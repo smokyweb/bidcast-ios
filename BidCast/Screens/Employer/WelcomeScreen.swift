@@ -63,14 +63,14 @@ struct WelcomeScreen: View {
                         DispatchQueue.main.async {
                             player?.isMuted = true
                             player?.pause()
-                            appRootManager.currentRoot = .user
+//                            appRootManager.currentRoot = .user
                         }
                     } else if UserDefaultsManager.shared.value(forKey: .userRoleId) == "3" {
                         UserDefaultsManager.shared.setValue("employer", forKey: .userRole)
                         DispatchQueue.main.async {
                             player?.isMuted = true
                             player?.pause()
-                            appRootManager.currentRoot = .employer
+//                            appRootManager.currentRoot = .employer
                         }
                     }
 //                    navigateToSignUp = true

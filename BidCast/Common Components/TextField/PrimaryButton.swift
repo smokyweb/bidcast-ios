@@ -19,14 +19,14 @@ struct PrimaryButton: View {
     var width: CGFloat = screenWidth - 30
     var height: CGFloat = 50
     
-    var btnColor: Color = .text
+    var btnColor: Color = .defaultTheme
     
     var body: some View {
         Button(action: { withAnimation {
             self.onButtonClick?()
         } }, label: {
             if isOutLine{
-                RoundedRectangle(cornerRadius: 25)
+                RoundedRectangle(cornerRadius: 2)
                     .stroke(btnColor, lineWidth: 2.0)
                     .overlay {
                         Text(title)
@@ -38,7 +38,7 @@ struct PrimaryButton: View {
                     .clipShape(RoundedRectangle(cornerRadius: 25))
                     .shadow(color: .gray, radius: 2, x: 0, y: 0)
             }else{
-                RoundedRectangle(cornerRadius: 25)
+                RoundedRectangle(cornerRadius: 2)
                     .fill(btnColor)
                     .shadow(color: .gray, radius: 2, x: 0, y: 0)
                     .overlay {
@@ -50,6 +50,7 @@ struct PrimaryButton: View {
             }
         })
         .frame(width: width, height: height)
+        .padding(.all,6)
     }
 }
 

@@ -10,7 +10,7 @@ import SwiftUI
 struct UserFlowStack: View {
     var body: some View {
         NavigationContainer {
-            UserHomeScreen(isWelcomePage: true)
+//            UserHomeScreen(isWelcomePage: true)
         }
     }
 }

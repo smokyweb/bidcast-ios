@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import BottomSheet
+//import BottomSheet
 
 struct NewsScreen: View {
     
@@ -43,7 +43,7 @@ struct NewsScreen: View {
                         LazyVStack(spacing: 12) {
                             ForEach(newsContent.indices, id: \.self) {
                                 ind in
-                                NewsCard(newsDetail: newsContent[ind])
+//                                NewsCard(newsDetail: newsContent[ind])
                             }
                         }
                         .padding([.horizontal, .vertical])
@@ -91,22 +91,22 @@ struct NewsScreen: View {
         .onAppear(perform: {
             observe()
         })
-        CusNavLink(doNavigate: $navigateToNotification, destination: NotificationScreen())
-
-        .fullScreenCover(isPresented: $navigateToMenu, content: {
-         
-                NavigationContainer {
-                    if let role: String = UserDefaultsManager.shared.value(forKey: .userRole) {
-                        if role != "employer" {
-                            UserHomeScreen()
-                        }else{
-                            EmployerHomeScreen()
-                        }
-                    }
-                   
-                
-            }
-        })
+//        CusNavLink(doNavigate: $navigateToNotification, destination: NotificationScreen())
+//
+//        .fullScreenCover(isPresented: $navigateToMenu, content: {
+//         
+//                NavigationContainer {
+//                    if let role: String = UserDefaultsManager.shared.value(forKey: .userRole) {
+//                        if role != "employer" {
+//                            UserHomeScreen()
+//                        }else{
+//                            EmployerHomeScreen()
+//                        }
+//                    }
+//                   
+//                
+//            }
+//        })
         .onTapGesture {
             UIApplication.shared.endEditing()
         }

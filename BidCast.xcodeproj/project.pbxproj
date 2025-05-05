@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		35A0450A2DC8DCFD0067C447 /* Color.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 35A045092DC8DCFD0067C447 /* Color.xcassets */; };
+		35A0450D2DC8DEC30067C447 /* AlertToast in Frameworks */ = {isa = PBXBuildFile; productRef = 35A0450C2DC8DEC30067C447 /* AlertToast */; };
+		35A045102DC8DF3D0067C447 /* RichTextKit in Frameworks */ = {isa = PBXBuildFile; productRef = 35A0450F2DC8DF3D0067C447 /* RichTextKit */; };
+		35A045132DC8DF4E0067C447 /* BottomSheet in Frameworks */ = {isa = PBXBuildFile; productRef = 35A045122DC8DF4E0067C447 /* BottomSheet */; };
+		35A045162DC8DF5B0067C447 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 35A045152DC8DF5B0067C447 /* Kingfisher */; };
+		35A0451C2DC8E19E0067C447 /* ActivityIndicatorView in Frameworks */ = {isa = PBXBuildFile; productRef = 35A0451B2DC8E19E0067C447 /* ActivityIndicatorView */; };
 		99C907C42DC8CC990054620B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907C22DC8CC990054620B /* AppDelegate.swift */; };
 		99C907C52DC8CC990054620B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907C32DC8CC990054620B /* SceneDelegate.swift */; };
 		99C9080E2DC8CD6A0054620B /* DocView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907D22DC8CD6A0054620B /* DocView.swift */; };
@@ -56,76 +62,34 @@
 		99C9083A2DC8CD6A0054620B /* SubmitVideoResumeSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907E22DC8CD6A0054620B /* SubmitVideoResumeSheet.swift */; };
 		99C9083B2DC8CD6A0054620B /* VideoResumeSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907E12DC8CD6A0054620B /* VideoResumeSheet.swift */; };
 		99C9083C2DC8CD6A0054620B /* JobListCardImg.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907FE2DC8CD6A0054620B /* JobListCardImg.swift */; };
-		99C909172DC8CD790054620B /* JobMatchViewModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908BD2DC8CD790054620B /* JobMatchViewModal.swift */; };
 		99C909182DC8CD790054620B /* ContactUsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908792DC8CD790054620B /* ContactUsViewModel.swift */; };
-		99C909192DC8CD790054620B /* UserVideoResumeDemoScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908E52DC8CD790054620B /* UserVideoResumeDemoScreen.swift */; };
-		99C9091A2DC8CD790054620B /* SavedScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908EA2DC8CD790054620B /* SavedScreen.swift */; };
-		99C9091B2DC8CD790054620B /* UserHomeScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908F82DC8CD790054620B /* UserHomeScreen.swift */; };
 		99C9091C2DC8CD790054620B /* NewsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908742DC8CD790054620B /* NewsViewModel.swift */; };
 		99C9091D2DC8CD790054620B /* MenuScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9086C2DC8CD790054620B /* MenuScreen.swift */; };
 		99C9091E2DC8CD790054620B /* NotificationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908852DC8CD790054620B /* NotificationViewModel.swift */; };
-		99C9091F2DC8CD790054620B /* LinkedInLoginScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908432DC8CD790054620B /* LinkedInLoginScreen.swift */; };
-		99C909202DC8CD790054620B /* UserProfileViewModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908D42DC8CD790054620B /* UserProfileViewModal.swift */; };
-		99C909212DC8CD790054620B /* DocumentUploadScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908AC2DC8CD790054620B /* DocumentUploadScreen.swift */; };
-		99C909222DC8CD790054620B /* EmployerCompanyDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9089B2DC8CD790054620B /* EmployerCompanyDetails.swift */; };
-		99C909232DC8CD790054620B /* DescriptionEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908412DC8CD790054620B /* DescriptionEditor.swift */; };
-		99C909242DC8CD790054620B /* CreateEmployerProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9088D2DC8CD790054620B /* CreateEmployerProfile.swift */; };
 		99C909252DC8CD790054620B /* EmployerProfileScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908582DC8CD790054620B /* EmployerProfileScreen.swift */; };
-		99C909262DC8CD790054620B /* MySkillScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908C92DC8CD790054620B /* MySkillScreen.swift */; };
-		99C909272DC8CD790054620B /* LinkedInConnectViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908B32DC8CD790054620B /* LinkedInConnectViewModel.swift */; };
-		99C909282DC8CD790054620B /* InterestedCandidateScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908AB2DC8CD790054620B /* InterestedCandidateScreen.swift */; };
 		99C909292DC8CD790054620B /* NewsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908762DC8CD790054620B /* NewsScreen.swift */; };
 		99C9092A2DC8CD790054620B /* SplashScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908832DC8CD790054620B /* SplashScreen.swift */; };
 		99C9092B2DC8CD790054620B /* MenuOptionsViewModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908662DC8CD790054620B /* MenuOptionsViewModal.swift */; };
-		99C9092C2DC8CD790054620B /* MatchesScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908F22DC8CD790054620B /* MatchesScreen.swift */; };
-		99C9092D2DC8CD790054620B /* UploadVideoViewModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908D92DC8CD790054620B /* UploadVideoViewModal.swift */; };
 		99C9092E2DC8CD790054620B /* VerifyOtpScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9090D2DC8CD790054620B /* VerifyOtpScreen.swift */; };
-		99C9092F2DC8CD790054620B /* RecordVideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908DB2DC8CD790054620B /* RecordVideoView.swift */; };
-		99C909302DC8CD790054620B /* UserCreateProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908E32DC8CD790054620B /* UserCreateProfile.swift */; };
-		99C909312DC8CD790054620B /* UserPersonalInfoScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908D02DC8CD790054620B /* UserPersonalInfoScreen.swift */; };
-		99C909322DC8CD790054620B /* SavedScreenViewModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908E82DC8CD790054620B /* SavedScreenViewModal.swift */; };
-		99C909332DC8CD790054620B /* EmployerCreateCompany.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9089C2DC8CD790054620B /* EmployerCreateCompany.swift */; };
-		99C909342DC8CD790054620B /* CreateEditJob.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908A32DC8CD790054620B /* CreateEditJob.swift */; };
-		99C909352DC8CD790054620B /* CompanyUserProfileScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9089D2DC8CD790054620B /* CompanyUserProfileScreen.swift */; };
 		99C909362DC8CD790054620B /* AboutUsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9086F2DC8CD790054620B /* AboutUsViewModel.swift */; };
-		99C909372DC8CD790054620B /* ReviewVideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908DD2DC8CD790054620B /* ReviewVideoView.swift */; };
-		99C909382DC8CD790054620B /* EmployeeProfileScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908932DC8CD790054620B /* EmployeeProfileScreen.swift */; };
 		99C909392DC8CD790054620B /* InterviewlistScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908532DC8CD790054620B /* InterviewlistScreen.swift */; };
-		99C9093A2DC8CD790054620B /* CompanyDetailViewModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908982DC8CD790054620B /* CompanyDetailViewModal.swift */; };
-		99C9093B2DC8CD790054620B /* UserCreateWorkHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908CF2DC8CD790054620B /* UserCreateWorkHistory.swift */; };
 		99C9093C2DC8CD790054620B /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908FC2DC8CD790054620B /* LoginViewModel.swift */; };
 		99C9093D2DC8CD790054620B /* AboutUsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908712DC8CD790054620B /* AboutUsScreen.swift */; };
 		99C9093E2DC8CD790054620B /* JobPostingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9085D2DC8CD790054620B /* JobPostingScreen.swift */; };
-		99C9093F2DC8CD790054620B /* LinkedInUserDetailScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908B52DC8CD790054620B /* LinkedInUserDetailScreen.swift */; };
 		99C909402DC8CD790054620B /* VerifyOtpViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9090B2DC8CD790054620B /* VerifyOtpViewModel.swift */; };
-		99C909412DC8CD790054620B /* UserCreateProfileViewModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908E12DC8CD790054620B /* UserCreateProfileViewModal.swift */; };
 		99C909422DC8CD790054620B /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908602DC8CD790054620B /* SearchViewModel.swift */; };
-		99C909432DC8CD790054620B /* JobUpsertViewModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908A02DC8CD790054620B /* JobUpsertViewModal.swift */; };
 		99C909442DC8CD790054620B /* SubscriptionViewModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908462DC8CD790054620B /* SubscriptionViewModal.swift */; };
 		99C909452DC8CD790054620B /* ForgotViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909102DC8CD790054620B /* ForgotViewModel.swift */; };
-		99C909462DC8CD790054620B /* EmployerViewModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908A62DC8CD790054620B /* EmployerViewModal.swift */; };
 		99C909472DC8CD790054620B /* UserFlowStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9083E2DC8CD790054620B /* UserFlowStack.swift */; };
-		99C909482DC8CD790054620B /* LicensesScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908CA2DC8CD790054620B /* LicensesScreen.swift */; };
-		99C909492DC8CD790054620B /* DeclineCandidatesScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908AA2DC8CD790054620B /* DeclineCandidatesScreen.swift */; };
-		99C9094A2DC8CD790054620B /* JobCategoriesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908CD2DC8CD790054620B /* JobCategoriesView.swift */; };
-		99C9094B2DC8CD790054620B /* UpdateUserProfileViewModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908C62DC8CD790054620B /* UpdateUserProfileViewModal.swift */; };
 		99C9094C2DC8CD790054620B /* WelcomeScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908802DC8CD790054620B /* WelcomeScreen.swift */; };
-		99C9094D2DC8CD790054620B /* LanguagesScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908CC2DC8CD790054620B /* LanguagesScreen.swift */; };
-		99C9094E2DC8CD790054620B /* CreateSubCompanyScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908AD2DC8CD790054620B /* CreateSubCompanyScreen.swift */; };
-		99C9094F2DC8CD790054620B /* InterviewDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908B82DC8CD790054620B /* InterviewDetailViewModel.swift */; };
 		99C909502DC8CD790054620B /* SignupViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909012DC8CD790054620B /* SignupViewModel.swift */; };
 		99C909512DC8CD790054620B /* WelcomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9087E2DC8CD790054620B /* WelcomeViewModel.swift */; };
-		99C909522DC8CD790054620B /* EmployerHomeScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908A82DC8CD790054620B /* EmployerHomeScreen.swift */; };
-		99C909532DC8CD790054620B /* InterviewDetailScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908BA2DC8CD790054620B /* InterviewDetailScreen.swift */; };
 		99C909542DC8CD790054620B /* DeleteAccountViweModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9084B2DC8CD790054620B /* DeleteAccountViweModel.swift */; };
-		99C909552DC8CD790054620B /* HomeScreenViewModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908F62DC8CD790054620B /* HomeScreenViewModal.swift */; };
 		99C909562DC8CD790054620B /* UserSearchScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908632DC8CD790054620B /* UserSearchScreen.swift */; };
 		99C909572DC8CD790054620B /* SignUpScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909032DC8CD790054620B /* SignUpScreen.swift */; };
 		99C909582DC8CD790054620B /* SubscriptionScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908482DC8CD790054620B /* SubscriptionScreen.swift */; };
-		99C909592DC8CD790054620B /* ExampleVideoResume.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908DE2DC8CD790054620B /* ExampleVideoResume.swift */; };
 		99C9095A2DC8CD790054620B /* TermsOfServicesScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908692DC8CD790054620B /* TermsOfServicesScreen.swift */; };
 		99C9095B2DC8CD790054620B /* ResetPasswordScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909082DC8CD790054620B /* ResetPasswordScreen.swift */; };
-		99C9095C2DC8CD790054620B /* EditListing Screen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908A22DC8CD790054620B /* EditListing Screen.swift */; };
 		99C9095D2DC8CD790054620B /* ForgotScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909122DC8CD790054620B /* ForgotScreen.swift */; };
 		99C9095E2DC8CD790054620B /* DeleteAccountScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9084D2DC8CD790054620B /* DeleteAccountScreen.swift */; };
 		99C9095F2DC8CD790054620B /* EmployerFlowStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9083F2DC8CD790054620B /* EmployerFlowStack.swift */; };
@@ -133,33 +97,14 @@
 		99C909612DC8CD790054620B /* ContactUsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9087B2DC8CD790054620B /* ContactUsScreen.swift */; };
 		99C909622DC8CD790054620B /* PrivacyPolicyScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908682DC8CD790054620B /* PrivacyPolicyScreen.swift */; };
 		99C909632DC8CD790054620B /* SubCompanyCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9086A2DC8CD790054620B /* SubCompanyCard.swift */; };
-		99C909642DC8CD790054620B /* EmployeeProfileViewModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908912DC8CD790054620B /* EmployeeProfileViewModal.swift */; };
-		99C909652DC8CD790054620B /* SubCompanyScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908AF2DC8CD790054620B /* SubCompanyScreen.swift */; };
-		99C909662DC8CD790054620B /* UpdateEmployerProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9088E2DC8CD790054620B /* UpdateEmployerProfile.swift */; };
-		99C909672DC8CD790054620B /* UserProfileScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908D62DC8CD790054620B /* UserProfileScreen.swift */; };
 		99C909682DC8CD790054620B /* NotificationScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908872DC8CD790054620B /* NotificationScreen.swift */; };
-		99C909692DC8CD790054620B /* UserWorkHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908CE2DC8CD790054620B /* UserWorkHistory.swift */; };
-		99C9096A2DC8CD790054620B /* PermissionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908AE2DC8CD790054620B /* PermissionsView.swift */; };
-		99C9096B2DC8CD790054620B /* ScheduleInterviewScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908BF2DC8CD790054620B /* ScheduleInterviewScreen.swift */; };
-		99C9096C2DC8CD790054620B /* UserImageSelectionScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908D12DC8CD790054620B /* UserImageSelectionScreen.swift */; };
-		99C9096D2DC8CD790054620B /* SelectedJobScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908A92DC8CD790054620B /* SelectedJobScreen.swift */; };
 		99C9096E2DC8CD790054620B /* InterviewlistViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908512DC8CD790054620B /* InterviewlistViewModel.swift */; };
 		99C9096F2DC8CD790054620B /* EmployerSearchScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908622DC8CD790054620B /* EmployerSearchScreen.swift */; };
 		99C909702DC8CD790054620B /* LoginScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908FE2DC8CD790054620B /* LoginScreen.swift */; };
-		99C909712DC8CD790054620B /* YourVideoResume.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908DC2DC8CD790054620B /* YourVideoResume.swift */; };
-		99C909722DC8CD790054620B /* SecondLookScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908C32DC8CD790054620B /* SecondLookScreen.swift */; };
-		99C909732DC8CD790054620B /* EmployerCompanyScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9089A2DC8CD790054620B /* EmployerCompanyScreen.swift */; };
-		99C909742DC8CD790054620B /* DiscoverScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908EE2DC8CD790054620B /* DiscoverScreen.swift */; };
-		99C909752DC8CD790054620B /* VolunteerScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908CB2DC8CD790054620B /* VolunteerScreen.swift */; };
 		99C909762DC8CD790054620B /* EmployerProfileViewModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908562DC8CD790054620B /* EmployerProfileViewModal.swift */; };
-		99C909772DC8CD790054620B /* GoogleCalenderScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908942DC8CD790054620B /* GoogleCalenderScreen.swift */; };
 		99C909782DC8CD790054620B /* AuthenticationStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9083D2DC8CD790054620B /* AuthenticationStack.swift */; };
-		99C909792DC8CD790054620B /* EmployeeDetailScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908952DC8CD790054620B /* EmployeeDetailScreen.swift */; };
 		99C9097A2DC8CD790054620B /* DeleteAccountSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9084E2DC8CD790054620B /* DeleteAccountSheet.swift */; };
-		99C9097B2DC8CD790054620B /* MyEducationScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908C82DC8CD790054620B /* MyEducationScreen.swift */; };
-		99C9097C2DC8CD790054620B /* CreateEmployerProfileViewModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9088B2DC8CD790054620B /* CreateEmployerProfileViewModal.swift */; };
 		99C9097D2DC8CD790054620B /* ResetPasswordViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909062DC8CD790054620B /* ResetPasswordViewModel.swift */; };
-		99C9097E2DC8CD790054620B /* UserProfileImgSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908E42DC8CD790054620B /* UserProfileImgSelection.swift */; };
 		99C909A12DC8CD930054620B /* UITextField+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909882DC8CD930054620B /* UITextField+Extension.swift */; };
 		99C909A22DC8CD930054620B /* VideoRecorderHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9098F2DC8CD930054620B /* VideoRecorderHelper.swift */; };
 		99C909A32DC8CD930054620B /* UIFont+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909802DC8CD930054620B /* UIFont+Extension.swift */; };
@@ -239,6 +184,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		35A045092DC8DCFD0067C447 /* Color.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Color.xcassets; sourceTree = "<group>"; };
 		99C907C22DC8CC990054620B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		99C907C32DC8CC990054620B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		99C907C82DC8CD6A0054620B /* SubscriptionCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionCard.swift; sourceTree = "<group>"; };
@@ -291,8 +237,6 @@
 		99C9083D2DC8CD790054620B /* AuthenticationStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationStack.swift; sourceTree = "<group>"; };
 		99C9083E2DC8CD790054620B /* UserFlowStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserFlowStack.swift; sourceTree = "<group>"; };
 		99C9083F2DC8CD790054620B /* EmployerFlowStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployerFlowStack.swift; sourceTree = "<group>"; };
-		99C908412DC8CD790054620B /* DescriptionEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DescriptionEditor.swift; sourceTree = "<group>"; };
-		99C908432DC8CD790054620B /* LinkedInLoginScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkedInLoginScreen.swift; sourceTree = "<group>"; };
 		99C908462DC8CD790054620B /* SubscriptionViewModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionViewModal.swift; sourceTree = "<group>"; };
 		99C908482DC8CD790054620B /* SubscriptionScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionScreen.swift; sourceTree = "<group>"; };
 		99C9084B2DC8CD790054620B /* DeleteAccountViweModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteAccountViweModel.swift; sourceTree = "<group>"; };
@@ -323,65 +267,6 @@
 		99C908832DC8CD790054620B /* SplashScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreen.swift; sourceTree = "<group>"; };
 		99C908852DC8CD790054620B /* NotificationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationViewModel.swift; sourceTree = "<group>"; };
 		99C908872DC8CD790054620B /* NotificationScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationScreen.swift; sourceTree = "<group>"; };
-		99C9088B2DC8CD790054620B /* CreateEmployerProfileViewModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateEmployerProfileViewModal.swift; sourceTree = "<group>"; };
-		99C9088D2DC8CD790054620B /* CreateEmployerProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateEmployerProfile.swift; sourceTree = "<group>"; };
-		99C9088E2DC8CD790054620B /* UpdateEmployerProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateEmployerProfile.swift; sourceTree = "<group>"; };
-		99C908912DC8CD790054620B /* EmployeeProfileViewModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployeeProfileViewModal.swift; sourceTree = "<group>"; };
-		99C908932DC8CD790054620B /* EmployeeProfileScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployeeProfileScreen.swift; sourceTree = "<group>"; };
-		99C908942DC8CD790054620B /* GoogleCalenderScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleCalenderScreen.swift; sourceTree = "<group>"; };
-		99C908952DC8CD790054620B /* EmployeeDetailScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployeeDetailScreen.swift; sourceTree = "<group>"; };
-		99C908982DC8CD790054620B /* CompanyDetailViewModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyDetailViewModal.swift; sourceTree = "<group>"; };
-		99C9089A2DC8CD790054620B /* EmployerCompanyScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployerCompanyScreen.swift; sourceTree = "<group>"; };
-		99C9089B2DC8CD790054620B /* EmployerCompanyDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployerCompanyDetails.swift; sourceTree = "<group>"; };
-		99C9089C2DC8CD790054620B /* EmployerCreateCompany.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployerCreateCompany.swift; sourceTree = "<group>"; };
-		99C9089D2DC8CD790054620B /* CompanyUserProfileScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyUserProfileScreen.swift; sourceTree = "<group>"; };
-		99C908A02DC8CD790054620B /* JobUpsertViewModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobUpsertViewModal.swift; sourceTree = "<group>"; };
-		99C908A22DC8CD790054620B /* EditListing Screen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditListing Screen.swift"; sourceTree = "<group>"; };
-		99C908A32DC8CD790054620B /* CreateEditJob.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateEditJob.swift; sourceTree = "<group>"; };
-		99C908A62DC8CD790054620B /* EmployerViewModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployerViewModal.swift; sourceTree = "<group>"; };
-		99C908A82DC8CD790054620B /* EmployerHomeScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployerHomeScreen.swift; sourceTree = "<group>"; };
-		99C908A92DC8CD790054620B /* SelectedJobScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectedJobScreen.swift; sourceTree = "<group>"; };
-		99C908AA2DC8CD790054620B /* DeclineCandidatesScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeclineCandidatesScreen.swift; sourceTree = "<group>"; };
-		99C908AB2DC8CD790054620B /* InterestedCandidateScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterestedCandidateScreen.swift; sourceTree = "<group>"; };
-		99C908AC2DC8CD790054620B /* DocumentUploadScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentUploadScreen.swift; sourceTree = "<group>"; };
-		99C908AD2DC8CD790054620B /* CreateSubCompanyScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateSubCompanyScreen.swift; sourceTree = "<group>"; };
-		99C908AE2DC8CD790054620B /* PermissionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsView.swift; sourceTree = "<group>"; };
-		99C908AF2DC8CD790054620B /* SubCompanyScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubCompanyScreen.swift; sourceTree = "<group>"; };
-		99C908B32DC8CD790054620B /* LinkedInConnectViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkedInConnectViewModel.swift; sourceTree = "<group>"; };
-		99C908B52DC8CD790054620B /* LinkedInUserDetailScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkedInUserDetailScreen.swift; sourceTree = "<group>"; };
-		99C908B82DC8CD790054620B /* InterviewDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterviewDetailViewModel.swift; sourceTree = "<group>"; };
-		99C908BA2DC8CD790054620B /* InterviewDetailScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterviewDetailScreen.swift; sourceTree = "<group>"; };
-		99C908BD2DC8CD790054620B /* JobMatchViewModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobMatchViewModal.swift; sourceTree = "<group>"; };
-		99C908BF2DC8CD790054620B /* ScheduleInterviewScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleInterviewScreen.swift; sourceTree = "<group>"; };
-		99C908C32DC8CD790054620B /* SecondLookScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondLookScreen.swift; sourceTree = "<group>"; };
-		99C908C62DC8CD790054620B /* UpdateUserProfileViewModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateUserProfileViewModal.swift; sourceTree = "<group>"; };
-		99C908C82DC8CD790054620B /* MyEducationScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyEducationScreen.swift; sourceTree = "<group>"; };
-		99C908C92DC8CD790054620B /* MySkillScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySkillScreen.swift; sourceTree = "<group>"; };
-		99C908CA2DC8CD790054620B /* LicensesScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LicensesScreen.swift; sourceTree = "<group>"; };
-		99C908CB2DC8CD790054620B /* VolunteerScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolunteerScreen.swift; sourceTree = "<group>"; };
-		99C908CC2DC8CD790054620B /* LanguagesScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguagesScreen.swift; sourceTree = "<group>"; };
-		99C908CD2DC8CD790054620B /* JobCategoriesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobCategoriesView.swift; sourceTree = "<group>"; };
-		99C908CE2DC8CD790054620B /* UserWorkHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserWorkHistory.swift; sourceTree = "<group>"; };
-		99C908CF2DC8CD790054620B /* UserCreateWorkHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCreateWorkHistory.swift; sourceTree = "<group>"; };
-		99C908D02DC8CD790054620B /* UserPersonalInfoScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPersonalInfoScreen.swift; sourceTree = "<group>"; };
-		99C908D12DC8CD790054620B /* UserImageSelectionScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserImageSelectionScreen.swift; sourceTree = "<group>"; };
-		99C908D42DC8CD790054620B /* UserProfileViewModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileViewModal.swift; sourceTree = "<group>"; };
-		99C908D62DC8CD790054620B /* UserProfileScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileScreen.swift; sourceTree = "<group>"; };
-		99C908D92DC8CD790054620B /* UploadVideoViewModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadVideoViewModal.swift; sourceTree = "<group>"; };
-		99C908DB2DC8CD790054620B /* RecordVideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordVideoView.swift; sourceTree = "<group>"; };
-		99C908DC2DC8CD790054620B /* YourVideoResume.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YourVideoResume.swift; sourceTree = "<group>"; };
-		99C908DD2DC8CD790054620B /* ReviewVideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewVideoView.swift; sourceTree = "<group>"; };
-		99C908DE2DC8CD790054620B /* ExampleVideoResume.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleVideoResume.swift; sourceTree = "<group>"; };
-		99C908E12DC8CD790054620B /* UserCreateProfileViewModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCreateProfileViewModal.swift; sourceTree = "<group>"; };
-		99C908E32DC8CD790054620B /* UserCreateProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCreateProfile.swift; sourceTree = "<group>"; };
-		99C908E42DC8CD790054620B /* UserProfileImgSelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileImgSelection.swift; sourceTree = "<group>"; };
-		99C908E52DC8CD790054620B /* UserVideoResumeDemoScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserVideoResumeDemoScreen.swift; sourceTree = "<group>"; };
-		99C908E82DC8CD790054620B /* SavedScreenViewModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedScreenViewModal.swift; sourceTree = "<group>"; };
-		99C908EA2DC8CD790054620B /* SavedScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedScreen.swift; sourceTree = "<group>"; };
-		99C908EE2DC8CD790054620B /* DiscoverScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverScreen.swift; sourceTree = "<group>"; };
-		99C908F22DC8CD790054620B /* MatchesScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchesScreen.swift; sourceTree = "<group>"; };
-		99C908F62DC8CD790054620B /* HomeScreenViewModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeScreenViewModal.swift; sourceTree = "<group>"; };
-		99C908F82DC8CD790054620B /* UserHomeScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserHomeScreen.swift; sourceTree = "<group>"; };
 		99C908FC2DC8CD790054620B /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		99C908FE2DC8CD790054620B /* LoginScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginScreen.swift; sourceTree = "<group>"; };
 		99C909012DC8CD790054620B /* SignupViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignupViewModel.swift; sourceTree = "<group>"; };
@@ -462,6 +347,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				35A0451C2DC8E19E0067C447 /* ActivityIndicatorView in Frameworks */,
+				35A045162DC8DF5B0067C447 /* Kingfisher in Frameworks */,
+				35A045102DC8DF3D0067C447 /* RichTextKit in Frameworks */,
+				35A045132DC8DF4E0067C447 /* BottomSheet in Frameworks */,
+				35A0450D2DC8DEC30067C447 /* AlertToast in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -496,6 +386,7 @@
 			isa = PBXGroup;
 			children = (
 				99DF9E6F2DC4F367008C15B2 /* Assets.xcassets */,
+				35A045092DC8DCFD0067C447 /* Color.xcassets */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -747,30 +638,6 @@
 				99C9083F2DC8CD790054620B /* EmployerFlowStack.swift */,
 			);
 			path = FlowStack;
-			sourceTree = "<group>";
-		};
-		99C908422DC8CD790054620B /* DescriptionEditor */ = {
-			isa = PBXGroup;
-			children = (
-				99C908412DC8CD790054620B /* DescriptionEditor.swift */,
-			);
-			path = DescriptionEditor;
-			sourceTree = "<group>";
-		};
-		99C908442DC8CD790054620B /* View */ = {
-			isa = PBXGroup;
-			children = (
-				99C908432DC8CD790054620B /* LinkedInLoginScreen.swift */,
-			);
-			path = View;
-			sourceTree = "<group>";
-		};
-		99C908452DC8CD790054620B /* LinkedInScreen */ = {
-			isa = PBXGroup;
-			children = (
-				99C908442DC8CD790054620B /* View */,
-			);
-			path = LinkedInScreen;
 			sourceTree = "<group>";
 		};
 		99C908472DC8CD790054620B /* ViewModel */ = {
@@ -1099,8 +966,6 @@
 		99C9088A2DC8CD790054620B /* Common */ = {
 			isa = PBXGroup;
 			children = (
-				99C908422DC8CD790054620B /* DescriptionEditor */,
-				99C908452DC8CD790054620B /* LinkedInScreen */,
 				99C9084A2DC8CD790054620B /* SubscriptionScreen */,
 				99C908502DC8CD790054620B /* DeleteAccountScreen */,
 				99C908552DC8CD790054620B /* InterviewlistScreen */,
@@ -1116,495 +981,6 @@
 				99C908892DC8CD790054620B /* NotificationScreens */,
 			);
 			path = Common;
-			sourceTree = "<group>";
-		};
-		99C9088C2DC8CD790054620B /* ViewModal */ = {
-			isa = PBXGroup;
-			children = (
-				99C9088B2DC8CD790054620B /* CreateEmployerProfileViewModal.swift */,
-			);
-			path = ViewModal;
-			sourceTree = "<group>";
-		};
-		99C9088F2DC8CD790054620B /* View */ = {
-			isa = PBXGroup;
-			children = (
-				99C9088D2DC8CD790054620B /* CreateEmployerProfile.swift */,
-				99C9088E2DC8CD790054620B /* UpdateEmployerProfile.swift */,
-			);
-			path = View;
-			sourceTree = "<group>";
-		};
-		99C908902DC8CD790054620B /* CreateProfile */ = {
-			isa = PBXGroup;
-			children = (
-				99C9088C2DC8CD790054620B /* ViewModal */,
-				99C9088F2DC8CD790054620B /* View */,
-			);
-			path = CreateProfile;
-			sourceTree = "<group>";
-		};
-		99C908922DC8CD790054620B /* ViewModal */ = {
-			isa = PBXGroup;
-			children = (
-				99C908912DC8CD790054620B /* EmployeeProfileViewModal.swift */,
-			);
-			path = ViewModal;
-			sourceTree = "<group>";
-		};
-		99C908962DC8CD790054620B /* View */ = {
-			isa = PBXGroup;
-			children = (
-				99C908932DC8CD790054620B /* EmployeeProfileScreen.swift */,
-				99C908942DC8CD790054620B /* GoogleCalenderScreen.swift */,
-				99C908952DC8CD790054620B /* EmployeeDetailScreen.swift */,
-			);
-			path = View;
-			sourceTree = "<group>";
-		};
-		99C908972DC8CD790054620B /* EmployeeScreen */ = {
-			isa = PBXGroup;
-			children = (
-				99C908922DC8CD790054620B /* ViewModal */,
-				99C908962DC8CD790054620B /* View */,
-			);
-			path = EmployeeScreen;
-			sourceTree = "<group>";
-		};
-		99C908992DC8CD790054620B /* ViewModal */ = {
-			isa = PBXGroup;
-			children = (
-				99C908982DC8CD790054620B /* CompanyDetailViewModal.swift */,
-			);
-			path = ViewModal;
-			sourceTree = "<group>";
-		};
-		99C9089E2DC8CD790054620B /* View */ = {
-			isa = PBXGroup;
-			children = (
-				99C9089A2DC8CD790054620B /* EmployerCompanyScreen.swift */,
-				99C9089B2DC8CD790054620B /* EmployerCompanyDetails.swift */,
-				99C9089C2DC8CD790054620B /* EmployerCreateCompany.swift */,
-				99C9089D2DC8CD790054620B /* CompanyUserProfileScreen.swift */,
-			);
-			path = View;
-			sourceTree = "<group>";
-		};
-		99C9089F2DC8CD790054620B /* EmployerCompany */ = {
-			isa = PBXGroup;
-			children = (
-				99C908992DC8CD790054620B /* ViewModal */,
-				99C9089E2DC8CD790054620B /* View */,
-			);
-			path = EmployerCompany;
-			sourceTree = "<group>";
-		};
-		99C908A12DC8CD790054620B /* ViewModal */ = {
-			isa = PBXGroup;
-			children = (
-				99C908A02DC8CD790054620B /* JobUpsertViewModal.swift */,
-			);
-			path = ViewModal;
-			sourceTree = "<group>";
-		};
-		99C908A42DC8CD790054620B /* View */ = {
-			isa = PBXGroup;
-			children = (
-				99C908A22DC8CD790054620B /* EditListing Screen.swift */,
-				99C908A32DC8CD790054620B /* CreateEditJob.swift */,
-			);
-			path = View;
-			sourceTree = "<group>";
-		};
-		99C908A52DC8CD790054620B /* JobScreen */ = {
-			isa = PBXGroup;
-			children = (
-				99C908A12DC8CD790054620B /* ViewModal */,
-				99C908A42DC8CD790054620B /* View */,
-			);
-			path = JobScreen;
-			sourceTree = "<group>";
-		};
-		99C908A72DC8CD790054620B /* ViewModal */ = {
-			isa = PBXGroup;
-			children = (
-				99C908A62DC8CD790054620B /* EmployerViewModal.swift */,
-			);
-			path = ViewModal;
-			sourceTree = "<group>";
-		};
-		99C908B02DC8CD790054620B /* View */ = {
-			isa = PBXGroup;
-			children = (
-				99C908A82DC8CD790054620B /* EmployerHomeScreen.swift */,
-				99C908A92DC8CD790054620B /* SelectedJobScreen.swift */,
-				99C908AA2DC8CD790054620B /* DeclineCandidatesScreen.swift */,
-				99C908AB2DC8CD790054620B /* InterestedCandidateScreen.swift */,
-				99C908AC2DC8CD790054620B /* DocumentUploadScreen.swift */,
-				99C908AD2DC8CD790054620B /* CreateSubCompanyScreen.swift */,
-				99C908AE2DC8CD790054620B /* PermissionsView.swift */,
-				99C908AF2DC8CD790054620B /* SubCompanyScreen.swift */,
-			);
-			path = View;
-			sourceTree = "<group>";
-		};
-		99C908B12DC8CD790054620B /* HomeScreen */ = {
-			isa = PBXGroup;
-			children = (
-				99C908A72DC8CD790054620B /* ViewModal */,
-				99C908B02DC8CD790054620B /* View */,
-			);
-			path = HomeScreen;
-			sourceTree = "<group>";
-		};
-		99C908B22DC8CD790054620B /* Employer */ = {
-			isa = PBXGroup;
-			children = (
-				99C908902DC8CD790054620B /* CreateProfile */,
-				99C908972DC8CD790054620B /* EmployeeScreen */,
-				99C9089F2DC8CD790054620B /* EmployerCompany */,
-				99C908A52DC8CD790054620B /* JobScreen */,
-				99C908B12DC8CD790054620B /* HomeScreen */,
-			);
-			path = Employer;
-			sourceTree = "<group>";
-		};
-		99C908B42DC8CD790054620B /* ViewModel */ = {
-			isa = PBXGroup;
-			children = (
-				99C908B32DC8CD790054620B /* LinkedInConnectViewModel.swift */,
-			);
-			path = ViewModel;
-			sourceTree = "<group>";
-		};
-		99C908B62DC8CD790054620B /* View */ = {
-			isa = PBXGroup;
-			children = (
-				99C908B52DC8CD790054620B /* LinkedInUserDetailScreen.swift */,
-			);
-			path = View;
-			sourceTree = "<group>";
-		};
-		99C908B72DC8CD790054620B /* LinkedInUserDetail */ = {
-			isa = PBXGroup;
-			children = (
-				99C908B42DC8CD790054620B /* ViewModel */,
-				99C908B62DC8CD790054620B /* View */,
-			);
-			path = LinkedInUserDetail;
-			sourceTree = "<group>";
-		};
-		99C908B92DC8CD790054620B /* ViewModel */ = {
-			isa = PBXGroup;
-			children = (
-				99C908B82DC8CD790054620B /* InterviewDetailViewModel.swift */,
-			);
-			path = ViewModel;
-			sourceTree = "<group>";
-		};
-		99C908BB2DC8CD790054620B /* View */ = {
-			isa = PBXGroup;
-			children = (
-				99C908BA2DC8CD790054620B /* InterviewDetailScreen.swift */,
-			);
-			path = View;
-			sourceTree = "<group>";
-		};
-		99C908BC2DC8CD790054620B /* InterviewDetailScreen */ = {
-			isa = PBXGroup;
-			children = (
-				99C908B92DC8CD790054620B /* ViewModel */,
-				99C908BB2DC8CD790054620B /* View */,
-			);
-			path = InterviewDetailScreen;
-			sourceTree = "<group>";
-		};
-		99C908BE2DC8CD790054620B /* ViewModal */ = {
-			isa = PBXGroup;
-			children = (
-				99C908BD2DC8CD790054620B /* JobMatchViewModal.swift */,
-			);
-			path = ViewModal;
-			sourceTree = "<group>";
-		};
-		99C908C02DC8CD790054620B /* View */ = {
-			isa = PBXGroup;
-			children = (
-				99C908BF2DC8CD790054620B /* ScheduleInterviewScreen.swift */,
-			);
-			path = View;
-			sourceTree = "<group>";
-		};
-		99C908C12DC8CD790054620B /* JobMatch */ = {
-			isa = PBXGroup;
-			children = (
-				99C908BE2DC8CD790054620B /* ViewModal */,
-				99C908C02DC8CD790054620B /* View */,
-			);
-			path = JobMatch;
-			sourceTree = "<group>";
-		};
-		99C908C22DC8CD790054620B /* ViewModal */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = ViewModal;
-			sourceTree = "<group>";
-		};
-		99C908C42DC8CD790054620B /* View */ = {
-			isa = PBXGroup;
-			children = (
-				99C908C32DC8CD790054620B /* SecondLookScreen.swift */,
-			);
-			path = View;
-			sourceTree = "<group>";
-		};
-		99C908C52DC8CD790054620B /* SecondLook */ = {
-			isa = PBXGroup;
-			children = (
-				99C908C22DC8CD790054620B /* ViewModal */,
-				99C908C42DC8CD790054620B /* View */,
-			);
-			path = SecondLook;
-			sourceTree = "<group>";
-		};
-		99C908C72DC8CD790054620B /* ViewModal */ = {
-			isa = PBXGroup;
-			children = (
-				99C908C62DC8CD790054620B /* UpdateUserProfileViewModal.swift */,
-			);
-			path = ViewModal;
-			sourceTree = "<group>";
-		};
-		99C908D22DC8CD790054620B /* View */ = {
-			isa = PBXGroup;
-			children = (
-				99C908C82DC8CD790054620B /* MyEducationScreen.swift */,
-				99C908C92DC8CD790054620B /* MySkillScreen.swift */,
-				99C908CA2DC8CD790054620B /* LicensesScreen.swift */,
-				99C908CB2DC8CD790054620B /* VolunteerScreen.swift */,
-				99C908CC2DC8CD790054620B /* LanguagesScreen.swift */,
-				99C908CD2DC8CD790054620B /* JobCategoriesView.swift */,
-				99C908CE2DC8CD790054620B /* UserWorkHistory.swift */,
-				99C908CF2DC8CD790054620B /* UserCreateWorkHistory.swift */,
-				99C908D02DC8CD790054620B /* UserPersonalInfoScreen.swift */,
-				99C908D12DC8CD790054620B /* UserImageSelectionScreen.swift */,
-			);
-			path = View;
-			sourceTree = "<group>";
-		};
-		99C908D32DC8CD790054620B /* UpdateUserProfile */ = {
-			isa = PBXGroup;
-			children = (
-				99C908C72DC8CD790054620B /* ViewModal */,
-				99C908D22DC8CD790054620B /* View */,
-			);
-			path = UpdateUserProfile;
-			sourceTree = "<group>";
-		};
-		99C908D52DC8CD790054620B /* ViewModal */ = {
-			isa = PBXGroup;
-			children = (
-				99C908D42DC8CD790054620B /* UserProfileViewModal.swift */,
-			);
-			path = ViewModal;
-			sourceTree = "<group>";
-		};
-		99C908D72DC8CD790054620B /* View */ = {
-			isa = PBXGroup;
-			children = (
-				99C908D62DC8CD790054620B /* UserProfileScreen.swift */,
-			);
-			path = View;
-			sourceTree = "<group>";
-		};
-		99C908D82DC8CD790054620B /* UserProfile */ = {
-			isa = PBXGroup;
-			children = (
-				99C908D52DC8CD790054620B /* ViewModal */,
-				99C908D72DC8CD790054620B /* View */,
-			);
-			path = UserProfile;
-			sourceTree = "<group>";
-		};
-		99C908DA2DC8CD790054620B /* ViewModal */ = {
-			isa = PBXGroup;
-			children = (
-				99C908D92DC8CD790054620B /* UploadVideoViewModal.swift */,
-			);
-			path = ViewModal;
-			sourceTree = "<group>";
-		};
-		99C908DF2DC8CD790054620B /* View */ = {
-			isa = PBXGroup;
-			children = (
-				99C908DB2DC8CD790054620B /* RecordVideoView.swift */,
-				99C908DC2DC8CD790054620B /* YourVideoResume.swift */,
-				99C908DD2DC8CD790054620B /* ReviewVideoView.swift */,
-				99C908DE2DC8CD790054620B /* ExampleVideoResume.swift */,
-			);
-			path = View;
-			sourceTree = "<group>";
-		};
-		99C908E02DC8CD790054620B /* VideoResume */ = {
-			isa = PBXGroup;
-			children = (
-				99C908DA2DC8CD790054620B /* ViewModal */,
-				99C908DF2DC8CD790054620B /* View */,
-			);
-			path = VideoResume;
-			sourceTree = "<group>";
-		};
-		99C908E22DC8CD790054620B /* ViewModal */ = {
-			isa = PBXGroup;
-			children = (
-				99C908E12DC8CD790054620B /* UserCreateProfileViewModal.swift */,
-			);
-			path = ViewModal;
-			sourceTree = "<group>";
-		};
-		99C908E62DC8CD790054620B /* View */ = {
-			isa = PBXGroup;
-			children = (
-				99C908E32DC8CD790054620B /* UserCreateProfile.swift */,
-				99C908E42DC8CD790054620B /* UserProfileImgSelection.swift */,
-				99C908E52DC8CD790054620B /* UserVideoResumeDemoScreen.swift */,
-			);
-			path = View;
-			sourceTree = "<group>";
-		};
-		99C908E72DC8CD790054620B /* CreateUpdateProfile */ = {
-			isa = PBXGroup;
-			children = (
-				99C908E22DC8CD790054620B /* ViewModal */,
-				99C908E62DC8CD790054620B /* View */,
-			);
-			path = CreateUpdateProfile;
-			sourceTree = "<group>";
-		};
-		99C908E92DC8CD790054620B /* ViewModal */ = {
-			isa = PBXGroup;
-			children = (
-				99C908E82DC8CD790054620B /* SavedScreenViewModal.swift */,
-			);
-			path = ViewModal;
-			sourceTree = "<group>";
-		};
-		99C908EB2DC8CD790054620B /* View */ = {
-			isa = PBXGroup;
-			children = (
-				99C908EA2DC8CD790054620B /* SavedScreen.swift */,
-			);
-			path = View;
-			sourceTree = "<group>";
-		};
-		99C908EC2DC8CD790054620B /* SavedScreen */ = {
-			isa = PBXGroup;
-			children = (
-				99C908E92DC8CD790054620B /* ViewModal */,
-				99C908EB2DC8CD790054620B /* View */,
-			);
-			path = SavedScreen;
-			sourceTree = "<group>";
-		};
-		99C908ED2DC8CD790054620B /* ViewModal */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = ViewModal;
-			sourceTree = "<group>";
-		};
-		99C908EF2DC8CD790054620B /* View */ = {
-			isa = PBXGroup;
-			children = (
-				99C908EE2DC8CD790054620B /* DiscoverScreen.swift */,
-			);
-			path = View;
-			sourceTree = "<group>";
-		};
-		99C908F02DC8CD790054620B /* DiscoverScreen */ = {
-			isa = PBXGroup;
-			children = (
-				99C908ED2DC8CD790054620B /* ViewModal */,
-				99C908EF2DC8CD790054620B /* View */,
-			);
-			path = DiscoverScreen;
-			sourceTree = "<group>";
-		};
-		99C908F12DC8CD790054620B /* ViewModal */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = ViewModal;
-			sourceTree = "<group>";
-		};
-		99C908F32DC8CD790054620B /* View */ = {
-			isa = PBXGroup;
-			children = (
-				99C908F22DC8CD790054620B /* MatchesScreen.swift */,
-			);
-			path = View;
-			sourceTree = "<group>";
-		};
-		99C908F42DC8CD790054620B /* MatchesScreen */ = {
-			isa = PBXGroup;
-			children = (
-				99C908F12DC8CD790054620B /* ViewModal */,
-				99C908F32DC8CD790054620B /* View */,
-			);
-			path = MatchesScreen;
-			sourceTree = "<group>";
-		};
-		99C908F52DC8CD790054620B /* HomeScreenSections */ = {
-			isa = PBXGroup;
-			children = (
-				99C908EC2DC8CD790054620B /* SavedScreen */,
-				99C908F02DC8CD790054620B /* DiscoverScreen */,
-				99C908F42DC8CD790054620B /* MatchesScreen */,
-			);
-			path = HomeScreenSections;
-			sourceTree = "<group>";
-		};
-		99C908F72DC8CD790054620B /* ViewModal */ = {
-			isa = PBXGroup;
-			children = (
-				99C908F62DC8CD790054620B /* HomeScreenViewModal.swift */,
-			);
-			path = ViewModal;
-			sourceTree = "<group>";
-		};
-		99C908F92DC8CD790054620B /* View */ = {
-			isa = PBXGroup;
-			children = (
-				99C908F82DC8CD790054620B /* UserHomeScreen.swift */,
-			);
-			path = View;
-			sourceTree = "<group>";
-		};
-		99C908FA2DC8CD790054620B /* HomeScreen */ = {
-			isa = PBXGroup;
-			children = (
-				99C908F72DC8CD790054620B /* ViewModal */,
-				99C908F92DC8CD790054620B /* View */,
-			);
-			path = HomeScreen;
-			sourceTree = "<group>";
-		};
-		99C908FB2DC8CD790054620B /* User */ = {
-			isa = PBXGroup;
-			children = (
-				99C908B72DC8CD790054620B /* LinkedInUserDetail */,
-				99C908BC2DC8CD790054620B /* InterviewDetailScreen */,
-				99C908C12DC8CD790054620B /* JobMatch */,
-				99C908C52DC8CD790054620B /* SecondLook */,
-				99C908D32DC8CD790054620B /* UpdateUserProfile */,
-				99C908D82DC8CD790054620B /* UserProfile */,
-				99C908E02DC8CD790054620B /* VideoResume */,
-				99C908E72DC8CD790054620B /* CreateUpdateProfile */,
-				99C908F52DC8CD790054620B /* HomeScreenSections */,
-				99C908FA2DC8CD790054620B /* HomeScreen */,
-			);
-			path = User;
 			sourceTree = "<group>";
 		};
 		99C908FD2DC8CD790054620B /* ViewModel */ = {
@@ -1749,8 +1125,6 @@
 			children = (
 				99C908402DC8CD790054620B /* FlowStack */,
 				99C9088A2DC8CD790054620B /* Common */,
-				99C908B22DC8CD790054620B /* Employer */,
-				99C908FB2DC8CD790054620B /* User */,
 				99C909152DC8CD790054620B /* Authentication */,
 			);
 			path = Screens;
@@ -1947,6 +1321,11 @@
 			);
 			name = BidCast;
 			packageProductDependencies = (
+				35A0450C2DC8DEC30067C447 /* AlertToast */,
+				35A0450F2DC8DF3D0067C447 /* RichTextKit */,
+				35A045122DC8DF4E0067C447 /* BottomSheet */,
+				35A045152DC8DF5B0067C447 /* Kingfisher */,
+				35A0451B2DC8E19E0067C447 /* ActivityIndicatorView */,
 			);
 			productName = BidCast;
 			productReference = 99DF9E3F2DC4F35D008C15B2 /* BidCast.app */;
@@ -2024,6 +1403,14 @@
 			);
 			mainGroup = 99DF9E362DC4F35D008C15B2;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				356116FC2DC8D22C00A45199 /* XCRemoteSwiftPackageReference "IQKeyboardManager" */,
+				35A0450B2DC8DEC30067C447 /* XCRemoteSwiftPackageReference "AlertToast" */,
+				35A0450E2DC8DF3D0067C447 /* XCRemoteSwiftPackageReference "RichTextKit" */,
+				35A045112DC8DF4E0067C447 /* XCRemoteSwiftPackageReference "bottom-sheet" */,
+				35A045142DC8DF5B0067C447 /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				35A0451A2DC8E19E0067C447 /* XCRemoteSwiftPackageReference "ActivityIndicatorView" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 99DF9E402DC4F35D008C15B2 /* Products */;
 			projectDirPath = "";
@@ -2043,6 +1430,7 @@
 			files = (
 				99C909ED2DC8CDF90054620B /* Preview Assets.xcassets in Resources */,
 				99DF9E772DC4F367008C15B2 /* Assets.xcassets in Resources */,
+				35A0450A2DC8DCFD0067C447 /* Color.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2076,24 +1464,11 @@
 				99C908122DC8CD6A0054620B /* AuthTextField.swift in Sources */,
 				99C908132DC8CD6A0054620B /* HeaderWithSegmentController.swift in Sources */,
 				99C908142DC8CD6A0054620B /* PrimaryButton.swift in Sources */,
-				99C909172DC8CD790054620B /* JobMatchViewModal.swift in Sources */,
 				99C909182DC8CD790054620B /* ContactUsViewModel.swift in Sources */,
-				99C909192DC8CD790054620B /* UserVideoResumeDemoScreen.swift in Sources */,
-				99C9091A2DC8CD790054620B /* SavedScreen.swift in Sources */,
-				99C9091B2DC8CD790054620B /* UserHomeScreen.swift in Sources */,
 				99C9091C2DC8CD790054620B /* NewsViewModel.swift in Sources */,
 				99C9091D2DC8CD790054620B /* MenuScreen.swift in Sources */,
 				99C9091E2DC8CD790054620B /* NotificationViewModel.swift in Sources */,
-				99C9091F2DC8CD790054620B /* LinkedInLoginScreen.swift in Sources */,
-				99C909202DC8CD790054620B /* UserProfileViewModal.swift in Sources */,
-				99C909212DC8CD790054620B /* DocumentUploadScreen.swift in Sources */,
-				99C909222DC8CD790054620B /* EmployerCompanyDetails.swift in Sources */,
-				99C909232DC8CD790054620B /* DescriptionEditor.swift in Sources */,
-				99C909242DC8CD790054620B /* CreateEmployerProfile.swift in Sources */,
 				99C909252DC8CD790054620B /* EmployerProfileScreen.swift in Sources */,
-				99C909262DC8CD790054620B /* MySkillScreen.swift in Sources */,
-				99C909272DC8CD790054620B /* LinkedInConnectViewModel.swift in Sources */,
-				99C909282DC8CD790054620B /* InterestedCandidateScreen.swift in Sources */,
 				99C909292DC8CD790054620B /* NewsScreen.swift in Sources */,
 				99C909D52DC8CDDC0054620B /* AboutUsResponseModel.swift in Sources */,
 				99C909D62DC8CDDC0054620B /* CombineDataModel.swift in Sources */,
@@ -2119,55 +1494,26 @@
 				99C909EA2DC8CDDC0054620B /* QualificationResponse.swift in Sources */,
 				99C9092A2DC8CD790054620B /* SplashScreen.swift in Sources */,
 				99C9092B2DC8CD790054620B /* MenuOptionsViewModal.swift in Sources */,
-				99C9092C2DC8CD790054620B /* MatchesScreen.swift in Sources */,
-				99C9092D2DC8CD790054620B /* UploadVideoViewModal.swift in Sources */,
 				99C9092E2DC8CD790054620B /* VerifyOtpScreen.swift in Sources */,
-				99C9092F2DC8CD790054620B /* RecordVideoView.swift in Sources */,
-				99C909302DC8CD790054620B /* UserCreateProfile.swift in Sources */,
-				99C909312DC8CD790054620B /* UserPersonalInfoScreen.swift in Sources */,
-				99C909322DC8CD790054620B /* SavedScreenViewModal.swift in Sources */,
-				99C909332DC8CD790054620B /* EmployerCreateCompany.swift in Sources */,
-				99C909342DC8CD790054620B /* CreateEditJob.swift in Sources */,
-				99C909352DC8CD790054620B /* CompanyUserProfileScreen.swift in Sources */,
 				99C909362DC8CD790054620B /* AboutUsViewModel.swift in Sources */,
-				99C909372DC8CD790054620B /* ReviewVideoView.swift in Sources */,
-				99C909382DC8CD790054620B /* EmployeeProfileScreen.swift in Sources */,
 				99C909392DC8CD790054620B /* InterviewlistScreen.swift in Sources */,
-				99C9093A2DC8CD790054620B /* CompanyDetailViewModal.swift in Sources */,
-				99C9093B2DC8CD790054620B /* UserCreateWorkHistory.swift in Sources */,
 				99C9093C2DC8CD790054620B /* LoginViewModel.swift in Sources */,
 				99C9093D2DC8CD790054620B /* AboutUsScreen.swift in Sources */,
 				99C9093E2DC8CD790054620B /* JobPostingScreen.swift in Sources */,
-				99C9093F2DC8CD790054620B /* LinkedInUserDetailScreen.swift in Sources */,
 				99C909402DC8CD790054620B /* VerifyOtpViewModel.swift in Sources */,
-				99C909412DC8CD790054620B /* UserCreateProfileViewModal.swift in Sources */,
 				99C909422DC8CD790054620B /* SearchViewModel.swift in Sources */,
-				99C909432DC8CD790054620B /* JobUpsertViewModal.swift in Sources */,
 				99C909442DC8CD790054620B /* SubscriptionViewModal.swift in Sources */,
 				99C909452DC8CD790054620B /* ForgotViewModel.swift in Sources */,
-				99C909462DC8CD790054620B /* EmployerViewModal.swift in Sources */,
 				99C909472DC8CD790054620B /* UserFlowStack.swift in Sources */,
-				99C909482DC8CD790054620B /* LicensesScreen.swift in Sources */,
-				99C909492DC8CD790054620B /* DeclineCandidatesScreen.swift in Sources */,
-				99C9094A2DC8CD790054620B /* JobCategoriesView.swift in Sources */,
-				99C9094B2DC8CD790054620B /* UpdateUserProfileViewModal.swift in Sources */,
 				99C9094C2DC8CD790054620B /* WelcomeScreen.swift in Sources */,
-				99C9094D2DC8CD790054620B /* LanguagesScreen.swift in Sources */,
-				99C9094E2DC8CD790054620B /* CreateSubCompanyScreen.swift in Sources */,
-				99C9094F2DC8CD790054620B /* InterviewDetailViewModel.swift in Sources */,
 				99C909502DC8CD790054620B /* SignupViewModel.swift in Sources */,
 				99C909512DC8CD790054620B /* WelcomeViewModel.swift in Sources */,
-				99C909522DC8CD790054620B /* EmployerHomeScreen.swift in Sources */,
-				99C909532DC8CD790054620B /* InterviewDetailScreen.swift in Sources */,
 				99C909542DC8CD790054620B /* DeleteAccountViweModel.swift in Sources */,
-				99C909552DC8CD790054620B /* HomeScreenViewModal.swift in Sources */,
 				99C909562DC8CD790054620B /* UserSearchScreen.swift in Sources */,
 				99C909572DC8CD790054620B /* SignUpScreen.swift in Sources */,
 				99C909582DC8CD790054620B /* SubscriptionScreen.swift in Sources */,
-				99C909592DC8CD790054620B /* ExampleVideoResume.swift in Sources */,
 				99C9095A2DC8CD790054620B /* TermsOfServicesScreen.swift in Sources */,
 				99C9095B2DC8CD790054620B /* ResetPasswordScreen.swift in Sources */,
-				99C9095C2DC8CD790054620B /* EditListing Screen.swift in Sources */,
 				99C9095D2DC8CD790054620B /* ForgotScreen.swift in Sources */,
 				99C9095E2DC8CD790054620B /* DeleteAccountScreen.swift in Sources */,
 				99C9095F2DC8CD790054620B /* EmployerFlowStack.swift in Sources */,
@@ -2203,33 +1549,14 @@
 				99C909BC2DC8CD930054620B /* DatePicker.swift in Sources */,
 				99C909622DC8CD790054620B /* PrivacyPolicyScreen.swift in Sources */,
 				99C909632DC8CD790054620B /* SubCompanyCard.swift in Sources */,
-				99C909642DC8CD790054620B /* EmployeeProfileViewModal.swift in Sources */,
-				99C909652DC8CD790054620B /* SubCompanyScreen.swift in Sources */,
-				99C909662DC8CD790054620B /* UpdateEmployerProfile.swift in Sources */,
-				99C909672DC8CD790054620B /* UserProfileScreen.swift in Sources */,
 				99C909682DC8CD790054620B /* NotificationScreen.swift in Sources */,
-				99C909692DC8CD790054620B /* UserWorkHistory.swift in Sources */,
-				99C9096A2DC8CD790054620B /* PermissionsView.swift in Sources */,
-				99C9096B2DC8CD790054620B /* ScheduleInterviewScreen.swift in Sources */,
-				99C9096C2DC8CD790054620B /* UserImageSelectionScreen.swift in Sources */,
-				99C9096D2DC8CD790054620B /* SelectedJobScreen.swift in Sources */,
 				99C9096E2DC8CD790054620B /* InterviewlistViewModel.swift in Sources */,
 				99C9096F2DC8CD790054620B /* EmployerSearchScreen.swift in Sources */,
 				99C909702DC8CD790054620B /* LoginScreen.swift in Sources */,
-				99C909712DC8CD790054620B /* YourVideoResume.swift in Sources */,
-				99C909722DC8CD790054620B /* SecondLookScreen.swift in Sources */,
-				99C909732DC8CD790054620B /* EmployerCompanyScreen.swift in Sources */,
-				99C909742DC8CD790054620B /* DiscoverScreen.swift in Sources */,
-				99C909752DC8CD790054620B /* VolunteerScreen.swift in Sources */,
 				99C909762DC8CD790054620B /* EmployerProfileViewModal.swift in Sources */,
-				99C909772DC8CD790054620B /* GoogleCalenderScreen.swift in Sources */,
 				99C909782DC8CD790054620B /* AuthenticationStack.swift in Sources */,
-				99C909792DC8CD790054620B /* EmployeeDetailScreen.swift in Sources */,
 				99C9097A2DC8CD790054620B /* DeleteAccountSheet.swift in Sources */,
-				99C9097B2DC8CD790054620B /* MyEducationScreen.swift in Sources */,
-				99C9097C2DC8CD790054620B /* CreateEmployerProfileViewModal.swift in Sources */,
 				99C9097D2DC8CD790054620B /* ResetPasswordViewModel.swift in Sources */,
-				99C9097E2DC8CD790054620B /* UserProfileImgSelection.swift in Sources */,
 				99C908152DC8CD6A0054620B /* LogOutSheet.swift in Sources */,
 				99C908162DC8CD6A0054620B /* NoInternetScreen.swift in Sources */,
 				99C908172DC8CD6A0054620B /* MultilineTextField.swift in Sources */,
@@ -2448,7 +1775,7 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 15.4;
@@ -2457,10 +1784,11 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				XROS_DEPLOYMENT_TARGET = 2.4;
 			};
 			name = Debug;
@@ -2487,7 +1815,7 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 15.4;
@@ -2496,10 +1824,11 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				XROS_DEPLOYMENT_TARGET = 2.4;
 			};
 			name = Release;
@@ -2634,6 +1963,85 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		356116FC2DC8D22C00A45199 /* XCRemoteSwiftPackageReference "IQKeyboardManager" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/hackiftekhar/IQKeyboardManager.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.0.1;
+			};
+		};
+		35A0450B2DC8DEC30067C447 /* XCRemoteSwiftPackageReference "AlertToast" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/elai950/AlertToast.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.3.9;
+			};
+		};
+		35A0450E2DC8DF3D0067C447 /* XCRemoteSwiftPackageReference "RichTextKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/danielsaidi/RichTextKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.0;
+			};
+		};
+		35A045112DC8DF4E0067C447 /* XCRemoteSwiftPackageReference "bottom-sheet" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/weitieda/bottom-sheet.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.12;
+			};
+		};
+		35A045142DC8DF5B0067C447 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.3.2;
+			};
+		};
+		35A0451A2DC8E19E0067C447 /* XCRemoteSwiftPackageReference "ActivityIndicatorView" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/exyte/ActivityIndicatorView.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		35A0450C2DC8DEC30067C447 /* AlertToast */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 35A0450B2DC8DEC30067C447 /* XCRemoteSwiftPackageReference "AlertToast" */;
+			productName = AlertToast;
+		};
+		35A0450F2DC8DF3D0067C447 /* RichTextKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 35A0450E2DC8DF3D0067C447 /* XCRemoteSwiftPackageReference "RichTextKit" */;
+			productName = RichTextKit;
+		};
+		35A045122DC8DF4E0067C447 /* BottomSheet */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 35A045112DC8DF4E0067C447 /* XCRemoteSwiftPackageReference "bottom-sheet" */;
+			productName = BottomSheet;
+		};
+		35A045152DC8DF5B0067C447 /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 35A045142DC8DF5B0067C447 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
+		35A0451B2DC8E19E0067C447 /* ActivityIndicatorView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 35A0451A2DC8E19E0067C447 /* XCRemoteSwiftPackageReference "ActivityIndicatorView" */;
+			productName = ActivityIndicatorView;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		99DF9E712DC4F367008C15B2 /* BidCast.xcdatamodeld */ = {

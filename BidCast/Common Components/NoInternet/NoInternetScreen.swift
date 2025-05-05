@@ -57,7 +57,7 @@ struct NoInternetScreen: View {
             }
         }.padding(.all)
         
-        CusNavLink(doNavigate: $navigateToDoc, destination: DocumentUploadScreen())
+//        CusNavLink(doNavigate: $navigateToDoc, destination: DocumentUploadScreen())
 
     }
 }

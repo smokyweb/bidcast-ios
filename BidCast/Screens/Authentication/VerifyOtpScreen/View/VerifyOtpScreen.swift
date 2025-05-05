@@ -6,8 +6,8 @@
 //
 
 import SwiftUI
-import BottomSheet
-import AlertToast
+//import BottomSheet
+//import AlertToast
 
 struct VerifyOtpScreen: View {
     
@@ -134,15 +134,15 @@ struct VerifyOtpScreen: View {
                 //                })
                 //            }
                 
-                CusNavLink(doNavigate: $navigateToResetPassword, destination: ResetPasswordScreen())
+//                CusNavLink(doNavigate: $navigateToResetPassword, destination: ResetPasswordScreen())
                 CusNavLink(doNavigate: $navigateToLogin, destination: LoginScreen())
             }.frame(width: screenWidth, height: screenHeight)
         }
         .onAppear(){
             observe()
         }
-        .toast(isPresenting: $showhud) {
-            AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)}
+//        .toast(isPresenting: $showhud) {
+//            AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)}
         .bottomSheet(isPresented: $showError, height: screenHeight/2, topBarCornerRadius: 25, showTopIndicator: false, content: {
             CommonBottomSheet(
                 sheetType: $alertType,

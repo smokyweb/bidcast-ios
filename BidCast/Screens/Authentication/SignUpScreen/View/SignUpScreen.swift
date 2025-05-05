@@ -6,9 +6,9 @@
 //
 
 import SwiftUI
-import OneSignalFramework
+//import OneSignalFramework
 //import SafariServices
-import BottomSheet
+//import BottomSheet
 import AlertToast
 
 struct SignUpScreen: View {
@@ -195,19 +195,19 @@ struct SignUpScreen: View {
                             anchor: .top)
                         .textContentType(.location)
                         .onChange(of: request.location) { newValue in
-                            GooglePlacesManager.shared.findPlaces(query: newValue) { result in
-                                switch result {
-                                    case .success(let places):
-                                        withAnimation(.easeIn(duration: 0.5)) {
-                                            locationArr.removeAll()
-                                            places.forEach { place in
-                                                locationArr.append(place.name)
-                                            }
-                                        }
-                                    case .failure(let error):
-                                        print(error)
-                                }
-                            }
+//                            GooglePlacesManager.shared.findPlaces(query: newValue) { result in
+//                                switch result {
+//                                    case .success(let places):
+//                                        withAnimation(.easeIn(duration: 0.5)) {
+//                                            locationArr.removeAll()
+//                                            places.forEach { place in
+//                                                locationArr.append(place.name)
+//                                            }
+//                                        }
+//                                    case .failure(let error):
+//                                        print(error)
+//                                }
+//                            }
                         }
                         
                         
@@ -389,32 +389,32 @@ struct SignUpScreen: View {
                                     navigateToLinkedIn = false
                                 }
                             }, count: .constant(0))
-                        LinkedInViewContainer(url: LinkedInConstants.AUTHURL + "?response_type=code&client_id=" + LinkedInConstants.CLIENT_ID + "&scope=" + LinkedInConstants.SCOPE + "&client_secret=" + LinkedInConstants.CLIENT_SECRET + "&redirect_uri=" + LinkedInConstants.REDIRECT_URI) { result in
-                            switch result {
-                                case .success(authCode: let authCode):
-                                    if authCode != "" {
-                                        navigateToLinkedIn = false
-                                        viewModel.getLinkedInDetails(param: result.message())
-                                        observe()
-                                    }
-                                case .inProgress:
-                                    isLoading = true
-                                    return
-                                case .stopLoading:
-                                    isLoading = false
-                                    return
-                                case .aceessDenied, .loginCancel, .loginFailed:
-                                    navigateToLinkedIn = false
-                                    hudMsg = result.message()
-                                    showhud = true
-                                    return
-                                case .error(error: _):
-                                    navigateToLinkedIn = false
-                                    alertType = .sheetType(icon: .alert, title: "Error", message: result.message(), primaryBtnText: "", secondaryBtnText: "Ok", sheetThemeColor: .pinkBtn)
-                                    showError = true
-                                    return
-                            }
-                        }
+//                        LinkedInViewContainer(url: LinkedInConstants.AUTHURL + "?response_type=code&client_id=" + LinkedInConstants.CLIENT_ID + "&scope=" + LinkedInConstants.SCOPE + "&client_secret=" + LinkedInConstants.CLIENT_SECRET + "&redirect_uri=" + LinkedInConstants.REDIRECT_URI) { result in
+//                            switch result {
+//                                case .success(authCode: let authCode):
+//                                    if authCode != "" {
+//                                        navigateToLinkedIn = false
+//                                        viewModel.getLinkedInDetails(param: result.message())
+//                                        observe()
+//                                    }
+//                                case .inProgress:
+//                                    isLoading = true
+//                                    return
+//                                case .stopLoading:
+//                                    isLoading = false
+//                                    return
+//                                case .aceessDenied, .loginCancel, .loginFailed:
+//                                    navigateToLinkedIn = false
+//                                    hudMsg = result.message()
+//                                    showhud = true
+//                                    return
+//                                case .error(error: _):
+//                                    navigateToLinkedIn = false
+//                                    alertType = .sheetType(icon: .alert, title: "Error", message: result.message(), primaryBtnText: "", secondaryBtnText: "Ok", sheetThemeColor: .pinkBtn)
+//                                    showError = true
+//                                    return
+//                            }
+//                        }
                     }
                     
                     if isLoading {
@@ -454,9 +454,9 @@ struct SignUpScreen: View {
 
             
             
-            CusNavLink(doNavigate: $navigatetoUser, destination: UserCreateProfile(firstName: request.first_name,lastName: request.last_name, email:request.email, password:request.location, role:request.role_id, location:request.location))
-                
-            CusNavLink(doNavigate: $navigateToEmployer, destination: EmployerCreateCompany(requestSignUp: RegisterRequest(first_name: request.first_name, last_name: request.last_name, user_name: request.user_name, email: request.email, password: request.password, password_confirmation: request.password_confirmation, location: request.location, role_id: request.role_id, linkedin_sub_id: "", linkedin_access: LinkedInAccessModel(access_token: "", expires_in: 0, scope: "", token_type: "", id_token: "")), isLoginFlow: true))
+//            CusNavLink(doNavigate: $navigatetoUser, destination: UserCreateProfile(firstName: request.first_name,lastName: request.last_name, email:request.email, password:request.location, role:request.role_id, location:request.location))
+//                
+//            CusNavLink(doNavigate: $navigateToEmployer, destination: EmployerCreateCompany(requestSignUp: RegisterRequest(first_name: request.first_name, last_name: request.last_name, user_name: request.user_name, email: request.email, password: request.password, password_confirmation: request.password_confirmation, location: request.location, role_id: request.role_id, linkedin_sub_id: "", linkedin_access: LinkedInAccessModel(access_token: "", expires_in: 0, scope: "", token_type: "", id_token: "")), isLoginFlow: true))
                 
 
         }

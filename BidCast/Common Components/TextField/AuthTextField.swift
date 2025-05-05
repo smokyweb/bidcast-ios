@@ -26,6 +26,8 @@ struct AuthTextField: View {
     
     var enteredText: ((String) -> Void)?
     var isRequiredValue: ((Int) -> Void)?
+    var width: CGFloat = screenWidth - 30
+    var height: CGFloat = 40
     
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
@@ -39,15 +41,15 @@ struct AuthTextField: View {
             
             ZStack(alignment: .trailing, content: {
                 HStack(alignment: .center, spacing: 10) {
-                    Image(icon)
-                        .renderingMode(.template)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 20, height: 20)
-                        .foregroundStyle(.text.opacity(0.45))
-                        .padding(.all, 10)
-                        .background(.text.opacity(0.1))
-                        .clipShape(Circle())
+//                    Image(icon)
+//                        .renderingMode(.template)
+//                        .resizable()
+//                        .scaledToFit()
+//                        .frame(width: 0, height: 20)
+//                        .foregroundStyle(.text.opacity(0.45))
+//                        .padding(.all, 10)
+//                        .background(.text.opacity(0.1))
+//                        .clipShape(Circle())
                     
                     if showPassword && isPassword {
                         SecureField(placeholder, text: $text)
@@ -75,6 +77,7 @@ struct AuthTextField: View {
                             .submitLabel(.next)
                             .accentColor(.text)
                             .focused($isFocused)
+                            .frame(height: height)
                             .onChange(of: text, perform: { value in
                                 self.enteredText?(value)
                             })
@@ -86,10 +89,11 @@ struct AuthTextField: View {
                     
                     Spacer()
                 }
+                .frame(width: width,height: height)
                 .padding(.all, 6)
                 .background(
-                    RoundedRectangle(cornerRadius: 25)
-                        .fill(.white)
+                    RoundedRectangle(cornerRadius: 2)
+                        .fill(.text.opacity(0.1))
                         .shadow(color: .gray, radius: 1, x: 0, y: 0)
                 )
                 .onTapGesture {

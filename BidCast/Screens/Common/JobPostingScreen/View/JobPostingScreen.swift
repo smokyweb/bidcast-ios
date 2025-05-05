@@ -34,23 +34,23 @@ struct JobPostingScreen: View {
                 if isLoading {
                     EmptyView()
                 } else {
-                    JobPostDetailScreen(
-                        job: $job,
-                        enableSwipe: $enableSwipe, rightSwipe: $rightSwipe,
-                        showTryThis: true,
-                        onSwipe: {
-                            result, id in
-                            if result {
-                                viewModal.applyJob(parameter: SaveJobRequest(job_id: id))
-                            } else {
-                                viewModal.rejectJob(parameter: SaveJobRequest(job_id: id))
-                            }
-                            observe()
-                        }, onSaveButtonClick: {
-                            id in
-                            viewModal.saveEmployeeJob(parameter: SaveJobRequest(job_id: id))
-                            observe()
-                        })
+//                    JobPostDetailScreen(
+//                        job: $job,
+//                        enableSwipe: $enableSwipe, rightSwipe: $rightSwipe,
+//                        showTryThis: true,
+//                        onSwipe: {
+//                            result, id in
+//                            if result {
+//                                viewModal.applyJob(parameter: SaveJobRequest(job_id: id))
+//                            } else {
+//                                viewModal.rejectJob(parameter: SaveJobRequest(job_id: id))
+//                            }
+//                            observe()
+//                        }, onSaveButtonClick: {
+//                            id in
+//                            viewModal.saveEmployeeJob(parameter: SaveJobRequest(job_id: id))
+//                            observe()
+//                        })
                 }
                 
                 Spacer()

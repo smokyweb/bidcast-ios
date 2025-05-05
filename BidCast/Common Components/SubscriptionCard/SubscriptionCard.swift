@@ -95,7 +95,7 @@ struct SubscriptionCard: View {
                 
                 
                 
-                CusNavLink(doNavigate: $navigateToSubscription, destination: SubscriptionScreen( isSubscription: self.userDetail.subscription ?? SubscriptionStatus()))
+//                CusNavLink(doNavigate: $navigateToSubscription, destination: SubscriptionScreen( isSubscription: self.userDetail.subscription ?? SubscriptionStatus()))
                 
             }
             .padding(.all, 8)

@@ -23,17 +23,17 @@ struct JobMatchSheet: View {
         HStack {
             Spacer()
             VStack(spacing: 0) {
-                Text(jobDetail.job?.title ?? "")
-                    .font(.custom(nunitoBold, fixedSize: 16))
-                    .foregroundStyle(.black)
+//                Text(jobDetail.job?.title ?? "")
+//                    .font(.custom(nunitoBold, fixedSize: 16))
+//                    .foregroundStyle(.black)
                 
-                Text("\(jobDetail.job?.salary?.toCurrency() ?? "")/\(jobDetail.job?.salary_type ?? "")")
-                    .font(.custom(nunitoMedium, fixedSize: 13))
-                    .foregroundStyle(.black)
+//                Text("\(jobDetail.job?.salary?.toCurrency() ?? "")/\(jobDetail.job?.salary_type ?? "")")
+//                    .font(.custom(nunitoMedium, fixedSize: 13))
+//                    .foregroundStyle(.black)
                 
-                Text("\(jobDetail.job?.user?.company_data?.company_name ?? "" != "" ? jobDetail.job?.user?.company_data?.company_name ?? "" : jobDetail.job?.user?.name ?? "")")
-                    .font(.custom(nunitoMedium, fixedSize: 13))
-                    .foregroundStyle(.gray)
+//                Text("\(jobDetail.job?.user?.company_data?.company_name ?? "" != "" ? jobDetail.job?.user?.company_data?.company_name ?? "" : jobDetail.job?.user?.name ?? "")")
+//                    .font(.custom(nunitoMedium, fixedSize: 13))
+//                    .foregroundStyle(.gray)
             }
             Spacer()
         }

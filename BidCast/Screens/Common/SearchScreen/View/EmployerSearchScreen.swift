@@ -114,13 +114,13 @@ struct EmployerSearchScreen: View {
                     })
             })
             .sheet(isPresented: $showFilterOption, content: {
-                FilterOptionView(filterRequest:self.filterRequest,jobDetail: jobDetail) { result in
-                    showFilterOption.toggle()
-                    searchRequest.page = 1
-                    searchRequest.search = ""
-                    filterRequest = result
-                    self.searchViewModel.getEmployeeFilterSearch(parameter: result)
-                }
+//                FilterOptionView(filterRequest:self.filterRequest,jobDetail: jobDetail) { result in
+//                    showFilterOption.toggle()
+//                    searchRequest.page = 1
+//                    searchRequest.search = ""
+//                    filterRequest = result
+//                    self.searchViewModel.getEmployeeFilterSearch(parameter: result)
+//                }
             })
             
             if isLoading {
@@ -139,9 +139,9 @@ struct EmployerSearchScreen: View {
 //                    })
 //            }
             
-            CusNavLink(doNavigate: $navigateToEmployeeDetailScreen, destination: EmployeeDetailScreen(employeeId: $selectedEmployeeId))
-            
-            CusNavLink(doNavigate: $navigateToSelectedEmployee, destination: EmployeeProfileScreen(job: $jobDetail, employeeId: $selectedEmployeeId))
+//            CusNavLink(doNavigate: $navigateToEmployeeDetailScreen, destination: EmployeeDetailScreen(employeeId: $selectedEmployeeId))
+//            
+//            CusNavLink(doNavigate: $navigateToSelectedEmployee, destination: EmployeeProfileScreen(job: $jobDetail, employeeId: $selectedEmployeeId))
         }
         .onAppear(){
             isLoading = true

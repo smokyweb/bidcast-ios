@@ -31,18 +31,18 @@ struct ForgotScreen: View {
             ZStack {
                 
                 VStack(alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/) {
-                    Image(.halfBackground)
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: screenWidth, height: screenHeight/3)
+                    Image(.mainLogo)
+//                        .resizable()
+//                        .scaledToFill()
+                        .frame(width: screenWidth - 50, height: screenHeight/3)
                         .edgesIgnoringSafeArea(.top)
-                        .overlay(alignment: .top, content: {
-                            Image(.appName)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: screenWidth/2, height: screenHeight/12)
-                                .padding(.top, screenHeight/20)
-                        })
+//                        .overlay(alignment: .top, content: {
+//                            Image(.appName)
+//                                .resizable()
+//                                .scaledToFit()
+//                                .frame(width: screenWidth/2, height: screenHeight/12)
+//                                .padding(.top, screenHeight/20)
+//                        })
                     Spacer()
                 }
                 
@@ -51,15 +51,15 @@ struct ForgotScreen: View {
                     
                     TitleWithLine(title: "Forgot Password", lineLength: 48)
                     
-                    Text("Please Enter the user name associated with your account")
-                        .font(.custom(nunitoMedium, fixedSize: 18))
+                    Text("Please enter the email address associated with your account")
+                        .font(.custom(nunitoMedium, fixedSize: 16))
                         .foregroundStyle(.black)
                     
-                    AuthTextField(floatingLabel: "User Name", placeholder: "Enter User Name", icon: .bag, text: $request.user_name) { email in
+                    AuthTextField(floatingLabel: "E-Mail", placeholder: "Enter Email address", icon: .bag, text: $request.user_name) { email in
                         self.request.user_name = email
                     }
                     
-                    PrimaryButton(title: "Submit") {
+                    PrimaryButton(title: "Submit",isOutLine: false) {
                         
                         UIApplication.shared.endEditing()
                         
@@ -75,7 +75,7 @@ struct ForgotScreen: View {
 //                            return
 //                        }
                         
-                        self.viewModel.forgotEmail(parameters: self.request)
+//                        self.viewModel.forgotEmail(parameters: self.request)
                     }
                     
                     HStack(spacing:4) {
@@ -114,7 +114,7 @@ struct ForgotScreen: View {
                 //                })
                 //            }
                 
-                CusNavLink(doNavigate: $navigateToOTP, destination: VerifyOtpScreen())
+//                CusNavLink(doNavigate: $navigateToOTP, destination: VerifyOtpScreen())
             }.frame(width: screenWidth, height: screenHeight)
         }
         .onAppear(){
@@ -171,6 +171,6 @@ struct ForgotScreen: View {
     }
 }
 
-#Preview {
-    ForgotScreen()
-}
+//#Preview {
+//    ForgotScreen()
+//}

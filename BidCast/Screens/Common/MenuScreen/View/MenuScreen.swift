@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import BottomSheet
+//import BottomSheet
 
 struct MenuModal: Identifiable {
     var id = UUID()
@@ -195,23 +195,23 @@ struct MenuScreen: View {
                     })
             }
             
-            CusNavLink(doNavigate: $navigateToAboutUs, destination: AboutUsScreen())
-            CusNavLink(doNavigate: $navigateToNews, destination: NewsScreen())
-            CusNavLink(doNavigate: $navigateToContactUs, destination: ContactUsScreen())
-            CusNavLink(doNavigate: $navigateToDocument, destination: DocumentUploadScreen())
-            CusNavLink(doNavigate: $navigateToSubCompany, destination: SubCompanyScreen())
-            CusNavLink(doNavigate: $navigateToTOS, destination: TermsOfServicesScreen())
-            CusNavLink(doNavigate: $navigateToPrivPoli, destination: PrivacyPolicyScreen())
-            CusNavLink(doNavigate: $navigateToProfile, destination: UserProfileScreen())
-            CusNavLink(doNavigate: $navigateToSecondLook, destination: SecondLookScreen())
-            CusNavLink(doNavigate: $navigateToCompanyUserProfile, destination: CompanyUserProfileScreen())
-            CusNavLink(doNavigate: $navigateToCompany, destination: EmployerCompanyScreen())
-            CusNavLink(doNavigate: $navigateTointerviewList, destination: InterviewlistScreen())
-            CusNavLink(doNavigate: $navigateToGoogleCalender, destination: GoogleCalenderScreen())
-            CusNavLink(doNavigate: $navigateTodeleteAccount, destination: DeleteAccountScreen())
-            CusNavLink(doNavigate: $navigateToSubscription, destination: SubscriptionScreen())
-            CusNavLink(doNavigate: $navigateToDecline, destination: DeclineCandidatesScreen( jobDetail: $jobDetail))
-            CusNavLink(doNavigate: $navigateToInterest, destination: InterestedCandidateScreen( jobDetail: $jobDetail))
+//            CusNavLink(doNavigate: $navigateToAboutUs, destination: AboutUsScreen())
+//            CusNavLink(doNavigate: $navigateToNews, destination: NewsScreen())
+//            CusNavLink(doNavigate: $navigateToContactUs, destination: ContactUsScreen())
+//            CusNavLink(doNavigate: $navigateToDocument, destination: DocumentUploadScreen())
+//            CusNavLink(doNavigate: $navigateToSubCompany, destination: SubCompanyScreen())
+//            CusNavLink(doNavigate: $navigateToTOS, destination: TermsOfServicesScreen())
+//            CusNavLink(doNavigate: $navigateToPrivPoli, destination: PrivacyPolicyScreen())
+//            CusNavLink(doNavigate: $navigateToProfile, destination: UserProfileScreen())
+//            CusNavLink(doNavigate: $navigateToSecondLook, destination: SecondLookScreen())
+//            CusNavLink(doNavigate: $navigateToCompanyUserProfile, destination: CompanyUserProfileScreen())
+//            CusNavLink(doNavigate: $navigateToCompany, destination: EmployerCompanyScreen())
+//            CusNavLink(doNavigate: $navigateTointerviewList, destination: InterviewlistScreen())
+//            CusNavLink(doNavigate: $navigateToGoogleCalender, destination: GoogleCalenderScreen())
+//            CusNavLink(doNavigate: $navigateTodeleteAccount, destination: DeleteAccountScreen())
+//            CusNavLink(doNavigate: $navigateToSubscription, destination: SubscriptionScreen())
+//            CusNavLink(doNavigate: $navigateToDecline, destination: DeclineCandidatesScreen( jobDetail: $jobDetail))
+//            CusNavLink(doNavigate: $navigateToInterest, destination: InterestedCandidateScreen( jobDetail: $jobDetail))
 
         }
     }
