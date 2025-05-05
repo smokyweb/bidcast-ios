@@ -46,111 +46,51 @@ struct SignUpScreen: View {
     @State var navigateToLinkedIn: Bool = false
     
     @State var role: String = ""
-    
     var viewModel = SignupViewModel()
     
     var body: some View {
         ZStack {
             VStack(spacing: 0) {
-                PrimaryHeader(title: "Create Account", trailingImgArr: [.cancel], onClickTrailing:  { _ in
-                    UserDefaultsManager.shared.setValue(false, forKey: .isLinkedInLogin)
+                PrimaryHeader(title: "Create Account",leadingImgArr: [.cancel], onClickLeading:  { _ in
+//                    UserDefaultsManager.shared.setValue(false, forKey: .isLinkedInLogin)
                     self.presentationMode.wrappedValue.dismiss()
                 }, count: .constant(0))
                 
                 ScrollView(showsIndicators: false) {
-                    
-                    ButtonWithImage(title: "Continue with LinkedIn", onButtonClick: {
-                        UIApplication.shared.endEditing()
-                        navigateToLinkedIn = true
-                    })
-                        .padding(.top, 10)
-                    
-                    
-                    HStack {
-                        Divider()
-                            .frame(width: screenWidth/2.5, height: 2)
-                            .background(.gray.opacity(0.5))
-                        
-                        Text("Or")
-                            .font(.custom(nunitoMedium, fixedSize: 14))
-                            .foregroundStyle(.gray)
-                        
-                        Divider()
-                            .frame(width: screenWidth/2.5, height: 2)
-                            .background(.gray.opacity(0.5))
-                    }.padding([.top, .bottom])
-                    
+                    VStack(alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/) {
+                        Image(.mainLogo)
+    //                        .resizable()
+    //                        .scaledToFill()
+                            .frame(width: screenWidth - 50, height: screenHeight/3)
+                            .edgesIgnoringSafeArea(.top)
+    //                        .overlay(alignment: .top, content: {
+    //                            Image(.appName)
+    //                                .resizable()
+    //                                .scaledToFit()
+    //                                .frame(width: screenWidth/2, height: screenHeight/12)
+    //                                .padding(.top, screenHeight/20)
+    //                        })
+                        Spacer()
+                    }
                     VStack(alignment: .leading, spacing: 15) {
                         Text("Create an Account")
                             .font(.custom(nunitoBlack, fixedSize: 18))
                             .frame(width: screenWidth - 50, alignment: .leading)
                         
-                        if AppleLogin{
-                            AuthTextField(floatingLabel: "First Name", placeholder: UserDefaults.userFirstNameWithApple, icon: .menuProfile, text: $appleUserFirstname, enteredText: {
-                                value in
-                                request.first_name = value
-                            })
-                            .disabled(true)
-                            .textContentType(.givenName)
-
-                        }else{
-                            AuthTextField(floatingLabel: "First Name", placeholder: "Enter First Name", icon: .menuProfile, text: $request.first_name, enteredText: {
+                    
+                            AuthTextField(floatingLabel: "Name", placeholder: "Enter Name", icon: .menuProfile, text: $request.first_name, enteredText: {
                                 value in
                                 request.first_name = value
                             })
                             .textContentType(.givenName)
 
-                        }
-                        
-                        
-                        if AppleLogin{
-                            AuthTextField(floatingLabel: "Last Name", placeholder: UserDefaults.userLastNameWithApple, icon: .menuProfile, text: $appleUserLastname, enteredText: {
-                                value in
-                                request.last_name = value
-                            })
-                            .disabled(true)
-                            .textContentType(.givenName)
-
-                        }else{
-                            
-                            AuthTextField(floatingLabel: "Last Name", placeholder: "Enter Last Name", icon: .menuProfile, text: $request.last_name, enteredText: {
-                                value in
-                                request.last_name = value
-                            })
-                            .textContentType(.familyName)
-                            
-                        }
-                        
-                        if AppleLogin{
-                            
-                            if appleUserEmail == ""{
                                 AuthTextField(floatingLabel: "Email Address", placeholder: "Enter Email Address", icon: .mail, text: $request.email, enteredText: {
                                     value in
                                     request.email = value
                                 }).textContentType(.username)
                                 .disabled(false)
-                            }else{
-                                AuthTextField(floatingLabel: "Email Address", placeholder: UserDefaults.userEmailWithApple, icon: .mail, text: $appleUserEmail, enteredText: {
-                                    value in
-                                    request.email = value
-                                }).textContentType(.username)
-                                .disabled(true)
-                            }
-
-                            
-                        }else{
-                            AuthTextField(floatingLabel: "Email Address", placeholder: "Enter Email Address", icon: .mail, text: $request.email, enteredText: {
-                                value in
-                                request.email = value
-                            }).textContentType(.username)
-                        }
-                        
-                        AuthTextField(floatingLabel: "User Name", placeholder: "Enter User Name", icon: .menuProfile, text: $request.user_name, enteredText: {
-                            value in
-                            request.user_name = value
-                            requestUserName.user_name = value
-                        }).textContentType(.username)
-                        
+                           
+                         
                         AuthTextField(floatingLabel: "Password", placeholder: "Enter Password", icon: .passwordLock, text: $request.password, isPassword: true, enteredText: {
                             value in
                             request.password = value
@@ -164,114 +104,78 @@ struct SignUpScreen: View {
                         
                     }.padding([.leading, .trailing])
                     
-                    DropDown(hint: "Select Role", options: ["Candidate", "Employer"], anchor: .top,floatingLabel: "Select Role", cornerRadius: 25, showLeadingIcon : true, leadingIcon:.menuProfile, onOptionSelected: {
-                        option in
-                        if option == "Candidate" {
-                            request.role_id = "2"
-                        } else {
-                            request.role_id = "3"
-                        }
-                    })
-                    .padding(.vertical)
-                    .textContentType(.jobTitle)
+//                    DropDown(hint: "Select Role", options: ["Candidate", "Employer"], anchor: .top,floatingLabel: "Select Role", cornerRadius: 25, showLeadingIcon : true, leadingIcon:.menuProfile, onOptionSelected: {
+//                        option in
+//                        if option == "Candidate" {
+//                            request.role_id = "2"
+//                        } else {
+//                            request.role_id = "3"
+//                        }
+//                    })
+//                    .padding(.vertical)
+//                    .textContentType(.jobTitle)
 
                     
                     VStack(spacing: 15) {
-                        Text("Location")
-                            .font(.custom(nunitoBlack, fixedSize: 18))
-                            .frame(width: screenWidth - 30, alignment: .leading)
+//                        Text("Location")
+//                            .font(.custom(nunitoBlack, fixedSize: 18))
+//                            .frame(width: screenWidth - 30, alignment: .leading)
+//                        
+//                        DropDownTextField(
+//                            hint: "Confirm your location",
+//                            floatingLabel: "Confirm your location",
+//                            text: $request.location,
+//                            options: $locationArr,
+//                            leadingIcon: .location,
+//                            showLeadingIcon: true,
+//                            showTrailingIcon: false,
+//                            onOptionSelected: { text in
+//                                    ////                                langArray[ind].name = text
+//                            },
+//                            anchor: .top)
+//                        .textContentType(.location)
+//                        .onChange(of: request.location) { newValue in
+////                            GooglePlacesManager.shared.findPlaces(query: newValue) { result in
+////                                switch result {
+////                                    case .success(let places):
+////                                        withAnimation(.easeIn(duration: 0.5)) {
+////                                            locationArr.removeAll()
+////                                            places.forEach { place in
+////                                                locationArr.append(place.name)
+////                                            }
+////                                        }
+////                                    case .failure(let error):
+////                                        print(error)
+////                                }
+////                            }
+//                        }
+//                        
                         
-                        DropDownTextField(
-                            hint: "Confirm your location",
-                            floatingLabel: "Confirm your location",
-                            text: $request.location,
-                            options: $locationArr,
-                            leadingIcon: .location,
-                            showLeadingIcon: true,
-                            showTrailingIcon: false,
-                            onOptionSelected: { text in
-                                    ////                                langArray[ind].name = text
-                            },
-                            anchor: .top)
-                        .textContentType(.location)
-                        .onChange(of: request.location) { newValue in
-//                            GooglePlacesManager.shared.findPlaces(query: newValue) { result in
-//                                switch result {
-//                                    case .success(let places):
-//                                        withAnimation(.easeIn(duration: 0.5)) {
-//                                            locationArr.removeAll()
-//                                            places.forEach { place in
-//                                                locationArr.append(place.name)
-//                                            }
-//                                        }
-//                                    case .failure(let error):
-//                                        print(error)
-//                                }
-//                            }
-                        }
-                        
-                        
-                        PrimaryButton(title: "Next", isOutLine: false, onButtonClick: {
+                        PrimaryButton(title: "Create an Account", isOutLine: false, onButtonClick: {
                             
-                            UIApplication.shared.endEditing()
-                            if AppleLogin{
-                                guard !appleUserFirstname.isEmpty else {
-                                    hudMsg = "Email address is required"
-                                    showhud = true
-                                    return
-                                }
-                            }else{
+                           
                                 guard !request.first_name.isEmpty else {
                                     hudMsg = "First Name is required"
                                     showhud = true
                                     return
                                 }
-                            }
-                            if AppleLogin{
-                                guard !appleUserLastname.isEmpty else {
-                                    hudMsg = "Last Name is required"
-                                    showhud = true
-                                    return
-                                }
-                                
-                            }else{
+                            
+                           
                                 guard !request.last_name.isEmpty else {
                                     hudMsg = "Last Name is required"
                                     showhud = true
                                     return
                                 }
-                            }
                             
-                            if AppleLogin{
-                                
-                                if appleUserEmail == ""{
-                                    guard !request.email.isEmpty else {
-                                        hudMsg = "Email address is required"
-                                        showhud = true
-                                        return
-                                    }
-                                }else{
-                                    guard !appleUserEmail.isEmpty else {
-                                        hudMsg = "Email address is required"
-                                        showhud = true
-                                        return
-                                    }
-                                }
-                            }else{
-                                
+                            
                                 guard !request.email.isEmpty else {
                                     hudMsg = "Email address is required"
                                     showhud = true
                                     return
                                 }
-                            }
                             
-                            guard !request.user_name.isEmpty else {
-                                hudMsg = "User Name is required"
-                                showhud = true
-                                return
-                            }
                             
+                           
                             guard !request.password.isEmpty else {
                                 hudMsg = "Password is required"
                                 showhud = true
@@ -296,49 +200,23 @@ struct SignUpScreen: View {
                                 return
                             }
                             
-                            guard !request.role_id.isEmpty else {
-                                hudMsg = "User role is required"
-                                showhud = true
-                                return
-                            }
                             
-                            guard !request.location.isEmpty else {
-                                hudMsg = "Location is required"
-                                showhud = true
-                                return
-                            }
-
-//                            if request.role_id == "2" {
-//                                navigatetoUser = true
+//                            self.viewModel.registerUser(parameters: requestUserName)
+                            
+                            
+//                            
+//                            
+//                                UserDefaults.userEmail = request.email
+//                                UserDefaults.firstName = request.first_name
+//                                UserDefaults.lastName = request.last_name
 //
-//                            } else if request.role_id == "3"{
-//                                navigateToEmployer = true
-//                            }
-                            
-                            self.viewModel.registerUser(parameters: requestUserName)
-                            
-                            
-                            
-                            if AppleLogin{
-                                if appleUserEmail == ""{
-                                    UserDefaults.userEmail = request.email
-                                }else{
-                                    UserDefaults.userEmail = appleUserEmail
-                                }
-                                UserDefaults.firstName = appleUserFirstname
-                                UserDefaults.lastName = appleUserLastname
-                            }else{
-                                UserDefaults.userEmail = request.email
-                                UserDefaults.firstName = request.first_name
-                                UserDefaults.lastName = request.last_name
-
-                            }
-                            
-                            UserDefaults.userNameAdd = request.user_name
-
-                            UserDefaults.userRole = request.role_id
-                            UserDefaults.password = request.password
-                            UserDefaults.userLocaion = request.location
+//                            
+//                            
+//                            UserDefaults.userNameAdd = request.user_name
+//
+//
+//                            UserDefaults.password = request.password
+//                            UserDefaults.userLocaion = request.location
                         })
                     }
                     .padding([.top, .bottom], 30)
@@ -354,74 +232,74 @@ struct SignUpScreen: View {
                 Spacer()
                 
             }
-            .onAppear(){
-                
-                appleUserFirstname = UserDefaults.userFirstNameWithApple
-                appleUserLastname = UserDefaults.userLastNameWithApple
-                appleUserEmail = UserDefaults.userEmailWithApple
-                
-                observe()
-
-                if let isLinkedInFlow: Bool = UserDefaultsManager.shared.value(forKey: .isLinkedInLogin) {
-                    if isLinkedInFlow {
-                        if let detail: LinkedInStatusModel = UserDefaultsManager.shared.getModel(forKey: .linkedInData) {
-                            linkedInDetail = detail
-                            request.first_name = detail.given_name ?? ""
-                            request.last_name = detail.family_name ?? ""
-                            request.email = detail.email ?? ""
-                            request.linkedin_sub_id = detail.sub ?? ""
-                            request.linkedin_access = detail.linkedin_access ?? LinkedInAccessModel()
-                        }
-                    }
-                }
-            }
+//            .onAppear(){
+//                
+////                appleUserFirstname = UserDefaults.userFirstNameWithApple
+////                appleUserLastname = UserDefaults.userLastNameWithApple
+////                appleUserEmail = UserDefaults.userEmailWithApple
+//                
+//                observe()
+//
+//                if let isLinkedInFlow: Bool = UserDefaultsManager.shared.value(forKey: .isLinkedInLogin) {
+//                    if isLinkedInFlow {
+//                        if let detail: LinkedInStatusModel = UserDefaultsManager.shared.getModel(forKey: .linkedInData) {
+//                            linkedInDetail = detail
+//                            request.first_name = detail.given_name ?? ""
+//                            request.last_name = detail.family_name ?? ""
+//                            request.email = detail.email ?? ""
+//                            request.linkedin_sub_id = detail.sub ?? ""
+//                            request.linkedin_access = detail.linkedin_access ?? LinkedInAccessModel()
+//                        }
+//                    }
+//                }
+//            }
 //            .onDisappear(perform: {
 //                request = RegisterRequest(first_name: "", last_name: "", email: "", password: "", password_confirmation: "", location: "", role_id: "", linkedin_sub_id: "", linkedin_access: LinkedInAccessModel(access_token: "", expires_in: 0, scope: "", token_type: "", id_token: ""))
 //            })
-            .fullScreenCover(isPresented: $navigateToLinkedIn, content: {
-                ZStack {
-                    VStack(spacing: 0) {
-                        PrimaryHeader(
-                            title: "LinkedIn",
-                            trailingImgArr: [.cancel],
-                            onClickTrailing: { _ in
-                                withAnimation(.easeInOut(duration: 0.25)) {
-                                    navigateToLinkedIn = false
-                                }
-                            }, count: .constant(0))
-//                        LinkedInViewContainer(url: LinkedInConstants.AUTHURL + "?response_type=code&client_id=" + LinkedInConstants.CLIENT_ID + "&scope=" + LinkedInConstants.SCOPE + "&client_secret=" + LinkedInConstants.CLIENT_SECRET + "&redirect_uri=" + LinkedInConstants.REDIRECT_URI) { result in
-//                            switch result {
-//                                case .success(authCode: let authCode):
-//                                    if authCode != "" {
-//                                        navigateToLinkedIn = false
-//                                        viewModel.getLinkedInDetails(param: result.message())
-//                                        observe()
-//                                    }
-//                                case .inProgress:
-//                                    isLoading = true
-//                                    return
-//                                case .stopLoading:
-//                                    isLoading = false
-//                                    return
-//                                case .aceessDenied, .loginCancel, .loginFailed:
+//            .fullScreenCover(isPresented: $navigateToLinkedIn, content: {
+//                ZStack {
+//                    VStack(spacing: 0) {
+//                        PrimaryHeader(
+//                            title: "LinkedIn",
+//                            trailingImgArr: [.cancel],
+//                            onClickTrailing: { _ in
+//                                withAnimation(.easeInOut(duration: 0.25)) {
 //                                    navigateToLinkedIn = false
-//                                    hudMsg = result.message()
-//                                    showhud = true
-//                                    return
-//                                case .error(error: _):
-//                                    navigateToLinkedIn = false
-//                                    alertType = .sheetType(icon: .alert, title: "Error", message: result.message(), primaryBtnText: "", secondaryBtnText: "Ok", sheetThemeColor: .pinkBtn)
-//                                    showError = true
-//                                    return
-//                            }
-//                        }
-                    }
-                    
-                    if isLoading {
-                        Loader(isLoading: $isLoading)
-                    }
-                }
-            })
+//                                }
+//                            }, count: .constant(0))
+////                        LinkedInViewContainer(url: LinkedInConstants.AUTHURL + "?response_type=code&client_id=" + LinkedInConstants.CLIENT_ID + "&scope=" + LinkedInConstants.SCOPE + "&client_secret=" + LinkedInConstants.CLIENT_SECRET + "&redirect_uri=" + LinkedInConstants.REDIRECT_URI) { result in
+////                            switch result {
+////                                case .success(authCode: let authCode):
+////                                    if authCode != "" {
+////                                        navigateToLinkedIn = false
+////                                        viewModel.getLinkedInDetails(param: result.message())
+////                                        observe()
+////                                    }
+////                                case .inProgress:
+////                                    isLoading = true
+////                                    return
+////                                case .stopLoading:
+////                                    isLoading = false
+////                                    return
+////                                case .aceessDenied, .loginCancel, .loginFailed:
+////                                    navigateToLinkedIn = false
+////                                    hudMsg = result.message()
+////                                    showhud = true
+////                                    return
+////                                case .error(error: _):
+////                                    navigateToLinkedIn = false
+////                                    alertType = .sheetType(icon: .alert, title: "Error", message: result.message(), primaryBtnText: "", secondaryBtnText: "Ok", sheetThemeColor: .pinkBtn)
+////                                    showError = true
+////                                    return
+////                            }
+////                        }
+//                    }
+//                    
+//                    if isLoading {
+//                        Loader(isLoading: $isLoading)
+//                    }
+//                }
+//            })
             .onTapGesture {
                 UIApplication.shared.endEditing()
             }
