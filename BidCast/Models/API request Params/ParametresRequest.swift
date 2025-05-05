@@ -1,0 +1,297 @@
+//
+//  ParametresRequest.swift
+//  imperium
+//
+//  Created by Abdul-JAM-E-157 on 18/01/24.
+//
+
+import Foundation
+
+//MARK: - Login
+struct LoginRequest:Encodable {
+    var user_name:String
+    var password:String
+}
+
+//MARK: - Signup
+struct RegisterRequest:Encodable {
+    var first_name:String
+    var last_name:String
+    var user_name : String
+    var email:String
+    var password:String
+    var password_confirmation:String
+    var location:String
+    var role_id:String
+    var linkedin_sub_id: String
+    var linkedin_access: LinkedInAccessModel
+}
+
+//MARK: - ForgetPassword
+struct ForgetRequest:Encodable {
+    var user_name:String
+}
+
+//MARK: - VerifyOtp
+struct VerifyOtpRequest:Encodable {
+    var user_name:String
+    var code:String
+}
+
+//MARK: - ResetPassword
+struct ResetPasswordRequest:Encodable {
+    var user_name:String
+    var password:String
+}
+
+
+// MARK: - UpdateUserrequest
+struct UpdateUserRequest: Encodable {
+    var images: [Imagee]?
+    var skills: [Skill]?
+    var license_certifications: [LicenseCertification]?
+    var volunteer_experiences: [VolunteerExperience]?
+    var languages: [EmpLanguageRequest]?
+    var interested_jobs: [InterestedJob]?
+    var education: [EmployeeEducationRequest]?
+    var work_histories: [CreateWorkHistory]?
+    var video_resume, profile_image: String?
+    var profile_info: [UserPersonalInfo]?
+    var type: String
+}
+
+// MARK: - Education
+struct Education: Codable {
+    var education_name, education_date: String
+}
+
+// MARK: - Image
+struct Imagee: Codable {
+    var image: String
+}
+
+// MARK: - InterestedJob
+struct InterestedJob: Codable {
+    var job_id: String
+}
+
+// MARK: - Language
+struct Languages: Codable {
+    var name: String
+}
+
+// MARK: - LicenseCertification
+struct LicenseCertification: Codable {
+    var license_certificate: String
+}
+
+// MARK: - Skill
+struct Skill: Codable {
+    var skill: String
+}
+
+// MARK: - VolunteerExperience
+struct VolunteerExperience: Codable {
+    var volunteer_experience: String
+}
+
+// MARK: - WorkHistory
+struct WorkHistory: Codable {
+    var id: Int?
+    var job_title, company_name, location: String?
+    var employment_type, location_type: String?
+    var start_date, end_date: String?
+    var profile_headline, description, industry: String?
+    var contact_info: String?
+    var created_at, updated_at: String?
+}
+
+    // MARK: - WorkHistory
+struct CreateWorkHistory: Codable {
+    var id: Int?
+    var job_title, company_name, location: String?
+    var employment_type, location_type: String?
+    var start_date, end_date: String?
+    var profile_headline, description, industry: String?
+    var contact_info: String?
+    var created_at, updated_at: String?
+}
+
+//MARK: - CreateProfileSection1
+struct CreateUserProfSection: Codable {
+    var is_student, most_recent_job_title, most_recent_company, your_dream_job, job_category_id: String?
+    var profile_image: String?
+}
+
+
+
+
+//MARK: - Generic Response Modal
+struct ResponseModal<T: Codable>: Codable {
+    var status, message, error_type: String?
+    var data: T
+}
+
+//MARK: - Job Paramters
+struct GetJobParameter: Codable {
+    var currentPage: Int
+    var type, search: String
+}
+
+struct CreateEventModel: Codable{
+    var status,message,error_type : String?
+    var data: DataModel?
+}
+
+struct DataModel: Codable {
+    var access_token: String?
+    var expires_in: Int?
+    var refresh_token: String?
+    var scope: String?
+    var token_type: String?
+}
+
+//MARK: - Create Update Job Parameter
+struct JobUpsertParamter: Codable {
+    var id: Int?
+    var title: String
+    var salary_type, salary: String
+    var hours_schedule: String
+    var type, description: String
+    var benefits: String
+    var experience, licensure: String
+    var qualification_id, education_field: String
+    var is_licensure_required,is_education_required:String
+    var location_type_id: String
+}
+
+//MARK: - Swipe Job Parameter
+struct JobSwipePatamter: Encodable {
+    var job_id: Int
+    var type: String
+}
+    
+// MARK: - ContactUs
+struct ContactModelParam: Encodable{
+    var email : String
+    var phone : String
+    var message : String
+    var image : String?
+}
+
+struct BusinessModelParam: Encodable{
+    var ein_number : String
+    var business_email : String
+    var id,business_name : String
+    var file : String?
+}
+
+//MARK: - Create Work History Request
+struct CreateWorkHistoryRequest: Codable {
+    var current_job, job_title, contact, previous_work: String
+}
+
+struct UserPersonalInfo: Codable {
+    var first_name, last_name, email, location, password: String
+    var phone, description, profile_image: String
+}
+
+
+struct SubCompanyParam: Codable {
+    var first_name, last_name, email, user_name,phone: String
+    var image: String
+    var data : [AssignData]?
+}
+
+
+struct SubCompanyUserParam: Codable {
+    var first_name, last_name,phone: String
+    var image: String
+}
+
+struct SubCompanyParamUpdate: Codable {
+    var first_name, last_name, email, user_id,phone: String
+    var image: String
+    var data : [AssignData]?
+}
+
+struct getSubCompanyParam: Codable {
+    var user_id: String?
+}
+struct AssignData: Codable {
+    var permission, read,write,delete: String
+}
+
+//MARK: - Search Job/Employee Request
+struct SearchRequest: Encodable {
+    var search, type: String
+    var page: Int
+}
+
+struct SearchRequestByJobId: Encodable {
+    var search, type: String
+//    var page: Int
+    var job_id :Int
+}
+
+    //MARK: - Generic Paginated Response Modal
+struct ResponseModalPaginate<T: Codable>: Codable {
+    var status, message, error_type: String?
+    var data: T
+    var total, totalPage, currentPage, perPage: Int?
+}
+
+//MARK: - Employee By Job ID
+struct EmployeeJobIdRequest: Encodable {
+    var job_id, status,page: Int
+}
+
+struct EmployeeEducationRequest: Encodable {
+    var qualification_id: Int
+    var institute_name: String
+    var graduation_date: String
+}
+
+struct EmpLanguageRequest: Encodable {
+    var language_id: String
+}
+
+struct PerformJobActionRequest: Codable {
+    var status:String
+    var  job_id, user_id: Int
+   
+}
+
+struct EmployerAvailabilityRequest: Codable {
+    var day_name: [String]
+    var duration, end_time, start_time: String
+}
+
+struct SaveJobRequest: Encodable {
+    var job_id: Int
+}
+
+struct ScheduleInterviewRequest: Codable {
+    var matched_id, scheduledDate, scheduledTime, timezone, scheduledEndTime: String
+}
+
+struct EmployerScheduleRequest: Codable{
+    var date:String
+    var employer_id: String
+}
+
+//MARK: - Save Device Detail
+struct DeviceDetailModal: Encodable {
+    var device_token, device_platform, device_version: String
+}
+
+//MARK: - Read Notification
+struct ReadNotification: Encodable {
+    var id: [String]
+}
+
+//MARK: - Interview Status Model
+struct InterviewRescheduleStatusModel: Encodable {
+    var status: String
+    var employer_id, job_id: Int
+}

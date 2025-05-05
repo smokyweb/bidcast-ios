@@ -6,6 +6,221 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		99C907C42DC8CC990054620B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907C22DC8CC990054620B /* AppDelegate.swift */; };
+		99C907C52DC8CC990054620B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907C32DC8CC990054620B /* SceneDelegate.swift */; };
+		99C9080E2DC8CD6A0054620B /* DocView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907D22DC8CD6A0054620B /* DocView.swift */; };
+		99C9080F2DC8CD6A0054620B /* AlertPopUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907ED2DC8CD6A0054620B /* AlertPopUp.swift */; };
+		99C908102DC8CD6A0054620B /* HeaderWithImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908072DC8CD6A0054620B /* HeaderWithImage.swift */; };
+		99C908112DC8CD6A0054620B /* HeaderWithImageTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908062DC8CD6A0054620B /* HeaderWithImageTitle.swift */; };
+		99C908122DC8CD6A0054620B /* AuthTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907CD2DC8CD6A0054620B /* AuthTextField.swift */; };
+		99C908132DC8CD6A0054620B /* HeaderWithSegmentController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908042DC8CD6A0054620B /* HeaderWithSegmentController.swift */; };
+		99C908142DC8CD6A0054620B /* PrimaryButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907CC2DC8CD6A0054620B /* PrimaryButton.swift */; };
+		99C908152DC8CD6A0054620B /* LogOutSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907E02DC8CD6A0054620B /* LogOutSheet.swift */; };
+		99C908162DC8CD6A0054620B /* NoInternetScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907D42DC8CD6A0054620B /* NoInternetScreen.swift */; };
+		99C908172DC8CD6A0054620B /* MultilineTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907CE2DC8CD6A0054620B /* MultilineTextField.swift */; };
+		99C908182DC8CD6A0054620B /* FilterOptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907E92DC8CD6A0054620B /* FilterOptionView.swift */; };
+		99C908192DC8CD6A0054620B /* MultiSelectionDropDownTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907F22DC8CD6A0054620B /* MultiSelectionDropDownTextField.swift */; };
+		99C9081A2DC8CD6A0054620B /* PrimaryHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908032DC8CD6A0054620B /* PrimaryHeader.swift */; };
+		99C9081B2DC8CD6A0054620B /* InterviewScheduledSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907E42DC8CD6A0054620B /* InterviewScheduledSheet.swift */; };
+		99C9081C2DC8CD6A0054620B /* DropDown.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907EF2DC8CD6A0054620B /* DropDown.swift */; };
+		99C9081D2DC8CD6A0054620B /* TitleWithLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908012DC8CD6A0054620B /* TitleWithLine.swift */; };
+		99C9081E2DC8CD6A0054620B /* JobListingCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907FD2DC8CD6A0054620B /* JobListingCard.swift */; };
+		99C9081F2DC8CD6A0054620B /* TitleWithPencil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907DE2DC8CD6A0054620B /* TitleWithPencil.swift */; };
+		99C908202DC8CD6A0054620B /* JobPostDetailScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907F62DC8CD6A0054620B /* JobPostDetailScreen.swift */; };
+		99C908212DC8CD6A0054620B /* SubscriptionCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907C82DC8CD6A0054620B /* SubscriptionCard.swift */; };
+		99C908222DC8CD6A0054620B /* DatePickerPopUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907D82DC8CD6A0054620B /* DatePickerPopUp.swift */; };
+		99C908232DC8CD6A0054620B /* UserListCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907D62DC8CD6A0054620B /* UserListCard.swift */; };
+		99C908242DC8CD6A0054620B /* HeaderWithSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908052DC8CD6A0054620B /* HeaderWithSearch.swift */; };
+		99C908252DC8CD6A0054620B /* EmployeesMatchCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907F92DC8CD6A0054620B /* EmployeesMatchCard.swift */; };
+		99C908262DC8CD6A0054620B /* InterviewListCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907CA2DC8CD6A0054620B /* InterviewListCard.swift */; };
+		99C908272DC8CD6A0054620B /* NewsCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907FB2DC8CD6A0054620B /* NewsCard.swift */; };
+		99C908282DC8CD6A0054620B /* CustomVideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907DA2DC8CD6A0054620B /* CustomVideoPlayer.swift */; };
+		99C908292DC8CD6A0054620B /* WorkHistoryCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907DC2DC8CD6A0054620B /* WorkHistoryCard.swift */; };
+		99C9082A2DC8CD6A0054620B /* MenuListCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907F42DC8CD6A0054620B /* MenuListCard.swift */; };
+		99C9082B2DC8CD6A0054620B /* EmployeeStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907FF2DC8CD6A0054620B /* EmployeeStackView.swift */; };
+		99C9082C2DC8CD6A0054620B /* DropDownTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907F02DC8CD6A0054620B /* DropDownTextField.swift */; };
+		99C9082D2DC8CD6A0054620B /* Loader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908092DC8CD6A0054620B /* Loader.swift */; };
+		99C9082E2DC8CD6A0054620B /* ButtonWithImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9080B2DC8CD6A0054620B /* ButtonWithImage.swift */; };
+		99C9082F2DC8CD6A0054620B /* DropDownSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907F12DC8CD6A0054620B /* DropDownSelection.swift */; };
+		99C908302DC8CD6A0054620B /* NotificationCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907D12DC8CD6A0054620B /* NotificationCountView.swift */; };
+		99C908312DC8CD6A0054620B /* NotificationListingCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907D02DC8CD6A0054620B /* NotificationListingCard.swift */; };
+		99C908322DC8CD6A0054620B /* CommonBottomSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907E72DC8CD6A0054620B /* CommonBottomSheet.swift */; };
+		99C908332DC8CD6A0054620B /* DeleteJobSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907E52DC8CD6A0054620B /* DeleteJobSheet.swift */; };
+		99C908342DC8CD6A0054620B /* JobMatchesCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907F82DC8CD6A0054620B /* JobMatchesCard.swift */; };
+		99C908352DC8CD6A0054620B /* DateSelectionSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907E62DC8CD6A0054620B /* DateSelectionSheet.swift */; };
+		99C908362DC8CD6A0054620B /* FilterEmployerOptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907EA2DC8CD6A0054620B /* FilterEmployerOptionView.swift */; };
+		99C908372DC8CD6A0054620B /* AlertType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907EC2DC8CD6A0054620B /* AlertType.swift */; };
+		99C908382DC8CD6A0054620B /* JobMatchSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907E32DC8CD6A0054620B /* JobMatchSheet.swift */; };
+		99C908392DC8CD6A0054620B /* LinkedInBottomSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907E82DC8CD6A0054620B /* LinkedInBottomSheet.swift */; };
+		99C9083A2DC8CD6A0054620B /* SubmitVideoResumeSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907E22DC8CD6A0054620B /* SubmitVideoResumeSheet.swift */; };
+		99C9083B2DC8CD6A0054620B /* VideoResumeSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907E12DC8CD6A0054620B /* VideoResumeSheet.swift */; };
+		99C9083C2DC8CD6A0054620B /* JobListCardImg.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907FE2DC8CD6A0054620B /* JobListCardImg.swift */; };
+		99C909172DC8CD790054620B /* JobMatchViewModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908BD2DC8CD790054620B /* JobMatchViewModal.swift */; };
+		99C909182DC8CD790054620B /* ContactUsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908792DC8CD790054620B /* ContactUsViewModel.swift */; };
+		99C909192DC8CD790054620B /* UserVideoResumeDemoScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908E52DC8CD790054620B /* UserVideoResumeDemoScreen.swift */; };
+		99C9091A2DC8CD790054620B /* SavedScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908EA2DC8CD790054620B /* SavedScreen.swift */; };
+		99C9091B2DC8CD790054620B /* UserHomeScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908F82DC8CD790054620B /* UserHomeScreen.swift */; };
+		99C9091C2DC8CD790054620B /* NewsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908742DC8CD790054620B /* NewsViewModel.swift */; };
+		99C9091D2DC8CD790054620B /* MenuScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9086C2DC8CD790054620B /* MenuScreen.swift */; };
+		99C9091E2DC8CD790054620B /* NotificationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908852DC8CD790054620B /* NotificationViewModel.swift */; };
+		99C9091F2DC8CD790054620B /* LinkedInLoginScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908432DC8CD790054620B /* LinkedInLoginScreen.swift */; };
+		99C909202DC8CD790054620B /* UserProfileViewModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908D42DC8CD790054620B /* UserProfileViewModal.swift */; };
+		99C909212DC8CD790054620B /* DocumentUploadScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908AC2DC8CD790054620B /* DocumentUploadScreen.swift */; };
+		99C909222DC8CD790054620B /* EmployerCompanyDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9089B2DC8CD790054620B /* EmployerCompanyDetails.swift */; };
+		99C909232DC8CD790054620B /* DescriptionEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908412DC8CD790054620B /* DescriptionEditor.swift */; };
+		99C909242DC8CD790054620B /* CreateEmployerProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9088D2DC8CD790054620B /* CreateEmployerProfile.swift */; };
+		99C909252DC8CD790054620B /* EmployerProfileScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908582DC8CD790054620B /* EmployerProfileScreen.swift */; };
+		99C909262DC8CD790054620B /* MySkillScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908C92DC8CD790054620B /* MySkillScreen.swift */; };
+		99C909272DC8CD790054620B /* LinkedInConnectViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908B32DC8CD790054620B /* LinkedInConnectViewModel.swift */; };
+		99C909282DC8CD790054620B /* InterestedCandidateScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908AB2DC8CD790054620B /* InterestedCandidateScreen.swift */; };
+		99C909292DC8CD790054620B /* NewsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908762DC8CD790054620B /* NewsScreen.swift */; };
+		99C9092A2DC8CD790054620B /* SplashScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908832DC8CD790054620B /* SplashScreen.swift */; };
+		99C9092B2DC8CD790054620B /* MenuOptionsViewModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908662DC8CD790054620B /* MenuOptionsViewModal.swift */; };
+		99C9092C2DC8CD790054620B /* MatchesScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908F22DC8CD790054620B /* MatchesScreen.swift */; };
+		99C9092D2DC8CD790054620B /* UploadVideoViewModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908D92DC8CD790054620B /* UploadVideoViewModal.swift */; };
+		99C9092E2DC8CD790054620B /* VerifyOtpScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9090D2DC8CD790054620B /* VerifyOtpScreen.swift */; };
+		99C9092F2DC8CD790054620B /* RecordVideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908DB2DC8CD790054620B /* RecordVideoView.swift */; };
+		99C909302DC8CD790054620B /* UserCreateProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908E32DC8CD790054620B /* UserCreateProfile.swift */; };
+		99C909312DC8CD790054620B /* UserPersonalInfoScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908D02DC8CD790054620B /* UserPersonalInfoScreen.swift */; };
+		99C909322DC8CD790054620B /* SavedScreenViewModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908E82DC8CD790054620B /* SavedScreenViewModal.swift */; };
+		99C909332DC8CD790054620B /* EmployerCreateCompany.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9089C2DC8CD790054620B /* EmployerCreateCompany.swift */; };
+		99C909342DC8CD790054620B /* CreateEditJob.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908A32DC8CD790054620B /* CreateEditJob.swift */; };
+		99C909352DC8CD790054620B /* CompanyUserProfileScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9089D2DC8CD790054620B /* CompanyUserProfileScreen.swift */; };
+		99C909362DC8CD790054620B /* AboutUsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9086F2DC8CD790054620B /* AboutUsViewModel.swift */; };
+		99C909372DC8CD790054620B /* ReviewVideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908DD2DC8CD790054620B /* ReviewVideoView.swift */; };
+		99C909382DC8CD790054620B /* EmployeeProfileScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908932DC8CD790054620B /* EmployeeProfileScreen.swift */; };
+		99C909392DC8CD790054620B /* InterviewlistScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908532DC8CD790054620B /* InterviewlistScreen.swift */; };
+		99C9093A2DC8CD790054620B /* CompanyDetailViewModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908982DC8CD790054620B /* CompanyDetailViewModal.swift */; };
+		99C9093B2DC8CD790054620B /* UserCreateWorkHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908CF2DC8CD790054620B /* UserCreateWorkHistory.swift */; };
+		99C9093C2DC8CD790054620B /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908FC2DC8CD790054620B /* LoginViewModel.swift */; };
+		99C9093D2DC8CD790054620B /* AboutUsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908712DC8CD790054620B /* AboutUsScreen.swift */; };
+		99C9093E2DC8CD790054620B /* JobPostingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9085D2DC8CD790054620B /* JobPostingScreen.swift */; };
+		99C9093F2DC8CD790054620B /* LinkedInUserDetailScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908B52DC8CD790054620B /* LinkedInUserDetailScreen.swift */; };
+		99C909402DC8CD790054620B /* VerifyOtpViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9090B2DC8CD790054620B /* VerifyOtpViewModel.swift */; };
+		99C909412DC8CD790054620B /* UserCreateProfileViewModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908E12DC8CD790054620B /* UserCreateProfileViewModal.swift */; };
+		99C909422DC8CD790054620B /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908602DC8CD790054620B /* SearchViewModel.swift */; };
+		99C909432DC8CD790054620B /* JobUpsertViewModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908A02DC8CD790054620B /* JobUpsertViewModal.swift */; };
+		99C909442DC8CD790054620B /* SubscriptionViewModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908462DC8CD790054620B /* SubscriptionViewModal.swift */; };
+		99C909452DC8CD790054620B /* ForgotViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909102DC8CD790054620B /* ForgotViewModel.swift */; };
+		99C909462DC8CD790054620B /* EmployerViewModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908A62DC8CD790054620B /* EmployerViewModal.swift */; };
+		99C909472DC8CD790054620B /* UserFlowStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9083E2DC8CD790054620B /* UserFlowStack.swift */; };
+		99C909482DC8CD790054620B /* LicensesScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908CA2DC8CD790054620B /* LicensesScreen.swift */; };
+		99C909492DC8CD790054620B /* DeclineCandidatesScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908AA2DC8CD790054620B /* DeclineCandidatesScreen.swift */; };
+		99C9094A2DC8CD790054620B /* JobCategoriesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908CD2DC8CD790054620B /* JobCategoriesView.swift */; };
+		99C9094B2DC8CD790054620B /* UpdateUserProfileViewModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908C62DC8CD790054620B /* UpdateUserProfileViewModal.swift */; };
+		99C9094C2DC8CD790054620B /* WelcomeScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908802DC8CD790054620B /* WelcomeScreen.swift */; };
+		99C9094D2DC8CD790054620B /* LanguagesScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908CC2DC8CD790054620B /* LanguagesScreen.swift */; };
+		99C9094E2DC8CD790054620B /* CreateSubCompanyScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908AD2DC8CD790054620B /* CreateSubCompanyScreen.swift */; };
+		99C9094F2DC8CD790054620B /* InterviewDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908B82DC8CD790054620B /* InterviewDetailViewModel.swift */; };
+		99C909502DC8CD790054620B /* SignupViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909012DC8CD790054620B /* SignupViewModel.swift */; };
+		99C909512DC8CD790054620B /* WelcomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9087E2DC8CD790054620B /* WelcomeViewModel.swift */; };
+		99C909522DC8CD790054620B /* EmployerHomeScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908A82DC8CD790054620B /* EmployerHomeScreen.swift */; };
+		99C909532DC8CD790054620B /* InterviewDetailScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908BA2DC8CD790054620B /* InterviewDetailScreen.swift */; };
+		99C909542DC8CD790054620B /* DeleteAccountViweModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9084B2DC8CD790054620B /* DeleteAccountViweModel.swift */; };
+		99C909552DC8CD790054620B /* HomeScreenViewModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908F62DC8CD790054620B /* HomeScreenViewModal.swift */; };
+		99C909562DC8CD790054620B /* UserSearchScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908632DC8CD790054620B /* UserSearchScreen.swift */; };
+		99C909572DC8CD790054620B /* SignUpScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909032DC8CD790054620B /* SignUpScreen.swift */; };
+		99C909582DC8CD790054620B /* SubscriptionScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908482DC8CD790054620B /* SubscriptionScreen.swift */; };
+		99C909592DC8CD790054620B /* ExampleVideoResume.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908DE2DC8CD790054620B /* ExampleVideoResume.swift */; };
+		99C9095A2DC8CD790054620B /* TermsOfServicesScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908692DC8CD790054620B /* TermsOfServicesScreen.swift */; };
+		99C9095B2DC8CD790054620B /* ResetPasswordScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909082DC8CD790054620B /* ResetPasswordScreen.swift */; };
+		99C9095C2DC8CD790054620B /* EditListing Screen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908A22DC8CD790054620B /* EditListing Screen.swift */; };
+		99C9095D2DC8CD790054620B /* ForgotScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909122DC8CD790054620B /* ForgotScreen.swift */; };
+		99C9095E2DC8CD790054620B /* DeleteAccountScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9084D2DC8CD790054620B /* DeleteAccountScreen.swift */; };
+		99C9095F2DC8CD790054620B /* EmployerFlowStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9083F2DC8CD790054620B /* EmployerFlowStack.swift */; };
+		99C909602DC8CD790054620B /* JobPostViewModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9085B2DC8CD790054620B /* JobPostViewModal.swift */; };
+		99C909612DC8CD790054620B /* ContactUsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9087B2DC8CD790054620B /* ContactUsScreen.swift */; };
+		99C909622DC8CD790054620B /* PrivacyPolicyScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908682DC8CD790054620B /* PrivacyPolicyScreen.swift */; };
+		99C909632DC8CD790054620B /* SubCompanyCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9086A2DC8CD790054620B /* SubCompanyCard.swift */; };
+		99C909642DC8CD790054620B /* EmployeeProfileViewModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908912DC8CD790054620B /* EmployeeProfileViewModal.swift */; };
+		99C909652DC8CD790054620B /* SubCompanyScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908AF2DC8CD790054620B /* SubCompanyScreen.swift */; };
+		99C909662DC8CD790054620B /* UpdateEmployerProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9088E2DC8CD790054620B /* UpdateEmployerProfile.swift */; };
+		99C909672DC8CD790054620B /* UserProfileScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908D62DC8CD790054620B /* UserProfileScreen.swift */; };
+		99C909682DC8CD790054620B /* NotificationScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908872DC8CD790054620B /* NotificationScreen.swift */; };
+		99C909692DC8CD790054620B /* UserWorkHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908CE2DC8CD790054620B /* UserWorkHistory.swift */; };
+		99C9096A2DC8CD790054620B /* PermissionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908AE2DC8CD790054620B /* PermissionsView.swift */; };
+		99C9096B2DC8CD790054620B /* ScheduleInterviewScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908BF2DC8CD790054620B /* ScheduleInterviewScreen.swift */; };
+		99C9096C2DC8CD790054620B /* UserImageSelectionScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908D12DC8CD790054620B /* UserImageSelectionScreen.swift */; };
+		99C9096D2DC8CD790054620B /* SelectedJobScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908A92DC8CD790054620B /* SelectedJobScreen.swift */; };
+		99C9096E2DC8CD790054620B /* InterviewlistViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908512DC8CD790054620B /* InterviewlistViewModel.swift */; };
+		99C9096F2DC8CD790054620B /* EmployerSearchScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908622DC8CD790054620B /* EmployerSearchScreen.swift */; };
+		99C909702DC8CD790054620B /* LoginScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908FE2DC8CD790054620B /* LoginScreen.swift */; };
+		99C909712DC8CD790054620B /* YourVideoResume.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908DC2DC8CD790054620B /* YourVideoResume.swift */; };
+		99C909722DC8CD790054620B /* SecondLookScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908C32DC8CD790054620B /* SecondLookScreen.swift */; };
+		99C909732DC8CD790054620B /* EmployerCompanyScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9089A2DC8CD790054620B /* EmployerCompanyScreen.swift */; };
+		99C909742DC8CD790054620B /* DiscoverScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908EE2DC8CD790054620B /* DiscoverScreen.swift */; };
+		99C909752DC8CD790054620B /* VolunteerScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908CB2DC8CD790054620B /* VolunteerScreen.swift */; };
+		99C909762DC8CD790054620B /* EmployerProfileViewModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908562DC8CD790054620B /* EmployerProfileViewModal.swift */; };
+		99C909772DC8CD790054620B /* GoogleCalenderScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908942DC8CD790054620B /* GoogleCalenderScreen.swift */; };
+		99C909782DC8CD790054620B /* AuthenticationStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9083D2DC8CD790054620B /* AuthenticationStack.swift */; };
+		99C909792DC8CD790054620B /* EmployeeDetailScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908952DC8CD790054620B /* EmployeeDetailScreen.swift */; };
+		99C9097A2DC8CD790054620B /* DeleteAccountSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9084E2DC8CD790054620B /* DeleteAccountSheet.swift */; };
+		99C9097B2DC8CD790054620B /* MyEducationScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908C82DC8CD790054620B /* MyEducationScreen.swift */; };
+		99C9097C2DC8CD790054620B /* CreateEmployerProfileViewModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9088B2DC8CD790054620B /* CreateEmployerProfileViewModal.swift */; };
+		99C9097D2DC8CD790054620B /* ResetPasswordViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909062DC8CD790054620B /* ResetPasswordViewModel.swift */; };
+		99C9097E2DC8CD790054620B /* UserProfileImgSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C908E42DC8CD790054620B /* UserProfileImgSelection.swift */; };
+		99C909A12DC8CD930054620B /* UITextField+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909882DC8CD930054620B /* UITextField+Extension.swift */; };
+		99C909A22DC8CD930054620B /* VideoRecorderHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9098F2DC8CD930054620B /* VideoRecorderHelper.swift */; };
+		99C909A32DC8CD930054620B /* UIFont+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909802DC8CD930054620B /* UIFont+Extension.swift */; };
+		99C909A42DC8CD930054620B /* UIDevice+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9097F2DC8CD930054620B /* UIDevice+Extension.swift */; };
+		99C909A52DC8CD930054620B /* NavigationPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909932DC8CD930054620B /* NavigationPath.swift */; };
+		99C909A62DC8CD930054620B /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909862DC8CD930054620B /* String+Extension.swift */; };
+		99C909A72DC8CD930054620B /* UIColor+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909822DC8CD930054620B /* UIColor+Extension.swift */; };
+		99C909A82DC8CD930054620B /* UIApplication+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9098B2DC8CD930054620B /* UIApplication+Extension.swift */; };
+		99C909A92DC8CD930054620B /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9099A2DC8CD930054620B /* Reachability.swift */; };
+		99C909AA2DC8CD930054620B /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9099F2DC8CD930054620B /* Logger.swift */; };
+		99C909AB2DC8CD930054620B /* IAPManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9099E2DC8CD930054620B /* IAPManager.swift */; };
+		99C909AC2DC8CD930054620B /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909852DC8CD930054620B /* UIView+Extension.swift */; };
+		99C909AD2DC8CD930054620B /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909972DC8CD930054620B /* Utilities.swift */; };
+		99C909AE2DC8CD930054620B /* UILabel+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909842DC8CD930054620B /* UILabel+Extension.swift */; };
+		99C909AF2DC8CD930054620B /* EndPointType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9099C2DC8CD930054620B /* EndPointType.swift */; };
+		99C909B02DC8CD930054620B /* CommanExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909812DC8CD930054620B /* CommanExtension.swift */; };
+		99C909B12DC8CD930054620B /* NavigationContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909942DC8CD930054620B /* NavigationContainer.swift */; };
+		99C909B22DC8CD930054620B /* APIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909992DC8CD930054620B /* APIManager.swift */; };
+		99C909B32DC8CD930054620B /* UserDefaultManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9099D2DC8CD930054620B /* UserDefaultManager.swift */; };
+		99C909B42DC8CD930054620B /* ProjectEndPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9099B2DC8CD930054620B /* ProjectEndPoint.swift */; };
+		99C909B52DC8CD930054620B /* UserDefaults+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909872DC8CD930054620B /* UserDefaults+Extension.swift */; };
+		99C909B62DC8CD930054620B /* CusNavLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909952DC8CD930054620B /* CusNavLink.swift */; };
+		99C909B72DC8CD930054620B /* CachingPlayerItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909892DC8CD930054620B /* CachingPlayerItem.swift */; };
+		99C909B82DC8CD930054620B /* ImageSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909912DC8CD930054620B /* ImageSelector.swift */; };
+		99C909B92DC8CD930054620B /* GooglePlaceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9098D2DC8CD930054620B /* GooglePlaceManager.swift */; };
+		99C909BA2DC8CD930054620B /* NotificationName+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C9098A2DC8CD930054620B /* NotificationName+Extension.swift */; };
+		99C909BB2DC8CD930054620B /* UIWindow+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909832DC8CD930054620B /* UIWindow+Extension.swift */; };
+		99C909BC2DC8CD930054620B /* DatePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909982DC8CD930054620B /* DatePicker.swift */; };
+		99C909D52DC8CDDC0054620B /* AboutUsResponseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909C42DC8CDDC0054620B /* AboutUsResponseModel.swift */; };
+		99C909D62DC8CDDC0054620B /* CombineDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909D02DC8CDDC0054620B /* CombineDataModel.swift */; };
+		99C909D72DC8CDDC0054620B /* LinkedInStatusModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909D12DC8CDDC0054620B /* LinkedInStatusModel.swift */; };
+		99C909D82DC8CDDC0054620B /* MenuOptionsModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909C92DC8CDDC0054620B /* MenuOptionsModal.swift */; };
+		99C909D92DC8CDDC0054620B /* InterviewlistModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909CF2DC8CDDC0054620B /* InterviewlistModel.swift */; };
+		99C909DA2DC8CDDC0054620B /* JobActionResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909CA2DC8CDDC0054620B /* JobActionResponse.swift */; };
+		99C909DB2DC8CDDC0054620B /* JobCategoriesListModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909C62DC8CDDC0054620B /* JobCategoriesListModal.swift */; };
+		99C909DC2DC8CDDC0054620B /* SavedJobListResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909CB2DC8CDDC0054620B /* SavedJobListResponse.swift */; };
+		99C909DD2DC8CDDC0054620B /* ContactModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909C32DC8CDDC0054620B /* ContactModel.swift */; };
+		99C909DE2DC8CDDC0054620B /* NewsResponseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909C52DC8CDDC0054620B /* NewsResponseModel.swift */; };
+		99C909DF2DC8CDDC0054620B /* UserDetailModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909C12DC8CDDC0054620B /* UserDetailModal.swift */; };
+		99C909E02DC8CDDC0054620B /* ParametresRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909BD2DC8CDDC0054620B /* ParametresRequest.swift */; };
+		99C909E12DC8CDDC0054620B /* UserProfileUpdateResponseModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909BE2DC8CDDC0054620B /* UserProfileUpdateResponseModal.swift */; };
+		99C909E22DC8CDDC0054620B /* InterviewScheduleModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909CC2DC8CDDC0054620B /* InterviewScheduleModal.swift */; };
+		99C909E32DC8CDDC0054620B /* NotificationResponseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909CE2DC8CDDC0054620B /* NotificationResponseModel.swift */; };
+		99C909E42DC8CDDC0054620B /* LinkedInUserDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909D22DC8CDDC0054620B /* LinkedInUserDetail.swift */; };
+		99C909E52DC8CDDC0054620B /* UserJobModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909C22DC8CDDC0054620B /* UserJobModal.swift */; };
+		99C909E62DC8CDDC0054620B /* CreateCompanyRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909D32DC8CDDC0054620B /* CreateCompanyRequest.swift */; };
+		99C909E72DC8CDDC0054620B /* LoginResponseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909C02DC8CDDC0054620B /* LoginResponseModel.swift */; };
+		99C909E82DC8CDDC0054620B /* JobDetailResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909C72DC8CDDC0054620B /* JobDetailResponse.swift */; };
+		99C909E92DC8CDDC0054620B /* EmployerProfileJobsModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909CD2DC8CDDC0054620B /* EmployerProfileJobsModal.swift */; };
+		99C909EA2DC8CDDC0054620B /* QualificationResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C909C82DC8CDDC0054620B /* QualificationResponse.swift */; };
+		99C909ED2DC8CDF90054620B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 99C909EB2DC8CDF90054620B /* Preview Assets.xcassets */; };
+		99DF9E772DC4F367008C15B2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 99DF9E6F2DC4F367008C15B2 /* Assets.xcassets */; };
+		99DF9E782DC4F367008C15B2 /* BidCast.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 99DF9E712DC4F367008C15B2 /* BidCast.xcdatamodeld */; };
+		99DF9E792DC4F367008C15B2 /* BidCastApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99DF9E722DC4F367008C15B2 /* BidCastApp.swift */; };
+		99DF9E7A2DC4F367008C15B2 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99DF9E732DC4F367008C15B2 /* ContentView.swift */; };
+		99DF9E7B2DC4F367008C15B2 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99DF9E742DC4F367008C15B2 /* Persistence.swift */; };
+		99DF9E7E2DC4F36D008C15B2 /* BidCastTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99DF9E7C2DC4F36D008C15B2 /* BidCastTests.swift */; };
+		99DF9E822DC4F370008C15B2 /* BidCastUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99DF9E7F2DC4F370008C15B2 /* BidCastUITests.swift */; };
+		99DF9E832DC4F370008C15B2 /* BidCastUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99DF9E802DC4F370008C15B2 /* BidCastUITestsLaunchTests.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		99DF9E532DC4F361008C15B2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -24,28 +239,223 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		99C907C22DC8CC990054620B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		99C907C32DC8CC990054620B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		99C907C82DC8CD6A0054620B /* SubscriptionCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionCard.swift; sourceTree = "<group>"; };
+		99C907CA2DC8CD6A0054620B /* InterviewListCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterviewListCard.swift; sourceTree = "<group>"; };
+		99C907CC2DC8CD6A0054620B /* PrimaryButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryButton.swift; sourceTree = "<group>"; };
+		99C907CD2DC8CD6A0054620B /* AuthTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthTextField.swift; sourceTree = "<group>"; };
+		99C907CE2DC8CD6A0054620B /* MultilineTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultilineTextField.swift; sourceTree = "<group>"; };
+		99C907D02DC8CD6A0054620B /* NotificationListingCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationListingCard.swift; sourceTree = "<group>"; };
+		99C907D12DC8CD6A0054620B /* NotificationCountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCountView.swift; sourceTree = "<group>"; };
+		99C907D22DC8CD6A0054620B /* DocView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocView.swift; sourceTree = "<group>"; };
+		99C907D42DC8CD6A0054620B /* NoInternetScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoInternetScreen.swift; sourceTree = "<group>"; };
+		99C907D62DC8CD6A0054620B /* UserListCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListCard.swift; sourceTree = "<group>"; };
+		99C907D82DC8CD6A0054620B /* DatePickerPopUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatePickerPopUp.swift; sourceTree = "<group>"; };
+		99C907DA2DC8CD6A0054620B /* CustomVideoPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomVideoPlayer.swift; sourceTree = "<group>"; };
+		99C907DC2DC8CD6A0054620B /* WorkHistoryCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkHistoryCard.swift; sourceTree = "<group>"; };
+		99C907DE2DC8CD6A0054620B /* TitleWithPencil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleWithPencil.swift; sourceTree = "<group>"; };
+		99C907E02DC8CD6A0054620B /* LogOutSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogOutSheet.swift; sourceTree = "<group>"; };
+		99C907E12DC8CD6A0054620B /* VideoResumeSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoResumeSheet.swift; sourceTree = "<group>"; };
+		99C907E22DC8CD6A0054620B /* SubmitVideoResumeSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubmitVideoResumeSheet.swift; sourceTree = "<group>"; };
+		99C907E32DC8CD6A0054620B /* JobMatchSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobMatchSheet.swift; sourceTree = "<group>"; };
+		99C907E42DC8CD6A0054620B /* InterviewScheduledSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterviewScheduledSheet.swift; sourceTree = "<group>"; };
+		99C907E52DC8CD6A0054620B /* DeleteJobSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteJobSheet.swift; sourceTree = "<group>"; };
+		99C907E62DC8CD6A0054620B /* DateSelectionSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateSelectionSheet.swift; sourceTree = "<group>"; };
+		99C907E72DC8CD6A0054620B /* CommonBottomSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonBottomSheet.swift; sourceTree = "<group>"; };
+		99C907E82DC8CD6A0054620B /* LinkedInBottomSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkedInBottomSheet.swift; sourceTree = "<group>"; };
+		99C907E92DC8CD6A0054620B /* FilterOptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterOptionView.swift; sourceTree = "<group>"; };
+		99C907EA2DC8CD6A0054620B /* FilterEmployerOptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterEmployerOptionView.swift; sourceTree = "<group>"; };
+		99C907EC2DC8CD6A0054620B /* AlertType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertType.swift; sourceTree = "<group>"; };
+		99C907ED2DC8CD6A0054620B /* AlertPopUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertPopUp.swift; sourceTree = "<group>"; };
+		99C907EF2DC8CD6A0054620B /* DropDown.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropDown.swift; sourceTree = "<group>"; };
+		99C907F02DC8CD6A0054620B /* DropDownTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropDownTextField.swift; sourceTree = "<group>"; };
+		99C907F12DC8CD6A0054620B /* DropDownSelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropDownSelection.swift; sourceTree = "<group>"; };
+		99C907F22DC8CD6A0054620B /* MultiSelectionDropDownTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiSelectionDropDownTextField.swift; sourceTree = "<group>"; };
+		99C907F42DC8CD6A0054620B /* MenuListCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuListCard.swift; sourceTree = "<group>"; };
+		99C907F62DC8CD6A0054620B /* JobPostDetailScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobPostDetailScreen.swift; sourceTree = "<group>"; };
+		99C907F82DC8CD6A0054620B /* JobMatchesCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobMatchesCard.swift; sourceTree = "<group>"; };
+		99C907F92DC8CD6A0054620B /* EmployeesMatchCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployeesMatchCard.swift; sourceTree = "<group>"; };
+		99C907FB2DC8CD6A0054620B /* NewsCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsCard.swift; sourceTree = "<group>"; };
+		99C907FD2DC8CD6A0054620B /* JobListingCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobListingCard.swift; sourceTree = "<group>"; };
+		99C907FE2DC8CD6A0054620B /* JobListCardImg.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobListCardImg.swift; sourceTree = "<group>"; };
+		99C907FF2DC8CD6A0054620B /* EmployeeStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployeeStackView.swift; sourceTree = "<group>"; };
+		99C908012DC8CD6A0054620B /* TitleWithLine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleWithLine.swift; sourceTree = "<group>"; };
+		99C908032DC8CD6A0054620B /* PrimaryHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryHeader.swift; sourceTree = "<group>"; };
+		99C908042DC8CD6A0054620B /* HeaderWithSegmentController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderWithSegmentController.swift; sourceTree = "<group>"; };
+		99C908052DC8CD6A0054620B /* HeaderWithSearch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderWithSearch.swift; sourceTree = "<group>"; };
+		99C908062DC8CD6A0054620B /* HeaderWithImageTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderWithImageTitle.swift; sourceTree = "<group>"; };
+		99C908072DC8CD6A0054620B /* HeaderWithImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderWithImage.swift; sourceTree = "<group>"; };
+		99C908092DC8CD6A0054620B /* Loader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Loader.swift; sourceTree = "<group>"; };
+		99C9080B2DC8CD6A0054620B /* ButtonWithImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonWithImage.swift; sourceTree = "<group>"; };
+		99C9083D2DC8CD790054620B /* AuthenticationStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationStack.swift; sourceTree = "<group>"; };
+		99C9083E2DC8CD790054620B /* UserFlowStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserFlowStack.swift; sourceTree = "<group>"; };
+		99C9083F2DC8CD790054620B /* EmployerFlowStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployerFlowStack.swift; sourceTree = "<group>"; };
+		99C908412DC8CD790054620B /* DescriptionEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DescriptionEditor.swift; sourceTree = "<group>"; };
+		99C908432DC8CD790054620B /* LinkedInLoginScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkedInLoginScreen.swift; sourceTree = "<group>"; };
+		99C908462DC8CD790054620B /* SubscriptionViewModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionViewModal.swift; sourceTree = "<group>"; };
+		99C908482DC8CD790054620B /* SubscriptionScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionScreen.swift; sourceTree = "<group>"; };
+		99C9084B2DC8CD790054620B /* DeleteAccountViweModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteAccountViweModel.swift; sourceTree = "<group>"; };
+		99C9084D2DC8CD790054620B /* DeleteAccountScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteAccountScreen.swift; sourceTree = "<group>"; };
+		99C9084E2DC8CD790054620B /* DeleteAccountSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteAccountSheet.swift; sourceTree = "<group>"; };
+		99C908512DC8CD790054620B /* InterviewlistViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterviewlistViewModel.swift; sourceTree = "<group>"; };
+		99C908532DC8CD790054620B /* InterviewlistScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterviewlistScreen.swift; sourceTree = "<group>"; };
+		99C908562DC8CD790054620B /* EmployerProfileViewModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployerProfileViewModal.swift; sourceTree = "<group>"; };
+		99C908582DC8CD790054620B /* EmployerProfileScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployerProfileScreen.swift; sourceTree = "<group>"; };
+		99C9085B2DC8CD790054620B /* JobPostViewModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobPostViewModal.swift; sourceTree = "<group>"; };
+		99C9085D2DC8CD790054620B /* JobPostingScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobPostingScreen.swift; sourceTree = "<group>"; };
+		99C908602DC8CD790054620B /* SearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
+		99C908622DC8CD790054620B /* EmployerSearchScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployerSearchScreen.swift; sourceTree = "<group>"; };
+		99C908632DC8CD790054620B /* UserSearchScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSearchScreen.swift; sourceTree = "<group>"; };
+		99C908662DC8CD790054620B /* MenuOptionsViewModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuOptionsViewModal.swift; sourceTree = "<group>"; };
+		99C908682DC8CD790054620B /* PrivacyPolicyScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyPolicyScreen.swift; sourceTree = "<group>"; };
+		99C908692DC8CD790054620B /* TermsOfServicesScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsOfServicesScreen.swift; sourceTree = "<group>"; };
+		99C9086A2DC8CD790054620B /* SubCompanyCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubCompanyCard.swift; sourceTree = "<group>"; };
+		99C9086C2DC8CD790054620B /* MenuScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuScreen.swift; sourceTree = "<group>"; };
+		99C9086F2DC8CD790054620B /* AboutUsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutUsViewModel.swift; sourceTree = "<group>"; };
+		99C908712DC8CD790054620B /* AboutUsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutUsScreen.swift; sourceTree = "<group>"; };
+		99C908742DC8CD790054620B /* NewsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsViewModel.swift; sourceTree = "<group>"; };
+		99C908762DC8CD790054620B /* NewsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsScreen.swift; sourceTree = "<group>"; };
+		99C908792DC8CD790054620B /* ContactUsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactUsViewModel.swift; sourceTree = "<group>"; };
+		99C9087B2DC8CD790054620B /* ContactUsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactUsScreen.swift; sourceTree = "<group>"; };
+		99C9087E2DC8CD790054620B /* WelcomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeViewModel.swift; sourceTree = "<group>"; };
+		99C908802DC8CD790054620B /* WelcomeScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeScreen.swift; sourceTree = "<group>"; };
+		99C908832DC8CD790054620B /* SplashScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreen.swift; sourceTree = "<group>"; };
+		99C908852DC8CD790054620B /* NotificationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationViewModel.swift; sourceTree = "<group>"; };
+		99C908872DC8CD790054620B /* NotificationScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationScreen.swift; sourceTree = "<group>"; };
+		99C9088B2DC8CD790054620B /* CreateEmployerProfileViewModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateEmployerProfileViewModal.swift; sourceTree = "<group>"; };
+		99C9088D2DC8CD790054620B /* CreateEmployerProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateEmployerProfile.swift; sourceTree = "<group>"; };
+		99C9088E2DC8CD790054620B /* UpdateEmployerProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateEmployerProfile.swift; sourceTree = "<group>"; };
+		99C908912DC8CD790054620B /* EmployeeProfileViewModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployeeProfileViewModal.swift; sourceTree = "<group>"; };
+		99C908932DC8CD790054620B /* EmployeeProfileScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployeeProfileScreen.swift; sourceTree = "<group>"; };
+		99C908942DC8CD790054620B /* GoogleCalenderScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleCalenderScreen.swift; sourceTree = "<group>"; };
+		99C908952DC8CD790054620B /* EmployeeDetailScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployeeDetailScreen.swift; sourceTree = "<group>"; };
+		99C908982DC8CD790054620B /* CompanyDetailViewModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyDetailViewModal.swift; sourceTree = "<group>"; };
+		99C9089A2DC8CD790054620B /* EmployerCompanyScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployerCompanyScreen.swift; sourceTree = "<group>"; };
+		99C9089B2DC8CD790054620B /* EmployerCompanyDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployerCompanyDetails.swift; sourceTree = "<group>"; };
+		99C9089C2DC8CD790054620B /* EmployerCreateCompany.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployerCreateCompany.swift; sourceTree = "<group>"; };
+		99C9089D2DC8CD790054620B /* CompanyUserProfileScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyUserProfileScreen.swift; sourceTree = "<group>"; };
+		99C908A02DC8CD790054620B /* JobUpsertViewModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobUpsertViewModal.swift; sourceTree = "<group>"; };
+		99C908A22DC8CD790054620B /* EditListing Screen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditListing Screen.swift"; sourceTree = "<group>"; };
+		99C908A32DC8CD790054620B /* CreateEditJob.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateEditJob.swift; sourceTree = "<group>"; };
+		99C908A62DC8CD790054620B /* EmployerViewModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployerViewModal.swift; sourceTree = "<group>"; };
+		99C908A82DC8CD790054620B /* EmployerHomeScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployerHomeScreen.swift; sourceTree = "<group>"; };
+		99C908A92DC8CD790054620B /* SelectedJobScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectedJobScreen.swift; sourceTree = "<group>"; };
+		99C908AA2DC8CD790054620B /* DeclineCandidatesScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeclineCandidatesScreen.swift; sourceTree = "<group>"; };
+		99C908AB2DC8CD790054620B /* InterestedCandidateScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterestedCandidateScreen.swift; sourceTree = "<group>"; };
+		99C908AC2DC8CD790054620B /* DocumentUploadScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentUploadScreen.swift; sourceTree = "<group>"; };
+		99C908AD2DC8CD790054620B /* CreateSubCompanyScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateSubCompanyScreen.swift; sourceTree = "<group>"; };
+		99C908AE2DC8CD790054620B /* PermissionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsView.swift; sourceTree = "<group>"; };
+		99C908AF2DC8CD790054620B /* SubCompanyScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubCompanyScreen.swift; sourceTree = "<group>"; };
+		99C908B32DC8CD790054620B /* LinkedInConnectViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkedInConnectViewModel.swift; sourceTree = "<group>"; };
+		99C908B52DC8CD790054620B /* LinkedInUserDetailScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkedInUserDetailScreen.swift; sourceTree = "<group>"; };
+		99C908B82DC8CD790054620B /* InterviewDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterviewDetailViewModel.swift; sourceTree = "<group>"; };
+		99C908BA2DC8CD790054620B /* InterviewDetailScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterviewDetailScreen.swift; sourceTree = "<group>"; };
+		99C908BD2DC8CD790054620B /* JobMatchViewModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobMatchViewModal.swift; sourceTree = "<group>"; };
+		99C908BF2DC8CD790054620B /* ScheduleInterviewScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleInterviewScreen.swift; sourceTree = "<group>"; };
+		99C908C32DC8CD790054620B /* SecondLookScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondLookScreen.swift; sourceTree = "<group>"; };
+		99C908C62DC8CD790054620B /* UpdateUserProfileViewModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateUserProfileViewModal.swift; sourceTree = "<group>"; };
+		99C908C82DC8CD790054620B /* MyEducationScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyEducationScreen.swift; sourceTree = "<group>"; };
+		99C908C92DC8CD790054620B /* MySkillScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySkillScreen.swift; sourceTree = "<group>"; };
+		99C908CA2DC8CD790054620B /* LicensesScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LicensesScreen.swift; sourceTree = "<group>"; };
+		99C908CB2DC8CD790054620B /* VolunteerScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolunteerScreen.swift; sourceTree = "<group>"; };
+		99C908CC2DC8CD790054620B /* LanguagesScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguagesScreen.swift; sourceTree = "<group>"; };
+		99C908CD2DC8CD790054620B /* JobCategoriesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobCategoriesView.swift; sourceTree = "<group>"; };
+		99C908CE2DC8CD790054620B /* UserWorkHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserWorkHistory.swift; sourceTree = "<group>"; };
+		99C908CF2DC8CD790054620B /* UserCreateWorkHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCreateWorkHistory.swift; sourceTree = "<group>"; };
+		99C908D02DC8CD790054620B /* UserPersonalInfoScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPersonalInfoScreen.swift; sourceTree = "<group>"; };
+		99C908D12DC8CD790054620B /* UserImageSelectionScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserImageSelectionScreen.swift; sourceTree = "<group>"; };
+		99C908D42DC8CD790054620B /* UserProfileViewModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileViewModal.swift; sourceTree = "<group>"; };
+		99C908D62DC8CD790054620B /* UserProfileScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileScreen.swift; sourceTree = "<group>"; };
+		99C908D92DC8CD790054620B /* UploadVideoViewModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadVideoViewModal.swift; sourceTree = "<group>"; };
+		99C908DB2DC8CD790054620B /* RecordVideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordVideoView.swift; sourceTree = "<group>"; };
+		99C908DC2DC8CD790054620B /* YourVideoResume.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YourVideoResume.swift; sourceTree = "<group>"; };
+		99C908DD2DC8CD790054620B /* ReviewVideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewVideoView.swift; sourceTree = "<group>"; };
+		99C908DE2DC8CD790054620B /* ExampleVideoResume.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleVideoResume.swift; sourceTree = "<group>"; };
+		99C908E12DC8CD790054620B /* UserCreateProfileViewModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCreateProfileViewModal.swift; sourceTree = "<group>"; };
+		99C908E32DC8CD790054620B /* UserCreateProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCreateProfile.swift; sourceTree = "<group>"; };
+		99C908E42DC8CD790054620B /* UserProfileImgSelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileImgSelection.swift; sourceTree = "<group>"; };
+		99C908E52DC8CD790054620B /* UserVideoResumeDemoScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserVideoResumeDemoScreen.swift; sourceTree = "<group>"; };
+		99C908E82DC8CD790054620B /* SavedScreenViewModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedScreenViewModal.swift; sourceTree = "<group>"; };
+		99C908EA2DC8CD790054620B /* SavedScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedScreen.swift; sourceTree = "<group>"; };
+		99C908EE2DC8CD790054620B /* DiscoverScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverScreen.swift; sourceTree = "<group>"; };
+		99C908F22DC8CD790054620B /* MatchesScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchesScreen.swift; sourceTree = "<group>"; };
+		99C908F62DC8CD790054620B /* HomeScreenViewModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeScreenViewModal.swift; sourceTree = "<group>"; };
+		99C908F82DC8CD790054620B /* UserHomeScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserHomeScreen.swift; sourceTree = "<group>"; };
+		99C908FC2DC8CD790054620B /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
+		99C908FE2DC8CD790054620B /* LoginScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginScreen.swift; sourceTree = "<group>"; };
+		99C909012DC8CD790054620B /* SignupViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignupViewModel.swift; sourceTree = "<group>"; };
+		99C909032DC8CD790054620B /* SignUpScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpScreen.swift; sourceTree = "<group>"; };
+		99C909062DC8CD790054620B /* ResetPasswordViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPasswordViewModel.swift; sourceTree = "<group>"; };
+		99C909082DC8CD790054620B /* ResetPasswordScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPasswordScreen.swift; sourceTree = "<group>"; };
+		99C9090B2DC8CD790054620B /* VerifyOtpViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerifyOtpViewModel.swift; sourceTree = "<group>"; };
+		99C9090D2DC8CD790054620B /* VerifyOtpScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerifyOtpScreen.swift; sourceTree = "<group>"; };
+		99C909102DC8CD790054620B /* ForgotViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotViewModel.swift; sourceTree = "<group>"; };
+		99C909122DC8CD790054620B /* ForgotScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotScreen.swift; sourceTree = "<group>"; };
+		99C9097F2DC8CD930054620B /* UIDevice+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIDevice+Extension.swift"; sourceTree = "<group>"; };
+		99C909802DC8CD930054620B /* UIFont+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+Extension.swift"; sourceTree = "<group>"; };
+		99C909812DC8CD930054620B /* CommanExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommanExtension.swift; sourceTree = "<group>"; };
+		99C909822DC8CD930054620B /* UIColor+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extension.swift"; sourceTree = "<group>"; };
+		99C909832DC8CD930054620B /* UIWindow+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIWindow+Extension.swift"; sourceTree = "<group>"; };
+		99C909842DC8CD930054620B /* UILabel+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+Extension.swift"; sourceTree = "<group>"; };
+		99C909852DC8CD930054620B /* UIView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extension.swift"; sourceTree = "<group>"; };
+		99C909862DC8CD930054620B /* String+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
+		99C909872DC8CD930054620B /* UserDefaults+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+Extension.swift"; sourceTree = "<group>"; };
+		99C909882DC8CD930054620B /* UITextField+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextField+Extension.swift"; sourceTree = "<group>"; };
+		99C909892DC8CD930054620B /* CachingPlayerItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachingPlayerItem.swift; sourceTree = "<group>"; };
+		99C9098A2DC8CD930054620B /* NotificationName+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NotificationName+Extension.swift"; sourceTree = "<group>"; };
+		99C9098B2DC8CD930054620B /* UIApplication+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+Extension.swift"; sourceTree = "<group>"; };
+		99C9098D2DC8CD930054620B /* GooglePlaceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GooglePlaceManager.swift; sourceTree = "<group>"; };
+		99C9098F2DC8CD930054620B /* VideoRecorderHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoRecorderHelper.swift; sourceTree = "<group>"; };
+		99C909912DC8CD930054620B /* ImageSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSelector.swift; sourceTree = "<group>"; };
+		99C909932DC8CD930054620B /* NavigationPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationPath.swift; sourceTree = "<group>"; };
+		99C909942DC8CD930054620B /* NavigationContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationContainer.swift; sourceTree = "<group>"; };
+		99C909952DC8CD930054620B /* CusNavLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CusNavLink.swift; sourceTree = "<group>"; };
+		99C909972DC8CD930054620B /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
+		99C909982DC8CD930054620B /* DatePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatePicker.swift; sourceTree = "<group>"; };
+		99C909992DC8CD930054620B /* APIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIManager.swift; sourceTree = "<group>"; };
+		99C9099A2DC8CD930054620B /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
+		99C9099B2DC8CD930054620B /* ProjectEndPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectEndPoint.swift; sourceTree = "<group>"; };
+		99C9099C2DC8CD930054620B /* EndPointType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndPointType.swift; sourceTree = "<group>"; };
+		99C9099D2DC8CD930054620B /* UserDefaultManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultManager.swift; sourceTree = "<group>"; };
+		99C9099E2DC8CD930054620B /* IAPManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IAPManager.swift; sourceTree = "<group>"; };
+		99C9099F2DC8CD930054620B /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		99C909BD2DC8CDDC0054620B /* ParametresRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParametresRequest.swift; sourceTree = "<group>"; };
+		99C909BE2DC8CDDC0054620B /* UserProfileUpdateResponseModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileUpdateResponseModal.swift; sourceTree = "<group>"; };
+		99C909C02DC8CDDC0054620B /* LoginResponseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginResponseModel.swift; sourceTree = "<group>"; };
+		99C909C12DC8CDDC0054620B /* UserDetailModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetailModal.swift; sourceTree = "<group>"; };
+		99C909C22DC8CDDC0054620B /* UserJobModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserJobModal.swift; sourceTree = "<group>"; };
+		99C909C32DC8CDDC0054620B /* ContactModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactModel.swift; sourceTree = "<group>"; };
+		99C909C42DC8CDDC0054620B /* AboutUsResponseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutUsResponseModel.swift; sourceTree = "<group>"; };
+		99C909C52DC8CDDC0054620B /* NewsResponseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsResponseModel.swift; sourceTree = "<group>"; };
+		99C909C62DC8CDDC0054620B /* JobCategoriesListModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobCategoriesListModal.swift; sourceTree = "<group>"; };
+		99C909C72DC8CDDC0054620B /* JobDetailResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobDetailResponse.swift; sourceTree = "<group>"; };
+		99C909C82DC8CDDC0054620B /* QualificationResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QualificationResponse.swift; sourceTree = "<group>"; };
+		99C909C92DC8CDDC0054620B /* MenuOptionsModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuOptionsModal.swift; sourceTree = "<group>"; };
+		99C909CA2DC8CDDC0054620B /* JobActionResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobActionResponse.swift; sourceTree = "<group>"; };
+		99C909CB2DC8CDDC0054620B /* SavedJobListResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedJobListResponse.swift; sourceTree = "<group>"; };
+		99C909CC2DC8CDDC0054620B /* InterviewScheduleModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterviewScheduleModal.swift; sourceTree = "<group>"; };
+		99C909CD2DC8CDDC0054620B /* EmployerProfileJobsModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployerProfileJobsModal.swift; sourceTree = "<group>"; };
+		99C909CE2DC8CDDC0054620B /* NotificationResponseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationResponseModel.swift; sourceTree = "<group>"; };
+		99C909CF2DC8CDDC0054620B /* InterviewlistModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterviewlistModel.swift; sourceTree = "<group>"; };
+		99C909D02DC8CDDC0054620B /* CombineDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombineDataModel.swift; sourceTree = "<group>"; };
+		99C909D12DC8CDDC0054620B /* LinkedInStatusModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkedInStatusModel.swift; sourceTree = "<group>"; };
+		99C909D22DC8CDDC0054620B /* LinkedInUserDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkedInUserDetail.swift; sourceTree = "<group>"; };
+		99C909D32DC8CDDC0054620B /* CreateCompanyRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateCompanyRequest.swift; sourceTree = "<group>"; };
+		99C909EB2DC8CDF90054620B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		99DF9E3F2DC4F35D008C15B2 /* BidCast.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BidCast.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		99DF9E522DC4F361008C15B2 /* BidCastTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BidCastTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		99DF9E5C2DC4F361008C15B2 /* BidCastUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BidCastUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		99DF9E6F2DC4F367008C15B2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		99DF9E702DC4F367008C15B2 /* BidCast.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BidCast.entitlements; sourceTree = "<group>"; };
+		99DF9E722DC4F367008C15B2 /* BidCastApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BidCastApp.swift; sourceTree = "<group>"; };
+		99DF9E732DC4F367008C15B2 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		99DF9E742DC4F367008C15B2 /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
+		99DF9E762DC4F367008C15B2 /* BidCast.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = BidCast.xcdatamodel; sourceTree = "<group>"; };
+		99DF9E7C2DC4F36D008C15B2 /* BidCastTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BidCastTests.swift; sourceTree = "<group>"; };
+		99DF9E7F2DC4F370008C15B2 /* BidCastUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BidCastUITests.swift; sourceTree = "<group>"; };
+		99DF9E802DC4F370008C15B2 /* BidCastUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BidCastUITestsLaunchTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		99DF9E412DC4F35D008C15B2 /* BidCast */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = BidCast;
-			sourceTree = "<group>";
-		};
-		99DF9E552DC4F361008C15B2 /* BidCastTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = BidCastTests;
-			sourceTree = "<group>";
-		};
-		99DF9E5F2DC4F361008C15B2 /* BidCastUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = BidCastUITests;
-			sourceTree = "<group>";
-		};
-/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		99DF9E3C2DC4F35D008C15B2 /* Frameworks */ = {
@@ -72,12 +482,1405 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		99C907BE2DC8CC5A0054620B /* Application */ = {
+			isa = PBXGroup;
+			children = (
+				99C907C22DC8CC990054620B /* AppDelegate.swift */,
+				99C907C32DC8CC990054620B /* SceneDelegate.swift */,
+				99DF9E722DC4F367008C15B2 /* BidCastApp.swift */,
+			);
+			path = Application;
+			sourceTree = "<group>";
+		};
+		99C907C62DC8CD250054620B /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				99DF9E6F2DC4F367008C15B2 /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		99C907C72DC8CD560054620B /* CoreDataStore */ = {
+			isa = PBXGroup;
+			children = (
+				99DF9E712DC4F367008C15B2 /* BidCast.xcdatamodeld */,
+				99DF9E742DC4F367008C15B2 /* Persistence.swift */,
+			);
+			path = CoreDataStore;
+			sourceTree = "<group>";
+		};
+		99C907C92DC8CD6A0054620B /* SubscriptionCard */ = {
+			isa = PBXGroup;
+			children = (
+				99C907C82DC8CD6A0054620B /* SubscriptionCard.swift */,
+			);
+			path = SubscriptionCard;
+			sourceTree = "<group>";
+		};
+		99C907CB2DC8CD6A0054620B /* InterviewListCard */ = {
+			isa = PBXGroup;
+			children = (
+				99C907CA2DC8CD6A0054620B /* InterviewListCard.swift */,
+			);
+			path = InterviewListCard;
+			sourceTree = "<group>";
+		};
+		99C907CF2DC8CD6A0054620B /* TextField */ = {
+			isa = PBXGroup;
+			children = (
+				99C907CC2DC8CD6A0054620B /* PrimaryButton.swift */,
+				99C907CD2DC8CD6A0054620B /* AuthTextField.swift */,
+				99C907CE2DC8CD6A0054620B /* MultilineTextField.swift */,
+			);
+			path = TextField;
+			sourceTree = "<group>";
+		};
+		99C907D32DC8CD6A0054620B /* NotificationCard */ = {
+			isa = PBXGroup;
+			children = (
+				99C907D02DC8CD6A0054620B /* NotificationListingCard.swift */,
+				99C907D12DC8CD6A0054620B /* NotificationCountView.swift */,
+				99C907D22DC8CD6A0054620B /* DocView.swift */,
+			);
+			path = NotificationCard;
+			sourceTree = "<group>";
+		};
+		99C907D52DC8CD6A0054620B /* NoInternet */ = {
+			isa = PBXGroup;
+			children = (
+				99C907D42DC8CD6A0054620B /* NoInternetScreen.swift */,
+			);
+			path = NoInternet;
+			sourceTree = "<group>";
+		};
+		99C907D72DC8CD6A0054620B /* UserListCard */ = {
+			isa = PBXGroup;
+			children = (
+				99C907D62DC8CD6A0054620B /* UserListCard.swift */,
+			);
+			path = UserListCard;
+			sourceTree = "<group>";
+		};
+		99C907D92DC8CD6A0054620B /* DatePicker */ = {
+			isa = PBXGroup;
+			children = (
+				99C907D82DC8CD6A0054620B /* DatePickerPopUp.swift */,
+			);
+			path = DatePicker;
+			sourceTree = "<group>";
+		};
+		99C907DB2DC8CD6A0054620B /* CustomVideoPlayer */ = {
+			isa = PBXGroup;
+			children = (
+				99C907DA2DC8CD6A0054620B /* CustomVideoPlayer.swift */,
+			);
+			path = CustomVideoPlayer;
+			sourceTree = "<group>";
+		};
+		99C907DD2DC8CD6A0054620B /* WorkHistoryCard */ = {
+			isa = PBXGroup;
+			children = (
+				99C907DC2DC8CD6A0054620B /* WorkHistoryCard.swift */,
+			);
+			path = WorkHistoryCard;
+			sourceTree = "<group>";
+		};
+		99C907DF2DC8CD6A0054620B /* TitleWithPencil */ = {
+			isa = PBXGroup;
+			children = (
+				99C907DE2DC8CD6A0054620B /* TitleWithPencil.swift */,
+			);
+			path = TitleWithPencil;
+			sourceTree = "<group>";
+		};
+		99C907EB2DC8CD6A0054620B /* BottomSheetDesign */ = {
+			isa = PBXGroup;
+			children = (
+				99C907E02DC8CD6A0054620B /* LogOutSheet.swift */,
+				99C907E12DC8CD6A0054620B /* VideoResumeSheet.swift */,
+				99C907E22DC8CD6A0054620B /* SubmitVideoResumeSheet.swift */,
+				99C907E32DC8CD6A0054620B /* JobMatchSheet.swift */,
+				99C907E42DC8CD6A0054620B /* InterviewScheduledSheet.swift */,
+				99C907E52DC8CD6A0054620B /* DeleteJobSheet.swift */,
+				99C907E62DC8CD6A0054620B /* DateSelectionSheet.swift */,
+				99C907E72DC8CD6A0054620B /* CommonBottomSheet.swift */,
+				99C907E82DC8CD6A0054620B /* LinkedInBottomSheet.swift */,
+				99C907E92DC8CD6A0054620B /* FilterOptionView.swift */,
+				99C907EA2DC8CD6A0054620B /* FilterEmployerOptionView.swift */,
+			);
+			path = BottomSheetDesign;
+			sourceTree = "<group>";
+		};
+		99C907EE2DC8CD6A0054620B /* AlertPopUp */ = {
+			isa = PBXGroup;
+			children = (
+				99C907EC2DC8CD6A0054620B /* AlertType.swift */,
+				99C907ED2DC8CD6A0054620B /* AlertPopUp.swift */,
+			);
+			path = AlertPopUp;
+			sourceTree = "<group>";
+		};
+		99C907F32DC8CD6A0054620B /* DropDown */ = {
+			isa = PBXGroup;
+			children = (
+				99C907EF2DC8CD6A0054620B /* DropDown.swift */,
+				99C907F02DC8CD6A0054620B /* DropDownTextField.swift */,
+				99C907F12DC8CD6A0054620B /* DropDownSelection.swift */,
+				99C907F22DC8CD6A0054620B /* MultiSelectionDropDownTextField.swift */,
+			);
+			path = DropDown;
+			sourceTree = "<group>";
+		};
+		99C907F52DC8CD6A0054620B /* MenuListCard */ = {
+			isa = PBXGroup;
+			children = (
+				99C907F42DC8CD6A0054620B /* MenuListCard.swift */,
+			);
+			path = MenuListCard;
+			sourceTree = "<group>";
+		};
+		99C907F72DC8CD6A0054620B /* JobPostComponent */ = {
+			isa = PBXGroup;
+			children = (
+				99C907F62DC8CD6A0054620B /* JobPostDetailScreen.swift */,
+			);
+			path = JobPostComponent;
+			sourceTree = "<group>";
+		};
+		99C907FA2DC8CD6A0054620B /* JobMatchesCard */ = {
+			isa = PBXGroup;
+			children = (
+				99C907F82DC8CD6A0054620B /* JobMatchesCard.swift */,
+				99C907F92DC8CD6A0054620B /* EmployeesMatchCard.swift */,
+			);
+			path = JobMatchesCard;
+			sourceTree = "<group>";
+		};
+		99C907FC2DC8CD6A0054620B /* NewsCard */ = {
+			isa = PBXGroup;
+			children = (
+				99C907FB2DC8CD6A0054620B /* NewsCard.swift */,
+			);
+			path = NewsCard;
+			sourceTree = "<group>";
+		};
+		99C908002DC8CD6A0054620B /* JobListingCard */ = {
+			isa = PBXGroup;
+			children = (
+				99C907FD2DC8CD6A0054620B /* JobListingCard.swift */,
+				99C907FE2DC8CD6A0054620B /* JobListCardImg.swift */,
+				99C907FF2DC8CD6A0054620B /* EmployeeStackView.swift */,
+			);
+			path = JobListingCard;
+			sourceTree = "<group>";
+		};
+		99C908022DC8CD6A0054620B /* TitleWithUnderLine */ = {
+			isa = PBXGroup;
+			children = (
+				99C908012DC8CD6A0054620B /* TitleWithLine.swift */,
+			);
+			path = TitleWithUnderLine;
+			sourceTree = "<group>";
+		};
+		99C908082DC8CD6A0054620B /* Headers */ = {
+			isa = PBXGroup;
+			children = (
+				99C908032DC8CD6A0054620B /* PrimaryHeader.swift */,
+				99C908042DC8CD6A0054620B /* HeaderWithSegmentController.swift */,
+				99C908052DC8CD6A0054620B /* HeaderWithSearch.swift */,
+				99C908062DC8CD6A0054620B /* HeaderWithImageTitle.swift */,
+				99C908072DC8CD6A0054620B /* HeaderWithImage.swift */,
+			);
+			path = Headers;
+			sourceTree = "<group>";
+		};
+		99C9080A2DC8CD6A0054620B /* LoadingIndicator */ = {
+			isa = PBXGroup;
+			children = (
+				99C908092DC8CD6A0054620B /* Loader.swift */,
+			);
+			path = LoadingIndicator;
+			sourceTree = "<group>";
+		};
+		99C9080C2DC8CD6A0054620B /* CustomButton */ = {
+			isa = PBXGroup;
+			children = (
+				99C9080B2DC8CD6A0054620B /* ButtonWithImage.swift */,
+			);
+			path = CustomButton;
+			sourceTree = "<group>";
+		};
+		99C9080D2DC8CD6A0054620B /* Common Components */ = {
+			isa = PBXGroup;
+			children = (
+				99C907C92DC8CD6A0054620B /* SubscriptionCard */,
+				99C907CB2DC8CD6A0054620B /* InterviewListCard */,
+				99C907CF2DC8CD6A0054620B /* TextField */,
+				99C907D32DC8CD6A0054620B /* NotificationCard */,
+				99C907D52DC8CD6A0054620B /* NoInternet */,
+				99C907D72DC8CD6A0054620B /* UserListCard */,
+				99C907D92DC8CD6A0054620B /* DatePicker */,
+				99C907DB2DC8CD6A0054620B /* CustomVideoPlayer */,
+				99C907DD2DC8CD6A0054620B /* WorkHistoryCard */,
+				99C907DF2DC8CD6A0054620B /* TitleWithPencil */,
+				99C907EB2DC8CD6A0054620B /* BottomSheetDesign */,
+				99C907EE2DC8CD6A0054620B /* AlertPopUp */,
+				99C907F32DC8CD6A0054620B /* DropDown */,
+				99C907F52DC8CD6A0054620B /* MenuListCard */,
+				99C907F72DC8CD6A0054620B /* JobPostComponent */,
+				99C907FA2DC8CD6A0054620B /* JobMatchesCard */,
+				99C907FC2DC8CD6A0054620B /* NewsCard */,
+				99C908002DC8CD6A0054620B /* JobListingCard */,
+				99C908022DC8CD6A0054620B /* TitleWithUnderLine */,
+				99C908082DC8CD6A0054620B /* Headers */,
+				99C9080A2DC8CD6A0054620B /* LoadingIndicator */,
+				99C9080C2DC8CD6A0054620B /* CustomButton */,
+			);
+			path = "Common Components";
+			sourceTree = "<group>";
+		};
+		99C908402DC8CD790054620B /* FlowStack */ = {
+			isa = PBXGroup;
+			children = (
+				99C9083D2DC8CD790054620B /* AuthenticationStack.swift */,
+				99C9083E2DC8CD790054620B /* UserFlowStack.swift */,
+				99C9083F2DC8CD790054620B /* EmployerFlowStack.swift */,
+			);
+			path = FlowStack;
+			sourceTree = "<group>";
+		};
+		99C908422DC8CD790054620B /* DescriptionEditor */ = {
+			isa = PBXGroup;
+			children = (
+				99C908412DC8CD790054620B /* DescriptionEditor.swift */,
+			);
+			path = DescriptionEditor;
+			sourceTree = "<group>";
+		};
+		99C908442DC8CD790054620B /* View */ = {
+			isa = PBXGroup;
+			children = (
+				99C908432DC8CD790054620B /* LinkedInLoginScreen.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		99C908452DC8CD790054620B /* LinkedInScreen */ = {
+			isa = PBXGroup;
+			children = (
+				99C908442DC8CD790054620B /* View */,
+			);
+			path = LinkedInScreen;
+			sourceTree = "<group>";
+		};
+		99C908472DC8CD790054620B /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				99C908462DC8CD790054620B /* SubscriptionViewModal.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		99C908492DC8CD790054620B /* View */ = {
+			isa = PBXGroup;
+			children = (
+				99C908482DC8CD790054620B /* SubscriptionScreen.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		99C9084A2DC8CD790054620B /* SubscriptionScreen */ = {
+			isa = PBXGroup;
+			children = (
+				99C908472DC8CD790054620B /* ViewModel */,
+				99C908492DC8CD790054620B /* View */,
+			);
+			path = SubscriptionScreen;
+			sourceTree = "<group>";
+		};
+		99C9084C2DC8CD790054620B /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				99C9084B2DC8CD790054620B /* DeleteAccountViweModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		99C9084F2DC8CD790054620B /* View */ = {
+			isa = PBXGroup;
+			children = (
+				99C9084D2DC8CD790054620B /* DeleteAccountScreen.swift */,
+				99C9084E2DC8CD790054620B /* DeleteAccountSheet.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		99C908502DC8CD790054620B /* DeleteAccountScreen */ = {
+			isa = PBXGroup;
+			children = (
+				99C9084C2DC8CD790054620B /* ViewModel */,
+				99C9084F2DC8CD790054620B /* View */,
+			);
+			path = DeleteAccountScreen;
+			sourceTree = "<group>";
+		};
+		99C908522DC8CD790054620B /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				99C908512DC8CD790054620B /* InterviewlistViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		99C908542DC8CD790054620B /* View */ = {
+			isa = PBXGroup;
+			children = (
+				99C908532DC8CD790054620B /* InterviewlistScreen.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		99C908552DC8CD790054620B /* InterviewlistScreen */ = {
+			isa = PBXGroup;
+			children = (
+				99C908522DC8CD790054620B /* ViewModel */,
+				99C908542DC8CD790054620B /* View */,
+			);
+			path = InterviewlistScreen;
+			sourceTree = "<group>";
+		};
+		99C908572DC8CD790054620B /* ViewModal */ = {
+			isa = PBXGroup;
+			children = (
+				99C908562DC8CD790054620B /* EmployerProfileViewModal.swift */,
+			);
+			path = ViewModal;
+			sourceTree = "<group>";
+		};
+		99C908592DC8CD790054620B /* View */ = {
+			isa = PBXGroup;
+			children = (
+				99C908582DC8CD790054620B /* EmployerProfileScreen.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		99C9085A2DC8CD790054620B /* EmployerProfile */ = {
+			isa = PBXGroup;
+			children = (
+				99C908572DC8CD790054620B /* ViewModal */,
+				99C908592DC8CD790054620B /* View */,
+			);
+			path = EmployerProfile;
+			sourceTree = "<group>";
+		};
+		99C9085C2DC8CD790054620B /* ViewModal */ = {
+			isa = PBXGroup;
+			children = (
+				99C9085B2DC8CD790054620B /* JobPostViewModal.swift */,
+			);
+			path = ViewModal;
+			sourceTree = "<group>";
+		};
+		99C9085E2DC8CD790054620B /* View */ = {
+			isa = PBXGroup;
+			children = (
+				99C9085D2DC8CD790054620B /* JobPostingScreen.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		99C9085F2DC8CD790054620B /* JobPostingScreen */ = {
+			isa = PBXGroup;
+			children = (
+				99C9085C2DC8CD790054620B /* ViewModal */,
+				99C9085E2DC8CD790054620B /* View */,
+			);
+			path = JobPostingScreen;
+			sourceTree = "<group>";
+		};
+		99C908612DC8CD790054620B /* ViewModal */ = {
+			isa = PBXGroup;
+			children = (
+				99C908602DC8CD790054620B /* SearchViewModel.swift */,
+			);
+			name = ViewModal;
+			path = BidCast/Screens/Common/SearchScreen/ViewModal;
+			sourceTree = SOURCE_ROOT;
+		};
+		99C908642DC8CD790054620B /* View */ = {
+			isa = PBXGroup;
+			children = (
+				99C908622DC8CD790054620B /* EmployerSearchScreen.swift */,
+				99C908632DC8CD790054620B /* UserSearchScreen.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		99C908652DC8CD790054620B /* SearchScreen */ = {
+			isa = PBXGroup;
+			children = (
+				99C908612DC8CD790054620B /* ViewModal */,
+				99C908642DC8CD790054620B /* View */,
+			);
+			path = SearchScreen;
+			sourceTree = "<group>";
+		};
+		99C908672DC8CD790054620B /* ViewModal */ = {
+			isa = PBXGroup;
+			children = (
+				99C908662DC8CD790054620B /* MenuOptionsViewModal.swift */,
+			);
+			path = ViewModal;
+			sourceTree = "<group>";
+		};
+		99C9086B2DC8CD790054620B /* OptionsScreen */ = {
+			isa = PBXGroup;
+			children = (
+				99C908682DC8CD790054620B /* PrivacyPolicyScreen.swift */,
+				99C908692DC8CD790054620B /* TermsOfServicesScreen.swift */,
+				99C9086A2DC8CD790054620B /* SubCompanyCard.swift */,
+			);
+			path = OptionsScreen;
+			sourceTree = "<group>";
+		};
+		99C9086D2DC8CD790054620B /* View */ = {
+			isa = PBXGroup;
+			children = (
+				99C9086B2DC8CD790054620B /* OptionsScreen */,
+				99C9086C2DC8CD790054620B /* MenuScreen.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		99C9086E2DC8CD790054620B /* MenuScreen */ = {
+			isa = PBXGroup;
+			children = (
+				99C908672DC8CD790054620B /* ViewModal */,
+				99C9086D2DC8CD790054620B /* View */,
+			);
+			path = MenuScreen;
+			sourceTree = "<group>";
+		};
+		99C908702DC8CD790054620B /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				99C9086F2DC8CD790054620B /* AboutUsViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		99C908722DC8CD790054620B /* View */ = {
+			isa = PBXGroup;
+			children = (
+				99C908712DC8CD790054620B /* AboutUsScreen.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		99C908732DC8CD790054620B /* AboutUsScreen */ = {
+			isa = PBXGroup;
+			children = (
+				99C908702DC8CD790054620B /* ViewModel */,
+				99C908722DC8CD790054620B /* View */,
+			);
+			path = AboutUsScreen;
+			sourceTree = "<group>";
+		};
+		99C908752DC8CD790054620B /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				99C908742DC8CD790054620B /* NewsViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		99C908772DC8CD790054620B /* View */ = {
+			isa = PBXGroup;
+			children = (
+				99C908762DC8CD790054620B /* NewsScreen.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		99C908782DC8CD790054620B /* NewsScreen */ = {
+			isa = PBXGroup;
+			children = (
+				99C908752DC8CD790054620B /* ViewModel */,
+				99C908772DC8CD790054620B /* View */,
+			);
+			path = NewsScreen;
+			sourceTree = "<group>";
+		};
+		99C9087A2DC8CD790054620B /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				99C908792DC8CD790054620B /* ContactUsViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		99C9087C2DC8CD790054620B /* View */ = {
+			isa = PBXGroup;
+			children = (
+				99C9087B2DC8CD790054620B /* ContactUsScreen.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		99C9087D2DC8CD790054620B /* ContactUsScreen */ = {
+			isa = PBXGroup;
+			children = (
+				99C9087A2DC8CD790054620B /* ViewModel */,
+				99C9087C2DC8CD790054620B /* View */,
+			);
+			path = ContactUsScreen;
+			sourceTree = "<group>";
+		};
+		99C9087F2DC8CD790054620B /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				99C9087E2DC8CD790054620B /* WelcomeViewModel.swift */,
+			);
+			name = ViewModel;
+			sourceTree = "<group>";
+		};
+		99C908812DC8CD790054620B /* View */ = {
+			isa = PBXGroup;
+			children = (
+				99C908802DC8CD790054620B /* WelcomeScreen.swift */,
+			);
+			name = View;
+			sourceTree = "<group>";
+		};
+		99C908822DC8CD790054620B /* WelcomeScreen */ = {
+			isa = PBXGroup;
+			children = (
+				99C9087F2DC8CD790054620B /* ViewModel */,
+				99C908812DC8CD790054620B /* View */,
+			);
+			name = WelcomeScreen;
+			path = ../Employer;
+			sourceTree = "<group>";
+		};
+		99C908842DC8CD790054620B /* SplashScreen */ = {
+			isa = PBXGroup;
+			children = (
+				99C908832DC8CD790054620B /* SplashScreen.swift */,
+			);
+			path = SplashScreen;
+			sourceTree = "<group>";
+		};
+		99C908862DC8CD790054620B /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				99C908852DC8CD790054620B /* NotificationViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		99C908882DC8CD790054620B /* View */ = {
+			isa = PBXGroup;
+			children = (
+				99C908872DC8CD790054620B /* NotificationScreen.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		99C908892DC8CD790054620B /* NotificationScreens */ = {
+			isa = PBXGroup;
+			children = (
+				99C908862DC8CD790054620B /* ViewModel */,
+				99C908882DC8CD790054620B /* View */,
+			);
+			path = NotificationScreens;
+			sourceTree = "<group>";
+		};
+		99C9088A2DC8CD790054620B /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				99C908422DC8CD790054620B /* DescriptionEditor */,
+				99C908452DC8CD790054620B /* LinkedInScreen */,
+				99C9084A2DC8CD790054620B /* SubscriptionScreen */,
+				99C908502DC8CD790054620B /* DeleteAccountScreen */,
+				99C908552DC8CD790054620B /* InterviewlistScreen */,
+				99C9085A2DC8CD790054620B /* EmployerProfile */,
+				99C9085F2DC8CD790054620B /* JobPostingScreen */,
+				99C908652DC8CD790054620B /* SearchScreen */,
+				99C9086E2DC8CD790054620B /* MenuScreen */,
+				99C908732DC8CD790054620B /* AboutUsScreen */,
+				99C908782DC8CD790054620B /* NewsScreen */,
+				99C9087D2DC8CD790054620B /* ContactUsScreen */,
+				99C908822DC8CD790054620B /* WelcomeScreen */,
+				99C908842DC8CD790054620B /* SplashScreen */,
+				99C908892DC8CD790054620B /* NotificationScreens */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
+		99C9088C2DC8CD790054620B /* ViewModal */ = {
+			isa = PBXGroup;
+			children = (
+				99C9088B2DC8CD790054620B /* CreateEmployerProfileViewModal.swift */,
+			);
+			path = ViewModal;
+			sourceTree = "<group>";
+		};
+		99C9088F2DC8CD790054620B /* View */ = {
+			isa = PBXGroup;
+			children = (
+				99C9088D2DC8CD790054620B /* CreateEmployerProfile.swift */,
+				99C9088E2DC8CD790054620B /* UpdateEmployerProfile.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		99C908902DC8CD790054620B /* CreateProfile */ = {
+			isa = PBXGroup;
+			children = (
+				99C9088C2DC8CD790054620B /* ViewModal */,
+				99C9088F2DC8CD790054620B /* View */,
+			);
+			path = CreateProfile;
+			sourceTree = "<group>";
+		};
+		99C908922DC8CD790054620B /* ViewModal */ = {
+			isa = PBXGroup;
+			children = (
+				99C908912DC8CD790054620B /* EmployeeProfileViewModal.swift */,
+			);
+			path = ViewModal;
+			sourceTree = "<group>";
+		};
+		99C908962DC8CD790054620B /* View */ = {
+			isa = PBXGroup;
+			children = (
+				99C908932DC8CD790054620B /* EmployeeProfileScreen.swift */,
+				99C908942DC8CD790054620B /* GoogleCalenderScreen.swift */,
+				99C908952DC8CD790054620B /* EmployeeDetailScreen.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		99C908972DC8CD790054620B /* EmployeeScreen */ = {
+			isa = PBXGroup;
+			children = (
+				99C908922DC8CD790054620B /* ViewModal */,
+				99C908962DC8CD790054620B /* View */,
+			);
+			path = EmployeeScreen;
+			sourceTree = "<group>";
+		};
+		99C908992DC8CD790054620B /* ViewModal */ = {
+			isa = PBXGroup;
+			children = (
+				99C908982DC8CD790054620B /* CompanyDetailViewModal.swift */,
+			);
+			path = ViewModal;
+			sourceTree = "<group>";
+		};
+		99C9089E2DC8CD790054620B /* View */ = {
+			isa = PBXGroup;
+			children = (
+				99C9089A2DC8CD790054620B /* EmployerCompanyScreen.swift */,
+				99C9089B2DC8CD790054620B /* EmployerCompanyDetails.swift */,
+				99C9089C2DC8CD790054620B /* EmployerCreateCompany.swift */,
+				99C9089D2DC8CD790054620B /* CompanyUserProfileScreen.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		99C9089F2DC8CD790054620B /* EmployerCompany */ = {
+			isa = PBXGroup;
+			children = (
+				99C908992DC8CD790054620B /* ViewModal */,
+				99C9089E2DC8CD790054620B /* View */,
+			);
+			path = EmployerCompany;
+			sourceTree = "<group>";
+		};
+		99C908A12DC8CD790054620B /* ViewModal */ = {
+			isa = PBXGroup;
+			children = (
+				99C908A02DC8CD790054620B /* JobUpsertViewModal.swift */,
+			);
+			path = ViewModal;
+			sourceTree = "<group>";
+		};
+		99C908A42DC8CD790054620B /* View */ = {
+			isa = PBXGroup;
+			children = (
+				99C908A22DC8CD790054620B /* EditListing Screen.swift */,
+				99C908A32DC8CD790054620B /* CreateEditJob.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		99C908A52DC8CD790054620B /* JobScreen */ = {
+			isa = PBXGroup;
+			children = (
+				99C908A12DC8CD790054620B /* ViewModal */,
+				99C908A42DC8CD790054620B /* View */,
+			);
+			path = JobScreen;
+			sourceTree = "<group>";
+		};
+		99C908A72DC8CD790054620B /* ViewModal */ = {
+			isa = PBXGroup;
+			children = (
+				99C908A62DC8CD790054620B /* EmployerViewModal.swift */,
+			);
+			path = ViewModal;
+			sourceTree = "<group>";
+		};
+		99C908B02DC8CD790054620B /* View */ = {
+			isa = PBXGroup;
+			children = (
+				99C908A82DC8CD790054620B /* EmployerHomeScreen.swift */,
+				99C908A92DC8CD790054620B /* SelectedJobScreen.swift */,
+				99C908AA2DC8CD790054620B /* DeclineCandidatesScreen.swift */,
+				99C908AB2DC8CD790054620B /* InterestedCandidateScreen.swift */,
+				99C908AC2DC8CD790054620B /* DocumentUploadScreen.swift */,
+				99C908AD2DC8CD790054620B /* CreateSubCompanyScreen.swift */,
+				99C908AE2DC8CD790054620B /* PermissionsView.swift */,
+				99C908AF2DC8CD790054620B /* SubCompanyScreen.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		99C908B12DC8CD790054620B /* HomeScreen */ = {
+			isa = PBXGroup;
+			children = (
+				99C908A72DC8CD790054620B /* ViewModal */,
+				99C908B02DC8CD790054620B /* View */,
+			);
+			path = HomeScreen;
+			sourceTree = "<group>";
+		};
+		99C908B22DC8CD790054620B /* Employer */ = {
+			isa = PBXGroup;
+			children = (
+				99C908902DC8CD790054620B /* CreateProfile */,
+				99C908972DC8CD790054620B /* EmployeeScreen */,
+				99C9089F2DC8CD790054620B /* EmployerCompany */,
+				99C908A52DC8CD790054620B /* JobScreen */,
+				99C908B12DC8CD790054620B /* HomeScreen */,
+			);
+			path = Employer;
+			sourceTree = "<group>";
+		};
+		99C908B42DC8CD790054620B /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				99C908B32DC8CD790054620B /* LinkedInConnectViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		99C908B62DC8CD790054620B /* View */ = {
+			isa = PBXGroup;
+			children = (
+				99C908B52DC8CD790054620B /* LinkedInUserDetailScreen.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		99C908B72DC8CD790054620B /* LinkedInUserDetail */ = {
+			isa = PBXGroup;
+			children = (
+				99C908B42DC8CD790054620B /* ViewModel */,
+				99C908B62DC8CD790054620B /* View */,
+			);
+			path = LinkedInUserDetail;
+			sourceTree = "<group>";
+		};
+		99C908B92DC8CD790054620B /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				99C908B82DC8CD790054620B /* InterviewDetailViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		99C908BB2DC8CD790054620B /* View */ = {
+			isa = PBXGroup;
+			children = (
+				99C908BA2DC8CD790054620B /* InterviewDetailScreen.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		99C908BC2DC8CD790054620B /* InterviewDetailScreen */ = {
+			isa = PBXGroup;
+			children = (
+				99C908B92DC8CD790054620B /* ViewModel */,
+				99C908BB2DC8CD790054620B /* View */,
+			);
+			path = InterviewDetailScreen;
+			sourceTree = "<group>";
+		};
+		99C908BE2DC8CD790054620B /* ViewModal */ = {
+			isa = PBXGroup;
+			children = (
+				99C908BD2DC8CD790054620B /* JobMatchViewModal.swift */,
+			);
+			path = ViewModal;
+			sourceTree = "<group>";
+		};
+		99C908C02DC8CD790054620B /* View */ = {
+			isa = PBXGroup;
+			children = (
+				99C908BF2DC8CD790054620B /* ScheduleInterviewScreen.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		99C908C12DC8CD790054620B /* JobMatch */ = {
+			isa = PBXGroup;
+			children = (
+				99C908BE2DC8CD790054620B /* ViewModal */,
+				99C908C02DC8CD790054620B /* View */,
+			);
+			path = JobMatch;
+			sourceTree = "<group>";
+		};
+		99C908C22DC8CD790054620B /* ViewModal */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModal;
+			sourceTree = "<group>";
+		};
+		99C908C42DC8CD790054620B /* View */ = {
+			isa = PBXGroup;
+			children = (
+				99C908C32DC8CD790054620B /* SecondLookScreen.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		99C908C52DC8CD790054620B /* SecondLook */ = {
+			isa = PBXGroup;
+			children = (
+				99C908C22DC8CD790054620B /* ViewModal */,
+				99C908C42DC8CD790054620B /* View */,
+			);
+			path = SecondLook;
+			sourceTree = "<group>";
+		};
+		99C908C72DC8CD790054620B /* ViewModal */ = {
+			isa = PBXGroup;
+			children = (
+				99C908C62DC8CD790054620B /* UpdateUserProfileViewModal.swift */,
+			);
+			path = ViewModal;
+			sourceTree = "<group>";
+		};
+		99C908D22DC8CD790054620B /* View */ = {
+			isa = PBXGroup;
+			children = (
+				99C908C82DC8CD790054620B /* MyEducationScreen.swift */,
+				99C908C92DC8CD790054620B /* MySkillScreen.swift */,
+				99C908CA2DC8CD790054620B /* LicensesScreen.swift */,
+				99C908CB2DC8CD790054620B /* VolunteerScreen.swift */,
+				99C908CC2DC8CD790054620B /* LanguagesScreen.swift */,
+				99C908CD2DC8CD790054620B /* JobCategoriesView.swift */,
+				99C908CE2DC8CD790054620B /* UserWorkHistory.swift */,
+				99C908CF2DC8CD790054620B /* UserCreateWorkHistory.swift */,
+				99C908D02DC8CD790054620B /* UserPersonalInfoScreen.swift */,
+				99C908D12DC8CD790054620B /* UserImageSelectionScreen.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		99C908D32DC8CD790054620B /* UpdateUserProfile */ = {
+			isa = PBXGroup;
+			children = (
+				99C908C72DC8CD790054620B /* ViewModal */,
+				99C908D22DC8CD790054620B /* View */,
+			);
+			path = UpdateUserProfile;
+			sourceTree = "<group>";
+		};
+		99C908D52DC8CD790054620B /* ViewModal */ = {
+			isa = PBXGroup;
+			children = (
+				99C908D42DC8CD790054620B /* UserProfileViewModal.swift */,
+			);
+			path = ViewModal;
+			sourceTree = "<group>";
+		};
+		99C908D72DC8CD790054620B /* View */ = {
+			isa = PBXGroup;
+			children = (
+				99C908D62DC8CD790054620B /* UserProfileScreen.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		99C908D82DC8CD790054620B /* UserProfile */ = {
+			isa = PBXGroup;
+			children = (
+				99C908D52DC8CD790054620B /* ViewModal */,
+				99C908D72DC8CD790054620B /* View */,
+			);
+			path = UserProfile;
+			sourceTree = "<group>";
+		};
+		99C908DA2DC8CD790054620B /* ViewModal */ = {
+			isa = PBXGroup;
+			children = (
+				99C908D92DC8CD790054620B /* UploadVideoViewModal.swift */,
+			);
+			path = ViewModal;
+			sourceTree = "<group>";
+		};
+		99C908DF2DC8CD790054620B /* View */ = {
+			isa = PBXGroup;
+			children = (
+				99C908DB2DC8CD790054620B /* RecordVideoView.swift */,
+				99C908DC2DC8CD790054620B /* YourVideoResume.swift */,
+				99C908DD2DC8CD790054620B /* ReviewVideoView.swift */,
+				99C908DE2DC8CD790054620B /* ExampleVideoResume.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		99C908E02DC8CD790054620B /* VideoResume */ = {
+			isa = PBXGroup;
+			children = (
+				99C908DA2DC8CD790054620B /* ViewModal */,
+				99C908DF2DC8CD790054620B /* View */,
+			);
+			path = VideoResume;
+			sourceTree = "<group>";
+		};
+		99C908E22DC8CD790054620B /* ViewModal */ = {
+			isa = PBXGroup;
+			children = (
+				99C908E12DC8CD790054620B /* UserCreateProfileViewModal.swift */,
+			);
+			path = ViewModal;
+			sourceTree = "<group>";
+		};
+		99C908E62DC8CD790054620B /* View */ = {
+			isa = PBXGroup;
+			children = (
+				99C908E32DC8CD790054620B /* UserCreateProfile.swift */,
+				99C908E42DC8CD790054620B /* UserProfileImgSelection.swift */,
+				99C908E52DC8CD790054620B /* UserVideoResumeDemoScreen.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		99C908E72DC8CD790054620B /* CreateUpdateProfile */ = {
+			isa = PBXGroup;
+			children = (
+				99C908E22DC8CD790054620B /* ViewModal */,
+				99C908E62DC8CD790054620B /* View */,
+			);
+			path = CreateUpdateProfile;
+			sourceTree = "<group>";
+		};
+		99C908E92DC8CD790054620B /* ViewModal */ = {
+			isa = PBXGroup;
+			children = (
+				99C908E82DC8CD790054620B /* SavedScreenViewModal.swift */,
+			);
+			path = ViewModal;
+			sourceTree = "<group>";
+		};
+		99C908EB2DC8CD790054620B /* View */ = {
+			isa = PBXGroup;
+			children = (
+				99C908EA2DC8CD790054620B /* SavedScreen.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		99C908EC2DC8CD790054620B /* SavedScreen */ = {
+			isa = PBXGroup;
+			children = (
+				99C908E92DC8CD790054620B /* ViewModal */,
+				99C908EB2DC8CD790054620B /* View */,
+			);
+			path = SavedScreen;
+			sourceTree = "<group>";
+		};
+		99C908ED2DC8CD790054620B /* ViewModal */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModal;
+			sourceTree = "<group>";
+		};
+		99C908EF2DC8CD790054620B /* View */ = {
+			isa = PBXGroup;
+			children = (
+				99C908EE2DC8CD790054620B /* DiscoverScreen.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		99C908F02DC8CD790054620B /* DiscoverScreen */ = {
+			isa = PBXGroup;
+			children = (
+				99C908ED2DC8CD790054620B /* ViewModal */,
+				99C908EF2DC8CD790054620B /* View */,
+			);
+			path = DiscoverScreen;
+			sourceTree = "<group>";
+		};
+		99C908F12DC8CD790054620B /* ViewModal */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModal;
+			sourceTree = "<group>";
+		};
+		99C908F32DC8CD790054620B /* View */ = {
+			isa = PBXGroup;
+			children = (
+				99C908F22DC8CD790054620B /* MatchesScreen.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		99C908F42DC8CD790054620B /* MatchesScreen */ = {
+			isa = PBXGroup;
+			children = (
+				99C908F12DC8CD790054620B /* ViewModal */,
+				99C908F32DC8CD790054620B /* View */,
+			);
+			path = MatchesScreen;
+			sourceTree = "<group>";
+		};
+		99C908F52DC8CD790054620B /* HomeScreenSections */ = {
+			isa = PBXGroup;
+			children = (
+				99C908EC2DC8CD790054620B /* SavedScreen */,
+				99C908F02DC8CD790054620B /* DiscoverScreen */,
+				99C908F42DC8CD790054620B /* MatchesScreen */,
+			);
+			path = HomeScreenSections;
+			sourceTree = "<group>";
+		};
+		99C908F72DC8CD790054620B /* ViewModal */ = {
+			isa = PBXGroup;
+			children = (
+				99C908F62DC8CD790054620B /* HomeScreenViewModal.swift */,
+			);
+			path = ViewModal;
+			sourceTree = "<group>";
+		};
+		99C908F92DC8CD790054620B /* View */ = {
+			isa = PBXGroup;
+			children = (
+				99C908F82DC8CD790054620B /* UserHomeScreen.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		99C908FA2DC8CD790054620B /* HomeScreen */ = {
+			isa = PBXGroup;
+			children = (
+				99C908F72DC8CD790054620B /* ViewModal */,
+				99C908F92DC8CD790054620B /* View */,
+			);
+			path = HomeScreen;
+			sourceTree = "<group>";
+		};
+		99C908FB2DC8CD790054620B /* User */ = {
+			isa = PBXGroup;
+			children = (
+				99C908B72DC8CD790054620B /* LinkedInUserDetail */,
+				99C908BC2DC8CD790054620B /* InterviewDetailScreen */,
+				99C908C12DC8CD790054620B /* JobMatch */,
+				99C908C52DC8CD790054620B /* SecondLook */,
+				99C908D32DC8CD790054620B /* UpdateUserProfile */,
+				99C908D82DC8CD790054620B /* UserProfile */,
+				99C908E02DC8CD790054620B /* VideoResume */,
+				99C908E72DC8CD790054620B /* CreateUpdateProfile */,
+				99C908F52DC8CD790054620B /* HomeScreenSections */,
+				99C908FA2DC8CD790054620B /* HomeScreen */,
+			);
+			path = User;
+			sourceTree = "<group>";
+		};
+		99C908FD2DC8CD790054620B /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				99C908FC2DC8CD790054620B /* LoginViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		99C908FF2DC8CD790054620B /* View */ = {
+			isa = PBXGroup;
+			children = (
+				99C908FE2DC8CD790054620B /* LoginScreen.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		99C909002DC8CD790054620B /* Login */ = {
+			isa = PBXGroup;
+			children = (
+				99C908FD2DC8CD790054620B /* ViewModel */,
+				99C908FF2DC8CD790054620B /* View */,
+			);
+			path = Login;
+			sourceTree = "<group>";
+		};
+		99C909022DC8CD790054620B /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				99C909012DC8CD790054620B /* SignupViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		99C909042DC8CD790054620B /* View */ = {
+			isa = PBXGroup;
+			children = (
+				99C909032DC8CD790054620B /* SignUpScreen.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		99C909052DC8CD790054620B /* SignUpScreen */ = {
+			isa = PBXGroup;
+			children = (
+				99C909022DC8CD790054620B /* ViewModel */,
+				99C909042DC8CD790054620B /* View */,
+			);
+			path = SignUpScreen;
+			sourceTree = "<group>";
+		};
+		99C909072DC8CD790054620B /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				99C909062DC8CD790054620B /* ResetPasswordViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		99C909092DC8CD790054620B /* View */ = {
+			isa = PBXGroup;
+			children = (
+				99C909082DC8CD790054620B /* ResetPasswordScreen.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		99C9090A2DC8CD790054620B /* ResetPasswordScreen */ = {
+			isa = PBXGroup;
+			children = (
+				99C909072DC8CD790054620B /* ViewModel */,
+				99C909092DC8CD790054620B /* View */,
+			);
+			path = ResetPasswordScreen;
+			sourceTree = "<group>";
+		};
+		99C9090C2DC8CD790054620B /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				99C9090B2DC8CD790054620B /* VerifyOtpViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		99C9090E2DC8CD790054620B /* View */ = {
+			isa = PBXGroup;
+			children = (
+				99C9090D2DC8CD790054620B /* VerifyOtpScreen.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		99C9090F2DC8CD790054620B /* VerifyOtpScreen */ = {
+			isa = PBXGroup;
+			children = (
+				99C9090C2DC8CD790054620B /* ViewModel */,
+				99C9090E2DC8CD790054620B /* View */,
+			);
+			path = VerifyOtpScreen;
+			sourceTree = "<group>";
+		};
+		99C909112DC8CD790054620B /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				99C909102DC8CD790054620B /* ForgotViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		99C909132DC8CD790054620B /* View */ = {
+			isa = PBXGroup;
+			children = (
+				99C909122DC8CD790054620B /* ForgotScreen.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		99C909142DC8CD790054620B /* ForgotScreen */ = {
+			isa = PBXGroup;
+			children = (
+				99C909112DC8CD790054620B /* ViewModel */,
+				99C909132DC8CD790054620B /* View */,
+			);
+			path = ForgotScreen;
+			sourceTree = "<group>";
+		};
+		99C909152DC8CD790054620B /* Authentication */ = {
+			isa = PBXGroup;
+			children = (
+				99C909002DC8CD790054620B /* Login */,
+				99C909052DC8CD790054620B /* SignUpScreen */,
+				99C9090A2DC8CD790054620B /* ResetPasswordScreen */,
+				99C9090F2DC8CD790054620B /* VerifyOtpScreen */,
+				99C909142DC8CD790054620B /* ForgotScreen */,
+			);
+			path = Authentication;
+			sourceTree = "<group>";
+		};
+		99C909162DC8CD790054620B /* Screens */ = {
+			isa = PBXGroup;
+			children = (
+				99C908402DC8CD790054620B /* FlowStack */,
+				99C9088A2DC8CD790054620B /* Common */,
+				99C908B22DC8CD790054620B /* Employer */,
+				99C908FB2DC8CD790054620B /* User */,
+				99C909152DC8CD790054620B /* Authentication */,
+			);
+			path = Screens;
+			sourceTree = "<group>";
+		};
+		99C9098C2DC8CD930054620B /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				99C9097F2DC8CD930054620B /* UIDevice+Extension.swift */,
+				99C909802DC8CD930054620B /* UIFont+Extension.swift */,
+				99C909812DC8CD930054620B /* CommanExtension.swift */,
+				99C909822DC8CD930054620B /* UIColor+Extension.swift */,
+				99C909832DC8CD930054620B /* UIWindow+Extension.swift */,
+				99C909842DC8CD930054620B /* UILabel+Extension.swift */,
+				99C909852DC8CD930054620B /* UIView+Extension.swift */,
+				99C909862DC8CD930054620B /* String+Extension.swift */,
+				99C909872DC8CD930054620B /* UserDefaults+Extension.swift */,
+				99C909882DC8CD930054620B /* UITextField+Extension.swift */,
+				99C909892DC8CD930054620B /* CachingPlayerItem.swift */,
+				99C9098A2DC8CD930054620B /* NotificationName+Extension.swift */,
+				99C9098B2DC8CD930054620B /* UIApplication+Extension.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		99C9098E2DC8CD930054620B /* GooglePlaceManager */ = {
+			isa = PBXGroup;
+			children = (
+				99C9098D2DC8CD930054620B /* GooglePlaceManager.swift */,
+			);
+			path = GooglePlaceManager;
+			sourceTree = "<group>";
+		};
+		99C909902DC8CD930054620B /* VideoRecorder */ = {
+			isa = PBXGroup;
+			children = (
+				99C9098F2DC8CD930054620B /* VideoRecorderHelper.swift */,
+			);
+			path = VideoRecorder;
+			sourceTree = "<group>";
+		};
+		99C909922DC8CD930054620B /* ImageSelector */ = {
+			isa = PBXGroup;
+			children = (
+				99C909912DC8CD930054620B /* ImageSelector.swift */,
+			);
+			path = ImageSelector;
+			sourceTree = "<group>";
+		};
+		99C909962DC8CD930054620B /* NavigationHandler */ = {
+			isa = PBXGroup;
+			children = (
+				99C909932DC8CD930054620B /* NavigationPath.swift */,
+				99C909942DC8CD930054620B /* NavigationContainer.swift */,
+				99C909952DC8CD930054620B /* CusNavLink.swift */,
+			);
+			path = NavigationHandler;
+			sourceTree = "<group>";
+		};
+		99C909A02DC8CD930054620B /* Helper */ = {
+			isa = PBXGroup;
+			children = (
+				99C9098E2DC8CD930054620B /* GooglePlaceManager */,
+				99C909902DC8CD930054620B /* VideoRecorder */,
+				99C909922DC8CD930054620B /* ImageSelector */,
+				99C909962DC8CD930054620B /* NavigationHandler */,
+				99C909972DC8CD930054620B /* Utilities.swift */,
+				99C909982DC8CD930054620B /* DatePicker.swift */,
+				99C909992DC8CD930054620B /* APIManager.swift */,
+				99C9099A2DC8CD930054620B /* Reachability.swift */,
+				99C9099B2DC8CD930054620B /* ProjectEndPoint.swift */,
+				99C9099C2DC8CD930054620B /* EndPointType.swift */,
+				99C9099D2DC8CD930054620B /* UserDefaultManager.swift */,
+				99C9099E2DC8CD930054620B /* IAPManager.swift */,
+				99C9099F2DC8CD930054620B /* Logger.swift */,
+			);
+			path = Helper;
+			sourceTree = "<group>";
+		};
+		99C909BF2DC8CDDC0054620B /* API request Params */ = {
+			isa = PBXGroup;
+			children = (
+				99C909BD2DC8CDDC0054620B /* ParametresRequest.swift */,
+				99C909BE2DC8CDDC0054620B /* UserProfileUpdateResponseModal.swift */,
+			);
+			path = "API request Params";
+			sourceTree = "<group>";
+		};
+		99C909D42DC8CDDC0054620B /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				99C909BF2DC8CDDC0054620B /* API request Params */,
+				99C909C02DC8CDDC0054620B /* LoginResponseModel.swift */,
+				99C909C12DC8CDDC0054620B /* UserDetailModal.swift */,
+				99C909C22DC8CDDC0054620B /* UserJobModal.swift */,
+				99C909C32DC8CDDC0054620B /* ContactModel.swift */,
+				99C909C42DC8CDDC0054620B /* AboutUsResponseModel.swift */,
+				99C909C52DC8CDDC0054620B /* NewsResponseModel.swift */,
+				99C909C62DC8CDDC0054620B /* JobCategoriesListModal.swift */,
+				99C909C72DC8CDDC0054620B /* JobDetailResponse.swift */,
+				99C909C82DC8CDDC0054620B /* QualificationResponse.swift */,
+				99C909C92DC8CDDC0054620B /* MenuOptionsModal.swift */,
+				99C909CA2DC8CDDC0054620B /* JobActionResponse.swift */,
+				99C909CB2DC8CDDC0054620B /* SavedJobListResponse.swift */,
+				99C909CC2DC8CDDC0054620B /* InterviewScheduleModal.swift */,
+				99C909CD2DC8CDDC0054620B /* EmployerProfileJobsModal.swift */,
+				99C909CE2DC8CDDC0054620B /* NotificationResponseModel.swift */,
+				99C909CF2DC8CDDC0054620B /* InterviewlistModel.swift */,
+				99C909D02DC8CDDC0054620B /* CombineDataModel.swift */,
+				99C909D12DC8CDDC0054620B /* LinkedInStatusModel.swift */,
+				99C909D22DC8CDDC0054620B /* LinkedInUserDetail.swift */,
+				99C909D32DC8CDDC0054620B /* CreateCompanyRequest.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		99C909EC2DC8CDF90054620B /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				99C909EB2DC8CDF90054620B /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
 		99DF9E362DC4F35D008C15B2 = {
 			isa = PBXGroup;
 			children = (
-				99DF9E412DC4F35D008C15B2 /* BidCast */,
-				99DF9E552DC4F361008C15B2 /* BidCastTests */,
-				99DF9E5F2DC4F361008C15B2 /* BidCastUITests */,
+				99DF9E752DC4F367008C15B2 /* BidCast */,
+				99DF9E7D2DC4F36D008C15B2 /* BidCastTests */,
+				99DF9E812DC4F370008C15B2 /* BidCastUITests */,
 				99DF9E402DC4F35D008C15B2 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -90,6 +1893,41 @@
 				99DF9E5C2DC4F361008C15B2 /* BidCastUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		99DF9E752DC4F367008C15B2 /* BidCast */ = {
+			isa = PBXGroup;
+			children = (
+				99C907C72DC8CD560054620B /* CoreDataStore */,
+				99C9080D2DC8CD6A0054620B /* Common Components */,
+				99C907BE2DC8CC5A0054620B /* Application */,
+				99C909D42DC8CDDC0054620B /* Models */,
+				99C909162DC8CD790054620B /* Screens */,
+				99C909EC2DC8CDF90054620B /* Preview Content */,
+				99C9098C2DC8CD930054620B /* Extensions */,
+				99C909A02DC8CD930054620B /* Helper */,
+				99C907C62DC8CD250054620B /* Resources */,
+				99DF9E702DC4F367008C15B2 /* BidCast.entitlements */,
+				99DF9E732DC4F367008C15B2 /* ContentView.swift */,
+			);
+			path = BidCast;
+			sourceTree = "<group>";
+		};
+		99DF9E7D2DC4F36D008C15B2 /* BidCastTests */ = {
+			isa = PBXGroup;
+			children = (
+				99DF9E7C2DC4F36D008C15B2 /* BidCastTests.swift */,
+			);
+			path = BidCastTests;
+			sourceTree = "<group>";
+		};
+		99DF9E812DC4F370008C15B2 /* BidCastUITests */ = {
+			isa = PBXGroup;
+			children = (
+				99DF9E7F2DC4F370008C15B2 /* BidCastUITests.swift */,
+				99DF9E802DC4F370008C15B2 /* BidCastUITestsLaunchTests.swift */,
+			);
+			path = BidCastUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -106,9 +1944,6 @@
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				99DF9E412DC4F35D008C15B2 /* BidCast */,
 			);
 			name = BidCast;
 			packageProductDependencies = (
@@ -130,9 +1965,6 @@
 			dependencies = (
 				99DF9E542DC4F361008C15B2 /* PBXTargetDependency */,
 			);
-			fileSystemSynchronizedGroups = (
-				99DF9E552DC4F361008C15B2 /* BidCastTests */,
-			);
 			name = BidCastTests;
 			packageProductDependencies = (
 			);
@@ -152,9 +1984,6 @@
 			);
 			dependencies = (
 				99DF9E5E2DC4F361008C15B2 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				99DF9E5F2DC4F361008C15B2 /* BidCastUITests */,
 			);
 			name = BidCastUITests;
 			packageProductDependencies = (
@@ -212,6 +2041,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				99C909ED2DC8CDF90054620B /* Preview Assets.xcassets in Resources */,
+				99DF9E772DC4F367008C15B2 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -236,6 +2067,213 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				99DF9E782DC4F367008C15B2 /* BidCast.xcdatamodeld in Sources */,
+				99DF9E792DC4F367008C15B2 /* BidCastApp.swift in Sources */,
+				99C9080E2DC8CD6A0054620B /* DocView.swift in Sources */,
+				99C9080F2DC8CD6A0054620B /* AlertPopUp.swift in Sources */,
+				99C908102DC8CD6A0054620B /* HeaderWithImage.swift in Sources */,
+				99C908112DC8CD6A0054620B /* HeaderWithImageTitle.swift in Sources */,
+				99C908122DC8CD6A0054620B /* AuthTextField.swift in Sources */,
+				99C908132DC8CD6A0054620B /* HeaderWithSegmentController.swift in Sources */,
+				99C908142DC8CD6A0054620B /* PrimaryButton.swift in Sources */,
+				99C909172DC8CD790054620B /* JobMatchViewModal.swift in Sources */,
+				99C909182DC8CD790054620B /* ContactUsViewModel.swift in Sources */,
+				99C909192DC8CD790054620B /* UserVideoResumeDemoScreen.swift in Sources */,
+				99C9091A2DC8CD790054620B /* SavedScreen.swift in Sources */,
+				99C9091B2DC8CD790054620B /* UserHomeScreen.swift in Sources */,
+				99C9091C2DC8CD790054620B /* NewsViewModel.swift in Sources */,
+				99C9091D2DC8CD790054620B /* MenuScreen.swift in Sources */,
+				99C9091E2DC8CD790054620B /* NotificationViewModel.swift in Sources */,
+				99C9091F2DC8CD790054620B /* LinkedInLoginScreen.swift in Sources */,
+				99C909202DC8CD790054620B /* UserProfileViewModal.swift in Sources */,
+				99C909212DC8CD790054620B /* DocumentUploadScreen.swift in Sources */,
+				99C909222DC8CD790054620B /* EmployerCompanyDetails.swift in Sources */,
+				99C909232DC8CD790054620B /* DescriptionEditor.swift in Sources */,
+				99C909242DC8CD790054620B /* CreateEmployerProfile.swift in Sources */,
+				99C909252DC8CD790054620B /* EmployerProfileScreen.swift in Sources */,
+				99C909262DC8CD790054620B /* MySkillScreen.swift in Sources */,
+				99C909272DC8CD790054620B /* LinkedInConnectViewModel.swift in Sources */,
+				99C909282DC8CD790054620B /* InterestedCandidateScreen.swift in Sources */,
+				99C909292DC8CD790054620B /* NewsScreen.swift in Sources */,
+				99C909D52DC8CDDC0054620B /* AboutUsResponseModel.swift in Sources */,
+				99C909D62DC8CDDC0054620B /* CombineDataModel.swift in Sources */,
+				99C909D72DC8CDDC0054620B /* LinkedInStatusModel.swift in Sources */,
+				99C909D82DC8CDDC0054620B /* MenuOptionsModal.swift in Sources */,
+				99C909D92DC8CDDC0054620B /* InterviewlistModel.swift in Sources */,
+				99C909DA2DC8CDDC0054620B /* JobActionResponse.swift in Sources */,
+				99C909DB2DC8CDDC0054620B /* JobCategoriesListModal.swift in Sources */,
+				99C909DC2DC8CDDC0054620B /* SavedJobListResponse.swift in Sources */,
+				99C909DD2DC8CDDC0054620B /* ContactModel.swift in Sources */,
+				99C909DE2DC8CDDC0054620B /* NewsResponseModel.swift in Sources */,
+				99C909DF2DC8CDDC0054620B /* UserDetailModal.swift in Sources */,
+				99C909E02DC8CDDC0054620B /* ParametresRequest.swift in Sources */,
+				99C909E12DC8CDDC0054620B /* UserProfileUpdateResponseModal.swift in Sources */,
+				99C909E22DC8CDDC0054620B /* InterviewScheduleModal.swift in Sources */,
+				99C909E32DC8CDDC0054620B /* NotificationResponseModel.swift in Sources */,
+				99C909E42DC8CDDC0054620B /* LinkedInUserDetail.swift in Sources */,
+				99C909E52DC8CDDC0054620B /* UserJobModal.swift in Sources */,
+				99C909E62DC8CDDC0054620B /* CreateCompanyRequest.swift in Sources */,
+				99C909E72DC8CDDC0054620B /* LoginResponseModel.swift in Sources */,
+				99C909E82DC8CDDC0054620B /* JobDetailResponse.swift in Sources */,
+				99C909E92DC8CDDC0054620B /* EmployerProfileJobsModal.swift in Sources */,
+				99C909EA2DC8CDDC0054620B /* QualificationResponse.swift in Sources */,
+				99C9092A2DC8CD790054620B /* SplashScreen.swift in Sources */,
+				99C9092B2DC8CD790054620B /* MenuOptionsViewModal.swift in Sources */,
+				99C9092C2DC8CD790054620B /* MatchesScreen.swift in Sources */,
+				99C9092D2DC8CD790054620B /* UploadVideoViewModal.swift in Sources */,
+				99C9092E2DC8CD790054620B /* VerifyOtpScreen.swift in Sources */,
+				99C9092F2DC8CD790054620B /* RecordVideoView.swift in Sources */,
+				99C909302DC8CD790054620B /* UserCreateProfile.swift in Sources */,
+				99C909312DC8CD790054620B /* UserPersonalInfoScreen.swift in Sources */,
+				99C909322DC8CD790054620B /* SavedScreenViewModal.swift in Sources */,
+				99C909332DC8CD790054620B /* EmployerCreateCompany.swift in Sources */,
+				99C909342DC8CD790054620B /* CreateEditJob.swift in Sources */,
+				99C909352DC8CD790054620B /* CompanyUserProfileScreen.swift in Sources */,
+				99C909362DC8CD790054620B /* AboutUsViewModel.swift in Sources */,
+				99C909372DC8CD790054620B /* ReviewVideoView.swift in Sources */,
+				99C909382DC8CD790054620B /* EmployeeProfileScreen.swift in Sources */,
+				99C909392DC8CD790054620B /* InterviewlistScreen.swift in Sources */,
+				99C9093A2DC8CD790054620B /* CompanyDetailViewModal.swift in Sources */,
+				99C9093B2DC8CD790054620B /* UserCreateWorkHistory.swift in Sources */,
+				99C9093C2DC8CD790054620B /* LoginViewModel.swift in Sources */,
+				99C9093D2DC8CD790054620B /* AboutUsScreen.swift in Sources */,
+				99C9093E2DC8CD790054620B /* JobPostingScreen.swift in Sources */,
+				99C9093F2DC8CD790054620B /* LinkedInUserDetailScreen.swift in Sources */,
+				99C909402DC8CD790054620B /* VerifyOtpViewModel.swift in Sources */,
+				99C909412DC8CD790054620B /* UserCreateProfileViewModal.swift in Sources */,
+				99C909422DC8CD790054620B /* SearchViewModel.swift in Sources */,
+				99C909432DC8CD790054620B /* JobUpsertViewModal.swift in Sources */,
+				99C909442DC8CD790054620B /* SubscriptionViewModal.swift in Sources */,
+				99C909452DC8CD790054620B /* ForgotViewModel.swift in Sources */,
+				99C909462DC8CD790054620B /* EmployerViewModal.swift in Sources */,
+				99C909472DC8CD790054620B /* UserFlowStack.swift in Sources */,
+				99C909482DC8CD790054620B /* LicensesScreen.swift in Sources */,
+				99C909492DC8CD790054620B /* DeclineCandidatesScreen.swift in Sources */,
+				99C9094A2DC8CD790054620B /* JobCategoriesView.swift in Sources */,
+				99C9094B2DC8CD790054620B /* UpdateUserProfileViewModal.swift in Sources */,
+				99C9094C2DC8CD790054620B /* WelcomeScreen.swift in Sources */,
+				99C9094D2DC8CD790054620B /* LanguagesScreen.swift in Sources */,
+				99C9094E2DC8CD790054620B /* CreateSubCompanyScreen.swift in Sources */,
+				99C9094F2DC8CD790054620B /* InterviewDetailViewModel.swift in Sources */,
+				99C909502DC8CD790054620B /* SignupViewModel.swift in Sources */,
+				99C909512DC8CD790054620B /* WelcomeViewModel.swift in Sources */,
+				99C909522DC8CD790054620B /* EmployerHomeScreen.swift in Sources */,
+				99C909532DC8CD790054620B /* InterviewDetailScreen.swift in Sources */,
+				99C909542DC8CD790054620B /* DeleteAccountViweModel.swift in Sources */,
+				99C909552DC8CD790054620B /* HomeScreenViewModal.swift in Sources */,
+				99C909562DC8CD790054620B /* UserSearchScreen.swift in Sources */,
+				99C909572DC8CD790054620B /* SignUpScreen.swift in Sources */,
+				99C909582DC8CD790054620B /* SubscriptionScreen.swift in Sources */,
+				99C909592DC8CD790054620B /* ExampleVideoResume.swift in Sources */,
+				99C9095A2DC8CD790054620B /* TermsOfServicesScreen.swift in Sources */,
+				99C9095B2DC8CD790054620B /* ResetPasswordScreen.swift in Sources */,
+				99C9095C2DC8CD790054620B /* EditListing Screen.swift in Sources */,
+				99C9095D2DC8CD790054620B /* ForgotScreen.swift in Sources */,
+				99C9095E2DC8CD790054620B /* DeleteAccountScreen.swift in Sources */,
+				99C9095F2DC8CD790054620B /* EmployerFlowStack.swift in Sources */,
+				99C909602DC8CD790054620B /* JobPostViewModal.swift in Sources */,
+				99C909612DC8CD790054620B /* ContactUsScreen.swift in Sources */,
+				99C909A12DC8CD930054620B /* UITextField+Extension.swift in Sources */,
+				99C909A22DC8CD930054620B /* VideoRecorderHelper.swift in Sources */,
+				99C909A32DC8CD930054620B /* UIFont+Extension.swift in Sources */,
+				99C909A42DC8CD930054620B /* UIDevice+Extension.swift in Sources */,
+				99C909A52DC8CD930054620B /* NavigationPath.swift in Sources */,
+				99C909A62DC8CD930054620B /* String+Extension.swift in Sources */,
+				99C909A72DC8CD930054620B /* UIColor+Extension.swift in Sources */,
+				99C909A82DC8CD930054620B /* UIApplication+Extension.swift in Sources */,
+				99C909A92DC8CD930054620B /* Reachability.swift in Sources */,
+				99C909AA2DC8CD930054620B /* Logger.swift in Sources */,
+				99C909AB2DC8CD930054620B /* IAPManager.swift in Sources */,
+				99C909AC2DC8CD930054620B /* UIView+Extension.swift in Sources */,
+				99C909AD2DC8CD930054620B /* Utilities.swift in Sources */,
+				99C909AE2DC8CD930054620B /* UILabel+Extension.swift in Sources */,
+				99C909AF2DC8CD930054620B /* EndPointType.swift in Sources */,
+				99C909B02DC8CD930054620B /* CommanExtension.swift in Sources */,
+				99C909B12DC8CD930054620B /* NavigationContainer.swift in Sources */,
+				99C909B22DC8CD930054620B /* APIManager.swift in Sources */,
+				99C909B32DC8CD930054620B /* UserDefaultManager.swift in Sources */,
+				99C909B42DC8CD930054620B /* ProjectEndPoint.swift in Sources */,
+				99C909B52DC8CD930054620B /* UserDefaults+Extension.swift in Sources */,
+				99C909B62DC8CD930054620B /* CusNavLink.swift in Sources */,
+				99C909B72DC8CD930054620B /* CachingPlayerItem.swift in Sources */,
+				99C909B82DC8CD930054620B /* ImageSelector.swift in Sources */,
+				99C909B92DC8CD930054620B /* GooglePlaceManager.swift in Sources */,
+				99C909BA2DC8CD930054620B /* NotificationName+Extension.swift in Sources */,
+				99C909BB2DC8CD930054620B /* UIWindow+Extension.swift in Sources */,
+				99C909BC2DC8CD930054620B /* DatePicker.swift in Sources */,
+				99C909622DC8CD790054620B /* PrivacyPolicyScreen.swift in Sources */,
+				99C909632DC8CD790054620B /* SubCompanyCard.swift in Sources */,
+				99C909642DC8CD790054620B /* EmployeeProfileViewModal.swift in Sources */,
+				99C909652DC8CD790054620B /* SubCompanyScreen.swift in Sources */,
+				99C909662DC8CD790054620B /* UpdateEmployerProfile.swift in Sources */,
+				99C909672DC8CD790054620B /* UserProfileScreen.swift in Sources */,
+				99C909682DC8CD790054620B /* NotificationScreen.swift in Sources */,
+				99C909692DC8CD790054620B /* UserWorkHistory.swift in Sources */,
+				99C9096A2DC8CD790054620B /* PermissionsView.swift in Sources */,
+				99C9096B2DC8CD790054620B /* ScheduleInterviewScreen.swift in Sources */,
+				99C9096C2DC8CD790054620B /* UserImageSelectionScreen.swift in Sources */,
+				99C9096D2DC8CD790054620B /* SelectedJobScreen.swift in Sources */,
+				99C9096E2DC8CD790054620B /* InterviewlistViewModel.swift in Sources */,
+				99C9096F2DC8CD790054620B /* EmployerSearchScreen.swift in Sources */,
+				99C909702DC8CD790054620B /* LoginScreen.swift in Sources */,
+				99C909712DC8CD790054620B /* YourVideoResume.swift in Sources */,
+				99C909722DC8CD790054620B /* SecondLookScreen.swift in Sources */,
+				99C909732DC8CD790054620B /* EmployerCompanyScreen.swift in Sources */,
+				99C909742DC8CD790054620B /* DiscoverScreen.swift in Sources */,
+				99C909752DC8CD790054620B /* VolunteerScreen.swift in Sources */,
+				99C909762DC8CD790054620B /* EmployerProfileViewModal.swift in Sources */,
+				99C909772DC8CD790054620B /* GoogleCalenderScreen.swift in Sources */,
+				99C909782DC8CD790054620B /* AuthenticationStack.swift in Sources */,
+				99C909792DC8CD790054620B /* EmployeeDetailScreen.swift in Sources */,
+				99C9097A2DC8CD790054620B /* DeleteAccountSheet.swift in Sources */,
+				99C9097B2DC8CD790054620B /* MyEducationScreen.swift in Sources */,
+				99C9097C2DC8CD790054620B /* CreateEmployerProfileViewModal.swift in Sources */,
+				99C9097D2DC8CD790054620B /* ResetPasswordViewModel.swift in Sources */,
+				99C9097E2DC8CD790054620B /* UserProfileImgSelection.swift in Sources */,
+				99C908152DC8CD6A0054620B /* LogOutSheet.swift in Sources */,
+				99C908162DC8CD6A0054620B /* NoInternetScreen.swift in Sources */,
+				99C908172DC8CD6A0054620B /* MultilineTextField.swift in Sources */,
+				99C908182DC8CD6A0054620B /* FilterOptionView.swift in Sources */,
+				99C908192DC8CD6A0054620B /* MultiSelectionDropDownTextField.swift in Sources */,
+				99C9081A2DC8CD6A0054620B /* PrimaryHeader.swift in Sources */,
+				99C9081B2DC8CD6A0054620B /* InterviewScheduledSheet.swift in Sources */,
+				99C9081C2DC8CD6A0054620B /* DropDown.swift in Sources */,
+				99C9081D2DC8CD6A0054620B /* TitleWithLine.swift in Sources */,
+				99C9081E2DC8CD6A0054620B /* JobListingCard.swift in Sources */,
+				99C9081F2DC8CD6A0054620B /* TitleWithPencil.swift in Sources */,
+				99C908202DC8CD6A0054620B /* JobPostDetailScreen.swift in Sources */,
+				99C908212DC8CD6A0054620B /* SubscriptionCard.swift in Sources */,
+				99C908222DC8CD6A0054620B /* DatePickerPopUp.swift in Sources */,
+				99C908232DC8CD6A0054620B /* UserListCard.swift in Sources */,
+				99C908242DC8CD6A0054620B /* HeaderWithSearch.swift in Sources */,
+				99C908252DC8CD6A0054620B /* EmployeesMatchCard.swift in Sources */,
+				99C908262DC8CD6A0054620B /* InterviewListCard.swift in Sources */,
+				99C908272DC8CD6A0054620B /* NewsCard.swift in Sources */,
+				99C908282DC8CD6A0054620B /* CustomVideoPlayer.swift in Sources */,
+				99C908292DC8CD6A0054620B /* WorkHistoryCard.swift in Sources */,
+				99C9082A2DC8CD6A0054620B /* MenuListCard.swift in Sources */,
+				99C9082B2DC8CD6A0054620B /* EmployeeStackView.swift in Sources */,
+				99C9082C2DC8CD6A0054620B /* DropDownTextField.swift in Sources */,
+				99C9082D2DC8CD6A0054620B /* Loader.swift in Sources */,
+				99C9082E2DC8CD6A0054620B /* ButtonWithImage.swift in Sources */,
+				99C9082F2DC8CD6A0054620B /* DropDownSelection.swift in Sources */,
+				99C908302DC8CD6A0054620B /* NotificationCountView.swift in Sources */,
+				99C908312DC8CD6A0054620B /* NotificationListingCard.swift in Sources */,
+				99C908322DC8CD6A0054620B /* CommonBottomSheet.swift in Sources */,
+				99C908332DC8CD6A0054620B /* DeleteJobSheet.swift in Sources */,
+				99C908342DC8CD6A0054620B /* JobMatchesCard.swift in Sources */,
+				99C908352DC8CD6A0054620B /* DateSelectionSheet.swift in Sources */,
+				99C908362DC8CD6A0054620B /* FilterEmployerOptionView.swift in Sources */,
+				99C908372DC8CD6A0054620B /* AlertType.swift in Sources */,
+				99C908382DC8CD6A0054620B /* JobMatchSheet.swift in Sources */,
+				99C908392DC8CD6A0054620B /* LinkedInBottomSheet.swift in Sources */,
+				99C9083A2DC8CD6A0054620B /* SubmitVideoResumeSheet.swift in Sources */,
+				99C9083B2DC8CD6A0054620B /* VideoResumeSheet.swift in Sources */,
+				99C9083C2DC8CD6A0054620B /* JobListCardImg.swift in Sources */,
+				99C907C42DC8CC990054620B /* AppDelegate.swift in Sources */,
+				99C907C52DC8CC990054620B /* SceneDelegate.swift in Sources */,
+				99DF9E7A2DC4F367008C15B2 /* ContentView.swift in Sources */,
+				99DF9E7B2DC4F367008C15B2 /* Persistence.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -243,6 +2281,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				99DF9E7E2DC4F36D008C15B2 /* BidCastTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -250,6 +2289,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				99DF9E822DC4F370008C15B2 /* BidCastUITests.swift in Sources */,
+				99DF9E832DC4F370008C15B2 /* BidCastUITestsLaunchTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -593,6 +2634,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		99DF9E712DC4F367008C15B2 /* BidCast.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				99DF9E762DC4F367008C15B2 /* BidCast.xcdatamodel */,
+			);
+			currentVersion = 99DF9E762DC4F367008C15B2 /* BidCast.xcdatamodel */;
+			path = BidCast.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 99DF9E372DC4F35D008C15B2 /* Project object */;
 }
