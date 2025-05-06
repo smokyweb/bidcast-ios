@@ -2,7 +2,6 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Y6W-OH-hqX">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -12,7 +11,7 @@
         <!--Sign In View Controller-->
         <scene sceneID="s0d-6b-0kx">
             <objects>
-                <viewController storyboardIdentifier="SignInViewController" id="Y6W-OH-hqX" customClass="SignInViewController" customModule="Rise_Shine_Swing" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SignInViewController" id="Y6W-OH-hqX" customClass="SignInViewController" customModule="BidCast" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="5EZ-qb-Rvc">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -42,7 +41,7 @@
         <!--Sign Up View Controller-->
         <scene sceneID="OPW-91-dOp">
             <objects>
-                <viewController storyboardIdentifier="SignUpViewController" id="Dhz-KY-56z" customClass="SignUpViewController" customModule="Rise_Shine_Swing" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SignUpViewController" id="Dhz-KY-56z" customClass="SignUpViewController" customModule="BidCast" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="RUG-X7-RPm">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -51,7 +50,7 @@
                                 <rect key="frame" x="0.0" y="100" width="393" height="752"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             </tableView>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VHa-8E-jAp" customClass="HeaderView" customModule="Rise_Shine_Swing" customModuleProvider="target">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VHa-8E-jAp" customClass="HeaderView" customModule="BidCast" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="393" height="110"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
@@ -83,12 +82,12 @@
         <!--Forget Password View Controller-->
         <scene sceneID="Kq7-LE-M0L">
             <objects>
-                <viewController storyboardIdentifier="ForgetPasswordViewController" id="sb5-Og-Oll" customClass="ForgetPasswordViewController" customModule="Rise_Shine_Swing" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ForgetPasswordViewController" id="sb5-Og-Oll" customClass="ForgetPasswordViewController" customModule="BidCast" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="9YJ-bv-W6p">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="L3J-vU-sON" customClass="HeaderView" customModule="Rise_Shine_Swing" customModuleProvider="target">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="L3J-vU-sON" customClass="HeaderView" customModule="BidCast" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="393" height="100"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
@@ -125,12 +124,12 @@
         <!--Otp View Controller-->
         <scene sceneID="WaO-BN-kW5">
             <objects>
-                <viewController storyboardIdentifier="OtpViewController" id="BOh-Le-FRn" customClass="OtpViewController" customModule="Rise_Shine_Swing" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="OtpViewController" id="BOh-Le-FRn" customClass="OtpViewController" customModule="BidCast" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Y7e-GW-PAc">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iLi-BY-Tvz" customClass="HeaderView" customModule="Rise_Shine_Swing" customModuleProvider="target">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iLi-BY-Tvz" customClass="HeaderView" customModule="BidCast" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="393" height="100"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
@@ -167,12 +166,12 @@
         <!--New Password View Controller-->
         <scene sceneID="B1o-wQ-Juo">
             <objects>
-                <viewController storyboardIdentifier="NewPasswordViewController" id="iUi-wY-f8r" customClass="NewPasswordViewController" customModule="Rise_Shine_Swing" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NewPasswordViewController" id="iUi-wY-f8r" customClass="NewPasswordViewController" customModule="BidCast" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="uOx-o0-IaZ">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EEw-O8-z1f" customClass="HeaderView" customModule="Rise_Shine_Swing" customModuleProvider="target">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EEw-O8-z1f" customClass="HeaderView" customModule="BidCast" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="393" height="100"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
