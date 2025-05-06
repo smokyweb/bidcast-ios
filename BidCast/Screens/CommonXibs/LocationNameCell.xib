@@ -27,17 +27,17 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hSi-jU-lFz">
-                        <rect key="frame" x="16" y="8" width="379" height="89"/>
+                        <rect key="frame" x="16" y="8" width="379" height="80"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="person.2.fill" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="G1f-MO-Z9A">
-                                <rect key="frame" x="16" y="24.333333333333336" width="44" height="42.000000000000007"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="defaultUser" translatesAutoresizingMaskIntoConstraints="NO" id="G1f-MO-Z9A">
+                                <rect key="frame" x="16" y="18" width="44" height="44"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="44" id="NmQ-Kd-3P8"/>
                                     <constraint firstAttribute="height" constant="44" id="SEM-h7-JV8"/>
                                 </constraints>
                             </imageView>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="-3" translatesAutoresizingMaskIntoConstraints="NO" id="gaH-vw-sh0">
-                                <rect key="frame" x="76" y="19" width="257" height="51"/>
+                                <rect key="frame" x="76" y="14.666666666666671" width="257" height="51"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Samantha Example" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LSs-99-WNr">
                                         <rect key="frame" x="0.0" y="0.0" width="257" height="27"/>
@@ -61,7 +61,7 @@
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </stackView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hDB-sh-GRp">
-                                <rect key="frame" x="341" y="32.666666666666664" width="24" height="24"/>
+                                <rect key="frame" x="341" y="28" width="24" height="24"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="24" id="9ie-tl-80o"/>
                                     <constraint firstAttribute="height" constant="24" id="sou-Y0-9Wc"/>
@@ -73,6 +73,7 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
+                            <constraint firstAttribute="height" constant="80" id="GZb-RY-Kvj"/>
                             <constraint firstItem="G1f-MO-Z9A" firstAttribute="leading" secondItem="hSi-jU-lFz" secondAttribute="leading" constant="16" id="Gv6-eZ-ghD"/>
                             <constraint firstItem="gaH-vw-sh0" firstAttribute="centerY" secondItem="G1f-MO-Z9A" secondAttribute="centerY" id="StR-oO-h7G"/>
                             <constraint firstItem="hDB-sh-GRp" firstAttribute="centerY" secondItem="G1f-MO-Z9A" secondAttribute="centerY" id="TRO-Ww-PfR"/>
@@ -108,8 +109,8 @@
         </tableViewCell>
     </objects>
     <resources>
+        <image name="defaultUser" width="64" height="64"/>
         <image name="ic_goArrow" width="10" height="16"/>
-        <image name="person.2.fill" catalog="system" width="128" height="86"/>
         <namedColor name="Black">
             <color red="0.062745098039215685" green="0.10980392156862745" blue="0.13725490196078433" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>

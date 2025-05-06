@@ -11,15 +11,15 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="177" id="KGk-i7-Jjw" customClass="SegmentCell" customModule="Rise_Shine_Swing" customModuleProvider="target">
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="177" id="KGk-i7-Jjw" customClass="SegmentCell" customModule="BidCast" customModuleProvider="target">
             <rect key="frame" x="0.0" y="0.0" width="434" height="177"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
                 <rect key="frame" x="0.0" y="0.0" width="434" height="177"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ehf-3B-ft4" customClass="HBSegmentedControl" customModule="Rise_Shine_Swing" customModuleProvider="target">
-                        <rect key="frame" x="20" y="61.666666666666657" width="394" height="54"/>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ehf-3B-ft4" customClass="HBSegmentedControl" customModule="BidCast" customModuleProvider="target">
+                        <rect key="frame" x="12" y="61.666666666666657" width="410" height="54"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="54" id="dxc-zY-TOM"/>
@@ -28,8 +28,8 @@
                 </subviews>
                 <constraints>
                     <constraint firstItem="Ehf-3B-ft4" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="YIA-gz-g09"/>
-                    <constraint firstItem="Ehf-3B-ft4" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="20" id="woD-HP-g7T"/>
-                    <constraint firstAttribute="trailing" secondItem="Ehf-3B-ft4" secondAttribute="trailing" constant="20" id="wzJ-MK-51C"/>
+                    <constraint firstItem="Ehf-3B-ft4" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="12" id="woD-HP-g7T"/>
+                    <constraint firstAttribute="trailing" secondItem="Ehf-3B-ft4" secondAttribute="trailing" constant="12" id="wzJ-MK-51C"/>
                 </constraints>
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>

@@ -43,6 +43,8 @@ class AccountViewController: UIViewController {
     ]
     var imageName = ["inventory","mic","orders","wallet","tag","tag","shipping","people","seller","shop","analysis","analysis"]
     var tabName = ["Inventory","Shows","My Orders","Wallet","Offers","Tips","Shipping","Affiliate Program","Seller Trainig","Premier Shop","Seller status","Seller Analytics"]
+    var sellerItems = ["284","$5.2K","4.8"]
+    var sellerItemsNAme = ["Items","Revenue","Rating"]
     var segmentType: segmentAccount = .sellerHub
     
     
@@ -95,14 +97,19 @@ extension AccountViewController : UITableViewDataSource,UITableViewDelegate{
                 
             case .profile:
                 let cell = tableViewOlt.dequeueCell(with: LocationNameCell.self)
+                cell.innerViewOlt.addBorders(of: .black, width: 0.0)
                 return cell
             case .segment:
                 let cell = tableViewOlt.dequeueCell(with: SegmentCell.self)
-                
+                cell.isNavFrom = "MyAccountVC"
+                cell.setupforsegmentControl()
+                cell.contentView.backgroundColor = .clear
                 return cell
             case .profileDetails:
                 let cell = tableViewOlt.dequeueCell(with: CollectionViewCell.self)
                 cell.isForDetails = true
+                cell.sellerItemsNAme = self.sellerItemsNAme
+                cell.seller = self.sellerItems
                 return cell
             case .tab:
                 let cell = tableViewOlt.dequeueCell(with: CollectionViewCell.self)
@@ -130,7 +137,7 @@ extension AccountViewController : UITableViewDataSource,UITableViewDelegate{
         case .profile:
             return UITableView.automaticDimension
         case .segment:
-            return UITableView.automaticDimension
+            return Const.Height.segment
         case .profileDetails:
             return 140
         case .tab:

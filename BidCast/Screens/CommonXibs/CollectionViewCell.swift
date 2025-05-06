@@ -16,7 +16,8 @@ class CollectionViewCell: UITableViewCell {
     static let identifier = "CollectionViewCell"
     var isForDetails = false
     var items = [Any]()
-    
+    var seller = [String]()
+    var sellerItemsNAme = [String]()
     var imageName = [String]()
     var titleName = [String]()
     
@@ -58,7 +59,7 @@ extension CollectionViewCell : UICollectionViewDelegate,UICollectionViewDataSour
 {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if self.isForDetails{
-            return 3
+            return self.seller.count == 0 ? 0 : self.seller.count
         }else{
             return self.titleName.count == 0 ? 0 : self.titleName.count
             
@@ -69,7 +70,8 @@ extension CollectionViewCell : UICollectionViewDelegate,UICollectionViewDataSour
         if isForDetails{
             let cell = collectionView.dequeueCell(ofType: SellerRevenueCell.self)
             cell.innerView.makeCornerRounded(ofSize: 12)
-            
+            cell.labelOlt.text = self.seller[indexPath.row]
+            cell.productNameLbl.text = self.sellerItemsNAme[indexPath.row]
             return cell
         }else{
             let cell = collectionView.dequeueCell(ofType: ProductCollectionViewCell.self)
