@@ -12,36 +12,67 @@ class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
     
     // Constants for Tab Items
     private enum Tab: Int, CaseIterable {
-        case home, myProfile, more
+        case home, explore, sell, activity, account
         
         var title: String {
             switch self {
-            case .home: return "Home"
-            case .myProfile: return "My Profile"
-            case .more: return "More"
+            case .home: 
+                return "Home"
+           
+            case .explore:
+                return "Explore"
+            case .sell:
+                return "Sell"
+            case .activity:
+                return "Activity"
+            case .account:
+                return "Account"
             }
         }
         
         var imageName: String {
             switch self {
-            case .home: return "house.fill"
-            case .myProfile: return "person.circle.fill"
-            case .more: return "line.3.horizontal"
+            case .home: 
+                return "house.fill"
+            case .explore:
+                return "safari.fill"
+            case .sell:
+                return "plus.circle.fill"
+            case .activity:
+                return "suit.heart.fill"
+            case .account:
+                return "person.fill"
             }
         }
         
         var viewControllerId: String {
             switch self {
-            case .home: return "HomeViewController"
-            case .myProfile: return "MoreViewController"
-            case .more: return "MoreViewController"
+            case .home: 
+                return "HomeViewController"
+            
+            case .explore:
+                return "ExploreViewController"
+            case .sell:
+                return "SellViewController"
+            case .activity:
+                return "ActivityViewController"
+            case .account:
+                return "AccountViewController"
             }
         }
         var storyboardName: String {
             switch self {
-            case .home: return "Main"
-            case .myProfile: return "More"
-            case .more: return "More"
+            case .home:
+                return "Main"
+           
+            case .explore:
+                return "Main"
+            case .sell:
+                return "Main"
+            case .activity:
+                return "Main"
+            case .account:
+                return "Main"
             }
         }
     }
@@ -52,10 +83,8 @@ class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
         super.viewDidLoad()
         delegate = self
         setup()
-//        configureSideMenu()
     }
     override func viewWillAppear(_ animated: Bool) {
-//        setup()
     }
     
    
@@ -76,8 +105,8 @@ class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
     }
     
     private func createTabBarItem(title: String, imageName: String) -> UITabBarItem {
-        let item = UITabBarItem(title: title, image: UIImage(systemName: imageName)?.withTintColor(UIColor.lightGray), selectedImage: UIImage(systemName: imageName)?.withTintColor(.darkGray, renderingMode: .alwaysOriginal))
-        item.setTitleTextAttributes([.foregroundColor: UIColor.darkGray], for: .selected)
+        let item = UITabBarItem(title: title, image: UIImage(systemName: imageName)?.withTintColor(UIColor.lightGray), selectedImage: UIImage(systemName: imageName)?.withTintColor(.primary, renderingMode: .alwaysOriginal))
+        item.setTitleTextAttributes([.foregroundColor: UIColor.primary], for: .selected)
         item.setTitleTextAttributes([.foregroundColor: UIColor.lightGray], for: .normal)
         return item
     }
@@ -92,23 +121,23 @@ class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
         tabBar.layer.masksToBounds = false
     }
     
-    private func configureSideMenu() {
-        let moreVC = Utilities.sharedInstance.getVC(storyBoardName: "More", vcId: Tab.more.viewControllerId) as! MoreViewController
-        
-        let menu = SideMenuNavigationController(rootViewController: moreVC)
-        menu.menuWidth = 300 // Set menu width
-        menu.presentationStyle = .menuSlideIn
-        menu.presentationStyle.presentingEndAlpha = 0.5
-        SideMenuManager.default.rightMenuNavigationController = menu // Configure the right menu
-    }
-    
+//    private func configureSideMenu() {
+//        let moreVC = Utilities.sharedInstance.getVC(storyBoardName: "More", vcId: Tab.more.viewControllerId) as! MoreViewController
+//        
+//        let menu = SideMenuNavigationController(rootViewController: moreVC)
+//        menu.menuWidth = 300 // Set menu width
+//        menu.presentationStyle = .menuSlideIn
+//        menu.presentationStyle.presentingEndAlpha = 0.5
+//        SideMenuManager.default.rightMenuNavigationController = menu // Configure the right menu
+//    }
+//    
     // Handle tab selection
     func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
-        if let index = viewControllers?.firstIndex(of: viewController), index == Tab.more.rawValue {
-            // Present the side menu
-            present(SideMenuManager.default.rightMenuNavigationController!, animated: true, completion: nil)
-            return false // Prevent the tab from being selected
-        }
+//        if let index = viewControllers?.firstIndex(of: viewController), index == Tab.more.rawValue {
+//            // Present the side menu
+//            present(SideMenuManager.default.rightMenuNavigationController!, animated: true, completion: nil)
+//            return false // Prevent the tab from being selected
+//        }
         return true // Allow normal selection for other tabs
     }
 }

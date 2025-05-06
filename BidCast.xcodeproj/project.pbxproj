@@ -11,6 +11,13 @@
 		201130344F8E2F62583D8D33 /* Pods_BidCast.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DBB088E0B08524BCEF34F45 /* Pods_BidCast.framework */; };
 		2F171C614638B60B62FA5711 /* Pods_BidCastTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 930D54942A42ED044A87B66B /* Pods_BidCastTests.framework */; };
 		35B866AF2DC9EBC200E6FFA1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 35B866AE2DC9EBC200E6FFA1 /* LaunchScreen.storyboard */; };
+		35B866B72DC9EFA700E6FFA1 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B866B62DC9EFA700E6FFA1 /* HomeViewController.swift */; };
+		35B866B92DC9F29800E6FFA1 /* ExploreViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B866B82DC9F29800E6FFA1 /* ExploreViewController.swift */; };
+		35B866BB2DC9F2A300E6FFA1 /* SellViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B866BA2DC9F2A300E6FFA1 /* SellViewController.swift */; };
+		35B866BD2DC9F2B300E6FFA1 /* ActivityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B866BC2DC9F2B300E6FFA1 /* ActivityViewController.swift */; };
+		35B866BF2DC9F2C000E6FFA1 /* AccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B866BE2DC9F2C000E6FFA1 /* AccountViewController.swift */; };
+		35B866C12DC9F82A00E6FFA1 /* HeaderWithAppName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B866C02DC9F82A00E6FFA1 /* HeaderWithAppName.swift */; };
+		35B866C32DC9F85000E6FFA1 /* HeaderWithAppName.xib in Resources */ = {isa = PBXBuildFile; fileRef = 35B866C22DC9F85000E6FFA1 /* HeaderWithAppName.xib */; };
 		99BC30032DC9DCED00E1BEA6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99BC2FF72DC9DCED00E1BEA6 /* AppDelegate.swift */; };
 		99BC30042DC9DCED00E1BEA6 /* BidCast.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 99BC2FF92DC9DCED00E1BEA6 /* BidCast.xcdatamodeld */; };
 		99BC30052DC9DCED00E1BEA6 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99BC2FFF2DC9DCED00E1BEA6 /* SceneDelegate.swift */; };
@@ -305,6 +312,13 @@
 /* Begin PBXFileReference section */
 		14371208B2B8B28094D4C90E /* Pods-BidCast.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BidCast.debug.xcconfig"; path = "Target Support Files/Pods-BidCast/Pods-BidCast.debug.xcconfig"; sourceTree = "<group>"; };
 		35B866AE2DC9EBC200E6FFA1 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		35B866B62DC9EFA700E6FFA1 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
+		35B866B82DC9F29800E6FFA1 /* ExploreViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreViewController.swift; sourceTree = "<group>"; };
+		35B866BA2DC9F2A300E6FFA1 /* SellViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SellViewController.swift; sourceTree = "<group>"; };
+		35B866BC2DC9F2B300E6FFA1 /* ActivityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityViewController.swift; sourceTree = "<group>"; };
+		35B866BE2DC9F2C000E6FFA1 /* AccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountViewController.swift; sourceTree = "<group>"; };
+		35B866C02DC9F82A00E6FFA1 /* HeaderWithAppName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderWithAppName.swift; sourceTree = "<group>"; };
+		35B866C22DC9F85000E6FFA1 /* HeaderWithAppName.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HeaderWithAppName.xib; sourceTree = "<group>"; };
 		52557220D9CDF3E039B0DCC0 /* Pods-BidCastTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BidCastTests.debug.xcconfig"; path = "Target Support Files/Pods-BidCastTests/Pods-BidCastTests.debug.xcconfig"; sourceTree = "<group>"; };
 		8DBB088E0B08524BCEF34F45 /* Pods_BidCast.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BidCast.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		930D54942A42ED044A87B66B /* Pods_BidCastTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BidCastTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -630,6 +644,54 @@
 				DE378E847C398975C6A1E294 /* Pods-BidCastTests.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		35B866B02DC9EF6C00E6FFA1 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				35B866B52DC9EF9800E6FFA1 /* VIew */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		35B866B12DC9EF7400E6FFA1 /* Explore */ = {
+			isa = PBXGroup;
+			children = (
+				35B866B82DC9F29800E6FFA1 /* ExploreViewController.swift */,
+			);
+			path = Explore;
+			sourceTree = "<group>";
+		};
+		35B866B22DC9EF8500E6FFA1 /* Sell */ = {
+			isa = PBXGroup;
+			children = (
+				35B866BA2DC9F2A300E6FFA1 /* SellViewController.swift */,
+			);
+			path = Sell;
+			sourceTree = "<group>";
+		};
+		35B866B32DC9EF8900E6FFA1 /* Activity */ = {
+			isa = PBXGroup;
+			children = (
+				35B866BC2DC9F2B300E6FFA1 /* ActivityViewController.swift */,
+			);
+			path = Activity;
+			sourceTree = "<group>";
+		};
+		35B866B42DC9EF9100E6FFA1 /* Account */ = {
+			isa = PBXGroup;
+			children = (
+				35B866BE2DC9F2C000E6FFA1 /* AccountViewController.swift */,
+			);
+			path = Account;
+			sourceTree = "<group>";
+		};
+		35B866B52DC9EF9800E6FFA1 /* VIew */ = {
+			isa = PBXGroup;
+			children = (
+				35B866B62DC9EFA700E6FFA1 /* HomeViewController.swift */,
+			);
+			path = VIew;
 			sourceTree = "<group>";
 		};
 		5295C27E0F1059CCCE08A1EA /* Frameworks */ = {
@@ -1002,6 +1064,11 @@
 		99BC30902DC9DD0400E1BEA6 /* Main */ = {
 			isa = PBXGroup;
 			children = (
+				35B866B42DC9EF9100E6FFA1 /* Account */,
+				35B866B32DC9EF8900E6FFA1 /* Activity */,
+				35B866B22DC9EF8500E6FFA1 /* Sell */,
+				35B866B12DC9EF7400E6FFA1 /* Explore */,
+				35B866B02DC9EF6C00E6FFA1 /* Home */,
 				99BC30852DC9DD0400E1BEA6 /* OurSubscription */,
 				99BC308F2DC9DD0400E1BEA6 /* LogOut */,
 			);
@@ -1387,6 +1454,8 @@
 				99BC30E72DC9DD0400E1BEA6 /* HeaderView.xib */,
 				99BC30E82DC9DD0400E1BEA6 /* MoreHeaderView.swift */,
 				99BC30E92DC9DD0400E1BEA6 /* MoreHeaderView.xib */,
+				35B866C02DC9F82A00E6FFA1 /* HeaderWithAppName.swift */,
+				35B866C22DC9F85000E6FFA1 /* HeaderWithAppName.xib */,
 			);
 			path = HeaderViews;
 			sourceTree = "<group>";
@@ -1886,6 +1955,7 @@
 				99BC32032DC9DD0400E1BEA6 /* Inter_18pt-Regular.ttf in Resources */,
 				99BC32062DC9DD0400E1BEA6 /* Inter_24pt-Light.ttf in Resources */,
 				99BC32072DC9DD0400E1BEA6 /* README.txt in Resources */,
+				35B866C32DC9F85000E6FFA1 /* HeaderWithAppName.xib in Resources */,
 				99BC32082DC9DD0400E1BEA6 /* Outfit-ExtraBold.ttf in Resources */,
 				99BC32092DC9DD0400E1BEA6 /* Inter_28pt-BoldItalic.ttf in Resources */,
 				99BC320A2DC9DD0400E1BEA6 /* Inter_28pt-Bold.ttf in Resources */,
@@ -2118,6 +2188,7 @@
 				99BC327E2DC9DD0400E1BEA6 /* CachingPlayerItem.swift in Sources */,
 				99BC327F2DC9DD0400E1BEA6 /* NewPasswordViewModel.swift in Sources */,
 				99BC32802DC9DD0400E1BEA6 /* ProfileDetailCell.swift in Sources */,
+				35B866B72DC9EFA700E6FFA1 /* HomeViewController.swift in Sources */,
 				99BC32812DC9DD0400E1BEA6 /* AppHeaderExpendableCell.swift in Sources */,
 				99BC32842DC9DD0400E1BEA6 /* UICollectionView+Extension.swift in Sources */,
 				99BC32862DC9DD0400E1BEA6 /* UITableView+Extensions.swift in Sources */,
@@ -2170,6 +2241,7 @@
 				99BC32C32DC9DD0400E1BEA6 /* DatePickerViewController.swift in Sources */,
 				99BC32C42DC9DD0400E1BEA6 /* ProfileViewController.swift in Sources */,
 				99BC32C52DC9DD0400E1BEA6 /* UIWindow+Extension.swift in Sources */,
+				35B866BF2DC9F2C000E6FFA1 /* AccountViewController.swift in Sources */,
 				99BC32C62DC9DD0400E1BEA6 /* UITableView+Extension.swift in Sources */,
 				99BC32C72DC9DD0400E1BEA6 /* PrivacyPolicyViewController.swift in Sources */,
 				99BC32C82DC9DD0400E1BEA6 /* SubmitBtnView.swift in Sources */,
@@ -2178,6 +2250,7 @@
 				99BC32CD2DC9DD0400E1BEA6 /* AboutUsViewModel.swift in Sources */,
 				99BC32CE2DC9DD0400E1BEA6 /* AlertWithSingleButtonViewController.swift in Sources */,
 				99BC32D12DC9DD0400E1BEA6 /* SecondBtnCell.swift in Sources */,
+				35B866B92DC9F29800E6FFA1 /* ExploreViewController.swift in Sources */,
 				99BC32D22DC9DD0400E1BEA6 /* SignInViewModel.swift in Sources */,
 				99BC32D32DC9DD0400E1BEA6 /* UITextField+Extension.swift in Sources */,
 				99BC32D42DC9DD0400E1BEA6 /* SubscriptionsCell.swift in Sources */,
@@ -2213,6 +2286,8 @@
 				99BC32FA2DC9DD0400E1BEA6 /* TextFieldWithoutTittleCell.swift in Sources */,
 				99BC32FD2DC9DD0400E1BEA6 /* FrequentlyAskedQuestionViewController.swift in Sources */,
 				99BC33002DC9DD0400E1BEA6 /* ToastMessages+Extension.swift in Sources */,
+				35B866C12DC9F82A00E6FFA1 /* HeaderWithAppName.swift in Sources */,
+				35B866BB2DC9F2A300E6FFA1 /* SellViewController.swift in Sources */,
 				99BC33012DC9DD0400E1BEA6 /* CommanExtension.swift in Sources */,
 				99BC33022DC9DD0400E1BEA6 /* AboutUsViewController.swift in Sources */,
 				99BC33032DC9DD0400E1BEA6 /* DatePicker.swift in Sources */,
@@ -2225,6 +2300,7 @@
 				99BC330A2DC9DD0400E1BEA6 /* ProfileViewModel.swift in Sources */,
 				99BC330B2DC9DD0400E1BEA6 /* NewPasswordViewController.swift in Sources */,
 				99BC330C2DC9DD0400E1BEA6 /* SignUpTodayCell.swift in Sources */,
+				35B866BD2DC9F2B300E6FFA1 /* ActivityViewController.swift in Sources */,
 				99BC30062DC9DCED00E1BEA6 /* ViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
