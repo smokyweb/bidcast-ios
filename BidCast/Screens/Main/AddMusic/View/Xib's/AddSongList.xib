@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="Montserrat-Regular.ttf">
+            <string>Montserrat-Regular</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="136" id="KGk-i7-Jjw" customClass="AddSongList" customModule="Rise_Shine_Swing" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="449" height="136"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="449" height="136"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hAL-M7-oqd">
+                        <rect key="frame" x="16" y="8" width="417" height="120"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillProportionally" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="god-Gz-3vz">
+                                <rect key="frame" x="16" y="8" width="347" height="104"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="FileName.png" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="155-jc-jWj">
+                                        <rect key="frame" x="0.0" y="0.0" width="347" height="39.333333333333336"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <fontDescription key="fontDescription" name="Montserrat-Regular" family="Montserrat" pointSize="13"/>
+                                        <color key="textColor" name="black"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="FileName.png" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gGk-o6-0Dq">
+                                        <rect key="frame" x="0.0" y="49.333333333333329" width="347" height="54.666666666666671"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <fontDescription key="fontDescription" name="Montserrat-Regular" family="Montserrat" pointSize="13"/>
+                                        <color key="textColor" name="black"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </stackView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5DH-qh-O4c">
+                                <rect key="frame" x="378" y="50" width="23" height="20"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="20" id="OFl-BF-bfa"/>
+                                    <constraint firstAttribute="width" constant="23" id="nfS-M0-1tR"/>
+                                </constraints>
+                                <color key="tintColor" name="black"/>
+                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                <state key="normal" image="ic_GrayDelete"/>
+                                <connections>
+                                    <action selector="didTab:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="c4D-DO-q56"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" name="white"/>
+                        <constraints>
+                            <constraint firstItem="5DH-qh-O4c" firstAttribute="centerY" secondItem="god-Gz-3vz" secondAttribute="centerY" id="9hS-yh-lWP"/>
+                            <constraint firstItem="god-Gz-3vz" firstAttribute="top" secondItem="hAL-M7-oqd" secondAttribute="top" constant="8" id="B6Y-Ok-cIz"/>
+                            <constraint firstItem="god-Gz-3vz" firstAttribute="leading" secondItem="hAL-M7-oqd" secondAttribute="leading" constant="16" id="MRN-nx-nMh"/>
+                            <constraint firstItem="5DH-qh-O4c" firstAttribute="leading" secondItem="god-Gz-3vz" secondAttribute="trailing" constant="15" id="NLU-8h-IRk"/>
+                            <constraint firstAttribute="bottom" secondItem="god-Gz-3vz" secondAttribute="bottom" constant="8" id="ZvD-JV-hyr"/>
+                            <constraint firstAttribute="trailing" secondItem="5DH-qh-O4c" secondAttribute="trailing" constant="16" id="cQS-Zz-04n"/>
+                        </constraints>
+                    </view>
+                </subviews>
+                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                <constraints>
+                    <constraint firstItem="hAL-M7-oqd" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="16" id="NFx-Ri-veP"/>
+                    <constraint firstItem="hAL-M7-oqd" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="8" id="PMb-rs-C3o"/>
+                    <constraint firstAttribute="trailing" secondItem="hAL-M7-oqd" secondAttribute="trailing" constant="16" id="k2z-uT-1cZ"/>
+                    <constraint firstAttribute="bottom" secondItem="hAL-M7-oqd" secondAttribute="bottom" constant="8" id="roV-mc-eAq"/>
+                </constraints>
+            </tableViewCellContentView>
+            <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <connections>
+                <outlet property="outerViewOlt" destination="hAL-M7-oqd" id="xTt-GG-7KT"/>
+                <outlet property="rightButtonOlt" destination="5DH-qh-O4c" id="zo7-36-emx"/>
+                <outlet property="subTitleOlt" destination="gGk-o6-0Dq" id="upL-ec-c9y"/>
+                <outlet property="titleOlt" destination="155-jc-jWj" id="0bG-cd-2ID"/>
+            </connections>
+            <point key="canvasLocation" x="138.1679389312977" y="30.985915492957748"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="ic_GrayDelete" width="35" height="35"/>
+        <namedColor name="black">
+            <color red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="white">
+            <color red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+    </resources>
+</document>

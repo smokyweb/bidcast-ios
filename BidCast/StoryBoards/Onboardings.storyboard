@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Y6W-OH-hqX">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Sign In View Controller-->
+        <scene sceneID="s0d-6b-0kx">
+            <objects>
+                <viewController storyboardIdentifier="SignInViewController" id="Y6W-OH-hqX" customClass="SignInViewController" customModule="Rise_Shine_Swing" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="5EZ-qb-Rvc">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="82r-yD-RDD">
+                                <rect key="frame" x="0.0" y="-80" width="393" height="932"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </tableView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="vDu-zF-Fre"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstAttribute="bottom" secondItem="82r-yD-RDD" secondAttribute="bottom" id="Lhs-zf-0Og"/>
+                            <constraint firstItem="82r-yD-RDD" firstAttribute="top" secondItem="5EZ-qb-Rvc" secondAttribute="top" constant="-80" id="MG5-Ve-pq4"/>
+                            <constraint firstItem="82r-yD-RDD" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" id="V3R-Ew-NcF"/>
+                            <constraint firstItem="82r-yD-RDD" firstAttribute="trailing" secondItem="vDu-zF-Fre" secondAttribute="trailing" id="tKv-GM-INs"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="signTblView" destination="82r-yD-RDD" id="ae2-ue-Wc9"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="135.1145038167939" y="4.9295774647887329"/>
+        </scene>
+        <!--Sign Up View Controller-->
+        <scene sceneID="OPW-91-dOp">
+            <objects>
+                <viewController storyboardIdentifier="SignUpViewController" id="Dhz-KY-56z" customClass="SignUpViewController" customModule="Rise_Shine_Swing" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="RUG-X7-RPm">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="tqg-q3-gED">
+                                <rect key="frame" x="0.0" y="100" width="393" height="752"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </tableView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VHa-8E-jAp" customClass="HeaderView" customModule="Rise_Shine_Swing" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="393" height="110"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="110" id="qZw-Qs-ufj"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="nw6-dp-yC3"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="tqg-q3-gED" firstAttribute="trailing" secondItem="nw6-dp-yC3" secondAttribute="trailing" id="50l-4y-Rdc"/>
+                            <constraint firstItem="tqg-q3-gED" firstAttribute="top" secondItem="VHa-8E-jAp" secondAttribute="bottom" constant="-10" id="MOw-oc-SLD"/>
+                            <constraint firstItem="VHa-8E-jAp" firstAttribute="leading" secondItem="RUG-X7-RPm" secondAttribute="leading" id="Syx-yt-v5f"/>
+                            <constraint firstAttribute="bottom" secondItem="tqg-q3-gED" secondAttribute="bottom" id="Yqg-Hk-vkw"/>
+                            <constraint firstItem="VHa-8E-jAp" firstAttribute="top" secondItem="RUG-X7-RPm" secondAttribute="top" id="Zbt-fC-lBg"/>
+                            <constraint firstItem="VHa-8E-jAp" firstAttribute="centerX" secondItem="RUG-X7-RPm" secondAttribute="centerX" id="fEc-Ch-R8U"/>
+                            <constraint firstItem="tqg-q3-gED" firstAttribute="leading" secondItem="nw6-dp-yC3" secondAttribute="leading" id="suE-Wb-LSi"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="headerView" destination="VHa-8E-jAp" id="v5O-K2-x5x"/>
+                        <outlet property="signUpTblView" destination="tqg-q3-gED" id="Zge-Yz-xSz"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="VFE-k2-eGr" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="840" y="5"/>
+        </scene>
+        <!--Forget Password View Controller-->
+        <scene sceneID="Kq7-LE-M0L">
+            <objects>
+                <viewController storyboardIdentifier="ForgetPasswordViewController" id="sb5-Og-Oll" customClass="ForgetPasswordViewController" customModule="Rise_Shine_Swing" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="9YJ-bv-W6p">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="L3J-vU-sON" customClass="HeaderView" customModule="Rise_Shine_Swing" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="393" height="100"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="100" id="JDF-eC-KUi"/>
+                                </constraints>
+                            </view>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="Fo9-Pb-b8w">
+                                <rect key="frame" x="0.0" y="100" width="393" height="752"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </tableView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="wiC-jy-nlM"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstAttribute="bottom" secondItem="Fo9-Pb-b8w" secondAttribute="bottom" id="5dj-vK-qJu"/>
+                            <constraint firstItem="L3J-vU-sON" firstAttribute="top" secondItem="9YJ-bv-W6p" secondAttribute="top" id="9yd-Kp-91a"/>
+                            <constraint firstItem="Fo9-Pb-b8w" firstAttribute="top" secondItem="L3J-vU-sON" secondAttribute="bottom" id="Hy2-Yv-VVn"/>
+                            <constraint firstItem="Fo9-Pb-b8w" firstAttribute="leading" secondItem="wiC-jy-nlM" secondAttribute="leading" id="IBe-Hd-BpH"/>
+                            <constraint firstItem="L3J-vU-sON" firstAttribute="leading" secondItem="wiC-jy-nlM" secondAttribute="leading" id="WFf-nb-KcT"/>
+                            <constraint firstItem="wiC-jy-nlM" firstAttribute="trailing" secondItem="Fo9-Pb-b8w" secondAttribute="trailing" id="a0P-dO-I6E"/>
+                            <constraint firstItem="L3J-vU-sON" firstAttribute="trailing" secondItem="wiC-jy-nlM" secondAttribute="trailing" id="zbK-6J-H5Y"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="forgetTblOlt" destination="Fo9-Pb-b8w" id="Xfu-Mz-dhl"/>
+                        <outlet property="headerViewOlt" destination="L3J-vU-sON" id="IHn-Ee-9OI"/>
+                        <outlet property="heightHeaderConstraint" destination="JDF-eC-KUi" id="32g-4k-1p5"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Hgp-OB-Tzp" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1569" y="5"/>
+        </scene>
+        <!--Otp View Controller-->
+        <scene sceneID="WaO-BN-kW5">
+            <objects>
+                <viewController storyboardIdentifier="OtpViewController" id="BOh-Le-FRn" customClass="OtpViewController" customModule="Rise_Shine_Swing" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Y7e-GW-PAc">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iLi-BY-Tvz" customClass="HeaderView" customModule="Rise_Shine_Swing" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="393" height="100"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="100" id="nOE-oc-gLm"/>
+                                </constraints>
+                            </view>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="DMz-uu-pM8">
+                                <rect key="frame" x="0.0" y="100" width="393" height="752"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </tableView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="saQ-KC-eXB"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="DMz-uu-pM8" firstAttribute="top" secondItem="iLi-BY-Tvz" secondAttribute="bottom" id="6lr-6d-bJL"/>
+                            <constraint firstItem="iLi-BY-Tvz" firstAttribute="trailing" secondItem="saQ-KC-eXB" secondAttribute="trailing" id="ILD-pb-Ifb"/>
+                            <constraint firstItem="iLi-BY-Tvz" firstAttribute="top" secondItem="Y7e-GW-PAc" secondAttribute="top" id="LDr-hb-bdO"/>
+                            <constraint firstAttribute="bottom" secondItem="DMz-uu-pM8" secondAttribute="bottom" id="hPg-Vi-Pac"/>
+                            <constraint firstItem="iLi-BY-Tvz" firstAttribute="leading" secondItem="saQ-KC-eXB" secondAttribute="leading" id="jBb-jq-Hf5"/>
+                            <constraint firstItem="saQ-KC-eXB" firstAttribute="trailing" secondItem="DMz-uu-pM8" secondAttribute="trailing" id="uJ9-PS-Qvh"/>
+                            <constraint firstItem="DMz-uu-pM8" firstAttribute="leading" secondItem="saQ-KC-eXB" secondAttribute="leading" id="viT-mJ-fab"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="headerViewOlt" destination="iLi-BY-Tvz" id="xKB-hc-8Fp"/>
+                        <outlet property="heightHeaderConstraint" destination="nOE-oc-gLm" id="TY7-dA-JE6"/>
+                        <outlet property="otpTableView" destination="DMz-uu-pM8" id="NCU-cZ-QJT"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="wU6-t7-st2" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2263" y="5"/>
+        </scene>
+        <!--New Password View Controller-->
+        <scene sceneID="B1o-wQ-Juo">
+            <objects>
+                <viewController storyboardIdentifier="NewPasswordViewController" id="iUi-wY-f8r" customClass="NewPasswordViewController" customModule="Rise_Shine_Swing" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="uOx-o0-IaZ">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EEw-O8-z1f" customClass="HeaderView" customModule="Rise_Shine_Swing" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="393" height="100"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="100" id="952-OO-qCr"/>
+                                </constraints>
+                            </view>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="ZEQ-6f-rRi">
+                                <rect key="frame" x="0.0" y="100" width="393" height="752"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </tableView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="i5w-CH-ya4"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="EEw-O8-z1f" firstAttribute="leading" secondItem="i5w-CH-ya4" secondAttribute="leading" id="2S4-m2-p7E"/>
+                            <constraint firstAttribute="bottom" secondItem="ZEQ-6f-rRi" secondAttribute="bottom" id="2mJ-3i-nfA"/>
+                            <constraint firstItem="EEw-O8-z1f" firstAttribute="top" secondItem="uOx-o0-IaZ" secondAttribute="top" id="TMF-3r-e1L"/>
+                            <constraint firstItem="ZEQ-6f-rRi" firstAttribute="leading" secondItem="i5w-CH-ya4" secondAttribute="leading" id="UFg-pw-ZE2"/>
+                            <constraint firstItem="i5w-CH-ya4" firstAttribute="trailing" secondItem="ZEQ-6f-rRi" secondAttribute="trailing" id="dUV-s6-0Ho"/>
+                            <constraint firstItem="EEw-O8-z1f" firstAttribute="trailing" secondItem="i5w-CH-ya4" secondAttribute="trailing" id="dzC-lt-35h"/>
+                            <constraint firstItem="ZEQ-6f-rRi" firstAttribute="top" secondItem="EEw-O8-z1f" secondAttribute="bottom" id="onA-0x-M8Q"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="headerView" destination="EEw-O8-z1f" id="yBb-ZA-hys"/>
+                        <outlet property="heightHeaderConstraint" destination="952-OO-qCr" id="oY3-Yo-DGg"/>
+                        <outlet property="passWordTbl" destination="ZEQ-6f-rRi" id="ngS-uV-4e6"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="OfG-c9-TBD" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2935" y="5"/>
+        </scene>
+    </scenes>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

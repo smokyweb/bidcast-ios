@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="259" id="KGk-i7-Jjw" customClass="AddSongCell" customModule="Rise_Shine_Swing" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="413" height="259"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="413" height="259"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ypa-PR-hri">
+                        <rect key="frame" x="16" y="16" width="381" height="227"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5Zf-bu-85y">
+                                <rect key="frame" x="0.0" y="93.666666666666671" width="381" height="40.000000000000014"/>
+                                <subviews>
+                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillProportionally" translatesAutoresizingMaskIntoConstraints="NO" id="UVW-En-iX6">
+                                        <rect key="frame" x="0.0" y="0.0" width="381" height="40"/>
+                                        <subviews>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MXC-rI-BEv">
+                                                <rect key="frame" x="0.0" y="0.0" width="183.66666666666666" height="40"/>
+                                                <subviews>
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="leading" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Gta-1s-iTx">
+                                                        <rect key="frame" x="0.0" y="0.0" width="183.66666666666666" height="40"/>
+                                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                        <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                        <inset key="titleEdgeInsets" minX="10" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                                        <state key="normal" title="Add Song" image="ic_AddSong">
+                                                            <color key="titleColor" name="darkGray"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="didTap:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="0qn-2s-sxB"/>
+                                                        </connections>
+                                                    </button>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4dy-Mn-AGs">
+                                                        <rect key="frame" x="183.66666666666666" y="0.0" width="0.0" height="40"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="width" id="KaS-lU-iIP"/>
+                                                        </constraints>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                        <nil key="textColor"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
+                                                </subviews>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <constraints>
+                                                    <constraint firstItem="Gta-1s-iTx" firstAttribute="top" secondItem="MXC-rI-BEv" secondAttribute="top" id="9fO-yr-v7v"/>
+                                                    <constraint firstAttribute="trailing" secondItem="4dy-Mn-AGs" secondAttribute="trailing" id="FMu-ww-84i"/>
+                                                    <constraint firstAttribute="trailing" secondItem="4dy-Mn-AGs" secondAttribute="trailing" id="IAs-nl-sHg"/>
+                                                    <constraint firstItem="4dy-Mn-AGs" firstAttribute="leading" secondItem="Gta-1s-iTx" secondAttribute="trailing" id="Uxq-I8-vEp"/>
+                                                    <constraint firstAttribute="bottom" secondItem="4dy-Mn-AGs" secondAttribute="bottom" id="dwO-lo-ibB"/>
+                                                    <constraint firstItem="4dy-Mn-AGs" firstAttribute="top" secondItem="MXC-rI-BEv" secondAttribute="top" id="pHn-2p-DAL"/>
+                                                    <constraint firstItem="Gta-1s-iTx" firstAttribute="leading" secondItem="MXC-rI-BEv" secondAttribute="leading" id="ulq-gC-QIe"/>
+                                                    <constraint firstAttribute="bottom" secondItem="Gta-1s-iTx" secondAttribute="bottom" id="yFG-vC-vIe"/>
+                                                </constraints>
+                                            </view>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zcI-zq-PB8">
+                                                <rect key="frame" x="183.66666666666663" y="0.0" width="197.33333333333337" height="40"/>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <inset key="titleEdgeInsets" minX="10" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="10" maxY="0.0"/>
+                                                <state key="normal" title="Delete to swap songs" image="ic_subscription">
+                                                    <color key="titleColor" name="darkGray"/>
+                                                </state>
+                                                <connections>
+                                                    <action selector="addSubscription:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="WLA-eD-ZTt"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    </stackView>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="UVW-En-iX6" secondAttribute="bottom" id="1OS-ZC-Mo3"/>
+                                    <constraint firstAttribute="height" constant="40" id="Yz7-Yn-B4y"/>
+                                    <constraint firstItem="UVW-En-iX6" firstAttribute="leading" secondItem="5Zf-bu-85y" secondAttribute="leading" id="l6Y-Ps-jYZ"/>
+                                    <constraint firstAttribute="trailing" secondItem="UVW-En-iX6" secondAttribute="trailing" id="pEN-Md-IuA"/>
+                                    <constraint firstItem="UVW-En-iX6" firstAttribute="top" secondItem="5Zf-bu-85y" secondAttribute="top" id="sMX-0X-2aR"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="5Zf-bu-85y" firstAttribute="centerY" secondItem="Ypa-PR-hri" secondAttribute="centerY" id="5rm-Ns-xtI"/>
+                            <constraint firstItem="5Zf-bu-85y" firstAttribute="leading" secondItem="Ypa-PR-hri" secondAttribute="leading" id="D3o-zv-E0V"/>
+                            <constraint firstAttribute="trailing" secondItem="5Zf-bu-85y" secondAttribute="trailing" id="VQi-0z-BMF"/>
+                        </constraints>
+                    </view>
+                </subviews>
+                <color key="backgroundColor" name="ultraLightGray"/>
+                <constraints>
+                    <constraint firstAttribute="trailing" secondItem="Ypa-PR-hri" secondAttribute="trailing" constant="16" id="VXa-Ic-1n9"/>
+                    <constraint firstAttribute="bottom" secondItem="Ypa-PR-hri" secondAttribute="bottom" constant="16" id="g5g-sL-aos"/>
+                    <constraint firstItem="Ypa-PR-hri" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="16" id="oY0-hP-6Bn"/>
+                    <constraint firstItem="Ypa-PR-hri" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="16" id="vgH-GJ-ry4"/>
+                </constraints>
+            </tableViewCellContentView>
+            <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <connections>
+                <outlet property="addSongBtn" destination="Gta-1s-iTx" id="4aI-o0-YsE"/>
+                <outlet property="addSubscription" destination="zcI-zq-PB8" id="llc-AX-me9"/>
+                <outlet property="outerView" destination="Ypa-PR-hri" id="g5m-ay-7p6"/>
+                <outlet property="totalCount" destination="4dy-Mn-AGs" id="SDX-Nt-tqm"/>
+            </connections>
+            <point key="canvasLocation" x="209.92366412213741" y="74.295774647887328"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="ic_AddSong" width="23" height="23"/>
+        <image name="ic_subscription" width="20" height="20"/>
+        <namedColor name="darkGray">
+            <color red="0.17647058823529413" green="0.18823529411764706" blue="0.20784313725490197" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="ultraLightGray">
+            <color red="0.96078431372549022" green="0.97254901960784312" blue="0.9882352941176471" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+    </resources>
+</document>

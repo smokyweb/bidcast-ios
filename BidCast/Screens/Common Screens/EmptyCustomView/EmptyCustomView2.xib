@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="20037" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="20020"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="Metropolis-Regular 3.otf">
+            <string>Metropolis-Regular</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="EmptyCustomView2" customModule="GearTrakr" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="414" height="145"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wee-bl-E1Y">
+                    <rect key="frame" x="0.0" y="0.0" width="414" height="145"/>
+                    <subviews>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GZ8-rA-EEr">
+                            <rect key="frame" x="40" y="52.5" width="334" height="40"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="40" id="t9s-jY-HhU"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" name="Metropolis-Regular" family="Metropolis" pointSize="18"/>
+                            <state key="normal" title="Select New Business Date">
+                                <color key="titleColor" red="0.30980392159999998" green="0.37647058820000001" blue="0.56470588239999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </state>
+                        </button>
+                    </subviews>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    <constraints>
+                        <constraint firstAttribute="trailing" secondItem="GZ8-rA-EEr" secondAttribute="trailing" constant="40" id="TSQ-G3-DJp"/>
+                        <constraint firstItem="GZ8-rA-EEr" firstAttribute="centerY" secondItem="wee-bl-E1Y" secondAttribute="centerY" id="fAW-E9-tJs"/>
+                        <constraint firstItem="GZ8-rA-EEr" firstAttribute="leading" secondItem="wee-bl-E1Y" secondAttribute="leading" constant="40" id="fc2-wI-y1e"/>
+                        <constraint firstItem="GZ8-rA-EEr" firstAttribute="centerX" secondItem="wee-bl-E1Y" secondAttribute="centerX" id="h3Q-vs-ilH"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="wee-bl-E1Y" firstAttribute="bottom" secondItem="vUN-kp-3ea" secondAttribute="bottom" id="0DA-Ox-gSj"/>
+                <constraint firstItem="wee-bl-E1Y" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="10d-ZI-qu8"/>
+                <constraint firstItem="wee-bl-E1Y" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="Q6P-Lf-h8b"/>
+                <constraint firstItem="wee-bl-E1Y" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="t8B-bS-m4T"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="nextBtn" destination="GZ8-rA-EEr" id="MQB-OS-L0l"/>
+                <outlet property="outerView" destination="wee-bl-E1Y" id="JZZ-6e-r8z"/>
+            </connections>
+            <point key="canvasLocation" x="137.68115942028987" y="353.90625"/>
+        </view>
+    </objects>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

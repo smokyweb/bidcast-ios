@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="Montserrat-Regular.ttf">
+            <string>Montserrat-Regular</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="56" id="KGk-i7-Jjw" customClass="RemberMeCell" customModule="Rise_Shine_Swing" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="496" height="56"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="496" height="56"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="kpc-FR-jLA">
+                        <rect key="frame" x="20" y="8" width="456" height="40"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vgO-mS-knX">
+                                <rect key="frame" x="0.0" y="0.0" width="228" height="40"/>
+                                <subviews>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="ijy-Od-ztT">
+                                        <rect key="frame" x="4" y="11.666666666666663" width="20" height="17"/>
+                                        <color key="tintColor" white="0.5" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="20" id="AJp-JM-yoC"/>
+                                            <constraint firstAttribute="width" constant="20" id="w5L-sV-8e7"/>
+                                        </constraints>
+                                    </imageView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Remember Me" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="s43-iT-8Xg">
+                                        <rect key="frame" x="36" y="12.333333333333332" width="188" height="15.333333333333332"/>
+                                        <fontDescription key="fontDescription" name="Montserrat-Regular" family="Montserrat" pointSize="13"/>
+                                        <color key="textColor" name="mediumDarkGray"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uae-gE-5VF">
+                                        <rect key="frame" x="0.0" y="0.0" width="228" height="40"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="plain"/>
+                                        <connections>
+                                            <action selector="didTapRememberBtn:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="KBD-Lb-FfW"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="s43-iT-8Xg" secondAttribute="trailing" constant="4" id="0uY-T6-Sw1"/>
+                                    <constraint firstAttribute="bottom" secondItem="uae-gE-5VF" secondAttribute="bottom" id="Kbb-38-T3o"/>
+                                    <constraint firstItem="s43-iT-8Xg" firstAttribute="leading" secondItem="ijy-Od-ztT" secondAttribute="trailing" constant="12" id="YZZ-OR-Hxo"/>
+                                    <constraint firstItem="uae-gE-5VF" firstAttribute="top" secondItem="vgO-mS-knX" secondAttribute="top" id="fdt-gw-0tX"/>
+                                    <constraint firstItem="uae-gE-5VF" firstAttribute="leading" secondItem="vgO-mS-knX" secondAttribute="leading" id="gYT-9A-sIK"/>
+                                    <constraint firstItem="ijy-Od-ztT" firstAttribute="leading" secondItem="vgO-mS-knX" secondAttribute="leading" constant="4" id="kCo-po-MV2"/>
+                                    <constraint firstItem="s43-iT-8Xg" firstAttribute="centerY" secondItem="ijy-Od-ztT" secondAttribute="centerY" id="lqh-LB-lll"/>
+                                    <constraint firstItem="ijy-Od-ztT" firstAttribute="centerY" secondItem="vgO-mS-knX" secondAttribute="centerY" id="qns-fB-Dbb"/>
+                                    <constraint firstAttribute="trailing" secondItem="uae-gE-5VF" secondAttribute="trailing" id="rVG-Yo-GDo"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="auH-nh-G9c">
+                                <rect key="frame" x="228" y="0.0" width="228" height="40"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Forgot Password?" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XKJ-YB-UfH">
+                                        <rect key="frame" x="4" y="12.333333333333332" width="224" height="15.333333333333332"/>
+                                        <fontDescription key="fontDescription" name="Montserrat-Regular" family="Montserrat" pointSize="13"/>
+                                        <color key="textColor" name="primary"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JB3-g9-6Gt">
+                                        <rect key="frame" x="0.0" y="0.0" width="228" height="40"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="plain"/>
+                                        <connections>
+                                            <action selector="DidTabFor:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="zyJ-yL-6QS"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="JB3-g9-6Gt" secondAttribute="trailing" id="2dC-Dz-yCs"/>
+                                    <constraint firstItem="XKJ-YB-UfH" firstAttribute="leading" secondItem="auH-nh-G9c" secondAttribute="leading" constant="4" id="9qH-gF-cOB"/>
+                                    <constraint firstAttribute="bottom" secondItem="JB3-g9-6Gt" secondAttribute="bottom" id="K6S-J3-IjN"/>
+                                    <constraint firstItem="JB3-g9-6Gt" firstAttribute="leading" secondItem="auH-nh-G9c" secondAttribute="leading" id="N55-Zc-CAe"/>
+                                    <constraint firstAttribute="trailing" secondItem="XKJ-YB-UfH" secondAttribute="trailing" id="Xuo-g9-GEv"/>
+                                    <constraint firstItem="XKJ-YB-UfH" firstAttribute="centerY" secondItem="auH-nh-G9c" secondAttribute="centerY" id="t29-gs-8hX"/>
+                                    <constraint firstItem="JB3-g9-6Gt" firstAttribute="top" secondItem="auH-nh-G9c" secondAttribute="top" id="tr2-ZL-6Qv"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="40" id="0r8-B2-XcK"/>
+                        </constraints>
+                    </stackView>
+                </subviews>
+                <constraints>
+                    <constraint firstAttribute="bottom" secondItem="kpc-FR-jLA" secondAttribute="bottom" constant="8" id="PbN-cx-Wgz"/>
+                    <constraint firstItem="kpc-FR-jLA" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="8" id="alO-pf-rhd"/>
+                    <constraint firstAttribute="trailing" secondItem="kpc-FR-jLA" secondAttribute="trailing" constant="20" id="dTt-2Q-pkY"/>
+                    <constraint firstItem="kpc-FR-jLA" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="20" id="gvN-nK-dHo"/>
+                </constraints>
+            </tableViewCellContentView>
+            <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
+            <connections>
+                <outlet property="forgotPaswordOlt" destination="XKJ-YB-UfH" id="yn9-GG-jqv"/>
+                <outlet property="remberVector" destination="ijy-Od-ztT" id="TDH-h8-MKr"/>
+                <outlet property="rememberMe" destination="vgO-mS-knX" id="RbX-VL-pVc"/>
+                <outlet property="rememberMeOlt" destination="s43-iT-8Xg" id="bjc-G2-6rr"/>
+            </connections>
+            <point key="canvasLocation" x="271.75572519083971" y="37.323943661971832"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="square" catalog="system" width="128" height="114"/>
+        <namedColor name="mediumDarkGray">
+            <color red="0.31372549019607843" green="0.3411764705882353" blue="0.38039215686274508" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="primary">
+            <color red="0.16862745098039217" green="0.32549019607843138" blue="0.49803921568627452" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

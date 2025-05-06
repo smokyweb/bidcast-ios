@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="23094" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23084"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="417" id="KGk-i7-Jjw" customClass="CalandarTableViewCell" customModule="Well_Genius_App" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="475" height="417"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" ambiguous="YES" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="475" height="417"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="WB0-wD-zDx" customClass="FSCalendar">
+                        <rect key="frame" x="16" y="8" width="443" height="400"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="400" id="0ib-AQ-P70"/>
+                        </constraints>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="number" keyPath="firstWeekday">
+                                <integer key="value" value="1"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="number" keyPath="headerHeight">
+                                <real key="value" value="46"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="number" keyPath="weekdayHeight">
+                                <real key="value" value="25"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="number" keyPath="titleTextSize">
+                                <real key="value" value="12"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="color" keyPath="titleSelectionColor">
+                                <color key="value" name="lightTheam"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="color" keyPath="titleTodayColor">
+                                <color key="value" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="number" keyPath="weekdayTextSize">
+                                <real key="value" value="15"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="color" keyPath="weekdayTextColor">
+                                <color key="value" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="color" keyPath="headerTitleColor">
+                                <color key="value" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="number" keyPath="headerTitleTextSize">
+                                <real key="value" value="18"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="number" keyPath="rowHeight">
+                                <real key="value" value="20"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="number" keyPath="headerMinimumDissolvedAlpha">
+                                <real key="value" value="0.0"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="boolean" keyPath="allowsMultipleSelection" value="NO"/>
+                            <userDefinedRuntimeAttribute type="boolean" keyPath="allowsSelection" value="YES"/>
+                            <userDefinedRuntimeAttribute type="number" keyPath="borderRadius">
+                                <real key="value" value="2"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="boolean" keyPath="keyPath" value="YES"/>
+                        </userDefinedRuntimeAttributes>
+                        <connections>
+                            <outlet property="dataSource" destination="KGk-i7-Jjw" id="kof-Z5-TGe"/>
+                            <outlet property="delegate" destination="KGk-i7-Jjw" id="wpQ-eQ-ifo"/>
+                        </connections>
+                    </view>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="J54-dr-5bj">
+                        <rect key="frame" x="379" y="18" width="30" height="24"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0S1-hG-IKT">
+                                <rect key="frame" x="2" y="2" width="26" height="20"/>
+                                <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                <state key="normal" image="backword"/>
+                                <connections>
+                                    <action selector="btnPrevClick:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="CUp-WW-CiB"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="0S1-hG-IKT" secondAttribute="trailing" constant="2" id="3V6-8y-rrJ"/>
+                            <constraint firstItem="0S1-hG-IKT" firstAttribute="leading" secondItem="J54-dr-5bj" secondAttribute="leading" constant="2" id="M6R-FN-Oen"/>
+                            <constraint firstAttribute="bottom" secondItem="0S1-hG-IKT" secondAttribute="bottom" constant="2" id="Vg1-B6-hhy"/>
+                            <constraint firstAttribute="width" constant="30" id="aE4-z6-ad1"/>
+                            <constraint firstAttribute="height" constant="24" id="l35-Ni-6w0"/>
+                            <constraint firstItem="0S1-hG-IKT" firstAttribute="top" secondItem="J54-dr-5bj" secondAttribute="top" constant="2" id="lfn-9U-YyE"/>
+                        </constraints>
+                    </view>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cLI-V3-fda">
+                        <rect key="frame" x="413" y="18" width="30" height="24"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bgl-Rk-OoO">
+                                <rect key="frame" x="0.0" y="0.0" width="30" height="24"/>
+                                <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                <state key="normal" image="forword"/>
+                                <connections>
+                                    <action selector="btnNextClick:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="Dbx-Cp-aaf"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstAttribute="bottom" secondItem="bgl-Rk-OoO" secondAttribute="bottom" id="0ot-4P-Ar1"/>
+                            <constraint firstItem="bgl-Rk-OoO" firstAttribute="top" secondItem="cLI-V3-fda" secondAttribute="top" id="30z-8g-9Do"/>
+                            <constraint firstItem="bgl-Rk-OoO" firstAttribute="leading" secondItem="cLI-V3-fda" secondAttribute="leading" id="9CN-6t-J77"/>
+                            <constraint firstAttribute="height" constant="24" id="D2J-e9-2jC"/>
+                            <constraint firstAttribute="width" constant="30" id="WE7-WB-8lK"/>
+                            <constraint firstAttribute="trailing" secondItem="bgl-Rk-OoO" secondAttribute="trailing" id="dyg-ED-nD8"/>
+                        </constraints>
+                    </view>
+                </subviews>
+                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                <constraints>
+                    <constraint firstAttribute="trailing" secondItem="WB0-wD-zDx" secondAttribute="trailing" constant="16" id="45g-bL-LUa"/>
+                    <constraint firstAttribute="trailing" secondItem="cLI-V3-fda" secondAttribute="trailing" constant="32" id="7MA-O8-78D"/>
+                    <constraint firstItem="WB0-wD-zDx" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="8" id="RkQ-aJ-ZhD"/>
+                    <constraint firstItem="WB0-wD-zDx" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="16" id="SQN-Sz-Vea"/>
+                    <constraint firstItem="J54-dr-5bj" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="18" id="YOU-r1-4bd"/>
+                    <constraint firstItem="cLI-V3-fda" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="18" id="irN-9S-vOO"/>
+                    <constraint firstItem="cLI-V3-fda" firstAttribute="leading" secondItem="J54-dr-5bj" secondAttribute="trailing" constant="4" id="kCG-sX-bDK"/>
+                    <constraint firstAttribute="bottom" secondItem="WB0-wD-zDx" secondAttribute="bottom" constant="8" id="xLq-lQ-bsJ"/>
+                </constraints>
+            </tableViewCellContentView>
+            <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
+            <connections>
+                <outlet property="btnNextMonthClick" destination="bgl-Rk-OoO" id="Q73-gY-fRF"/>
+                <outlet property="btnPrevMonthClick" destination="0S1-hG-IKT" id="6Do-QU-BcK"/>
+                <outlet property="calandarView" destination="WB0-wD-zDx" id="hVt-Go-WAE"/>
+                <outlet property="leftBtnBgView" destination="J54-dr-5bj" id="fQO-mO-avU"/>
+                <outlet property="rightBtnBgVIew" destination="cLI-V3-fda" id="MUC-Rg-BLH"/>
+            </connections>
+            <point key="canvasLocation" x="255.72519083969465" y="186.97183098591549"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="backword" width="25" height="19"/>
+        <image name="forword" width="26" height="19"/>
+        <namedColor name="lightTheam">
+            <color red="0.95686274509803926" green="0.54509803921568623" blue="0.094117647058823528" alpha="0.27000001072883606" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+    </resources>
+</document>

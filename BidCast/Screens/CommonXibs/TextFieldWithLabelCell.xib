@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="Inter-VariableFont_opsz,wght.ttf">
+            <string>Inter-Regular</string>
+            <string>Inter-Regular_Bold</string>
+        </array>
+        <array key="Montserrat-Regular.ttf">
+            <string>Montserrat-Regular</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="105" id="KGk-i7-Jjw" customClass="TextFieldWithLabelCell" customModule="Rise_Shine_Swing" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="422" height="105"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="422" height="105"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="SmW-7f-9jU">
+                        <rect key="frame" x="16" y="16" width="390" height="23"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Email" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="y5O-rb-WcL">
+                                <rect key="frame" x="0.0" y="0.0" width="390" height="23"/>
+                                <fontDescription key="fontDescription" name="Inter-Regular_Bold" family="Inter" pointSize="14"/>
+                                <color key="textColor" name="indigo"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Edit Password" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="V2m-eu-P96">
+                                <rect key="frame" x="390" y="0.0" width="99.333333333333314" height="23"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="99.329999999999998" id="YQl-Ch-Dbb"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Montserrat-Regular" family="Montserrat" pointSize="14"/>
+                                <color key="textColor" name="darkGray"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                    </stackView>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5BX-89-F3C">
+                        <rect key="frame" x="16" y="47" width="390" height="50"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Twv-ma-tp7">
+                                <rect key="frame" x="358" y="13" width="24" height="24"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="24" id="FmV-Mf-UYj"/>
+                                    <constraint firstAttribute="width" constant="24" id="cHw-5W-vEY"/>
+                                </constraints>
+                                <color key="tintColor" name="mediumGray"/>
+                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                <state key="normal" title="Button" image="ic_eye">
+                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="13"/>
+                                </state>
+                                <connections>
+                                    <action selector="didTapEyeBtnOlt:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="hs9-Y3-MGt"/>
+                                </connections>
+                            </button>
+                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Enter Email Address" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="QiE-l5-mjq">
+                                <rect key="frame" x="8" y="0.0" width="342" height="50"/>
+                                <color key="textColor" name="mediumLightGray"/>
+                                <fontDescription key="fontDescription" name="Inter-Regular" family="Inter" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                        </subviews>
+                        <color key="backgroundColor" name="ultraLightGray"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="Twv-ma-tp7" secondAttribute="trailing" constant="8" id="Am2-3Z-s3m"/>
+                            <constraint firstItem="Twv-ma-tp7" firstAttribute="centerY" secondItem="5BX-89-F3C" secondAttribute="centerY" id="DC2-Y8-Ftc"/>
+                            <constraint firstItem="QiE-l5-mjq" firstAttribute="leading" secondItem="5BX-89-F3C" secondAttribute="leading" constant="8" id="LDT-Eq-rPT"/>
+                            <constraint firstItem="QiE-l5-mjq" firstAttribute="top" secondItem="5BX-89-F3C" secondAttribute="top" id="PA7-Bj-PE6"/>
+                            <constraint firstAttribute="height" constant="50" id="a4Z-yz-K5r"/>
+                            <constraint firstItem="Twv-ma-tp7" firstAttribute="leading" secondItem="QiE-l5-mjq" secondAttribute="trailing" constant="8" id="egZ-44-45C"/>
+                            <constraint firstItem="QiE-l5-mjq" firstAttribute="centerY" secondItem="5BX-89-F3C" secondAttribute="centerY" id="gSh-ks-uPZ"/>
+                            <constraint firstAttribute="bottom" secondItem="QiE-l5-mjq" secondAttribute="bottom" id="yny-2A-rWM"/>
+                        </constraints>
+                    </view>
+                </subviews>
+                <constraints>
+                    <constraint firstAttribute="bottom" secondItem="5BX-89-F3C" secondAttribute="bottom" constant="8" id="SlN-Je-28V"/>
+                    <constraint firstItem="SmW-7f-9jU" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="16" id="eby-sT-0l1"/>
+                    <constraint firstItem="5BX-89-F3C" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="16" id="fTE-Oh-APq"/>
+                    <constraint firstItem="5BX-89-F3C" firstAttribute="top" secondItem="SmW-7f-9jU" secondAttribute="bottom" constant="8" id="niZ-OG-VOR"/>
+                    <constraint firstAttribute="trailing" secondItem="5BX-89-F3C" secondAttribute="trailing" constant="16" id="rbV-kw-7gQ"/>
+                    <constraint firstItem="SmW-7f-9jU" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="16" id="sN5-Og-mbS"/>
+                    <constraint firstAttribute="trailing" secondItem="SmW-7f-9jU" secondAttribute="trailing" constant="16" id="vuM-2p-FgG"/>
+                </constraints>
+            </tableViewCellContentView>
+            <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
+            <connections>
+                <outlet property="editPasswordOlt" destination="V2m-eu-P96" id="mpK-l1-O09"/>
+                <outlet property="emailStackOlt" destination="SmW-7f-9jU" id="QaM-CP-nKu"/>
+                <outlet property="eyeBtnOlt" destination="Twv-ma-tp7" id="T6m-Kx-QMJ"/>
+                <outlet property="textFieldOlt" destination="QiE-l5-mjq" id="6NL-G2-OFL"/>
+                <outlet property="textFieldOuterView" destination="5BX-89-F3C" id="CeJ-cN-CJn"/>
+                <outlet property="titleOlt" destination="y5O-rb-WcL" id="PCs-kA-NAJ"/>
+            </connections>
+            <point key="canvasLocation" x="137.40458015267174" y="41.197183098591552"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="ic_eye" width="512" height="512"/>
+        <namedColor name="darkGray">
+            <color red="0.17647058823529413" green="0.18823529411764706" blue="0.20784313725490197" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="indigo">
+            <color red="0.18823529411764706" green="0.22745098039215686" blue="0.27450980392156865" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="mediumGray">
+            <color red="0.45490196078431372" green="0.49019607843137253" blue="0.54509803921568623" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="mediumLightGray">
+            <color red="0.75686274509803919" green="0.78823529411764703" blue="0.83921568627450982" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="ultraLightGray">
+            <color red="0.96078431372549022" green="0.97254901960784312" blue="0.9882352941176471" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+    </resources>
+</document>
