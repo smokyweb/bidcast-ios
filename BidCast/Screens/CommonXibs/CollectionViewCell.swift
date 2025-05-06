@@ -16,6 +16,10 @@ class CollectionViewCell: UITableViewCell {
     static let identifier = "CollectionViewCell"
     var isForDetails = false
     var items = [Any]()
+    
+    var imageName = [String]()
+    var titleName = [String]()
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         configureCollectionVIew()
@@ -26,13 +30,13 @@ class CollectionViewCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
     }
     
-    func configure(with items: [Any]) {
+    func configure(with items: [String]) {
         self.items = items
         self.collectionViewOlt.reloadData()
         self.collectionViewOlt.layoutIfNeeded()
 
-        let rows = ceil(CGFloat(10) / 2.0)
-        let itemHeight: CGFloat = 80
+        let rows = ceil(CGFloat(items.count) / 2.0)
+        let itemHeight: CGFloat = 100
         let spacing: CGFloat = 8
         let totalHeight = (rows * itemHeight) + ((rows - 1) * spacing)
         self.collectionViewHeihgt.constant = totalHeight
@@ -40,7 +44,8 @@ class CollectionViewCell: UITableViewCell {
     
     func configureCollectionVIew(){
         let cellId = [
-            ProductCollectionViewCell.identifier
+            ProductCollectionViewCell.identifier,
+            SellerRevenueCell.identifier
         ]
         self.collectionViewOlt.registerCells(for: cellId)
         self.collectionViewOlt.delegate = self
@@ -55,15 +60,26 @@ extension CollectionViewCell : UICollectionViewDelegate,UICollectionViewDataSour
         if self.isForDetails{
             return 3
         }else{
-            return 10
+            return self.titleName.count == 0 ? 0 : self.titleName.count
+            
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueCell(ofType: ProductCollectionViewCell.self)
-        cell.innerView.makeCornerRounded(ofSize: 4)
-        cell.productNameLbl.text = "test"
-        return cell
+        if isForDetails{
+            let cell = collectionView.dequeueCell(ofType: SellerRevenueCell.self)
+            cell.innerView.makeCornerRounded(ofSize: 12)
+            
+            return cell
+        }else{
+            let cell = collectionView.dequeueCell(ofType: ProductCollectionViewCell.self)
+            cell.innerView.makeCornerRounded(ofSize: 12)
+            if self.titleName.count != 0{
+                cell.productNameLbl.text = self.titleName[indexPath.row]
+                cell.productImgView.image = UIImage(named: self.imageName[indexPath.row])
+            }
+            return cell
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {

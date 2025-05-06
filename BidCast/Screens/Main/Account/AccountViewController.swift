@@ -41,6 +41,8 @@ class AccountViewController: UIViewController {
         .tab : 1,
         .vacation : 1
     ]
+    var imageName = ["inventory","mic","orders","wallet","tag","tag","shipping","people","seller","shop","analysis","analysis"]
+    var tabName = ["Inventory","Shows","My Orders","Wallet","Offers","Tips","Shipping","Affiliate Program","Seller Trainig","Premier Shop","Seller status","Seller Analytics"]
     var segmentType: segmentAccount = .sellerHub
     
     
@@ -104,10 +106,13 @@ extension AccountViewController : UITableViewDataSource,UITableViewDelegate{
                 return cell
             case .tab:
                 let cell = tableViewOlt.dequeueCell(with: CollectionViewCell.self)
-                cell.configure(with: [""])
+                cell.imageName = self.imageName
+                cell.titleName = self.tabName
+                cell.configure(with: self.tabName)
                 return cell
             case .vacation:
                 let cell = tableViewOlt.dequeueCell(with: SwitchEditorAndPhotographerCell.self)
+                
                 cell.titleOlt.text = "Vacation Mode"
                 return cell
             }

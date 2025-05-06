@@ -10,7 +10,7 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="gTV-IL-0wX" customClass="ProductCollectionViewCell" customModule="BidCast" customModuleProvider="target">
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="gTV-IL-0wX" customClass="SellerRevenueCell" customModule="BidCast" customModuleProvider="target">
             <rect key="frame" x="0.0" y="0.0" width="271" height="342"/>
             <autoresizingMask key="autoresizingMask"/>
             <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
@@ -20,15 +20,14 @@
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ObK-5K-CTD">
                         <rect key="frame" x="8" y="8" width="255" height="326"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="person.fill" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="p3i-Ie-Tph">
-                                <rect key="frame" x="111.66666666666667" y="11.666666666666666" width="32.000000000000014" height="28.666666666666671"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="32" id="65t-4b-5UK"/>
-                                    <constraint firstAttribute="height" constant="32" id="H2H-86-7DS"/>
-                                </constraints>
-                            </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Excellient Product in Distributer Shop" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jvb-J9-smC">
-                                <rect key="frame" x="12" y="56" width="231" height="40.666666666666657"/>
+                                <rect key="frame" x="12" y="53" width="231" height="40.666666666666657"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CcP-b2-vUo">
+                                <rect key="frame" x="16" y="16" width="223" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -36,12 +35,13 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
+                            <constraint firstItem="CcP-b2-vUo" firstAttribute="centerX" secondItem="ObK-5K-CTD" secondAttribute="centerX" id="1KD-uy-7lL"/>
                             <constraint firstAttribute="trailing" secondItem="jvb-J9-smC" secondAttribute="trailing" constant="12" id="I36-fD-62X"/>
-                            <constraint firstItem="jvb-J9-smC" firstAttribute="centerX" secondItem="p3i-Ie-Tph" secondAttribute="centerX" id="L6h-4Z-I9A"/>
-                            <constraint firstItem="p3i-Ie-Tph" firstAttribute="centerX" secondItem="ObK-5K-CTD" secondAttribute="centerX" id="cIc-9e-YKq"/>
-                            <constraint firstItem="p3i-Ie-Tph" firstAttribute="top" secondItem="ObK-5K-CTD" secondAttribute="top" constant="10" id="cbv-bI-1bt"/>
-                            <constraint firstItem="jvb-J9-smC" firstAttribute="top" secondItem="p3i-Ie-Tph" secondAttribute="bottom" constant="14" id="d7X-LB-vbQ"/>
+                            <constraint firstAttribute="trailing" secondItem="CcP-b2-vUo" secondAttribute="trailing" constant="16" id="OLc-4H-PvW"/>
+                            <constraint firstItem="jvb-J9-smC" firstAttribute="top" secondItem="CcP-b2-vUo" secondAttribute="bottom" constant="16" id="Oq4-QA-hy7"/>
+                            <constraint firstItem="CcP-b2-vUo" firstAttribute="top" secondItem="ObK-5K-CTD" secondAttribute="top" constant="16" id="VQZ-d7-N8T"/>
                             <constraint firstItem="jvb-J9-smC" firstAttribute="leading" secondItem="ObK-5K-CTD" secondAttribute="leading" constant="12" id="fPc-Lo-B8u"/>
+                            <constraint firstItem="CcP-b2-vUo" firstAttribute="leading" secondItem="ObK-5K-CTD" secondAttribute="leading" constant="16" id="nVD-pN-vD5"/>
                         </constraints>
                     </view>
                 </subviews>
@@ -57,13 +57,10 @@
             <size key="customSize" width="271" height="342"/>
             <connections>
                 <outlet property="innerView" destination="ObK-5K-CTD" id="wDz-uw-pd7"/>
-                <outlet property="productImgView" destination="p3i-Ie-Tph" id="A4t-AJ-M4y"/>
+                <outlet property="labelOlt" destination="CcP-b2-vUo" id="y5V-1N-elm"/>
                 <outlet property="productNameLbl" destination="jvb-J9-smC" id="6Tg-6w-vsy"/>
             </connections>
             <point key="canvasLocation" x="292.36641221374043" y="100.70422535211269"/>
         </collectionViewCell>
     </objects>
-    <resources>
-        <image name="person.fill" catalog="system" width="128" height="120"/>
-    </resources>
 </document>

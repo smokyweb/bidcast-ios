@@ -16,6 +16,8 @@
 		357D64202DCA136900E73D91 /* ProductCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357D641D2DCA136900E73D91 /* ProductCollectionViewCell.swift */; };
 		357D64232DCA1C8900E73D91 /* SwitchEditorAndPhotographerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357D64212DCA1C8900E73D91 /* SwitchEditorAndPhotographerCell.swift */; };
 		357D64242DCA1C8900E73D91 /* SwitchEditorAndPhotographerCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 357D64222DCA1C8900E73D91 /* SwitchEditorAndPhotographerCell.xib */; };
+		357D64272DCA2B2400E73D91 /* SellerRevenueCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357D64252DCA2B2400E73D91 /* SellerRevenueCell.swift */; };
+		357D64282DCA2B2400E73D91 /* SellerRevenueCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 357D64262DCA2B2400E73D91 /* SellerRevenueCell.xib */; };
 		35B866AF2DC9EBC200E6FFA1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 35B866AE2DC9EBC200E6FFA1 /* LaunchScreen.storyboard */; };
 		35B866B72DC9EFA700E6FFA1 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B866B62DC9EFA700E6FFA1 /* HomeViewController.swift */; };
 		35B866B92DC9F29800E6FFA1 /* ExploreViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B866B82DC9F29800E6FFA1 /* ExploreViewController.swift */; };
@@ -333,6 +335,8 @@
 		357D641E2DCA136900E73D91 /* ProductCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ProductCollectionViewCell.xib; sourceTree = "<group>"; };
 		357D64212DCA1C8900E73D91 /* SwitchEditorAndPhotographerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchEditorAndPhotographerCell.swift; sourceTree = "<group>"; };
 		357D64222DCA1C8900E73D91 /* SwitchEditorAndPhotographerCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SwitchEditorAndPhotographerCell.xib; sourceTree = "<group>"; };
+		357D64252DCA2B2400E73D91 /* SellerRevenueCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SellerRevenueCell.swift; sourceTree = "<group>"; };
+		357D64262DCA2B2400E73D91 /* SellerRevenueCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SellerRevenueCell.xib; sourceTree = "<group>"; };
 		35B866AE2DC9EBC200E6FFA1 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		35B866B62DC9EFA700E6FFA1 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		35B866B82DC9F29800E6FFA1 /* ExploreViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreViewController.swift; sourceTree = "<group>"; };
@@ -1534,6 +1538,8 @@
 			children = (
 				D48D75382DCA1F210096B223 /* SearchTextfieldCell.swift */,
 				D48D75392DCA1F210096B223 /* SearchTextfieldCell.xib */,
+				357D64252DCA2B2400E73D91 /* SellerRevenueCell.swift */,
+				357D64262DCA2B2400E73D91 /* SellerRevenueCell.xib */,
 				99BC30F22DC9DD0400E1BEA6 /* LocationNameCell.swift */,
 				99BC30F32DC9DD0400E1BEA6 /* LocationNameCell.xib */,
 				99BC30F42DC9DD0400E1BEA6 /* RemberMeCell.swift */,
@@ -1989,6 +1995,7 @@
 				99BC31D32DC9DD0400E1BEA6 /* ProfileCell.xib in Resources */,
 				99BC31D42DC9DD0400E1BEA6 /* NoDataTableViewCell.xib in Resources */,
 				99BC31D52DC9DD0400E1BEA6 /* TextViewCell.xib in Resources */,
+				357D64282DCA2B2400E73D91 /* SellerRevenueCell.xib in Resources */,
 				99BC31D62DC9DD0400E1BEA6 /* MenuCell.xib in Resources */,
 				99BC31D72DC9DD0400E1BEA6 /* Alert.storyboard in Resources */,
 				99BC31D82DC9DD0400E1BEA6 /* AppHeaderExpendableCell.xib in Resources */,
@@ -2256,6 +2263,7 @@
 				99BC32642DC9DD0400E1BEA6 /* Utilities.swift in Sources */,
 				99BC32652DC9DD0400E1BEA6 /* LogOutViewController.swift in Sources */,
 				99BC32672DC9DD0400E1BEA6 /* OurSubscriptionViewModel.swift in Sources */,
+				357D64272DCA2B2400E73D91 /* SellerRevenueCell.swift in Sources */,
 				99BC32682DC9DD0400E1BEA6 /* DeleteProfileModel.swift in Sources */,
 				99BC32692DC9DD0400E1BEA6 /* SignUpViewController.swift in Sources */,
 				99BC326A2DC9DD0400E1BEA6 /* MoreViewController.swift in Sources */,
