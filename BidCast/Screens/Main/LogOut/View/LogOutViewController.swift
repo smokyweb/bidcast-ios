@@ -102,7 +102,7 @@ extension LogOutViewController: UITableViewDelegate, UITableViewDataSource {
             cell.selectionStyle = .none
             cell.didTapFirst = { [weak self] sender in
                 guard let self = self else { return }
-                self.pushVC(with: HomeViewController.self, storyboardName: .main)
+//                self.pushVC(with: HomeViewController.self, storyboardName: .main)
             }
             cell.didTapSeconde = { [weak self] sender in
                 guard let self = self else { return }

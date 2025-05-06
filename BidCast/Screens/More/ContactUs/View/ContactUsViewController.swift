@@ -308,7 +308,7 @@ extension ContactUsViewController {
         vc.firstBtnClosure = {
             self.dismiss(animated: true)
             //go to welcome page
-            self.pushVC(with: HomeViewController.self, storyboardName: .main)
+//            self.pushVC(with: HomeViewController.self, storyboardName: .main)
         }
         let sheet = SheetViewController(controller: vc, sizes: [UIDevice.current.hasNotch ? .percent(0.40) : .percent(0.50)], options: options)
         sheet.cornerRadius = Corner_32

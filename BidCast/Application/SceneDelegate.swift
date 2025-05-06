@@ -10,7 +10,7 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-
+    var navController : UINavigationController!
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
@@ -50,6 +50,23 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
     }
 
+    func navigateToLandingScreen(){
+        var viewController = UIViewController()
+        if UserDefaults.refreshToken == "" {
+            let storyboard = UIStoryboard(name: "Onboardings", bundle: nil)
+            viewController = storyboard.instantiateViewController(withIdentifier: "SignInViewController") as! SignInViewController
+            
+        }else {
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            viewController = storyboard.instantiateViewController(withIdentifier: "TabBarViewController") as! TabBarViewController
+        }
+        navController = UINavigationController(rootViewController: viewController)
+        navController?.interactivePopGestureRecognizer?.isEnabled = true
+        navController?.setNavigationBarHidden(true, animated: false)
+        navController.isNavigationBarHidden = true
+        self.window?.rootViewController = navController
+        self.window?.makeKeyAndVisible()
+    }
 
 }
 
