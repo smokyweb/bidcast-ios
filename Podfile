@@ -6,20 +6,6 @@ target 'BidCast' do
   use_frameworks!
 
   # Pods for BidCast
-  
-  pod 'Kingfisher'
-  pod 'SVProgressHUD'
-  pod 'IQKeyboardManagerSwift'
-  pod 'FittedSheets'
-  pod 'Toast-Swift'
-  pod 'DropDown'
-  pod 'SideMenu'
-  pod 'CropViewController'
-  pod 'FSCalendar'
-  pod 'DropDown'
-  pod 'SPIndicator'
-  pod 'CHIPageControl/Jaloro'
-  pod 'OTPFieldView'
 
   target 'BidCastTests' do
     inherit! :search_paths
