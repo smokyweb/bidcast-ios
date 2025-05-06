@@ -16,7 +16,7 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="63" id="KGk-i7-Jjw" customClass="AppHeaderCell" customModule="Rise_Shine_Swing" customModuleProvider="target">
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="63" id="KGk-i7-Jjw" customClass="AppHeaderCell" customModule="BidCast" customModuleProvider="target">
             <rect key="frame" x="0.0" y="0.0" width="381" height="63"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
@@ -29,9 +29,9 @@
                         <color key="textColor" name="black"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="J2e-Fj-ggj">
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="J2e-Fj-ggj">
                         <rect key="frame" x="16" y="51" width="20" height="4"/>
-                        <color key="backgroundColor" name="primary"/>
+                        <color key="backgroundColor" name="secondary"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="4" id="dC4-ee-OD3"/>
                             <constraint firstAttribute="width" constant="20" id="jIm-Rf-gqD"/>
@@ -59,8 +59,8 @@
         <namedColor name="black">
             <color red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
-        <namedColor name="primary">
-            <color red="0.16862745098039217" green="0.32549019607843138" blue="0.49803921568627452" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        <namedColor name="secondary">
+            <color red="1" green="0.40000000000000002" blue="0.40000000000000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
     </resources>
 </document>
