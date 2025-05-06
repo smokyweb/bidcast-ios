@@ -1,8 +1,8 @@
 //
 //  SignUpModel.swift
-//  Rise Shine Swing
+//  BidCast
 //
-//  Created by JAM-E-329 on 31/08/24.
+//  Created by JAM-E-329 on 06/05/25
 //
 
 // MARK: - SignUpDataModel

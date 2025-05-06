@@ -1,6 +1,6 @@
 //
 //  OtpViewController.swift
-//  Rise Shine Swing
+//  BidCast
 //
 //  Created by JAM-E-221 on 02/09/24.
 //
@@ -85,12 +85,16 @@ class OtpViewController: UIViewController {
         if self.enteredOTP == "" {
             Utilities.sharedInstance.showToast(source: self, message: "")
         }else if Reachability.isConnectedToNetwork(){
-            DispatchQueue.main.async {
-                debugLog(self.enteredOTP)
-                SVProgressHUD.show()
-                let otpRequest = VerifyOtpRequest(email: self.email, code: Int(self.enteredOTP)!)
-                self.verifyOTPViewModel.verifyOTP(parameters: otpRequest)
-            }
+            //TODO: Remove this code when using the API.
+            self.pushVC(with: NewPasswordViewController.self, storyboardName: .onboardings)
+            
+            //TODO: Open this code when using the API.
+//            DispatchQueue.main.async {
+//                debugLog(self.enteredOTP)
+//                SVProgressHUD.show()
+//                let otpRequest = VerifyOtpRequest(email: self.email, code: Int(self.enteredOTP)!)
+//                self.verifyOTPViewModel.verifyOTP(parameters: otpRequest)
+//            }
         }else{
             Utilities.sharedInstance.showToast(source: self, message: "")
         }
@@ -152,9 +156,11 @@ extension OtpViewController: UITableViewDelegate,UITableViewDataSource{
             cell.didTapExit = { [weak self] sender in
                 guard let self = self  else { return }
                 SVProgressHUD.show()
-                if self.isOtpCorrect == false {
-                    self.resendOTPModel.forgetPassword(parameters: ForgetRequest(email: self.email ?? ""))
-                }
+                
+                //TODO: Open this code when using the API.
+//                if self.isOtpCorrect == false {
+//                    self.resendOTPModel.forgetPassword(parameters: ForgetRequest(email: self.email ?? ""))
+//                }
                    
             }
             return cell

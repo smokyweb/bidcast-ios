@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
         <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
@@ -32,13 +33,10 @@
             <rect key="frame" x="0.0" y="0.0" width="367" height="174"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="PXS-so-NHE">
-                    <rect key="frame" x="0.0" y="0.0" width="367" height="171"/>
-                </imageView>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tfx-GX-dzT">
                     <rect key="frame" x="62" y="78.666666666666671" width="243" height="17"/>
                     <fontDescription key="fontDescription" name="Inter-Regular_Bold" family="Inter" pointSize="14"/>
-                    <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <color key="textColor" name="black"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lby-y4-yfr">
@@ -47,7 +45,7 @@
                         <constraint firstAttribute="width" constant="30" id="4io-rC-b8m"/>
                         <constraint firstAttribute="height" constant="30" id="GMJ-vD-sb8"/>
                     </constraints>
-                    <color key="tintColor" name="Color2"/>
+                    <color key="tintColor" name="black"/>
                     <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                     <state key="normal">
                         <imageReference key="image" image="ic_back" symbolScale="large"/>
@@ -77,7 +75,7 @@
                 </button>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XbO-sd-far">
                     <rect key="frame" x="0.0" y="171" width="367" height="3"/>
-                    <color key="backgroundColor" name="secondary"/>
+                    <color key="backgroundColor" name="bgColor"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="3" id="yEz-MU-sSf"/>
                     </constraints>
@@ -88,16 +86,13 @@
                 <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0xe-hx-ZyC">
                     <rect key="frame" x="62" y="100.66666666666667" width="243" height="20.333333333333329"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                    <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <color key="textColor" name="black"/>
                     <nil key="highlightedColor"/>
                 </label>
             </subviews>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
-            <color key="backgroundColor" red="0.89803921568627454" green="0.90588235294117647" blue="0.92156862745098034" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color key="backgroundColor" name="white"/>
             <constraints>
-                <constraint firstItem="PXS-so-NHE" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="4S5-tf-5NZ"/>
-                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="PXS-so-NHE" secondAttribute="trailing" id="7F3-wz-oI9"/>
-                <constraint firstItem="PXS-so-NHE" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="AF2-nA-yVl"/>
                 <constraint firstAttribute="bottom" secondItem="XbO-sd-far" secondAttribute="bottom" id="FVl-Xa-nzE"/>
                 <constraint firstItem="xT2-ss-917" firstAttribute="leading" secondItem="tfx-GX-dzT" secondAttribute="trailing" constant="16" id="Hac-0w-UmW"/>
                 <constraint firstItem="tfx-GX-dzT" firstAttribute="centerY" secondItem="lby-y4-yfr" secondAttribute="centerY" id="KJw-yg-gHu"/>
@@ -108,7 +103,6 @@
                 <constraint firstItem="0xe-hx-ZyC" firstAttribute="trailing" secondItem="tfx-GX-dzT" secondAttribute="trailing" id="VtH-9k-4xn"/>
                 <constraint firstItem="XbO-sd-far" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="a7K-VO-LVH"/>
                 <constraint firstItem="0xe-hx-ZyC" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="baQ-45-UY9"/>
-                <constraint firstItem="XbO-sd-far" firstAttribute="top" secondItem="PXS-so-NHE" secondAttribute="bottom" id="cKM-9o-m53"/>
                 <constraint firstItem="xT2-ss-917" firstAttribute="top" secondItem="lby-y4-yfr" secondAttribute="top" id="ggn-aA-tT6"/>
                 <constraint firstItem="lby-y4-yfr" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="hlC-Vc-ChJ"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="xT2-ss-917" secondAttribute="trailing" constant="16" id="qED-jg-2VW"/>
@@ -122,11 +116,14 @@
     <resources>
         <image name="ic_back" width="512" height="512"/>
         <image name="ic_menu" width="18" height="12"/>
-        <namedColor name="Color2">
-            <color red="0.95686274509803926" green="0.96862745098039216" blue="0.9882352941176471" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        <namedColor name="bgColor">
+            <color red="0.89803921568627454" green="0.90588235294117647" blue="0.92156862745098034" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
-        <namedColor name="secondary">
-            <color red="0.40784313725490196" green="0.61176470588235299" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        <namedColor name="black">
+            <color red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="white">
+            <color red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
     </resources>
 </document>

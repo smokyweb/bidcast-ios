@@ -1,6 +1,6 @@
 //
 //  LabelCell.swift
-//  Rise Shine Swing
+//  BidCast
 //
 //  Created by JAM-E-221 on 02/09/24.
 //

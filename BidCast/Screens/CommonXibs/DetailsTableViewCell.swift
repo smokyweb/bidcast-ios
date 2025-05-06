@@ -1,6 +1,6 @@
 //
 //  DetailsTableViewCell.swift
-//  Rise Shine Swing
+//  BidCast
 //
 //  Created by JamTech on 13/12/24.
 //

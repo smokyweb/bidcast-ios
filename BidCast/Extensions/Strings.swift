@@ -1,6 +1,6 @@
 //
 //  Strings.swift
-//  Rise Shine Swing
+//  BidCast
 //
 //  Created by JAM-E-174 on 03/10/24.
 //

@@ -1,6 +1,6 @@
 //
 //  SecondBtnCell.swift
-//  Rise Shine Swing
+//  BidCast
 //
 //  Created by JAM-E-221 on 02/09/24.
 //
@@ -35,7 +35,7 @@ class SecondBtnCell: UITableViewCell {
     //MARK: UISetup()
     func setupBtnUI(){
         self.exitBtn.backgroundColor = AppColor.secondary
-        self.exitBtn.makeCornerRounded(ofSize: Corner_26)
+        self.exitBtn.makeCornerRounded(ofSize: Corner_08)
         self.exitBtn.setTitleColor(.white, for: .normal)
         selectionStyle = .none
     }

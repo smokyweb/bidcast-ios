@@ -1,6 +1,6 @@
 //
 //  MonsoonDetailsColCell.swift
-//  Rise Shine Swing
+//  BidCast
 //
 //  Created by JAM_E_329 on 02/05/25.
 //

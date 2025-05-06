@@ -1,6 +1,6 @@
 //
 //  ForgetPasswordViewModel.swift
-//  Rise Shine Swing
+//  BidCast
 //
 //  Created by JAM-E-328 on 31/08/24.
 //

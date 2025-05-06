@@ -1,6 +1,6 @@
 //
 //  ViewModel.swift
-//  Rise Shine Swing
+//  BidCast
 //
 //  Created by Vivek-JAM-E-328 on 31/08/24.
 //

@@ -1,8 +1,8 @@
 //
 //  AboutUsViewModel.swift
-//  Rise Shine Swing
+//  BidCast
 //
-//  Created by JAM-E-329 on 27/12/24.
+//  Created by JAM-E-329 on 06/05/25. on 27/12/24.
 //
 
 import Foundation

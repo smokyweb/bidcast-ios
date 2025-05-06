@@ -1,6 +1,6 @@
 //
 //  UICollectionView+Extension.swift
-//  Rise Shine Swing
+//  BidCast
 //
 //  Created by Vivek-JAM-E-328 on 10/12/24.
 //

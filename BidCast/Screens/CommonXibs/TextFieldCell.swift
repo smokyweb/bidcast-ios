@@ -1,6 +1,6 @@
 //
 //  TextFieldCell.swift
-//  Rise Shine Swing
+//  BidCast
 //
 //  Created by JAM_328 on 10/12/24.
 //
@@ -46,7 +46,7 @@ class TextFieldCell: UITableViewCell {
         self.textFieldOlt.font = JostFont.defaultRegular(size: 15).value
         self.titleLblOlt.font = AppFont.Labeltitle
         self.eyeBtnOlt.setImage(UIImage(named: "ic_eyeOff"), for: .normal)
-        self.textFieldOuterView.makeCornerRounded(ofSize: Corner_12)
+        self.textFieldOuterView.makeCornerRounded(ofSize: Corner_08)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             self.textFieldOlt.text = " "
             self.textFieldOlt.text = ""

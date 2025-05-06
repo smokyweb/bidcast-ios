@@ -37,7 +37,7 @@ class SubmitCell: UITableViewCell {
     //MARK: setupUI
     func setupUI(){
         self.submitBtnOlt.titleLabel?.font = OutFitFont.defaultExtraBold(size: 15).value
-        self.submitBtnOlt.makeCornerRounded(ofSize: Corner_26)
+        self.submitBtnOlt.makeCornerRounded(ofSize: Corner_08)
         selectionStyle = .none
     }
   

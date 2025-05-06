@@ -11,7 +11,7 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="222" id="KGk-i7-Jjw" customClass="SignUpTodayCell" customModule="Rise_Shine_Swing" customModuleProvider="target">
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="222" id="KGk-i7-Jjw" customClass="SignUpTodayCell" customModule="BidCast" customModuleProvider="target">
             <rect key="frame" x="0.0" y="0.0" width="396" height="222"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
@@ -19,21 +19,21 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <stackView opaque="NO" contentMode="scaleToFill" distribution="fillProportionally" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="ntq-wr-PjF">
-                        <rect key="frame" x="23" y="171" width="350" height="35"/>
+                        <rect key="frame" x="69" y="171" width="258" height="35"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gtg-vG-hIo">
-                                <rect key="frame" x="0.0" y="0.0" width="229" height="35"/>
+                                <rect key="frame" x="0.0" y="0.0" width="137" height="35"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="35" id="Qpo-nF-pCd"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="18"/>
                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                <state key="normal" title="New to Rise Shine &amp; Swing?">
+                                <state key="normal" title="New to BidCast?">
                                     <color key="titleColor" name="darkGray"/>
                                 </state>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="leading" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1l8-s6-0pI">
-                                <rect key="frame" x="233" y="0.0" width="117" height="35"/>
+                                <rect key="frame" x="141" y="0.0" width="117" height="35"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="35" id="mge-h5-Hph"/>
                                 </constraints>
@@ -66,7 +66,7 @@
             <color red="0.17647058823529413" green="0.18823529411764706" blue="0.20784313725490197" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <namedColor name="secondary">
-            <color red="0.40784313725490196" green="0.61176470588235299" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="1" green="0.40000000000000002" blue="0.40000000000000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
     </resources>
 </document>

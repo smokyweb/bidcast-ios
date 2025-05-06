@@ -393,7 +393,7 @@ extension ProfileViewController: UITableViewDelegate,UITableViewDataSource{
             guard let rowType = ProfileformData.allCases[safe: indexPath.row] else {
                 fatalError("Invalid index for AlarmSection")
             }
-            let options : [formDataEnum] = formDataEnum.allCases
+            let options : [ProfileformData] = ProfileformData.allCases
             let profileForm = options[indexPath.row]
             switch rowType {
             case .firstName:

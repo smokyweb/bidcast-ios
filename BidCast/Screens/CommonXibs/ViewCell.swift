@@ -1,6 +1,6 @@
 //
 //  ViewCell.swift
-//  Rise Shine Swing
+//  BidCast
 //
 //  Created by jam 1 TB on 10/12/24.
 //

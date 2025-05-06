@@ -1,8 +1,8 @@
 //
 //  AlarmCell.swift
-//  Rise Shine Swing
+//  BidCast
 //
-//  Created by JAM-E-329 on 02/09/24.
+//  Created by JAM-E-329 on 06/05/25. on 02/09/24.
 //
 
 import UIKit

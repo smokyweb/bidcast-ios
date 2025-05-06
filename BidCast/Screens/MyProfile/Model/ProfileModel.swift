@@ -1,8 +1,8 @@
 //
 //  ProfileModel.swift
-//  Rise Shine Swing App
+//  BidCast App
 //
-//  Created by JAM-E-329 on 10/01/25.
+//  Created by JAM-E-329 on 06/05/25. on 10/01/25.
 //
 
 import Foundation

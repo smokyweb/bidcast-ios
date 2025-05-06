@@ -1,8 +1,8 @@
 //
 //  NewPasswordViewController.swift
-//  Rise Shine Swing
+//  BidCast
 //
-//  Created by JAM-E-329 on 02/09/24.
+//  Created by JAM-E-329 on 06/05/25
 //
 
 import UIKit
@@ -121,7 +121,6 @@ class NewPasswordViewController: UIViewController {
     //MARK: - submitNewPass.
     private func submitNewPass() {
         self.view.endEditing(true)
-        
         if let validationError = validatePasswordInputs() {
             Utilities.sharedInstance.showToast(source: self, message: validationError)
             return
@@ -130,10 +129,13 @@ class NewPasswordViewController: UIViewController {
             Utilities.sharedInstance.showToast(source: self, message: Toast.Network.noConnection)
             return
         }
+        //TODO: Removed this code when using the API.
+        self.pushVC(with: SignInViewController.self, storyboardName: .onboardings)
         
-        SVProgressHUD.show()
-        let newPasswordRequest = newPasswordRequest(email: self.email, password: self.password, password_confirmation: self.conFirmPassowrd)
-        self.viewModel.newPassword(parameters: newPasswordRequest)
+        //TODO: Open this code when using the API.
+//        SVProgressHUD.show()
+//        let newPasswordRequest = newPasswordRequest(email: self.email, password: self.password, password_confirmation: self.conFirmPassowrd)
+//        self.viewModel.newPassword(parameters: newPasswordRequest)
     }
 }
 

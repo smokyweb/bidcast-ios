@@ -1,8 +1,8 @@
 //
 //  ForgetPasswordController.swift
-//  Rise Shine Swing
+//  BidCast
 //
-//  Created by JAM-E-329 on 26/12/24.
+//  Created by JAM-E-329 06/05/25.
 //
 
 import UIKit
@@ -83,15 +83,20 @@ class ForgetPasswordViewController: UIViewController {
     //MARK: submit.
     private func submit(){
         self.view.endEditing(true)
+       
         if self.email == "" {
             Utilities.sharedInstance.showToast(source: self, message: Toast.Validation.emptyEmail)
         }else if Reachability.isConnectedToNetwork(){
-            DispatchQueue.main.async {
-                debugLog(self.email)
-                SVProgressHUD.show()
-                let forgetRequest = ForgetRequest(email: self.email)
-                self.viewModel.forgetPassword(parameters: forgetRequest)
-            }
+            //TODO: Removed this code when using the API.
+            self.pushVC(with: OtpViewController.self, storyboardName: .onboardings)
+            
+            //TODO: Open this code when using the API.
+//            DispatchQueue.main.async {
+//                debugLog(self.email)
+//                SVProgressHUD.show()
+//                let forgetRequest = ForgetRequest(email: self.email)
+//                self.viewModel.forgetPassword(parameters: forgetRequest)
+//            }
         }else{
             Utilities.sharedInstance.showToast(source: self, message: Toast.Network.noConnection)
         }
@@ -114,7 +119,7 @@ extension ForgetPasswordViewController: UITableViewDelegate,UITableViewDataSourc
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let rowType = ForgetPasswordSection.allCases[safe: indexPath.row] else {
-            fatalError("Invalid index for LoginTableRow")
+            fatalError("Invalid index for ForgetPasswordSection")
         }
         
         switch rowType {

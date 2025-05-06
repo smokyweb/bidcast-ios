@@ -1,8 +1,8 @@
 //
 //  UIColor+Extension.swift
-//  Rise Shine Swing
+//  BidCast
 //
-//  Created by JAM-E-329 on 26/12/24.
+//  Created by JAM-E-329 06/05/25.
 //
 import Foundation
 import UIKit

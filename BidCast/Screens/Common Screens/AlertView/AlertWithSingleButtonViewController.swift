@@ -1,6 +1,6 @@
 //
 //  AlertWithSingleButtonViewController.swift
-//  Rise Shine Swing
+//  BidCast
 //
 //  Created by JAM-E-328 on 14/12/24.
 //

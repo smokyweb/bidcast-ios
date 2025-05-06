@@ -1,6 +1,6 @@
 //
 //  Error+Extension.swift
-//  Rise Shine Swing
+//  BidCast
 //
 //  Created by jam 1 TB on 25/03/25.
 //

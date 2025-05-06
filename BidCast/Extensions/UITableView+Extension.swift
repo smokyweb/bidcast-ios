@@ -1,6 +1,6 @@
 //
 //  UITableView+Extension.swift
-//  Rise Shine Swing
+//  BidCast
 //
 //  Created by Vivek-JAM-E-328 on 18/09/24.
 //
@@ -19,7 +19,7 @@ extension UITableView {
         let identifier = String(describing: cellType)
         return dequeueReusableCell(withIdentifier: identifier) as! T
     }
-    func configTblView(rowHeight: CGFloat = UITableView.automaticDimension, estimatedRowHeight: CGFloat = 85.0, separatorStyle: UITableViewCell.SeparatorStyle = .none, showsVerticalScrollIndicator: Bool = false,bgColor : UIColor = .ultraLightGray) {
+    func configTblView(rowHeight: CGFloat = UITableView.automaticDimension, estimatedRowHeight: CGFloat = 85.0, separatorStyle: UITableViewCell.SeparatorStyle = .none, showsVerticalScrollIndicator: Bool = false,bgColor : UIColor = .white) {
         
         // Configure row height and estimated row height
         self.rowHeight = rowHeight
