@@ -104,5 +104,10 @@ enum StoryBoard: String {
     case onboardings = "Onboardings"
     case more = "More"
     case alert = "Alert"
+    case home = "Home"
+    case explore = "Explore"
+    case sell = "Sell"
+    case activity = "Activity"
+    case account = "Account"
 }
 

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Inventory View Controller-->
+        <scene sceneID="5Mi-CC-rhJ">
+            <objects>
+                <viewController storyboardIdentifier="InventoryViewController" id="lPw-A8-FiL" customClass="InventoryViewController" customModule="BidCast" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="bR4-5b-bkY">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zw0-zm-hSJ" customClass="HeaderWithAppName" customModule="BidCast" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="393" height="85"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="85" id="Yel-SY-TaW"/>
+                                </constraints>
+                            </view>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="9aE-8x-7TO">
+                                <rect key="frame" x="0.0" y="85" width="393" height="767"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </tableView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="Diw-W1-PYV"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="9aE-8x-7TO" firstAttribute="leading" secondItem="Diw-W1-PYV" secondAttribute="leading" id="3h2-cq-fhz"/>
+                            <constraint firstItem="zw0-zm-hSJ" firstAttribute="leading" secondItem="bR4-5b-bkY" secondAttribute="leading" id="5Lg-9T-K5S"/>
+                            <constraint firstItem="zw0-zm-hSJ" firstAttribute="top" secondItem="bR4-5b-bkY" secondAttribute="top" id="JyS-bR-bAa"/>
+                            <constraint firstItem="9aE-8x-7TO" firstAttribute="top" secondItem="zw0-zm-hSJ" secondAttribute="bottom" id="Pf1-MQ-ILJ"/>
+                            <constraint firstAttribute="trailing" secondItem="zw0-zm-hSJ" secondAttribute="trailing" id="dHG-ja-orZ"/>
+                            <constraint firstItem="9aE-8x-7TO" firstAttribute="trailing" secondItem="Diw-W1-PYV" secondAttribute="trailing" id="hKb-fo-KNx"/>
+                            <constraint firstItem="9aE-8x-7TO" firstAttribute="top" secondItem="zw0-zm-hSJ" secondAttribute="bottom" id="rjQ-uF-n7r"/>
+                            <constraint firstAttribute="bottom" secondItem="9aE-8x-7TO" secondAttribute="bottom" id="wCq-Cc-Rnd"/>
+                        </constraints>
+                    </view>
+                    <nil key="simulatedTopBarMetrics"/>
+                    <connections>
+                        <outlet property="headerView" destination="zw0-zm-hSJ" id="lUP-B1-Hqh"/>
+                        <outlet property="tblView" destination="9aE-8x-7TO" id="iTe-K2-TzE"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="9uS-NB-0g7" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-376" y="-211"/>
+        </scene>
+    </scenes>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

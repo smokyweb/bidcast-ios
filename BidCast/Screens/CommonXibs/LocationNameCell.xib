@@ -22,22 +22,22 @@
         <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="105" id="KGk-i7-Jjw" customClass="LocationNameCell" customModule="BidCast" customModuleProvider="target">
             <rect key="frame" x="0.0" y="0.0" width="411" height="105"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" ambiguous="YES" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
                 <rect key="frame" x="0.0" y="0.0" width="411" height="105"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hSi-jU-lFz">
-                        <rect key="frame" x="16" y="2" width="379" height="80"/>
+                        <rect key="frame" x="16" y="8" width="379" height="89"/>
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="person.2.fill" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="G1f-MO-Z9A">
-                                <rect key="frame" x="16" y="19.666666666666668" width="44" height="41.999999999999986"/>
+                                <rect key="frame" x="16" y="24.333333333333336" width="44" height="42.000000000000007"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="44" id="NmQ-Kd-3P8"/>
                                     <constraint firstAttribute="height" constant="44" id="SEM-h7-JV8"/>
                                 </constraints>
                             </imageView>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="-3" translatesAutoresizingMaskIntoConstraints="NO" id="gaH-vw-sh0">
-                                <rect key="frame" x="76" y="14.666666666666671" width="257" height="51"/>
+                                <rect key="frame" x="76" y="19" width="257" height="51"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Samantha Example" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LSs-99-WNr">
                                         <rect key="frame" x="0.0" y="0.0" width="257" height="27"/>
@@ -61,7 +61,7 @@
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </stackView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hDB-sh-GRp">
-                                <rect key="frame" x="341" y="28" width="24" height="24"/>
+                                <rect key="frame" x="341" y="32.666666666666664" width="24" height="24"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="24" id="9ie-tl-80o"/>
                                     <constraint firstAttribute="height" constant="24" id="sou-Y0-9Wc"/>
@@ -74,7 +74,6 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="G1f-MO-Z9A" firstAttribute="leading" secondItem="hSi-jU-lFz" secondAttribute="leading" constant="16" id="Gv6-eZ-ghD"/>
-                            <constraint firstAttribute="height" constant="80" id="RoA-ak-v60"/>
                             <constraint firstItem="gaH-vw-sh0" firstAttribute="centerY" secondItem="G1f-MO-Z9A" secondAttribute="centerY" id="StR-oO-h7G"/>
                             <constraint firstItem="hDB-sh-GRp" firstAttribute="centerY" secondItem="G1f-MO-Z9A" secondAttribute="centerY" id="TRO-Ww-PfR"/>
                             <constraint firstItem="G1f-MO-Z9A" firstAttribute="centerY" secondItem="hSi-jU-lFz" secondAttribute="centerY" id="Xst-gY-g1S"/>
@@ -88,8 +87,9 @@
                 <constraints>
                     <constraint firstAttribute="trailing" secondItem="hSi-jU-lFz" secondAttribute="trailing" constant="16" id="0f8-tQ-YWo"/>
                     <constraint firstItem="hSi-jU-lFz" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="16" id="1gj-7K-3Z5"/>
-                    <constraint firstAttribute="bottom" secondItem="hSi-jU-lFz" secondAttribute="bottom" constant="20" id="Yoq-by-kUx"/>
-                    <constraint firstItem="hSi-jU-lFz" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="2" id="jhv-AN-eIF"/>
+                    <constraint firstItem="hSi-jU-lFz" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="9uL-ek-97M"/>
+                    <constraint firstItem="hSi-jU-lFz" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="8" id="HOV-11-jef"/>
+                    <constraint firstAttribute="bottom" secondItem="hSi-jU-lFz" secondAttribute="bottom" constant="8" id="i16-Ee-xcm"/>
                 </constraints>
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>

@@ -296,6 +296,16 @@
 		99BC330A2DC9DD0400E1BEA6 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99BC309C2DC9DD0400E1BEA6 /* ProfileViewModel.swift */; };
 		99BC330B2DC9DD0400E1BEA6 /* NewPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99BC30262DC9DD0400E1BEA6 /* NewPasswordViewController.swift */; };
 		99BC330C2DC9DD0400E1BEA6 /* SignUpTodayCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99BC31102DC9DD0400E1BEA6 /* SignUpTodayCell.swift */; };
+		D48D75252DCA1B4B0096B223 /* Account.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D48D75242DCA1B4A0096B223 /* Account.storyboard */; };
+		D48D75272DCA1B6A0096B223 /* Activity.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D48D75262DCA1B6A0096B223 /* Activity.storyboard */; };
+		D48D75292DCA1B760096B223 /* Sell.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D48D75282DCA1B760096B223 /* Sell.storyboard */; };
+		D48D752B2DCA1B8C0096B223 /* Explore.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D48D752A2DCA1B8C0096B223 /* Explore.storyboard */; };
+		D48D752D2DCA1B9C0096B223 /* Home.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D48D752C2DCA1B9C0096B223 /* Home.storyboard */; };
+		D48D75352DCA1C730096B223 /* InventoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D48D75302DCA1C730096B223 /* InventoryViewController.swift */; };
+		D48D75362DCA1C730096B223 /* InventoryModelViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D48D75322DCA1C730096B223 /* InventoryModelViewModel.swift */; };
+		D48D75372DCA1C730096B223 /* InventoryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D48D752E2DCA1C730096B223 /* InventoryModel.swift */; };
+		D48D753A2DCA1F210096B223 /* SearchTextfieldCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D48D75382DCA1F210096B223 /* SearchTextfieldCell.swift */; };
+		D48D753B2DCA1F210096B223 /* SearchTextfieldCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D48D75392DCA1F210096B223 /* SearchTextfieldCell.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -611,6 +621,16 @@
 		99BC31CA2DC9DD0400E1BEA6 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		99BC31CB2DC9DD0400E1BEA6 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		9C01742AE13B328D7B6441D7 /* Pods-BidCast-BidCastUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BidCast-BidCastUITests.debug.xcconfig"; path = "Target Support Files/Pods-BidCast-BidCastUITests/Pods-BidCast-BidCastUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		D48D75242DCA1B4A0096B223 /* Account.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Account.storyboard; sourceTree = "<group>"; };
+		D48D75262DCA1B6A0096B223 /* Activity.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Activity.storyboard; sourceTree = "<group>"; };
+		D48D75282DCA1B760096B223 /* Sell.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Sell.storyboard; sourceTree = "<group>"; };
+		D48D752A2DCA1B8C0096B223 /* Explore.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Explore.storyboard; sourceTree = "<group>"; };
+		D48D752C2DCA1B9C0096B223 /* Home.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Home.storyboard; sourceTree = "<group>"; };
+		D48D752E2DCA1C730096B223 /* InventoryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryModel.swift; sourceTree = "<group>"; };
+		D48D75302DCA1C730096B223 /* InventoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryViewController.swift; sourceTree = "<group>"; };
+		D48D75322DCA1C730096B223 /* InventoryModelViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryModelViewModel.swift; sourceTree = "<group>"; };
+		D48D75382DCA1F210096B223 /* SearchTextfieldCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchTextfieldCell.swift; sourceTree = "<group>"; };
+		D48D75392DCA1F210096B223 /* SearchTextfieldCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SearchTextfieldCell.xib; sourceTree = "<group>"; };
 		DBB2DF41002CD8D163CFB8F0 /* Pods_BidCast_BidCastUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BidCast_BidCastUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DE378E847C398975C6A1E294 /* Pods-BidCastTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BidCastTests.release.xcconfig"; path = "Target Support Files/Pods-BidCastTests/Pods-BidCastTests.release.xcconfig"; sourceTree = "<group>"; };
 		DEA831EEA9BCA5141D495061 /* Pods-BidCast.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BidCast.release.xcconfig"; path = "Target Support Files/Pods-BidCast/Pods-BidCast.release.xcconfig"; sourceTree = "<group>"; };
@@ -694,6 +714,7 @@
 			isa = PBXGroup;
 			children = (
 				35B866BE2DC9F2C000E6FFA1 /* AccountViewController.swift */,
+				D48D75342DCA1C730096B223 /* Inventory */,
 			);
 			path = Account;
 			sourceTree = "<group>";
@@ -784,6 +805,11 @@
 			isa = PBXGroup;
 			children = (
 				99BC2FFE2DC9DCED00E1BEA6 /* Main.storyboard */,
+				D48D752C2DCA1B9C0096B223 /* Home.storyboard */,
+				D48D752A2DCA1B8C0096B223 /* Explore.storyboard */,
+				D48D75282DCA1B760096B223 /* Sell.storyboard */,
+				D48D75262DCA1B6A0096B223 /* Activity.storyboard */,
+				D48D75242DCA1B4A0096B223 /* Account.storyboard */,
 				35B866AE2DC9EBC200E6FFA1 /* LaunchScreen.storyboard */,
 				99BC30162DC9DD0400E1BEA6 /* Onboardings.storyboard */,
 				99BC30172DC9DD0400E1BEA6 /* More.storyboard */,
@@ -979,6 +1005,8 @@
 				99BC30382DC9DD0400E1BEA6 /* Sign In */,
 				99BC303F2DC9DD0400E1BEA6 /* Sign Up */,
 				99BC30422DC9DD0400E1BEA6 /* DeviceDetail */,
+				99BC30852DC9DD0400E1BEA6 /* OurSubscription */,
+				99BC308F2DC9DD0400E1BEA6 /* LogOut */,
 			);
 			path = Onboardings;
 			sourceTree = "<group>";
@@ -1076,13 +1104,11 @@
 		99BC30902DC9DD0400E1BEA6 /* Main */ = {
 			isa = PBXGroup;
 			children = (
+				35B866B02DC9EF6C00E6FFA1 /* Home */,
+				35B866B12DC9EF7400E6FFA1 /* Explore */,
+				35B866B22DC9EF8500E6FFA1 /* Sell */,
 				35B866B42DC9EF9100E6FFA1 /* Account */,
 				35B866B32DC9EF8900E6FFA1 /* Activity */,
-				35B866B22DC9EF8500E6FFA1 /* Sell */,
-				35B866B12DC9EF7400E6FFA1 /* Explore */,
-				35B866B02DC9EF6C00E6FFA1 /* Home */,
-				99BC30852DC9DD0400E1BEA6 /* OurSubscription */,
-				99BC308F2DC9DD0400E1BEA6 /* LogOut */,
 			);
 			path = Main;
 			sourceTree = "<group>";
@@ -1506,6 +1532,8 @@
 		99BC31282DC9DD0400E1BEA6 /* CommonXibs */ = {
 			isa = PBXGroup;
 			children = (
+				D48D75382DCA1F210096B223 /* SearchTextfieldCell.swift */,
+				D48D75392DCA1F210096B223 /* SearchTextfieldCell.xib */,
 				99BC30F22DC9DD0400E1BEA6 /* LocationNameCell.swift */,
 				99BC30F32DC9DD0400E1BEA6 /* LocationNameCell.xib */,
 				99BC30F42DC9DD0400E1BEA6 /* RemberMeCell.swift */,
@@ -1806,6 +1834,40 @@
 			path = Helper;
 			sourceTree = "<group>";
 		};
+		D48D752F2DCA1C730096B223 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				D48D752E2DCA1C730096B223 /* InventoryModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		D48D75312DCA1C730096B223 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				D48D75302DCA1C730096B223 /* InventoryViewController.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		D48D75332DCA1C730096B223 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				D48D75322DCA1C730096B223 /* InventoryModelViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		D48D75342DCA1C730096B223 /* Inventory */ = {
+			isa = PBXGroup;
+			children = (
+				D48D752F2DCA1C730096B223 /* Model */,
+				D48D75312DCA1C730096B223 /* View */,
+				D48D75332DCA1C730096B223 /* ViewModel */,
+			);
+			path = Inventory;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1917,6 +1979,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				99BC30072DC9DCED00E1BEA6 /* Assets.xcassets in Resources */,
+				D48D753B2DCA1F210096B223 /* SearchTextfieldCell.xib in Resources */,
 				99BC31CD2DC9DD0400E1BEA6 /* Jost-ExtraLight.ttf in Resources */,
 				99BC31CE2DC9DD0400E1BEA6 /* Inter_24pt-MediumItalic.ttf in Resources */,
 				99BC31CF2DC9DD0400E1BEA6 /* EmptyCustomView.xib in Resources */,
@@ -1953,6 +2016,7 @@
 				99BC31EE2DC9DD0400E1BEA6 /* Inter_24pt-ExtraLight.ttf in Resources */,
 				99BC31EF2DC9DD0400E1BEA6 /* Inter_18pt-ThinItalic.ttf in Resources */,
 				99BC31F02DC9DD0400E1BEA6 /* Inter-VariableFont_opsz,wght.ttf in Resources */,
+				D48D752B2DCA1B8C0096B223 /* Explore.storyboard in Resources */,
 				99BC31F12DC9DD0400E1BEA6 /* IncorrectPasswordCell.xib in Resources */,
 				99BC31F22DC9DD0400E1BEA6 /* Jost-BlackItalic.ttf in Resources */,
 				99BC31F32DC9DD0400E1BEA6 /* Inter_28pt-Black.ttf in Resources */,
@@ -1975,6 +2039,7 @@
 				99BC32062DC9DD0400E1BEA6 /* Inter_24pt-Light.ttf in Resources */,
 				99BC32072DC9DD0400E1BEA6 /* README.txt in Resources */,
 				35B866C32DC9F85000E6FFA1 /* HeaderWithAppName.xib in Resources */,
+				D48D75272DCA1B6A0096B223 /* Activity.storyboard in Resources */,
 				99BC32082DC9DD0400E1BEA6 /* Outfit-ExtraBold.ttf in Resources */,
 				99BC32092DC9DD0400E1BEA6 /* Inter_28pt-BoldItalic.ttf in Resources */,
 				99BC320A2DC9DD0400E1BEA6 /* Inter_28pt-Bold.ttf in Resources */,
@@ -2006,6 +2071,7 @@
 				99BC32282DC9DD0400E1BEA6 /* Inter_28pt-LightItalic.ttf in Resources */,
 				99BC32292DC9DD0400E1BEA6 /* Inter_28pt-Regular.ttf in Resources */,
 				99BC322A2DC9DD0400E1BEA6 /* Inter_28pt-Italic.ttf in Resources */,
+				D48D752D2DCA1B9C0096B223 /* Home.storyboard in Resources */,
 				99BC322B2DC9DD0400E1BEA6 /* Jost-Black.ttf in Resources */,
 				99BC322C2DC9DD0400E1BEA6 /* Outfit-Black.ttf in Resources */,
 				99BC322D2DC9DD0400E1BEA6 /* WeatherDetailTblCell.xib in Resources */,
@@ -2014,6 +2080,7 @@
 				99BC32312DC9DD0400E1BEA6 /* Inter_28pt-ExtraLight.ttf in Resources */,
 				99BC32322DC9DD0400E1BEA6 /* Inter_28pt-ThinItalic.ttf in Resources */,
 				99BC32332DC9DD0400E1BEA6 /* MonsoonDetailsColCell.xib in Resources */,
+				D48D75252DCA1B4B0096B223 /* Account.storyboard in Resources */,
 				99BC32342DC9DD0400E1BEA6 /* Inter_18pt-Black.ttf in Resources */,
 				99BC32362DC9DD0400E1BEA6 /* SubmitCell.xib in Resources */,
 				99BC32372DC9DD0400E1BEA6 /* Jost-Thin.ttf in Resources */,
@@ -2031,6 +2098,7 @@
 				99BC32492DC9DD0400E1BEA6 /* Outfit-Regular.ttf in Resources */,
 				99BC324A2DC9DD0400E1BEA6 /* Inter_18pt-Light.ttf in Resources */,
 				99BC324B2DC9DD0400E1BEA6 /* Outfit-Light.ttf in Resources */,
+				D48D75292DCA1B760096B223 /* Sell.storyboard in Resources */,
 				99BC324C2DC9DD0400E1BEA6 /* ImageWithTitleCell.xib in Resources */,
 				99BC324D2DC9DD0400E1BEA6 /* Jost-ExtraBold.ttf in Resources */,
 				99BC324E2DC9DD0400E1BEA6 /* Inter_24pt-Bold.ttf in Resources */,
@@ -2201,6 +2269,7 @@
 				99BC32752DC9DD0400E1BEA6 /* OtpModel.swift in Sources */,
 				99BC32762DC9DD0400E1BEA6 /* LogOutViewModel.swift in Sources */,
 				99BC32772DC9DD0400E1BEA6 /* ParameterRequest.swift in Sources */,
+				D48D753A2DCA1F210096B223 /* SearchTextfieldCell.swift in Sources */,
 				99BC32782DC9DD0400E1BEA6 /* AlertWithDoubleButtonViewController.swift in Sources */,
 				99BC32792DC9DD0400E1BEA6 /* TermOfServiceViewModel.swift in Sources */,
 				99BC327A2DC9DD0400E1BEA6 /* UIButton + Extension.swift in Sources */,
@@ -2290,6 +2359,9 @@
 				99BC32E12DC9DD0400E1BEA6 /* PrivacyPolicyViewModel.swift in Sources */,
 				99BC32E42DC9DD0400E1BEA6 /* Strings.swift in Sources */,
 				99BC32E52DC9DD0400E1BEA6 /* LogOutModel.swift in Sources */,
+				D48D75352DCA1C730096B223 /* InventoryViewController.swift in Sources */,
+				D48D75362DCA1C730096B223 /* InventoryModelViewModel.swift in Sources */,
+				D48D75372DCA1C730096B223 /* InventoryModel.swift in Sources */,
 				99BC32E62DC9DD0400E1BEA6 /* TabBarViewController.swift in Sources */,
 				99BC32E72DC9DD0400E1BEA6 /* UIColor+Extension.swift in Sources */,
 				99BC32E82DC9DD0400E1BEA6 /* ForgetPasswordViewModel.swift in Sources */,

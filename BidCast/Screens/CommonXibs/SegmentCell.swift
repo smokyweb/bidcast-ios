@@ -12,6 +12,8 @@ class SegmentCell: UITableViewCell {
     @IBOutlet var segment: HBSegmentedControl!
     
     static let identifier = "SegmentCell"
+    var isNavFrom : String?
+
     
     // Define a closure property
     var onSegmentChanged: ((Int) -> Void)?
@@ -27,19 +29,24 @@ class SegmentCell: UITableViewCell {
     }
     
     // MARK: setupforsegmentControl
-    private func setupforsegmentControl() {
-        segment.items = ["SIGN IN", "SIGN UP"]
+    func setupforsegmentControl() {
+        if isNavFrom == "InventoryVC"{
+            segment.items = ["Active", "Draft","Inactive"]
+        }else if isNavFrom == "MyAccountVC"{
+            segment.items = ["Seller Hub", "My Account"]
+        }
+       
         segment.font  = AppFont.Labeltitle
-        segment.backgroundColor = AppColor.lightGray
-        segment.borderColor = .clear
-        segment.selectedLabelColor = .white
-        segment.unselectedLabelColor = AppColor.darkGray ?? .darkGray
-        segment.thumbColor = AppColor.primary ?? .primary
+        segment.backgroundColor = AppColor.Segment.whiteFrost
+        segment.selectedLabelColor = .black
+        segment.unselectedLabelColor = .darkGray
+        segment.thumbColor = .white
         segment.selectedIndex = 0
         segment.padding = 6
+        segment.makeCornerRounded(ofSize: Corner_08)
+        
         // Add target for value change
         segment.addTarget(self, action: #selector(segmentValueChanged(_:)), for: .valueChanged)
-    
     }
     
     @objc private func segmentValueChanged(_ sender: HBSegmentedControl) {

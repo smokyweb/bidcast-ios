@@ -24,6 +24,7 @@ struct AppColor{
     static let danger = UIColor(named: "danger") ?? UIColor(hex: "#D62B4D") //#D62B4D
     static let lightBlue = UIColor(named: "lightBlue") ?? UIColor(hex: "#F1F6FF") //#F1F6FF
     static let clear = UIColor(named: "clear") ?? UIColor(hex: "#FFFFFF") //#FFFFFF
+    static let bgColor = UIColor(named: "bgColor") ?? UIColor(hex: "#E5E7EB") //#E5E7EB
     
 
     

@@ -93,6 +93,7 @@ struct Const {
         static let notNotch =  84.0
         static let isNotchCenter = 15.0
         static let notNotchCenter = 8.0
+        static let search = 70.0
         static let AutomaticDimension = UITableView.automaticDimension
     }
 }

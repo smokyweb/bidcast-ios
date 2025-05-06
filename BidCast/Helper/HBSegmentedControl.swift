@@ -98,7 +98,7 @@ import UIKit
             label.textColor = selectedLabelColor
             thumbView.frame = label.frame
             thumbView.backgroundColor = thumbColor
-            thumbView.layer.cornerRadius = thumbView.frame.height / 2
+            thumbView.layer.cornerRadius = 8.0
             displayNewSelectedIndex()
         }
     }

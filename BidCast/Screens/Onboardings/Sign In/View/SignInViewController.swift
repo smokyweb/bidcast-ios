@@ -196,7 +196,9 @@ extension SignInViewController: UITableViewDelegate, UITableViewDataSource {
                 self.rememberMeSwitch = sender
             }
             cell.didTapForgot = { sender in
-                self.pushVC(with: ForgetPasswordViewController.self, storyboardName: .onboardings)
+//                self.pushVC(with: ForgetPasswordViewController.self, storyboardName: .onboardings)
+                self.pushVC(with: InventoryViewController.self, storyboardName: .account)
+                
             }
             return cell
             
