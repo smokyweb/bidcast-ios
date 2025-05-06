@@ -65,11 +65,12 @@ class InventoryViewController: UIViewController {
                         ]
         tblView.registerCells(for: cellIds)
         tblView.configTblView()
+        tblView.configTblView(bgColor : .pearl)
     }
     
     //MARK: - configureHeaderView.
     func configureHeaderView(){
-        self.headerView.headerViewSetup(rightButtonHidden: false,leftButtonHidden: false,headerName: AppString.VCName.Inventory)
+        self.headerView.headerViewSetup(rightButtonHidden: false,leftButtonHidden: false,headerName: AppString.VCName.Inventory,setAppBtnImage: UIImage(named: "ic_back"))
     }
 
     
@@ -123,10 +124,19 @@ extension InventoryViewController: UITableViewDelegate,UITableViewDataSource{
             cell.isNavFrom = "InventoryVC"
             cell.setupforsegmentControl()
             cell.onSegmentChanged = { [weak self] selectedIndex in
-                self?.isDraftSelected = (selectedIndex == 1)
-                self?.isInactiveSelected = (selectedIndex == 2)
+                   if selectedIndex == 1 {
+                    self?.isDraftSelected = true
+                    self?.isInactiveSelected = false
+                } else if selectedIndex == 2 {
+                    self?.isInactiveSelected = true
+                    self?.isDraftSelected = false
+                }else{
+                    self?.isInactiveSelected = false
+                    self?.isDraftSelected = false
+                }
                 self?.reloadDataForSelectedSegment()
             }
+            cell.selectionStyle = .none
             return cell
             
         case .searchBar:

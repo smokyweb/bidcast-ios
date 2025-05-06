@@ -12,9 +12,9 @@ class SegmentCell: UITableViewCell {
     @IBOutlet var segment: HBSegmentedControl!
     
     static let identifier = "SegmentCell"
+    var selectedIndex: Int = 0
     var isNavFrom : String?
 
-    
     // Define a closure property
     var onSegmentChanged: ((Int) -> Void)?
     
@@ -41,7 +41,7 @@ class SegmentCell: UITableViewCell {
         segment.selectedLabelColor = .black
         segment.unselectedLabelColor = .darkGray
         segment.thumbColor = .white
-        segment.selectedIndex = 0
+        segment.selectedIndex = selectedIndex
         segment.padding = 6
         segment.makeCornerRounded(ofSize: Corner_08)
         
@@ -52,5 +52,6 @@ class SegmentCell: UITableViewCell {
     @objc private func segmentValueChanged(_ sender: HBSegmentedControl) {
         // Call the closure when the segment value changes
         onSegmentChanged?(sender.selectedIndex)
+        selectedIndex = sender.selectedIndex
     }
 }

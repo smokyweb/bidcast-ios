@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
         <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
@@ -25,6 +26,7 @@
                 <outlet property="leftButton" destination="uV1-ru-ino" id="ygD-Rt-h7g"/>
                 <outlet property="midLbl" destination="cHh-6k-9xk" id="fKx-bg-Ubl"/>
                 <outlet property="rightButton" destination="eDa-H3-Zra" id="6R9-bx-vFq"/>
+                <outlet property="widthConstraint" destination="M4f-1K-jcJ" id="ffL-yo-KjH"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
@@ -45,7 +47,7 @@
                         <constraint firstAttribute="height" constant="30" id="H6s-Ww-PSS"/>
                         <constraint firstAttribute="width" constant="80" id="M4f-1K-jcJ"/>
                     </constraints>
-                    <color key="tintColor" name="Color2"/>
+                    <color key="tintColor" name="black"/>
                     <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                     <state key="normal">
                         <imageReference key="image" image="AppName" symbolScale="large"/>
@@ -111,9 +113,6 @@
         <image name="AppName" width="90.666664123535156" height="19"/>
         <image name="bell.fill" catalog="system" width="123" height="128"/>
         <image name="gearshape.fill" catalog="system" width="128" height="123"/>
-        <namedColor name="Color2">
-            <color red="0.32899999618530273" green="0.32400000095367432" blue="0.4779999852180481" alpha="0.33000001311302185" colorSpace="custom" customColorSpace="sRGB"/>
-        </namedColor>
         <namedColor name="black">
             <color red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
