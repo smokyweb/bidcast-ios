@@ -34,7 +34,7 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tfx-GX-dzT">
-                    <rect key="frame" x="62" y="78.666666666666671" width="243" height="17"/>
+                    <rect key="frame" x="62" y="79" width="243" height="16.333333333333329"/>
                     <fontDescription key="fontDescription" name="Inter-Regular_Bold" family="Inter" pointSize="14"/>
                     <color key="textColor" name="black"/>
                     <nil key="highlightedColor"/>
@@ -84,7 +84,7 @@
                     <nil key="highlightedColor"/>
                 </label>
                 <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0xe-hx-ZyC">
-                    <rect key="frame" x="62" y="100.66666666666667" width="243" height="20.333333333333329"/>
+                    <rect key="frame" x="62" y="100.33333333333333" width="243" height="20.333333333333329"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <color key="textColor" name="black"/>
                     <nil key="highlightedColor"/>
