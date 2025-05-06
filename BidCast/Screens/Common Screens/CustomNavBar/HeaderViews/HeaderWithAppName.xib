@@ -17,24 +17,33 @@
         </array>
     </customFonts>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="HeaderWithAppName" customModule="BidCast" customModuleProvider="target">
+            <connections>
+                <outlet property="appButton" destination="3ts-GN-3WQ" id="QUe-9Z-3uJ"/>
+                <outlet property="cenetrVerticalConstraint" destination="n1y-1o-yLj" id="q0I-Ab-7YR"/>
+                <outlet property="containerView" destination="LeS-8e-uov" id="2Vy-7F-BrC"/>
+                <outlet property="leftButton" destination="uV1-ru-ino" id="ygD-Rt-h7g"/>
+                <outlet property="midLbl" destination="cHh-6k-9xk" id="fKx-bg-Ubl"/>
+                <outlet property="rightButton" destination="eDa-H3-Zra" id="6R9-bx-vFq"/>
+            </connections>
+        </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <view contentMode="scaleToFill" id="LeS-8e-uov" customClass="HeaderWithAppName" customModule="BidCast" customModuleProvider="target">
+        <view contentMode="scaleToFill" id="LeS-8e-uov">
             <rect key="frame" x="0.0" y="0.0" width="367" height="174"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cHh-6k-9xk">
-                    <rect key="frame" x="92" y="78.666666666666671" width="183" height="17"/>
+                    <rect key="frame" x="112" y="78.666666666666671" width="143" height="17"/>
                     <color key="tintColor" name="black"/>
                     <fontDescription key="fontDescription" name="Inter-Regular_Bold" family="Inter" pointSize="14"/>
                     <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3ts-GN-3WQ">
-                    <rect key="frame" x="16" y="72" width="60" height="30"/>
+                    <rect key="frame" x="16" y="72" width="80" height="30"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="30" id="H6s-Ww-PSS"/>
-                        <constraint firstAttribute="width" constant="60" id="M4f-1K-jcJ"/>
+                        <constraint firstAttribute="width" constant="80" id="M4f-1K-jcJ"/>
                     </constraints>
                     <color key="tintColor" name="Color2"/>
                     <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
@@ -44,10 +53,11 @@
                     </state>
                 </button>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eDa-H3-Zra">
-                    <rect key="frame" x="321" y="72" width="30" height="30"/>
+                    <rect key="frame" x="325" y="72" width="30" height="30"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="30" id="7Le-gZ-AfO"/>
-                        <constraint firstAttribute="width" constant="30" id="tuH-w6-oa9"/>
+                        <constraint firstAttribute="height" constant="30" id="G3w-Ft-m6Y"/>
+                        <constraint firstAttribute="width" constant="30" id="spk-HP-BlA"/>
                     </constraints>
                     <fontDescription key="fontDescription" name="SFProText-Medium" family="SF Pro Text" pointSize="15"/>
                     <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -58,11 +68,11 @@
                         <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="medium"/>
                     </state>
                     <connections>
-                        <action selector="rightBtnActiio:" destination="LeS-8e-uov" eventType="touchUpInside" id="oXR-cM-aQO"/>
+                        <action selector="rightBtnActiio:" destination="-1" eventType="touchUpInside" id="lxs-1L-tgW"/>
                     </connections>
                 </button>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uV1-ru-ino">
-                    <rect key="frame" x="291" y="72" width="30" height="30"/>
+                    <rect key="frame" x="283" y="72" width="30" height="30"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="30" id="sSZ-ym-j9n"/>
                         <constraint firstAttribute="height" constant="30" id="wHM-9q-4nM"/>
@@ -76,7 +86,7 @@
                         <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="medium"/>
                     </state>
                     <connections>
-                        <action selector="leftBtnAction:" destination="LeS-8e-uov" eventType="touchUpInside" id="Bek-Es-G3e"/>
+                        <action selector="leftBtnAction:" destination="-1" eventType="touchUpInside" id="rBm-Pi-3Ca"/>
                     </connections>
                 </button>
             </subviews>
@@ -84,22 +94,16 @@
             <color key="backgroundColor" red="0.8980392157" green="0.90588235289999997" blue="0.92156862750000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
                 <constraint firstItem="cHh-6k-9xk" firstAttribute="leading" secondItem="3ts-GN-3WQ" secondAttribute="trailing" constant="16" id="3fQ-ze-Zh8"/>
-                <constraint firstItem="uHE-w8-ROQ" firstAttribute="trailing" secondItem="eDa-H3-Zra" secondAttribute="trailing" constant="16" id="DeY-R3-JV3"/>
-                <constraint firstItem="uV1-ru-ino" firstAttribute="trailing" secondItem="eDa-H3-Zra" secondAttribute="leading" id="ELQ-iz-F0O"/>
                 <constraint firstItem="3ts-GN-3WQ" firstAttribute="leading" secondItem="uHE-w8-ROQ" secondAttribute="leading" constant="16" id="Fon-bh-cXs"/>
-                <constraint firstItem="eDa-H3-Zra" firstAttribute="top" secondItem="3ts-GN-3WQ" secondAttribute="top" id="IIf-H3-NMR"/>
+                <constraint firstItem="uHE-w8-ROQ" firstAttribute="trailing" secondItem="eDa-H3-Zra" secondAttribute="trailing" constant="12" id="RkW-Zx-wXL"/>
                 <constraint firstItem="3ts-GN-3WQ" firstAttribute="centerY" secondItem="LeS-8e-uov" secondAttribute="centerY" id="n1y-1o-yLj"/>
                 <constraint firstItem="uV1-ru-ino" firstAttribute="centerY" secondItem="3ts-GN-3WQ" secondAttribute="centerY" id="nWn-3M-ZUu"/>
                 <constraint firstItem="cHh-6k-9xk" firstAttribute="centerY" secondItem="3ts-GN-3WQ" secondAttribute="centerY" id="pCM-CS-Wrt"/>
                 <constraint firstItem="cHh-6k-9xk" firstAttribute="centerX" secondItem="uHE-w8-ROQ" secondAttribute="centerX" id="r4a-M4-cho"/>
+                <constraint firstItem="eDa-H3-Zra" firstAttribute="centerY" secondItem="uV1-ru-ino" secondAttribute="centerY" id="t6v-u4-l54"/>
+                <constraint firstItem="eDa-H3-Zra" firstAttribute="leading" secondItem="uV1-ru-ino" secondAttribute="trailing" constant="12" id="uV6-qA-ZRG"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-            <connections>
-                <outlet property="appButton" destination="3ts-GN-3WQ" id="Z1e-9g-cNv"/>
-                <outlet property="leftButton" destination="uV1-ru-ino" id="P3t-dp-WJr"/>
-                <outlet property="midLbl" destination="cHh-6k-9xk" id="Mow-WS-QpL"/>
-                <outlet property="rightButton" destination="eDa-H3-Zra" id="T6f-DP-Xmz"/>
-            </connections>
             <point key="canvasLocation" x="-101.5267175572519" y="-22.535211267605636"/>
         </view>
     </objects>

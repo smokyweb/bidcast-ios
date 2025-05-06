@@ -11,13 +11,13 @@ class HeaderWithAppName: UIView {
     
     //MARK: IBOutlets
    
-//    @IBOutlet var containerView: UIView!
+    @IBOutlet var containerView: UIView!
     @IBOutlet weak var midLbl: UILabel!
     @IBOutlet weak var rightButton: UIButton!
     @IBOutlet weak var leftButton: UIButton!
     
     @IBOutlet weak var appButton: UIButton!
-//    @IBOutlet var cenetrVerticalConstraint: NSLayoutConstraint!
+    @IBOutlet var cenetrVerticalConstraint: NSLayoutConstraint!
     
     //MARK: Properties
     var appButtonPresses: () -> () = {}
@@ -40,12 +40,12 @@ class HeaderWithAppName: UIView {
     
     private func commonInit(){
         Bundle.main.loadNibNamed("HeaderWithAppName", owner: self, options: nil)
-//        addSubview(containerView)
-//        containerView.frame = self.bounds
-//        containerView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        addSubview(containerView)
+        containerView.frame = self.bounds
+        containerView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         midLbl.lineBreakMode = .byWordWrapping
         midLbl.numberOfLines = 0
-        midLbl.font = OutFitFont.defaultBold(size: 13.0).value
+        midLbl.font = OutFitFont.defaultBold(size: 18.0).value
         
     }
     
@@ -83,7 +83,7 @@ class HeaderWithAppName: UIView {
             leftButton.setImage(leftImage, for: .normal)
             
         }
-        
+        self.cenetrVerticalConstraint.constant = UIDevice.current.hasNotch ? 20 : 0
         // Add target actions for right and left buttons
         rightButton.addTarget(self, action: #selector(didTapRightButton), for: .touchUpInside)
         leftButton.addTarget(self, action: #selector(didTapLeftButton), for: .touchUpInside)
