@@ -23,7 +23,7 @@ class ProductCollectionViewCell: UICollectionViewCell {
         innerView.backgroundColor = .white
 //        self.productNameLbl.setupLabel(title: "Product Name", fontSize: AppFont.labelBold)
 //        self.productPriceLbl.setupLabel(title: "$999.99", fontSize: AppFont.label)
-        self.productImgView.image = UIImage(named: "solar-panel")
+//        self.productImgView.image = UIImage(named: "solar-panel")
     }
     
 //    func configureCell(with product: CGetShopProduct?) {

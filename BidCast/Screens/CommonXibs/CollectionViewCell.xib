@@ -2,9 +2,10 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
-        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -21,8 +22,11 @@
                         <rect key="frame" x="0.0" y="0.0" width="440" height="167"/>
                         <subviews>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="OYZ-Mp-f21">
-                                <rect key="frame" x="8" y="8" width="424" height="151"/>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <rect key="frame" x="8" y="8" width="424" height="150"/>
+                                <color key="backgroundColor" name="bgColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="150" id="dJx-os-7LX"/>
+                                </constraints>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="fmd-Iw-NPW">
                                     <size key="itemSize" width="128" height="128"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
@@ -31,15 +35,16 @@
                                 </collectionViewFlowLayout>
                             </collectionView>
                         </subviews>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="OYZ-Mp-f21" firstAttribute="leading" secondItem="s8x-QJ-lg6" secondAttribute="leading" constant="8" id="QZj-M1-xWg"/>
                             <constraint firstAttribute="trailing" secondItem="OYZ-Mp-f21" secondAttribute="trailing" constant="8" id="r6g-6H-Bue"/>
-                            <constraint firstAttribute="bottom" secondItem="OYZ-Mp-f21" secondAttribute="bottom" constant="8" id="s12-qf-351"/>
+                            <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="OYZ-Mp-f21" secondAttribute="bottom" constant="8" id="s12-qf-351"/>
                             <constraint firstItem="OYZ-Mp-f21" firstAttribute="top" secondItem="s8x-QJ-lg6" secondAttribute="top" constant="8" id="ydw-w7-lmS"/>
                         </constraints>
                     </view>
                 </subviews>
+                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                 <constraints>
                     <constraint firstItem="s8x-QJ-lg6" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" id="1fB-Pc-g3c"/>
                     <constraint firstAttribute="bottom" secondItem="s8x-QJ-lg6" secondAttribute="bottom" id="DHl-Dl-gVe"/>
@@ -48,7 +53,9 @@
                 </constraints>
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
+            <color key="backgroundColor" name="bgColor"/>
             <connections>
+                <outlet property="collectionViewHeihgt" destination="dJx-os-7LX" id="Lj6-T6-to2"/>
                 <outlet property="collectionViewOlt" destination="OYZ-Mp-f21" id="7V4-Po-O1I"/>
                 <outlet property="outerViewOlt" destination="s8x-QJ-lg6" id="X03-kn-jnE"/>
             </connections>
@@ -56,8 +63,8 @@
         </tableViewCell>
     </objects>
     <resources>
-        <systemColor name="systemBackgroundColor">
-            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
+        <namedColor name="bgColor">
+            <color red="0.89803921568627454" green="0.90588235294117647" blue="0.92156862745098034" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
     </resources>
 </document>

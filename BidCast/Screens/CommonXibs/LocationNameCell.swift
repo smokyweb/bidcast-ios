@@ -35,7 +35,7 @@ class LocationNameCell: UITableViewCell {
     
     //MARK: setupUI
     func setupUI(){
-        self.innerViewOlt.dropShadow(opacity: 0.5, shadowRadius: Radius_04, cornerRadius: Corner_12, shadowColor: AppColor.Label.SquirrelGrey ?? UIColor.squirrelGrey)
+        self.innerViewOlt.dropShadow(opacity: 0, shadowRadius: 0, cornerRadius: Corner_12, shadowColor: AppColor.Label.SquirrelGrey ?? UIColor.squirrelGrey)
         self.titleOlt.font = OutFitFont.defaultBold(size: 13.0).value
         self.descriptionOlt.font = JostFont.defaultSemiBold(size: 13.0).value
     }

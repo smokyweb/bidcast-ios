@@ -64,8 +64,8 @@ class AccountViewController: UIViewController {
         let cellIds = [LocationNameCell.identifier,
                        SegmentCell.identifier,
                        CollectionViewCell.identifier,
-                       SubmitCell.identifier,
-                       SignUpTodayCell.identifier,SegmentCell.identifier,RemberMeCell.identifier,LabelCell.identifier,TextFieldWithLabelCell.identifier]
+                       SwitchEditorAndPhotographerCell.identifier,
+                       ]
         tableViewOlt.registerCells(for: cellIds)
         
     }
@@ -96,6 +96,7 @@ extension AccountViewController : UITableViewDataSource,UITableViewDelegate{
                 return cell
             case .segment:
                 let cell = tableViewOlt.dequeueCell(with: SegmentCell.self)
+                
                 return cell
             case .profileDetails:
                 let cell = tableViewOlt.dequeueCell(with: CollectionViewCell.self)
@@ -103,9 +104,11 @@ extension AccountViewController : UITableViewDataSource,UITableViewDelegate{
                 return cell
             case .tab:
                 let cell = tableViewOlt.dequeueCell(with: CollectionViewCell.self)
+                cell.configure(with: [""])
                 return cell
             case .vacation:
-                let cell = tableViewOlt.dequeueCell(with: SegmentCell.self)
+                let cell = tableViewOlt.dequeueCell(with: SwitchEditorAndPhotographerCell.self)
+                cell.titleOlt.text = "Vacation Mode"
                 return cell
             }
         case .account :
@@ -124,7 +127,7 @@ extension AccountViewController : UITableViewDataSource,UITableViewDelegate{
         case .segment:
             return UITableView.automaticDimension
         case .profileDetails:
-            return 100
+            return 140
         case .tab:
             return UITableView.automaticDimension
         case .vacation:

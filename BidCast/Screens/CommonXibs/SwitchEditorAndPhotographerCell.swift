@@ -10,6 +10,7 @@ import UIKit
 class SwitchEditorAndPhotographerCell: UITableViewCell {
     
     
+    @IBOutlet weak var outerView: UIView!
     @IBOutlet weak var titleOlt: UILabel!
     @IBOutlet weak var switchOlt: UISwitch!
     
@@ -22,7 +23,8 @@ class SwitchEditorAndPhotographerCell: UITableViewCell {
     //MARK: - Initilizations
     override func awakeFromNib() {
         super.awakeFromNib()
-        
+        self.contentView.makeCornerRounded(ofSize: 4)
+        self.outerView.makeCornerRounded(ofSize: 4)
     }
     @IBAction func switchbtnAction(_ sender: UISwitch) {
         

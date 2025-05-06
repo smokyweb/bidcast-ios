@@ -2,8 +2,8 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
-        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -20,39 +20,34 @@
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ObK-5K-CTD">
                         <rect key="frame" x="8" y="8" width="255" height="326"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="solar-panel" translatesAutoresizingMaskIntoConstraints="NO" id="p3i-Ie-Tph">
-                                <rect key="frame" x="8" y="10" width="239" height="50"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="person.fill" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="p3i-Ie-Tph">
+                                <rect key="frame" x="107.66666666666667" y="11.666666666666668" width="40.000000000000014" height="36.666666666666657"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="50" id="H2H-86-7DS"/>
+                                    <constraint firstAttribute="width" constant="40" id="65t-4b-5UK"/>
+                                    <constraint firstAttribute="height" constant="40" id="H2H-86-7DS"/>
                                 </constraints>
                             </imageView>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="RVB-js-d8o">
-                                <rect key="frame" x="8" y="68" width="239" height="250"/>
-                                <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Excellient Product in Distributer Shop" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jvb-J9-smC">
-                                        <rect key="frame" x="40" y="0.0" width="159" height="250"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <nil key="textColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                </subviews>
-                            </stackView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Excellient Product in Distributer Shop" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jvb-J9-smC">
+                                <rect key="frame" x="24" y="64" width="207" height="40.666666666666657"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="RVB-js-d8o" firstAttribute="top" secondItem="p3i-Ie-Tph" secondAttribute="bottom" constant="8" id="3GI-vz-LUe"/>
-                            <constraint firstItem="RVB-js-d8o" firstAttribute="leading" secondItem="ObK-5K-CTD" secondAttribute="leading" constant="8" id="5MZ-DK-SXo"/>
-                            <constraint firstAttribute="trailing" secondItem="RVB-js-d8o" secondAttribute="trailing" constant="8" id="BFF-EX-9w3"/>
-                            <constraint firstAttribute="bottom" secondItem="RVB-js-d8o" secondAttribute="bottom" constant="8" id="JeI-7W-NJe"/>
-                            <constraint firstAttribute="trailing" secondItem="p3i-Ie-Tph" secondAttribute="trailing" constant="8" id="TJG-xZ-6gO"/>
+                            <constraint firstAttribute="trailing" secondItem="jvb-J9-smC" secondAttribute="trailing" constant="24" id="I36-fD-62X"/>
+                            <constraint firstItem="jvb-J9-smC" firstAttribute="centerX" secondItem="p3i-Ie-Tph" secondAttribute="centerX" id="L6h-4Z-I9A"/>
+                            <constraint firstItem="p3i-Ie-Tph" firstAttribute="centerX" secondItem="ObK-5K-CTD" secondAttribute="centerX" id="cIc-9e-YKq"/>
                             <constraint firstItem="p3i-Ie-Tph" firstAttribute="top" secondItem="ObK-5K-CTD" secondAttribute="top" constant="10" id="cbv-bI-1bt"/>
-                            <constraint firstItem="p3i-Ie-Tph" firstAttribute="leading" secondItem="ObK-5K-CTD" secondAttribute="leading" constant="8" id="foP-mM-Txv"/>
+                            <constraint firstItem="jvb-J9-smC" firstAttribute="top" secondItem="p3i-Ie-Tph" secondAttribute="bottom" constant="14" id="d7X-LB-vbQ"/>
+                            <constraint firstItem="jvb-J9-smC" firstAttribute="leading" secondItem="ObK-5K-CTD" secondAttribute="leading" constant="24" id="fPc-Lo-B8u"/>
                         </constraints>
                     </view>
                 </subviews>
             </view>
             <viewLayoutGuide key="safeArea" id="ZTg-uK-7eu"/>
-            <color key="backgroundColor" name="red"/>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <constraints>
                 <constraint firstAttribute="bottom" secondItem="ObK-5K-CTD" secondAttribute="bottom" constant="8" id="Sek-hH-asQ"/>
                 <constraint firstItem="ObK-5K-CTD" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" constant="8" id="buh-jx-3Pm"/>
@@ -62,7 +57,6 @@
             <size key="customSize" width="271" height="342"/>
             <connections>
                 <outlet property="innerView" destination="ObK-5K-CTD" id="wDz-uw-pd7"/>
-                <outlet property="lblStackView" destination="RVB-js-d8o" id="3fI-hb-dtm"/>
                 <outlet property="productImgView" destination="p3i-Ie-Tph" id="A4t-AJ-M4y"/>
                 <outlet property="productNameLbl" destination="jvb-J9-smC" id="6Tg-6w-vsy"/>
             </connections>
@@ -70,9 +64,6 @@
         </collectionViewCell>
     </objects>
     <resources>
-        <image name="solar-panel" width="1307" height="1307"/>
-        <namedColor name="red">
-            <color red="0.94901960784313721" green="0.086274509803921567" blue="0.090196078431372548" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </namedColor>
+        <image name="person.fill" catalog="system" width="128" height="120"/>
     </resources>
 </document>

@@ -9,6 +9,7 @@ import UIKit
 
 class CollectionViewCell: UITableViewCell {
 
+    @IBOutlet weak var collectionViewHeihgt: NSLayoutConstraint!
     @IBOutlet weak var outerViewOlt: UIView!
     @IBOutlet weak var collectionViewOlt: UICollectionView!
     
@@ -18,7 +19,7 @@ class CollectionViewCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         configureCollectionVIew()
-        self.configure(with: [""])
+       
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -31,10 +32,10 @@ class CollectionViewCell: UITableViewCell {
         self.collectionViewOlt.layoutIfNeeded()
 
         let rows = ceil(CGFloat(10) / 2.0)
-        let itemHeight: CGFloat = 100  // same as returned in sizeForItemAt
-        let spacing: CGFloat = 10  // adjust based on your layout spacing
+        let itemHeight: CGFloat = 80
+        let spacing: CGFloat = 8
         let totalHeight = (rows * itemHeight) + ((rows - 1) * spacing)
-        collectionViewHeightConstraint.constant = totalHeight
+        self.collectionViewHeihgt.constant = totalHeight
     }
     
     func configureCollectionVIew(){
@@ -60,15 +61,16 @@ extension CollectionViewCell : UICollectionViewDelegate,UICollectionViewDataSour
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueCell(ofType: ProductCollectionViewCell.self)
+        cell.innerView.makeCornerRounded(ofSize: 4)
         cell.productNameLbl.text = "test"
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         if isForDetails{
-            return CGSize(width: self.collectionViewOlt.frame.width/3 - 10, height: 80)
+            return CGSize(width: self.collectionViewOlt.frame.width/3 - 10, height: 100)
         }else{
-            return CGSize(width: self.collectionViewOlt.frame.width/2, height: 80)
+            return CGSize(width: self.collectionViewOlt.frame.width/2 - 10, height: 100)
         }
     }
     
