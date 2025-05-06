@@ -113,6 +113,15 @@ extension AccountViewController : UITableViewDataSource,UITableViewDelegate{
                 return cell
             case .tab:
                 let cell = tableViewOlt.dequeueCell(with: CollectionViewCell.self)
+                cell.onItemSelected = { [weak self] index in
+                    guard let self = self else { return }
+                    switch index {
+                    case 0:
+                        self.pushVC(with: InventoryViewController.self, storyboardName: .account)
+                    default:
+                        break
+                    }
+                }
                 cell.imageName = self.imageName
                 cell.titleName = self.tabName
                 cell.configure(with: self.tabName)

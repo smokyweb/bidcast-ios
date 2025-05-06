@@ -14,6 +14,8 @@ class CollectionViewCell: UITableViewCell {
     @IBOutlet weak var collectionViewOlt: UICollectionView!
     
     static let identifier = "CollectionViewCell"
+    var onItemSelected: ((Int) -> Void)?
+
     var isForDetails = false
     var items = [Any]()
     var seller = [String]()
@@ -91,7 +93,7 @@ extension CollectionViewCell : UICollectionViewDelegate,UICollectionViewDataSour
             return CGSize(width: self.collectionViewOlt.frame.width/2 - 10, height: 100)
         }
     }
-    
-    
-    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        onItemSelected?(indexPath.row)
+    }
 }

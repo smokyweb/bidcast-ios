@@ -70,7 +70,12 @@ class InventoryViewController: UIViewController {
     
     //MARK: - configureHeaderView.
     func configureHeaderView(){
-        self.headerView.headerViewSetup(rightButtonHidden: false,leftButtonHidden: false,headerName: AppString.VCName.Inventory,setAppBtnImage: UIImage(named: "ic_back"))
+        self.headerView.headerViewSetup(rightButtonHidden: false,leftButtonHidden: false,headerName: AppString.VCName.Inventory,setAppBtnImage: UIImage(named: "ic_back"),appButtonAction : didTabBack)
+    }
+    
+    //MARK: didTabBack.
+    @objc private func didTabBack(){
+        self.goToBack()
     }
 
     
@@ -93,11 +98,6 @@ class InventoryViewController: UIViewController {
            ]
        }
         tblView.reloadData()
-    }
-
-    //MARK: didTabBack.
-    @objc private func didTabBack(){
-        self.goToBack()
     }
 }
 
