@@ -16,7 +16,7 @@ struct AppColor{
     static let ultraLightGray = UIColor(named: "ultraLightGray") ?? UIColor(hex: "#F5F8FC") //#F5F8FC
     static let lightGray = UIColor(named: "lightGray") ?? UIColor(hex: "#EBF1F9") //#EBF1F9
     static let mediumLightGray = UIColor(named: "mediumLightGray") ?? UIColor(hex: "#C1C9D6") //#C1C9D6
-    static let mediumGray = UIColor(named: "mediumGray") ?? UIColor(hex: "#747D8B") //#747D8B
+    static let mediumGray = UIColor(named: "mediumGray") ?? UIColor(hex: "#D9D9D9") //#747D8B
     static let mediumDarkGray = UIColor(named: "mediumDarkGray") ?? UIColor(hex: "#505761") //#505761
     static let darkGray = UIColor(named: "darkGray") ?? UIColor(hex: "#2D3035") //#2D3035
     static let success = UIColor(named: "success") ?? UIColor(hex: "#13B761") //#13B761

@@ -124,7 +124,7 @@ extension AccountViewController : UITableViewDataSource,UITableViewDelegate{
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard let sectionType = AccountSection(rawValue: section) else { return 0 }
-        debugLog("Rows in section:\(sectionType.numberOfRows(data: sectionData))")
+       
         return sectionType.numberOfRows(data: sectionData)
     }
     

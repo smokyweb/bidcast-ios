@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" id="gTV-IL-0wX" customClass="LabelCollectionCell" customModule="BidCast" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="332" height="261"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                <rect key="frame" x="0.0" y="0.0" width="332" height="261"/>
+                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vAx-gv-LDn">
+                        <rect key="frame" x="0.0" y="0.0" width="332" height="261"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Live Now | Popular | Coming Soon" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Vhl-qE-6Gb">
+                                <rect key="frame" x="8" y="119" width="308" height="23"/>
+                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="19"/>
+                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" name="bgColor"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="Vhl-qE-6Gb" secondAttribute="trailing" constant="16" id="C42-ds-kMY"/>
+                            <constraint firstItem="Vhl-qE-6Gb" firstAttribute="leading" secondItem="vAx-gv-LDn" secondAttribute="leading" constant="8" id="GZQ-6e-U4d"/>
+                            <constraint firstItem="Vhl-qE-6Gb" firstAttribute="centerY" secondItem="vAx-gv-LDn" secondAttribute="centerY" id="X4y-Tv-ZsD"/>
+                        </constraints>
+                    </view>
+                </subviews>
+            </view>
+            <viewLayoutGuide key="safeArea" id="ZTg-uK-7eu"/>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <constraints>
+                <constraint firstItem="vAx-gv-LDn" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" id="1KZ-yF-dwb"/>
+                <constraint firstAttribute="trailing" secondItem="vAx-gv-LDn" secondAttribute="trailing" id="Y8J-0D-vC3"/>
+                <constraint firstAttribute="bottom" secondItem="vAx-gv-LDn" secondAttribute="bottom" id="iuV-Zr-Mec"/>
+                <constraint firstItem="vAx-gv-LDn" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" id="ksN-DR-MWL"/>
+            </constraints>
+            <size key="customSize" width="332" height="261"/>
+            <connections>
+                <outlet property="labelOlt" destination="Vhl-qE-6Gb" id="88C-Nu-dXY"/>
+                <outlet property="outerViewOlt" destination="vAx-gv-LDn" id="QUz-Fv-Hhb"/>
+            </connections>
+            <point key="canvasLocation" x="312.97709923664121" y="94.014084507042256"/>
+        </collectionViewCell>
+    </objects>
+    <resources>
+        <namedColor name="bgColor">
+            <color red="0.89803921568627454" green="0.90588235294117647" blue="0.92156862745098034" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+    </resources>
+</document>

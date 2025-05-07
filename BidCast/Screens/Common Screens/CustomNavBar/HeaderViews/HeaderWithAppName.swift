@@ -98,6 +98,8 @@ class HeaderWithAppName: UIView {
             let heightConstraint = appButton.heightAnchor.constraint(equalToConstant: appBtnImageSize.height)
             heightConstraint.isActive = true
             widthConstraint.constant = 30.0
+        }else{
+            widthConstraint.constant = 100.0
         }
         
         self.cenetrVerticalConstraint.constant = UIDevice.current.hasNotch ? 20 : 0
