@@ -9,35 +9,48 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Inventory View Controller-->
-        <scene sceneID="s0d-6b-0kx">
-            <objects>
-                <viewController storyboardIdentifier="InventoryViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Y6W-OH-hqX" customClass="InventoryViewController" customModule="BidCast" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="5EZ-qb-Rvc">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <viewLayoutGuide key="safeArea" id="vDu-zF-Fre"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="84" y="-23"/>
-        </scene>
         <!--Activity View Controller-->
-        <scene sceneID="wPW-Qk-e0H">
+        <scene sceneID="2Kk-RL-ehN">
             <objects>
-                <viewController storyboardIdentifier="ActivityViewController" id="pJs-jw-Ls4" customClass="ActivityViewController" customModule="BidCast" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="GDw-dL-wPi">
+                <viewController storyboardIdentifier="ActivityViewController" id="2Bf-qI-Lx4" customClass="ActivityViewController" customModule="BidCast" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="XQf-CV-XYI">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <viewLayoutGuide key="safeArea" id="n47-g0-hJC"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gu7-Uw-5NU" customClass="HeaderWithAppName" customModule="BidCast" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="393" height="85"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="85" id="iJn-7P-Xo7"/>
+                                </constraints>
+                            </view>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="xOG-tQ-lmg">
+                                <rect key="frame" x="0.0" y="85" width="393" height="767"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </tableView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="oCw-Lr-Nuy"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="gu7-Uw-5NU" firstAttribute="top" secondItem="XQf-CV-XYI" secondAttribute="top" id="GBq-Cc-CSo"/>
+                            <constraint firstItem="xOG-tQ-lmg" firstAttribute="top" secondItem="gu7-Uw-5NU" secondAttribute="bottom" id="JTF-S6-UXy"/>
+                            <constraint firstItem="xOG-tQ-lmg" firstAttribute="leading" secondItem="oCw-Lr-Nuy" secondAttribute="leading" id="cI3-Tk-vdk"/>
+                            <constraint firstItem="xOG-tQ-lmg" firstAttribute="top" secondItem="gu7-Uw-5NU" secondAttribute="bottom" id="glS-Lj-mzo"/>
+                            <constraint firstAttribute="bottom" secondItem="xOG-tQ-lmg" secondAttribute="bottom" id="jjh-xq-bdf"/>
+                            <constraint firstItem="xOG-tQ-lmg" firstAttribute="trailing" secondItem="oCw-Lr-Nuy" secondAttribute="trailing" id="mu0-8W-OIl"/>
+                            <constraint firstAttribute="trailing" secondItem="gu7-Uw-5NU" secondAttribute="trailing" id="nMU-6U-R4c"/>
+                            <constraint firstItem="gu7-Uw-5NU" firstAttribute="leading" secondItem="XQf-CV-XYI" secondAttribute="leading" id="s7Y-hW-ha4"/>
+                        </constraints>
                     </view>
+                    <nil key="simulatedTopBarMetrics"/>
+                    <connections>
+                        <outlet property="headerView" destination="gu7-Uw-5NU" id="Kl5-NO-PMm"/>
+                        <outlet property="tblView" destination="xOG-tQ-lmg" id="Wgd-rn-GWM"/>
+                    </connections>
                 </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="nNX-iH-koE" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="iNg-n6-7SR" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1085" y="-211"/>
+            <point key="canvasLocation" x="-376" y="-211"/>
         </scene>
     </scenes>
     <resources>

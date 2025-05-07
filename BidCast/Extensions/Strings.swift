@@ -32,6 +32,7 @@ enum AppString{
         static let myProfile = "MY PROFILE"
         static let addMusic = "MUSIC LIBRARY"
         static let Inventory = "Inventory"
+        static let activity = "Activity"
 
     }
     

@@ -51,6 +51,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
     }
 
+    //MARK: navigateToLandingScreen.
     func navigateToLandingScreen(){
         var viewController = UIViewController()
         if UserDefaults.refreshToken != "" {
@@ -68,6 +69,5 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         self.window?.rootViewController = navController
         self.window?.makeKeyAndVisible()
     }
-
 }
 
