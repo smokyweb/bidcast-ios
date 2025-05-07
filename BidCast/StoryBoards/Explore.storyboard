@@ -4,6 +4,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -16,16 +17,45 @@
                     <view key="view" contentMode="scaleToFill" id="0y6-ur-2CL">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Hjp-j5-bmN" customClass="HeaderWithAppName" customModule="BidCast" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="393" height="85"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="85" id="ggz-xt-XHM"/>
+                                </constraints>
+                            </view>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="15W-sF-F2T">
+                                <rect key="frame" x="0.0" y="85" width="393" height="733"/>
+                                <color key="backgroundColor" name="bgColor"/>
+                            </tableView>
+                        </subviews>
                         <viewLayoutGuide key="safeArea" id="XuG-6p-kvX"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <color key="backgroundColor" name="bgColor"/>
+                        <constraints>
+                            <constraint firstItem="XuG-6p-kvX" firstAttribute="trailing" secondItem="Hjp-j5-bmN" secondAttribute="trailing" id="6dx-rr-O3M"/>
+                            <constraint firstItem="XuG-6p-kvX" firstAttribute="bottom" secondItem="15W-sF-F2T" secondAttribute="bottom" id="Nhn-Fl-qEg"/>
+                            <constraint firstItem="15W-sF-F2T" firstAttribute="top" secondItem="Hjp-j5-bmN" secondAttribute="bottom" id="OAw-rQ-tYG"/>
+                            <constraint firstItem="Hjp-j5-bmN" firstAttribute="top" secondItem="0y6-ur-2CL" secondAttribute="top" id="Q4z-pd-PCz"/>
+                            <constraint firstItem="15W-sF-F2T" firstAttribute="leading" secondItem="XuG-6p-kvX" secondAttribute="leading" id="jet-rL-d2u"/>
+                            <constraint firstItem="Hjp-j5-bmN" firstAttribute="leading" secondItem="XuG-6p-kvX" secondAttribute="leading" id="nQl-WH-DmW"/>
+                            <constraint firstItem="XuG-6p-kvX" firstAttribute="trailing" secondItem="15W-sF-F2T" secondAttribute="trailing" id="off-g3-aJ6"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="headerViewOlt" destination="Hjp-j5-bmN" id="oHm-1y-odn"/>
+                        <outlet property="tableViewOlt" destination="15W-sF-F2T" id="QjI-Dj-CnR"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="xXR-tZ-YVh" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-2515" y="-211"/>
+            <point key="canvasLocation" x="-2515.2671755725191" y="-211.26760563380282"/>
         </scene>
     </scenes>
     <resources>
+        <namedColor name="bgColor">
+            <color red="0.89803921568627454" green="0.90588235294117647" blue="0.92156862745098034" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

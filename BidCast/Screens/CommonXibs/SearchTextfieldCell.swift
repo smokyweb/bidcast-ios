@@ -35,8 +35,8 @@ class SearchTextfieldCell: UITableViewCell {
     
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-        innerViewOlt.dropShadow(opacity: 0.2, shadowRadius: Radius_04, cornerRadius: Corner_05, shadowColor: AppColor.Label.SquirrelGrey ?? UIColor.squirrelGrey)
-        self.innerViewOlt.addBorders(of: AppColor.bgColor ?? .bg, width: Width_01)
+        innerViewOlt.dropShadow(opacity: 0.2, shadowRadius: Radius_04, cornerRadius: Corner_08, shadowColor: AppColor.Label.SquirrelGrey ?? UIColor.squirrelGrey)
+//        self.innerViewOlt.addBorders(of: AppColor.bgColor ?? .bg, width: Width_01)
         // Configure the view for the selected state
     }
     

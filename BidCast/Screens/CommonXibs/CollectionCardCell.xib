@@ -37,7 +37,7 @@
                                         <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" image="logo1" translatesAutoresizingMaskIntoConstraints="NO" id="Pla-sB-3aD">
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalCompressionResistancePriority="749" image="IMG_2678" translatesAutoresizingMaskIntoConstraints="NO" id="Pla-sB-3aD">
                                         <rect key="frame" x="8" y="50.000000000000014" width="317" height="252.33333333333337"/>
                                     </imageView>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="System Example" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="99Y-7N-r0f">
@@ -105,8 +105,8 @@
         </collectionViewCell>
     </objects>
     <resources>
+        <image name="IMG_2678" width="736" height="520"/>
         <image name="defaultUser" width="64" height="64"/>
-        <image name="logo1" width="268" height="220"/>
         <namedColor name="darkGray">
             <color red="0.17647058823529413" green="0.18823529411764706" blue="0.20784313725490197" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
