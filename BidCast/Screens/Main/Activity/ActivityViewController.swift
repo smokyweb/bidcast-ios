@@ -31,9 +31,9 @@ class ActivityViewController: UIViewController {
     var sectionData: [ActivitySections: Int] = [
         .activityCollection : 1,
         .messageDetails : 1,
-        .bidDetails : 2,
-        .offerDetails : 4,
-        .purchasedDetails : 2
+        .bidDetails : 1,
+        .offerDetails : 1,
+        .purchasedDetails : 1
     ]
     
     //MARK: ViewLife Cycle Method.
@@ -51,6 +51,7 @@ class ActivityViewController: UIViewController {
     private func loadInit(){
         self.configureTableView()
         self.configureHeaderView()
+        self.reloadDataForFirstTimeSegment()
     }
     
     
@@ -70,19 +71,29 @@ class ActivityViewController: UIViewController {
     
     //MARK: - configureHeaderView.
     func configureHeaderView(){
-        self.headerView.headerViewSetup(rightButtonHidden: false,leftButtonHidden: true,headerName: AppString.VCName.activity,setAppBtnImage: UIImage(named: "ic_back"),appButtonAction : didTabBack)
+        self.headerView.headerViewSetup(rightButtonHidden: false,leftButtonHidden: true,headerName: AppString.VCName.activity,setRightImage: UIImage(named: "ic_notification"))
+        self.headerView.containerView.backgroundColor = .white
     }
     
     //MARK: didTabBack.
     @objc private func didTabBack(){
         self.goToBack()
     }
+    
+    private func reloadDataForFirstTimeSegment() {
+        sectionData[.messageDetails] = 1
+        sectionData[.bidDetails] = 0
+        sectionData[.offerDetails] = 0
+        sectionData[.purchasedDetails] = 0
+        sectionData[.savedItems] = 0
+        self.tblView.reloadData()
+    }
 }
 
 //MARK: UITableViewDelegate,UITableViewDataSource
 extension ActivityViewController: UITableViewDelegate,UITableViewDataSource{
     func numberOfSections(in tableView: UITableView) -> Int {
-        return InventorySections.allCases.count
+        return ActivitySections.allCases.count
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -99,7 +110,46 @@ extension ActivityViewController: UITableViewDelegate,UITableViewDataSource{
         switch rowType {
         case .activityCollection:
             let cell = tblView.dequeueCell(with: CategoryTableViewCell.self)
-            cell.contentView.backgroundColor = AppColor.pearl
+            cell.contentView.backgroundColor = AppColor.white
+            cell.categoryCollectionView.backgroundColor = AppColor.white
+            cell.onItemSelected = { [weak self] index in
+                guard let self = self else { return }
+                switch index {
+                case 0:
+                    self.sectionData[.messageDetails] = 1
+                    self.sectionData[.bidDetails] = 0
+                    self.sectionData[.offerDetails] = 0
+                    self.sectionData[.purchasedDetails] = 0
+                    self.sectionData[.savedItems] = 0
+                case 1:
+                    self.sectionData[.messageDetails] = 0
+                    self.sectionData[.bidDetails] = 1
+                    self.sectionData[.offerDetails] = 0
+                    self.sectionData[.purchasedDetails] = 0
+                    self.sectionData[.savedItems] = 0
+                case 2:
+                    self.sectionData[.messageDetails] = 0
+                    self.sectionData[.bidDetails] = 0
+                    self.sectionData[.offerDetails] = 2
+                    self.sectionData[.purchasedDetails] = 0
+                    self.sectionData[.savedItems] = 0
+                case 3:
+                    self.sectionData[.messageDetails] = 0
+                    self.sectionData[.bidDetails] = 0
+                    self.sectionData[.offerDetails] = 0
+                    self.sectionData[.purchasedDetails] = 3
+                    self.sectionData[.savedItems] = 0
+                case 4 :
+                    self.sectionData[.messageDetails] = 0
+                    self.sectionData[.bidDetails] = 0
+                    self.sectionData[.offerDetails] = 0
+                    self.sectionData[.purchasedDetails] = 0
+                    self.sectionData[.savedItems] = 2
+                default:
+                    break
+                }
+                self.tblView.reloadData()
+            }
             cell.categoryCollectionView.reloadData()
             cell.selectionStyle = .none
             return cell
@@ -110,9 +160,10 @@ extension ActivityViewController: UITableViewDelegate,UITableViewDataSource{
             cell.userNameOlt.text = "William Jhonsn"
             cell.userbidDetail.text = "Testing Message"
             cell.userbidPrice.text = "2hr Ago"
-            cell.bidderStack.isHidden = true
-            cell.userStack.isHidden = false
-            cell.acceptStack.isHidden = true
+            cell.userbidPrice.textColor = AppColor.mediumGray
+            cell.hideShowUserView(stackHidden: false)
+            cell.hideShowBidderView(stackHidden: true)
+            cell.hideShowAcceptView(stackHidden: true)
             cell.selectionStyle = .none
             return cell
         case .bidDetails:
@@ -122,12 +173,15 @@ extension ActivityViewController: UITableViewDelegate,UITableViewDataSource{
             cell.userNameOlt.text = "William"
             cell.userbidDetail.text = "Place a bit 2hr ago"
             cell.userbidPrice.text = "$45. 0"
-            cell.bidderImageOlt.image = UIImage(named: "defaultUser")
-            cell.bidderNameDetail.text = "Jhonson"
-            cell.bidderPriceDetail.text = "Current Id #235"
-            cell.bidderStack.isHidden = false
-            cell.userStack.isHidden = false
-            cell.acceptStack.isHidden = true
+            cell.userbidPrice.textColor = AppColor.successGreen
+            cell.bidderImageOlt.image = UIImage(named: "ic_bidder")
+            cell.bidderNameDetail.text = "Current Id #235"
+            cell.bidderBidDetails.text = "Current bid: 2:45"
+            cell.bidderPriceDetail.isHidden = true
+            cell.bidderDate.isHidden = true
+            cell.hideShowUserView(stackHidden: false)
+            cell.hideShowBidderView(stackHidden: false)
+            cell.hideShowAcceptView(stackHidden: true)
             cell.selectionStyle = .none
             return cell
         case .offerDetails:
@@ -137,12 +191,15 @@ extension ActivityViewController: UITableViewDelegate,UITableViewDataSource{
             cell.userNameOlt.text = "William"
             cell.userbidDetail.text = "Place a bit 2hr ago"
             cell.userbidPrice.text = "$45. 0"
-            cell.bidderImageOlt.image = UIImage(named: "defaultUser")
-            cell.bidderNameDetail.text = "Jhonson"
-            cell.bidderPriceDetail.text = "Current Id #235"
-            cell.bidderStack.isHidden = false
-            cell.userStack.isHidden = false
-            cell.acceptStack.isHidden = false
+            cell.userbidPrice.textColor = AppColor.successGreen
+            cell.bidderImageOlt.image = UIImage(named: "ic_bidder")
+            cell.bidderNameDetail.text = "Current Id #235"
+            cell.bidderBidDetails.text = "Current bid: 2:45"
+            cell.bidderPriceDetail.isHidden = true
+            cell.bidderDate.isHidden = true
+            cell.hideShowUserView(stackHidden: false)
+            cell.hideShowBidderView(stackHidden: false)
+            cell.hideShowAcceptView(stackHidden: false)
             cell.didTapAccept = { [weak self] sender in
                 
             }
@@ -154,25 +211,33 @@ extension ActivityViewController: UITableViewDelegate,UITableViewDataSource{
         case .purchasedDetails:
             let cell = tblView.dequeueCell(with: AcitivityCell.self)
             cell.contentView.backgroundColor = AppColor.pearl
-            cell.bidderImageOlt.image = UIImage(named: "defaultUser")
-            cell.bidderNameDetail.text = "Jhonson"
-            cell.bidderPriceDetail.text = "Current Id #235"
+            cell.bidderImageOlt.image = UIImage(named: "ic_bidder")
+            cell.bidderNameDetail.text = "Current Id #235"
+            cell.bidderBidDetails.text = "Current bid: 2:45"
             cell.bidderPriceDetail.text = "$45. 0"
-            cell.bidderStack.isHidden = true
-            cell.userStack.isHidden = false
-            cell.acceptStack.isHidden = true
+            cell.bidderDate.text = "Date\("04/12/25")"
+            cell.bidderPriceDetail.isHidden = false
+            cell.bidderPriceDetail.textColor = AppColor.successGreen
+            cell.hideShowUserView(stackHidden: true)
+            cell.bidderDate.isHidden = false
+            cell.hideShowBidderView(stackHidden: false)
+            cell.hideShowAcceptView(stackHidden: true)
             cell.selectionStyle = .none
             return cell
         case .savedItems:
             let cell = tblView.dequeueCell(with: AcitivityCell.self)
             cell.contentView.backgroundColor = AppColor.pearl
-            cell.bidderImageOlt.image = UIImage(named: "defaultUser")
-            cell.bidderNameDetail.text = "Jhonson"
-            cell.bidderPriceDetail.text = "Current Id #235"
+            cell.bidderImageOlt.image = UIImage(named: "ic_bidder")
+            cell.bidderNameDetail.text = "Current Id #235"
+            cell.bidderBidDetails.text = "Current bid: 2:45"
             cell.bidderPriceDetail.text = "$45. 0"
-            cell.bidderStack.isHidden = true
-            cell.userStack.isHidden = false
-            cell.acceptStack.isHidden = true
+            cell.bidderDate.text = "Date\("04/12/25")"
+            cell.bidderPriceDetail.isHidden = false
+            cell.bidderDate.isHidden = false
+            cell.bidderPriceDetail.textColor = AppColor.successGreen
+            cell.hideShowUserView(stackHidden: true)
+            cell.hideShowBidderView(stackHidden: false)
+            cell.hideShowAcceptView(stackHidden: true)
             cell.selectionStyle = .none
             return cell
         }
@@ -182,10 +247,9 @@ extension ActivityViewController: UITableViewDelegate,UITableViewDataSource{
         guard let rowType = ActivitySections.allCases[safe: indexPath.section] else {
             fatalError("Invalid index for ActivitySections")
         }
-        
         switch rowType {
         case .activityCollection:
-            return Const.Height.segment
+            return 50
         case .messageDetails:
             return Const.Height.AutomaticDimension
         case .bidDetails:

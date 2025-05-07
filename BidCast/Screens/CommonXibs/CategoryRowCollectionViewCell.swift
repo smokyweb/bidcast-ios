@@ -11,6 +11,7 @@ class CategoryRowCollectionViewCell: UICollectionViewCell {
 
     @IBOutlet weak var categoryLabel: UILabel!
     @IBOutlet weak var outerStackView: UIStackView!
+    @IBOutlet var seprator: UILabel!
     
     static let identifier = "CategoryRowCollectionViewCell"
     
