@@ -215,7 +215,7 @@ extension ActivityViewController: UITableViewDelegate,UITableViewDataSource{
             cell.bidderNameDetail.text = "Current Id #235"
             cell.bidderBidDetails.text = "Current bid: 2:45"
             cell.bidderPriceDetail.text = "$45. 0"
-            cell.bidderDate.text = "Date\("04/12/25")"
+            cell.bidderDate.text = "Date: \("04/12/25")"
             cell.bidderPriceDetail.isHidden = false
             cell.bidderPriceDetail.textColor = AppColor.successGreen
             cell.hideShowUserView(stackHidden: true)
@@ -231,7 +231,7 @@ extension ActivityViewController: UITableViewDelegate,UITableViewDataSource{
             cell.bidderNameDetail.text = "Current Id #235"
             cell.bidderBidDetails.text = "Current bid: 2:45"
             cell.bidderPriceDetail.text = "$45. 0"
-            cell.bidderDate.text = "Date\("04/12/25")"
+            cell.bidderDate.text = "Date: \("04/12/25")"
             cell.bidderPriceDetail.isHidden = false
             cell.bidderDate.isHidden = false
             cell.bidderPriceDetail.textColor = AppColor.successGreen
