@@ -11,8 +11,11 @@ import UIKit
 enum AccountSection : Int, CaseIterable {
     case profile
     case segment
+    case creditAcc
     case profileDetails
+    case paymentAcc
     case tab
+    case detailsAcc
     case vacation
     
     func numberOfRows(data: [AccountSection: Int]) -> Int {
@@ -37,14 +40,27 @@ class AccountViewController: UIViewController {
     var sectionData : [AccountSection : Int ] = [
         .profile : 1,
         .segment : 1,
+        .creditAcc: 0,
         .profileDetails : 1,
+        .paymentAcc: 0,
         .tab : 1,
+        .detailsAcc : 0,
         .vacation : 1
     ]
+    var moreSection = ["About Us","Contact Us","Sales Tax Exemption","Terms & Conditions","Privacy Policy","F.A.Q"]
+    
     var imageName = ["inventory","mic","orders","wallet","tag","tag","shipping","people","seller","shop","analysis","analysis"]
     var tabName = ["Inventory","Shows","My Orders","Wallet","Offers","Tips","Shipping","Affiliate Program","Seller Trainig","Premier Shop","Seller status","Seller Analytics"]
+    
     var sellerItems = ["284","$5.2K","4.8"]
     var sellerItemsNAme = ["Items","Revenue","Rating"]
+    
+    var accPayImage = ["shipping","mic","shop","wallet","tag"]
+    var AccountPayment = ["Payment & Shipping","Addresses","Trusted Buyer","Notifications","Preferences"]
+    
+    var creditName = ["Credits","Coupons"]
+    var creditDate = ["284","$5.2K"]
+    
     var segmentType: segmentAccount = .sellerHub
     
     
@@ -69,11 +85,37 @@ class AccountViewController: UIViewController {
                        SegmentCell.identifier,
                        CollectionViewCell.identifier,
                        SwitchEditorAndPhotographerCell.identifier,
+                       MenuCell.identifier
                        ]
         tableViewOlt.registerCells(for: cellIds)
         
     }
-    
+    func reloadSegmentData (){
+        if segmentType == .sellerHub {
+            self.sectionData = [
+                .profile : 1,
+                .segment : 1,
+                .creditAcc: 0,
+                .profileDetails : 1,
+                .paymentAcc: 0,
+                .tab : 1,
+                .detailsAcc : 0,
+                .vacation : 1
+            ]
+        }else{
+            self.sectionData = [
+                .profile : 1,
+                .segment : 1,
+                .creditAcc: 1,
+                .profileDetails : 0,
+                .paymentAcc: 1,
+                .tab : 0,
+                .detailsAcc : 6,
+                .vacation : 0
+            ]
+        }
+        self.tableViewOlt.reloadData()
+    }
 }
 extension AccountViewController : UITableViewDataSource,UITableViewDelegate{
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -88,8 +130,8 @@ extension AccountViewController : UITableViewDataSource,UITableViewDelegate{
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        switch segmentType{
-        case .sellerHub:
+//        switch segmentType{
+//        case .sellerHub:
             guard let rowType = AccountSection.allCases[safe: indexPath.section] else {
                 fatalError("Invalid index for LoginTableRow")
             }
@@ -103,13 +145,47 @@ extension AccountViewController : UITableViewDataSource,UITableViewDelegate{
                 let cell = tableViewOlt.dequeueCell(with: SegmentCell.self)
                 cell.isNavFrom = "MyAccountVC"
                 cell.setupforsegmentControl()
+                cell.onSegmentChanged = { selectedIndex in
+                    self.segmentType = selectedIndex == 0 ? .sellerHub : .account
+                    self.reloadSegmentData()
+                }
                 cell.contentView.backgroundColor = .clear
+                return cell
+            case .creditAcc:
+                let cell = tableViewOlt.dequeueCell(with: CollectionViewCell.self)
+                cell.isForPayment = true
+                cell.isForDetails = false
+                cell.segmentType = .account
+                cell.creditName = self.creditName
+                cell.creditDate = self.creditDate
+                cell.collectionViewOlt.reloadData()
                 return cell
             case .profileDetails:
                 let cell = tableViewOlt.dequeueCell(with: CollectionViewCell.self)
                 cell.isForDetails = true
+                cell.isForPayment = false
+                cell.segmentType = .sellerHub
                 cell.sellerItemsNAme = self.sellerItemsNAme
                 cell.seller = self.sellerItems
+                cell.collectionViewOlt.reloadData()
+                return cell
+            case .paymentAcc:
+                let cell = tableViewOlt.dequeueCell(with: CollectionViewCell.self)
+//                cell.onItemSelected = { [weak self] index in
+//                    guard let self = self else { return }
+//                    switch index {
+//                    case 0:
+//                        self.pushVC(with: InventoryViewController.self, storyboardName: .account)
+//                    default:
+//                        break
+//                    }
+//                }
+                cell.isForDetails = false
+                cell.isForPayment = false
+                cell.segmentType = .account
+                cell.accPayImage = self.accPayImage
+                cell.AccountPayment = self.AccountPayment
+                cell.configure(with: self.AccountPayment)
                 return cell
             case .tab:
                 let cell = tableViewOlt.dequeueCell(with: CollectionViewCell.self)
@@ -122,20 +198,31 @@ extension AccountViewController : UITableViewDataSource,UITableViewDelegate{
                         break
                     }
                 }
+                cell.isForDetails = false
+                cell.isForPayment = false
+                cell.segmentType = .sellerHub
                 cell.imageName = self.imageName
                 cell.titleName = self.tabName
                 cell.configure(with: self.tabName)
+                return cell
+            case .detailsAcc:
+                let cell = tableViewOlt.dequeueCell(with: MenuCell.self)
+                
+                cell.labelOlt.text = moreSection[indexPath.row]
                 return cell
             case .vacation:
                 let cell = tableViewOlt.dequeueCell(with: SwitchEditorAndPhotographerCell.self)
                 
                 cell.titleOlt.text = "Vacation Mode"
                 return cell
-            }
-        case .account :
-            return UITableViewCell()
             
-        }
+           
+           
+            }
+//        case .account :
+//            return UITableViewCell()
+//            
+//        }
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -148,10 +235,16 @@ extension AccountViewController : UITableViewDataSource,UITableViewDelegate{
         case .segment:
             return Const.Height.segment
         case .profileDetails:
-            return 140
+            return 110
         case .tab:
             return UITableView.automaticDimension
         case .vacation:
+            return UITableView.automaticDimension
+        case .creditAcc:
+            return 110
+        case .paymentAcc:
+            return UITableView.automaticDimension
+        case .detailsAcc:
             return UITableView.automaticDimension
         }
     }

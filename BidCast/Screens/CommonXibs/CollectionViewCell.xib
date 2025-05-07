@@ -22,10 +22,10 @@
                         <rect key="frame" x="0.0" y="0.0" width="440" height="167"/>
                         <subviews>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="OYZ-Mp-f21">
-                                <rect key="frame" x="8" y="8" width="424" height="150"/>
+                                <rect key="frame" x="8" y="0.0" width="424" height="167"/>
                                 <color key="backgroundColor" name="bgColor"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="150" id="dJx-os-7LX"/>
+                                    <constraint firstAttribute="height" constant="167" id="7Qy-BT-wC8"/>
                                 </constraints>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="fmd-Iw-NPW">
                                     <size key="itemSize" width="128" height="128"/>
@@ -39,8 +39,8 @@
                         <constraints>
                             <constraint firstItem="OYZ-Mp-f21" firstAttribute="leading" secondItem="s8x-QJ-lg6" secondAttribute="leading" constant="8" id="QZj-M1-xWg"/>
                             <constraint firstAttribute="trailing" secondItem="OYZ-Mp-f21" secondAttribute="trailing" constant="8" id="r6g-6H-Bue"/>
-                            <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="OYZ-Mp-f21" secondAttribute="bottom" constant="8" id="s12-qf-351"/>
-                            <constraint firstItem="OYZ-Mp-f21" firstAttribute="top" secondItem="s8x-QJ-lg6" secondAttribute="top" constant="8" id="ydw-w7-lmS"/>
+                            <constraint firstAttribute="bottom" secondItem="OYZ-Mp-f21" secondAttribute="bottom" id="s12-qf-351"/>
+                            <constraint firstItem="OYZ-Mp-f21" firstAttribute="top" secondItem="s8x-QJ-lg6" secondAttribute="top" id="ydw-w7-lmS"/>
                         </constraints>
                     </view>
                 </subviews>
@@ -55,7 +55,7 @@
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <color key="backgroundColor" name="bgColor"/>
             <connections>
-                <outlet property="collectionViewHeihgt" destination="dJx-os-7LX" id="Lj6-T6-to2"/>
+                <outlet property="collectionViewHeihgt" destination="7Qy-BT-wC8" id="peZ-c5-yeu"/>
                 <outlet property="collectionViewOlt" destination="OYZ-Mp-f21" id="7V4-Po-O1I"/>
                 <outlet property="outerViewOlt" destination="s8x-QJ-lg6" id="X03-kn-jnE"/>
             </connections>

@@ -9,21 +9,22 @@ import UIKit
 
 class HomeViewController: UIViewController {
 
+    //MARK: IBOutlets
+    @IBOutlet weak var headerViewolt: HeaderWithAppName!
+    @IBOutlet weak var collectionViewOlt: UICollectionView!
+    
+    //MARK: Properties
+    
+    
+    //MARK: View Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        self.configureHeaderView()
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    func configureHeaderView(){
+        self.headerViewolt.headerViewSetup(rightButtonHidden: false,leftButtonHidden: false , headerName: "")
     }
-    */
+    
 
 }

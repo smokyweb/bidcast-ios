@@ -21,15 +21,15 @@
                         <rect key="frame" x="8" y="8" width="255" height="326"/>
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="person.fill" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="p3i-Ie-Tph">
-                                <rect key="frame" x="111.66666666666667" y="11.666666666666666" width="32.000000000000014" height="28.666666666666671"/>
+                                <rect key="frame" x="113.66666666666667" y="11.666666666666666" width="28.000000000000014" height="24.666666666666671"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="32" id="65t-4b-5UK"/>
-                                    <constraint firstAttribute="height" constant="32" id="H2H-86-7DS"/>
+                                    <constraint firstAttribute="width" constant="28" id="65t-4b-5UK"/>
+                                    <constraint firstAttribute="height" constant="28" id="H2H-86-7DS"/>
                                 </constraints>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Excellient Product in Distributer Shop" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jvb-J9-smC">
-                                <rect key="frame" x="12" y="56" width="231" height="40.666666666666657"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <rect key="frame" x="12" y="46" width="231" height="36"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
@@ -40,7 +40,7 @@
                             <constraint firstItem="jvb-J9-smC" firstAttribute="centerX" secondItem="p3i-Ie-Tph" secondAttribute="centerX" id="L6h-4Z-I9A"/>
                             <constraint firstItem="p3i-Ie-Tph" firstAttribute="centerX" secondItem="ObK-5K-CTD" secondAttribute="centerX" id="cIc-9e-YKq"/>
                             <constraint firstItem="p3i-Ie-Tph" firstAttribute="top" secondItem="ObK-5K-CTD" secondAttribute="top" constant="10" id="cbv-bI-1bt"/>
-                            <constraint firstItem="jvb-J9-smC" firstAttribute="top" secondItem="p3i-Ie-Tph" secondAttribute="bottom" constant="14" id="d7X-LB-vbQ"/>
+                            <constraint firstItem="jvb-J9-smC" firstAttribute="top" secondItem="p3i-Ie-Tph" secondAttribute="bottom" constant="8" id="d7X-LB-vbQ"/>
                             <constraint firstItem="jvb-J9-smC" firstAttribute="leading" secondItem="ObK-5K-CTD" secondAttribute="leading" constant="12" id="fPc-Lo-B8u"/>
                         </constraints>
                     </view>

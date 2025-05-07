@@ -63,16 +63,16 @@ class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
         var storyboardName: String {
             switch self {
             case .home:
-                return "Main"
+                return "Home"
            
             case .explore:
-                return "Main"
+                return "Explore"
             case .sell:
-                return "Main"
+                return "Sell"
             case .activity:
-                return "Main"
+                return "Activity"
             case .account:
-                return "Main"
+                return "Account"
             }
         }
     }

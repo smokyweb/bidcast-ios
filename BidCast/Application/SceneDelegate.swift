@@ -53,7 +53,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func navigateToLandingScreen(){
         var viewController = UIViewController()
-        if UserDefaults.refreshToken == "" {
+        if UserDefaults.refreshToken != "" {
             let storyboard = UIStoryboard(name: "Onboardings", bundle: nil)
             viewController = storyboard.instantiateViewController(withIdentifier: "SignInViewController") as! SignInViewController
             
