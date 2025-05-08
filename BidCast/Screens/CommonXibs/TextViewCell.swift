@@ -26,6 +26,7 @@ class TextViewCell: UITableViewCell {
         self.outerView.makeCornerRounded(ofSize: Corner_12)
         self.textViewOlt.font = AppFont.placeHolder
         self.outerView.addBorders(of: AppColor.mediumLightGray ?? .systemGray3, width: Width_01)
+        self.outerView.backgroundColor = .white
         self.textViewOlt.delegate = self
     }
     

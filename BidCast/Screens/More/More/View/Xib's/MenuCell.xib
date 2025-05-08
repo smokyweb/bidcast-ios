@@ -49,7 +49,7 @@
                                 <preferredSymbolConfiguration key="preferredSymbolConfiguration" weight="bold"/>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="efW-N7-al8">
-                                <rect key="frame" x="0.0" y="0.0" width="429" height="14"/>
+                                <rect key="frame" x="0.0" y="0.0" width="429" height="60"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain"/>
                                 <connections>
@@ -57,7 +57,7 @@
                                 </connections>
                             </button>
                         </subviews>
-                        <color key="backgroundColor" name="white"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="efW-N7-al8" firstAttribute="leading" secondItem="ryC-7W-Tdj" secondAttribute="leading" id="4Ay-mL-dhy"/>
                             <constraint firstAttribute="trailing" secondItem="efW-N7-al8" secondAttribute="trailing" id="FLC-7g-GdA"/>
@@ -65,6 +65,7 @@
                             <constraint firstItem="0u3-0b-3gG" firstAttribute="top" secondItem="ryC-7W-Tdj" secondAttribute="top" constant="8" id="Oje-mI-MW8"/>
                             <constraint firstItem="efW-N7-al8" firstAttribute="top" secondItem="ryC-7W-Tdj" secondAttribute="top" id="P2O-a4-kdP"/>
                             <constraint firstAttribute="trailing" secondItem="I4F-m2-n96" secondAttribute="trailing" constant="20" id="PR8-bY-y4h"/>
+                            <constraint firstAttribute="bottom" secondItem="efW-N7-al8" secondAttribute="bottom" id="QjJ-0c-ILd"/>
                             <constraint firstItem="0u3-0b-3gG" firstAttribute="centerY" secondItem="fjc-IB-rAt" secondAttribute="centerY" id="TpU-Sx-2fu"/>
                             <constraint firstItem="I4F-m2-n96" firstAttribute="centerY" secondItem="ryC-7W-Tdj" secondAttribute="centerY" id="XvV-Rb-85U"/>
                             <constraint firstItem="0u3-0b-3gG" firstAttribute="leading" secondItem="fjc-IB-rAt" secondAttribute="trailing" constant="12" id="bz5-KH-oAu"/>
@@ -87,6 +88,7 @@
             <connections>
                 <outlet property="OuterView" destination="ryC-7W-Tdj" id="6pe-Ga-6mh"/>
                 <outlet property="contentOuterViewOlt" destination="Dv7-qw-HpH" id="gr9-fS-BuD"/>
+                <outlet property="imgOlt" destination="fjc-IB-rAt" id="iWI-MQ-CI9"/>
                 <outlet property="labelOlt" destination="0u3-0b-3gG" id="iFe-bu-hu1"/>
                 <outlet property="nextBtnImg" destination="I4F-m2-n96" id="ogE-Wc-qIs"/>
                 <outlet property="nextBtnOlt" destination="efW-N7-al8" id="mFD-iS-g1x"/>
@@ -99,9 +101,6 @@
         <image name="vacation" width="27" height="24"/>
         <namedColor name="black">
             <color red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </namedColor>
-        <namedColor name="white">
-            <color red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
     </resources>
 </document>

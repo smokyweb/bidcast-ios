@@ -20,40 +20,43 @@ enum ContactUsSections: Int, CaseIterable {
 }
 
 enum contactForm : Int,CaseIterable{
+    case fullName
     case emailAddress
-    case phoneNumber
+    case subject
     case message
+    case emailTab
     
     var title : String{
         switch self {
+       
+        case .fullName:
+            return "Full Name"
         case .emailAddress:
-            return AppString.Title.email
-        case .phoneNumber:
-            return AppString.Title.phoneNumber
+            return "Email Address"
+        case .subject:
+            return "Subject"
         case .message:
-            return AppString.Title.message
+            return "Message"
+        case .emailTab:
+            return ""
         }
     }
     var placeHolder : String{
         switch self {
+       
+        case .fullName:
+            return "Enter full name"
         case .emailAddress:
-            return AppString.Placeholder.email
-        case .phoneNumber:
-            return AppString.Placeholder.phoneNumber
+            return "Enter email Address"
+        case .subject:
+            return "Enter subject"
         case .message:
-            return AppString.Placeholder.message
-        }
-    }
-    var icon : String{
-        switch self {
-        case .emailAddress:
-            return "mail"
-        case .phoneNumber:
-            return "ic_Phone"
-        case .message:
+            return "Enter message"
+        case .emailTab:
             return ""
         }
     }
+   
 }
 
 class ContactUsViewController: UIViewController {
@@ -73,7 +76,7 @@ class ContactUsViewController: UIViewController {
     
     //MARK: Properties
     var sectionData: [ContactUsSections: Int] = [
-        .contactForm: 3
+        .contactForm: 5
     ]
     
     //MARK: ViewLife Cycle Method
@@ -90,13 +93,13 @@ class ContactUsViewController: UIViewController {
     
     //MARK: submitBtnTapped
     @IBAction func submitBtnTapped(_ sender: UIButton) {
-        didtapNext()
+//        didtapNext()
     }
     
     //MARK: loadInit.
     private func loadInit(){
         self.configureTableView()
-        submitBtn.makeCornerRounded(ofSize: Corner_26)
+        submitBtn.makeCornerRounded(ofSize: Corner_08)
         submitBtn.titleLabel?.font = OutFitFont.defaultExtraBold(size: 15).value
         initViewModel()
     }
@@ -110,7 +113,12 @@ class ContactUsViewController: UIViewController {
     private func configureTableView(){
         self.contactUsTableView.delegate = self
         self.contactUsTableView.dataSource = self
-        let cellIds =  [TextFieldCell.identifier,TextViewCell.identifier,AppHeaderCell.identifier]
+        let cellIds =  [
+            TextFieldCell.identifier,
+            TextViewCell.identifier,
+            InfoCell.identifier,
+            LocationNameCell.identifier
+        ]
         contactUsTableView.registerCells(for: cellIds)
         contactUsTableView.configTblView(bgColor : .ultraLightGray)
         configureHeaderView()
@@ -185,9 +193,11 @@ extension ContactUsViewController: UITableViewDelegate,UITableViewDataSource{
         
         switch rowType {
         case .conatactHeader:
-            let cell = contactUsTableView.dequeueCell(with: AppHeaderCell.self)
-            cell.outerViewOlt.backgroundColor = .ultraLightGray
-            cell.titleOlt.text = AppString.Header.contactUs
+            let cell = contactUsTableView.dequeueCell(with: InfoCell.self)
+            cell.contentView.backgroundColor = .pearl
+            cell.outerViewOlt.makeCornerRounded(ofSize: Corner_08)
+//            cell.outerViewOlt.backgroundColor = .ultraLightGray
+//            cell.titleOlt.text = AppString.Header.contactUs
             return cell
         case .contactForm:
             guard let rowType = contactForm.allCases[safe: indexPath.row] else {
@@ -195,25 +205,39 @@ extension ContactUsViewController: UITableViewDelegate,UITableViewDataSource{
             }
             let options : [contactForm] = contactForm.allCases
             switch rowType {
-            case .emailAddress:
+            case .fullName:
                 let cell = contactUsTableView.dequeueCell(with: TextFieldCell.self)
-                cell.contentView.backgroundColor = .ultraLightGray
+                cell.contentView.backgroundColor = .pearl
                 cell.titleLblOlt.text = options[indexPath.row].title
                 cell.textFieldOlt.placeholder = options[indexPath.row].placeHolder
                 cell.textFieldOlt.text = " "
-                cell.imgIconOlt.image = UIImage(named: options[indexPath.row].icon)
-//                cell.textFieldOlt.keyboardType = .emailAddress
+                cell.imgIconOlt.isHidden = true
+                cell.imgWidht.constant = 0
                 cell.eyeBtnOlt.isHidden = true
                 cell.entertext = {  [weak self] text in
                     self?.email = text.text ?? ""
                 }
                 return cell
-            case .phoneNumber:
+            case .emailAddress:
                 let cell = contactUsTableView.dequeueCell(with: TextFieldCell.self)
-                cell.contentView.backgroundColor = .ultraLightGray
+                cell.contentView.backgroundColor = .pearl
                 cell.titleLblOlt.text = options[indexPath.row].title
                 cell.textFieldOlt.placeholder = options[indexPath.row].placeHolder
-                cell.imgIconOlt.image = UIImage(named: options[indexPath.row].icon)
+                cell.textFieldOlt.text = " "
+                cell.imgIconOlt.isHidden = true
+                cell.imgWidht.constant = 0
+                cell.eyeBtnOlt.isHidden = true
+                cell.entertext = {  [weak self] text in
+                    self?.email = text.text ?? ""
+                }
+                return cell
+            case .subject:
+                let cell = contactUsTableView.dequeueCell(with: TextFieldCell.self)
+                cell.contentView.backgroundColor = .pearl
+                cell.titleLblOlt.text = options[indexPath.row].title
+                cell.textFieldOlt.placeholder = options[indexPath.row].placeHolder
+                cell.imgIconOlt.isHidden = true
+                cell.imgWidht.constant = 0
                 cell.textFieldOlt.keyboardType = .phonePad
                 cell.eyeBtnOlt.isHidden = true
                 cell.entertext = {  [weak self] text in
@@ -222,25 +246,26 @@ extension ContactUsViewController: UITableViewDelegate,UITableViewDataSource{
                 return cell
             case .message:
                 let cell = contactUsTableView.dequeueCell(with: TextViewCell.self)
-                cell.contentView.backgroundColor = .ultraLightGray
+                cell.contentView.backgroundColor = .pearl
                 cell.titleLabel.text = options[indexPath.row].title
                 if self.contactmessage != "" {
                     cell.textViewOlt.text = self.contactmessage
                 }else{
                     cell.textViewOlt.text = "Type here..."
                 }
-//                cell.placeholderText = options[indexPath.row].placeHolder
-                //                if self.serviceArea != "" {
-                //                    cell.textViewOlt.text = self.serviceArea
-                //                }
-                //                else {
-                //                    cell.textViewOlt.text = AppString.Placeholder.serviceArea
-                //                }
                 cell.enterText = { [weak self] text in
                     guard let self = self else { return }
                     self.contactmessage = text.text ?? ""
                 }
                 cell.selectionStyle = .none
+                return cell
+            case .emailTab:
+                let cell = contactUsTableView.dequeueCell(with: LocationNameCell.self)
+                cell.contentView.backgroundColor = .pearl
+                cell.titleOlt.text = "Email"
+                cell.descriptionOlt.text = "support@company.com"
+                cell.imageOlt.image = UIImage(named: "emailBorder")
+                cell.innerViewOlt.addBorders(of: .black, width: 0.0)
                 return cell
             }
         }
@@ -252,7 +277,7 @@ extension ContactUsViewController: UITableViewDelegate,UITableViewDataSource{
         
         switch rowType {
         case .conatactHeader:
-            return Const.Height.header
+            return Const.Height.AutomaticDimension
         case .contactForm:
             return Const.Height.AutomaticDimension
         }

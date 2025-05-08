@@ -38,6 +38,7 @@
                         </constraints>
                     </view>
                 </subviews>
+                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                 <constraints>
                     <constraint firstItem="XPt-sa-Jhn" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="16" id="0nM-qb-Dao"/>
                     <constraint firstAttribute="trailing" secondItem="XPt-sa-Jhn" secondAttribute="trailing" constant="16" id="4EL-mF-UpS"/>
@@ -48,14 +49,20 @@
                 </constraints>
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
+            <color key="backgroundColor" name="bgColor"/>
             <connections>
                 <outlet property="outerViewOlt" destination="H2p-sc-9uM" id="FMa-hO-vzB"/>
                 <outlet property="titleOlt" destination="XPt-sa-Jhn" id="j2D-ni-CuE"/>
+                <outlet property="underView" destination="J2e-Fj-ggj" id="F6e-h4-nNe"/>
+                <outlet property="viewCOnst" destination="dC4-ee-OD3" id="ecL-e4-bFF"/>
             </connections>
             <point key="canvasLocation" x="183.96946564885496" y="27.112676056338028"/>
         </tableViewCell>
     </objects>
     <resources>
+        <namedColor name="bgColor">
+            <color red="0.89803921568627454" green="0.90588235294117647" blue="0.92156862745098034" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
         <namedColor name="black">
             <color red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>

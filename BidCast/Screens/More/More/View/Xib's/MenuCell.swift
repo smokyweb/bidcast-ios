@@ -9,6 +9,7 @@ import UIKit
 
 class MenuCell: UITableViewCell {
     
+    @IBOutlet weak var imgOlt: UIImageView!
     @IBOutlet weak var OuterView: UIView!
     @IBOutlet weak var nextBtnImg: UIImageView!
     @IBOutlet weak var contentOuterViewOlt: UIView!
@@ -19,7 +20,7 @@ class MenuCell: UITableViewCell {
     
     @IBOutlet var borderWidth: UIView!
     static let identifier = "MenuCell"
-    var didTapNext : (UIButton)->() = {_ in}
+    var didTapNext : (Int)->() = {_ in}
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -33,7 +34,7 @@ class MenuCell: UITableViewCell {
     }
     
     @IBAction func didTap(_ sender: UIButton) {
-        didTapNext(sender)
+        didTapNext(sender.tag)
     }
     
 }

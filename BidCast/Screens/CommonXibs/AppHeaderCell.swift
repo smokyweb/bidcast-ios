@@ -13,6 +13,8 @@ class AppHeaderCell: UITableViewCell {
     @IBOutlet weak var titleOlt: UILabel!
     @IBOutlet weak var outerViewOlt: UIView!
     
+    @IBOutlet weak var viewCOnst: NSLayoutConstraint!
+    @IBOutlet weak var underView: UIView!
     // MARK: Properties
     static let identifier = "AppHeaderCell"
     
@@ -30,5 +32,7 @@ class AppHeaderCell: UITableViewCell {
     func setupUI(){
         titleOlt.font = OutFitFont.defaultExtraBold(size: 23.0).value
         selectionStyle = .none
+        self.underView.isHidden = true
+        self.viewCOnst.constant = 0
     }
 }

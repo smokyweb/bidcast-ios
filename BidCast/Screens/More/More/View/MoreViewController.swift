@@ -180,18 +180,18 @@ extension MoreViewController: UITableViewDelegate,UITableViewDataSource{
             cell.labelOlt.text = options[indexPath.row].title
             cell.selectionStyle = .none
             cell.nextBtnOlt.tag = indexPath.row
-            cell.didTapNext = { sender in
-                self.didTap(index: sender.tag)
-            }
+//            cell.didTapNext = { sender in
+//                self.didTap(index: sender.tag)
+//            }
             return cell
         case .myAccount:
             let cell = tblView.dequeueCell(with: MenuCell.self)
             cell.labelOlt.text = options[indexPath.row].title
             cell.selectionStyle = .none
             cell.nextBtnOlt.tag = indexPath.row
-            cell.didTapNext = { sender in
-                self.didTap(index: sender.tag)
-            }
+//            cell.didTapNext = { sender in
+//                self.didTap(index: sender.tag)
+//            }
             return cell
             
         case .AboutUs:
@@ -199,48 +199,48 @@ extension MoreViewController: UITableViewDelegate,UITableViewDataSource{
             cell.labelOlt.text = options[indexPath.row].title
             cell.selectionStyle = .none
             cell.nextBtnOlt.tag = indexPath.row
-            cell.didTapNext = { sender in
-                
-                self.didTap(index: sender.tag)
-            }
+//            cell.didTapNext = { sender in
+//                
+//                self.didTap(index: sender.tag)
+//            }
             return cell
         case .ContactUs:
             let cell = tblView.dequeueCell(with: MenuCell.self)
             cell.labelOlt.text = options[indexPath.row].title
             cell.selectionStyle = .none
             cell.nextBtnOlt.tag = indexPath.row
-            cell.didTapNext = { sender in
-                
-                self.didTap(index: sender.tag)
-            }
+//            cell.didTapNext = { sender in
+//                
+//                self.didTap(index: sender.tag)
+//            }
             return cell
         case .FAQ:
             let cell = tblView.dequeueCell(with: MenuCell.self)
             cell.labelOlt.text = options[indexPath.row].title
             cell.selectionStyle = .none
             cell.nextBtnOlt.tag = indexPath.row
-            cell.didTapNext = { sender in
-                
-                self.didTap(index: sender.tag)
-            }
+//            cell.didTapNext = { sender in
+//                
+//                self.didTap(index: sender.tag)
+//            }
             return cell
         case .PrivacyPolicy:
             let cell = tblView.dequeueCell(with: MenuCell.self)
             cell.labelOlt.text = options[indexPath.row].title
             cell.selectionStyle = .none
             cell.nextBtnOlt.tag = indexPath.row
-            cell.didTapNext = { sender in
-                self.didTap(index: sender.tag)
-            }
+//            cell.didTapNext = { sender in
+//                self.didTap(index: sender.tag)
+//            }
             return cell
         case .TermOfService:
             let cell = tblView.dequeueCell(with: MenuCell.self)
             cell.labelOlt.text = options[indexPath.row].title
             cell.selectionStyle = .none
             cell.nextBtnOlt.tag = indexPath.row
-            cell.didTapNext = { sender in
-                self.didTap(index: sender.tag)
-            }
+//            cell.didTapNext = { sender in
+//                self.didTap(index: sender.tag)
+//            }
             return cell
         case .Logout:
             let cell = tblView.dequeueCell(with: MenuCell.self)
@@ -249,9 +249,9 @@ extension MoreViewController: UITableViewDelegate,UITableViewDataSource{
             cell.nextBtnOlt.tag = indexPath.row
             cell.addBottomLeftCorner(to: cell.OuterView,radius: Corner_26)
             cell.borderWidth.isHidden = true
-            cell.didTapNext = { sender in
-                self.didTap(index: sender.tag)
-            }
+//            cell.didTapNext = { sender in
+//                self.didTap(index: sender.tag)
+//            }
             return cell
         case .closeTab:
             let cell = tblView.dequeueCell(with: CloseTabBarCell.self)

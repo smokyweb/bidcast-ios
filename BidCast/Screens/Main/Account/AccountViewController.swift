@@ -116,6 +116,18 @@ class AccountViewController: UIViewController {
         }
         self.tableViewOlt.reloadData()
     }
+    func didTap(index:Int){
+        switch index {
+        case 0 :
+            let vc = Utilities.sharedInstance.getVC(storyBoardName: "Main", vcId: "AboutUsViewController") as! AboutUsViewController
+            self.navigationController?.pushViewController(vc, animated: true)
+        case 1:
+            let vc = Utilities.sharedInstance.getVC(storyBoardName: "Main", vcId: "ContactUsViewController") as! ContactUsViewController
+            self.navigationController?.pushViewController(vc, animated: true)
+        default:
+            print("")
+        }
+    }
 }
 extension AccountViewController : UITableViewDataSource,UITableViewDelegate{
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -207,7 +219,10 @@ extension AccountViewController : UITableViewDataSource,UITableViewDelegate{
                 return cell
             case .detailsAcc:
                 let cell = tableViewOlt.dequeueCell(with: MenuCell.self)
-                
+                cell.nextBtnOlt.tag = indexPath.row
+                cell.didTapNext = { index in
+                    self.didTap(index:index)
+                }
                 cell.labelOlt.text = moreSection[indexPath.row]
                 return cell
             case .vacation:
