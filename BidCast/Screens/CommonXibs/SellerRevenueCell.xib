@@ -43,8 +43,6 @@
                             <constraint firstItem="CcP-b2-vUo" firstAttribute="top" secondItem="ObK-5K-CTD" secondAttribute="top" constant="16" id="VQZ-d7-N8T"/>
                             <constraint firstItem="jvb-J9-smC" firstAttribute="leading" secondItem="ObK-5K-CTD" secondAttribute="leading" constant="12" id="fPc-Lo-B8u"/>
                             <constraint firstItem="CcP-b2-vUo" firstAttribute="leading" secondItem="ObK-5K-CTD" secondAttribute="leading" constant="16" id="nVD-pN-vD5"/>
-                            <constraint firstAttribute="width" constant="255" id="oNP-gH-hiM"/>
-                            <constraint firstAttribute="height" constant="326" id="y1q-X3-lOM"/>
                         </constraints>
                     </view>
                 </subviews>
@@ -67,10 +65,8 @@
         </collectionViewCell>
     </objects>
     <resources>
-
-        <namedColor name="mediumGray">
-            <color red="0.85098039215686272" green="0.85098039215686272" blue="0.85098039215686272" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-
+        <namedColor name="violet">
+            <color red="0.44705882352941179" green="0.49019607843137253" blue="0.56862745098039214" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
     </resources>
 </document>
