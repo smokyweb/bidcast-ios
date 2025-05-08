@@ -316,6 +316,8 @@
 		99BC330A2DC9DD0400E1BEA6 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99BC309C2DC9DD0400E1BEA6 /* ProfileViewModel.swift */; };
 		99BC330B2DC9DD0400E1BEA6 /* NewPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99BC30262DC9DD0400E1BEA6 /* NewPasswordViewController.swift */; };
 		99BC330C2DC9DD0400E1BEA6 /* SignUpTodayCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99BC31102DC9DD0400E1BEA6 /* SignUpTodayCell.swift */; };
+		D441F3882DCCDED900266D6E /* TipsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D441F3862DCCDED900266D6E /* TipsCell.swift */; };
+		D441F3892DCCDED900266D6E /* TipsCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D441F3872DCCDED900266D6E /* TipsCell.xib */; };
 		D48D75252DCA1B4B0096B223 /* Account.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D48D75242DCA1B4A0096B223 /* Account.storyboard */; };
 		D48D75272DCA1B6A0096B223 /* Activity.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D48D75262DCA1B6A0096B223 /* Activity.storyboard */; };
 		D48D75292DCA1B760096B223 /* Sell.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D48D75282DCA1B760096B223 /* Sell.storyboard */; };
@@ -699,6 +701,8 @@
 		99BC31CA2DC9DD0400E1BEA6 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		99BC31CB2DC9DD0400E1BEA6 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		9C01742AE13B328D7B6441D7 /* Pods-BidCast-BidCastUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BidCast-BidCastUITests.debug.xcconfig"; path = "Target Support Files/Pods-BidCast-BidCastUITests/Pods-BidCast-BidCastUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		D441F3862DCCDED900266D6E /* TipsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TipsCell.swift; sourceTree = "<group>"; };
+		D441F3872DCCDED900266D6E /* TipsCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TipsCell.xib; sourceTree = "<group>"; };
 		D48D75242DCA1B4A0096B223 /* Account.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Account.storyboard; sourceTree = "<group>"; };
 		D48D75262DCA1B6A0096B223 /* Activity.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Activity.storyboard; sourceTree = "<group>"; };
 		D48D75282DCA1B760096B223 /* Sell.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Sell.storyboard; sourceTree = "<group>"; };
@@ -1671,6 +1675,8 @@
 				357D64252DCA2B2400E73D91 /* SellerRevenueCell.swift */,
 				D49E85D22DCC795A00879803 /* LocationNameCell.swift */,
 				D49E85D32DCC795A00879803 /* LocationNameCell.xib */,
+				D441F3862DCCDED900266D6E /* TipsCell.swift */,
+				D441F3872DCCDED900266D6E /* TipsCell.xib */,
 				357D64262DCA2B2400E73D91 /* SellerRevenueCell.xib */,
 				D4913C772DCB290C001EA3B4 /* AcitivityCell.swift */,
 				D4913C782DCB290C001EA3B4 /* AcitivityCell.xib */,
@@ -2538,6 +2544,7 @@
 				99BC32412DC9DD0400E1BEA6 /* HeaderView.xib in Resources */,
 				99BC32432DC9DD0400E1BEA6 /* Inter_28pt-Light.ttf in Resources */,
 				99BC32452DC9DD0400E1BEA6 /* Inter_24pt-Medium.ttf in Resources */,
+				D441F3892DCCDED900266D6E /* TipsCell.xib in Resources */,
 				351E50302DCC8FDF0082D2AD /* MemberCollectionViewCell.xib in Resources */,
 				99BC32472DC9DD0400E1BEA6 /* Inter_18pt-Medium.ttf in Resources */,
 				99BC32482DC9DD0400E1BEA6 /* Inter-Italic-VariableFont_opsz,wght.ttf in Resources */,
@@ -2886,6 +2893,7 @@
 				35B866BD2DC9F2B300E6FFA1 /* ActivityViewController.swift in Sources */,
 				99BC30062DC9DCED00E1BEA6 /* ViewController.swift in Sources */,
 				D4EA47D12DCC8F6C008CB96F /* MyOrderViewController.swift in Sources */,
+				D441F3882DCCDED900266D6E /* TipsCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

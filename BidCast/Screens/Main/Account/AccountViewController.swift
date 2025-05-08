@@ -205,6 +205,14 @@ extension AccountViewController : UITableViewDataSource,UITableViewDelegate{
                     switch index {
                     case 0:
                         self.pushVC(with: InventoryViewController.self, storyboardName: .account)
+                    case 1 :
+                        self.pushVC(with: ShowsViewController.self, storyboardName: .account)
+                    case 2 :
+                        self.pushVC(with: MyOrderViewController.self, storyboardName: .account)
+                    case 4 :
+                        self.pushVC(with: OfferViewController.self, storyboardName: .account)
+                    case 5 :
+                        self.pushVC(with: TipsViewController.self, storyboardName: .account)
                     default:
                         break
                     }

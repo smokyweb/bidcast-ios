@@ -17,8 +17,6 @@ enum OfferSection: Int, CaseIterable {
     }
 }
 
-
-
 class OfferViewController: UIViewController {
     
     //MARK: IBOutlets
@@ -55,7 +53,7 @@ class OfferViewController: UIViewController {
         self.tblView.delegate = self
         let cellIds =  [
             NoDataTableViewCell.identifier,MyOrderCell.identifier,
-            ShowInventoryCell.identifier,MyOrderCollectionCell.identifier
+            AcitivityCell.identifier,MyOrderCollectionCell.identifier
         ]
         tblView.registerCells(for: cellIds)
         tblView.configTblView()
@@ -96,23 +94,26 @@ extension OfferViewController: UITableViewDelegate,UITableViewDataSource{
             cell.selectionStyle = .none
             return cell
         case .offerListing:
-            let cell = tblView.dequeueCell(with: MyOrderCell.self)
-            cell.contentView.backgroundColor = AppColor.white
-            cell.userNameOlt.text = "#ORD-2025-0123"
-            cell.userbidDetail.text = "Jan 23, 2025, 14:30"
+            let cell = tblView.dequeueCell(with: AcitivityCell.self)
+            cell.contentView.backgroundColor = AppColor.pearl
+            cell.userImageOlt.image = UIImage(named: "defaultUser")
+            cell.userNameOlt.text = "Michael Smith"
+            cell.userbidDetail.text = "2 hours ago"
+            cell.userbidPrice.isHidden = true
+            cell.userbidPrice.textColor = AppColor.successGreen
             cell.bidderImageOlt.image = UIImage(named: "ic_bidder")
-            cell.bidderNameDetail.text = "John Anderson"
-            cell.bidderBidDetails.text = "Los Angeles, CA"
-            cell.orderAmountTitle.text = "Order Amount"
-            cell.orderAmountTotal.text = "$189.99"
-            if indexPath.row % 2 == 0{
-                cell.userbidPrice.text = "Processing"
-                cell.orderView.backgroundColor = .lightBlue
-                cell.userbidPrice.textColor = .darkBlue
-            }else{
-                cell.userbidPrice.text = "Delivered"
-                cell.userbidPrice.textColor = .darkGreen
-                cell.orderView.backgroundColor = .lightGreen
+            cell.bidderNameDetail.text = "Gaming Headphones X1"
+            cell.bidderBidDetails.text = "Listed Price: $129.99"
+            cell.bidderDate.text = "Offer Price: $99.99"
+            cell.bidderPriceDetail.isHidden = true
+            cell.hideShowUserView(stackHidden: false)
+            cell.hideShowBidderView(stackHidden: false)
+            cell.hideShowAcceptView(stackHidden: false)
+            cell.didTapAccept = { [weak self] sender in
+                
+            }
+            cell.didTapReject = { [weak self] sender in
+                
             }
             cell.selectionStyle = .none
             return cell

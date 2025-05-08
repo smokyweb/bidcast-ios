@@ -8,32 +8,26 @@
 import UIKit
 import SVProgressHUD
 
-class TipsViewController: UIViewController {
+enum TipsSection: Int, CaseIterable {
+    case tipsDetails
+    case tipsListing
     
-    enum InventorySections: Int, CaseIterable {
-        case segment
-        case searchBar
-        case details
-        
-        func numberOfRows(data: [InventorySections: Int]) -> Int {
-            return data[self] ?? 1 // Default to 1 if no data provided
-        }
+    func numberOfRows(data: [TipsSection: Int]) -> Int {
+        return data[self] ?? 1 // Default to 1 if no data provided
     }
-    
-    //MARK: IBOutlets
+}
 
+class TipsViewController: UIViewController {
+
+    //MARK: IBOutlets
     @IBOutlet var headerView: HeaderWithAppName!
     @IBOutlet weak var tblView: UITableView!
     
-    //MARK: Properties
-    var isInactiveSelected = false
-    var isDraftSelected = false
-    
-    var sectionData: [InventorySections: Int] = [
-        .segment : 1,
-        .searchBar: 1,
-        .details: 10
+    var sectionData: [TipsSection: Int] = [
+        .tipsDetails : 1,
+        .tipsListing: 6
     ]
+    var orderName : [OrderDetail] = []
     
     //MARK: ViewLife Cycle Method.
     override func viewDidLoad() {
@@ -51,124 +45,75 @@ class TipsViewController: UIViewController {
         self.configureTableView()
         self.configureHeaderView()
     }
-
-
+    
+    
     //MARK: - configureTableView.
     private func configureTableView(){
         self.tblView.dataSource = self
         self.tblView.delegate = self
-        
         let cellIds =  [
-                        SearchTextfieldCell.identifier,
-                        NoDataTableViewCell.identifier,SegmentCell.identifier,
-                        LocationNameCell.identifier
-                        ]
+            NoDataTableViewCell.identifier,MyOrderCell.identifier,
+            AcitivityCell.identifier,MyOrderCollectionCell.identifier,TipsCell.identifier
+        ]
         tblView.registerCells(for: cellIds)
         tblView.configTblView()
+        orderName.append(OrderDetail(orderName: "Pending", orderPrice: "24"))
+        orderName.append(OrderDetail(orderName: "Accepted", orderPrice: "156"))
+        orderName.append(OrderDetail(orderName: "Decline", orderPrice: "892"))
         tblView.configTblView(bgColor : .pearl)
     }
     
     //MARK: - configureHeaderView.
     func configureHeaderView(){
-        self.headerView.headerViewSetup(rightButtonHidden: false,leftButtonHidden: false,headerName: AppString.VCName.Inventory,setAppBtnImage: UIImage(named: "ic_back"),appButtonAction : didTabBack)
-    }
-    
-    //MARK: didTabBack.
-    @objc private func didTabBack(){
-        self.goToBack()
-    }
-
-    
-    //MARK: reloadDataForSelectedSegment.
-    private func reloadDataForSelectedSegment() {
-        if isDraftSelected {
-            sectionData = [
-                .searchBar: 1,
-                .details: 3
-            ]
-        } else if isInactiveSelected {
-            sectionData = [
-                .searchBar: 1,
-                .details: 2
-            ]
-        }else {
-           sectionData = [
-               .searchBar: 1,
-               .details: 10
-           ]
-       }
-        tblView.reloadData()
+        self.headerView.headerViewSetup(rightButtonHidden: false,leftButtonHidden: true,headerName: AppString.VCName.tips)
     }
 }
 
 //MARK: UITableViewDelegate,UITableViewDataSource
 extension TipsViewController: UITableViewDelegate,UITableViewDataSource{
     func numberOfSections(in tableView: UITableView) -> Int {
-        return InventorySections.allCases.count
+        return TipsSection.allCases.count
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let sectionType = InventorySections(rawValue: section) else { return 0 }
+        guard let sectionType = TipsSection(rawValue: section) else { return 0 }
         print("Rows in section:\(sectionType.numberOfRows(data: sectionData))")
         return sectionType.numberOfRows(data: sectionData)
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let rowType = InventorySections.allCases[safe: indexPath.section] else {
-            fatalError("Invalid index for InventorySections")
+        guard let rowType = TipsSection.allCases[safe: indexPath.section] else {
+            fatalError("Invalid index for MyOrderSection")
         }
-      
         switch rowType {
-        case .segment:
-            let cell = tblView.dequeueCell(with: SegmentCell.self)
-            cell.isNavFrom = "InventoryVC"
-            cell.setupforsegmentControl()
-            cell.onSegmentChanged = { [weak self] selectedIndex in
-                   if selectedIndex == 1 {
-                    self?.isDraftSelected = true
-                    self?.isInactiveSelected = false
-                } else if selectedIndex == 2 {
-                    self?.isInactiveSelected = true
-                    self?.isDraftSelected = false
-                }else{
-                    self?.isInactiveSelected = false
-                    self?.isDraftSelected = false
-                }
-                self?.reloadDataForSelectedSegment()
-            }
+        case .tipsDetails:
+            let cell = tblView.dequeueCell(with: MyOrderCollectionCell.self)
+            cell.orderName = self.orderName
+            cell.collectionViewOlt.backgroundColor = AppColor.white
+            cell.collectionViewOlt.reloadData()
             cell.selectionStyle = .none
             return cell
-            
-        case .searchBar:
-            let cell = tblView.dequeueCell(with: SearchTextfieldCell.self)
-            cell.contentView.backgroundColor = .white
-            cell.filterHistoryBtnTapped = {[weak self] sender in
-                guard let self  = self else { return }
-            }
-            cell.selectionStyle = .none
+        case .tipsListing:
+            let cell = tblView.dequeueCell(with: TipsCell.self)
+            cell.imageOlt.image = UIImage(named: "user1")
+            cell.titleOlt.text = "Testing"
+            cell.descriptionOlt.text = "Jan 15, 2025 • 2:30 PM"
+            cell.priceLbl.text = "$90.0"
+            cell.contentView.backgroundColor = .clear
+            cell.outerViewOlt.backgroundColor = .bg
             return cell
-            
-        case .details:
-            let cell = tblView.dequeueCell(with: LocationNameCell.self)
-            cell.contentView.backgroundColor = .pearl
-            cell.selectionStyle = .none
-            return cell
-    
         }
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        guard let rowType = InventorySections.allCases[safe: indexPath.section] else {
-            fatalError("Invalid index for InventorySections")
+        guard let rowType = TipsSection.allCases[safe: indexPath.section] else {
+            fatalError("Invalid index for MyOrderSection")
         }
-      
         switch rowType {
-        case .segment:
-            return Const.Height.segment
-        case .searchBar:
-            return Const.Height.search
-        case .details:
-            return 104
+        case .tipsDetails:
+            return 100
+        case .tipsListing:
+            return Const.Height.AutomaticDimension
         }
     }
 }
