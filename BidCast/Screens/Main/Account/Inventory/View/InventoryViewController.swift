@@ -50,6 +50,7 @@ class InventoryViewController: UIViewController {
     private func loadInit(){
         self.configureTableView()
         self.configureHeaderView()
+        self.reloadDataForSelectedSegment()
     }
 
 
@@ -121,8 +122,7 @@ extension InventoryViewController: UITableViewDelegate,UITableViewDataSource{
         switch rowType {
         case .segment:
             let cell = tblView.dequeueCell(with: SegmentCell.self)
-            cell.isNavFrom = "InventoryVC"
-            cell.setupforsegmentControl()
+            cell.configure(isNavFor: "InventoryVC")
             cell.onSegmentChanged = { [weak self] selectedIndex in
                    if selectedIndex == 1 {
                     self?.isDraftSelected = true

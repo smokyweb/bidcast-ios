@@ -90,7 +90,7 @@ class AccountViewController: UIViewController {
         tableViewOlt.registerCells(for: cellIds)
         
     }
-    func reloadSegmentData (){
+    func reloadSegmentData(){
         if segmentType == .sellerHub {
             self.sectionData = [
                 .profile : 1,
@@ -155,8 +155,7 @@ extension AccountViewController : UITableViewDataSource,UITableViewDelegate{
                 return cell
             case .segment:
                 let cell = tableViewOlt.dequeueCell(with: SegmentCell.self)
-                cell.isNavFrom = "MyAccountVC"
-                cell.setupforsegmentControl()
+                cell.configure(isNavFor: "MyAccountVC")
                 cell.onSegmentChanged = { selectedIndex in
                     self.segmentType = selectedIndex == 0 ? .sellerHub : .account
                     self.reloadSegmentData()

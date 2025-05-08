@@ -62,7 +62,7 @@ class ActivityViewController: UIViewController {
         
         let cellIds =  [
             CategoryTableViewCell.identifier,
-            NoDataTableViewCell.identifier,AcitivityCell.identifier
+            NoDataTableViewCell.identifier,AcitivityCell.identifier,MyOrderCell.identifier
         ]
         tblView.registerCells(for: cellIds)
         tblView.configTblView()
@@ -154,18 +154,35 @@ extension ActivityViewController: UITableViewDelegate,UITableViewDataSource{
             cell.selectionStyle = .none
             return cell
         case .messageDetails:
-            let cell = tblView.dequeueCell(with: AcitivityCell.self)
-            cell.contentView.backgroundColor = AppColor.pearl
-            cell.userImageOlt.image = UIImage(named: "defaultUser")
-            cell.userNameOlt.text = "William Jhonsn"
-            cell.userbidDetail.text = "Testing Message"
-            cell.userbidPrice.text = "2hr Ago"
-            cell.userbidPrice.textColor = AppColor.mediumGray
-            cell.hideShowUserView(stackHidden: false)
-            cell.hideShowBidderView(stackHidden: true)
-            cell.hideShowAcceptView(stackHidden: true)
+            let cell = tblView.dequeueCell(with: MyOrderCell.self)
+            cell.contentView.backgroundColor = AppColor.white
+            cell.userNameOlt.text = "#ORD-2025-0123"
+            cell.userbidDetail.text = "Jan 23, 2025, 14:30"
+            cell.userbidPrice.text = "Delivered"
+            cell.userbidPrice.textColor = AppColor.successGreen
+            cell.bidderImageOlt.image = UIImage(named: "ic_bidder")
+            cell.bidderNameDetail.text = "John Anderson"
+            cell.bidderBidDetails.text = "Los Angeles, CA"
+            cell.orderAmountTitle.text = "Order Amount"
+            cell.orderAmountTotal.text = "$189.99"
             cell.selectionStyle = .none
             return cell
+            
+            
+          
+            
+//            let cell = tblView.dequeueCell(with: AcitivityCell.self)
+//            cell.contentView.backgroundColor = AppColor.pearl
+//            cell.userImageOlt.image = UIImage(named: "defaultUser")
+//            cell.userNameOlt.text = "William Jhonsn"
+//            cell.userbidDetail.text = "Testing Message"
+//            cell.userbidPrice.text = "2hr Ago"
+//            cell.userbidPrice.textColor = AppColor.mediumGray
+//            cell.hideShowUserView(stackHidden: false)
+//            cell.hideShowBidderView(stackHidden: true)
+//            cell.hideShowAcceptView(stackHidden: true)
+//            cell.selectionStyle = .none
+//            return cell
         case .bidDetails:
             let cell = tblView.dequeueCell(with: AcitivityCell.self)
             cell.contentView.backgroundColor = AppColor.pearl

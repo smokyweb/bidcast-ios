@@ -34,6 +34,8 @@ class SegmentCell: UITableViewCell {
             segment.items = ["Active", "Draft","Inactive"]
         }else if isNavFrom == "MyAccountVC"{
             segment.items = ["Seller Hub", "My Account"]
+        }else if isNavFrom == "ShowVC"{
+            segment.items = ["Shows", "Past Shows"]
         }
        
         segment.font  = AppFont.Labeltitle
@@ -53,5 +55,10 @@ class SegmentCell: UITableViewCell {
         // Call the closure when the segment value changes
         onSegmentChanged?(sender.selectedIndex)
         selectedIndex = sender.selectedIndex
+    }
+    
+    func configure(isNavFor: String = "Other") {
+        self.isNavFrom = isNavFor
+        setupforsegmentControl()
     }
 }

@@ -18,12 +18,8 @@ class SellerRevenueCell: UICollectionViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        innerView.dropShadow(opacity: 0.5, shadowRadius: Radius_04, cornerRadius: Corner_05, shadowColor: AppColor.black ?? UIColor.black)
+        innerView.dropShadow(opacity: 0.5, shadowRadius: Radius_04, cornerRadius: Corner_08, shadowColor: AppColor.black ?? UIColor.black)
         self.labelOlt.font = AppFont.Labeltitle
         
     }
-    
-    
-    
-    
 }

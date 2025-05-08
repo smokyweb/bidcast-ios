@@ -214,7 +214,9 @@ extension SignInViewController: UITableViewDelegate, UITableViewDataSource {
             let cell = signTblView.dequeueCell(with: SignUpTodayCell.self)
             cell.didTapSignUpClosure = {  [weak self] sender in
                 guard let self = self else { return }
-                self.pushVC(with: SignUpViewController.self, storyboardName: .onboardings)
+//                self.pushVC(with: SignUpViewController.self, storyboardName: .onboardings)
+                self.pushVC(with: MyOrderViewController.self, storyboardName: .account)
+                
             }
             return cell
         }

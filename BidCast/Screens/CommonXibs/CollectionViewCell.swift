@@ -8,14 +8,14 @@
 import UIKit
 
 class CollectionViewCell: UITableViewCell {
-
+    
     @IBOutlet weak var collectionViewHeihgt: NSLayoutConstraint!
     @IBOutlet weak var outerViewOlt: UIView!
     @IBOutlet weak var collectionViewOlt: UICollectionView!
     
     static let identifier = "CollectionViewCell"
     var onItemSelected: ((Int) -> Void)?
-
+    
     var isForDetails = false
     var isForPayment = false
     var items = [Any]()
@@ -32,9 +32,9 @@ class CollectionViewCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         configureCollectionVIew()
-       
+        
     }
-
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
     }
@@ -43,7 +43,7 @@ class CollectionViewCell: UITableViewCell {
         self.items = items
         
         self.collectionViewOlt.layoutIfNeeded()
-
+        
         let rows = ceil(CGFloat(items.count) / 2.0)
         let itemHeight: CGFloat = 100
         let spacing: CGFloat = 6
@@ -129,7 +129,7 @@ extension CollectionViewCell : UICollectionViewDelegate,UICollectionViewDataSour
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-      
+        
         switch segmentType{
         case .sellerHub:
             if isForDetails{
@@ -146,11 +146,11 @@ extension CollectionViewCell : UICollectionViewDelegate,UICollectionViewDataSour
         }
     }
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-       
+        
         switch segmentType{
         case .sellerHub:
             if isForDetails{
-               
+                
             }else{
                 onItemSelected?(indexPath.row)
             }
@@ -158,7 +158,7 @@ extension CollectionViewCell : UICollectionViewDelegate,UICollectionViewDataSour
             if isForPayment{
                 
             }else{
-               
+                
             }
         }
     }

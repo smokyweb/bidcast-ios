@@ -33,6 +33,15 @@ enum AppString{
         static let addMusic = "MUSIC LIBRARY"
         static let Inventory = "Inventory"
         static let activity = "Activity"
+        static let shows = "Shows"
+        static let myOrders = "My Orders"
+        static let wallet = "Wallet"
+        static let offer = "Offer"
+        static let tips = "Tips"
+        static let analytics = "Analytics"
+        static let shipping = "Shipping"
+        static let sellerStatus = "Seller Status"
+        
 
     }
     

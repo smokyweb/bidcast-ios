@@ -50,7 +50,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9uS-NB-0g7" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-376" y="-211"/>
+            <point key="canvasLocation" x="-1063" y="-211"/>
         </scene>
         <!--Account View Controller-->
         <scene sceneID="RdS-4U-p75">
@@ -93,7 +93,394 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fa0-7G-VS7" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-376" y="-211"/>
+            <point key="canvasLocation" x="-1758" y="-211"/>
+        </scene>
+        <!--Shows View Controller-->
+        <scene sceneID="TII-hs-kzd">
+            <objects>
+                <viewController storyboardIdentifier="ShowsViewController" id="Btx-o5-unX" customClass="ShowsViewController" customModule="BidCast" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Jm7-5o-Hsu">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="R7N-It-4lh" customClass="HeaderWithAppName" customModule="BidCast" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="393" height="85"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="85" id="bgX-9V-J5Q"/>
+                                </constraints>
+                            </view>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="xIN-Jm-X7D">
+                                <rect key="frame" x="0.0" y="85" width="393" height="767"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </tableView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="2jz-Nj-d5m"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="xIN-Jm-X7D" firstAttribute="leading" secondItem="2jz-Nj-d5m" secondAttribute="leading" id="JdG-17-gtQ"/>
+                            <constraint firstItem="R7N-It-4lh" firstAttribute="leading" secondItem="Jm7-5o-Hsu" secondAttribute="leading" id="bAJ-X0-oh9"/>
+                            <constraint firstAttribute="bottom" secondItem="xIN-Jm-X7D" secondAttribute="bottom" id="km1-m9-TFl"/>
+                            <constraint firstItem="xIN-Jm-X7D" firstAttribute="top" secondItem="R7N-It-4lh" secondAttribute="bottom" id="tMa-Bm-oAe"/>
+                            <constraint firstItem="R7N-It-4lh" firstAttribute="top" secondItem="Jm7-5o-Hsu" secondAttribute="top" id="teX-qV-DIp"/>
+                            <constraint firstAttribute="trailing" secondItem="R7N-It-4lh" secondAttribute="trailing" id="wQx-ly-k8o"/>
+                            <constraint firstItem="xIN-Jm-X7D" firstAttribute="trailing" secondItem="2jz-Nj-d5m" secondAttribute="trailing" id="xNQ-RM-4kN"/>
+                            <constraint firstItem="xIN-Jm-X7D" firstAttribute="top" secondItem="R7N-It-4lh" secondAttribute="bottom" id="yhP-kT-vxp"/>
+                        </constraints>
+                    </view>
+                    <nil key="simulatedTopBarMetrics"/>
+                    <connections>
+                        <outlet property="headerView" destination="R7N-It-4lh" id="NGN-zE-Vax"/>
+                        <outlet property="tblView" destination="xIN-Jm-X7D" id="X05-ju-RMp"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="1ie-gB-LWc" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-353" y="-211"/>
+        </scene>
+        <!--My Order View Controller-->
+        <scene sceneID="YiD-ni-0um">
+            <objects>
+                <viewController storyboardIdentifier="MyOrderViewController" id="DUM-2u-Rev" customClass="MyOrderViewController" customModule="BidCast" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="ZIG-pw-WP5">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="w2Y-SL-fKn" customClass="HeaderWithAppName" customModule="BidCast" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="393" height="85"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="85" id="7vt-2Y-75E"/>
+                                </constraints>
+                            </view>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="74u-mX-G5G">
+                                <rect key="frame" x="0.0" y="85" width="393" height="767"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </tableView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="uV2-fU-gKp"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="74u-mX-G5G" firstAttribute="top" secondItem="w2Y-SL-fKn" secondAttribute="bottom" id="7Ck-zZ-gNu"/>
+                            <constraint firstItem="74u-mX-G5G" firstAttribute="leading" secondItem="uV2-fU-gKp" secondAttribute="leading" id="7s6-Vv-sZA"/>
+                            <constraint firstAttribute="trailing" secondItem="w2Y-SL-fKn" secondAttribute="trailing" id="L6u-Dy-Z3n"/>
+                            <constraint firstItem="74u-mX-G5G" firstAttribute="top" secondItem="w2Y-SL-fKn" secondAttribute="bottom" id="QCA-xs-gr5"/>
+                            <constraint firstItem="74u-mX-G5G" firstAttribute="trailing" secondItem="uV2-fU-gKp" secondAttribute="trailing" id="UAX-ZI-pK2"/>
+                            <constraint firstAttribute="bottom" secondItem="74u-mX-G5G" secondAttribute="bottom" id="m4F-1J-z0v"/>
+                            <constraint firstItem="w2Y-SL-fKn" firstAttribute="top" secondItem="ZIG-pw-WP5" secondAttribute="top" id="tsC-UR-XSZ"/>
+                            <constraint firstItem="w2Y-SL-fKn" firstAttribute="leading" secondItem="ZIG-pw-WP5" secondAttribute="leading" id="yhD-fM-QPF"/>
+                        </constraints>
+                    </view>
+                    <nil key="simulatedTopBarMetrics"/>
+                    <connections>
+                        <outlet property="headerView" destination="w2Y-SL-fKn" id="vUP-Jg-RXw"/>
+                        <outlet property="tblView" destination="74u-mX-G5G" id="rMu-96-tnW"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="kJP-lN-O5P" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="300" y="-211"/>
+        </scene>
+        <!--Wallet View Controller-->
+        <scene sceneID="VAc-O0-809">
+            <objects>
+                <viewController storyboardIdentifier="WalletViewController" id="0LP-0b-HTL" customClass="WalletViewController" customModule="BidCast" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="OMe-11-0Dw">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="t3K-PX-6jB" customClass="HeaderWithAppName" customModule="BidCast" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="393" height="85"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="85" id="b0d-gW-izZ"/>
+                                </constraints>
+                            </view>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="SFw-I1-MST">
+                                <rect key="frame" x="0.0" y="85" width="393" height="767"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </tableView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="xlI-yW-7Cd"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="t3K-PX-6jB" firstAttribute="top" secondItem="OMe-11-0Dw" secondAttribute="top" id="GnR-VF-jDF"/>
+                            <constraint firstItem="SFw-I1-MST" firstAttribute="leading" secondItem="xlI-yW-7Cd" secondAttribute="leading" id="QAw-wG-FHH"/>
+                            <constraint firstItem="t3K-PX-6jB" firstAttribute="leading" secondItem="OMe-11-0Dw" secondAttribute="leading" id="Qi6-VO-bjE"/>
+                            <constraint firstItem="SFw-I1-MST" firstAttribute="top" secondItem="t3K-PX-6jB" secondAttribute="bottom" id="Sfx-xm-ugU"/>
+                            <constraint firstAttribute="bottom" secondItem="SFw-I1-MST" secondAttribute="bottom" id="YyB-RE-F0D"/>
+                            <constraint firstItem="SFw-I1-MST" firstAttribute="trailing" secondItem="xlI-yW-7Cd" secondAttribute="trailing" id="e8o-Vk-ctn"/>
+                            <constraint firstAttribute="trailing" secondItem="t3K-PX-6jB" secondAttribute="trailing" id="fEc-Il-5hL"/>
+                            <constraint firstItem="SFw-I1-MST" firstAttribute="top" secondItem="t3K-PX-6jB" secondAttribute="bottom" id="sgF-v5-c7y"/>
+                        </constraints>
+                    </view>
+                    <nil key="simulatedTopBarMetrics"/>
+                    <connections>
+                        <outlet property="headerView" destination="t3K-PX-6jB" id="Kue-rp-tpk"/>
+                        <outlet property="tblView" destination="SFw-I1-MST" id="Aqh-be-sky"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Mp6-42-wqP" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="967" y="-211"/>
+        </scene>
+        <!--Offer View Controller-->
+        <scene sceneID="ySy-tq-cbf">
+            <objects>
+                <viewController storyboardIdentifier="OfferViewController" id="cFX-cK-ccu" customClass="OfferViewController" customModule="BidCast" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="MUy-5K-Yg6">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="h5d-VG-5Rr" customClass="HeaderWithAppName" customModule="BidCast" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="393" height="85"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="85" id="Erf-Fw-YIs"/>
+                                </constraints>
+                            </view>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="kBi-CQ-odN">
+                                <rect key="frame" x="0.0" y="85" width="393" height="767"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </tableView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="F0X-TM-giW"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="h5d-VG-5Rr" secondAttribute="trailing" id="2VY-xR-c6K"/>
+                            <constraint firstItem="kBi-CQ-odN" firstAttribute="leading" secondItem="F0X-TM-giW" secondAttribute="leading" id="CmO-vT-ye3"/>
+                            <constraint firstItem="kBi-CQ-odN" firstAttribute="trailing" secondItem="F0X-TM-giW" secondAttribute="trailing" id="PY0-kY-5kd"/>
+                            <constraint firstAttribute="bottom" secondItem="kBi-CQ-odN" secondAttribute="bottom" id="RLH-TD-y1h"/>
+                            <constraint firstItem="kBi-CQ-odN" firstAttribute="top" secondItem="h5d-VG-5Rr" secondAttribute="bottom" id="Rub-4d-YYW"/>
+                            <constraint firstItem="h5d-VG-5Rr" firstAttribute="leading" secondItem="MUy-5K-Yg6" secondAttribute="leading" id="jVq-1s-Ys7"/>
+                            <constraint firstItem="kBi-CQ-odN" firstAttribute="top" secondItem="h5d-VG-5Rr" secondAttribute="bottom" id="m2X-o3-j7p"/>
+                            <constraint firstItem="h5d-VG-5Rr" firstAttribute="top" secondItem="MUy-5K-Yg6" secondAttribute="top" id="pRc-Vn-mVs"/>
+                        </constraints>
+                    </view>
+                    <nil key="simulatedTopBarMetrics"/>
+                    <connections>
+                        <outlet property="headerView" destination="h5d-VG-5Rr" id="DdY-el-aXG"/>
+                        <outlet property="tblView" destination="kBi-CQ-odN" id="YOb-Yf-49R"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Rhu-3P-04g" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1633" y="-211"/>
+        </scene>
+        <!--Tips View Controller-->
+        <scene sceneID="Lc4-YQ-yQw">
+            <objects>
+                <viewController storyboardIdentifier="TipsViewController" id="SXx-7b-7Ya" customClass="TipsViewController" customModule="BidCast" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="42G-TH-njS">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Plj-rM-pVo" customClass="HeaderWithAppName" customModule="BidCast" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="393" height="85"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="85" id="GIw-XI-uzD"/>
+                                </constraints>
+                            </view>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="edI-RA-niW">
+                                <rect key="frame" x="0.0" y="85" width="393" height="767"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </tableView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="Ge5-AQ-jgv"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="Plj-rM-pVo" firstAttribute="top" secondItem="42G-TH-njS" secondAttribute="top" id="3p9-gE-JSg"/>
+                            <constraint firstItem="edI-RA-niW" firstAttribute="leading" secondItem="Ge5-AQ-jgv" secondAttribute="leading" id="5h0-1r-0w3"/>
+                            <constraint firstItem="Plj-rM-pVo" firstAttribute="leading" secondItem="42G-TH-njS" secondAttribute="leading" id="8EN-Yh-afi"/>
+                            <constraint firstItem="edI-RA-niW" firstAttribute="trailing" secondItem="Ge5-AQ-jgv" secondAttribute="trailing" id="BR2-mu-69u"/>
+                            <constraint firstAttribute="bottom" secondItem="edI-RA-niW" secondAttribute="bottom" id="Cx5-hW-VRb"/>
+                            <constraint firstAttribute="trailing" secondItem="Plj-rM-pVo" secondAttribute="trailing" id="HL2-Z5-alF"/>
+                            <constraint firstItem="edI-RA-niW" firstAttribute="top" secondItem="Plj-rM-pVo" secondAttribute="bottom" id="Ofs-a3-eOl"/>
+                            <constraint firstItem="edI-RA-niW" firstAttribute="top" secondItem="Plj-rM-pVo" secondAttribute="bottom" id="rkw-7e-zif"/>
+                        </constraints>
+                    </view>
+                    <nil key="simulatedTopBarMetrics"/>
+                    <connections>
+                        <outlet property="headerView" destination="Plj-rM-pVo" id="rSF-qW-DGX"/>
+                        <outlet property="tblView" destination="edI-RA-niW" id="e05-s3-UfV"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="udH-tp-i15" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2294" y="-211"/>
+        </scene>
+        <!--Analytics View Controller-->
+        <scene sceneID="EVc-8k-Vw5">
+            <objects>
+                <viewController storyboardIdentifier="AnalyticsViewController" id="nqn-NB-nVQ" customClass="AnalyticsViewController" customModule="BidCast" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="XJi-5h-qqF">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="kf7-Jo-OrV" customClass="HeaderWithAppName" customModule="BidCast" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="393" height="85"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="85" id="eGT-Qo-D5E"/>
+                                </constraints>
+                            </view>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="USu-ab-gP6">
+                                <rect key="frame" x="0.0" y="85" width="393" height="767"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </tableView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="ESt-Lc-tLd"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="kf7-Jo-OrV" firstAttribute="leading" secondItem="XJi-5h-qqF" secondAttribute="leading" id="I6J-Ld-Hu5"/>
+                            <constraint firstItem="USu-ab-gP6" firstAttribute="leading" secondItem="ESt-Lc-tLd" secondAttribute="leading" id="MgJ-VG-X00"/>
+                            <constraint firstAttribute="bottom" secondItem="USu-ab-gP6" secondAttribute="bottom" id="P23-nB-IwP"/>
+                            <constraint firstAttribute="trailing" secondItem="kf7-Jo-OrV" secondAttribute="trailing" id="Ric-fb-SdT"/>
+                            <constraint firstItem="USu-ab-gP6" firstAttribute="top" secondItem="kf7-Jo-OrV" secondAttribute="bottom" id="TN6-SC-Cl3"/>
+                            <constraint firstItem="kf7-Jo-OrV" firstAttribute="top" secondItem="XJi-5h-qqF" secondAttribute="top" id="Xgn-ZC-gNF"/>
+                            <constraint firstItem="USu-ab-gP6" firstAttribute="trailing" secondItem="ESt-Lc-tLd" secondAttribute="trailing" id="ZBs-mO-HUm"/>
+                            <constraint firstItem="USu-ab-gP6" firstAttribute="top" secondItem="kf7-Jo-OrV" secondAttribute="bottom" id="hxA-wa-Z4m"/>
+                        </constraints>
+                    </view>
+                    <nil key="simulatedTopBarMetrics"/>
+                    <connections>
+                        <outlet property="headerView" destination="kf7-Jo-OrV" id="7v5-8X-6tG"/>
+                        <outlet property="tblView" destination="USu-ab-gP6" id="kOS-u1-0fl"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Pty-mP-Unq" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2963" y="-211"/>
+        </scene>
+        <!--Shipping View Controller-->
+        <scene sceneID="N9f-Iq-vLi">
+            <objects>
+                <viewController storyboardIdentifier="ShippingViewController" id="2jM-AG-bac" customClass="ShippingViewController" customModule="BidCast" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="yiR-Nf-oZQ">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="W8g-wk-K8K" customClass="HeaderWithAppName" customModule="BidCast" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="393" height="85"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="85" id="ggR-Xf-4Sm"/>
+                                </constraints>
+                            </view>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="jk5-IE-Zxz">
+                                <rect key="frame" x="0.0" y="85" width="393" height="767"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </tableView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="giW-wv-lal"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="W8g-wk-K8K" firstAttribute="leading" secondItem="yiR-Nf-oZQ" secondAttribute="leading" id="Eey-VB-by6"/>
+                            <constraint firstItem="jk5-IE-Zxz" firstAttribute="leading" secondItem="giW-wv-lal" secondAttribute="leading" id="F6F-gX-QVr"/>
+                            <constraint firstItem="jk5-IE-Zxz" firstAttribute="trailing" secondItem="giW-wv-lal" secondAttribute="trailing" id="G5H-fD-igX"/>
+                            <constraint firstAttribute="bottom" secondItem="jk5-IE-Zxz" secondAttribute="bottom" id="PCw-by-G2P"/>
+                            <constraint firstItem="jk5-IE-Zxz" firstAttribute="top" secondItem="W8g-wk-K8K" secondAttribute="bottom" id="aC2-BQ-m4B"/>
+                            <constraint firstItem="W8g-wk-K8K" firstAttribute="top" secondItem="yiR-Nf-oZQ" secondAttribute="top" id="lSd-aN-4QC"/>
+                            <constraint firstAttribute="trailing" secondItem="W8g-wk-K8K" secondAttribute="trailing" id="oFd-rs-G1L"/>
+                            <constraint firstItem="jk5-IE-Zxz" firstAttribute="top" secondItem="W8g-wk-K8K" secondAttribute="bottom" id="y3H-9v-gVE"/>
+                        </constraints>
+                    </view>
+                    <nil key="simulatedTopBarMetrics"/>
+                    <connections>
+                        <outlet property="headerView" destination="W8g-wk-K8K" id="fwQ-Sc-jcV"/>
+                        <outlet property="tblView" destination="jk5-IE-Zxz" id="q72-B3-VSi"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="D3M-Jm-xqH" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3631" y="-211"/>
+        </scene>
+        <!--Seller Status View Controller-->
+        <scene sceneID="git-OL-VvE">
+            <objects>
+                <viewController storyboardIdentifier="SellerStatusViewController" id="Bi9-3L-DOc" customClass="SellerStatusViewController" customModule="BidCast" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="vsc-cb-oxU">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GrG-9s-fpw" customClass="HeaderWithAppName" customModule="BidCast" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="393" height="85"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="85" id="yS5-Gy-3d9"/>
+                                </constraints>
+                            </view>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="9KW-tV-exE">
+                                <rect key="frame" x="0.0" y="85" width="393" height="767"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </tableView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="gpp-SZ-o4g"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="9KW-tV-exE" firstAttribute="top" secondItem="GrG-9s-fpw" secondAttribute="bottom" id="6oV-XU-6QP"/>
+                            <constraint firstItem="9KW-tV-exE" firstAttribute="leading" secondItem="gpp-SZ-o4g" secondAttribute="leading" id="D26-nz-uiY"/>
+                            <constraint firstItem="GrG-9s-fpw" firstAttribute="leading" secondItem="vsc-cb-oxU" secondAttribute="leading" id="V7X-te-cAe"/>
+                            <constraint firstItem="9KW-tV-exE" firstAttribute="top" secondItem="GrG-9s-fpw" secondAttribute="bottom" id="bP7-k9-GP6"/>
+                            <constraint firstItem="9KW-tV-exE" firstAttribute="trailing" secondItem="gpp-SZ-o4g" secondAttribute="trailing" id="h8T-1Y-rdx"/>
+                            <constraint firstAttribute="trailing" secondItem="GrG-9s-fpw" secondAttribute="trailing" id="oSE-9G-A3a"/>
+                            <constraint firstItem="GrG-9s-fpw" firstAttribute="top" secondItem="vsc-cb-oxU" secondAttribute="top" id="pcM-7a-nia"/>
+                            <constraint firstAttribute="bottom" secondItem="9KW-tV-exE" secondAttribute="bottom" id="x1E-iX-Npo"/>
+                        </constraints>
+                    </view>
+                    <nil key="simulatedTopBarMetrics"/>
+                    <connections>
+                        <outlet property="headerView" destination="GrG-9s-fpw" id="TsT-at-q3T"/>
+                        <outlet property="tblView" destination="9KW-tV-exE" id="SKr-C4-km6"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Jm4-qg-sS8" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4300" y="-211"/>
+        </scene>
+        <!--Activity View Controller-->
+        <scene sceneID="QJL-Io-vKM">
+            <objects>
+                <viewController storyboardIdentifier="ActivityViewController" id="Niy-rS-Anm" customClass="ActivityViewController" customModule="BidCast" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="b6G-Z5-cHm">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NFD-vX-RKF" customClass="HeaderWithAppName" customModule="BidCast" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="393" height="85"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="85" id="wXL-bz-DZ1"/>
+                                </constraints>
+                            </view>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="c4e-eC-uSJ">
+                                <rect key="frame" x="0.0" y="85" width="393" height="767"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </tableView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="Q8N-GN-5QH"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="NFD-vX-RKF" firstAttribute="leading" secondItem="b6G-Z5-cHm" secondAttribute="leading" id="1qd-zQ-EtJ"/>
+                            <constraint firstItem="c4e-eC-uSJ" firstAttribute="top" secondItem="NFD-vX-RKF" secondAttribute="bottom" id="5Qi-dV-Uhu"/>
+                            <constraint firstItem="NFD-vX-RKF" firstAttribute="top" secondItem="b6G-Z5-cHm" secondAttribute="top" id="XUe-Av-Yce"/>
+                            <constraint firstItem="c4e-eC-uSJ" firstAttribute="trailing" secondItem="Q8N-GN-5QH" secondAttribute="trailing" id="beb-dL-A0r"/>
+                            <constraint firstAttribute="bottom" secondItem="c4e-eC-uSJ" secondAttribute="bottom" id="mKc-4V-ryn"/>
+                            <constraint firstAttribute="trailing" secondItem="NFD-vX-RKF" secondAttribute="trailing" id="sl0-1M-4vw"/>
+                            <constraint firstItem="c4e-eC-uSJ" firstAttribute="top" secondItem="NFD-vX-RKF" secondAttribute="bottom" id="tY1-8n-EZy"/>
+                            <constraint firstItem="c4e-eC-uSJ" firstAttribute="leading" secondItem="Q8N-GN-5QH" secondAttribute="leading" id="xJL-ba-k4e"/>
+                        </constraints>
+                    </view>
+                    <nil key="simulatedTopBarMetrics"/>
+                    <connections>
+                        <outlet property="headerView" destination="NFD-vX-RKF" id="uGP-In-cc8"/>
+                        <outlet property="tblView" destination="c4e-eC-uSJ" id="Jnr-lL-Z2m"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="6FM-UG-gwm" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4967" y="-211"/>
         </scene>
     </scenes>
     <resources>
