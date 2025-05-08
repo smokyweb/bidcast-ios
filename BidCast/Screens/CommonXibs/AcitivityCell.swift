@@ -47,7 +47,7 @@ class AcitivityCell: UITableViewCell {
     
     //MARK: setupUI
     func setupUI(){
-        self.mainViewOlt.dropShadow(opacity: 0, shadowRadius: 0, cornerRadius: Corner_12, shadowColor: AppColor.Label.SquirrelGrey ?? UIColor.squirrelGrey)
+        self.mainViewOlt.dropShadow(opacity: 0.5, shadowRadius: Radius_04, cornerRadius: Corner_12, shadowColor: AppColor.Label.SquirrelGrey ?? UIColor.squirrelGrey)
         self.userNameOlt.font = OutFitFont.defaultBold(size: 13.0).value
         self.userbidDetail.font = OutFitFont.defaultMedium(size: 13.0).value
         self.userbidPrice.font =  OutFitFont.defaultBold(size: 15.0).value
