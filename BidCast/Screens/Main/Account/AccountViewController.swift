@@ -124,6 +124,19 @@ class AccountViewController: UIViewController {
         case 1:
             let vc = Utilities.sharedInstance.getVC(storyBoardName: "Main", vcId: "ContactUsViewController") as! ContactUsViewController
             self.navigationController?.pushViewController(vc, animated: true)
+        case 2:
+            let vc = Utilities.sharedInstance.getVC(storyBoardName: "Main", vcId: "SalesTaxExemptionViewController") as! SalesTaxExemptionViewController
+            self.navigationController?.pushViewController(vc, animated: true)
+        case 3:
+            let vc = Utilities.sharedInstance.getVC(storyBoardName: "More", vcId: "PrivacyAndPolicyViewController") as! PrivacyAndPolicyViewController
+            vc.comeFrom = "terms"
+            self.navigationController?.pushViewController(vc, animated: true)
+        case 4:
+            let vc = Utilities.sharedInstance.getVC(storyBoardName: "More", vcId: "PrivacyAndPolicyViewController") as! PrivacyAndPolicyViewController
+            self.navigationController?.pushViewController(vc, animated: true)
+        case 5:
+            let vc = Utilities.sharedInstance.getVC(storyBoardName: "More", vcId: "FrequentlyAskedQuestionViewController") as! FrequentlyAskedQuestionViewController
+            self.navigationController?.pushViewController(vc, animated: true)
         default:
             print("")
         }
@@ -182,15 +195,17 @@ extension AccountViewController : UITableViewDataSource,UITableViewDelegate{
                 return cell
             case .paymentAcc:
                 let cell = tableViewOlt.dequeueCell(with: CollectionViewCell.self)
-//                cell.onItemSelected = { [weak self] index in
-//                    guard let self = self else { return }
-//                    switch index {
-//                    case 0:
-//                        self.pushVC(with: InventoryViewController.self, storyboardName: .account)
-//                    default:
-//                        break
-//                    }
-//                }
+                cell.onItemSelected = { [weak self] index in
+                    guard let self = self else { return }
+                    switch index {
+                    case 0:
+                        self.pushVC(with: PaymentAndShippingViewController.self, storyboardName: .main)
+                    case 1:
+                        self.pushVC(with: MyAddressViewController.self, storyboardName: .main)
+                    default:
+                        break
+                    }
+                }
                 cell.isForDetails = false
                 cell.isForPayment = false
                 cell.segmentType = .account

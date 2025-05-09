@@ -131,6 +131,184 @@
             </objects>
             <point key="canvasLocation" x="3672.5190839694656" y="4.9295774647887329"/>
         </scene>
+        <!--Sales Tax Exemption View Controller-->
+        <scene sceneID="jHM-mg-xaw">
+            <objects>
+                <viewController storyboardIdentifier="SalesTaxExemptionViewController" id="sOp-FS-XxI" customClass="SalesTaxExemptionViewController" customModule="BidCast" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="aXf-IS-qwA">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="y4X-qf-aVB" customClass="HeaderView" customModule="BidCast" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="393" height="85"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="85" id="2p2-ra-B64"/>
+                                </constraints>
+                            </view>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="64E-KP-JEv">
+                                <rect key="frame" x="0.0" y="85" width="393" height="661"/>
+                                <color key="backgroundColor" name="pearl"/>
+                            </tableView>
+                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="6" translatesAutoresizingMaskIntoConstraints="NO" id="RFm-X0-EW5">
+                                <rect key="frame" x="12" y="758" width="369" height="48"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wUK-7B-4S1">
+                                        <rect key="frame" x="0.0" y="0.0" width="181.66666666666666" height="48"/>
+                                        <color key="backgroundColor" name="secondary"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="48" id="TEt-Fy-8rb"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" name="Inter-Regular_Bold" family="Inter" pointSize="14"/>
+                                        <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                        <state key="normal" title="Send Message"/>
+                                        <connections>
+                                            <action selector="submitBtnTapped:" destination="HAE-H2-iBT" eventType="touchUpInside" id="j2Z-5G-zBH"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GU0-vV-657">
+                                        <rect key="frame" x="187.66666666666663" y="0.0" width="181.33333333333337" height="48"/>
+                                        <color key="backgroundColor" name="secondary"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="48" id="C0M-g9-nd8"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" name="Inter-Regular_Bold" family="Inter" pointSize="14"/>
+                                        <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                        <state key="normal" title="Send Message"/>
+                                        <connections>
+                                            <action selector="submitBtnTapped:" destination="HAE-H2-iBT" eventType="touchUpInside" id="DXM-76-sQr"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                            </stackView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="d65-nc-cAY"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="d65-nc-cAY" firstAttribute="bottom" secondItem="RFm-X0-EW5" secondAttribute="bottom" constant="12" id="00Q-8N-fG4"/>
+                            <constraint firstItem="RFm-X0-EW5" firstAttribute="top" secondItem="64E-KP-JEv" secondAttribute="bottom" constant="12" id="2fz-vu-gAi"/>
+                            <constraint firstItem="d65-nc-cAY" firstAttribute="trailing" secondItem="64E-KP-JEv" secondAttribute="trailing" id="HDC-BW-hpT"/>
+                            <constraint firstItem="64E-KP-JEv" firstAttribute="top" secondItem="y4X-qf-aVB" secondAttribute="bottom" id="IZf-zP-UUA"/>
+                            <constraint firstItem="64E-KP-JEv" firstAttribute="leading" secondItem="d65-nc-cAY" secondAttribute="leading" id="KLn-7i-UYg"/>
+                            <constraint firstItem="y4X-qf-aVB" firstAttribute="trailing" secondItem="d65-nc-cAY" secondAttribute="trailing" id="Oaj-GT-SeX"/>
+                            <constraint firstItem="y4X-qf-aVB" firstAttribute="top" secondItem="aXf-IS-qwA" secondAttribute="top" id="bDQ-NN-g05"/>
+                            <constraint firstItem="y4X-qf-aVB" firstAttribute="leading" secondItem="d65-nc-cAY" secondAttribute="leading" id="bVz-Jh-BNg"/>
+                            <constraint firstItem="d65-nc-cAY" firstAttribute="trailing" secondItem="RFm-X0-EW5" secondAttribute="trailing" constant="12" id="ij5-Zw-ffR"/>
+                            <constraint firstItem="RFm-X0-EW5" firstAttribute="leading" secondItem="d65-nc-cAY" secondAttribute="leading" constant="12" id="taz-af-gtf"/>
+                        </constraints>
+                    </view>
+                    <nil key="simulatedBottomBarMetrics"/>
+                    <connections>
+                        <outlet property="btn1Olt" destination="wUK-7B-4S1" id="6T1-cM-T1k"/>
+                        <outlet property="btn2Olt" destination="GU0-vV-657" id="zut-OC-VYF"/>
+                        <outlet property="headerView" destination="y4X-qf-aVB" id="43x-Yg-5R4"/>
+                        <outlet property="tblView" destination="64E-KP-JEv" id="Fw5-MG-nOC"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="yad-8M-Dhy" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4365.6488549618316" y="4.9295774647887329"/>
+        </scene>
+        <!--Payment And Shipping View Controller-->
+        <scene sceneID="lCP-fC-e93">
+            <objects>
+                <viewController storyboardIdentifier="PaymentAndShippingViewController" id="ieo-CU-qVh" customClass="PaymentAndShippingViewController" customModule="BidCast" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="XT7-mR-X4Z">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="faz-fJ-myB" customClass="HeaderView" customModule="BidCast" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="393" height="85"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="85" id="sFN-2B-qJD"/>
+                                </constraints>
+                            </view>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="Arw-b8-nBR">
+                                <rect key="frame" x="0.0" y="85" width="393" height="733"/>
+                                <color key="backgroundColor" name="pearl"/>
+                            </tableView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="Tvg-af-S0N"/>
+                        <color key="backgroundColor" name="pearl"/>
+                        <constraints>
+                            <constraint firstItem="faz-fJ-myB" firstAttribute="leading" secondItem="Tvg-af-S0N" secondAttribute="leading" id="OV3-F8-8rZ"/>
+                            <constraint firstItem="faz-fJ-myB" firstAttribute="trailing" secondItem="Tvg-af-S0N" secondAttribute="trailing" id="T1F-sl-6OL"/>
+                            <constraint firstItem="Tvg-af-S0N" firstAttribute="bottom" secondItem="Arw-b8-nBR" secondAttribute="bottom" id="ThX-Ix-hnY"/>
+                            <constraint firstItem="Arw-b8-nBR" firstAttribute="top" secondItem="faz-fJ-myB" secondAttribute="bottom" id="auJ-Im-Ab9"/>
+                            <constraint firstItem="faz-fJ-myB" firstAttribute="top" secondItem="XT7-mR-X4Z" secondAttribute="top" id="gSe-ai-8h3"/>
+                            <constraint firstItem="Arw-b8-nBR" firstAttribute="leading" secondItem="Tvg-af-S0N" secondAttribute="leading" id="hy7-bb-hKR"/>
+                            <constraint firstItem="Tvg-af-S0N" firstAttribute="trailing" secondItem="Arw-b8-nBR" secondAttribute="trailing" id="wFT-dG-Vbk"/>
+                        </constraints>
+                    </view>
+                    <nil key="simulatedBottomBarMetrics"/>
+                    <connections>
+                        <outlet property="headerView" destination="faz-fJ-myB" id="rBl-rn-Fsh"/>
+                        <outlet property="tableViewOlt" destination="Arw-b8-nBR" id="amY-yf-cY0"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="2Pm-yS-Irp" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="5085" y="5"/>
+        </scene>
+        <!--My Address View Controller-->
+        <scene sceneID="Zdb-4C-X8u">
+            <objects>
+                <viewController storyboardIdentifier="MyAddressViewController" id="JuK-29-pt0" customClass="MyAddressViewController" customModule="BidCast" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="w32-yS-Bhi">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fnr-23-Upb" customClass="HeaderView" customModule="BidCast" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="393" height="85"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="85" id="ARl-g5-9SU"/>
+                                </constraints>
+                            </view>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="BB9-fa-8P6">
+                                <rect key="frame" x="0.0" y="85" width="393" height="673"/>
+                                <color key="backgroundColor" name="pearl"/>
+                            </tableView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="K3r-4M-h8z">
+                                <rect key="frame" x="12" y="762" width="369" height="48"/>
+                                <color key="backgroundColor" name="secondary"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="48" id="nw9-r0-JKv"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Inter-Regular_Bold" family="Inter" pointSize="14"/>
+                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                <state key="normal" title="Send Message"/>
+                            </button>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="K2o-5t-YZU"/>
+                        <color key="backgroundColor" name="pearl"/>
+                        <constraints>
+                            <constraint firstItem="fnr-23-Upb" firstAttribute="top" secondItem="w32-yS-Bhi" secondAttribute="top" id="0IX-Es-Ett"/>
+                            <constraint firstItem="K2o-5t-YZU" firstAttribute="bottom" secondItem="K3r-4M-h8z" secondAttribute="bottom" constant="8" id="3rs-wK-puh"/>
+                            <constraint firstItem="fnr-23-Upb" firstAttribute="leading" secondItem="K2o-5t-YZU" secondAttribute="leading" id="9Ys-lb-AJB"/>
+                            <constraint firstItem="K2o-5t-YZU" firstAttribute="trailing" secondItem="K3r-4M-h8z" secondAttribute="trailing" constant="12" id="MdO-Mw-hbx"/>
+                            <constraint firstItem="K3r-4M-h8z" firstAttribute="top" secondItem="BB9-fa-8P6" secondAttribute="bottom" constant="4" id="TWu-m4-6bH"/>
+                            <constraint firstItem="fnr-23-Upb" firstAttribute="trailing" secondItem="K2o-5t-YZU" secondAttribute="trailing" id="Vjc-u5-ybi"/>
+                            <constraint firstItem="K2o-5t-YZU" firstAttribute="trailing" secondItem="BB9-fa-8P6" secondAttribute="trailing" id="gaQ-Ws-kV7"/>
+                            <constraint firstItem="K3r-4M-h8z" firstAttribute="leading" secondItem="w32-yS-Bhi" secondAttribute="leading" constant="12" id="gcX-zn-gC6"/>
+                            <constraint firstItem="BB9-fa-8P6" firstAttribute="top" secondItem="fnr-23-Upb" secondAttribute="bottom" id="hSz-Zy-gYG"/>
+                            <constraint firstItem="BB9-fa-8P6" firstAttribute="leading" secondItem="K2o-5t-YZU" secondAttribute="leading" id="pAv-2e-XA2"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="headerView" destination="fnr-23-Upb" id="CF3-9s-Gtk"/>
+                        <outlet property="submitBtn" destination="K3r-4M-h8z" id="cef-1J-97W"/>
+                        <outlet property="tableViewOlt" destination="BB9-fa-8P6" id="fhT-HO-How"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="2ed-FQ-Y9s" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="5752" y="5"/>
+        </scene>
     </scenes>
     <resources>
         <namedColor name="pearl">

@@ -35,6 +35,7 @@ class PrivacyAndPolicyViewController: UIViewController {
     var zipCode = ""
     var password  = ""
     var conFirmPassowrd  = ""
+    var comeFrom = ""
     
     //MARK: IBOutlets
     @IBOutlet weak var headerView: HeaderView!
@@ -90,7 +91,7 @@ class PrivacyAndPolicyViewController: UIViewController {
         self.initViewModel()
         self.configureTableView()
         self.setDynamicFirstCellHeight()
-        self.fetchApi()
+//        self.fetchApi()
         self.setupUI()
     }
     
@@ -123,12 +124,14 @@ class PrivacyAndPolicyViewController: UIViewController {
     private func configureHeaderView() {
         self.headerView.headerViewSetup(
             leftButtonHidden: false,
-            headerName: AppString.VCName.privacyPolicy,
+            headerName: self.comeFrom == "terms" ? "Terms & Conditions" : AppString.VCName.privacyPolicy,
             leftButtonAction: didTabBack
         )
         heightHeaderConstraint.constant = UIDevice.current.hasNotch ? Const.Height.isNotch : Const.Height.notNotch
         headerView.cenetrVerticalConstraint.constant = UIDevice.current.hasNotch ? Const.Height.isNotchCenter : Const.Height.notNotchCenter
+        self.tblView.backgroundColor = .pearl
     }
+    
     
     //MARK: initViewModel.
     func initViewModel() {
@@ -197,17 +200,21 @@ extension PrivacyAndPolicyViewController: UITableViewDelegate, UITableViewDataSo
         switch rowType {
         case .privacyPolicyHeader:
             let cell = tblView.dequeueCell(with: AppHeaderCell.self)
-            cell.titleOlt.text = AppString.Header.privacyPolicy
+            cell.contentView.backgroundColor = .pearl
+            cell.titleOlt.text = self.comeFrom == "terms" ? "Terms & Conditions" : AppString.VCName.privacyPolicy
             return cell
         case .privacyView:
             let cell = tblView.dequeueCell(with: LabelCell.self)
-            if let data =  self.viewModel.privacyPolicyDict?.data {
-                cell.titleOlt.attributedText = data?.page_content?.htmlToAttributedString
-            }
+            cell.contentView.backgroundColor = .pearl
+            cell.titleOlt.text = AppString.Description.lorelumpsum
+//            if let data =  self.viewModel.privacyPolicyDict?.data {
+//                cell.titleOlt.attributedText = data?.page_content?.htmlToAttributedString
+//            }
             cell.selectionStyle = .none
             return cell
         case .acceptTerm:
             let cell = tblView.dequeueCell(with: AgreeTermCell.self)
+            cell.contentView.backgroundColor = .pearl
             cell.acceptTermClosure = { [weak self] sender in
                 guard let self = self else { return }
                 UserDefaults.isAgreePrivacyPolicy =  cell.isAcceptTerm ? true : true

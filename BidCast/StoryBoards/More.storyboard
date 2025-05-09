@@ -76,7 +76,7 @@
                                 </constraints>
                             </view>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="4jH-1c-xe4">
-                                <rect key="frame" x="8" y="100" width="377" height="602"/>
+                                <rect key="frame" x="8" y="100" width="385" height="602"/>
                                 <color key="backgroundColor" red="0.96078431369999995" green="0.96470588239999999" blue="0.98039215690000003" alpha="1" colorSpace="calibratedRGB"/>
                             </tableView>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="FVa-XW-Xun">
@@ -154,9 +154,9 @@
                             </stackView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="ltF-XW-SjC"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <color key="backgroundColor" name="pearl"/>
                         <constraints>
-                            <constraint firstItem="ltF-XW-SjC" firstAttribute="trailing" secondItem="4jH-1c-xe4" secondAttribute="trailing" constant="8" id="1Bb-H4-2HO"/>
+                            <constraint firstItem="ltF-XW-SjC" firstAttribute="trailing" secondItem="4jH-1c-xe4" secondAttribute="trailing" id="1Bb-H4-2HO"/>
                             <constraint firstItem="4jH-1c-xe4" firstAttribute="leading" secondItem="ltF-XW-SjC" secondAttribute="leading" constant="8" id="4h6-xg-kJe"/>
                             <constraint firstItem="4jH-1c-xe4" firstAttribute="top" secondItem="z5z-BR-oXY" secondAttribute="bottom" id="8zc-ti-Cvs"/>
                             <constraint firstItem="z5z-BR-oXY" firstAttribute="leading" secondItem="ltF-XW-SjC" secondAttribute="leading" id="AoP-P0-fE7"/>
@@ -397,6 +397,9 @@
         <image name="square" catalog="system" width="128" height="114"/>
         <namedColor name="black">
             <color red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="pearl">
+            <color red="0.92941176470588238" green="0.93725490196078431" blue="0.95686274509803926" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <namedColor name="primary">
             <color red="0.30588235294117649" green="0.33333333333333331" blue="0.54117647058823526" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

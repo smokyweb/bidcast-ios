@@ -31,7 +31,7 @@ class FrequentlyAskedQuestionViewController: UIViewController {
     var faqDatArray:[FAQModel] = []
     
    lazy var sectionData: [FAQRow: Int] = [
-        .FAQRow: faqDatArray.count
+        .FAQRow: 5
     ]
     
     //MARK: ViewLife Cycle Methods
@@ -45,17 +45,18 @@ class FrequentlyAskedQuestionViewController: UIViewController {
         self.initialViewModel()
         self.configureTableView()
         self.configureHeaderView()
-        self.fetchApi()
+//        self.fetchApi()
     }
     
     //MARK: configureTableView.
     private  func configureTableView(){
         self.tblView.delegate = self
         self.tblView.dataSource = self
-        let cellIds = [FAQCell.identifier,AppHeaderCell.identifier,NoDataTableViewCell.identifier]
+        let cellIds = [FAQCell.identifier,AppHeaderCell.identifier,NoDataTableViewCell.identifier,CategoryTableCell.identifier]
         tblView.registerCells(for: cellIds)
         tblView.configTblView()
         configureHeaderView()
+        self.tblView.backgroundColor = .pearl
     }
     
     //MARK: configureView.
@@ -80,7 +81,7 @@ class FrequentlyAskedQuestionViewController: UIViewController {
     }
     // MARK: initialViewModel
     func initialViewModel(){
-        self.viewModel.userDelegate = self
+//        self.viewModel.userDelegate = self
     }
     //MARK: didTabBack
     @objc private func didTabBack(){
@@ -107,25 +108,28 @@ extension FrequentlyAskedQuestionViewController: UITableViewDelegate,UITableView
         
         switch rowType {
         case .FaqHeader:
-            let cell = tblView.dequeueCell(with: AppHeaderCell.self)
-            cell.outerViewOlt.backgroundColor = .ultraLightGray
-            cell.titleOlt.text = AppString.Header.faq
+            let cell = tableView.dequeueCell(with: CategoryTableCell.self)
+            cell.didTapBtn = { index in
+                cell.selectedIndex = index
+                cell.collectionViewOlt.reloadData()
+            }
+           
             return cell
         case .FAQRow:
             let cell = tableView.dequeueCell(with: FAQCell.self)
-            cell.contentView.backgroundColor = .ultraLightGray
+            cell.contentView.backgroundColor = .pearl
             if let dataFAQ = self.viewModel.FAQDict?.data{
-                cell.lblQuestions.text = dataFAQ?[indexPath.row].question
+//                cell.lblQuestions.text = dataFAQ?[indexPath.row].question
                 cell.lblQuestions.font = AppFont.LblTitleBold_17
-                cell.lblAnswer.attributedText = dataFAQ?[indexPath.row].answer?.htmlToAttributedString
+//                cell.lblAnswer.attributedText = dataFAQ?[indexPath.row].answer?.htmlToAttributedString
                 cell.lblAnswer.font = AppFont.LblTitle_15
             }
             if self.selectedIndex == indexPath.row {
                 cell.secondView.isHidden = false
-                cell.vertorImg.image = UIImage(named: "ic_arrowUp")
+                cell.vertorImg.image = UIImage(systemName: "chevron.up")
             }else{
                 cell.secondView.isHidden = true
-                cell.vertorImg.image = UIImage(named: "ic_arrowDown")
+                cell.vertorImg.image = UIImage(systemName: "chevron.down")
             }
             cell.showBtn.tag = indexPath.row
             cell.didTabFAQ = { [weak self] sender in

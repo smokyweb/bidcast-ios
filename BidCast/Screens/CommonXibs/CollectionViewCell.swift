@@ -158,7 +158,7 @@ extension CollectionViewCell : UICollectionViewDelegate,UICollectionViewDataSour
             if isForPayment{
                 
             }else{
-                
+                onItemSelected?(indexPath.row)
             }
         }
     }
