@@ -22,7 +22,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="440" height="167"/>
                         <subviews>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="BHY-Rw-s0b">
-                                <rect key="frame" x="8" y="0.0" width="424" height="167"/>
+                                <rect key="frame" x="0.0" y="0.0" width="440" height="167"/>
                                 <color key="backgroundColor" name="bgColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="167" id="UNf-V5-Nz5"/>
@@ -39,8 +39,8 @@
                         <constraints>
                             <constraint firstAttribute="bottom" secondItem="BHY-Rw-s0b" secondAttribute="bottom" id="Pt4-Z8-Fko"/>
                             <constraint firstItem="BHY-Rw-s0b" firstAttribute="top" secondItem="LhF-Xq-6Bm" secondAttribute="top" id="fjY-Cy-wPD"/>
-                            <constraint firstAttribute="trailing" secondItem="BHY-Rw-s0b" secondAttribute="trailing" constant="8" id="lVX-Af-FSa"/>
-                            <constraint firstItem="BHY-Rw-s0b" firstAttribute="leading" secondItem="LhF-Xq-6Bm" secondAttribute="leading" constant="8" id="xIu-9o-si6"/>
+                            <constraint firstAttribute="trailing" secondItem="BHY-Rw-s0b" secondAttribute="trailing" id="lVX-Af-FSa"/>
+                            <constraint firstItem="BHY-Rw-s0b" firstAttribute="leading" secondItem="LhF-Xq-6Bm" secondAttribute="leading" id="xIu-9o-si6"/>
                         </constraints>
                     </view>
                 </subviews>

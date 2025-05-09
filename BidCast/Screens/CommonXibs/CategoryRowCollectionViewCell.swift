@@ -17,6 +17,12 @@ class CategoryRowCollectionViewCell: UICollectionViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
+       
 //        categoryLabel.setupLabel(title: "Category", txtColor: .darkGray, fontSize: AppFont.label)
+    }
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        outerStackView.layer.cornerRadius = outerStackView.frame.height / 2
+        outerStackView.layer.masksToBounds = true
     }
 }

@@ -123,8 +123,7 @@ extension PaymentAndShippingViewController: UITableViewDelegate,UITableViewDataS
             return cell
         case .card:
             let cell = tableView.dequeueCell(with: LocationNameCell.self)
-            cell.contentView.backgroundColor = .pearl
-            cell.outerViewOlt.backgroundColor = .white
+            cell.outerViewOlt.backgroundColor = .pearl
             cell.imageOlt.makeCornerRounded(ofSize: 8)
             cell.imageOlt.image = UIImage(named: "cardImg")
             cell.titleOlt.text = "**** 4543"

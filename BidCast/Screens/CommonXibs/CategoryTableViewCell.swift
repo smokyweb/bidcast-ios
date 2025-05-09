@@ -14,6 +14,7 @@ class CategoryTableViewCell: UITableViewCell {
     static let identifier = "CategoryTableViewCell"
     
     var categoryListArray = ["Message", "Bid", "Offer", "Purchases", "Saved Items"]
+    var transCategoryArr : [TransCategory] = []
     var onItemSelected: ((Int) -> Void)?
     var selectedIndex: Int?
     
@@ -51,25 +52,37 @@ extension CategoryTableViewCell: UICollectionViewDelegate, UICollectionViewDataS
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return categoryListArray.count
+        if transCategoryArr.count != 0 || !transCategoryArr.isEmpty{
+            return transCategoryArr.count
+        }else{
+            return categoryListArray.count
+        }
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueCell(ofType: CategoryRowCollectionViewCell.self)
-        cell.categoryLabel.text = categoryListArray[indexPath.row]
-        cell.outerStackView.dropShadow(opacity: 0.5, shadowRadius: Radius_04, cornerRadius: Corner_05, shadowColor: AppColor.Label.SquirrelGrey ?? UIColor.squirrelGrey)
+        if transCategoryArr.count != 0 || !transCategoryArr.isEmpty{
+            cell.categoryLabel.text = transCategoryArr[indexPath.row].name
+            if selectedIndex == indexPath.row{
+                cell.outerStackView.backgroundColor = .secondary
+            }else{
+                cell.outerStackView.backgroundColor = .bg
+            }
+        }else{
+            cell.categoryLabel.text = categoryListArray[indexPath.row]
+            cell.outerStackView.dropShadow(opacity: 0.5, shadowRadius: Radius_04, cornerRadius: Corner_05, shadowColor: AppColor.Label.SquirrelGrey ?? UIColor.squirrelGrey)
 
-        if selectedIndex == indexPath.row {
-            // Selected appearance
-            cell.categoryLabel.textColor = AppColor.blue
-            cell.categoryLabel.font = AppFont.Labeltitle
-            cell.seprator.isHidden = false
-        } else {
-            cell.categoryLabel.textColor = AppColor.black
-            cell.categoryLabel.font = AppFont.Labeltitle
-            cell.seprator.isHidden = true
+            if selectedIndex == indexPath.row {
+                // Selected appearance
+                cell.categoryLabel.textColor = AppColor.blue
+                cell.categoryLabel.font = AppFont.Labeltitle
+                cell.seprator.isHidden = false
+            } else {
+                cell.categoryLabel.textColor = AppColor.black
+                cell.categoryLabel.font = AppFont.Labeltitle
+                cell.seprator.isHidden = true
+            }
         }
-
         return cell
     }
 
@@ -89,13 +102,23 @@ extension CategoryTableViewCell: UICollectionViewDelegate, UICollectionViewDataS
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let text = categoryListArray[indexPath.item]
-        let tempLabel = UILabel()
-        tempLabel.numberOfLines = 0
-        tempLabel.text = text
-        tempLabel.font = UIFont.systemFont(ofSize: 17)
-        let labelWidth = tempLabel.intrinsicContentSize.width + 32
-        return CGSize(width: labelWidth, height: collectionView.frame.height)
+        if transCategoryArr.count != 0 || !transCategoryArr.isEmpty{
+            let text = transCategoryArr[indexPath.item].name
+            let tempLabel = UILabel()
+            tempLabel.numberOfLines = 0
+            tempLabel.text = text
+            tempLabel.font = UIFont.systemFont(ofSize: 17)
+            let labelWidth = tempLabel.intrinsicContentSize.width + 32
+            return CGSize(width: labelWidth, height: collectionView.frame.height)
+        }else{
+            let text = categoryListArray[indexPath.item]
+            let tempLabel = UILabel()
+            tempLabel.numberOfLines = 0
+            tempLabel.text = text
+            tempLabel.font = UIFont.systemFont(ofSize: 17)
+            let labelWidth = tempLabel.intrinsicContentSize.width + 32
+            return CGSize(width: labelWidth, height: collectionView.frame.height)
+        }
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {

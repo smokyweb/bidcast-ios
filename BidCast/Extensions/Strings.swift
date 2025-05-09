@@ -100,6 +100,9 @@ enum AppString{
         static let getSubscription = "Get subscription as per your need"
         static let updatePassword = "UPDATE PASSWORD"
         static let addSong = "Add Song"
+        static let availableBalance = "Available Balance"
+        static let payOutHistory = "Payout History"
+        
     
     }
     

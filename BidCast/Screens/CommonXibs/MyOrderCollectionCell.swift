@@ -20,6 +20,7 @@ class MyOrderCollectionCell: UITableViewCell {
     //MARK: properties.
     static let identifier = "MyOrderCollectionCell"
     var spacing: CGFloat = 2.5
+    var itemsPerRow : CGFloat = 3.0
     var orderName : [OrderDetail] = []
 
     
@@ -67,7 +68,7 @@ extension MyOrderCollectionCell: UICollectionViewDelegate, UICollectionViewDataS
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let padding: CGFloat = 5 // Total padding (left + right)
-        let itemsPerRow: CGFloat = 3
+        let itemsPerRow: CGFloat = itemsPerRow
         let totalSpacing = (itemsPerRow - 1) * spacing // Space between items
         
         let width = (collectionViewOlt.frame.width - padding - totalSpacing) / itemsPerRow

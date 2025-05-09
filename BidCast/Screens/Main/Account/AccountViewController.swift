@@ -224,14 +224,21 @@ extension AccountViewController : UITableViewDataSource,UITableViewDelegate{
                         self.pushVC(with: ShowsViewController.self, storyboardName: .account)
                     case 2 :
                         self.pushVC(with: MyOrderViewController.self, storyboardName: .account)
+                    case 3 :
+                        self.pushVC(with: WalletViewController.self, storyboardName: .account)
                     case 4 :
                         self.pushVC(with: OfferViewController.self, storyboardName: .account)
                     case 5 :
                         self.pushVC(with: TipsViewController.self, storyboardName: .account)
+                    case 6:
+                        self.pushVC(with: ShippingViewController.self, storyboardName: .account)
+                    case 10:
+                        self.pushVC(with: SellerStatusViewController.self, storyboardName: .account)
                     default:
                         break
                     }
                 }
+                
                 cell.isForDetails = false
                 cell.isForPayment = false
                 cell.segmentType = .sellerHub

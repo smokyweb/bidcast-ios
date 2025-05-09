@@ -36,6 +36,8 @@ class SegmentCell: UITableViewCell {
             segment.items = ["Seller Hub", "My Account"]
         }else if isNavFrom == "ShowVC"{
             segment.items = ["Shows", "Past Shows"]
+        }else if isNavFrom == "WalletVC"{
+            segment.items = ["Wallet", "Transactions"]
         }
        
         segment.font  = AppFont.Labeltitle

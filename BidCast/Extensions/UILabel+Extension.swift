@@ -31,5 +31,12 @@ extension UILabel {
         
         self.attributedText = attributedString
     }
+    // MARK: Set Font and Text Color,title
+    func setupLabel(title : String = "",txtColor: UIColor = .darkGray, fontSize: UIFont? = AppFont.LblTitleBold_15) {
+        // Set the font size and color for the title label
+        self.text = title
+        self.font = fontSize
+        self.textColor = txtColor
+    }
 }
 

@@ -22,10 +22,20 @@
         <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="105" id="KGk-i7-Jjw" customClass="TipsCell" customModule="BidCast" customModuleProvider="target">
             <rect key="frame" x="0.0" y="0.0" width="411" height="105"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" ambiguous="YES" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
                 <rect key="frame" x="0.0" y="0.0" width="411" height="105"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7y1-5m-6va">
+                        <rect key="frame" x="0.0" y="88" width="411" height="2"/>
+                        <color key="backgroundColor" name="bgColor"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="2" id="HMf-Fe-rqX"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hSi-jU-lFz">
                         <rect key="frame" x="16" y="8" width="379" height="80"/>
                         <subviews>
@@ -37,7 +47,7 @@
                                 </constraints>
                             </imageView>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="-3" translatesAutoresizingMaskIntoConstraints="NO" id="gaH-vw-sh0">
-                                <rect key="frame" x="76" y="15" width="113" height="51"/>
+                                <rect key="frame" x="76" y="14.666666666666671" width="113" height="51"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Samantha Example" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LSs-99-WNr">
                                         <rect key="frame" x="0.0" y="0.0" width="113" height="27"/>
@@ -61,7 +71,7 @@
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </stackView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qZc-8g-WQW">
-                                <rect key="frame" x="323" y="30" width="42" height="21"/>
+                                <rect key="frame" x="323.66666666666669" y="30" width="41.333333333333314" height="20.333333333333329"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" name="darkGreen"/>
                                 <nil key="highlightedColor"/>
@@ -85,7 +95,9 @@
                     <constraint firstItem="hSi-jU-lFz" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="16" id="1gj-7K-3Z5"/>
                     <constraint firstItem="hSi-jU-lFz" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="9uL-ek-97M"/>
                     <constraint firstItem="hSi-jU-lFz" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="8" id="HOV-11-jef"/>
-                    <constraint firstAttribute="bottom" secondItem="hSi-jU-lFz" secondAttribute="bottom" constant="8" id="i16-Ee-xcm"/>
+                    <constraint firstItem="7y1-5m-6va" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" id="WOT-a5-hYs"/>
+                    <constraint firstAttribute="trailing" secondItem="7y1-5m-6va" secondAttribute="trailing" id="Y28-6l-lf6"/>
+                    <constraint firstItem="7y1-5m-6va" firstAttribute="top" secondItem="hSi-jU-lFz" secondAttribute="bottom" id="xqO-hF-ogG"/>
                 </constraints>
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
@@ -93,9 +105,12 @@
             <connections>
                 <outlet property="descriptionOlt" destination="yyg-9g-bnW" id="J7w-KZ-Stu"/>
                 <outlet property="imageOlt" destination="G1f-MO-Z9A" id="vTq-mO-gbi"/>
+                <outlet property="imgLeadingConstraint" destination="Gv6-eZ-ghD" id="O90-m2-Nef"/>
+                <outlet property="imgWidthConstraint" destination="NmQ-Kd-3P8" id="FZw-mz-qD5"/>
                 <outlet property="innerViewOlt" destination="hSi-jU-lFz" id="qzn-1d-zlQ"/>
                 <outlet property="outerViewOlt" destination="H2p-sc-9uM" id="k1r-qc-4vP"/>
                 <outlet property="priceLbl" destination="qZc-8g-WQW" id="yjq-Eu-od7"/>
+                <outlet property="seprator" destination="7y1-5m-6va" id="FqO-nk-NL6"/>
                 <outlet property="titleOlt" destination="LSs-99-WNr" id="iaE-SY-9Fq"/>
             </connections>
             <point key="canvasLocation" x="206.87022900763358" y="1.0563380281690142"/>
@@ -108,6 +123,9 @@
         </namedColor>
         <namedColor name="SquirrelGrey">
             <color red="0.45490196078431372" green="0.49019607843137253" blue="0.54509803921568623" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="bgColor">
+            <color red="0.89803921568627454" green="0.90588235294117647" blue="0.92156862745098034" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <namedColor name="darkGreen">
             <color red="0.019607843137254902" green="0.58823529411764708" blue="0.41176470588235292" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

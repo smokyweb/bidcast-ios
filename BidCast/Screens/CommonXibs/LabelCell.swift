@@ -34,5 +34,4 @@ class LabelCell: UITableViewCell {
         titleOlt.font = AppFont.placeHolder
         titleOlt.textColor = txtColor // Default color for the title label
     }
-
 }

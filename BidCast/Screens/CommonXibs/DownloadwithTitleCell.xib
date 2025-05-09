@@ -23,7 +23,7 @@
                         <rect key="frame" x="16" y="12" width="638" height="226"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Exemption Status" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fCc-tB-OQb">
-                                <rect key="frame" x="12" y="12" width="614" height="24"/>
+                                <rect key="frame" x="12.000000000000007" y="12" width="125.66666666666669" height="24"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="24" id="wxR-aJ-Bxb"/>
                                 </constraints>
@@ -31,6 +31,16 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="heh-cl-fwh">
+                                <rect key="frame" x="550.66666666666663" y="12" width="71.333333333333371" height="24"/>
+                                <color key="backgroundColor" red="0.015686274510000001" green="0.85098039219999999" blue="0.5450980392" alpha="0.32702667029999999" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="24" id="lVj-I9-Sns"/>
+                                </constraints>
+                                <color key="tintColor" name="darkGreen"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" title="Active"/>
+                            </button>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LBq-gE-8yY">
                                 <rect key="frame" x="12" y="44" width="614" height="50"/>
                                 <subviews>
@@ -74,12 +84,13 @@
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstAttribute="trailing" secondItem="fCc-tB-OQb" secondAttribute="trailing" constant="12" id="Bc8-YM-8kv"/>
+                            <constraint firstAttribute="trailing" secondItem="heh-cl-fwh" secondAttribute="trailing" constant="16" id="0JX-qf-f6t"/>
                             <constraint firstItem="fCc-tB-OQb" firstAttribute="leading" secondItem="yH2-KX-hcv" secondAttribute="leading" constant="12" id="Q1W-hC-GLX"/>
                             <constraint firstItem="LBq-gE-8yY" firstAttribute="leading" secondItem="yH2-KX-hcv" secondAttribute="leading" constant="12" id="dq8-6W-bAz"/>
                             <constraint firstItem="LBq-gE-8yY" firstAttribute="top" secondItem="fCc-tB-OQb" secondAttribute="bottom" constant="8" id="k9e-7C-cFJ"/>
                             <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="LBq-gE-8yY" secondAttribute="bottom" constant="8" id="o3h-yf-yFX"/>
                             <constraint firstItem="fCc-tB-OQb" firstAttribute="top" secondItem="yH2-KX-hcv" secondAttribute="top" constant="12" id="oYB-PL-S9q"/>
+                            <constraint firstItem="heh-cl-fwh" firstAttribute="centerY" secondItem="fCc-tB-OQb" secondAttribute="centerY" id="qjM-z5-9wj"/>
                             <constraint firstAttribute="trailing" secondItem="LBq-gE-8yY" secondAttribute="trailing" constant="12" id="xUM-lN-tg4"/>
                         </constraints>
                     </view>
@@ -94,8 +105,11 @@
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <connections>
+                <outlet property="downloadImgOlt" destination="Ln3-8m-qCt" id="2Na-Cq-GZD"/>
+                <outlet property="imgOlt" destination="uTp-LA-iZW" id="yzE-RR-UED"/>
                 <outlet property="innerViewOlt" destination="LBq-gE-8yY" id="TWw-N6-Mr8"/>
                 <outlet property="outerViewOlt" destination="yH2-KX-hcv" id="B92-bn-Hjg"/>
+                <outlet property="statusBtn" destination="heh-cl-fwh" id="NWn-vF-l6u"/>
             </connections>
             <point key="canvasLocation" x="392.36641221374043" y="91.549295774647888"/>
         </tableViewCell>
@@ -105,6 +119,9 @@
         <image name="text.document.fill" catalog="system" width="115" height="128"/>
         <namedColor name="darkGray">
             <color red="0.17647058823529413" green="0.18823529411764706" blue="0.20784313725490197" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="darkGreen">
+            <color red="0.019607843137254902" green="0.58823529411764708" blue="0.41176470588235292" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <namedColor name="pearl">
             <color red="0.92941176470588238" green="0.93725490196078431" blue="0.95686274509803926" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

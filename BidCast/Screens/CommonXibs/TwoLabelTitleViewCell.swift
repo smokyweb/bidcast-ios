@@ -11,7 +11,9 @@ class TwoLabelTitleViewCell: UITableViewCell {
 
     @IBOutlet weak var outerViewOlt: UIView!
     @IBOutlet weak var activeBtn: UIButton!
-    static let identitfier = "TwoLabelTitleViewCell"
+   
+    
+    static let identifier = "TwoLabelTitleViewCell"
     override func awakeFromNib() {
         super.awakeFromNib()
         self.activeBtn.makeCornerRounded(ofSize: 12)

@@ -349,6 +349,8 @@
 		D49E85D52DCC795A00879803 /* LocationNameCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D49E85D22DCC795A00879803 /* LocationNameCell.swift */; };
 		D49E85D82DCC7CE000879803 /* ShowInventoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D49E85D72DCC7CE000879803 /* ShowInventoryCell.swift */; };
 		D49E85D92DCC7CE000879803 /* ShowInventoryCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D49E85D62DCC7CE000879803 /* ShowInventoryCell.xib */; };
+		D4A9FF7B2DCDDA5D00E762F3 /* TotalEarningTblCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A9FF792DCDDA5D00E762F3 /* TotalEarningTblCell.swift */; };
+		D4A9FF7C2DCDDA5D00E762F3 /* TotalEarningTblCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D4A9FF7A2DCDDA5D00E762F3 /* TotalEarningTblCell.xib */; };
 		D4EA47BC2DCC85A5008CB96F /* MyOrderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4EA47BA2DCC85A5008CB96F /* MyOrderCell.swift */; };
 		D4EA47BD2DCC85A5008CB96F /* MyOrderCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D4EA47BB2DCC85A5008CB96F /* MyOrderCell.xib */; };
 		D4EA47C52DCC8F09008CB96F /* ShowsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4EA47C02DCC8F09008CB96F /* ShowsViewController.swift */; };
@@ -745,6 +747,8 @@
 		D49E85D32DCC795A00879803 /* LocationNameCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LocationNameCell.xib; sourceTree = "<group>"; };
 		D49E85D62DCC7CE000879803 /* ShowInventoryCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ShowInventoryCell.xib; sourceTree = "<group>"; };
 		D49E85D72DCC7CE000879803 /* ShowInventoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowInventoryCell.swift; sourceTree = "<group>"; };
+		D4A9FF792DCDDA5D00E762F3 /* TotalEarningTblCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TotalEarningTblCell.swift; sourceTree = "<group>"; };
+		D4A9FF7A2DCDDA5D00E762F3 /* TotalEarningTblCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TotalEarningTblCell.xib; sourceTree = "<group>"; };
 		D4EA47BA2DCC85A5008CB96F /* MyOrderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyOrderCell.swift; sourceTree = "<group>"; };
 		D4EA47BB2DCC85A5008CB96F /* MyOrderCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MyOrderCell.xib; sourceTree = "<group>"; };
 		D4EA47BE2DCC8F09008CB96F /* ShowsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowsModel.swift; sourceTree = "<group>"; };
@@ -879,21 +883,9 @@
 		35B866B42DC9EF9100E6FFA1 /* Account */ = {
 			isa = PBXGroup;
 			children = (
-				35B1CE432DCE02C300DE9987 /* Payment_shipping */,
-				352156372DCDE0650014BBBC /* SalesTax */,
-				99BC30BD2DC9DD0400E1BEA6 /* ContactUs */,
-				99BC30AA2DC9DD0400E1BEA6 /* AboutUs */,
 				35B866BE2DC9F2C000E6FFA1 /* AccountViewController.swift */,
-				D48D75342DCA1C730096B223 /* Inventory */,
-				D4EA47C42DCC8F09008CB96F /* Shows */,
-				D4EA47CE2DCC8F6C008CB96F /* MyOrder */,
-				D4EA47D82DCC8FC3008CB96F /* Wallet */,
-				D4EA47E22DCC9013008CB96F /* Offer */,
-				D4EA47EC2DCC9057008CB96F /* Tips */,
-				D4EA47F62DCC90A4008CB96F /* Analytics */,
-				D4EA48002DCC90F6008CB96F /* Shipping */,
-				D4EA480A2DCC9144008CB96F /* SellerStatus */,
-				35B1CE4C2DCE122500DE9987 /* MyAddress */,
+				D4A9FF712DCDD28800E762F3 /* SellerHub */,
+				D4A9FF722DCDD28F00E762F3 /* MyAccount */,
 			);
 			path = Account;
 			sourceTree = "<group>";
@@ -1711,6 +1703,8 @@
 			children = (
 				99BC30F32DC9DD0400E1BEA6 /* InventoryCell.xib */,
 				99BC30F22DC9DD0400E1BEA6 /* InventoryCell.swift */,
+				D4A9FF792DCDDA5D00E762F3 /* TotalEarningTblCell.swift */,
+				D4A9FF7A2DCDDA5D00E762F3 /* TotalEarningTblCell.xib */,
 				D49E85D62DCC7CE000879803 /* ShowInventoryCell.xib */,
 				D49E85D72DCC7CE000879803 /* ShowInventoryCell.swift */,
 				D4EA47BA2DCC85A5008CB96F /* MyOrderCell.swift */,
@@ -2087,6 +2081,34 @@
 				D48D75332DCA1C730096B223 /* ViewModel */,
 			);
 			path = Inventory;
+			sourceTree = "<group>";
+		};
+		D4A9FF712DCDD28800E762F3 /* SellerHub */ = {
+			isa = PBXGroup;
+			children = (
+				D48D75342DCA1C730096B223 /* Inventory */,
+				D4EA47C42DCC8F09008CB96F /* Shows */,
+				D4EA47CE2DCC8F6C008CB96F /* MyOrder */,
+				D4EA47D82DCC8FC3008CB96F /* Wallet */,
+				D4EA47E22DCC9013008CB96F /* Offer */,
+				D4EA47EC2DCC9057008CB96F /* Tips */,
+				D4EA47F62DCC90A4008CB96F /* Analytics */,
+				D4EA48002DCC90F6008CB96F /* Shipping */,
+				D4EA480A2DCC9144008CB96F /* SellerStatus */,
+			);
+			path = SellerHub;
+			sourceTree = "<group>";
+		};
+		D4A9FF722DCDD28F00E762F3 /* MyAccount */ = {
+			isa = PBXGroup;
+			children = (
+				99BC30AA2DC9DD0400E1BEA6 /* AboutUs */,
+				99BC30BD2DC9DD0400E1BEA6 /* ContactUs */,
+				35B1CE432DCE02C300DE9987 /* Payment_shipping */,
+				352156372DCDE0650014BBBC /* SalesTax */,
+				35B1CE4C2DCE122500DE9987 /* MyAddress */,
+			);
+			path = MyAccount;
 			sourceTree = "<group>";
 		};
 		D4EA47BF2DCC8F09008CB96F /* Model */ = {
@@ -2557,6 +2579,7 @@
 				99BC320F2DC9DD0400E1BEA6 /* Inter_24pt-ExtraLightItalic.ttf in Resources */,
 				99BC32102DC9DD0400E1BEA6 /* TitleAndDescriptionCell.xib in Resources */,
 				D4913C7A2DCB290C001EA3B4 /* AcitivityCell.xib in Resources */,
+				D4A9FF7C2DCDDA5D00E762F3 /* TotalEarningTblCell.xib in Resources */,
 				35062E092DCB3DDA006C0BCE /* CategoryCollectionCell.xib in Resources */,
 				99BC32112DC9DD0400E1BEA6 /* TwoButtonCell.xib in Resources */,
 				99BC32122DC9DD0400E1BEA6 /* Jost-ExtraBoldItalic.ttf in Resources */,
@@ -2763,6 +2786,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D4A9FF7B2DCDDA5D00E762F3 /* TotalEarningTblCell.swift in Sources */,
 				99BC30032DC9DCED00E1BEA6 /* AppDelegate.swift in Sources */,
 				99BC30042DC9DCED00E1BEA6 /* BidCast.xcdatamodeld in Sources */,
 				99BC30052DC9DCED00E1BEA6 /* SceneDelegate.swift in Sources */,

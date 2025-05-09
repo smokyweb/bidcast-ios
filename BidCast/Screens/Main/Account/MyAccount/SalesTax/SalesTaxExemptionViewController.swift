@@ -57,7 +57,7 @@ class SalesTaxExemptionViewController: UIViewController {
         self.tblView.dataSource = self
         let cellIds =  [
             LocationNameCell.identifier,
-            TwoLabelTitleViewCell.identitfier,
+            TwoLabelTitleViewCell.identifier,
             DownloadwithTitleCell.identifier
            
         ]
