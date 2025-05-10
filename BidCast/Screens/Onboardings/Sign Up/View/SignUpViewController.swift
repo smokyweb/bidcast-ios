@@ -18,11 +18,11 @@ enum SignUpSection: Int, CaseIterable {
         return data[self] ?? 1 // Default to 1 if no data provided
     }
 }
+
 enum formData : Int,CaseIterable{
     case firstName
     case lastName
     case email
-    case zipCode
     case password
     case confirmPass
     var title : String{
@@ -33,8 +33,6 @@ enum formData : Int,CaseIterable{
             return  AppString.Title.lastName
         case .email:
             return AppString.Title.email
-        case .zipCode:
-            return AppString.Title.zipCode
         case .password:
             return AppString.Title.password
         case .confirmPass:
@@ -49,8 +47,6 @@ enum formData : Int,CaseIterable{
             return AppString.Placeholder.lastName
         case .email:
             return AppString.Placeholder.email
-        case .zipCode:
-            return  AppString.Placeholder.zipCode
         case .password:
             return AppString.Placeholder.password
         case .confirmPass:
@@ -68,20 +64,18 @@ class SignUpViewController: UIViewController {
     //MARK: Properties.
     var firstName  = ""
     var lastName  = ""
-    var address = ""
     var email  = ""
-    var zipCode = ""
     var password  = ""
     var conFirmPassowrd  = ""
+    var roleID  = 2
  
     //MARK: sectionData.
     var sectionData: [SignUpSection: Int] = [
         .headingTitle : 1,
-        .formData : 6,
+        .formData : 5,
         .continueBtn : 1
     ]
-    
-    
+
     var viewModel = SignUpViewModel()
     var deviceDetailViewModel = DeviceDetailsViewModel()
     
@@ -97,7 +91,7 @@ class SignUpViewController: UIViewController {
     private func configureTableView(){
         self.signUpTblView.delegate = self
         self.signUpTblView.dataSource = self
-        self.signUpTblView.configTblView()
+        self.signUpTblView.configTblView(bgColor : .pearl)
         //register cell
         let cellIds = [AppBannerCell.identifier, AppHeaderCell.identifier, TextFieldCell.identifier, SubmitCell.identifier, SignUpTodayCell.identifier, SecondBtnCell.identifier,LabelCell.identifier,TextFieldWithLabelCell.identifier]
         signUpTblView.registerCells(for: cellIds)
@@ -132,9 +126,6 @@ class SignUpViewController: UIViewController {
         else if self.email == "" {
             Utilities.sharedInstance.showToast(source: self, message: Toast.Validation.emptyEmail)
         }
-        else if self.zipCode == "" {
-            Utilities.sharedInstance.showToast(source: self, message: Toast.Validation.emptyZipCode)
-        }
         else if self.password == "" {
             Utilities.sharedInstance.showToast(source: self, message: Toast.Validation.emptyPassword)
         }
@@ -144,27 +135,24 @@ class SignUpViewController: UIViewController {
         else if self.password != self.conFirmPassowrd {
             Utilities.sharedInstance.showToast(source: self, message: Toast.Validation.passwordsDoNotMatch)
         }
-        //TODO: Removed this code when using the API.
-        self.pushVC(with: SignInViewController.self, storyboardName: .onboardings)
-        
-        //TODO: Open this code when using the API.
-//        else if Reachability.isConnectedToNetwork(){
-//            DispatchQueue.main.async {
-//                let signUpParam = SignUpRequest(firstName: self.firstName,
-//                                                lastName: self.lastName,
-//                                                email: self.email,
-//                                                zipCode: self.zipCode,
-//                                                password: self.password,
-//                                                passwordConf: self.conFirmPassowrd)
-//                debugLog(signUpParam)
-//                SVProgressHUD.show()
-//                self.viewModel.signUp(parameters: signUpParam)
-//            }
-//        }else{
-//            Utilities.sharedInstance.showToast(source: self, message: Toast.Network.noConnection)
-//        }
+        else if Reachability.isConnectedToNetwork(){
+            DispatchQueue.main.async {
+                let signUpParam = SignUpRequest(firstName: self.firstName,
+                                                lastName: self.lastName,
+                                                email: self.email,
+                                                password: self.password,
+                                                passwordConf: self.conFirmPassowrd, roleID: self.roleID)
+                debugLog(signUpParam)
+                SVProgressHUD.show()
+                self.viewModel.signUp(parameters: signUpParam)
+            }
+        }else{
+            Utilities.sharedInstance.showToast(source: self, message: Toast.Network.noConnection)
+        }
     }
 }
+
+
 //MARK: UITableViewDelegate,UITableViewDataSource.
 extension SignUpViewController: UITableViewDelegate,UITableViewDataSource{
     
@@ -187,6 +175,7 @@ extension SignUpViewController: UITableViewDelegate,UITableViewDataSource{
         case .headingTitle:
             let cell = signUpTblView.dequeueCell(with: AppHeaderCell.self)
             cell.titleOlt.text = AppString.Header.createYourAccount
+            cell.outerViewOlt.backgroundColor = .white
             return cell
         case .formData:
             guard let rowType = formData.allCases[safe: indexPath.row] else {
@@ -224,17 +213,6 @@ extension SignUpViewController: UITableViewDelegate,UITableViewDataSource{
                 cell.entertext = { [weak self] text in
                     guard let self = self else { return }
                     self.email = text.text ?? ""
-                }
-                cell.selectionStyle = .none
-                return cell
-            case .zipCode:
-                let cell = signUpTblView.dequeueCell(with: TextFieldWithLabelCell.self)
-                cell.titleOlt.text = options[indexPath.row].title
-                cell.textFieldOlt.placeholder = options[indexPath.row].placeholder
-                cell.eyeBtnOlt.isHidden = true
-                cell.entertext = { [weak self] text in
-                    guard let self = self else { return }
-                    self.zipCode = text.text ?? ""
                 }
                 cell.selectionStyle = .none
                 return cell
@@ -288,15 +266,15 @@ extension SignUpViewController: UITableViewDelegate,UITableViewDataSource{
     
 }
 
-//succesuccessfullyAccCreatedAlert
+//MARK: succesuccessfullyAccCreatedAlert
 extension SignUpViewController {
     func succesuccessfullyAccCreatedAlert() {
         let storyBoard = UIStoryboard(name: "Alert", bundle: nil)
         let vc = storyBoard.instantiateViewController(withIdentifier: "AlertWithSingleButtonViewController") as! AlertWithSingleButtonViewController
-        vc.image = UIImage(named: "ic_Circle")
+        vc.image = UIImage(named: "ic_Success")
         vc.content = AppString.Alert.successfullyAccCreated
         vc.heading = AppString.Header.success
-        vc.firstBtnTitle = AppString.BtnTitle.home
+        vc.firstBtnTitle = AppString.BtnTitle.login
         vc.isHiddenRequired = true
         var options = SheetOptions()
         options.shrinkPresentingViewController = false
@@ -304,7 +282,7 @@ extension SignUpViewController {
         vc.firstBtnClosure = {
             self.dismiss(animated: true)
             //go to welcome page
-            self.pushVC(with: SignInViewController.self, storyboardName: .onboardings)
+            sceneDel.navigateToLandingScreen()
         }
         let sheet = SheetViewController(controller: vc, sizes: [UIDevice.current.hasNotch ? .percent(0.40) : .percent(0.50)], options: options)
         sheet.cornerRadius = Corner_32
@@ -341,13 +319,10 @@ extension SignUpViewController {
             DispatchQueue.main.async {
                 //show success alert
                 self.succesuccessfullyAccCreatedAlert()
+                self.viewModel.requestType = .none
                 //save user details
 //                self.saveUserDetails(data: self.viewModel.signUpDict?.data)
-                //navigate to welcome page
-                self.pushVC(with: SignInViewController.self, storyboardName: .onboardings)
             }
-            
-            
         }else{
             DispatchQueue.main.async {
                 Utilities.sharedInstance.showToast(source: self, message: self.viewModel.signUpDict?.message ?? "")

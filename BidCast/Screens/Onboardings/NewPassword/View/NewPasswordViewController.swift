@@ -113,8 +113,9 @@ class NewPasswordViewController: UIViewController {
             Utilities.sharedInstance.showToast(source: self, message: Toast.Network.noConnection)
             return
         }
+        
         SVProgressHUD.show()
-        let updatePassword = UpdatePasswordRequest(current_password: self.oldPassword, password: self.password, password_confirmation: self.conFirmPassowrd)
+        let updatePassword = ResetPasswordRequest(email: UserDefaults.email, password: self.password, password_confirmation: self.conFirmPassowrd)
         self.viewModel.updatePassword(parameters: updatePassword)
     }
     
@@ -129,13 +130,9 @@ class NewPasswordViewController: UIViewController {
             Utilities.sharedInstance.showToast(source: self, message: Toast.Network.noConnection)
             return
         }
-        //TODO: Removed this code when using the API.
-        self.pushVC(with: SignInViewController.self, storyboardName: .onboardings)
-        
-        //TODO: Open this code when using the API.
-//        SVProgressHUD.show()
-//        let newPasswordRequest = newPasswordRequest(email: self.email, password: self.password, password_confirmation: self.conFirmPassowrd)
-//        self.viewModel.newPassword(parameters: newPasswordRequest)
+        SVProgressHUD.show()
+        let newPasswordRequest = ResetPasswordRequest(email: self.email, password: self.password, password_confirmation: self.conFirmPassowrd)
+        self.viewModel.newPassword(parameters: newPasswordRequest)
     }
 }
 
@@ -160,9 +157,11 @@ extension NewPasswordViewController: UITableViewDelegate,UITableViewDataSource{
         case .forgotHeader:
             let cell = passWordTbl.dequeueCell(with: AppHeaderCell.self)
             cell.titleOlt.text = isComeFromUpdatePass ? AppString.Title.updatePassword : AppString.Header.newPassword
+            cell.outerViewOlt.backgroundColor = .white
             return cell
         case .passStatus:
             let cell = passWordTbl.dequeueCell(with: LabelCell.self)
+            cell.contentView.backgroundColor = .white
             cell.titleOlt.text = isComeFromUpdatePass ? AppString.Description.successUpdatePassword : AppString.Description.successNewPassword
             return cell
         case .oldPassword:
@@ -212,7 +211,7 @@ extension NewPasswordViewController: UITableViewDelegate,UITableViewDataSource{
         case .passStatus:
             return Const.Height.AutomaticDimension
         case .oldPassword:
-            return isComeFromUpdatePass ? Const.Height.AutomaticDimension : Const.Height.zero
+            return isComeFromUpdatePass ? Const.Height.zero : Const.Height.zero
         case .newPassword:
             return Const.Height.AutomaticDimension
         case .submitCell:

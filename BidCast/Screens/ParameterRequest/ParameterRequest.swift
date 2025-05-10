@@ -29,23 +29,24 @@ struct SignInRequest:Encodable {
 //    var device_token:String
 }
 
-//MARK: - Signup
+//MARK: - SignUpRequest
 struct SignUpRequest:Encodable {
     var firstName:String
     var lastName:String
     var email:String
-    var zipCode : String
     var password:String
     var passwordConf:String
+    var roleID : Int
     
     enum CodingKeys: String, CodingKey {
         case firstName = "first_name"
         case lastName = "last_name"
         case passwordConf = "password_confirmation"
-        case zipCode = "zip_code"
+        case roleID = "role_id"
         case email, password
     }
 }
+
 
 //MARK: - ForgetPassword
 struct ForgetRequest:Encodable {
@@ -87,19 +88,11 @@ struct VerifyOtpRequest:Encodable {
     var email:String
     var code:Int
 }
-struct newPasswordRequest:Encodable {
+struct ResetPasswordRequest:Encodable {
     var email:String
     var password:String
     var password_confirmation:String
 }
-
-//MARK: - ResetPassword
-struct ResetPasswordRequest:Encodable {
-    var email:String
-    var password:String
-}
-
-
 
 struct DeviceDetailParam: Encodable{
     var device_token,platform,app_version : String

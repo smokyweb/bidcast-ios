@@ -160,28 +160,28 @@ class TermAndConditionViewController: UIViewController {
     // MARK: submitBtn.
     @IBAction func submitBtn(_ sender: UIButton) {
         if UserDefaults.isAgreeTermAndCondition{
-            self.signUpSubmit()
+//            self.signUpSubmit()
         }else{
             Utilities.sharedInstance.showToast(source: self, message: Toast.Validation.agreeTermAndCondition)
         }
     }
     
     //MARK: signUpSubmit.
-    func signUpSubmit(){
-        if Reachability.isConnectedToNetwork(){
-                let signUpParam = SignUpRequest(firstName: self.firstName,
-                                                lastName: self.lastName,
-                                                email: self.email,
-                                                zipCode: self.zipCode,
-                                                password: self.password,
-                                                passwordConf: self.conFirmPassowrd)
-                print(signUpParam)
-                SVProgressHUD.show()
-                self.signUpviewModel.signUp(parameters: signUpParam)
-        }else{
-            Utilities.sharedInstance.showToast(source: self, message: Toast.Network.noConnection)
-        }
-    }
+//    func signUpSubmit(){
+//        if Reachability.isConnectedToNetwork(){
+//                let signUpParam = SignUpRequest(firstName: self.firstName,
+//                                                lastName: self.lastName,
+//                                                email: self.email,
+//                                                zipCode: self.zipCode,
+//                                                password: self.password,
+//                                                passwordConf: self.conFirmPassowrd)
+//                print(signUpParam)
+//                SVProgressHUD.show()
+//                self.signUpviewModel.signUp(parameters: signUpParam)
+//        }else{
+//            Utilities.sharedInstance.showToast(source: self, message: Toast.Network.noConnection)
+//        }
+//    }
 
     // MARK: didTabBack
     @objc private func didTabBack() {

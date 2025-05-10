@@ -4,6 +4,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -486,8 +487,95 @@
             </objects>
             <point key="canvasLocation" x="4967" y="-211"/>
         </scene>
+        <!--Profile View Controller-->
+        <scene sceneID="R1S-cp-ysH">
+            <objects>
+                <viewController storyboardIdentifier="ProfileViewController" id="hDF-Ar-7Wr" customClass="ProfileViewController" customModule="BidCast" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="kFr-37-cRm">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Pro-n8-9dP" customClass="HeaderView" customModule="Onleetech_App" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="393" height="108"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="108" id="eyw-MQ-bVQ"/>
+                                </constraints>
+                            </view>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="WOR-Ea-PL8">
+                                <rect key="frame" x="0.0" y="108" width="393" height="744"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </tableView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="vWQ-bb-Pej"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="Pro-n8-9dP" firstAttribute="trailing" secondItem="vWQ-bb-Pej" secondAttribute="trailing" id="33F-Fl-jbW"/>
+                            <constraint firstItem="Pro-n8-9dP" firstAttribute="leading" secondItem="vWQ-bb-Pej" secondAttribute="leading" id="KZQ-nG-bXW"/>
+                            <constraint firstItem="Pro-n8-9dP" firstAttribute="top" secondItem="kFr-37-cRm" secondAttribute="top" id="REs-nH-B5C"/>
+                            <constraint firstItem="WOR-Ea-PL8" firstAttribute="top" secondItem="Pro-n8-9dP" secondAttribute="bottom" id="hDl-0y-qsa"/>
+                            <constraint firstItem="vWQ-bb-Pej" firstAttribute="trailing" secondItem="WOR-Ea-PL8" secondAttribute="trailing" id="rhV-On-Y4t"/>
+                            <constraint firstItem="WOR-Ea-PL8" firstAttribute="leading" secondItem="vWQ-bb-Pej" secondAttribute="leading" id="t1i-qQ-S1h"/>
+                            <constraint firstAttribute="bottom" secondItem="WOR-Ea-PL8" secondAttribute="bottom" id="zwr-8l-f0H"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="headerView" destination="Pro-n8-9dP" id="Aic-CD-zK4"/>
+                        <outlet property="heightHeaderConstraint" destination="eyw-MQ-bVQ" id="5jg-xH-hmJ"/>
+                        <outlet property="profileTbl" destination="WOR-Ea-PL8" id="mYn-3r-FXo"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="kIg-9i-OzC" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="5656" y="-211"/>
+        </scene>
+        <!--Delete Profile View Controller-->
+        <scene sceneID="1QM-qH-F9Q">
+            <objects>
+                <viewController storyboardIdentifier="DeleteProfileViewController" id="Rjv-Y2-6gc" customClass="DeleteProfileViewController" customModule="BidCast" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="EaK-bT-eZd">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uTS-tQ-uLK" customClass="HeaderView" customModule="Onleetech_App" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="393" height="108"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="108" id="d9c-Ww-rlQ"/>
+                                </constraints>
+                            </view>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="o7d-3Z-VIZ">
+                                <rect key="frame" x="0.0" y="108" width="393" height="744"/>
+                                <color key="backgroundColor" red="0.96078431369999995" green="0.96470588239999999" blue="0.98039215690000003" alpha="1" colorSpace="calibratedRGB"/>
+                            </tableView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="7rZ-7N-Xqk"/>
+                        <color key="backgroundColor" name="ghostWhite"/>
+                        <constraints>
+                            <constraint firstItem="uTS-tQ-uLK" firstAttribute="leading" secondItem="7rZ-7N-Xqk" secondAttribute="leading" id="83Y-Km-r91"/>
+                            <constraint firstItem="uTS-tQ-uLK" firstAttribute="top" secondItem="EaK-bT-eZd" secondAttribute="top" id="Ddp-0f-MVl"/>
+                            <constraint firstItem="uTS-tQ-uLK" firstAttribute="trailing" secondItem="7rZ-7N-Xqk" secondAttribute="trailing" id="fbn-9M-M1i"/>
+                            <constraint firstAttribute="bottom" secondItem="o7d-3Z-VIZ" secondAttribute="bottom" id="ffg-uh-QJh"/>
+                            <constraint firstItem="o7d-3Z-VIZ" firstAttribute="top" secondItem="uTS-tQ-uLK" secondAttribute="bottom" id="mH7-hG-ZIG"/>
+                            <constraint firstItem="o7d-3Z-VIZ" firstAttribute="leading" secondItem="7rZ-7N-Xqk" secondAttribute="leading" id="r0f-9T-Nff"/>
+                            <constraint firstItem="7rZ-7N-Xqk" firstAttribute="trailing" secondItem="o7d-3Z-VIZ" secondAttribute="trailing" id="zxl-gf-pKm"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="headerView" destination="uTS-tQ-uLK" id="xpq-uO-TzM"/>
+                        <outlet property="heightHeaderConstraint" destination="d9c-Ww-rlQ" id="vbk-ZR-vOc"/>
+                        <outlet property="tblView" destination="o7d-3Z-VIZ" id="v51-MN-jOc"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Rge-Ws-7vr" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1727" y="461"/>
+        </scene>
     </scenes>
     <resources>
+        <namedColor name="ghostWhite">
+            <color red="0.32899999618530273" green="0.32400000095367432" blue="0.4779999852180481" alpha="0.33000001311302185" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

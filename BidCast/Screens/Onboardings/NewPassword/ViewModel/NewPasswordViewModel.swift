@@ -31,7 +31,7 @@ final class NewPasswordViewModel {
     var requestType: RequestType = .none
     
     @MainActor
-    func newPassword(parameters: newPasswordRequest) {
+    func newPassword(parameters: ResetPasswordRequest) {
         Task { // @MainActor in
             do {
                 let userResponseArray: ResponseModel<ResetPasswordModel?>? = try await APIManager.shared.request(
@@ -52,11 +52,11 @@ final class NewPasswordViewModel {
     }
     
     
-    func updatePassword(parameters: UpdatePasswordRequest) {
+    func updatePassword(parameters: ResetPasswordRequest) {
         Task { // @MainActor in
             do {
                 let userResponseArray: ResponseModel<UpdatePasswordModel?>? = try await APIManager.shared.request(
-                    type: APIEndPoint.changePassword(param: parameters),
+                    type: APIEndPoint.resetPassword(param: parameters),
                     header: true)
                 self.requestType = .updatePassword
                 self.updatePasswordDict = userResponseArray

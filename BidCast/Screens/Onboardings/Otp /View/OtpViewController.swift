@@ -74,7 +74,7 @@ class OtpViewController: UIViewController {
     
     //MARK: initViewModel.
     func initViewModel() {
-        resendOTPModel.forgetPasswordDelegate = self
+        resendOTPModel.userDelegate = self
         verifyOTPViewModel.userDelegate = self
     }
     
@@ -85,16 +85,12 @@ class OtpViewController: UIViewController {
         if self.enteredOTP == "" {
             Utilities.sharedInstance.showToast(source: self, message: "")
         }else if Reachability.isConnectedToNetwork(){
-            //TODO: Remove this code when using the API.
-            self.pushVC(with: NewPasswordViewController.self, storyboardName: .onboardings)
-            
-            //TODO: Open this code when using the API.
-//            DispatchQueue.main.async {
-//                debugLog(self.enteredOTP)
-//                SVProgressHUD.show()
-//                let otpRequest = VerifyOtpRequest(email: self.email, code: Int(self.enteredOTP)!)
-//                self.verifyOTPViewModel.verifyOTP(parameters: otpRequest)
-//            }
+            DispatchQueue.main.async {
+                debugLog(self.enteredOTP)
+                SVProgressHUD.show()
+                let otpRequest = VerifyOtpRequest(email: self.email, code: Int(self.enteredOTP)!)
+                self.verifyOTPViewModel.verifyOTP(parameters: otpRequest)
+            }
         }else{
             Utilities.sharedInstance.showToast(source: self, message: "")
         }
@@ -117,10 +113,12 @@ extension OtpViewController: UITableViewDelegate,UITableViewDataSource{
         switch rowType {
         case .AppHeaderCell:
             let cell = otpTableView.dequeueCell(with: AppHeaderCell.self)
+            cell.outerViewOlt.backgroundColor = .white
             cell.titleOlt.text = AppString.Header.enterCode
             return cell
         case .LabelCell:
             let cell = otpTableView.dequeueCell(with: LabelCell.self)
+            cell.contentView.backgroundColor = .white
             cell.titleOlt.text = AppString.Description.enterCodeSent
             return cell
         case .otpCell:
@@ -156,11 +154,9 @@ extension OtpViewController: UITableViewDelegate,UITableViewDataSource{
             cell.didTapExit = { [weak self] sender in
                 guard let self = self  else { return }
                 SVProgressHUD.show()
-                
-                //TODO: Open this code when using the API.
-//                if self.isOtpCorrect == false {
-//                    self.resendOTPModel.forgetPassword(parameters: ForgetRequest(email: self.email ?? ""))
-//                }
+                if self.isOtpCorrect == false {
+                    self.resendOTPModel.forgetPassword(parameters: ForgetRequest(email: self.email ?? ""))
+                }
                    
             }
             return cell
@@ -201,7 +197,7 @@ extension OtpViewController: UserServices {
     
     func reloadData() {
         //resendOTPModel
-        if self.resendOTPModel.requestType == .forgetPassword {
+        if self.resendOTPModel.requestType == .forgotPassword {
             if let dict = self.resendOTPModel.forgetPasswordDict {
                 let statusType = APIResponseStatus(rawValue: dict.status ?? "")
                 switch statusType {

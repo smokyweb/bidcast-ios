@@ -9,7 +9,7 @@
 struct SignUpDataModel: Codable {
     var firstName, lastName, name: String?
     var roleID: Int?
-    var email, zipCode, updatedAt, createdAt: String?
+    var email: String?
     var id: Int?
     var token: String?
 
@@ -18,13 +18,10 @@ struct SignUpDataModel: Codable {
         case lastName = "last_name"
         case name
         case roleID = "role_id"
-        case email
-        case zipCode = "zip_code"
-        case updatedAt = "updated_at"
-        case createdAt = "created_at"
-        case id, token
+        case email, id, token
     }
 }
+
 
 //MARK: ResetPasswordModel
 struct ResetPasswordModel:Codable {

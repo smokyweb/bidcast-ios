@@ -5,22 +5,26 @@
 import Foundation
 
 enum APIEndPoint {
+    //MARK: -  AUTHENTICATION
     case login (param : SignInRequest)
     case singUp(param : SignUpRequest)
-    case getRoll
-    case welcome
     case aboutUs
     case contact(param : ContactUsRequest)
     case verifyOTP(param : VerifyOtpRequest)
-    case resetPassword(param : newPasswordRequest)
+    case resetPassword(param : ResetPasswordRequest)
     case changePassword(param : UpdatePasswordRequest)
     case forgotPassword(param : ForgetRequest)
-    case tutorial
-    case getProfile
-    case getNotification
     case privacyPolicy
     case termsCondition
     case faq
+    
+    
+    
+    case getRoll
+    case welcome
+    case tutorial
+    case getProfile
+    case getNotification
     case alarm
     case getCurrentWeather(param : CurrentWeatherRequest)
     case getSubscriptionList
@@ -52,7 +56,8 @@ extension APIEndPoint: EndPointType {
     
     
     var baseURL: String {
-        return "https://riseshineswing.betaplanets.com/api/"
+        return "https://backend.bidcast.betaplanets.com/api/"
+        
     }
     var url: URL? {
         let path = "\(baseURL)\(path)"
@@ -62,26 +67,15 @@ extension APIEndPoint: EndPointType {
     
     var path: String {
         switch self {
+            //MARK: -  AUTHENTICATION
         case .login:
             return "login"
-        case .musicRequest:
-            return "my-music"
-        case .addMusic:
-            return "add-music"
         case .updateProfile:
             return "update-profile"
-        case .changeAlarmStatus:
-            return "change-alarm-status"
-        case .NewAlarm:
-            return "upsert-alarm"
-        case .getCurrentWeather:
-            return "current-weather-details"
         case .singUp:
             return "register"
         case .getRoll:
             return "get-role"
-        case .welcome:
-            return "get-welcome-video"
         case .contact:
             return "contact-us"
         case .verifyOTP:
@@ -98,6 +92,24 @@ extension APIEndPoint: EndPointType {
             return "terms-of-service"
         case .faq:
             return "get-questions"
+        case .aboutUs:
+            return "about-us"
+        case .logout:
+            return "logout"
+            
+  
+        case .musicRequest:
+            return "my-music"
+        case .addMusic:
+            return "add-music"
+        case .changeAlarmStatus:
+            return "change-alarm-status"
+        case .NewAlarm:
+            return "upsert-alarm"
+        case .getCurrentWeather:
+            return "current-weather-details"
+        case .welcome:
+            return "get-welcome-video"
         case .alarm:
             return "get-alarms"
         case .getSubscriptionList:
@@ -110,10 +122,6 @@ extension APIEndPoint: EndPointType {
             return "get-profile"
         case .getNotification:
             return "mobileapi/v1/get_notification_setting"
-        case .aboutUs:
-            return "about-us"
-        case .logout:
-            return "logout"
             
         //MARK: - Company API
         case .getStateList:
@@ -147,25 +155,12 @@ extension APIEndPoint: EndPointType {
     
     var method: HTTPMethods {
         switch self {
+            //MARK: -  AUTHENTICATION
         case .login:
-            return .post
-        case .addMusic:
-            return .post
-        case .updateProfile:
-            return .post
-        case .musicRequest:
-            return .get
-        case .changeAlarmStatus:
-            return .post
-        case .NewAlarm:
             return .post
         case .singUp:
             return .post
-        case .addSubscriptionRequest:
-            return .post
         case .getRoll:
-            return .get
-        case .welcome:
             return .get
         case .logout:
             return .post
@@ -179,12 +174,6 @@ extension APIEndPoint: EndPointType {
             return .post
         case .verifyOTP:
             return .post
-        case .tutorial:
-            return .get
-        case .getProfile:
-            return .get
-        case .getNotification:
-            return .get
         case .aboutUs:
             return .get
         case .privacyPolicy:
@@ -192,6 +181,30 @@ extension APIEndPoint: EndPointType {
         case .termsCondition:
             return .get
         case .faq:
+            return .get
+            
+            
+            
+        case .addMusic:
+            return .post
+        case .updateProfile:
+            return .post
+        case .musicRequest:
+            return .get
+        case .changeAlarmStatus:
+            return .post
+        case .NewAlarm:
+            return .post
+       
+        case .addSubscriptionRequest:
+            return .post
+        case .welcome:
+            return .get
+        case .tutorial:
+            return .get
+        case .getProfile:
+            return .get
+        case .getNotification:
             return .get
         case .alarm:
             return .get
@@ -231,21 +244,10 @@ extension APIEndPoint: EndPointType {
     
     var body: Encodable? {
         switch self {
+            //MARK: -  AUTHENTICATION
         case .login(let param):
             return param
-        case .addMusic:
-            return nil
-        case .updateProfile:
-            return nil
-        case .musicRequest:
-            return nil
-        case .changeAlarmStatus(let param):
-            return param
-        case .NewAlarm(let param):
-            return param
         case .singUp(let param):
-            return param
-        case .addSubscriptionRequest(let param):
             return param
         case .getRoll:
             return nil
@@ -263,26 +265,40 @@ extension APIEndPoint: EndPointType {
             return nil
         case .faq:
             return nil
-        case .alarm:
-            return nil
-        case .getSubscriptionList:
-            return nil
-        case .categories:
-            return nil
+        case .logout(let param):
+            return param
         case .aboutUs:
             return nil
         case .contact(let param):
             return param
         case .verifyOTP(let param):
             return param
+            
+            
+        case .addMusic:
+            return nil
+        case .updateProfile:
+            return nil
+        case .musicRequest:
+            return nil
+        case .changeAlarmStatus(let param):
+            return param
+        case .NewAlarm(let param):
+            return param
+        case .addSubscriptionRequest(let param):
+            return param
+        case .alarm:
+            return nil
+        case .getSubscriptionList:
+            return nil
+        case .categories:
+            return nil
         case .tutorial:
             return nil
         case .getProfile:
             return nil
         case .getNotification:
             return nil
-        case .logout(let param):
-            return param
         //MARK: - Company API
         case .getStateList:
             return nil

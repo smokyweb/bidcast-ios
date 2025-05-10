@@ -8,25 +8,22 @@ import Foundation
 
 final class ForgetPasswordViewModel {
     
-    //MARK: - variables
-
     
+    //MARK: - variables
     enum RequestType {
-        case forgetPassword
+        case forgotPassword
         case none
     }
-    
+    //MARK: - variables
     weak var userDelegate: UserServices?
-    
-    var requestType: RequestType = .none
-    
-    weak var forgetPasswordDelegate: UserServices?
     
     var forgetPasswordDict : ResponseModel<ForgetPasswordModel?>?{
         didSet {
-            self.forgetPasswordDelegate?.reloadData()
+            self.userDelegate?.reloadData()
         }
     }
+    
+    var requestType: RequestType = .none
     
     @MainActor
     func forgetPassword(parameters: ForgetRequest)  {
@@ -35,9 +32,10 @@ final class ForgetPasswordViewModel {
                 let userResponseArray: ResponseModel<ForgetPasswordModel?>? = try await APIManager.shared.request(
                     type: APIEndPoint.forgotPassword(param: parameters),
                     header: false)
-                self.requestType = .forgetPassword
+                self.requestType = .forgotPassword
                 self.forgetPasswordDict = userResponseArray
             }catch(let error) {
+                self.requestType = .forgotPassword
                 if let dataError = error as? DataError {
                     let errorMessage = dataError.getErrorMessage()
                     self.userDelegate?.showError(error: errorMessage)

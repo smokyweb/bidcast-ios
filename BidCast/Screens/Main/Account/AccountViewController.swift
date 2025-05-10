@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import FittedSheets
+import SVProgressHUD
 
 //MARK: Account section
 enum AccountSection : Int, CaseIterable {
@@ -34,6 +36,7 @@ class AccountViewController: UIViewController {
     
     @IBOutlet weak var tableViewOlt: UITableView!
     @IBOutlet weak var headerViewOlt: HeaderWithAppName!
+    var logoutViewModel = LogoutViewModel()
     
     
     //MARK: Properties
@@ -47,7 +50,7 @@ class AccountViewController: UIViewController {
         .detailsAcc : 0,
         .vacation : 1
     ]
-    var moreSection = ["About Us","Contact Us","Sales Tax Exemption","Terms & Conditions","Privacy Policy","F.A.Q"]
+    var moreSection = ["About Us","Contact Us","Sales Tax Exemption","Terms & Conditions","Privacy Policy","F.A.Q","Log Out"]
     
     var imageName = ["inventory","mic","orders","wallet","tag","tag","shipping","people","seller","shop","analysis","analysis"]
     var tabName = ["Inventory","Shows","My Orders","Wallet","Offers","Tips","Shipping","Affiliate Program","Seller Trainig","Premier Shop","Seller status","Seller Analytics"]
@@ -69,6 +72,12 @@ class AccountViewController: UIViewController {
         super.viewDidLoad()
         self.configureHeaderView()
         configureTableView()
+        self.initViewModel()
+    }
+    
+    //MARK: initViewModel.
+    func initViewModel() {
+        self.logoutViewModel.userDelegate = self
     }
 
     func configureHeaderView(){
@@ -85,7 +94,7 @@ class AccountViewController: UIViewController {
                        SegmentCell.identifier,
                        CollectionViewCell.identifier,
                        SwitchEditorAndPhotographerCell.identifier,
-                       MenuCell.identifier
+                       MenuCell.identifier,MyAccountCell.identifier
                        ]
         tableViewOlt.registerCells(for: cellIds)
         
@@ -110,7 +119,7 @@ class AccountViewController: UIViewController {
                 .profileDetails : 0,
                 .paymentAcc: 1,
                 .tab : 0,
-                .detailsAcc : 6,
+                .detailsAcc : 7,
                 .vacation : 0
             ]
         }
@@ -119,29 +128,28 @@ class AccountViewController: UIViewController {
     func didTap(index:Int){
         switch index {
         case 0 :
-            let vc = Utilities.sharedInstance.getVC(storyBoardName: "Main", vcId: "AboutUsViewController") as! AboutUsViewController
-            self.navigationController?.pushViewController(vc, animated: true)
+            self.pushVC(with: AboutUsViewController.self, storyboardName: .main)
         case 1:
-            let vc = Utilities.sharedInstance.getVC(storyBoardName: "Main", vcId: "ContactUsViewController") as! ContactUsViewController
-            self.navigationController?.pushViewController(vc, animated: true)
+            self.pushVC(with: ContactUsViewController.self, storyboardName: .main)
         case 2:
-            let vc = Utilities.sharedInstance.getVC(storyBoardName: "Main", vcId: "SalesTaxExemptionViewController") as! SalesTaxExemptionViewController
-            self.navigationController?.pushViewController(vc, animated: true)
+            self.pushVC(with: SalesTaxExemptionViewController.self, storyboardName: .main)
         case 3:
-            let vc = Utilities.sharedInstance.getVC(storyBoardName: "More", vcId: "PrivacyAndPolicyViewController") as! PrivacyAndPolicyViewController
-            vc.comeFrom = "terms"
-            self.navigationController?.pushViewController(vc, animated: true)
+            self.pushVCWithValue(with: PrivacyAndPolicyViewController.self, storyboardName: .main) { value in
+                value.comeFrom = "terms"
+            }
         case 4:
-            let vc = Utilities.sharedInstance.getVC(storyBoardName: "More", vcId: "PrivacyAndPolicyViewController") as! PrivacyAndPolicyViewController
-            self.navigationController?.pushViewController(vc, animated: true)
+            self.pushVC(with: PrivacyAndPolicyViewController.self, storyboardName: .main)
         case 5:
-            let vc = Utilities.sharedInstance.getVC(storyBoardName: "More", vcId: "FrequentlyAskedQuestionViewController") as! FrequentlyAskedQuestionViewController
-            self.navigationController?.pushViewController(vc, animated: true)
+            self.pushVC(with: FrequentlyAskedQuestionViewController.self, storyboardName: .more)
+        case 6:
+            self.logout()
         default:
             print("")
         }
     }
 }
+
+//MARK: UITableViewDataSource,UITableViewDelegate.
 extension AccountViewController : UITableViewDataSource,UITableViewDelegate{
     func numberOfSections(in tableView: UITableView) -> Int {
         return AccountSection.allCases.count
@@ -163,8 +171,14 @@ extension AccountViewController : UITableViewDataSource,UITableViewDelegate{
             switch rowType {
                 
             case .profile:
-                let cell = tableViewOlt.dequeueCell(with: LocationNameCell.self)
-                cell.innerViewOlt.addBorders(of: .black, width: 0.0)
+                let cell = tableViewOlt.dequeueCell(with: MyAccountCell.self)
+                cell.contentView.backgroundColor = .white
+                cell.userNameOlt.text = "Devin Jhonson"
+                cell.descriptionOlt.text = "Seller Since 2003"
+                cell.profileImage.image = UIImage(named: "defaultUser")
+                cell.didTapEdit = { sender in
+                    self.pushVC(with:  ProfileViewController.self, storyboardName: .account)
+                }
                 return cell
             case .segment:
                 let cell = tableViewOlt.dequeueCell(with: SegmentCell.self)
@@ -293,3 +307,102 @@ extension AccountViewController : UITableViewDataSource,UITableViewDelegate{
         }
     }
 }
+
+//MARK: logout.
+extension AccountViewController{
+    private  func logout(){
+        let storyBoard = UIStoryboard(name: "Alert", bundle: nil)
+        let vc = storyBoard.instantiateViewController(withIdentifier: "AlertWithDoubleButtonViewController") as! AlertWithDoubleButtonViewController
+        vc.image = UIImage(named: "ic_logOut")
+        vc.content = AppString.Alert.confirmLogout
+        vc.heading = AppString.Header.logOut
+        vc.firstBtnTitle = AppString.BtnTitle.yes
+        vc.isHiddenRequired = false
+        vc.secondBtnTitle = AppString.BtnTitle.no
+        vc.titleColor2 = AppColor.warning ?? .orange
+        vc.borderColor2 = AppColor.warning ?? .orange
+        vc.firstBackColor =  AppColor.warning ?? .orange
+        vc.secondBackColor =  .white
+        
+        var options = SheetOptions()
+        options.shrinkPresentingViewController = false
+        options.pullBarHeight = Height_30
+        vc.firstBtnClosure = {
+            if Reachability.isConnectedToNetwork(){
+                let token = UserDefaults.accessToken
+                let param = LogoutRequest(device_token: token)
+                self.logoutViewModel.logout(parameters: param)
+                self.dismiss(animated: true)
+                SVProgressHUD.show()
+            }
+            else {
+                DispatchQueue.main.async {
+                    Utilities.sharedInstance.showToast(source: self, message: Toast.Network.noConnection)
+                }
+            }
+        }
+        
+        let sheet = SheetViewController(controller: vc, sizes: [UIDevice.current.hasNotch ? .percent(0.40) : .percent(0.50)], options: options)
+        
+        sheet.cornerRadius = Corner_32
+        //sheet.overlayColor = .black.withAlphaComponent(0.9)
+        sheet.dismissOnPull = true
+        sheet.dismissOnOverlayTap = true
+        sheet.gripSize = CGSize(width: Width_50, height: Height_0)
+        self.present(sheet, animated: true, completion: nil)
+    }
+    
+    func clearUserDetails() {
+        UserDefaults.accessToken = ""
+        UserDefaults.userId = 0
+        UserDefaults.isSubscribe = false
+        UserDefaults.subscribeType = ""
+        UserDefaults.isSubscriptionExpired = false
+        let domain = Bundle.main.bundleIdentifier!
+        UserDefaults.standard.removePersistentDomain(forName: domain)
+        UserDefaults.standard.synchronize()
+        IAPManager.shared.removeAllUnfinishedTransactions()
+        ReceiptManager.shared.clearReceipt()
+    }
+}
+
+
+//MARK:- API Delegate management
+extension AccountViewController : UserServices{
+    func reloadData() {
+        debugLog("reload data")
+        debugLog("userDefault token \(UserDefaults.accessToken )")
+        
+        //For Logout
+        if self.logoutViewModel.requestType == .logout {
+            if let dict = self.logoutViewModel.logoutDict {
+                let statusType = APIResponseStatus(rawValue: dict.status ?? "")
+                switch statusType {
+                case .success:
+                    debugLog("success API Response")
+                    SVProgressHUD.dismiss()
+                    //login cred, details, remember me from userdefaults
+                    Utilities.sharedInstance.clearUserDetails()
+//                    self.clearUserDetails()
+                    sceneDel.navigateToLandingScreen()
+                    self.logoutViewModel.requestType = .none
+                    self.tableViewOlt.reload()
+                case .failure:
+                    SVProgressHUD.dismiss()
+                    Utilities.sharedInstance.showToast(source: self, message: self.logoutViewModel.logoutDict?.message ?? "")
+                default:
+                    Utilities.sharedInstance.showToast(source: self, message: "Some Error Occcured")
+                }
+            }
+        }
+    }
+    
+    func showError(error: String) {
+        DispatchQueue.main.async {
+            SVProgressHUD.dismiss()
+            Utilities.sharedInstance.showToast(source: self, message: error)
+        }
+    }
+}
+
+

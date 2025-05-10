@@ -5,19 +5,13 @@
 //  Created by Vivek-JAM-E-328 on 31/08/24.
 //
 
+
 // MARK: - SignInDataModel
 struct SignInDataModel: Codable {
     var id, roleID: Int?
     var firstName, lastName, name, email: String?
-    var username: String?
-    var zipCode: Int?
-    var profileImage, emailVerifiedAt: String?
-    var zoneID: Int?
-    var createdAt, updatedAt: String?
-    var deletedAt: String?
+    var profileImage: String?
     var token: String
-    var isSubscribed: Bool?
-    var subscription: SubscriptionData?
     var role: RoleData?
 
     enum CodingKeys: String, CodingKey {
@@ -25,24 +19,17 @@ struct SignInDataModel: Codable {
         case roleID = "role_id"
         case firstName = "first_name"
         case lastName = "last_name"
-        case name, email, username
-        case zipCode = "zip_code"
+        case name, email
         case profileImage = "profile_image"
-        case emailVerifiedAt = "email_verified_at"
-        case zoneID = "zone_id"
-        case createdAt = "created_at"
-        case updatedAt = "updated_at"
-        case deletedAt = "deleted_at"
-        case token
-        case isSubscribed = "is_subscribed"
-        case subscription, role
+        case token, role
     }
 }
 
-// MARK: - Role
+// MARK: - RoleData
 struct RoleData: Codable {
     var id: Int?
-    var name, createdAt, updatedAt: String?
+    var name: String?
+    var createdAt, updatedAt: String?
 
     enum CodingKeys: String, CodingKey {
         case id, name

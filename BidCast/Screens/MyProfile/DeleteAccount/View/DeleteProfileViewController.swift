@@ -94,7 +94,6 @@ class DeleteProfileViewController: UIViewController {
             Utilities.sharedInstance.showToast(source: self, message: Toast.Validation.emptyDeleteMessage)
         }else if Reachability.isConnectedToNetwork(){
             DispatchQueue.main.async {
-                let message = self.Deletemessage
                     let param  = DeleteProfileRequest(reason: self.Deletemessage)
                     self.viewModel.deleteAccount(parameters: param)
                 }
@@ -130,6 +129,7 @@ extension DeleteProfileViewController: UITableViewDelegate,UITableViewDataSource
         switch rowType {
         case .deleteHeader:
             let cell = tblView.dequeueCell(with: LabelCell.self)
+            cell.contentView.backgroundColor = .white
             cell.titleOlt.text = AppString.Description.accountDeleteNote
             return cell
         case .deleteReason:
@@ -152,7 +152,7 @@ extension DeleteProfileViewController: UITableViewDelegate,UITableViewDataSource
             
         case .submitButton:
             let cell = tblView.dequeueCell(with: SubmitCell.self)
-            cell.submitBtnOlt.setupButton(title: AppString.BtnTitle.submit,backgroundColor: .primary)
+            cell.submitBtnOlt.setupButton(title: AppString.BtnTitle.submit,backgroundColor: .secondary)
             cell.didTapSum = { [weak self] sender in
                 guard let self = self else { return }
                 self.didtapNext()

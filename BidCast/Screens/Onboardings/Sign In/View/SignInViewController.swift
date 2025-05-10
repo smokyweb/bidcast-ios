@@ -275,7 +275,6 @@ extension SignInViewController {
                         IAPManager.shared.removeAllUnfinishedTransactions()
                         self.saveUserDetails(data: self.signInviewModel.signInDict?.data)
                         self.signInviewModel.requestType = .none
-                        sceneDel.navigateToLandingScreen()
                     case .failure:
                         SVProgressHUD.dismiss()
                         Utilities.sharedInstance.showToast(source: self, message: dict.message ?? "")
@@ -297,16 +296,21 @@ extension SignInViewController {
         }
         //name,
         UserDefaults.name = userData.name ?? ""
+        
         //first name
         UserDefaults.firstName = userData.firstName ?? ""
+        
         //last name
         UserDefaults.lastName = userData.lastName ?? ""
+        
         //role_id
         UserDefaults.roleId = userData.roleID ?? 0
+        
         //email
         UserDefaults.email = userData.email ?? ""
         
         UserDefaults.userId = userData.id ?? 0
+        
         //token
         UserDefaults.accessToken = userData.token
         

@@ -351,6 +351,8 @@
 		D49E85D92DCC7CE000879803 /* ShowInventoryCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D49E85D62DCC7CE000879803 /* ShowInventoryCell.xib */; };
 		D4A9FF7B2DCDDA5D00E762F3 /* TotalEarningTblCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A9FF792DCDDA5D00E762F3 /* TotalEarningTblCell.swift */; };
 		D4A9FF7C2DCDDA5D00E762F3 /* TotalEarningTblCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D4A9FF7A2DCDDA5D00E762F3 /* TotalEarningTblCell.xib */; };
+		D4B6D3FD2DCF2C2F00231659 /* MyAccountCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B6D3FB2DCF2C2F00231659 /* MyAccountCell.swift */; };
+		D4B6D3FE2DCF2C2F00231659 /* MyAccountCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D4B6D3FC2DCF2C2F00231659 /* MyAccountCell.xib */; };
 		D4EA47BC2DCC85A5008CB96F /* MyOrderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4EA47BA2DCC85A5008CB96F /* MyOrderCell.swift */; };
 		D4EA47BD2DCC85A5008CB96F /* MyOrderCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D4EA47BB2DCC85A5008CB96F /* MyOrderCell.xib */; };
 		D4EA47C52DCC8F09008CB96F /* ShowsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4EA47C02DCC8F09008CB96F /* ShowsViewController.swift */; };
@@ -749,6 +751,8 @@
 		D49E85D72DCC7CE000879803 /* ShowInventoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowInventoryCell.swift; sourceTree = "<group>"; };
 		D4A9FF792DCDDA5D00E762F3 /* TotalEarningTblCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TotalEarningTblCell.swift; sourceTree = "<group>"; };
 		D4A9FF7A2DCDDA5D00E762F3 /* TotalEarningTblCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TotalEarningTblCell.xib; sourceTree = "<group>"; };
+		D4B6D3FB2DCF2C2F00231659 /* MyAccountCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyAccountCell.swift; sourceTree = "<group>"; };
+		D4B6D3FC2DCF2C2F00231659 /* MyAccountCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MyAccountCell.xib; sourceTree = "<group>"; };
 		D4EA47BA2DCC85A5008CB96F /* MyOrderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyOrderCell.swift; sourceTree = "<group>"; };
 		D4EA47BB2DCC85A5008CB96F /* MyOrderCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MyOrderCell.xib; sourceTree = "<group>"; };
 		D4EA47BE2DCC8F09008CB96F /* ShowsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowsModel.swift; sourceTree = "<group>"; };
@@ -1701,6 +1705,8 @@
 		99BC31282DC9DD0400E1BEA6 /* CommonXibs */ = {
 			isa = PBXGroup;
 			children = (
+				D4B6D3FB2DCF2C2F00231659 /* MyAccountCell.swift */,
+				D4B6D3FC2DCF2C2F00231659 /* MyAccountCell.xib */,
 				99BC30F32DC9DD0400E1BEA6 /* InventoryCell.xib */,
 				99BC30F22DC9DD0400E1BEA6 /* InventoryCell.swift */,
 				D4A9FF792DCDDA5D00E762F3 /* TotalEarningTblCell.swift */,
@@ -2615,6 +2621,7 @@
 				99BC32332DC9DD0400E1BEA6 /* MonsoonDetailsColCell.xib in Resources */,
 				D48D75252DCA1B4B0096B223 /* Account.storyboard in Resources */,
 				99BC32342DC9DD0400E1BEA6 /* Inter_18pt-Black.ttf in Resources */,
+				D4B6D3FE2DCF2C2F00231659 /* MyAccountCell.xib in Resources */,
 				99BC32362DC9DD0400E1BEA6 /* SubmitCell.xib in Resources */,
 				99BC32372DC9DD0400E1BEA6 /* Jost-Thin.ttf in Resources */,
 				352156402DCDE65C0014BBBC /* DownloadwithTitleCell.xib in Resources */,
@@ -2883,6 +2890,7 @@
 				D4EA47E42DCC9013008CB96F /* OfferViewModel.swift in Sources */,
 				99BC32B12DC9DD0400E1BEA6 /* OtpViewController.swift in Sources */,
 				99BC32B32DC9DD0400E1BEA6 /* OtpViewModel.swift in Sources */,
+				D4B6D3FD2DCF2C2F00231659 /* MyAccountCell.swift in Sources */,
 				99BC32B42DC9DD0400E1BEA6 /* MoreViewModel.swift in Sources */,
 				D49E85D82DCC7CE000879803 /* ShowInventoryCell.swift in Sources */,
 				D4913C712DCB25B7001EA3B4 /* CategoryTableViewCell.swift in Sources */,
@@ -3044,6 +3052,8 @@
 				DEVELOPMENT_TEAM = YQGQU3RV34;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = BidCast/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Allow permisssion to access camera.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Allow permisssion to access Photo Library.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -3079,6 +3089,8 @@
 				DEVELOPMENT_TEAM = YQGQU3RV34;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = BidCast/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Allow permisssion to access camera.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Allow permisssion to access Photo Library.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -3108,6 +3120,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -3172,6 +3185,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";

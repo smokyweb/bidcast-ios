@@ -474,7 +474,7 @@ extension ProfileViewController: UITableViewDelegate,UITableViewDataSource{
             cell.selectionStyle = .none
             cell.submitBtnOlt.setupButton(title: AppString.BtnTitle.delete,backgroundColor: AppColor.danger)
             cell.didTapSum = { [weak self] sender in
-                self?.pushVC(with: DeleteProfileViewController.self, storyboardName: .main)
+                self?.pushVC(with: DeleteProfileViewController.self, storyboardName: .account)
             }
             return cell
         }
@@ -498,6 +498,7 @@ extension ProfileViewController: UITableViewDelegate,UITableViewDataSource{
         }
     }
 }
+
 //MARK: UIImage Extension.
 extension UIImage {
     func stringToImage(compressionQuality: CGFloat = 0.8) -> String? {
