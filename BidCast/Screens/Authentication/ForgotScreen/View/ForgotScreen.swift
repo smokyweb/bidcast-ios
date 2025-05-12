@@ -15,7 +15,8 @@ struct ForgotScreen: View {
     
     @State var isRemeber: Bool = false
     @State var isLoading: Bool = false
-    @State var request: ForgetRequest = ForgetRequest(user_name: "")
+//    @State var request: ForgetRequest = ForgetRequest(user_name: "")
+    @State var request: ForgetRequest = ForgetRequest(email: "")
     @State var navigateToOTP: Bool = false
     @State var showError: Bool = false
     @State var isPassword: Bool = false
@@ -53,21 +54,21 @@ struct ForgotScreen: View {
                         .font(.custom(nunitoMedium, fixedSize: 16))
                         .foregroundStyle(.black)
                     
-                    AuthTextField(floatingLabel: "EMAIL ADDRESS", placeholder: "Enter Email address", icon: .icMail, text: $request.user_name) { email in
-                        self.request.user_name = email
+                    AuthTextField(floatingLabel: "EMAIL ADDRESS", placeholder: "Enter Email address", icon: .icMail, text: $request.email) { email in
+                        self.request.email = email
                     }
                     
                     PrimaryButton(title: "Submit",isOutLine: false) {
                         
                         UIApplication.shared.endEditing()
                         
-                        guard !request.user_name.isEmpty else {
+                        guard !request.email.isEmpty else {
                             hudMsg = "Please enter email address"
                             showhud = true
                             return
                         }
                         
-                        guard request.user_name.isValidEmail() else {
+                        guard request.email.isValidEmail() else {
                             hudMsg = "Please enter a valid mail id."
                             showhud = true
                             return
@@ -156,7 +157,7 @@ struct ForgotScreen: View {
         let response = viewModel.forgotResponceDict
         
         if response.status == "success" {
-            UserDefaultsManager.shared.setValue(request.user_name, forKey: .mailId)
+            UserDefaultsManager.shared.setValue(request.email, forKey: .mailId)
             alertType = .sheetType(icon: .success, title: response.status.capitalized, message: response.message.capitalized, primaryBtnText: "", secondaryBtnText: "Ok", sheetThemeColor: .green)
             showError = true
             isPassword = true

@@ -18,7 +18,7 @@ final class LoginViewModel:NSObject {
     
     var eventHandler: ((_ event: Event) -> Void)? // Data Binding Closure
 	    
-    func logIn(parameters: LoginRequest) {
+    func logIn(parameters: SignInRequest) {
         self.eventHandler?(.loading)
         requestType = "Login"
         APIManager.shared.requestPost(

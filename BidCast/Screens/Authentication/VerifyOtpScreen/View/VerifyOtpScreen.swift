@@ -14,7 +14,8 @@ struct VerifyOtpScreen: View {
         //MARK: Static Properties
     @State var isRemeber: Bool = false
     @State var isLoading: Bool = false
-    @State var request: VerifyOtpRequest = VerifyOtpRequest(user_name: "", code: "")
+//    @State var request: VerifyOtpRequest = VerifyOtpRequest(user_name: "", code: "")
+    @State var request: VerifyOtpRequest = VerifyOtpRequest(email: "", code: 0)
     @State var pin: String = ""
     @State var maxDigits: Int = 4
     @State var navigateToResetPassword: Bool = false
@@ -73,7 +74,7 @@ struct VerifyOtpScreen: View {
                         Button(action: {
                             if let mail: String = UserDefaultsManager.shared.value(forKey: .mailId) {
                                 pin = ""
-                                self.viewModel.resendOTPCode(parameters: ForgetRequest(user_name: mail))
+//                                self.viewModel.resendOTPCode(parameters: (user_name: mail))
                             }
                         }, label: {
                             Text("Resend OTP")
@@ -97,11 +98,11 @@ struct VerifyOtpScreen: View {
                             return
                         }
                         
-                        if let mail: String = UserDefaultsManager.shared.value(forKey: .mailId) {
-                            request.user_name = mail
-                            request.code = pin
-                            self.viewModel.verifyCode(parameters: self.request)
-                        }
+//                        if let mail: String = UserDefaultsManager.shared.value(forKey: .mailId) {
+//                            request.user_name = mail
+//                            request.code = pin
+//                            self.viewModel.verifyCode(parameters: self.request)
+//                        }
                     }
                     
                     HStack(spacing:4) {
@@ -179,7 +180,7 @@ struct VerifyOtpScreen: View {
     func handleSuccess() {
         let response = viewModel.verifyResponceDict
         if response.status == "success" {
-            UserDefaultsManager.shared.setValue(request.user_name, forKey: .mailId)
+//            UserDefaultsManager.shared.setValue(request.user_name, forKey: .mailId)
             alertType = .sheetType(icon: .success, title: response.status.capitalized, message: response.message.capitalized, primaryBtnText: "", secondaryBtnText: "Ok", sheetThemeColor: .green)
             showError = true
             isPassword = true

@@ -18,7 +18,7 @@ final class SignupViewModel {
     
     var eventHandler: ((_ event: Event) -> Void)? // Data Binding Closure
 
-    func register(parameters: RegisterRequest) {
+    func register(parameters: SignUpRequest) {
         self.requestType = "RegisterUser"
         self.eventHandler?(.loading)
         APIManager.shared.requestPost(
@@ -37,12 +37,12 @@ final class SignupViewModel {
     }
     
     
-    func registerUser(parameters: CreateUserRequest) {
+    func registerUser(parameters: SignUpRequest) {
         self.requestType = "RegisterUserName"
         self.eventHandler?(.loading)
         APIManager.shared.requestPost(
             modelType: ResponseModal<[String]>.self, // response type
-            type: APIEndPoint.verifyUser(param: parameters),
+            type: APIEndPoint.singUp(param: parameters),
             header: false) { result in
                 self.eventHandler?(.stopLoading)
                 switch result {

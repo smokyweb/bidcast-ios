@@ -183,14 +183,14 @@ final class APIManager {
         var request = URLRequest(url: url)
         request.httpMethod = type.method.rawValue
         Log.d("Method >> \(type.method.rawValue)")
-        if let json = type.jsonBody{
-            if JSONSerialization.isValidJSONObject(json) {
-                if let parameters = type.jsonBody {
-                    request.httpBody = try? JSONSerialization.data(withJSONObject: parameters)
-                    Log.d("Parameters >> \(parameters)")
-                }
-            }
-        }
+//        if let json = type.jsonBody{
+//            if JSONSerialization.isValidJSONObject(json) {
+//                if let parameters = type.jsonBody {
+//                    request.httpBody = try? JSONSerialization.data(withJSONObject: parameters)
+//                    Log.d("Parameters >> \(parameters)")
+//                }
+//            }
+//        }
         
         request.allHTTPHeaderFields = type.headers
         if header {

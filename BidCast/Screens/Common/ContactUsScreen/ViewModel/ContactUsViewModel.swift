@@ -15,7 +15,7 @@ final class ContactUsViewModel {
     
     var eventHandler: ((_ event: Event) -> Void)? // Data Binding Closure
 
-    func contactUs(parameters: ContactModelParam) {
+    func contactUs(parameters: ContactUsRequest) {
         self.eventHandler?(.loading)
         APIManager.shared.requestPost(
             modelType: ContactModel.self, // response type

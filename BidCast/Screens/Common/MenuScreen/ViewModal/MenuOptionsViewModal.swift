@@ -20,13 +20,13 @@ final class MenuOptionsViewModal {
     var eventHandler: ((_ event: Event) -> Void)?
     
         //MARK: - User LogOut
-    func logOut() {
+    func logOut(param:LogoutRequest) {
         self.eventHandler?(.loading)
         if let deviceToken: String = UserDefaultsManager.shared.value(forKey: .deviceToken) {
             APIManager.shared
                 .requestPost(
                     modelType: ResponseModal<MenuOptionsModal>.self,
-                    type: APIEndPoint.logout(device_token: deviceToken),
+                    type: APIEndPoint.logout(param: param),
                     header: true) { result in
                         self.eventHandler?(.stopLoading)
                         switch result {

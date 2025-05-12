@@ -41,7 +41,8 @@ struct LoginScreen: View {
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
     
-    @State var request: LoginRequest = LoginRequest(user_name: "", password: "")
+//    @State var request: LoginRequest = LoginRequest(user_name: "", password: "")
+    @State var request: SignInRequest = SignInRequest(email: "", password: "")
     
     @State var loginDetail: UserDetailModal = UserDetailModal()
     
@@ -78,8 +79,8 @@ struct LoginScreen: View {
 //                    }.padding(.bottom, 12)
                     
                     Group {
-                        AuthTextField(floatingLabel: "E-Mail", placeholder: "Enter Email address", icon: .menuProfile, text: $request.user_name) { email in
-                            self.request.user_name = email
+                        AuthTextField(floatingLabel: "E-Mail", placeholder: "Enter Email address", icon: .menuProfile, text: $request.email) { email in
+                            self.request.email = email
                         }
                         .textContentType(.username)
                         .keyboardType(.emailAddress)
@@ -129,7 +130,7 @@ struct LoginScreen: View {
 //                                Log.e("Error >> \(String(describing: error))")
 //                            }
                         
-                        guard !request.user_name.isEmpty else {
+                        guard !request.email.isEmpty else {
                             hudMsg = "User name can not be empty."
                             showhud = true
                             return
