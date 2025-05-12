@@ -23,14 +23,14 @@ struct PrimaryHeader: View {
     
     var body: some View {
         VStack(spacing: 0, content: {
-//            Image(.header)
-//                .resizable()
-//                .frame(height: topPadding + 50)
-//            Divider()
-//                .frame(width: screenWidth, height: 4)
-//                .background(.red)
+            Image(.header)
+                .resizable()
+                .frame(height: topPadding + 50)
+            Divider()
+                .frame(width: screenWidth, height: 4)
+                .background(.red)
         })
-//        .overlay(alignment: .bottom) {
+        .overlay(alignment: .bottom) {
             HStack {
                 if leadingImgArr.count > 0 {
                     ForEach(leadingImgArr.indices, id: \.self) {
@@ -41,7 +41,7 @@ struct PrimaryHeader: View {
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 30, height: 30)
-                                .tint(.defaultTheme)
+                                .tint(.white)
                                 .padding(.all, 8)
                         })
                     }
@@ -77,7 +77,7 @@ struct PrimaryHeader: View {
                                         .resizable()
                                         .scaledToFit()
                                         .frame(width: 30, height: 30)
-                                        .tint(.defaultTheme)
+                                        .tint(.white)
                                         .padding(.all, 8)
                                         .overlay(NotificationCountView(value: .constant(count)))
                                 }else{
@@ -86,7 +86,7 @@ struct PrimaryHeader: View {
                                         .resizable()
                                         .scaledToFit()
                                         .frame(width: 30, height: 30)
-                                        .tint(.defaultTheme)
+                                        .tint(.white)
                                         .padding(.all, 8)
                                 }
                             })
@@ -98,7 +98,7 @@ struct PrimaryHeader: View {
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 30, height: 30)
-                                    .tint(.defaultTheme)
+                                    .tint(.white)
                                     .padding(.all, 8)
                                 
                             })
@@ -120,14 +120,14 @@ struct PrimaryHeader: View {
                 } else {
                     Text(title)
                         .font(.custom(nunitoBlack, fixedSize: 18))
-                        .foregroundStyle(.black)
+                        .foregroundStyle(.white)
                         .padding(.bottom)
 //                        .padding(.leading, CGFloat(trailingImgArr.count) * 38)
 //                        .padding(.trailing, CGFloat(leadingImgArr.count) * 38)
                 }
             })
-//        }
-//        .edgesIgnoringSafeArea(.top)
+        }
+        .edgesIgnoringSafeArea(.top)
     }
 }
 
