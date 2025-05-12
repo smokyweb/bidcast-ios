@@ -16,7 +16,7 @@ struct VerifyOtpScreen: View {
     @State var isLoading: Bool = false
     @State var request: VerifyOtpRequest = VerifyOtpRequest(user_name: "", code: "")
     @State var pin: String = ""
-    @State var maxDigits: Int = 5
+    @State var maxDigits: Int = 4
     @State var navigateToResetPassword: Bool = false
     @State var navigateToLogin: Bool = false
     @State var isPassword: Bool = false

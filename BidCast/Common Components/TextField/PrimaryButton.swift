@@ -18,6 +18,7 @@ struct PrimaryButton: View {
     
     var width: CGFloat = screenWidth - 30
     var height: CGFloat = 50
+    var cornerRadius : CGFloat = 8.0
     
     var btnColor: Color = .defaultTheme
     
@@ -26,8 +27,8 @@ struct PrimaryButton: View {
             self.onButtonClick?()
         } }, label: {
             if isOutLine{
-                RoundedRectangle(cornerRadius: 2)
-                    .stroke(btnColor, lineWidth: 2.0)
+                RoundedRectangle(cornerRadius: cornerRadius)
+//                    .stroke(btnColor, lineWidth: 2.0)
                     .overlay {
                         Text(title)
                             .font(.custom(nunitoBold, fixedSize: 18))
@@ -38,9 +39,9 @@ struct PrimaryButton: View {
                     .clipShape(RoundedRectangle(cornerRadius: 25))
                     .shadow(color: .gray, radius: 2, x: 0, y: 0)
             }else{
-                RoundedRectangle(cornerRadius: 2)
+                RoundedRectangle(cornerRadius: cornerRadius)
                     .fill(btnColor)
-                    .shadow(color: .gray, radius: 2, x: 0, y: 0)
+//                    .shadow(color: .gray, radius: 2, x: 0, y: 0)
                     .overlay {
                         Text(title)
                             .font(.custom(nunitoBold, fixedSize: 18))

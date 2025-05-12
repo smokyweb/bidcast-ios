@@ -29,7 +29,6 @@ struct ForgotScreen: View {
     var body: some View {
         ScrollView {
             ZStack {
-                
                 VStack(alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/) {
                     Image(.mainLogo)
 //                        .resizable()
@@ -46,7 +45,6 @@ struct ForgotScreen: View {
                     Spacer()
                 }
                 
-                
                 VStack(alignment: .leading, spacing: 25) {
                     
                     TitleWithLine(title: "Forgot Password", lineLength: 48)
@@ -55,7 +53,7 @@ struct ForgotScreen: View {
                         .font(.custom(nunitoMedium, fixedSize: 16))
                         .foregroundStyle(.black)
                     
-                    AuthTextField(floatingLabel: "E-Mail", placeholder: "Enter Email address", icon: .bag, text: $request.user_name) { email in
+                    AuthTextField(floatingLabel: "EMAIL ADDRESS", placeholder: "Enter Email address", icon: .icMail, text: $request.user_name) { email in
                         self.request.user_name = email
                     }
                     
@@ -64,41 +62,40 @@ struct ForgotScreen: View {
                         UIApplication.shared.endEditing()
                         
                         guard !request.user_name.isEmpty else {
-                            hudMsg = "User Name cannot be empty"
+                            hudMsg = "Please enter email address"
                             showhud = true
                             return
                         }
                         
-//                        guard request.user_name.isValidEmail() else {
-//                            hudMsg = "Please enter a valid mail id."
-//                            showhud = true
-//                            return
-//                        }
-                        
+                        guard request.user_name.isValidEmail() else {
+                            hudMsg = "Please enter a valid mail id."
+                            showhud = true
+                            return
+                        }
+                        navigateToOTP = true
 //                        self.viewModel.forgotEmail(parameters: self.request)
                     }
                     
-                    HStack(spacing:4) {
-                        Spacer()
-                        Text("Back to")
-                            .font(.system(size: 14))
-                            .foregroundStyle(.gray)
-                        Button(action: {
-                            withAnimation {
-                                self.presentationMode.wrappedValue.dismiss()
-                            }
-                        }, label: {
-                            Text("Login!").font(.system(size: 14))
-                                .bold()
-                                .foregroundStyle(.red)
-                        })
-                        Spacer()
-                    }.padding([.top, .bottom], 16)
+//                    HStack(spacing:4) {
+//                        Spacer()
+//                        Text("Back to")
+//                            .font(.system(size: 14))
+//                            .foregroundStyle(.gray)
+//                        Button(action: {
+//                            withAnimation {
+//                                self.presentationMode.wrappedValue.dismiss()
+//                            }
+//                        }, label: {
+//                            Text("Login!").font(.system(size: 14))
+//                                .bold()
+//                                .foregroundStyle(.red)
+//                        })
+//                        Spacer()
+//                    }.padding([.top, .bottom], 16)
                     
                 }.padding([.leading, .trailing])
                 
                     .padding(.top, screenHeight/3)
-                
                 
                 if isLoading {
                     Loader(isLoading: $isLoading)
@@ -114,7 +111,7 @@ struct ForgotScreen: View {
                 //                })
                 //            }
                 
-//                CusNavLink(doNavigate: $navigateToOTP, destination: VerifyOtpScreen())
+                CusNavLink(doNavigate: $navigateToOTP, destination: VerifyOtpScreen())
             }.frame(width: screenWidth, height: screenHeight)
         }
         .onAppear(){
@@ -171,6 +168,6 @@ struct ForgotScreen: View {
     }
 }
 
-//#Preview {
-//    ForgotScreen()
-//}
+#Preview {
+    ForgotScreen()
+}
