@@ -6,15 +6,14 @@
 //
 
 import SwiftUI
-//import BottomSheet
-//import AlertToast
+import AlertToast
 
 struct VerifyOtpScreen: View {
     
-        //MARK: Static Properties
+    //MARK: Static Properties
     @State var isRemeber: Bool = false
     @State var isLoading: Bool = false
-//    @State var request: VerifyOtpRequest = VerifyOtpRequest(user_name: "", code: "")
+    @State var forgetOtpRequest: ForgetRequest = ForgetRequest(email: "")
     @State var request: VerifyOtpRequest = VerifyOtpRequest(email: "", code: 0)
     @State var pin: String = ""
     @State var maxDigits: Int = 4
@@ -23,40 +22,29 @@ struct VerifyOtpScreen: View {
     @State var isPassword: Bool = false
     @FocusState private var focusedField: Int?
     @State private var focusedIndex: Int? = 0
-
-        //MARK: Properties
-    var headingText = "User Name was good"
-    var viewModel = VerifyOtpViewModel()
     
-        //MARK: - Custom Alert
+    //MARK: Properties
+    var headingText = "Enter Code"
+    var viewModel = VerifyOtpViewModel()
+    var forgetOtpModel = ForgotViewModel()
+    
+    //MARK: - Custom Alert
     @State var showError: Bool = false
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
     
-        //MARK: View
+    //MARK: View
     var body: some View {
-        ScrollView(showsIndicators: false) {
-
-            ZStack {
-                VStack(alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/) {
-                    Image(.halfBackground)
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: screenWidth, height: screenHeight/3)
-                        .edgesIgnoringSafeArea(.top)
-                        .overlay(alignment: .top, content: {
-                            Image(.appName)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: screenWidth/2, height: screenHeight/12)
-                                .padding(.top, screenHeight/20)
-                        })
-                    Spacer()
-                }
-                
+        ZStack(alignment: .top) {
+            
+            // Scrollable content
+            ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 20) {
+                    // Add spacing equal to header height
+                    Color.clear.frame(height: 0)
+                    
                     TitleWithLine(title: headingText, lineLength: 32)
                     
                     Text("Please enter the code that was sent to the email associated with your account!")
@@ -68,13 +56,12 @@ struct VerifyOtpScreen: View {
                         .foregroundStyle(.black)
                     
                     VStack(alignment: .trailing, spacing: 12, content: {
-                        
                         pinDots
                         
                         Button(action: {
                             if let mail: String = UserDefaultsManager.shared.value(forKey: .mailId) {
-                                pin = ""
-//                                self.viewModel.resendOTPCode(parameters: (user_name: mail))
+                                request.email = mail
+                                self.forgetOtpModel.forgotEmail(parameters: self.forgetOtpRequest)
                             }
                         }, label: {
                             Text("Resend OTP")
@@ -92,87 +79,102 @@ struct VerifyOtpScreen: View {
                             return
                         }
                         
-                        guard pin.count == 5 else {
+                        guard pin.count == 4 else {
                             hudMsg = "Please enter the OTP"
                             showhud = true
                             return
                         }
                         
-//                        if let mail: String = UserDefaultsManager.shared.value(forKey: .mailId) {
-//                            request.user_name = mail
-//                            request.code = pin
-//                            self.viewModel.verifyCode(parameters: self.request)
-//                        }
+                        if let mail: String = UserDefaultsManager.shared.value(forKey: .mailId) {
+                            request.email = mail
+                            if let codeInt = Int(pin) {
+                                request.code = codeInt
+                                self.viewModel.verifyCode(parameters: self.request)
+                            } else {
+                                hudMsg = "OTP must be numeric"
+                                showhud = true
+                            }
+                        }
                     }
-                    
-                    HStack(spacing:4) {
-                        Spacer()
-                        Text("Back to")
-                            .font(.system(size: 14))
-                            .foregroundStyle(.gray)
-                        Button(action: {
-                            navigateToLogin = true
-                        }, label: {
-                            Text("Login!")
-                                .font(.system(size: 14))
-                                .bold()
-                                .foregroundStyle(.red)
-                        })
-                        Spacer()
-                    }.padding([.top, .bottom], 16)
                 }
-                .padding([.leading, .trailing])
-                
-                .padding(.top, screenHeight/3)
-                
-                if isLoading {
-                    Loader(isLoading: $isLoading)
-                }
-                
-                //            if showError {
-                //                AlertPopUp(presentAlert: $showError, alertType: alertType, rightButtonAction: {
-                //                    withAnimation(.snappy) { showError = false }
-                //                })
-                //            }
-                
-//                CusNavLink(doNavigate: $navigateToResetPassword, destination: ResetPasswordScreen())
-                CusNavLink(doNavigate: $navigateToLogin, destination: LoginScreen())
-            }.frame(width: screenWidth, height: screenHeight)
+                .padding([.horizontal])
+                .padding(.bottom, 32)
+            }
+            .padding(.top, 80)
+            
+            // Fixed Header
+            PrimaryHeader(
+                title: "Verify OTP",
+                leadingImgArr: [.icBack],
+                onClickLeading: { _ in
+                    self.navigateToLogin = true
+                },
+                count: .constant(0)
+            )
+            .frame(height: 80)
+            .background(Color.white)
+            .shadow(radius: 2)
+            
+            // Loading Indicator
+            if isLoading {
+                Loader(isLoading: $isLoading)
+            }
+            
+            CusNavLink(doNavigate: $navigateToResetPassword, destination: ResetPasswordScreen())
         }
-        .onAppear(){
+        .frame(width: screenWidth, height: screenHeight)
+        .onAppear {
             observe()
+            forgotOtpObserver()
         }
-//        .toast(isPresenting: $showhud) {
-//            AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)}
-        .bottomSheet(isPresented: $showError, height: screenHeight/2, topBarCornerRadius: 25, showTopIndicator: false, content: {
+        .toast(isPresenting: $showhud) {
+            AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
+        }
+        .bottomSheet(isPresented: $showError, height: screenHeight / 2, topBarCornerRadius: 25, showTopIndicator: false, content: {
             CommonBottomSheet(
                 sheetType: $alertType,
                 onPrimaryClick: {
                     withAnimation { showError = false }
-                }, onSecondaryClick: {
-                    if isPassword == true{
-                        withAnimation(.snappy){ navigateToResetPassword = true }
-                    }else{
+                },
+                onSecondaryClick: {
+                    if isPassword == true {
+                        withAnimation(.snappy) { navigateToResetPassword = true }
+                    } else {
                         withAnimation { showError = false }
                     }
-
                 })
         })
     }
     
-    
+    //MARK: Methods
     func observe() {
         self.viewModel.eventHandler = { event in
             switch event {
-                case .loading:
-                    self.isLoading = true
-                case .stopLoading:
-                    self.isLoading = false
-                case .dataLoaded:
-                    handleSuccess()
-                case .error(let error):
-                    alertType = .sheetType(icon: .alert, title: "Error", message: error?.localizedDescription ?? "", primaryBtnText: "", secondaryBtnText: "Ok", sheetThemeColor: .pinkBtn)
-                    showError = true
+            case .loading:
+                self.isLoading = true
+            case .stopLoading:
+                self.isLoading = false
+            case .dataLoaded:
+                handleSuccess()
+            case .error(let error):
+                alertType = .sheetType(icon: .alert, title: "Error", message: error?.localizedDescription ?? "", primaryBtnText: "", secondaryBtnText: "Ok", sheetThemeColor: .pinkBtn)
+                showError = true
+            }
+        }
+    }
+    
+    func forgotOtpObserver() {
+        self.forgetOtpModel.eventHandler = { event in
+            switch event {
+            case .loading:
+                self.isLoading = true
+            case .stopLoading:
+                self.isLoading = false
+            case .dataLoaded:
+                handleSuccess()
+            case .error(let error):
+                alertType = .sheetType(icon: .alert, title: "Error", message: error?.localizedDescription ?? "", primaryBtnText: "", secondaryBtnText: "Ok", sheetThemeColor: .pinkBtn)
+                showError = true
             }
         }
     }
@@ -180,18 +182,17 @@ struct VerifyOtpScreen: View {
     func handleSuccess() {
         let response = viewModel.verifyResponceDict
         if response.status == "success" {
-//            UserDefaultsManager.shared.setValue(request.user_name, forKey: .mailId)
+            UserDefaultsManager.shared.setValue(request.email, forKey: .mailId)
             alertType = .sheetType(icon: .success, title: response.status.capitalized, message: response.message.capitalized, primaryBtnText: "", secondaryBtnText: "Ok", sheetThemeColor: .green)
             showError = true
             isPassword = true
-//            withAnimation(.snappy) { navigateToResetPassword = true }
+            withAnimation(.snappy) { navigateToResetPassword = true }
         } else {
             alertType = .sheetType(icon: .alert, title: response.status.capitalized, message: response.message.capitalized, primaryBtnText: "", secondaryBtnText: "Ok", sheetThemeColor: .pinkBtn)
             withAnimation(.snappy) { showError = true }
         }
     }
     
-        //MARK: Methods
     private func getImageName(at index: Int) -> String {
         if index >= pin.count {
             return ""
@@ -201,7 +202,6 @@ struct VerifyOtpScreen: View {
         }
         return ""
     }
-    
     
     private var pinDots: some View {
         HStack(spacing: 12) {
