@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct TabbarScreen: View {
+
     var body: some View {
         TabView {
             HomeViewScreen()
@@ -31,7 +32,7 @@ struct TabbarScreen: View {
                     Label("Account", systemImage: "person.fill")
                 }
         }
-        
+        .accentColor(.tabBar)
     }
 }
 

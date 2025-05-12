@@ -12,6 +12,7 @@ struct BidCastApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject private var appRootManager = AppRootManager()
     let persistenceController = PersistenceController.shared
+    
     init() {
            let appearance = UITabBarAppearance()
            appearance.configureWithOpaqueBackground()
@@ -24,8 +25,7 @@ struct BidCastApp: App {
            if #available(iOS 15.0, *) {
                UITabBar.appearance().scrollEdgeAppearance = appearance
            }
-
-        UITabBar.appearance().tintColor = UIColor(named: "tabBar")
+     
         UITabBar.appearance().unselectedItemTintColor = UIColor.mediumDarkGray
        }
     var body: some Scene {
