@@ -7,10 +7,11 @@
 
 import SwiftUI
 import AlertToast
+//import BottomSheet
 
 struct VerifyOtpScreen: View {
     
-    //MARK: Static Properties
+    // MARK: - Static Properties
     @State var isRemeber: Bool = false
     @State var isLoading: Bool = false
     @State var forgetOtpRequest: ForgetRequest = ForgetRequest(email: "")
@@ -22,30 +23,26 @@ struct VerifyOtpScreen: View {
     @State var isPassword: Bool = false
     @FocusState private var focusedField: Int?
     @State private var focusedIndex: Int? = 0
-    
-    //MARK: Properties
+
+    // MARK: - Properties
     var headingText = "Enter Code"
     var viewModel = VerifyOtpViewModel()
     var forgetOtpModel = ForgotViewModel()
     
-    //MARK: - Custom Alert
+    // MARK: - Custom Alert
     @State var showError: Bool = false
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
     
-    //MARK: View
     var body: some View {
         ZStack(alignment: .top) {
-            
-            // Scrollable content
             ScrollView(showsIndicators: false) {
+                
                 VStack(alignment: .leading, spacing: 20) {
-                    // Add spacing equal to header height
-                    Color.clear.frame(height: 0)
-                    
-                    TitleWithLine(title: headingText, lineLength: 32)
+                    Color.clear.frame(height: 5)
+                    TitleWithLine(title: headingText, lineLength: 0)
                     
                     Text("Please enter the code that was sent to the email associated with your account!")
                         .font(.custom(nunitoMedium, fixedSize: 18))
@@ -56,6 +53,7 @@ struct VerifyOtpScreen: View {
                         .foregroundStyle(.black)
                     
                     VStack(alignment: .trailing, spacing: 12, content: {
+                        
                         pinDots
                         
                         Button(action: {
@@ -71,7 +69,7 @@ struct VerifyOtpScreen: View {
                         }).padding(.trailing, 35)
                     })
                     
-                    PrimaryButton(title: "Submit") {
+                    PrimaryButton(title: "Submit",isOutLine: false) {
                         
                         guard !pin.isEmpty else {
                             hudMsg = "OTP can not be empty"
@@ -97,12 +95,19 @@ struct VerifyOtpScreen: View {
                         }
                     }
                 }
-                .padding([.horizontal])
+                .padding(.horizontal)
+                .padding(.top, 80)
                 .padding(.bottom, 32)
+                
+                if isLoading {
+                    Loader(isLoading: $isLoading)
+                }
+                
+                CusNavLink(doNavigate: $navigateToResetPassword, destination: ResetPasswordScreen())
             }
-            .padding(.top, 80)
+            .frame(width: screenWidth, height: screenHeight)
             
-            // Fixed Header
+            // Primary Header
             PrimaryHeader(
                 title: "Verify OTP",
                 leadingImgArr: [.icBack],
@@ -114,15 +119,7 @@ struct VerifyOtpScreen: View {
             .frame(height: 80)
             .background(Color.white)
             .shadow(radius: 2)
-            
-            // Loading Indicator
-            if isLoading {
-                Loader(isLoading: $isLoading)
-            }
-            
-            CusNavLink(doNavigate: $navigateToResetPassword, destination: ResetPasswordScreen())
         }
-        .frame(width: screenWidth, height: screenHeight)
         .onAppear {
             observe()
             forgotOtpObserver()
@@ -135,8 +132,7 @@ struct VerifyOtpScreen: View {
                 sheetType: $alertType,
                 onPrimaryClick: {
                     withAnimation { showError = false }
-                },
-                onSecondaryClick: {
+                }, onSecondaryClick: {
                     if isPassword == true {
                         withAnimation(.snappy) { navigateToResetPassword = true }
                     } else {
@@ -146,7 +142,6 @@ struct VerifyOtpScreen: View {
         })
     }
     
-    //MARK: Methods
     func observe() {
         self.viewModel.eventHandler = { event in
             switch event {
@@ -193,6 +188,19 @@ struct VerifyOtpScreen: View {
         }
     }
     
+    func handleForgetPassSuccess() {
+        let response = forgetOtpModel.forgotResponceDict
+        if response.status == "success" {
+            UserDefaultsManager.shared.setValue(request.email, forKey: .mailId)
+            alertType = .sheetType(icon: .success, title: response.status.capitalized, message: response.message.capitalized, primaryBtnText: "", secondaryBtnText: "Ok", sheetThemeColor: .green)
+            showError = true
+            isPassword = true
+        } else {
+            alertType = .sheetType(icon: .alert, title: response.status.capitalized, message: response.message.capitalized, primaryBtnText: "", secondaryBtnText: "Ok", sheetThemeColor: .pinkBtn)
+            withAnimation(.snappy) { showError = true }
+        }
+    }
+
     private func getImageName(at index: Int) -> String {
         if index >= pin.count {
             return ""
