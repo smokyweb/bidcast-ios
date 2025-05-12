@@ -10,7 +10,7 @@ import Foundation
 
 final class LoginViewModel:NSObject {
     
-    var loginResponceDict: ResponseModal<UserDetailModal>?
+    var loginResponceDict: ResponseModal<LoginModel>?
     var linkedInResponse: ResponseModal<LinkedInDataResponse>?
     var welcomeVideoResponse : ResponseModal<WelcomeModel>?
     var employerId: String?
@@ -22,7 +22,7 @@ final class LoginViewModel:NSObject {
         self.eventHandler?(.loading)
         requestType = "Login"
         APIManager.shared.requestPost(
-            modelType: ResponseModal<UserDetailModal>.self, // response type
+            modelType: ResponseModal<LoginModel>.self, // response type
             type: APIEndPoint.login(param: parameters),
             header: false) { result in
                 self.eventHandler?(.stopLoading)

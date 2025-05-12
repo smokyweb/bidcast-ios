@@ -22,9 +22,12 @@ struct Loader: View {
             }
             Spacer()
         }
-        .frame(width: screenWidth)
-        .ignoresSafeArea()
-        .background(.text.opacity(0.35))
+        .frame(width: screenWidth, height:screenHeight)
+        
+        
+        .ignoresSafeArea(.all)
+//        .edgesIgnoringSafeArea(.all)
+        .background(.text.opacity(0.2))
     }
 }
 

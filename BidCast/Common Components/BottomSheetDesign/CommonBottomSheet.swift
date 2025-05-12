@@ -15,7 +15,7 @@ enum BottomSheetType {
         message: String,
         primaryBtnText: String = "Continue",
         secondaryBtnText: String = "Cancel",
-        sheetThemeColor: Color = .text,
+        sheetThemeColor: ColorResource = .text,
         isButtonVertical: Bool = true,
         buttonHeight: CGFloat = 40,
         buttonWidth: CGFloat = screenWidth/1.5)
@@ -55,7 +55,7 @@ enum BottomSheetType {
         }
     }
     
-    var sheetThemeColor: Color {
+    var sheetThemeColor: ColorResource {
         switch self {
             case .sheetType(_, _, _, _, _, sheetThemeColor: let color, _, _, _):
                 return color
@@ -102,7 +102,7 @@ struct CommonBottomSheet: View {
                 .resizable()
                 .frame(width: 40, height: 40)
                 .padding(.all, 6)
-                .background(sheetType.sheetThemeColor)
+                .background(Color(sheetType.sheetThemeColor))
                 .foregroundStyle(.white)
                 .clipShape(Circle())
             

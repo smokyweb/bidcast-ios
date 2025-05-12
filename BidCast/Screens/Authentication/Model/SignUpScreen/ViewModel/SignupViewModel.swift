@@ -11,7 +11,7 @@ final class SignupViewModel {
     
     var signUpResponceDict = LoginResponce()
     var linkedInResponse: ResponseModal<LinkedInDataResponse>?
-    var userNameDict: ResponseModal<SignUpModel>?
+    var userNameDict: ResponseModal<[String]>?
 
     
     var requestType: String = ""
@@ -41,7 +41,7 @@ final class SignupViewModel {
         self.requestType = "RegisterUserName"
         self.eventHandler?(.loading)
         APIManager.shared.requestPost(
-            modelType: ResponseModal<SignUpModel>.self, // response type
+            modelType: ResponseModal<[String]>.self, // response type
             type: APIEndPoint.singUp(param: parameters),
             header: false) { result in
                 self.eventHandler?(.stopLoading)

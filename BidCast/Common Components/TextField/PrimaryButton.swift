@@ -20,7 +20,7 @@ struct PrimaryButton: View {
     var height: CGFloat = 50
     var cornerRadius : CGFloat = 8.0
     
-    var btnColor: Color = .defaultTheme
+    var btnColor: ColorResource = .defaultTheme
     
     var body: some View {
         Button(action: { withAnimation {
@@ -33,14 +33,14 @@ struct PrimaryButton: View {
                         Text(title)
                             .font(.custom(nunitoBold, fixedSize: 18))
                             .bold()
-                            .foregroundStyle(btnColor)
+                            .foregroundStyle(Color(btnColor))
                     }
                     .background(.white)
                     .clipShape(RoundedRectangle(cornerRadius: 25))
                     .shadow(color: .gray, radius: 2, x: 0, y: 0)
             }else{
                 RoundedRectangle(cornerRadius: cornerRadius)
-                    .fill(btnColor)
+                    .fill(Color(btnColor))
 //                    .shadow(color: .gray, radius: 2, x: 0, y: 0)
                     .overlay {
                         Text(title)

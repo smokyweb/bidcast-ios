@@ -44,7 +44,7 @@ struct LoginScreen: View {
 //    @State var request: LoginRequest = LoginRequest(user_name: "", password: "")
     @State var request: SignInRequest = SignInRequest(email: "", password: "")
     
-    @State var loginDetail: UserDetailModal = UserDetailModal()
+    @State var loginDetail: LoginModel = LoginModel()
     
     var viewModel = LoginViewModel()
     
@@ -131,7 +131,7 @@ struct LoginScreen: View {
 //                            }
                         
                         guard !request.email.isEmpty else {
-                            hudMsg = "User name can not be empty."
+                            hudMsg = "Email can not be empty."
                             showhud = true
                             return
                         }
@@ -153,8 +153,8 @@ struct LoginScreen: View {
                             showhud = true
                             return
                         }
-                        
-//                        self.viewModel.logIn(parameters: self.request)
+                        print("Parameters used for login:- \(self.request)")
+                        self.viewModel.logIn(parameters: self.request)
                     }
                     
                     
@@ -215,7 +215,7 @@ struct LoginScreen: View {
 
             }
         }
-        .bottomSheet(isPresented: $showError, height: screenHeight/2, topBarCornerRadius: 25, showTopIndicator: false, content: {
+        .bottomSheet(isPresented: $showError, height: screenHeight/2.3, topBarCornerRadius: 25, showTopIndicator: false, content: {
             CommonBottomSheet(
                 sheetType: $alertType,
                 onPrimaryClick: {
@@ -265,11 +265,11 @@ struct LoginScreen: View {
                     success()
                 case .error(let error):
                     if error?.localizedDescription == DataError.tokenExpired.localizedDescription {
-                        alertType = .sheetType(icon: .alert, title: "Login Failed", message: "Fail to login with current credentials", primaryBtnText: "", secondaryBtnText: "Retry Login", sheetThemeColor: .pinkBtn)
+                        alertType = .sheetType(icon: .alert, title: "Login Failed", message: "Fail to login with current credentials", primaryBtnText: "", secondaryBtnText: "Retry Login", sheetThemeColor: .secondary)
                         showError = true
                         Log.e(error as Any)
                     } else {
-                        alertType = .sheetType(icon: .alert, title: "Error", message: error?.localizedDescription ?? "", primaryBtnText: "", secondaryBtnText: "Ok", sheetThemeColor: .pinkBtn)
+                        alertType = .sheetType(icon: .alert, title: "Error", message: error?.localizedDescription ?? "", primaryBtnText: "", secondaryBtnText: "Ok", sheetThemeColor: .secondary)
                         showError = true
                         Log.e(error as Any)
                     }
@@ -279,64 +279,55 @@ struct LoginScreen: View {
 
     
     func success() {
-//        
-//       if viewModel.requestType == "Login" {
-//            let dict = viewModel.loginResponceDict
-//            if dict?.status == "success" {
-//                UserDefaults.isFirstLogin = dict?.data.is_first_login ?? 0
+        
+       if viewModel.requestType == "Login" {
+            let dict = viewModel.loginResponceDict
+            if dict?.status == "success" {
+                UserDefaults.isFirstLogin = dict?.data.is_first_login ?? 0
 //                if dict?.data.role_id != "1" {
-//                    loginDetail = dict!.data
-//                    UserDefaultsManager.shared.setValue(dict?.data.token, forKey: .token)
-//                    UserDefaultsManager.shared.setModel(dict?.data, forKey: .userDetail)
-//                    UserDefaultsManager.shared.setValue(isRemeber, forKey: .rememberMe)
+                    loginDetail = dict!.data
+                    UserDefaultsManager.shared.setValue(dict?.data.token, forKey: .token)
+                    UserDefaultsManager.shared.setModel(dict?.data, forKey: .userDetail)
+                    UserDefaultsManager.shared.setValue(isRemeber, forKey: .rememberMe)
 //                    if isRemeber {
-//                        saveLoginDetail(mail: request.user_name, password: request.password)
+//                        saveLoginDetail(mail: request.email, password: request.password)
 //                    } else {
 //                        saveLoginDetail(mail: "", password: "")
 //                    }
-//                    UserDefaultsManager.shared.setValue(true, forKey: .isLoggedIn)
-////                    UserDefaultsManager.shared.setValue(dict?.data.right_swipes, forKey: .employerRightSwipe)
-//                    UserDefaults.EmployerRightSwipe = dict?.data.right_swipes
-//                    UserDefaultsManager.shared.setValue(dict?.data.role_id, forKey: .userRoleId)
-//                    UserDefaultsManager.shared.setValue(dict?.data.roles?.user_role ??  "", forKey: .userRole)
-//                    if dict?.data.employer_matches_count ?? "" != "" {
-//                        if let count: Int = Int(dict?.data.employer_matches_count ?? "0") {
-//                            UserDefaultsManager.shared.setValue(count > 0, forKey: .isSubscribed)
-//                            if count > 0 {
-//                                UserDefaultsManager.shared.setValue(dict?.data.subscription?.product_id ?? "", forKey: .subscriptionType)
-//                            }
+                    UserDefaultsManager.shared.setValue(true, forKey: .isLoggedIn)
+                   
+                    UserDefaultsManager.shared.setValue(dict?.data.role_id, forKey: .userRoleId)
+                UserDefaultsManager.shared.setValue(dict?.data.roles?.name ??  "", forKey: .userRole)
+//                    let id = dict!.data.id!.description
+//                    OneSignal.login(id)
+//                    let observer = MyPushSubscriptionObserver()
+//                    OneSignal.User.pushSubscription.addObserver(observer)
+//                    if OneSignal.User.pushSubscription.optedIn {
+//                        if let id = OneSignal.User.pushSubscription.id {
+//                            Log.i("FCM token: \(id)")
+//                            UserDefaultsManager.shared.setValue(id , forKey: .deviceToken)
 //                        }
+//                            // User is opted in for push notifications
+//                            // Update your UI or perform other actions here
+//                    } else {
+//                        Log.i("User is opted out of push notifications")
+//                            // User is opted out of push notifications
+//                            // Update your UI or perform other actions here
 //                    }
-////                    let id = dict!.data.id!.description
-////                    OneSignal.login(id)
-////                    let observer = MyPushSubscriptionObserver()
-////                    OneSignal.User.pushSubscription.addObserver(observer)
-////                    if OneSignal.User.pushSubscription.optedIn {
-////                        if let id = OneSignal.User.pushSubscription.id {
-////                            Log.i("FCM token: \(id)")
-////                            UserDefaultsManager.shared.setValue(id , forKey: .deviceToken)
-////                        }
-////                            // User is opted in for push notifications
-////                            // Update your UI or perform other actions here
-////                    } else {
-////                        Log.i("User is opted out of push notifications")
-////                            // User is opted out of push notifications
-////                            // Update your UI or perform other actions here
-////                    }
-//                    
-//                    if let token: String = UserDefaultsManager.shared.value(forKey: .deviceToken) {
+                    
+                    if let token: String = UserDefaultsManager.shared.value(forKey: .deviceToken) {
 //                        viewModel.saveDeviceDetail(parameter: DeviceDetailModal(device_token: token, device_platform: UIDevice.current.systemName.lowercased(), device_version: UIDevice.current.systemVersion))
-//                    }
+                    }
 //                }else{
-//                    alertType = .sheetType(icon: .alert, title: "Access Denied", message: "Admin not authorized for App Login.", primaryBtnText: "", secondaryBtnText: "Ok", sheetThemeColor: .pinkBtn)
-//                    withAnimation(.snappy) { showError = true }
+                alertType = .sheetType(icon: .success, title: dict?.status?.capitalized ?? "", message: dict?.message ?? "", primaryBtnText: "OK" , secondaryBtnText: "", sheetThemeColor: .secondary)
+                withAnimation(.snappy) { showError = true }
 //                }
-//            }else{
-//                alertType = .sheetType(icon: .alert, title: dict?.status?.capitalized ?? "", message: dict?.message ?? "", primaryBtnText: "", secondaryBtnText: "Ok", sheetThemeColor: .pinkBtn)
-//                withAnimation(.snappy) { showError = true }
-//            }
+            }else{
+                alertType = .sheetType(icon: .alert, title: dict?.status?.capitalized ?? "", message: dict?.message ?? "", primaryBtnText: "", secondaryBtnText: "Ok", sheetThemeColor: .secondary)
+                withAnimation(.snappy) { showError = true }
+            }
 //        } else if viewModel.requestType == "SaveDeviceDetail" {
-//            viewModel.getCombineDetail()
+////            viewModel.getCombineDetail()
 //        } else if viewModel.requestType == "CombineDetail" {
 //            if loginDetail.role_id == "2" && loginDetail.is_student ?? "" == "" {
 //                if viewModel.loginResponceDict?.data.is_first_login ?? -1 == 1{
@@ -381,7 +372,7 @@ struct LoginScreen: View {
 //                }
 //                }
 //            }
-//        }
+        }
     }
     
     func saveLoginDetail(mail: String, password: String) {

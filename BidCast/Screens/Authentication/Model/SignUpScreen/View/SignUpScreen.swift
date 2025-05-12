@@ -328,7 +328,25 @@ struct SignUpScreen: View {
                 
                 observe()
             }
-           
+            .fullScreenCover(isPresented: $navigateToLinkedIn, content: {
+                ZStack {
+                    VStack(spacing: 0) {
+                        PrimaryHeader(
+                            title: "LinkedIn",
+                            trailingImgArr: [.cancel],
+                            onClickTrailing: { _ in
+                                withAnimation(.easeInOut(duration: 0.25)) {
+                                    navigateToLinkedIn = false
+                                }
+                            }, count: .constant(0))
+
+                    }
+                    
+                    if isLoading {
+                        Loader(isLoading: $isLoading)
+                    }
+                }
+            })
             .onTapGesture {
                 UIApplication.shared.endEditing()
             }
@@ -342,8 +360,8 @@ struct SignUpScreen: View {
                         if alertType.primaryBtnText == "Proceed to Login" {
                             self.presentationMode.wrappedValue.dismiss()
                         }
-                        let response = viewModel.userNameDict
-                        if response?.status == "success" {
+                        let response = viewModel.signUpResponceDict
+                        if response.status == "success" {
                             self.presentationMode.wrappedValue.dismiss()
                         }else{
                             withAnimation { showError = false }
@@ -419,14 +437,24 @@ struct SignUpScreen: View {
             let response = viewModel.userNameDict
             if response?.status == "success" {
                
+                if request.roleID == 2 {
+
 //                    UserDefaultsManager.shared.setValue("employee", forKey: .userRole)
-                alertType = .sheetType(icon: .success, title: response?.status?.capitalized ?? "", message: response?.message?.capitalized ?? "", primaryBtnText: "Back to Login", secondaryBtnText: "", sheetThemeColor: .secondary)
-                showError = true
-//                    navigatetoUser = true
-                  
-                
+//                    alertType = .sheetType(icon: .success, title: response.status.capitalized, message: response.message.capitalized, primaryBtnText: "Back to Login", secondaryBtnText: "", sheetThemeColor: .green)
+                    
+                    navigatetoUser = true
+
+//                } else if request.role_id == "3"{
+////                    UserDefaultsManager.shared.setValue("employer", forKey: .userRole)
+////                    alertType = .sheetType(icon: .success, title: response.status.capitalized, message: response.message.capitalized, primaryBtnText: "Back to Login", secondaryBtnText: "", sheetThemeColor: .green)
+//                    navigateToEmployer = true
+//
+//                }else{
+//                    
+//                    
+                }
             } else {
-                alertType = .sheetType(icon: .alert, title: response?.error_type?.capitalized ?? "", message: response?.message?.capitalized ?? "", primaryBtnText: "", secondaryBtnText: "Ok", sheetThemeColor: .secondary)
+                alertType = .sheetType(icon: .alert, title: response?.error_type?.capitalized ?? "", message: response?.message?.capitalized ?? "", primaryBtnText: "", secondaryBtnText: "Ok", sheetThemeColor: .pinkBtn)
                 showError = true
             }
         }

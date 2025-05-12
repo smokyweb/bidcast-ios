@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		355AE9682DD1D51A00CD3D17 /* IQKeyboardManagerSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 355AE9672DD1D51A00CD3D17 /* IQKeyboardManagerSwift */; };
+		355AE96B2DD1D70500CD3D17 /* SignUpModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 355AE96A2DD1D70500CD3D17 /* SignUpModel.swift */; };
+		355AE96E2DD1DE3100CD3D17 /* LoginModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 355AE96D2DD1DE3100CD3D17 /* LoginModel.swift */; };
 		35A0450A2DC8DCFD0067C447 /* Color.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 35A045092DC8DCFD0067C447 /* Color.xcassets */; };
 		35A0450D2DC8DEC30067C447 /* AlertToast in Frameworks */ = {isa = PBXBuildFile; productRef = 35A0450C2DC8DEC30067C447 /* AlertToast */; };
 		35A045102DC8DF3D0067C447 /* RichTextKit in Frameworks */ = {isa = PBXBuildFile; productRef = 35A0450F2DC8DF3D0067C447 /* RichTextKit */; };
@@ -184,6 +187,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		355AE96A2DD1D70500CD3D17 /* SignUpModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpModel.swift; sourceTree = "<group>"; };
+		355AE96D2DD1DE3100CD3D17 /* LoginModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginModel.swift; sourceTree = "<group>"; };
 		35A045092DC8DCFD0067C447 /* Color.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Color.xcassets; sourceTree = "<group>"; };
 		99C907C22DC8CC990054620B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		99C907C32DC8CC990054620B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -352,6 +357,7 @@
 				35A045102DC8DF3D0067C447 /* RichTextKit in Frameworks */,
 				35A045132DC8DF4E0067C447 /* BottomSheet in Frameworks */,
 				35A0450D2DC8DEC30067C447 /* AlertToast in Frameworks */,
+				355AE9682DD1D51A00CD3D17 /* IQKeyboardManagerSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -372,6 +378,29 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		355AE9662DD1D51A00CD3D17 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		355AE9692DD1D6E100CD3D17 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				355AE96A2DD1D70500CD3D17 /* SignUpModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		355AE96C2DD1DE2A00CD3D17 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				355AE96D2DD1DE3100CD3D17 /* LoginModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 		99C907BE2DC8CC5A0054620B /* Application */ = {
 			isa = PBXGroup;
 			children = (
@@ -1002,6 +1031,7 @@
 		99C909002DC8CD790054620B /* Login */ = {
 			isa = PBXGroup;
 			children = (
+				355AE96C2DD1DE2A00CD3D17 /* Model */,
 				99C908FD2DC8CD790054620B /* ViewModel */,
 				99C908FF2DC8CD790054620B /* View */,
 			);
@@ -1027,6 +1057,7 @@
 		99C909052DC8CD790054620B /* SignUpScreen */ = {
 			isa = PBXGroup;
 			children = (
+				355AE9692DD1D6E100CD3D17 /* Model */,
 				99C909022DC8CD790054620B /* ViewModel */,
 				99C909042DC8CD790054620B /* View */,
 			);
@@ -1255,6 +1286,7 @@
 				99DF9E752DC4F367008C15B2 /* BidCast */,
 				99DF9E7D2DC4F36D008C15B2 /* BidCastTests */,
 				99DF9E812DC4F370008C15B2 /* BidCastUITests */,
+				355AE9662DD1D51A00CD3D17 /* Frameworks */,
 				99DF9E402DC4F35D008C15B2 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -1326,6 +1358,7 @@
 				35A045122DC8DF4E0067C447 /* BottomSheet */,
 				35A045152DC8DF5B0067C447 /* Kingfisher */,
 				35A0451B2DC8E19E0067C447 /* ActivityIndicatorView */,
+				355AE9672DD1D51A00CD3D17 /* IQKeyboardManagerSwift */,
 			);
 			productName = BidCast;
 			productReference = 99DF9E3F2DC4F35D008C15B2 /* BidCast.app */;
@@ -1470,6 +1503,7 @@
 				99C9091E2DC8CD790054620B /* NotificationViewModel.swift in Sources */,
 				99C909252DC8CD790054620B /* EmployerProfileScreen.swift in Sources */,
 				99C909292DC8CD790054620B /* NewsScreen.swift in Sources */,
+				355AE96B2DD1D70500CD3D17 /* SignUpModel.swift in Sources */,
 				99C909D52DC8CDDC0054620B /* AboutUsResponseModel.swift in Sources */,
 				99C909D62DC8CDDC0054620B /* CombineDataModel.swift in Sources */,
 				99C909D72DC8CDDC0054620B /* LinkedInStatusModel.swift in Sources */,
@@ -1481,6 +1515,7 @@
 				99C909DD2DC8CDDC0054620B /* ContactModel.swift in Sources */,
 				99C909DE2DC8CDDC0054620B /* NewsResponseModel.swift in Sources */,
 				99C909DF2DC8CDDC0054620B /* UserDetailModal.swift in Sources */,
+				355AE96E2DD1DE3100CD3D17 /* LoginModel.swift in Sources */,
 				99C909E02DC8CDDC0054620B /* ParametresRequest.swift in Sources */,
 				99C909E12DC8CDDC0054620B /* UserProfileUpdateResponseModal.swift in Sources */,
 				99C909E22DC8CDDC0054620B /* InterviewScheduleModal.swift in Sources */,
@@ -2016,6 +2051,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		355AE9672DD1D51A00CD3D17 /* IQKeyboardManagerSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 356116FC2DC8D22C00A45199 /* XCRemoteSwiftPackageReference "IQKeyboardManager" */;
+			productName = IQKeyboardManagerSwift;
+		};
 		35A0450C2DC8DEC30067C447 /* AlertToast */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 35A0450B2DC8DEC30067C447 /* XCRemoteSwiftPackageReference "AlertToast" */;

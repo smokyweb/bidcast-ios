@@ -13,7 +13,7 @@ import UIKit
 //import Firebase
 //import FirebaseCore
 //import GooglePlaces
-//import IQKeyboardManagerSwift
+import IQKeyboardManagerSwift
 
 
 
@@ -42,7 +42,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 //        FirebaseApp.configure()
 ////        Messaging.messaging().delegate = self
 //        
-//        IQKeyboardManager.shared.enable = true
+        IQKeyboardManager.shared.isEnabled = true
+        IQKeyboardManager.shared.resignOnTouchOutside = true
 //        IQKeyboardManager.shared.enableAutoToolbar = false
         
         if #available(iOS 10.0, *) {
