@@ -205,7 +205,7 @@ struct LoginScreen: View {
 //                CusNavLink(doNavigate: $navigateToEmployer, destination: CreateEmployerProfile())
                 
 //                CusNavLink(doNavigate: $navigatetoUser, destination: WelcomeScreen())
-//                CusNavLink(doNavigate: $navigateToSignUp, destination: SignUpScreen())
+                CusNavLink(doNavigate: $navigateToSignUp, destination: SignUpScreen())
 //
 //                CusNavLink(doNavigate: $signInWithApple, destination: SignUpScreen(AppleLogin: true))
 //
@@ -398,7 +398,7 @@ struct LoginScreen: View {
 }
 
 
-
-#Preview {
-    LoginScreen()
-}
+//
+//#Preview {
+//    LoginScreen()
+//}

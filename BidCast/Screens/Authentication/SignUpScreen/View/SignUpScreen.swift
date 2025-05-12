@@ -52,34 +52,12 @@ struct SignUpScreen: View {
     var body: some View {
         ZStack {
             VStack(spacing: 0) {
-                PrimaryHeader(title: "Create Account", trailingImgArr: [.cancel], onClickTrailing:  { _ in
-                    UserDefaultsManager.shared.setValue(false, forKey: .isLinkedInLogin)
+                PrimaryHeader(title: "Create Account", leadingImgArr: [.icBack], onClickLeading:  { _ in
+                   
                     self.presentationMode.wrappedValue.dismiss()
                 }, count: .constant(0))
                 
                 ScrollView(showsIndicators: false) {
-                    
-                    ButtonWithImage(title: "Continue with LinkedIn", onButtonClick: {
-                        UIApplication.shared.endEditing()
-                        navigateToLinkedIn = true
-                    })
-                        .padding(.top, 10)
-                    
-                    
-                    HStack {
-                        Divider()
-                            .frame(width: screenWidth/2.5, height: 2)
-                            .background(.gray.opacity(0.5))
-                        
-                        Text("Or")
-                            .font(.custom(nunitoMedium, fixedSize: 14))
-                            .foregroundStyle(.gray)
-                        
-                        Divider()
-                            .frame(width: screenWidth/2.5, height: 2)
-                            .background(.gray.opacity(0.5))
-                    }.padding([.top, .bottom])
-                    
                     VStack(alignment: .leading, spacing: 15) {
                         Text("Create an Account")
                             .font(.custom(nunitoBlack, fixedSize: 18))

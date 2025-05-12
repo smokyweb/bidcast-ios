@@ -26,9 +26,9 @@ struct PrimaryHeader: View {
             Image(.header)
                 .resizable()
                 .frame(height: topPadding + 50)
-            Divider()
-                .frame(width: screenWidth, height: 4)
-                .background(.red)
+//            Divider()
+//                .frame(width: screenWidth, height: 4)
+//                .background(.red)
         })
         .overlay(alignment: .bottom) {
             HStack {
