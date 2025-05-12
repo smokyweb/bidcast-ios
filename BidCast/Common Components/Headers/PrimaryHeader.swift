@@ -22,27 +22,28 @@ struct PrimaryHeader: View {
     @Binding var count: Int
     
     var body: some View {
-        VStack(spacing: 0, content: {
-            Image(.header)
-                .resizable()
-                .frame(height: topPadding + 50)
+        VStack{
+//            Image(.header)
+//                .resizable()
+//                .frame(height: topPadding + 50)
 //            Divider()
 //                .frame(width: screenWidth, height: 4)
 //                .background(.red)
-        })
-        .overlay(alignment: .bottom) {
+        
+//        .frame(height: topPadding + 50)
+//        .overlay(alignment: .bottom) {
             HStack {
                 if leadingImgArr.count > 0 {
                     ForEach(leadingImgArr.indices, id: \.self) {
                         ind in
                         Button(action: { withAnimation { onClickLeading?(ind) } }, label: {
                             Image(leadingImgArr[ind])
-                                .renderingMode(.template)
+                                .renderingMode(.original)
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 30, height: 30)
                                 .tint(.white)
-                                .padding(.all, 8)
+                                .padding(.all, 16)
                         })
                     }
                 }
@@ -73,7 +74,7 @@ struct PrimaryHeader: View {
                             Button(action: { withAnimation { onClickTrailing?(ind) } }, label: {
                                 if count != 0 {
                                     Image(trailingImgArr[ind])
-                                        .renderingMode(.template)
+                                        .renderingMode(.original)
                                         .resizable()
                                         .scaledToFit()
                                         .frame(width: 30, height: 30)
@@ -120,13 +121,14 @@ struct PrimaryHeader: View {
                 } else {
                     Text(title)
                         .font(.custom(nunitoBlack, fixedSize: 18))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(.black)
                         .padding(.bottom)
 //                        .padding(.leading, CGFloat(trailingImgArr.count) * 38)
 //                        .padding(.trailing, CGFloat(leadingImgArr.count) * 38)
                 }
             })
         }
+        .frame(height: topPadding + 70)
         .edgesIgnoringSafeArea(.top)
     }
 }
