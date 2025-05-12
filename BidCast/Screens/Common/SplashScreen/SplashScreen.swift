@@ -15,42 +15,29 @@ struct SplashScreen: View {
     @State var navigatetoUser: Bool = false
 
     func handleUserLogin() {
-//        if let _: Bool = UserDefaultsManager.shared.value(forKey: .isLoggedIn) {
-//            if let userData: UserDetailModal = UserDefaultsManager.shared.getModel(forKey: .userDetail) {
-//                withAnimation(.snappy) {
-//                    if userData.role_id == "2" {
-//                        if userData.is_student ?? "" == "" {
-//                            navigatetoUser = true
-//                        } else {
-//                            DispatchQueue.main.async {
-//                                appRootManager.currentRoot = .user
-//                            }
-//                        }
-//                    } else if userData.role_id == "3" {
-//                        if userData.emp_company_created ?? false == false {
-//                            navigateToEmployer = true
-//                        } else {
-//                            DispatchQueue.main.async {
-//                                appRootManager.currentRoot = .employer
-//                            }
-//                        }
-//                    }else if userData.role_id == "4" {
-//                        
-//                        DispatchQueue.main.async {
-//                            appRootManager.currentRoot = .employer
-//                        }
-//                    }
-//                }
-//            } else {
-//                DispatchQueue.main.async {
-//                    appRootManager.currentRoot = .authentication
-//                }
-//            }
-//        } else {
+        if let _: Bool = UserDefaultsManager.shared.value(forKey: .isLoggedIn) {
+            if let userData: LoginModel = UserDefaultsManager.shared.getModel(forKey: .userDetail) {
+                withAnimation(.snappy) {
+                    if userData.role_id == 2 {
+                        DispatchQueue.main.async {
+                            appRootManager.currentRoot = .tabBar
+                        }
+                    }else{
+                        DispatchQueue.main.async {
+                            appRootManager.currentRoot = .authentication
+                        }
+                    }
+                }
+            } else {
+                DispatchQueue.main.async {
+                    appRootManager.currentRoot = .authentication
+                }
+            }
+        } else {
             DispatchQueue.main.async {
                 appRootManager.currentRoot = .authentication
             }
-//        }
+        }
     }
     
     var body: some View {

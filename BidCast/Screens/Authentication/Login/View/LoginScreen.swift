@@ -26,7 +26,7 @@ struct LoginScreen: View {
     @State var showError: Bool = false
     @State var navigateToForgot: Bool = false
     @State var navigateToSignUp: Bool = false
-    @State var navigateToLinkedIn: Bool = false
+    @State var navigateTotab: Bool = false
     @State var signInWithApple: Bool = false
     @State private var isLoggedIn = false
 
@@ -202,7 +202,7 @@ struct LoginScreen: View {
                 
                 
                 CusNavLink(doNavigate: $navigateToForgot, destination: ForgotScreen())
-                
+                CusNavLink(doNavigate: $navigateTotab, destination: TabbarScreen())
 //                CusNavLink(doNavigate: $navigateToEmployer, destination: CreateEmployerProfile())
                 
 //                CusNavLink(doNavigate: $navigatetoUser, destination: WelcomeScreen())
@@ -223,6 +223,7 @@ struct LoginScreen: View {
                     if alertType.primaryBtnText == "Continue" {
                         navigateToSignUp = true
                     }
+                    navigateTotab = true
                 }, onSecondaryClick: {
                     withAnimation { showError = false }
                 })
@@ -319,11 +320,11 @@ struct LoginScreen: View {
 //                        viewModel.saveDeviceDetail(parameter: DeviceDetailModal(device_token: token, device_platform: UIDevice.current.systemName.lowercased(), device_version: UIDevice.current.systemVersion))
                     }
 //                }else{
-                alertType = .sheetType(icon: .success, title: dict?.status?.capitalized ?? "", message: dict?.message ?? "", primaryBtnText: "OK" , secondaryBtnText: "", sheetThemeColor: .secondary)
-                withAnimation(.snappy) { showError = true }
+//                alertType = .sheetType(icon: .success, title: dict?.status?.capitalized ?? "", message: dict?.message ?? "", primaryBtnText: "OK" , secondaryBtnText: "", sheetThemeColor: .secondary)
+                withAnimation(.snappy) { navigateTotab = true }
 //                }
             }else{
-                alertType = .sheetType(icon: .alert, title: dict?.status?.capitalized ?? "", message: dict?.message ?? "", primaryBtnText: "", secondaryBtnText: "Ok", sheetThemeColor: .secondary)
+                alertType = .sheetType(icon: .alert, title: dict?.status?.capitalized ?? "", message: dict?.message ?? "", primaryBtnText: "OK", secondaryBtnText: "", sheetThemeColor: .secondary)
                 withAnimation(.snappy) { showError = true }
             }
 //        } else if viewModel.requestType == "SaveDeviceDetail" {

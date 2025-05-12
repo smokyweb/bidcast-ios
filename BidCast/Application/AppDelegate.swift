@@ -67,7 +67,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             Log.e("Error Handling callStackSymbols: \(exception.callStackSymbols)")
         }
         
-        UserDefaultsManager.shared.setValue(true, forKey: .showMatchingSheet)
+//        UserDefaultsManager.shared.setValue(true, forKey: .showMatchingSheet)
         
         UITextField.appearance().tintColor = .text
         

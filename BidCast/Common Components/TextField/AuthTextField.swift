@@ -112,7 +112,7 @@ struct AuthTextField: View {
                             .renderingMode(.template)
                             .resizable()
                             .scaledToFit()
-                            .frame(width: 20, height: 20)
+                            .frame(width: 25, height: 20)
                             .foregroundStyle(.black.opacity(0.5))
                             .clipShape(Circle())
                             .padding(.trailing)

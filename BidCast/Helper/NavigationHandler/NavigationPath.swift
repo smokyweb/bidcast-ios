@@ -14,6 +14,7 @@ final class AppRootManager: ObservableObject {
     enum eAppRoots {
         case splash
         case authentication
+        case tabBar
 //        case subscription
 //        case user
 //        case employer
