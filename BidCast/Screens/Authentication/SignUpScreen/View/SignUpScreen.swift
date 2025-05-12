@@ -59,37 +59,38 @@ struct SignUpScreen: View {
                 
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 15) {
-                        Text("Create an Account")
+                        Text("Create your Account")
                             .font(.custom(nunitoBlack, fixedSize: 18))
+                            .fontWeight(.bold)
                             .frame(width: screenWidth - 50, alignment: .leading)
                         
-                        if AppleLogin{
-                            AuthTextField(floatingLabel: "First Name", placeholder: UserDefaults.userFirstNameWithApple, icon: .menuProfile, text: $appleUserFirstname, enteredText: {
-                                value in
-                                request.first_name = value
-                            })
-                            .disabled(true)
-                            .textContentType(.givenName)
-
-                        }else{
+//                        if AppleLogin{
+//                            AuthTextField(floatingLabel: "First Name", placeholder: UserDefaults.userFirstNameWithApple, icon: .menuProfile, text: $appleUserFirstname, enteredText: {
+//                                value in
+//                                request.first_name = value
+//                            })
+//                            .disabled(true)
+//                            .textContentType(.givenName)
+//
+//                        }else{
                             AuthTextField(floatingLabel: "First Name", placeholder: "Enter First Name", icon: .menuProfile, text: $request.first_name, enteredText: {
                                 value in
                                 request.first_name = value
                             })
                             .textContentType(.givenName)
 
-                        }
+//                        }
                         
                         
-                        if AppleLogin{
-                            AuthTextField(floatingLabel: "Last Name", placeholder: UserDefaults.userLastNameWithApple, icon: .menuProfile, text: $appleUserLastname, enteredText: {
-                                value in
-                                request.last_name = value
-                            })
-                            .disabled(true)
-                            .textContentType(.givenName)
-
-                        }else{
+//                        if AppleLogin{
+//                            AuthTextField(floatingLabel: "Last Name", placeholder: UserDefaults.userLastNameWithApple, icon: .menuProfile, text: $appleUserLastname, enteredText: {
+//                                value in
+//                                request.last_name = value
+//                            })
+//                            .disabled(true)
+//                            .textContentType(.givenName)
+//
+//                        }else{
                             
                             AuthTextField(floatingLabel: "Last Name", placeholder: "Enter Last Name", icon: .menuProfile, text: $request.last_name, enteredText: {
                                 value in
@@ -97,37 +98,37 @@ struct SignUpScreen: View {
                             })
                             .textContentType(.familyName)
                             
-                        }
+//                        }
                         
-                        if AppleLogin{
-                            
-                            if appleUserEmail == ""{
-                                AuthTextField(floatingLabel: "Email Address", placeholder: "Enter Email Address", icon: .mail, text: $request.email, enteredText: {
-                                    value in
-                                    request.email = value
-                                }).textContentType(.username)
-                                .disabled(false)
-                            }else{
-                                AuthTextField(floatingLabel: "Email Address", placeholder: UserDefaults.userEmailWithApple, icon: .mail, text: $appleUserEmail, enteredText: {
-                                    value in
-                                    request.email = value
-                                }).textContentType(.username)
-                                .disabled(true)
-                            }
+//                        if AppleLogin{
+//                            
+//                            if appleUserEmail == ""{
+//                                AuthTextField(floatingLabel: "Email Address", placeholder: "Enter Email Address", icon: .mail, text: $request.email, enteredText: {
+//                                    value in
+//                                    request.email = value
+//                                }).textContentType(.username)
+//                                .disabled(false)
+//                            }else{
+//                                AuthTextField(floatingLabel: "Email Address", placeholder: UserDefaults.userEmailWithApple, icon: .mail, text: $appleUserEmail, enteredText: {
+//                                    value in
+//                                    request.email = value
+//                                }).textContentType(.username)
+//                                .disabled(true)
+//                            }
 
                             
-                        }else{
+//                        }else{
                             AuthTextField(floatingLabel: "Email Address", placeholder: "Enter Email Address", icon: .mail, text: $request.email, enteredText: {
                                 value in
                                 request.email = value
                             }).textContentType(.username)
-                        }
+//                        }
                         
-                        AuthTextField(floatingLabel: "User Name", placeholder: "Enter User Name", icon: .menuProfile, text: $request.user_name, enteredText: {
-                            value in
-                            request.user_name = value
-                            requestUserName.user_name = value
-                        }).textContentType(.username)
+//                        AuthTextField(floatingLabel: "User Name", placeholder: "Enter User Name", icon: .menuProfile, text: $request.user_name, enteredText: {
+//                            value in
+//                            request.user_name = value
+//                            requestUserName.user_name = value
+//                        }).textContentType(.username)
                         
                         AuthTextField(floatingLabel: "Password", placeholder: "Enter Password", icon: .passwordLock, text: $request.password, isPassword: true, enteredText: {
                             value in
@@ -142,37 +143,37 @@ struct SignUpScreen: View {
                         
                     }.padding([.leading, .trailing])
                     
-                    DropDown(hint: "Select Role", options: ["Candidate", "Employer"], anchor: .top,floatingLabel: "Select Role", cornerRadius: 25, showLeadingIcon : true, leadingIcon:.menuProfile, onOptionSelected: {
-                        option in
-                        if option == "Candidate" {
-                            request.role_id = "2"
-                        } else {
-                            request.role_id = "3"
-                        }
-                    })
-                    .padding(.vertical)
-                    .textContentType(.jobTitle)
+//                    DropDown(hint: "Select Role", options: ["Candidate", "Employer"], anchor: .top,floatingLabel: "Select Role", cornerRadius: 25, showLeadingIcon : true, leadingIcon:.menuProfile, onOptionSelected: {
+//                        option in
+//                        if option == "Candidate" {
+//                            request.role_id = "2"
+//                        } else {
+//                            request.role_id = "3"
+//                        }
+//                    })
+//                    .padding(.vertical)
+//                    .textContentType(.jobTitle)
 
                     
                     VStack(spacing: 15) {
-                        Text("Location")
-                            .font(.custom(nunitoBlack, fixedSize: 18))
-                            .frame(width: screenWidth - 30, alignment: .leading)
-                        
-                        DropDownTextField(
-                            hint: "Confirm your location",
-                            floatingLabel: "Confirm your location",
-                            text: $request.location,
-                            options: $locationArr,
-                            leadingIcon: .location,
-                            showLeadingIcon: true,
-                            showTrailingIcon: false,
-                            onOptionSelected: { text in
-                                    ////                                langArray[ind].name = text
-                            },
-                            anchor: .top)
-                        .textContentType(.location)
-                        .onChange(of: request.location) { newValue in
+//                        Text("Location")
+//                            .font(.custom(nunitoBlack, fixedSize: 18))
+//                            .frame(width: screenWidth - 30, alignment: .leading)
+//                        
+//                        DropDownTextField(
+//                            hint: "Confirm your location",
+//                            floatingLabel: "Confirm your location",
+//                            text: $request.location,
+//                            options: $locationArr,
+//                            leadingIcon: .location,
+//                            showLeadingIcon: true,
+//                            showTrailingIcon: false,
+//                            onOptionSelected: { text in
+//                                    ////                                langArray[ind].name = text
+//                            },
+//                            anchor: .top)
+//                        .textContentType(.location)
+//                        .onChange(of: request.location) { newValue in
 //                            GooglePlacesManager.shared.findPlaces(query: newValue) { result in
 //                                switch result {
 //                                    case .success(let places):
@@ -186,69 +187,69 @@ struct SignUpScreen: View {
 //                                        print(error)
 //                                }
 //                            }
-                        }
+//                        }
                         
                         
-                        PrimaryButton(title: "Next", isOutLine: false, onButtonClick: {
+                        PrimaryButton(title: "Submit", isOutLine: false, onButtonClick: {
                             
                             UIApplication.shared.endEditing()
-                            if AppleLogin{
-                                guard !appleUserFirstname.isEmpty else {
-                                    hudMsg = "Email address is required"
-                                    showhud = true
-                                    return
-                                }
-                            }else{
+//                            if AppleLogin{
+//                                guard !appleUserFirstname.isEmpty else {
+//                                    hudMsg = "Email address is required"
+//                                    showhud = true
+//                                    return
+//                                }
+//                            }else{
                                 guard !request.first_name.isEmpty else {
                                     hudMsg = "First Name is required"
                                     showhud = true
                                     return
                                 }
-                            }
-                            if AppleLogin{
-                                guard !appleUserLastname.isEmpty else {
-                                    hudMsg = "Last Name is required"
-                                    showhud = true
-                                    return
-                                }
-                                
-                            }else{
+//                            }
+//                            if AppleLogin{
+//                                guard !appleUserLastname.isEmpty else {
+//                                    hudMsg = "Last Name is required"
+//                                    showhud = true
+//                                    return
+//                                }
+//                                
+//                            }else{
                                 guard !request.last_name.isEmpty else {
                                     hudMsg = "Last Name is required"
                                     showhud = true
                                     return
                                 }
-                            }
+//                            }
                             
-                            if AppleLogin{
-                                
-                                if appleUserEmail == ""{
-                                    guard !request.email.isEmpty else {
-                                        hudMsg = "Email address is required"
-                                        showhud = true
-                                        return
-                                    }
-                                }else{
-                                    guard !appleUserEmail.isEmpty else {
-                                        hudMsg = "Email address is required"
-                                        showhud = true
-                                        return
-                                    }
-                                }
-                            }else{
+//                            if AppleLogin{
+//                                
+//                                if appleUserEmail == ""{
+//                                    guard !request.email.isEmpty else {
+//                                        hudMsg = "Email address is required"
+//                                        showhud = true
+//                                        return
+//                                    }
+//                                }else{
+//                                    guard !appleUserEmail.isEmpty else {
+//                                        hudMsg = "Email address is required"
+//                                        showhud = true
+//                                        return
+//                                    }
+//                                }
+//                            }else{
                                 
                                 guard !request.email.isEmpty else {
                                     hudMsg = "Email address is required"
                                     showhud = true
                                     return
                                 }
-                            }
+//                            }
                             
-                            guard !request.user_name.isEmpty else {
-                                hudMsg = "User Name is required"
-                                showhud = true
-                                return
-                            }
+//                            guard !request.user_name.isEmpty else {
+//                                hudMsg = "User Name is required"
+//                                showhud = true
+//                                return
+//                            }
                             
                             guard !request.password.isEmpty else {
                                 hudMsg = "Password is required"
@@ -274,17 +275,17 @@ struct SignUpScreen: View {
                                 return
                             }
                             
-                            guard !request.role_id.isEmpty else {
-                                hudMsg = "User role is required"
-                                showhud = true
-                                return
-                            }
+//                            guard !request.role_id.isEmpty else {
+//                                hudMsg = "User role is required"
+//                                showhud = true
+//                                return
+//                            }
                             
-                            guard !request.location.isEmpty else {
-                                hudMsg = "Location is required"
-                                showhud = true
-                                return
-                            }
+//                            guard !request.location.isEmpty else {
+//                                hudMsg = "Location is required"
+//                                showhud = true
+//                                return
+//                            }
 
 //                            if request.role_id == "2" {
 //                                navigatetoUser = true

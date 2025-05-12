@@ -7,59 +7,6 @@
 
 import Foundation
 
-//MARK: - Login
-struct LoginRequest:Encodable {
-    var user_name:String
-    var password:String
-}
-
-//MARK: - Signup
-struct RegisterRequest:Encodable {
-    var first_name:String
-    var last_name:String
-    var user_name : String
-    var email:String
-    var password:String
-    var password_confirmation:String
-    var location:String
-    var role_id:String
-    var linkedin_sub_id: String
-    var linkedin_access: LinkedInAccessModel
-}
-
-//MARK: - ForgetPassword
-struct ForgetRequest:Encodable {
-    var user_name:String
-}
-
-//MARK: - VerifyOtp
-struct VerifyOtpRequest:Encodable {
-    var user_name:String
-    var code:String
-}
-
-//MARK: - ResetPassword
-struct ResetPasswordRequest:Encodable {
-    var user_name:String
-    var password:String
-}
-
-
-// MARK: - UpdateUserrequest
-struct UpdateUserRequest: Encodable {
-    var images: [Imagee]?
-    var skills: [Skill]?
-    var license_certifications: [LicenseCertification]?
-    var volunteer_experiences: [VolunteerExperience]?
-    var languages: [EmpLanguageRequest]?
-    var interested_jobs: [InterestedJob]?
-    var education: [EmployeeEducationRequest]?
-    var work_histories: [CreateWorkHistory]?
-    var video_resume, profile_image: String?
-    var profile_info: [UserPersonalInfo]?
-    var type: String
-}
-
 // MARK: - Education
 struct Education: Codable {
     var education_name, education_date: String
@@ -294,4 +241,107 @@ struct ReadNotification: Encodable {
 struct InterviewRescheduleStatusModel: Encodable {
     var status: String
     var employer_id, job_id: Int
+}
+
+
+//MARK: For BidCast
+
+//MARK: - Generic Response Model
+struct ResponseModel<T: Codable>: Codable {
+    var status, message, error_type: String?
+    var data: T?
+}
+
+//MARK: - Generic Paginated Response Model
+struct ResponseModelPaginate<T: Codable>: Codable {
+    var status, message, error_type: String?
+    var data: T?
+    var total, total_pages,total_records, current_page, per_page: Int?
+}
+
+//MARK: - Login
+struct SignInRequest:Encodable {
+    var email:String
+    var password:String
+//    var device_token:String
+}
+
+//MARK: - SignUpRequest
+struct SignUpRequest:Encodable {
+    var firstName:String
+    var lastName:String
+    var email:String
+    var password:String
+    var passwordConf:String
+    var roleID : Int
+    
+    enum CodingKeys: String, CodingKey {
+        case firstName = "first_name"
+        case lastName = "last_name"
+        case passwordConf = "password_confirmation"
+        case roleID = "role_id"
+        case email, password
+    }
+}
+
+
+//MARK: - ForgetPassword
+struct ForgetRequest:Encodable {
+    var email:String
+}
+
+//MARK: - VerifyPassword
+struct VerifyPasswordRequest:Encodable {
+    var password:String?
+    var new_password:String?
+
+}
+
+//MARK: - VerifyOtp
+struct VerifyOtpRequest:Encodable {
+    var email:String
+    var code:Int
+}
+struct ResetPasswordRequest:Encodable {
+    var email:String
+    var password:String
+    var password_confirmation:String
+}
+
+struct DeviceDetailParam: Encodable{
+    var device_token,platform,app_version : String
+    var lat,long: String
+    var timezone : String
+}
+
+
+//MARK: DeleteProfileRequest.
+struct DeleteProfileRequest : Encodable{
+    var reason : String?
+}
+
+//MARK: EditProfileDetailsRequest.
+struct EditProfileDetailsRequest:Encodable {
+    var first_name : String?
+    var last_name : String?
+    var profile_image : String?
+}
+
+//MARK: ContactUsRequest.
+struct ContactUsRequest : Encodable{
+    var email : String?
+    var phone : String?
+    var message : String?
+}
+
+//MARK: - UpdatePasswordRequest.
+struct UpdatePasswordRequest : Encodable{
+    var current_password : String
+    var password : String
+    var password_confirmation : String
+}
+
+//MARK: LogoutRequest
+struct LogoutRequest : Encodable{
+    var device_token : String
 }

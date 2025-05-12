@@ -108,27 +108,28 @@ struct PrimaryHeader: View {
                 }
             }
             .frame(height: 40)
-            .padding(.bottom, 10)
+            .padding(.top, 10)
             .overlay(alignment: .center, content: {
                 if showAppIcon {
                     Image(.appName)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(height: 25)
-                        .padding(.bottom)
+                        .padding(.top)
 //                        .padding(.leading, CGFloat(trailingImgArr.count) * 38)
 //                        .padding(.trailing, CGFloat(leadingImgArr.count) * 38)
                 } else {
                     Text(title)
                         .font(.custom(nunitoBlack, fixedSize: 18))
+                        .fontWeight(.bold)
                         .foregroundStyle(.black)
-                        .padding(.bottom)
+                        .padding(.top)
 //                        .padding(.leading, CGFloat(trailingImgArr.count) * 38)
 //                        .padding(.trailing, CGFloat(leadingImgArr.count) * 38)
                 }
             })
         }
-        .frame(height: topPadding + 70)
+        .frame(height: topPadding + 40)
         .edgesIgnoringSafeArea(.top)
     }
 }

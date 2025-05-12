@@ -19,7 +19,7 @@ protocol EndPointType {
     var url: URL? { get }
     var method: HTTPMethods { get }
     var body: Encodable? { get }
-	var jsonBody : [String:Any]? {get}
+//	var jsonBody : [String:Any]? {get}
     var headers: [String: String]? { get }
 }
 enum Event {
