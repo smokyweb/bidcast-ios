@@ -1,19 +1,18 @@
 //
-//  TitleWithLine.swift
-//  imperium
+//  SingleTitleLabel.swift
+//  BidCast
 //
-//  Created by JAM-E-282 on 20/01/24.
+//  Created by JAM-E-329 on 13/05/25.
 //
 
 import SwiftUI
 
-struct TitleWithLine: View {
+struct SingleTitleLabel: View {
     
     var title: String = "My Listing"
     var lineLength: CGFloat = 32
     var textColor : Color?
     var fontValue : CGFloat = 23
-    var divderHeight : CGFloat = 5
     
     var body: some View {
         HStack {
@@ -23,11 +22,7 @@ struct TitleWithLine: View {
                     .bold()
                     .foregroundStyle(.text)
                     .foregroundColor(textColor)
-                Divider()
-                    .frame(width: lineLength, height: divderHeight)
-                    .background(.red)
             }
-            Spacer()
         }
     }
 }

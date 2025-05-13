@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum APIEndPoint {
+enum APIEndPoint{
     case login (param : SignInRequest)
     case singUp(param : SignUpRequest)
     case aboutUs
@@ -108,7 +108,6 @@ extension APIEndPoint: EndPointType {
     
     var baseURL: String {
         return "https://backend.bidcast.betaplanets.com/api/"
-        
     }
     
     var url: URL? {

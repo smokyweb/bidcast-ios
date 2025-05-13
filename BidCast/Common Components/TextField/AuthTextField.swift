@@ -16,12 +16,8 @@ struct AuthTextField: View {
     @State var icon: ImageResource
     @State var maxDigits: Int = 10
     @Binding var text: String
-    
     @State var isPassword: Bool = false
-    
-    
     @State var showPassword: Bool = true
-    
     @FocusState var isFocused: Bool
     
     var enteredText: ((String) -> Void)?

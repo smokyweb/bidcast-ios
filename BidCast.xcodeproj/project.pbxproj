@@ -173,6 +173,10 @@
 		99DF9E7E2DC4F36D008C15B2 /* BidCastTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99DF9E7C2DC4F36D008C15B2 /* BidCastTests.swift */; };
 		99DF9E822DC4F370008C15B2 /* BidCastUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99DF9E7F2DC4F370008C15B2 /* BidCastUITests.swift */; };
 		99DF9E832DC4F370008C15B2 /* BidCastUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99DF9E802DC4F370008C15B2 /* BidCastUITestsLaunchTests.swift */; };
+		D4C4D7972DD31C2D00274E51 /* ActivityCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C4D7962DD31C2D00274E51 /* ActivityCell.swift */; };
+		D4C4D79A2DD3263A00274E51 /* SingleTitleLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C4D7982DD3263A00274E51 /* SingleTitleLabel.swift */; };
+		D4C4D79C2DD32F3D00274E51 /* TwoButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C4D79B2DD32F3D00274E51 /* TwoButton.swift */; };
+		D4CDF2A32DD21A6F00DA8161 /* SegmentedControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4CDF2A22DD21A6F00DA8161 /* SegmentedControlView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -357,6 +361,10 @@
 		99DF9E7C2DC4F36D008C15B2 /* BidCastTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BidCastTests.swift; sourceTree = "<group>"; };
 		99DF9E7F2DC4F370008C15B2 /* BidCastUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BidCastUITests.swift; sourceTree = "<group>"; };
 		99DF9E802DC4F370008C15B2 /* BidCastUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BidCastUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		D4C4D7962DD31C2D00274E51 /* ActivityCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityCell.swift; sourceTree = "<group>"; };
+		D4C4D7982DD3263A00274E51 /* SingleTitleLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleTitleLabel.swift; sourceTree = "<group>"; };
+		D4C4D79B2DD32F3D00274E51 /* TwoButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwoButton.swift; sourceTree = "<group>"; };
+		D4CDF2A22DD21A6F00DA8161 /* SegmentedControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedControlView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -509,6 +517,7 @@
 			isa = PBXGroup;
 			children = (
 				99C907CC2DC8CD6A0054620B /* PrimaryButton.swift */,
+				D4C4D79B2DD32F3D00274E51 /* TwoButton.swift */,
 				99C907CD2DC8CD6A0054620B /* AuthTextField.swift */,
 				99C907CE2DC8CD6A0054620B /* MultilineTextField.swift */,
 			);
@@ -712,6 +721,7 @@
 				99C907FC2DC8CD6A0054620B /* NewsCard */,
 				99C908002DC8CD6A0054620B /* JobListingCard */,
 				99C908022DC8CD6A0054620B /* TitleWithUnderLine */,
+				D4C4D7992DD3263A00274E51 /* SingleTitleLabel */,
 				99C908082DC8CD6A0054620B /* Headers */,
 				99C9080A2DC8CD6A0054620B /* LoadingIndicator */,
 				99C9080C2DC8CD6A0054620B /* CustomButton */,
@@ -1055,6 +1065,8 @@
 		99C9088A2DC8CD790054620B /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				D4C4D7952DD31C0F00274E51 /* ActivityCell */,
+				D4CDF2A12DD21A5300DA8161 /* Segment */,
 				99C9084A2DC8CD790054620B /* SubscriptionScreen */,
 				99C908502DC8CD790054620B /* DeleteAccountScreen */,
 				99C908552DC8CD790054620B /* InterviewlistScreen */,
@@ -1402,6 +1414,30 @@
 			path = BidCastUITests;
 			sourceTree = "<group>";
 		};
+		D4C4D7952DD31C0F00274E51 /* ActivityCell */ = {
+			isa = PBXGroup;
+			children = (
+				D4C4D7962DD31C2D00274E51 /* ActivityCell.swift */,
+			);
+			path = ActivityCell;
+			sourceTree = "<group>";
+		};
+		D4C4D7992DD3263A00274E51 /* SingleTitleLabel */ = {
+			isa = PBXGroup;
+			children = (
+				D4C4D7982DD3263A00274E51 /* SingleTitleLabel.swift */,
+			);
+			path = SingleTitleLabel;
+			sourceTree = "<group>";
+		};
+		D4CDF2A12DD21A5300DA8161 /* Segment */ = {
+			isa = PBXGroup;
+			children = (
+				D4CDF2A22DD21A6F00DA8161 /* SegmentedControlView.swift */,
+			);
+			path = Segment;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1572,6 +1608,7 @@
 				99C909292DC8CD790054620B /* NewsScreen.swift in Sources */,
 				355AE96B2DD1D70500CD3D17 /* SignUpModel.swift in Sources */,
 				99C909D52DC8CDDC0054620B /* AboutUsResponseModel.swift in Sources */,
+				D4C4D79A2DD3263A00274E51 /* SingleTitleLabel.swift in Sources */,
 				99C909D62DC8CDDC0054620B /* CombineDataModel.swift in Sources */,
 				99C909D72DC8CDDC0054620B /* LinkedInStatusModel.swift in Sources */,
 				99C909D82DC8CDDC0054620B /* MenuOptionsModal.swift in Sources */,
@@ -1609,6 +1646,7 @@
 				99C909422DC8CD790054620B /* SearchViewModel.swift in Sources */,
 				99C909442DC8CD790054620B /* SubscriptionViewModal.swift in Sources */,
 				99C909452DC8CD790054620B /* ForgotViewModel.swift in Sources */,
+				D4CDF2A32DD21A6F00DA8161 /* SegmentedControlView.swift in Sources */,
 				99C909472DC8CD790054620B /* UserFlowStack.swift in Sources */,
 				99C9094C2DC8CD790054620B /* WelcomeScreen.swift in Sources */,
 				99C909502DC8CD790054620B /* SignupViewModel.swift in Sources */,
@@ -1620,6 +1658,7 @@
 				99C9095A2DC8CD790054620B /* TermsOfServicesScreen.swift in Sources */,
 				99C9095B2DC8CD790054620B /* ResetPasswordScreen.swift in Sources */,
 				99C9095D2DC8CD790054620B /* ForgotScreen.swift in Sources */,
+				D4C4D79C2DD32F3D00274E51 /* TwoButton.swift in Sources */,
 				99C9095E2DC8CD790054620B /* DeleteAccountScreen.swift in Sources */,
 				99C9095F2DC8CD790054620B /* EmployerFlowStack.swift in Sources */,
 				99C909602DC8CD790054620B /* JobPostViewModal.swift in Sources */,
@@ -1670,6 +1709,7 @@
 				99C908192DC8CD6A0054620B /* MultiSelectionDropDownTextField.swift in Sources */,
 				99C9081A2DC8CD6A0054620B /* PrimaryHeader.swift in Sources */,
 				99C9081B2DC8CD6A0054620B /* InterviewScheduledSheet.swift in Sources */,
+				D4C4D7972DD31C2D00274E51 /* ActivityCell.swift in Sources */,
 				99C9081C2DC8CD6A0054620B /* DropDown.swift in Sources */,
 				99C9081D2DC8CD6A0054620B /* TitleWithLine.swift in Sources */,
 				99C9081E2DC8CD6A0054620B /* JobListingCard.swift in Sources */,
