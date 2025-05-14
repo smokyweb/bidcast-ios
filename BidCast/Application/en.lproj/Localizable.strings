@@ -1,0 +1,17 @@
+/* 
+  Localizable.strings
+  BidCast
+
+  Created by jam 1 TB on 14/05/25.
+  
+*/
+"Hello" = "Hello!";
+"About" = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.";
+"Change the language" = "Change the language";
+"Arabic" = "Arabic";
+"English" = "English";
+"Welcome!" = "Welcome!";
+"Select a language" = "Select a language";
+ "E-Mail" = "E-Mail";
+"change_language" = "Change Language";
+

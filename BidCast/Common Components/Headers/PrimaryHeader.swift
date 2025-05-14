@@ -10,6 +10,7 @@ import SwiftUI
 struct PrimaryHeader: View {
     
     var title: String = "Header Title"
+    var isForLogo : Bool = false
     
     var leadingImgArr: [ImageResource] = []
     var trailingImgArr: [ImageResource] = []
@@ -41,7 +42,7 @@ struct PrimaryHeader: View {
                                 .renderingMode(.original)
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: 30, height: 30)
+                                .frame(width: isForLogo ? 90 : 30, height: 30)
                                 .tint(.white)
                                 .padding(.all, 16)
                         })
@@ -83,7 +84,7 @@ struct PrimaryHeader: View {
                                         .overlay(NotificationCountView(value: .constant(count)))
                                 }else{
                                     Image(trailingImgArr[ind])
-                                        .renderingMode(.template)
+                                        .renderingMode(.original)
                                         .resizable()
                                         .scaledToFit()
                                         .frame(width: 30, height: 30)

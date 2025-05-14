@@ -48,10 +48,6 @@ struct MenuListCard: View {
                         .frame(width: 16, height: 16)
                         .foregroundStyle(.text)
                 }
-                
-                
-
-                
             }
             .padding(.all, 8)
             .background(
@@ -62,7 +58,6 @@ struct MenuListCard: View {
         })
         
     }
-    
 }
 
 

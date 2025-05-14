@@ -79,7 +79,7 @@ struct LoginScreen: View {
 //                    }.padding(.bottom, 12)
                     
                     Group {
-                        AuthTextField(floatingLabel: "E-Mail", placeholder: "Enter Email address", icon: .menuProfile, text: $request.email) { email in
+                        AuthTextField(floatingLabel: "E-Mail".localized, placeholder: "Enter Email address", icon: .menuProfile, text: $request.email) { email in
                             self.request.email = email
                         }
                         .textContentType(.username)
@@ -201,7 +201,8 @@ struct LoginScreen: View {
                 }
                 
                 
-                CusNavLink(doNavigate: $navigateToForgot, destination: ForgotScreen())
+//                CusNavLink(doNavigate: $navigateToForgot, destination: ForgotScreen())
+                CusNavLink(doNavigate: $navigateToForgot, destination: LanguagePickerView())
                 CusNavLink(doNavigate: $navigateTotab, destination: TabbarScreen())
 //                CusNavLink(doNavigate: $navigateToEmployer, destination: CreateEmployerProfile())
                 

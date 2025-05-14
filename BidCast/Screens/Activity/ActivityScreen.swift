@@ -8,24 +8,45 @@
 import SwiftUICore
 import SwiftUI
 
+
 struct ActivityScreen: View {
     @State private var selected: Segment = .message
-    var lineLength: CGFloat = 32
-    var divderHeight : CGFloat = 2
+    @Environment(\.presentationMode) var presentationMode
 
     var body: some View {
-        VStack(spacing: 20) {
-            SegmentedControlView(
-                segments: Segment.allCases,
-                selectedSegment: $selected,
-                isWithBorder: false
+//        ZStack{
+        VStack(spacing: 0) {
+            // Fixed Header
+            PrimaryHeader(
+                title: "Activity",
+                isForLogo : true, leadingImgArr: [.appName],
+                trailingImgArr: [.notification],
+                onClickLeading: { _ in
+                    self.presentationMode.wrappedValue.dismiss()
+                },
+                count: .constant(0)
             )
+            //.frame(height: 80)
+            .background(Color.white)
+            .shadow(radius: 2)
+            
+            // Scrollable Content
             ScrollView {
-                ActivityCell(isFor: selected.rawValue)
+                VStack(spacing: 20) {
+                    SegmentedControlView(
+                        segments: Segment.allCases,
+                        selectedSegment: $selected,
+                        isWithBorder: false
+                    )
+                    .frame(height: 40)
+                    ProfileDetailCell()
+//                    ActivityCell(isFor: selected.rawValue)
+                }
             }
-            .frame(maxWidth: .infinity)
+            .padding()
         }
-        .padding()
+        .background(Color(.systemGroupedBackground))
+        .edgesIgnoringSafeArea(.top)
     }
 }
 

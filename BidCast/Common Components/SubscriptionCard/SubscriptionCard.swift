@@ -134,5 +134,4 @@ class GoogleAuthViewModel: ObservableObject {
             
         }
     }
-    
 }

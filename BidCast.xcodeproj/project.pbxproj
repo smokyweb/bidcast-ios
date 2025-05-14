@@ -176,7 +176,13 @@
 		D4C4D7972DD31C2D00274E51 /* ActivityCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C4D7962DD31C2D00274E51 /* ActivityCell.swift */; };
 		D4C4D79A2DD3263A00274E51 /* SingleTitleLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C4D7982DD3263A00274E51 /* SingleTitleLabel.swift */; };
 		D4C4D79C2DD32F3D00274E51 /* TwoButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C4D79B2DD32F3D00274E51 /* TwoButton.swift */; };
+		D4C4D79F2DD3647B00274E51 /* MenuCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C4D79E2DD3647B00274E51 /* MenuCell.swift */; };
 		D4CDF2A32DD21A6F00DA8161 /* SegmentedControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4CDF2A22DD21A6F00DA8161 /* SegmentedControlView.swift */; };
+		D4E569CE2DD461120005A78E /* ProfileDetailCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E569CD2DD461120005A78E /* ProfileDetailCell.swift */; };
+		D4E569D12DD46A3B0005A78E /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = D4E569CF2DD46A3B0005A78E /* Localizable.strings */; };
+		D4E569D72DD46BA10005A78E /* LanguageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E569D62DD46BA10005A78E /* LanguageManager.swift */; };
+		D4E569D92DD46BBE0005A78E /* BundleEx.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E569D82DD46BBE0005A78E /* BundleEx.swift */; };
+		D4E569DB2DD46BE50005A78E /* LanguagePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E569DA2DD46BE50005A78E /* LanguagePickerView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -364,7 +370,14 @@
 		D4C4D7962DD31C2D00274E51 /* ActivityCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityCell.swift; sourceTree = "<group>"; };
 		D4C4D7982DD3263A00274E51 /* SingleTitleLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleTitleLabel.swift; sourceTree = "<group>"; };
 		D4C4D79B2DD32F3D00274E51 /* TwoButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwoButton.swift; sourceTree = "<group>"; };
+		D4C4D79E2DD3647B00274E51 /* MenuCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuCell.swift; sourceTree = "<group>"; };
 		D4CDF2A22DD21A6F00DA8161 /* SegmentedControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedControlView.swift; sourceTree = "<group>"; };
+		D4E569CD2DD461120005A78E /* ProfileDetailCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileDetailCell.swift; sourceTree = "<group>"; };
+		D4E569D02DD46A3B0005A78E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		D4E569D22DD46A5B0005A78E /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/Localizable.strings; sourceTree = "<group>"; };
+		D4E569D62DD46BA10005A78E /* LanguageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageManager.swift; sourceTree = "<group>"; };
+		D4E569D82DD46BBE0005A78E /* BundleEx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleEx.swift; sourceTree = "<group>"; };
+		D4E569DA2DD46BE50005A78E /* LanguagePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguagePickerView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -475,6 +488,7 @@
 				99C907C22DC8CC990054620B /* AppDelegate.swift */,
 				99C907C32DC8CC990054620B /* SceneDelegate.swift */,
 				99DF9E722DC4F367008C15B2 /* BidCastApp.swift */,
+				D4E569CF2DD46A3B0005A78E /* Localizable.strings */,
 			);
 			path = Application;
 			sourceTree = "<group>";
@@ -702,6 +716,7 @@
 		99C9080D2DC8CD6A0054620B /* Common Components */ = {
 			isa = PBXGroup;
 			children = (
+				D4C4D79D2DD3646400274E51 /* MenuCell */,
 				99C907C92DC8CD6A0054620B /* SubscriptionCard */,
 				99C907CB2DC8CD6A0054620B /* InterviewListCard */,
 				99C907CF2DC8CD6A0054620B /* TextField */,
@@ -1065,6 +1080,8 @@
 		99C9088A2DC8CD790054620B /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				D4E569D52DD46B940005A78E /* LanguageManager */,
+				D4E569CC2DD461040005A78E /* ProfileDetailCell */,
 				D4C4D7952DD31C0F00274E51 /* ActivityCell */,
 				D4CDF2A12DD21A5300DA8161 /* Segment */,
 				99C9084A2DC8CD790054620B /* SubscriptionScreen */,
@@ -1430,12 +1447,38 @@
 			path = SingleTitleLabel;
 			sourceTree = "<group>";
 		};
+		D4C4D79D2DD3646400274E51 /* MenuCell */ = {
+			isa = PBXGroup;
+			children = (
+				D4C4D79E2DD3647B00274E51 /* MenuCell.swift */,
+			);
+			path = MenuCell;
+			sourceTree = "<group>";
+		};
 		D4CDF2A12DD21A5300DA8161 /* Segment */ = {
 			isa = PBXGroup;
 			children = (
 				D4CDF2A22DD21A6F00DA8161 /* SegmentedControlView.swift */,
 			);
 			path = Segment;
+			sourceTree = "<group>";
+		};
+		D4E569CC2DD461040005A78E /* ProfileDetailCell */ = {
+			isa = PBXGroup;
+			children = (
+				D4E569CD2DD461120005A78E /* ProfileDetailCell.swift */,
+			);
+			path = ProfileDetailCell;
+			sourceTree = "<group>";
+		};
+		D4E569D52DD46B940005A78E /* LanguageManager */ = {
+			isa = PBXGroup;
+			children = (
+				D4E569D62DD46BA10005A78E /* LanguageManager.swift */,
+				D4E569D82DD46BBE0005A78E /* BundleEx.swift */,
+				D4E569DA2DD46BE50005A78E /* LanguagePickerView.swift */,
+			);
+			path = LanguageManager;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1535,6 +1578,7 @@
 			knownRegions = (
 				en,
 				Base,
+				ar,
 			);
 			mainGroup = 99DF9E362DC4F35D008C15B2;
 			minimizedProjectReferenceProxies = 1;
@@ -1564,6 +1608,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				99C909ED2DC8CDF90054620B /* Preview Assets.xcassets in Resources */,
+				D4E569D12DD46A3B0005A78E /* Localizable.strings in Resources */,
 				99DF9E772DC4F367008C15B2 /* Assets.xcassets in Resources */,
 				35A0450A2DC8DCFD0067C447 /* Color.xcassets in Resources */,
 			);
@@ -1592,6 +1637,7 @@
 			files = (
 				99DF9E782DC4F367008C15B2 /* BidCast.xcdatamodeld in Sources */,
 				99DF9E792DC4F367008C15B2 /* BidCastApp.swift in Sources */,
+				D4C4D79F2DD3647B00274E51 /* MenuCell.swift in Sources */,
 				99C9080E2DC8CD6A0054620B /* DocView.swift in Sources */,
 				99C9080F2DC8CD6A0054620B /* AlertPopUp.swift in Sources */,
 				99C908102DC8CD6A0054620B /* HeaderWithImage.swift in Sources */,
@@ -1604,6 +1650,7 @@
 				99C9091C2DC8CD790054620B /* NewsViewModel.swift in Sources */,
 				99C9091D2DC8CD790054620B /* MenuScreen.swift in Sources */,
 				99C9091E2DC8CD790054620B /* NotificationViewModel.swift in Sources */,
+				D4E569D72DD46BA10005A78E /* LanguageManager.swift in Sources */,
 				99C909252DC8CD790054620B /* EmployerProfileScreen.swift in Sources */,
 				99C909292DC8CD790054620B /* NewsScreen.swift in Sources */,
 				355AE96B2DD1D70500CD3D17 /* SignUpModel.swift in Sources */,
@@ -1611,6 +1658,7 @@
 				D4C4D79A2DD3263A00274E51 /* SingleTitleLabel.swift in Sources */,
 				99C909D62DC8CDDC0054620B /* CombineDataModel.swift in Sources */,
 				99C909D72DC8CDDC0054620B /* LinkedInStatusModel.swift in Sources */,
+				D4E569CE2DD461120005A78E /* ProfileDetailCell.swift in Sources */,
 				99C909D82DC8CDDC0054620B /* MenuOptionsModal.swift in Sources */,
 				99C909D92DC8CDDC0054620B /* InterviewlistModel.swift in Sources */,
 				355AE97E2DD1FC4900CD3D17 /* SellScreen.swift in Sources */,
@@ -1627,6 +1675,7 @@
 				99C909E22DC8CDDC0054620B /* InterviewScheduleModal.swift in Sources */,
 				99C909E32DC8CDDC0054620B /* NotificationResponseModel.swift in Sources */,
 				99C909E42DC8CDDC0054620B /* LinkedInUserDetail.swift in Sources */,
+				D4E569DB2DD46BE50005A78E /* LanguagePickerView.swift in Sources */,
 				99C909E52DC8CDDC0054620B /* UserJobModal.swift in Sources */,
 				99C909E62DC8CDDC0054620B /* CreateCompanyRequest.swift in Sources */,
 				99C909E72DC8CDDC0054620B /* LoginResponseModel.swift in Sources */,
@@ -1695,6 +1744,7 @@
 				99C909622DC8CD790054620B /* PrivacyPolicyScreen.swift in Sources */,
 				99C909632DC8CD790054620B /* SubCompanyCard.swift in Sources */,
 				99C909682DC8CD790054620B /* NotificationScreen.swift in Sources */,
+				D4E569D92DD46BBE0005A78E /* BundleEx.swift in Sources */,
 				99C9096E2DC8CD790054620B /* InterviewlistViewModel.swift in Sources */,
 				99C9096F2DC8CD790054620B /* EmployerSearchScreen.swift in Sources */,
 				99C909702DC8CD790054620B /* LoginScreen.swift in Sources */,
@@ -1782,6 +1832,18 @@
 			targetProxy = 99DF9E5D2DC4F361008C15B2 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		D4E569CF2DD46A3B0005A78E /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D4E569D02DD46A3B0005A78E /* en */,
+				D4E569D22DD46A5B0005A78E /* ar */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		99DF9E642DC4F361008C15B2 /* Debug */ = {

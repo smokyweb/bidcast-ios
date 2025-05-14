@@ -23,6 +23,10 @@ extension String{
 //        }
     }
     
+    var localized: String {
+        NSLocalizedString(self, comment: "")
+    }
+    
     var htmlToString: String {
         return htmlToAttributedString?.string ?? ""
     }
@@ -35,10 +39,10 @@ extension String{
         return self
     }
     
-    func localized() -> String
-    {
-        return self.localized(lang: UserDefaults.standard.object(forKey: "language") != nil ? UserDefaults.standard.object(forKey: "language") as! String : "en")
-    }
+//    func localized() -> String
+//    {
+//        return self.localized(lang: UserDefaults.standard.object(forKey: "language") != nil ? UserDefaults.standard.object(forKey: "language") as! String : "en")
+//    }
     
     var trim: String {
         return trimmingCharacters(in: .whitespacesAndNewlines)
