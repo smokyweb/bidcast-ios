@@ -326,7 +326,7 @@ struct LoginScreen: View {
                     }
 //                }else{
                 alertType = .sheetType(icon: .success, title: dict?.status?.capitalized ?? "", message: AppString.chooseLanguage.localized, primaryBtnText: AppString.continueBtn.localized , secondaryBtnText: "", sheetThemeColor: .secondary)
-                withAnimation(.snappy) { navigateToLanguage = true }
+                withAnimation(.snappy) { navigateTotab = true }
                
 //                }
             }else{
