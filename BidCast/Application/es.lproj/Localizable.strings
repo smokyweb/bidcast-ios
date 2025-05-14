@@ -1,0 +1,55 @@
+/* 
+  Localizable.strings
+  BidCast
+
+  Created by JAM_E_329 on 14/05/25.
+  
+*/
+"Activity" = "Actividad";
+"Email Address" = "Dirección de correo electrónico";
+"Password" = "Contraseña"; 
+"Email" = "Correo electrónico";
+"Enter Email Address" = "Ingrese la dirección de correo electrónico";
+"Enter Password" = "Ingrese la contraseña";
+"Remember Me" = "Recuérdame";
+"Forgot Password?" = "¿Olvidaste tu contraseña?";
+"Login" = "Iniciar sesión";
+"New User?" = "¿Nuevo usuario?";
+"Create Account" = "Crear cuenta";
+"Please Enter Email" = "Por favor, ingrese el correo electrónico";
+"Please Enter Password" = "Por favor, ingrese la contraseña";
+"Confirm Password" = "Confirmar contraseña";
+"Confirm New Password" = "Confirmar nueva contraseña";
+"Please Enter New Password" = "Por favor, ingrese la nueva contraseña";
+"Please Confirm Password" = "Por favor, confirme la contraseña";
+"Password can not be less than 8 characters" = "La contraseña no puede tener menos de 8 caracteres";
+"Password and Confirm Password can not be different" = "La contraseña y la confirmación no pueden ser diferentes";
+"Continue" = "Continuar";
+"Login Failed" = "Error de inicio de sesión";
+"Fail to login with current credentials" = "Error al iniciar sesión con las credenciales actuales";
+"Retry Login" = "Reintentar inicio de sesión";
+"Error" = "Error";
+"Please enter the email address associated with your account" = "Por favor, ingrese la dirección de correo asociada con su cuenta";
+"Submit" = "Enviar";
+"Please enter a valid mail address" = "Por favor, ingrese una dirección de correo válida";
+"Ok" = "Aceptar";
+"Enter Code" = "Ingrese el código";
+"Enter OTP" = "Ingrese el código OTP";
+"Resend OTP" = "Reenviar código OTP";
+"OTP can not be empty" = "El código OTP no puede estar vacío";
+"Please enter the OTP" = "Por favor, ingrese el código OTP";
+"OTP must be numeric" = "El código OTP debe ser numérico";
+"Verify OTP" = "Verificar código OTP";
+"Reset Password" = "Restablecer contraseña";
+"Proceed to Login" = "Continuar al inicio de sesión";
+"Create Your Account" = "Cree su cuenta";
+"First Name" = "Nombre";
+"Enter First Name" = "Ingrese su nombre";
+"Last Name" = "Apellido";
+"Enter Last Name" = "Ingrese su apellido";
+"Please Enter First Name" = "Por favor, ingrese su nombre";
+"Please Enter Last Name" = "Por favor, ingrese su apellido";
+"Back to Login" = "Volver al inicio de sesión";
+"Choose Language" = "Elegir idioma";
+
+

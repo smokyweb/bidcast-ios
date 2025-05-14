@@ -1,0 +1,55 @@
+/* 
+  Localizable.strings
+  BidCast
+
+  Created by JAM_E_329 on 14/05/25.
+  
+*/
+"Activity" = "गतिविधि";
+"Email Address" = "ईमेल पता";
+"Password" = "पासवर्ड";  
+"Email" = "ईमेल";
+"Enter Email Address" = "ईमेल पता दर्ज करें";
+"Enter Password" = "पासवर्ड दर्ज करें";
+"Remember Me" = "मुझे याद रखें";
+"Forgot Password?" = "पासवर्ड भूल गए?";
+"Login" = "लॉगिन करें";
+"New User?" = "नया उपयोगकर्ता?";
+"Create Account" = "खाता बनाएं";
+"Please Enter Email" = "कृपया ईमेल दर्ज करें";
+"Please Enter Password" = "कृपया पासवर्ड दर्ज करें";
+"Confirm Password" = "पासवर्ड की पुष्टि करें";
+"Confirm New Password" = "नया पासवर्ड पुष्टि करें";
+"Please Enter New Password" = "कृपया नया पासवर्ड दर्ज करें";
+"Please Confirm Password" = "कृपया पासवर्ड की पुष्टि करें";
+"Password can not be less than 8 characters" = "पासवर्ड 8 अक्षरों से कम नहीं हो सकता";
+"Password and Confirm Password can not be different" = "पासवर्ड और पुष्टि पासवर्ड भिन्न नहीं हो सकते";
+"Continue" = "जारी रखें";
+"Login Failed" = "लॉगिन विफल";
+"Fail to login with current credentials" = "वर्तमान प्रमाण-पत्रों से लॉगिन विफल";
+"Retry Login" = "लॉगिन पुनः प्रयास करें";
+"Error" = "त्रुटि";
+"Please enter the email address associated with your account" = "कृपया अपने खाते से जुड़ा ईमेल पता दर्ज करें";
+"Submit" = "जमा करें";
+"Please enter a valid mail address" = "कृपया मान्य ईमेल पता दर्ज करें";
+"Ok" = "ठीक है";
+"Enter Code" = "कोड दर्ज करें";
+"Enter OTP" = "ओटीपी दर्ज करें";
+"Resend OTP" = "ओटीपी पुनः भेजें";
+"OTP can not be empty" = "ओटीपी खाली नहीं हो सकता";
+"Please enter the OTP" = "कृपया ओटीपी दर्ज करें";
+"OTP must be numeric" = "ओटीपी केवल अंकीय होना चाहिए";
+"Verify OTP" = "ओटीपी सत्यापित करें";
+"Reset Password" = "पासवर्ड रीसेट करें";
+"Proceed to Login" = "लॉगिन के लिए आगे बढ़ें";
+"Create Your Account" = "अपना खाता बनाएं";
+"First Name" = "पहला नाम";
+"Enter First Name" = "पहला नाम दर्ज करें";
+"Last Name" = "अंतिम नाम";
+"Enter Last Name" = "अंतिम नाम दर्ज करें";
+"Please Enter First Name" = "कृपया पहला नाम दर्ज करें";
+"Please Enter Last Name" = "कृपया अंतिम नाम दर्ज करें";
+"Back to Login" = "लॉगिन पर वापस जाएं";
+"Choose Language" = "भाषा चुनें";
+
+

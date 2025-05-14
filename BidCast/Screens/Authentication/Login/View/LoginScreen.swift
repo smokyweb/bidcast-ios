@@ -18,6 +18,8 @@ struct LoginScreen: View {
     @EnvironmentObject private var appRootManager: AppRootManager
 //    @EnvironmentObject var coreDataManager: CoreDataProvider
     @Environment(\.managedObjectContext) var viewContext
+    @ObservedObject var languageManager = LanguageManager.shared
+
     
 //    @FetchRequest(sortDescriptors: []) private var loginDetailList: FetchedResults<Login>
     
@@ -25,6 +27,7 @@ struct LoginScreen: View {
     @State var isLoading: Bool = false
     @State var showError: Bool = false
     @State var navigateToForgot: Bool = false
+    @State var navigateToLanguage: Bool = false
     @State var navigateToSignUp: Bool = false
     @State var navigateTotab: Bool = false
     @State var signInWithApple: Bool = false
@@ -79,13 +82,13 @@ struct LoginScreen: View {
 //                    }.padding(.bottom, 12)
                     
                     Group {
-                        AuthTextField(floatingLabel: "E-Mail".localized, placeholder: "Enter Email address", icon: .menuProfile, text: $request.email) { email in
+                        AuthTextField(floatingLabel: AppString.email.localized, placeholder: AppString.enterEmail.localized, icon: .menuProfile, text: $request.email) { email in
                             self.request.email = email
                         }
                         .textContentType(.username)
                         .keyboardType(.emailAddress)
                         
-                        AuthTextField(floatingLabel: "Password", placeholder: "Enter Password", icon: .passwordLock, text: $request.password, isPassword: true) { password in
+                        AuthTextField(floatingLabel: AppString.password.localized, placeholder: AppString.enterPassword.localized, icon: .passwordLock, text: $request.password, isPassword: true) { password in
                             self.request.password = password
                         }
                         .textContentType(.password)
@@ -101,7 +104,7 @@ struct LoginScreen: View {
                                 .frame(width: 25, height: 25)
                                 .tint(.red)
                             
-                            Text("Remember Me")
+                            Text(AppString.rememberMe.localized)
                                 .font(.custom(nunitoMedium, fixedSize: 14))
                                 .foregroundStyle(.gray)
                         })
@@ -113,14 +116,14 @@ struct LoginScreen: View {
                                 navigateToForgot = true
                             }
                         }, label: {
-                            Text("Forgot password?")
+                            Text(AppString.forgotPassword.localized)
                                 .font(.custom(nunitoRegular, fixedSize: 14))
                                 .foregroundStyle(.defaultTheme)
                         })
                     }.padding([.top, .bottom], 10)
                     
                     
-                    PrimaryButton(title: "Login", isOutLine: false) {
+                    PrimaryButton(title: AppString.login.localized, isOutLine: false) {
                         UIApplication.shared.endEditing()
                         
 //                        SecAddSharedWebCredential(
@@ -131,7 +134,7 @@ struct LoginScreen: View {
 //                            }
                         
                         guard !request.email.isEmpty else {
-                            hudMsg = "Email can not be empty."
+                            hudMsg = AppString.pleaseEnterEmail.localized
                             showhud = true
                             return
                         }
@@ -143,13 +146,13 @@ struct LoginScreen: View {
 //                        }
                         
                         guard !request.password.isEmpty else {
-                            hudMsg = "Password can not be empty."
+                            hudMsg = AppString.pleaseEnterPassword.localized
                             showhud = true
                             return
                         }
                         
                         guard request.password.count > 7 else {
-                            hudMsg = "Password can not be less than 8 characters."
+                            hudMsg = AppString.passwordNotLessThan.localized
                             showhud = true
                             return
                         }
@@ -160,7 +163,7 @@ struct LoginScreen: View {
                     
                     HStack(spacing: 6) {
                         Spacer()
-                        Text("New User? ")
+                        Text(AppString.newUser.localized)
                             .font(.custom(nunitoMedium, fixedSize: 14))
                             .foregroundStyle(.gray)
                         Button(action: {
@@ -169,25 +172,25 @@ struct LoginScreen: View {
 //                                navigatetoUser = true
                             }
                         }, label: {
-                            Text("Create Account")
+                            Text(AppString.createAccount.localized)
                                 .font(.custom(nunitoBold, fixedSize: 14))
                                 .foregroundStyle(.red)
                         })
                         Spacer()
                     }.padding([.top, .bottom], 12)
                     
-                    HStack(spacing: 6) {
-                        Spacer()
-                        Text("Privacy Policy |")
-                            .font(.custom(nunitoMedium, fixedSize: 14))
-                            .foregroundStyle(.gray)
-                        
-                        Text("Terms of Services")
-                            .font(.custom(nunitoBold, fixedSize: 14))
-                            .foregroundStyle(.gray)
-                       
-                        Spacer()
-                    }.padding([.top, .bottom], 25)
+//                    HStack(spacing: 6) {
+//                        Spacer()
+//                        Text("Privacy Policy |")
+//                            .font(.custom(nunitoMedium, fixedSize: 14))
+//                            .foregroundStyle(.gray)
+//                        
+//                        Text("Terms of Services")
+//                            .font(.custom(nunitoBold, fixedSize: 14))
+//                            .foregroundStyle(.gray)
+//                       
+//                        Spacer()
+//                    }.padding([.top, .bottom], 25)
                 }
                 .padding([.leading, .trailing])
                 .padding(.top, screenHeight/3)
@@ -199,11 +202,11 @@ struct LoginScreen: View {
                 if isLoading {
                     Loader(isLoading: $isLoading)
                 }
-                
-                
-//                CusNavLink(doNavigate: $navigateToForgot, destination: ForgotScreen())
+            
+                CusNavLink(doNavigate: $navigateToForgot, destination: ForgotScreen())
                 CusNavLink(doNavigate: $navigateToForgot, destination: LanguagePickerView())
                 CusNavLink(doNavigate: $navigateTotab, destination: TabbarScreen())
+                CusNavLink(doNavigate: $navigateToLanguage, destination: LanguagePickerView())
 //                CusNavLink(doNavigate: $navigateToEmployer, destination: CreateEmployerProfile())
                 
 //                CusNavLink(doNavigate: $navigatetoUser, destination: WelcomeScreen())
@@ -215,16 +218,15 @@ struct LoginScreen: View {
 //                CusNavLink(doNavigate: $navigateToCompanyUser, destination: EmployerHomeScreen())
 
             }
-        }
+        }.id(languageManager.languageChanged)
         .bottomSheet(isPresented: $showError, height: screenHeight/2.3, topBarCornerRadius: 25, showTopIndicator: false, content: {
             CommonBottomSheet(
                 sheetType: $alertType,
                 onPrimaryClick: {
                     withAnimation { showError = false }
-                    if alertType.primaryBtnText == "Continue" {
-                        navigateToSignUp = true
+                    if alertType.primaryBtnText == AppString.continueBtn.localized {
+                        navigateToLanguage = true
                     }
-                    navigateTotab = true
                 }, onSecondaryClick: {
                     withAnimation { showError = false }
                 })
@@ -267,11 +269,11 @@ struct LoginScreen: View {
                     success()
                 case .error(let error):
                     if error?.localizedDescription == DataError.tokenExpired.localizedDescription {
-                        alertType = .sheetType(icon: .alert, title: "Login Failed", message: "Fail to login with current credentials", primaryBtnText: "", secondaryBtnText: "Retry Login", sheetThemeColor: .secondary)
+                        alertType = .sheetType(icon: .alert, title: AppString.loginFailed.localized, message: AppString.failedToLogin.localized , primaryBtnText: "", secondaryBtnText: AppString.retryLogin.localized, sheetThemeColor: .secondary)
                         showError = true
                         Log.e(error as Any)
                     } else {
-                        alertType = .sheetType(icon: .alert, title: "Error", message: error?.localizedDescription ?? "", primaryBtnText: "", secondaryBtnText: "Ok", sheetThemeColor: .secondary)
+                        alertType = .sheetType(icon: .alert, title: AppString.error.localized, message: error?.localizedDescription ?? "", primaryBtnText: "", secondaryBtnText: AppString.error.localized, sheetThemeColor: .secondary)
                         showError = true
                         Log.e(error as Any)
                     }
@@ -285,12 +287,13 @@ struct LoginScreen: View {
        if viewModel.requestType == "Login" {
             let dict = viewModel.loginResponceDict
             if dict?.status == "success" {
-                UserDefaults.isFirstLogin = dict?.data.is_first_login ?? 0
+                UserDefaults.isFirstLogin = 1
 //                if dict?.data.role_id != "1" {
                     loginDetail = dict!.data
                     UserDefaultsManager.shared.setValue(dict?.data.token, forKey: .token)
                     UserDefaultsManager.shared.setModel(dict?.data, forKey: .userDetail)
                     UserDefaultsManager.shared.setValue(isRemeber, forKey: .rememberMe)
+                
 //                    if isRemeber {
 //                        saveLoginDetail(mail: request.email, password: request.password)
 //                    } else {
@@ -318,14 +321,16 @@ struct LoginScreen: View {
 //                    }
                     
                     if let token: String = UserDefaultsManager.shared.value(forKey: .deviceToken) {
+                        print("Device Token \(token)")
 //                        viewModel.saveDeviceDetail(parameter: DeviceDetailModal(device_token: token, device_platform: UIDevice.current.systemName.lowercased(), device_version: UIDevice.current.systemVersion))
                     }
 //                }else{
-//                alertType = .sheetType(icon: .success, title: dict?.status?.capitalized ?? "", message: dict?.message ?? "", primaryBtnText: "OK" , secondaryBtnText: "", sheetThemeColor: .secondary)
-                withAnimation(.snappy) { navigateTotab = true }
+                alertType = .sheetType(icon: .success, title: dict?.status?.capitalized ?? "", message: AppString.chooseLanguage.localized, primaryBtnText: AppString.continueBtn.localized , secondaryBtnText: "", sheetThemeColor: .secondary)
+                withAnimation(.snappy) { navigateToLanguage = true }
+               
 //                }
             }else{
-                alertType = .sheetType(icon: .alert, title: dict?.status?.capitalized ?? "", message: dict?.message ?? "", primaryBtnText: "OK", secondaryBtnText: "", sheetThemeColor: .secondary)
+                alertType = .sheetType(icon: .alert, title: dict?.status?.capitalized ?? "", message: dict?.message ?? "", primaryBtnText: AppString.ok.localized, secondaryBtnText: "", sheetThemeColor: .secondary)
                 withAnimation(.snappy) { showError = true }
             }
 //        } else if viewModel.requestType == "SaveDeviceDetail" {

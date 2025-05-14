@@ -2,19 +2,52 @@
   Localizable.strings
   BidCast
 
-  Created by jam 1 TB on 14/05/25.
+  Created by JAM_E_329 on 14/05/25.
   
 */
-"Hello" = "Hello!";
-"About" = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.";
-"Change the language" = "Change the language";
-"Arabic" = "Arabic";
-"English" = "English";
-"Welcome!" = "Welcome!";
-"Select a language" = "Select a language";
- "E-Mail" = "E-Mail";
-"change_language" = "Change Language";
-
-"Live Now" = "Live Now";
-"Popular" = "Popular";
-"coming Soon" = "coming Soon";
+"Activity" = "Activity";
+"Password" = "Password";
+"Email Address" = "Email Address";
+"Email" = "Email";
+"Enter Email Address" = "Enter Email Address";
+"Enter Password" = "Enter Password";
+"Remember Me" = "Remember Me";
+"Forgot Password?" = "Forgot Password?";
+"Login" = "Login";
+"New User?" = "New User?";
+"Create Account" = "Create Account";
+"Please Enter Email" = "Please Enter Email";
+"Please Enter Password" = "Please Enter Password";
+"Confirm Password" = "Confirm Password";
+"Confirm New Password" = "Confirm New Password";
+"Please Enter New Password" = "Please Enter New Password";
+"Please Confirm Password" = "Please Confirm Password";
+"Password can not be less than 8 characters" = "Password can not be less than 8 characters";
+"Password and Confirm Password can not be different" = "Password and Confirm Password can not be different";
+"Continue" = "Continue";
+"Login Failed" = "Login Failed";
+"Fail to login with current credentials" = "Fail to login with current credentials";
+"Retry Login" = "Retry Login";
+"Error" = "Error";
+"Please enter the email address associated with your account" = "Please enter the email address associated with your account";
+"Submit" = "Submit";
+"Please enter a valid mail address" = "Please enter a valid mail address";
+"Ok" = "Ok";
+"Enter Code" = "Enter Code";
+"Enter OTP" = "Enter OTP";
+"Resend OTP" = "Resend OTP";
+"OTP can not be empty" = "OTP can not be empty";
+"Please enter the OTP" = "Please enter the OTP";
+"OTP must be numeric" = "OTP must be numeric";
+"Verify OTP" = "Verify OTP";
+"Reset Password" = "Reset Password";
+"Proceed to Login" = "Proceed to Login";
+"Create Your Account" = "Create Your Account";
+"First Name" = "First Name";
+"Enter First Name" = "Enter First Name";
+"Last Name" = "Last Name";
+"Enter Last Name" = "Enter Last Name";
+"Please Enter First Name" = "Please Enter First Name";
+"Please Enter Last Name" = "Please Enter Last Name";
+"Back to Login" = "Back to Login";
+"Choose Language" = "Choose Language";

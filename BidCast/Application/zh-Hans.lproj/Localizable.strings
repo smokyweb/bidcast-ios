@@ -1,0 +1,53 @@
+/* 
+  Localizable.strings
+  BidCast
+
+  Created by JAM_E_329 on 14/05/25.
+  
+*/
+"Activity" = "活动";
+"Email Address" = "电子邮件地址";
+"Email" = "电子邮件";
+"Password" = "密码";
+"Enter Email Address" = "请输入电子邮件地址";
+"Enter Password" = "请输入密码";
+"Remember Me" = "记住我";
+"Forgot Password?" = "忘记密码？";
+"Login" = "登录";
+"New User?" = "新用户？";
+"Create Account" = "创建账户";
+"Please Enter Email" = "请输入电子邮件";
+"Please Enter Password" = "请输入密码";
+"Confirm Password" = "确认密码";
+"Confirm New Password" = "确认新密码";
+"Please Enter New Password" = "请输入新密码";
+"Please Confirm Password" = "请确认密码";
+"Password can not be less than 8 characters" = "密码不能少于8个字符";
+"Password and Confirm Password can not be different" = "密码和确认密码必须一致";
+"Continue" = "继续";
+"Login Failed" = "登录失败";
+"Fail to login with current credentials" = "使用当前凭据登录失败";
+"Retry Login" = "重试登录";
+"Error" = "错误";
+"Please enter the email address associated with your account" = "请输入与您的账户关联的电子邮件地址";
+"Submit" = "提交";
+"Please enter a valid mail address" = "请输入有效的电子邮件地址";
+"Ok" = "确定";
+"Enter Code" = "输入验证码";
+"Enter OTP" = "输入一次性密码";
+"Resend OTP" = "重新发送一次性密码";
+"OTP can not be empty" = "一次性密码不能为空";
+"Please enter the OTP" = "请输入一次性密码";
+"OTP must be numeric" = "一次性密码必须是数字";
+"Verify OTP" = "验证一次性密码";
+"Reset Password" = "重置密码";
+"Proceed to Login" = "继续登录";
+"Create Your Account" = "创建您的账户";
+"First Name" = "名字";
+"Enter First Name" = "请输入名字";
+"Last Name" = "姓氏";
+"Enter Last Name" = "请输入姓氏";
+"Please Enter First Name" = "请输入名字";
+"Please Enter Last Name" = "请输入姓氏";
+"Back to Login" = "返回登录";
+"Choose Language" = "选择语言";

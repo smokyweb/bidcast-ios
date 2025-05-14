@@ -60,6 +60,7 @@ struct BidCastApp: App {
                     
             }
             .environmentObject(appRootManager)
+            .environmentObject(LanguageManager.shared)
 //            .environmentObject(manager)
         }
     }

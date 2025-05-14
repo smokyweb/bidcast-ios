@@ -13,15 +13,19 @@ class LanguageManager: ObservableObject {
 
     @Published var selectedLanguage: String {
         didSet {
-            UserDefaults.standard.set([selectedLanguage], forKey: "AppleLanguages")
-            UserDefaults.standard.synchronize()
+            UserDefaults.standard.set(selectedLanguage, forKey: "selectedLanguage")
             Bundle.setLanguage(selectedLanguage)
+            // Trigger refresh
+            languageChanged.toggle()
         }
     }
 
-    init() {
-        let current = Locale.preferredLanguages.first ?? "en"
-        self.selectedLanguage = current.contains("ar") ? "ar" : "en"
+    // This forces views to re-render
+    @Published var languageChanged = false
+
+    private init() {
+        self.selectedLanguage = UserDefaults.standard.string(forKey: "selectedLanguage") ?? "en"
         Bundle.setLanguage(selectedLanguage)
     }
 }
+

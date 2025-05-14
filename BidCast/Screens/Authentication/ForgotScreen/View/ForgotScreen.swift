@@ -32,32 +32,32 @@ struct ForgotScreen: View {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 25) {
                     Color.clear.frame(height: 5)
-                    TitleWithLine(title: "Forgot Password", lineLength: 48)
+                    TitleWithLine(title: AppString.forgotPassword, lineLength: 48)
                     
-                    Text("Please enter the email address associated with your account")
+                    Text(AppString.emailAddressNotAssociated.localized)
                         .font(.custom(nunitoMedium, fixedSize: 16))
                         .foregroundStyle(.black)
                     
                     AuthTextField(
-                        floatingLabel: "EMAIL ADDRESS",
-                        placeholder: "Enter Email address",
+                        floatingLabel: AppString.email.localized,
+                        placeholder: AppString.enterEmail.localized,
                         icon: .icMail,
                         text: $request.email
                     ) { email in
                         self.request.email = email
                     }
                     
-                    PrimaryButton(title: "Submit", isOutLine: false) {
+                    PrimaryButton(title: AppString.submit.localized, isOutLine: false) {
                         UIApplication.shared.endEditing()
                         
                         guard !request.email.isEmpty else {
-                            hudMsg = "Please enter email address"
+                            hudMsg = AppString.pleaseEnterEmail.localized
                             showhud = true
                             return
                         }
                         
                         guard request.email.isValidEmail() else {
-                            hudMsg = "Please enter a valid mail id."
+                            hudMsg = AppString.pleaseEnterValidEmailAddress.localized
                             showhud = true
                             return
                         }
@@ -71,7 +71,7 @@ struct ForgotScreen: View {
             
             // Fixed Header
             PrimaryHeader(
-                title: "Forget Password",
+                title: AppString.forgotPassword.localized,
                 leadingImgArr: [.icBack],
                 onClickLeading: { _ in
                     self.presentationMode.wrappedValue.dismiss()
@@ -129,10 +129,10 @@ struct ForgotScreen: View {
             case .error(let error):
                 alertType = .sheetType(
                     icon: .alert,
-                    title: "Error",
+                    title: AppString.error.localized,
                     message: error?.localizedDescription ?? "",
                     primaryBtnText: "",
-                    secondaryBtnText: "Ok",
+                    secondaryBtnText: AppString.ok.localized,
                     sheetThemeColor: .pinkBtn
                 )
                 showError = true
@@ -145,12 +145,12 @@ struct ForgotScreen: View {
         
         if response.status == "success" {
             UserDefaultsManager.shared.setValue(request.email, forKey: .mailId)
-            alertType = .sheetType(icon: .success, title: response.status.capitalized, message: response.message.capitalized, primaryBtnText: "", secondaryBtnText: "Ok", sheetThemeColor: .green)
+            alertType = .sheetType(icon: .success, title: response.status.capitalized, message: response.message.capitalized, primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .green)
             showError = true
             isPassword = true
             withAnimation(.snappy) { navigateToOTP = true }
         } else {
-            alertType = .sheetType(icon: .alert, title: response.status.capitalized, message: response.message.capitalized, primaryBtnText: "", secondaryBtnText: "Ok", sheetThemeColor: .pinkBtn)
+            alertType = .sheetType(icon: .alert, title: response.status.capitalized, message: response.message.capitalized, primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .pinkBtn)
             withAnimation(.snappy) { showError = true }
         }
     }

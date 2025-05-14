@@ -1,0 +1,56 @@
+/* 
+  Localizable.strings
+  BidCast
+
+  Created by JAM_E_329 on 14/05/25.
+  
+*/
+
+"Activity" = "Активность";
+"Email Address" = "Адрес электронной почты";
+"Password" = "Пароль"; 
+"Email" = "Электронная почта";
+"Enter Email Address" = "Введите адрес электронной почты";
+"Enter Password" = "Введите пароль";
+"Remember Me" = "Запомнить меня";
+"Forgot Password?" = "Забыли пароль?";
+"Login" = "Войти";
+"New User?" = "Новый пользователь?";
+"Create Account" = "Создать аккаунт";
+"Please Enter Email" = "Пожалуйста, введите адрес электронной почты";
+"Please Enter Password" = "Пожалуйста, введите пароль";
+"Confirm Password" = "Подтвердите пароль";
+"Confirm New Password" = "Подтвердите новый пароль";
+"Please Enter New Password" = "Пожалуйста, введите новый пароль";
+"Please Confirm Password" = "Пожалуйста, подтвердите пароль";
+"Password can not be less than 8 characters" = "Пароль не может быть меньше 8 символов";
+"Password and Confirm Password can not be different" = "Пароль и подтверждение пароля не совпадают";
+"Continue" = "Продолжить";
+"Login Failed" = "Ошибка входа";
+"Fail to login with current credentials" = "Не удалось войти с текущими данными";
+"Retry Login" = "Повторить вход";
+"Error" = "Ошибка";
+"Please enter the email address associated with your account" = "Введите адрес электронной почты, связанный с вашей учетной записью";
+"Submit" = "Отправить";
+"Please enter a valid mail address" = "Пожалуйста, введите действительный адрес электронной почты";
+"Ok" = "Ок";
+"Enter Code" = "Введите код";
+"Enter OTP" = "Введите код подтверждения";
+"Resend OTP" = "Отправить код повторно";
+"OTP can not be empty" = "Код подтверждения не может быть пустым";
+"Please enter the OTP" = "Пожалуйста, введите код подтверждения";
+"OTP must be numeric" = "Код подтверждения должен содержать только цифры";
+"Verify OTP" = "Подтвердить код";
+"Reset Password" = "Сбросить пароль";
+"Proceed to Login" = "Перейти к входу";
+"Create Your Account" = "Создайте аккаунт";
+"First Name" = "Имя";
+"Enter First Name" = "Введите имя";
+"Last Name" = "Фамилия";
+"Enter Last Name" = "Введите фамилию";
+"Please Enter First Name" = "Пожалуйста, введите имя";
+"Please Enter Last Name" = "Пожалуйста, введите фамилию";
+"Back to Login" = "Назад ко входу";
+"Choose Language" = "Выбрать язык";
+"Choose Language" = "言語を選択";
+

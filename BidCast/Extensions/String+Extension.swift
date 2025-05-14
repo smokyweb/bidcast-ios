@@ -24,14 +24,13 @@ extension String{
     }
     
     var localized: String {
-        NSLocalizedString(self, comment: "")
+        return Bundle.main.localizedString(forKey: self, value: nil, table: nil)
     }
     
     var htmlToString: String {
         return htmlToAttributedString?.string ?? ""
     }
-    
-    
+
     func localized(lang:String) -> String {
         if let path = Bundle.main.path(forResource: lang, ofType: "lproj"), let bundle = Bundle(path: path) {
             return bundle.localizedString(forKey: self, value: nil, table: nil)

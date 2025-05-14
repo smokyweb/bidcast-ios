@@ -6,10 +6,11 @@
 //
 
 import Foundation
+import ObjectiveC
 
 private var bundleKey: UInt8 = 0
 
-class BundleEx: Bundle {
+class CustomBundle: Bundle {
     override func localizedString(forKey key: String, value: String?, table tableName: String?) -> String {
         guard let bundle = objc_getAssociatedObject(self, &bundleKey) as? Bundle else {
             return super.localizedString(forKey: key, value: value, table: tableName)
@@ -20,13 +21,10 @@ class BundleEx: Bundle {
 
 extension Bundle {
     static func setLanguage(_ language: String) {
-        defer {
-            object_setClass(Bundle.main, BundleEx.self)
+        object_setClass(Bundle.main, CustomBundle.self)
+        if let path = Bundle.main.path(forResource: language, ofType: "lproj"),
+           let langBundle = Bundle(path: path) {
+            objc_setAssociatedObject(Bundle.main, &bundleKey, langBundle, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
-        guard let path = Bundle.main.path(forResource: language, ofType: "lproj"),
-              let langBundle = Bundle(path: path) else {
-            return
-        }
-        objc_setAssociatedObject(Bundle.main, &bundleKey, langBundle, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
 }

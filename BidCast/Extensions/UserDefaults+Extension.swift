@@ -356,6 +356,7 @@ extension UserDefaults{
         }
     }
     
+    
     static var CalendarWrite:Bool{
         set(input){
             self.standard.setValue(input, forKey: "CalendarWrite")

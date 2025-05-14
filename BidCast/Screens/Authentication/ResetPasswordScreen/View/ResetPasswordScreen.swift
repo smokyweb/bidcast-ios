@@ -34,11 +34,11 @@ struct ResetPasswordScreen: View {
                 VStack(alignment: .leading, spacing: 25) {
                     Color.clear.frame(height: 5)
 
-                    TitleWithLine(title: "Reset Password", lineLength: 48)
+                    TitleWithLine(title: AppString.resetPassword, lineLength: 48)
 
                     AuthTextField(
-                        floatingLabel: "Enter Password",
-                        placeholder: "Enter New Password",
+                        floatingLabel: AppString.enterPassword.localized,
+                        placeholder: AppString.pleaseEnterNewPassword.localized,
                         icon: .bag,
                         text: $password,
                         isPassword: true
@@ -47,8 +47,8 @@ struct ResetPasswordScreen: View {
                     }
 
                     AuthTextField(
-                        floatingLabel: "Confirm Password",
-                        placeholder: "Confirm New Password",
+                        floatingLabel: AppString.confirmPassword.localized,
+                        placeholder: AppString.confirmNewPassword.localized,
                         icon: .bag,
                         text: $confPassword,
                         isPassword: true
@@ -57,23 +57,23 @@ struct ResetPasswordScreen: View {
                     }
                     .padding(.bottom, 16)
 
-                    PrimaryButton(title: "Submit", isOutLine: false) {
+                    PrimaryButton(title: AppString.submit.localized, isOutLine: false) {
                         UIApplication.shared.endEditing()
 
                         guard !request.password.isEmpty else {
-                            hudMsg = "Password can not be empty"
+                            hudMsg = AppString.pleaseEnterPassword.localized
                             showhud = true
                             return
                         }
 
                         guard request.password.count > 7 else {
-                            hudMsg = "Password can not be less than 8 digit"
+                            hudMsg = AppString.passwordNotLessThan.localized
                             showhud = true
                             return
                         }
 
                         guard request.password == confPassword else {
-                            hudMsg = "Password and Confirm Password can not be different"
+                            hudMsg = AppString.passwordNotMatched.localized
                             showhud = true
                             return
                         }
@@ -92,7 +92,7 @@ struct ResetPasswordScreen: View {
             }
 
             PrimaryHeader(
-                title: "Reset Password",
+                title: AppString.resetPassword,
                 leadingImgArr: [.icBack],
                 onClickLeading: { _ in
                     self.navigateToLogin = true
@@ -124,7 +124,7 @@ struct ResetPasswordScreen: View {
                 sheetType: $alertType,
                 onPrimaryClick: {
                     withAnimation { showError = false }
-                    if alertType.primaryBtnText == "Proceed to Login" {
+                    if alertType.primaryBtnText == AppString.proceedToLogin.localized {
                         navigateToLogin = true
                     }
                 },
@@ -148,10 +148,10 @@ struct ResetPasswordScreen: View {
             case .error(let error):
                 alertType = .sheetType(
                     icon: .alert,
-                    title: "Error",
+                    title: AppString.error.localized,
                     message: error?.localizedDescription ?? "",
                     primaryBtnText: "",
-                    secondaryBtnText: "Ok",
+                    secondaryBtnText: AppString.ok.localized,
                     sheetThemeColor: .pinkBtn
                 )
                 showError = true
@@ -168,7 +168,7 @@ struct ResetPasswordScreen: View {
                     icon: .success,
                     title: response.status.capitalized,
                     message: response.message.capitalized,
-                    primaryBtnText: "Proceed to Login",
+                    primaryBtnText: AppString.proceedToLogin.localized,
                     secondaryBtnText: "",
                     sheetThemeColor: .green
                 )
@@ -180,7 +180,7 @@ struct ResetPasswordScreen: View {
                 title: response.status.capitalized,
                 message: response.message.capitalized,
                 primaryBtnText: "",
-                secondaryBtnText: "Ok",
+                secondaryBtnText: AppString.ok.localized,
                 sheetThemeColor: .pinkBtn
             )
             withAnimation(.snappy) {

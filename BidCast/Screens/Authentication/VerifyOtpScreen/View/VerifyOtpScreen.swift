@@ -25,7 +25,7 @@ struct VerifyOtpScreen: View {
     @State private var focusedIndex: Int? = 0
 
     // MARK: - Properties
-    var headingText = "Enter Code"
+    var headingText = AppString.enterCode.localized
     var viewModel = VerifyOtpViewModel()
     var forgetOtpModel = ForgotViewModel()
     
@@ -44,11 +44,11 @@ struct VerifyOtpScreen: View {
                     Color.clear.frame(height: 5)
                     TitleWithLine(title: headingText, lineLength: 0)
                     
-                    Text("Please enter the code that was sent to the email associated with your account!")
+                    Text(AppString.emailAddressNotAssociated.localized)
                         .font(.custom(nunitoMedium, fixedSize: 18))
                         .foregroundStyle(.black)
                     
-                    Text("Enter OTP")
+                    Text(AppString.enterOtp.localized)
                         .font(.custom(nunitoBold, fixedSize: 22))
                         .foregroundStyle(.black)
                     
@@ -62,23 +62,23 @@ struct VerifyOtpScreen: View {
                                 self.forgetOtpModel.forgotEmail(parameters: self.forgetOtpRequest)
                             }
                         }, label: {
-                            Text("Resend OTP")
+                            Text(AppString.resendOtp.localized)
                                 .font(.system(size: 14))
                                 .bold()
                                 .foregroundStyle(.red)
                         }).padding(.trailing, 35)
                     })
                     
-                    PrimaryButton(title: "Submit",isOutLine: false) {
+                    PrimaryButton(title: AppString.submit.localized,isOutLine: false) {
                         
                         guard !pin.isEmpty else {
-                            hudMsg = "OTP can not be empty"
+                            hudMsg = AppString.otpNotEmpty.localized
                             showhud = true
                             return
                         }
                         
                         guard pin.count == 4 else {
-                            hudMsg = "Please enter the OTP"
+                            hudMsg = AppString.enterOtp.localized
                             showhud = true
                             return
                         }
@@ -89,7 +89,7 @@ struct VerifyOtpScreen: View {
                                 request.code = codeInt
                                 self.viewModel.verifyCode(parameters: self.request)
                             } else {
-                                hudMsg = "OTP must be numeric"
+                                hudMsg = AppString.otpNumeric.localized
                                 showhud = true
                             }
                         }
@@ -109,7 +109,7 @@ struct VerifyOtpScreen: View {
             
             // Primary Header
             PrimaryHeader(
-                title: "Verify OTP",
+                title: AppString.verifyOtp.localized ,
                 leadingImgArr: [.icBack],
                 onClickLeading: { _ in
                     self.navigateToLogin = true
@@ -152,7 +152,7 @@ struct VerifyOtpScreen: View {
             case .dataLoaded:
                 handleSuccess()
             case .error(let error):
-                alertType = .sheetType(icon: .alert, title: "Error", message: error?.localizedDescription ?? "", primaryBtnText: "", secondaryBtnText: "Ok", sheetThemeColor: .pinkBtn)
+                alertType = .sheetType(icon: .alert, title: AppString.error.localized, message: error?.localizedDescription ?? "", primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .pinkBtn)
                 showError = true
             }
         }
@@ -168,7 +168,7 @@ struct VerifyOtpScreen: View {
             case .dataLoaded:
                 handleSuccess()
             case .error(let error):
-                alertType = .sheetType(icon: .alert, title: "Error", message: error?.localizedDescription ?? "", primaryBtnText: "", secondaryBtnText: "Ok", sheetThemeColor: .pinkBtn)
+                alertType = .sheetType(icon: .alert, title: AppString.error.localized, message: error?.localizedDescription ?? "", primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .pinkBtn)
                 showError = true
             }
         }
@@ -178,12 +178,12 @@ struct VerifyOtpScreen: View {
         let response = viewModel.verifyResponceDict
         if response.status == "success" {
             UserDefaultsManager.shared.setValue(request.email, forKey: .mailId)
-            alertType = .sheetType(icon: .success, title: response.status.capitalized, message: response.message.capitalized, primaryBtnText: "", secondaryBtnText: "Ok", sheetThemeColor: .green)
+            alertType = .sheetType(icon: .success, title: response.status.capitalized, message: response.message.capitalized, primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .green)
             showError = true
             isPassword = true
             withAnimation(.snappy) { navigateToResetPassword = true }
         } else {
-            alertType = .sheetType(icon: .alert, title: response.status.capitalized, message: response.message.capitalized, primaryBtnText: "", secondaryBtnText: "Ok", sheetThemeColor: .pinkBtn)
+            alertType = .sheetType(icon: .alert, title: response.status.capitalized, message: response.message.capitalized, primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .pinkBtn)
             withAnimation(.snappy) { showError = true }
         }
     }
@@ -192,11 +192,11 @@ struct VerifyOtpScreen: View {
         let response = forgetOtpModel.forgotResponceDict
         if response.status == "success" {
             UserDefaultsManager.shared.setValue(request.email, forKey: .mailId)
-            alertType = .sheetType(icon: .success, title: response.status.capitalized, message: response.message.capitalized, primaryBtnText: "", secondaryBtnText: "Ok", sheetThemeColor: .green)
+            alertType = .sheetType(icon: .success, title: response.status.capitalized, message: response.message.capitalized, primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .green)
             showError = true
             isPassword = true
         } else {
-            alertType = .sheetType(icon: .alert, title: response.status.capitalized, message: response.message.capitalized, primaryBtnText: "", secondaryBtnText: "Ok", sheetThemeColor: .pinkBtn)
+            alertType = .sheetType(icon: .alert, title: response.status.capitalized, message: response.message.capitalized, primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .pinkBtn)
             withAnimation(.snappy) { showError = true }
         }
     }

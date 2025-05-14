@@ -22,7 +22,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-        
+        self.languageSelection()
             // Remove this method to stop OneSignal Debugging
 //        OneSignal.Debug.setLogLevel(.LL_VERBOSE)
 //        let observer = MyPushSubscriptionObserver()
@@ -75,6 +75,14 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         UIApplication.shared.setStatusBarStyle(.lightContent, animated: true)
         
         return true
+    }
+    
+    func languageSelection(){
+        if LanguageManager.shared.selectedLanguage == "ar" {
+            UIView.appearance().semanticContentAttribute = .forceRightToLeft
+        } else {
+            UIView.appearance().semanticContentAttribute = .forceLeftToRight
+        }
     }
     
 //    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {

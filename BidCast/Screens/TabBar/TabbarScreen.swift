@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct TabbarScreen: View {
+    
+    @ObservedObject var languageManager = LanguageManager.shared
 
     var body: some View {
         TabView {
@@ -32,6 +34,7 @@ struct TabbarScreen: View {
                     Label("Account", systemImage: "person.fill")
                 }
         }
+//        .id(languageManager.languageChanged)
         .accentColor(.tabBar)
     }
 }

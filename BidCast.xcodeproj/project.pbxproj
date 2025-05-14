@@ -186,6 +186,7 @@
 		D4E569D72DD46BA10005A78E /* LanguageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E569D62DD46BA10005A78E /* LanguageManager.swift */; };
 		D4E569D92DD46BBE0005A78E /* BundleEx.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E569D82DD46BBE0005A78E /* BundleEx.swift */; };
 		D4E569DB2DD46BE50005A78E /* LanguagePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E569DA2DD46BE50005A78E /* LanguagePickerView.swift */; };
+		D4E569E92DD49A970005A78E /* AppString.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E569E82DD49A970005A78E /* AppString.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -384,6 +385,15 @@
 		D4E569D62DD46BA10005A78E /* LanguageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageManager.swift; sourceTree = "<group>"; };
 		D4E569D82DD46BBE0005A78E /* BundleEx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleEx.swift; sourceTree = "<group>"; };
 		D4E569DA2DD46BE50005A78E /* LanguagePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguagePickerView.swift; sourceTree = "<group>"; };
+		D4E569DE2DD498480005A78E /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
+		D4E569DF2DD498540005A78E /* hi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hi; path = hi.lproj/Localizable.strings; sourceTree = "<group>"; };
+		D4E569E02DD498640005A78E /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		D4E569E12DD498720005A78E /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
+		D4E569E22DD4987E0005A78E /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
+		D4E569E32DD498880005A78E /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = vi; path = vi.lproj/Localizable.strings; sourceTree = "<group>"; };
+		D4E569E42DD498900005A78E /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/Localizable.strings; sourceTree = "<group>"; };
+		D4E569E52DD4990B0005A78E /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		D4E569E82DD49A970005A78E /* AppString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppString.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1281,6 +1291,7 @@
 				99C909892DC8CD930054620B /* CachingPlayerItem.swift */,
 				99C9098A2DC8CD930054620B /* NotificationName+Extension.swift */,
 				99C9098B2DC8CD930054620B /* UIApplication+Extension.swift */,
+				D4E569E82DD49A970005A78E /* AppString.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1588,6 +1599,14 @@
 				en,
 				Base,
 				ar,
+				es,
+				hi,
+				"pt-BR",
+				ru,
+				ja,
+				vi,
+				ko,
+				"zh-Hans",
 			);
 			mainGroup = 99DF9E362DC4F35D008C15B2;
 			minimizedProjectReferenceProxies = 1;
@@ -1672,6 +1691,7 @@
 				D4E569CE2DD461120005A78E /* ProfileDetailCell.swift in Sources */,
 				99C909D82DC8CDDC0054620B /* MenuOptionsModal.swift in Sources */,
 				99C909D92DC8CDDC0054620B /* InterviewlistModel.swift in Sources */,
+				D4E569E92DD49A970005A78E /* AppString.swift in Sources */,
 				355AE97E2DD1FC4900CD3D17 /* SellScreen.swift in Sources */,
 				355AE9712DD1F94E00CD3D17 /* TabbarScreen.swift in Sources */,
 				99C909DA2DC8CDDC0054620B /* JobActionResponse.swift in Sources */,
@@ -1851,6 +1871,14 @@
 			children = (
 				D4E569D02DD46A3B0005A78E /* en */,
 				D4E569D22DD46A5B0005A78E /* ar */,
+				D4E569DE2DD498480005A78E /* es */,
+				D4E569DF2DD498540005A78E /* hi */,
+				D4E569E02DD498640005A78E /* pt-BR */,
+				D4E569E12DD498720005A78E /* ru */,
+				D4E569E22DD4987E0005A78E /* ja */,
+				D4E569E32DD498880005A78E /* vi */,
+				D4E569E42DD498900005A78E /* ko */,
+				D4E569E52DD4990B0005A78E /* zh-Hans */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";

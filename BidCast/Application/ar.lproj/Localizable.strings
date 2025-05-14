@@ -2,17 +2,56 @@
   Localizable.strings
   BidCast
 
-  Created by jam 1 TB on 14/05/25.
+  Created by JAM_E_329 on 14/05/25.
   
 */
 
-"Hello" = "مرحبا!";
-"About" = "كان لوريم إيبسوم ولايزال المعيار للنص الشكلي منذ القرن الخامس عشر عندما قامت مطبعة مجهولة برص مجموعة من الأحرف بشكل عشوائي أخذتها من نص، لتكوّن كتيّب بمثابة دليل أو مرجع شكلي لهذه الأحرف.";
-"Change the language" = "غير اللغة";
-"Arabic" = "عربي";
-"English" = "English";
-"Welcome!" = "اهلا وسهلا!";
 "Select a language" = "اختر لغة";
-"E-Mail" = "بريد إلكتروني";
-"change_language" = "تغيير اللغة";
+"Password" = "كلمة المرور"; 
+"Activity" = "نشاط";
+"Email Address" = "عنوان البريد الإلكتروني";
+"Email" = "البريد الإلكتروني";
+"Enter Email Address" = "أدخل عنوان البريد الإلكتروني";
+"Enter Password" = "أدخل كلمة المرور";
+"Remember Me" = "تذكرني";
+"Forgot Password?" = "هل نسيت كلمة المرور؟";
+"Login" = "تسجيل الدخول";
+"New User?" = "مستخدم جديد؟";
+"Create Account" = "إنشاء حساب";
+"Please Enter Email" = "يرجى إدخال البريد الإلكتروني";
+"Please Enter Password" = "يرجى إدخال كلمة المرور";
+"Confirm Password" = "تأكيد كلمة المرور";
+"Confirm New Password" = "تأكيد كلمة المرور الجديدة";
+"Please Enter New Password" = "يرجى إدخال كلمة مرور جديدة";
+"Please Confirm Password" = "يرجى تأكيد كلمة المرور";
+"Password can not be less than 8 characters" = "لا يمكن أن تقل كلمة المرور عن 8 أحرف";
+"Password and Confirm Password can not be different" = "كلمة المرور وتأكيد كلمة المرور غير متطابقتين";
+"Continue" = "متابعة";
+"Login Failed" = "فشل تسجيل الدخول";
+"Fail to login with current credentials" = "فشل تسجيل الدخول بالمعلومات الحالية";
+"Retry Login" = "إعادة المحاولة";
+"Error" = "خطأ";
+"Please enter the email address associated with your account" = "يرجى إدخال عنوان البريد الإلكتروني المرتبط بحسابك";
+"Submit" = "إرسال";
+"Please enter a valid mail address" = "يرجى إدخال عنوان بريد إلكتروني صحيح";
+"Ok" = "حسنًا";
+"Enter Code" = "أدخل الرمز";
+"Enter OTP" = "أدخل رمز التحقق";
+"Resend OTP" = "إعادة إرسال رمز التحقق";
+"OTP can not be empty" = "لا يمكن أن يكون رمز التحقق فارغًا";
+"Please enter the OTP" = "يرجى إدخال رمز التحقق";
+"OTP must be numeric" = "يجب أن يكون رمز التحقق رقمًا";
+"Verify OTP" = "تحقق من رمز التحقق";
+"Reset Password" = "إعادة تعيين كلمة المرور";
+"Proceed to Login" = "الانتقال إلى تسجيل الدخول";
+"Create Your Account" = "أنشئ حسابك";
+"First Name" = "الاسم الأول";
+"Enter First Name" = "أدخل الاسم الأول";
+"Last Name" = "اسم العائلة";
+"Enter Last Name" = "أدخل اسم العائلة";
+"Please Enter First Name" = "يرجى إدخال الاسم الأول";
+"Please Enter Last Name" = "يرجى إدخال اسم العائلة";
+"Back to Login" = "العودة إلى تسجيل الدخول";
+"Choose Language" = "اختَر اللغة";
+
 

@@ -1,0 +1,54 @@
+/* 
+  Localizable.strings
+  BidCast
+
+  Created by JAM_E_329 on 14/05/25.
+  
+*/
+"Activity" = "Atividade";
+"Email Address" = "Endereço de e-mail";
+"Email" = "E-mail";
+"Password" = "Senha"; 
+"Enter Email Address" = "Digite o endereço de e-mail";
+"Enter Password" = "Digite a senha";
+"Remember Me" = "Lembrar-me";
+"Forgot Password?" = "Esqueceu a senha?";
+"Login" = "Entrar";
+"New User?" = "Novo usuário?";
+"Create Account" = "Criar conta";
+"Please Enter Email" = "Por favor, insira o e-mail";
+"Please Enter Password" = "Por favor, insira a senha";
+"Confirm Password" = "Confirmar senha";
+"Confirm New Password" = "Confirmar nova senha";
+"Please Enter New Password" = "Por favor, insira a nova senha";
+"Please Confirm Password" = "Por favor, confirme a senha";
+"Password can not be less than 8 characters" = "A senha não pode ter menos de 8 caracteres";
+"Password and Confirm Password can not be different" = "A senha e a confirmação de senha devem ser iguais";
+"Continue" = "Continuar";
+"Login Failed" = "Falha no login";
+"Fail to login with current credentials" = "Falha ao entrar com as credenciais atuais";
+"Retry Login" = "Tentar novamente";
+"Error" = "Erro";
+"Please enter the email address associated with your account" = "Por favor, insira o e-mail associado à sua conta";
+"Submit" = "Enviar";
+"Please enter a valid mail address" = "Por favor, insira um endereço de e-mail válido";
+"Ok" = "OK";
+"Enter Code" = "Digite o código";
+"Enter OTP" = "Digite o OTP";
+"Resend OTP" = "Reenviar OTP";
+"OTP can not be empty" = "O OTP não pode estar vazio";
+"Please enter the OTP" = "Por favor, insira o OTP";
+"OTP must be numeric" = "O OTP deve ser numérico";
+"Verify OTP" = "Verificar OTP";
+"Reset Password" = "Redefinir senha";
+"Proceed to Login" = "Ir para login";
+"Create Your Account" = "Crie sua conta";
+"First Name" = "Nome";
+"Enter First Name" = "Digite o nome";
+"Last Name" = "Sobrenome";
+"Enter Last Name" = "Digite o sobrenome";
+"Please Enter First Name" = "Por favor, insira o nome";
+"Please Enter Last Name" = "Por favor, insira o sobrenome";
+"Back to Login" = "Voltar ao login";
+"Choose Language" = "Escolher idioma";
+

@@ -53,14 +53,14 @@ struct SignUpScreen: View {
     var body: some View {
         ZStack {
             VStack(spacing: 0) {
-                PrimaryHeader(title: "Create Account", leadingImgArr: [.icBack], onClickLeading:  { _ in
+                PrimaryHeader(title: AppString.createAccount.localized, leadingImgArr: [.icBack], onClickLeading:  { _ in
                    
                     self.presentationMode.wrappedValue.dismiss()
                 }, count: .constant(0))
                 
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 15) {
-                        Text("Create your Account")
+                        Text(AppString.createYourAccount.localized)
                             .font(.custom(nunitoBlack, fixedSize: 18))
                             .fontWeight(.bold)
                             .frame(width: screenWidth - 50, alignment: .leading)
@@ -74,7 +74,7 @@ struct SignUpScreen: View {
 //                            .textContentType(.givenName)
 //
 //                        }else{
-                        AuthTextField(floatingLabel: "First Name", placeholder: "Enter First Name", icon: .menuProfile, text: $request.firstName, enteredText: {
+                        AuthTextField(floatingLabel: AppString.firstName.localized, placeholder: AppString.enterFirstName.localized, icon: .menuProfile, text: $request.firstName, enteredText: {
                                 value in
                                 request.firstName = value
                             })
@@ -93,7 +93,7 @@ struct SignUpScreen: View {
 //
 //                        }else{
                             
-                            AuthTextField(floatingLabel: "Last Name", placeholder: "Enter Last Name", icon: .menuProfile, text: $request.lastName, enteredText: {
+                        AuthTextField(floatingLabel: AppString.lastName.localized, placeholder: AppString.enterLastName.localized, icon: .menuProfile, text: $request.lastName, enteredText: {
                                 value in
                                 request.lastName = value
                             })
@@ -119,7 +119,7 @@ struct SignUpScreen: View {
 
                             
 //                        }else{
-                        AuthTextField(floatingLabel: "Email Address", placeholder: "Enter Email Address", icon: .icMail, text: $request.email, enteredText: {
+                        AuthTextField(floatingLabel: AppString.email.localized, placeholder: AppString.pleaseEnterEmail.localized, icon: .icMail, text: $request.email, enteredText: {
                                 value in
                                 request.email = value
                             }).textContentType(.username)
@@ -131,12 +131,12 @@ struct SignUpScreen: View {
 //                            requestUserName.user_name = value
 //                        }).textContentType(.username)
                         
-                        AuthTextField(floatingLabel: "Password", placeholder: "Enter Password", icon: .passwordLock, text: $request.password, isPassword: true, enteredText: {
+                        AuthTextField(floatingLabel: AppString.password.localized, placeholder: AppString.enterPassword.localized, icon: .passwordLock, text: $request.password, isPassword: true, enteredText: {
                             value in
                             request.password = value
                         }).textContentType(.password)
                         
-                        AuthTextField(floatingLabel: "Confirm Password", placeholder: "Reenter Password", icon: .passwordLock, text: $request.passwordConf, isPassword: true, enteredText: {
+                        AuthTextField(floatingLabel: AppString.confirmPassword.localized, placeholder: AppString.pleaseConfirmPassword.localized, icon: .passwordLock, text: $request.passwordConf, isPassword: true, enteredText: {
                             value in
                             request.passwordConf = value
                         }).textContentType(.newPassword)
@@ -191,7 +191,7 @@ struct SignUpScreen: View {
 //                        }
                         
                         
-                        PrimaryButton(title: "Submit", isOutLine: false, onButtonClick: {
+                        PrimaryButton(title: AppString.submit.localized, isOutLine: false, onButtonClick: {
                             
                             UIApplication.shared.endEditing()
 //                            if AppleLogin{
@@ -202,7 +202,7 @@ struct SignUpScreen: View {
 //                                }
 //                            }else{
                             guard !request.firstName.isEmpty else {
-                                    hudMsg = "First Name is required"
+                                hudMsg = AppString.pleaseEnterFirstName.localized
                                     showhud = true
                                     return
                                 }
@@ -216,7 +216,7 @@ struct SignUpScreen: View {
 //                                
 //                            }else{
                             guard !request.lastName.isEmpty else {
-                                    hudMsg = "Last Name is required"
+                                hudMsg = AppString.pleaseEnterLastName.localized
                                     showhud = true
                                     return
                                 }
@@ -240,7 +240,7 @@ struct SignUpScreen: View {
 //                            }else{
                                 
                                 guard !request.email.isEmpty else {
-                                    hudMsg = "Email address is required"
+                                    hudMsg = AppString.pleaseEnterEmail.localized
                                     showhud = true
                                     return
                                 }
@@ -253,25 +253,25 @@ struct SignUpScreen: View {
 //                            }
                             
                             guard !request.password.isEmpty else {
-                                hudMsg = "Password is required"
+                                hudMsg = AppString.pleaseEnterPassword.localized
                                 showhud = true
                                 return
                             }
                             
                             guard request.password.count >= 8 else {
-                                hudMsg = "Password can not be less than 8 characters"
+                                hudMsg = AppString.passwordNotLessThan.localized
                                 showhud = true
                                 return
                             }
                             
                             guard !request.passwordConf.isEmpty else {
-                                hudMsg = "Confirm Password is required"
+                                hudMsg = AppString.pleaseConfirmPassword.localized
                                 showhud = true
                                 return
                             }
                             
                             guard request.password == request.passwordConf else {
-                                hudMsg = "Password and Confirm Password are  not matching"
+                                hudMsg = AppString.passwordNotMatched.localized
                                 showhud = true
                                 return
                             }
@@ -339,7 +339,7 @@ struct SignUpScreen: View {
                     sheetType: $alertType,
                     onPrimaryClick: {
                         withAnimation { showError = false }
-                        if alertType.primaryBtnText == "Proceed to Login" {
+                        if alertType.primaryBtnText == AppString.proceedToLogin.localized {
                             self.presentationMode.wrappedValue.dismiss()
                         }
                         let response = viewModel.userNameDict
@@ -379,7 +379,7 @@ struct SignUpScreen: View {
             case .dataLoaded:
                 handleSuccess()
             case .error(let error):
-                    alertType = .sheetType(icon: .alert, title: "Error", message: error?.localizedDescription ?? "", primaryBtnText: "", secondaryBtnText: "Ok", sheetThemeColor: .pinkBtn)
+                alertType = .sheetType(icon: .alert, title: AppString.error.localized, message: error?.localizedDescription ?? "", primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .pinkBtn)
                 withAnimation(.easeInOut) { showError = true }
             }
         }
@@ -418,15 +418,16 @@ struct SignUpScreen: View {
         if viewModel.requestType == "RegisterUserName" {
             let response = viewModel.userNameDict
             if response?.status == "success" {
+                UserDefaults.isFirstLogin = 1
                
 //                    UserDefaultsManager.shared.setValue("employee", forKey: .userRole)
-                alertType = .sheetType(icon: .success, title: response?.status?.capitalized ?? "", message: response?.message?.capitalized ?? "", primaryBtnText: "Back to Login", secondaryBtnText: "", sheetThemeColor: .secondary)
+                alertType = .sheetType(icon: .success, title: response?.status?.capitalized ?? "", message: response?.message?.capitalized ?? "", primaryBtnText: AppString.backToLogin.localized, secondaryBtnText: "", sheetThemeColor: .secondary)
                 showError = true
 //                    navigatetoUser = true
                   
                 
             } else {
-                alertType = .sheetType(icon: .alert, title: response?.error_type?.capitalized ?? "", message: response?.message?.capitalized ?? "", primaryBtnText: "", secondaryBtnText: "Ok", sheetThemeColor: .secondary)
+                alertType = .sheetType(icon: .alert, title: response?.error_type?.capitalized ?? "", message: response?.message?.capitalized ?? "", primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .secondary)
                 showError = true
             }
         }

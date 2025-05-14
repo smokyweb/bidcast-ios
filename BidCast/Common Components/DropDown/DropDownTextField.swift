@@ -130,9 +130,11 @@ struct DropDownTextField: View {
                                     }
                                 }) {
                                     Image(.arrowForward)
+                                        .renderingMode(.template)
                                         .resizable()
                                         .scaledToFit()
                                         .frame(width: 16, height: 16)
+                                        .tint(.black)
                                         .rotationEffect(.degrees(showOption ? 180 : 0)) // Rotate icon when open
                                         .padding(.trailing, 10)
                                 }

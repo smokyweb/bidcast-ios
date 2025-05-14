@@ -1,0 +1,53 @@
+/* 
+  Localizable.strings
+  BidCast
+
+ Created by JAM_E_329 on 14/05/25.
+  
+*/
+"Activity" = "アクティビティ";
+"Email Address" = "メールアドレス";
+"Password" = "パスワード"; 
+"Email" = "メール";
+"Enter Email Address" = "メールアドレスを入力してください";
+"Enter Password" = "パスワードを入力してください";
+"Remember Me" = "ログイン状態を保持する";
+"Forgot Password?" = "パスワードをお忘れですか？";
+"Login" = "ログイン";
+"New User?" = "新規ユーザーですか？";
+"Create Account" = "アカウントを作成";
+"Please Enter Email" = "メールアドレスを入力してください";
+"Please Enter Password" = "パスワードを入力してください";
+"Confirm Password" = "パスワードの確認";
+"Confirm New Password" = "新しいパスワードの確認";
+"Please Enter New Password" = "新しいパスワードを入力してください";
+"Please Confirm Password" = "パスワードを確認してください";
+"Password can not be less than 8 characters" = "パスワードは8文字以上で入力してください";
+"Password and Confirm Password can not be different" = "パスワードと確認用パスワードが一致しません";
+"Continue" = "続ける";
+"Login Failed" = "ログインに失敗しました";
+"Fail to login with current credentials" = "入力された情報でログインできませんでした";
+"Retry Login" = "再度ログイン";
+"Error" = "エラー";
+"Please enter the email address associated with your account" = "アカウントに関連付けられたメールアドレスを入力してください";
+"Submit" = "送信";
+"Please enter a valid mail address" = "有効なメールアドレスを入力してください";
+"Ok" = "OK";
+"Enter Code" = "コードを入力";
+"Enter OTP" = "認証コードを入力";
+"Resend OTP" = "認証コードを再送信";
+"OTP can not be empty" = "認証コードを入力してください";
+"Please enter the OTP" = "認証コードを入力してください";
+"OTP must be numeric" = "認証コードは数字で入力してください";
+"Verify OTP" = "認証コードを確認";
+"Reset Password" = "パスワードをリセット";
+"Proceed to Login" = "ログインへ進む";
+"Create Your Account" = "アカウントを作成する";
+"First Name" = "名";
+"Enter First Name" = "名を入力してください";
+"Last Name" = "姓";
+"Enter Last Name" = "姓を入力してください";
+"Please Enter First Name" = "名を入力してください";
+"Please Enter Last Name" = "姓を入力してください";
+"Back to Login" = "ログインに戻る";
+"Choose Language" = "言語を選択";

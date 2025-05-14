@@ -1,0 +1,54 @@
+/* 
+  Localizable.strings
+  BidCast
+
+  Created by JAM_E_329 on 14/05/25.
+  
+*/
+"Activity" = "Hoạt động";
+"Email Address" = "Địa chỉ Email";
+"Email" = "Email";
+"Password" = "Mật khẩu";  
+"Enter Email Address" = "Nhập địa chỉ Email";
+"Enter Password" = "Nhập mật khẩu";
+"Remember Me" = "Ghi nhớ tôi";
+"Forgot Password?" = "Quên mật khẩu?";
+"Login" = "Đăng nhập";
+"New User?" = "Người dùng mới?";
+"Create Account" = "Tạo tài khoản";
+"Please Enter Email" = "Vui lòng nhập Email";
+"Please Enter Password" = "Vui lòng nhập mật khẩu";
+"Confirm Password" = "Xác nhận mật khẩu";
+"Confirm New Password" = "Xác nhận mật khẩu mới";
+"Please Enter New Password" = "Vui lòng nhập mật khẩu mới";
+"Please Confirm Password" = "Vui lòng xác nhận mật khẩu";
+"Password can not be less than 8 characters" = "Mật khẩu không được ít hơn 8 ký tự";
+"Password and Confirm Password can not be different" = "Mật khẩu và xác nhận mật khẩu phải giống nhau";
+"Continue" = "Tiếp tục";
+"Login Failed" = "Đăng nhập thất bại";
+"Fail to login with current credentials" = "Không thể đăng nhập với thông tin hiện tại";
+"Retry Login" = "Thử lại đăng nhập";
+"Error" = "Lỗi";
+"Please enter the email address associated with your account" = "Vui lòng nhập địa chỉ email liên kết với tài khoản của bạn";
+"Submit" = "Gửi";
+"Please enter a valid mail address" = "Vui lòng nhập địa chỉ email hợp lệ";
+"Ok" = "OK";
+"Enter Code" = "Nhập mã";
+"Enter OTP" = "Nhập mã OTP";
+"Resend OTP" = "Gửi lại OTP";
+"OTP can not be empty" = "OTP không được để trống";
+"Please enter the OTP" = "Vui lòng nhập mã OTP";
+"OTP must be numeric" = "OTP phải là số";
+"Verify OTP" = "Xác minh OTP";
+"Reset Password" = "Đặt lại mật khẩu";
+"Proceed to Login" = "Tiếp tục đăng nhập";
+"Create Your Account" = "Tạo tài khoản của bạn";
+"First Name" = "Tên";
+"Enter First Name" = "Nhập tên";
+"Last Name" = "Họ";
+"Enter Last Name" = "Nhập họ";
+"Please Enter First Name" = "Vui lòng nhập tên";
+"Please Enter Last Name" = "Vui lòng nhập họ";
+"Back to Login" = "Quay lại đăng nhập";
+"Choose Language" = "Chọn ngôn ngữ";
+
