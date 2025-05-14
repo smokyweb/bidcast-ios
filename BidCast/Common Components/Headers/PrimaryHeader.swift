@@ -96,7 +96,7 @@ struct PrimaryHeader: View {
                             Button(action: { withAnimation { onClickTrailing?(ind) } }, label: {
                                 
                                 Image(trailingImgArr[ind])
-                                    .renderingMode(.template)
+                                    .renderingMode(.original)
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 30, height: 30)

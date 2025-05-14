@@ -8,11 +8,59 @@
 import SwiftUI
 
 struct ExploreViewScreen: View {
+   
+    @Environment(\.presentationMode) var presentationMode
+    
+    let count = Array(0...5)
+       
+       let columns = [
+           GridItem(.flexible()),
+           GridItem(.flexible())
+       ]
+    var imageName : [ImageResource] = [.gaming,.sports,.jewelery,.fashion,.vinyl]
+    var tabName = ["Gaming","Sports","Jewellery ","Fashion","Vinyl Records"]
+    var subLabel = ["864 Live","1.2K Live","640 Live","640 Live","640 Live"]
+    
     var body: some View {
-        Text("Hello, Explore!")
+            VStack(spacing:0){
+                PrimaryHeader(
+                    title: "",
+                    isForLogo : true, leadingImgArr: [.appName],
+                    trailingImgArr: [.search,.notification],
+                    onClickLeading: { _ in
+                        self.presentationMode.wrappedValue.dismiss()
+                    },
+                    count: .constant(0)
+                )
+                .background(.white)
+                
+                ScrollView{
+                    VStack(alignment: .leading,spacing: 8){
+                        SearchView()
+                        
+                        SingleTitleLabel(title: "Recommended | Popular | All" ,textColor: .black,fontValue: 20.0)
+                            .padding([.leading,.trailing],12)
+                        ForEach(0 ..< tabName.count, id: \.self) { ind in
+//                            print("\(ind)")
+//                            print(self.title[ind])
+                            ListCell(image: imageName[ind], title: tabName[ind], vectorImg: .arrowForward,subLabel : subLabel[ind])
+                           
+                        }
+                       
+                    }
+                    .padding([.leading,.trailing],12)
+                }
+              
+            }
+            
+            .background(.bg.opacity(0.4))
+            .edgesIgnoringSafeArea(.top)
+            
+       
     }
 }
 
 #Preview {
     ExploreViewScreen()
 }
+

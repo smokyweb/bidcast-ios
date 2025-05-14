@@ -15,7 +15,7 @@ struct SegmentedControlView<T: Hashable & CustomStringConvertible>: View {
     
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) { // Make the HStack scrollable
-            HStack(spacing: 10) {
+            HStack(spacing: 8) {
                 ForEach(segments.indices, id: \.self) { index in
                     let segment = segments[index]
                     VStack {

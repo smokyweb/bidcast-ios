@@ -126,3 +126,4 @@ struct HeaderWithSearch: View {
 #Preview {
     HeaderWithSearch()
 }
+
