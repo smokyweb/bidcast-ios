@@ -55,3 +55,46 @@
 "Choose Language" = "اختَر اللغة";
 
 
+//MARK: New
+
+"List a Product" = "إدراج منتج";
+"Scheduled a show" = "جدولة عرض";
+"Seller Hub" = "مركز البائع";
+"Create a listing for your item" = "إنشاء قائمة لعنصرك";
+"Go live and sell to your audience" = "ابدأ البث المباشر وبِع لجمهورك";
+"Manage your store and listings" = "إدارة متجرك وقوائمك";
+"Sell" = "بيع";
+"My Account" = "حسابي";
+
+"Inventory" = "المخزون";
+"Shows" = "العروض";
+"My Orders" = "طلباتي";
+"Wallet" = "المحفظة";
+"Offers" = "العروض";
+"Tips" = "نصائح";
+"Shipping" = "الشحن";
+"Affiliate Program" = "برنامج الشركاء";
+"Seller Training" = "تدريب البائعين";
+"Premier Shop" = "المتجر المميز";
+"Seller Status" = "حالة البائع";
+"Seller Analytics" = "تحليلات البائع";
+
+"Payment & Shipping" = "الدفع والشحن";
+"Addresses" = "العناوين";
+"Trusted Buyer" = "مشتري موثوق";
+"Notifications" = "الإشعارات";
+"Preference" = "التفضيلات";
+
+"About Us" = "معلومات عنا";
+"Contact Us" = "اتصل بنا";
+"Sales tax Exemption" = "إعفاء ضريبة المبيعات";
+"Terms & Conditions" = "الشروط والأحكام";
+"Privacy & Policy" = "سياسة الخصوصية";
+"F.A.Q" = "الأسئلة الشائعة";
+
+"Account" = "حساب";
+"Items" = "العناصر";
+"Revenue" = "الإيرادات";
+"Sorting" = "الفرز";
+"Credits" = "الاعتمادات";
+"Coupons" = "القسائم";

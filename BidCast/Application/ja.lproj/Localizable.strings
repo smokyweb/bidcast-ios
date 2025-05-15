@@ -51,3 +51,47 @@
 "Please Enter Last Name" = "姓を入力してください";
 "Back to Login" = "ログインに戻る";
 "Choose Language" = "言語を選択";
+
+//MARK: New
+
+"List a Product" = "商品を出品する";
+"Scheduled a show" = "ショーを予定する";
+"Seller Hub" = "セラーハブ";
+"Create a listing for your item" = "あなたの商品をリストに追加する";
+"Go live and sell to your audience" = "ライブ配信して視聴者に販売する";
+"Manage your store and listings" = "ストアとリストを管理する";
+"Sell" = "販売する";
+"My Account" = "マイアカウント";
+
+"Inventory" = "在庫";
+"Shows" = "ショー";
+"My Orders" = "注文履歴";
+"Wallet" = "ウォレット";
+"Offers" = "オファー";
+"Tips" = "ヒント";
+"Shipping" = "配送";
+"Affiliate Program" = "アフィリエイトプログラム";
+"Seller Training" = "セラー向けトレーニング";
+"Premier Shop" = "プレミアショップ";
+"Seller Status" = "セラーの状態";
+"Seller Analytics" = "セラー分析";
+
+"Payment & Shipping" = "支払いと配送";
+"Addresses" = "住所";
+"Trusted Buyer" = "信頼できる購入者";
+"Notifications" = "通知";
+"Preference" = "設定";
+
+"About Us" = "私たちについて";
+"Contact Us" = "お問い合わせ";
+"Sales tax Exemption" = "消費税免除";
+"Terms & Conditions" = "利用規約";
+"Privacy & Policy" = "プライバシーポリシー";
+"F.A.Q" = "よくある質問";
+
+"Account" = "アカウント";
+"Items" = "アイテム";
+"Revenue" = "収益";
+"Sorting" = "並べ替え";
+"Credits" = "クレジット";
+"Coupons" = "クーポン";

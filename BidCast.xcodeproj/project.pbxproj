@@ -25,6 +25,10 @@
 		35AC64722DD4827D00B5E13E /* ImageCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35AC64712DD4827D00B5E13E /* ImageCollectionView.swift */; };
 		35AC64742DD48C0300B5E13E /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35AC64732DD48C0300B5E13E /* SearchView.swift */; };
 		35AC64782DD4A8AD00B5E13E /* ListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35AC64772DD4A7D700B5E13E /* ListCell.swift */; };
+		35CA09D92DD5BCE4002ABB83 /* LabelWithButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CA09D82DD5BCE4002ABB83 /* LabelWithButton.swift */; };
+		35CA09DE2DD5CC29002ABB83 /* CustomSegmentedControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CA09DC2DD5CBB8002ABB83 /* CustomSegmentedControl.swift */; };
+		35CA09E02DD5D2B1002ABB83 /* TwoVerticalLabelCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CA09DF2DD5D2B1002ABB83 /* TwoVerticalLabelCell.swift */; };
+		35CA09E22DD5D996002ABB83 /* VerticalLabelImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CA09E12DD5D996002ABB83 /* VerticalLabelImageCell.swift */; };
 		99C907C42DC8CC990054620B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907C22DC8CC990054620B /* AppDelegate.swift */; };
 		99C907C52DC8CC990054620B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907C32DC8CC990054620B /* SceneDelegate.swift */; };
 		99C9080E2DC8CD6A0054620B /* DocView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907D22DC8CD6A0054620B /* DocView.swift */; };
@@ -219,6 +223,10 @@
 		35AC64712DD4827D00B5E13E /* ImageCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCollectionView.swift; sourceTree = "<group>"; };
 		35AC64732DD48C0300B5E13E /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		35AC64772DD4A7D700B5E13E /* ListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListCell.swift; sourceTree = "<group>"; };
+		35CA09D82DD5BCE4002ABB83 /* LabelWithButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelWithButton.swift; sourceTree = "<group>"; };
+		35CA09DC2DD5CBB8002ABB83 /* CustomSegmentedControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSegmentedControl.swift; sourceTree = "<group>"; };
+		35CA09DF2DD5D2B1002ABB83 /* TwoVerticalLabelCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwoVerticalLabelCell.swift; sourceTree = "<group>"; };
+		35CA09E12DD5D996002ABB83 /* VerticalLabelImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalLabelImageCell.swift; sourceTree = "<group>"; };
 		99C907C22DC8CC990054620B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		99C907C32DC8CC990054620B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		99C907C82DC8CD6A0054620B /* SubscriptionCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionCard.swift; sourceTree = "<group>"; };
@@ -758,6 +766,7 @@
 				99C9080A2DC8CD6A0054620B /* LoadingIndicator */,
 				99C9080C2DC8CD6A0054620B /* CustomButton */,
 				35AC64732DD48C0300B5E13E /* SearchView.swift */,
+				35CA09D82DD5BCE4002ABB83 /* LabelWithButton.swift */,
 			);
 			path = "Common Components";
 			sourceTree = "<group>";
@@ -1098,6 +1107,9 @@
 		99C9088A2DC8CD790054620B /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				35CA09DF2DD5D2B1002ABB83 /* TwoVerticalLabelCell.swift */,
+				35CA09E12DD5D996002ABB83 /* VerticalLabelImageCell.swift */,
+				35CA09DC2DD5CBB8002ABB83 /* CustomSegmentedControl.swift */,
 				35AC64772DD4A7D700B5E13E /* ListCell.swift */,
 				D4E569D52DD46B940005A78E /* LanguageManager */,
 				D4E569CC2DD461040005A78E /* ProfileDetailCell */,
@@ -1671,6 +1683,7 @@
 				99C908102DC8CD6A0054620B /* HeaderWithImage.swift in Sources */,
 				99C908112DC8CD6A0054620B /* HeaderWithImageTitle.swift in Sources */,
 				99C908122DC8CD6A0054620B /* AuthTextField.swift in Sources */,
+				35CA09D92DD5BCE4002ABB83 /* LabelWithButton.swift in Sources */,
 				99C908132DC8CD6A0054620B /* HeaderWithSegmentController.swift in Sources */,
 				99C908142DC8CD6A0054620B /* PrimaryButton.swift in Sources */,
 				35AC64742DD48C0300B5E13E /* SearchView.swift in Sources */,
@@ -1707,6 +1720,7 @@
 				99C909E32DC8CDDC0054620B /* NotificationResponseModel.swift in Sources */,
 				99C909E42DC8CDDC0054620B /* LinkedInUserDetail.swift in Sources */,
 				D4E569DB2DD46BE50005A78E /* LanguagePickerView.swift in Sources */,
+				35CA09E02DD5D2B1002ABB83 /* TwoVerticalLabelCell.swift in Sources */,
 				99C909E52DC8CDDC0054620B /* UserJobModal.swift in Sources */,
 				99C909E62DC8CDDC0054620B /* CreateCompanyRequest.swift in Sources */,
 				99C909E72DC8CDDC0054620B /* LoginResponseModel.swift in Sources */,
@@ -1748,6 +1762,7 @@
 				99C909A32DC8CD930054620B /* UIFont+Extension.swift in Sources */,
 				99C909A42DC8CD930054620B /* UIDevice+Extension.swift in Sources */,
 				99C909A52DC8CD930054620B /* NavigationPath.swift in Sources */,
+				35CA09DE2DD5CC29002ABB83 /* CustomSegmentedControl.swift in Sources */,
 				99C909A62DC8CD930054620B /* String+Extension.swift in Sources */,
 				355AE97C2DD1FC3900CD3D17 /* AccountScreen.swift in Sources */,
 				99C909A72DC8CD930054620B /* UIColor+Extension.swift in Sources */,
@@ -1783,6 +1798,7 @@
 				99C909782DC8CD790054620B /* AuthenticationStack.swift in Sources */,
 				99C9097A2DC8CD790054620B /* DeleteAccountSheet.swift in Sources */,
 				99C9097D2DC8CD790054620B /* ResetPasswordViewModel.swift in Sources */,
+				35CA09E22DD5D996002ABB83 /* VerticalLabelImageCell.swift in Sources */,
 				99C908152DC8CD6A0054620B /* LogOutSheet.swift in Sources */,
 				99C908162DC8CD6A0054620B /* NoInternetScreen.swift in Sources */,
 				99C908172DC8CD6A0054620B /* MultilineTextField.swift in Sources */,

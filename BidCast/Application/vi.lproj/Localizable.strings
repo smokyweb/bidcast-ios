@@ -52,3 +52,46 @@
 "Back to Login" = "Quay lại đăng nhập";
 "Choose Language" = "Chọn ngôn ngữ";
 
+//MARK: New
+
+"List a Product" = "Đăng sản phẩm";
+"Scheduled a show" = "Lên lịch buổi trình diễn";
+"Seller Hub" = "Trung tâm người bán";
+"Create a listing for your item" = "Tạo danh sách cho mặt hàng của bạn";
+"Go live and sell to your audience" = "Phát trực tiếp và bán cho khán giả của bạn";
+"Manage your store and listings" = "Quản lý cửa hàng và danh sách của bạn";
+"Sell" = "Bán";
+"My Account" = "Tài khoản của tôi";
+
+"Inventory" = "Hàng tồn kho";
+"Shows" = "Buổi trình diễn";
+"My Orders" = "Đơn hàng của tôi";
+"Wallet" = "Ví tiền";
+"Offers" = "Ưu đãi";
+"Tips" = "Mẹo";
+"Shipping" = "Vận chuyển";
+"Affiliate Program" = "Chương trình liên kết";
+"Seller Training" = "Đào tạo người bán";
+"Premier Shop" = "Cửa hàng cao cấp";
+"Seller Status" = "Trạng thái người bán";
+"Seller Analytics" = "Phân tích người bán";
+
+"Payment & Shipping" = "Thanh toán & Vận chuyển";
+"Addresses" = "Địa chỉ";
+"Trusted Buyer" = "Người mua đáng tin cậy";
+"Notifications" = "Thông báo";
+"Preference" = "Tùy chọn";
+
+"About Us" = "Về chúng tôi";
+"Contact Us" = "Liên hệ";
+"Sales tax Exemption" = "Miễn thuế bán hàng";
+"Terms & Conditions" = "Điều khoản & Điều kiện";
+"Privacy & Policy" = "Chính sách bảo mật";
+"F.A.Q" = "Câu hỏi thường gặp";
+
+"Account" = "Tài khoản";
+"Items" = "Mặt hàng";
+"Revenue" = "Doanh thu";
+"Sorting" = "Sắp xếp";
+"Credits" = "Tín dụng";
+"Coupons" = "Phiếu giảm giá";

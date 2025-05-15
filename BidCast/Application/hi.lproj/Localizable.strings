@@ -16,6 +16,7 @@
 "Login" = "लॉगिन करें";
 "New User?" = "नया उपयोगकर्ता?";
 "Create Account" = "खाता बनाएं";
+"Account" = "खाता";
 "Please Enter Email" = "कृपया ईमेल दर्ज करें";
 "Please Enter Password" = "कृपया पासवर्ड दर्ज करें";
 "Confirm Password" = "पासवर्ड की पुष्टि करें";
@@ -53,3 +54,45 @@
 "Choose Language" = "भाषा चुनें";
 
 
+//MARK: New
+"List a Product" = "एक उत्पाद सूचीबद्ध करें";
+"Scheduled a show" = "एक शो निर्धारित किया गया";
+"Seller Hub" = "विक्रेता केंद्र";
+"Create a listing for your item" = "अपने आइटम के लिए एक लिस्टिंग बनाएं";
+"Go live and sell to your audience" = "लाइव जाएं और अपने दर्शकों को बेचें";
+"Manage your store and listings" = "अपनी दुकान और लिस्टिंग प्रबंधित करें";
+"Sell" = "बेचें";
+"My Account" = "मेरा खाता";
+
+"Inventory" = "इन्वेंट्री";
+"Shows" = "शो";
+"My Orders" = "मेरे ऑर्डर";
+"Wallet" = "वॉलेट";
+"Offers" = "ऑफ़र";
+"Tips" = "टिप्स";
+"Shipping" = "शिपिंग";
+"Affiliate Program" = "सहयोगी कार्यक्रम";
+"Seller Training" = "विक्रेता प्रशिक्षण";
+"Premier Shop" = "प्रीमियर दुकान";
+"Seller Status" = "विक्रेता स्थिति";
+"Seller Analytics" = "विक्रेता विश्लेषण";
+
+"Payment & Shipping" = "भुगतान और शिपिंग";
+"Addresses" = "पते";
+"Trusted Buyer" = "विश्वसनीय खरीदार";
+"Notifications" = "सूचनाएं";
+"Preference" = "प्राथमिकता";
+
+"About Us" = "हमारे बारे में";
+"Contact Us" = "संपर्क करें";
+"Sales tax Exemption" = "बिक्री कर छूट";
+"Terms & Conditions" = "नियम और शर्तें";
+"Privacy & Policy" = "गोपनीयता नीति";
+"F.A.Q" = "अक्सर पूछे जाने वाले प्रश्न";
+
+"Account" = "खाता";
+"Items" = "आइटम";
+"Revenue" = "राजस्व";
+"Sorting" = "सॉर्टिंग";
+"Credits" = "क्रेडिट";
+"Coupons" = "कूपन";

@@ -43,7 +43,7 @@ struct ExploreViewScreen: View {
                         ForEach(0 ..< tabName.count, id: \.self) { ind in
 //                            print("\(ind)")
 //                            print(self.title[ind])
-                            ListCell(image: imageName[ind], title: tabName[ind], vectorImg: .arrowForward,subLabel : subLabel[ind])
+                            ListCell(image: imageName[ind], title: tabName[ind], vectorImg: .icArrowUp,subLabel : subLabel[ind])
                            
                         }
                        

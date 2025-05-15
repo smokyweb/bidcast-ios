@@ -108,7 +108,7 @@ struct PrimaryHeader: View {
                     }
                 }
             }
-            .frame(height: 40)
+            .frame(height: 50)
             .padding(.top, 10)
             .overlay(alignment: .center, content: {
                 if showAppIcon {
@@ -130,7 +130,7 @@ struct PrimaryHeader: View {
                 }
             })
         }
-        .frame(height: topPadding + 40)
+        .frame(height: topPadding + 50)
         .edgesIgnoringSafeArea(.top)
     }
 }

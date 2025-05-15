@@ -52,3 +52,45 @@
 "Back to Login" = "Voltar ao login";
 "Choose Language" = "Escolher idioma";
 
+//MARK: New
+"List a Product" = "Listar um produto";
+"Scheduled a show" = "Show agendado";
+"Seller Hub" = "Central do vendedor";
+"Create a listing for your item" = "Crie um anúncio para seu item";
+"Go live and sell to your audience" = "Vá ao vivo e venda para seu público";
+"Manage your store and listings" = "Gerencie sua loja e anúncios";
+"Sell" = "Vender";
+"My Account" = "Minha conta";
+
+"Inventory" = "Inventário";
+"Shows" = "Shows";
+"My Orders" = "Meus pedidos";
+"Wallet" = "Carteira";
+"Offers" = "Ofertas";
+"Tips" = "Dicas";
+"Shipping" = "Envio";
+"Affiliate Program" = "Programa de afiliados";
+"Seller Training" = "Treinamento de vendedores";
+"Premier Shop" = "Loja premium";
+"Seller Status" = "Status do vendedor";
+"Seller Analytics" = "Análises do vendedor";
+
+"Payment & Shipping" = "Pagamento e envio";
+"Addresses" = "Endereços";
+"Trusted Buyer" = "Comprador confiável";
+"Notifications" = "Notificações";
+"Preference" = "Preferência";
+
+"About Us" = "Sobre nós";
+"Contact Us" = "Fale conosco";
+"Sales tax Exemption" = "Isenção de imposto sobre vendas";
+"Terms & Conditions" = "Termos e condições";
+"Privacy & Policy" = "Política de privacidade";
+"F.A.Q" = "Perguntas frequentes";
+
+"Account" = "Conta";
+"Items" = "Itens";
+"Revenue" = "Receita";
+"Sorting" = "Ordenação";
+"Credits" = "Créditos";
+"Coupons" = "Cupons";

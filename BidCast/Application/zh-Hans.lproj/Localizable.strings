@@ -51,3 +51,48 @@
 "Please Enter Last Name" = "请输入姓氏";
 "Back to Login" = "返回登录";
 "Choose Language" = "选择语言";
+
+
+//MARK: New
+
+"List a Product" = "发布产品";
+"Scheduled a show" = "安排展示";
+"Seller Hub" = "卖家中心";
+"Create a listing for your item" = "为您的商品创建列表";
+"Go live and sell to your audience" = "直播并向观众销售";
+"Manage your store and listings" = "管理您的商店和列表";
+"Sell" = "出售";
+"My Account" = "我的账户";
+
+"Inventory" = "库存";
+"Shows" = "展示";
+"My Orders" = "我的订单";
+"Wallet" = "钱包";
+"Offers" = "优惠";
+"Tips" = "技巧";
+"Shipping" = "运输";
+"Affiliate Program" = "联盟计划";
+"Seller Training" = "卖家培训";
+"Premier Shop" = "旗舰店";
+"Seller Status" = "卖家状态";
+"Seller Analytics" = "卖家分析";
+
+"Payment & Shipping" = "付款与配送";
+"Addresses" = "地址";
+"Trusted Buyer" = "可信买家";
+"Notifications" = "通知";
+"Preference" = "偏好";
+
+"About Us" = "关于我们";
+"Contact Us" = "联系我们";
+"Sales tax Exemption" = "销售税豁免";
+"Terms & Conditions" = "条款与条件";
+"Privacy & Policy" = "隐私政策";
+"F.A.Q" = "常见问题";
+
+"Account" = "账户";
+"Items" = "商品";
+"Revenue" = "收入";
+"Sorting" = "排序";
+"Credits" = "积分";
+"Coupons" = "优惠券";

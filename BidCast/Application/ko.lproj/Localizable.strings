@@ -51,3 +51,46 @@
 "Please Enter Last Name" = "성을 입력하세요";
 "Back to Login" = "로그인으로 돌아가기";
 "Choose Language" = "언어 선택";
+
+
+//MARK: New
+"List a Product" = "상품 등록하기";
+"Scheduled a show" = "쇼 일정 예약";
+"Seller Hub" = "판매자 허브";
+"Create a listing for your item" = "상품 목록 만들기";
+"Go live and sell to your audience" = "라이브 방송으로 판매하기";
+"Manage your store and listings" = "매장 및 목록 관리";
+"Sell" = "판매";
+"My Account" = "내 계정";
+
+"Inventory" = "재고";
+"Shows" = "쇼";
+"My Orders" = "내 주문";
+"Wallet" = "지갑";
+"Offers" = "제안";
+"Tips" = "팁";
+"Shipping" = "배송";
+"Affiliate Program" = "제휴 프로그램";
+"Seller Training" = "판매자 교육";
+"Premier Shop" = "프리미어 상점";
+"Seller Status" = "판매자 상태";
+"Seller Analytics" = "판매자 분석";
+
+"Payment & Shipping" = "결제 및 배송";
+"Addresses" = "주소";
+"Trusted Buyer" = "신뢰받는 구매자";
+"Notifications" = "알림";
+"Preference" = "설정";
+
+"About Us" = "회사 소개";
+"Contact Us" = "문의하기";
+"Sales tax Exemption" = "판매세 면제";
+"Terms & Conditions" = "약관";
+"Privacy & Policy" = "개인정보처리방침";
+"F.A.Q" = "자주 묻는 질문";
+"Account" = "계정";
+"Items" = "항목";
+"Revenue" = "수익";
+"Sorting" = "정렬";
+"Credits" = "크레딧";
+"Coupons" = "쿠폰";

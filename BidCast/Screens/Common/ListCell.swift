@@ -13,8 +13,9 @@ struct ListCell: View {
     
     var image : ImageResource
     var title = "Gaming"
-    var vectorImg : ImageResource
+    var vectorImg : ImageResource?
     var subLabel = "Live"
+    var isVectorImgHidden : Bool = false
     var body: some View {
         HStack(alignment: .center,spacing: 10){
             HStack{
@@ -38,11 +39,14 @@ struct ListCell: View {
                         .padding(.leading, 10)
                 }
                 Spacer()
-                Image(vectorImg)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 24,height: 24)
-                    .padding(.trailing ,8)
+                if !isVectorImgHidden{
+                    Image(vectorImg ?? .defaultUser )
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 24,height: 24)
+                        .rotationEffect(Angle(degrees: 90.0))
+                        .padding(.trailing ,8)
+                }
             }
             .frame(maxWidth: .infinity )
         }

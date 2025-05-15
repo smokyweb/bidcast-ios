@@ -54,3 +54,45 @@
 "Choose Language" = "Выбрать язык";
 "Choose Language" = "言語を選択";
 
+//MARK: New
+"List a Product" = "Добавить товар";
+"Scheduled a show" = "Запланировать шоу";
+"Seller Hub" = "Центр продавца";
+"Create a listing for your item" = "Создайте объявление для вашего товара";
+"Go live and sell to your audience" = "Выходите в эфир и продавайте своей аудитории";
+"Manage your store and listings" = "Управляйте магазином и объявлениями";
+"Sell" = "Продать";
+"My Account" = "Мой аккаунт";
+
+"Inventory" = "Инвентарь";
+"Shows" = "Шоу";
+"My Orders" = "Мои заказы";
+"Wallet" = "Кошелек";
+"Offers" = "Предложения";
+"Tips" = "Советы";
+"Shipping" = "Доставка";
+"Affiliate Program" = "Партнерская программа";
+"Seller Training" = "Обучение продавцов";
+"Premier Shop" = "Премиум-магазин";
+"Seller Status" = "Статус продавца";
+"Seller Analytics" = "Аналитика продавца";
+
+"Payment & Shipping" = "Оплата и доставка";
+"Addresses" = "Адреса";
+"Trusted Buyer" = "Надежный покупатель";
+"Notifications" = "Уведомления";
+"Preference" = "Предпочтения";
+
+"About Us" = "О нас";
+"Contact Us" = "Связаться с нами";
+"Sales tax Exemption" = "Освобождение от налога с продаж";
+"Terms & Conditions" = "Условия и положения";
+"Privacy & Policy" = "Политика конфиденциальности";
+"F.A.Q" = "Часто задаваемые вопросы";
+
+"Account" = "Аккаунт";
+"Items" = "Товары";
+"Revenue" = "Доход";
+"Sorting" = "Сортировка";
+"Credits" = "Кредиты";
+"Coupons" = "Купоны";
