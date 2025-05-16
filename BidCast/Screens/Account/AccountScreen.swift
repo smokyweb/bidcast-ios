@@ -19,7 +19,6 @@ struct AccountScreen: View {
     @State var navigateToSales : Bool = false
     @State var navigateToPrivacy : Bool = false
     @State var navigateToTerms : Bool = false
-    
     let columns = [
         GridItem(.flexible()),
         GridItem(.flexible())
@@ -135,6 +134,7 @@ struct AccountScreen: View {
             CusNavLink(doNavigate: $navigateToFAQ, destination: FAQScreen())
             CusNavLink(doNavigate: $navigateToTerms, destination: TermsOfServicesScreen())
             CusNavLink(doNavigate: $navigateToPrivacy, destination: PrivacyPolicyScreen())
+            CusNavLink(doNavigate: $navigateToContactus, destination: ContactUs())
         }
         .edgesIgnoringSafeArea(.top)
         .background(.bg.opacity(0.5))

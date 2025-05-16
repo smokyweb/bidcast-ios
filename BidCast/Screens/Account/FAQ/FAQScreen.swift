@@ -6,20 +6,20 @@
 //
 
 import SwiftUI
+import AlertToast
 
-// Expandable Item Model
-struct ExpandableItem: Codable, Identifiable {
-    var id: Int
-    var question: String?
-    var answer: String?
-}
-
-// FAQ Screen
 struct FAQScreen: View {
     @Environment(\.presentationMode) var presentationMode
     @State private var selectedButton: FAQButton = .AllFAQ
-    @State private var items: [ExpandableItem] = []
+    @State var showError: Bool = false
+    @State var isLoading: Bool = false
+    @State var showhud: Bool = false
+    @State var hudMsg: String = ""
+    @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @State private var expandedItemID: Int? = nil
+    @State private var faqList: [FAQDataModel] = [] // ✅ Local FAQ list
+
+    var viewModel = FAQViewModel()
 
     var body: some View {
         VStack(spacing: 0) {
@@ -45,15 +45,21 @@ struct FAQScreen: View {
             // FAQ List
             ScrollView {
                 VStack(spacing: 20) {
-                    ForEach(items) { item in
-                        FAQCell(
-                            title: item.question ?? "",
-                            content: item.answer ?? "",
-                            isExpanded: expandedItemID == item.id,
-                            onTap: {
-                                expandedItemID = (expandedItemID == item.id) ? nil : item.id
-                            }
-                        )
+                    if faqList.isEmpty {
+                        Text("No FAQ data available")
+                            .foregroundColor(.gray)
+                            .padding()
+                    } else {
+                        ForEach(faqList, id: \.id) { item in
+                            FAQCell(
+                                title: item.question ?? "",
+                                content: item.answer ?? "",
+                                isExpanded: expandedItemID == item.id,
+                                onTap: {
+                                    expandedItemID = (expandedItemID == item.id) ? nil : item.id
+                                }
+                            )
+                        }
                     }
                 }
                 .padding(.all, 20)
@@ -61,33 +67,63 @@ struct FAQScreen: View {
         }
         .background(Color.pearl)
         .onAppear {
-            loadFAQData(for: selectedButton)
+            observe()
+            self.viewModel.getFAQ()
         }
-        .onChange(of: selectedButton) { newValue in
-            loadFAQData(for: newValue)
+        .toast(isPresenting: $showhud) {
+            AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
+        }
+        .bottomSheet(isPresented: $showError, height: screenHeight / 2.5, topBarCornerRadius: 25, showTopIndicator: false) {
+            CommonBottomSheet(
+                sheetType: $alertType,
+                onPrimaryClick: {
+                    withAnimation { showError = false }
+                    let response = viewModel.FAQModelDict
+                    if response.status == "success" {
+                        self.presentationMode.wrappedValue.dismiss()
+                    }
+                },
+                onSecondaryClick: {
+                    withAnimation { showError = false }
+                }
+            )
         }
     }
 
-    // Simulate API data loading based on segment selection
-    func loadFAQData(for type: FAQButton) {
-        switch type {
-        case .AllFAQ:
-            items = [
-                ExpandableItem(id: 1, question: "All: What is this?", answer: "This is an answer."),
-                ExpandableItem(id: 2, question: "All: How to use it?", answer: "Here's how."),
-                ExpandableItem(id: 3, question: "All: Why does it work?", answer: "It works because of this."),
-            ]
-        case .biding:
-            items = [
-                ExpandableItem(id: 4, question: "Bidding: How do I bid?", answer: "Use the bidding system."),
-            ]
-        case .payment:
-            items = [
-                ExpandableItem(id: 5, question: "Payment: How do I pay?", answer: "Use a credit card."),
-            ]
+    func observe() {
+        self.viewModel.eventHandler = { event in
+            switch event {
+            case .loading:
+                self.isLoading = true
+            case .stopLoading:
+                self.isLoading = false
+            case .dataLoaded:
+                success()
+            case .error(let error):
+                let msg = error?.localizedDescription ?? AppString.error.localized
+                alertType = .sheetType(icon: .alert, title: AppString.error.localized, message: msg, primaryBtnText: "", secondaryBtnText: AppString.ok.localized)
+                showError = true
+            }
+        }
+    }
+
+    func success() {
+        let response = viewModel.FAQModelDict
+        if response.status == "success" {
+            self.faqList = response.data ?? [] // ✅ Update UI-bound list
+        } else {
+            alertType = .sheetType(
+                icon: .alert,
+                title: response.error_type?.capitalized ?? "",
+                message: response.message?.capitalized ?? "",
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
+            )
+            showError = true
         }
     }
 }
+
 
 // Enum for FAQ segments
 enum FAQButton: String, CaseIterable, CustomStringConvertible {
@@ -100,8 +136,8 @@ enum FAQButton: String, CaseIterable, CustomStringConvertible {
     }
 }
 
-// Preview for the FAQ Screen
-#Preview {
-    FAQScreen()
-}
+//// Preview for the FAQ Screen
+//#Preview {
+//    FAQScreen()
+//}
 

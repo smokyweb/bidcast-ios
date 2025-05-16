@@ -284,6 +284,22 @@ struct SignUpRequest:Encodable {
     }
 }
 
+//MARK: - Contact US
+struct ContactUsRequest:Encodable {
+    var name:String
+    var email:String
+    var subject:String
+    var message:String
+    
+    enum CodingKeys: String, CodingKey {
+        case name
+        case email
+        case subject
+        case message
+    }
+}
+
+
 
 //MARK: - ForgetPassword
 struct ForgetRequest:Encodable {
@@ -327,12 +343,6 @@ struct EditProfileDetailsRequest:Encodable {
     var profile_image : String?
 }
 
-//MARK: ContactUsRequest.
-struct ContactUsRequest : Encodable{
-    var email : String?
-    var phone : String?
-    var message : String?
-}
 
 //MARK: - UpdatePasswordRequest.
 struct UpdatePasswordRequest : Encodable{

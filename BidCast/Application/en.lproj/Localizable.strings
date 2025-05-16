@@ -51,13 +51,6 @@
 "Please Enter Last Name" = "Please Enter Last Name";
 "Back to Login" = "Back to Login";
 "Choose Language" = "Choose Language";
-
-
-
-
-
-//MARK: New
-
 "List a Product" = "List a Product";
 "Scheduled a show" = "Scheduled a show";
 "Seller Hub" = "Seller Hub";
@@ -67,7 +60,6 @@
 "Sell" = "Sell";
 "Seller Hub" = "Seller Hub";
 "My Account" = "My Account";
-
 "Inventory" = "Inventory";
 "Shows" = "Shows";
 "My Orders" = "My Orders";
@@ -80,20 +72,17 @@
 "Premier Shop" = "Premier Shop";
 "Seller Status" = "Seller Status";
 "Seller Analytics" = "Seller Analytics";
-
 "Payment & Shipping" = "Payment & Shipping";
 "Addresses" = "Addresses";
 "Trusted Buyer" = "Trusted Buyer";
 "Notifications" = "Notifications";
 "Preference" = "Preference";
-
 "About Us" = "About Us";
 "Contact Us" = "Contact Us";
 "Sales tax Exemption" = "Sales tax Exemption";
 "Terms & Conditions" = "Terms & Conditions";
 "Privacy & Policy" = "Privacy & Policy";
 "F.A.Q" = "F.A.Q";
-        
 "Account" = "Account";
 "Items" = "Items";
 "Revenue" = "Revenue";
@@ -101,3 +90,16 @@
 "Credits" = "Credits";
 "Coupons" = "Coupons";
 
+//MARK: New
+
+"First Name" = "First Name";
+"Subject" = "Subject";
+"Message" = "Message";
+"Send Message" = "Send Message";
+"Get In Touch" = "Get In Touch";
+"We're here to help! Send us your queries and we'll get back to you soon" = "We're here to help! Send us your queries and we'll get back to you soon";
+"FAQ" = "FAQ";
+"Enter Full Name" = "Enter Full Name";
+"Contact Us" = "Contact Us";
+"Enter Subject" = "Enter Subject";
+"Enter Your Message Here" = "Enter Your Message Here";

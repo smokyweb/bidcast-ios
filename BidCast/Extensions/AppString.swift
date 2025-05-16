@@ -55,5 +55,14 @@ struct AppString{
     static let pleaseEnterLastName = "Please Enter Last Name".localized
     static let backToLogin  = "Back to Login".localized
     static let selectALanguage  = "Select a language".localized
+    static let fullName = "First Name".localized
+    static let subject = "Subject".localized
+    static let enterSubject = "Enter Subject".localized
+    static let message = "Message".localized
+    static let sendMessage = "Send Message".localized
+    static let getInTouch = "Get In Touch".localized
+    static let enterFullName = "Enter Full Name".localized
+    static let weAreHereToHelp = "We're here to help! Send us your queries and we'll get back to you soon.".localized
+    static let enterYourMessage = "Enter Your Message Here".localized
     
 }

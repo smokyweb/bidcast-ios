@@ -139,7 +139,7 @@ extension APIEndPoint: EndPointType {
         case .termsCondition:
             return "terms-conditions"
         case .faq:
-            return "get-questions"
+            return "get-FAQ"
         case .aboutUs:
             return "about-us"
         case .logout:

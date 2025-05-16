@@ -186,6 +186,8 @@
 		99DF9E832DC4F370008C15B2 /* BidCastUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99DF9E802DC4F370008C15B2 /* BidCastUITestsLaunchTests.swift */; };
 		D49A95682DD704CD006044A7 /* FAQScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D49A95672DD704CD006044A7 /* FAQScreen.swift */; };
 		D49A956A2DD70952006044A7 /* FAQCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D49A95692DD70952006044A7 /* FAQCell.swift */; };
+		D49A956E2DD71E3E006044A7 /* ContactUs.swift in Sources */ = {isa = PBXBuildFile; fileRef = D49A956B2DD71E3E006044A7 /* ContactUs.swift */; };
+		D49A95732DD75EAF006044A7 /* FAQViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D49A95722DD75EAE006044A7 /* FAQViewModel.swift */; };
 		D4C4D7972DD31C2D00274E51 /* ActivityCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C4D7962DD31C2D00274E51 /* ActivityCell.swift */; };
 		D4C4D79A2DD3263A00274E51 /* SingleTitleLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C4D7982DD3263A00274E51 /* SingleTitleLabel.swift */; };
 		D4C4D79C2DD32F3D00274E51 /* TwoButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C4D79B2DD32F3D00274E51 /* TwoButton.swift */; };
@@ -395,6 +397,8 @@
 		99DF9E802DC4F370008C15B2 /* BidCastUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BidCastUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		D49A95672DD704CD006044A7 /* FAQScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FAQScreen.swift; sourceTree = "<group>"; };
 		D49A95692DD70952006044A7 /* FAQCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FAQCell.swift; sourceTree = "<group>"; };
+		D49A956B2DD71E3E006044A7 /* ContactUs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactUs.swift; sourceTree = "<group>"; };
+		D49A95722DD75EAE006044A7 /* FAQViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FAQViewModel.swift; sourceTree = "<group>"; };
 		D4C4D7962DD31C2D00274E51 /* ActivityCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityCell.swift; sourceTree = "<group>"; };
 		D4C4D7982DD3263A00274E51 /* SingleTitleLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleTitleLabel.swift; sourceTree = "<group>"; };
 		D4C4D79B2DD32F3D00274E51 /* TwoButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwoButton.swift; sourceTree = "<group>"; };
@@ -502,6 +506,7 @@
 				35B44F152DD7052400FBCBC4 /* About Us */,
 				355AE97B2DD1FC3900CD3D17 /* AccountScreen.swift */,
 				D49A95662DD704BF006044A7 /* FAQ */,
+				D49A956D2DD71E3E006044A7 /* ContactUs */,
 			);
 			path = Account;
 			sourceTree = "<group>";
@@ -1503,8 +1508,17 @@
 			children = (
 				D49A95672DD704CD006044A7 /* FAQScreen.swift */,
 				D49A95692DD70952006044A7 /* FAQCell.swift */,
+				D49A95722DD75EAE006044A7 /* FAQViewModel.swift */,
 			);
 			path = FAQ;
+			sourceTree = "<group>";
+		};
+		D49A956D2DD71E3E006044A7 /* ContactUs */ = {
+			isa = PBXGroup;
+			children = (
+				D49A956B2DD71E3E006044A7 /* ContactUs.swift */,
+			);
+			path = ContactUs;
 			sourceTree = "<group>";
 		};
 		D4C4D7952DD31C0F00274E51 /* ActivityCell */ = {
@@ -1798,8 +1812,10 @@
 				99C9095A2DC8CD790054620B /* TermsOfServicesScreen.swift in Sources */,
 				99C9095B2DC8CD790054620B /* ResetPasswordScreen.swift in Sources */,
 				99C9095D2DC8CD790054620B /* ForgotScreen.swift in Sources */,
+				D49A956E2DD71E3E006044A7 /* ContactUs.swift in Sources */,
 				D4C4D79C2DD32F3D00274E51 /* TwoButton.swift in Sources */,
 				99C9095E2DC8CD790054620B /* DeleteAccountScreen.swift in Sources */,
+				D49A95732DD75EAF006044A7 /* FAQViewModel.swift in Sources */,
 				99C9095F2DC8CD790054620B /* EmployerFlowStack.swift in Sources */,
 				99C909602DC8CD790054620B /* JobPostViewModal.swift in Sources */,
 				99C909612DC8CD790054620B /* ContactUsScreen.swift in Sources */,

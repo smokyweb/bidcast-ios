@@ -14,6 +14,22 @@ struct ContactModel : Codable{
     var data : ContactDataModel?
 }
 
+struct FAQModel : Codable{
+    var status : String?
+    var message : String?
+    var error_type : String?
+    var data : [FAQDataModel]?
+}
+
+struct FAQDataModel : Codable{
+    var id : Int?
+    var question : String?
+    var answer : String?
+}
+
+
+
+
 struct BusinessModel : Codable{
     var status : String?
     var message : String?
@@ -29,14 +45,9 @@ struct UpdateBusinessModel : Codable{
 }
 
 struct ContactDataModel : Codable{
-    var email :  String?
-    var phone :  String?
-    var message :  String?
-    var image : String?
-    var user_id : Int?
-    var updated_at :  String?
-    var created_at :  String?
     var id : Int?
+    var question : String?
+    var answer : String?
 }
 
 struct BusinessDataModel : Codable{
