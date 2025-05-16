@@ -137,7 +137,7 @@ extension APIEndPoint: EndPointType {
         case .privacyPolicy:
             return "privacy-policy"
         case .termsCondition:
-            return "terms-of-service"
+            return "terms-conditions"
         case .faq:
             return "get-questions"
         case .aboutUs:

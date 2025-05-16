@@ -65,7 +65,7 @@ final class MenuOptionsViewModal {
         APIManager.shared
             .requestPost(
                 modelType: ResponseModal<MenuOptionsModal>.self,
-                type: APIEndPoint.termsOfService,
+                type: APIEndPoint.termsCondition,
                 header: true) { result in
                     self.eventHandler?(.stopLoading)
                     switch result {

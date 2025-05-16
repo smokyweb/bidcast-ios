@@ -15,6 +15,11 @@ struct AccountScreen: View {
     @State var isTappedSwitch : Bool = false
     @State var navigateToAboutUs : Bool = false
     @State var navigateToFAQ : Bool = false
+    @State var navigateToContactus : Bool = false
+    @State var navigateToSales : Bool = false
+    @State var navigateToPrivacy : Bool = false
+    @State var navigateToTerms : Bool = false
+    
     let columns = [
         GridItem(.flexible()),
         GridItem(.flexible())
@@ -84,11 +89,33 @@ struct AccountScreen: View {
                                     withAnimation {
                                         navigateToAboutUs = true
                                     }
-                                }else if index == 5 {
+                                }else
+                                if index == 1{
+                                    withAnimation {
+                                        navigateToContactus = true
+                                    }
+                                }else
+                                if index == 2{
+                                    withAnimation {
+                                        navigateToSales = true
+                                    }
+                                }else
+                                if index == 3{
+                                    withAnimation {
+                                        navigateToTerms = true
+                                    }
+                                }else
+                                if index == 4{
+                                    withAnimation {
+                                        navigateToPrivacy = true
+                                    }
+                                }
+                                else if index == 5 {
                                     withAnimation {
                                         navigateToFAQ = true
                                     }
                                 }
+                                
                                 print(AccountMenuSection.allCases[index].description)
                             })
                             
@@ -106,6 +133,8 @@ struct AccountScreen: View {
             .background(.bg.opacity(0.5))
             CusNavLink(doNavigate: $navigateToAboutUs, destination: AboutUsScreen())
             CusNavLink(doNavigate: $navigateToFAQ, destination: FAQScreen())
+            CusNavLink(doNavigate: $navigateToTerms, destination: TermsOfServicesScreen())
+            CusNavLink(doNavigate: $navigateToPrivacy, destination: PrivacyPolicyScreen())
         }
         .edgesIgnoringSafeArea(.top)
         .background(.bg.opacity(0.5))
