@@ -13,26 +13,40 @@ struct TabbarScreen: View {
 
     var body: some View {
         TabView {
-            HomeViewScreen()
-                .tabItem {
-                    Label("Home", systemImage: "house")
-                }
-            ExploreViewScreen()
-                .tabItem {
-                    Label("Explore", systemImage: "safari.fill")
-                }
-            SellScreen()
-                .tabItem {
-                    Label("Sell", systemImage: "plus.circle.fill")
-                }
-            ActivityScreen()
-                .tabItem {
-                    Label("Activity", systemImage: "suit.heart.fill")
-                          }
-            AccountScreen()
-                .tabItem {
-                    Label("Account", systemImage: "person.fill")
-                }
+            NavigationContainer {
+                   HomeViewScreen()
+               }
+            .tabItem {
+                Label("Home", systemImage: "house")
+            }
+
+            NavigationContainer {
+                   ExploreViewScreen()
+               }
+               .tabItem {
+                   Label("Explore", systemImage: "safari.fill")
+               }
+
+            NavigationContainer {
+                   SellScreen()
+               }
+               .tabItem {
+                   Label("Sell", systemImage: "plus.circle.fill")
+               }
+
+            NavigationContainer { 
+                   ActivityScreen()
+               }
+               .tabItem {
+                   Label("Activity", systemImage: "suit.heart.fill")
+               }
+
+            NavigationContainer {
+                   AccountScreen()
+               }
+               .tabItem {
+                   Label("Account", systemImage: "person.fill")
+               }
         }
 //        .id(languageManager.languageChanged)
         .accentColor(.tabBar)

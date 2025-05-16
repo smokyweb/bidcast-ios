@@ -25,8 +25,8 @@ struct Loader: View {
         .frame(width: screenWidth, height:screenHeight)
         
         
-        .ignoresSafeArea(.all)
-//        .edgesIgnoringSafeArea(.all)
+//        .ignoresSafeArea([.top,.bottom])
+        .edgesIgnoringSafeArea([.top,.bottom])
         .background(.text.opacity(0.2))
     }
 }

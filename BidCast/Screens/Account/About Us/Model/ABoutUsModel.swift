@@ -1,14 +1,13 @@
 //
-//  AboutUsResponseModel.swift
-//  imperium
+//  ABoutUsModel.swift
+//  BidCast
 //
-//  Created by Abdul-JAM-E-157 on 29/01/24.
+//  Created by Ankit-JAM-E-294 on 16/05/25.
 //
 
 import Foundation
 
-
-struct AboutUsResponseModel : Codable{
+struct AboutUsModel : Codable{
     var page_name :  String?
     var page_content :  String?
     var page_url :  String?

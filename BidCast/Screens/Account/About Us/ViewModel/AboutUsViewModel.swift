@@ -1,22 +1,22 @@
 //
 //  AboutUsViewModel.swift
-//  imperium
+//  BidCast
 //
-//  Created by Abdul-JAM-E-157 on 20/01/24.
+//  Created by Ankit-JAM-E-294 on 16/05/25.
 //
 
 import Foundation
 
 final class AboutUsViewModel {
     
-    var aboutResponceDict : ResponseModal<AboutUsResponseModel>?
+    var aboutResponceDict : ResponseModal<AboutUsModel>?
     
     var eventHandler: ((_ event: Event) -> Void)? // Data Binding Closure
 
     func getAboutContent(){
         self.eventHandler?(.loading)
         APIManager.shared.requestPost(
-            modelType: ResponseModal<AboutUsResponseModel>.self, // response type
+            modelType: ResponseModal<AboutUsModel>.self, // response type
             type: APIEndPoint.aboutUs,
             header: true) { result in
                 self.eventHandler?(.stopLoading)

@@ -57,7 +57,7 @@ struct MenuCell: View {
             }
             .frame(maxWidth: .infinity )
         }
-        .frame(height: 70)
+        .frame(height: 65)
         .background(.white)
         .cornerRadius(8.0)
         .padding([.leading,.trailing],8)

@@ -39,7 +39,7 @@ struct SellScreen: View {
         .frame(maxWidth: .infinity,maxHeight: .infinity)
         .padding(.all,2)
         .background(.black.opacity(0.5))
-        .edgesIgnoringSafeArea(.all)
+        .edgesIgnoringSafeArea(.top)
     }
 }
 

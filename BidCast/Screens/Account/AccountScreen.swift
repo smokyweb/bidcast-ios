@@ -13,6 +13,7 @@ struct AccountScreen: View {
     @State var segment : AccountSegment = .sellerHub
     @State var selectedSegmentSourceType = 0
     @State var isTappedSwitch : Bool = false
+    @State var navigateToAboutUs : Bool = false
     let columns = [
         GridItem(.flexible()),
         GridItem(.flexible())
@@ -78,23 +79,33 @@ struct AccountScreen: View {
                                 print("Vacation Mode state is now \(newValue ? "ON" : "OFF")")
                                 
                             },onTapMenuCell: {
+                                if index == 0 {
+                                    withAnimation {
+                                        navigateToAboutUs = true
+                                    }
+                                   
+                                   
+                                }
                                 print(AccountMenuSection.allCases[index].description)
                             })
                             
-                            .frame(height:75)
+                            .frame(height:70)
                             .padding([.leading,.trailing],8)
                         }
                     }
+                   
                 }
+               
                 
             }
-            .padding(.bottom,24)
+            .padding(.bottom,12)
             .padding(.top,-24)
             .background(.bg.opacity(0.5))
-            
+            CusNavLink(doNavigate: $navigateToAboutUs, destination: AboutUsScreen())
         }
-        .edgesIgnoringSafeArea(.all)
+        .edgesIgnoringSafeArea(.top)
         .background(.bg.opacity(0.5))
+        
     }
 }
 
