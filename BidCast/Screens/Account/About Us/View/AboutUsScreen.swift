@@ -29,7 +29,7 @@ struct AboutUsScreen: View {
         ZStack {
             VStack(spacing: 0, content: {
                 PrimaryHeader(
-                    title: "Account".localized,
+                    title: "About Us".localized,
                     isForLogo : false, leadingImgArr: [.sideArrow],
                     trailingImgArr: [],
                     onClickLeading: { _ in
@@ -69,7 +69,7 @@ struct AboutUsScreen: View {
                 }
                 .padding([.horizontal, .vertical])
                 .background(.text.opacity(0.05))
-                .padding(.top, 12)
+                .padding(.top, 2)
                 .refreshable {
                     self.isLoading = true
                     viewModel.getAboutContent()
@@ -79,15 +79,15 @@ struct AboutUsScreen: View {
                 Spacer()
             })
           
-            .bottomSheet(isPresented: $showError, height: screenHeight/2, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: { showError = true }, content: {
-                CommonBottomSheet(
-                    sheetType: $alertType,
-                    onPrimaryClick: {
-                        withAnimation { showError = false }
-                    }, onSecondaryClick: {
-                        withAnimation { showError = false }
-                    })
-            })
+//            .bottomSheet(isPresented: $showError, height: screenHeight/2, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: { showError = true }, content: {
+//                CommonBottomSheet(
+//                    sheetType: $alertType,
+//                    onPrimaryClick: {
+//                        withAnimation { showError = false }
+//                    }, onSecondaryClick: {
+//                        withAnimation { showError = false }
+//                    })
+//            })
 
             if isLoading {
                 Loader(isLoading: $isLoading)
