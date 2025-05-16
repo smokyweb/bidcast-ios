@@ -23,32 +23,32 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         self.languageSelection()
-            // Remove this method to stop OneSignal Debugging
-//        OneSignal.Debug.setLogLevel(.LL_VERBOSE)
-//        let observer = MyPushSubscriptionObserver()
-//        OneSignal.User.pushSubscription.addObserver(observer)
-//        
-//        OneSignal.initialize("973c5938-5a1c-410e-8389-02b74b38f6c6", withLaunchOptions: launchOptions)
-//       
-//        OneSignal.Notifications.requestPermission({ accepted in
-//            Log.s("User accepted notifications: \(accepted)")
-//            Log.s("User ID: \(OneSignal.User)")
-//            UserDefaultsManager.shared.setValue(OneSignal.User.onesignalId ?? "", forKey: .deviceToken)
-//            DispatchQueue.main.async {
-//                UIApplication.shared.registerForRemoteNotifications()
-//            }
-//        }, fallbackToSettings: true)
-//        
-//        FirebaseApp.configure()
-////        Messaging.messaging().delegate = self
-//        
+        // Remove this method to stop OneSignal Debugging
+        //        OneSignal.Debug.setLogLevel(.LL_VERBOSE)
+        //        let observer = MyPushSubscriptionObserver()
+        //        OneSignal.User.pushSubscription.addObserver(observer)
+        //
+        //        OneSignal.initialize("973c5938-5a1c-410e-8389-02b74b38f6c6", withLaunchOptions: launchOptions)
+        //
+        //        OneSignal.Notifications.requestPermission({ accepted in
+        //            Log.s("User accepted notifications: \(accepted)")
+        //            Log.s("User ID: \(OneSignal.User)")
+        //            UserDefaultsManager.shared.setValue(OneSignal.User.onesignalId ?? "", forKey: .deviceToken)
+        //            DispatchQueue.main.async {
+        //                UIApplication.shared.registerForRemoteNotifications()
+        //            }
+        //        }, fallbackToSettings: true)
+        //
+        //        FirebaseApp.configure()
+        ////        Messaging.messaging().delegate = self
+        //
         IQKeyboardManager.shared.isEnabled = true
         IQKeyboardManager.shared.resignOnTouchOutside = true
-//        IQKeyboardManager.shared.enableAutoToolbar = false
+        //        IQKeyboardManager.shared.enableAutoToolbar = false
         
         if #available(iOS 10.0, *) {
-                // For iOS 10 display notification (sent via APNS)
-//            UNUserNotificationCenter.current().delegate = self
+            // For iOS 10 display notification (sent via APNS)
+            //            UNUserNotificationCenter.current().delegate = self
             
             let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
             UNUserNotificationCenter.current().requestAuthorization(
@@ -67,7 +67,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             Log.e("Error Handling callStackSymbols: \(exception.callStackSymbols)")
         }
         
-//        UserDefaultsManager.shared.setValue(true, forKey: .showMatchingSheet)
+        //        UserDefaultsManager.shared.setValue(true, forKey: .showMatchingSheet)
         
         UITextField.appearance().tintColor = .text
         
@@ -85,17 +85,17 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         }
     }
     
-//    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
-//        // Handle the redirect URL here
-//        // For example:
-//        if url.scheme == "your_redirect_scheme" {
-//            // This URL is the redirect URL from your authorization flow
-//            // You can handle it further, for example, by extracting parameters
-//            // and updating your app's state or UI accordingly.
-//            // Example:
-//        }
-//        return true
-//    }
+    //    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+    //        // Handle the redirect URL here
+    //        // For example:
+    //        if url.scheme == "your_redirect_scheme" {
+    //            // This URL is the redirect URL from your authorization flow
+    //            // You can handle it further, for example, by extracting parameters
+    //            // and updating your app's state or UI accordingly.
+    //            // Example:
+    //        }
+    //        return true
+    //    }
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         if url.scheme == "myapp" && url.host == "google-calendar" && url.path == "/callback-process" {
             // Handle the redirection here
@@ -110,13 +110,13 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         return sceneConfig
     }
     
-//    func onPushSubscriptionDidChange(state: OneSignalUser.OSPushSubscriptionChangedState) {
-//        Log.s(state)
-//        if let token = state.current.token {
-//            Log.s("FCM token: \(token)")
-//            UserDefaultsManager.shared.setValue(token, forKey: .deviceToken)
-//        }
-//    }
+    //    func onPushSubscriptionDidChange(state: OneSignalUser.OSPushSubscriptionChangedState) {
+    //        Log.s(state)
+    //        if let token = state.current.token {
+    //            Log.s("FCM token: \(token)")
+    //            UserDefaultsManager.shared.setValue(token, forKey: .deviceToken)
+    //        }
+    //    }
 }
 
 //@available(iOS 10, *)
@@ -143,7 +143,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 //        if let aps = userInfo["aps"] as? [String: Any],
 //           let alert = aps["alert"] as? [String: Any],
 //           let bodyHTML = alert["body"] as? String {
-//            
+//
 //            plainTextBody = decodeHTML(bodyHTML) // Convert HTML to plain text
 //            Log.s("Decoded Notification Body: \(plainTextBody ?? "")")
 //        }
@@ -180,18 +180,18 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 //    // ✅ Improved HTML Decoder
 //    func decodeHTML(_ htmlString: String) -> String {
 //        guard let data = htmlString.data(using: .utf8) else { return htmlString }
-//        
+//
 //        let options: [NSAttributedString.DocumentReadingOptionKey: Any] = [
 //            .documentType: NSAttributedString.DocumentType.html,
 //            .characterEncoding: String.Encoding.utf8.rawValue
 //        ]
-//        
+//
 //        if let attributedString = try? NSAttributedString(data: data, options: options, documentAttributes: nil) {
 //            return attributedString.string
 //                .replacingOccurrences(of: "\u{00A0}", with: " ") // Unicode non-breaking space
 //                .trimmingCharacters(in: .whitespacesAndNewlines)
 //        }
-//        
+//
 //        return htmlString
 //            .replacingOccurrences(of: "&nbsp;", with: " ") // Manual fallback
 //            .trimmingCharacters(in: .whitespacesAndNewlines)
@@ -199,7 +199,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 //
 //
 //
-//    
+//
 //    func application(_: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
 ////        if let token: String = Messaging.messaging().fcmToken {
 ////            Log.s("Device FCM Token - - - - - - - - - - - - - - - >>")
@@ -209,11 +209,11 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 ////        }
 ////        Messaging.messaging().apnsToken = deviceToken
 //    }
-//    
+//
 //    func application(_: UIApplication, didFailToRegisterForRemoteNotificationsWithError _: Error) {
 ////        Log.s("Fail to register for Notification >>> \(error)")
 //    }
-//    
+//
 ////    func userNotificationCenter(_: UNUserNotificationCenter,
 ////                                didReceive response: UNNotificationResponse,
 ////                                withCompletionHandler completionHandler: @escaping () -> Void) {
@@ -226,7 +226,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 ////        guard let _: String = userInfo["page"] as? String else { return }
 ////        completionHandler()
 ////    }
-//    
+//
 //    func userNotificationCenter(_: UNUserNotificationCenter,
 //                                didReceive response: UNNotificationResponse,
 //                                withCompletionHandler completionHandler: @escaping () -> Void) {
@@ -236,15 +236,15 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 //        if let messageID = userInfo[gcmMessageIDKey] as? String {
 //            Log.s("Message ID from userNotificationCenter didReceive: \(messageID)")
 //        }
-//        
+//
 //        if let aps = userInfo["aps"] as? [String: Any],
 //           let alert = aps["alert"] as? [String: Any],
 //           let bodyHTML = alert["body"] as? String {
-//            
+//
 //            let plainTextBody = decodeHTML(bodyHTML) // Convert HTML to plain text
 //            Log.s("Decoded Notification Body: \(plainTextBody)")
 //        }
-//        
+//
 //        completionHandler()
 //    }
 //
@@ -273,12 +273,12 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 //            // Update your UI or perform other actions here
 //        }
 //    }
-//    
+//
 //    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
 //        guard userActivity.activityType == NSUserActivityTypeBrowsingWeb, let url = userActivity.webpageURL else {
 //            return false
 //        }
-//        
+//
 //        // Handle the URL that your app is opened with.
 //        // For example, extract the authorization code from the URL and continue the OAuth flow.
 //        if let code = url.queryParameters?["code"] {
