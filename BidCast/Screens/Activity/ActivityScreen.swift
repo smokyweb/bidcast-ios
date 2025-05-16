@@ -39,8 +39,7 @@ struct ActivityScreen: View {
                         isWithBorder: false
                     )
                     .frame(height: 40)
-                    ProfileDetailCell()
-//                    ActivityCell(isFor: selected.rawValue)
+                    ActivityCell(isFor: selected.rawValue)
                 }
             }
             .padding()

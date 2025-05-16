@@ -1,5 +1,6 @@
 {
-  "originHash" : "8fb06dac27d5ab61b73c299b0128a77d8efb3b8f6ca90657e137229548b93902",
+
+  "originHash" : "8d8f0c22af0b4635ff7f1c5a06858f47c0aaeaf3d6f30ceb6b63e8d468927108",
   "pins" : [
     {
       "identity" : "activityindicatorview",

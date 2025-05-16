@@ -181,6 +181,8 @@
 		99DF9E7E2DC4F36D008C15B2 /* BidCastTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99DF9E7C2DC4F36D008C15B2 /* BidCastTests.swift */; };
 		99DF9E822DC4F370008C15B2 /* BidCastUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99DF9E7F2DC4F370008C15B2 /* BidCastUITests.swift */; };
 		99DF9E832DC4F370008C15B2 /* BidCastUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99DF9E802DC4F370008C15B2 /* BidCastUITestsLaunchTests.swift */; };
+		D49A95682DD704CD006044A7 /* FAQScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D49A95672DD704CD006044A7 /* FAQScreen.swift */; };
+		D49A956A2DD70952006044A7 /* FAQCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D49A95692DD70952006044A7 /* FAQCell.swift */; };
 		D4C4D7972DD31C2D00274E51 /* ActivityCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C4D7962DD31C2D00274E51 /* ActivityCell.swift */; };
 		D4C4D79A2DD3263A00274E51 /* SingleTitleLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C4D7982DD3263A00274E51 /* SingleTitleLabel.swift */; };
 		D4C4D79C2DD32F3D00274E51 /* TwoButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C4D79B2DD32F3D00274E51 /* TwoButton.swift */; };
@@ -384,6 +386,8 @@
 		99DF9E7C2DC4F36D008C15B2 /* BidCastTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BidCastTests.swift; sourceTree = "<group>"; };
 		99DF9E7F2DC4F370008C15B2 /* BidCastUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BidCastUITests.swift; sourceTree = "<group>"; };
 		99DF9E802DC4F370008C15B2 /* BidCastUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BidCastUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		D49A95672DD704CD006044A7 /* FAQScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FAQScreen.swift; sourceTree = "<group>"; };
+		D49A95692DD70952006044A7 /* FAQCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FAQCell.swift; sourceTree = "<group>"; };
 		D4C4D7962DD31C2D00274E51 /* ActivityCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityCell.swift; sourceTree = "<group>"; };
 		D4C4D7982DD3263A00274E51 /* SingleTitleLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleTitleLabel.swift; sourceTree = "<group>"; };
 		D4C4D79B2DD32F3D00274E51 /* TwoButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwoButton.swift; sourceTree = "<group>"; };
@@ -490,6 +494,7 @@
 			children = (
 				35B44F152DD7052400FBCBC4 /* About Us */,
 				355AE97B2DD1FC3900CD3D17 /* AccountScreen.swift */,
+				D49A95662DD704BF006044A7 /* FAQ */,
 			);
 			path = Account;
 			sourceTree = "<group>";
@@ -1474,6 +1479,15 @@
 			path = BidCastUITests;
 			sourceTree = "<group>";
 		};
+		D49A95662DD704BF006044A7 /* FAQ */ = {
+			isa = PBXGroup;
+			children = (
+				D49A95672DD704CD006044A7 /* FAQScreen.swift */,
+				D49A95692DD70952006044A7 /* FAQCell.swift */,
+			);
+			path = FAQ;
+			sourceTree = "<group>";
+		};
 		D4C4D7952DD31C0F00274E51 /* ActivityCell */ = {
 			isa = PBXGroup;
 			children = (
@@ -1697,6 +1711,7 @@
 				35CA09D92DD5BCE4002ABB83 /* LabelWithButton.swift in Sources */,
 				99C908132DC8CD6A0054620B /* HeaderWithSegmentController.swift in Sources */,
 				35B44F1E2DD705E100FBCBC4 /* AboutUsViewModel.swift in Sources */,
+				D49A95682DD704CD006044A7 /* FAQScreen.swift in Sources */,
 				99C908142DC8CD6A0054620B /* PrimaryButton.swift in Sources */,
 				35AC64742DD48C0300B5E13E /* SearchView.swift in Sources */,
 				355AE9752DD1F98C00CD3D17 /* HomeViewScreen.swift in Sources */,
@@ -1803,6 +1818,7 @@
 				99C909632DC8CD790054620B /* SubCompanyCard.swift in Sources */,
 				99C909682DC8CD790054620B /* NotificationScreen.swift in Sources */,
 				D4E569D92DD46BBE0005A78E /* BundleEx.swift in Sources */,
+				D49A956A2DD70952006044A7 /* FAQCell.swift in Sources */,
 				99C9096E2DC8CD790054620B /* InterviewlistViewModel.swift in Sources */,
 				99C9096F2DC8CD790054620B /* EmployerSearchScreen.swift in Sources */,
 				99C909702DC8CD790054620B /* LoginScreen.swift in Sources */,
