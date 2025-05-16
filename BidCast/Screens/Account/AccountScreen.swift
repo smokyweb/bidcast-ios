@@ -38,7 +38,7 @@ struct AccountScreen: View {
             )
             .background(.white)
             
-            ScrollView{
+            ScrollView(showsIndicators: false){
                 VStack(alignment: .leading,spacing: 4){
                     ListCell(image: .defaultUser, title: "John Smith",subLabel : "Seller since 2003",isVectorImgHidden: true)
                         .padding(.all,1)
@@ -128,7 +128,7 @@ struct AccountScreen: View {
                
                 
             }
-            .padding(.bottom,12)
+            .padding(.bottom,-40)
             .padding(.top,-24)
             .background(.bg.opacity(0.5))
             CusNavLink(doNavigate: $navigateToAboutUs, destination: AboutUsScreen())

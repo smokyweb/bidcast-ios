@@ -16,6 +16,7 @@ struct ListCell: View {
     var vectorImg : ImageResource?
     var subLabel = "Live"
     var isVectorImgHidden : Bool = false
+    var onTapMenuCell: (() -> Void)? = nil
     var body: some View {
         HStack(alignment: .center,spacing: 10){
             HStack{
@@ -56,6 +57,9 @@ struct ListCell: View {
         .padding([.leading,.trailing],16)
         .edgesIgnoringSafeArea(.all)
         .shadow(color: .squirrelGrey.opacity(0.5), radius: 2, x: 0, y: 0)
+        .onTapGesture {
+            self.onTapMenuCell?()
+        }
     }
 }
 

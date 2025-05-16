@@ -13,10 +13,10 @@ struct SellScreen: View {
     var imageName : [ImageResource] = [.tagBorder,.streamBorder,.sellerBorder]
     var tabName = ["List a Product","Scheduled a show","Seller Hub"]
     var subLabel = ["Create a listing for your item","Go live and sell to your audience","Manage your store and listings"]
-    
+    @State var navigateToLisProduct : Bool = false
     var body: some View {
         VStack{
-           Text("hell")
+         
             Spacer()
             VStack{
                 LabelWithButton(
@@ -29,17 +29,24 @@ struct SellScreen: View {
                 .frame(height: 50)
                 .background(.white)
                 ForEach(0 ..< tabName.count, id: \.self) { ind in
-                    ListCell(image: imageName[ind], title: tabName[ind], vectorImg: .icArrowUp,subLabel : subLabel[ind])
+                    ListCell(image: imageName[ind], title: tabName[ind], vectorImg: .icArrowUp,subLabel : subLabel[ind],onTapMenuCell: {
+                        if ind == 0{
+                            navigateToLisProduct = true
+                        }
+                    })
                    
                 }
             }
-            .padding(.bottom,40)
+            .padding(.bottom,80)
             .background(.bg)
+           
+            
+            CusNavLink(doNavigate: $navigateToLisProduct, destination: ListProductScreen())
         }
         .frame(maxWidth: .infinity,maxHeight: .infinity)
         .padding(.all,2)
         .background(.black.opacity(0.5))
-        .edgesIgnoringSafeArea(.top)
+        .edgesIgnoringSafeArea(.all)
     }
 }
 

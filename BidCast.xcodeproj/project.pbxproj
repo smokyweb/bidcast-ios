@@ -28,6 +28,9 @@
 		35B44F1C2DD705C200FBCBC4 /* ABoutUsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B44F1B2DD705C200FBCBC4 /* ABoutUsModel.swift */; };
 		35B44F1E2DD705E100FBCBC4 /* AboutUsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B44F1D2DD705E100FBCBC4 /* AboutUsViewModel.swift */; };
 		35B44F212DD7152600FBCBC4 /* RichText in Frameworks */ = {isa = PBXBuildFile; productRef = 35B44F202DD7152600FBCBC4 /* RichText */; };
+		35B44F242DD741A000FBCBC4 /* ListProductScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B44F232DD741A000FBCBC4 /* ListProductScreen.swift */; };
+		35B44F262DD7446000FBCBC4 /* MediaPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B44F252DD7446000FBCBC4 /* MediaPickerView.swift */; };
+		35B44F282DD74CCA00FBCBC4 /* PhotoPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B44F272DD74CCA00FBCBC4 /* PhotoPicker.swift */; };
 		35CA09D92DD5BCE4002ABB83 /* LabelWithButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CA09D82DD5BCE4002ABB83 /* LabelWithButton.swift */; };
 		35CA09DE2DD5CC29002ABB83 /* CustomSegmentedControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CA09DC2DD5CBB8002ABB83 /* CustomSegmentedControl.swift */; };
 		35CA09E02DD5D2B1002ABB83 /* TwoVerticalLabelCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CA09DF2DD5D2B1002ABB83 /* TwoVerticalLabelCell.swift */; };
@@ -229,6 +232,10 @@
 		35B44F162DD7053B00FBCBC4 /* AboutUsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutUsScreen.swift; sourceTree = "<group>"; };
 		35B44F1B2DD705C200FBCBC4 /* ABoutUsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ABoutUsModel.swift; sourceTree = "<group>"; };
 		35B44F1D2DD705E100FBCBC4 /* AboutUsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutUsViewModel.swift; sourceTree = "<group>"; };
+		35B44F232DD741A000FBCBC4 /* ListProductScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListProductScreen.swift; sourceTree = "<group>"; };
+		35B44F252DD7446000FBCBC4 /* MediaPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaPickerView.swift; sourceTree = "<group>"; };
+		35B44F272DD74CCA00FBCBC4 /* PhotoPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoPicker.swift; sourceTree = "<group>"; };
+		35B44F292DD74F4A00FBCBC4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		35CA09D82DD5BCE4002ABB83 /* LabelWithButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelWithButton.swift; sourceTree = "<group>"; };
 		35CA09DC2DD5CBB8002ABB83 /* CustomSegmentedControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSegmentedControl.swift; sourceTree = "<group>"; };
 		35CA09DF2DD5D2B1002ABB83 /* TwoVerticalLabelCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwoVerticalLabelCell.swift; sourceTree = "<group>"; };
@@ -502,6 +509,7 @@
 		355AE9792DD1FC0D00CD3D17 /* Sell */ = {
 			isa = PBXGroup;
 			children = (
+				35B44F222DD7418A00FBCBC4 /* ListProduct */,
 				355AE97D2DD1FC4900CD3D17 /* SellScreen.swift */,
 			);
 			path = Sell;
@@ -547,6 +555,14 @@
 				35B44F1D2DD705E100FBCBC4 /* AboutUsViewModel.swift */,
 			);
 			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		35B44F222DD7418A00FBCBC4 /* ListProduct */ = {
+			isa = PBXGroup;
+			children = (
+				35B44F232DD741A000FBCBC4 /* ListProductScreen.swift */,
+			);
+			path = ListProduct;
 			sourceTree = "<group>";
 		};
 		99C907BE2DC8CC5A0054620B /* Application */ = {
@@ -1124,6 +1140,8 @@
 		99C9088A2DC8CD790054620B /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				35B44F252DD7446000FBCBC4 /* MediaPickerView.swift */,
+				35B44F272DD74CCA00FBCBC4 /* PhotoPicker.swift */,
 				35CA09DF2DD5D2B1002ABB83 /* TwoVerticalLabelCell.swift */,
 				35CA09E12DD5D996002ABB83 /* VerticalLabelImageCell.swift */,
 				35CA09DC2DD5CBB8002ABB83 /* CustomSegmentedControl.swift */,
@@ -1447,6 +1465,7 @@
 		99DF9E752DC4F367008C15B2 /* BidCast */ = {
 			isa = PBXGroup;
 			children = (
+				35B44F292DD74F4A00FBCBC4 /* Info.plist */,
 				99C907C72DC8CD560054620B /* CoreDataStore */,
 				99C9080D2DC8CD6A0054620B /* Common Components */,
 				99C907BE2DC8CC5A0054620B /* Application */,
@@ -1736,6 +1755,7 @@
 				355AE9712DD1F94E00CD3D17 /* TabbarScreen.swift in Sources */,
 				99C909DA2DC8CDDC0054620B /* JobActionResponse.swift in Sources */,
 				99C909DB2DC8CDDC0054620B /* JobCategoriesListModal.swift in Sources */,
+				35B44F242DD741A000FBCBC4 /* ListProductScreen.swift in Sources */,
 				99C909DC2DC8CDDC0054620B /* SavedJobListResponse.swift in Sources */,
 				99C909DD2DC8CDDC0054620B /* ContactModel.swift in Sources */,
 				99C909DE2DC8CDDC0054620B /* NewsResponseModel.swift in Sources */,
@@ -1788,6 +1808,7 @@
 				99C909A32DC8CD930054620B /* UIFont+Extension.swift in Sources */,
 				35B44F172DD7053B00FBCBC4 /* AboutUsScreen.swift in Sources */,
 				99C909A42DC8CD930054620B /* UIDevice+Extension.swift in Sources */,
+				35B44F262DD7446000FBCBC4 /* MediaPickerView.swift in Sources */,
 				99C909A52DC8CD930054620B /* NavigationPath.swift in Sources */,
 				35CA09DE2DD5CC29002ABB83 /* CustomSegmentedControl.swift in Sources */,
 				99C909A62DC8CD930054620B /* String+Extension.swift in Sources */,
@@ -1805,6 +1826,7 @@
 				99C909B12DC8CD930054620B /* NavigationContainer.swift in Sources */,
 				99C909B22DC8CD930054620B /* APIManager.swift in Sources */,
 				99C909B32DC8CD930054620B /* UserDefaultManager.swift in Sources */,
+				35B44F282DD74CCA00FBCBC4 /* PhotoPicker.swift in Sources */,
 				99C909B42DC8CD930054620B /* ProjectEndPoint.swift in Sources */,
 				99C909B52DC8CD930054620B /* UserDefaults+Extension.swift in Sources */,
 				99C909B62DC8CD930054620B /* CusNavLink.swift in Sources */,
@@ -2058,6 +2080,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = BidCast/Info.plist;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -2098,6 +2121,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = BidCast/Info.plist;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
