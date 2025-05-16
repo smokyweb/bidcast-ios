@@ -90,7 +90,6 @@
 "Credits" = "Credits";
 "Coupons" = "Coupons";
 
-//MARK: New
 
 "First Name" = "First Name";
 "Subject" = "Subject";
@@ -103,3 +102,7 @@
 "Contact Us" = "Contact Us";
 "Enter Subject" = "Enter Subject";
 "Enter Your Message Here" = "Enter Your Message Here";
+
+"Media" = "Media";
+"Product Details" = "Product Details";
+"Category" = "Category";

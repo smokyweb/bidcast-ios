@@ -18,6 +18,7 @@ struct AuthTextField: View {
     @Binding var text: String
     @State var isPassword: Bool = false
     @State var showPassword: Bool = true
+    var isIconDisplay : Bool = true
     @FocusState var isFocused: Bool
     
     var enteredText: ((String) -> Void)?
@@ -38,16 +39,17 @@ struct AuthTextField: View {
             
             ZStack(alignment: .trailing, content: {
                 HStack(alignment: .center, spacing: 10) {
-                    Image(icon)
-                        .renderingMode(.original)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 20, height: 20)
-                        .foregroundStyle(.text.opacity(0.45))
-                        .padding(.all, 10)
+                    if isIconDisplay{
+                        Image(icon)
+                            .renderingMode(.original)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 20, height: 20)
+                            .foregroundStyle(.text.opacity(0.45))
+                            .padding(.all, 10)
                         //.background(.text.opacity(0.1))
                         //.clipShape(Circle())
-                    
+                    }
                     if showPassword && isPassword {
                         SecureField(placeholder, text: $text)
                             .font(.custom(nunitoMedium, fixedSize: 15))
@@ -87,7 +89,7 @@ struct AuthTextField: View {
                     
                     Spacer()
                 }
-                .frame(width: width,height: height)
+                .frame(/*width: width,*/height: height)
                 .padding(.all, 6)
                 .background(
                     RoundedRectangle(cornerRadius: cornerRadius)
@@ -115,41 +117,42 @@ struct AuthTextField: View {
                     })
                 }
             })
-            if isMandatory{
-                HStack{
-                    
-                    Button(action: {
-                        isRequired.toggle()
-                        if isRequired{
-                            self.isRequiredValue?(1)
-                        }else{
-                            self.isRequiredValue?(0)
-                        }
-                    }, label: {
-                        Image(systemName: isRequired ? "checkmark.square.fill":"square")
-                            .renderingMode(.template)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 20, height: 20)
-                            .foregroundStyle(.text)
-                        
-                        Text("It's required")
-                            .font(.custom(nunitoRegular, fixedSize: 15))
-                            .foregroundStyle(.text)
-                    })
-                    
-                    Spacer()
-                    
-                }
-                .padding(.top,1.5)
-                .padding(.leading,0)
-            }
+//            if isMandatory{
+//                HStack{
+//                    
+//                    Button(action: {
+//                        isRequired.toggle()
+//                        if isRequired{
+//                            self.isRequiredValue?(1)
+//                        }else{
+//                            self.isRequiredValue?(0)
+//                        }
+//                    }, label: {
+//                        Image(systemName: isRequired ? "checkmark.square.fill":"square")
+//                            .renderingMode(.template)
+//                            .resizable()
+//                            .scaledToFit()
+//                            .frame(width: 20, height: 20)
+//                            .foregroundStyle(.text)
+//                        
+//                        Text("It's required")
+//                            .font(.custom(nunitoRegular, fixedSize: 15))
+//                            .foregroundStyle(.text)
+//                    })
+//                    
+//                    Spacer()
+//                    
+//                }
+//                .padding(.top,1.5)
+//                .padding(.leading,0)
+//            }
         }.onTapGesture {
             isFocused = true
         }
         .onDisappear {
             isFocused = false
         }
+        .padding([.leading,.trailing],8)
     }
     
     

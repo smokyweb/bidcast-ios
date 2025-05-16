@@ -19,7 +19,7 @@ struct DropDownSelection: View {
     @State var showOption: Bool = false
     var anchor: Anchor = .bottom
     var maxWidth: CGFloat = screenWidth - 30
-    var cornerRadius: CGFloat = 25
+    var cornerRadius: CGFloat = 9
     
     var onOptionSelected: ((String) -> Void)?
     
@@ -55,7 +55,7 @@ struct DropDownSelection: View {
                             .scaledToFill()
                             .frame(width: 16, height: 16)
                             .foregroundStyle(.text)
-                            .rotationEffect(.init(degrees: showOption ? 90 : 0))
+                            .rotationEffect(.init(degrees: showOption ? -90 : 0))
                         
                     })
                     .padding(.horizontal, 15)

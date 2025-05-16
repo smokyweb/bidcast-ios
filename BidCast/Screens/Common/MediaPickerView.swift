@@ -24,7 +24,7 @@ struct MediaPickerView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Text("Media")
+                Text("Media".localized)
                     .font(.headline)
                 Spacer()
                 Text("\(selectedMedia.count)/\(maxMediaCount)")
@@ -89,9 +89,9 @@ struct MediaPickerView: View {
                 }
                 .padding(.vertical, 4)
             }
-            .padding(.top, -54)
+            .padding(.top, -14)
         }
-        .padding()
+//        .padding()
         .confirmationDialog("Select Media Source", isPresented: $showPickerOptions) {
             Button("Camera") {
                 showCameraPicker = true
@@ -109,11 +109,11 @@ struct MediaPickerView: View {
             }
         }
         .sheet(isPresented: $showPhotoLibrary) {
-            PhotoPicker { images in
+            PhotoPicker(count:8, onImagesPicked:  { images in
                 let remaining = maxMediaCount - selectedMedia.count
                 let limited = Array(images.prefix(remaining))
                 selectedMedia.append(contentsOf: limited)
-            }
+            })
         }
     }
 }
