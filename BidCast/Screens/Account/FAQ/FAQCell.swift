@@ -8,40 +8,36 @@
 
 import SwiftUI
 
+// FAQ Cell
 struct FAQCell: View {
-    let title: String
-    let content: String
-    @State private var isExpanded: Bool = false
+    var title: String
+    var content: String
+    var isExpanded: Bool
+    var onTap: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            // Header
+        VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Text(title)
                     .font(.headline)
                 Spacer()
                 Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                    .foregroundColor(.mediumLightGray)
+                    .foregroundColor(.mediumGray)
             }
             .onTapGesture {
-                withAnimation {
-                    isExpanded.toggle()
-                }
+                onTap()
             }
 
-            // Expandable Content
             if isExpanded {
                 Text(content)
                     .font(.body)
-                    .transition(.opacity.combined(with: .slide))
-                    .padding(.top , 10)
+                    .transition(.opacity)
             }
         }
         .padding()
         .background(Color.white)
         .cornerRadius(12)
-        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
-        .padding(.horizontal)
+        .shadow(radius: 2)
+        .animation(.easeInOut, value: isExpanded)
     }
 }
-

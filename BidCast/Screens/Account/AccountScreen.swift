@@ -14,6 +14,7 @@ struct AccountScreen: View {
     @State var selectedSegmentSourceType = 0
     @State var isTappedSwitch : Bool = false
     @State var navigateToAboutUs : Bool = false
+    @State var navigateToFAQ : Bool = false
     let columns = [
         GridItem(.flexible()),
         GridItem(.flexible())
@@ -83,8 +84,10 @@ struct AccountScreen: View {
                                     withAnimation {
                                         navigateToAboutUs = true
                                     }
-                                   
-                                   
+                                }else if index == 5 {
+                                    withAnimation {
+                                        navigateToFAQ = true
+                                    }
                                 }
                                 print(AccountMenuSection.allCases[index].description)
                             })
@@ -102,6 +105,7 @@ struct AccountScreen: View {
             .padding(.top,-24)
             .background(.bg.opacity(0.5))
             CusNavLink(doNavigate: $navigateToAboutUs, destination: AboutUsScreen())
+            CusNavLink(doNavigate: $navigateToFAQ, destination: FAQScreen())
         }
         .edgesIgnoringSafeArea(.top)
         .background(.bg.opacity(0.5))
