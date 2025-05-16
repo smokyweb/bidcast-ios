@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import RichText
 
 struct AboutUsScreen: View {
 
@@ -27,70 +28,48 @@ struct AboutUsScreen: View {
     var body: some View {
         ZStack {
             VStack(spacing: 0, content: {
-                PrimaryHeader(title: "About Us", leadingImgArr: [.sideArrow], trailingImgArr: [.notification,.sideMenu], onClickLeading: { _ in
-                    self.presentationMode.wrappedValue.dismiss()
-                }, onClickTrailing: { ind in
-                    switch ind {
-                        case 1:
-                            navigateToMenu = true
-                        default:
-                            navigateToNotification = true
-                    }
-                }, showAppIcon: true, count: $notiCount)
+                PrimaryHeader(
+                    title: "Account".localized,
+                    isForLogo : false, leadingImgArr: [.sideArrow],
+                    trailingImgArr: [],
+                    onClickLeading: { _ in
+                        self.presentationMode.wrappedValue.dismiss()
+                    },
+                    count: .constant(0)
+                )
+                .background(.white)
                 ScrollView(showsIndicators: false){
                 VStack(alignment: .leading, spacing: 16) {
 
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Welcome to Imperium")
-                            .font(.custom(nunitoBold, fixedSize: 24))
-                            .bold()
-                        Divider()
-                            .frame(width: 32, height: 5)
-                            .background(.red)
-                    }.padding(.bottom, 16)
-
-//                    CustomVideoPlayer(player: player)
-//                        .frame(height: screenHeight/2.5)
-//                        .onAppear(perform: {
-//                            player?.isMuted = true
-//                            player?.play()
-//                        })
-//                        .onDisappear(perform: {
-//                            player?.isMuted = true
-//                            player?.pause()
-//                        })
-//                        .clipShape(RoundedRectangle(cornerRadius: 10))
-
-                    TitleWithLine(title: "About Us", lineLength: 36)
-                        .padding(.top)
+//                    TitleWithLine(title: "About Us", lineLength: 36)
+//                        .padding()
 
 
-//                        RichText(html: aboutUsContent)
-//                            .customCSS("""
-//                body {
-//                        font-size: 16px;
-//                        line-height: 1.5; /* Improve readability */
-//                    }
-//                    ul {
-//                        margin: 0; /* Remove default margin */
-//                        padding-left: 20px; /* Indent for bullets */
-//                    }
-//                    li {
-//                        margin-bottom: 8px; /* Space between list items */
-//                        list-style-type: disc; /* Ensure bullet points are displayed */
-//                    }
-//                """)
-//
-//
-//                            .font(.custom(nunitoLight, fixedSize: 16))
-//                            .multilineTextAlignment(.leading)
+                        RichText(html: aboutUsContent)
+                            .customCSS("""
+                body {
+                        font-size: 16px;
+                        line-height: 1.5; /* Improve readability */
+                    }
+                    ul {
+                        margin: 0; /* Remove default margin */
+                        padding-left: 20px; /* Indent for bullets */
+                    }
+                    li {
+                        margin-bottom: 8px; /* Space between list items */
+                        list-style-type: disc; /* Ensure bullet points are displayed */
+                    }
+                """)
+
+
+                            .font(.custom(nunitoLight, fixedSize: 16))
+                            .multilineTextAlignment(.leading)
                     }
 
-//                    Spacer()
                 }
                 .padding([.horizontal, .vertical])
                 .background(.text.opacity(0.05))
-                .padding(.top, -topPadding)
+                .padding(.top, 12)
                 .refreshable {
                     self.isLoading = true
                     viewModel.getAboutContent()
@@ -115,7 +94,7 @@ struct AboutUsScreen: View {
             }
 
         }
-        .edgesIgnoringSafeArea(.bottom)
+        .edgesIgnoringSafeArea(.top)
         .onFirstAppear(perform: {
             self.isLoading = true
             viewModel.getAboutContent()
@@ -123,28 +102,12 @@ struct AboutUsScreen: View {
         .onAppear(perform: {
             observe()
         })
-//        CusNavLink(doNavigate: $navigateToNotification, destination: NotificationScreen())
-
-//        .fullScreenCover(isPresented: $navigateToMenu, content: {
-//
-//                NavigationContainer {
-//                    if let role: String = UserDefaultsManager.shared.value(forKey: .userRole) {
-//                        if role != "employer" {
-//                            UserHomeScreen()
-//                        }else{
-//                            EmployerHomeScreen()
-//                        }
-//                    }
-//
-//
-//            }
-//        })
         .onTapGesture {
             UIApplication.shared.endEditing()
         }
 
     }
-//
+
     func observe() {
         self.viewModel.eventHandler = { event in
             switch event {

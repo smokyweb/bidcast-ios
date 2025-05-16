@@ -1,5 +1,5 @@
 {
-  "originHash" : "9cc2a4656f2f73f6f78690314a702adbb087ac5c7716c4e6e159d82a64b3609d",
+  "originHash" : "8fb06dac27d5ab61b73c299b0128a77d8efb3b8f6ca90657e137229548b93902",
   "pins" : [
     {
       "identity" : "activityindicatorview",
@@ -110,12 +110,12 @@
       }
     },
     {
-      "identity" : "richtextkit",
+      "identity" : "richtext",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/danielsaidi/RichTextKit.git",
+      "location" : "https://github.com/NuPlay/RichText.git",
       "state" : {
-        "revision" : "8aa44cfa645404ad84e52e3ab7723ecf4b82f92b",
-        "version" : "1.2.0"
+        "revision" : "3910393f3837a21fd2e414b758942ffd2d62aaa2",
+        "version" : "2.5.0"
       }
     }
   ],

@@ -18,7 +18,6 @@
 		355AE9802DD1FC5600CD3D17 /* ActivityScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 355AE97F2DD1FC5600CD3D17 /* ActivityScreen.swift */; };
 		35A0450A2DC8DCFD0067C447 /* Color.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 35A045092DC8DCFD0067C447 /* Color.xcassets */; };
 		35A0450D2DC8DEC30067C447 /* AlertToast in Frameworks */ = {isa = PBXBuildFile; productRef = 35A0450C2DC8DEC30067C447 /* AlertToast */; };
-		35A045102DC8DF3D0067C447 /* RichTextKit in Frameworks */ = {isa = PBXBuildFile; productRef = 35A0450F2DC8DF3D0067C447 /* RichTextKit */; };
 		35A045132DC8DF4E0067C447 /* BottomSheet in Frameworks */ = {isa = PBXBuildFile; productRef = 35A045122DC8DF4E0067C447 /* BottomSheet */; };
 		35A045162DC8DF5B0067C447 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 35A045152DC8DF5B0067C447 /* Kingfisher */; };
 		35A0451C2DC8E19E0067C447 /* ActivityIndicatorView in Frameworks */ = {isa = PBXBuildFile; productRef = 35A0451B2DC8E19E0067C447 /* ActivityIndicatorView */; };
@@ -28,6 +27,7 @@
 		35B44F172DD7053B00FBCBC4 /* AboutUsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B44F162DD7053B00FBCBC4 /* AboutUsScreen.swift */; };
 		35B44F1C2DD705C200FBCBC4 /* ABoutUsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B44F1B2DD705C200FBCBC4 /* ABoutUsModel.swift */; };
 		35B44F1E2DD705E100FBCBC4 /* AboutUsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B44F1D2DD705E100FBCBC4 /* AboutUsViewModel.swift */; };
+		35B44F212DD7152600FBCBC4 /* RichText in Frameworks */ = {isa = PBXBuildFile; productRef = 35B44F202DD7152600FBCBC4 /* RichText */; };
 		35CA09D92DD5BCE4002ABB83 /* LabelWithButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CA09D82DD5BCE4002ABB83 /* LabelWithButton.swift */; };
 		35CA09DE2DD5CC29002ABB83 /* CustomSegmentedControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CA09DC2DD5CBB8002ABB83 /* CustomSegmentedControl.swift */; };
 		35CA09E02DD5D2B1002ABB83 /* TwoVerticalLabelCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CA09DF2DD5D2B1002ABB83 /* TwoVerticalLabelCell.swift */; };
@@ -412,8 +412,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				35A0451C2DC8E19E0067C447 /* ActivityIndicatorView in Frameworks */,
+				35B44F212DD7152600FBCBC4 /* RichText in Frameworks */,
 				35A045162DC8DF5B0067C447 /* Kingfisher in Frameworks */,
-				35A045102DC8DF3D0067C447 /* RichTextKit in Frameworks */,
 				35A045132DC8DF4E0067C447 /* BottomSheet in Frameworks */,
 				35A0450D2DC8DEC30067C447 /* AlertToast in Frameworks */,
 				355AE9682DD1D51A00CD3D17 /* IQKeyboardManagerSwift in Frameworks */,
@@ -1542,11 +1542,11 @@
 			name = BidCast;
 			packageProductDependencies = (
 				35A0450C2DC8DEC30067C447 /* AlertToast */,
-				35A0450F2DC8DF3D0067C447 /* RichTextKit */,
 				35A045122DC8DF4E0067C447 /* BottomSheet */,
 				35A045152DC8DF5B0067C447 /* Kingfisher */,
 				35A0451B2DC8E19E0067C447 /* ActivityIndicatorView */,
 				355AE9672DD1D51A00CD3D17 /* IQKeyboardManagerSwift */,
+				35B44F202DD7152600FBCBC4 /* RichText */,
 			);
 			productName = BidCast;
 			productReference = 99DF9E3F2DC4F35D008C15B2 /* BidCast.app */;
@@ -1636,10 +1636,10 @@
 			packageReferences = (
 				356116FC2DC8D22C00A45199 /* XCRemoteSwiftPackageReference "IQKeyboardManager" */,
 				35A0450B2DC8DEC30067C447 /* XCRemoteSwiftPackageReference "AlertToast" */,
-				35A0450E2DC8DF3D0067C447 /* XCRemoteSwiftPackageReference "RichTextKit" */,
 				35A045112DC8DF4E0067C447 /* XCRemoteSwiftPackageReference "bottom-sheet" */,
 				35A045142DC8DF5B0067C447 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				35A0451A2DC8E19E0067C447 /* XCRemoteSwiftPackageReference "ActivityIndicatorView" */,
+				35B44F1F2DD7152600FBCBC4 /* XCRemoteSwiftPackageReference "RichText" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 99DF9E402DC4F35D008C15B2 /* Products */;
@@ -2258,14 +2258,6 @@
 				minimumVersion = 1.3.9;
 			};
 		};
-		35A0450E2DC8DF3D0067C447 /* XCRemoteSwiftPackageReference "RichTextKit" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/danielsaidi/RichTextKit.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.2.0;
-			};
-		};
 		35A045112DC8DF4E0067C447 /* XCRemoteSwiftPackageReference "bottom-sheet" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/weitieda/bottom-sheet.git";
@@ -2290,6 +2282,14 @@
 				minimumVersion = 1.2.1;
 			};
 		};
+		35B44F1F2DD7152600FBCBC4 /* XCRemoteSwiftPackageReference "RichText" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/NuPlay/RichText.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -2302,11 +2302,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 35A0450B2DC8DEC30067C447 /* XCRemoteSwiftPackageReference "AlertToast" */;
 			productName = AlertToast;
-		};
-		35A0450F2DC8DF3D0067C447 /* RichTextKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 35A0450E2DC8DF3D0067C447 /* XCRemoteSwiftPackageReference "RichTextKit" */;
-			productName = RichTextKit;
 		};
 		35A045122DC8DF4E0067C447 /* BottomSheet */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -2322,6 +2317,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 35A0451A2DC8E19E0067C447 /* XCRemoteSwiftPackageReference "ActivityIndicatorView" */;
 			productName = ActivityIndicatorView;
+		};
+		35B44F202DD7152600FBCBC4 /* RichText */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 35B44F1F2DD7152600FBCBC4 /* XCRemoteSwiftPackageReference "RichText" */;
+			productName = RichText;
 		};
 /* End XCSwiftPackageProductDependency section */
 
