@@ -85,7 +85,6 @@ struct ForgotScreen: View {
             if isLoading {
                 Loader(isLoading: $isLoading)
             }
-            
             CusNavLink(doNavigate: $navigateToOTP, destination: VerifyOtpScreen())
         }
         .frame(width: screenWidth, height: screenHeight)
