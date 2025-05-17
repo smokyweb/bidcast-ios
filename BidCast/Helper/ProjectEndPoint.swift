@@ -21,6 +21,12 @@ enum APIEndPoint{
     case faq
     case logout(param : LogoutRequest)
     
+    case getLesson
+    case getSellingTips
+    case howToSell
+    case showTips
+    case letsPrepare
+    
     //MARK: OLD
   
     case SubCompany(param : SubCompanyParam)
@@ -144,7 +150,16 @@ extension APIEndPoint: EndPointType {
             return "about-us"
         case .logout:
             return "logout"
-            
+        case .getLesson:
+            return "get-lesson"
+        case .getSellingTips:
+            return "selling-tips"
+        case .howToSell:
+            return "how-to-sell"
+        case .showTips:
+            return "show-tips"
+        case .letsPrepare:
+            return "get-prepare"
             //MARK: Old
           
             case .getProfile:
@@ -292,6 +307,7 @@ extension APIEndPoint: EndPointType {
             case .removeSavedJob:
                 return "save-job"
      
+       
         }
     }
     
@@ -322,7 +338,16 @@ extension APIEndPoint: EndPointType {
             return .get
         case .faq:
             return .get
-        
+        case .getLesson:
+            return .get
+        case .getSellingTips:
+            return .get
+        case .howToSell:
+            return .get
+        case .showTips:
+            return .get
+        case .letsPrepare:
+            return .get
             
             //MARK: Old
            
@@ -470,6 +495,7 @@ extension APIEndPoint: EndPointType {
                 return .post
         case .Business(param: let param):
             return .post
+       
         }
     }
     
@@ -503,7 +529,16 @@ extension APIEndPoint: EndPointType {
             return param
         case .verifyOTP(let param):
             return param
-            
+        case .getLesson:
+            return nil
+        case .getSellingTips:
+            return nil
+        case .howToSell:
+            return nil
+        case .showTips:
+            return nil
+        case .letsPrepare:
+            return nil
             
             
             //MARK: Old
@@ -651,6 +686,7 @@ extension APIEndPoint: EndPointType {
             return nil
             case .removeSavedJob(let param):
                 return param
+      
         }
     }
     

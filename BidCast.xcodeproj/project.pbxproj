@@ -35,6 +35,14 @@
 		35CA09DE2DD5CC29002ABB83 /* CustomSegmentedControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CA09DC2DD5CBB8002ABB83 /* CustomSegmentedControl.swift */; };
 		35CA09E02DD5D2B1002ABB83 /* TwoVerticalLabelCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CA09DF2DD5D2B1002ABB83 /* TwoVerticalLabelCell.swift */; };
 		35CA09E22DD5D996002ABB83 /* VerticalLabelImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CA09E12DD5D996002ABB83 /* VerticalLabelImageCell.swift */; };
+		35CCE00E2DD8603700760CEE /* DescriptionFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CCE00D2DD8603700760CEE /* DescriptionFieldView.swift */; };
+		35CCE0112DD876C500760CEE /* GetStartedScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CCE0102DD876C500760CEE /* GetStartedScreen.swift */; };
+		35CCE0132DD876C900760CEE /* LessonScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CCE0122DD876C900760CEE /* LessonScreen.swift */; };
+		35CCE0152DD876CD00760CEE /* HowToSell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CCE0142DD876CD00760CEE /* HowToSell.swift */; };
+		35CCE0172DD8774000760CEE /* LetsPrepare.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CCE0162DD8774000760CEE /* LetsPrepare.swift */; };
+		35CCE01B2DD8781B00760CEE /* ScheduleViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CCE01A2DD8781B00760CEE /* ScheduleViewModel.swift */; };
+		35CCE01D2DD8782600760CEE /* ScheduleModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CCE01C2DD8782600760CEE /* ScheduleModel.swift */; };
+		35CCE01F2DD8A8BC00760CEE /* SellingTips.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CCE01E2DD8A8BC00760CEE /* SellingTips.swift */; };
 		99C907C42DC8CC990054620B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907C22DC8CC990054620B /* AppDelegate.swift */; };
 		99C907C52DC8CC990054620B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907C32DC8CC990054620B /* SceneDelegate.swift */; };
 		99C9080E2DC8CD6A0054620B /* DocView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907D22DC8CD6A0054620B /* DocView.swift */; };
@@ -242,6 +250,14 @@
 		35CA09DC2DD5CBB8002ABB83 /* CustomSegmentedControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSegmentedControl.swift; sourceTree = "<group>"; };
 		35CA09DF2DD5D2B1002ABB83 /* TwoVerticalLabelCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwoVerticalLabelCell.swift; sourceTree = "<group>"; };
 		35CA09E12DD5D996002ABB83 /* VerticalLabelImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalLabelImageCell.swift; sourceTree = "<group>"; };
+		35CCE00D2DD8603700760CEE /* DescriptionFieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DescriptionFieldView.swift; sourceTree = "<group>"; };
+		35CCE0102DD876C500760CEE /* GetStartedScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetStartedScreen.swift; sourceTree = "<group>"; };
+		35CCE0122DD876C900760CEE /* LessonScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonScreen.swift; sourceTree = "<group>"; };
+		35CCE0142DD876CD00760CEE /* HowToSell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HowToSell.swift; sourceTree = "<group>"; };
+		35CCE0162DD8774000760CEE /* LetsPrepare.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetsPrepare.swift; sourceTree = "<group>"; };
+		35CCE01A2DD8781B00760CEE /* ScheduleViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleViewModel.swift; sourceTree = "<group>"; };
+		35CCE01C2DD8782600760CEE /* ScheduleModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleModel.swift; sourceTree = "<group>"; };
+		35CCE01E2DD8A8BC00760CEE /* SellingTips.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SellingTips.swift; sourceTree = "<group>"; };
 		99C907C22DC8CC990054620B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		99C907C32DC8CC990054620B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		99C907C82DC8CD6A0054620B /* SubscriptionCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionCard.swift; sourceTree = "<group>"; };
@@ -514,6 +530,7 @@
 		355AE9792DD1FC0D00CD3D17 /* Sell */ = {
 			isa = PBXGroup;
 			children = (
+				35CCE00F2DD876AC00760CEE /* Schedule */,
 				35B44F222DD7418A00FBCBC4 /* ListProduct */,
 				355AE97D2DD1FC4900CD3D17 /* SellScreen.swift */,
 			);
@@ -568,6 +585,36 @@
 				35B44F232DD741A000FBCBC4 /* ListProductScreen.swift */,
 			);
 			path = ListProduct;
+			sourceTree = "<group>";
+		};
+		35CCE00F2DD876AC00760CEE /* Schedule */ = {
+			isa = PBXGroup;
+			children = (
+				35CCE0192DD8780600760CEE /* ViewModel */,
+				35CCE0182DD877FC00760CEE /* Model */,
+				35CCE0162DD8774000760CEE /* LetsPrepare.swift */,
+				35CCE0142DD876CD00760CEE /* HowToSell.swift */,
+				35CCE01E2DD8A8BC00760CEE /* SellingTips.swift */,
+				35CCE0122DD876C900760CEE /* LessonScreen.swift */,
+				35CCE0102DD876C500760CEE /* GetStartedScreen.swift */,
+			);
+			path = Schedule;
+			sourceTree = "<group>";
+		};
+		35CCE0182DD877FC00760CEE /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				35CCE01C2DD8782600760CEE /* ScheduleModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		35CCE0192DD8780600760CEE /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				35CCE01A2DD8781B00760CEE /* ScheduleViewModel.swift */,
+			);
+			path = ViewModel;
 			sourceTree = "<group>";
 		};
 		99C907BE2DC8CC5A0054620B /* Application */ = {
@@ -1145,6 +1192,7 @@
 		99C9088A2DC8CD790054620B /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				35CCE00D2DD8603700760CEE /* DescriptionFieldView.swift */,
 				35B44F252DD7446000FBCBC4 /* MediaPickerView.swift */,
 				35B44F272DD74CCA00FBCBC4 /* PhotoPicker.swift */,
 				35CA09DF2DD5D2B1002ABB83 /* TwoVerticalLabelCell.swift */,
@@ -1761,6 +1809,7 @@
 				D4C4D79A2DD3263A00274E51 /* SingleTitleLabel.swift in Sources */,
 				99C909D62DC8CDDC0054620B /* CombineDataModel.swift in Sources */,
 				99C909D72DC8CDDC0054620B /* LinkedInStatusModel.swift in Sources */,
+				35CCE00E2DD8603700760CEE /* DescriptionFieldView.swift in Sources */,
 				D4E569CE2DD461120005A78E /* ProfileDetailCell.swift in Sources */,
 				99C909D82DC8CDDC0054620B /* MenuOptionsModal.swift in Sources */,
 				99C909D92DC8CDDC0054620B /* InterviewlistModel.swift in Sources */,
@@ -1798,6 +1847,7 @@
 				355AE9772DD1F99C00CD3D17 /* ExploreViewScreen.swift in Sources */,
 				99C909402DC8CD790054620B /* VerifyOtpViewModel.swift in Sources */,
 				99C909422DC8CD790054620B /* SearchViewModel.swift in Sources */,
+				35CCE01D2DD8782600760CEE /* ScheduleModel.swift in Sources */,
 				99C909442DC8CD790054620B /* SubscriptionViewModal.swift in Sources */,
 				99C909452DC8CD790054620B /* ForgotViewModel.swift in Sources */,
 				D4CDF2A32DD21A6F00DA8161 /* SegmentedControlView.swift in Sources */,
@@ -1814,6 +1864,7 @@
 				99C9095D2DC8CD790054620B /* ForgotScreen.swift in Sources */,
 				D49A956E2DD71E3E006044A7 /* ContactUs.swift in Sources */,
 				D4C4D79C2DD32F3D00274E51 /* TwoButton.swift in Sources */,
+				35CCE0112DD876C500760CEE /* GetStartedScreen.swift in Sources */,
 				99C9095E2DC8CD790054620B /* DeleteAccountScreen.swift in Sources */,
 				D49A95732DD75EAF006044A7 /* FAQViewModel.swift in Sources */,
 				99C9095F2DC8CD790054620B /* EmployerFlowStack.swift in Sources */,
@@ -1829,6 +1880,7 @@
 				35CA09DE2DD5CC29002ABB83 /* CustomSegmentedControl.swift in Sources */,
 				99C909A62DC8CD930054620B /* String+Extension.swift in Sources */,
 				355AE97C2DD1FC3900CD3D17 /* AccountScreen.swift in Sources */,
+				35CCE01B2DD8781B00760CEE /* ScheduleViewModel.swift in Sources */,
 				99C909A72DC8CD930054620B /* UIColor+Extension.swift in Sources */,
 				99C909A82DC8CD930054620B /* UIApplication+Extension.swift in Sources */,
 				99C909A92DC8CD930054620B /* Reachability.swift in Sources */,
@@ -1860,9 +1912,11 @@
 				99C9096E2DC8CD790054620B /* InterviewlistViewModel.swift in Sources */,
 				99C9096F2DC8CD790054620B /* EmployerSearchScreen.swift in Sources */,
 				99C909702DC8CD790054620B /* LoginScreen.swift in Sources */,
+				35CCE01F2DD8A8BC00760CEE /* SellingTips.swift in Sources */,
 				99C909762DC8CD790054620B /* EmployerProfileViewModal.swift in Sources */,
 				99C909782DC8CD790054620B /* AuthenticationStack.swift in Sources */,
 				99C9097A2DC8CD790054620B /* DeleteAccountSheet.swift in Sources */,
+				35CCE0132DD876C900760CEE /* LessonScreen.swift in Sources */,
 				99C9097D2DC8CD790054620B /* ResetPasswordViewModel.swift in Sources */,
 				35CA09E22DD5D996002ABB83 /* VerticalLabelImageCell.swift in Sources */,
 				99C908152DC8CD6A0054620B /* LogOutSheet.swift in Sources */,
@@ -1891,6 +1945,7 @@
 				99C9082A2DC8CD6A0054620B /* MenuListCard.swift in Sources */,
 				99C9082B2DC8CD6A0054620B /* EmployeeStackView.swift in Sources */,
 				99C9082C2DC8CD6A0054620B /* DropDownTextField.swift in Sources */,
+				35CCE0152DD876CD00760CEE /* HowToSell.swift in Sources */,
 				99C9082D2DC8CD6A0054620B /* Loader.swift in Sources */,
 				99C9082E2DC8CD6A0054620B /* ButtonWithImage.swift in Sources */,
 				99C9082F2DC8CD6A0054620B /* DropDownSelection.swift in Sources */,
@@ -1911,6 +1966,7 @@
 				99C907C42DC8CC990054620B /* AppDelegate.swift in Sources */,
 				99C907C52DC8CC990054620B /* SceneDelegate.swift in Sources */,
 				99DF9E7A2DC4F367008C15B2 /* ContentView.swift in Sources */,
+				35CCE0172DD8774000760CEE /* LetsPrepare.swift in Sources */,
 				99DF9E7B2DC4F367008C15B2 /* Persistence.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

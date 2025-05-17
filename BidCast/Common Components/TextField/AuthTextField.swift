@@ -93,10 +93,11 @@ struct AuthTextField: View {
                 .padding(.all, 6)
                 .background(
                     RoundedRectangle(cornerRadius: cornerRadius)
-                        .fill(.text.opacity(0.1))
+                        .fill(.white)
+//                        .fill(.text.opacity(0.1))
                         .overlay(
                             RoundedRectangle(cornerRadius: cornerRadius)
-                                .stroke(.mediumLightGray, lineWidth: 2) 
+                                .stroke(.mediumLightGray, lineWidth: 1)
                         )
                         .shadow(color: .ultraLightGray, radius: 1, x: 0, y: 0)
                 )

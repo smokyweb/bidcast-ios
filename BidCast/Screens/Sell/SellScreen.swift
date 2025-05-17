@@ -14,6 +14,8 @@ struct SellScreen: View {
     var tabName = ["List a Product","Scheduled a show","Seller Hub"]
     var subLabel = ["Create a listing for your item","Go live and sell to your audience","Manage your store and listings"]
     @State var navigateToLisProduct : Bool = false
+    @State var navigateTolesson : Bool = false
+    
     var body: some View {
         VStack{
          
@@ -32,6 +34,8 @@ struct SellScreen: View {
                     ListCell(image: imageName[ind], title: tabName[ind], vectorImg: .icArrowUp,subLabel : subLabel[ind],onTapMenuCell: {
                         if ind == 0{
                             navigateToLisProduct = true
+                        }else if ind == 1{
+                            navigateTolesson = true
                         }
                     })
                    
@@ -42,6 +46,8 @@ struct SellScreen: View {
            
             
             CusNavLink(doNavigate: $navigateToLisProduct, destination: ListProductScreen())
+//            CusNavLink(doNavigate: $navigateTolesson, destination: LessonScreen())
+            CusNavLink(doNavigate: $navigateTolesson, destination: SellingTips())
         }
         .frame(maxWidth: .infinity,maxHeight: .infinity)
         .padding(.all,2)

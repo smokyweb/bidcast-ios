@@ -19,7 +19,8 @@ struct PrimaryButton: View {
     var width: CGFloat = screenWidth - 30
     var height: CGFloat = 50
     var cornerRadius : CGFloat = 8.0
-    
+    var imageName : String = ""
+    var btnTextColor : Color = .darkBlue
     var btnColor: ColorResource = .defaultTheme
     
     var body: some View {
@@ -41,20 +42,34 @@ struct PrimaryButton: View {
             }else{
                 RoundedRectangle(cornerRadius: cornerRadius)
                     .fill(Color(btnColor))
-//                    .shadow(color: .gray, radius: 2, x: 0, y: 0)
+                    .shadow(color: .gray, radius: 2, x: 0, y: 0)
                     .overlay {
-                        Text(title)
-                            .font(.custom(nunitoBold, fixedSize: 18))
-                            .bold()
-                            .foregroundStyle(.white)
+                        HStack{
+                            if !imageName.isEmpty {
+                                Image(imageName)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .foregroundColor(isOutLine ? Color(btnColor) : .white)
+                                    .frame(width: 24,height: 24)
+                            }
+                            Text(title)
+                                .font(.custom(nunitoBold, fixedSize: 18))
+                                .bold()
+                                .foregroundColor(btnTextColor)
+//                                .foregroundStyle()
+                        }
                     }
+                    
+            
             }
         })
         .frame(width: width, height: height)
-        .padding(.all,6)
+        .padding(.all,16)
     }
 }
 
 #Preview {
     PrimaryButton()
 }
+
+

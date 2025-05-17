@@ -21,11 +21,13 @@ struct MenuCell: View {
     var body: some View {
         HStack(alignment: .center,spacing: 10){
             HStack{
-                Image(menuImg)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 25,height: 25)
-                    .padding(.leading ,10)
+                if !menuImg.isEmpty{
+                    Image(menuImg)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 25,height: 25)
+                        .padding(.leading ,10)
+                }
                 Text(title)
                     .font(.custom(nunitoBlack, fixedSize: fontValue))
                     .bold()
@@ -57,7 +59,7 @@ struct MenuCell: View {
             }
             .frame(maxWidth: .infinity )
         }
-        .frame(height: 65)
+        .frame(height: 55)
         .background(.white)
         .cornerRadius(8.0)
         .padding([.leading,.trailing],8)
