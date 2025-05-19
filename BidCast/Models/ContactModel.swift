@@ -27,7 +27,31 @@ struct FAQDataModel : Codable{
     var answer : String?
 }
 
+struct CategoryModel : Codable{
+    var status : String?
+    var message : String?
+    var error_type : String?
+    var data : [CategoryDataModel]?
+}
 
+struct CategoryDataModel : Codable{
+    var id : Int?
+    var name : String?
+    var image : String?
+    var color : String?
+}
+
+struct AuctionModel : Codable{
+    var status : String?
+    var message : String?
+    var error_type : String?
+    var data : [AuctionDataModel]?
+}
+
+struct AuctionDataModel : Codable{
+    var id : Int?
+    var name : String?
+}
 
 
 struct BusinessModel : Codable{

@@ -33,7 +33,6 @@ struct ForgotScreen: View {
                 VStack(alignment: .leading, spacing: 25) {
                     Color.clear.frame(height: 5)
                     TitleWithLine(title: AppString.forgotPassword, lineLength: 48)
-                    
                     Text(AppString.emailAddressNotAssociated.localized)
                         .font(.custom(nunitoMedium, fixedSize: 16))
                         .foregroundStyle(.black)

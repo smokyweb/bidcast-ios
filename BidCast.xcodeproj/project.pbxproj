@@ -196,6 +196,8 @@
 		D49A956A2DD70952006044A7 /* FAQCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D49A95692DD70952006044A7 /* FAQCell.swift */; };
 		D49A956E2DD71E3E006044A7 /* ContactUs.swift in Sources */ = {isa = PBXBuildFile; fileRef = D49A956B2DD71E3E006044A7 /* ContactUs.swift */; };
 		D49A95732DD75EAF006044A7 /* FAQViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D49A95722DD75EAE006044A7 /* FAQViewModel.swift */; };
+		D4BA324B2DDB000600FE4FD2 /* SelectCategoryScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BA324A2DDB000600FE4FD2 /* SelectCategoryScreen.swift */; };
+		D4BA324D2DDB03BD00FE4FD2 /* SelectCategoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BA324C2DDB03BD00FE4FD2 /* SelectCategoryViewModel.swift */; };
 		D4C4D7972DD31C2D00274E51 /* ActivityCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C4D7962DD31C2D00274E51 /* ActivityCell.swift */; };
 		D4C4D79A2DD3263A00274E51 /* SingleTitleLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C4D7982DD3263A00274E51 /* SingleTitleLabel.swift */; };
 		D4C4D79C2DD32F3D00274E51 /* TwoButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C4D79B2DD32F3D00274E51 /* TwoButton.swift */; };
@@ -415,6 +417,8 @@
 		D49A95692DD70952006044A7 /* FAQCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FAQCell.swift; sourceTree = "<group>"; };
 		D49A956B2DD71E3E006044A7 /* ContactUs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactUs.swift; sourceTree = "<group>"; };
 		D49A95722DD75EAE006044A7 /* FAQViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FAQViewModel.swift; sourceTree = "<group>"; };
+		D4BA324A2DDB000600FE4FD2 /* SelectCategoryScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectCategoryScreen.swift; sourceTree = "<group>"; };
+		D4BA324C2DDB03BD00FE4FD2 /* SelectCategoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectCategoryViewModel.swift; sourceTree = "<group>"; };
 		D4C4D7962DD31C2D00274E51 /* ActivityCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityCell.swift; sourceTree = "<group>"; };
 		D4C4D7982DD3263A00274E51 /* SingleTitleLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleTitleLabel.swift; sourceTree = "<group>"; };
 		D4C4D79B2DD32F3D00274E51 /* TwoButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwoButton.swift; sourceTree = "<group>"; };
@@ -530,6 +534,7 @@
 		355AE9792DD1FC0D00CD3D17 /* Sell */ = {
 			isa = PBXGroup;
 			children = (
+				D4BA32492DDAFFD600FE4FD2 /* SelectCategory */,
 				35CCE00F2DD876AC00760CEE /* Schedule */,
 				35B44F222DD7418A00FBCBC4 /* ListProduct */,
 				355AE97D2DD1FC4900CD3D17 /* SellScreen.swift */,
@@ -1569,6 +1574,15 @@
 			path = ContactUs;
 			sourceTree = "<group>";
 		};
+		D4BA32492DDAFFD600FE4FD2 /* SelectCategory */ = {
+			isa = PBXGroup;
+			children = (
+				D4BA324A2DDB000600FE4FD2 /* SelectCategoryScreen.swift */,
+				D4BA324C2DDB03BD00FE4FD2 /* SelectCategoryViewModel.swift */,
+			);
+			path = SelectCategory;
+			sourceTree = "<group>";
+		};
 		D4C4D7952DD31C0F00274E51 /* ActivityCell */ = {
 			isa = PBXGroup;
 			children = (
@@ -1816,6 +1830,7 @@
 				D4E569E92DD49A970005A78E /* AppString.swift in Sources */,
 				355AE97E2DD1FC4900CD3D17 /* SellScreen.swift in Sources */,
 				355AE9712DD1F94E00CD3D17 /* TabbarScreen.swift in Sources */,
+				D4BA324D2DDB03BD00FE4FD2 /* SelectCategoryViewModel.swift in Sources */,
 				99C909DA2DC8CDDC0054620B /* JobActionResponse.swift in Sources */,
 				99C909DB2DC8CDDC0054620B /* JobCategoriesListModal.swift in Sources */,
 				35B44F242DD741A000FBCBC4 /* ListProductScreen.swift in Sources */,
@@ -1924,6 +1939,7 @@
 				99C908172DC8CD6A0054620B /* MultilineTextField.swift in Sources */,
 				99C908182DC8CD6A0054620B /* FilterOptionView.swift in Sources */,
 				99C908192DC8CD6A0054620B /* MultiSelectionDropDownTextField.swift in Sources */,
+				D4BA324B2DDB000600FE4FD2 /* SelectCategoryScreen.swift in Sources */,
 				99C9081A2DC8CD6A0054620B /* PrimaryHeader.swift in Sources */,
 				99C9081B2DC8CD6A0054620B /* InterviewScheduledSheet.swift in Sources */,
 				D4C4D7972DD31C2D00274E51 /* ActivityCell.swift in Sources */,

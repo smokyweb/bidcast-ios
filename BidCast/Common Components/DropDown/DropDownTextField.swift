@@ -34,7 +34,7 @@ struct DropDownTextField: View {
     
         //MARK: - Static Variable Initializer
     var maxWidth: CGFloat = screenWidth - 30
-    var cornerRadius: CGFloat = 25
+    var cornerRadius: CGFloat = 12
     var anchor: Anchor = .bottom
     
     @State var filterOptions: [String] = []
@@ -154,6 +154,7 @@ struct DropDownTextField: View {
                     .clipped()
                     .background((scheme == .dark ? Color.black : Color.white))
                     .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
+                    .cornerRadius(cornerRadius)
                     .shadow(color: .gray, radius: 1, x: 0, y: 0)
                     .frame(height: size.height, alignment: anchor == .top ? .bottom : .top)
                     .onChange(of: text) { value in

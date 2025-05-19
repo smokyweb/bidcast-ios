@@ -19,6 +19,8 @@ enum APIEndPoint{
     case privacyPolicy
     case termsCondition
     case faq
+    case category
+    case auctionType
     case logout(param : LogoutRequest)
     
     case getLesson
@@ -160,6 +162,11 @@ extension APIEndPoint: EndPointType {
             return "show-tips"
         case .letsPrepare:
             return "get-prepare"
+        case .category :
+            return "get-category"
+        case .auctionType:
+            return "get-auction-type"
+            
             //MARK: Old
           
             case .getProfile:
@@ -347,6 +354,10 @@ extension APIEndPoint: EndPointType {
         case .showTips:
             return .get
         case .letsPrepare:
+            return .get
+        case .category :
+            return .get
+        case .auctionType:
             return .get
             
             //MARK: Old
@@ -538,6 +549,10 @@ extension APIEndPoint: EndPointType {
         case .showTips:
             return nil
         case .letsPrepare:
+            return nil
+        case .category:
+            return nil
+        case .auctionType:
             return nil
             
             
