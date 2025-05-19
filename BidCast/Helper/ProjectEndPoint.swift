@@ -30,6 +30,8 @@ enum APIEndPoint{
     case showTips
     case letsPrepare
     
+    case storeProduct(param : StoreProductParam )
+    
     //MARK: OLD
   
     case SubCompany(param : SubCompanyParam)
@@ -169,6 +171,8 @@ extension APIEndPoint: EndPointType {
             return "get-auction-type"
         case .getInventory:
             return "get-my-inventory"
+        case .storeProduct:
+            return "store-product"
             
             //MARK: Old
           
@@ -318,6 +322,7 @@ extension APIEndPoint: EndPointType {
                 return "save-job"
      
        
+       
         }
     }
     
@@ -363,6 +368,8 @@ extension APIEndPoint: EndPointType {
         case .auctionType:
             return .get
         case .getInventory:
+            return .post
+        case .storeProduct:
             return .post
             
             //MARK: Old
@@ -509,8 +516,9 @@ extension APIEndPoint: EndPointType {
             return .get
             case .removeSavedJob:
                 return .post
-        case .Business(param: let param):
+        case .Business:
             return .post
+       
        
         }
     }
@@ -561,6 +569,8 @@ extension APIEndPoint: EndPointType {
             return nil
         case .auctionType:
             return nil
+        case .storeProduct(param: let param):
+            return param
             
             
             //MARK: Old
@@ -709,6 +719,7 @@ extension APIEndPoint: EndPointType {
             case .removeSavedJob(let param):
                 return param
       
+        
         }
     }
     

@@ -523,6 +523,8 @@ final class APIManager {
         urlArray: [String],
         mimeType: String,
         modalType: T.Type,
+        key : String,
+        parameters: [String: Any],
         header: Bool,
         completion: @escaping Handler<T>
     ) {
@@ -539,22 +541,25 @@ final class APIManager {
         let boundary = generateBoundary()
         
         var media: [MediaData] = []
-        
         urlArray.forEach { url in
             if url.contains("media") {
-                guard let med = MediaData(withURL: "https://backend.imperiumjob.com/\(url)", forKey: "file[]", mimeType: mimeType) else { return }
+                guard let med = MediaData(withURL:"\(url)", forKey: key, mimeType: mimeType) else {
+                    return }
                 media.append(med)
             } else {
-                guard let med = MediaData(withURL: url, forKey: "file[]", mimeType: mimeType) else { return }
+                guard let med = MediaData(withURL: url, forKey: key, mimeType: mimeType) else {
+                    return
+                }
+                
                 media.append(med)
+                
             }
         }
+        var params = parameters
         
-        var params: [String: String] = [:]
-        
-        if let role: String = UserDefaultsManager.shared.value(forKey: .userRole) {
-            params["folder"] = role
-        }
+//        if let role: String = UserDefaultsManager.shared.value(forKey: .userRole) {
+//            params["folder"] = role
+//        }
         
         request.allHTTPHeaderFields = type.headers
         if header {

@@ -383,3 +383,18 @@ struct LogoutRequest : Encodable{
 struct InventoryRequest : Encodable{
     var status : String
 }
+
+//MARK: Store Product param
+
+struct StoreProductParam : Encodable{
+    var category_id : String
+    var title: String
+    var description  :String
+    var quantity : String
+    var pricing : String
+    var flash_sale : String
+    var accept_offers : String
+    var reserve_for_live : String
+    var shipping_profile_id : String
+    var status : String
+}

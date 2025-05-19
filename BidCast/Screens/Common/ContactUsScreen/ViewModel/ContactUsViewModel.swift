@@ -76,51 +76,51 @@ final class ContactUsViewModel {
 //
 //    }
 
-    func createCompanyWithImage(parameters: BusinessModelParam, images: [String]) {
-        self.eventHandler?(.loading)
-        APIManager.shared
-            .uploadFile(
-                type: APIEndPoint.uploadFile,
-                urlArray: images,
-                mimeType: "application/pdf",
-                modalType: ResponseModal<[String]>.self,
-                header: true,
-                completion: {
-                    result in
-                    self.eventHandler?(.stopLoading)
-                    switch result {
-                        case .success(let data):
-                            if data.status == "success" {
-                                var newPara = parameters
-                                newPara.file = data.data[0]
-                                self.Business(parameters: newPara)
-                            } else {
+//    func createCompanyWithImage(parameters: BusinessModelParam, images: [String]) {
+//        self.eventHandler?(.loading)
+//        APIManager.shared
+//            .uploadFile(
+//                type: APIEndPoint.uploadFile,
+//                urlArray: images,
+//                mimeType: "application/pdf",
+//                modalType: ResponseModal<[String]>.self,
+//                header: true,
+//                completion: {
+//                    result in
+//                    self.eventHandler?(.stopLoading)
+//                    switch result {
+//                        case .success(let data):
+//                            if data.status == "success" {
+//                                var newPara = parameters
+//                                newPara.file = data.data[0]
 //                                self.Business(parameters: newPara)
-                            }
-                        case .failure(let error):
-                            self.eventHandler?(.error(error))
-                    }
-                })
-    }
-//
-    
-    func Business(parameters: BusinessModelParam) {
-        requestType = "UpdateBusinessDetails"
-        self.eventHandler?(.loading)
-        APIManager.shared.requestPost(
-            modelType: UpdateBusinessModel.self, // response type
-            type: APIEndPoint.Business(param: parameters),
-            header: true) { result in
-                self.eventHandler?(.stopLoading)
-                switch result {
-                case .success(let data):
-                    self.updateBusineedModelDict = data
-                    self.eventHandler?(.dataLoaded)
-                case .failure(let error):
-                    self.eventHandler?(.error(error))
-                }
-            }
-    }
+//                            } else {
+////                                self.Business(parameters: newPara)
+//                            }
+//                        case .failure(let error):
+//                            self.eventHandler?(.error(error))
+//                    }
+//                })
+//    }
+////
+//    
+//    func Business(parameters: BusinessModelParam) {
+//        requestType = "UpdateBusinessDetails"
+//        self.eventHandler?(.loading)
+//        APIManager.shared.requestPost(
+//            modelType: UpdateBusinessModel.self, // response type
+//            type: APIEndPoint.Business(param: parameters),
+//            header: true) { result in
+//                self.eventHandler?(.stopLoading)
+//                switch result {
+//                case .success(let data):
+//                    self.updateBusineedModelDict = data
+//                    self.eventHandler?(.dataLoaded)
+//                case .failure(let error):
+//                    self.eventHandler?(.error(error))
+//                }
+//            }
+//    }
 
 }
 

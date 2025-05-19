@@ -15,7 +15,7 @@ struct DropDownSelection: View {
     @State var hint: String = ""
     
     
-    @State var selected: String = ""
+    @Binding var selected: String
     @State var showOption: Bool = false
     var anchor: Anchor = .bottom
     var maxWidth: CGFloat = screenWidth - 30
@@ -25,7 +25,7 @@ struct DropDownSelection: View {
     
     @Environment(\.colorScheme) private var scheme
     @SceneStorage("drop_down_zindex") private var index = 1001.0
-    @State var zIndex = 1001.0
+    @State var zIndex = 1000.0
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -82,7 +82,7 @@ struct DropDownSelection: View {
                 .frame(height: size.height, alignment: anchor == .top ? .bottom : .top)
             }
             .frame(width: maxWidth, height: 50)
-            .zIndex(zIndex)
+            .zIndex(zIndex + 1)
         }
     }
     
@@ -96,10 +96,10 @@ struct DropDownSelection: View {
                         .lineLimit(1)
                         .font(.custom(nunitoMedium, fixedSize: 16))
                     Spacer()
-                    Image(systemName: "checkmark")
-                        .opacity(selected == ind ? 1 : 0)
+//                    Image(systemName: "checkmark")
+//                        .opacity(selected == ind ? 1 : 0)
                 })
-                .frame(height: 25)
+                .frame(height: 32)
                 .foregroundStyle(selected == ind ? Color.primary : Color.gray)
                 .animation(.none, value: selected)
                 .contentShape(.rect)
@@ -112,6 +112,7 @@ struct DropDownSelection: View {
                 }
             }
         }
+        .frame(maxHeight: 200)          
         .padding(.horizontal)
         .transition(.move(edge: anchor == .top ? .bottom : .top))
         .background(.white)
@@ -123,6 +124,6 @@ struct DropDownSelection: View {
     }
 }
 
-#Preview {
-    DropDownSelection(options: .constant([]))
-}
+//#Preview {
+//    DropDownSelection(options: .constant([]))
+//}
