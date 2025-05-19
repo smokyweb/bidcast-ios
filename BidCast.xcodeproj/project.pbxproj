@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		354163882DDB16BC00026B34 /* StepCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 354163872DDB16BC00026B34 /* StepCard.swift */; };
+		3541638A2DDB178300026B34 /* ShowTips.swift in Sources */ = {isa = PBXBuildFile; fileRef = 354163892DDB178300026B34 /* ShowTips.swift */; };
 		355AE9682DD1D51A00CD3D17 /* IQKeyboardManagerSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 355AE9672DD1D51A00CD3D17 /* IQKeyboardManagerSwift */; };
 		355AE96B2DD1D70500CD3D17 /* SignUpModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 355AE96A2DD1D70500CD3D17 /* SignUpModel.swift */; };
 		355AE96E2DD1DE3100CD3D17 /* LoginModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 355AE96D2DD1DE3100CD3D17 /* LoginModel.swift */; };
@@ -229,6 +231,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		354163872DDB16BC00026B34 /* StepCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepCard.swift; sourceTree = "<group>"; };
+		354163892DDB178300026B34 /* ShowTips.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowTips.swift; sourceTree = "<group>"; };
 		355AE96A2DD1D70500CD3D17 /* SignUpModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpModel.swift; sourceTree = "<group>"; };
 		355AE96D2DD1DE3100CD3D17 /* LoginModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginModel.swift; sourceTree = "<group>"; };
 		355AE9702DD1F94E00CD3D17 /* TabbarScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabbarScreen.swift; sourceTree = "<group>"; };
@@ -599,6 +603,7 @@
 				35CCE0182DD877FC00760CEE /* Model */,
 				35CCE0162DD8774000760CEE /* LetsPrepare.swift */,
 				35CCE0142DD876CD00760CEE /* HowToSell.swift */,
+				354163892DDB178300026B34 /* ShowTips.swift */,
 				35CCE01E2DD8A8BC00760CEE /* SellingTips.swift */,
 				35CCE0122DD876C900760CEE /* LessonScreen.swift */,
 				35CCE0102DD876C500760CEE /* GetStartedScreen.swift */,
@@ -1197,6 +1202,7 @@
 		99C9088A2DC8CD790054620B /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				354163872DDB16BC00026B34 /* StepCard.swift */,
 				35CCE00D2DD8603700760CEE /* DescriptionFieldView.swift */,
 				35B44F252DD7446000FBCBC4 /* MediaPickerView.swift */,
 				35B44F272DD74CCA00FBCBC4 /* PhotoPicker.swift */,
@@ -1806,6 +1812,7 @@
 				35CA09D92DD5BCE4002ABB83 /* LabelWithButton.swift in Sources */,
 				99C908132DC8CD6A0054620B /* HeaderWithSegmentController.swift in Sources */,
 				35B44F1E2DD705E100FBCBC4 /* AboutUsViewModel.swift in Sources */,
+				3541638A2DDB178300026B34 /* ShowTips.swift in Sources */,
 				D49A95682DD704CD006044A7 /* FAQScreen.swift in Sources */,
 				99C908142DC8CD6A0054620B /* PrimaryButton.swift in Sources */,
 				35AC64742DD48C0300B5E13E /* SearchView.swift in Sources */,
@@ -1903,6 +1910,7 @@
 				99C909AB2DC8CD930054620B /* IAPManager.swift in Sources */,
 				99C909AC2DC8CD930054620B /* UIView+Extension.swift in Sources */,
 				99C909AD2DC8CD930054620B /* Utilities.swift in Sources */,
+				354163882DDB16BC00026B34 /* StepCard.swift in Sources */,
 				99C909AE2DC8CD930054620B /* UILabel+Extension.swift in Sources */,
 				99C909AF2DC8CD930054620B /* EndPointType.swift in Sources */,
 				99C909B02DC8CD930054620B /* CommanExtension.swift in Sources */,

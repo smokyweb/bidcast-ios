@@ -16,7 +16,7 @@ struct SellingTips: View {
     @State var currentIndex = 0
     @State var isLoading: Bool = false
     
-    
+    @State var navigateToPrepare = false
     @State  var showNextButton = false
     
     @Environment(\.presentationMode) var presentationMode
@@ -35,10 +35,10 @@ struct SellingTips: View {
                 )
                 .background(.white)
             }.frame(height: 40)
-            ScrollView{
+            ScrollView(showsIndicators:false){
                 if !lessons.isEmpty{
                     let lesson = lessons[currentIndex]
-                    Text("Step 1 of 7")
+                    Text("Step \(currentIndex + 1) of \(lessons.count)")
                         .foregroundColor(.red)
                         .font(.subheadline)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -64,15 +64,50 @@ struct SellingTips: View {
                     RichText(html:lesson.description ?? "")
                         .foregroundColor(.white)
                         .padding()
+                    HStack{
+                        
+                        Button("Back") {
+                            if currentIndex > 0 { currentIndex -= 1 }
+                        }
+                        .disabled(currentIndex == 0)
+                        .buttonStyle(.bordered)
+                        .frame(width: 100.0)
+                      
+                        
+                       Spacer()
+                        
+                        Button("Next") {
+                            if currentIndex < lessons.count - 1 { currentIndex += 1 }
+                        }
+                        .disabled(currentIndex == lessons.count - 1)
+                        .buttonStyle(.borderedProminent)
+                        .frame(width: 100.0)
+                        .tint(.red)
+                        
+                    }
+                    .padding(.horizontal,16)
+                    if currentIndex == lessons.count - 1{
+                        PrimaryButton(title: "Continue",isOutLine: false,onButtonClick: {
+                            navigateToPrepare = true
+                        },cornerRadius: 12, btnTextColor: .white)
+//                            .disabled(currentIndex < lessons.count - 1)
+                    }
+                    
                 }
             }
-            .edgesIgnoringSafeArea(.top)
-            .background(.bg.opacity(0.5))
             
+            .background(.bg.opacity(0.5))
+            if isLoading {
+                Loader(isLoading: $isLoading)
+            }
         }
+        
+        CusNavLink(doNavigate: $navigateToPrepare, destination: LetsPrepare())
+            .edgesIgnoringSafeArea(.bottom)
         .toolbar(.hidden,for: .tabBar)
         .onAppear {
             observe()
+            
             viewModel.getSellingTips()
         }
     }

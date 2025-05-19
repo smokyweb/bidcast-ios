@@ -14,4 +14,5 @@ struct LessonModel : Codable {
     var description : String?
     var status : String?
     var image : String?
+    var isLocked: Bool { status?.lowercased() != "unlocked" }
 }
