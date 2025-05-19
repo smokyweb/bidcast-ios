@@ -19,6 +19,7 @@ struct AccountScreen: View {
     @State var navigateToSales : Bool = false
     @State var navigateToPrivacy : Bool = false
     @State var navigateToTerms : Bool = false
+    @State var navigateToInventry : Bool = false
     let columns = [
         GridItem(.flexible()),
         GridItem(.flexible())
@@ -53,8 +54,14 @@ struct AccountScreen: View {
                         
                         LazyVGrid(columns: columns, spacing: 2) {
                             ForEach(0 ..< TabSection.allCases.count, id: \.self) { index in
-                                VerticalLabelImageCell(topLabel: TabSection.allCases[index].img , bottomLabel:TabSection.allCases[index].description.localized )
-                                
+                                VerticalLabelImageCell(topLabel: TabSection.allCases[index].img , bottomLabel:TabSection.allCases[index].description.localized
+                                ){
+                                    if index == 0 {
+                                        withAnimation {
+                                            navigateToInventry = true
+                                        }
+                                    }
+                                }
                             }
                         }
                         .padding([.leading,.trailing],8)
@@ -135,6 +142,7 @@ struct AccountScreen: View {
             CusNavLink(doNavigate: $navigateToTerms, destination: TermsOfServicesScreen())
             CusNavLink(doNavigate: $navigateToPrivacy, destination: PrivacyPolicyScreen())
             CusNavLink(doNavigate: $navigateToContactus, destination: ContactUs())
+            CusNavLink(doNavigate: $navigateToInventry, destination: InventoryScreen())
         }
         .edgesIgnoringSafeArea(.top)
         .background(.bg.opacity(0.5))

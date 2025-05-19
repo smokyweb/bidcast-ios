@@ -200,6 +200,10 @@
 		D49A95732DD75EAF006044A7 /* FAQViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D49A95722DD75EAE006044A7 /* FAQViewModel.swift */; };
 		D4BA324B2DDB000600FE4FD2 /* SelectCategoryScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BA324A2DDB000600FE4FD2 /* SelectCategoryScreen.swift */; };
 		D4BA324D2DDB03BD00FE4FD2 /* SelectCategoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BA324C2DDB03BD00FE4FD2 /* SelectCategoryViewModel.swift */; };
+		D4BA32522DDB34CA00FE4FD2 /* InventoryScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BA32512DDB34CA00FE4FD2 /* InventoryScreen.swift */; };
+		D4BA32552DDB37C200FE4FD2 /* ActiveInventoryScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BA32542DDB37C200FE4FD2 /* ActiveInventoryScreen.swift */; };
+		D4BA32582DDB3C0D00FE4FD2 /* InventoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BA32572DDB3C0D00FE4FD2 /* InventoryViewModel.swift */; };
+		D4BA325B2DDB3C6F00FE4FD2 /* InventoryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BA325A2DDB3C6F00FE4FD2 /* InventoryModel.swift */; };
 		D4C4D7972DD31C2D00274E51 /* ActivityCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C4D7962DD31C2D00274E51 /* ActivityCell.swift */; };
 		D4C4D79A2DD3263A00274E51 /* SingleTitleLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C4D7982DD3263A00274E51 /* SingleTitleLabel.swift */; };
 		D4C4D79C2DD32F3D00274E51 /* TwoButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C4D79B2DD32F3D00274E51 /* TwoButton.swift */; };
@@ -423,6 +427,10 @@
 		D49A95722DD75EAE006044A7 /* FAQViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FAQViewModel.swift; sourceTree = "<group>"; };
 		D4BA324A2DDB000600FE4FD2 /* SelectCategoryScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectCategoryScreen.swift; sourceTree = "<group>"; };
 		D4BA324C2DDB03BD00FE4FD2 /* SelectCategoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectCategoryViewModel.swift; sourceTree = "<group>"; };
+		D4BA32512DDB34CA00FE4FD2 /* InventoryScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryScreen.swift; sourceTree = "<group>"; };
+		D4BA32542DDB37C200FE4FD2 /* ActiveInventoryScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveInventoryScreen.swift; sourceTree = "<group>"; };
+		D4BA32572DDB3C0D00FE4FD2 /* InventoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryViewModel.swift; sourceTree = "<group>"; };
+		D4BA325A2DDB3C6F00FE4FD2 /* InventoryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryModel.swift; sourceTree = "<group>"; };
 		D4C4D7962DD31C2D00274E51 /* ActivityCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityCell.swift; sourceTree = "<group>"; };
 		D4C4D7982DD3263A00274E51 /* SingleTitleLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleTitleLabel.swift; sourceTree = "<group>"; };
 		D4C4D79B2DD32F3D00274E51 /* TwoButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwoButton.swift; sourceTree = "<group>"; };
@@ -527,8 +535,9 @@
 		355AE9782DD1FC0400CD3D17 /* Account */ = {
 			isa = PBXGroup;
 			children = (
-				35B44F152DD7052400FBCBC4 /* About Us */,
 				355AE97B2DD1FC3900CD3D17 /* AccountScreen.swift */,
+				D4BA324E2DDB346100FE4FD2 /* Inventory */,
+				35B44F152DD7052400FBCBC4 /* About Us */,
 				D49A95662DD704BF006044A7 /* FAQ */,
 				D49A956D2DD71E3E006044A7 /* ContactUs */,
 			);
@@ -1202,6 +1211,7 @@
 		99C9088A2DC8CD790054620B /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				D4BA32532DDB378A00FE4FD2 /* ActiveInventory */,
 				354163872DDB16BC00026B34 /* StepCard.swift */,
 				35CCE00D2DD8603700760CEE /* DescriptionFieldView.swift */,
 				35B44F252DD7446000FBCBC4 /* MediaPickerView.swift */,
@@ -1589,6 +1599,40 @@
 			path = SelectCategory;
 			sourceTree = "<group>";
 		};
+		D4BA324E2DDB346100FE4FD2 /* Inventory */ = {
+			isa = PBXGroup;
+			children = (
+				D4BA32592DDB3C5F00FE4FD2 /* Model */,
+				D4BA32512DDB34CA00FE4FD2 /* InventoryScreen.swift */,
+				D4BA32562DDB3BD300FE4FD2 /* ViewModel */,
+			);
+			path = Inventory;
+			sourceTree = "<group>";
+		};
+		D4BA32532DDB378A00FE4FD2 /* ActiveInventory */ = {
+			isa = PBXGroup;
+			children = (
+				D4BA32542DDB37C200FE4FD2 /* ActiveInventoryScreen.swift */,
+			);
+			path = ActiveInventory;
+			sourceTree = "<group>";
+		};
+		D4BA32562DDB3BD300FE4FD2 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				D4BA32572DDB3C0D00FE4FD2 /* InventoryViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		D4BA32592DDB3C5F00FE4FD2 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				D4BA325A2DDB3C6F00FE4FD2 /* InventoryModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 		D4C4D7952DD31C0F00274E51 /* ActivityCell */ = {
 			isa = PBXGroup;
 			children = (
@@ -1918,6 +1962,7 @@
 				99C909B22DC8CD930054620B /* APIManager.swift in Sources */,
 				99C909B32DC8CD930054620B /* UserDefaultManager.swift in Sources */,
 				35B44F282DD74CCA00FBCBC4 /* PhotoPicker.swift in Sources */,
+				D4BA32582DDB3C0D00FE4FD2 /* InventoryViewModel.swift in Sources */,
 				99C909B42DC8CD930054620B /* ProjectEndPoint.swift in Sources */,
 				99C909B52DC8CD930054620B /* UserDefaults+Extension.swift in Sources */,
 				99C909B62DC8CD930054620B /* CusNavLink.swift in Sources */,
@@ -1928,8 +1973,10 @@
 				99C909BB2DC8CD930054620B /* UIWindow+Extension.swift in Sources */,
 				99C909BC2DC8CD930054620B /* DatePicker.swift in Sources */,
 				99C909622DC8CD790054620B /* PrivacyPolicyScreen.swift in Sources */,
+				D4BA325B2DDB3C6F00FE4FD2 /* InventoryModel.swift in Sources */,
 				99C909632DC8CD790054620B /* SubCompanyCard.swift in Sources */,
 				99C909682DC8CD790054620B /* NotificationScreen.swift in Sources */,
+				D4BA32552DDB37C200FE4FD2 /* ActiveInventoryScreen.swift in Sources */,
 				D4E569D92DD46BBE0005A78E /* BundleEx.swift in Sources */,
 				D49A956A2DD70952006044A7 /* FAQCell.swift in Sources */,
 				99C9096E2DC8CD790054620B /* InterviewlistViewModel.swift in Sources */,
@@ -1959,6 +2006,7 @@
 				99C908212DC8CD6A0054620B /* SubscriptionCard.swift in Sources */,
 				99C908222DC8CD6A0054620B /* DatePickerPopUp.swift in Sources */,
 				99C908232DC8CD6A0054620B /* UserListCard.swift in Sources */,
+				D4BA32522DDB34CA00FE4FD2 /* InventoryScreen.swift in Sources */,
 				35AC64722DD4827D00B5E13E /* ImageCollectionView.swift in Sources */,
 				99C908242DC8CD6A0054620B /* HeaderWithSearch.swift in Sources */,
 				99C908252DC8CD6A0054620B /* EmployeesMatchCard.swift in Sources */,

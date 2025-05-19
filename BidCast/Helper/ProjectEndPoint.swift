@@ -22,6 +22,7 @@ enum APIEndPoint{
     case category
     case auctionType
     case logout(param : LogoutRequest)
+    case getInventory(param : InventoryRequest)
     
     case getLesson
     case getSellingTips
@@ -166,6 +167,8 @@ extension APIEndPoint: EndPointType {
             return "get-category"
         case .auctionType:
             return "get-auction-type"
+        case .getInventory:
+            return "get-my-inventory"
             
             //MARK: Old
           
@@ -359,6 +362,8 @@ extension APIEndPoint: EndPointType {
             return .get
         case .auctionType:
             return .get
+        case .getInventory:
+            return .post
             
             //MARK: Old
            
@@ -539,6 +544,8 @@ extension APIEndPoint: EndPointType {
         case .contact(let param):
             return param
         case .verifyOTP(let param):
+            return param
+        case .getInventory(let param):
             return param
         case .getLesson:
             return nil

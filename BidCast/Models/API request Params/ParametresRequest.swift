@@ -182,11 +182,34 @@ struct SearchRequestByJobId: Encodable {
 }
 
     //MARK: - Generic Paginated Response Modal
+//struct ResponseModalPaginate<T: Codable>: Codable {
+//    var status, message, error_type: String?
+//    var data: T
+//    var total, totalPage, currentPage, perPage: Int?
+//}
+
 struct ResponseModalPaginate<T: Codable>: Codable {
-    var status, message, error_type: String?
+    var status: String?
+    var message: String?
+    var error_type: String?
     var data: T
-    var total, totalPage, currentPage, perPage: Int?
+    var total: Int?
+    var totalPage: Int?
+    var currentPage: Int?
+    var perPage: Int?
+
+    enum CodingKeys: String, CodingKey {
+        case status
+        case message
+        case error_type
+        case data
+        case total
+        case totalPage
+        case currentPage
+        case perPage
+    }
 }
+
 
 //MARK: - Employee By Job ID
 struct EmployeeJobIdRequest: Encodable {
@@ -354,4 +377,9 @@ struct UpdatePasswordRequest : Encodable{
 //MARK: LogoutRequest
 struct LogoutRequest : Encodable{
     var device_token : String
+}
+
+//MARK: InventoryRequest
+struct InventoryRequest : Encodable{
+    var status : String
 }
