@@ -24,6 +24,7 @@ struct LessonScreen: View {
     @State  var showNextButton = false
     @State  var showPreviousButton = false
     @State private var player: AVPlayer? = nil
+    @State var navigateToSell = false
     @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
@@ -39,6 +40,7 @@ struct LessonScreen: View {
             )
             .background(.white)
 //            .frame(height: 80)
+            CusNavLink(doNavigate: $navigateToSell, destination: SellingTips())
         }
         .background(.red)
         .frame(height: 40)
@@ -174,7 +176,8 @@ struct LessonScreen: View {
                 currentIndex += 1
                 playCurrentVideo()
             } else {
-                showNextButton = false
+                showNextButton = true
+                navigateToSell = true
                 print("All lessons finished")
             }
         }

@@ -14,7 +14,7 @@ struct ShowTips: View {
     @State var tips =  [LessonModel]()
     @State var isLoading  = false
     var viewModel = ScheduleViewModel()
-    
+    @State var navigateToSelectCategory = false
     private var currentProgress: Double {
         guard !tips.isEmpty else { return 0 }
         return Double(currentIndex) / Double(tips.count - 1)
@@ -54,8 +54,9 @@ struct ShowTips: View {
             .padding(.top,18)
             .padding(.bottom,-18)
             PrimaryButton(title: "Continue to next step",isOutLine: false,onButtonClick: {
-//                navigateToPrepare = true
+              navigateToSelectCategory = true
             },cornerRadius: 12, btnTextColor: .white)
+            CusNavLink(doNavigate: $navigateToSelectCategory, destination: SelectCategoryScreen())
         }
         .edgesIgnoringSafeArea(.bottom)
         .toolbar(.hidden,for: .tabBar)
