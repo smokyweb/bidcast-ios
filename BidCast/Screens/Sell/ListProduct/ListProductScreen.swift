@@ -26,7 +26,7 @@ struct ListProductScreen: View {
     @State private var categoryList: [CategoryDataModel] = []
     
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
-    var request : StoreProductParam = StoreProductParam(category_id: "", title: "", description: "", quantity: "", pricing: "", flash_sale: "", accept_offers: "", reserve_for_live: "", shipping_profile_id: "", status: "")
+    @State var request : StoreProductParam = StoreProductParam(category_id: "", title: "", description: "", quantity: "", pricing: "", flash_sale: "0", accept_offers: "0", reserve_for_live: "0", shipping_profile_id: "", status: "")
     
     var viewModel = ListProductViewModel()
     
@@ -64,16 +64,16 @@ struct ListProductScreen: View {
                             anchor: .bottom,
                             onOptionSelected: { value in
                                 if let id = categoryList.first(where: { $0.name == value })?.id {
-                                    request.category_id = id
+                                    request.category_id = "\(id)"
                                 } else {
-                                    request.category_id = nil
+                                    request.category_id = ""
                                 }
                             }
                         )
                         .zIndex(1201.0)
                         .padding([.leading,.trailing],8)
                         
-                        AuthTextField(floatingLabel: "Title".localized, placeholder: "Enter Product title".localized, icon: .menuProfile, text:$productTitle ,isIconDisplay : false) { email in
+                        AuthTextField(floatingLabel: "Title".localized, placeholder: "Enter Product title".localized, icon: .menuProfile, text: $request.title ,isIconDisplay : false) { email in
                             request.title = email
                         }
                         .keyboardType(.alphabet)
@@ -82,7 +82,7 @@ struct ListProductScreen: View {
                         DescriptionFieldView(){ message in
                             request.description = message
                         }
-                        AuthTextField(floatingLabel: "Quantity".localized, placeholder: "Enter Quantity".localized, icon: .menuProfile, text:$productTitle ,isIconDisplay : false) { email in
+                        AuthTextField(floatingLabel: "Quantity".localized, placeholder: "Enter Quantity".localized, icon: .menuProfile, text: $request.quantity ,isIconDisplay : false) { email in
                             request.quantity = email
                         }
                         .keyboardType(.numberPad)
@@ -104,7 +104,7 @@ struct ListProductScreen: View {
                             .padding(.top,8)
                             .padding([.leading,.trailing],8)
                         
-                        AuthTextField(floatingLabel: "Buy it Now Price".localized, placeholder: "0.00".localized, icon: .menuProfile, text:$productTitle ,isIconDisplay : true) { email in
+                        AuthTextField(floatingLabel: "Buy it Now Price".localized, placeholder: "0.00".localized, icon: .menuProfile, text: $request.pricing ,isIconDisplay : true) { email in
                             request.pricing = email
                         }
                         //                    .textContentType(.username)
@@ -112,19 +112,19 @@ struct ListProductScreen: View {
                         .padding([.leading,.trailing],4)
                         
                         MenuCell( title: "Flash Sale",fontValue: 18.0,menuImg: "",isSelectable: true, isTappedSwitch: $isTappedFlash,onToggle: { value in
-//                            if value == true{
-//                                request.flash_sale = "1"
-//                            }else{
-//                                request.flash_sale = "0"
-//                            }
+                            if value == true{
+                                request.flash_sale = "1"
+                            }else{
+                                request.flash_sale = "0"
+                            }
                         })
                         MenuCell( title: "Accept offers",fontValue: 18.0,menuImg: "",isSelectable: true, isTappedSwitch: $isTappedAccept,onToggle: { value in
                             print(value)
-//                            if value == true{
-//                                request.accept_offers = "1"
-//                            }else{
-//                                request.accept_offers = "0"
-//                            }
+                            if value == true{
+                                request.accept_offers = "1"
+                            }else{
+                                request.accept_offers = "0"
+                            }
                         })
                         MenuCell( title: "Reserve for Live",fontValue: 18.0,menuImg: "",isSelectable: true, isTappedSwitch: $isTappedReserve,onToggle: { value in
                             print(value)
