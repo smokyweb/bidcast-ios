@@ -9,7 +9,6 @@ import SwiftUI
 import RichText
 import AVFoundation
 import AVKit
-//import _AVKit_SwiftUI
 
 struct LessonScreen: View {
     
@@ -40,7 +39,7 @@ struct LessonScreen: View {
             )
             .background(.white)
 //            .frame(height: 80)
-            CusNavLink(doNavigate: $navigateToSell, destination: SellingTips())
+//            CusNavLink(doNavigate: $navigateToSell, destination: SellingTips())
         }
         .background(.red)
         .frame(height: 40)

@@ -11,11 +11,12 @@ import Foundation
 final class ScheduleViewModel {
     
     var getLessonDict : ResponseModal<[LessonModel]>?
-    
+    var request = ""
     var eventHandler: ((_ event: Event) -> Void)? // Data Binding Closure
 
     func getLesson(){
         self.eventHandler?(.loading)
+        self.request = "lesson"
         APIManager.shared.requestPost(
             modelType: ResponseModal<[LessonModel]>.self, // response type
             type: APIEndPoint.getLesson,
@@ -33,6 +34,7 @@ final class ScheduleViewModel {
     
     func getSellingTips(){
         self.eventHandler?(.loading)
+        self.request = "sellingTips"
         APIManager.shared.requestPost(
             modelType: ResponseModal<[LessonModel]>.self, // response type
             type: APIEndPoint.getSellingTips,
