@@ -46,7 +46,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         IQKeyboardManager.shared.isEnabled = true
         IQKeyboardManager.shared.resignOnTouchOutside = true
         IQKeyboardManager.shared.keyboardDistance = 10
-
+                IQKeyboardManager.shared.enableAutoToolbar = true
         
         if #available(iOS 10.0, *) {
             // For iOS 10 display notification (sent via APNS)
