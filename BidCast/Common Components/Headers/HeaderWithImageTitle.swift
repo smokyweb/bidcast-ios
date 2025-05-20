@@ -1,6 +1,6 @@
 //
 //  HeaderWithImageTitle.swift
-//  imperium
+// BidSwipe
 //
 //  Created by Ankit-JAM-E-294 on 25/01/24.
 //

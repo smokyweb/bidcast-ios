@@ -1,6 +1,6 @@
     //
     //  SwiftUIView.swift
-    //  imperium
+    // BidSwipe
     //
     //  Created by Maneet-JAM-E-282 on 23/01/24.
     //

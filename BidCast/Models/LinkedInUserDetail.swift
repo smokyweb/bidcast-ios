@@ -1,6 +1,6 @@
 //
 //  LinkedInUserDetail.swift
-//  imperium
+// BidSwipe
 //
 //  Created by Maneet-JAM-E-282 on 05/04/24.
 //

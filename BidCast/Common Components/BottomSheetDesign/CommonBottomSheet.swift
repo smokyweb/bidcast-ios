@@ -1,6 +1,6 @@
 //
 //  CommonBottomSheet.swift
-//  imperium
+// BidSwipe
 //
 //  Created by Maneet-JAM-E-282 on 04/03/24.
 //
@@ -15,7 +15,7 @@ enum BottomSheetType {
         message: String,
         primaryBtnText: String = "Continue",
         secondaryBtnText: String = "Cancel",
-        sheetThemeColor: ColorResource = .text,
+        sheetThemeColor: ColorResource = .defaultTheme,
         isButtonVertical: Bool = true,
         buttonHeight: CGFloat = 40,
         buttonWidth: CGFloat = screenWidth/1.5)
@@ -119,13 +119,13 @@ struct CommonBottomSheet: View {
                     if sheetType.primaryBtnText != "" {
                         PrimaryButton(title: sheetType.primaryBtnText, isOutLine: false, onButtonClick: {
                             self.onPrimaryClick?()
-                        }, width: sheetType.btnWidth, height: sheetType.btnHeight, btnColor: sheetType.sheetThemeColor)
+                        }, width: sheetType.btnWidth, height: sheetType.btnHeight,btnTextColor: .white,btnColor: sheetType.sheetThemeColor)
                     }
                     
                     if sheetType.secondaryBtnText != "" {
-                        PrimaryButton(title: sheetType.secondaryBtnText, isOutLine: true, onButtonClick: {
+                        PrimaryButton(title: sheetType.secondaryBtnText, isOutLine: false, onButtonClick: {
                             self.onSecondaryClick?()
-                        }, width: sheetType.btnWidth, height: sheetType.btnHeight, btnColor: sheetType.sheetThemeColor)
+                        }, width: sheetType.btnWidth, height: sheetType.btnHeight, btnTextColor: .white, btnColor: sheetType.sheetThemeColor)
                     }
                 }.padding(.top, 10)
             } else {
@@ -139,11 +139,11 @@ struct CommonBottomSheet: View {
                             } else {
                                 self.onPrimaryClick?()
                             }
-                        }, width: sheetType.btnWidth, height: sheetType.btnHeight, btnColor: sheetType.sheetThemeColor)
+                        }, width: sheetType.btnWidth, height: sheetType.btnHeight,btnTextColor: .white, btnColor: sheetType.sheetThemeColor)
                     }
                     
                     if sheetType.secondaryBtnText != "" {
-                        PrimaryButton(title: sheetType.secondaryBtnText, isOutLine: true, onButtonClick: {
+                        PrimaryButton(title: sheetType.secondaryBtnText, isOutLine: false, onButtonClick: {
                             if sheetType.message.contains("token") {
                                 DispatchQueue.main.async {
                                     appRootManager.currentRoot = .authentication
@@ -151,7 +151,7 @@ struct CommonBottomSheet: View {
                             } else {
                                 self.onSecondaryClick?()
                             }
-                        }, width: sheetType.btnWidth, height: sheetType.btnHeight, btnColor: sheetType.sheetThemeColor)
+                        }, width: sheetType.btnWidth, height: sheetType.btnHeight,btnTextColor: .white, btnColor: sheetType.sheetThemeColor)
                     }
                 }.padding(.top, 10)
             }

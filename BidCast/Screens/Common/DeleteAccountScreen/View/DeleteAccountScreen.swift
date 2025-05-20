@@ -1,6 +1,6 @@
 ////
 ////  DeleteAccountScreen.swift
-////  imperium
+//// BidSwipe
 ////
 ////  Created by Abdul-JAM-E-157 on 01/03/24.
 ////

@@ -1,6 +1,6 @@
 //
 //  ContactModel.swift
-//  imperium
+// BidSwipe
 //
 //  Created by JAM-E-265 on 25/01/24.
 //

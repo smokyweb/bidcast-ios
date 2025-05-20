@@ -1,6 +1,6 @@
 //
 //  UIApplication+Extension.swift
-//  imperium
+// BidSwipe
 //
 //  Created by JAM-E-282 on 19/01/24.
 //

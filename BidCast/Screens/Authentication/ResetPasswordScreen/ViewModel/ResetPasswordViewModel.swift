@@ -1,6 +1,6 @@
 //
 //  ResetPasswordViewModel.swift
-//  imperium
+// BidSwipe
 //
 //  Created by Abdul-JAM-E-157 on 19/01/24.
 //

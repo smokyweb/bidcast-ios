@@ -1,6 +1,6 @@
 //
 //  UserProfileUpdateResponseModal.swift
-//  imperium
+// BidSwipe
 //
 //  Created by Maneet-JAM-E-282 on 30/01/24.
 //

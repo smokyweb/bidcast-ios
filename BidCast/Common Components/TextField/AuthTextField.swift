@@ -1,6 +1,6 @@
 //
 //  AuthTextField.swift
-//  imperium
+// BidSwipe
 //
 //  Created by JAM-E-282 on 18/01/24.
 //
@@ -32,7 +32,7 @@ struct AuthTextField: View {
             
             if floatingLabel != "" {
                 Text(floatingLabel)
-                    .font(.custom(nunitoBold, fixedSize: 15))
+                    .font(.custom(poppinsBold, fixedSize: 13))
                     .bold()
                     .foregroundStyle(.text)
             }
@@ -52,7 +52,7 @@ struct AuthTextField: View {
                     }
                     if showPassword && isPassword {
                         SecureField(placeholder, text: $text)
-                            .font(.custom(nunitoMedium, fixedSize: 15))
+                            .font(.custom(poppinsMedium, fixedSize: placeHolder))
                             .autocorrectionDisabled(true)
                             .autocapitalization(.none)
                             .foregroundStyle(.text)
@@ -69,7 +69,7 @@ struct AuthTextField: View {
                     } else {
                         TextField(placeholder, text: $text)
                         
-                            .font(.custom(nunitoMedium, fixedSize: 15))
+                            .font(.custom(poppinsMedium, fixedSize: placeHolder))
                             .autocorrectionDisabled(true)
                             .autocapitalization(.none)
                             .foregroundStyle(.text)
@@ -153,7 +153,7 @@ struct AuthTextField: View {
         .onDisappear {
             isFocused = false
         }
-        .padding([.leading,.trailing],8)
+        .padding([.leading,.trailing],Leading)
     }
     
     

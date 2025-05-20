@@ -1,6 +1,6 @@
 //
 //  VerifyOtpScreen.swift
-//  imperium
+// BidSwipe
 //
 //  Created by Abdul-JAM-E-157 on 19/01/24.
 //
@@ -42,20 +42,9 @@ struct VerifyOtpScreen: View {
                 
                 VStack(alignment: .leading, spacing: 20) {
                     Color.clear.frame(height: 5)
-                    TitleWithLine(title: headingText, lineLength: 0)
-                    
-                    Text(AppString.emailAddressNotAssociated.localized)
-                        .font(.custom(nunitoMedium, fixedSize: 18))
-                        .foregroundStyle(.black)
-                    
-                    Text(AppString.enterOtp.localized)
-                        .font(.custom(nunitoBold, fixedSize: 22))
-                        .foregroundStyle(.black)
-                    
+                    TitleWithLine(title: headingText, lineLength: sepratorLine)
                     VStack(alignment: .trailing, spacing: 12, content: {
-                        
                         pinDots
-                        
                         Button(action: {
                             if let mail: String = UserDefaultsManager.shared.value(forKey: .mailId) {
                                 request.email = mail
@@ -63,13 +52,13 @@ struct VerifyOtpScreen: View {
                             }
                         }, label: {
                             Text(AppString.resendOtp.localized)
-                                .font(.system(size: 14))
-                                .bold()
+                                .font(.custom(poppinsMedium, fixedSize: 13))
                                 .foregroundStyle(.red)
                         }).padding(.trailing, 35)
                     })
+                    .padding([.leading , .trailing], Leading)
                     
-                    PrimaryButton(title: AppString.submit.localized,isOutLine: false) {
+                    PrimaryButton(title: AppString.submit.localized,isOutLine: false,onButtonClick: {
                         
                         guard !pin.isEmpty else {
                             hudMsg = AppString.otpNotEmpty.localized
@@ -93,7 +82,7 @@ struct VerifyOtpScreen: View {
                                 showhud = true
                             }
                         }
-                    }
+                    },btnTextColor: .white)
                 }
                 .padding(.horizontal)
                 .padding(.top, 80)
@@ -105,8 +94,6 @@ struct VerifyOtpScreen: View {
                 
                 CusNavLink(doNavigate: $navigateToResetPassword, destination: ResetPasswordScreen())
             }
-            .frame(width: screenWidth, height: screenHeight)
-            
             // Primary Header
             PrimaryHeader(
                 title: AppString.verifyOtp.localized ,
@@ -116,10 +103,11 @@ struct VerifyOtpScreen: View {
                 },
                 count: .constant(0)
             )
+            
             .frame(height: 80)
-            .background(Color.white)
             .shadow(radius: 2)
         }
+        .frame(width: screenWidth, height: screenHeight)
         .onAppear {
             observe()
             forgotOtpObserver()
@@ -224,7 +212,7 @@ struct VerifyOtpScreen: View {
                     backgroundField
                     let otp = self.getImageName(at: index)
                     Text(otp)
-                        .font(.custom(nunitoSemiBold, fixedSize: 20))
+                        .font(.custom(poppinsSemiBold, fixedSize: 18))
                         .foregroundColor(.black)
                         .padding(.leading, 5)
                 }

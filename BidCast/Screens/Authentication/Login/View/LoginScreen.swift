@@ -1,6 +1,6 @@
 //
 //  LoginScreen.swift
-//  imperium
+// BidSwipe
 //
 //  Created by JAM-E-282 on 18/01/24.
 //
@@ -32,19 +32,15 @@ struct LoginScreen: View {
     @State var navigateTotab: Bool = false
     @State var signInWithApple: Bool = false
     @State private var isLoggedIn = false
-
     @State var navigateToEmployer: Bool = false
     @State var navigateToCompanyUser: Bool = false
-
     @State var navigatetoUser: Bool = false
-//    @State private var coordinator: AppleSignInCoordinator? // Strong reference to the coordinator
 
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
     
-//    @State var request: LoginRequest = LoginRequest(user_name: "", password: "")
     @State var request: SignInRequest = SignInRequest(email: "", password: "")
     
     @State var loginDetail: LoginModel = LoginModel()
@@ -69,7 +65,7 @@ struct LoginScreen: View {
 //                        })
                     Spacer()
                 }
-                    //            ScrollView(showsIndicators: false) {
+                    //ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 15) {
 //                    VStack(alignment: .leading, spacing: 4) {
 //                        Text("Sign In")
@@ -105,7 +101,7 @@ struct LoginScreen: View {
                                 .tint(.red)
                             
                             Text(AppString.rememberMe.localized)
-                                .font(.custom(nunitoMedium, fixedSize: 14))
+                                .font(.custom(poppinsMedium, fixedSize: placeHolder))
                                 .foregroundStyle(.gray)
                         })
                         
@@ -117,13 +113,14 @@ struct LoginScreen: View {
                             }
                         }, label: {
                             Text(AppString.forgotPassword.localized)
-                                .font(.custom(nunitoRegular, fixedSize: 14))
+                                .font(.custom(poppinsRegular, fixedSize: placeHolder))
                                 .foregroundStyle(.defaultTheme)
                         })
                     }.padding([.top, .bottom], 10)
+                        .padding([.leading,.trailing] , Leading)
                     
                     
-                    PrimaryButton(title: AppString.login.localized, isOutLine: false) {
+                    PrimaryButton(title: AppString.login.localized, isOutLine: false,onButtonClick: {
                         UIApplication.shared.endEditing()
                         
 //                        SecAddSharedWebCredential(
@@ -139,12 +136,6 @@ struct LoginScreen: View {
                             return
                         }
                         
-//                        guard request.user_name else {
-//                            hudMsg = "Please enter a valid mail id or user name."
-//                            showhud = true
-//                            return
-//                        }
-                        
                         guard !request.password.isEmpty else {
                             hudMsg = AppString.pleaseEnterPassword.localized
                             showhud = true
@@ -158,13 +149,13 @@ struct LoginScreen: View {
                         }
                         print("Parameters used for login:- \(self.request)")
                         self.viewModel.logIn(parameters: self.request)
-                    }
+                    }, btnTextColor: .white)
                     
                     
                     HStack(spacing: 6) {
                         Spacer()
                         Text(AppString.newUser.localized)
-                            .font(.custom(nunitoMedium, fixedSize: 14))
+                            .font(.custom(poppinsMedium, fixedSize: placeHolder))
                             .foregroundStyle(.gray)
                         Button(action: {
                             withAnimation(.easeInOut) {
@@ -173,24 +164,12 @@ struct LoginScreen: View {
                             }
                         }, label: {
                             Text(AppString.createAccount.localized)
-                                .font(.custom(nunitoBold, fixedSize: 14))
+                                .font(.custom(poppinsBold, fixedSize: placeHolder))
                                 .foregroundStyle(.red)
                         })
                         Spacer()
                     }.padding([.top, .bottom], 12)
-                    
-//                    HStack(spacing: 6) {
-//                        Spacer()
-//                        Text("Privacy Policy |")
-//                            .font(.custom(nunitoMedium, fixedSize: 14))
-//                            .foregroundStyle(.gray)
-//                        
-//                        Text("Terms of Services")
-//                            .font(.custom(nunitoBold, fixedSize: 14))
-//                            .foregroundStyle(.gray)
-//                       
-//                        Spacer()
-//                    }.padding([.top, .bottom], 25)
+
                 }
                 .padding([.leading, .trailing])
                 .padding(.top, screenHeight/3)
@@ -204,18 +183,9 @@ struct LoginScreen: View {
                 }
             
                 CusNavLink(doNavigate: $navigateToForgot, destination: ForgotScreen())
-                CusNavLink(doNavigate: $navigateToForgot, destination: LanguagePickerView())
                 CusNavLink(doNavigate: $navigateTotab, destination: TabbarScreen())
                 CusNavLink(doNavigate: $navigateToLanguage, destination: LanguagePickerView())
-//                CusNavLink(doNavigate: $navigateToEmployer, destination: CreateEmployerProfile())
-                
-//                CusNavLink(doNavigate: $navigatetoUser, destination: WelcomeScreen())
                 CusNavLink(doNavigate: $navigateToSignUp, destination: SignUpScreen())
-//
-//                CusNavLink(doNavigate: $signInWithApple, destination: SignUpScreen(AppleLogin: true))
-//
-//                CusNavLink(doNavigate: $navigateToEmployer, destination: SubscriptionScreen(isLoginFlow: true))
-//                CusNavLink(doNavigate: $navigateToCompanyUser, destination: EmployerHomeScreen())
 
             }
         }.id(languageManager.languageChanged)
@@ -395,10 +365,24 @@ struct LoginScreen: View {
 //        }
     }
 }
-
+extension LoginScreen{
+    func isValidPhone(phone: String) -> Bool {
+        // Reject if the phone number is all zeros
+        if Set(phone).count == 1 && phone.first == "0" {
+            return false
+        }
+        
+        // Regex pattern: Only digits, length between 7 and 12
+        let phoneRegex = "^[0-9]{10,12}$"
+        let phoneTest = NSPredicate(format: "SELF MATCHES %@", phoneRegex)
+        
+        // Check if the phone number matches the regex pattern
+        return phoneTest.evaluate(with: phone)
+    }
+}
 
 //
-//#Preview {
-//    LoginScreen()
-//}
+#Preview {
+    LoginScreen()
+}
 

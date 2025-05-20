@@ -1,6 +1,6 @@
 //
 //  PrimaryHeader.swift
-//  imperium
+// BidSwipe
 //
 //  Created by JAM-E-282 on 19/01/24.
 //
@@ -14,7 +14,7 @@ struct PrimaryHeader: View {
     
     var leadingImgArr: [ImageResource] = []
     var trailingImgArr: [ImageResource] = []
-    
+    var showShadow : Bool = true
     var onClickLeading: ((Int) -> Void)?
     var onClickTrailing: ((Int) -> Void)?
     
@@ -110,6 +110,7 @@ struct PrimaryHeader: View {
             }
             .frame(height: 50)
             .padding(.top, 10)
+            .padding(.leading , Leading)
             .overlay(alignment: .center, content: {
                 if showAppIcon {
                     Image(.appName)
@@ -131,6 +132,7 @@ struct PrimaryHeader: View {
             })
         }
         .frame(height: topPadding + 50)
+        .shadow(color: showShadow ? .squirrelGrey.opacity(0.5) : Color.clear, radius: 2, x: 0, y: 0)
         .edgesIgnoringSafeArea(.top)
     }
 }

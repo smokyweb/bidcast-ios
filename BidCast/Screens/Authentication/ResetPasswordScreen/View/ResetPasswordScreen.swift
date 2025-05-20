@@ -1,6 +1,6 @@
 //    //
 //    //  ResetPasswordScreen.swift
-//    //  imperium
+//    // BidSwipe
 //    //
 //    //  Created by Abdul-JAM-E-157 on 19/01/24.
 //    //
@@ -38,7 +38,7 @@ struct ResetPasswordScreen: View {
 
                     AuthTextField(
                         floatingLabel: AppString.enterPassword.localized,
-                        placeholder: AppString.pleaseEnterNewPassword.localized,
+                        placeholder: AppString.enterPassword.localized,
                         icon: .bag,
                         text: $password,
                         isPassword: true
@@ -48,7 +48,7 @@ struct ResetPasswordScreen: View {
 
                     AuthTextField(
                         floatingLabel: AppString.confirmPassword.localized,
-                        placeholder: AppString.confirmNewPassword.localized,
+                        placeholder: AppString.confirmPassword.localized,
                         icon: .bag,
                         text: $confPassword,
                         isPassword: true
@@ -57,7 +57,7 @@ struct ResetPasswordScreen: View {
                     }
                     .padding(.bottom, 16)
 
-                    PrimaryButton(title: AppString.submit.localized, isOutLine: false) {
+                    PrimaryButton(title: AppString.submit.localized, isOutLine: false,onButtonClick: {
                         UIApplication.shared.endEditing()
 
                         guard !request.password.isEmpty else {
@@ -84,7 +84,7 @@ struct ResetPasswordScreen: View {
                             request.password_confirmation = confPassword
                             viewModel.resetPassword(parameters: request)
                         }
-                    }
+                    },btnTextColor: .white)
                 }
                 .padding(.horizontal)
                 .padding(.top, 80)

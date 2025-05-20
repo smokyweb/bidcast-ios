@@ -1,6 +1,6 @@
 //
 //  PrimaryButton.swift
-//  imperium
+// BidSwipe
 //
 //  Created by JAM-E-282 on 18/01/24.
 //
@@ -32,7 +32,7 @@ struct PrimaryButton: View {
 //                    .stroke(btnColor, lineWidth: 2.0)
                     .overlay {
                         Text(title)
-                            .font(.custom(nunitoBold, fixedSize: 18))
+                            .font(.custom(poppinsBold, fixedSize: buttonTitle))
                             .bold()
                             .foregroundStyle(Color(btnColor))
                     }
@@ -53,7 +53,7 @@ struct PrimaryButton: View {
                                     .frame(width: 24,height: 24)
                             }
                             Text(title)
-                                .font(.custom(nunitoBold, fixedSize: 18))
+                                .font(.custom(poppinsBold, fixedSize: buttonTitle))
                                 .bold()
                                 .foregroundColor(btnTextColor)
 //                                .foregroundStyle()

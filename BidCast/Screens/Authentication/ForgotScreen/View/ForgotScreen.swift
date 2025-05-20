@@ -1,6 +1,6 @@
 //
 //  ForgotScreen.swift
-//  imperium
+// BidSwipe
 //
 //  Created by Abdul-JAM-E-157 on 19/01/24.
 //
@@ -32,10 +32,8 @@ struct ForgotScreen: View {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 25) {
                     Color.clear.frame(height: 5)
-                    TitleWithLine(title: AppString.forgotPassword, lineLength: 48)
-                    Text(AppString.emailAddressNotAssociated.localized)
-                        .font(.custom(nunitoMedium, fixedSize: 16))
-                        .foregroundStyle(.black)
+                    TitleWithLine(title: AppString.forgetPassword, lineLength: sepratorLine)
+                    SingleTitleLabel(title: AppString.emailAddressNotAssociated.localized ,textColor: .mediumLightGray,fontValue: 13.0)
                     
                     AuthTextField(
                         floatingLabel: AppString.email.localized,
@@ -46,7 +44,7 @@ struct ForgotScreen: View {
                         self.request.email = email
                     }
                     
-                    PrimaryButton(title: AppString.submit.localized, isOutLine: false) {
+                    PrimaryButton(title: AppString.submit.localized, isOutLine: false,onButtonClick: {
                         UIApplication.shared.endEditing()
                         
                         guard !request.email.isEmpty else {
@@ -61,7 +59,7 @@ struct ForgotScreen: View {
                             return
                         }
                         self.viewModel.forgotEmail(parameters: self.request)
-                    }
+                    },btnTextColor: .white)
                 }
                 .padding(.horizontal)
                 .padding(.bottom, 32)
@@ -70,7 +68,7 @@ struct ForgotScreen: View {
             
             // Fixed Header
             PrimaryHeader(
-                title: AppString.forgotPassword.localized,
+                title: AppString.forgetPassword.localized,
                 leadingImgArr: [.icBack],
                 onClickLeading: { _ in
                     self.presentationMode.wrappedValue.dismiss()
@@ -79,7 +77,6 @@ struct ForgotScreen: View {
             )
             .frame(height: 80)
             .background(Color.white)
-            .shadow(radius: 2)
             
             if isLoading {
                 Loader(isLoading: $isLoading)
@@ -148,7 +145,7 @@ struct ForgotScreen: View {
             isPassword = true
             withAnimation(.snappy) { navigateToOTP = true }
         } else {
-            alertType = .sheetType(icon: .alert, title: response.status.capitalized, message: response.message.capitalized, primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .pinkBtn)
+            alertType = .sheetType(icon: .alert, title: response.status.capitalized, message: response.message.capitalized, primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .defaultTheme)
             withAnimation(.snappy) { showError = true }
         }
     }

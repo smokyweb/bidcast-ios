@@ -1,6 +1,6 @@
 //
 //  InterviewlistModel.swift
-//  imperium
+// BidSwipe
 //
 //  Created by Abdul-JAM-E-157 on 27/02/24.
 //

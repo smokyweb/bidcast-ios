@@ -1,6 +1,6 @@
 //
 //  DeleteAccountSheet.swift
-//  imperium
+// BidSwipe
 //
 //  Created by JAM-E-221 on 26/08/24.
 //

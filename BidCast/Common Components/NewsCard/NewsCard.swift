@@ -1,6 +1,6 @@
 ////
 ////  NewsCard.swift
-////  imperium
+//// BidSwipe
 ////
 ////  Created by Abdul-JAM-E-157 on 20/01/24.
 ////

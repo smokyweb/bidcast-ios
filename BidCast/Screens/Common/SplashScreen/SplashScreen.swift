@@ -1,6 +1,6 @@
 //
 //  SplashScreen.swift
-//  imperium
+// BidSwipe
 //
 //  Created by JAM-E-282 on 18/01/24.
 //
@@ -10,7 +10,6 @@ import SwiftUI
 struct SplashScreen: View {
     
     @EnvironmentObject private var appRootManager: AppRootManager
-    
     @State var navigateToEmployer: Bool = false
     @State var navigatetoUser: Bool = false
 
@@ -59,9 +58,8 @@ struct SplashScreen: View {
 //            CusNavLink(doNavigate: $navigatetoUser, destination: UserHomeScreen())
             
 //            CusNavLink(doNavigate: $navigateToEmployer, destination: EmployerHomeScreen())
-            
         }.onAppear(perform: {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3, execute: {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
                 handleUserLogin()
             })
         })
@@ -71,3 +69,4 @@ struct SplashScreen: View {
 #Preview {
     SplashScreen()
 }
+

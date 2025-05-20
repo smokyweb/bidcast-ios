@@ -1,6 +1,6 @@
 ////
 ////  GooglePlaceManager.swift
-////  imperium
+//// BidSwipe
 ////
 ////  Created by Abdul-JAM-E-157 on 29/02/24.
 ////

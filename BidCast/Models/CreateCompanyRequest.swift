@@ -1,6 +1,6 @@
 //
 //  CreateCompanyRequest.swift
-//  imperium
+// BidSwipe
 //
 //  Created by Maneet-JAM-E-282 on 20/04/24.
 //

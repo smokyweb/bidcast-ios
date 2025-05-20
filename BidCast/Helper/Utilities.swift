@@ -26,6 +26,33 @@ let nunitoBold = "NunitoSans10ptCondensed-ExtraBold"
 let nunitoSemiBold = "NunitoSans10ptCondensed-Bold"
 let nunitoBlack = "NunitoSans10ptCondensed-Black"
 
+let poppinsBlack = "Poppins-Black"
+let poppinsBlackItalic = "Poppins-BlackItalic"
+let poppinsBold = "Poppins-Bold"
+let poppinsBoldItalic = "Poppins-BoldItalic"
+let poppinsExtraBold = "Poppins-ExtraBold"
+let poppinsExtraBoldItalic = "Poppins-ExtraBoldItalic"
+let poppinsExtraLight = "Poppins-ExtraLight"
+let poppinsExtraLightItalic = "Poppins-ExtraLightItalic"
+let poppinsItalic = "Poppins-Italic"
+let poppinsLight = "Poppins-Light"
+let poppinsLightItalic = "Poppins-LightItalic"
+let poppinsMedium = "Poppins-Medium"
+let poppinsMediumItalic = "Poppins-MediumItalic"
+let poppinsRegular = "Poppins-Regular"
+let poppinsSemiBold = "Poppins-SemiBold"
+let poppinsSemiBoldItalic = "Poppins-SemiBoldItalic"
+let poppinsThin = "Poppins-Thin"
+let poppinsThinItalic = "Poppins-ThinItalic"
+
+let Leading = 16.0
+let Trailing = 16.0
+let flotingLabel = 13.0
+let placeHolder = 13.0
+let buttonTitle = 18.0
+let headerTitle = 20.0
+let sepratorLine = 38.0
+
 func generateFeedback(type: UIImpactFeedbackGenerator.FeedbackStyle = .light) {
     let impactHeavy = UIImpactFeedbackGenerator(style: type)
     impactHeavy.impactOccurred()

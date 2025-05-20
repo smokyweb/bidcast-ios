@@ -1,6 +1,6 @@
 //
 //  NoInternetScreen.swift
-//  imperium
+// BidSwipe
 //
 //  Created by Maneet-JAM-E-282 on 09/02/24.
 //

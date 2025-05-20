@@ -1,6 +1,6 @@
 //
 //  SubCompanyCard.swift
-//  imperium
+// BidSwipe
 //
 //  Created by JAM-E-221 on 27/01/25.
 //
