@@ -13,7 +13,6 @@ import SwiftfulLoadingIndicators
 struct ForgotScreen: View {
     
     @Environment(\.presentationMode) var presentationMode
-    
     @State var isRemeber: Bool = false
     @State var isLoading: Bool = false
     @State var request: ForgetRequest = ForgetRequest(email: "")
@@ -43,7 +42,7 @@ struct ForgotScreen: View {
                         text: $request.email
                     ) { email in
                         self.request.email = email
-                    }
+                    }.textContentType(.username)
                     
                     PrimaryButton(title: AppString.submit.localized, isOutLine: false,onButtonClick: {
                         UIApplication.shared.endEditing()
@@ -86,8 +85,20 @@ struct ForgotScreen: View {
         }
         .frame(width: screenWidth, height: screenHeight)
         .onAppear {
+            UIScrollView.appearance().bounces = false
+        }
+        .onDisappear(perform: {
+            DispatchQueue.main.async {
+                UIScrollView.appearance().bounces = true
+            }
+        })
+        .onAppear {
             observe()
         }
+        .onTapGesture {
+            UIApplication.shared.endEditing()
+        }
+        
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }
@@ -151,3 +162,5 @@ struct ForgotScreen: View {
         }
     }
 }
+
+

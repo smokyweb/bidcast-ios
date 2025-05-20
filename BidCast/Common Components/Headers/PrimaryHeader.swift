@@ -122,7 +122,7 @@ struct PrimaryHeader: View {
 //                        .padding(.trailing, CGFloat(leadingImgArr.count) * 38)
                 } else {
                     Text(title)
-                        .font(.custom(nunitoBlack, fixedSize: 18))
+                        .font(.custom(poppinsBold, fixedSize: 18))
                         .fontWeight(.bold)
                         .foregroundStyle(.black)
                         .padding(.top)
@@ -132,7 +132,6 @@ struct PrimaryHeader: View {
             })
         }
         .frame(height: topPadding + 50)
-        .shadow(color: showShadow ? .squirrelGrey.opacity(0.5) : Color.clear, radius: 2, x: 0, y: 0)
         .edgesIgnoringSafeArea(.top)
     }
 }

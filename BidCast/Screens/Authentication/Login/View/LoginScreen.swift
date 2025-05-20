@@ -53,31 +53,11 @@ struct LoginScreen: View {
             ZStack(alignment: .bottom) {
                 VStack(alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/) {
                     Image(.mainLogo)
-//                        .resizable()
-//                        .scaledToFill()
                         .frame(width: screenWidth - 50, height: screenHeight/3)
                         .edgesIgnoringSafeArea(.top)
-//                        .overlay(alignment: .top, content: {
-//                            Image(.appName)
-//                                .resizable()
-//                                .scaledToFit()
-//                                .frame(width: screenWidth/2, height: screenHeight/12)
-//                                .padding(.top, screenHeight/20)
-//                        })
                     Spacer()
                 }
-                    //ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 15) {
-//                    VStack(alignment: .leading, spacing: 4) {
-//                        Text("Sign In")
-//                            .font(.custom(nunitoBlack, fixedSize: 21))
-//                            .bold()
-//                            .foregroundStyle(.text)
-//                        Divider()
-//                            .frame(width: 28, height: 5)
-//                            .background(.red)
-//                    }.padding(.bottom, 12)
-                    
                     Group {
                         AuthTextField(floatingLabel: AppString.email.localized, placeholder: AppString.enterEmail.localized, icon: .menuProfile, text: $request.email) { email in
                             self.request.email = email
@@ -123,14 +103,6 @@ struct LoginScreen: View {
                     
                     PrimaryButton(title: AppString.login.localized, isOutLine: false,onButtonClick: {
                         UIApplication.shared.endEditing()
-                        
-//                        SecAddSharedWebCredential(
-//                            "io.knoxweb.imperium" as CFString,
-//                            request.user_name as CFString,
-//                            request.password as CFString) { error in
-//                                Log.e("Error >> \(String(describing: error))")
-//                            }
-                        
                         guard !request.email.isEmpty else {
                             hudMsg = AppString.pleaseEnterEmail.localized
                             showhud = true
@@ -161,7 +133,6 @@ struct LoginScreen: View {
                         Button(action: {
                             withAnimation(.easeInOut) {
                                 navigateToSignUp = true
-//                                navigatetoUser = true
                             }
                         }, label: {
                             Text(AppString.createAccount.localized)
@@ -212,16 +183,9 @@ struct LoginScreen: View {
         })
 
         .onAppear(){
-//            if loginDetailList.count > 0 {
-//                request.user_name = loginDetailList.first?.mailId ?? ""
-//                request.password = loginDetailList.first?.password ?? ""
-//            }
            
             observe()
         }
-//        .fullScreenCover(isPresented: $navigateToSignUp, content: {
-//            SignUpScreen()
-//        })
         .onTapGesture {
             UIApplication.shared.endEditing()
         }
@@ -264,106 +228,30 @@ struct LoginScreen: View {
                     UserDefaultsManager.shared.setValue(dict?.data.token, forKey: .token)
                     UserDefaultsManager.shared.setModel(dict?.data, forKey: .userDetail)
                     UserDefaultsManager.shared.setValue(isRemeber, forKey: .rememberMe)
-                
-//                    if isRemeber {
-//                        saveLoginDetail(mail: request.email, password: request.password)
-//                    } else {
-//                        saveLoginDetail(mail: "", password: "")
-//                    }
+                    if isRemeber {
+                        saveLoginDetail(mail: request.email, password: request.password)
+                    } else {
+                        saveLoginDetail(mail: "", password: "")
+                    }
                     UserDefaultsManager.shared.setValue(true, forKey: .isLoggedIn)
                    
                     UserDefaultsManager.shared.setValue(dict?.data.role_id, forKey: .userRoleId)
                 UserDefaultsManager.shared.setValue(dict?.data.roles?.name ??  "", forKey: .userRole)
-//                    let id = dict!.data.id!.description
-//                    OneSignal.login(id)
-//                    let observer = MyPushSubscriptionObserver()
-//                    OneSignal.User.pushSubscription.addObserver(observer)
-//                    if OneSignal.User.pushSubscription.optedIn {
-//                        if let id = OneSignal.User.pushSubscription.id {
-//                            Log.i("FCM token: \(id)")
-//                            UserDefaultsManager.shared.setValue(id , forKey: .deviceToken)
-//                        }
-//                            // User is opted in for push notifications
-//                            // Update your UI or perform other actions here
-//                    } else {
-//                        Log.i("User is opted out of push notifications")
-//                            // User is opted out of push notifications
-//                            // Update your UI or perform other actions here
-//                    }
-                    
                     if let token: String = UserDefaultsManager.shared.value(forKey: .deviceToken) {
                         print("Device Token \(token)")
-//                        viewModel.saveDeviceDetail(parameter: DeviceDetailModal(device_token: token, device_platform: UIDevice.current.systemName.lowercased(), device_version: UIDevice.current.systemVersion))
                     }
-//                }else{
                 alertType = .sheetType(icon: .success, title: dict?.status?.capitalized ?? "", message: AppString.chooseLanguage.localized, primaryBtnText: AppString.continueBtn.localized , secondaryBtnText: "", sheetThemeColor: .secondary)
                 withAnimation(.snappy) { navigateTotab = true }
-               
-//                }
             }else{
                 alertType = .sheetType(icon: .alert, title: dict?.status?.capitalized ?? "", message: dict?.message ?? "", primaryBtnText: AppString.ok.localized, secondaryBtnText: "", sheetThemeColor: .secondary)
                 withAnimation(.snappy) { showError = true }
             }
-//        } else if viewModel.requestType == "SaveDeviceDetail" {
-////            viewModel.getCombineDetail()
-//        } else if viewModel.requestType == "CombineDetail" {
-//            if loginDetail.role_id == "2" && loginDetail.is_student ?? "" == "" {
-//                if viewModel.loginResponceDict?.data.is_first_login ?? -1 == 1{
-//                    navigatetoUser = true
-//                }else{
-//                    appRootManager.currentRoot = .user
-//                }
-//            } else if loginDetail.role_id == "3" && loginDetail.emp_company_created ?? false == false {
-//                if viewModel.loginResponceDict?.data.is_first_login  ?? -1  == 1{
-//                    navigateToEmployer = true
-//                }else{
-//                    appRootManager.currentRoot = .employer
-//                }
-//            } else if loginDetail.role_id == "4"{
-//                navigateToCompanyUser = true
-//
-//            } else{
-//                if viewModel.loginResponceDict?.data.user_role == "employee"{
-//                    
-//                    
-//                    
-//                    DispatchQueue.main.async {
-//                        if viewModel.loginResponceDict?.data.is_first_login  ?? -1  == 1{
-//                            appRootManager.currentRoot = .welcome
-//                        }else{
-//                            appRootManager.currentRoot = .user
-//                        }
-//                    }
-//                }else{
-//                    if viewModel.loginResponceDict?.data.subscription == nil || viewModel.loginResponceDict?.data.subscription?.is_expired == "yes"{
-//                    DispatchQueue.main.async {
-//                        appRootManager.currentRoot = .subscription
-//                    }
-//                }else{
-//                    DispatchQueue.main.async {
-//                        if viewModel.loginResponceDict?.data.is_first_login  ?? -1  == 1{
-//                            appRootManager.currentRoot = .welcome
-//                        }else{
-//                            appRootManager.currentRoot = .employer
-//                        }
-//                    }
-//                }
-//                }
-//            }
         }
     }
     
     func saveLoginDetail(mail: String, password: String) {
-//        let detail = loginDetailList.count == 0 ? Login(context: self.viewContext) : loginDetailList.first
-//        detail?.mailId = mail
-//        detail?.password = password
-//        
-//        do {
-//            try self.viewContext.save()
-//            print("Login Detail saved!")
-//        } catch {
-//            print("whoops \(error.localizedDescription)")
-//        }
+        UserDefaults.userEmail = mail
+        UserDefaults.password = password
     }
 }
 extension LoginScreen{

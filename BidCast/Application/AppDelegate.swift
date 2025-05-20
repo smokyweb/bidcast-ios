@@ -23,6 +23,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         self.languageSelection()
+//        STPAPIClient.shared.publishableKey = "pk_test_51RQLxjQEbmPLLc7GaDeFTplB9lwTK5t9ZvpHVd1CtK4XtWsmktQvN3hoZW0ZZ0kSu0PFJ6R63D9X3PSMAq8tg5Sh00Vzh05MeU"
         // Remove this method to stop OneSignal Debugging
         //        OneSignal.Debug.setLogLevel(.LL_VERBOSE)
         //        let observer = MyPushSubscriptionObserver()
@@ -44,7 +45,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         //
         IQKeyboardManager.shared.isEnabled = true
         IQKeyboardManager.shared.resignOnTouchOutside = true
-        //        IQKeyboardManager.shared.enableAutoToolbar = false
+        IQKeyboardManager.shared.keyboardDistance = 10
+
         
         if #available(iOS 10.0, *) {
             // For iOS 10 display notification (sent via APNS)
