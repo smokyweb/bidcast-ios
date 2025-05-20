@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftfulLoadingIndicators
 
 struct ListProductScreen: View {
     @Environment(\.presentationMode) var presentationMode
@@ -186,7 +187,7 @@ struct ListProductScreen: View {
                 })
                 
                 if isLoading {
-                    Loader(isLoading: $isLoading)
+                    LoadingIndicator()
                 }
                 
             }

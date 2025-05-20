@@ -41,21 +41,14 @@ struct BidCastApp: App {
                         }
                         
                     case .authentication:
+                    NavigationContainer {
                         AuthenticationStack()
-                    
-//                case .subscription:
-////                    SubscriptionScreen(isLoginFlow: true)
-//                        
-//                    case .employer:
-////                        EmployerFlowStack()
-//                        
-//                    case .user:
-////                        UserFlowStack()
-//                        
-//                    case .welcome:
-//                        WelcomeScreen()
+                    }
+
                 case .tabBar:
-                    TabbarScreen()
+                    NavigationContainer{
+                        TabbarScreen()
+                    }
                 }
                     
             }

@@ -7,6 +7,7 @@
 
 import SwiftUI
 import RichText
+import SwiftfulLoadingIndicators
 
 struct AboutUsScreen: View {
 
@@ -90,7 +91,7 @@ struct AboutUsScreen: View {
 //            })
 
             if isLoading {
-                Loader(isLoading: $isLoading)
+                LoadingIndicator()
             }
 
         }

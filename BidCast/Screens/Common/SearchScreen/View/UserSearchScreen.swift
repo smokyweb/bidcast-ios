@@ -148,7 +148,7 @@
 //            })
 //            
 //            if isLoading {
-//                Loader(isLoading: $isLoading)
+//                LoadingIndicator()
 //            }
 //            
 //            if let role : String = UserDefaultsManager.shared.value(forKey: .userRole)  {

@@ -257,7 +257,7 @@
 //            })
 //            
 //            if isLoading {
-//                Loader(isLoading: $isLoading)
+//                LoadingIndicator()
 //            }
 //        }
 //    }

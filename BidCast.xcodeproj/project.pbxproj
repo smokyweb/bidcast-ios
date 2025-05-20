@@ -47,6 +47,7 @@
 		35CCE01B2DD8781B00760CEE /* ScheduleViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CCE01A2DD8781B00760CEE /* ScheduleViewModel.swift */; };
 		35CCE01D2DD8782600760CEE /* ScheduleModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CCE01C2DD8782600760CEE /* ScheduleModel.swift */; };
 		35CCE01F2DD8A8BC00760CEE /* SellingTips.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CCE01E2DD8A8BC00760CEE /* SellingTips.swift */; };
+		35F63D682DDC5DF100D29878 /* SwiftfulLoadingIndicators in Frameworks */ = {isa = PBXBuildFile; productRef = 35F63D672DDC5DF100D29878 /* SwiftfulLoadingIndicators */; };
 		99C907C42DC8CC990054620B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907C22DC8CC990054620B /* AppDelegate.swift */; };
 		99C907C52DC8CC990054620B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907C32DC8CC990054620B /* SceneDelegate.swift */; };
 		99C9080E2DC8CD6A0054620B /* DocView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C907D22DC8CD6A0054620B /* DocView.swift */; };
@@ -500,6 +501,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				35F63D682DDC5DF100D29878 /* SwiftfulLoadingIndicators in Frameworks */,
 				35A0451C2DC8E19E0067C447 /* ActivityIndicatorView in Frameworks */,
 				35B44F212DD7152600FBCBC4 /* RichText in Frameworks */,
 				35A045162DC8DF5B0067C447 /* Kingfisher in Frameworks */,
@@ -1801,6 +1803,7 @@
 				35A0451B2DC8E19E0067C447 /* ActivityIndicatorView */,
 				355AE9672DD1D51A00CD3D17 /* IQKeyboardManagerSwift */,
 				35B44F202DD7152600FBCBC4 /* RichText */,
+				35F63D672DDC5DF100D29878 /* SwiftfulLoadingIndicators */,
 			);
 			productName = BidCast;
 			productReference = 99DF9E3F2DC4F35D008C15B2 /* BidCast.app */;
@@ -1890,6 +1893,7 @@
 				35A045142DC8DF5B0067C447 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				35A0451A2DC8E19E0067C447 /* XCRemoteSwiftPackageReference "ActivityIndicatorView" */,
 				35B44F1F2DD7152600FBCBC4 /* XCRemoteSwiftPackageReference "RichText" */,
+				35F63D662DDC5DF100D29878 /* XCRemoteSwiftPackageReference "SwiftfulLoadingIndicators" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 99DF9E402DC4F35D008C15B2 /* Products */;
@@ -2592,6 +2596,14 @@
 				minimumVersion = 2.5.0;
 			};
 		};
+		35F63D662DDC5DF100D29878 /* XCRemoteSwiftPackageReference "SwiftfulLoadingIndicators" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SwiftfulThinking/SwiftfulLoadingIndicators.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.0.4;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -2624,6 +2636,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 35B44F1F2DD7152600FBCBC4 /* XCRemoteSwiftPackageReference "RichText" */;
 			productName = RichText;
+		};
+		35F63D672DDC5DF100D29878 /* SwiftfulLoadingIndicators */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 35F63D662DDC5DF100D29878 /* XCRemoteSwiftPackageReference "SwiftfulLoadingIndicators" */;
+			productName = SwiftfulLoadingIndicators;
 		};
 /* End XCSwiftPackageProductDependency section */
 

@@ -197,7 +197,7 @@
 //            })
 //            
 //            if isLoading, notificationListArr.count == 0 {
-//                Loader(isLoading: $isLoading)
+//                LoadingIndicator()
 //            }
 //            
 ////            if showError {

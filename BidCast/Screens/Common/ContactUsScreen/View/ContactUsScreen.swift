@@ -95,7 +95,7 @@
 //            })
 //            
 //            if isLoading {
-//                Loader(isLoading: $isLoading)
+//                LoadingIndicator()
 //            }
 //            
 //            CusNavLink(doNavigate: $navigateToNotification, destination: NotificationScreen())

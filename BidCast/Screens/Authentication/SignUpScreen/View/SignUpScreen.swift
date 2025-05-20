@@ -10,6 +10,7 @@ import SwiftUI
 //import SafariServices
 //import BottomSheet
 import AlertToast
+import SwiftfulLoadingIndicators
 
 struct SignUpScreen: View {
     
@@ -164,7 +165,7 @@ struct SignUpScreen: View {
             })
             
             if isLoading {
-                Loader(isLoading: $isLoading)
+                LoadingIndicator()
             }
         }
     }

@@ -873,7 +873,7 @@
 //
 //        
 //        if isLoading {
-//            Loader(isLoading: $isLoading)
+//            LoadingIndicator()
 //        }
 //        
 //        CusNavLink(doNavigate: $navigateToEditJobDetail, destination: CreateEditJob(isEdit: true, request: JobUpsertParamter(id: job.id, title: job.title  ?? "", salary_type: job.salary_type ?? "", salary: job.salary ?? "", hours_schedule: job.hours_schedule ?? "", type: job.job_type ?? "", description: job.description ?? "", benefits: job.benefits ?? "", experience: job.experience ?? "", licensure: job.licensure ?? "", qualification_id: job.qualification_id ?? "", education_field: job.education_field_id ?? "",is_licensure_required: "0", is_education_required: "0", location_type_id: "")))

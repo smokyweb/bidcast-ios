@@ -8,6 +8,7 @@
 import SwiftUI
 import BottomSheet
 import AlertToast
+import SwiftfulLoadingIndicators
 
 struct ForgotScreen: View {
     
@@ -79,7 +80,7 @@ struct ForgotScreen: View {
             .background(Color.white)
             
             if isLoading {
-                Loader(isLoading: $isLoading)
+                LoadingIndicator()
             }
             CusNavLink(doNavigate: $navigateToOTP, destination: VerifyOtpScreen())
         }

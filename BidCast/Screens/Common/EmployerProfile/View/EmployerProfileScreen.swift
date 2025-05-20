@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftfulLoadingIndicators
 
 struct EmployerProfileScreen: View {
     
@@ -62,7 +63,7 @@ struct EmployerProfileScreen: View {
             })
             
             if isLoading {
-                Loader(isLoading: $isLoading)
+                LoadingIndicator()
             }
             
             CusNavLink(doNavigate: $navigateToJobDetail, destination: JobPostingScreen(jobId: $selectedJob, enableSwipe: .constant(false)))

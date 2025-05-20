@@ -8,6 +8,7 @@
 import SwiftUI
 import WebKit
 import RichText
+import SwiftfulLoadingIndicators
 //
 struct TermsOfServicesScreen: View {
     
@@ -65,7 +66,7 @@ struct TermsOfServicesScreen: View {
             }
             
             if isLoading {
-                Loader(isLoading: $isLoading)
+                LoadingIndicator()
             }
         }
         .edgesIgnoringSafeArea(.top)

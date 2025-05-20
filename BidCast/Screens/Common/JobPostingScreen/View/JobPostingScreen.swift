@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftfulLoadingIndicators
 
 struct JobPostingScreen: View {
     
@@ -63,7 +64,7 @@ struct JobPostingScreen: View {
             })
             
             if isLoading {
-                Loader(isLoading: $isLoading)
+                LoadingIndicator()
             }
         }
     }

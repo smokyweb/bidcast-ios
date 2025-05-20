@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftfulLoadingIndicators
 //import BottomSheet
 
 struct MenuModal: Identifiable {
@@ -181,7 +182,7 @@ struct MenuScreen: View {
             })
             
             if isLoading {
-                Loader(isLoading: $isLoading)
+                LoadingIndicator()
             }
             
             if showAlert {

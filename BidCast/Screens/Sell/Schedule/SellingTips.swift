@@ -8,6 +8,7 @@
 import SwiftUI
 import RichText
 import AVKit
+import SwiftfulLoadingIndicators
 
 //struct SellingTips: View {
 //    
@@ -99,7 +100,7 @@ import AVKit
 //            
 //            .background(.bg.opacity(0.5))
 //            if isLoading {
-//                Loader(isLoading: $isLoading)
+//                LoadingIndicator()
 //            }
 //        }
 //        
@@ -175,6 +176,7 @@ struct CombinedLessonTipsView: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            if !combinedList.isEmpty {
             PrimaryHeader(
                 title: "How It Works".localized,
                 isForLogo : false,
@@ -188,9 +190,7 @@ struct CombinedLessonTipsView: View {
             .background(.white)
             .frame(height: 40)
 
-            if isLoading {
-                Loader(isLoading: $isLoading)
-            } else if !combinedList.isEmpty {
+         
                 let item = combinedList[currentIndex]
 
                 ScrollView(showsIndicators: false) {
@@ -200,6 +200,7 @@ struct CombinedLessonTipsView: View {
                             .font(.headline)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.top, 10)
+                            .padding(.horizontal)
 
                         switch item {
                         case .lesson(let lesson):
@@ -228,8 +229,6 @@ struct CombinedLessonTipsView: View {
                                     RichText(html: desc)
                                         .foregroundColor(.black)
                                         .padding()
-//                                        .background(Color.white)
-//                                        .cornerRadius(10)
                                         .padding(.horizontal)
                                 }
                                 Spacer()
@@ -238,7 +237,6 @@ struct CombinedLessonTipsView: View {
                                    Spacer()
                                     ProgressView(value: playbackProgress)
                                         .tint(.red)
-//                                        .padding(.horizontal, 16)
                                     
                                     HStack {
                                         Button {
@@ -332,7 +330,11 @@ struct CombinedLessonTipsView: View {
             }
 
             CusNavLink(doNavigate: $navigateToNext, destination: LetsPrepare())
+            if isLoading {
+                LoadingIndicator()
+            }
         }
+       
         .onAppear {
             currentIndex = 0
             observe()

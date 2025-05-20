@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftfulLoadingIndicators
 //import BottomSheet
 
 struct NewsScreen: View {
@@ -74,7 +75,7 @@ struct NewsScreen: View {
             })
             
             if isLoading {
-                Loader(isLoading: $isLoading)
+                LoadingIndicator()
             }
             
 //            if showError {

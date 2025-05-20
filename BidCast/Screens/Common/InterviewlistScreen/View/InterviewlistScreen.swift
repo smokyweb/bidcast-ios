@@ -109,7 +109,7 @@
 //            })
 //            
 //            if isLoading && interviewListContent.count == 0 {
-//                Loader(isLoading: $isLoading)
+//                LoadingIndicator()
 //            }
 //            
 ////            if showError {

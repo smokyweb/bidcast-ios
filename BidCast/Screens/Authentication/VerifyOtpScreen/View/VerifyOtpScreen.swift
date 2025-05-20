@@ -7,6 +7,7 @@
 
 import SwiftUI
 import AlertToast
+import SwiftfulLoadingIndicators
 //import BottomSheet
 
 struct VerifyOtpScreen: View {
@@ -89,7 +90,7 @@ struct VerifyOtpScreen: View {
                 .padding(.bottom, 32)
                 
                 if isLoading {
-                    Loader(isLoading: $isLoading)
+                    LoadingIndicator()
                 }
                 
                 CusNavLink(doNavigate: $navigateToResetPassword, destination: ResetPasswordScreen())

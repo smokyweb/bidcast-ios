@@ -8,6 +8,7 @@
 import SwiftUI
 import AlertToast
 import BottomSheet
+import SwiftfulLoadingIndicators
 
 struct EmployerSearchScreen: View {
     
@@ -124,7 +125,7 @@ struct EmployerSearchScreen: View {
             })
             
             if isLoading {
-                Loader(isLoading: $isLoading)
+                LoadingIndicator()
             }
             
 //            if showError {

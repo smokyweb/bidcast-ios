@@ -11,6 +11,7 @@ import SwiftUI
 import CoreData
 import BottomSheet
 import AlertToast
+import SwiftfulLoadingIndicators
 //import AuthenticationServices
 
 struct LoginScreen: View {
@@ -179,7 +180,7 @@ struct LoginScreen: View {
                 }
                 
                 if isLoading {
-                    Loader(isLoading: $isLoading)
+                    LoadingIndicator()
                 }
             
                 CusNavLink(doNavigate: $navigateToForgot, destination: ForgotScreen())

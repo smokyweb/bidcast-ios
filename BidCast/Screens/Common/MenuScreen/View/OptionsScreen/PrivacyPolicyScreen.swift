@@ -7,6 +7,7 @@
 //
 import SwiftUI
 import RichText
+import SwiftfulLoadingIndicators
 
 struct PrivacyPolicyScreen: View {
     
@@ -62,7 +63,7 @@ struct PrivacyPolicyScreen: View {
             }
             
             if isLoading {
-                Loader(isLoading: $isLoading)
+                LoadingIndicator()
             }
         }
         .edgesIgnoringSafeArea(.bottom)

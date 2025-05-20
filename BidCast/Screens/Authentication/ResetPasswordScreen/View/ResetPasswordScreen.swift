@@ -8,6 +8,7 @@
 import SwiftUI
 import BottomSheet
 import AlertToast
+import SwiftfulLoadingIndicators
 
 struct ResetPasswordScreen: View {
 
@@ -104,7 +105,7 @@ struct ResetPasswordScreen: View {
             .shadow(radius: 2)
 
             if isLoading {
-                Loader(isLoading: $isLoading)
+                LoadingIndicator()
             }
 
             CusNavLink(doNavigate: $navigateToLogin, destination: LoginScreen())
