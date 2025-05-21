@@ -72,7 +72,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         //        UserDefaultsManager.shared.setValue(true, forKey: .showMatchingSheet)
         
         UITextField.appearance().tintColor = .text
-        
         UIScrollView.appearance().bounces = true
         UIApplication.shared.setStatusBarStyle(.lightContent, animated: true)
         

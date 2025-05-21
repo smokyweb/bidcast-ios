@@ -21,7 +21,7 @@ enum APIEndPoint{
     case faq
     case category
     case auctionType
-    case logout(param : LogoutRequest)
+    case logout
     case getInventory(param : InventoryRequest)
     
     case getLesson
@@ -545,8 +545,8 @@ extension APIEndPoint: EndPointType {
             return nil
         case .faq:
             return nil
-        case .logout(let param):
-            return param
+        case .logout:
+            return nil
         case .aboutUs:
             return nil
         case .contact(let param):

@@ -19,25 +19,23 @@ final class MenuOptionsViewModal {
         //MARK: - Event Handler
     var eventHandler: ((_ event: Event) -> Void)?
     
-        //MARK: - User LogOut
-    func logOut(param:LogoutRequest) {
+    //MARK: - User LogOut
+    func logOut() {
         self.eventHandler?(.loading)
-        if let deviceToken: String = UserDefaultsManager.shared.value(forKey: .deviceToken) {
-            APIManager.shared
-                .requestPost(
-                    modelType: ResponseModal<MenuOptionsModal>.self,
-                    type: APIEndPoint.logout(param: param),
-                    header: true) { result in
-                        self.eventHandler?(.stopLoading)
-                        switch result {
-                            case .success(let data):
-                                self.logOutResponse = data
-                                self.eventHandler?(.dataLoaded)
-                            case .failure(let error):
-                                self.eventHandler?(.error(error))
-                        }
+        APIManager.shared
+            .requestPost(
+                modelType: ResponseModal<MenuOptionsModal>.self,
+                type: APIEndPoint.logout,
+                header: true) { result in
+                    self.eventHandler?(.stopLoading)
+                    switch result {
+                    case .success(let data):
+                        self.logOutResponse = data
+                        self.eventHandler?(.dataLoaded)
+                    case .failure(let error):
+                        self.eventHandler?(.error(error))
                     }
-        }
+                }
     }
     
         //MARK: - Privacy Policy

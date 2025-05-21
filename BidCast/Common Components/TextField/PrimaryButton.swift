@@ -29,15 +29,15 @@ struct PrimaryButton: View {
         } }, label: {
             if isOutLine{
                 RoundedRectangle(cornerRadius: cornerRadius)
-//                    .stroke(btnColor, lineWidth: 2.0)
+                    .stroke(Color.white, lineWidth: 2.0)
+                    .background(Color.white)
                     .overlay {
                         Text(title)
                             .font(.custom(poppinsBold, fixedSize: buttonTitle))
                             .bold()
-                            .foregroundStyle(Color(btnColor))
+                            .foregroundColor(.black)
                     }
-                    .background(.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 25))
+                    .clipShape(RoundedRectangle(cornerRadius: 8.0))
                     .shadow(color: .gray, radius: 2, x: 0, y: 0)
             }else{
                 RoundedRectangle(cornerRadius: cornerRadius)
@@ -56,15 +56,15 @@ struct PrimaryButton: View {
                                 .font(.custom(poppinsBold, fixedSize: buttonTitle))
                                 .bold()
                                 .foregroundColor(btnTextColor)
-//                                .foregroundStyle()
+                            //                                .foregroundStyle()
                         }
                     }
-                    
-            
+                
+                
             }
         })
         .frame(width: width, height: height)
-        .padding(.all,16)
+        .padding([.bottom,.leading,.trailing],16)
     }
 }
 

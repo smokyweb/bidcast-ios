@@ -10,6 +10,11 @@ import SwiftUI
 struct AccountScreen: View {
     
     @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject private var appRootManager: AppRootManager
+    @State var userLogOut: Bool = false
+    @State var isLoading: Bool = false
+    @State var showAlert: Bool = false
+    @State var alertType: AlertType = .error(title: "", message: "", leftBtnText: "", rightBtnText: "")
     @State var segment : AccountSegment = .sellerHub
     @State var selectedSegmentSourceType = 0
     @State var isTappedSwitch : Bool = false
@@ -20,6 +25,8 @@ struct AccountScreen: View {
     @State var navigateToPrivacy : Bool = false
     @State var navigateToTerms : Bool = false
     @State var navigateToInventry : Bool = false
+    
+    var viewModal = MenuOptionsViewModal()
     let columns = [
         GridItem(.flexible()),
         GridItem(.flexible())
@@ -121,7 +128,11 @@ struct AccountScreen: View {
                                         navigateToFAQ = true
                                     }
                                 }
-                                
+                                else if index == 6 {
+                                    withAnimation {
+                                        userLogOut = true
+                                    }
+                                }
                                 print(AccountMenuSection.allCases[index].description)
                             })
                             
@@ -146,7 +157,47 @@ struct AccountScreen: View {
         }
         .edgesIgnoringSafeArea(.top)
         .background(.bg.opacity(0.5))
-        
+        .bottomSheet(isPresented: $userLogOut, height: screenHeight/2, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: { userLogOut = true }, content: {
+            LogOutSheet(onLogoutClick: {
+                withAnimation(.snappy) { userLogOut = false }
+                viewModal.logOut()
+                observe()
+            }, onCancelClick: {
+                withAnimation(.snappy) { userLogOut = false }
+            })
+        })
+    }
+    func observe() {
+        viewModal.eventHandler = {
+            event in
+            switch event {
+                case .loading:
+                    isLoading = true
+                case .stopLoading:
+                    isLoading = false
+                case .dataLoaded:
+                    handleSuccess()
+                case .error(let error):
+                    alertType = .error(title: "Error", message: error?.localizedDescription ?? "", leftBtnText: "Ok", rightBtnText: "")
+                    showAlert = true
+                    print("Error >> \(error as Any)")
+            }
+        }
+    }
+    
+    func handleSuccess() {
+        if viewModal.logOutResponse != nil {
+            handleUserLogout()
+        }
+    }
+    func handleUserLogout() {
+        DispatchQueue.main.async {
+            UserDefaultsManager.shared.clearAllValues()
+            DispatchQueue.main.async {
+                appRootManager.currentRoot = .authentication
+                self.presentationMode.wrappedValue.dismiss()
+            }
+        }
     }
 }
 
@@ -300,6 +351,7 @@ enum AccountMenuSection : String, CaseIterable, CustomStringConvertible{
     case TermsandCond = "Terms & Conditions"
     case privacy = "Privacy & Policy"
     case faq = "F.A.Q"
+    case logout = "Logout"
     
     
     var description: String {

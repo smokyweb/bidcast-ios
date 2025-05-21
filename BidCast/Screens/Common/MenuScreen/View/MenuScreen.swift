@@ -174,7 +174,7 @@ struct MenuScreen: View {
             .bottomSheet(isPresented: $userLogOut, height: screenHeight/2, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: { userLogOut = true }, content: {
                 LogOutSheet(onLogoutClick: {
                     withAnimation(.snappy) { userLogOut = false }
-                    viewModal.logOut(param: LogoutRequest(device_token: ""))
+                    viewModal.logOut()
                     observe()
                 }, onCancelClick: {
                     withAnimation(.snappy) { userLogOut = false }

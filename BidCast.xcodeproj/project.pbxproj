@@ -728,11 +728,9 @@
 		355AE9782DD1FC0400CD3D17 /* Account */ = {
 			isa = PBXGroup;
 			children = (
-				355AE97B2DD1FC3900CD3D17 /* AccountScreen.swift */,
-				D4BA324E2DDB346100FE4FD2 /* Inventory */,
-				35B44F152DD7052400FBCBC4 /* About Us */,
-				D49A95662DD704BF006044A7 /* FAQ */,
-				D49A956D2DD71E3E006044A7 /* ContactUs */,
+				D4A7F8FD2DDD9E0D001FC705 /* Account */,
+				D4A7F8FB2DDD9A75001FC705 /* MyAccount */,
+				D4A7F8FA2DDD9A6E001FC705 /* SellerHub */,
 			);
 			path = Account;
 			sourceTree = "<group>";
@@ -1784,6 +1782,72 @@
 				D49A956B2DD71E3E006044A7 /* ContactUs.swift */,
 			);
 			path = ContactUs;
+			sourceTree = "<group>";
+		};
+		D4A7F8F92DDD9A42001FC705 /* Addressess */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Addressess;
+			sourceTree = "<group>";
+		};
+		D4A7F8FA2DDD9A6E001FC705 /* SellerHub */ = {
+			isa = PBXGroup;
+			children = (
+				D4BA324E2DDB346100FE4FD2 /* Inventory */,
+			);
+			path = SellerHub;
+			sourceTree = "<group>";
+		};
+		D4A7F8FB2DDD9A75001FC705 /* MyAccount */ = {
+			isa = PBXGroup;
+			children = (
+				D4A7F8FC2DDD9AE0001FC705 /* LogOut */,
+				D49A956D2DD71E3E006044A7 /* ContactUs */,
+				35B44F152DD7052400FBCBC4 /* About Us */,
+				D49A95662DD704BF006044A7 /* FAQ */,
+				D4A7F8F92DDD9A42001FC705 /* Addressess */,
+			);
+			path = MyAccount;
+			sourceTree = "<group>";
+		};
+		D4A7F8FC2DDD9AE0001FC705 /* LogOut */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = LogOut;
+			sourceTree = "<group>";
+		};
+		D4A7F8FD2DDD9E0D001FC705 /* Account */ = {
+			isa = PBXGroup;
+			children = (
+				D4A7F9002DDD9E3D001FC705 /* View */,
+				D4A7F8FF2DDD9E30001FC705 /* VieModel */,
+				D4A7F8FE2DDD9E22001FC705 /* Model */,
+			);
+			path = Account;
+			sourceTree = "<group>";
+		};
+		D4A7F8FE2DDD9E22001FC705 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		D4A7F8FF2DDD9E30001FC705 /* VieModel */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = VieModel;
+			sourceTree = "<group>";
+		};
+		D4A7F9002DDD9E3D001FC705 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				355AE97B2DD1FC3900CD3D17 /* AccountScreen.swift */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 		D4BA32492DDAFFD600FE4FD2 /* SelectCategory */ = {
