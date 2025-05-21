@@ -398,3 +398,7 @@ struct StoreProductParam : Encodable{
     var shipping_profile_id : String
     var status : String
 }
+
+struct TipParam : Encodable {
+    var type : String
+}

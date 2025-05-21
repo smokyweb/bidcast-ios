@@ -9,16 +9,20 @@ import SwiftUI
 import RichText
 
 struct ShowTips: View {
+    
     @Environment(\.presentationMode) var presentationMode
     @State private var currentIndex = 0
     @State var tips =  [LessonModel]()
     @State var isLoading  = false
     var viewModel = ScheduleViewModel()
     @State var navigateToSelectCategory = false
+    @State var navigateToShowTitle = false
+    
     private var currentProgress: Double {
         guard !tips.isEmpty else { return 0 }
         return Double(currentIndex) / Double(tips.count - 1)
     }
+    
     var body: some View {
         VStack(spacing:12){
             VStack{
@@ -54,9 +58,11 @@ struct ShowTips: View {
             .padding(.top,18)
             .padding(.bottom,-18)
             PrimaryButton(title: "Continue to next step",isOutLine: false,onButtonClick: {
-              navigateToSelectCategory = true
+//              navigateToSelectCategory = true
+                navigateToShowTitle = true
             },cornerRadius: 12, btnTextColor: .white)
-            CusNavLink(doNavigate: $navigateToSelectCategory, destination: SelectCategoryScreen())
+//            CusNavLink(doNavigate: $navigateToSelectCategory, destination: SelectCategoryScreen())
+            CusNavLink(doNavigate: $navigateToShowTitle, destination: ShowTitleTips())
         }
         .edgesIgnoringSafeArea(.bottom)
         .toolbar(.hidden,for: .tabBar)

@@ -21,6 +21,10 @@ struct SelectCategoryScreen: View {
     @State private var selectedAuctionType = ""
     @State private var categoryList: [CategoryDataModel] = []
     @State private var auctionTypeList: [AuctionDataModel] = []
+    @State var navigateToThumbnail : Bool = false
+    
+    @Binding var title : String
+    
     var viewModel = SelectCategoryViewModel()
 
 
@@ -73,14 +77,14 @@ struct SelectCategoryScreen: View {
                 
                 Spacer()
                 PrimaryButton(title: AppString.continueBtn.localized, isOutLine: false, onButtonClick: {
-                   //
+                    navigateToThumbnail = true
                 },cornerRadius : 12.0, btnTextColor: .white)
                 .padding(.bottom, 0)
             }
             .zIndex(1400.0)
             .padding(.top , 10)
             .padding(.horizontal)
-            
+            CusNavLink(doNavigate: $navigateToThumbnail, destination: SelectThumbnailScreen())
         }
         .edgesIgnoringSafeArea(.top)
         .background(Color.bg.opacity(0.5))
@@ -159,7 +163,7 @@ struct SelectCategoryScreen: View {
         }
     }
 }
-
-#Preview {
-    SelectCategoryScreen()
-}
+//
+//#Preview {
+//    SelectCategoryScreen(, title: <#Binding<String>#>)
+//}

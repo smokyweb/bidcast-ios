@@ -70,7 +70,7 @@ struct PhotoPicker: UIViewControllerRepresentable {
 
 struct ImagePicker: UIViewControllerRepresentable {
     var sourceType: UIImagePickerController.SourceType
-    var onImagePicked: (UIImage?) -> Void
+    var onImagePicked: (UIImage?,String?) -> Void
 
     func makeCoordinator() -> Coordinator {
         Coordinator(onImagePicked: onImagePicked)
@@ -86,17 +86,53 @@ struct ImagePicker: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {}
 
     class Coordinator: NSObject, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
-        var onImagePicked: (UIImage?) -> Void
+        var onImagePicked: (UIImage?,String?) -> Void
 
-        init(onImagePicked: @escaping (UIImage?) -> Void) {
+        init(onImagePicked: @escaping (UIImage?,String?) -> Void) {
             self.onImagePicked = onImagePicked
         }
 
         func imagePickerController(_ picker: UIImagePickerController,
                                    didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-            let image = info[.originalImage] as? UIImage
-            onImagePicked(image)
-            picker.dismiss(animated: true)
+            if let selectedImage = info[.originalImage] as? UIImage {
+                if let imageData = selectedImage.jpegData(compressionQuality: 0.1) {
+                    
+                    if let compressedImage = UIImage(data: imageData) {
+                        
+                        let tempURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("compressedImage_\(UUID().uuidString).jpg")
+                        
+                        do {
+                            
+                            try imageData.write(to: tempURL)
+                            print("Compressed image URL: \(tempURL)")
+                            print("Image URL: \(tempURL)")
+                            self.onImagePicked(compressedImage,"\(tempURL)")
+                           
+                            
+                        } catch {
+                            print("Failed to write imageData to disk: \(error.localizedDescription)")
+                        }
+                    }
+                }else {
+                    if let imageData = selectedImage.jpegData(compressionQuality: 0.1) {
+                        let tempDirectoryURL = FileManager.default.temporaryDirectory
+                        let imageURL = tempDirectoryURL.appendingPathComponent("selectedImage.jpg")
+                        
+                        do {
+                            try imageData.write(to: imageURL)
+                            self.onImagePicked(selectedImage,"\(imageURL)")
+                            print("Temporary Image URL: \(imageURL)")
+                        } catch {
+                            print("Error saving image to temporary file: \(error)")
+                        }
+                    }
+                }
+              
+                
+                print("Image selected: \(selectedImage)")
+                
+            }
+            picker.dismiss(animated: true, completion: nil)
         }
 
         func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {

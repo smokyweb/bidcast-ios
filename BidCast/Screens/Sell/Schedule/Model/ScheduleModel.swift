@@ -16,3 +16,16 @@ struct LessonModel : Codable {
     var image : String?
     var isLocked: Bool { status?.lowercased() != "unlocked" }
 }
+
+
+struct TitleTipsModel : Codable {
+    var tips: [TipsData]?
+    var example : [String]?
+    
+}
+
+struct TipsData : Codable {
+    var icon: String?
+    var title: String?
+    var description: String?
+}

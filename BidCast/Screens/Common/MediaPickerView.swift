@@ -117,7 +117,7 @@ struct MediaPickerView: View {
             Button("Cancel", role: .cancel) {}
         }
         .sheet(isPresented: $showCameraPicker) {
-            ImagePicker(sourceType: .camera) { image in
+            ImagePicker(sourceType: .camera) { image,url  in
                 if let image = image,
                    selectedMedia.count < maxMediaCount,
                    !selectedMedia.contains(image) {

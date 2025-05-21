@@ -29,7 +29,7 @@ enum APIEndPoint{
     case howToSell
     case showTips
     case letsPrepare
-    
+    case getAllTips(param:TipParam)
     case storeProduct(param : StoreProductParam )
     
     //MARK: OLD
@@ -173,7 +173,8 @@ extension APIEndPoint: EndPointType {
             return "get-my-inventory"
         case .storeProduct:
             return "store-product"
-            
+        case .getAllTips:
+            return "get-all-tips"
             //MARK: Old
           
             case .getProfile:
@@ -323,6 +324,7 @@ extension APIEndPoint: EndPointType {
      
        
        
+       
         }
     }
     
@@ -371,7 +373,8 @@ extension APIEndPoint: EndPointType {
             return .post
         case .storeProduct:
             return .post
-            
+        case .getAllTips:
+            return .post
             //MARK: Old
            
             case .getProfile:
@@ -386,7 +389,6 @@ extension APIEndPoint: EndPointType {
             case .uploadFile:
                 return .post
            
-                return .get
         case .getBusiness:
             return .get
             case .getEmployerAvailability:
@@ -520,6 +522,7 @@ extension APIEndPoint: EndPointType {
             return .post
        
        
+       
         }
     }
     
@@ -571,7 +574,8 @@ extension APIEndPoint: EndPointType {
             return nil
         case .storeProduct(param: let param):
             return param
-            
+        case .getAllTips(let param):
+            return param
             
             //MARK: Old
            
@@ -720,6 +724,7 @@ extension APIEndPoint: EndPointType {
                 return param
       
         
+       
         }
     }
     

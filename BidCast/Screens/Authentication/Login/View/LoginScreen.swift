@@ -50,7 +50,7 @@ struct LoginScreen: View {
     
     var body: some View {
         ScrollView(showsIndicators: false) {
-            ZStack(alignment: .bottom) {
+            ZStack {
                 VStack(alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/) {
                     Image(.mainLogo)
                         .frame(width: screenWidth - 50, height: screenHeight/3)
@@ -151,7 +151,11 @@ struct LoginScreen: View {
                 }
                 
                 if isLoading {
+                   
+                        
                     LoadingIndicator()
+                        .edgesIgnoringSafeArea(.all)
+//                    Color.black.opacity(0.4)
                 }
             
                 CusNavLink(doNavigate: $navigateToForgot, destination: ForgotScreen())
@@ -160,6 +164,7 @@ struct LoginScreen: View {
                 CusNavLink(doNavigate: $navigateToSignUp, destination: SignUpScreen())
 
             }
+           
         }.id(languageManager.languageChanged)
         .bottomSheet(isPresented: $showError, height: screenHeight/2.3, topBarCornerRadius: 25, showTopIndicator: false, content: {
             CommonBottomSheet(

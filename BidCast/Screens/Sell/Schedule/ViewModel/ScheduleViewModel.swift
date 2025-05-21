@@ -11,6 +11,7 @@ import Foundation
 final class ScheduleViewModel {
     
     var getLessonDict : ResponseModal<[LessonModel]>?
+    var getTipsDict : ResponseModal<[TitleTipsModel]>?
     var request = ""
     var eventHandler: ((_ event: Event) -> Void)? // Data Binding Closure
 
@@ -92,6 +93,23 @@ final class ScheduleViewModel {
                 switch result {
                 case .success(let data):
                     self.getLessonDict = data
+                    self.eventHandler?(.dataLoaded)
+                case .failure(let error):
+                    self.eventHandler?(.error(error))
+                }
+            }
+    }
+    
+    func getTitleTips(param:TipParam){
+        self.eventHandler?(.loading)
+        APIManager.shared.requestPost(
+            modelType: ResponseModal<[TitleTipsModel]>.self, // response type
+            type: APIEndPoint.getAllTips(param: param),
+            header: true) { result in
+                self.eventHandler?(.stopLoading)
+                switch result {
+                case .success(let data):
+                    self.getTipsDict = data
                     self.eventHandler?(.dataLoaded)
                 case .failure(let error):
                     self.eventHandler?(.error(error))
