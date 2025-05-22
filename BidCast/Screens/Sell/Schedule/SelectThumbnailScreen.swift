@@ -17,7 +17,7 @@ struct SelectThumbnailScreen: View {
     @State var isLoading  = false
     var viewModel = ScheduleViewModel()
     @State var title = ""
-    @State var navigateToSelectCategory  = false
+    @State var navigateToSelectTime  = false
     @State private var showCameraPicker = false
     @State private var showPhotoLibrary = false
     @State private var showPickerOptions = false
@@ -98,11 +98,11 @@ struct SelectThumbnailScreen: View {
             .padding(.horizontal,Leading)
             //            .background(.green)
             PrimaryButton(title: "Continue to next step",isOutLine: false,onButtonClick: {
-                
+                navigateToSelectTime = true
              
             },cornerRadius: 12, btnTextColor: .white)
             
-//            CusNavLink(doNavigate: $navigateToSelectCategory, destination: SelectCategoryScreen(title: $title))
+            CusNavLink(doNavigate: $navigateToSelectTime, destination: SelectShowScreen())
             if isLoading{
                 LoadingIndicator()
             }

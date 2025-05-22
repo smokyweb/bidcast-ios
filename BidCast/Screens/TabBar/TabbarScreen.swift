@@ -48,7 +48,8 @@ struct TabbarScreen: View {
                 }
             }
            
-            CusNavLink(doNavigate: $navigateToLesson, destination: CombinedLessonTipsView())
+//            CusNavLink(doNavigate: $navigateToLesson, destination: CombinedLessonTipsView())
+            CusNavLink(doNavigate: $navigateToLesson, destination: SelectShowScreen())
             CusNavLink(doNavigate: $navigateTolist, destination: ListProductScreen())
             
         }

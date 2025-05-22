@@ -105,8 +105,6 @@ enum APIEndPoint{
     case linkedInConnect(param: LinkedInURL)
     case storeLinkedIn(param: LinkedInUserDetail)
     case upsertCompany(param: CreateCompanyRequest)
-    case subscription(param: SubscriptionRequestModal)
-    case SaveRightSwipe(param: RightSwipeRequestModal)
     case getProductEmployer
     case getProductCandidate
     case getCompanyName
@@ -305,10 +303,6 @@ extension APIEndPoint: EndPointType {
                 return "store-linkedIn-details"
             case .upsertCompany:
                 return "upsert-company"
-            case .subscription:
-                return "subscribe"
-            case .SaveRightSwipe:
-            return "purchase-right-swipes"
             case .getCompanyName:
                 return "get-company-name"
         case .getProductEmployer:
@@ -502,10 +496,7 @@ extension APIEndPoint: EndPointType {
                 return .post
             case .upsertCompany:
                 return .post
-            case .subscription:
-                return .post
-            case .SaveRightSwipe:
-            return .post
+          
             case .getCompanyName:
                 return .post
         case .getProductEmployer:
@@ -706,10 +697,7 @@ extension APIEndPoint: EndPointType {
                 return param
             case .upsertCompany(let param):
                 return param
-            case .subscription:
-                return nil
-            case .SaveRightSwipe:
-            return nil
+          
             case .getCompanyName:
                 return nil
         case .getProductEmployer:

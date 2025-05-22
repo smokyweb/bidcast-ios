@@ -51,7 +51,7 @@ struct SellScreen: View {
             
             CusNavLink(doNavigate: $navigateToLisProduct, destination: ListProductScreen())
 //            CusNavLink(doNavigate: $navigateTolesson, destination: LessonScreen())
-            CusNavLink(doNavigate: $navigateTolesson, destination: CombinedLessonTipsView())
+            CusNavLink(doNavigate: $navigateTolesson, destination: SelectShowScreen())
         }
         .frame(maxWidth: .infinity,maxHeight: .infinity)
         .padding(.all,2)

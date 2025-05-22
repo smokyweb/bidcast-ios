@@ -110,7 +110,7 @@ struct PrimaryHeader: View {
             }
             .frame(height: 50)
             .padding(.top, 10)
-            .padding(.leading , Leading)
+            .padding(.leading , Leading/2)
             .overlay(alignment: .center, content: {
                 if showAppIcon {
                     Image(.appName)
