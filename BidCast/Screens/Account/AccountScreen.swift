@@ -25,7 +25,7 @@ struct AccountScreen: View {
     @State var navigateToPrivacy : Bool = false
     @State var navigateToTerms : Bool = false
     @State var navigateToInventry : Bool = false
-    
+    @State var navigateToShipping : Bool = false
     var viewModal = MenuOptionsViewModal()
     let columns = [
         GridItem(.flexible()),
@@ -66,6 +66,10 @@ struct AccountScreen: View {
                                     if index == 0 {
                                         withAnimation {
                                             navigateToInventry = true
+                                        }
+                                    }else if index == 6{
+                                        withAnimation {
+                                            navigateToShipping = true
                                         }
                                     }
                                 }
@@ -145,15 +149,16 @@ struct AccountScreen: View {
                
                 
             }
-            .padding(.bottom,-40)
+            .padding(.bottom,-60)
             .padding(.top,-24)
             .background(.bg.opacity(0.5))
-            CusNavLink(doNavigate: $navigateToAboutUs, destination: AddressesScreen())
+            CusNavLink(doNavigate: $navigateToAboutUs, destination: AboutUsScreen())
             CusNavLink(doNavigate: $navigateToFAQ, destination: FAQScreen())
             CusNavLink(doNavigate: $navigateToTerms, destination: TermsOfServicesScreen())
             CusNavLink(doNavigate: $navigateToPrivacy, destination: PrivacyPolicyScreen())
             CusNavLink(doNavigate: $navigateToContactus, destination: ContactUs())
             CusNavLink(doNavigate: $navigateToInventry, destination: InventoryScreen())
+            CusNavLink(doNavigate: $navigateToShipping, destination: AddressesScreen())
         }
         .edgesIgnoringSafeArea(.top)
         .background(.bg.opacity(0.5))

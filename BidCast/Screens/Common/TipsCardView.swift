@@ -56,5 +56,6 @@ struct TipsCardView: View {
             
             
         }
+        .padding(.horizontal,Leading)
     }
 }

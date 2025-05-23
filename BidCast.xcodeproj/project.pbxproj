@@ -23,6 +23,9 @@
 		3576EAD02DDDA0E800177C7D /* ShowTitleTips.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3576EACF2DDDA0E800177C7D /* ShowTitleTips.swift */; };
 		3576EAD22DDDD5DD00177C7D /* TipsCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3576EAD12DDDD5DD00177C7D /* TipsCardView.swift */; };
 		3576EAD42DDDD96900177C7D /* SelectThumbnailScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3576EAD32DDDD96900177C7D /* SelectThumbnailScreen.swift */; };
+		3581D4192DE08F7300BEAB88 /* CreateAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3581D4182DE08F7300BEAB88 /* CreateAddress.swift */; };
+		3581D41D2DE0964C00BEAB88 /* AddressViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3581D41C2DE0964C00BEAB88 /* AddressViewModel.swift */; };
+		3581D41F2DE096F100BEAB88 /* AddressModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3581D41E2DE096F100BEAB88 /* AddressModel.swift */; };
 		358B9D152DDEFB9900932250 /* SelectShowScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 358B9D142DDEFB9900932250 /* SelectShowScreen.swift */; };
 		358B9D182DDF049600932250 /* FSCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = 358B9D172DDF049600932250 /* FSCalendar */; };
 		358B9D1A2DDF04FA00932250 /* FSCalendar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 358B9D192DDF04FA00932250 /* FSCalendar.swift */; };
@@ -330,6 +333,9 @@
 		3576EACF2DDDA0E800177C7D /* ShowTitleTips.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowTitleTips.swift; sourceTree = "<group>"; };
 		3576EAD12DDDD5DD00177C7D /* TipsCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TipsCardView.swift; sourceTree = "<group>"; };
 		3576EAD32DDDD96900177C7D /* SelectThumbnailScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectThumbnailScreen.swift; sourceTree = "<group>"; };
+		3581D4182DE08F7300BEAB88 /* CreateAddress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateAddress.swift; sourceTree = "<group>"; };
+		3581D41C2DE0964C00BEAB88 /* AddressViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressViewModel.swift; sourceTree = "<group>"; };
+		3581D41E2DE096F100BEAB88 /* AddressModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressModel.swift; sourceTree = "<group>"; };
 		358B9D142DDEFB9900932250 /* SelectShowScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectShowScreen.swift; sourceTree = "<group>"; };
 		358B9D192DDF04FA00932250 /* FSCalendar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FSCalendar.swift; sourceTree = "<group>"; };
 		358B9D1B2DDF11A400932250 /* ContactUsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactUsViewModel.swift; sourceTree = "<group>"; };
@@ -738,6 +744,22 @@
 				355AE97F2DD1FC5600CD3D17 /* ActivityScreen.swift */,
 			);
 			path = Activity;
+			sourceTree = "<group>";
+		};
+		3581D41A2DE0962F00BEAB88 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				3581D41C2DE0964C00BEAB88 /* AddressViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		3581D41B2DE0963500BEAB88 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				3581D41E2DE096F100BEAB88 /* AddressModel.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 		35A1C28F2DE07B00007466B6 /* Model */ = {
@@ -1616,7 +1638,10 @@
 		D4A7F8F92DDD9A42001FC705 /* Addressess */ = {
 			isa = PBXGroup;
 			children = (
+				3581D41B2DE0963500BEAB88 /* Model */,
+				3581D41A2DE0962F00BEAB88 /* ViewModel */,
 				D4A7F9032DDDA8C5001FC705 /* AddressesScreen.swift */,
+				3581D4182DE08F7300BEAB88 /* CreateAddress.swift */,
 			);
 			path = Addressess;
 			sourceTree = "<group>";
@@ -2199,6 +2224,7 @@
 				355AE97C2DD1FC3900CD3D17 /* AccountScreen.swift in Sources */,
 				35CCE01B2DD8781B00760CEE /* ScheduleViewModel.swift in Sources */,
 				99C909A72DC8CD930054620B /* UIColor+Extension.swift in Sources */,
+				3581D4192DE08F7300BEAB88 /* CreateAddress.swift in Sources */,
 				99C909A82DC8CD930054620B /* UIApplication+Extension.swift in Sources */,
 				99C909A92DC8CD930054620B /* Reachability.swift in Sources */,
 				99C909AA2DC8CD930054620B /* Logger.swift in Sources */,
@@ -2275,11 +2301,13 @@
 				355AE9802DD1FC5600CD3D17 /* ActivityScreen.swift in Sources */,
 				99C908302DC8CD6A0054620B /* NotificationCountView.swift in Sources */,
 				99C908312DC8CD6A0054620B /* NotificationListingCard.swift in Sources */,
+				3581D41D2DE0964C00BEAB88 /* AddressViewModel.swift in Sources */,
 				99C908322DC8CD6A0054620B /* CommonBottomSheet.swift in Sources */,
 				99C908332DC8CD6A0054620B /* DeleteJobSheet.swift in Sources */,
 				99C908342DC8CD6A0054620B /* JobMatchesCard.swift in Sources */,
 				99C908352DC8CD6A0054620B /* DateSelectionSheet.swift in Sources */,
 				99C908362DC8CD6A0054620B /* FilterEmployerOptionView.swift in Sources */,
+				3581D41F2DE096F100BEAB88 /* AddressModel.swift in Sources */,
 				99C908372DC8CD6A0054620B /* AlertType.swift in Sources */,
 				99C908382DC8CD6A0054620B /* JobMatchSheet.swift in Sources */,
 				99C908392DC8CD6A0054620B /* LinkedInBottomSheet.swift in Sources */,

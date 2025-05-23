@@ -70,10 +70,10 @@ struct SelectShowScreen: View {
             //            .background(.green)
             PrimaryButton(title: "Continue to next step",isOutLine: false,onButtonClick: {
                 
-                navigateToSelectCategory = true
+//                navigateToSelectCategory = true
             },cornerRadius: 12, btnTextColor: .white)
             
-            CusNavLink(doNavigate: $navigateToSelectCategory, destination: SelectCategoryScreen(title: $title))
+//            CusNavLink(doNavigate: $navigateToSelectCategory, destination: SelectCategoryScreen(title: $title))
             if isLoading{
                 LoadingIndicator()
             }

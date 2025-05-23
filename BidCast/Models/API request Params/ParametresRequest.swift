@@ -402,3 +402,13 @@ struct StoreProductParam : Encodable{
 struct TipParam : Encodable {
     var type : String
 }
+
+struct AddressRequest : Encodable {
+    var type : String
+    var name : String
+    var phone_number,street_address,pincode : String
+}
+
+struct AddressDefaultParam : Encodable {
+    var address_id : String
+}

@@ -31,6 +31,9 @@ enum APIEndPoint{
     case letsPrepare
     case getAllTips(param:TipParam)
     case storeProduct(param : StoreProductParam )
+    case storeAddress(param:AddressRequest)
+    case getAddress
+    case setDefaultAddress(param:AddressDefaultParam)
     
     //MARK: OLD
   
@@ -173,6 +176,14 @@ extension APIEndPoint: EndPointType {
             return "store-product"
         case .getAllTips:
             return "get-all-tips"
+        case .storeAddress:
+            return "upsert-shipping-address"
+        case .getAddress:
+            return "get-shipping-address"
+        case .setDefaultAddress:
+            return "set-default-shipping-address"
+            
+            
             //MARK: Old
           
             case .getProfile:
@@ -316,9 +327,7 @@ extension APIEndPoint: EndPointType {
             case .removeSavedJob:
                 return "save-job"
      
-       
-       
-       
+        
         }
     }
     
@@ -369,6 +378,15 @@ extension APIEndPoint: EndPointType {
             return .post
         case .getAllTips:
             return .post
+            
+        case .storeAddress:
+            return .post
+            
+             case .getAddress:
+                 return .get
+             case .setDefaultAddress:
+                 return .post
+            
             //MARK: Old
            
             case .getProfile:
@@ -514,6 +532,7 @@ extension APIEndPoint: EndPointType {
        
        
        
+      
         }
     }
     
@@ -566,6 +585,13 @@ extension APIEndPoint: EndPointType {
         case .storeProduct(param: let param):
             return param
         case .getAllTips(let param):
+            return param
+            
+        case .storeAddress(param: let param):
+            return param
+        case .getAddress:
+            return nil
+        case .setDefaultAddress(param: let param):
             return param
             
             //MARK: Old
@@ -713,6 +739,8 @@ extension APIEndPoint: EndPointType {
       
         
        
+       
+      
         }
     }
     

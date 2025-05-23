@@ -8,14 +8,16 @@ import SwiftUI
 import StripeUICore
 
 struct AddressListCell: View {
-    var address: Address
-
+    var address: AddressModel
+    var onTapDefault : () -> () = { }
+    var onTapDelete : () -> () = { }
+    var isDefault = false
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text(address.type)
-                    .font(.caption)
-                    .padding(.horizontal, 8)
+                Text(address.type ?? "")
+                    .font(.custom(poppinsBold, size: 13.0))
+                    .padding(.horizontal, 4)
                     .padding(.vertical, 4)
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
@@ -24,12 +26,30 @@ struct AddressListCell: View {
                     .background(Color.white)
                     .foregroundColor(.black)
                     .cornerRadius(8)
-
+                if isDefault{
+                    Text("Default")
+                        .font(.custom(poppinsSemiBold, size: 13.0))
+                        .padding(.horizontal, 4)
+                        .padding(.vertical, 4)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(Color.white, lineWidth: 1)
+                        )
+                        .background(.lightBlue)
+                        .foregroundColor(.black)
+                        .cornerRadius(8)
+                }
                 Spacer()
 
                 Menu {
-                    Button("Make Default", action: { print("Make Default for \(address.name)") })
-                    Button("Delete", role: .destructive, action: { print("Delete \(address.name)") })
+                    Button("Make Default", action: {
+                        print("Make Default for \(address.name ?? "")")
+                        onTapDefault()
+                    })
+                    Button("Delete", role: .destructive, action: {
+                        print("Delete \(address.name ?? "")")
+                        onTapDelete()
+                    })
                 } label: {
                     Image(systemName: "ellipsis")
                         .rotationEffect(.degrees(90))
@@ -38,16 +58,16 @@ struct AddressListCell: View {
                 }
             }
 
-            Text(address.name)
+            Text(address.name ?? "")
                 .font(.headline)
 
-            Text(address.house)
+            Text(address.street_address ?? "")
                 .font(.subheadline)
 
-            Text(address.country)
+            Text(address.pincode ?? "")
                 .font(.subheadline)
 
-            Text(address.mobile)
+            Text(address.phone_number ?? "")
                 .font(.subheadline)
         }
         .padding()

@@ -8,21 +8,12 @@
 import SwiftUI
 import AlertToast
 
-struct Address: Identifiable {
-    let id = UUID()
-    var type: String
-    var name: String
-    var house: String
-    var country: String
-    var mobile: String
-}
+
 
 struct AddressesScreen: View {
 
-    let sampleAddresses: [Address] = [
-        Address(type: "Home", name: "John Doe", house: "1234 Elm Street", country: "USA", mobile: "+1 555 111 2222"),
-        Address(type: "Work", name: "Jane Smith", house: "456 Office Blvd", country: "Canada", mobile: "+1 555 333 4444")
-    ]
+    @State var sampleAddresses = [AddressModel]()
+    
 
     @Environment(\.presentationMode) var presentationMode
     @State var showError: Bool = false
@@ -30,7 +21,10 @@ struct AddressesScreen: View {
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
-
+    @State var navigateToCreate = false
+    @State var isDefault = false
+    var viewModel = AddressViewModel()
+    
     var body: some View {
         VStack(spacing: 0) {
             // Top Header
@@ -38,7 +32,6 @@ struct AddressesScreen: View {
                 title: "My Addresses",
                 isForLogo: false,
                 leadingImgArr: [.icBack],
-                trailingImgArr: [.icAdd],
                 onClickLeading: { _ in
                     self.presentationMode.wrappedValue.dismiss()
                 },
@@ -46,18 +39,22 @@ struct AddressesScreen: View {
             )
             .frame(height: 50)
             .background(Color.white)
-            .shadow(radius: 2)
 
             // Address list with space for bottom button
             ScrollView {
                 VStack(spacing: 16) {
-                    ForEach(sampleAddresses) { address in
-                        AddressListCell(address: address)
+                    ForEach(sampleAddresses.indices, id: \.self) { index in
+                        let address = sampleAddresses[index]
+                        AddressListCell(address: address,onTapDefault: {
+                            print("indexx \(index)")
+                            self.viewModel.setDefaultAddress(parameters: AddressDefaultParam(address_id: "\(sampleAddresses[index].id ?? 0)"))
+                        },isDefault: address.is_default ?? false)
                     }
                 }
                 .padding(.top, 16)
                 .padding(.bottom, 80)
             }
+            .padding(.horizontal,Leading/2)
             .background(Color(.systemGroupedBackground))
 
             //Bottom fixed button
@@ -66,17 +63,22 @@ struct AddressesScreen: View {
                 isOutLine: false,
                 onButtonClick: {
                     print("Add New Address tapped")
+                    navigateToCreate = true
                 },
                 width: screenWidth - 45,
                 cornerRadius: 25.0, imageName: "plus_btn",
-                btnTextColor : .white, btnColor: .white
+                btnTextColor : .black, btnColor: .white
             )
-            .padding(.vertical, 10)
+//            .padding(.vertical, 10)
             .background(Color.white)
-            .shadow(radius: 3)
             .padding(.all)
+            .padding(.bottom,-24)
+            CusNavLink(doNavigate: $navigateToCreate, destination: CreateAddress())
         }
-        .edgesIgnoringSafeArea(.bottom)
+        .onAppear{
+            observe()
+            self.viewModel.getAddresses()
+        }
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }
@@ -97,8 +99,60 @@ struct AddressesScreen: View {
             )
         }
     }
+    func observe() {
+        self.viewModel.eventHandler = { event in
+            switch event {
+            case .loading:
+                self.isLoading = true
+            case .stopLoading:
+                self.isLoading = false
+            case .dataLoaded:
+                success()
+            case .error(let error):
+                let msg = error?.localizedDescription ?? AppString.error.localized
+                alertType = .sheetType(icon: .alert, title: AppString.error.localized, message: msg, primaryBtnText: "", secondaryBtnText: AppString.ok.localized)
+                showError = true
+            }
+        }
+    }
+
+    func success() {
+        if self.viewModel.requestType == "get"{
+            let response = viewModel.getAddressDict
+            if response.status == "success" {
+                sampleAddresses = response.data ?? [AddressModel]()
+                
+            } else {
+                showError = true
+                alertType = .sheetType(
+                    icon: .alert,
+                    title: response.error_type?.capitalized ?? "",
+                    message: response.message?.capitalized ?? "",
+                    primaryBtnText: "",
+                    secondaryBtnText: AppString.ok.localized
+                )
+            }
+            
+        }else{
+            let response = viewModel.addressDict
+            if response.status == "success" {
+                self.viewModel.getAddresses()
+            } else {
+                showError = true
+                alertType = .sheetType(
+                    icon: .alert,
+                    title: response.error_type?.capitalized ?? "",
+                    message: response.message?.capitalized ?? "",
+                    primaryBtnText: "",
+                    secondaryBtnText: AppString.ok.localized
+                )
+            }
+           
+        }
+    }
+    
 }
 
-#Preview {
-    AddressesScreen()
-}
+//#Preview {
+//    AddressesScreen()
+//}

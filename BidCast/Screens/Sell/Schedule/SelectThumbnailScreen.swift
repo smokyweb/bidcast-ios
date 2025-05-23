@@ -56,7 +56,7 @@ struct SelectThumbnailScreen: View {
                             VStack(spacing:12){
                             TipsCardView(image:tips.icon ?? "" , title: tips.title ?? "", description: tips.description ?? "")
                             }
-                            .padding(.all,Leading/2)
+//                            .padding(.all,Leading/2)
                             .background(.white)
                             .cornerRadius(10)
                             
@@ -66,25 +66,28 @@ struct SelectThumbnailScreen: View {
                         VStack(alignment:.leading){
                             Text("Good Example")
                                 .font(.custom(poppinsBold, size: 16.0))
-                            HStack(spacing:20){
-                                ForEach(example.indices, id: \.self) { index in
-                                    let text = example[index]
-                                    AsyncImage(url: URL(string: text)) { phase in
-                                        switch phase {
-                                        case .success(let image):
-                                            image.resizable()
-                                        default:
-                                            Image(systemName: "photo")
-                                                .resizable()
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                LazyHStack(spacing: 16) {
+                                    ForEach(example.indices, id: \.self) { index in
+                                        let text = example[index]
+                                        AsyncImage(url: URL(string: text)) { phase in
+                                            switch phase {
+                                            case .success(let image):
+                                                image
+                                                    .resizable()
+                                            default:
+                                                Image(systemName: "photo")
+                                                    .resizable()
+                                            }
                                         }
+                                        .frame(width: 120, height: 120)
+                                        .cornerRadius(10)
                                     }
-                                    .frame(width: screenWidth/2 - 30, height: 140)
-                                    .cornerRadius(10)
                                 }
                             }
                         }
                         
-                        .padding(.all,Leading/2)
+//                        .padding(.all,Leading/2)
                         
                     }
                     
