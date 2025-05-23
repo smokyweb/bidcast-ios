@@ -20,6 +20,10 @@ struct ExploreViewScreen: View {
     var imageName : [ImageResource] = [.gaming,.sports,.jewelery,.fashion,.vinyl]
     var tabName = ["Gaming","Sports","Jewellery ","Fashion","Vinyl Records"]
     var subLabel = ["864 Live","1.2K Live","640 Live","640 Live","640 Live"]
+    var viewModel = SelectCategoryViewModel()
+    
+    @State var categoryList = [CategoryDataModel]()
+    @State var isLoading = false
     
     var body: some View {
             VStack(spacing:0){
@@ -40,10 +44,11 @@ struct ExploreViewScreen: View {
                         
                         SingleTitleLabel(title: "Recommended | Popular | All" ,textColor: .black,fontValue: 20.0)
                             .padding([.leading,.trailing],12)
-                        ForEach(0 ..< tabName.count, id: \.self) { ind in
+//                        let data = self.viewModel.categoryDict?.data ?? [CategoryDataModel]()
+                        ForEach(0 ..< categoryList.count, id: \.self) { ind in
 //                            print("\(ind)")
 //                            print(self.title[ind])
-                            ListCell(image: imageName[ind], title: tabName[ind], vectorImg: .icArrowUp,subLabel : subLabel[ind])
+                            ListCell(image: categoryList[ind].image ?? "", title: categoryList[ind].name ?? "", vectorImg: .icArrowUp,subLabel : "BidSwipe",tintColot: categoryList[ind].color ?? "")
                            
                         }
                        
@@ -55,8 +60,42 @@ struct ExploreViewScreen: View {
             
             .background(.bg.opacity(0.4))
             .edgesIgnoringSafeArea(.top)
+            .onAppear {
+                observe()
+                self.viewModel.getCategoryList()
+            }
             
        
+    }
+    
+    func observe() {
+        self.viewModel.eventHandler = { event in
+            switch event {
+            case .loading:
+                self.isLoading = true
+            case .stopLoading:
+                self.isLoading = false
+            case .dataLoaded:
+                categorySuccess()
+            case .error(let error):
+                let msg = error?.localizedDescription ?? AppString.error.localized
+                print(msg)
+            }
+        }
+    }
+
+    func categorySuccess() {
+        if viewModel.request == "Category" {
+            if let response = viewModel.categoryDict {
+                if response.status == "success" {
+                 
+                    self.categoryList = response.data
+                } else {
+                   
+//                    showError = true
+                }
+            }
+        }
     }
 }
 

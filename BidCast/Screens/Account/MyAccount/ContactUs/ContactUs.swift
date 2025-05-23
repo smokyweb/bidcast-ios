@@ -15,7 +15,7 @@ struct ContactUs: View {
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
 
-    var imageName: [ImageResource] = [.tagBorder, .streamBorder, .sellerBorder]
+    var imageName = ["tagBorder", "streamBorder", "sellerBorder"]
     var tabName = ["List a Product", "Scheduled a show", "Seller Hub"]
     var subLabel = ["Create a listing for your item", "Go live and sell to your audience", "Manage your store and listings"]
 

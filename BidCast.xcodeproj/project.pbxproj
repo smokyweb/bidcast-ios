@@ -704,7 +704,9 @@
 		355AE9732DD1F97900CD3D17 /* Explore */ = {
 			isa = PBXGroup;
 			children = (
-				355AE9762DD1F99C00CD3D17 /* ExploreViewScreen.swift */,
+				35A1C2912DE07B15007466B6 /* VIewModel */,
+				35A1C28F2DE07B00007466B6 /* Model */,
+				35A1C2902DE07B08007466B6 /* View */,
 			);
 			path = Explore;
 			sourceTree = "<group>";
@@ -736,6 +738,28 @@
 				355AE97F2DD1FC5600CD3D17 /* ActivityScreen.swift */,
 			);
 			path = Activity;
+			sourceTree = "<group>";
+		};
+		35A1C28F2DE07B00007466B6 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		35A1C2902DE07B08007466B6 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				355AE9762DD1F99C00CD3D17 /* ExploreViewScreen.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		35A1C2912DE07B15007466B6 /* VIewModel */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = VIewModel;
 			sourceTree = "<group>";
 		};
 		35B44F152DD7052400FBCBC4 /* About Us */ = {

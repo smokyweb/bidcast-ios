@@ -2,7 +2,7 @@
 //  LinkedInUserDetail.swift
 // BidSwipe
 //
-//  Created by Maneet-JAM-E-282 on 05/04/24.
+//  Created by Ankit - JAM - E - 294 on 05/04/24.
 //
 
 import Foundation

@@ -2,7 +2,7 @@
 //  CreateCompanyRequest.swift
 // BidSwipe
 //
-//  Created by Maneet-JAM-E-282 on 20/04/24.
+//  Created by Ankit - JAM - E - 294 on 20/04/24.
 //
 
 import Foundation

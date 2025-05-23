@@ -11,7 +11,7 @@ struct SellScreen: View {
     @Environment(\.presentationMode) var presentationMode
     var onTap: (SellTabOption) -> Void
     var onTapCancel :() -> Void? 
-    var imageName : [ImageResource] = [.tagBorder,.streamBorder,.sellerBorder]
+    var imageName =  ["tagBorder","streamBorder","sellerBorder"]
     var tabName = ["List a Product","Scheduled a show","Seller Hub"]
     var subLabel = ["Create a listing for your item","Go live and sell to your audience","Manage your store and listings"]
     @State var navigateToLisProduct : Bool = false

@@ -2,7 +2,7 @@
 //  AlertType.swift
 // BidSwipe
 //
-//  Created by Maneet-JAM-E-282 on 23/01/24.
+//  Created by Ankit - JAM - E - 294 on 23/01/24.
 //
 
 import Foundation

@@ -47,7 +47,7 @@ struct AccountScreen: View {
             
             ScrollView(showsIndicators: false){
                 VStack(alignment: .leading,spacing: 4){
-                    ListCell(image: .defaultUser, title: "John Smith",subLabel : "Seller since 2003",isVectorImgHidden: true)
+                    ListCell(image: "defaultUser", title: "John Smith",subLabel : "Seller since 2003",isVectorImgHidden: true)
                         .padding(.all,1)
                         .padding([.leading,.trailing],-18)
                         .frame(height: 80)
