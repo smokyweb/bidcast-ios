@@ -148,7 +148,7 @@ struct AccountScreen: View {
             .padding(.bottom,-40)
             .padding(.top,-24)
             .background(.bg.opacity(0.5))
-            CusNavLink(doNavigate: $navigateToAboutUs, destination: AboutUsScreen())
+            CusNavLink(doNavigate: $navigateToAboutUs, destination: AddressesScreen())
             CusNavLink(doNavigate: $navigateToFAQ, destination: FAQScreen())
             CusNavLink(doNavigate: $navigateToTerms, destination: TermsOfServicesScreen())
             CusNavLink(doNavigate: $navigateToPrivacy, destination: PrivacyPolicyScreen())

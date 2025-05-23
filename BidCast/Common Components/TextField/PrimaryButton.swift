@@ -22,6 +22,7 @@ struct PrimaryButton: View {
     var imageName : String = ""
     var btnTextColor : Color = .darkBlue
     var btnColor: ColorResource = .defaultTheme
+    var foregroundColor : Color = .black
     
     var body: some View {
         Button(action: { withAnimation {
@@ -59,8 +60,6 @@ struct PrimaryButton: View {
                             //                                .foregroundStyle()
                         }
                     }
-                
-                
             }
         })
         .frame(width: width, height: height)

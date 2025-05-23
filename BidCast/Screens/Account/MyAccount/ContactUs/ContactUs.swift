@@ -37,7 +37,7 @@ struct ContactUs: View {
                     count: .constant(0)
                 )
                 .frame(height: 50)
-                .background(Color.white)
+                .background(Color.red)
                 .shadow(radius: 2)
 
                 // Scrollable Form
@@ -59,7 +59,7 @@ struct ContactUs: View {
                         .padding(.top, 16)
 
                         // Form Fields
-                        Group {
+                        Group{
                             AuthTextField(
                                 floatingLabel: AppString.fullName.localized,
                                 placeholder: AppString.enterFullName.localized,
