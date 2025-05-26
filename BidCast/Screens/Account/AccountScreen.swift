@@ -26,6 +26,10 @@ struct AccountScreen: View {
     @State var navigateToTerms : Bool = false
     @State var navigateToInventry : Bool = false
     @State var navigateToShipping : Bool = false
+    @State var navigateToShows : Bool = false
+    @State var navigateToWallet : Bool = false
+    @State var navigateTips : Bool = false
+    
     var viewModal = MenuOptionsViewModal()
     let columns = [
         GridItem(.flexible()),
@@ -66,6 +70,18 @@ struct AccountScreen: View {
                                     if index == 0 {
                                         withAnimation {
                                             navigateToInventry = true
+                                        }
+                                    }else if index == 1 {
+                                        withAnimation {
+                                            navigateToShows = true
+                                        }
+                                    }else if index == 2 {
+                                        withAnimation {
+                                            navigateToWallet = true
+                                        }
+                                    }else if index == 5 {
+                                        withAnimation {
+                                            navigateTips = true
                                         }
                                     }else if index == 6{
                                         withAnimation {
@@ -146,13 +162,14 @@ struct AccountScreen: View {
                     }
                    
                 }
-               
-                
             }
             .padding(.bottom,-60)
             .padding(.top,-24)
             .background(.bg.opacity(0.5))
             CusNavLink(doNavigate: $navigateToAboutUs, destination: AboutUsScreen())
+            CusNavLink(doNavigate: $navigateTips, destination: TipsScreen())
+            CusNavLink(doNavigate: $navigateToWallet, destination: WalletScreen())
+            CusNavLink(doNavigate: $navigateToShows, destination: ShowsScreen())
             CusNavLink(doNavigate: $navigateToFAQ, destination: FAQScreen())
             CusNavLink(doNavigate: $navigateToTerms, destination: TermsOfServicesScreen())
             CusNavLink(doNavigate: $navigateToPrivacy, destination: PrivacyPolicyScreen())

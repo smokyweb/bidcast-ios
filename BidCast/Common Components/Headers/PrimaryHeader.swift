@@ -139,3 +139,81 @@ struct PrimaryHeader: View {
 #Preview {
     PrimaryHeader(count: .constant(0))
 }
+
+
+//import SwiftUI
+//
+//struct PrimaryHeader: View {
+//    var title: String = "Header Title"
+//    var isForLogo: Bool = false
+//
+//    var leadingImgArr: [ImageResource] = []
+//    var trailingImgArr: [ImageResource] = []
+//    var showShadow: Bool = true
+//    var onClickLeading: ((Int) -> Void)?
+//    var onClickTrailing: ((Int) -> Void)?
+//
+//    var showAppIcon: Bool = false
+//
+//    @Binding var count: Int
+//
+//    var body: some View {
+//        VStack {
+//            HStack {
+//                // Leading Icons
+//                ForEach(leadingImgArr.indices, id: \.self) { ind in
+//                    Button(action: {
+//                        withAnimation { onClickLeading?(ind) }
+//                    }) {
+//                        Image(leadingImgArr[ind])
+//                            .renderingMode(.original)
+//                            .resizable()
+//                            .scaledToFit()
+//                            .frame(width: isForLogo ? 90 : 30, height: 30)
+//                            .padding(16)
+//                    }
+//                }
+//
+//                Spacer()
+//
+//                // Title or Logo
+//                if showAppIcon {
+//                    Image(.appName)
+//                        .resizable()
+//                        .aspectRatio(contentMode: .fit)
+//                        .frame(height: 25)
+//                } else {
+//                    Text(title)
+//                        .font(.custom("Poppins-Bold", size: 18))
+//                        .fontWeight(.bold)
+//                        .foregroundColor(.black)
+//                }
+//
+//                Spacer()
+//
+//                // Trailing Icons
+//                ForEach(trailingImgArr.indices, id: \.self) { ind in
+//                    Button(action: {
+//                        withAnimation { onClickTrailing?(ind) }
+//                    }) {
+//                        Image(trailingImgArr[ind])
+//                            .renderingMode(.original)
+//                            .resizable()
+//                            .scaledToFit()
+//                            .frame(width: 30, height: 30)
+//                            .padding(8)
+//                            .overlay(
+//                                ind == 0 && count != 0 ?
+//                                NotificationCountView(value: .constant(count)) : nil
+//                            )
+//                    }
+//                }
+//            }
+//            .frame(height: 50)
+//            .padding(.horizontal)
+////            .background(Color.white)
+//            .shadow(color: showShadow ? Color.black.opacity(0.1) : .clear, radius: 4, y: 2)
+//        }
+////        .background(Color.white)
+//    }
+//}

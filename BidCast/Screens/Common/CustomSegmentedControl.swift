@@ -45,8 +45,9 @@ struct CustomSegmentedControl<T: Hashable & CustomStringConvertible>: View {
         .background(.white)
         .frame(height: 50)
         .cornerRadius(8)
-        .padding([.top,.bottom],8)
-        .padding([.leading,.trailing],20)
+//        .padding([.top,.bottom],8)
+//        .padding([.leading,.trailing],20)
+        .padding([.top, .bottom], 0)
     }
 }
 //
