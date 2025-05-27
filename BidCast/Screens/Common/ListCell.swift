@@ -23,30 +23,32 @@ struct ListCell: View {
     var body: some View {
         HStack(alignment: .center,spacing: 10){
             HStack{
-                AsyncImage(url: URL(string:image.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")) { phase in
-                    switch phase {
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .renderingMode(.template)
-                            .frame(width: 30,height: 30)
+                if isComeFrom != "Wallet"{
+                    AsyncImage(url: URL(string:image.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")) { phase in
+                        switch phase {
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .renderingMode(.template)
+                                .frame(width: 30,height: 30)
                             
-                    default:
-                        Image(image)
-                            .resizable()
+                        default:
+                            Image(image)
+                                .resizable()
+                        }
                     }
-                }
-                .scaledToFill()
-                .frame(width: 40,height: 40)
-                .background(Color(hex: tintColot) ?? .clear)
-                .mask {
-                    if isComeFrom == "ShippingScreen" {
-                        Circle()
-                    } else {
-                        RoundedRectangle(cornerRadius: 8)
+                    .scaledToFill()
+                    .frame(width: 40,height: 40)
+                    .background(Color(hex: tintColot) ?? .clear)
+                    .mask {
+                        if isComeFrom == "ShippingScreen" {
+                            Circle()
+                        } else {
+                            RoundedRectangle(cornerRadius: 8)
+                        }
                     }
+                    .padding(.leading ,10)
                 }
-                .padding(.leading ,10)
 //                Image(image)
 //                    .resizable()
 //                    .scaledToFill()
@@ -81,7 +83,7 @@ struct ListCell: View {
         .frame(height: 60)
         .background(.white)
         .cornerRadius(8.0)
-        .padding([.leading,.trailing],16)
+        .padding([.leading,.trailing], 0)
         .edgesIgnoringSafeArea(.all)
         .shadow(color: .squirrelGrey.opacity(0.5), radius: 2, x: 0, y: 0)
         .onTapGesture {

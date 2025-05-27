@@ -16,18 +16,20 @@ struct Transaction: Identifiable {
 import SwiftUI
  
 struct TransactionRowView: View {
+    var isComeFrom : String = ""
     let transaction: Transaction
  
     var body: some View {
         HStack {
-            Circle()
-                .fill(Color(.systemGray6))
-                .frame(width: 40, height: 40)
-                .overlay(
-                    Image(systemName: transaction.isOutgoing ? "arrow.right.arrow.left" : "arrow.left.arrow.right")
-                        .foregroundColor(.red)
-                )
- 
+            if isComeFrom != "Wallet"{
+                Circle()
+                    .fill(Color(.systemGray6))
+                    .frame(width: 40, height: 40)
+                    .overlay(
+                        Image(systemName: transaction.isOutgoing ? "arrow.right.arrow.left" : "arrow.left.arrow.right")
+                            .foregroundColor(.red)
+                    )
+            }
             VStack(alignment: .leading, spacing: 4) {
                 Text(transaction.title)
                     .font(.headline)

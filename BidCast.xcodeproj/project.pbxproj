@@ -237,6 +237,14 @@
 		D4BB9A0B2DE5A99700C1BCBC /* MyOrdersScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BB9A022DE5A99700C1BCBC /* MyOrdersScreen.swift */; };
 		D4BB9A0D2DE5A99700C1BCBC /* MyOrdersViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BB9A072DE5A99700C1BCBC /* MyOrdersViewModel.swift */; };
 		D4BB9A0F2DE5AB4D00C1BCBC /* OrderCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BB9A0E2DE5AB4D00C1BCBC /* OrderCardView.swift */; };
+		D4BB9A112DE5C92100C1BCBC /* TransactionsTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BB9A102DE5C92100C1BCBC /* TransactionsTabView.swift */; };
+		D4BB9A132DE5C95A00C1BCBC /* PayoutRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BB9A122DE5C95A00C1BCBC /* PayoutRowView.swift */; };
+		D4BB9A152DE5C9ED00C1BCBC /* WalletTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BB9A142DE5C9ED00C1BCBC /* WalletTabView.swift */; };
+		D4BB9A1E2DE5D22A00C1BCBC /* PromoteToolsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BB9A162DE5D22A00C1BCBC /* PromoteToolsView.swift */; };
+		D4BB9A202DE5D22A00C1BCBC /* PromoteToolsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BB9A1B2DE5D22A00C1BCBC /* PromoteToolsViewModel.swift */; };
+		D4BB9A212DE5D22A00C1BCBC /* PromoteToolsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BB9A192DE5D22A00C1BCBC /* PromoteToolsModel.swift */; };
+		D4BB9A232DE5D33600C1BCBC /* ToolGridItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BB9A222DE5D33600C1BCBC /* ToolGridItemView.swift */; };
+		D4BB9A252DE5D66500C1BCBC /* StatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BB9A242DE5D66500C1BCBC /* StatView.swift */; };
 		D4C4D7972DD31C2D00274E51 /* ActivityCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C4D7962DD31C2D00274E51 /* ActivityCell.swift */; };
 		D4C4D79A2DD3263A00274E51 /* SingleTitleLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C4D7982DD3263A00274E51 /* SingleTitleLabel.swift */; };
 		D4C4D79C2DD32F3D00274E51 /* TwoButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C4D79B2DD32F3D00274E51 /* TwoButton.swift */; };
@@ -562,6 +570,14 @@
 		D4BB9A052DE5A99700C1BCBC /* MyOrdersModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyOrdersModel.swift; sourceTree = "<group>"; };
 		D4BB9A072DE5A99700C1BCBC /* MyOrdersViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyOrdersViewModel.swift; sourceTree = "<group>"; };
 		D4BB9A0E2DE5AB4D00C1BCBC /* OrderCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderCardView.swift; sourceTree = "<group>"; };
+		D4BB9A102DE5C92100C1BCBC /* TransactionsTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionsTabView.swift; sourceTree = "<group>"; };
+		D4BB9A122DE5C95A00C1BCBC /* PayoutRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PayoutRowView.swift; sourceTree = "<group>"; };
+		D4BB9A142DE5C9ED00C1BCBC /* WalletTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletTabView.swift; sourceTree = "<group>"; };
+		D4BB9A162DE5D22A00C1BCBC /* PromoteToolsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromoteToolsView.swift; sourceTree = "<group>"; };
+		D4BB9A192DE5D22A00C1BCBC /* PromoteToolsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromoteToolsModel.swift; sourceTree = "<group>"; };
+		D4BB9A1B2DE5D22A00C1BCBC /* PromoteToolsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromoteToolsViewModel.swift; sourceTree = "<group>"; };
+		D4BB9A222DE5D33600C1BCBC /* ToolGridItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolGridItemView.swift; sourceTree = "<group>"; };
+		D4BB9A242DE5D66500C1BCBC /* StatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatView.swift; sourceTree = "<group>"; };
 		D4C4D7962DD31C2D00274E51 /* ActivityCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityCell.swift; sourceTree = "<group>"; };
 		D4C4D7982DD3263A00274E51 /* SingleTitleLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleTitleLabel.swift; sourceTree = "<group>"; };
 		D4C4D79B2DD32F3D00274E51 /* TwoButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwoButton.swift; sourceTree = "<group>"; };
@@ -1726,6 +1742,7 @@
 				D4BB99F22DE590D100C1BCBC /* Shippings */,
 				D4BB99FC2DE59E9F00C1BCBC /* SellerStatus */,
 				D4BB9A092DE5A99700C1BCBC /* MyOrders */,
+				D4BB9A1D2DE5D22A00C1BCBC /* PromoteToolsScreen */,
 			);
 			path = SellerHub;
 			sourceTree = "<group>";
@@ -1848,6 +1865,9 @@
 			children = (
 				D4BA9C1C2DE4A02B00DFF6E6 /* WalletScreen.swift */,
 				D4BA9C1E2DE4A35200DFF6E6 /* TransactionRowView.swift */,
+				D4BB9A102DE5C92100C1BCBC /* TransactionsTabView.swift */,
+				D4BB9A122DE5C95A00C1BCBC /* PayoutRowView.swift */,
+				D4BB9A142DE5C9ED00C1BCBC /* WalletTabView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -2048,6 +2068,42 @@
 				D4BB9A082DE5A99700C1BCBC /* ViewModel */,
 			);
 			path = MyOrders;
+			sourceTree = "<group>";
+		};
+		D4BB9A182DE5D22A00C1BCBC /* View */ = {
+			isa = PBXGroup;
+			children = (
+				D4BB9A162DE5D22A00C1BCBC /* PromoteToolsView.swift */,
+				D4BB9A222DE5D33600C1BCBC /* ToolGridItemView.swift */,
+				D4BB9A242DE5D66500C1BCBC /* StatView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		D4BB9A1A2DE5D22A00C1BCBC /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				D4BB9A192DE5D22A00C1BCBC /* PromoteToolsModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		D4BB9A1C2DE5D22A00C1BCBC /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				D4BB9A1B2DE5D22A00C1BCBC /* PromoteToolsViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		D4BB9A1D2DE5D22A00C1BCBC /* PromoteToolsScreen */ = {
+			isa = PBXGroup;
+			children = (
+				D4BB9A182DE5D22A00C1BCBC /* View */,
+				D4BB9A1A2DE5D22A00C1BCBC /* Model */,
+				D4BB9A1C2DE5D22A00C1BCBC /* ViewModel */,
+			);
+			path = PromoteToolsScreen;
 			sourceTree = "<group>";
 		};
 		D4C4D7952DD31C0F00274E51 /* ActivityCell */ = {
@@ -2469,10 +2525,12 @@
 				35B44F1E2DD705E100FBCBC4 /* AboutUsViewModel.swift in Sources */,
 				3541638A2DDB178300026B34 /* ShowTips.swift in Sources */,
 				D4BB9A0B2DE5A99700C1BCBC /* MyOrdersScreen.swift in Sources */,
+				D4BB9A112DE5C92100C1BCBC /* TransactionsTabView.swift in Sources */,
 				D4BA9C0B2DE4856900DFF6E6 /* ShowsViewModel.swift in Sources */,
 				3576EAD42DDDD96900177C7D /* SelectThumbnailScreen.swift in Sources */,
 				D49A95682DD704CD006044A7 /* FAQScreen.swift in Sources */,
 				99C908142DC8CD6A0054620B /* PrimaryButton.swift in Sources */,
+				D4BB9A1E2DE5D22A00C1BCBC /* PromoteToolsView.swift in Sources */,
 				35AC64742DD48C0300B5E13E /* SearchView.swift in Sources */,
 				355AE9752DD1F98C00CD3D17 /* HomeViewScreen.swift in Sources */,
 				99C9091C2DC8CD790054620B /* NewsViewModel.swift in Sources */,
@@ -2512,12 +2570,14 @@
 				D4BA9C1A2DE49D1300DFF6E6 /* WalletModel.swift in Sources */,
 				99C909E42DC8CDDC0054620B /* LinkedInUserDetail.swift in Sources */,
 				D4E569DB2DD46BE50005A78E /* LanguagePickerView.swift in Sources */,
+				D4BB9A202DE5D22A00C1BCBC /* PromoteToolsViewModel.swift in Sources */,
 				35CA09E02DD5D2B1002ABB83 /* TwoVerticalLabelCell.swift in Sources */,
 				99C909E52DC8CDDC0054620B /* UserJobModal.swift in Sources */,
 				99C909E62DC8CDDC0054620B /* CreateCompanyRequest.swift in Sources */,
 				99C909E72DC8CDDC0054620B /* LoginResponseModel.swift in Sources */,
 				D4BB99EB2DE5890D00C1BCBC /* OffersScreen.swift in Sources */,
 				99C909E82DC8CDDC0054620B /* JobDetailResponse.swift in Sources */,
+				D4BB9A152DE5C9ED00C1BCBC /* WalletTabView.swift in Sources */,
 				99C909E92DC8CDDC0054620B /* EmployerProfileJobsModal.swift in Sources */,
 				99C909EA2DC8CDDC0054620B /* QualificationResponse.swift in Sources */,
 				35B44F1C2DD705C200FBCBC4 /* ABoutUsModel.swift in Sources */,
@@ -2552,6 +2612,7 @@
 				3576EAD02DDDA0E800177C7D /* ShowTitleTips.swift in Sources */,
 				99C909A12DC8CD930054620B /* UITextField+Extension.swift in Sources */,
 				99C909A22DC8CD930054620B /* VideoRecorderHelper.swift in Sources */,
+				D4BB9A252DE5D66500C1BCBC /* StatView.swift in Sources */,
 				99C909A32DC8CD930054620B /* UIFont+Extension.swift in Sources */,
 				35B44F172DD7053B00FBCBC4 /* AboutUsScreen.swift in Sources */,
 				99C909A42DC8CD930054620B /* UIDevice+Extension.swift in Sources */,
@@ -2577,7 +2638,9 @@
 				354163882DDB16BC00026B34 /* StepCard.swift in Sources */,
 				99C909AE2DC8CD930054620B /* UILabel+Extension.swift in Sources */,
 				99C909AF2DC8CD930054620B /* EndPointType.swift in Sources */,
+				D4BB9A232DE5D33600C1BCBC /* ToolGridItemView.swift in Sources */,
 				99C909B02DC8CD930054620B /* CommanExtension.swift in Sources */,
+				D4BB9A132DE5C95A00C1BCBC /* PayoutRowView.swift in Sources */,
 				99C909B12DC8CD930054620B /* NavigationContainer.swift in Sources */,
 				99C909B22DC8CD930054620B /* APIManager.swift in Sources */,
 				D4A7F9092DDDB7CA001FC705 /* AddressesList.swift in Sources */,
@@ -2596,6 +2659,7 @@
 				99C909BB2DC8CD930054620B /* UIWindow+Extension.swift in Sources */,
 				99C909BC2DC8CD930054620B /* DatePicker.swift in Sources */,
 				99C909622DC8CD790054620B /* PrivacyPolicyScreen.swift in Sources */,
+				D4BB9A212DE5D22A00C1BCBC /* PromoteToolsModel.swift in Sources */,
 				D4BB99E92DE5890D00C1BCBC /* OffersViewModel.swift in Sources */,
 				D4BA325B2DDB3C6F00FE4FD2 /* InventoryModel.swift in Sources */,
 				D4BA32552DDB37C200FE4FD2 /* ActiveInventoryScreen.swift in Sources */,

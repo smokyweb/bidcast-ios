@@ -33,6 +33,7 @@ struct AccountScreen: View {
     @State var navigateToShipping : Bool = false
     @State var navigateToSellerStatus : Bool = false
     @State var navigateToMyOrder : Bool = false
+    @State var navigateToSellerTraining : Bool = false
     
     var viewModal = MenuOptionsViewModal()
     let columns = [
@@ -99,7 +100,11 @@ struct AccountScreen: View {
                                         withAnimation {
                                             navigateToShipping = true
                                         }
-                                    }else if index == 10{
+                                    }else if index == 8{
+                                    withAnimation {
+                                        navigateToSellerTraining = true
+                                    }
+                                }else if index == 10{
                                         withAnimation {
                                             navigateToSellerStatus = true
                                         }
@@ -183,9 +188,25 @@ struct AccountScreen: View {
             .padding(.top,-24)
             .background(.bg.opacity(0.5))
             CusNavLink(doNavigate: $navigateToOffers, destination: OffersScreen())
+            CusNavLink(doNavigate: $navigateToSellerTraining, destination: PromoteToolsView())
             CusNavLink(doNavigate: $navigateToAboutUs, destination: AboutUsScreen())
             CusNavLink(doNavigate: $navigateTips, destination: TipsScreen())
-            CusNavLink(doNavigate: $navigateToWallet, destination: WalletScreen())
+            CusNavLink(doNavigate: $navigateToWallet, destination: WalletScreen(data:  WalletData(
+                summary: WalletSummary(
+                    availableBalance: 5280.50,
+                    availableForPayout: 3450.00,
+                    processing: 1830.50,
+                    earlyPayoutMessage: "You're eligible for early payout"
+                ),
+                payoutHistory: [
+                    Payout(amount: 1250, date: .init(timeIntervalSince1970: 1741977600), status: "Completed"),
+                    Payout(amount: 980.25, date: .init(timeIntervalSince1970: 1740796800), status: "Completed"),
+                    Payout(amount: 2150.75, date: .init(timeIntervalSince1970: 1739568000), status: "Completed")
+                ],
+                transactions: [
+                    Transaction(title: "Purchase from John", date: .init(timeIntervalSince1970: 1742841600), amount: 1250.00, isOutgoing: true)
+                ]
+            )))
             CusNavLink(doNavigate: $navigateToShows, destination: ShowsScreen())
             CusNavLink(doNavigate: $navigateToFAQ, destination: FAQScreen())
             CusNavLink(doNavigate: $navigateToTerms, destination: TermsOfServicesScreen())
