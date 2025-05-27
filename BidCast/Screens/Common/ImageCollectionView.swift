@@ -17,7 +17,8 @@ struct ImageCollectionView: View {
     var title2 = "Stream Time"
     var categorySize = 13.0
     var title2Size = 15.0
-    
+    var onTap: () -> Void = {}
+
     var body: some View {
         
         VStack(alignment: .leading,spacing: 8){
@@ -46,6 +47,9 @@ struct ImageCollectionView: View {
                 .foregroundColor(.black)
         }
         .padding(.all,8)
+        .onTapGesture {
+                    onTap()
+                }
     }
 }
 

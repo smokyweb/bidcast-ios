@@ -10,7 +10,7 @@ import SwiftUI
 struct HomeViewScreen: View {
     @State private var selectedButton: HomeButton = .For_you
     @Environment(\.presentationMode) var presentationMode
-    
+    @State var navigateToLiveStream = false
     let images = Array(1...10)
        
        let columns = [
@@ -37,7 +37,10 @@ struct HomeViewScreen: View {
                         SingleTitleLabel(title: "Live Now | Popular | coming Soon" ,textColor: .black,fontValue: 20.0)
                         LazyVGrid(columns: columns, spacing: 20) {
                                    ForEach(images, id: \.self) { index in
-                                       ImageCollectionView(textSize: 16.0, image: .IMG_2678)
+                                       ImageCollectionView(textSize: 16.0, image: .IMG_2678){
+                                           print("babumoshai tapped the card!")
+                                           navigateToLiveStream = true
+                                       }
                                            .background(.bg)
                                            .frame(height: 240)
                                          
@@ -48,6 +51,8 @@ struct HomeViewScreen: View {
                 }
                 .padding([.leading,.trailing],12)
                 .padding(.top , 10)
+                
+                CusNavLink(doNavigate: $navigateToLiveStream, destination: LiveStream())
             }
             .background(.bg.opacity(0.4))
             .edgesIgnoringSafeArea(.top)
