@@ -31,6 +31,8 @@ struct AccountScreen: View {
     @State var navigateTips : Bool = false
     @State var navigateToOffers : Bool = false
     @State var navigateToShipping : Bool = false
+    @State var navigateToSellerStatus : Bool = false
+    @State var navigateToMyOrder : Bool = false
     
     var viewModal = MenuOptionsViewModal()
     let columns = [
@@ -77,6 +79,10 @@ struct AccountScreen: View {
                                         withAnimation {
                                             navigateToShows = true
                                         }
+                                    }else if index == 2 {
+                                        withAnimation {
+                                            navigateToMyOrder = true
+                                        }
                                     }else if index == 3 {
                                         withAnimation {
                                             navigateToWallet = true
@@ -92,6 +98,10 @@ struct AccountScreen: View {
                                     }else if index == 6{
                                         withAnimation {
                                             navigateToShipping = true
+                                        }
+                                    }else if index == 10{
+                                        withAnimation {
+                                            navigateToSellerStatus = true
                                         }
                                     }
                                 }
@@ -184,6 +194,23 @@ struct AccountScreen: View {
             CusNavLink(doNavigate: $navigateToInventry, destination: InventoryScreen())
             CusNavLink(doNavigate: $navigateToAddress, destination: AddressesScreen())
             CusNavLink(doNavigate: $navigateToShipping, destination: ShippingsScreen())
+            CusNavLink(doNavigate: $navigateToSellerStatus, destination:   SellerStatusScreen(sections: [
+                SellerStatusSection(
+                    title: "Marketplace Vendor Status",
+                    subtitle: "Vendor since Jan 2025\nSeller Rating: 4.8/5",
+                    icon: Image(systemName: "cart.fill"),
+                    statusText: "Active",
+                    statusColor: .green
+                ),
+                SellerStatusSection(
+                    title: "Live Sell Vendor Status",
+                    subtitle: "Application in Review\nSubmitted: Jan 15, 2025",
+                    icon: Image(systemName: "video.fill"),
+                    statusText: "Pending",
+                    statusColor: .orange
+                )
+            ]))
+            CusNavLink(doNavigate: $navigateToMyOrder, destination: MyOrdersScreen())
         }
         .edgesIgnoringSafeArea(.top)
         .background(.bg.opacity(0.5))

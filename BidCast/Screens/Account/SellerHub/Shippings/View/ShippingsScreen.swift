@@ -14,21 +14,22 @@ struct ShippingsScreen: View {
     @State private var isLoading: Bool = false
     @State private var showhud: Bool = false
     @State private var hudMsg: String = ""
+    @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject private var appRootManager: AppRootManager
+    @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+    
+    
     @State var categoryList: [CategoryDataModel] = [
         CategoryDataModel(id: 1, name: "Electronics", image: "electronics_icon", color: "#FF5733"),
         CategoryDataModel(id: 2, name: "Fashion", image: "fashion_icon", color: "#33C1FF"),
         CategoryDataModel(id: 3, name: "Home", image: "home_icon", color: "#28A745"),
         CategoryDataModel(id: 4, name: "Books", image: "books_icon", color: "#FFC300")
     ]
-
-    @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     
     let transactions = [
         Transaction(title: "Purchase from John", date: Date(timeIntervalSince1970: 1742841600), amount: 1250.00, isOutgoing: true)
     ]
-    
-    @Environment(\.presentationMode) var presentationMode
-    @EnvironmentObject private var appRootManager: AppRootManager
+
 
 
     var body: some View {

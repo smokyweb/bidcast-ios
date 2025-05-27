@@ -229,6 +229,14 @@
 		D4BB99F32DE590D100C1BCBC /* ShippingsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BB99EC2DE590D100C1BCBC /* ShippingsScreen.swift */; };
 		D4BB99F42DE590D100C1BCBC /* ShippingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BB99F02DE590D100C1BCBC /* ShippingsViewModel.swift */; };
 		D4BB99F52DE590D100C1BCBC /* ShippingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BB99EE2DE590D100C1BCBC /* ShippingsModel.swift */; };
+		D4BB99FD2DE59E9F00C1BCBC /* SellerStatusModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BB99F82DE59E9F00C1BCBC /* SellerStatusModel.swift */; };
+		D4BB99FE2DE59E9F00C1BCBC /* SellerStatusViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BB99FA2DE59E9F00C1BCBC /* SellerStatusViewModel.swift */; };
+		D4BB99FF2DE59E9F00C1BCBC /* SellerStatusScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BB99F62DE59E9F00C1BCBC /* SellerStatusScreen.swift */; };
+		D4BB9A012DE5A59500C1BCBC /* SellerStatusCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BB9A002DE5A59500C1BCBC /* SellerStatusCardView.swift */; };
+		D4BB9A0A2DE5A99700C1BCBC /* MyOrdersModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BB9A052DE5A99700C1BCBC /* MyOrdersModel.swift */; };
+		D4BB9A0B2DE5A99700C1BCBC /* MyOrdersScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BB9A022DE5A99700C1BCBC /* MyOrdersScreen.swift */; };
+		D4BB9A0D2DE5A99700C1BCBC /* MyOrdersViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BB9A072DE5A99700C1BCBC /* MyOrdersViewModel.swift */; };
+		D4BB9A0F2DE5AB4D00C1BCBC /* OrderCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BB9A0E2DE5AB4D00C1BCBC /* OrderCardView.swift */; };
 		D4C4D7972DD31C2D00274E51 /* ActivityCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C4D7962DD31C2D00274E51 /* ActivityCell.swift */; };
 		D4C4D79A2DD3263A00274E51 /* SingleTitleLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C4D7982DD3263A00274E51 /* SingleTitleLabel.swift */; };
 		D4C4D79C2DD32F3D00274E51 /* TwoButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C4D79B2DD32F3D00274E51 /* TwoButton.swift */; };
@@ -546,6 +554,14 @@
 		D4BB99EC2DE590D100C1BCBC /* ShippingsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShippingsScreen.swift; sourceTree = "<group>"; };
 		D4BB99EE2DE590D100C1BCBC /* ShippingsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShippingsModel.swift; sourceTree = "<group>"; };
 		D4BB99F02DE590D100C1BCBC /* ShippingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShippingsViewModel.swift; sourceTree = "<group>"; };
+		D4BB99F62DE59E9F00C1BCBC /* SellerStatusScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SellerStatusScreen.swift; sourceTree = "<group>"; };
+		D4BB99F82DE59E9F00C1BCBC /* SellerStatusModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SellerStatusModel.swift; sourceTree = "<group>"; };
+		D4BB99FA2DE59E9F00C1BCBC /* SellerStatusViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SellerStatusViewModel.swift; sourceTree = "<group>"; };
+		D4BB9A002DE5A59500C1BCBC /* SellerStatusCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SellerStatusCardView.swift; sourceTree = "<group>"; };
+		D4BB9A022DE5A99700C1BCBC /* MyOrdersScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyOrdersScreen.swift; sourceTree = "<group>"; };
+		D4BB9A052DE5A99700C1BCBC /* MyOrdersModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyOrdersModel.swift; sourceTree = "<group>"; };
+		D4BB9A072DE5A99700C1BCBC /* MyOrdersViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyOrdersViewModel.swift; sourceTree = "<group>"; };
+		D4BB9A0E2DE5AB4D00C1BCBC /* OrderCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderCardView.swift; sourceTree = "<group>"; };
 		D4C4D7962DD31C2D00274E51 /* ActivityCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityCell.swift; sourceTree = "<group>"; };
 		D4C4D7982DD3263A00274E51 /* SingleTitleLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleTitleLabel.swift; sourceTree = "<group>"; };
 		D4C4D79B2DD32F3D00274E51 /* TwoButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwoButton.swift; sourceTree = "<group>"; };
@@ -1708,6 +1724,8 @@
 				D4BA9C272DE4A4E700DFF6E6 /* Tips */,
 				D4BB99E82DE5890D00C1BCBC /* Offers */,
 				D4BB99F22DE590D100C1BCBC /* Shippings */,
+				D4BB99FC2DE59E9F00C1BCBC /* SellerStatus */,
+				D4BB9A092DE5A99700C1BCBC /* MyOrders */,
 			);
 			path = SellerHub;
 			sourceTree = "<group>";
@@ -1960,6 +1978,76 @@
 				D4BB99F12DE590D100C1BCBC /* ViewModel */,
 			);
 			path = Shippings;
+			sourceTree = "<group>";
+		};
+		D4BB99F72DE59E9F00C1BCBC /* View */ = {
+			isa = PBXGroup;
+			children = (
+				D4BB99F62DE59E9F00C1BCBC /* SellerStatusScreen.swift */,
+				D4BB9A002DE5A59500C1BCBC /* SellerStatusCardView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		D4BB99F92DE59E9F00C1BCBC /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				D4BB99F82DE59E9F00C1BCBC /* SellerStatusModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		D4BB99FB2DE59E9F00C1BCBC /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				D4BB99FA2DE59E9F00C1BCBC /* SellerStatusViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		D4BB99FC2DE59E9F00C1BCBC /* SellerStatus */ = {
+			isa = PBXGroup;
+			children = (
+				D4BB99F72DE59E9F00C1BCBC /* View */,
+				D4BB99F92DE59E9F00C1BCBC /* Model */,
+				D4BB99FB2DE59E9F00C1BCBC /* ViewModel */,
+			);
+			path = SellerStatus;
+			sourceTree = "<group>";
+		};
+		D4BB9A042DE5A99700C1BCBC /* View */ = {
+			isa = PBXGroup;
+			children = (
+				D4BB9A022DE5A99700C1BCBC /* MyOrdersScreen.swift */,
+				D4BB9A0E2DE5AB4D00C1BCBC /* OrderCardView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		D4BB9A062DE5A99700C1BCBC /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				D4BB9A052DE5A99700C1BCBC /* MyOrdersModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		D4BB9A082DE5A99700C1BCBC /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				D4BB9A072DE5A99700C1BCBC /* MyOrdersViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		D4BB9A092DE5A99700C1BCBC /* MyOrders */ = {
+			isa = PBXGroup;
+			children = (
+				D4BB9A042DE5A99700C1BCBC /* View */,
+				D4BB9A062DE5A99700C1BCBC /* Model */,
+				D4BB9A082DE5A99700C1BCBC /* ViewModel */,
+			);
+			path = MyOrders;
 			sourceTree = "<group>";
 		};
 		D4C4D7952DD31C0F00274E51 /* ActivityCell */ = {
@@ -2380,6 +2468,7 @@
 				D4BA9C0F2DE48D2A00DFF6E6 /* ShowCardView.swift in Sources */,
 				35B44F1E2DD705E100FBCBC4 /* AboutUsViewModel.swift in Sources */,
 				3541638A2DDB178300026B34 /* ShowTips.swift in Sources */,
+				D4BB9A0B2DE5A99700C1BCBC /* MyOrdersScreen.swift in Sources */,
 				D4BA9C0B2DE4856900DFF6E6 /* ShowsViewModel.swift in Sources */,
 				3576EAD42DDDD96900177C7D /* SelectThumbnailScreen.swift in Sources */,
 				D49A95682DD704CD006044A7 /* FAQScreen.swift in Sources */,
@@ -2395,6 +2484,8 @@
 				99C909D52DC8CDDC0054620B /* AboutUsResponseModel.swift in Sources */,
 				D4C4D79A2DD3263A00274E51 /* SingleTitleLabel.swift in Sources */,
 				99C909D62DC8CDDC0054620B /* CombineDataModel.swift in Sources */,
+				D4BB99FD2DE59E9F00C1BCBC /* SellerStatusModel.swift in Sources */,
+				D4BB9A0F2DE5AB4D00C1BCBC /* OrderCardView.swift in Sources */,
 				99C909D72DC8CDDC0054620B /* LinkedInStatusModel.swift in Sources */,
 				35CCE00E2DD8603700760CEE /* DescriptionFieldView.swift in Sources */,
 				D4E569CE2DD461120005A78E /* ProfileDetailCell.swift in Sources */,
@@ -2464,6 +2555,7 @@
 				99C909A32DC8CD930054620B /* UIFont+Extension.swift in Sources */,
 				35B44F172DD7053B00FBCBC4 /* AboutUsScreen.swift in Sources */,
 				99C909A42DC8CD930054620B /* UIDevice+Extension.swift in Sources */,
+				D4BB99FF2DE59E9F00C1BCBC /* SellerStatusScreen.swift in Sources */,
 				35B44F262DD7446000FBCBC4 /* MediaPickerView.swift in Sources */,
 				99C909A52DC8CD930054620B /* NavigationPath.swift in Sources */,
 				D4BB99F32DE590D100C1BCBC /* ShippingsScreen.swift in Sources */,
@@ -2542,10 +2634,12 @@
 				99C908252DC8CD6A0054620B /* EmployeesMatchCard.swift in Sources */,
 				99C908262DC8CD6A0054620B /* InterviewListCard.swift in Sources */,
 				99C908272DC8CD6A0054620B /* NewsCard.swift in Sources */,
+				D4BB9A012DE5A59500C1BCBC /* SellerStatusCardView.swift in Sources */,
 				99C908282DC8CD6A0054620B /* CustomVideoPlayer.swift in Sources */,
 				D4BA9C1D2DE4A02B00DFF6E6 /* WalletScreen.swift in Sources */,
 				99C908292DC8CD6A0054620B /* WorkHistoryCard.swift in Sources */,
 				99C9082A2DC8CD6A0054620B /* MenuListCard.swift in Sources */,
+				D4BB99FE2DE59E9F00C1BCBC /* SellerStatusViewModel.swift in Sources */,
 				99C9082B2DC8CD6A0054620B /* EmployeeStackView.swift in Sources */,
 				99C9082C2DC8CD6A0054620B /* DropDownTextField.swift in Sources */,
 				35CCE0152DD876CD00760CEE /* HowToSell.swift in Sources */,
@@ -2566,6 +2660,7 @@
 				99C908372DC8CD6A0054620B /* AlertType.swift in Sources */,
 				99C908382DC8CD6A0054620B /* JobMatchSheet.swift in Sources */,
 				99C908392DC8CD6A0054620B /* LinkedInBottomSheet.swift in Sources */,
+				D4BB9A0D2DE5A99700C1BCBC /* MyOrdersViewModel.swift in Sources */,
 				99C9083A2DC8CD6A0054620B /* SubmitVideoResumeSheet.swift in Sources */,
 				99C9083B2DC8CD6A0054620B /* VideoResumeSheet.swift in Sources */,
 				99C9083C2DC8CD6A0054620B /* JobListCardImg.swift in Sources */,
@@ -2574,6 +2669,7 @@
 				99DF9E7A2DC4F367008C15B2 /* ContentView.swift in Sources */,
 				35CCE0172DD8774000760CEE /* LetsPrepare.swift in Sources */,
 				99DF9E7B2DC4F367008C15B2 /* Persistence.swift in Sources */,
+				D4BB9A0A2DE5A99700C1BCBC /* MyOrdersModel.swift in Sources */,
 				D4BA9C2B2DE4A4E700DFF6E6 /* TipsScreen.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
