@@ -18,6 +18,36 @@
             endingLineNumber = "179"
             landmarkName = "filteredSlots(date:)"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "B6489DF6-403F-4E4C-A3F5-06081C787E02 - a07d1bd259dac55e"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "BidCast.TimePickerView.filteredSlots(date: Foundation.Date) -&gt; Swift.Array&lt;Foundation.Date&gt;"
+                  moduleName = "BidCast.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jamtech/Documents/GitHub/bidcast/BidCast/Screens/Sell/Schedule/SelectShowScreen.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "180"
+                  endingLineNumber = "180">
+               </Location>
+               <Location
+                  uuid = "B6489DF6-403F-4E4C-A3F5-06081C787E02 - eed3b10b7c43bf8c"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Foundation.Date) -&gt; Swift.Optional&lt;Foundation.Date&gt; in BidCast.TimePickerView.filteredSlots(date: Foundation.Date) -&gt; Swift.Array&lt;Foundation.Date&gt;"
+                  moduleName = "BidCast.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jamtech/Documents/GitHub/bidcast/BidCast/Screens/Sell/Schedule/SelectShowScreen.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "180"
+                  endingLineNumber = "180">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy

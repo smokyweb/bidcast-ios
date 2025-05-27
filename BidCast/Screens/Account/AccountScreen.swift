@@ -34,6 +34,9 @@ struct AccountScreen: View {
     @State var navigateToSellerStatus : Bool = false
     @State var navigateToMyOrder : Bool = false
     @State var navigateToSellerTraining : Bool = false
+    @State var navigateToPreference : Bool = false
+    @State var navigateToPayment : Bool = false
+    @State var navigateToTrustedBuyer : Bool = false
     
     var viewModal = MenuOptionsViewModal()
     let columns = [
@@ -58,7 +61,7 @@ struct AccountScreen: View {
                 VStack(alignment: .leading,spacing: 4){
                     ListCell(image: "defaultUser", title: "John Smith",subLabel : "Seller since 2003",isVectorImgHidden: true)
                         .padding(.all,1)
-                        .padding([.leading,.trailing],-18)
+//                        .padding([.leading,.trailing],18)
                         .frame(height: 80)
                     
                     CustomSegmentedControl(preselectedIndex: $segment ,
@@ -117,7 +120,7 @@ struct AccountScreen: View {
                                  onToggle: { newValue in
                             print("Vacation Mode state is now \(newValue ? "ON" : "OFF")")
                         })
-                        .padding([.leading,.trailing],8)
+                        .padding([.leading,.trailing],6)
                         
                     }else{
                         //My Account section
@@ -125,11 +128,29 @@ struct AccountScreen: View {
                         
                         LazyVGrid(columns: columns, spacing: 2) {
                             ForEach(0 ..< AccountTabSection.allCases.count, id: \.self) { index in
-                                VerticalLabelImageCell(topLabel: TabSection.allCases[index].img , bottomLabel:TabSection.allCases[index].description )
+                                VerticalLabelImageCell(topLabel: AccountTabSection.allCases[index].img , bottomLabel:AccountTabSection.allCases[index].description ){
+                                    if index == 0{
+                                        withAnimation {
+                                            navigateToPayment = true
+                                        }
+                                    }else if index == 1 {
+                                        withAnimation {
+                                            navigateToAddress = true
+                                        }
+                                    }else if index == 2  {
+                                        withAnimation {
+                                            navigateToTrustedBuyer = true
+                                        }
+                                    }else if index == 4 {
+                                        withAnimation {
+                                            navigateToPreference = true
+                                        }
+                                    }
+                                }
                                 
                             }
                         }
-                        .padding([.leading,.trailing],8)
+                        .padding([.leading,.trailing],6)
                         
                         ForEach(0 ..< AccountMenuSection.allCases.count,id :\.self) { index in
                             
@@ -178,18 +199,36 @@ struct AccountScreen: View {
                             })
                             
                             .frame(height:70)
-                            .padding([.leading,.trailing],8)
+                            .padding([.leading,.trailing],6)
                         }
                     }
                    
                 }
             }
-            .padding(.bottom,-60)
+          
             .padding(.top,-24)
             .background(.bg.opacity(0.5))
+            .padding(.bottom,-120)
+            
+            //MARK: My Account navigation
+            CusNavLink(doNavigate: $navigateToAboutUs, destination: AboutUsScreen())
+            CusNavLink(doNavigate: $navigateToSales, destination: SalesTaxScreen())
+            CusNavLink(doNavigate: $navigateToFAQ, destination: FAQScreen())
+            CusNavLink(doNavigate: $navigateToTerms, destination: TermsOfServicesScreen())
+            CusNavLink(doNavigate: $navigateToPrivacy, destination: PrivacyPolicyScreen())
+            CusNavLink(doNavigate: $navigateToContactus, destination: ContactUs())
+            CusNavLink(doNavigate: $navigateToAddress, destination: AddressesScreen())
+            CusNavLink(doNavigate: $navigateToShipping, destination: ShippingsScreen())
+            CusNavLink(doNavigate: $navigateToPreference, destination: SettingsView())
+            CusNavLink(doNavigate: $navigateToPayment, destination: PaymentAndShipping_Screen())
+            CusNavLink(doNavigate: $navigateToTrustedBuyer, destination: VerifyIdentityScreen())
+            
+            
+            //MARK: Seller hub navigation
+            CusNavLink(doNavigate: $navigateToShows, destination: ShowsScreen())
+            CusNavLink(doNavigate: $navigateToInventry, destination: InventoryScreen())
             CusNavLink(doNavigate: $navigateToOffers, destination: OffersScreen())
             CusNavLink(doNavigate: $navigateToSellerTraining, destination: PromoteToolsView())
-            CusNavLink(doNavigate: $navigateToAboutUs, destination: AboutUsScreen())
             CusNavLink(doNavigate: $navigateTips, destination: TipsScreen())
             CusNavLink(doNavigate: $navigateToWallet, destination: WalletScreen(data:  WalletData(
                 summary: WalletSummary(
@@ -207,14 +246,6 @@ struct AccountScreen: View {
                     Transaction(title: "Purchase from John", date: .init(timeIntervalSince1970: 1742841600), amount: 1250.00, isOutgoing: true)
                 ]
             )))
-            CusNavLink(doNavigate: $navigateToShows, destination: ShowsScreen())
-            CusNavLink(doNavigate: $navigateToFAQ, destination: FAQScreen())
-            CusNavLink(doNavigate: $navigateToTerms, destination: TermsOfServicesScreen())
-            CusNavLink(doNavigate: $navigateToPrivacy, destination: PrivacyPolicyScreen())
-            CusNavLink(doNavigate: $navigateToContactus, destination: ContactUs())
-            CusNavLink(doNavigate: $navigateToInventry, destination: InventoryScreen())
-            CusNavLink(doNavigate: $navigateToAddress, destination: AddressesScreen())
-            CusNavLink(doNavigate: $navigateToShipping, destination: ShippingsScreen())
             CusNavLink(doNavigate: $navigateToSellerStatus, destination:   SellerStatusScreen(sections: [
                 SellerStatusSection(
                     title: "Marketplace Vendor Status",
@@ -233,7 +264,7 @@ struct AccountScreen: View {
             ]))
             CusNavLink(doNavigate: $navigateToMyOrder, destination: MyOrdersScreen())
         }
-        .edgesIgnoringSafeArea(.top)
+        .edgesIgnoringSafeArea([.top,.bottom])
         .background(.bg.opacity(0.5))
         .bottomSheet(isPresented: $userLogOut, height: screenHeight/2, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: { userLogOut = true }, content: {
             LogOutSheet(onLogoutClick: {

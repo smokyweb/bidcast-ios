@@ -61,13 +61,13 @@ struct PromoteToolsView: View {
                 ScrollView {
                     VStack(spacing: 24) {
                         
-                        ForEach(0 ..< categoryList.count, id: \.self) { ind in
-    //                            print("\(ind)")
-    //                            print(self.title[ind])
-                            ListCell( isComeFrom: "ShippingScreen",image: categoryList[ind].image ?? "", title: categoryList[ind].name ?? "", vectorImg: .icArrowUp,subLabel : "BidSwipe",tintColot: categoryList[ind].color ?? "")
-                               
-                           
-                        }
+//                        ForEach(0 ..< categoryList.count, id: \.self) { ind in
+//    //                            print("\(ind)")
+//    //                            print(self.title[ind])
+//                            ListCell( isComeFrom: "ShippingScreen",image: categoryList[ind].image ?? "", title: categoryList[ind].name ?? "", vectorImg: .icArrowUp,subLabel : "BidSwipe",tintColot: categoryList[ind].color ?? "")
+//                               
+//                           
+//                        }
                         
                         // Stats
                         HStack {
