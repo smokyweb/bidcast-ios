@@ -40,7 +40,7 @@ struct ShowsScreen: View {
             // MARK: - Top Header (fixed)
             PrimaryHeader(
                 title: "",
-                isForLogo : true,
+                isForLogo: true,
                 leadingImgArr: [.appName],
                 trailingImgArr: [.search, .notification],
                 onClickLeading: { _ in
@@ -50,18 +50,17 @@ struct ShowsScreen: View {
             )
             .padding(.horizontal)
             .padding(.bottom, 10)
+            .frame(height: 50)
 
-            // MARK: - Segmented Control (also fixed)
+            // MARK: - Segmented Control
             CustomSegmentedControl(preselectedIndex: $segment, options: ShowScreenSegment.allCases)
-//                .background(Color.white)
                 .padding(.horizontal)
 
-            // MARK: - Scrollable Show List
+            // MARK: - Scrollable Content
             ScrollView {
                 VStack(spacing: 10) {
                     if isLoading {
-                        ProgressView()
-                            .padding()
+                        ProgressView().padding()
                     } else if shows.isEmpty {
                         Text("No shows available.")
                             .foregroundColor(.gray)
@@ -71,28 +70,31 @@ struct ShowsScreen: View {
                             ShowCardView(show: show)
                         }
                     }
-                    Spacer()
-                        .frame(height: 80) // for space below content
+                    Spacer().frame(height: 80)
                 }
                 .padding(.top)
             }
-
-            // MARK: - Fixed Bottom Button
-            PrimaryButton(title: AppString.submit.localized, isOutLine: false, onButtonClick: {
-                // Action
-            },btnTextColor: .white)
-            .padding(.horizontal)
-            .padding(.vertical, 20)
-            .background(Color(UIColor.systemGroupedBackground))
+            .safeAreaInset(edge: .bottom) {
+                // MARK: - Fixed Bottom Button
+                PrimaryButton(
+                    title: AppString.submit.localized,
+                    isOutLine: false,
+                    onButtonClick: {
+                        // Action
+                    },
+                    btnTextColor: .white
+                )
+                .padding(.horizontal)
+                .padding(.vertical, 0)
+                .background(Color(UIColor.systemGroupedBackground))
+            }
         }
         .background(Color(UIColor.systemGroupedBackground))
-        .ignoresSafeArea(edges: .bottom)
         .toast(isPresenting: $showhud) {
             AlertToast(type: .regular, title: hudMsg)
         }
     }
 }
-
 
 // MARK: - Segment Enum
 enum ShowScreenSegment: String, CaseIterable, CustomStringConvertible {
@@ -103,7 +105,6 @@ enum ShowScreenSegment: String, CaseIterable, CustomStringConvertible {
         NSLocalizedString(rawValue, comment: "")
     }
 }
-
 
 // MARK: - Preview
 #Preview {

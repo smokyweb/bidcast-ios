@@ -41,6 +41,7 @@ struct WalletScreen: View {
             )
             .padding(.horizontal)
             .padding(.bottom, 10)
+            .frame(height: 50)
 
             // MARK: - Segmented Control (also fixed)
             CustomSegmentedControl(preselectedIndex: $segment, options: WalletScreenSegment.allCases)
@@ -55,21 +56,26 @@ struct WalletScreen: View {
                     ForEach(transactions) { txn in
                         TransactionRowView(transaction: txn)
                             .padding(.horizontal)
+                            .padding(.top ,20)
                     }
                 }
                 .padding(.top)
+            } .safeAreaInset(edge: .bottom) {
+                // MARK: - Fixed Bottom Button
+                PrimaryButton(
+                    title: AppString.submit.localized,
+                    isOutLine: false,
+                    onButtonClick: {
+                        // Action
+                    },
+                    btnTextColor: .white
+                )
+                .padding(.horizontal)
+                .padding(.vertical, 0)
+                .background(Color(UIColor.systemGroupedBackground))
             }
-
-            // MARK: - Fixed Bottom Button
-            PrimaryButton(title: AppString.submit.localized, isOutLine: false, onButtonClick: {
-                // Action
-            },btnTextColor: .white)
-            .padding(.horizontal)
-            .padding(.vertical, 20)
-            .background(Color(UIColor.systemGroupedBackground))
         }
         .background(Color(UIColor.systemGroupedBackground))
-        .ignoresSafeArea(edges: .bottom)
         .toast(isPresenting: $showhud) {
             AlertToast(type: .regular, title: hudMsg)
         }

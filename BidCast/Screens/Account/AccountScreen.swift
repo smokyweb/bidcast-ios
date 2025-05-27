@@ -75,7 +75,7 @@ struct AccountScreen: View {
                                         withAnimation {
                                             navigateToShows = true
                                         }
-                                    }else if index == 2 {
+                                    }else if index == 3 {
                                         withAnimation {
                                             navigateToWallet = true
                                         }

@@ -61,9 +61,6 @@ struct SelectShowScreen: View {
                     .cornerRadius(12)
                     
                 }
-            
-                
-                
             }
             .padding(.top,10)
             .padding(.horizontal,Leading)
