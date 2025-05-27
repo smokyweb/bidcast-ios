@@ -61,10 +61,10 @@ struct TwoButton: View {
                     .cornerRadius(cornerRadius)
             }
             .shadow(color: .gray.opacity(0.3), radius: 2, x: 0, y: 1)
-            .overlay(
-                RoundedRectangle(cornerRadius: cornerRadius)
-                    .stroke(Color.defaultTheme, lineWidth: 1)
-            )
+//            .overlay(
+//                RoundedRectangle(cornerRadius: cornerRadius)
+//                    .stroke(Color.defaultTheme, lineWidth: 1)
+//            )
             .padding(.trailing, 16)
         }
     }

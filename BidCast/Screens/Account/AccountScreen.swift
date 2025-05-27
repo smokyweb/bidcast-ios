@@ -64,9 +64,12 @@ struct AccountScreen: View {
 //                        .padding([.leading,.trailing],18)
                         .frame(height: 80)
                     
-                    CustomSegmentedControl(preselectedIndex: $segment ,
-                                           options: AccountSegment.allCases)
-                    .background(.white)
+                        CustomSegmentedControl(preselectedIndex: $segment ,
+                                               options: AccountSegment.allCases)
+                       
+                    
+                   
+                    
                     if segment == .sellerHub{
                         //Seller hub
                         TwoVerticalLabelCell(dataModel: Credit.allCases,topLabel: {$0.labelOlt },bottomLabel: { $0.description.localized})
@@ -115,12 +118,12 @@ struct AccountScreen: View {
                                 }
                             }
                         }
-                        .padding([.leading,.trailing],8)
+//                        .padding([.leading,.trailing],8)
                         MenuCell(title: "Vacation Mode", textColor: .black, fontValue: 18.0, menuImg:"vacation", vectorImg: .vacation,isSelectable: true,isTappedSwitch: $isTappedSwitch,
                                  onToggle: { newValue in
                             print("Vacation Mode state is now \(newValue ? "ON" : "OFF")")
                         })
-                        .padding([.leading,.trailing],6)
+//                        .padding([.leading,.trailing],8)
                         
                     }else{
                         //My Account section
@@ -150,7 +153,7 @@ struct AccountScreen: View {
                                 
                             }
                         }
-                        .padding([.leading,.trailing],6)
+//                        .padding([.leading,.trailing],8)
                         
                         ForEach(0 ..< AccountMenuSection.allCases.count,id :\.self) { index in
                             
@@ -199,16 +202,16 @@ struct AccountScreen: View {
                             })
                             
                             .frame(height:70)
-                            .padding([.leading,.trailing],6)
+//                            .padding([.leading,.trailing],8)
                         }
                     }
                    
                 }
             }
+            .padding(.horizontal,8)
           
-            .padding(.top,-24)
             .background(.bg.opacity(0.5))
-            .padding(.bottom,-120)
+            .padding(.bottom,-160)
             
             //MARK: My Account navigation
             CusNavLink(doNavigate: $navigateToAboutUs, destination: AboutUsScreen())

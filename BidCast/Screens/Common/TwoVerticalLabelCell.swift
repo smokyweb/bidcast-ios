@@ -32,7 +32,7 @@ struct TwoVerticalLabelCell<T: Hashable & CustomStringConvertible>: View {
                         .foregroundColor(.lightGray)
                     
                 }
-                .frame(width: 100, height: 100)
+                .frame(width: 90, height: 90)
                 
                 .background(.white)
                 .cornerRadius(12)

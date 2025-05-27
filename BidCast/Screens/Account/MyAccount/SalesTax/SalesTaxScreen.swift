@@ -29,7 +29,7 @@ struct SalesTaxScreen: View {
               ScrollView(showsIndicators:false){
                   ListCell(image: "defaultUser", title: "John Smith",subLabel : "ID: #12345678",isVectorImgHidden: true)
                       .padding(.all,1)
-                      .padding([.leading,.trailing],0)
+                      .padding([.leading,.trailing],12)
                       .frame(height: 80)
                   VStack(alignment: .leading, spacing: 12) {
                                  HStack {

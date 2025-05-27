@@ -36,10 +36,10 @@ struct ShippingsScreen: View {
         VStack(spacing: 0) {
             // MARK: - Top Header (fixed)
             PrimaryHeader(
-                title: "Offers",
+                title: "Shipping",
                 isForLogo : true,
                 leadingImgArr: [.appName],
-                trailingImgArr: [.icSetting],
+                trailingImgArr: [.icBack],
                 onClickLeading: { _ in
                     self.presentationMode.wrappedValue.dismiss()
                 },
@@ -59,6 +59,7 @@ struct ShippingsScreen: View {
 //                            print("\(ind)")
 //                            print(self.title[ind])
                         ListCell( isComeFrom: "ShippingScreen",image: categoryList[ind].image ?? "", title: categoryList[ind].name ?? "", vectorImg: .icArrowUp,subLabel : "BidSwipe",tintColot: categoryList[ind].color ?? "")
+                            .padding(.horizontal,Leading)
                            
                        
                     }
