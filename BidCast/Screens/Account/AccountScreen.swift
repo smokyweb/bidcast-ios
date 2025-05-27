@@ -25,10 +25,12 @@ struct AccountScreen: View {
     @State var navigateToPrivacy : Bool = false
     @State var navigateToTerms : Bool = false
     @State var navigateToInventry : Bool = false
-    @State var navigateToShipping : Bool = false
+    @State var navigateToAddress : Bool = false
     @State var navigateToShows : Bool = false
     @State var navigateToWallet : Bool = false
     @State var navigateTips : Bool = false
+    @State var navigateToOffers : Bool = false
+    @State var navigateToShipping : Bool = false
     
     var viewModal = MenuOptionsViewModal()
     let columns = [
@@ -78,6 +80,10 @@ struct AccountScreen: View {
                                     }else if index == 3 {
                                         withAnimation {
                                             navigateToWallet = true
+                                        }
+                                    }else if index == 4 {
+                                        withAnimation {
+                                            navigateToOffers = true
                                         }
                                     }else if index == 5 {
                                         withAnimation {
@@ -166,6 +172,7 @@ struct AccountScreen: View {
             .padding(.bottom,-60)
             .padding(.top,-24)
             .background(.bg.opacity(0.5))
+            CusNavLink(doNavigate: $navigateToOffers, destination: OffersScreen())
             CusNavLink(doNavigate: $navigateToAboutUs, destination: AboutUsScreen())
             CusNavLink(doNavigate: $navigateTips, destination: TipsScreen())
             CusNavLink(doNavigate: $navigateToWallet, destination: WalletScreen())
@@ -175,7 +182,8 @@ struct AccountScreen: View {
             CusNavLink(doNavigate: $navigateToPrivacy, destination: PrivacyPolicyScreen())
             CusNavLink(doNavigate: $navigateToContactus, destination: ContactUs())
             CusNavLink(doNavigate: $navigateToInventry, destination: InventoryScreen())
-            CusNavLink(doNavigate: $navigateToShipping, destination: AddressesScreen())
+            CusNavLink(doNavigate: $navigateToAddress, destination: AddressesScreen())
+            CusNavLink(doNavigate: $navigateToShipping, destination: ShippingsScreen())
         }
         .edgesIgnoringSafeArea(.top)
         .background(.bg.opacity(0.5))

@@ -12,6 +12,7 @@ import SwiftUI
 
 struct ListCell: View {
     
+    var isComeFrom : String = ""
     var image : String = ""
     var title = "Gaming"
     var vectorImg : ImageResource?
@@ -38,7 +39,13 @@ struct ListCell: View {
                 .scaledToFill()
                 .frame(width: 40,height: 40)
                 .background(Color(hex: tintColot) ?? .clear)
-                .cornerRadius(8)
+                .mask {
+                    if isComeFrom == "ShippingScreen" {
+                        Circle()
+                    } else {
+                        RoundedRectangle(cornerRadius: 8)
+                    }
+                }
                 .padding(.leading ,10)
 //                Image(image)
 //                    .resizable()

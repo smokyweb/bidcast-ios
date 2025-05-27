@@ -67,4 +67,5 @@ struct AppString{
     static let enterconfirmPassword = "Enter Confirm Password".localized
     static let forgetPassword = "Forgot Password".localized
     static let enterCodeSent = "Enter the code sent to your email address."
+    static let newShow =  "New Show".localized
 }
