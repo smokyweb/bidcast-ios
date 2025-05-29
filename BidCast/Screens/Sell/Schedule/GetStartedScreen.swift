@@ -15,16 +15,18 @@ struct GetStartedScreen: View {
     var body: some View {
       
             VStack {
-                PrimaryHeader(
-                    title: "Let's Get Started".localized,
-                    isForLogo : false, leadingImgArr: [.sideArrow],
-                    trailingImgArr: [],
-                    onClickLeading: { _ in
-                        self.presentationMode.wrappedValue.dismiss()
-                    },
-                    count: .constant(0)
-                )
-                .frame(height: 70)
+                VStack{
+                    PrimaryHeader(
+                        title: "Let's Get Started".localized,
+                        isForLogo : false, leadingImgArr: [.sideArrow],
+                        trailingImgArr: [],
+                        onClickLeading: { _ in
+                            self.presentationMode.wrappedValue.dismiss()
+                        },
+                        count: .constant(0)
+                    )
+                }
+                .frame(height: 50)
                 .background(.white)
                 ScrollView {
                     VStack(alignment: .leading, spacing: 24) {

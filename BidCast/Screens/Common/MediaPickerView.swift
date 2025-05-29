@@ -14,7 +14,7 @@ import PhotosUI
 
 struct MediaPickerView: View {
     let maxMediaCount = 8
-    
+    var title = "Media"
     @State private var selectedMedia: [UIImage] = []
     @State private var showCameraPicker = false
     @State private var showPhotoLibrary = false
@@ -25,8 +25,10 @@ struct MediaPickerView: View {
             VStack {
                 VStack{
                     HStack {
-                        Text("Media".localized)
-                            .font(.headline)
+                        if title != ""{
+                            Text(title.localized)
+                                .font(.headline)
+                        }
                         Spacer()
                         Text("\(selectedMedia.count)/\(maxMediaCount)")
                             .foregroundColor(.gray)

@@ -54,6 +54,13 @@
 		35B44F242DD741A000FBCBC4 /* ListProductScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B44F232DD741A000FBCBC4 /* ListProductScreen.swift */; };
 		35B44F262DD7446000FBCBC4 /* MediaPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B44F252DD7446000FBCBC4 /* MediaPickerView.swift */; };
 		35B44F282DD74CCA00FBCBC4 /* PhotoPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B44F272DD74CCA00FBCBC4 /* PhotoPicker.swift */; };
+		35BA4A3F2DE8641200EEC92A /* ProfileScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35BA4A3E2DE8641200EEC92A /* ProfileScreen.swift */; };
+		35BA4A422DE86E8300EEC92A /* SendGiftScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35BA4A412DE86E8300EEC92A /* SendGiftScreen.swift */; };
+		35BA4A452DE870DB00EEC92A /* CreateProductScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35BA4A442DE870DB00EEC92A /* CreateProductScreen.swift */; };
+		35BA4A482DE878F900EEC92A /* SalesFormatScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35BA4A472DE878F900EEC92A /* SalesFormatScreen.swift */; };
+		35BA4A4B2DE87C2300EEC92A /* AddProductScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35BA4A4A2DE87C2300EEC92A /* AddProductScreen.swift */; };
+		35BA4A4E2DE8806A00EEC92A /* ReferEarnScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35BA4A4D2DE8806A00EEC92A /* ReferEarnScreen.swift */; };
+		35BA4A512DE883E800EEC92A /* CompleteProfileScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35BA4A502DE883E800EEC92A /* CompleteProfileScreen.swift */; };
 		35CA09D92DD5BCE4002ABB83 /* LabelWithButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CA09D82DD5BCE4002ABB83 /* LabelWithButton.swift */; };
 		35CA09DE2DD5CC29002ABB83 /* CustomSegmentedControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CA09DC2DD5CBB8002ABB83 /* CustomSegmentedControl.swift */; };
 		35CA09E02DD5D2B1002ABB83 /* TwoVerticalLabelCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CA09DF2DD5D2B1002ABB83 /* TwoVerticalLabelCell.swift */; };
@@ -473,6 +480,13 @@
 		35B44F252DD7446000FBCBC4 /* MediaPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaPickerView.swift; sourceTree = "<group>"; };
 		35B44F272DD74CCA00FBCBC4 /* PhotoPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoPicker.swift; sourceTree = "<group>"; };
 		35B44F292DD74F4A00FBCBC4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		35BA4A3E2DE8641200EEC92A /* ProfileScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileScreen.swift; sourceTree = "<group>"; };
+		35BA4A412DE86E8300EEC92A /* SendGiftScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendGiftScreen.swift; sourceTree = "<group>"; };
+		35BA4A442DE870DB00EEC92A /* CreateProductScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateProductScreen.swift; sourceTree = "<group>"; };
+		35BA4A472DE878F900EEC92A /* SalesFormatScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SalesFormatScreen.swift; sourceTree = "<group>"; };
+		35BA4A4A2DE87C2300EEC92A /* AddProductScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddProductScreen.swift; sourceTree = "<group>"; };
+		35BA4A4D2DE8806A00EEC92A /* ReferEarnScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferEarnScreen.swift; sourceTree = "<group>"; };
+		35BA4A502DE883E800EEC92A /* CompleteProfileScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompleteProfileScreen.swift; sourceTree = "<group>"; };
 		35CA09D82DD5BCE4002ABB83 /* LabelWithButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelWithButton.swift; sourceTree = "<group>"; };
 		35CA09DC2DD5CBB8002ABB83 /* CustomSegmentedControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSegmentedControl.swift; sourceTree = "<group>"; };
 		35CA09DF2DD5D2B1002ABB83 /* TwoVerticalLabelCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwoVerticalLabelCell.swift; sourceTree = "<group>"; };
@@ -1108,14 +1122,70 @@
 			path = ListProduct;
 			sourceTree = "<group>";
 		};
+		35BA4A3D2DE8638400EEC92A /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+				35BA4A3E2DE8641200EEC92A /* ProfileScreen.swift */,
+			);
+			path = Profile;
+			sourceTree = "<group>";
+		};
+		35BA4A402DE86E7100EEC92A /* SendGift */ = {
+			isa = PBXGroup;
+			children = (
+				35BA4A412DE86E8300EEC92A /* SendGiftScreen.swift */,
+			);
+			path = SendGift;
+			sourceTree = "<group>";
+		};
+		35BA4A432DE870C500EEC92A /* CreateProduct */ = {
+			isa = PBXGroup;
+			children = (
+				35BA4A442DE870DB00EEC92A /* CreateProductScreen.swift */,
+			);
+			path = CreateProduct;
+			sourceTree = "<group>";
+		};
+		35BA4A462DE878E300EEC92A /* SalesFormat */ = {
+			isa = PBXGroup;
+			children = (
+				35BA4A472DE878F900EEC92A /* SalesFormatScreen.swift */,
+			);
+			path = SalesFormat;
+			sourceTree = "<group>";
+		};
+		35BA4A492DE87C1100EEC92A /* Add Product */ = {
+			isa = PBXGroup;
+			children = (
+				35BA4A4A2DE87C2300EEC92A /* AddProductScreen.swift */,
+			);
+			path = "Add Product";
+			sourceTree = "<group>";
+		};
+		35BA4A4C2DE8805800EEC92A /* ReferAndEarn */ = {
+			isa = PBXGroup;
+			children = (
+				35BA4A4D2DE8806A00EEC92A /* ReferEarnScreen.swift */,
+			);
+			path = ReferAndEarn;
+			sourceTree = "<group>";
+		};
+		35BA4A4F2DE883BE00EEC92A /* CompleteProfile */ = {
+			isa = PBXGroup;
+			children = (
+				35BA4A502DE883E800EEC92A /* CompleteProfileScreen.swift */,
+			);
+			path = CompleteProfile;
+			sourceTree = "<group>";
+		};
 		35CCE00F2DD876AC00760CEE /* Schedule */ = {
 			isa = PBXGroup;
 			children = (
+				35CCE0192DD8780600760CEE /* ViewModel */,
+				35CCE0182DD877FC00760CEE /* Model */,
 				3576EACF2DDDA0E800177C7D /* ShowTitleTips.swift */,
 				358B9D142DDEFB9900932250 /* SelectShowScreen.swift */,
 				3576EAD32DDDD96900177C7D /* SelectThumbnailScreen.swift */,
-				35CCE0192DD8780600760CEE /* ViewModel */,
-				35CCE0182DD877FC00760CEE /* Model */,
 				35CCE0162DD8774000760CEE /* LetsPrepare.swift */,
 				35CCE0142DD876CD00760CEE /* HowToSell.swift */,
 				354163892DDB178300026B34 /* ShowTips.swift */,
@@ -2186,6 +2256,13 @@
 		D4B6160D2DE8622100924A3D /* NonLinkedSceen */ = {
 			isa = PBXGroup;
 			children = (
+				35BA4A4F2DE883BE00EEC92A /* CompleteProfile */,
+				35BA4A4C2DE8805800EEC92A /* ReferAndEarn */,
+				35BA4A492DE87C1100EEC92A /* Add Product */,
+				35BA4A462DE878E300EEC92A /* SalesFormat */,
+				35BA4A432DE870C500EEC92A /* CreateProduct */,
+				35BA4A402DE86E7100EEC92A /* SendGift */,
+				35BA4A3D2DE8638400EEC92A /* Profile */,
 				D4CAEC7E2DE7120900705CD7 /* More */,
 				D4B616072DE8612300924A3D /* SellerVerification */,
 				D4B616172DE86C9700924A3D /* OrderStatus */,
@@ -3437,7 +3514,9 @@
 				D4E569D72DD46BA10005A78E /* LanguageManager.swift in Sources */,
 				D4B615E22DE8312200924A3D /* MakeOfferBottomSheet.swift in Sources */,
 				35987D2B2DE5C7A500D6C2C9 /* PaymentAndShipping Screen.swift in Sources */,
+				35BA4A4E2DE8806A00EEC92A /* ReferEarnScreen.swift in Sources */,
 				35AC64782DD4A8AD00B5E13E /* ListCell.swift in Sources */,
+				35BA4A3F2DE8641200EEC92A /* ProfileScreen.swift in Sources */,
 				D4B615FD2DE83C4800924A3D /* CreateClipBottomSheet.swift in Sources */,
 				99C909292DC8CD790054620B /* NewsScreen.swift in Sources */,
 				355AE96B2DD1D70500CD3D17 /* SignUpModel.swift in Sources */,
@@ -3450,6 +3529,7 @@
 				D4BB9A0F2DE5AB4D00C1BCBC /* OrderCardView.swift in Sources */,
 				99C909D72DC8CDDC0054620B /* LinkedInStatusModel.swift in Sources */,
 				35CCE00E2DD8603700760CEE /* DescriptionFieldView.swift in Sources */,
+				35BA4A4B2DE87C2300EEC92A /* AddProductScreen.swift in Sources */,
 				D4E569CE2DD461120005A78E /* ProfileDetailCell.swift in Sources */,
 				99C909D82DC8CDDC0054620B /* MenuOptionsModal.swift in Sources */,
 				99C909D92DC8CDDC0054620B /* InterviewlistModel.swift in Sources */,
@@ -3490,6 +3570,7 @@
 				99C909E62DC8CDDC0054620B /* CreateCompanyRequest.swift in Sources */,
 				D4CAEC6E2DE6F74A00705CD7 /* AnalyticsModel.swift in Sources */,
 				D4B615F22DE8374E00924A3D /* ProductDetailsModel.swift in Sources */,
+				35BA4A452DE870DB00EEC92A /* CreateProductScreen.swift in Sources */,
 				99C909E72DC8CDDC0054620B /* LoginResponseModel.swift in Sources */,
 				D4BB99EB2DE5890D00C1BCBC /* OffersScreen.swift in Sources */,
 				99C909E82DC8CDDC0054620B /* JobDetailResponse.swift in Sources */,
@@ -3521,6 +3602,7 @@
 				D4CAEC702DE6FF1400705CD7 /* ToolGridAnalyticsView.swift in Sources */,
 				D4B615F32DE8374E00924A3D /* ProductDetailSheet.swift in Sources */,
 				99C909452DC8CD790054620B /* ForgotViewModel.swift in Sources */,
+				35BA4A512DE883E800EEC92A /* CompleteProfileScreen.swift in Sources */,
 				D4CDF2A32DD21A6F00DA8161 /* SegmentedControlView.swift in Sources */,
 				99C909502DC8CD790054620B /* SignupViewModel.swift in Sources */,
 				99C909542DC8CD790054620B /* DeleteAccountViweModel.swift in Sources */,
@@ -3593,6 +3675,7 @@
 				99C909B12DC8CD930054620B /* NavigationContainer.swift in Sources */,
 				99C909B22DC8CD930054620B /* APIManager.swift in Sources */,
 				D4CAEC5C2DE6F50600705CD7 /* ReferralCodeCardView.swift in Sources */,
+				35BA4A422DE86E8300EEC92A /* SendGiftScreen.swift in Sources */,
 				D4CAEC572DE6F11F00705CD7 /* AffiliateProgramViewModel.swift in Sources */,
 				D4A7F9092DDDB7CA001FC705 /* AddressesList.swift in Sources */,
 				D4B6162F2DE87AD200924A3D /* BuyerProtectionView.swift in Sources */,
@@ -3653,6 +3736,7 @@
 				D4B6160A2DE8612300924A3D /* SellerVerificationViewModel.swift in Sources */,
 				D4B6160B2DE8612300924A3D /* SellerVerificationModel.swift in Sources */,
 				99C908222DC8CD6A0054620B /* DatePickerPopUp.swift in Sources */,
+				35BA4A482DE878F900EEC92A /* SalesFormatScreen.swift in Sources */,
 				99C908232DC8CD6A0054620B /* UserListCard.swift in Sources */,
 				D4BA32522DDB34CA00FE4FD2 /* InventoryScreen.swift in Sources */,
 				35AC64722DD4827D00B5E13E /* ImageCollectionView.swift in Sources */,
