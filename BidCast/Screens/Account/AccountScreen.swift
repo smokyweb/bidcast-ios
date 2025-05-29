@@ -226,7 +226,7 @@ struct AccountScreen: View {
             .padding(.horizontal,8)
           
             .background(.bg.opacity(0.5))
-            .padding(.bottom,-160)
+            .padding(.bottom,-200)
             
             //MARK: My Account navigation
             CusNavLink(doNavigate: $navigateToAboutUs, destination: AboutUsScreen())

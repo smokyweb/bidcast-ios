@@ -11,7 +11,7 @@ struct TabbarScreen: View {
     @State private var selectedTab = 0
     @State private var showSellSheet = false
     @State private var selectedSellTab: SellTabOption? = nil
-    @State private var navigateToLesson = false
+    @State private var navigateTogetStarted = false
     @State private var navigateTolist = false
     @State private var navigateToseller = false
     @State private var isGift = false
@@ -52,13 +52,39 @@ struct TabbarScreen: View {
                 }
             }
             
-            CusNavLink(doNavigate: $navigateToLesson, destination: CombinedLessonTipsView())
+            CusNavLink(doNavigate: $navigateTogetStarted, destination: GetStartedScreen())
             //CusNavLink(doNavigate: $navigateToLesson, destination: SelectShowScreen())
             CusNavLink(doNavigate: $navigateTolist, destination: ListProductScreen())
             
         }
         //
-      
+        
+        .bottomSheet(
+            isPresented: $showSellSheet,
+            height: screenHeight / 2.6,
+            topBarCornerRadius: 12,
+            contentBackgroundColor: .clear,
+            topBarBackgroundColor: .clear,
+            showTopIndicator: false,
+            onDismiss: {
+                showSellSheet = false
+                
+            },
+            content: {
+                SellScreen { tappedTab in
+                    if tappedTab == .lesson {
+                        navigateTogetStarted = true
+                    } else if tappedTab == .listProduct {
+                        navigateTolist = true
+                    }
+                } onTapCancel: {
+                    showSellSheet = false
+                    
+                }
+                .presentationDetents([.fraction(0.35)])
+            })
+        
+            
         
     }
 }
@@ -323,3 +349,8 @@ struct TabbarScreen: View {
 //            }
 //        )
 //    }
+
+
+
+
+//GetStartedScreen()
