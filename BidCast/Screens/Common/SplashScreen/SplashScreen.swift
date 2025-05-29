@@ -42,10 +42,11 @@ struct SplashScreen: View {
     var body: some View {
         VStack {
             Image(.mainLogo)
-//                .resizable()
-//                .scaledToFill()
-//                .frame(width: screenWidth, height: screenHeight/3)
-                .padding(.top,-screenHeight/3.5)
+                .resizable()
+                .scaledToFill()
+                .frame(width: screenWidth, height: screenHeight)
+//                .padding(.top,-screenHeight/3.5)
+                .padding(.leading,-20)
                 .ignoresSafeArea(.all)
 //                .overlay(alignment: .center, content: {
 //                    Image(.mainLogo)
