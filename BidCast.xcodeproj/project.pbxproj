@@ -229,6 +229,9 @@
 		D4B615FC2DE83C4800924A3D /* CreateClipModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B615F72DE83C4800924A3D /* CreateClipModel.swift */; };
 		D4B615FD2DE83C4800924A3D /* CreateClipBottomSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B615F52DE83C4800924A3D /* CreateClipBottomSheet.swift */; };
 		D4B615FE2DE83C4800924A3D /* CreateClipViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B615F92DE83C4800924A3D /* CreateClipViewModel.swift */; };
+		D4B616082DE8612300924A3D /* SellerVerificationScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B615FF2DE8612300924A3D /* SellerVerificationScreen.swift */; };
+		D4B6160A2DE8612300924A3D /* SellerVerificationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B616052DE8612300924A3D /* SellerVerificationViewModel.swift */; };
+		D4B6160B2DE8612300924A3D /* SellerVerificationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B616032DE8612300924A3D /* SellerVerificationModel.swift */; };
 		D4BA324B2DDB000600FE4FD2 /* SelectCategoryScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BA324A2DDB000600FE4FD2 /* SelectCategoryScreen.swift */; };
 		D4BA324D2DDB03BD00FE4FD2 /* SelectCategoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BA324C2DDB03BD00FE4FD2 /* SelectCategoryViewModel.swift */; };
 		D4BA32522DDB34CA00FE4FD2 /* InventoryScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BA32512DDB34CA00FE4FD2 /* InventoryScreen.swift */; };
@@ -621,6 +624,9 @@
 		D4B615F52DE83C4800924A3D /* CreateClipBottomSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateClipBottomSheet.swift; sourceTree = "<group>"; };
 		D4B615F72DE83C4800924A3D /* CreateClipModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateClipModel.swift; sourceTree = "<group>"; };
 		D4B615F92DE83C4800924A3D /* CreateClipViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateClipViewModel.swift; sourceTree = "<group>"; };
+		D4B615FF2DE8612300924A3D /* SellerVerificationScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SellerVerificationScreen.swift; sourceTree = "<group>"; };
+		D4B616032DE8612300924A3D /* SellerVerificationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SellerVerificationModel.swift; sourceTree = "<group>"; };
+		D4B616052DE8612300924A3D /* SellerVerificationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SellerVerificationViewModel.swift; sourceTree = "<group>"; };
 		D4BA324A2DDB000600FE4FD2 /* SelectCategoryScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectCategoryScreen.swift; sourceTree = "<group>"; };
 		D4BA324C2DDB03BD00FE4FD2 /* SelectCategoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectCategoryViewModel.swift; sourceTree = "<group>"; };
 		D4BA32512DDB34CA00FE4FD2 /* InventoryScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryScreen.swift; sourceTree = "<group>"; };
@@ -887,7 +893,6 @@
 		355AE9722DD1F96D00CD3D17 /* Home */ = {
 			isa = PBXGroup;
 			children = (
-				D4CAEC7E2DE7120900705CD7 /* More */,
 				35987D1C2DE585F000D6C2C9 /* Live Stream */,
 				35987D1F2DE5864900D6C2C9 /* View */,
 			);
@@ -1664,6 +1669,7 @@
 		99C909162DC8CD790054620B /* Screens */ = {
 			isa = PBXGroup;
 			children = (
+				D4B6160D2DE8622100924A3D /* NonLinkedSceen */,
 				355AE97A2DD1FC1300CD3D17 /* Activity */,
 				355AE9792DD1FC0D00CD3D17 /* Sell */,
 				355AE9782DD1FC0400CD3D17 /* Account */,
@@ -2104,6 +2110,49 @@
 				D4B615FA2DE83C4800924A3D /* ViewModel */,
 			);
 			path = CreateClip;
+			sourceTree = "<group>";
+		};
+		D4B616022DE8612300924A3D /* View */ = {
+			isa = PBXGroup;
+			children = (
+				D4B615FF2DE8612300924A3D /* SellerVerificationScreen.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		D4B616042DE8612300924A3D /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				D4B616032DE8612300924A3D /* SellerVerificationModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		D4B616062DE8612300924A3D /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				D4B616052DE8612300924A3D /* SellerVerificationViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		D4B616072DE8612300924A3D /* SellerVerification */ = {
+			isa = PBXGroup;
+			children = (
+				D4B616022DE8612300924A3D /* View */,
+				D4B616042DE8612300924A3D /* Model */,
+				D4B616062DE8612300924A3D /* ViewModel */,
+			);
+			path = SellerVerification;
+			sourceTree = "<group>";
+		};
+		D4B6160D2DE8622100924A3D /* NonLinkedSceen */ = {
+			isa = PBXGroup;
+			children = (
+				D4CAEC7E2DE7120900705CD7 /* More */,
+				D4B616072DE8612300924A3D /* SellerVerification */,
+			);
+			path = NonLinkedSceen;
 			sourceTree = "<group>";
 		};
 		D4BA32492DDAFFD600FE4FD2 /* SelectCategory */ = {
@@ -3402,6 +3451,9 @@
 				99C908202DC8CD6A0054620B /* JobPostDetailScreen.swift in Sources */,
 				D4CAECA92DE7360F00705CD7 /* ShowSummaryModel.swift in Sources */,
 				99C908212DC8CD6A0054620B /* SubscriptionCard.swift in Sources */,
+				D4B616082DE8612300924A3D /* SellerVerificationScreen.swift in Sources */,
+				D4B6160A2DE8612300924A3D /* SellerVerificationViewModel.swift in Sources */,
+				D4B6160B2DE8612300924A3D /* SellerVerificationModel.swift in Sources */,
 				99C908222DC8CD6A0054620B /* DatePickerPopUp.swift in Sources */,
 				99C908232DC8CD6A0054620B /* UserListCard.swift in Sources */,
 				D4BA32522DDB34CA00FE4FD2 /* InventoryScreen.swift in Sources */,
