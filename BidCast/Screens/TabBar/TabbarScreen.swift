@@ -57,34 +57,7 @@ struct TabbarScreen: View {
             
             CusNavLink(doNavigate: $navigateTogetStarted, destination: GetStartedScreen())
             //CusNavLink(doNavigate: $navigateToLesson, destination: SelectShowScreen())
-//            CusNavLink(doNavigate: $navigateTolist, destination: ListProductScreen())
-            CusNavLink(doNavigate: $showSellSheet, destination:  LiveShowTipsScreen(
-                currentStep: 1,
-                totalSteps: 3,
-                tips: [
-                    LiveTip(
-                        title: "Referral Program",
-                        description: "Share your referral code with friends and earn rewards. Both you and your referred friends get special bonuses on their first purchase.",
-                        icon: "video.fill",
-                        iconColor: .blue
-                    ),
-                    LiveTip(
-                        title: "Complete Your Profile",
-                        description: "A complete profile builds trust with buyers. Add a professional photo, detailed bio, and showcase your expertise in your field..",
-                        icon: "mic.fill",
-                        iconColor: .purple
-                    ),
-                    LiveTip(
-                        title: "Read and Eangagged Check",
-                        description: "Promote your upcoming shows on social media. Use our easy sharing tools to post directly to Instagram, Facebook, and Twitter..",
-                        icon: "hammer.fill",
-                        iconColor: .orange
-                    )
-                ],
-                onContinue: {
-                    print("Continue to next step")
-                }
-            ))
+            CusNavLink(doNavigate: $navigateTolist, destination: ListProductScreen())
         }
         //
         
