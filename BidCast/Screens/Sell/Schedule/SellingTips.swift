@@ -38,7 +38,7 @@ struct CombinedLessonTipsView: View {
         VStack(spacing: 0) {
             if !combinedList.isEmpty {
             PrimaryHeader(
-                title: "How It Works".localized,
+                title: "How to Sell".localized,
                 isForLogo : false,
                 leadingImgArr: [.sideArrow],
                 trailingImgArr: [],

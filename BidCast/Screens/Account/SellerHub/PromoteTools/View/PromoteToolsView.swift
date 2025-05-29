@@ -31,6 +31,7 @@ struct PromoteToolsView: View {
         StatItem(value: "12.4k", label: "Views"),
         StatItem(value: "892", label: "Followers")
     ]
+    @State private var navigateToLesson = false
     @Environment(\.presentationMode) var presentationMode
 
     let tools: [ToolItem] = [
@@ -93,7 +94,9 @@ struct PromoteToolsView: View {
                             Text("Get tips and strategies to grow your live shows")
                                 .font(.subheadline)
                                 .foregroundColor(.white.opacity(0.9))
-                            Button(action: {}) {
+                            Button(action: {
+                                navigateToLesson = true
+                            }) {
                                 Text("Start Learning")
                                     .fontWeight(.semibold)
                                     .padding()
@@ -111,6 +114,7 @@ struct PromoteToolsView: View {
                     .padding(.top)
                 }
             }
+        CusNavLink(doNavigate: $navigateToLesson, destination: CombinedLessonTipsView())
     }
 
 }

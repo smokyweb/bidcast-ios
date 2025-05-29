@@ -28,7 +28,7 @@ struct SellerStatusScreen: View {
             VStack(spacing: 0) {
                 // MARK: - Fixed Header
                 PrimaryHeader(
-                    title: "Offers",
+                    title: "Seller Status",
                     isForLogo: true,
                     leadingImgArr: [.appName],
                     trailingImgArr: [.icSetting],

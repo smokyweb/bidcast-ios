@@ -37,6 +37,9 @@ struct AccountScreen: View {
     @State var navigateToPreference : Bool = false
     @State var navigateToPayment : Bool = false
     @State var navigateToTrustedBuyer : Bool = false
+    @State var navigateToPremierShop : Bool = false
+    @State var navigateToAffilateProgram : Bool = false
+    @State var navigateToAnalytics : Bool = false
     
     var viewModal = MenuOptionsViewModal()
     let columns = [
@@ -106,13 +109,25 @@ struct AccountScreen: View {
                                         withAnimation {
                                             navigateToShipping = true
                                         }
+                                    }else if index == 7{
+                                        withAnimation {
+                                            navigateToAffilateProgram = true
+                                        }
                                     }else if index == 8{
-                                    withAnimation {
-                                        navigateToSellerTraining = true
-                                    }
-                                }else if index == 10{
+                                        withAnimation {
+                                            navigateToSellerTraining = true
+                                        }
+                                    }else if index == 9{
+                                        withAnimation {
+                                            navigateToPremierShop = true
+                                        }
+                                    }else if index == 10{
                                         withAnimation {
                                             navigateToSellerStatus = true
+                                        }
+                                    }else if index == 11{
+                                        withAnimation {
+                                            navigateToAnalytics = true
                                         }
                                     }
                                 }
@@ -215,6 +230,7 @@ struct AccountScreen: View {
             
             //MARK: My Account navigation
             CusNavLink(doNavigate: $navigateToAboutUs, destination: AboutUsScreen())
+            CusNavLink(doNavigate: $navigateToPremierShop, destination: PremierShopScreen())
             CusNavLink(doNavigate: $navigateToSales, destination: SalesTaxScreen())
             CusNavLink(doNavigate: $navigateToFAQ, destination: FAQScreen())
             CusNavLink(doNavigate: $navigateToTerms, destination: TermsOfServicesScreen())
@@ -266,6 +282,15 @@ struct AccountScreen: View {
                 )
             ]))
             CusNavLink(doNavigate: $navigateToMyOrder, destination: MyOrdersScreen())
+            CusNavLink(doNavigate: $navigateToAffilateProgram, destination: AffiliateProgramScreen(
+                referralCode: "SELLER2025",
+                stats: ReferralStats(totalReferrals: 0, earnings: 0.0),
+                onShare: {
+                    print("Share link tapped")
+                }
+            ))
+            CusNavLink(doNavigate: $navigateToAnalytics, destination: AnalyticsScreen())
+            
         }
         .edgesIgnoringSafeArea([.top,.bottom])
         .background(.bg.opacity(0.5))

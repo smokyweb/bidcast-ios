@@ -16,68 +16,205 @@ struct TabbarScreen: View {
     @State private var navigateToseller = false
     @ObservedObject var languageManager = LanguageManager.shared
     @Environment(\.presentationMode) var presentationMode
-
+    
+    @State private var showOptions = true
+    @State private var verifiedOnly = false
+    
     var body: some View {
         ZStack {
             TabView(selection: $selectedTab) {
                 NavigationContainer { HomeViewScreen() }
                     .tabItem { Label("Home", systemImage: "house") }
-
+                
                 NavigationContainer { ExploreViewScreen() }
                     .tabItem { Label("Explore", systemImage: "safari.fill") }
-
+                
                 Color.clear
                     .tabItem {
                         Label("Sell",
-                        systemImage: "plus.circle.fill")
+                              systemImage: "plus.circle.fill")
                     }
                     .tag(2)
-    
-
+                
+                
                 NavigationContainer { ActivityScreen() }
                     .tabItem { Label("Activity", systemImage: "suit.heart.fill") }
-
+                
                 NavigationContainer { AccountScreen() }
                     .tabItem { Label("Account", systemImage: "person.fill") }
             }
             .onChange(of: selectedTab) { newTab in
                 if newTab == 2 {
-                    
                     showSellSheet = true
                     selectedTab = 0
                 }
             }
-           
+            
             CusNavLink(doNavigate: $navigateToLesson, destination: CombinedLessonTipsView())
-//            CusNavLink(doNavigate: $navigateToLesson, destination: SelectShowScreen())
+            //            CusNavLink(doNavigate: $navigateToLesson, destination: SelectShowScreen())
             CusNavLink(doNavigate: $navigateTolist, destination: ListProductScreen())
             
         }
         .bottomSheet(
-                    isPresented: $showSellSheet,
-                    height: screenHeight / 2.6,
-                    topBarCornerRadius: 12,
-                    contentBackgroundColor: .clear,
-                    topBarBackgroundColor: .clear,
-                    showTopIndicator: false,
-                    onDismiss: {
-                        showSellSheet = false
-                        
-                    },
-                    content: {
-                        SellScreen { tappedTab in
-                            if tappedTab == .lesson {
-                                navigateToLesson = true
-                            } else if tappedTab == .listProduct {
-                                navigateTolist = true
-                            }
-                        } onTapCancel: {
-                            showSellSheet = false
-                           
-                        }
-                        .presentationDetents([.fraction(0.35)])
+            isPresented: $showSellSheet,
+            height: screenHeight / 2.6,
+            topBarCornerRadius: 12,
+            contentBackgroundColor: .clear,
+            topBarBackgroundColor: .clear,
+            showTopIndicator: false,
+            onDismiss: {
+                showSellSheet = false
+                
+            },
+            content: {
+                SellScreen { tappedTab in
+                    if tappedTab == .lesson {
+                        navigateToLesson = true
+                    } else if tappedTab == .listProduct {
+                        navigateTolist = true
                     }
-                )
-        
+                } onTapCancel: {
+                    showSellSheet = false
+                    
+                }
+                .presentationDetents([.fraction(0.35)])
+            }
+        )
     }
 }
+
+
+
+//
+//    }
+//}
+
+
+//MARK: For MoreOptionsScreen Sheet
+//    .bottomSheet(
+//        isPresented: $showSellSheet,
+//        height: screenHeight * 0.75, // Adjust as needed
+//        topBarCornerRadius: 20,
+//        contentBackgroundColor: Color(.systemBackground),
+//        topBarBackgroundColor: Color(.systemBackground),
+//        showTopIndicator: false,
+//        onDismiss: {
+//            showSellSheet = false
+//        },
+//        content: {
+//            MoreOptionsScreen(
+//                isPresented: $showSellSheet,
+//                isVerifiedBuyersOn: $verifiedOnly,
+//                onEndShow: { print("End Show") },
+//                onCloneItems: { print("Clone Items") },
+//                onTipSettings: { print("Tip Settings") },
+//                onMulticast: { print("Multicast") },
+//                onAddCoupons: { print("Add Coupons") },
+//                onRaid: { print("Raid") },
+//                onCreatePoll: { print("Create Poll") },
+//                onRotateCamera: { print("Rotate Camera") },
+//                onZoomIn: { print("Zoom In") },
+//                onMicToggle: { print("Mic Toggled") }
+//            )
+//        }
+//    )
+
+//MARK: For PromoteShowSheet Sheet
+//    .bottomSheet(isPresented: $showSellSheet, height: screenHeight * 0.75) {
+//        PromoteShowSheet(boosts: exampleBoosts) {
+//            showSellSheet = false
+//        }
+//    }
+//    var exampleBoosts: [ShowBoost] {
+//           [
+//               ShowBoost(
+//                   title: "15 Minute Boost",
+//                   subtitle: "Quick visibility boost",
+//                   description: "Get featured in the top shows for 15 minutes",
+//                   price: "$3.99",
+//                   iconName: "bolt.fill",
+//                   gradient: LinearGradient(colors: [.pink, .purple], startPoint: .topLeading, endPoint: .bottomTrailing),
+//                   action: { print("Selected 15 Minute Boost") }
+//               ),
+//               ShowBoost(
+//                   title: "Full Show Promote",
+//                   subtitle: "Extended visibility",
+//                   description: "Stay featured for your entire show duration",
+//                   price: "$7.99",
+//                   iconName: "star.fill",
+//                   gradient: LinearGradient(colors: [.blue, .teal], startPoint: .topLeading, endPoint: .bottomTrailing),
+//                   action: { print("Selected Full Show Promote") }
+//               ),
+//               ShowBoost(
+//                   title: "Community Boost",
+//                   subtitle: "Power of the crowd",
+//                   description: "Rally your community for massive exposure",
+//                   price: "$12.99",
+//                   iconName: "person.3.fill",
+//                   gradient: LinearGradient(colors: [.orange, .red], startPoint: .topLeading, endPoint: .bottomTrailing),
+//                   action: { print("Selected Community Boost") }
+//               )
+//           ]
+//       }
+
+//MARK: For ShowSummarySheet Sheet
+//    .bottomSheet(
+//        isPresented: $showSellSheet,
+//        height: screenHeight * 0.50,
+//        topBarCornerRadius: 20,
+//        contentBackgroundColor: Color(.systemBackground),
+//        topBarBackgroundColor: Color(.systemBackground),
+//        showTopIndicator: false,
+//        onDismiss: {
+//            showSellSheet = false
+//        },
+//        content: {
+//            ShowSummarySheet(
+//                avatarImage: Image("defaultUser"),
+//                showTitle: "Live Sales",
+//                showDuration: "00:45:22",
+//                estimatedSales: "$4,521",
+//                salesGrowth: "+12.5%",
+//                totalOrders: "127",
+//                orderGrowth: "+8.3%",
+//                onShare: { print("Share tapped") },
+//                onAnalytics: { print("Analytics tapped") },
+//                onSettings: { print("Settings tapped") },
+//                onEndShow: { print("End Show tapped") },
+//                isPresented: $showSellSheet
+//            )
+//        }
+//    )
+
+//MARK: For ShopBottomSheetView Sheet
+//    .bottomSheet(
+//        isPresented: $showSellSheet,
+//        height: screenHeight * 0.85,
+//        topBarCornerRadius: 20,
+//        contentBackgroundColor: Color(.systemBackground),
+//        topBarBackgroundColor: Color(.systemBackground),
+//        showTopIndicator: false,
+//        onDismiss: { showSellSheet = false },
+//        content: {
+//            ShopBottomSheetView(
+//                isPresented: $showSellSheet,
+//                products: [
+//                    Product(imageName: "IMG_1340", title: "iPhone 15 Pro", subtitle: "Starting bid: $999", detail: "05:23:45 left", statusColor: .red),
+//                    Product(imageName: "IMG_1340", title: "AirPods Max", subtitle: "Buy Now: $549", detail: "0 Bids", statusColor: .green)
+//                ]
+//            )
+//        }
+//    )
+
+//MARK: For EndShowBottomSheetView Sheet
+//    .bottomSheet(isPresented: $showSellSheet, height: screenHeight * 0.35) {
+//        EndShowBottomSheetView(
+//            isPresented: $showSellSheet,
+//            onCreateRaid: {
+//                print("Raid Created")
+//            },
+//            onEndShow: {
+//                print("Show Ended")
+//            }
+//        )
+//    }
