@@ -14,6 +14,8 @@ struct TabbarScreen: View {
     @State private var navigateToLesson = false
     @State private var navigateTolist = false
     @State private var navigateToseller = false
+    @State private var isGift = false
+    @State private var promoCode = ""
     @ObservedObject var languageManager = LanguageManager.shared
     @Environment(\.presentationMode) var presentationMode
     
@@ -51,37 +53,46 @@ struct TabbarScreen: View {
             }
             
             CusNavLink(doNavigate: $navigateToLesson, destination: CombinedLessonTipsView())
-            //            CusNavLink(doNavigate: $navigateToLesson, destination: SelectShowScreen())
+            //CusNavLink(doNavigate: $navigateToLesson, destination: SelectShowScreen())
             CusNavLink(doNavigate: $navigateTolist, destination: ListProductScreen())
             
         }
-        .bottomSheet(
-            isPresented: $showSellSheet,
-            height: screenHeight / 2.6,
-            topBarCornerRadius: 12,
-            contentBackgroundColor: .clear,
-            topBarBackgroundColor: .clear,
-            showTopIndicator: false,
-            onDismiss: {
-                showSellSheet = false
-                
-            },
-            content: {
-                SellScreen { tappedTab in
-                    if tappedTab == .lesson {
-                        navigateToLesson = true
-                    } else if tappedTab == .listProduct {
-                        navigateTolist = true
-                    }
-                } onTapCancel: {
-                    showSellSheet = false
-                    
-                }
-                .presentationDetents([.fraction(0.35)])
-            }
-        )
+        //
+      
+        
     }
 }
+
+        
+        
+        
+//        .bottomSheet(
+//            isPresented: $showSellSheet,
+//            height: screenHeight / 2.6,
+//            topBarCornerRadius: 12,
+//            contentBackgroundColor: .clear,
+//            topBarBackgroundColor: .clear,
+//            showTopIndicator: false,
+//            onDismiss: {
+//                showSellSheet = false
+//                
+//            },
+//            content: {
+//                SellScreen { tappedTab in
+//                    if tappedTab == .lesson {
+//                        navigateToLesson = true
+//                    } else if tappedTab == .listProduct {
+//                        navigateTolist = true
+//                    }
+//                } onTapCancel: {
+//                    showSellSheet = false
+//                    
+//                }
+//                .presentationDetents([.fraction(0.35)])
+//            }
+//        )
+//    }
+//}
 
 
 
@@ -215,6 +226,100 @@ struct TabbarScreen: View {
 //            },
 //            onEndShow: {
 //                print("Show Ended")
+//            }
+//        )
+//    }
+
+//MARK: For ShareShowBottomSheetView Sheet
+//    .bottomSheet(isPresented: $showSellSheet,height: screenHeight * 0.80) {
+//        ShareShowBottomSheetView(
+//            isPresented: $showSellSheet,
+//            showTitle: "John's Live Show",
+//            username: "johnsmith",
+//            showImage: Image("icWatch"),
+//            message: "Live auction starting in 5 minutes! Don’t miss out on exclusive items.",
+//            onShare: { platform in
+//                print("Shared to \(platform)")
+//            },
+//            onSavePDF: {
+//                print("PDF Saved")
+//            },
+//            onShareEmail: {
+//                print("Email sent")
+//            }
+//        )
+//        .presentationDetents([.height(500)])
+//        .presentationDragIndicator(.visible)
+//    }
+
+//MARK: For NotifyMeBottomSheet Sheet
+//    .bottomSheet(isPresented: $showSellSheet,height: screenHeight * 0.45) {
+//        NotifyMeBottomSheet(
+//            isPresented: $showSellSheet,
+//            profileImage: Image("defaultUser"),
+//            username: "username",
+//            onNotify: {
+//                print("User wants notifications")
+//            },
+//            onDismiss: {
+//                print("User dismissed")
+//            }
+//        )
+//    }
+
+//MARK: For BuyNowBottomSheetView Sheet
+//    .bottomSheet(isPresented: $showSellSheet, height: screenHeight * 0.98) {
+//        BuyNowBottomSheetView(
+//            isPresented: $showSellSheet,
+//            productImage: Image(systemName: "headphones"),
+//            productTitle: "Premium Wireless Headphones",
+//            productColor: "White",
+//            cardLastDigits: "4242",
+//            shippingAddress: "123 Main St, Apt 4B New York, NY 10001",
+//            subtotal: 299.99,
+//            shipping: 9.99,
+//            tax: 24.00,
+//            onConfirmPurchase: {
+//                print("Purchase confirmed!")
+//                showSellSheet = false
+//            }
+//        )
+//        .presentationDetents([.medium, .large])
+//    }
+
+//MARK: For MakeOfferBottomSheet Sheet
+//    .bottomSheet(isPresented: $showSellSheet, height: screenHeight * 0.85) {
+//           MakeOfferBottomSheet(
+//               isPresented: $showSellSheet,
+//               listedPrice: 1299,
+//               offerOptions: [1039, 1104, 1169, 1234]
+//           ) { selectedOffer in
+//               print("User selected offer: \(selectedOffer ?? 0)")
+//           }
+//       }
+
+
+//MARK: For ProductDetailSheet Sheet
+//    .bottomSheet(isPresented: $showSellSheet, height: screenHeight * 0.95) {
+//        ProductDetailSheet(
+//            productImage: Image("icWatch"),
+//            productTitle: "Canon DSLR",
+//            productPrice: 1299,
+//            condition: "Like New",
+//            location: "New York, NY",
+//            postedTime: "2 days ago",
+//            sellerName: "Sarah Williams",
+//            sellerStatus: "Verified Seller"
+//        )
+//    }
+
+//MARK: For CreateClipBottomSheetView Sheet
+//    .bottomSheet(isPresented: $showSellSheet, height: screenHeight * 0.65) {
+//        CreateClipBottomSheetView(
+//            isPresented: $showSellSheet,
+//            videoURL: URL(string: "https://example.com/video.mp4")!,
+//            onCreateClip: { start, end in
+//                print("Clip range: \(start.seconds) to \(end.seconds)")
 //            }
 //        )
 //    }

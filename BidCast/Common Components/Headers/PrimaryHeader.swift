@@ -42,9 +42,9 @@ struct PrimaryHeader: View {
                                 .renderingMode(.original)
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: isForLogo ? 90 : 30, height: 30)
+                                .frame(width: isForLogo ? 90 : 30, height: isForLogo ? 50 : 30)
                                 .tint(.white)
-                                .padding(.all, 16)
+                                .padding(.all,0)
                         })
                     }
                 }

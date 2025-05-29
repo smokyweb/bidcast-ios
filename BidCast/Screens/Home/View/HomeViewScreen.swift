@@ -30,6 +30,8 @@ struct HomeViewScreen: View {
                     count: .constant(0)
                 )
                 .background(.white)
+                .padding()
+                .frame(height: 70)
                 
                 ScrollView{
                     VStack(alignment: .leading,spacing: 8){
@@ -54,7 +56,7 @@ struct HomeViewScreen: View {
                 
                 CusNavLink(doNavigate: $navigateToLiveStream, destination: LiveStream())
             }
-            .background(.bg.opacity(0.4))
+            .background(.white)
             .edgesIgnoringSafeArea(.top)
             
        
