@@ -8,116 +8,103 @@
 import SwiftUI
 
 enum VerificationStatus {
-    case completed, pending, notStarted
+    case completed, pending
 }
-
-struct VerificationStep: Identifiable {
-    let id = UUID()
-    let title: String
-    let subtitle: String
-    let icon: String
-    var actionTitle: String
-    var status: VerificationStatus
-    var action: () -> Void
-}
-
 
 struct SellerVerificationScreen: View {
-    @Binding var isPresented: Bool
-
-    @State private var steps: [VerificationStep] = []
+    @Environment(\.presentationMode) var presentationMode
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
-            // Header
-            HStack {
-                Button(action: { isPresented = false }) {
-                    Image(systemName: "chevron.left")
-                        .font(.title2)
-                }
-                Text("Seller Verification")
-                    .font(.title3.bold())
-                Spacer()
-            }
+        VStack(spacing: 0) {
+            
+            // Custom Primary Header
+            PrimaryHeader(
+                title: "Seller Verification",
+                isForLogo: false,
+                leadingImgArr: [.icBack],
+                trailingImgArr: [],
+                onClickLeading: { _ in
+                    self.presentationMode.wrappedValue.dismiss()
+                },
+                count: .constant(0)
+            )
+            .background(Color.white)
+            .padding(.horizontal)
+            .frame(height: 70)
 
-            // Progress
-            Text("Verification Progress")
-                .font(.subheadline)
-                .foregroundColor(.gray)
-
-            ProgressView(value: Double(steps.filter { $0.status == .completed }.count),
-                         total: Double(steps.count))
-                .accentColor(.blue)
-
-            Text("\(steps.filter { $0.status == .completed }.count) of \(steps.count)")
-                .font(.caption)
-                .foregroundColor(.gray)
-
-            // Step List
-            ForEach(steps) { step in
-                VStack(alignment: .leading) {
-                    HStack {
-                        Image(systemName: step.icon)
-                            .font(.title3)
-                            .foregroundColor(.blue)
-
-                        VStack(alignment: .leading) {
-                            Text(step.title).bold()
-                            Text(step.subtitle).font(.subheadline).foregroundColor(.gray)
-                        }
-
-                        Spacer()
-
-                        if step.status == .completed {
-                            Image(systemName: "checkmark")
-                                .foregroundColor(.green)
-                        } else {
-                            Button(step.actionTitle) {
-                                step.action()
-                            }
-                            .foregroundColor(.blue)
-                        }
+            ScrollView {
+                VStack(alignment: .leading, spacing: 24) {
+                    
+                    // Progress Section
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Verification Progress")
+                            .font(.subheadline)
+                            .foregroundColor(.gray)
+                        
+                        ProgressView(value: 2, total: 4)
+                            .accentColor(.blue)
+                        
+                        Text("2 of 4")
+                            .font(.caption.bold())
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                            .foregroundColor(.black)
                     }
-                    Divider()
+                    .padding(.horizontal)
+
+                    // ID Verification
+                    VerificationSectionView(
+                        icon: "idcard.fill",
+                        title: "ID Verification",
+                        subtitle: "Upload your ID card & take a selfie",
+                        status: .completed,
+                        actions: ["ID Card", "Selfie"]
+                    )
+
+                    // Phone Verification
+                    VerificationSectionView(
+                        icon: "phone.fill",
+                        title: "Phone Verification",
+                        subtitle: "Verify your phone number",
+                        status: .pending,
+                        actionLabel: "Verify"
+                    )
+
+                    // Payment Method
+                    VerificationSectionView(
+                        icon: "creditcard.fill",
+                        title: "Payment Method",
+                        subtitle: "Add your payment details",
+                        status: .pending,
+                        actionLabel: "Add",
+                        showDashedCard: true
+                    )
+
+                    // Manual Verification
+                    VerificationSectionView(
+                        icon: "person.crop.circle.badge.checkmark",
+                        title: "Manual Verification",
+                        subtitle: "Final review by our team",
+                        statusText: "Pending"
+                    )
                 }
+                .padding()
             }
 
-            // Complete Button
+            // Bottom Action Button
             Button(action: {
-                // Complete Verification Logic
-                isPresented = false
+                print("Complete Verification tapped")
             }) {
                 Text("Complete Verification")
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .padding()
                     .background(Color.blue)
-                    .cornerRadius(12)
+                    .cornerRadius(16)
             }
-
+            .padding()
         }
-        .padding()
-        .background(Color.white)
-        .clipShape(RoundedRectangle(cornerRadius: 20))
-        .onAppear {
-            setupSteps()
-        }
-    }
-
-    private func setupSteps() {
-        steps = [
-            VerificationStep(title: "ID Verification", subtitle: "Upload your ID card & take a selfie", icon: "person.text.rectangle", actionTitle: "ID Card", status: .completed) {
-                print("ID Card tapped")
-            },
-            VerificationStep(title: "Phone Verification", subtitle: "Verify your phone number", icon: "phone.fill", actionTitle: "Verify", status: .notStarted) {
-                print("Verify phone tapped")
-            },
-            VerificationStep(title: "Payment Method", subtitle: "Add your payment details", icon: "creditcard", actionTitle: "Add", status: .notStarted) {
-                print("Add payment method tapped")
-            },
-            VerificationStep(title: "Manual Verification", subtitle: "Final review by our team", icon: "person.crop.circle.badge.checkmark", actionTitle: "Pending", status: .pending) {
-                print("Manual verification tapped")
-            }
-        ]
+        .background(Color(.systemGroupedBackground))
+        .ignoresSafeArea(edges: .bottom)
     }
 }
+
