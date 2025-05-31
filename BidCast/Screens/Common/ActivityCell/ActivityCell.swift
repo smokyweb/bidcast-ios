@@ -35,7 +35,7 @@ struct ActivityCell: View {
                     }
                 }
                 .frame(height: 50)
-                .padding([.top, .bottom], 16)
+                .padding([.top, .bottom], 12)
             }
             
             // ── Second row ─────────────────────────────

@@ -20,18 +20,24 @@ struct HomeViewScreen: View {
     
     var body: some View {
             VStack(spacing:0){
-                PrimaryHeader(
-                    title: "",
-                    isForLogo : true, leadingImgArr: [.appName],
-                    trailingImgArr: [.search,.notification],
-                    onClickLeading: { _ in
-                        self.presentationMode.wrappedValue.dismiss()
-                    },
-                    count: .constant(0)
-                )
-                .background(.white)
-                .padding()
-                .frame(height: 70)
+                VStack{
+                    PrimaryHeader(
+                        title: "",
+                        isForLogo : true, leadingImgArr: [.appName],
+                        trailingImgArr: [.search,.notification],
+                        onClickLeading: { _ in
+                            self.presentationMode.wrappedValue.dismiss()
+                        },
+                        count: .constant(0)
+                    )
+                    .padding(.horizontal,12)
+                    .background(.white)
+                    .frame(height: 40)
+                    
+                   
+                }
+                
+                .padding(.horizontal,12)
                 
                 ScrollView{
                     VStack(alignment: .leading,spacing: 8){
@@ -57,7 +63,7 @@ struct HomeViewScreen: View {
                 CusNavLink(doNavigate: $navigateToLiveStream, destination: LiveStream())
             }
             .background(.white)
-            .edgesIgnoringSafeArea(.top)
+//            .edgesIgnoringSafeArea(.top)
             
        
     }

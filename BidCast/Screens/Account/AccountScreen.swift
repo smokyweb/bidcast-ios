@@ -49,16 +49,21 @@ struct AccountScreen: View {
     
     var body: some View {
         VStack{
-            PrimaryHeader(
-                title: "Account".localized,
-                isForLogo : true, leadingImgArr: [.appName],
-                trailingImgArr: [],
-                onClickLeading: { _ in
-                    self.presentationMode.wrappedValue.dismiss()
-                },
-                count: .constant(0)
-            )
-            .background(.white)
+            VStack{
+                PrimaryHeader(
+                    title: "Account".localized,
+                    isForLogo : true, leadingImgArr: [.appName],
+                    trailingImgArr: [],
+                    onClickLeading: { _ in
+                        self.presentationMode.wrappedValue.dismiss()
+                    },
+                    count: .constant(0)
+                )
+                .padding(.horizontal,12)
+                .background(.white)
+                
+            }.padding(.horizontal,12)
+                .background(.white)
             
             ScrollView(showsIndicators: false){
                 VStack(alignment: .leading,spacing: 4){

@@ -11,7 +11,6 @@ import SwiftUI
 struct BidCastApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject private var appRootManager = AppRootManager()
-    let persistenceController = PersistenceController.shared
     
     init() {
            let appearance = UITabBarAppearance()

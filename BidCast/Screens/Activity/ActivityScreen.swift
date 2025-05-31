@@ -17,18 +17,24 @@ struct ActivityScreen: View {
 //        ZStack{
         VStack(spacing: 0) {
             // Fixed Header
-            PrimaryHeader(
-                title: "Activity",
-                isForLogo : true, leadingImgArr: [.appName],
-                trailingImgArr: [.notification],
-                onClickLeading: { _ in
-                    self.presentationMode.wrappedValue.dismiss()
-                },
-                count: .constant(0)
-            )
-            //.frame(height: 80)
+            VStack{
+                PrimaryHeader(
+                    title: "Activity",
+                    isForLogo : true, leadingImgArr: [.appName],
+                    trailingImgArr: [.notification],
+                    onClickLeading: { _ in
+                        self.presentationMode.wrappedValue.dismiss()
+                    },
+                    count: .constant(0)
+                )
+                //.frame(height: 80)
+                .padding(.horizontal,12)
+                .shadow(radius: 2)
+                .background(Color.white)
+               
+            }
+            .padding(.horizontal,12)
             .background(Color.white)
-            .shadow(radius: 2)
             
             // Scrollable Content
             ScrollView {

@@ -41,30 +41,16 @@ struct PrimaryHeader: View {
                             Image(leadingImgArr[ind])
                                 .renderingMode(.original)
                                 .resizable()
-                                .scaledToFit()
-                                .frame(width: isForLogo ? 90 : 30, height: isForLogo ? 50 : 30)
+                                .aspectRatio(contentMode:isForLogo ? .fill : .fit)
+                                .frame(width: isForLogo ? 70 : 30, height: isForLogo ? 40 : 30)
                                 .tint(.white)
-                                .padding(.all,0)
+                                .padding(.all,isForLogo ? 6 : 0)
                         })
                     }
                 }
                 
                 Spacer()
-                
-//                if showAppIcon {
-//                    Image(.appName)
-//                        .resizable()
-//                        .aspectRatio(contentMode: .fit)
-//                        .frame(height: 25)
-//                        .padding(.leading, CGFloat(trailingImgArr.count) * 38)
-//                        .padding(.trailing, CGFloat(leadingImgArr.count) * 38)
-//                } else {
-//                    Text(title)
-//                        .font(.custom(nunitoBlack, size: 18))
-//                        .foregroundStyle(.white)
-//                        .padding(.leading, CGFloat(trailingImgArr.count) * 38)
-//                        .padding(.trailing, CGFloat(leadingImgArr.count) * 38)
-//                }
+
                 
                 Spacer()
                 
@@ -109,7 +95,7 @@ struct PrimaryHeader: View {
                 }
             }
             .frame(height: 50)
-            .padding(.top, 10)
+            .padding(.top, isForLogo ? 15 : 10)
             .padding(.leading , Leading/2)
             .overlay(alignment: .center, content: {
                 if showAppIcon {
