@@ -12,15 +12,16 @@ struct TitleWithLine: View {
     var title: String = "My Listing"
     var lineLength: CGFloat = 32
     var textColor : Color?
-    var fontValue : CGFloat = 18
+    var fontName : String = poppinsBold
+    var fontValue : CGFloat = 16
     var divderHeight : CGFloat = 5
     
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
-                    .font(.custom(poppinsBold, fixedSize: fontValue))
-                    .bold()
+                    .font(.custom(fontName, fixedSize: fontValue))
+//                    .bold()
                     .foregroundStyle(.text)
                     .foregroundColor(textColor)
                 Divider()

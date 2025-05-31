@@ -26,7 +26,7 @@ struct ExploreViewScreen: View {
     @State var isLoading = false
     
     var body: some View {
-        VStack(spacing:0){
+        VStack(alignment:.leading,spacing:0){
 //            VStack{
 //            PrimaryHeader(
 //                title: "",
@@ -62,20 +62,21 @@ struct ExploreViewScreen: View {
                         SearchView()
                         
                         SingleTitleLabel(title: "Recommended | Popular | All" ,textColor: .black,fontValue: 18.0)
-                        .padding(.horizontal,Leading)
+                        .padding(.horizontal,8)
 //                        let data = self.viewModel.categoryDict?.data ?? [CategoryDataModel]()
                         ForEach(0 ..< categoryList.count, id: \.self) { ind in
 //                            print("\(ind)")
 //                            print(self.title[ind])
                             ListCell(image: categoryList[ind].image ?? "", title: categoryList[ind].name ?? "", vectorImg: .icArrowUp,subLabel : "BidSwipe",tintColot: categoryList[ind].color ?? "")
-                                .padding(.horizontal,Leading)
+                                .padding(.horizontal,8)
                            
                         }
                        
                     }
                    
                 }
-            .padding(.horizontal,Leading)
+            .padding(.top,8)
+            .padding(.horizontal,12)
               
             }
             

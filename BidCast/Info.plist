@@ -24,6 +24,48 @@
 		<string>Poppins-SemiBoldItalic.ttf</string>
 		<string>Poppins-Thin.ttf</string>
 		<string>Poppins-ThinItalic.ttf</string>
+        <string>Roboto-Thin.ttf</string>
+            <string>Roboto-ThinItalic.ttf</string>
+            <string>Roboto-ExtraLight.ttf</string>
+            <string>Roboto-ExtraLightItalic.ttf</string>
+            <string>Roboto-Light.ttf</string>
+            <string>Roboto-LightItalic.ttf</string>
+            <string>Roboto-Regular.ttf</string>
+            <string>Roboto-Italic.ttf</string>
+            <string>Roboto-Medium.ttf</string>
+            <string>Roboto-MediumItalic.ttf</string>
+            <string>Roboto-SemiBold.ttf</string>
+            <string>Roboto-SemiBoldItalic.ttf</string>
+            <string>Roboto-Bold.ttf</string>
+            <string>Roboto-BoldItalic.ttf</string>
+            <string>Roboto-ExtraBold.ttf</string>
+            <string>Roboto-ExtraBoldItalic.ttf</string>
+            <string>Roboto-Black.ttf</string>
+            <string>Roboto-BlackItalic.ttf</string>
+            <string>RobotoCondensed-Light.ttf</string>
+            <string>RobotoCondensed-LightItalic.ttf</string>
+            <string>RobotoCondensed-Regular.ttf</string>
+            <string>RobotoCondensed-Italic.ttf</string>
+            <string>RobotoCondensed-Bold.ttf</string>
+            <string>RobotoCondensed-BoldItalic.ttf</string>
+            <string>RobotoSlab-Thin.ttf</string>
+            <string>RobotoSlab-Light.ttf</string>
+            <string>RobotoSlab-Regular.ttf</string>
+            <string>RobotoSlab-Bold.ttf</string>
+            <string>RobotoMono-Thin.ttf</string>
+            <string>RobotoMono-ThinItalic.ttf</string>
+            <string>RobotoMono-Light.ttf</string>
+            <string>RobotoMono-LightItalic.ttf</string>
+            <string>RobotoMono-Regular.ttf</string>
+            <string>RobotoMono-Italic.ttf</string>
+            <string>RobotoMono-Medium.ttf</string>
+            <string>RobotoMono-MediumItalic.ttf</string>
+            <string>RobotoMono-Bold.ttf</string>
+            <string>RobotoMono-BoldItalic.ttf</string>
+            <string>RobotoMono-SemiBold.ttf</string>
+            <string>RobotoMono-SemiBoldItalic.ttf</string>
+            <string>RobotoFlex-Regular.ttf</string>
+            <string>RobotoFlex-Italic.ttf</string>
 	</array>
 </dict>
 </plist>

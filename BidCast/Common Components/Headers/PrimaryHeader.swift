@@ -252,7 +252,7 @@ struct PrimaryHeader: View {
                 
                 // Title
                 Text(title)
-                    .font(.custom(poppinsBold, fixedSize: 18))
+                    .font(.custom(robotoSemiBold, fixedSize: 18))
                     .fontWeight(.bold)
                     .foregroundColor(.black)
                     .lineLimit(1)

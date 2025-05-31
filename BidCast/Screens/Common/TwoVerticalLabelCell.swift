@@ -13,6 +13,10 @@ struct TwoVerticalLabelCell<T: Hashable & CustomStringConvertible>: View {
     let dataModel : [T]
     let topLabel: (T) -> String
     let bottomLabel: (T) -> String
+    var h1fontname = poppinsSemiBold
+    var h1fontSize = 20.0
+    var h2fontname = poppinsRegular
+    var h2fontSize = 12.0
     
     var body: some View {
         HStack(alignment: .center,spacing: 6){
@@ -20,16 +24,16 @@ struct TwoVerticalLabelCell<T: Hashable & CustomStringConvertible>: View {
                
                 VStack(alignment: .center,spacing: 8){
                     Text(topLabel(index))
-                        .font(.custom(nunitoBold, fixedSize: 28.0))
-                        .bold()
+                        .font(.custom(h1fontname, fixedSize: h1fontSize))
+//                        .bold()
                         .foregroundStyle(.text)
                         .foregroundColor(.black)
                     
                     Text(bottomLabel(index))
-                        .font(.custom(nunitoBlack, fixedSize: 15.0))
-                        .bold()
+                        .font(.custom(h2fontname, fixedSize: h2fontSize))
+//                        .bold()
                         .foregroundStyle(.text)
-                        .foregroundColor(.lightGray)
+                        .foregroundColor(.lightText)
                     
                 }
                 .frame(width: 90, height: 90)

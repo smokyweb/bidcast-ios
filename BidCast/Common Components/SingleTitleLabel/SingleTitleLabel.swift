@@ -12,13 +12,14 @@ struct SingleTitleLabel: View {
     var title: String = "My Listing"
     var lineLength: CGFloat = 32
     var textColor : Color?
+    var fontName = poppinsSemiBold
     var fontValue : CGFloat = 23
     
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
-                    .font(.custom(poppinsSemiBold, fixedSize: fontValue))
+                    .font(.custom(fontName, fixedSize: fontValue))
                     .foregroundStyle(.text)
                     .foregroundColor(textColor)
             }

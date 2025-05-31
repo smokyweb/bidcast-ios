@@ -17,41 +17,55 @@ struct ActivityScreen: View {
 //        ZStack{
         VStack(spacing: 0) {
             // Fixed Header
+//            VStack{
+//                PrimaryHeader(
+//                    title: "Activity",
+//                    isForLogo : true, leadingImgArr: [.appName],
+//                    trailingImgArr: [.notification],
+//                    onClickLeading: { _ in
+//                        self.presentationMode.wrappedValue.dismiss()
+//                    },
+//                    count: .constant(0)
+//                )
+//                //.frame(height: 80)
+//                .padding(.horizontal,12)
+//                .shadow(radius: 2)
+//                .background(Color.white)
+//               
+//            }
+//            .padding(.horizontal,12)
+//            .background(Color.white)
             VStack{
                 PrimaryHeader(
                     title: "Activity",
-                    isForLogo : true, leadingImgArr: [.appName],
+                    isForLogo: true,
+                    leadingImgArr: [.appName], // logo on left
                     trailingImgArr: [.notification],
-                    onClickLeading: { _ in
+                    onClickLeading: { index in
                         self.presentationMode.wrappedValue.dismiss()
+                        // maybe open menu or do nothing
                     },
+                    onClickTrailing: nil,
                     count: .constant(0)
                 )
-                //.frame(height: 80)
-                .padding(.horizontal,12)
-                .shadow(radius: 2)
-                .background(Color.white)
                
             }
-            .padding(.horizontal,12)
-            .background(Color.white)
-            
             // Scrollable Content
             ScrollView {
                 VStack(spacing: 20) {
                     SegmentedControlView(
                         segments: Segment.allCases,
                         selectedSegment: $selected,
-                        isWithBorder: false
+                        isWithBorder: false,fontTitle: robotoMedium, fontSize: 14.0
                     )
-                    .frame(height: 40)
+//                    .frame(height: 40)
                     ActivityCell(isFor: selected.rawValue)
                 }
             }
-            .padding()
+            .padding(.horizontal,8)
         }
         .background(Color(.systemGroupedBackground))
-        .edgesIgnoringSafeArea(.top)
+//        .edgesIgnoringSafeArea(.top)
     }
 }
 

@@ -14,7 +14,9 @@ struct CustomSegmentedControl<T: Hashable & CustomStringConvertible>: View {
     @Binding var preselectedIndex: T
     var options: [T]
     // this color is coming theme library
-    let color = Color.bg
+    let color = Color.bg.opacity(0.5)
+    var fontName = poppinsMedium
+    var fontSize = 16.0
 
     var body: some View {
         HStack(spacing: 0) {
@@ -38,6 +40,7 @@ struct CustomSegmentedControl<T: Hashable & CustomStringConvertible>: View {
                
                 .overlay(
                     Text(option.description)
+                        .font(.custom(fontName, size: fontSize))
                         .foregroundColor(preselectedIndex == option ? .black : .gray)
                 )
             }

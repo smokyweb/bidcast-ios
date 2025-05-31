@@ -45,6 +45,62 @@ let poppinsSemiBoldItalic = "Poppins-SemiBoldItalic"
 let poppinsThin = "Poppins-Thin"
 let poppinsThinItalic = "Poppins-ThinItalic"
 
+
+
+// Roboto Core
+let robotoThin = "Roboto-Thin"
+let robotoThinItalic = "Roboto-ThinItalic"
+let robotoExtraLight = "Roboto-ExtraLight"
+let robotoExtraLightItalic = "Roboto-ExtraLightItalic"
+let robotoLight = "Roboto-Light"
+let robotoLightItalic = "Roboto-LightItalic"
+let robotoRegular = "Roboto-Regular"
+let robotoItalic = "Roboto-Italic"
+let robotoMedium = "Roboto-Medium"
+let robotoMediumItalic = "Roboto-MediumItalic"
+let robotoSemiBold = "Roboto-SemiBold"
+let robotoSemiBoldItalic = "Roboto-SemiBoldItalic"
+let robotoBold = "Roboto-Bold"
+let robotoBoldItalic = "Roboto-BoldItalic"
+let robotoExtraBold = "Roboto-ExtraBold"
+let robotoExtraBoldItalic = "Roboto-ExtraBoldItalic"
+let robotoBlack = "Roboto-Black"
+let robotoBlackItalic = "Roboto-BlackItalic"
+
+// Roboto Condensed
+let robotoCondensedLight = "RobotoCondensed-Light"
+let robotoCondensedLightItalic = "RobotoCondensed-LightItalic"
+let robotoCondensedRegular = "RobotoCondensed-Regular"
+let robotoCondensedItalic = "RobotoCondensed-Italic"
+let robotoCondensedBold = "RobotoCondensed-Bold"
+let robotoCondensedBoldItalic = "RobotoCondensed-BoldItalic"
+
+// Roboto Slab
+let robotoSlabThin = "RobotoSlab-Thin"
+let robotoSlabLight = "RobotoSlab-Light"
+let robotoSlabRegular = "RobotoSlab-Regular"
+let robotoSlabBold = "RobotoSlab-Bold"
+
+// Roboto Mono
+let robotoMonoThin = "RobotoMono-Thin"
+let robotoMonoThinItalic = "RobotoMono-ThinItalic"
+let robotoMonoLight = "RobotoMono-Light"
+let robotoMonoLightItalic = "RobotoMono-LightItalic"
+let robotoMonoRegular = "RobotoMono-Regular"
+let robotoMonoItalic = "RobotoMono-Italic"
+let robotoMonoMedium = "RobotoMono-Medium"
+let robotoMonoMediumItalic = "RobotoMono-MediumItalic"
+let robotoMonoBold = "RobotoMono-Bold"
+let robotoMonoBoldItalic = "RobotoMono-BoldItalic"
+let robotoMonoSemiBold = "RobotoMono-SemiBold"
+let robotoMonoSemiBoldItalic = "RobotoMono-SemiBoldItalic"
+
+// Optional (if you have Flex or Variable)
+let robotoFlex = "RobotoFlex-Regular"
+let robotoFlexItalic = "RobotoFlex-Italic"
+
+
+
 let Leading = 16.0
 let Trailing = 16.0
 let flotingLabel = 13.0

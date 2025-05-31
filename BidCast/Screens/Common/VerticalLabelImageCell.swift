@@ -12,6 +12,9 @@ import SwiftUI
 struct VerticalLabelImageCell: View {
     let topLabel : ImageResource
     let bottomLabel: String
+    
+    var fontName = poppinsRegular
+    var fontSize = 14.0
     var onTap: (() -> Void)? = nil
     
     var body: some View {
@@ -26,10 +29,10 @@ struct VerticalLabelImageCell: View {
                             .frame(width: 32, height: 32)
                         
                         Text(bottomLabel)
-                            .font(.custom(nunitoBlack, fixedSize: 15.0))
-                            .bold()
+                            .font(.custom(fontName, fixedSize: fontSize))
+//                            .bold()
                             .foregroundStyle(.text)
-                            .foregroundColor(.lightGray)
+                            .foregroundColor(.black)
                         
                     }
                     .frame(height: 100)

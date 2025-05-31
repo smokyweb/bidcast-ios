@@ -12,6 +12,8 @@ struct SegmentedControlView<T: Hashable & CustomStringConvertible>: View {
     @Binding var selectedSegment: T
     var isWithBorder: Bool = false
     var onSegmentChanged: ((T) -> Void)?
+    var fontTitle : String = poppinsRegular
+    var fontSize : Double = 14.0
     
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) { // Make the HStack scrollable
@@ -24,13 +26,19 @@ struct SegmentedControlView<T: Hashable & CustomStringConvertible>: View {
                             onSegmentChanged?(segment)
                         }) {
                             Text(segment.description)
-                                .padding()
-                                .font(.custom(poppinsRegular, size: 16.0))
-                                .frame(maxWidth: .infinity)
-                                .background(getBackgroundColor(for: segment))
+                                .font(.custom(fontTitle, size: fontSize))
                                 .foregroundColor(getForegroundColor(for: segment))
-                                .clipShape(Capsule())
+                                .padding(.vertical, 6)
+                                .padding(.horizontal, 6)
+                                .background(
+                                    Capsule()
+                                        .fill(getBackgroundColor(for: segment))
+                                )
+                               
                         }
+                        
+                        .frame(height: 40)
+                        .padding(.vertical,2)
                         
                         // Line under selected segment
                         if !isWithBorder {
@@ -44,7 +52,7 @@ struct SegmentedControlView<T: Hashable & CustomStringConvertible>: View {
                     }
                 }
             }
-            .padding(.horizontal) // Add horizontal padding around the entire HStack for spacing
+//            .padding(.horizontal) // Add horizontal padding around the entire HStack for spacing
         }
         .frame(maxWidth: .infinity) // Make sure it takes up full width
     }

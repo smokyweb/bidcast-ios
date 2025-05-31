@@ -4,31 +4,36 @@
 //
 //  Created by Ankit-JAM-E-294 on 14/05/25.
 //
-
-import Foundation
-import SwiftUICore
+//
+//  SearchView.swift
+//  BidCast
+//
+//  Created by Ankit-JAM-E-294 on 14/05/25.
+//
 import SwiftUI
+import SwiftUICore
 
 struct SearchView: View {
-    @State var searchText: String = ""
+    @State private var searchText: String = ""
     var onSubmitClick: ((String) -> Void)?
     
     var body: some View {
-        HStack(spacing: 0) {
+        HStack(spacing: 10) {
+            // Search Icon
             Image(.search)
                 .renderingMode(.template)
                 .resizable()
                 .scaledToFit()
                 .frame(width: 20, height: 20)
                 .foregroundStyle(.black.opacity(0.5))
-                .padding(.all, 10)
-                .background(.gray.opacity(0.15))
+                .padding(10)
+                .background(Color.gray.opacity(0.15))
                 .clipShape(Circle())
+                .accessibilityHidden(true)
             
-            Spacer()
-            
+            // Text Field
             TextField("Search for...", text: $searchText)
-                .font(.custom(nunitoMedium, fixedSize: 14))
+                .font(.custom(poppinsMedium, fixedSize: 14))
                 .keyboardType(.default)
                 .autocorrectionDisabled(true)
                 .autocapitalization(.none)
@@ -36,18 +41,28 @@ struct SearchView: View {
                 .accentColor(.text)
                 .submitLabel(.search)
                 .onSubmit {
-                    self.onSubmitClick?(searchText)
+                    onSubmitClick?(searchText)
                 }
+                .accessibilityLabel("Search field")
+                .accessibilityHint("Enter keywords to search")
             
-            Spacer()
-            
-            
+            // Clear Button
+            if !searchText.isEmpty {
+                Button(action: {
+                    searchText = ""
+                }) {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundColor(.gray)
+                        .frame(width: 20, height: 20)
+                }
+                .accessibilityLabel("Clear search text")
+            }
         }
-        .frame(width: screenWidth - 30)
-        .padding(.all, 4)
-        .background(.bg)
-        .cornerRadius(8)
-        .shadow(color: .black, radius: 1)
-        .padding(.all)
+        .padding(.horizontal, 8)
+        .frame(height: 50)
+        .background(Color.bg.opacity(0.4))
+        .cornerRadius(12)
+        .shadow(color: .gray.opacity(0.3), radius: 1, x: 0, y: 1)
+//        .padding(.horizontal)
     }
 }

@@ -10,7 +10,8 @@ import SwiftUI
 struct MenuCell: View {
     var title : String = "About Us"
     var textColor : Color?
-    var fontValue : CGFloat = 23
+    var fontName = poppinsMedium
+    var fontValue : CGFloat = 16.0
     var menuImg : String = "defaultUser"
     var vectorImg : ImageResource = .vacation
     var isSelectable : Bool = false
@@ -29,8 +30,8 @@ struct MenuCell: View {
                         .padding(.leading ,10)
                 }
                 Text(title)
-                    .font(.custom(nunitoBlack, fixedSize: fontValue))
-                    .bold()
+                    .font(.custom(fontName, fixedSize: fontValue))
+//                    .bold()
                     .foregroundStyle(.text)
                     .foregroundColor(textColor)
                     .padding(.leading, 10)

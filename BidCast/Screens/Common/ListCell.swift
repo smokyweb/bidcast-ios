@@ -18,6 +18,10 @@ struct ListCell: View {
     var vectorImg : ImageResource?
     var subLabel = "Live"
     var tintColot = ""
+    var titleFontName = poppinsMedium
+    var titleFontSize = 16.0
+    var subLabelFontName = poppinsRegular
+    var subLabelFontSize = 14.0
     var isVectorImgHidden : Bool = false
     var onTapMenuCell: (() -> Void)? = nil
     var body: some View {
@@ -56,14 +60,12 @@ struct ListCell: View {
 //                    .padding(.leading ,10)
                 VStack(alignment: .leading,spacing: 6) {
                     Text(title)
-                        .font(.custom(nunitoBlack, fixedSize: 15.0))
-                        .bold()
+                        .font(.custom(titleFontName, fixedSize: titleFontSize))
                         .foregroundStyle(.black)
                         .foregroundColor(.black)
                         .padding(.leading, 10)
                     Text(subLabel)
-                        .font(.custom(nunitoBlack, fixedSize: 13.0))
-                        .bold()
+                        .font(.custom(subLabelFontName, fixedSize: subLabelFontSize))
                         .foregroundStyle(.black.opacity(0.6))
                         .foregroundColor(.black)
                         .padding(.leading, 10)

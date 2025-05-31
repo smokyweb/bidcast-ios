@@ -25,29 +25,45 @@ struct InventoryScreen: View {
     var body: some View {
         VStack(spacing: 0) {
             // MARK: - Header
-            PrimaryHeader(
-                title: "Inventory".localized,
-                isForLogo: false,
-                leadingImgArr: [.icBack],
-                trailingImgArr: [],
-                onClickLeading: { _ in
-                    self.presentationMode.wrappedValue.dismiss()
-                },
-                count: .constant(0)
-            )
-            .background(Color.white)
-
+//            VStack{
+//                PrimaryHeader(
+//                    title: "Inventory".localized,
+//                    isForLogo: false,
+//                    leadingImgArr: [.icBack],
+//                    trailingImgArr: [],
+//                    onClickLeading: { _ in
+//                        self.presentationMode.wrappedValue.dismiss()
+//                    },
+//                    count: .constant(0)
+//                )
+//                .background(Color.white)
+//            }
+            VStack{
+                PrimaryHeader(
+                    title: "Inventory".localized,
+                    isForLogo: true,
+                    leadingImgArr: [.appName], // logo on left
+                    trailingImgArr: [],
+                    onClickLeading: { index in
+                        self.presentationMode.wrappedValue.dismiss()
+                        // maybe open menu or do nothing
+                    },
+                    onClickTrailing: nil,
+                    count: .constant(0)
+                )
+               
+            }
             // MARK: - Segment
             CustomSegmentedControl(preselectedIndex: $segment, options: InventorySegment.allCases)
-                .padding([.horizontal,.leading,.trailing], 16)
-                .background(Color.white)
+                .padding(.horizontal, 12)
+                .background(Color.bg.opacity(0.5))
                 .onChange(of: segment) { newSegment in
                     fetchInventory(for: newSegment)
                 }
 
             // MARK: - Search
             SearchView()
-                .padding(.horizontal, 16)
+                .padding(.horizontal, 12)
                 .padding(.top, 10)
 
             // MARK: - Inventory List
@@ -55,15 +71,15 @@ struct InventoryScreen: View {
                 VStack(spacing: 12) {
                     ForEach(inventoryList, id: \.id) { inventory in
                         ActiveInventoryScreen(inventory: inventory)
-                            .padding(.horizontal, 10)
+//                            .padding(.horizontal, 10)
                     }
                 }
                 .padding(.top, 10)
-                .padding([.leading, .trailing ], 16)
+                .padding(.horizontal, 12)
             }
         }
-        .edgesIgnoringSafeArea(.top)
-        .background(Color.bg)
+//        .edgesIgnoringSafeArea(.top)
+        .background(Color.bg.opacity(0.5))
         .onAppear {
             observe()
             fetchInventory(for: segment)

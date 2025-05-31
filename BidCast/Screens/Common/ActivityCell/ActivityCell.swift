@@ -25,8 +25,8 @@ struct ActivityCell: View {
                         .padding(.leading, 16)
                     
                     VStack(alignment: .leading, spacing: 0) {
-                        TitleWithLine(title: "Testing", lineLength: 0, textColor: .black, fontValue: 12, divderHeight: 0)
-                        TitleWithLine(title: "TestingTwo", lineLength: 0, textColor: .lightGray, fontValue: 12, divderHeight: 0)
+                        TitleWithLine(title: "Testing", lineLength: 0, textColor: .black,fontName: robotoMedium, fontValue: 16, divderHeight: 0)
+                        TitleWithLine(title: "TestingTwo", lineLength: 0, textColor: .lightGray,fontName: robotoRegular,fontValue: 14, divderHeight: 0)
                     }
                     
                     if isFor != "OffersScreen" {
@@ -49,8 +49,8 @@ struct ActivityCell: View {
                         .padding(.leading, 16)
                     
                     VStack(alignment: .leading, spacing: 0) {
-                        TitleWithLine(title: "Testing", lineLength: 0, textColor: .black, fontValue: 12, divderHeight: 0)
-                        TitleWithLine(title: "TestingTwo", lineLength: 0, textColor: .lightGray, fontValue: 12, divderHeight: 0)
+                        TitleWithLine(title: "Testing", lineLength: 0, textColor: .black,fontName: robotoMedium, fontValue: 16, divderHeight: 0)
+                        TitleWithLine(title: "TestingTwo", lineLength: 0, textColor: .lightGray,fontName: robotoRegular,fontValue: 14, divderHeight: 0)
                         
                         if isFor == "OffersScreen" {
                             TitleWithLine(title: "TestingThree", lineLength: 0, textColor: .lightGray, fontValue: 12, divderHeight: 0)

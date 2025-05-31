@@ -49,25 +49,39 @@ struct AccountScreen: View {
     
     var body: some View {
         VStack{
+//            VStack{
+//                PrimaryHeader(
+//                    title: "Account".localized,
+//                    isForLogo : true, leadingImgArr: [.appName],
+//                    trailingImgArr: [],
+//                    onClickLeading: { _ in
+//                        self.presentationMode.wrappedValue.dismiss()
+//                    },
+//                    count: .constant(0)
+//                )
+//                .padding(.horizontal,12)
+//                .background(.white)
+//                
+//            }.padding(.horizontal,12)
+//                .background(.white)
             VStack{
                 PrimaryHeader(
                     title: "Account".localized,
-                    isForLogo : true, leadingImgArr: [.appName],
+                    isForLogo: true,
+                    leadingImgArr: [.appName], // logo on left
                     trailingImgArr: [],
-                    onClickLeading: { _ in
+                    onClickLeading: { index in
                         self.presentationMode.wrappedValue.dismiss()
+                        // maybe open menu or do nothing
                     },
+                    onClickTrailing: nil,
                     count: .constant(0)
                 )
-                .padding(.horizontal,12)
-                .background(.white)
-                
-            }.padding(.horizontal,12)
-                .background(.white)
-            
+               
+            }
             ScrollView(showsIndicators: false){
                 VStack(alignment: .leading,spacing: 4){
-                    ListCell(image: "defaultUser", title: "John Smith",subLabel : "Seller since 2003",isVectorImgHidden: true)
+                    ListCell(image: "defaultUser", title: "John Smith",subLabel : "Seller since 2003",titleFontName: poppinsSemiBold,titleFontSize: 18.0,subLabelFontName: poppinsRegular,subLabelFontSize: 14.0,isVectorImgHidden: true)
                         .padding(.all,1)
 //                        .padding([.leading,.trailing],18)
                         .frame(height: 80)
@@ -139,7 +153,7 @@ struct AccountScreen: View {
                             }
                         }
 //                        .padding([.leading,.trailing],8)
-                        MenuCell(title: "Vacation Mode", textColor: .black, fontValue: 18.0, menuImg:"vacation", vectorImg: .vacation,isSelectable: true,isTappedSwitch: $isTappedSwitch,
+                        MenuCell(title: "Vacation Mode", textColor: .black, fontValue: 16.0, menuImg:"vacation", vectorImg: .vacation,isSelectable: true,isTappedSwitch: $isTappedSwitch,
                                  onToggle: { newValue in
                             print("Vacation Mode state is now \(newValue ? "ON" : "OFF")")
                         })
@@ -177,7 +191,7 @@ struct AccountScreen: View {
                         
                         ForEach(0 ..< AccountMenuSection.allCases.count,id :\.self) { index in
                             
-                            MenuCell(title: AccountMenuSection.allCases[index].description, textColor: .black, fontValue: 18.0, menuImg:"vacation", vectorImg: .icArrowUp ,isSelectable: false,isTappedSwitch: $isTappedSwitch,
+                            MenuCell(title: AccountMenuSection.allCases[index].description, textColor: .black, fontValue: 16.0, menuImg:"vacation", vectorImg: .icArrowUp ,isSelectable: false,isTappedSwitch: $isTappedSwitch,
                                      onToggle: { newValue in
                                 
                                 print("Vacation Mode state is now \(newValue ? "ON" : "OFF")")
@@ -297,7 +311,7 @@ struct AccountScreen: View {
             CusNavLink(doNavigate: $navigateToAnalytics, destination: AnalyticsScreen())
             
         }
-        .edgesIgnoringSafeArea([.top,.bottom])
+        .edgesIgnoringSafeArea(.bottom)
         .background(.bg.opacity(0.5))
         .bottomSheet(isPresented: $userLogOut, height: screenHeight/2, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: { userLogOut = true }, content: {
             LogOutSheet(onLogoutClick: {
