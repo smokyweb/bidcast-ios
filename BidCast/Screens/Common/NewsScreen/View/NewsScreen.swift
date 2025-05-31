@@ -27,17 +27,17 @@ struct NewsScreen: View {
     var body: some View {
         ZStack {
             VStack(spacing: 0, content: {
-                PrimaryHeader(title: "News",
-                              leadingImgArr: [.sideArrow], trailingImgArr: [.notification,.sideMenu], onClickLeading: { _ in
-                                  self.presentationMode.wrappedValue.dismiss()
-                              }, onClickTrailing: { ind in
-                                  switch ind {
-                                      case 1:
-                                          navigateToMenu = true
-                                      default:
-                                          navigateToNotification = true
-                                  }
-                              }, showAppIcon: true, count: $notiCount)
+//                PrimaryHeader(title: "News",
+//                              leadingImgArr: [.sideArrow], trailingImgArr: [.notification,.sideMenu], onClickLeading: { _ in
+//                                  self.presentationMode.wrappedValue.dismiss()
+//                              }, onClickTrailing: { ind in
+//                                  switch ind {
+//                                      case 1:
+//                                          navigateToMenu = true
+//                                      default:
+//                                          navigateToNotification = true
+//                                  }
+//                              }, showAppIcon: true, count: $notiCount)
                 
                 VStack(alignment: .leading) {
                     ScrollView(showsIndicators: false){

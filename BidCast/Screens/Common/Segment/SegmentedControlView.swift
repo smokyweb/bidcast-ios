@@ -25,6 +25,7 @@ struct SegmentedControlView<T: Hashable & CustomStringConvertible>: View {
                         }) {
                             Text(segment.description)
                                 .padding()
+                                .font(.custom(poppinsRegular, size: 16.0))
                                 .frame(maxWidth: .infinity)
                                 .background(getBackgroundColor(for: segment))
                                 .foregroundColor(getForegroundColor(for: segment))

@@ -18,12 +18,11 @@ struct SingleTitleLabel: View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
-                    .font(.custom(poppinsRegular, fixedSize: fontValue))
-                    .bold()
+                    .font(.custom(poppinsSemiBold, fixedSize: fontValue))
                     .foregroundStyle(.text)
                     .foregroundColor(textColor)
             }
-            .padding([.leading,.trailing], Leading)
+//            .padding(x[.leading,.trailing], Leading)
         }
     }
 }

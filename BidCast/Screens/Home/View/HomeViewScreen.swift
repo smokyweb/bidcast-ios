@@ -21,31 +21,42 @@ struct HomeViewScreen: View {
     var body: some View {
             VStack(spacing:0){
                 VStack{
+//                    PrimaryHeader(
+//                        title: "",
+//                        isForLogo : true, leadingImgArr: [.appName],
+//                        trailingImgArr: [.search,.notification],
+//                        onClickLeading: { _ in
+//                            self.presentationMode.wrappedValue.dismiss()
+//                        },
+//                        count: .constant(0)
+//                    )
+//                    .padding(.horizontal,12)
+//                    .background(.white)
+//                    .frame(height: 40)
                     PrimaryHeader(
                         title: "",
-                        isForLogo : true, leadingImgArr: [.appName],
+                        isForLogo: true,
+                        leadingImgArr: [.appName], // logo on left
                         trailingImgArr: [.search,.notification],
-                        onClickLeading: { _ in
-                            self.presentationMode.wrappedValue.dismiss()
+                        onClickLeading: { index in
+                            // maybe open menu or do nothing
                         },
+                        onClickTrailing: nil,
                         count: .constant(0)
                     )
-                    .padding(.horizontal,12)
-                    .background(.white)
-                    .frame(height: 40)
-                    
                    
                 }
                 
-                .padding(.horizontal,12)
+//                .padding(.leading,16)
+//                .padding(.trailing,12)
                 
                 ScrollView{
                     VStack(alignment: .leading,spacing: 8){
                         SegmentedControlView(segments: HomeButton.allCases, selectedSegment:$selectedButton, isWithBorder: true)
-                        SingleTitleLabel(title: "Live Now | Popular | coming Soon" ,textColor: .black,fontValue: 20.0)
+                        SingleTitleLabel(title: "Live Now | Popular | coming Soon" ,textColor: .black,fontValue: 18.0)
                         LazyVGrid(columns: columns, spacing: 20) {
                                    ForEach(images, id: \.self) { index in
-                                       ImageCollectionView(textSize: 16.0, image: .IMG_2678){
+                                       ImageCollectionView(textSize: 13.0, image: .IMG_2678,categorySize:8, title2Size: 12.0){
                                            print("babumoshai tapped the card!")
                                            navigateToLiveStream = true
                                        }

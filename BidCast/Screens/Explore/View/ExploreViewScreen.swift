@@ -27,41 +27,55 @@ struct ExploreViewScreen: View {
     
     var body: some View {
         VStack(spacing:0){
+//            VStack{
+//            PrimaryHeader(
+//                title: "",
+//                isForLogo : true, leadingImgArr: [.appName],
+//                trailingImgArr: [.search,.notification],
+//                onClickLeading: { _ in
+//                    self.presentationMode.wrappedValue.dismiss()
+//                },
+//                count: .constant(0)
+//            )
+//            .padding(.horizontal,12)
+//            .frame(height: 40)
+//            .background(.white)
+//        }
+//            .padding(.horizontal,12)
+//            .background(.white)
             VStack{
-            PrimaryHeader(
-                title: "",
-                isForLogo : true, leadingImgArr: [.appName],
-                trailingImgArr: [.search,.notification],
-                onClickLeading: { _ in
-                    self.presentationMode.wrappedValue.dismiss()
-                },
-                count: .constant(0)
-            )
-            .padding(.horizontal,12)
-            .frame(height: 40)
-            .background(.white)
-        }
-            .padding(.horizontal,12)
-            .background(.white)
-                
-                ScrollView{
-                    VStack(alignment: .leading,spacing: 8){
+                PrimaryHeader(
+                    title: "",
+                    isForLogo: true,
+                    leadingImgArr: [.appName], // logo on left
+                    trailingImgArr: [.search,.notification],
+                    onClickLeading: { index in
+                        // maybe open menu or do nothing
+                    },
+                    onClickTrailing: nil,
+                    count: .constant(0)
+                )
+               
+            }
+            ScrollView(showsIndicators: false){
+                VStack(alignment: .leading,spacing: 8){
                         SearchView()
                         
-                        SingleTitleLabel(title: "Recommended | Popular | All" ,textColor: .black,fontValue: 20.0)
-//                            .padding([.leading,.trailing],12)
+                        SingleTitleLabel(title: "Recommended | Popular | All" ,textColor: .black,fontValue: 18.0)
+                        .padding(.horizontal,Leading)
 //                        let data = self.viewModel.categoryDict?.data ?? [CategoryDataModel]()
                         ForEach(0 ..< categoryList.count, id: \.self) { ind in
 //                            print("\(ind)")
 //                            print(self.title[ind])
                             ListCell(image: categoryList[ind].image ?? "", title: categoryList[ind].name ?? "", vectorImg: .icArrowUp,subLabel : "BidSwipe",tintColot: categoryList[ind].color ?? "")
-                                .padding(.horizontal,12)
+                                .padding(.horizontal,Leading)
                            
                         }
                        
                     }
                    
-                } .padding(.horizontal,12)
+                }
+            .padding(.horizontal,Leading)
               
             }
             
