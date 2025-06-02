@@ -48,7 +48,9 @@ struct AddressesScreen: View {
                         AddressListCell(address: address,onTapDefault: {
                             print("indexx \(index)")
                             self.viewModel.setDefaultAddress(parameters: AddressDefaultParam(address_id: "\(sampleAddresses[index].id ?? 0)"))
-                        },isDefault: address.is_default ?? false)
+                        },onTapDelete: {
+                            self.viewModel.DeleteAddress(parameters: AddressDefaultParam(address_id:"\(sampleAddresses[index].id ?? 0)"))
+                        }, isDefault: address.is_default ?? false)
                     }
                 }
                 .padding(.top, 16)

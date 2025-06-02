@@ -439,3 +439,10 @@ struct NotifyLiveUserRequest: Encodable{
 }
 
 
+struct ProfileParamRequest : Encodable{
+    var id : String
+}
+
+struct FollowRequest : Encodable {
+    var following_id : String
+}

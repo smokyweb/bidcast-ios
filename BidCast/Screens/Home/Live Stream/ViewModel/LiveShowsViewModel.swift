@@ -7,10 +7,10 @@
 
 import Foundation
 
-final class AddressViewModel {
+final class LiveShowsViewModel {
     
     var addressDict = ResponseModel<AddressModel>()
-    var getAddressDict = ResponseModel<[AddressModel]>()
+    var getLiveShowsDict = ResponseModel<[LiveShowsModel]>()
    
     var requestType = ""
     
@@ -35,19 +35,19 @@ final class AddressViewModel {
     }
     
     
-    func getAddresses() {
+    func getLiveShows() {
         self.eventHandler?(.loading)
         self.requestType = "get"
         APIManager.shared
             .dictionaryRequest(
-                modelType: ResponseModel<[AddressModel]>.self,
-                type: APIEndPoint.getAddress,
+                modelType: ResponseModel<[LiveShowsModel]>.self,
+                type: APIEndPoint.getLiveShows,
                 header: true) {
                     result in
                     self.eventHandler?(.stopLoading)
                     switch result {
                     case .success(let data):
-                        self.getAddressDict = data
+                        self.getLiveShowsDict = data
                         print(data)
                         self.eventHandler?(.dataLoaded)
                         return
@@ -89,7 +89,7 @@ final class AddressViewModel {
                 switch result {
                 case .success(let data):
 //                    self.addressDict = data
-                    self.getAddresses()
+//                    self.getAddresses()
                     self.eventHandler?(.dataLoaded)
                 case .failure(let error):
                     self.eventHandler?(.error(error))
@@ -100,7 +100,7 @@ final class AddressViewModel {
 }
 
 
-extension AddressViewModel {
+extension LiveShowsViewModel {
     
     enum Event {
         case loading

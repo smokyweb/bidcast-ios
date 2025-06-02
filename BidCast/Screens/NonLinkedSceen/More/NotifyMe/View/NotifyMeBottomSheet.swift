@@ -91,7 +91,7 @@ struct NotifyMeBottomSheet: View {
                 }
                 
                 Spacer()
-                CusNavLink(doNavigate: $navToProfile, destination: ProfileScreen())
+//                CusNavLink(doNavigate: $navToProfile, destination: ProfileScreen())
             }
             .padding()
             

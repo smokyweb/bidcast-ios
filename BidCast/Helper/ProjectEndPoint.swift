@@ -34,12 +34,14 @@ enum APIEndPoint{
     case storeAddress(param:AddressRequest)
     case getAddress
     case setDefaultAddress(param:AddressDefaultParam)
-    
-    //MARK: Fazal Changes
     case getPreference
     case updatePreference(param : UpdatePreferenceRequest)
     case notifyLiveUser(param : NotifyLiveUserRequest)
-
+    case deleteAddress(param:AddressDefaultParam)
+    case getLiveShows
+    case getProfileById(param:ProfileParamRequest)
+    case getUserProduct(param : UserProductRequest)
+    case followUnfollow(param:FollowRequest)
     
     //MARK: OLD
     
@@ -188,14 +190,22 @@ extension APIEndPoint: EndPointType {
             return "get-shipping-address"
         case .setDefaultAddress:
             return "set-default-shipping-address"
-            
-            //MARK: Fazal Changes
         case .getPreference:
             return "setting/list"
         case .updatePreference:
             return "setting/store"
         case .notifyLiveUser:
             return "notify-live-user"
+        case .deleteAddress:
+            return "delete-shipping-address"
+        case .getLiveShows:
+            return "get-live-show"
+        case .getProfileById:
+            return "get-profile-by-id"
+        case .getUserProduct:
+                    return "get-user-product"
+        case .followUnfollow:
+            return "follow-unfollow"
             
             //MARK: Old
             
@@ -339,8 +349,10 @@ extension APIEndPoint: EndPointType {
             return "get_jobs?category=\(param.category)&job_title=\(param.job_title)&salary=\(param.salary)"
         case .removeSavedJob:
             return "save-job"
-            
-            
+
+            case .removeSavedJob:
+                return "save-job"
+
         }
     }
     
@@ -399,19 +411,28 @@ extension APIEndPoint: EndPointType {
             return .get
         case .setDefaultAddress:
             return .post
-            
-            //MARK: Fazal Changes
         case .getPreference:
             return .get
         case .updatePreference:
             return .post
         case .notifyLiveUser:
             return .post
+        case .deleteAddress:
+            return .post
+        case .getLiveShows:
+            return .post
+        case .getProfileById:
+            return .post
+        case .getUserProduct:
+            return .post
+        case .followUnfollow(param: let param):
+            return .post
             
             //MARK: Old
             
         case .getProfile:
             return .get
+            
         case .getCategories:
             return .get
             
@@ -614,13 +635,23 @@ extension APIEndPoint: EndPointType {
             return nil
         case .setDefaultAddress(param: let param):
             return param
-            
-            //MARK: Fazal Changes
         case .getPreference:
             return nil
+            
         case .updatePreference(param: let param):
             return param
+            
         case .notifyLiveUser(param: let param):
+            return param
+        case .deleteAddress(param: let param):
+            return param
+        case .getLiveShows:
+            return nil
+        case .getProfileById(param: let param):
+            return param
+        case .getUserProduct(param: let param):
+                    return param
+        case .followUnfollow(param: let param):
             return param
             
             //MARK: Old
@@ -765,10 +796,6 @@ extension APIEndPoint: EndPointType {
             return nil
         case .removeSavedJob(let param):
             return param
-            
-            
-            
-            
             
         }
     }

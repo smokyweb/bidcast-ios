@@ -24,14 +24,21 @@ struct LiveStream: View {
         Comment(username: "trapwoc212", message: "White gold"),
         Comment(username: "trapwoc212", message: "White gold")
     ]
-    
+    @State var id : String = ""
     @GestureState private var dragOffset = CGSize.zero
-    
+    @State var navigateToProfile = false
     @State private var swipeConfirmed = false
     @State private var currentStreamIndex = 0
     @State private var verticalDragOffset = CGSize.zero
     @GestureState private var verticalGestureOffset = CGSize.zero
     let streams = ["Stream 1", "Stream 2", "Stream 3"]
+    
+    var viewModel = LiveShowsViewModel()
+    @State var liveShowsData = [LiveShowsModel]()
+    @State var isLoading: Bool = false
+    @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+    @State var showError: Bool = false
+    @Binding var userId : String
     
     var body: some View {
         GeometryReader { geometry in
@@ -46,6 +53,10 @@ struct LiveStream: View {
                 VStack {
                     // Header with user info and follow button
                     HStack(spacing: 12) {
+                        Button(action:{
+                            id = userId
+                            navigateToProfile = true
+                        }){
                         Image("user1")
                             .resizable()
                             .frame(width: 40, height: 40)
@@ -61,6 +72,7 @@ struct LiveStream: View {
                                     .foregroundColor(.yellow)
                             }
                         }
+                    }
                         Spacer()
                         Button(action: {}) {
                             Text("Follow")
@@ -267,7 +279,48 @@ struct LiveStream: View {
                         }
                     }
             )
+            CusNavLink(doNavigate: $navigateToProfile, destination: ProfileScreen(id:$id))
         }
         .foregroundColor(.white)
+        .onAppear{
+            observe()
+//            self.viewModel.getLiveShows()
+        }
+    }
+    func observe() {
+        self.viewModel.eventHandler = { event in
+            switch event {
+            case .loading:
+                self.isLoading = true
+            case .stopLoading:
+                self.isLoading = false
+            case .dataLoaded:
+                success()
+            case .error(let error):
+                let msg = error?.localizedDescription ?? AppString.error.localized
+                alertType = .sheetType(icon: .alert, title: AppString.error.localized, message: msg, primaryBtnText: "", secondaryBtnText: AppString.ok.localized)
+                showError = true
+            }
+        }
+    }
+
+    func success() {
+        if self.viewModel.requestType == "get"{
+            let response = viewModel.getLiveShowsDict
+            if response.status == "success" {
+                liveShowsData = response.data ?? [LiveShowsModel]()
+                
+            } else {
+                showError = true
+                alertType = .sheetType(
+                    icon: .alert,
+                    title: response.error_type?.capitalized ?? "",
+                    message: response.message?.capitalized ?? "",
+                    primaryBtnText: "",
+                    secondaryBtnText: AppString.ok.localized
+                )
+            }
+            
+        }
     }
 }

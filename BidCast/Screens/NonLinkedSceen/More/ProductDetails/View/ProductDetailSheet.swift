@@ -17,13 +17,11 @@ struct ProductDetailSheet: View {
     @State private var hudMsg = ""
     @State private var showBuyNowSheet = false
     @State private var showMakeOfferSheet = false
+    @State private var selectedImageIndex = 0
 
-    var userProfile: String
-    var userName: String
-    var verifiedOrNot: String
-    var productImage: Image
+    var productImages: [String] // Image URLs or asset names
     var productTitle: String
-    var productPrice: Double
+    var productPrice: String
     var condition: String
     var location: String
     var postedTime: String
@@ -67,11 +65,36 @@ struct ProductDetailSheet: View {
             }
             .padding(.horizontal)
 
-            // Product Image
-            productImage
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(maxHeight: 300)
+            // Image Carousel
+            TabView(selection: $selectedImageIndex) {
+                ForEach(productImages.indices, id: \.self) { index in
+                    let img = productImages[index]
+                    AsyncImage(url: URL(string: img)) { phase in
+                        switch phase {
+                        case .empty:
+                            ProgressView()
+                                .frame(height: 300)
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .scaledToFill()
+                                .frame(height: 300)
+                                .clipped()
+                        case .failure:
+                            Image(systemName: "photo")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(height: 300)
+                                .foregroundColor(.gray)
+                        @unknown default:
+                            EmptyView()
+                        }
+                    }
+                    .tag(index)
+                }
+            }
+            .tabViewStyle(PageTabViewStyle())
+            .frame(height: 300)
 
             // Product Info
             VStack(alignment: .leading, spacing: 12) {
@@ -79,7 +102,7 @@ struct ProductDetailSheet: View {
                     Text(productTitle)
                         .font(.headline)
                     Spacer()
-                    Text("$\(Int(productPrice))")
+                    Text("$\(productPrice)")
                         .font(.title3.bold())
                 }
                 VStack(alignment: .leading, spacing: 6) {
@@ -110,7 +133,6 @@ struct ProductDetailSheet: View {
                             .font(.caption)
                     }
                 }
-
             }
             .padding()
             .background(Color(.systemGray6))
@@ -131,15 +153,15 @@ struct ProductDetailSheet: View {
                         .foregroundColor(.white)
                         .cornerRadius(30)
                 }
-                  .bottomSheet(isPresented: $showBuyNowSheet, height: screenHeight * 0.85) {
-                           MakeOfferBottomSheet(
-                               isPresented: $showBuyNowSheet,
-                               listedPrice: productPrice,
-                               offerOptions: [1039, 1104, 1169, 1234]
-                           ) { selectedOffer in
-                               print("User selected offer: \(selectedOffer ?? 0)")
-                           }
-                       }
+//                  .bottomSheet(isPresented: $showBuyNowSheet, height: screenHeight * 0.85) {
+//                           MakeOfferBottomSheet(
+//                               isPresented: $showBuyNowSheet,
+//                               listedPrice: productPrice,
+//                               offerOptions: [1039, 1104, 1169, 1234]
+//                           ) { selectedOffer in
+//                               print("User selected offer: \(selectedOffer ?? 0)")
+//                           }
+//                       }
                 Button(action: {
                     showMakeOfferSheet.toggle()
                 }) {

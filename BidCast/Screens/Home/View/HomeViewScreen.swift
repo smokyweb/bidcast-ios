@@ -18,21 +18,16 @@ struct HomeViewScreen: View {
            GridItem(.flexible())
        ]
     
+    @State var viewModel = HomeViewModel()
+    @State var liveShowsData = [HomeModel]()
+    @State var isLoading: Bool = false
+    @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+    @State var showError: Bool = false
+    @State var userId = ""
+    
     var body: some View {
             VStack(spacing:0){
                 VStack{
-//                    PrimaryHeader(
-//                        title: "",
-//                        isForLogo : true, leadingImgArr: [.appName],
-//                        trailingImgArr: [.search,.notification],
-//                        onClickLeading: { _ in
-//                            self.presentationMode.wrappedValue.dismiss()
-//                        },
-//                        count: .constant(0)
-//                    )
-//                    .padding(.horizontal,12)
-//                    .background(.white)
-//                    .frame(height: 40)
                     PrimaryHeader(
                         title: "",
                         isForLogo: true,
@@ -47,21 +42,31 @@ struct HomeViewScreen: View {
                    
                 }
                 
-//                .padding(.leading,16)
-//                .padding(.trailing,12)
-                
-                ScrollView{
-                    VStack(alignment: .leading,spacing: 8){
+                ScrollView(showsIndicators:false){
+                    VStack(alignment: .leading,spacing: 4){
                         SegmentedControlView(segments: HomeButton.allCases, selectedSegment:$selectedButton, isWithBorder: true)
                         SingleTitleLabel(title: "Live Now | Popular | coming Soon" ,textColor: .black,fontValue: 18.0)
-                        LazyVGrid(columns: columns, spacing: 20) {
-                                   ForEach(images, id: \.self) { index in
-                                       ImageCollectionView(textSize: 13.0, image: .IMG_2678,categorySize:8, title2Size: 12.0){
+                        LazyVGrid(columns: columns, spacing: 12) {
+//                            let liveData = Array(0..<liveShowsData.count)
+                            ForEach(liveShowsData, id: \.id) { item in
+//                                let item = liveShowsData[index]
+                                
+                                ImageCollectionView(profileImg: item.user?.profile_image ?? "",
+                                                    profileName: item.user?.name ?? "",
+                                                    textSize: 13.0,
+                                                    image: item.thumbnail?.first ?? "",
+                                                    category: item.category?.name ?? "",
+                                                    title2:item.title ?? "",
+                                                    categorySize: 8,
+                                                    title2Size: 12.0){
+                                    
                                            print("babumoshai tapped the card!")
+                                    userId = "\(item.user?.id ?? 0)"
                                            navigateToLiveStream = true
                                        }
                                            .background(.bg)
-                                           .frame(height: 240)
+                                           .frame(maxWidth: .infinity)
+                                           .frame(height: 280)
                                          
                                            .cornerRadius(10)
                                    }
@@ -71,12 +76,52 @@ struct HomeViewScreen: View {
                 .padding([.leading,.trailing],12)
                 .padding(.top , 10)
                 
-                CusNavLink(doNavigate: $navigateToLiveStream, destination: LiveStream())
+                CusNavLink(doNavigate: $navigateToLiveStream, destination: LiveStream(userId : $userId))
             }
             .background(.white)
 //            .edgesIgnoringSafeArea(.top)
+            .onAppear{
+                observe()
+                self.viewModel.getLiveShows()
+            }
             
        
+    }
+    func observe() {
+        self.viewModel.eventHandler = { event in
+            switch event {
+            case .loading:
+                self.isLoading = true
+            case .stopLoading:
+                self.isLoading = false
+            case .dataLoaded:
+                success()
+            case .error(let error):
+                let msg = error?.localizedDescription ?? AppString.error.localized
+                alertType = .sheetType(icon: .alert, title: AppString.error.localized, message: msg, primaryBtnText: "", secondaryBtnText: AppString.ok.localized)
+                showError = true
+            }
+        }
+    }
+
+    func success() {
+        if self.viewModel.requestType == "get"{
+            let response = viewModel.getLiveShowsDict
+            if response.status == "success" {
+                liveShowsData = response.data ?? [HomeModel]()
+                
+            } else {
+                showError = true
+                alertType = .sheetType(
+                    icon: .alert,
+                    title: response.error_type?.capitalized ?? "",
+                    message: response.message?.capitalized ?? "",
+                    primaryBtnText: "",
+                    secondaryBtnText: AppString.ok.localized
+                )
+            }
+            
+        }
     }
 }
 
