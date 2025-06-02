@@ -61,43 +61,31 @@ struct TabbarScreen: View {
         }
         //
         
-//        .bottomSheet(
-//            isPresented: $showSellSheet,
-//            height: screenHeight / 2.6,
-//            topBarCornerRadius: 12,
-//            contentBackgroundColor: .clear,
-//            topBarBackgroundColor: .clear,
-//            showTopIndicator: false,
-//            onDismiss: {
-//                showSellSheet = false
-//                
-//            },
-//            content: {
-//                SellScreen { tappedTab in
-//                    if tappedTab == .lesson {
-//                        navigateTogetStarted = true
-//                    } else if tappedTab == .listProduct {
-//                        navigateTolist = true
-//                    }
-//                } onTapCancel: {
-//                    showSellSheet = false
-//                    
-//                }
-//                .presentationDetents([.fraction(0.35)])
-//            })
-        
-        .bottomSheet(isPresented: $showSellSheet,height: screenHeight * 0.45) {
-               NotifyMeBottomSheet(
-                   isPresented: $showSellSheet,
-                   profileImage: Image("defaultUser"),
-                   username: "username",
-                   onDismiss: {
-                       print("User dismissed")
-                   }
-               )
-           }
-            
-        
+        .bottomSheet(
+            isPresented: $showSellSheet,
+            height: screenHeight / 2.6,
+            topBarCornerRadius: 12,
+            contentBackgroundColor: .clear,
+            topBarBackgroundColor: .clear,
+            showTopIndicator: false,
+            onDismiss: {
+                showSellSheet = false
+                
+            },
+            content: {
+                SellScreen { tappedTab in
+                    if tappedTab == .lesson {
+                        navigateTogetStarted = true
+                    } else if tappedTab == .listProduct {
+                        navigateTolist = true
+                    }
+                } onTapCancel: {
+                    showSellSheet = false
+                    
+                }
+                .presentationDetents([.fraction(0.35)])
+            })
+   
     }
 }
 

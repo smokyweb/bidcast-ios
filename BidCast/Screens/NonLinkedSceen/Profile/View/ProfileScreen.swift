@@ -18,6 +18,7 @@ struct ProfileScreen: View {
     @State var showError: Bool = false
     @State var profileData = ProfileModel()
     @State var showSellSheet = false
+    @State var showNotify = false
    
     @State  var showhud = false
     @State  var hudMsg = ""
@@ -29,7 +30,9 @@ struct ProfileScreen: View {
         VStack(spacing: 0) {
             ScrollView {
                 VStack(spacing: 16) {
-                    ProfileHeaderView(name: profileData.name ?? "", email: profileData.username ?? "", profileImage: profileData.profile_image ?? "", followers: "\(profileData.follower_count ?? 0)", following: "\(profileData.following_count ?? 0)" , bio: profileData.bio ?? "")
+                    ProfileHeaderView(name: profileData.name ?? "", email: profileData.username ?? "", profileImage: profileData.profile_image ?? "", followers: "\(profileData.follower_count ?? 0)", following: "\(profileData.following_count ?? 0)" , bio: profileData.bio ?? "",onTapNotify: {
+                        showNotify = true
+                    })
                     
                     ProfileActionsView(isFollowing: $isFollowing ,
                                        onTapFollow: {
@@ -62,6 +65,16 @@ struct ProfileScreen: View {
                               sellerStatus: "Verified Seller"
                           )
                       }
+            .bottomSheet(isPresented: $showNotify,height: screenHeight * 0.45) {
+                   NotifyMeBottomSheet(
+                       isPresented: $showSellSheet,
+                       profileImage: profileData.profile_image ?? "" ,
+                       username: profileData.username ?? "",
+                       onDismiss: {
+                           print("User dismissed")
+                       }
+                   )
+               }
            
         }
         .onAppear{
@@ -129,6 +142,7 @@ struct ProfileHeaderView: View {
     var followers = "2.4K"
     var following = "856"
     var bio = "Professional photographer specializing in portrait and wedding photography. Available for bookings worldwide."
+    var onTapNotify : () -> () = {}
     var body: some View {
         ZStack(alignment: .topLeading) {
                    // Background image
@@ -210,7 +224,7 @@ struct ProfileHeaderView: View {
                 Spacer()
                 HStack(spacing: 12) {
                             Button(action: {
-                                // Notification action
+                                onTapNotify()
                             }) {
                                 Image(systemName: "bell")
                                     .foregroundColor(.black)

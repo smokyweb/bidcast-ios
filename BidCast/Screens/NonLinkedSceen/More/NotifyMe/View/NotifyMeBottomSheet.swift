@@ -27,7 +27,7 @@ struct NotifyMeBottomSheet: View {
     // MARK: – Inputs from parent
     @Binding var isPresented: Bool
     let userId: Int = 5
-    let profileImage: Image
+    let profileImage: String
     let username: String
     var onDismiss: () -> Void = {}
     
@@ -39,11 +39,27 @@ struct NotifyMeBottomSheet: View {
                 // ---------- HEADER ----------
                 HStack {
                     HStack(spacing: 12) {
-                        profileImage
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 36, height: 36)
-                            .clipShape(Circle())
+                        AsyncImage(url: URL(string: profileImage)) { phase in
+                                           switch phase {
+                                           case .empty:
+                                               ProgressView()
+                                                   .frame(width: 80, height: 80)
+                                           case .success(let image):
+                                               image
+                                                   .resizable()
+                                                   .scaledToFill()
+                                                   .frame(width: 36, height: 36)
+                                                   .clipShape(Circle())
+                                           case .failure:
+                                               Image(systemName: "person.crop.circle.fill")
+                                                   .resizable()
+                                                   .scaledToFill()
+                                                   .frame(width: 36, height: 36)
+                                                   .clipShape(Circle())
+                                           @unknown default:
+                                               EmptyView()
+                                           }
+                                       }
                         
                         Text("@\(username)")
                             .font(.headline)
