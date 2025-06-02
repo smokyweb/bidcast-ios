@@ -6,11 +6,21 @@
 //
 
 import SwiftUI
+import AlertToast
 
 struct ProductDetailSheet: View {
+    @Environment(\.presentationMode) var presentationMode
+    @State private var isLoading = false
+    @State private var showError = false
+    @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+    @State private var showhud = false
+    @State private var hudMsg = ""
     @State private var showBuyNowSheet = false
     @State private var showMakeOfferSheet = false
 
+    var userProfile: String
+    var userName: String
+    var verifiedOrNot: String
     var productImage: Image
     var productTitle: String
     var productPrice: Double
@@ -121,7 +131,15 @@ struct ProductDetailSheet: View {
                         .foregroundColor(.white)
                         .cornerRadius(30)
                 }
-
+                  .bottomSheet(isPresented: $showBuyNowSheet, height: screenHeight * 0.85) {
+                           MakeOfferBottomSheet(
+                               isPresented: $showBuyNowSheet,
+                               listedPrice: productPrice,
+                               offerOptions: [1039, 1104, 1169, 1234]
+                           ) { selectedOffer in
+                               print("User selected offer: \(selectedOffer ?? 0)")
+                           }
+                       }
                 Button(action: {
                     showMakeOfferSheet.toggle()
                 }) {
@@ -135,5 +153,34 @@ struct ProductDetailSheet: View {
             }
             .padding()
         }
+        .onAppear {
+            UIScrollView.appearance().bounces = false
+        }
+        .onDisappear {
+            UIScrollView.appearance().bounces = true
+        }
+        .onFirstAppear {
+            self.isLoading = true
+        }
+        .toast(isPresenting: $showhud) {
+            AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
+        }
+        .bottomSheet(
+            isPresented: $showError,
+            height: screenHeight / 2.3,
+            topBarCornerRadius: 25,
+            showTopIndicator: false
+        ) {
+            CommonBottomSheet(
+                sheetType: $alertType,
+                onPrimaryClick: {
+                    withAnimation { showError = false }
+                },
+                onSecondaryClick: {
+                    withAnimation { showError = false }
+                }
+            )
+        }
     }
 }
+

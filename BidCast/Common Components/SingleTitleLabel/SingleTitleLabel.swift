@@ -23,7 +23,8 @@ struct SingleTitleLabel: View {
                     .foregroundStyle(.text)
                     .foregroundColor(textColor)
             }
-//            .padding(x[.leading,.trailing], Leading)
+           .padding([.leading ,.trailing], Leading)
+            Spacer()
         }
     }
 }

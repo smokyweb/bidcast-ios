@@ -17,7 +17,6 @@ struct ToggleCell: View {
     var body: some View {
         
             HStack{
-                
                 Text(title)
                     .font(.custom(poppinsSemiBold, fixedSize: fontValue))
                     .bold()

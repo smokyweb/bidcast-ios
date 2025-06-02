@@ -83,7 +83,6 @@ struct AccountScreen: View {
                 VStack(alignment: .leading,spacing: 4){
                     ListCell(image: "defaultUser", title: "John Smith",subLabel : "Seller since 2003",titleFontName: poppinsSemiBold,titleFontSize: 18.0,subLabelFontName: poppinsRegular,subLabelFontSize: 14.0,isVectorImgHidden: true)
                         .padding(.all,1)
-//                        .padding([.leading,.trailing],18)
                         .frame(height: 80)
                     
                         CustomSegmentedControl(preselectedIndex: $segment ,
@@ -257,7 +256,7 @@ struct AccountScreen: View {
             CusNavLink(doNavigate: $navigateToContactus, destination: ContactUs())
             CusNavLink(doNavigate: $navigateToAddress, destination: AddressesScreen())
             CusNavLink(doNavigate: $navigateToShipping, destination: ShippingsScreen())
-            CusNavLink(doNavigate: $navigateToPreference, destination: SettingsView())
+            CusNavLink(doNavigate: $navigateToPreference, destination: PreferncesScreen())
             CusNavLink(doNavigate: $navigateToPayment, destination: PaymentAndShipping_Screen())
             CusNavLink(doNavigate: $navigateToTrustedBuyer, destination: VerifyIdentityScreen())
             

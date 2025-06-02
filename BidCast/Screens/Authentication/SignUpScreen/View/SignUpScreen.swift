@@ -16,7 +16,6 @@ struct SignUpScreen: View {
     
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject private var appRootManager: AppRootManager
-    
     @State var isLoading: Bool = false
     @State var searchText = ""
     @State var selectedCountry : String?
@@ -24,13 +23,11 @@ struct SignUpScreen: View {
     @State var request : SignUpRequest = SignUpRequest(firstName: "", lastName: "", email: "", password: "", passwordConf: "", roleID: 2)
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @State var showError: Bool = false
-    
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
     @State var navigateToEmployer: Bool = false
     @State var navigatetoUser: Bool = false
     @State var navigateToLinkedIn: Bool = false
-    
     @State var role: String = ""
     
     var viewModel = SignupViewModel()
@@ -134,8 +131,6 @@ struct SignUpScreen: View {
                 
             }
             .onAppear(){
-                
-                
                 observe()
             }
            

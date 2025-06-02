@@ -20,7 +20,6 @@ struct ForgotScreen: View {
     @State var showError: Bool = false
     @State var isPassword: Bool = false
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
-    
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
     
@@ -29,76 +28,79 @@ struct ForgotScreen: View {
     var body: some View {
         ZStack(alignment: .top) {
             
-            ScrollView(showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 25) {
-                    Color.clear.frame(height: 5)
-                    TitleWithLine(title: AppString.forgetPassword, lineLength: sepratorLine)
-                    SingleTitleLabel(title: AppString.emailAddressNotAssociated.localized ,textColor: .mediumLightGray,fontValue: 13.0)
-                    
-                    AuthTextField(
-                        floatingLabel: AppString.email.localized,
-                        placeholder: AppString.enterEmail.localized,
-                        icon: .icMail,
-                        text: $request.email
-                    ) { email in
-                        self.request.email = email
-                    }.textContentType(.username)
-                    
-                    PrimaryButton(title: AppString.submit.localized, isOutLine: false,onButtonClick: {
-                        UIApplication.shared.endEditing()
+            VStack(spacing: 0) {
+                PrimaryHeader(
+                    title: AppString.forgetPassword.localized,
+                    leadingImgArr: [.icBack],
+                    onClickLeading: { _ in
+                        self.presentationMode.wrappedValue.dismiss()
+                    },
+                    count: .constant(0)
+                )
+
+                ScrollView(showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: 25) {
+                        Color.clear.frame(height: 5)
+                        TitleWithLine(title: AppString.forgetPassword, lineLength: sepratorLine)
+                        SingleTitleLabel(title: AppString.emailAddressNotAssociated.localized, textColor: .mediumLightGray, fontValue: 13.0)
                         
-                        guard !request.email.isEmpty else {
-                            hudMsg = AppString.pleaseEnterEmail.localized
-                            showhud = true
-                            return
+                        AuthTextField(
+                            floatingLabel: AppString.email.localized,
+                            placeholder: AppString.enterEmail.localized,
+                            icon: .icMail,
+                            text: $request.email
+                        ) { email in
+                            self.request.email = email
                         }
+                        .textContentType(.username)
                         
-                        guard request.email.isValidEmail() else {
-                            hudMsg = AppString.pleaseEnterValidEmailAddress.localized
-                            showhud = true
-                            return
-                        }
-                        self.viewModel.forgotEmail(parameters: self.request)
-                    },btnTextColor: .white)
+                        PrimaryButton(
+                            title: AppString.submit.localized,
+                            isOutLine: false,
+                            onButtonClick: {
+                                UIApplication.shared.endEditing()
+                                
+                                guard !request.email.isEmpty else {
+                                    hudMsg = AppString.pleaseEnterEmail.localized
+                                    showhud = true
+                                    return
+                                }
+                                
+                                guard request.email.isValidEmail() else {
+                                    hudMsg = AppString.pleaseEnterValidEmailAddress.localized
+                                    showhud = true
+                                    return
+                                }
+                                self.viewModel.forgotEmail(parameters: self.request)
+                            },
+                            btnTextColor: .white
+                        )
+                    }
+                    .padding(.horizontal)
+                    .padding(.bottom, 32)
                 }
-                .padding(.horizontal)
-                .padding(.bottom, 32)
+                .padding(.top, 20)
             }
-            .padding(.top, 80)
-            
-            // Fixed Header
-            PrimaryHeader(
-                title: AppString.forgetPassword.localized,
-                leadingImgArr: [.icBack],
-                onClickLeading: { _ in
-                    self.presentationMode.wrappedValue.dismiss()
-                },
-                count: .constant(0)
-            )
-            .frame(height: 80)
-            .background(Color.white)
-            
+
             if isLoading {
                 LoadingIndicator()
             }
+
             CusNavLink(doNavigate: $navigateToOTP, destination: VerifyOtpScreen())
         }
         .frame(width: screenWidth, height: screenHeight)
         .onAppear {
             UIScrollView.appearance().bounces = false
+            observe()
         }
-        .onDisappear(perform: {
+        .onDisappear {
             DispatchQueue.main.async {
                 UIScrollView.appearance().bounces = true
             }
-        })
-        .onAppear {
-            observe()
         }
         .onTapGesture {
             UIApplication.shared.endEditing()
         }
-        
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }
@@ -123,7 +125,8 @@ struct ForgotScreen: View {
             )
         }
     }
-    
+
+    //MARK: observe
     func observe() {
         self.viewModel.eventHandler = { event in
             switch event {
@@ -162,5 +165,7 @@ struct ForgotScreen: View {
         }
     }
 }
+
+
 
 

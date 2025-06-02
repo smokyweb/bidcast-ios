@@ -52,8 +52,8 @@ struct LoginScreen: View {
         ScrollView(showsIndicators: false) {
             ZStack {
                 VStack(alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/) {
-                    Image(.mainLogo)
-                        .frame(width: screenWidth - 50, height: screenHeight/3)
+                    Image(.logo1)
+                        .frame(width: screenWidth, height: screenHeight/3)
                         .edgesIgnoringSafeArea(.top)
                     Spacer()
                 }

@@ -39,11 +39,11 @@ struct PrimaryButton: View {
                             .foregroundColor(.black)
                     }
                     .clipShape(RoundedRectangle(cornerRadius: 8.0))
-                    .shadow(color: .gray, radius: 2, x: 0, y: 0)
+//                    .shadow(color: .gray, radius: 2, x: 0, y: 0)
             }else{
                 RoundedRectangle(cornerRadius: cornerRadius)
                     .fill(Color(btnColor))
-                    .shadow(color: .gray, radius: 2, x: 0, y: 0)
+//                    .shadow(color: .gray, radius: 2, x: 0, y: 0)
                     .overlay {
                         HStack{
                             if !imageName.isEmpty {

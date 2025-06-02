@@ -412,3 +412,30 @@ struct AddressRequest : Encodable {
 struct AddressDefaultParam : Encodable {
     var address_id : String
 }
+
+
+struct UpdatePreferenceRequest: Encodable{
+    var country_of_residence: String
+    var direct_message: Int
+    var receive_gifts: Int
+    var enable_private_entry: Int
+    var show_reward_status: Int
+    var show_seller_tools: Int
+    var enable_clips: Int
+    var save_past_shows: Int
+    var activity_status: Int
+    var sync_phone_contacts: Int
+    var suggest_my_account: Int
+    var haptic_feedback: Int
+}
+
+
+struct UserProductRequest: Encodable{
+    var user_id : Int
+}
+
+struct NotifyLiveUserRequest: Encodable{
+    var live_user_id : Int
+}
+
+

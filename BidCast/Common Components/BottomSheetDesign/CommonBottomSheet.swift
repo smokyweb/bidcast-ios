@@ -107,10 +107,10 @@ struct CommonBottomSheet: View {
                 .clipShape(Circle())
             
             Text(sheetType.title)
-                .font(.custom(nunitoBlack, fixedSize: 24))
+                .font(.custom(poppinsBold, fixedSize: 24))
             
             Text(sheetType.message)
-                .font(.custom(nunitoRegular, fixedSize: 16))
+                .font(.custom(poppinsMedium, fixedSize: 16))
                 .padding(.horizontal, 45)
                 .multilineTextAlignment(.center)
             
