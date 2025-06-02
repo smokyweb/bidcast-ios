@@ -18,6 +18,7 @@ struct ProductDetailSheet: View {
     @State private var showBuyNowSheet = false
     @State private var showMakeOfferSheet = false
     @State private var selectedImageIndex = 0
+    var onDismiss: () -> Void = {}
 
     var productImages: [String] // Image URLs or asset names
     var productTitle: String
@@ -32,7 +33,9 @@ struct ProductDetailSheet: View {
         VStack(spacing: 0) {
             // Header
             HStack {
-                Button(action: {}) {
+                Button(action: {
+                    onDismiss()
+                }) {
                     Image(systemName: "chevron.left")
                         .font(.title2)
                         .foregroundColor(.black)
@@ -43,7 +46,9 @@ struct ProductDetailSheet: View {
                         .font(.title2)
                         .foregroundColor(.gray)
                 }
-                Button(action: {}) {
+                Button(action: {
+                    onDismiss()
+                }) {
                     Image(systemName: "xmark.circle.fill")
                         .font(.title2)
                         .foregroundColor(.red)
@@ -153,15 +158,6 @@ struct ProductDetailSheet: View {
                         .foregroundColor(.white)
                         .cornerRadius(30)
                 }
-//                  .bottomSheet(isPresented: $showBuyNowSheet, height: screenHeight * 0.85) {
-//                           MakeOfferBottomSheet(
-//                               isPresented: $showBuyNowSheet,
-//                               listedPrice: productPrice,
-//                               offerOptions: [1039, 1104, 1169, 1234]
-//                           ) { selectedOffer in
-//                               print("User selected offer: \(selectedOffer ?? 0)")
-//                           }
-//                       }
                 Button(action: {
                     showMakeOfferSheet.toggle()
                 }) {
@@ -175,6 +171,7 @@ struct ProductDetailSheet: View {
             }
             .padding()
         }
+
         .onAppear {
             UIScrollView.appearance().bounces = false
         }

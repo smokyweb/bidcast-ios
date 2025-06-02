@@ -25,7 +25,6 @@ struct NotifyMeBottomSheet: View {
     @State private var navToProfile = false
     
     // MARK: – Inputs from parent
-    @Binding var isPresented: Bool
     let userId: Int = 5
     let profileImage: String
     let username: String
@@ -68,11 +67,10 @@ struct NotifyMeBottomSheet: View {
                     
                     Spacer()
                     
-                    Button { closeSheet() } label: {
-                        Image(systemName: "xmark")
+                    Button { onDismiss() } label: {
+                        Image(systemName: "xmark.circle.fill")
                             .foregroundColor(.white)
                             .frame(width: 30, height: 30)
-                            .background(Color.red)
                             .clipShape(Circle())
                     }
                 }
@@ -96,7 +94,7 @@ struct NotifyMeBottomSheet: View {
                             .cornerRadius(30)
                     }
                     
-                    Button { closeSheet() } label: {
+                    Button { onDismiss() } label: {
                         Text("No, thanks")
                             .frame(maxWidth: .infinity)
                             .padding()
@@ -107,7 +105,6 @@ struct NotifyMeBottomSheet: View {
                 }
                 
                 Spacer()
-//                CusNavLink(doNavigate: $navToProfile, destination: ProfileScreen())
             }
             .padding()
             
@@ -144,11 +141,7 @@ struct NotifyMeBottomSheet: View {
         let param = NotifyLiveUserRequest(live_user_id: userId)
         viewModel.notifyLiveUser(parameter: param)
     }
-    
-    private func closeSheet() {
-        onDismiss()
-        isPresented = false
-    }
+
     
     // MARK: – View-model events
     private func observeEvents() {

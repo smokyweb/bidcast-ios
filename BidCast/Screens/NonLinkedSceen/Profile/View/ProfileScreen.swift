@@ -55,6 +55,9 @@ struct ProfileScreen: View {
             .edgesIgnoringSafeArea(.top)
             .bottomSheet(isPresented: $showSellSheet, height: screenHeight * 0.95) {
                           ProductDetailSheet(
+                            onDismiss : {
+                                self.showSellSheet = false
+                            },
                             productImages: productData.images ?? [""],
                             productTitle: productData.title ?? "",
                             productPrice: "\(productData.pricing ?? 0)",
@@ -67,11 +70,10 @@ struct ProfileScreen: View {
                       }
             .bottomSheet(isPresented: $showNotify,height: screenHeight * 0.45) {
                    NotifyMeBottomSheet(
-                       isPresented: $showSellSheet,
                        profileImage: profileData.profile_image ?? "" ,
                        username: profileData.username ?? "",
                        onDismiss: {
-                           print("User dismissed")
+                           self.showNotify = false
                        }
                    )
                }
