@@ -31,7 +31,7 @@ struct DropDownSelection: View {
         VStack(alignment: .leading, spacing: 8) {
             if floatingLabel != "" {
                 Text(floatingLabel)
-                    .font(.custom(nunitoBold, fixedSize: 15))
+                    .font(.custom(poppinsBold, fixedSize: 13))
                     .bold()
                     .foregroundStyle(.text)
                     .multilineTextAlignment(.leading)
@@ -46,7 +46,7 @@ struct DropDownSelection: View {
                     
                     HStack(spacing: 0, content: {
                         Text(selected == "" ? hint : selected )
-                            .font(.custom(nunitoMedium, fixedSize: 16))
+                            .font(.custom(poppinsMedium, fixedSize: 13))
                             .foregroundStyle(selected == "" ? .gray : .text)
                         Spacer()
                         Image(.arrowForward)
@@ -55,7 +55,7 @@ struct DropDownSelection: View {
                             .scaledToFill()
                             .frame(width: 16, height: 16)
                             .foregroundStyle(.text)
-                            .rotationEffect(.init(degrees: showOption ? -90 : 0))
+                            .rotationEffect(.init(degrees: showOption ? 0 : -90))
                         
                     })
                     .padding(.horizontal, 15)
@@ -94,7 +94,7 @@ struct DropDownSelection: View {
                 HStack(spacing: 0, content: {
                     Text(ind)
                         .lineLimit(1)
-                        .font(.custom(nunitoMedium, fixedSize: 16))
+                        .font(.custom(poppinsMedium, fixedSize: 13))
                     Spacer()
 //                    Image(systemName: "checkmark")
 //                        .opacity(selected == ind ? 1 : 0)

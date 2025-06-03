@@ -21,12 +21,16 @@ struct AuthTextField: View {
     var isIconDisplay : Bool = true
     @FocusState var isFocused: Bool
     
-    var enteredText: ((String) -> Void)?
+   
     var isRequiredValue: ((Int) -> Void)?
     var width: CGFloat = screenWidth - 30
     var height: CGFloat = 40
     var cornerRadius : CGFloat = 8.0
     
+    @State var isForCVV: Bool = false
+    @State var isForExpiry: Bool = false
+    @State var isForCardNumber: Bool = false
+    var enteredText: ((String) -> Void)?
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             
@@ -47,8 +51,6 @@ struct AuthTextField: View {
                             .frame(width: 20, height: 20)
                             .foregroundStyle(.text.opacity(0.45))
                             .padding(.all, 10)
-                        //.background(.text.opacity(0.1))
-                        //.clipShape(Circle())
                     }
                     if showPassword && isPassword {
                         SecureField(placeholder, text: $text)
@@ -78,7 +80,39 @@ struct AuthTextField: View {
                             .focused($isFocused)
                             .frame(height: height)
                             .onChange(of: text, perform: { value in
-                                self.enteredText?(value)
+                                var filtered = value.filter { $0.isNumber }
+                                if isForCVV {
+                                        filtered = String(filtered.prefix(3))
+                                    text = filtered
+                                self.enteredText?(text)
+                                    } else if isForExpiry {
+                                        filtered = String(filtered.prefix(4))
+                                        if filtered.count >= 3 {
+                                            let month = filtered.prefix(2)
+                                            let year = filtered.suffix(from: filtered.index(filtered.startIndex, offsetBy: 2))
+                                            filtered = "\(month)/\(year)"
+                                        }
+                                        text = filtered
+                                    self.enteredText?(text)
+                                    } else if isForCardNumber {
+                                        filtered = String(filtered.prefix(16))
+                                        var formatted = ""
+                                        for (index, char) in filtered.enumerated() {
+                                            if index != 0 && index % 4 == 0 {
+                                                formatted.append("-")
+                                            }
+                                            formatted.append(char)
+                                        }
+                                        filtered = formatted
+                                        text = filtered
+                                    self.enteredText?(text)
+                                    } else {
+                                        filtered = String(filtered.prefix(maxDigits))
+                                        self.enteredText?(value)
+                                    }
+
+                                  
+                                
                             })
                             .onSubmit {
                                 self.enteredText?(text)
@@ -118,35 +152,6 @@ struct AuthTextField: View {
                     })
                 }
             })
-//            if isMandatory{
-//                HStack{
-//                    
-//                    Button(action: {
-//                        isRequired.toggle()
-//                        if isRequired{
-//                            self.isRequiredValue?(1)
-//                        }else{
-//                            self.isRequiredValue?(0)
-//                        }
-//                    }, label: {
-//                        Image(systemName: isRequired ? "checkmark.square.fill":"square")
-//                            .renderingMode(.template)
-//                            .resizable()
-//                            .scaledToFit()
-//                            .frame(width: 20, height: 20)
-//                            .foregroundStyle(.text)
-//                        
-//                        Text("It's required")
-//                            .font(.custom(nunitoRegular, fixedSize: 15))
-//                            .foregroundStyle(.text)
-//                    })
-//                    
-//                    Spacer()
-//                    
-//                }
-//                .padding(.top,1.5)
-//                .padding(.leading,0)
-//            }
         }.onTapGesture {
             isFocused = true
         }

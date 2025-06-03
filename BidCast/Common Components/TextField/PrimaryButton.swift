@@ -31,19 +31,19 @@ struct PrimaryButton: View {
             if isOutLine{
                 RoundedRectangle(cornerRadius: cornerRadius)
                     .stroke(Color.white, lineWidth: 2.0)
-                    .background(Color.white)
+                    .background(Color.defaultTheme)
                     .overlay {
                         Text(title)
                             .font(.custom(poppinsBold, fixedSize: buttonTitle))
-                            .bold()
-                            .foregroundColor(.black)
+//                            .bold()
+                            .foregroundColor(.white)
                     }
                     .clipShape(RoundedRectangle(cornerRadius: 8.0))
 //                    .shadow(color: .gray, radius: 2, x: 0, y: 0)
             }else{
                 RoundedRectangle(cornerRadius: cornerRadius)
                     .fill(Color(btnColor))
-//                    .shadow(color: .gray, radius: 2, x: 0, y: 0)
+                    .shadow(color: .gray, radius: 2, x: 0, y: 0)
                     .overlay {
                         HStack{
                             if !imageName.isEmpty {
@@ -55,7 +55,7 @@ struct PrimaryButton: View {
                             }
                             Text(title)
                                 .font(.custom(poppinsBold, fixedSize: buttonTitle))
-                                .bold()
+//                                .bold()
                                 .foregroundColor(btnTextColor)
                             //                                .foregroundStyle()
                         }

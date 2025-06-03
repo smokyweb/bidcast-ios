@@ -27,18 +27,32 @@ struct CreateAddress: View {
     var body: some View {
         VStack(spacing: 0) {
             // Top Header
-            PrimaryHeader(
-                title: "Create New Addresses",
-                isForLogo: false,
-                leadingImgArr: [.icBack],
+//            PrimaryHeader(
+//                title: "Create New Addresses",
+//                isForLogo: false,
+//                leadingImgArr: [.icBack],
+//               
+//                onClickLeading: { _ in
+//                    self.presentationMode.wrappedValue.dismiss()
+//                },
+//                count: .constant(0)
+//            )
+//            .frame(height: 50)
+//            .background(Color.white)
+            VStack{
+                PrimaryHeader(
+                    title: "Create New Address",
+                    isForLogo: false,
+                    leadingImgArr: [.icBack],
+                    onClickLeading: { index in
+                        self.presentationMode.wrappedValue.dismiss()
+                        // maybe open menu or do nothing
+                    },
+                    onClickTrailing: nil,
+                    count: .constant(0)
+                )
                
-                onClickLeading: { _ in
-                    self.presentationMode.wrappedValue.dismiss()
-                },
-                count: .constant(0)
-            )
-            .frame(height: 50)
-            .background(Color.white)
+            }
 
             // Address list with space for bottom button
             ScrollView {
@@ -55,7 +69,7 @@ struct CreateAddress: View {
                             }
                         )
                         .zIndex(1201.0)
-                        .padding([.leading,.trailing],8)
+//                        .padding([.leading,.trailing],8)
                         
                         AuthTextField(
                             floatingLabel: "Name",
@@ -101,12 +115,12 @@ struct CreateAddress: View {
                         )
                         .keyboardType(.numberPad)
                     }
-                    .padding(.horizontal, 16)
+//                    .padding(.horizontal, 16)
                 }
                 .padding(.top, 16)
                 .padding(.bottom, 80)
             }
-            .padding(.horizontal,Leading/2)
+//            .padding(.horizontal,Leading/2)
             .background(Color(.systemGroupedBackground))
 
             //Bottom fixed button
@@ -151,9 +165,9 @@ struct CreateAddress: View {
                 cornerRadius: 12.0, imageName: "",
                 btnTextColor : .black, btnColor: .white
             )
-//            .padding(.vertical, 10)
+            .padding(.vertical, 10)
             .background(Color.white)
-            .padding(.all)
+//            .padding(.all)
             if isLoading{
                 LoadingIndicator()
             }

@@ -45,6 +45,10 @@ enum APIEndPoint{
     
     //MARK: Faz
     case fetchProduct(param : FetchProductRequest)
+    //MARK: Extension
+    case AddCard(param:AddCardRequest)
+    case deleteCard(param:DeleteCardRequest)
+    case getCard
     
     //MARK: OLD
     
@@ -213,6 +217,10 @@ extension APIEndPoint: EndPointType {
             //MARK: Faz
         case .fetchProduct:
             return "fetch-product"
+            //MARK: Extenion
+            
+        case .AddCard:
+            return "add-card"
             
             //MARK: Old
             
@@ -356,10 +364,18 @@ extension APIEndPoint: EndPointType {
             return "get_jobs?category=\(param.category)&job_title=\(param.job_title)&salary=\(param.salary)"
         case .removeSavedJob:
             return "save-job"
-            
         case .removeSavedJob:
             return "save-job"
             
+
+            case .removeSavedJob:
+                return "save-job"
+
+        
+        case .deleteCard:
+            return "delete-card"
+        case .getCard:
+            return "get-card"
         }
     }
     
@@ -432,12 +448,19 @@ extension APIEndPoint: EndPointType {
             return .post
         case .getUserProduct:
             return .post
-        case .followUnfollow(param: let param):
+        case .followUnfollow:
             return .post
             
             //MARK: Faz
         case .fetchProduct:
             return .post
+            //MARK: Extension
+        case .AddCard:
+            return .post
+        case .deleteCard:
+            return .post
+        case .getCard:
+            return .get
             
             //MARK: Old
             
@@ -586,6 +609,9 @@ extension APIEndPoint: EndPointType {
             
             
             
+       
+       
+       
         }
     }
     
@@ -668,6 +694,13 @@ extension APIEndPoint: EndPointType {
             //MARK: Faz
         case .fetchProduct(param: let param):
             return param
+            //MARK: Extenson
+        case .AddCard(param: let param):
+            return param
+        case .deleteCard(param: let param):
+            return param
+        case .getCard:
+            return nil
             
             //MARK: Old
             
@@ -812,6 +845,8 @@ extension APIEndPoint: EndPointType {
         case .removeSavedJob(let param):
             return param
             
+        
+        
         }
     }
     

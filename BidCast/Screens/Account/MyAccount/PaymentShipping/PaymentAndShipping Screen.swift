@@ -37,19 +37,43 @@ struct PaymentAndShipping_Screen: View {
            AddressModel(id: 2, user_id: 101, type: "Office", name: "John Smith", phone_number: "9876543210", street_address: "456 Business Ave, Suite 200", pincode: "10002", is_default: false)
        ]
     @State var navigateToCreateAddress = false
+    @State var navigateToAddCard = false
+    @State var viewModel = AddCardViewModel()
+    
+    @State var showError: Bool = false
+    @State var isLoading: Bool = false
+    @State var showhud: Bool = false
+    @State var hudMsg: String = ""
+    @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+    
       var body: some View {
           VStack {
-              PrimaryHeader(
-                  title: "Preferences".localized,
-                  isForLogo : false, leadingImgArr: [.icBack],
-                  trailingImgArr: [],
-                  onClickLeading: { _ in
-                      self.presentationMode.wrappedValue.dismiss()
-                  },
-                  count: .constant(0)
-              )
-              .background(.white)
-              .frame(height: 50)
+//              PrimaryHeader(
+//                  title: "Preferences".localized,
+//                  isForLogo : false, leadingImgArr: [.icBack],
+//                  trailingImgArr: [],
+//                  onClickLeading: { _ in
+//                      self.presentationMode.wrappedValue.dismiss()
+//                  },
+//                  count: .constant(0)
+//              )
+//              .background(.white)
+//              .frame(height: 50)
+              VStack{
+                  PrimaryHeader(
+                      title: "Payment & Shipping".localized,
+                      isForLogo: false,
+                      leadingImgArr: [.icBack], // logo on left
+                      trailingImgArr: [],
+                      onClickLeading: { index in
+                          self.presentationMode.wrappedValue.dismiss()
+                          // maybe open menu or do nothing
+                      },
+                      onClickTrailing: nil,
+                      count: .constant(0)
+                  )
+                 
+              }
               ScrollView {
                   VStack(spacing: 24) {
                       
@@ -63,7 +87,7 @@ struct PaymentAndShipping_Screen: View {
                           }
                           
                           Button(action: {
-                              // Add payment method action
+                              navigateToAddCard = true
                           }) {
                               Label("Add Payment Method", systemImage: "plus")
                                   .frame(maxWidth: .infinity)
@@ -99,8 +123,72 @@ struct PaymentAndShipping_Screen: View {
                   .padding()
               }
               CusNavLink(doNavigate: $navigateToCreateAddress, destination: CreateAddress())
+              CusNavLink(doNavigate: $navigateToAddCard, destination: AddCardScreen())
+          }
+          .onAppear{
+              observe()
+              
           }
       }
+    func observe() {
+        self.viewModel.eventHandler = { event in
+            switch event {
+            case .loading:
+                self.isLoading = true
+            case .stopLoading:
+                self.isLoading = false
+            case .dataLoaded:
+                success()
+            case .error(let error):
+                let msg = error?.localizedDescription ?? AppString.error.localized
+                alertType = .sheetType(icon: .alert, title: AppString.error.localized, message: msg, primaryBtnText: "", secondaryBtnText: AppString.ok.localized)
+                showError = true
+            }
+        }
+    }
+
+    func success() {
+        if self.viewModel.requestType == "get"{
+            let response = viewModel.cardDict
+            if response.status == "success" {
+                
+                
+            } else {
+                showError = true
+                alertType = .sheetType(
+                    icon: .alert,
+                    title: response.error_type?.capitalized ?? "",
+                    message: response.message?.capitalized ?? "",
+                    primaryBtnText: "",
+                    secondaryBtnText: AppString.ok.localized
+                )
+            }
+            
+        }else{
+            let response = viewModel.addCardDict
+            if response.status == "success" {
+                showError = true
+                alertType = .sheetType(
+                    icon: .alert,
+                    title: response.error_type?.capitalized ?? "",
+                    message: response.message?.capitalized ?? "",
+                    primaryBtnText: AppString.ok.localized,
+                    secondaryBtnText: AppString.ok.localized
+                )
+            } else {
+                showError = true
+                alertType = .sheetType(
+                    icon: .alert,
+                    title: response.error_type?.capitalized ?? "",
+                    message: response.message?.capitalized ?? "",
+                    primaryBtnText: "",
+                    secondaryBtnText: AppString.ok.localized
+                )
+            }
+           
+        }
+    }
+    
   }
 
 #Preview {

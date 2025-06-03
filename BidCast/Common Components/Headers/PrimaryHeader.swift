@@ -242,6 +242,7 @@ struct PrimaryHeader: View {
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
                                     .frame(width: 24, height: 24)
+                                    .tint(.black)
                                     .clipped()
                             }
                         }

@@ -14,6 +14,7 @@ import UIKit
 //import FirebaseCore
 //import GooglePlaces
 import IQKeyboardManagerSwift
+import Stripe
 
 
 
@@ -46,7 +47,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         IQKeyboardManager.shared.isEnabled = true
         IQKeyboardManager.shared.resignOnTouchOutside = true
         IQKeyboardManager.shared.keyboardDistance = 10
-                IQKeyboardManager.shared.enableAutoToolbar = true
+        IQKeyboardManager.shared.enableAutoToolbar = true
+        STPAPIClient.shared.publishableKey = "pk_test_51RQLxjQEbmPLLc7GaDeFTplB9lwTK5t9ZvpHVd1CtK4XtWsmktQvN3hoZW0ZZ0kSu0PFJ6R63D9X3PSMAq8tg5Sh00Vzh05MeU"
         
         if #available(iOS 10.0, *) {
             // For iOS 10 display notification (sent via APNS)

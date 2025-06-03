@@ -68,7 +68,7 @@ struct AddressesScreen: View {
                     navigateToCreate = true
                 },
                 width: screenWidth - 45,
-                cornerRadius: 25.0, imageName: "plus_btn",
+                cornerRadius: 12.0, imageName: "plus_btn",
                 btnTextColor : .black, btnColor: .white
             )
 //            .padding(.vertical, 10)

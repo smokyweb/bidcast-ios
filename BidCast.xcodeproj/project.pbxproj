@@ -61,6 +61,10 @@
 		35BA4A4B2DE87C2300EEC92A /* AddProductScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35BA4A4A2DE87C2300EEC92A /* AddProductScreen.swift */; };
 		35BA4A4E2DE8806A00EEC92A /* ReferEarnScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35BA4A4D2DE8806A00EEC92A /* ReferEarnScreen.swift */; };
 		35BA4A512DE883E800EEC92A /* CompleteProfileScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35BA4A502DE883E800EEC92A /* CompleteProfileScreen.swift */; };
+		35C202502DEEFFE300492F2D /* AddCardScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35C2024F2DEEFFDD00492F2D /* AddCardScreen.swift */; };
+		35C202522DEF0DEB00492F2D /* StripeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35C202512DEF0DEB00492F2D /* StripeManager.swift */; };
+		35C202572DEF128300492F2D /* AddCardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35C202562DEF127900492F2D /* AddCardViewModel.swift */; };
+		35C2025B2DEF12A200492F2D /* AddCardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35C2025A2DEF129900492F2D /* AddCardModel.swift */; };
 		35CA09D92DD5BCE4002ABB83 /* LabelWithButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CA09D82DD5BCE4002ABB83 /* LabelWithButton.swift */; };
 		35CA09DE2DD5CC29002ABB83 /* CustomSegmentedControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CA09DC2DD5CBB8002ABB83 /* CustomSegmentedControl.swift */; };
 		35CA09E02DD5D2B1002ABB83 /* TwoVerticalLabelCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CA09DF2DD5D2B1002ABB83 /* TwoVerticalLabelCell.swift */; };
@@ -495,6 +499,10 @@
 		35BA4A4A2DE87C2300EEC92A /* AddProductScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddProductScreen.swift; sourceTree = "<group>"; };
 		35BA4A4D2DE8806A00EEC92A /* ReferEarnScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferEarnScreen.swift; sourceTree = "<group>"; };
 		35BA4A502DE883E800EEC92A /* CompleteProfileScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompleteProfileScreen.swift; sourceTree = "<group>"; };
+		35C2024F2DEEFFDD00492F2D /* AddCardScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCardScreen.swift; sourceTree = "<group>"; };
+		35C202512DEF0DEB00492F2D /* StripeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StripeManager.swift; sourceTree = "<group>"; };
+		35C202562DEF127900492F2D /* AddCardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCardViewModel.swift; sourceTree = "<group>"; };
+		35C2025A2DEF129900492F2D /* AddCardModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCardModel.swift; sourceTree = "<group>"; };
 		35CA09D82DD5BCE4002ABB83 /* LabelWithButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelWithButton.swift; sourceTree = "<group>"; };
 		35CA09DC2DD5CBB8002ABB83 /* CustomSegmentedControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSegmentedControl.swift; sourceTree = "<group>"; };
 		35CA09DF2DD5D2B1002ABB83 /* TwoVerticalLabelCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwoVerticalLabelCell.swift; sourceTree = "<group>"; };
@@ -1053,6 +1061,7 @@
 		35987D292DE5C77A00D6C2C9 /* PaymentShipping */ = {
 			isa = PBXGroup;
 			children = (
+				35C2024E2DEEFFD500492F2D /* AddCard */,
 				35987D2A2DE5C7A500D6C2C9 /* PaymentAndShipping Screen.swift */,
 				35987D2F2DE5CE5C00D6C2C9 /* CardCell.swift */,
 			);
@@ -1197,6 +1206,40 @@
 				35BA4A502DE883E800EEC92A /* CompleteProfileScreen.swift */,
 			);
 			path = CompleteProfile;
+			sourceTree = "<group>";
+		};
+		35C2024E2DEEFFD500492F2D /* AddCard */ = {
+			isa = PBXGroup;
+			children = (
+				35C202552DEF125000492F2D /* View */,
+				35C202542DEF124D00492F2D /* ViewModel */,
+				35C202532DEF124500492F2D /* Model */,
+			);
+			path = AddCard;
+			sourceTree = "<group>";
+		};
+		35C202532DEF124500492F2D /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				35C2025A2DEF129900492F2D /* AddCardModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		35C202542DEF124D00492F2D /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				35C202562DEF127900492F2D /* AddCardViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		35C202552DEF125000492F2D /* View */ = {
+			isa = PBXGroup;
+			children = (
+				35C2024F2DEEFFDD00492F2D /* AddCardScreen.swift */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 		35CCE00F2DD876AC00760CEE /* Schedule */ = {
@@ -1947,6 +1990,7 @@
 				99C9099E2DC8CD930054620B /* IAPManager.swift */,
 				99C9099F2DC8CD930054620B /* Logger.swift */,
 				358B9D192DDF04FA00932250 /* FSCalendar.swift */,
+				35C202512DEF0DEB00492F2D /* StripeManager.swift */,
 			);
 			path = Helper;
 			sourceTree = "<group>";
@@ -3601,6 +3645,7 @@
 				D4C4D79F2DD3647B00274E51 /* MenuCell.swift in Sources */,
 				D4BAA3D52DED7947001BA4DA /* PreferenceModel.swift in Sources */,
 				99C9080E2DC8CD6A0054620B /* DocView.swift in Sources */,
+				35C202522DEF0DEB00492F2D /* StripeManager.swift in Sources */,
 				99C9080F2DC8CD6A0054620B /* AlertPopUp.swift in Sources */,
 				3576EAD22DDDD5DD00177C7D /* TipsCardView.swift in Sources */,
 				99C908102DC8CD6A0054620B /* HeaderWithImage.swift in Sources */,
@@ -3661,6 +3706,7 @@
 				D4CAEC6B2DE6F74A00705CD7 /* AnalyticsViewModel.swift in Sources */,
 				D4BA9C1F2DE4A35200DFF6E6 /* TransactionRowView.swift in Sources */,
 				99C909DC2DC8CDDC0054620B /* SavedJobListResponse.swift in Sources */,
+				35C202572DEF128300492F2D /* AddCardViewModel.swift in Sources */,
 				D4B6163D2DE87F1100924A3D /* OBSSetupModel.swift in Sources */,
 				99C909DD2DC8CDDC0054620B /* ContactModel.swift in Sources */,
 				D4B615D92DE82A5400924A3D /* BuyNowBottomSheetView.swift in Sources */,
@@ -3743,6 +3789,7 @@
 				99C909A22DC8CD930054620B /* VideoRecorderHelper.swift in Sources */,
 				D4B616242DE8796F00924A3D /* ProductWeightViewModel.swift in Sources */,
 				D4BB9A252DE5D66500C1BCBC /* StatView.swift in Sources */,
+				35C202502DEEFFE300492F2D /* AddCardScreen.swift in Sources */,
 				99C909A32DC8CD930054620B /* UIFont+Extension.swift in Sources */,
 				D4CAECA82DE7360F00705CD7 /* ShowSummaryViewModel.swift in Sources */,
 				35B44F172DD7053B00FBCBC4 /* AboutUsScreen.swift in Sources */,
@@ -3893,6 +3940,7 @@
 				99C908342DC8CD6A0054620B /* JobMatchesCard.swift in Sources */,
 				99C908352DC8CD6A0054620B /* DateSelectionSheet.swift in Sources */,
 				D4CAECBE2DE73BCC00705CD7 /* EndShowViewModel.swift in Sources */,
+				35C2025B2DEF12A200492F2D /* AddCardModel.swift in Sources */,
 				99C908362DC8CD6A0054620B /* FilterEmployerOptionView.swift in Sources */,
 				3581D41F2DE096F100BEAB88 /* AddressModel.swift in Sources */,
 				99C908372DC8CD6A0054620B /* AlertType.swift in Sources */,

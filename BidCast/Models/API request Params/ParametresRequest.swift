@@ -450,3 +450,10 @@ struct FollowRequest : Encodable {
 struct FetchProductRequest : Encodable {
     var product_id : Int
 }
+struct AddCardRequest : Encodable{
+    var card_token :String
+}
+
+struct DeleteCardRequest : Encodable{
+    var card_id :String
+}
