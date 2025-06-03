@@ -446,3 +446,7 @@ struct ProfileParamRequest : Encodable{
 struct FollowRequest : Encodable {
     var following_id : String
 }
+
+struct FetchProductRequest : Encodable {
+    var product_id : Int
+}

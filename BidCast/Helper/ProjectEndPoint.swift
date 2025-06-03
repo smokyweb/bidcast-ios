@@ -43,6 +43,9 @@ enum APIEndPoint{
     case getUserProduct(param : UserProductRequest)
     case followUnfollow(param:FollowRequest)
     
+    //MARK: Faz
+    case fetchProduct(param : FetchProductRequest)
+    
     //MARK: OLD
     
     case SubCompany(param : SubCompanyParam)
@@ -203,9 +206,13 @@ extension APIEndPoint: EndPointType {
         case .getProfileById:
             return "get-profile-by-id"
         case .getUserProduct:
-                    return "get-user-product"
+            return "get-user-product"
         case .followUnfollow:
             return "follow-unfollow"
+            
+            //MARK: Faz
+        case .fetchProduct:
+            return "fetch-product"
             
             //MARK: Old
             
@@ -349,10 +356,10 @@ extension APIEndPoint: EndPointType {
             return "get_jobs?category=\(param.category)&job_title=\(param.job_title)&salary=\(param.salary)"
         case .removeSavedJob:
             return "save-job"
-
-            case .removeSavedJob:
-                return "save-job"
-
+            
+        case .removeSavedJob:
+            return "save-job"
+            
         }
     }
     
@@ -426,6 +433,10 @@ extension APIEndPoint: EndPointType {
         case .getUserProduct:
             return .post
         case .followUnfollow(param: let param):
+            return .post
+            
+            //MARK: Faz
+        case .fetchProduct:
             return .post
             
             //MARK: Old
@@ -650,8 +661,12 @@ extension APIEndPoint: EndPointType {
         case .getProfileById(param: let param):
             return param
         case .getUserProduct(param: let param):
-                    return param
+            return param
         case .followUnfollow(param: let param):
+            return param
+            
+            //MARK: Faz
+        case .fetchProduct(param: let param):
             return param
             
             //MARK: Old

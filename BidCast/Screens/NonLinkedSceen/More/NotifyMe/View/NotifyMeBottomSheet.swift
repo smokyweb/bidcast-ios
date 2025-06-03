@@ -67,11 +67,12 @@ struct NotifyMeBottomSheet: View {
                     
                     Spacer()
                     
+                    
                     Button { onDismiss() } label: {
                         Image(systemName: "xmark.circle.fill")
-                            .foregroundColor(.white)
+                            .font(.title2)
+                            .foregroundColor(.red)
                             .frame(width: 30, height: 30)
-                            .clipShape(Circle())
                     }
                 }
                 

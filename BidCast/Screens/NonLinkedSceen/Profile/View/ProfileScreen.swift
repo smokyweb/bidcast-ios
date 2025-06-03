@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-
 struct ProfileScreen: View {
     
     @State var viewModel = ProfileViewModel()
@@ -24,8 +23,9 @@ struct ProfileScreen: View {
     @State  var hudMsg = ""
     @State  var productData = ProductListingDataModel()
     @State var isFollowing = false
-    
+    @State var productId : Int = 0
     @State var productArr = [ProductListingDataModel]()
+
     var body: some View {
         VStack(spacing: 0) {
             ScrollView {
@@ -45,27 +45,25 @@ struct ProfileScreen: View {
                     ProfileTabsView()
                     SearchAndFiltersView()
                     ProductListView(prouduct: $productArr,onTapProduct: { index in
-                        showSellSheet = true
                         productData = productArr[index]
+                        productId = productData.id ?? 0
+                        showSellSheet = true
+                        print("Selected product id: \(productData.id ?? 0)")
                         print("index fdor sheegt \(index)")
                     })
                 }
 //                .padding()
             }
             .edgesIgnoringSafeArea(.top)
+            
             .bottomSheet(isPresented: $showSellSheet, height: screenHeight * 0.95) {
                           ProductDetailSheet(
                             onDismiss : {
                                 self.showSellSheet = false
+                                productId = 0
                             },
-                            productImages: productData.images ?? [""],
-                            productTitle: productData.title ?? "",
-                            productPrice: "\(productData.pricing ?? 0)",
-                              condition: "Like New",
-                              location: "New York, NY",
-                              postedTime: "2 days ago",
-                            sellerName: profileData.name ?? "",
-                              sellerStatus: "Verified Seller"
+                            productID: $productId
+
                           )
                       }
             .bottomSheet(isPresented: $showNotify,height: screenHeight * 0.45) {
