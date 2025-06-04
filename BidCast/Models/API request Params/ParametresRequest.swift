@@ -457,3 +457,89 @@ struct AddCardRequest : Encodable{
 struct DeleteCardRequest : Encodable{
     var card_id :String
 }
+
+
+struct StoreIDCardRequest : Encodable{
+    var id_card :String
+    var image : String
+}
+
+struct StorePhoneNumberRequest : Encodable{
+    var phone_number : Int
+}
+
+struct OtpVerifyRequest : Encodable{
+    var otp : Int
+}
+
+struct StorePaymentMethodRequest : Encodable{
+    var card_token : String
+}
+
+struct BuyerIdentityStoreRequest : Encodable{
+    var image : String
+}
+
+
+struct DeleteNotificationRequest : Encodable{
+    var id : Int
+}
+
+struct GetMyScheduleShowRequest : Encodable{
+    var type : String
+}
+
+struct ProductOrderListingRequest : Encodable{
+    var type : String
+}
+
+struct ProductPurchaseDetailRequest : Encodable{
+    var shipping_id : Int
+    var product_id : Int
+}
+
+struct ProductOrderRequest : Encodable{
+    var shipping_id: Int
+    var product_id: Int
+    var card_id: String
+    var promo_code: String
+    var send_as_gift: Int
+    var gift_user_id: Int
+    var gift_msg: String
+    var shipping_charges: Int
+    var tax_amount: Int
+    var sub_total: Int
+    var total: Int
+    var discount: Int?
+}
+
+struct ProductOrderDetailRequest : Encodable{
+    var order_id : Int
+}
+
+struct MakeOfferRequest : Encodable{
+    var amount : Int
+    var product_id : Int
+}
+
+struct MakeOfferListRequest : Encodable{
+    var product_id : Int?
+}
+
+struct OfferUpdateStatusRequest : Encodable{
+    var offer_id : Int
+    var status : Int
+}
+
+struct TransactionHistoryListingRequest : Encodable{
+    var id : Int
+}
+
+struct SearchingRequest : Encodable{
+    var search : String
+}
+
+struct PromoCodeRequest : Encodable{
+    var promo_code : String
+}
+

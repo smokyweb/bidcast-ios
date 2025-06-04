@@ -43,8 +43,36 @@ enum APIEndPoint{
     case getUserProduct(param : UserProductRequest)
     case followUnfollow(param:FollowRequest)
     
+    
     //MARK: Faz
     case fetchProduct(param : FetchProductRequest)
+    case storeIDCard(param : [String:Any])
+    case storePhoneNumber(param : StorePhoneNumberRequest)
+    case otpVerify(param : VerifyOtpRequest)
+    case storePaymentMethod(param : StorePaymentMethodRequest)
+    case buyerIdentityStore(param : [String:Any])
+    case buyerIdentityList
+    case sellerIdentityFetch
+    case notificationListing
+    case deleteNotification(param : DeleteNotificationRequest)
+    case getLiveShow
+    case getMyScheduleShow(param : GetMyScheduleShowRequest)
+    case productOrderListing(param : ProductOrderListingRequest)
+    case productPurchaseDetail(param : ProductPurchaseDetailRequest)
+    case productOrder(param : ProductOrderRequest)
+    case productOrderDetails(param : ProductOrderDetailRequest)
+    case makeOffer(param : MakeOfferRequest)
+    case makeOfferList(param : MakeOfferListRequest)
+    case offerUpdateStatus(param : OfferUpdateStatusRequest)
+    case transactionListing(param : TransactionHistoryListingRequest)
+    case searching(param : SearchingRequest)
+    case promo(param : PromoCodeRequest)
+    
+    
+    
+    
+    
+    
     //MARK: Extension
     case AddCard(param:AddCardRequest)
     case deleteCard(param:DeleteCardRequest)
@@ -105,7 +133,6 @@ enum APIEndPoint{
     case saveDeviceDetail(param: DeviceDetailModal)
     case getEmployeeDetail(id: String, job: String)
     case getNotification(param: String)
-    case deleteNotification(param:String)
     case updateNotification(param: ReadNotification)
     case getNotificationCount
     case getEmploymentLocationType
@@ -217,6 +244,51 @@ extension APIEndPoint: EndPointType {
             //MARK: Faz
         case .fetchProduct:
             return "fetch-product"
+        case .storeIDCard:
+            return "store-id-card"
+        case .storePhoneNumber:
+            return "store-phone-number"
+        case .otpVerify:
+            return "otp-verify"
+        case .storePaymentMethod:
+            return "store-payment-method"
+        case .buyerIdentityStore:
+            return "buyer-identity/store"
+        case .buyerIdentityList:
+            return "buyer-identity/list"
+        case .sellerIdentityFetch:
+            return "seller-identity/fetch"
+        case .notificationListing:
+            return "notification/listing"
+        case .deleteNotification:
+            return "notification/delete"
+        case .getLiveShow:
+            return "get-live-show"
+        case .getMyScheduleShow:
+            return "get-my-schedule-show"
+        case .productOrderListing:
+            return "product/order-listing"
+        case .productPurchaseDetail:
+            return "product/purchase-details"
+        case .productOrder:
+            return "product/order"
+        case .productOrderDetails:
+            return "product/order-details"
+        case .makeOffer:
+            return "offer/make"
+        case .makeOfferList:
+            return "offer/lists"
+        case .offerUpdateStatus:
+            return "offer/update-status"
+        case .transactionListing:
+            return "transaction-history/listing"
+        case .searching:
+            return "user/searching"
+        case .promo:
+            return "promo/verify-code"
+
+            
+            
             //MARK: Extenion
             
         case .AddCard:
@@ -316,8 +388,6 @@ extension APIEndPoint: EndPointType {
             return "get-matches?page=\(page)&job_id=\(job_id)"
         case .getNotification(let param):
             return "get-notification?page=\(param)"
-        case .deleteNotification(let id):
-            return id != "" ? "delete-notification?id=\(id)" : "delete-notification"
         case .updateNotification:
             return "update-notification-status"
         case .getNotificationCount:
@@ -366,12 +436,8 @@ extension APIEndPoint: EndPointType {
             return "save-job"
         case .removeSavedJob:
             return "save-job"
-            
-
-            case .removeSavedJob:
-                return "save-job"
-
-        
+        case .removeSavedJob:
+            return "save-job"
         case .deleteCard:
             return "delete-card"
         case .getCard:
@@ -454,6 +520,52 @@ extension APIEndPoint: EndPointType {
             //MARK: Faz
         case .fetchProduct:
             return .post
+        case .storeIDCard:
+            return .post
+        case .storePhoneNumber:
+            return .post
+        case .otpVerify:
+            return .post
+        case .storePaymentMethod:
+            return .post
+        case .buyerIdentityStore:
+            return .post
+        case .buyerIdentityList:
+            return .get
+        case .sellerIdentityFetch:
+            return .get
+        case .notificationListing:
+            return .get
+        case .deleteNotification:
+            return .post
+        case .getLiveShow:
+            return .post
+        case .getMyScheduleShow:
+            return .post
+        case .productOrderListing:
+            return .post
+        case .productPurchaseDetail:
+            return .post
+        case .productOrder:
+            return .post
+        case .productOrderDetails:
+            return .post
+        case .makeOffer:
+            return .post
+        case .makeOfferList:
+            return .post
+        case .offerUpdateStatus:
+            return .post
+        case .transactionListing:
+            return .post
+        case .searching:
+            return .post
+        case .promo:
+            return .post
+            
+            
+            
+            
             //MARK: Extension
         case .AddCard:
             return .post
@@ -694,6 +806,51 @@ extension APIEndPoint: EndPointType {
             //MARK: Faz
         case .fetchProduct(param: let param):
             return param
+        case .storeIDCard:
+            return nil
+        case .storePhoneNumber(param: let param):
+            return param
+        case .otpVerify(param: let param):
+            return param
+        case .storePaymentMethod(param: let param):
+            return param
+        case .buyerIdentityStore:
+            return nil
+        case .buyerIdentityList:
+            return nil
+        case .sellerIdentityFetch:
+            return nil
+        case .notificationListing:
+            return nil
+        case .deleteNotification(param: let param):
+            return param
+        case .getLiveShow:
+            return nil
+        case .getMyScheduleShow(param: let param):
+            return param
+            
+        case .productOrderListing(param: let param):
+            return param
+        case .productPurchaseDetail(param: let param):
+            return param
+        case .productOrder(param: let param):
+            return param
+        case .productOrderDetails(param: let param):
+            return param
+        case .makeOffer(param: let param):
+            return param
+        case .makeOfferList(param: let param):
+            return param
+        case .offerUpdateStatus(param: let param):
+            return param
+        case .transactionListing(param: let param):
+            return param
+        case .searching(param: let param):
+            return param
+        case .promo(param: let param):
+            return param
+            
+            
             //MARK: Extenson
         case .AddCard(param: let param):
             return param
@@ -701,6 +858,7 @@ extension APIEndPoint: EndPointType {
             return param
         case .getCard:
             return nil
+            
             
             //MARK: Old
             
