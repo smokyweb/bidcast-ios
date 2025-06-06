@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SVProgressHUD
 
 struct AddCardScreen: View {
     @State private var cardHolderName = ""
@@ -191,6 +192,23 @@ struct AddCardScreen: View {
             .padding(.vertical, 10)
             .background(Color.white)
         }
+        .bottomSheet(isPresented: $showError, height: screenHeight / 2.5, topBarCornerRadius: 25, showTopIndicator: false) {
+            CommonBottomSheet(
+                sheetType: $alertType,
+                onPrimaryClick: {
+                    withAnimation { showError = false }
+                    let response = viewModel.cardDict
+                    if response.status == "success" {
+                        self.presentationMode.wrappedValue.dismiss()
+                    }else{
+                        withAnimation { showError = false }
+                    }
+                },
+                onSecondaryClick: {
+                    withAnimation { showError = false }
+                }
+            )
+        }
         .onAppear{
             observe()
             
@@ -202,11 +220,13 @@ struct AddCardScreen: View {
             switch event {
             case .loading:
                 self.isLoading = true
+                SVProgressHUD.show()
             case .stopLoading:
                 self.isLoading = false
             case .dataLoaded:
                 success()
             case .error(let error):
+                SVProgressHUD.dismiss()
                 let msg = error?.localizedDescription ?? AppString.error.localized
                 alertType = .sheetType(icon: .alert, title: AppString.error.localized, message: msg, primaryBtnText: "", secondaryBtnText: AppString.ok.localized)
                 showError = true
@@ -216,9 +236,17 @@ struct AddCardScreen: View {
 
     func success() {
         if self.viewModel.requestType == "get"{
+            SVProgressHUD.dismiss()
             let response = viewModel.cardDict
             if response.status == "success" {
-                
+                showError = true
+                alertType = .sheetType(
+                    icon: .alert,
+                    title: response.error_type?.capitalized ?? "",
+                    message: response.message?.capitalized ?? "",
+                    primaryBtnText:AppString.ok.localized,
+                    secondaryBtnText: ""
+                )
                 
             } else {
                 showError = true
@@ -232,6 +260,7 @@ struct AddCardScreen: View {
             }
             
         }else{
+            SVProgressHUD.dismiss()
             let response = viewModel.addCardDict
             if response.status == "success" {
                 showError = true

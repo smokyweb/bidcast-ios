@@ -1,5 +1,5 @@
 {
-  "originHash" : "17d2217bc68e59d80b8180502d0007afe8d8a606a1a7692007f7d255aa6dc975",
+  "originHash" : "be29ef242634516e0c6deff3dae9e90b565d97fc43a471c4e93c9907db78fd38",
   "pins" : [
     {
       "identity" : "activityindicatorview",
@@ -134,6 +134,15 @@
       "state" : {
         "revision" : "5b9444d1e765ee7dcc58ea8d1ae0acc4bbfbf435",
         "version" : "24.14.0"
+      }
+    },
+    {
+      "identity" : "svprogresshud",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SVProgressHUD/SVProgressHUD.git",
+      "state" : {
+        "revision" : "c33f7c775ba7feea6047a1fc3257f2e5863b44f7",
+        "version" : "2.3.1"
       }
     },
     {

@@ -10,6 +10,8 @@ struct CardCell: View {
     var image = ""
     var cardNo = ""
     var expires = ""
+  
+    var onTapDelete : () -> () = { }
     var body: some View {
         HStack {
             Image(systemName: image)
@@ -24,7 +26,17 @@ struct CardCell: View {
                     .foregroundColor(.gray)
             }
             Spacer()
-            Image(systemName: "ellipsis")
+            Menu {
+                Button("Delete", role: .destructive, action: {
+//                    print("Delete \(address.name ?? "")")
+                    onTapDelete()
+                })
+            } label: {
+                Image(systemName: "ellipsis")
+                    .rotationEffect(.degrees(90))
+                    .foregroundColor(.gray)
+                    .padding(8)
+            }
         }
         .padding()
         .background(Color(.secondarySystemBackground))
