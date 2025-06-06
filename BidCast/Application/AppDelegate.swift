@@ -7,7 +7,6 @@
 
 import Foundation
 import UIKit
-import SVProgressHUD
 //import OneSignalFramework
 //import OneSignalCore
 //import OneSignalExtension
@@ -45,12 +44,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         //        FirebaseApp.configure()
         ////        Messaging.messaging().delegate = self
         //
-        SVProgressHUD.setDefaultStyle(.custom)
-        SVProgressHUD.setDefaultMaskType(.custom)
-        SVProgressHUD.setDefaultAnimationType(.native)
-        SVProgressHUD.setForegroundColor(.primary)
-        SVProgressHUD.setBackgroundColor(.black)
-        SVProgressHUD.setBackgroundLayerColor(.black.withAlphaComponent(0.8))
         IQKeyboardManager.shared.isEnabled = true
         IQKeyboardManager.shared.resignOnTouchOutside = true
         IQKeyboardManager.shared.keyboardDistance = 10

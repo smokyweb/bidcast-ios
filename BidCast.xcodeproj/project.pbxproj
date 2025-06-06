@@ -11,8 +11,6 @@
 		3541638A2DDB178300026B34 /* ShowTips.swift in Sources */ = {isa = PBXBuildFile; fileRef = 354163892DDB178300026B34 /* ShowTips.swift */; };
 		3541638E2DDB370C00026B34 /* ListProductViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3541638D2DDB370C00026B34 /* ListProductViewModel.swift */; };
 		354163902DDB3A2100026B34 /* StoreProductModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3541638F2DDB3A2100026B34 /* StoreProductModel.swift */; };
-		354652692DF2EE5900EB353F /* SVProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = 354652682DF2EE5900EB353F /* SVProgressHUD */; };
-		3546526E2DF2F51E00EB353F /* PaymentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3546526D2DF2F51E00EB353F /* PaymentViewModel.swift */; };
 		355AE9682DD1D51A00CD3D17 /* IQKeyboardManagerSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 355AE9672DD1D51A00CD3D17 /* IQKeyboardManagerSwift */; };
 		355AE96B2DD1D70500CD3D17 /* SignUpModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 355AE96A2DD1D70500CD3D17 /* SignUpModel.swift */; };
 		355AE96E2DD1DE3100CD3D17 /* LoginModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 355AE96D2DD1DE3100CD3D17 /* LoginModel.swift */; };
@@ -457,7 +455,6 @@
 		354163892DDB178300026B34 /* ShowTips.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowTips.swift; sourceTree = "<group>"; };
 		3541638D2DDB370C00026B34 /* ListProductViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListProductViewModel.swift; sourceTree = "<group>"; };
 		3541638F2DDB3A2100026B34 /* StoreProductModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreProductModel.swift; sourceTree = "<group>"; };
-		3546526D2DF2F51E00EB353F /* PaymentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentViewModel.swift; sourceTree = "<group>"; };
 		355AE96A2DD1D70500CD3D17 /* SignUpModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpModel.swift; sourceTree = "<group>"; };
 		355AE96D2DD1DE3100CD3D17 /* LoginModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginModel.swift; sourceTree = "<group>"; };
 		355AE9702DD1F94E00CD3D17 /* TabbarScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabbarScreen.swift; sourceTree = "<group>"; };
@@ -894,7 +891,6 @@
 				35F63D6D2DDCBE5B00D29878 /* StripeApplePay in Frameworks */,
 				35A045162DC8DF5B0067C447 /* Kingfisher in Frameworks */,
 				35A045132DC8DF4E0067C447 /* BottomSheet in Frameworks */,
-				354652692DF2EE5900EB353F /* SVProgressHUD in Frameworks */,
 				35F63D752DDCBE5B00D29878 /* StripeIdentity in Frameworks */,
 				35F63D6B2DDCBE5B00D29878 /* Stripe in Frameworks */,
 				35A0450D2DC8DEC30067C447 /* AlertToast in Frameworks */,
@@ -942,29 +938,6 @@
 				3541638F2DDB3A2100026B34 /* StoreProductModel.swift */,
 			);
 			path = Model;
-			sourceTree = "<group>";
-		};
-		3546526A2DF2F4F900EB353F /* View */ = {
-			isa = PBXGroup;
-			children = (
-				35987D2A2DE5C7A500D6C2C9 /* PaymentAndShipping Screen.swift */,
-			);
-			path = View;
-			sourceTree = "<group>";
-		};
-		3546526B2DF2F50100EB353F /* Model */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Model;
-			sourceTree = "<group>";
-		};
-		3546526C2DF2F50900EB353F /* ViewModel */ = {
-			isa = PBXGroup;
-			children = (
-				3546526D2DF2F51E00EB353F /* PaymentViewModel.swift */,
-			);
-			path = ViewModel;
 			sourceTree = "<group>";
 		};
 		355AE9692DD1D6E100CD3D17 /* Model */ = {
@@ -1088,10 +1061,8 @@
 		35987D292DE5C77A00D6C2C9 /* PaymentShipping */ = {
 			isa = PBXGroup;
 			children = (
-				3546526C2DF2F50900EB353F /* ViewModel */,
-				3546526A2DF2F4F900EB353F /* View */,
-				3546526B2DF2F50100EB353F /* Model */,
 				35C2024E2DEEFFD500492F2D /* AddCard */,
+				35987D2A2DE5C7A500D6C2C9 /* PaymentAndShipping Screen.swift */,
 				35987D2F2DE5CE5C00D6C2C9 /* CardCell.swift */,
 			);
 			path = PaymentShipping;
@@ -3454,7 +3425,6 @@
 				35F63D782DDCBE5B00D29878 /* StripePayments */,
 				35F63D7A2DDCBE5B00D29878 /* StripePaymentsUI */,
 				358B9D172DDF049600932250 /* FSCalendar */,
-				354652682DF2EE5900EB353F /* SVProgressHUD */,
 			);
 			productName = BidCast;
 			productReference = 99DF9E3F2DC4F35D008C15B2 /* BidCast.app */;
@@ -3547,7 +3517,6 @@
 				35F63D662DDC5DF100D29878 /* XCRemoteSwiftPackageReference "SwiftfulLoadingIndicators" */,
 				35F63D692DDCBE5B00D29878 /* XCRemoteSwiftPackageReference "stripe-ios" */,
 				358B9D162DDF049600932250 /* XCRemoteSwiftPackageReference "FSCalendar" */,
-				354652672DF2EE5900EB353F /* XCRemoteSwiftPackageReference "SVProgressHUD" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 99DF9E402DC4F35D008C15B2 /* Products */;
@@ -3961,7 +3930,6 @@
 				99C9082E2DC8CD6A0054620B /* ButtonWithImage.swift in Sources */,
 				99C9082F2DC8CD6A0054620B /* DropDownSelection.swift in Sources */,
 				355AE9802DD1FC5600CD3D17 /* ActivityScreen.swift in Sources */,
-				3546526E2DF2F51E00EB353F /* PaymentViewModel.swift in Sources */,
 				99C908302DC8CD6A0054620B /* NotificationCountView.swift in Sources */,
 				99C908312DC8CD6A0054620B /* NotificationListingCard.swift in Sources */,
 				D4CAEC3C2DE6DC6000705CD7 /* BenefitView.swift in Sources */,
@@ -4389,14 +4357,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		354652672DF2EE5900EB353F /* XCRemoteSwiftPackageReference "SVProgressHUD" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/SVProgressHUD/SVProgressHUD.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.3.1;
-			};
-		};
 		356116FC2DC8D22C00A45199 /* XCRemoteSwiftPackageReference "IQKeyboardManager" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/hackiftekhar/IQKeyboardManager.git";
@@ -4472,11 +4432,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		354652682DF2EE5900EB353F /* SVProgressHUD */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 354652672DF2EE5900EB353F /* XCRemoteSwiftPackageReference "SVProgressHUD" */;
-			productName = SVProgressHUD;
-		};
 		355AE9672DD1D51A00CD3D17 /* IQKeyboardManagerSwift */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 356116FC2DC8D22C00A45199 /* XCRemoteSwiftPackageReference "IQKeyboardManager" */;
