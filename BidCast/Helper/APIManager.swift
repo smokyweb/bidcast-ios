@@ -136,32 +136,39 @@ final class APIManager {
                     //                completion(.failure(.tokenExpired))
                     //                return
                     //            }
+//                do {
+//                    Log.d("API Response >>> \n\(data.prettyPrintedJSONString ?? "")")
+//                    let products = try JSONDecoder().decode(modelType, from: data)
+//                    completion(.success(products))
+//                    
+//                } catch {
+//                    switch response.statusCode {
+//                        case 400:
+//                            completion(.failure(.badRequest))
+//                        case 401:
+//                            completion(.failure(.tokenExpired))
+//                        case 403:
+//                            completion(.failure(.userDisabled))
+//                        case 404:
+//                            completion(.failure(.notFound))
+//                        case 500:
+//                            completion(.failure(.serverError))
+//                        case 405:
+//                            completion(.failure(.methodNotAllowed))
+//                        case -1009:
+//                            completion(.failure(.noConnection))
+//                        case -1001:
+//                            completion(.failure(.timeOutError))
+//                        default:
+//                            completion(.failure(.network(error)))
+//                    }
+//                }
                 do {
-                    Log.d("API Response >>> \n\(data.prettyPrintedJSONString ?? "")")
+                    print("API Response >>> \n\(data.prettyPrintedJSONString ?? "")")
                     let products = try JSONDecoder().decode(modelType, from: data)
                     completion(.success(products))
-                    
-                } catch {
-                    switch response.statusCode {
-                        case 400:
-                            completion(.failure(.badRequest))
-                        case 401:
-                            completion(.failure(.tokenExpired))
-                        case 403:
-                            completion(.failure(.userDisabled))
-                        case 404:
-                            completion(.failure(.notFound))
-                        case 500:
-                            completion(.failure(.serverError))
-                        case 405:
-                            completion(.failure(.methodNotAllowed))
-                        case -1009:
-                            completion(.failure(.noConnection))
-                        case -1001:
-                            completion(.failure(.timeOutError))
-                        default:
-                            completion(.failure(.network(error)))
-                    }
+                }catch {
+                    completion(.failure(.network(error)))
                 }
             }.resume()
         }
