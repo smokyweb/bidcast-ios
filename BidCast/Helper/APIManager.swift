@@ -391,9 +391,125 @@ final class APIManager {
         }.resume()
     }
     
-    
-    
     func uploadImageWithMultipleKeys<T: Decodable>(
+        type: EndPointType,
+        urlArray: [[String]]? = nil,
+        mimeType: [String],
+        keyName: [String],
+        parameters: [String: Any],
+        modelType: T.Type,
+        header: Bool,
+        completion: @escaping Handler<T>
+    ) {
+        print("Upload File API Request - - - - - - - - - - >>>>>")
+        guard let url = type.url else {
+            completion(.failure(.invalidURL))
+            return
+        }
+        print("URL >> \(url)")
+        var request = URLRequest(url: url)
+        request.httpMethod = type.method.rawValue
+        print("Method >> \(type.method.rawValue)")
+        
+        let boundary = generateBoundary()
+        
+        var media =  [MediaData1]()
+        
+        
+        for (index,key) in keyName.enumerated()  {
+//            if key == "images[]" {
+//                uploadImages?.forEach { url in
+//                    if url.contains("media") {
+//                        guard let med = MediaData1(withURL:"\(url)", forKey: "images[]", mimeType: "image/png") else {
+//                            return }
+//                        media.append(med)
+//                    } else {
+//                        guard let med = MediaData1(withURL: url, forKey: "images[]", mimeType: "image/png") else {
+//                            return
+//                        }
+//                        
+//                        media.append(med)
+//                    }
+//                }
+//            }
+//            else {
+//                for (index,mime) in mimeType.enumerated()  {
+                    urlArray?[index].forEach { url in
+                        if url.contains("media") {
+                            guard let med = MediaData1(withURL:"\(url)", forKey: key, mimeType: mimeType[index]) else {
+                                return }
+                            media.append(med)
+                        } else {
+                            guard let med = MediaData1(withURL: url, forKey: key, mimeType: mimeType[index]) else {
+                                return
+                            }
+                            
+                            media.append(med)
+                        }
+                    }
+//                }
+//            }
+        }
+
+        print(media as Any)
+   
+        let params  = parameters
+        
+        print(params)
+        
+        request.allHTTPHeaderFields = type.headers
+        if header {
+            if header{
+                request.allHTTPHeaderFields = ["Authorization":"Bearer \(UserDefaults.accessToken)"]
+            }
+        }
+        
+        request.allHTTPHeaderFields = [
+            "Accept": "application/json",
+            "Content-Type": "multipart/form-data; boundary=\(boundary)"
+        ]
+        
+        print(media as Any)
+        
+        let dataBody = createDataBody1(withParameters: params, media: media, boundary: boundary)
+        
+        request.httpBody = dataBody
+        
+        print("Headers >>> \(request.allHTTPHeaderFields ?? [:])")
+        
+        print(request)
+        let config = URLSessionConfiguration.default
+        config.waitsForConnectivity = true
+        config.timeoutIntervalForResource = 300
+        
+        URLSession(configuration: config).dataTask(with: request) { data, response, error in
+            guard let data, error == nil else {
+                completion(.failure(.invalidData))
+                return
+            }
+            guard let response = response as? HTTPURLResponse,
+                  200 ... 599 ~= response.statusCode else {
+                do {
+                    let products = try JSONDecoder().decode(modelType, from: data)
+                    completion(.success(products))
+                }catch {
+                    completion(.failure(.invalidResponse(data)))
+                }
+                return
+            }
+            do {
+                print("API Response >>> \n\(data.prettyPrintedJSONString ?? "")")
+                let products = try JSONDecoder().decode(modelType, from: data)
+                completion(.success(products))
+            }catch {
+                completion(.failure(.network(error)))
+            }
+            
+        }.resume()
+    }
+    
+    
+    func uploadImageWithMultipleKeys1<T: Decodable>(
         type: EndPointType,
         urlArray: [[String]]? = nil,
         mimeType: [String],
@@ -567,7 +683,11 @@ final class APIManager {
             self.fileName = "\(arc4random()).\(type.split(separator: "/").last ?? "")"
             if let url = url {
                 do {
-                    self.data = try Data(contentsOf: URL(string: url)!, options: Data.ReadingOptions.alwaysMapped)
+//                    self.data = try Data(contentsOf: URL(string: url)!, options: Data.ReadingOptions.alwaysMapped)
+                    let fileURL = URL(fileURLWithPath: url)
+                    self.data = try Data(contentsOf: fileURL, options: .alwaysMapped)
+                    let image = UIImage(data: self.data)
+                    print(image)
                 } catch _ {
                     self.data = Data()
                 }

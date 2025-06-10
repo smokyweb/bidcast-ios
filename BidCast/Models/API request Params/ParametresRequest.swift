@@ -528,7 +528,7 @@ struct MakeOfferListRequest : Encodable{
 
 struct OfferUpdateStatusRequest : Encodable{
     var offer_id : Int
-    var status : Int
+    var status : String
 }
 
 struct TransactionHistoryListingRequest : Encodable{

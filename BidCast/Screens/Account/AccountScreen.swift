@@ -259,7 +259,7 @@ struct AccountScreen: View {
             CusNavLink(doNavigate: $navigateToShipping, destination: ShippingsScreen())
             CusNavLink(doNavigate: $navigateToPreference, destination: PreferncesScreen())
             CusNavLink(doNavigate: $navigateToPayment, destination: PaymentAndShipping_Screen())
-            CusNavLink(doNavigate: $navigateToTrustedBuyer, destination: VerifyIdentityScreen())
+            CusNavLink(doNavigate: $navigateToTrustedBuyer, destination: TrustedBuyerScreen())
             
             
             //MARK: Seller hub navigation

@@ -5,3 +5,43 @@
 //  Created by JAM_E_329 on 19/05/25.
 //
 
+import Foundation
+
+@MainActor
+final class OffersViewModel: ObservableObject {
+    
+    @Published var offerListResponse = ResponseModel<[OfferListModel]>()
+    @Published var offerUpdateResponse = ResponseModel<OfferUpdateStatus>()
+    @Published var errorMessage: String? = nil
+
+    // MARK: - Get Preference
+    func getOfferList() async {
+        do {
+            let response: ResponseModel<[OfferListModel]> = try await APIManager.shared.request(
+                type: APIEndPoint.makeOfferList,
+                header: true
+            )
+            self.offerListResponse = response
+        } catch {
+            self.handle(error: error)
+        }
+    }
+    
+    // MARK: - updateOfferList Preference
+    func updateOfferStatus(parameters: OfferUpdateStatusRequest) async {
+        do {
+            let response: ResponseModel<OfferUpdateStatus> = try await APIManager.shared.request(
+                type: APIEndPoint.offerUpdateStatus(param: parameters),
+                header: true
+            )
+            self.offerUpdateResponse = response
+        } catch {
+            self.handle(error: error)
+        }
+    }
+
+    // MARK: - Error Handling
+    private func handle(error: Error) {
+        self.errorMessage = error.localizedDescription
+    }
+}

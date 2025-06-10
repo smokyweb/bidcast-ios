@@ -62,11 +62,12 @@ enum APIEndPoint{
     case productOrder(param : ProductOrderRequest)
     case productOrderDetails(param : ProductOrderDetailRequest)
     case makeOffer(param : MakeOfferRequest)
-    case makeOfferList(param : MakeOfferListRequest)
+    case makeOfferList
     case offerUpdateStatus(param : OfferUpdateStatusRequest)
     case transactionListing(param : TransactionHistoryListingRequest)
     case searching(param : SearchingRequest)
     case promo(param : PromoCodeRequest)
+    case getReferralCode
     
     
     
@@ -287,6 +288,8 @@ extension APIEndPoint: EndPointType {
             return "user/searching"
         case .promo:
             return "promo/verify-code"
+        case .getReferralCode:
+            return "referral-code/fetch"
 
             
             
@@ -566,6 +569,8 @@ extension APIEndPoint: EndPointType {
             return .post
         case .promo:
             return .post
+        case .getReferralCode:
+            return .get
             
             
             
@@ -846,8 +851,8 @@ extension APIEndPoint: EndPointType {
             return param
         case .makeOffer(param: let param):
             return param
-        case .makeOfferList(param: let param):
-            return param
+        case .makeOfferList:
+            return nil
         case .offerUpdateStatus(param: let param):
             return param
         case .transactionListing(param: let param):
@@ -856,7 +861,8 @@ extension APIEndPoint: EndPointType {
             return param
         case .promo(param: let param):
             return param
-            
+        case .getReferralCode:
+            return nil
             
             //MARK: Extenson
         case .AddCard(param: let param):

@@ -7,6 +7,7 @@
 
 import SwiftUI
 import AlertToast
+import SVProgressHUD
 
 // MARK: - OffersScreen View
 struct OffersScreen: View {
@@ -14,15 +15,13 @@ struct OffersScreen: View {
     @State private var isLoading: Bool = false
     @State private var showhud: Bool = false
     @State private var hudMsg: String = ""
+    @StateObject var viewModel = OffersViewModel()
+    @State private var offerList: [OfferListModel] = []
+
     @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
-    let transactions = [
-        Transaction(title: "Purchase from John", date: Date(timeIntervalSince1970: 1742841600), amount: 1250.00, isOutgoing: true)
-    ]
     
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject private var appRootManager: AppRootManager
-
-
 
     var body: some View {
         VStack(spacing: 0) {
@@ -46,28 +45,63 @@ struct OffersScreen: View {
             ScrollView {
                 VStack(spacing: 10) {
                     TwoVerticalLabelCell(dataModel: OffersValue.allCases,topLabel: {$0.labelOlt },bottomLabel: { $0.description.localized})
-                    
-                    ForEach(transactions) { txn in
-                        ActivityCell(isFor: "OffersScreen")
-                            .padding([.leading,.trailing] , 15)
+                    ForEach(offerList, id: \.id) { txn in
+                        ActivityCell(offerListing: txn, isFor: "OffersScreen")
+                            .padding([.leading, .trailing], 15)
                     }
                 }
                 .padding(.top)
                
             }
-//            .safeAreaInset(edge: .bottom) {
-//                // MARK: - Fixed Bottom Button
-//                PrimaryButton(title: AppString.submit.localized, isOutLine: false, onButtonClick: {
-//                    // Action
-//                },btnTextColor: .white)
-//                .padding(.horizontal)
-//                .padding(.vertical, 0)
-//                .background(Color(UIColor.systemGroupedBackground))
-//            }
         }
         .background(Color(UIColor.systemGroupedBackground))
         .toast(isPresenting: $showhud) {
             AlertToast(type: .regular, title: hudMsg)
+        }
+        .onAppear {
+            UIScrollView.appearance().bounces = false
+            
+        }
+        .onDisappear {
+            UIScrollView.appearance().bounces = true
+        }
+        .onAppear{
+            Task{
+                SVProgressHUD.show()
+                await viewModel.getOfferList()
+                await SVProgressHUD.dismiss()
+                await getOfferSuccess()
+            }
+        }
+        
+        .toast(isPresenting: $showhud) {
+            AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
+        }
+        .bottomSheet(
+            isPresented: $showError,
+            height: screenHeight / 2.3,
+            topBarCornerRadius: 25,
+            showTopIndicator: false
+        ) {
+            CommonBottomSheet(
+                sheetType: $alertType,
+                onPrimaryClick: {
+                    withAnimation { showError = false }
+                },
+                onSecondaryClick: {
+                    withAnimation { showError = false }
+                }
+            )
+        }
+    }
+    
+    func getOfferSuccess() {
+        SVProgressHUD.dismiss()
+        let response = viewModel.offerListResponse
+        if response.status == "success" {
+            offerList = response.data ?? []
+        } else {
+           
         }
     }
 }
