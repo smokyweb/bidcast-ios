@@ -47,12 +47,12 @@ final class ProfileViewModel: ObservableObject {
     // MARK: - Product Details
     func productDetails(parameters: UserProductRequest) async {
         do {
-            self.requestType = "product"
-            let response: ResponseModalPaginate<[ProductListingDataModel]> = try await APIManager.shared.request(
+           if let response: ResponseModalPaginate<[ProductListingDataModel]> = try await APIManager.shared.request(
                 type: APIEndPoint.getUserProduct(param: parameters),
                 header: true
-            )
-            self.productDetailsResponseDict = response
+           ){
+               self.productDetailsResponseDict = response
+           }
         } catch {
             handle(error: error)
         }
@@ -84,6 +84,7 @@ final class ProfileViewModel: ObservableObject {
                 if let data = data,
                    let json = try? JSONSerialization.jsonObject(with: data, options: []) {
                     self.errorMessage = "Invalid response: \(json)"
+                    print(errorMessage)
                 } else {
                     self.errorMessage = "Invalid response with no data"
                 }

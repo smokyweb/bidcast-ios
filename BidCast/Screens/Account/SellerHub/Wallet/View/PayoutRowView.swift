@@ -8,15 +8,12 @@
 import SwiftUI
 
 struct PayoutRowView: View {
-    var payout: Payout
-    var currencySymbol: String
+    var payout: Payout?
+    var currencySymbol: String? = ""
     
-    private var dateString: String {
-        payout.date.formatted(date: .long, time: .omitted)
-    }
-    
-    private var amountString: String {
-        "\(currencySymbol)" + String(format: "%,.2f", payout.amount)
+    var dateString: String? = ""
+    var amountString: String {
+        "\(currencySymbol ?? "")" + String(format: "%,.2f", payout?.amount ?? 0.0)
     }
     
     var body: some View {
@@ -24,12 +21,12 @@ struct PayoutRowView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(amountString)
                     .fontWeight(.semibold)
-                Text(dateString)
+                Text(dateString ?? "")
                     .font(.footnote)
                     .foregroundColor(.gray)
             }
             Spacer()
-            Text(payout.status)
+            Text(payout?.status ?? "")
                 .font(.footnote)
                 .foregroundColor(.green)   // adjust per-status if needed
         }

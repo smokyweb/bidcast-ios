@@ -77,6 +77,7 @@ enum APIEndPoint{
     case AddCard(param:AddCardRequest)
     case deleteCard(param:DeleteCardRequest)
     case getCard
+    case getTransactionList(param : TransactionRequest)
     
     //MARK: OLD
     
@@ -293,6 +294,12 @@ extension APIEndPoint: EndPointType {
             
         case .AddCard:
             return "add-card"
+        case .deleteCard:
+            return "delete-card"
+        case .getCard:
+            return "get-card"
+        case .getTransactionList:
+            return "transaction-history/listing"
             
             //MARK: Old
             
@@ -438,10 +445,7 @@ extension APIEndPoint: EndPointType {
             return "save-job"
         case .removeSavedJob:
             return "save-job"
-        case .deleteCard:
-            return "delete-card"
-        case .getCard:
-            return "get-card"
+      
         }
     }
     
@@ -573,6 +577,8 @@ extension APIEndPoint: EndPointType {
             return .post
         case .getCard:
             return .get
+        case .getTransactionList:
+            return .post
             
             //MARK: Old
             
@@ -724,6 +730,7 @@ extension APIEndPoint: EndPointType {
        
        
        
+        
         }
     }
     
@@ -858,6 +865,9 @@ extension APIEndPoint: EndPointType {
             return param
         case .getCard:
             return nil
+            
+        case .getTransactionList(param: let param):
+                return param
             
             
             //MARK: Old
@@ -1004,7 +1014,7 @@ extension APIEndPoint: EndPointType {
             return param
             
         
-        
+      
         }
     }
     

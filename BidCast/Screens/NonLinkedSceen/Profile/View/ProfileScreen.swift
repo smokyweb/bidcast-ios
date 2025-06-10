@@ -104,7 +104,7 @@ struct ProfileScreen: View {
             Task{
                 await self.viewModel.productDetails(parameters: UserProductRequest(user_id: Int(id) ?? 0))
                 await SVProgressHUD.dismiss()
-                success()
+                await success()
             }
         } else {
             showError = true

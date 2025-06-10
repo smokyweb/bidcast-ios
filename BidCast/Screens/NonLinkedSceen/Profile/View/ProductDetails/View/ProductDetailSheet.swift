@@ -7,6 +7,7 @@
 
 import SwiftUI
 import AlertToast
+import SVProgressHUD
 
 struct ProductDetailSheet: View {
     @Environment(\.presentationMode) var presentationMode
@@ -31,6 +32,8 @@ struct ProductDetailSheet: View {
     @State var sellerStatus: String = ""
     @Binding var productID : Int
     @State var sellerImage : String = ""
+    @State var offerArr = [Double]()
+    
     
     var body: some View {
         VStack(spacing: 0) {
@@ -193,15 +196,27 @@ struct ProductDetailSheet: View {
             }
             .padding()
         }
-        .bottomSheet(isPresented: $showMakeOfferSheet, height: screenHeight * 0.85) {
+        .bottomSheet(isPresented: $showMakeOfferSheet, height: screenHeight * 0.95) {
             MakeOfferBottomSheet(
                 isPresented: $showMakeOfferSheet,
-                listedPrice: 1299,
-                offerOptions: [1039, 1104, 1169, 1234]
+                listedPrice: Double(productPrice) ?? 0.0,
+                offerOptions: offerArr,onSendOffer : { text in
+                    var text = "\(text ?? 0.0)"
+                    Task{
+                        SVProgressHUD.show()
+                        let param = MakeOfferRequest(amount: text, product_id: productID)
+                        await viewModel.MakeOffer(param: param)
+                        await SVProgressHUD.dismiss()
+                        await offerSuccess()
+                    }
+                    
+                }
             ) { selectedOffer in
-                print("User selected offer: \(selectedOffer ?? 0)")
+                print("User selected offer: \(selectedOffer)")
+                
             }
         }
+        .presentationDetents([.large])
         
         .bottomSheet(isPresented: $showBuyNowSheet, height: screenHeight * 0.98) {
             BuyNowBottomSheetView(
@@ -233,16 +248,17 @@ struct ProductDetailSheet: View {
                 return
             }
             Task{
+                SVProgressHUD.show()
                 let param = FetchProductRequest(product_id: newValue)
                 await viewModel.getProductDetails(parameters: param)
+                await SVProgressHUD.dismiss()
+                await handleSuccess()
             }
         }
         .onDisappear {
             UIScrollView.appearance().bounces = true
         }
-        .onReceive(viewModel.$productDetailsResponseDict){ response in
-            handleSuccess()
-        }
+        
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }
@@ -255,6 +271,8 @@ struct ProductDetailSheet: View {
             CommonBottomSheet(
                 sheetType: $alertType,
                 onPrimaryClick: {
+                    showMakeOfferSheet = false
+                    onDismiss()
                     withAnimation { showError = false }
                 },
                 onSecondaryClick: {
@@ -263,7 +281,16 @@ struct ProductDetailSheet: View {
             )
         }
     }
-    
+    func offerSuccess(){
+        let response = viewModel.offerResponse
+        if response?.status == "success"{
+            alertType = .sheetType(icon: .success, title: response?.status?.capitalized ?? "", message: response?.message?.capitalized ?? "", primaryBtnText: AppString.ok.localized, secondaryBtnText: "", sheetThemeColor: .defaultTheme)
+            withAnimation(.snappy) { showError = true }
+        }else{
+            alertType = .sheetType(icon: .alert, title: response?.status?.capitalized ?? "", message: response?.message?.capitalized ?? "", primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .defaultTheme)
+            withAnimation(.snappy) { showError = true }
+        }
+    }
     
     func handleSuccess() {
         let response = viewModel.productDetailsResponseDict
@@ -278,6 +305,15 @@ struct ProductDetailSheet: View {
             sellerName =  data?.user?.name ?? ""
             sellerImage = data?.user?.profileImage ?? ""
             sellerStatus = data?.user?.sellerVerification == false ? "Non Verified Seller" : "Verified Seller"
+            offerArr.removeAll()
+            if let price = data?.pricing {
+                    let percentages: [Double] = [0.05, 0.10, 0.15, 0.20]
+                    for percent in percentages {
+                        let offerPrice = Double(price) * percent
+                        
+                        offerArr.append(offerPrice)
+                    }
+                }
             
         } else {
             alertType = .sheetType(icon: .alert, title: response?.status?.capitalized ?? "", message: response?.message?.capitalized ?? "", primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .defaultTheme)

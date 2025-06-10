@@ -33,7 +33,7 @@ struct WalletTabView: View {
                         Text("Available Balance")
                             .font(.footnote)
                             .foregroundColor(.gray)
-                        Text(money(summary.availableBalance))
+                        Text(money(summary.availableBalance ?? 0.0))
                             .font(.system(size: 34, weight: .bold))
                     }
                     .padding(.vertical, 16)
@@ -43,12 +43,12 @@ struct WalletTabView: View {
                     HStack(spacing: 12) {
                         WalletStatTile(
                             title: "Available for\nPayout",
-                            value: money(summary.availableForPayout),
+                            value: money(summary.availableForPayout ?? 0.0),
                             iconName: "arrow.up.arrow.down"
                         )
                         WalletStatTile(
                             title: "Processing",
-                            value: money(summary.processing),
+                            value: money(summary.processing ?? 0.0 ),
                             iconName: "lock.rotation"
                         )
                     }

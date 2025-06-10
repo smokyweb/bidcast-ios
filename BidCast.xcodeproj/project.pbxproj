@@ -1364,6 +1364,7 @@
 		35F8B5642DED975500FE0778 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				D4B615F12DE8374E00924A3D /* ProductDetails */,
 				35BA4A3E2DE8641200EEC92A /* ProfileScreen.swift */,
 			);
 			path = View;
@@ -3111,7 +3112,6 @@
 				D4B615CD2DE8280200924A3D /* NotifyMe */,
 				D4B615D72DE82A5400924A3D /* BuyNow */,
 				D4B615E12DE8312200924A3D /* MakeAnOffer */,
-				D4B615F12DE8374E00924A3D /* ProductDetails */,
 				D4B615FB2DE83C4800924A3D /* CreateClip */,
 			);
 			path = More;

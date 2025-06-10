@@ -518,7 +518,7 @@ struct ProductOrderDetailRequest : Encodable{
 }
 
 struct MakeOfferRequest : Encodable{
-    var amount : Int
+    var amount : String
     var product_id : Int
 }
 
@@ -543,3 +543,9 @@ struct PromoCodeRequest : Encodable{
     var promo_code : String
 }
 
+
+
+//MARK: extension
+struct TransactionRequest : Encodable {
+    var id : String? = ""
+}

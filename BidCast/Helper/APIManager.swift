@@ -100,6 +100,7 @@ final class APIManager {
             return object
         }
         catch let error {
+            print(error)
             throw error//DataError.invalidResponse(data)
         }
     }

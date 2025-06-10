@@ -8,38 +8,33 @@
 import SwiftUICore
 
 struct TransactionsTabView: View {
-    var transactions: [Transaction]
-    @State var categoryList: [CategoryDataModel] = [
-        CategoryDataModel(id: 1, name: "Electronics", image: "electronics_icon", color: "#FF5733"),
-        CategoryDataModel(id: 2, name: "Fashion", image: "fashion_icon", color: "#33C1FF"),
-        CategoryDataModel(id: 3, name: "Home", image: "home_icon", color: "#28A745"),
-        CategoryDataModel(id: 4, name: "Books", image: "books_icon", color: "#FFC300")
-    ]
-    @State private var selectedButton: WalletSegment = .all
+   @State var title = ""
+    @State var subLabel = ""
+    @State var price = ""
+    @State var selectedButton: WalletSegment = .all
     
     var body: some View {
-        if transactions.isEmpty {
-            Text("No transactions yet.")
-                .foregroundColor(.gray)
-                .frame(maxWidth: .infinity, minHeight: 200)
-        } else {
+      
             VStack(spacing: 15) {
                 VStack(spacing: 10) {
                     SegmentedControlView(segments: WalletSegment.allCases, selectedSegment: $selectedButton, isWithBorder: true)
                 }
-                ForEach(0 ..< categoryList.count, id: \.self) { ind in
+                
                     ListCell(
                         isComeFrom: "Wallet",
-                        image: categoryList[ind].image ?? "",
-                        title: categoryList[ind].name ?? "",
+                        image: "",
+                        title: title,
                         vectorImg: .icArrowUp,
-                        subLabel: "BidSwipe",
-                        tintColot: categoryList[ind].color ?? ""
+                        subLabel: "xxxx-xxxx-xxxx-\(subLabel)",
+                        tintColot: "",
+                        isVectorImgHidden: true,
+                        isDisplayPrice: true,
+                        price: "$\(price)"
                     )
-                }
+                
             }
             .padding(.horizontal, 0) 
-        }
+        
     }
 }
 

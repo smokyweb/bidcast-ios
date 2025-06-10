@@ -23,6 +23,8 @@ struct ListCell: View {
     var subLabelFontName = poppinsRegular
     var subLabelFontSize = 14.0
     var isVectorImgHidden : Bool = false
+    var isDisplayPrice = false
+    var price = ""
     var onTapMenuCell: (() -> Void)? = nil
     var body: some View {
         HStack(alignment: .center,spacing: 10){
@@ -78,6 +80,13 @@ struct ListCell: View {
                         .frame(width: 24,height: 24)
                         .rotationEffect(Angle(degrees: 90.0))
                         .padding(.trailing ,8)
+                }
+                if isDisplayPrice{
+                    Text(price)
+                        .font(.custom(poppinsSemiBold, fixedSize: titleFontSize))
+                        .foregroundStyle(.black)
+                        .foregroundColor(.black)
+                        .padding(.trailing, 10)
                 }
             }
             .frame(maxWidth: .infinity )

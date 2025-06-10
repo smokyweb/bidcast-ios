@@ -12,6 +12,7 @@ import Foundation
 final class ProductDetailsViewModel: ObservableObject {
     
     @Published var productDetailsResponseDict: ResponseModal<ProductDetailsModel>?
+    @Published var offerResponse: ResponseModal<Offer>?
     @Published var errorMessage: String? = nil
     
     // MARK: - Get Product Details
@@ -22,6 +23,19 @@ final class ProductDetailsViewModel: ObservableObject {
                 header: true
             )
             self.productDetailsResponseDict = response
+        } catch {
+            handle(error: error)
+        }
+    }
+    
+    func MakeOffer(param:MakeOfferRequest) async {
+        do {
+            if let response: ResponseModal<Offer> = try await APIManager.shared.request(
+                type: APIEndPoint.makeOffer(param: param),
+                header: true
+            ){
+                self.offerResponse = response
+            }
         } catch {
             handle(error: error)
         }

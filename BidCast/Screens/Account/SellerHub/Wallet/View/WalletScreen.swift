@@ -113,12 +113,16 @@
 //}
 
 import SwiftUI
+import SVProgressHUD
 
 struct WalletScreen: View {
     
     @State private var segment: WalletScreenSegment = .wallet
     @Environment(\.presentationMode) private var presentationMode
-    var data: WalletData
+    @State var data: WalletData?
+    @State var dataTransaction = [TransactionModel]()
+    
+    @State var viewModel = WalletViewModel()
     
     var body: some View {
         VStack(spacing: 0) {
@@ -143,11 +147,18 @@ struct WalletScreen: View {
                     
                     switch segment {
                     case .wallet:
-                        WalletTabView(summary: data.summary,
-                                      payouts: data.payoutHistory)
+                        WalletTabView(summary: data?.summary ?? WalletSummary(),
+                                      payouts: data?.payoutHistory ?? [Payout]())
                         
                     case .transactions:
-                        TransactionsTabView(transactions: data.transactions)
+                        ForEach(dataTransaction.indices, id: \.self) { index in
+                            let data = dataTransaction[index]
+                            TransactionsTabView(
+                                title: data.source_type ?? "",
+                                subLabel: data.card_number ?? "",
+                                price: "\(data.total ?? 0)"
+                            )
+                        }
                     }
                     
                     Spacer(minLength: 90)
@@ -155,8 +166,26 @@ struct WalletScreen: View {
                 .padding(.horizontal)
                 .padding(.top, 10)
             }
+            
+        }
+        .onChange(of: segment) { newValue in
+            if newValue == .transactions {
+                Task {
+                    SVProgressHUD.show()
+                    await viewModel.getTransaction(param: TransactionRequest())
+                    await SVProgressHUD.dismiss()
+                    await success()
+                }
+            }
         }
         .background(Color(UIColor.systemGroupedBackground).ignoresSafeArea())
+    }
+    
+    func success(){
+        let response  = viewModel.transactionDict
+        if response.status == "success"{
+            dataTransaction = response.data ?? [TransactionModel]()
+        }
     }
 }
 
@@ -187,51 +216,31 @@ struct WalletStatTile: View {
     }
 }
 
-#Preview {
-    let sampleData = WalletData(
-        summary: WalletSummary(
-            availableBalance: 5280.50,
-            availableForPayout: 3450.00,
-            processing: 1830.50,
-            earlyPayoutMessage: "You're eligible for early payout"
-        ),
-        payoutHistory: [
-            Payout(amount: 1250, date: .init(timeIntervalSince1970: 1741977600), status: "Completed"),
-            Payout(amount: 980.25, date: .init(timeIntervalSince1970: 1740796800), status: "Completed"),
-            Payout(amount: 2150.75, date: .init(timeIntervalSince1970: 1739568000), status: "Completed")
-        ],
-        transactions: [
-            Transaction(title: "Purchase from John", date: .init(timeIntervalSince1970: 1742841600), amount: 1250.00, isOutgoing: true)
-        ]
-    )
-    
-    WalletScreen(data: sampleData)
-        .environmentObject(AppRootManager())
-}
+
 
 
 // MARK: - WalletData.
 struct WalletData {
-    var summary: WalletSummary
-    var payoutHistory: [Payout]
-    var transactions: [Transaction]
+    var summary: WalletSummary?
+    var payoutHistory: [Payout]?
+    var transactions: [TransactionModel]?
 }
 
 // MARK: - WalletSummary.
 struct WalletSummary {
-    var availableBalance: Double
-    var availableForPayout: Double
-    var processing: Double
-    var earlyPayoutMessage: String
+    var availableBalance: Double? = 0.0
+    var availableForPayout: Double? = 0.0
+    var processing: Double? = 0.0
+    var earlyPayoutMessage: String? = ""
     var currencySymbol: String = "$"
 }
 
 // MARK: - Payout.
 struct Payout: Identifiable {
     let id = UUID()
-    var amount: Double
-    var date: Date
-    var status: String
+    var amount: Double? = 0.0
+    var date: String? = ""
+    var status: String? = ""
 }
 //MARK: - WalletScreenSegment
 enum WalletScreenSegment: String, CaseIterable, CustomStringConvertible {

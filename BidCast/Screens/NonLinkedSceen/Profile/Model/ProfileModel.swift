@@ -24,7 +24,8 @@ struct ProfileModel : Codable{
 struct ProductListingDataModel: Codable {
     var id, userID, categoryID: Int?
     var title, description: String?
-    var quantity, pricing: Int?
+    var quantity : Int?
+    var pricing: Float?
     var flashSale, acceptOffers, reserveForLive: Bool?
     var shippingProfileID: Int?
     var status: String?

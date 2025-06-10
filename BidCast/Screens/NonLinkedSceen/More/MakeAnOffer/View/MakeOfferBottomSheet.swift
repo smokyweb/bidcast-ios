@@ -12,9 +12,10 @@ struct MakeOfferBottomSheet: View {
     var listedPrice: Double
     var offerOptions: [Double]
     var onSendOffer: (Double?) -> Void
-
+    @State var discountedPrice : Double?
     @State private var selectedOffer: Double?
     @State private var customOffer: String = ""
+    var enteredText : (String) -> () = { _ in}
 
     var body: some View {
         VStack(spacing: 16) {
@@ -49,13 +50,15 @@ struct MakeOfferBottomSheet: View {
                     let discount = Int(100 - (offer / listedPrice * 100))
                     Button {
                         selectedOffer = offer
-                        customOffer = ""
+                        customOffer = "\(discount)"
+                        discountedPrice = Double(discount)
+                        
                     } label: {
                         VStack {
-                            Text("$\(Int(offer))")
+                            Text("$ \(Int(offer))  off")
                                 .font(.headline)
                                 .foregroundColor(.red)
-                            Text("\(discount)% off")
+                            Text("$ \(discount)")
                                 .font(.subheadline)
                                 .foregroundColor(.gray)
                         }
@@ -83,6 +86,10 @@ struct MakeOfferBottomSheet: View {
                         RoundedRectangle(cornerRadius: 12)
                             .stroke(Color.gray.opacity(0.3), lineWidth: 1)
                     )
+                    .onChange(of: customOffer) { newValue in
+                                            enteredText(newValue)
+                                            selectedOffer = nil // Unselect preset if custom entered
+                                        }
             }
 
             // Info note
