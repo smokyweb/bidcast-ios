@@ -7,29 +7,24 @@
 
 import Foundation
 
-final class NotifyMeViewModel : ObservableObject {
+
+@MainActor
+final class NotifyMeViewModel: ObservableObject {
     
-    var notifyLiveUserResponseDict : ResponseModal<[String]>?
+    @Published var notifyLiveUserResponseDict: ResponseModal<[String]>?
+    @Published var errorMessage: String? = nil
     
-    var eventHandler: ((_ event: Event) -> Void)?
-    
-    func notifyLiveUser(parameter : NotifyLiveUserRequest){
-        self.eventHandler?(.loading)
-        APIManager.shared.requestPost(
-            modelType: ResponseModal<[String]>.self,
-            type: APIEndPoint.notifyLiveUser(param: parameter),
-            header: true) { result in
-                self.eventHandler?(.stopLoading)
-                switch result {
-                case .success(let data):
-                    self.notifyLiveUserResponseDict = data
-                    self.eventHandler?(.dataLoaded)
-                case .failure(let error):
-                    self.eventHandler?(.error(error))
-                }
-            }
+    func notifyLiveUser(parameter: NotifyLiveUserRequest) async {
+        do {
+            let response: ResponseModal<[String]> = try await APIManager.shared.request(
+                type: APIEndPoint.notifyLiveUser(param: parameter),
+                header: true
+            )
+            notifyLiveUserResponseDict = response
+        } catch {
+            errorMessage = error.localizedDescription
+        }
     }
 }
-
 
 

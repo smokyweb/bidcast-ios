@@ -149,7 +149,13 @@ struct AddCardScreen: View {
                                            switch result {
                                            case .success(let token):
                                                print("Stripe token: \(token)")
-                                               self.viewModel.addCard(parameters: AddCardRequest(card_token: token))
+                                               
+                                               Task {
+                                                   await viewModel.addCard(parameters: AddCardRequest(card_token: token))
+                                                   await SVProgressHUD.dismiss()
+                                                   handleResponse()
+                                               }
+                                               
                                            case .failure(let error):
                                                print("Error: \(error.localizedDescription)")
                                            }
@@ -209,81 +215,32 @@ struct AddCardScreen: View {
                 }
             )
         }
-        .onAppear{
-            observe()
-            
-        }
     }
     
-    func observe() {
-        self.viewModel.eventHandler = { event in
-            switch event {
-            case .loading:
-                self.isLoading = true
-                SVProgressHUD.show()
-            case .stopLoading:
-                self.isLoading = false
-            case .dataLoaded:
-                success()
-            case .error(let error):
-                SVProgressHUD.dismiss()
-                let msg = error?.localizedDescription ?? AppString.error.localized
-                alertType = .sheetType(icon: .alert, title: AppString.error.localized, message: msg, primaryBtnText: "", secondaryBtnText: AppString.ok.localized)
-                showError = true
-            }
-        }
-    }
+ 
 
-    func success() {
-        if self.viewModel.requestType == "get"{
-            SVProgressHUD.dismiss()
-            let response = viewModel.cardDict
-            if response.status == "success" {
-                showError = true
-                alertType = .sheetType(
-                    icon: .alert,
-                    title: response.error_type?.capitalized ?? "",
-                    message: response.message?.capitalized ?? "",
-                    primaryBtnText:AppString.ok.localized,
-                    secondaryBtnText: ""
-                )
-                
-            } else {
-                showError = true
-                alertType = .sheetType(
-                    icon: .alert,
-                    title: response.error_type?.capitalized ?? "",
-                    message: response.message?.capitalized ?? "",
-                    primaryBtnText: "",
-                    secondaryBtnText: AppString.ok.localized
-                )
-            }
-            
-        }else{
-            SVProgressHUD.dismiss()
+    func handleResponse() {
             let response = viewModel.addCardDict
             if response.status == "success" {
-                showError = true
                 alertType = .sheetType(
-                    icon: .alert,
-                    title: response.error_type?.capitalized ?? "",
-                    message: response.message?.capitalized ?? "",
-                    primaryBtnText: AppString.ok.localized,
-                    secondaryBtnText: AppString.ok.localized
+                    icon: .success,
+                    title: response.error_type?.capitalized ?? "Success",
+                    message: response.message?.capitalized ?? "Card added successfully.",
+                    primaryBtnText: "OK",
+                    secondaryBtnText: ""
                 )
+                showError = true
             } else {
-                showError = true
                 alertType = .sheetType(
                     icon: .alert,
-                    title: response.error_type?.capitalized ?? "",
-                    message: response.message?.capitalized ?? "",
+                    title: response.error_type?.capitalized ?? "Error",
+                    message: response.message?.capitalized ?? "Something went wrong.",
                     primaryBtnText: "",
-                    secondaryBtnText: AppString.ok.localized
+                    secondaryBtnText: "OK"
                 )
+                showError = true
             }
-           
         }
-    }
     
 }
 

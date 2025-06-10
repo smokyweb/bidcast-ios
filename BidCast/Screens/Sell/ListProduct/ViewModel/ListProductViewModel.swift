@@ -8,63 +8,66 @@
 import Foundation
 import StoreKit
 
-final class ListProductViewModel {
+@MainActor
+final class ListProductViewModel: ObservableObject {
     
-    var categoryDict: ResponseModal<[CategoryDataModel]>?
-    var storeProductDict: ResponseModal<StoreProductModel>?
-    var request : String = ""
+    @Published var categoryResponse: ResponseModal<[CategoryDataModel]>?
+    @Published var storeProductResponse: ResponseModal<StoreProductModel>?
+    @Published var errorMessage: String?
+    @Published var requestType: String = ""
     
-    var eventHandler: ((_ event: Event) -> Void)?
-    
-    //MARK: getCategory
-    func getCategoryList() {
-        self.eventHandler?(.loading)
-        self.request = "Category"
-        APIManager.shared
-            .dictionaryRequest(
-                modelType: ResponseModal<[CategoryDataModel]>.self,
+    // MARK: - Get Category List
+    func getCategoryList() async {
+        requestType = "Category"
+        do {
+            let response: ResponseModal<[CategoryDataModel]> = try await APIManager.shared.request(
                 type: APIEndPoint.category,
-                header: true) {
-                    result in
-                    self.eventHandler?(.stopLoading)
-                    switch result {
-                    case .success(let data):
-                        self.categoryDict = data
-                        print(data)
-                        self.eventHandler?(.dataLoaded)
-                        return
-                    case .failure(let error):
-                        self.eventHandler?(.error(error))
-                        return
-                        
-                    }
-                }
-        
+                header: true
+            )
+            self.categoryResponse = response
+        } catch {
+            self.errorMessage = error.localizedDescription
+        }
     }
-    func storeProduct(param: StoreProductParam, images: [String],key : String) {
-        self.eventHandler?(.loading)
-        self.request = "store"
-        var parameters = [String:Any]()
-        do { parameters = try param.asDictionary() } catch {print(error.localizedDescription)}
+    
+ 
+    @MainActor
+    final class ListProductViewModel: ObservableObject {
         
-        APIManager.shared
-            .uploadFile(
+        @Published var storeProductResponse: ResponseModal<StoreProductModel>?
+        @Published var errorMessage: String?
+        @Published var requestType: String = ""
+        
+        func storeProduct(param: StoreProductParam, images: [String], key: String) {
+            self.requestType = "store"
+            var parameters = [String: Any]()
+            
+            do {
+                parameters = try param.asDictionary()
+            } catch {
+                self.errorMessage = "Invalid parameters: \(error.localizedDescription)"
+                return
+            }
+            
+            APIManager.shared.uploadImage(
                 type: APIEndPoint.storeProduct(param: param),
                 urlArray: images,
                 mimeType: "image/png",
-                modalType: ResponseModal<StoreProductModel>.self,
-                key: key,
+                keyName: key,
                 parameters: parameters,
-                header: true,
-                completion: {
-                    result in
-                    self.eventHandler?(.stopLoading)
+                modelType: ResponseModal<StoreProductModel>.self,
+                header: true
+            ) { result in
+                DispatchQueue.main.async {
                     switch result {
-                        case .success(let data):
-                        self.storeProductDict = data
-                        case .failure(let error):
-                            self.eventHandler?(.error(error))
+                    case .success(let data):
+                        self.storeProductResponse = data
+                    case .failure(let error):
+                        self.errorMessage = error.localizedDescription
                     }
-                })
+                }
+            }
+        }
     }
+
 }

@@ -12,6 +12,7 @@ import CoreData
 import BottomSheet
 import AlertToast
 import SwiftfulLoadingIndicators
+import SVProgressHUD
 //import AuthenticationServices
 
 struct LoginScreen: View {
@@ -25,7 +26,6 @@ struct LoginScreen: View {
 //    @FetchRequest(sortDescriptors: []) private var loginDetailList: FetchedResults<Login>
     
     @State var isRemeber: Bool = true
-    @State var isLoading: Bool = false
     @State var showError: Bool = false
     @State var navigateToForgot: Bool = false
     @State var navigateToLanguage: Bool = false
@@ -121,7 +121,12 @@ struct LoginScreen: View {
                             return
                         }
                         print("Parameters used for login:- \(self.request)")
-                        self.viewModel.logIn(parameters: self.request)
+                        Task{
+                            SVProgressHUD.show()
+                            await self.viewModel.logIn(parameters: self.request)
+                            await SVProgressHUD.dismiss()
+                            await success()
+                        }
                     }, btnTextColor: .white)
                     
                     
@@ -150,14 +155,7 @@ struct LoginScreen: View {
                     AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
                 }
                 
-                if isLoading {
-                   
-                        
-                    LoadingIndicator()
-                        .edgesIgnoringSafeArea(.all)
-//                    Color.black.opacity(0.4)
-                }
-            
+              
                 CusNavLink(doNavigate: $navigateToForgot, destination: ForgotScreen())
                 CusNavLink(doNavigate: $navigateTotab, destination: TabbarScreen())
                 CusNavLink(doNavigate: $navigateToLanguage, destination: LanguagePickerView())
@@ -187,51 +185,26 @@ struct LoginScreen: View {
             }
         })
 
-        .onAppear(){
-           
-            observe()
-        }
+        
         .onTapGesture {
             UIApplication.shared.endEditing()
         }
     }
     
-   
-    
-    func observe() {
-        self.viewModel.eventHandler = { event in
-            switch event {
-                case .loading:
-                    self.isLoading = true
-                case .stopLoading:
-                    self.isLoading = false
-                case .dataLoaded:
-                    success()
-                case .error(let error):
-                    if error?.localizedDescription == DataError.tokenExpired.localizedDescription {
-                        alertType = .sheetType(icon: .alert, title: AppString.loginFailed.localized, message: AppString.failedToLogin.localized , primaryBtnText: "", secondaryBtnText: AppString.retryLogin.localized, sheetThemeColor: .secondary)
-                        showError = true
-                        Log.e(error as Any)
-                    } else {
-                        alertType = .sheetType(icon: .alert, title: AppString.error.localized, message: error?.localizedDescription ?? "", primaryBtnText: "", secondaryBtnText: AppString.error.localized, sheetThemeColor: .secondary)
-                        showError = true
-                        Log.e(error as Any)
-                    }
-            }
-        }
-    }
-
-    
     func success() {
         
-       if viewModel.requestType == "Login" {
-            let dict = viewModel.loginResponceDict
-            if dict?.status == "success" {
+        SVProgressHUD.dismiss()
+           let dict = viewModel.loginResponse
+            if dict.status == "success" {
                 UserDefaults.isFirstLogin = 1
 //                if dict?.data.role_id != "1" {
-                    loginDetail = dict!.data
-                    UserDefaultsManager.shared.setValue(dict?.data.token, forKey: .token)
-                    UserDefaultsManager.shared.setModel(dict?.data, forKey: .userDetail)
+                loginDetail = dict.data ?? LoginModel()
+                UserDefaults.accessToken = dict.data?.token ?? ""
+                UserDefaults.userId = dict.data?.id ?? 0
+                UserDefaults.userName = dict.data?.name ?? ""
+                
+                UserDefaultsManager.shared.setValue(dict.data?.token, forKey: .token)
+                UserDefaultsManager.shared.setModel(dict.data, forKey: .userDetail)
                     UserDefaultsManager.shared.setValue(isRemeber, forKey: .rememberMe)
                     if isRemeber {
                         saveLoginDetail(mail: request.email, password: request.password)
@@ -240,18 +213,16 @@ struct LoginScreen: View {
                     }
                     UserDefaultsManager.shared.setValue(true, forKey: .isLoggedIn)
                    
-                    UserDefaultsManager.shared.setValue(dict?.data.role_id, forKey: .userRoleId)
-                UserDefaultsManager.shared.setValue(dict?.data.roles?.name ??  "", forKey: .userRole)
-                    if let token: String = UserDefaultsManager.shared.value(forKey: .deviceToken) {
-                        print("Device Token \(token)")
-                    }
-                alertType = .sheetType(icon: .success, title: dict?.status?.capitalized ?? "", message: AppString.chooseLanguage.localized, primaryBtnText: AppString.continueBtn.localized , secondaryBtnText: "", sheetThemeColor: .secondary)
+                UserDefaultsManager.shared.setValue(dict.data?.role_id, forKey: .userRoleId)
+                UserDefaultsManager.shared.setValue(dict.data?.roles?.name ??  "", forKey: .userRole)
+                  
+                alertType = .sheetType(icon: .success, title: dict.status?.capitalized ?? "", message: AppString.chooseLanguage.localized, primaryBtnText: AppString.continueBtn.localized , secondaryBtnText: "", sheetThemeColor: .secondary)
                 withAnimation(.snappy) { navigateTotab = true }
             }else{
-                alertType = .sheetType(icon: .alert, title: dict?.status?.capitalized ?? "", message: dict?.message ?? "", primaryBtnText: AppString.ok.localized, secondaryBtnText: "", sheetThemeColor: .secondary)
+                alertType = .sheetType(icon: .alert, title: dict.status?.capitalized ?? "", message: dict.message ?? "", primaryBtnText: AppString.ok.localized, secondaryBtnText: "", sheetThemeColor: .secondary)
                 withAnimation(.snappy) { showError = true }
             }
-        }
+        
     }
     
     func saveLoginDetail(mail: String, password: String) {

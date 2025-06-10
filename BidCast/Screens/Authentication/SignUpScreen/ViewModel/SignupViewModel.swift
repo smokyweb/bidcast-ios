@@ -7,105 +7,63 @@
 
 import Foundation
 
-final class SignupViewModel {
+@MainActor
+final class SignupViewModel: ObservableObject {
     
-    var signUpResponceDict = LoginResponce()
-    var linkedInResponse: ResponseModal<LinkedInDataResponse>?
-    var userNameDict: ResponseModal<SignUpModel>?
-
+    @Published var signUpResponse = ResponseModel<SignUpModel>()
+    @Published var errorMessage: String? = nil
+    @Published var requestType: String = ""
     
-    var requestType: String = ""
-    
-    var eventHandler: ((_ event: Event) -> Void)? // Data Binding Closure
-
-    func register(parameters: SignUpRequest) {
-        self.requestType = "RegisterUser"
-        self.eventHandler?(.loading)
-        APIManager.shared.requestPost(
-            modelType: LoginResponce.self, // response type
-            type: APIEndPoint.singUp(param: parameters),
-            header: false) { result in
-                self.eventHandler?(.stopLoading)
-                switch result {
-                case .success(let data):
-                    self.signUpResponceDict = data
-                    self.eventHandler?(.dataLoaded)
-                case .failure(let error):
-                    self.eventHandler?(.error(error))
-                }
+    // MARK: - Register User
+    func register(parameters: SignUpRequest) async {
+        do {
+            self.requestType = "RegisterUser"
+            if let response: ResponseModel<SignUpModel> = try await APIManager.shared.request(
+                type: APIEndPoint.singUp(param: parameters),
+                header: false
+            ){
+                self.signUpResponse = response
             }
+        } catch {
+            handle(error: error)
+        }
     }
     
-    
-    func registerUser(parameters: SignUpRequest) {
-        self.requestType = "RegisterUserName"
-        self.eventHandler?(.loading)
-        APIManager.shared.requestPost(
-            modelType: ResponseModal<SignUpModel>.self, // response type
-            type: APIEndPoint.singUp(param: parameters),
-            header: false) { result in
-                self.eventHandler?(.stopLoading)
-                switch result {
-                case .success(let data):
-                    self.userNameDict = data
-                    self.eventHandler?(.dataLoaded)
-                case .failure(let error):
-                    self.eventHandler?(.error(error))
-                }
+    // MARK: - Register UserName
+    func registerUser(parameters: SignUpRequest) async {
+        do {
+            self.requestType = "RegisterUserName"
+            if let response: ResponseModel<SignUpModel> = try await APIManager.shared.request(
+                type: APIEndPoint.singUp(param: parameters),
+                header: false
+            ){
+                self.signUpResponse = response
             }
+        } catch {
+            handle(error: error)
+        }
     }
     
-    func saveDeviceDetail(parameter: DeviceDetailModal) {
-        APIManager.shared.requestPost(
-            modelType: ResponseModal<SignInData>.self, // response type
-            type: APIEndPoint.saveDeviceDetail(param: parameter),
-            header: true) { result in
-                self.eventHandler?(.stopLoading)
-                switch result {
-                    case .success(_):
-                        self.eventHandler?(.dataLoaded)
-                    case .failure(let error):
-                        self.eventHandler?(.error(error))
-                }
-            }
-    }
+   
     
-    func getCombineDetail() {
-        self.eventHandler?(.loading)
-        requestType = "CombineDetail"
-        APIManager.shared
-            .requestPost(
-                modelType: ResponseModal<CombineDataModel>.self,
-                type: APIEndPoint.combineData,
-                header: true) {
-                    result in
-                    switch result {
-                        case .success(let data):
-                            UserDefaultsManager.shared.setModel(data.data, forKey: .combineData)
-                            self.eventHandler?(.dataLoaded)
-                            return
-                        case .failure(let error):
-                            Log.e(String(describing: error))
-                            return
-                    }
+    // MARK: - Centralized Error Handler
+    private func handle(error: Error) {
+        if let dataError = error as? DataError {
+            switch dataError {
+            case .invalidCode(let message):
+                self.errorMessage = message ?? "Invalid code error"
+            case .invalidResponse(let data):
+                if let data = data,
+                   let json = try? JSONSerialization.jsonObject(with: data, options: []) {
+                    self.errorMessage = "Invalid response: \(json)"
+                } else {
+                    self.errorMessage = "Invalid response with no data"
                 }
-    }
-    
-    func getLinkedInDetails(param: String) {
-        self.eventHandler?(.loading)
-        requestType = "LinkedInDetail"
-        APIManager.shared.requestPost(
-            modelType: ResponseModal<LinkedInDataResponse>.self,
-            type: APIEndPoint.checkLinkedIn(param: param),
-            header: false) { result in
-                self.eventHandler?(.stopLoading)
-                switch result {
-                    case .success(let data):
-                        self.linkedInResponse = data
-                        self.eventHandler?(.dataLoaded)
-                    case .failure(let error):
-                        self.eventHandler?(.error(error))
-                }
+            default:
+                self.errorMessage = error.localizedDescription
             }
+        } else {
+            self.errorMessage = error.localizedDescription
+        }
     }
 }

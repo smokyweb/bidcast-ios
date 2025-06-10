@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SVProgressHUD
 
 struct HomeViewScreen: View {
     @State private var selectedButton: HomeButton = .For_you
@@ -81,32 +82,23 @@ struct HomeViewScreen: View {
             .background(.white)
 //            .edgesIgnoringSafeArea(.top)
             .onAppear{
-                observe()
-                self.viewModel.getLiveShows()
+                Task{
+                    SVProgressHUD.show()
+                   await self.viewModel.getLiveShows()
+                    await SVProgressHUD.dismiss()
+                    await self.success()
+                }
+            }
+            .onReceive(viewModel.$liveShowsResponse){ reponse in
+               
             }
             
        
     }
-    func observe() {
-        self.viewModel.eventHandler = { event in
-            switch event {
-            case .loading:
-                self.isLoading = true
-            case .stopLoading:
-                self.isLoading = false
-            case .dataLoaded:
-                success()
-            case .error(let error):
-                let msg = error?.localizedDescription ?? AppString.error.localized
-                alertType = .sheetType(icon: .alert, title: AppString.error.localized, message: msg, primaryBtnText: "", secondaryBtnText: AppString.ok.localized)
-                showError = true
-            }
-        }
-    }
+   
 
     func success() {
-        if self.viewModel.requestType == "get"{
-            let response = viewModel.getLiveShowsDict
+        let response = viewModel.liveShowsResponse
             if response.status == "success" {
                 liveShowsData = response.data ?? [HomeModel]()
                 
@@ -119,7 +111,7 @@ struct HomeViewScreen: View {
                     primaryBtnText: "",
                     secondaryBtnText: AppString.ok.localized
                 )
-            }
+            
             
         }
     }

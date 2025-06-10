@@ -7,106 +7,91 @@
 
 import Foundation
 
-final class ProfileViewModel {
+@MainActor
+final class ProfileViewModel: ObservableObject {
     
-    var getProfileDict = ResponseModel<ProfileModel>()
-    var productDetailsResponceDict : ResponseModalPaginate<[ProductListingDataModel]>?
-    var followDict = ResponseModel<[String]>()
-    var requestType = ""
+    @Published var getProfileDict = ResponseModel<ProfileModel>()
+    @Published var productDetailsResponseDict: ResponseModalPaginate<[ProductListingDataModel]>?
+    @Published var followDict = ResponseModel<[String]>()
+    @Published var errorMessage: String? = nil
+    @Published var requestType = ""
     
-    var eventHandler: ((_ event: Event) -> Void)? // Data Binding Closure
-
-    func storeAddress(parameters: AddressRequest) {
-        self.requestType = "store"
-        self.eventHandler?(.loading)
-        APIManager.shared.requestPost(
-            modelType: ResponseModel<AddressModel>.self, // response type
-            type: APIEndPoint.storeAddress(param: parameters),
-            header: true) { result in
-                self.eventHandler?(.stopLoading)
-                switch result {
-                case .success(let data):
-//                    self.addressDict = data
-                    self.eventHandler?(.dataLoaded)
-                case .failure(let error):
-                    self.eventHandler?(.error(error))
-                }
-            }
+    // MARK: - Store Address
+    func storeAddress(parameters: AddressRequest) async {
+        do {
+            self.requestType = "store"
+            _ = try await APIManager.shared.request(
+                type: APIEndPoint.storeAddress(param: parameters),
+                header: true
+            ) as ResponseModel<AddressModel>
+            // No property update here, you can add if needed
+        } catch {
+            handle(error: error)
+        }
     }
     
-    
-    func getProfile(param:ProfileParamRequest) {
-        self.eventHandler?(.loading)
-        self.requestType = "get"
-        APIManager.shared.requestPost(
-                modelType: ResponseModel<ProfileModel>.self,
+    // MARK: - Get Profile
+    func getProfile(param: ProfileParamRequest) async {
+        do {
+            self.requestType = "get"
+            let response: ResponseModel<ProfileModel> = try await APIManager.shared.request(
                 type: APIEndPoint.getProfileById(param: param),
-                header: true) {
-                    result in
-                    self.eventHandler?(.stopLoading)
-                    switch result {
-                    case .success(let data):
-                        self.getProfileDict = data
-                        self.eventHandler?(.dataLoaded)
-                        return
-                    case .failure(let error):
-                        self.eventHandler?(.error(error))
-                        return
-                        
-                    }
+                header: true
+            )
+            self.getProfileDict = response
+        } catch {
+            handle(error: error)
+        }
+    }
+    
+    // MARK: - Product Details
+    func productDetails(parameters: UserProductRequest) async {
+        do {
+            self.requestType = "product"
+            let response: ResponseModalPaginate<[ProductListingDataModel]> = try await APIManager.shared.request(
+                type: APIEndPoint.getUserProduct(param: parameters),
+                header: true
+            )
+            self.productDetailsResponseDict = response
+        } catch {
+            handle(error: error)
+        }
+    }
+    
+    // MARK: - Follow / Unfollow
+    func followUnfollow(parameters: FollowRequest) async {
+        do {
+            self.requestType = "follow"
+            _ = try await APIManager.shared.request(
+                type: APIEndPoint.followUnfollow(param: parameters),
+                header: true
+            ) as ResponseModel<[String]>
+            
+            // Refresh profile after follow/unfollow
+            await getProfile(param: ProfileParamRequest(id: parameters.following_id))
+        } catch {
+            handle(error: error)
+        }
+    }
+    
+    // MARK: - Centralized Error Handler
+    private func handle(error: Error) {
+        if let dataError = error as? DataError {
+            switch dataError {
+            case .invalidCode(let message):
+                self.errorMessage = message ?? "Invalid code error"
+            case .invalidResponse(let data):
+                if let data = data,
+                   let json = try? JSONSerialization.jsonObject(with: data, options: []) {
+                    self.errorMessage = "Invalid response: \(json)"
+                } else {
+                    self.errorMessage = "Invalid response with no data"
                 }
-        
+            default:
+                self.errorMessage = error.localizedDescription
+            }
+        } else {
+            self.errorMessage = error.localizedDescription
+        }
     }
-    
-    func productDetails(parameters: UserProductRequest) {
-        self.requestType = "product"
-           self.eventHandler?(.loading)
-           APIManager.shared.requestPost(
-               modelType: ResponseModalPaginate<[ProductListingDataModel]>.self,
-               type: APIEndPoint.getUserProduct(param: parameters),
-               header: true) { result in
-                   self.eventHandler?(.stopLoading)
-                   switch result {
-                   case .success(let data):
-                       self.productDetailsResponceDict = data
-                       self.eventHandler?(.dataLoaded)
-                   case .failure(let error):
-                       self.eventHandler?(.error(error))
-                   }
-               }
-       }
-    
-    func followUnfollow(parameters: FollowRequest) {
-        self.requestType = "follow"
-           self.eventHandler?(.loading)
-           APIManager.shared.requestPost(
-            modelType: ResponseModel<[String]>.self,
-               type: APIEndPoint.followUnfollow(param: parameters),
-               header: true) { result in
-                   self.eventHandler?(.stopLoading)
-                   switch result {
-                   case .success(let data):
-//                       self.followDict = data
-                       self.getProfile(param: ProfileParamRequest(id: parameters.following_id))
-                       self.eventHandler?(.dataLoaded)
-                   case .failure(let error):
-                       self.eventHandler?(.error(error))
-                   }
-               }
-       }
-   
 }
-
-
-extension ProfileViewModel {
-    
-    enum Event {
-        case loading
-        case stopLoading
-        case dataLoaded
-        case error(Error?)
-        
-    }
-    
-}
-

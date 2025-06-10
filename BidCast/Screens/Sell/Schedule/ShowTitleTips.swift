@@ -8,6 +8,7 @@
 import SwiftUI
 import RichText
 import SwiftfulLoadingIndicators
+import SVProgressHUD
 
 struct ShowTitleTips: View {
     
@@ -39,9 +40,9 @@ struct ShowTitleTips: View {
             
             ScrollView(showsIndicators: false) {
                 VStack(alignment:.leading,spacing: 16) {
-                    AuthTextField(floatingLabel: "Show Title".localized, placeholder: "Enter title".localized, icon: .alert, text:$title  ,isIconDisplay : false) { text in
+                    AuthTextField(floatingLabel: "Show Title".localized, placeholder: "Enter title".localized, icon: .alert, text:$title  ,isIconDisplay : false, enteredText:  { text in
                         title = text
-                    }
+                    })
                     .keyboardType(.alphabet)
                     .padding([.leading,.trailing],-16)
                     Text("Tips for a Great Title")
@@ -109,44 +110,33 @@ struct ShowTitleTips: View {
             },cornerRadius: 12, btnTextColor: .white)
             
             CusNavLink(doNavigate: $navigateToSelectCategory, destination: SelectCategoryScreen(title: $title))
-            if isLoading{
-                LoadingIndicator()
-            }
+           
         }
     
         .edgesIgnoringSafeArea([.top,.bottom])
         .background(.bg.opacity(0.5))
         .toolbar(.hidden,for: .tabBar)
         .onAppear {
-            observe()
-            
-            viewModel.getTitleTips(param: TipParam(type: "title"))
-        }
-    }
-    func observe() {
-        self.viewModel.eventHandler = { event in
-            switch event {
-            case .loading:
-                self.isLoading = true
-            case .stopLoading:
-                self.isLoading = false
-            case .dataLoaded:
-                success()
-            case .error(let error):
-                print("Error: \(error?.localizedDescription ?? "Unknown")")
+            Task{
+                SVProgressHUD.show()
+                await viewModel.getTitleTips(param: TipParam(type: "title"))
+                await SVProgressHUD.dismiss()
+                await success()
             }
         }
+        
     }
     
+    
     func success() {
-        if let dict = viewModel.getTipsDict {
-            if dict.status == "success" {
-                tip = dict.data.first ?? TitleTipsModel()
+        let dict = viewModel.tipsResponse
+        if dict?.status == "success" {
+            tip = dict?.data.first ?? TitleTipsModel()
             } else {
-                print("API error: \(dict.status ?? "")")
+                print("API error: \(dict?.status ?? "")")
             }
         }
-    }
+    
     //    private func goToNextStep() {
     //        if currentIndex < prepare.count - 1 {
     //            currentIndex += 1

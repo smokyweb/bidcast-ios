@@ -7,27 +7,25 @@
 
 import Foundation
 
-final class AboutUsViewModel {
-    
-    var aboutResponceDict : ResponseModal<AboutUsModel>?
-    
-    var eventHandler: ((_ event: Event) -> Void)? // Data Binding Closure
+@MainActor
+final class AboutUsViewModel: ObservableObject {
 
-    func getAboutContent(){
-        self.eventHandler?(.loading)
-        APIManager.shared.requestPost(
-            modelType: ResponseModal<AboutUsModel>.self, // response type
-            type: APIEndPoint.aboutUs,
-            header: true) { result in
-                self.eventHandler?(.stopLoading)
-                switch result {
-                case .success(let data):
-                    self.aboutResponceDict = data
-                    self.eventHandler?(.dataLoaded)
-                case .failure(let error):
-                    self.eventHandler?(.error(error))
-                }
-            }
+    @Published var aboutResponse = ResponseModel<AboutUsModel>()
+    @Published var errorMessage: String? = nil
+
+    func getAboutContent() async {
+        do {
+            let response: ResponseModel<AboutUsModel> = try await APIManager.shared.request(
+                type: APIEndPoint.aboutUs,
+                header: true
+            )
+            self.aboutResponse = response
+        } catch {
+            self.handle(error: error)
+        }
+    }
+
+    private func handle(error: Error) {
+        self.errorMessage = error.localizedDescription
     }
 }
-

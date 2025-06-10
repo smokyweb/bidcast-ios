@@ -7,6 +7,7 @@
 
 import SwiftUI
 import AlertToast
+import SVProgressHUD
 
 struct SelectCategoryScreen: View {
     @Environment(\.presentationMode) var presentationMode
@@ -26,8 +27,8 @@ struct SelectCategoryScreen: View {
     @Binding var title : String
     
     var viewModel = SelectCategoryViewModel()
-
-
+    
+    
     var body: some View {
         VStack {
             // Top Header
@@ -60,7 +61,7 @@ struct SelectCategoryScreen: View {
                     anchor: .top
                 )
                 .onChange(of: selectedCategory) { newValue in
-                   print("The catory count \(categoryNames)")
+                    print("The catory count \(categoryNames)")
                 }
                 
                 // Drop Down for Auction Type
@@ -89,8 +90,19 @@ struct SelectCategoryScreen: View {
         .edgesIgnoringSafeArea(.top)
         .background(Color.bg.opacity(0.5))
         .onAppear {
-            observe()
-            self.viewModel.getCategoryList()
+            
+            Task{
+                SVProgressHUD.show()
+                await self.viewModel.getCategoryList()
+                await SVProgressHUD.dismiss()
+                categorySuccess()
+                
+            }
+        }
+       
+        .onReceive(viewModel.$auctionResponse){ response in
+           
+          
         }
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
@@ -108,61 +120,53 @@ struct SelectCategoryScreen: View {
             )
         }
     }
-
-    func observe() {
-        self.viewModel.eventHandler = { event in
-            switch event {
-            case .loading:
-                self.isLoading = true
-            case .stopLoading:
-                self.isLoading = false
-            case .dataLoaded:
-                categorySuccess()
-            case .error(let error):
-                let msg = error?.localizedDescription ?? AppString.error.localized
-                alertType = .sheetType(icon: .alert, title: AppString.error.localized, message: msg, primaryBtnText: "", secondaryBtnText: AppString.ok.localized)
-                showError = true
-            }
-        }
-    }
-
+    
+    
     func categorySuccess() {
-        if viewModel.request == "Category" {
-            if let response = viewModel.categoryDict {
-                if response.status == "success" {
-                    self.categoryList = response.data
-                    self.categoryNames = response.data.map { $0.name ?? "No Category" }
-                    self.viewModel.getAuctionList()
-                } else {
-                    alertType = .sheetType(
-                        icon: .alert,
-                        title: response.error_type?.capitalized ?? "",
-                        message: response.message?.capitalized ?? "",
-                        primaryBtnText: "",
-                        secondaryBtnText: AppString.ok.localized
-                    )
-                    showError = true
-                }
+        let response = viewModel.categoryResponse
+        if response.status == "success" {
+            self.categoryList = response.data ?? [CategoryDataModel]()
+            self.categoryNames = (response.data ?? []).map { $0.name ?? "No Category" }
+            Task{
+                SVProgressHUD.show()
+                await  self.viewModel.getAuctionList()
+                await SVProgressHUD.dismiss()
+                auctionSuccess()
             }
-        } else if viewModel.request == "Auction" {
-            if let response = viewModel.AuctionDict {
-                if response.status == "success" {
-                    self.auctionTypeList = response.data
-                    self.auctionTypeNames = response.data.map { $0.name ?? "No Auction" }
-                } else {
-                    alertType = .sheetType(
-                        icon: .alert,
-                        title: response.error_type?.capitalized ?? "",
-                        message: response.message?.capitalized ?? "",
-                        primaryBtnText: "",
-                        secondaryBtnText: AppString.ok.localized
-                    )
-                    showError = true
-                }
-            }
+        } else {
+            alertType = .sheetType(
+                icon: .alert,
+                title: response.error_type?.capitalized ?? "",
+                message: response.message?.capitalized ?? "",
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
+            )
+            showError = true
         }
+        
     }
+    func auctionSuccess(){
+        let response = viewModel.auctionResponse
+        if response.status == "success" {
+            self.auctionTypeList = response.data ?? [AuctionDataModel]()
+            self.auctionTypeNames = (response.data ?? []).map { $0.name ?? "No Auction" }
+        } else {
+            alertType = .sheetType(
+                icon: .alert,
+                title: response.error_type?.capitalized ?? "",
+                message: response.message?.capitalized ?? "",
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
+            )
+            showError = true
+        }
+        
+        
+        
+    }
+    
 }
+
 //
 //#Preview {
 //    SelectCategoryScreen(, title: <#Binding<String>#>)

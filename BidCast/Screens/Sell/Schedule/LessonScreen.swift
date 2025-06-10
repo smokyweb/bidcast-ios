@@ -159,7 +159,7 @@ struct LessonScreen: View {
             .onAppear {
                 observe()
                 
-                viewModel.getLesson()
+//                viewModel.getLesson()
             }
             .onDisappear {
                 if let token = timeObserverToken, let currentPlayer = player {
@@ -242,29 +242,29 @@ struct LessonScreen: View {
 
         
         func observe() {
-            self.viewModel.eventHandler = { event in
-                switch event {
-                    case .loading:
-                        self.isLoading = true
-                    case .stopLoading:
-                        self.isLoading = false
-                    case .dataLoaded:
-                        success()
-                    case .error(let error):
-                        print("Error: \(error?.localizedDescription ?? "Unknown")")
-                }
-            }
+//            self.viewModel.eventHandler = { event in
+//                switch event {
+//                    case .loading:
+//                        self.isLoading = true
+//                    case .stopLoading:
+//                        self.isLoading = false
+//                    case .dataLoaded:
+//                        success()
+//                    case .error(let error):
+//                        print("Error: \(error?.localizedDescription ?? "Unknown")")
+//                }
+//            }
         }
 
         func success() {
-            if let dict = viewModel.getLessonDict {
-                if dict.status == "success" {
-                    lessons = dict.data
-                    playCurrentVideo()
-                } else {
-                    print("API error: \(dict.status ?? "")")
-                }
-            }
+//            if let dict = viewModel.getLessonDict {
+//                if dict.status == "success" {
+//                    lessons = dict.data
+//                    playCurrentVideo()
+//                } else {
+//                    print("API error: \(dict.status ?? "")")
+//                }
+//            }
         }
 
 }

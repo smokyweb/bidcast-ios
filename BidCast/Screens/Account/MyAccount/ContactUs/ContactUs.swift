@@ -7,6 +7,7 @@
 
 import SwiftUI
 import AlertToast
+import SVProgressHUD
 
 struct ContactUs: View {
     @Environment(\.presentationMode) var presentationMode
@@ -140,8 +141,10 @@ struct ContactUs: View {
                                 showhud = true
                                 return
                             }
-                        
-                        self.viewModel.contactUs(parameters: request)
+                        Task{
+                            SVProgressHUD.show()
+                            await self.viewModel.contactUs(parameters: request)
+                        }
                     }
                 }
                 .padding(.horizontal)
@@ -150,8 +153,10 @@ struct ContactUs: View {
             .shadow(radius: 3)
            
         }
-        .onAppear {
-            observe()
+        .onReceive(viewModel.$contactModel){ response in
+            SVProgressHUD.dismiss()
+            self.success()
+            
         }
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)}
@@ -160,7 +165,7 @@ struct ContactUs: View {
                 sheetType: $alertType,
                 onPrimaryClick: {
                     withAnimation { showError = false }
-                    let response = viewModel.contactModelDict
+                    let response = viewModel.contactModel
                     if response.status == "success" {
                         self.presentationMode.wrappedValue.dismiss()
                     }
@@ -172,25 +177,9 @@ struct ContactUs: View {
         }
     }
 
-    func observe() {
-        self.viewModel.eventHandler = { event in
-            switch event {
-            case .loading:
-                self.isLoading = true
-            case .stopLoading:
-                self.isLoading = false
-            case .dataLoaded:
-                success()
-            case .error(let error):
-                let msg = error?.localizedDescription ?? AppString.error.localized
-                alertType = .sheetType(icon: .alert, title: AppString.error.localized, message: msg, primaryBtnText: "", secondaryBtnText: AppString.ok.localized)
-                showError = true
-            }
-        }
-    }
-
+    
     func success() {
-        let response = viewModel.contactModelDict
+        let response = viewModel.contactModel
         if response.status == "success" {
             alertType = .sheetType(
                 icon: .success,

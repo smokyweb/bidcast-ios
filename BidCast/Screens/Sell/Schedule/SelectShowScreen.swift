@@ -71,43 +71,27 @@ struct SelectShowScreen: View {
             },cornerRadius: 12, btnTextColor: .white)
             
 //            CusNavLink(doNavigate: $navigateToSelectCategory, destination: SelectCategoryScreen(title: $title))
-            if isLoading{
-                LoadingIndicator()
-            }
+           
         }
     
         .edgesIgnoringSafeArea([.top,.bottom])
         .background(.bg.opacity(0.5))
         .toolbar(.hidden,for: .tabBar)
         .onAppear {
-            observe()
+           
             
 //            viewModel.getTitleTips(param: TipParam(type: "title"))
         }
     }
-    func observe() {
-        self.viewModel.eventHandler = { event in
-            switch event {
-            case .loading:
-                self.isLoading = true
-            case .stopLoading:
-                self.isLoading = false
-            case .dataLoaded:
-                success()
-            case .error(let error):
-                print("Error: \(error?.localizedDescription ?? "Unknown")")
-            }
-        }
-    }
     
     func success() {
-        if let dict = viewModel.getTipsDict {
-            if dict.status == "success" {
-                tip = dict.data.first ?? TitleTipsModel()
+        let dict = viewModel.tipsResponse
+        if dict?.status == "success" {
+            tip = dict?.data.first ?? TitleTipsModel()
             } else {
-                print("API error: \(dict.status ?? "")")
+                print("API error: \(dict?.status ?? "")")
             }
-        }
+        
     }
     //    private func goToNextStep() {
     //        if currentIndex < prepare.count - 1 {

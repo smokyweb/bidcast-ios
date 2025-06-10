@@ -11,12 +11,13 @@ import SwiftUI
 //import BottomSheet
 import AlertToast
 import SwiftfulLoadingIndicators
+import SVProgressHUD
 
 struct SignUpScreen: View {
     
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject private var appRootManager: AppRootManager
-    @State var isLoading: Bool = false
+   
     @State var searchText = ""
     @State var selectedCountry : String?
     @State var showingDropdown: Bool = false
@@ -114,7 +115,10 @@ struct SignUpScreen: View {
                                 return
                             }
                             print("Parameters for register user :- \(request)")
-                            self.viewModel.registerUser(parameters: request)
+                            Task{
+                                SVProgressHUD.show()
+                                await self.viewModel.registerUser(parameters: request)
+                            }
                             },btnTextColor: .white)
                     }
                     .padding([.top, .bottom], 16)
@@ -131,12 +135,16 @@ struct SignUpScreen: View {
                 
             }
             .onAppear(){
-                observe()
+               
             }
            
             .onTapGesture {
                 UIApplication.shared.endEditing()
             }
+            .onReceive(viewModel.$signUpResponse){ response in
+                handleSuccess()
+            }
+            
             .toast(isPresenting: $showhud) {
                 AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)}
 			.bottomSheet(isPresented: $showError, height: screenHeight/2.5, topBarCornerRadius: 25, showTopIndicator: false, content: {
@@ -147,8 +155,8 @@ struct SignUpScreen: View {
                         if alertType.primaryBtnText == AppString.proceedToLogin.localized {
                             self.presentationMode.wrappedValue.dismiss()
                         }
-                        let response = viewModel.userNameDict
-                        if response?.status == "success" {
+                        let response = viewModel.signUpResponse
+                        if response.status == "success" {
                             self.presentationMode.wrappedValue.dismiss()
                         }else{
                             withAnimation { showError = false }
@@ -159,47 +167,31 @@ struct SignUpScreen: View {
                     })
             })
             
-            if isLoading {
-                LoadingIndicator()
-            }
+           
         }
     }
     
-    func observe() {
-        self.viewModel.eventHandler = { event in
-            switch event {
-            case .loading:
-                self.isLoading = true
-            case .stopLoading:
-                self.isLoading = false
-            case .dataLoaded:
-                handleSuccess()
-            case .error(let error):
-                alertType = .sheetType(icon: .alert, title: AppString.error.localized, message: error?.localizedDescription ?? "", primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .pinkBtn)
-                withAnimation(.easeInOut) { showError = true }
-            }
-        }
-    }
+   
     
     func handleSuccess() {
-        if viewModel.requestType == "RegisterUserName" {
-            let response = viewModel.userNameDict
-            if response?.status == "success" {
+        SVProgressHUD.dismiss()
+            let response = viewModel.signUpResponse
+            if response.status == "success" {
                 UserDefaults.isFirstLogin = 1
-                let userData = response?.data
+                let userData = response.data
                 UserDefaults.userEmail = userData?.email ?? ""
                 UserDefaults.firstName = userData?.first_name ?? ""
                 UserDefaults.lastName = userData?.last_name ?? ""
                 UserDefaults.userRole = "\(userData?.role_id ?? 0)"
-                alertType = .sheetType(icon: .success, title: response?.status?.capitalized ?? "", message: response?.message?.capitalized ?? "", primaryBtnText: AppString.backToLogin.localized, secondaryBtnText: "", sheetThemeColor: .secondary)
+                alertType = .sheetType(icon: .success, title: response.status?.capitalized ?? "", message: response.message?.capitalized ?? "", primaryBtnText: AppString.backToLogin.localized, secondaryBtnText: "", sheetThemeColor: .secondary)
                 showError = true
                   
                 
             } else {
-                alertType = .sheetType(icon: .alert, title: response?.error_type?.capitalized ?? "", message: response?.message?.capitalized ?? "", primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .secondary)
+                alertType = .sheetType(icon: .alert, title: response.error_type?.capitalized ?? "", message: response.message?.capitalized ?? "", primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .secondary)
                 showError = true
             }
-        }
+        
     }
 }
 #Preview {

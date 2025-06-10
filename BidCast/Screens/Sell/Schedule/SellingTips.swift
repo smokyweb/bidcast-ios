@@ -9,6 +9,7 @@ import SwiftUI
 import RichText
 import AVKit
 import SwiftfulLoadingIndicators
+import SVProgressHUD
 
 
 enum LearningContent {
@@ -193,15 +194,31 @@ struct CombinedLessonTipsView: View {
             }
 
             CusNavLink(doNavigate: $navigateToNext, destination: LetsPrepare())
-            if isLoading {
-                LoadingIndicator()
-            }
+            
         }
        
         .onAppear {
             currentIndex = 0
-            observe()
-            viewModel.getLesson()
+           
+            Task{
+                SVProgressHUD.show()
+                await viewModel.getLesson()
+                if let lessonResponse = viewModel.lessonsResponse,
+                   lessonResponse.status == "success" {
+                    lessonList = lessonResponse.data
+                    await viewModel.getSellingTips()
+                    if let tipResponse = viewModel.lessonsResponse,
+                       tipResponse.status == "success" {
+                        tipList = tipResponse.data
+                        mergeData()
+                        await SVProgressHUD.dismiss()
+                    } else {
+                        await SVProgressHUD.dismiss()
+                    }
+                } else {
+                    await SVProgressHUD.dismiss()
+                }
+            }
         }
         .onDisappear {
             cleanupPlayer()
@@ -209,49 +226,23 @@ struct CombinedLessonTipsView: View {
         .toolbar(.hidden, for: .tabBar)
     }
 
-    func observe() {
-        viewModel.eventHandler = { event in
-            switch event {
-            case .loading:
-                self.isLoading = true
-            case .stopLoading:
-                self.isLoading = false
-            case .dataLoaded:
-                self.mergeData()
-            case .error(let error):
-                print("Error: \(error?.localizedDescription ?? "Unknown")")
-            }
-        }
-    }
+  
 
     func mergeData() {
-        if viewModel.request == "lesson" {
-            if let lessonDict = viewModel.getLessonDict,
-               lessonDict.status == "success" {
-                self.lessonList = lessonDict.data
-                self.viewModel.getSellingTips()
-            }
-        } else {
-            if let tipDict = viewModel.getLessonDict,
-               tipDict.status == "success" {
-                self.tipList = tipDict.data
+            let count = max(lessonList.count, tipList.count)
+            var result: [LearningContent] = []
 
-                let count = max(lessonList.count, tipList.count)
-                var result: [LearningContent] = []
-
-                for i in 0..<count {
-                    if i < lessonList.count {
-                        result.append(.lesson(lessonList[i]))
-                    }
-                    if i < tipList.count {
-                        result.append(.tip(tipList[i]))
-                    }
+            for i in 0..<count {
+                if i < lessonList.count {
+                    result.append(.lesson(lessonList[i]))
                 }
-                self.combinedList = result
+                if i < tipList.count {
+                    result.append(.tip(tipList[i]))
+                }
             }
-        }
-    }
 
+            self.combinedList = result
+        }
     func playVideo(from url: URL) {
         cleanupPlayer()
         player = AVPlayer(url: url)

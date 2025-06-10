@@ -7,45 +7,58 @@
 
 import Foundation
 
-final class VerifyOtpViewModel {
-    
-    var verifyResponceDict = LoginResponce()
-    
-    var eventHandler: ((_ event: Event) -> Void)?
-    
-    func resendOTPCode(parameters: ForgetRequest) {
-        self.eventHandler?(.loading)
-        APIManager.shared.requestPost(
-            modelType: LoginResponce.self,
-            type: APIEndPoint.forgotPassword(param: parameters),
-            header: false) {
-                result in
-                self.eventHandler?(.stopLoading)
-                switch result {
-                case .success(let data):
-                    self.verifyResponceDict = data
-                    //                        self.eventHandler?(.dataLoaded)
-                case .failure(let error):
-                    self.eventHandler?(.error(error))
-                }
-            }
+
+@MainActor
+final class VerifyOtpViewModel: ObservableObject {
+
+    // MARK: - Published Properties
+    @Published var verifyResponse = LoginResponce()
+    @Published var errorMessage: String? = nil
+
+    // MARK: - Resend OTP Code
+    func resendOTPCode(parameters: ForgetRequest) async {
+        do {
+            let response: LoginResponce = try await APIManager.shared.request(
+                type: APIEndPoint.forgotPassword(param: parameters),
+                header: false
+            )
+            self.verifyResponse = response
+        } catch {
+            handle(error: error)
+        }
     }
 
-    func verifyCode(parameters: VerifyOtpRequest) {
-        self.eventHandler?(.loading)
-        APIManager.shared.requestPost(
-            modelType: LoginResponce.self, // response type
-            type: APIEndPoint.verifyOTP(param: parameters),
-            header: false) { result in
-                self.eventHandler?(.stopLoading)
-                switch result {
-                case .success(let data):
-                    self.verifyResponceDict = data
-                    self.eventHandler?(.dataLoaded)
-                case .failure(let error):
-                    self.eventHandler?(.error(error))
-                }
-            }
+    // MARK: - Verify OTP Code
+    func verifyCode(parameters: VerifyOtpRequest) async {
+        do {
+            let response: LoginResponce = try await APIManager.shared.request(
+                type: APIEndPoint.verifyOTP(param: parameters),
+                header: false
+            )
+            self.verifyResponse = response
+        } catch {
+            handle(error: error)
+        }
     }
 
+    // MARK: - Centralized Error Handler
+    private func handle(error: Error) {
+        if let dataError = error as? DataError {
+            switch dataError {
+            case .invalidCode(let message):
+                self.errorMessage = message ?? "Invalid code error"
+            case .invalidResponse(let data):
+                if let data = data,
+                   let json = try? JSONSerialization.jsonObject(with: data, options: []) {
+                    self.errorMessage = "Invalid response: \(json)"
+                } else {
+                    self.errorMessage = "Invalid response with no data"
+                }
+            default:
+                self.errorMessage = error.localizedDescription
+            }
+        } else {
+            self.errorMessage = error.localizedDescription
+        }
+    }
 }

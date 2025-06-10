@@ -7,6 +7,7 @@
 
 import SwiftUI
 import AlertToast
+import SVProgressHUD
 
 // MARK: - InventoryScreen
 struct InventoryScreen: View {
@@ -71,17 +72,15 @@ struct InventoryScreen: View {
                 VStack(spacing: 12) {
                     ForEach(inventoryList, id: \.id) { inventory in
                         ActiveInventoryScreen(inventory: inventory)
-//                            .padding(.horizontal, 10)
                     }
                 }
                 .padding(.top, 10)
                 .padding(.horizontal, 12)
             }
         }
-//        .edgesIgnoringSafeArea(.top)
         .background(Color.bg.opacity(0.5))
         .onAppear {
-            observe()
+           
             fetchInventory(for: segment)
         }
         .toast(isPresenting: $showhud) {
@@ -99,54 +98,35 @@ struct InventoryScreen: View {
             )
         }
     }
-
-    // MARK: - Observe ViewModel Events
-    func observe() {
-        self.viewModel.eventHandler = { event in
-            switch event {
-            case .loading:
-                self.isLoading = true
-            case .stopLoading:
-                self.isLoading = false
-            case .dataLoaded:
-                handleDataLoad()
-            case .error(let error):
-                let msg = error?.localizedDescription ?? AppString.error.localized
-                alertType = .sheetType(
-                    icon: .alert,
-                    title: AppString.error.localized,
-                    message: msg,
-                    primaryBtnText: "",
-                    secondaryBtnText: AppString.ok.localized
-                )
-                showError = true
-            }
-        }
-    }
-
+   
     // MARK: - Fetch Inventory List
     func fetchInventory(for segment: InventorySegment) {
-        request.status = segment.rawValue.lowercased()
-        viewModel.getInventoryList(param: request)
+        Task{
+            SVProgressHUD.show()
+            request.status = segment.rawValue.lowercased()
+            await viewModel.getInventoryList(param: request)
+            await SVProgressHUD.dismiss()
+            await handleDataLoad()
+        }
     }
 
     // MARK: - Handle ViewModel Data
     func handleDataLoad() {
-        if viewModel.request == "Inventory" {
-            if let response = viewModel.InventoryDict {
-                if response.status == "success" {
-                    self.inventoryList = response.data ?? []
+        SVProgressHUD.dismiss()
+        let response = viewModel.inventoryDict
+        if response?.status == "success" {
+            self.inventoryList = response?.data ?? []
                 } else {
                     alertType = .sheetType(
                         icon: .alert,
-                        title: response.error_type?.capitalized ?? "",
-                        message: response.message?.capitalized ?? "",
+                        title: response?.error_type?.capitalized ?? "",
+                        message: response?.message?.capitalized ?? "",
                         primaryBtnText: "",
                         secondaryBtnText: AppString.ok.localized
                     )
                     showError = true
-                }
-            }
+                
+            
         }
     }
 }

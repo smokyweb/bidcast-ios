@@ -7,36 +7,45 @@
 
 import Foundation
 
-final class InventoryViewModel {
+@MainActor
+final class InventoryViewModel: ObservableObject {
     
-    var InventoryDict: ResponseModalPaginate<[InventoryDataModel]>?
-    var request : String = ""
+    @Published var inventoryDict: ResponseModalPaginate<[InventoryDataModel]>?
+    @Published var errorMessage: String? = nil
+    var request: String = ""
     
-    var eventHandler: ((_ event: Event) -> Void)?
-    
-    //MARK: getInventoryList
-    func getInventoryList(param : InventoryRequest) {
-        self.eventHandler?(.loading)
+    // MARK: - Get Inventory List
+    func getInventoryList(param: InventoryRequest) async {
         self.request = "Inventory"
-        APIManager.shared
-            .requestPost(
-                modelType: ResponseModalPaginate<[InventoryDataModel]>.self,
+        do {
+            let response: ResponseModalPaginate<[InventoryDataModel]> = try await APIManager.shared.request(
                 type: APIEndPoint.getInventory(param: param),
-                header: true) {
-                    result in
-                    self.eventHandler?(.stopLoading)
-                    switch result {
-                    case .success(let data):
-                        self.InventoryDict = data
-                        print(data)
-                        self.eventHandler?(.dataLoaded)
-                        return
-                    case .failure(let error):
-                        self.eventHandler?(.error(error))
-                        return
-                        
-                    }
+                header: true
+            )
+            self.inventoryDict = response
+        } catch {
+            handle(error: error)
+        }
+    }
+    
+    // MARK: - Centralized Error Handler
+    private func handle(error: Error) {
+        if let dataError = error as? DataError {
+            switch dataError {
+            case .invalidCode(let message):
+                self.errorMessage = message ?? "Invalid code error"
+            case .invalidResponse(let data):
+                if let data = data,
+                   let json = try? JSONSerialization.jsonObject(with: data, options: []) {
+                    self.errorMessage = "Invalid response: \(json)"
+                } else {
+                    self.errorMessage = "Invalid response with no data"
                 }
+            default:
+                self.errorMessage = error.localizedDescription
+            }
+        } else {
+            self.errorMessage = error.localizedDescription
+        }
     }
 }
-

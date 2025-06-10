@@ -8,6 +8,7 @@
 import SwiftUI
 import AlertToast
 import SwiftfulLoadingIndicators
+import SVProgressHUD
 //import BottomSheet
 
 struct VerifyOtpScreen: View {
@@ -49,7 +50,9 @@ struct VerifyOtpScreen: View {
                         Button(action: {
                             if let mail: String = UserDefaultsManager.shared.value(forKey: .mailId) {
                                 request.email = mail
-                                self.forgetOtpModel.forgotEmail(parameters: self.forgetOtpRequest)
+                                Task {
+                                    await forgetOtpModel.forgotEmail(parameters: forgetOtpRequest)
+                                }
                             }
                         }, label: {
                             Text(AppString.resendOtp.localized)
@@ -77,7 +80,9 @@ struct VerifyOtpScreen: View {
                             request.email = mail
                             if let codeInt = Int(pin) {
                                 request.code = codeInt
-                                self.viewModel.verifyCode(parameters: self.request)
+                                Task {
+                                    await viewModel.verifyCode(parameters: request)
+                                }
                             } else {
                                 hudMsg = AppString.otpNumeric.localized
                                 showhud = true
@@ -109,9 +114,44 @@ struct VerifyOtpScreen: View {
             .shadow(radius: 2)
         }
         .frame(width: screenWidth, height: screenHeight)
-        .onAppear {
-            observe()
-            forgotOtpObserver()
+        .onReceive( viewModel.$verifyResponse) { response in
+            SVProgressHUD.dismiss()
+            handleSuccess()
+        }
+        
+        .onReceive(viewModel.$errorMessage) { errorMsg in
+            SVProgressHUD.dismiss()
+            if let msg = errorMsg {
+                alertType = .sheetType(
+                    icon: .alert,
+                    title: AppString.error.localized,
+                    message: msg,
+                    primaryBtnText: "",
+                    secondaryBtnText: AppString.ok.localized,
+                    sheetThemeColor: .pinkBtn
+                )
+                showError = true
+            }
+        }
+        
+        .onReceive(forgetOtpModel.$forgotResponseDict) { response in
+            SVProgressHUD.dismiss()
+            handleForgetPassSuccess()
+        }
+        
+        .onReceive(forgetOtpModel.$errorMessage) { errorMsg in
+            SVProgressHUD.dismiss()
+            if let msg = errorMsg {
+                alertType = .sheetType(
+                    icon: .alert,
+                    title: AppString.error.localized,
+                    message: msg,
+                    primaryBtnText: "",
+                    secondaryBtnText: AppString.ok.localized,
+                    sheetThemeColor: .pinkBtn
+                )
+                showError = true
+            }
         }
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
@@ -131,40 +171,10 @@ struct VerifyOtpScreen: View {
         })
     }
     
-    func observe() {
-        self.viewModel.eventHandler = { event in
-            switch event {
-            case .loading:
-                self.isLoading = true
-            case .stopLoading:
-                self.isLoading = false
-            case .dataLoaded:
-                handleSuccess()
-            case .error(let error):
-                alertType = .sheetType(icon: .alert, title: AppString.error.localized, message: error?.localizedDescription ?? "", primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .pinkBtn)
-                showError = true
-            }
-        }
-    }
     
-    func forgotOtpObserver() {
-        self.forgetOtpModel.eventHandler = { event in
-            switch event {
-            case .loading:
-                self.isLoading = true
-            case .stopLoading:
-                self.isLoading = false
-            case .dataLoaded:
-                handleSuccess()
-            case .error(let error):
-                alertType = .sheetType(icon: .alert, title: AppString.error.localized, message: error?.localizedDescription ?? "", primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .pinkBtn)
-                showError = true
-            }
-        }
-    }
     
     func handleSuccess() {
-        let response = viewModel.verifyResponceDict
+        let response = viewModel.verifyResponse
         if response.status == "success" {
             UserDefaultsManager.shared.setValue(request.email, forKey: .mailId)
             alertType = .sheetType(icon: .success, title: response.status.capitalized, message: response.message.capitalized, primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .green)
@@ -178,7 +188,7 @@ struct VerifyOtpScreen: View {
     }
     
     func handleForgetPassSuccess() {
-        let response = forgetOtpModel.forgotResponceDict
+        let response = forgetOtpModel.forgotResponseDict
         if response.status == "success" {
             UserDefaultsManager.shared.setValue(request.email, forKey: .mailId)
             alertType = .sheetType(icon: .success, title: response.status.capitalized, message: response.message.capitalized, primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .green)
@@ -189,7 +199,6 @@ struct VerifyOtpScreen: View {
             withAnimation(.snappy) { showError = true }
         }
     }
-
     private func getImageName(at index: Int) -> String {
         if index >= pin.count {
             return ""

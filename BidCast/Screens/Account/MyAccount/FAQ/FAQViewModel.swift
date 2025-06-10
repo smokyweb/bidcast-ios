@@ -6,41 +6,24 @@
 //
 
 import Foundation
-import Foundation
 
-final class FAQViewModel {
+@MainActor
+final class FAQViewModel: ObservableObject {
     
-    var FAQModelDict = FAQModel()
-    var requestType = ""
+    // MARK: - Published Properties
+    @Published var faqModel = FAQModel()
+    @Published var errorMessage: String?
     
-    var eventHandler: ((_ event: Event) -> Void)? // Data Binding Closure
-
-    func getFAQ() {
-        self.eventHandler?(.loading)
-        APIManager.shared.requestPost(
-            modelType: FAQModel.self, // response type
-            type: APIEndPoint.faq,
-            header: true) { result in
-                self.eventHandler?(.stopLoading)
-                switch result {
-                case .success(let data):
-                    self.FAQModelDict = data
-                    self.eventHandler?(.dataLoaded)
-                case .failure(let error):
-                    self.eventHandler?(.error(error))
-                }
-            }
+    // MARK: - API Call
+    func getFAQ() async {
+        do {
+            let response: FAQModel = try await APIManager.shared.request(
+                type: APIEndPoint.faq,
+                header: true
+            )
+            self.faqModel = response
+        } catch {
+            self.errorMessage = error.localizedDescription
+        }
     }
 }
-
-
-extension FAQViewModel {
-    enum Event {
-        case loading
-        case stopLoading
-        case dataLoaded
-        case error(Error?)
-        
-    }
-}
-

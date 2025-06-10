@@ -73,8 +73,10 @@ struct AboutUsScreen: View {
                 .padding(.top, 2)
                 .refreshable {
                     self.isLoading = true
-                    viewModel.getAboutContent()
-                    observe()
+                    Task{
+                        await viewModel.getAboutContent()
+                    }
+                   
                 }
 
                 Spacer()
@@ -98,43 +100,31 @@ struct AboutUsScreen: View {
         .edgesIgnoringSafeArea(.top)
         .onFirstAppear(perform: {
             self.isLoading = true
-            viewModel.getAboutContent()
+            Task{
+                await viewModel.getAboutContent()
+            }
         })
-        .onAppear(perform: {
-            observe()
-        })
+        .onReceive(viewModel.$aboutResponse){ response in
+            success()
+        }
         .onTapGesture {
             UIApplication.shared.endEditing()
         }
 
     }
 
-    func observe() {
-        self.viewModel.eventHandler = { event in
-            switch event {
-                case .loading:
-                    self.isLoading = true
-                case .stopLoading:
-                    self.isLoading = false
-                case .dataLoaded:
-                    success()
-                case .error(let error):
-                    alertType = .sheetType(icon: .alert, title: "Error", message: error?.localizedDescription ?? "", primaryBtnText: "", secondaryBtnText: "Ok", sheetThemeColor: .pinkBtn)
-                    showError = true
-            }
-        }
-    }
+  
 
     func success() {
-        if let dict = viewModel.aboutResponceDict {
+         let dict = viewModel.aboutResponse
 
             if dict.status == "success" {
-                aboutUsContent = dict.data.page_content ?? ""
+                aboutUsContent = dict.data?.page_content ?? ""
             }else{
                 alertType = .sheetType(icon: .alert, title: dict.status?.capitalized ?? "", message: dict.message ?? "", primaryBtnText: "", secondaryBtnText: "Ok", sheetThemeColor: .pinkBtn)
                 withAnimation(.snappy) { showError = true }
             }
-        }
+        
 
     }
 

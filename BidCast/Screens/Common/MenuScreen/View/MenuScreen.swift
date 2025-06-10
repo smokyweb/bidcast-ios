@@ -128,7 +128,7 @@ struct MenuScreen: View {
     @State var navigateToDecline: Bool = false
     @State var navigateToInterest : Bool = false
     
-    var viewModal = MenuOptionsViewModal()
+    @State var viewModel = MenuOptionsViewModel()
     
     var body: some View {
         ZStack {
@@ -166,7 +166,7 @@ struct MenuScreen: View {
                 }).padding(.top, -topPadding)
             }
             .onAppear(perform: {
-                observe()
+               
                 if let role: String = UserDefaultsManager.shared.value(forKey: .userRole) {
                     userRole = role
                 }
@@ -174,8 +174,15 @@ struct MenuScreen: View {
             .bottomSheet(isPresented: $userLogOut, height: screenHeight/2, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: { userLogOut = true }, content: {
                 LogOutSheet(onLogoutClick: {
                     withAnimation(.snappy) { userLogOut = false }
-                    viewModal.logOut()
-                    observe()
+                    Task{
+                        await viewModel.logOut()
+                        if viewModel.errorMessage == nil {
+                            handleSuccess()
+                        } else {
+                           
+                        }
+                        
+                    }
                 }, onCancelClick: {
                     withAnimation(.snappy) { userLogOut = false }
                 })
@@ -290,26 +297,9 @@ struct MenuScreen: View {
         }
     }
     
-    func observe() {
-        viewModal.eventHandler = {
-            event in
-            switch event {
-                case .loading:
-                    isLoading = true
-                case .stopLoading:
-                    isLoading = false
-                case .dataLoaded:
-                    handleSuccess()
-                case .error(let error):
-                    alertType = .error(title: "Error", message: error?.localizedDescription ?? "", leftBtnText: "Ok", rightBtnText: "")
-                    showAlert = true
-                    print("Error >> \(error as Any)")
-            }
-        }
-    }
-    
+   
     func handleSuccess() {
-        if viewModal.logOutResponse != nil {
+        if viewModel.logOutResponse != nil {
             handleUserLogout()
         }
     }

@@ -9,6 +9,7 @@ import SwiftUI
 import BottomSheet
 import AlertToast
 import SwiftfulLoadingIndicators
+import SVProgressHUD
 
 struct ResetPasswordScreen: View {
 
@@ -83,7 +84,10 @@ struct ResetPasswordScreen: View {
                             request.email = mail
                             request.password = password
                             request.password_confirmation = confPassword
-                            viewModel.resetPassword(parameters: request)
+                            Task{
+                                SVProgressHUD.show()
+                                await viewModel.resetPassword(parameters: request)
+                            }
                         }
                     },btnTextColor: .white)
                 }
@@ -112,13 +116,16 @@ struct ResetPasswordScreen: View {
         }
         .frame(width: screenWidth, height: screenHeight)
         .onAppear {
-            observe()
+           
         }
         .onTapGesture {
             UIApplication.shared.endEditing()
         }
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
+        }
+        .onReceive(viewModel.$resetPasswordResponse){ response in
+            handleSuccess()
         }
         .bottomSheet(isPresented: $showError, height: screenHeight / 2, topBarCornerRadius: 25, showTopIndicator: false) {
             CommonBottomSheet(
@@ -136,33 +143,11 @@ struct ResetPasswordScreen: View {
         }
     }
 
-    // MARK: - ViewModel Observer
-    func observe() {
-        self.viewModel.eventHandler = { event in
-            switch event {
-            case .loading:
-                self.isLoading = true
-            case .stopLoading:
-                self.isLoading = false
-            case .dataLoaded:
-                handleSuccess()
-            case .error(let error):
-                alertType = .sheetType(
-                    icon: .alert,
-                    title: AppString.error.localized,
-                    message: error?.localizedDescription ?? "",
-                    primaryBtnText: "",
-                    secondaryBtnText: AppString.ok.localized,
-                    sheetThemeColor: .pinkBtn
-                )
-                showError = true
-                print(error as Any)
-            }
-        }
-    }
+  
 
     func handleSuccess() {
-        let response = viewModel.resetPasswordResponceDict
+        SVProgressHUD.dismiss()
+        let response = viewModel.resetPasswordResponse
         if response.status == "success" {
             withAnimation(.snappy) {
                 alertType = .sheetType(

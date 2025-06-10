@@ -1,139 +1,104 @@
-//
-//  PaymentViewModel.swift
-//  BidCast
-//
-//  Created by Ankit-JAM-E-294 on 06/06/25.
-//
-
 import Foundation
 
-final class PaymentViewModel {
-    var addressDict = ResponseModel<AddressModel>()
-    var getAddressDict = ResponseModel<[AddressModel]>()
-    var cardDict = ResponseModel<[CardModel]>()
-    var requestType = ""
+@MainActor
+final class PaymentViewModel: ObservableObject {
     
-    var eventHandler: ((_ event: Event) -> Void)? // Data Binding Closure
+    @Published var cardDict = ResponseModel<[CardModel]>()
+  
+    @Published var getAddressDict = ResponseModel<[AddressModel]>()
+    @Published var addressDict = ResponseModel<AddressModel>()
+    @Published var errorMessage: String? = nil
 
     
-    
-    func getCard() {
-        self.eventHandler?(.loading)
-        self.requestType = "get"
-        APIManager.shared
-            .dictionaryRequest(
-                modelType: ResponseModel<[CardModel]>.self,
+
+    // MARK: - Get Cards
+    func getCard() async {
+        do {
+            if let response: ResponseModel<[CardModel]> = try await APIManager.shared.request(
                 type: APIEndPoint.getCard,
-                header: true) {
-                    result in
-                    self.eventHandler?(.stopLoading)
-                    switch result {
-                    case .success(let data):
-                        self.cardDict = data
-                        print(data)
-                        self.eventHandler?(.dataLoaded)
-                        return
-                    case .failure(let error):
-                        self.eventHandler?(.error(error))
-                        return
-                        
-                    }
-                }
-        
-    }
-    
-   
-    func deleteCard(parameters: DeleteCardRequest) {
-        self.requestType = "delete"
-        self.eventHandler?(.loading)
-        APIManager.shared.requestPost(
-            modelType: ResponseModel<CardModel>.self, // response type
-            type: APIEndPoint.deleteCard(param: parameters),
-            header: true) { result in
-                self.eventHandler?(.stopLoading)
-                switch result {
-                case .success(let data):
-//                    self.addressDict = data
-                    self.getCard()
-                    self.eventHandler?(.dataLoaded)
-                case .failure(let error):
-                    self.eventHandler?(.error(error))
-                }
+                header: true
+            ) {
+                self.cardDict = response
             }
+        } catch {
+            handle(error: error)
+        }
     }
-    
-    func getAddresses() {
-        self.eventHandler?(.loading)
-        self.requestType = "getAddress"
-        APIManager.shared
-            .dictionaryRequest(
-                modelType: ResponseModel<[AddressModel]>.self,
+
+    // MARK: - Delete Card
+    func deleteCard(parameters: DeleteCardRequest) async {
+        do {
+            if let response: ResponseModel<CardModel>  = try await APIManager.shared.request(
+                type: APIEndPoint.deleteCard(param: parameters),
+                header: true
+            ) {
+                await getCard()
+            }
+        } catch {
+            handle(error: error)
+        }
+    }
+
+    // MARK: - Get Addresses
+    func getAddresses() async {
+        do {
+            if let response: ResponseModel<[AddressModel]> = try await APIManager.shared.request(
                 type: APIEndPoint.getAddress,
-                header: true) {
-                    result in
-                    self.eventHandler?(.stopLoading)
-                    switch result {
-                    case .success(let data):
-                        self.getAddressDict = data
-                        print(data)
-                        self.eventHandler?(.dataLoaded)
-                        return
-                    case .failure(let error):
-                        self.eventHandler?(.error(error))
-                        return
-                        
-                    }
-                }
-        
-    }
-    func setDefaultAddress(parameters: AddressDefaultParam) {
-        self.requestType = "default"
-        self.eventHandler?(.loading)
-        APIManager.shared.requestPost(
-            modelType: ResponseModel<AddressModel>.self, // response type
-            type: APIEndPoint.setDefaultAddress(param: parameters),
-            header: true) { result in
-                self.eventHandler?(.stopLoading)
-                switch result {
-                case .success(let data):
-                    self.addressDict = data
-                    self.eventHandler?(.dataLoaded)
-                case .failure(let error):
-                    self.eventHandler?(.error(error))
-                }
+                header: true
+            ) {
+                self.getAddressDict = response
             }
+        } catch {
+            handle(error: error)
+        }
     }
-    
-    func DeleteAddress(parameters: AddressDefaultParam) {
-        self.requestType = "deleteAddress"
-        self.eventHandler?(.loading)
-        APIManager.shared.requestPost(
-            modelType: ResponseModel<AddressModel>.self, // response type
-            type: APIEndPoint.deleteAddress(param: parameters),
-            header: true) { result in
-                self.eventHandler?(.stopLoading)
-                switch result {
-                case .success(let data):
-//                    self.addressDict = data
-                    self.getAddresses()
-                    self.eventHandler?(.dataLoaded)
-                case .failure(let error):
-                    self.eventHandler?(.error(error))
-                }
+
+    // MARK: - Set Default Address
+    func setDefaultAddress(parameters: AddressDefaultParam) async {
+        do {
+            if let response: ResponseModel<AddressModel> = try await APIManager.shared.request(
+                type: APIEndPoint.setDefaultAddress(param: parameters),
+                header: true
+            ) {
+                self.addressDict = response
             }
+        } catch {
+            handle(error: error)
+        }
+    }
+
+    // MARK: - Delete Address
+    func deleteAddress(parameters: AddressDefaultParam) async {
+        do {
+            if let response: ResponseModel<AddressModel> = try await APIManager.shared.request(
+                type: APIEndPoint.deleteAddress(param: parameters),
+                header: true
+            ){
+                await getAddresses()
+            }
+        } catch {
+            handle(error: error)
+        }
+    }
+
+    // MARK: - Centralized Error Handler
+    private func handle(error: Error) {
+        if let dataError = error as? DataError {
+            switch dataError {
+            case .invalidCode(let message):
+                self.errorMessage = message ?? "Invalid code error"
+            case .invalidResponse(let data):
+                if let data = data,
+                   let json = try? JSONSerialization.jsonObject(with: data, options: []) {
+                    self.errorMessage = "Invalid response: \(json)"
+                } else {
+                    self.errorMessage = "Invalid response with no data"
+                }
+            default:
+                self.errorMessage = error.localizedDescription
+            }
+        } else {
+            self.errorMessage = error.localizedDescription
+        }
     }
 }
-
-
-extension PaymentViewModel {
-    
-    enum Event {
-        case loading
-        case stopLoading
-        case dataLoaded
-        case error(Error?)
-        
-    }
-    
-}
-

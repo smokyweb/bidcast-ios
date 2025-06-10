@@ -7,6 +7,7 @@
 
 import SwiftUI
 import AlertToast
+import SVProgressHUD
 
 struct FAQScreen: View {
     @Environment(\.presentationMode) var presentationMode
@@ -67,8 +68,13 @@ struct FAQScreen: View {
         }
         .background(Color.pearl)
         .onAppear {
-            observe()
-            self.viewModel.getFAQ()
+            Task{
+                SVProgressHUD.show()
+                await self.viewModel.getFAQ()
+            }
+        }
+        .onReceive(viewModel.$faqModel){response in
+            
         }
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
@@ -78,7 +84,7 @@ struct FAQScreen: View {
                 sheetType: $alertType,
                 onPrimaryClick: {
                     withAnimation { showError = false }
-                    let response = viewModel.FAQModelDict
+                    let response = viewModel.faqModel
                     if response.status == "success" {
                         self.presentationMode.wrappedValue.dismiss()
                     }
@@ -90,25 +96,11 @@ struct FAQScreen: View {
         }
     }
 
-    func observe() {
-        self.viewModel.eventHandler = { event in
-            switch event {
-            case .loading:
-                self.isLoading = true
-            case .stopLoading:
-                self.isLoading = false
-            case .dataLoaded:
-                success()
-            case .error(let error):
-                let msg = error?.localizedDescription ?? AppString.error.localized
-                alertType = .sheetType(icon: .alert, title: AppString.error.localized, message: msg, primaryBtnText: "", secondaryBtnText: AppString.ok.localized)
-                showError = true
-            }
-        }
-    }
+   
 
     func success() {
-        let response = viewModel.FAQModelDict
+        SVProgressHUD.dismiss()
+        let response = viewModel.faqModel
         if response.status == "success" {
             self.faqList = response.data ?? [] // ✅ Update UI-bound list
         } else {

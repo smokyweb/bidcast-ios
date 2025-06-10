@@ -7,14 +7,15 @@
 
 import SwiftUI
 import AlertToast
+import SVProgressHUD
 
 
 
 struct AddressesScreen: View {
-
+    
     @State var sampleAddresses = [AddressModel]()
     
-
+    
     @Environment(\.presentationMode) var presentationMode
     @State var showError: Bool = false
     @State var isLoading: Bool = false
@@ -39,17 +40,23 @@ struct AddressesScreen: View {
             )
             .frame(height: 50)
             .background(Color.white)
-
+            
             // Address list with space for bottom button
             ScrollView {
                 VStack(spacing: 16) {
-                    ForEach(sampleAddresses.indices, id: \.self) { index in
-                        let address = sampleAddresses[index]
+                    ForEach(sampleAddresses, id: \.id) { address in
+//                        let address = sampleAddresses[index]
                         AddressListCell(address: address,onTapDefault: {
-                            print("indexx \(index)")
-                            self.viewModel.setDefaultAddress(parameters: AddressDefaultParam(address_id: "\(sampleAddresses[index].id ?? 0)"))
+//                            print("indexx \(index)")
+                            Task{
+                                SVProgressHUD.show()
+                                await self.viewModel.setDefaultAddress(parameters: AddressDefaultParam(address_id: "\(address.id ?? 0)"))
+                            }
                         },onTapDelete: {
-                            self.viewModel.DeleteAddress(parameters: AddressDefaultParam(address_id:"\(sampleAddresses[index].id ?? 0)"))
+                            Task{
+                                SVProgressHUD.show()
+                                await self.viewModel.deleteAddress(parameters: AddressDefaultParam(address_id:"\(address.id ?? 0)"))
+                            }
                         }, isDefault: address.is_default ?? false)
                     }
                 }
@@ -58,7 +65,7 @@ struct AddressesScreen: View {
             }
             .padding(.horizontal,Leading/2)
             .background(Color(.systemGroupedBackground))
-
+            
             //Bottom fixed button
             PrimaryButton(
                 title: "Add New Address",
@@ -71,16 +78,21 @@ struct AddressesScreen: View {
                 cornerRadius: 12.0, imageName: "plus_btn",
                 btnTextColor : .black, btnColor: .white
             )
-//            .padding(.vertical, 10)
+            //            .padding(.vertical, 10)
             .background(Color.white)
             .padding(.all)
             .padding(.bottom,-24)
             CusNavLink(doNavigate: $navigateToCreate, destination: CreateAddress())
         }
         .onAppear{
-            observe()
-            self.viewModel.getAddresses()
+            Task{
+                SVProgressHUD.show()
+                await self.viewModel.getAddresses()
+                await SVProgressHUD.dismiss()
+                AddressesSuccess()
+            }
         }
+        
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }
@@ -101,44 +113,36 @@ struct AddressesScreen: View {
             )
         }
     }
-    func observe() {
-        self.viewModel.eventHandler = { event in
-            switch event {
-            case .loading:
-                self.isLoading = true
-            case .stopLoading:
-                self.isLoading = false
-            case .dataLoaded:
-                success()
-            case .error(let error):
-                let msg = error?.localizedDescription ?? AppString.error.localized
-                alertType = .sheetType(icon: .alert, title: AppString.error.localized, message: msg, primaryBtnText: "", secondaryBtnText: AppString.ok.localized)
-                showError = true
-            }
+    
+    
+    func AddressesSuccess() {
+        SVProgressHUD.dismiss()
+        let response = viewModel.addressesResponse
+        if response.status == "success" {
+            sampleAddresses = response.data ?? [AddressModel]()
+            
+        } else {
+            showError = true
+            alertType = .sheetType(
+                icon: .alert,
+                title: response.error_type?.capitalized ?? "",
+                message: response.message?.capitalized ?? "",
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
+            )
         }
+        
     }
 
-    func success() {
-        if self.viewModel.requestType == "get"{
-            let response = viewModel.getAddressDict
+    func AddressSuccess(){
+        SVProgressHUD.dismiss()
+    let response = viewModel.addressResponse
             if response.status == "success" {
-                sampleAddresses = response.data ?? [AddressModel]()
-                
-            } else {
-                showError = true
-                alertType = .sheetType(
-                    icon: .alert,
-                    title: response.error_type?.capitalized ?? "",
-                    message: response.message?.capitalized ?? "",
-                    primaryBtnText: "",
-                    secondaryBtnText: AppString.ok.localized
-                )
-            }
-            
-        }else{
-            let response = viewModel.addressDict
-            if response.status == "success" {
-                self.viewModel.getAddresses()
+                Task{
+                    SVProgressHUD.show()
+                   await self.viewModel.getAddresses()
+                }
+               
             } else {
                 showError = true
                 alertType = .sheetType(
@@ -151,7 +155,7 @@ struct AddressesScreen: View {
             }
            
         }
-    }
+    
     
 }
 

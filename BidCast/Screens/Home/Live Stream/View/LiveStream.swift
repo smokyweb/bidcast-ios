@@ -8,6 +8,7 @@
 import SwiftUI
 
 import SwiftUI
+import SVProgressHUD
 
 struct Comment: Identifiable, Equatable {
     let id = UUID()
@@ -283,30 +284,20 @@ struct LiveStream: View {
         }
         .foregroundColor(.white)
         .onAppear{
-            observe()
-//            self.viewModel.getLiveShows()
-        }
-    }
-    func observe() {
-        self.viewModel.eventHandler = { event in
-            switch event {
-            case .loading:
-                self.isLoading = true
-            case .stopLoading:
-                self.isLoading = false
-            case .dataLoaded:
-                success()
-            case .error(let error):
-                let msg = error?.localizedDescription ?? AppString.error.localized
-                alertType = .sheetType(icon: .alert, title: AppString.error.localized, message: msg, primaryBtnText: "", secondaryBtnText: AppString.ok.localized)
-                showError = true
+            Task{
+                SVProgressHUD.show()
+                await self.viewModel.getLiveShows()
+                await SVProgressHUD.dismiss()
+                await  success()
             }
         }
+        
     }
+   
 
     func success() {
-        if self.viewModel.requestType == "get"{
-            let response = viewModel.getLiveShowsDict
+        SVProgressHUD.dismiss()
+        let response = viewModel.liveShowsResponse
             if response.status == "success" {
                 liveShowsData = response.data ?? [LiveShowsModel]()
                 
@@ -321,6 +312,6 @@ struct LiveStream: View {
                 )
             }
             
-        }
+        
     }
 }

@@ -6,63 +6,59 @@
 ////
 //
 import SwiftUI
-import WebKit
 import RichText
 import SwiftfulLoadingIndicators
-//
+
 struct TermsOfServicesScreen: View {
     
-        //MARK: - Vairable Initialised
     @Environment(\.presentationMode) var presentationMode
-    @State var isLoading: Bool = false
-    @State var termsOfService: String = ""
-    @State var navigateToMenu: Bool = false
-    @State var navigateToNotification: Bool = false
-    @State var notiCount: Int = 0
-        //MARK: View Modal
-    var viewModal = MenuOptionsViewModal()
     
-        //MARK: - Primary View
+    @StateObject private var viewModal = MenuOptionsViewModel()
+    @State private var termsOfService: String = ""
+    @State private var isLoading: Bool = false
+    @State private var errorMessage: String? = nil
+    
     var body: some View {
         ZStack {
-            VStack(spacing: 0, content: {
+            VStack(spacing: 0) {
                 PrimaryHeader(
                     title: "Terms and Conditions".localized,
-                    isForLogo : false, leadingImgArr: [.sideArrow],
+                    isForLogo: false,
+                    leadingImgArr: [.sideArrow],
                     trailingImgArr: [],
                     onClickLeading: { _ in
-                        self.presentationMode.wrappedValue.dismiss()
+                        presentationMode.wrappedValue.dismiss()
                     },
                     count: .constant(0)
                 )
-                .background(.white)
+                .background(Color.white)
                 
                 VStack(alignment: .leading) {
+                    if let errorMessage = errorMessage {
+                        Text(errorMessage)
+                            .foregroundColor(.red)
+                            .padding()
+                    }
                     
-                   
-                    ScrollView(showsIndicators: false){
+                    ScrollView(showsIndicators: false) {
                         RichText(html: termsOfService)
                             .customCSS("""
-            body {
-                font-size: 16px;
-            }
-        """)
+                                body { font-size: 16px; }
+                            """)
                             .font(.custom(nunitoLight, fixedSize: 16))
                             .multilineTextAlignment(.leading)
-                            .padding([.top,.leading,.trailing])
+                            .padding([.top, .leading, .trailing])
                     }
                     Spacer()
                 }
                 .padding(.bottom, bottomPadding)
-                .background(.text.opacity(0.05))
+                .background(Color.text.opacity(0.05))
                 .padding(.top, 2)
                 
                 Spacer()
-            })
+            }
             .refreshable {
-                isLoading = true
-                self.viewModal.getTermsOfServ()
-                observe()
+                await fetchTermsOfService()
             }
             
             if isLoading {
@@ -70,39 +66,30 @@ struct TermsOfServicesScreen: View {
             }
         }
         .edgesIgnoringSafeArea(.top)
-        .onFirstAppear(perform: {
-            isLoading = true
-            self.viewModal.getTermsOfServ()
-        })
-        .onAppear(perform: {
-            observe()
-        })
-    }
-    
-        //MARK: - View Modal Observer
-    func observe() {
-        self.viewModal.eventHandler = {
-            event in
-            switch event {
-                case .loading:
-                    isLoading = true
-                case .stopLoading:
-                    isLoading = false
-                case .dataLoaded:
-                    handleSuccess()
-                case .error(let error):
-                    print("Error >> \(error?.localizedDescription ?? "")")
-            }
+        .task {
+            await fetchTermsOfService()
         }
-    }
-    
-        //MARK: - View Modal Success Handler
-    func handleSuccess() {
-        if let response = viewModal.termServiceResonse {
+        .onReceive(viewModal.$termsResponse) { response in
+            isLoading = false
             if response.status == "success" {
-                termsOfService = response.data.page_content ?? ""
+                termsOfService = response.data?.page_content ?? ""
+                errorMessage = nil
+            } else {
+                errorMessage = response.message ?? "Failed to load terms of service"
             }
         }
+        .onReceive(viewModal.$errorMessage) { error in
+            if let error = error {
+                errorMessage = error
+                isLoading = false
+            }
+        }
+    }
+    
+    @MainActor
+    private func fetchTermsOfService() async {
+        isLoading = true
+        await viewModal.getTermsOfService()
     }
 }
 

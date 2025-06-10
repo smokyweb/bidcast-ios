@@ -7,6 +7,7 @@
 
 import SwiftUI
 import RichText
+import SVProgressHUD
 
 struct LetsPrepare: View {
     
@@ -84,35 +85,29 @@ struct LetsPrepare: View {
         .background(.bg.opacity(0.5))
         .toolbar(.hidden,for: .tabBar)
         .onAppear {
-            observe()
-            
-            viewModel.getLetsPrepare()
-        }
-    }
-    func observe() {
-        self.viewModel.eventHandler = { event in
-            switch event {
-            case .loading:
-                self.isLoading = true
-            case .stopLoading:
-                self.isLoading = false
-            case .dataLoaded:
+            Task{
+                SVProgressHUD.show()
+               await viewModel.getLetsPrepare()
+                await SVProgressHUD.dismiss()
                 success()
-            case .error(let error):
-                print("Error: \(error?.localizedDescription ?? "Unknown")")
             }
         }
+        .onReceive(viewModel.$lessonsResponse){ response in
+           
+        }
     }
+  
     
     func success() {
-        if let dict = viewModel.getLessonDict {
-            if dict.status == "success" {
-                prepare = dict.data
+        let dict = viewModel.lessonsResponse
+        if dict?.status == "success" {
+            prepare = dict?.data ?? [LessonModel]()
             } else {
-                print("API error: \(dict.status ?? "")")
+                print("API error: \(dict?.status ?? "")")
             }
-        }
+        
     }
+    
     private func goToNextStep() {
         if currentIndex < prepare.count - 1 {
             currentIndex += 1

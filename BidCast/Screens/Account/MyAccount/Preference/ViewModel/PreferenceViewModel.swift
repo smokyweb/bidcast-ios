@@ -7,47 +7,40 @@
 
 import Foundation
 
-final class PreferenceViewModel : ObservableObject {
+@MainActor
+final class PreferenceViewModel: ObservableObject {
     
-    var preferenceResponceDict : ResponseModal<PreferenceDataModel>?
-    
-    var eventHandler: ((_ event: Event) -> Void)? // Data Binding Closure
+    @Published var preferenceResponse = ResponseModel<PreferenceDataModel>()
+    @Published var errorMessage: String? = nil
 
-    func getPreferenceContent(){
-        self.eventHandler?(.loading)
-        APIManager.shared.requestPost(
-            modelType: ResponseModal<PreferenceDataModel>.self, // response type
-            type: APIEndPoint.getPreference,
-            header: true) { result in
-                self.eventHandler?(.stopLoading)
-                switch result {
-                case .success(let data):
-                    self.preferenceResponceDict = data
-                    self.eventHandler?(.dataLoaded)
-                case .failure(let error):
-                    self.eventHandler?(.error(error))
-                }
-            }
+    // MARK: - Get Preference
+    func getPreferenceContent() async {
+        do {
+            let response: ResponseModel<PreferenceDataModel> = try await APIManager.shared.request(
+                type: APIEndPoint.getPreference,
+                header: true
+            )
+            self.preferenceResponse = response
+        } catch {
+            self.handle(error: error)
+        }
     }
 
-    //MARK: updatePreference.
-    func updatePreference(parameters: UpdatePreferenceRequest) {
-        self.eventHandler?(.loading)
-        APIManager.shared.requestPost(
-            modelType: ResponseModal<PreferenceDataModel>.self,
-            type: APIEndPoint.updatePreference(param: parameters),
-            header: true) { result in
-                self.eventHandler?(.stopLoading)
-                switch result {
-                case .success(let data):
-                    self.preferenceResponceDict = data
-                    self.eventHandler?(.dataLoaded)
-                case .failure(let error):
-                    self.eventHandler?(.error(error))
-                }
-            }
+    // MARK: - Update Preference
+    func updatePreference(parameters: UpdatePreferenceRequest) async {
+        do {
+            let response: ResponseModel<PreferenceDataModel> = try await APIManager.shared.request(
+                type: APIEndPoint.updatePreference(param: parameters),
+                header: true
+            )
+            self.preferenceResponse = response
+        } catch {
+            self.handle(error: error)
+        }
+    }
+
+    // MARK: - Error Handling
+    private func handle(error: Error) {
+        self.errorMessage = error.localizedDescription
     }
 }
-
-
-

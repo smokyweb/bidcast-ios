@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SVProgressHUD
 
 struct AccountScreen: View {
     
@@ -41,7 +42,7 @@ struct AccountScreen: View {
     @State var navigateToAffilateProgram : Bool = false
     @State var navigateToAnalytics : Bool = false
     
-    var viewModal = MenuOptionsViewModal()
+    @State var viewModal = MenuOptionsViewModel()
     let columns = [
         GridItem(.flexible()),
         GridItem(.flexible())
@@ -312,35 +313,26 @@ struct AccountScreen: View {
         }
         .edgesIgnoringSafeArea(.bottom)
         .background(.bg.opacity(0.5))
+       
         .bottomSheet(isPresented: $userLogOut, height: screenHeight/2, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: { userLogOut = true }, content: {
             LogOutSheet(onLogoutClick: {
                 withAnimation(.snappy) { userLogOut = false }
-                viewModal.logOut()
-                observe()
+                Task{
+                    SVProgressHUD.show()
+                    await viewModal.logOut()
+                    await SVProgressHUD.show()
+                    await handleSuccess()
+                }
+               
             }, onCancelClick: {
                 withAnimation(.snappy) { userLogOut = false }
             })
         })
     }
-    func observe() {
-        viewModal.eventHandler = {
-            event in
-            switch event {
-                case .loading:
-                    isLoading = true
-                case .stopLoading:
-                    isLoading = false
-                case .dataLoaded:
-                    handleSuccess()
-                case .error(let error):
-                    alertType = .error(title: "Error", message: error?.localizedDescription ?? "", leftBtnText: "Ok", rightBtnText: "")
-                    showAlert = true
-                    print("Error >> \(error as Any)")
-            }
-        }
-    }
+    
     
     func handleSuccess() {
+        SVProgressHUD.dismiss()
         if viewModal.logOutResponse != nil {
             handleUserLogout()
         }

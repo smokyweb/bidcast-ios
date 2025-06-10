@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SVProgressHUD
 
 struct ProfileScreen: View {
     
@@ -36,7 +37,10 @@ struct ProfileScreen: View {
                     
                     ProfileActionsView(isFollowing: $isFollowing ,
                                        onTapFollow: {
-                        self.viewModel.followUnfollow(parameters: FollowRequest(following_id: id))
+                        Task{
+                            await self.viewModel.followUnfollow(parameters: FollowRequest(following_id: id))
+                            profileSuccess()
+                        }
                     },
                                        onTapMessage: {
                         //MEssage chat
@@ -78,59 +82,53 @@ struct ProfileScreen: View {
            
         }
         .onAppear{
-            observe()
             let param = ProfileParamRequest(id: id)
             print(param)
-            self.viewModel.getProfile(param:param )
+            Task{
+                SVProgressHUD.show()
+                await self.viewModel.getProfile(param:param )
+                await SVProgressHUD.dismiss()
+                profileSuccess()
+            }
         }
         .background(Color(UIColor.systemGroupedBackground))
     }
     
-    func observe() {
-        self.viewModel.eventHandler = { event in
-            switch event {
-            case .loading:
-                self.isLoading = true
-            case .stopLoading:
-                self.isLoading = false
-            case .dataLoaded:
+    
+    func profileSuccess() {
+        SVProgressHUD.dismiss()
+        let response = viewModel.getProfileDict
+        if response.status == "success" {
+            profileData = response.data ?? ProfileModel()
+            isFollowing = profileData.is_following ?? false
+            Task{
+                await self.viewModel.productDetails(parameters: UserProductRequest(user_id: Int(id) ?? 0))
+                await SVProgressHUD.dismiss()
                 success()
-            case .error(let error):
-                let msg = error?.localizedDescription ?? AppString.error.localized
-                alertType = .sheetType(icon: .alert, title: AppString.error.localized, message: msg, primaryBtnText: "", secondaryBtnText: AppString.ok.localized)
-                showError = true
             }
+        } else {
+            showError = true
+            alertType = .sheetType(
+                icon: .alert,
+                title: response.error_type?.capitalized ?? "",
+                message: response.message?.capitalized ?? "",
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
+            )
         }
     }
-
-    func success() {
-        if self.viewModel.requestType == "get"{
-            let response = viewModel.getProfileDict
-            if response.status == "success" {
-                profileData = response.data ?? ProfileModel()
-                isFollowing = profileData.is_following ?? false
-                self.viewModel.productDetails(parameters: UserProductRequest(user_id: Int(id) ?? 0))
-            } else {
-                showError = true
-                alertType = .sheetType(
-                    icon: .alert,
-                    title: response.error_type?.capitalized ?? "",
-                    message: response.message?.capitalized ?? "",
-                    primaryBtnText: "",
-                    secondaryBtnText: AppString.ok.localized
-                )
-            }
+    
+    func success(){
+        SVProgressHUD.dismiss()
+        let response = viewModel.productDetailsResponseDict
+        if response?.status == "success" {
+            productArr = response?.data ?? []
             
-        }else  if self.viewModel.requestType == "product"{
-            let response = viewModel.productDetailsResponceDict
-            if response?.status == "success" {
-                      productArr = response?.data ?? []
-                     
-                  } else {
-                      alertType = .sheetType(icon: .alert, title: response?.status?.capitalized ?? "", message: response?.message?.capitalized ?? "", primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .defaultTheme)
-                      withAnimation(.snappy) { showError = true }
-                  }
+        } else {
+            alertType = .sheetType(icon: .alert, title: response?.status?.capitalized ?? "", message: response?.message?.capitalized ?? "", primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .defaultTheme)
+            withAnimation(.snappy) { showError = true }
         }
+        
     }
 }
 

@@ -223,20 +223,25 @@ struct ProductDetailSheet: View {
         }
         .onAppear {
             UIScrollView.appearance().bounces = false
-            observe()
+           
             
         }
         .onChange(of: productID) { newValue in
+        
             guard newValue != 0 else {
                 print("Invalid productID, skipping API call")
                 return
             }
-            self.isLoading = true
-            let param = FetchProductRequest(product_id: newValue)
-            viewModel.getProductDetails(parameters: param)
+            Task{
+                let param = FetchProductRequest(product_id: newValue)
+                await viewModel.getProductDetails(parameters: param)
+            }
         }
         .onDisappear {
             UIScrollView.appearance().bounces = true
+        }
+        .onReceive(viewModel.$productDetailsResponseDict){ response in
+            handleSuccess()
         }
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
@@ -259,25 +264,10 @@ struct ProductDetailSheet: View {
         }
     }
     
-    private func observe() {
-        viewModel.eventHandler = { event in
-            switch event {
-            case .loading:
-                isLoading = true
-            case .stopLoading:
-                isLoading = false
-            case .dataLoaded:
-                self.handleSuccess()
-            case .error(let error):
-                alertType = .sheetType(icon: .alert, title: "Error", message: error?.localizedDescription ?? "", primaryBtnText: "", secondaryBtnText: "Ok", sheetThemeColor: .pinkBtn)
-                showError = true
-            }
-        }
-    }
     
     func handleSuccess() {
-        let response = viewModel.productDetailsResponceDict
-        let data = viewModel.productDetailsResponceDict?.data
+        let response = viewModel.productDetailsResponseDict
+        let data = viewModel.productDetailsResponseDict?.data
         if response?.status == "success" {
             productImages =  data?.images ?? []
             productTitle = data?.description ?? ""

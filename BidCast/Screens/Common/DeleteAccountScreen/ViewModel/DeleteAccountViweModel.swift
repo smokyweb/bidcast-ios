@@ -7,31 +7,25 @@
 
 import Foundation
 
-class DeleteAccountViweModel {
+@MainActor
+final class DeleteAccountViewModel: ObservableObject {
     
-    var deleteResponceDict : ResponseModal<[String]>?
+    @Published var deleteResponseDict: ResponseModal<[String]>?
+    @Published var errorMessage: String?
     
-    var eventHandler: ((_ event: Event) -> Void)? // Data Binding Closure
-
-    func postDeleteRequest(param:DeleteParam){
-        self.eventHandler?(.loading)
-        APIManager.shared.requestPost(
-            modelType: ResponseModal<[String]>.self, // response type
-            type: APIEndPoint.deleteAccount(param:param),
-            header: true) { result in
-                self.eventHandler?(.stopLoading)
-                switch result {
-                case .success(let data):
-                    self.deleteResponceDict = data
-                    self.eventHandler?(.dataLoaded)
-                case .failure(let error):
-                    self.eventHandler?(.error(error))
-                }
-            }
+    func postDeleteRequest(param: DeleteParam) async {
+        do {
+            let response: ResponseModal<[String]> = try await APIManager.shared.request(
+                type: APIEndPoint.deleteAccount(param: param),
+                header: true
+            )
+            self.deleteResponseDict = response
+        } catch {
+            self.errorMessage = error.localizedDescription
+        }
     }
 }
 
-
-struct DeleteParam: Codable{
-    var reason : String?
+struct DeleteParam: Codable {
+    var reason: String?
 }

@@ -7,10 +7,11 @@
 
 import SwiftUI
 import SwiftfulLoadingIndicators
+import SVProgressHUD
 
 struct ListProductScreen: View {
     @Environment(\.presentationMode) var presentationMode
-    @State var isLoading : Bool = false
+    
     @State var categorySelect : String = ""
     @State var categoyList = [String]()
     @State var productTitle = ""
@@ -186,9 +187,7 @@ struct ListProductScreen: View {
                         })
                 })
                 
-                if isLoading {
-                    LoadingIndicator()
-                }
+              
                 
             }
 //            .padding([.leading,.trailing],12)
@@ -196,53 +195,40 @@ struct ListProductScreen: View {
         .edgesIgnoringSafeArea(.top)
         .background(.bg.opacity(0.5))
         .onFirstAppear(perform: {
-            self.isLoading = true
-            viewModel.getCategoryList()
+            Task{
+                SVProgressHUD.show()
+                await viewModel.getCategoryList()
+            }
         })
-        .onAppear(perform: {
-            observe()
-        })
+        .onReceive(viewModel.$categoryResponse){ response in
+            
+        }
         .onTapGesture {
             UIApplication.shared.endEditing()
         }
         
-    }
     
-    func observe() {
-        self.viewModel.eventHandler = { event in
-            switch event {
-            case .loading:
-                self.isLoading = true
-            case .stopLoading:
-                self.isLoading = false
-            case .dataLoaded:
-                categorySuccess()
-            case .error(let error):
-                let msg = error?.localizedDescription ?? AppString.error.localized
-                alertType = .sheetType(icon: .alert, title: AppString.error.localized, message: msg, primaryBtnText: "", secondaryBtnText: AppString.ok.localized)
-                showError = true
-            }
-        }
+    
     }
 
     func categorySuccess() {
-        if viewModel.request == "Category" {
-            if let response = viewModel.categoryDict {
-                if response.status == "success" {
-                    self.categoryList = response.data
-                    self.categoryNames = response.data.map { $0.name ?? "No Category" }
+       
+        let response = viewModel.categoryResponse
+        if response?.status == "success" {
+            self.categoryList = response?.data ?? [CategoryDataModel]()
+            self.categoryNames = response?.data.map { $0.name ?? "No Category" } ?? [String]()
                     
                 } else {
                     alertType = .sheetType(
                         icon: .alert,
-                        title: response.error_type?.capitalized ?? "",
-                        message: response.message?.capitalized ?? "",
+                        title: response?.error_type?.capitalized ?? "",
+                        message: response?.message?.capitalized ?? "",
                         primaryBtnText: "",
                         secondaryBtnText: AppString.ok.localized
                     )
                     showError = true
-                }
-            }
+                
+            
         }
     }
 }

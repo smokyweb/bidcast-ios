@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftfulLoadingIndicators
+import SVProgressHUD
 //import BottomSheet
 
 struct NewsScreen: View {
@@ -56,10 +57,12 @@ struct NewsScreen: View {
                 .padding(.top, -topPadding)
                 .refreshable {
                     generateFeedback(type: .medium)
-                    self.isLoading = true
-                    newsContent.removeAll()
-                    viewModel.getNewsContent()
-                    observe()
+                    Task{
+                        SVProgressHUD.show()
+                        newsContent.removeAll()
+                        await viewModel.getNewsContent()
+                    }
+                   
                 }
                 
                 Spacer()
@@ -86,12 +89,15 @@ struct NewsScreen: View {
         }
         .edgesIgnoringSafeArea(.bottom)
         .onFirstAppear(perform: {
-            self.isLoading = true
-            viewModel.getNewsContent()
+            Task{
+                SVProgressHUD.show()
+               await  viewModel.getNewsContent()
+            }
         })
-        .onAppear(perform: {
-            observe()
-        })
+        .onReceive(viewModel.$newsResponse){ response in
+            success()
+        }
+        
 //        CusNavLink(doNavigate: $navigateToNotification, destination: NotificationScreen())
 //
 //        .fullScreenCover(isPresented: $navigateToMenu, content: {
@@ -114,34 +120,20 @@ struct NewsScreen: View {
         
     }
     
-    func observe() {
-        self.viewModel.eventHandler = { event in
-            switch event {
-                case .loading:
-                    self.isLoading = true
-                case .stopLoading:
-                    self.isLoading = false
-                case .dataLoaded:
-                    success()
-                case .error(let error):
-                    alertType = .sheetType(icon: .alert, title: "Error", message: error?.localizedDescription ?? "", primaryBtnText: "", secondaryBtnText: "Ok", sheetThemeColor: .pinkBtn)
-                    showError = true
-            }
-        }
-    }
+  
     
     func success() {
-        if let dict = viewModel.newsResponceDict {
+        let dict = viewModel.newsResponse
             
             if dict.status == "success" {
                 withAnimation(.interactiveSpring(duration: 0.45, extraBounce: 0.3, blendDuration: 0.25)) {
-                    self.newsContent.append(contentsOf: dict.data)
+                    self.newsContent.append(contentsOf: dict.data ?? [NewsResponseModel]())
                 }
             }else{
                 alertType = .sheetType(icon: .alert, title: dict.status?.capitalized ?? "", message: dict.message ?? "", primaryBtnText: "", secondaryBtnText: "Ok", sheetThemeColor: .pinkBtn)
                 withAnimation(.snappy) { showError = true }
             }
-        }
+        
         
     }
 }

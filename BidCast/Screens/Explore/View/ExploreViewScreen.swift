@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SVProgressHUD
 
 struct ExploreViewScreen: View {
    
@@ -83,42 +84,21 @@ struct ExploreViewScreen: View {
             .background(.bg.opacity(0.4))
 //            .edgesIgnoringSafeArea(.top)
             .onAppear {
-                observe()
-                self.viewModel.getCategoryList()
+                Task {
+                    SVProgressHUD.show()
+                    await self.viewModel.getCategoryList()
+                    await SVProgressHUD.dismiss()
+                    self.categoryList = viewModel.categoryResponse.data ?? [CategoryDataModel]()
+                }
             }
+           
             
        
     }
     
-    func observe() {
-        self.viewModel.eventHandler = { event in
-            switch event {
-            case .loading:
-                self.isLoading = true
-            case .stopLoading:
-                self.isLoading = false
-            case .dataLoaded:
-                categorySuccess()
-            case .error(let error):
-                let msg = error?.localizedDescription ?? AppString.error.localized
-                print(msg)
-            }
-        }
-    }
+   
 
-    func categorySuccess() {
-        if viewModel.request == "Category" {
-            if let response = viewModel.categoryDict {
-                if response.status == "success" {
-                 
-                    self.categoryList = response.data
-                } else {
-                   
-//                    showError = true
-                }
-            }
-        }
-    }
+   
 }
 
 #Preview {

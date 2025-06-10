@@ -8,6 +8,7 @@
 import SwiftUI
 import AlertToast
 import SwiftfulLoadingIndicators
+import SVProgressHUD
 
 
 struct CreateAddress: View {
@@ -23,7 +24,7 @@ struct CreateAddress: View {
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @State var request : AddressRequest = AddressRequest(type: "", name: "", phone_number: "", street_address: "", pincode: "")
     
-    var viewModel = AddressViewModel()
+    @State var viewModel = AddressViewModel()
     var body: some View {
         VStack(spacing: 0) {
             // Top Header
@@ -138,27 +139,30 @@ struct CreateAddress: View {
                         
                         guard !request.name.isEmpty else {
                             hudMsg = "Please enter name of address"
-                                showhud = true
-                                return
-                            }
-                      
+                            showhud = true
+                            return
+                        }
+                        
                         guard !request.phone_number.isEmpty else {
                             hudMsg = "Please enter phone number"
-                                showhud = true
-                                return
-                            }
+                            showhud = true
+                            return
+                        }
                         guard !request.street_address.isEmpty else {
                             hudMsg = "Please enter street address"
-                                showhud = true
-                                return
-                            }
+                            showhud = true
+                            return
+                        }
                         guard !request.pincode.isEmpty else {
                             hudMsg = "Please enter pin code"
-                                showhud = true
-                                return
-                            }
+                            showhud = true
+                            return
+                        }
                         let request = self.request
-                        self.viewModel.storeAddress(parameters: request)
+                        Task {
+                            SVProgressHUD.show()
+                            await viewModel.storeAddress(parameters: request)
+                        }
                     }
                 },
                 width: screenWidth - 45,
@@ -172,9 +176,9 @@ struct CreateAddress: View {
                 LoadingIndicator()
             }
         }
-        
-        .onAppear{
-            observe()
+        .onReceive( viewModel.$addressResponse) { response in
+            SVProgressHUD.dismiss()
+            success()
         }
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
@@ -198,25 +202,10 @@ struct CreateAddress: View {
         }
     }
     
-    func observe() {
-        self.viewModel.eventHandler = { event in
-            switch event {
-            case .loading:
-                self.isLoading = true
-            case .stopLoading:
-                self.isLoading = false
-            case .dataLoaded:
-                success()
-            case .error(let error):
-                let msg = error?.localizedDescription ?? AppString.error.localized
-                alertType = .sheetType(icon: .alert, title: AppString.error.localized, message: msg, primaryBtnText: "", secondaryBtnText: AppString.ok.localized)
-                showError = true
-            }
-        }
-    }
+   
 
     func success() {
-        let response = viewModel.addressDict
+        let response = viewModel.addressResponse
         if response.status == "success" {
             alertType = .sheetType(
                 icon: .success,

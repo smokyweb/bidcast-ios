@@ -8,6 +8,7 @@
 import SwiftUI
 import RichText
 import SwiftfulLoadingIndicators
+import SVProgressHUD
 
 struct SelectThumbnailScreen: View {
     
@@ -106,9 +107,7 @@ struct SelectThumbnailScreen: View {
             },cornerRadius: 12, btnTextColor: .white)
             
             CusNavLink(doNavigate: $navigateToSelectTime, destination: SelectShowScreen())
-            if isLoading{
-                LoadingIndicator()
-            }
+            
         }
         .edgesIgnoringSafeArea([.top,.bottom])
         .background(.bg.opacity(0.5))
@@ -137,34 +136,26 @@ struct SelectThumbnailScreen: View {
             }
         }
         .onAppear {
-            observe()
             
-            viewModel.getTitleTips(param: TipParam(type: "thumbnail"))
-        }
-    }
-    func observe() {
-        self.viewModel.eventHandler = { event in
-            switch event {
-            case .loading:
-                self.isLoading = true
-            case .stopLoading:
-                self.isLoading = false
-            case .dataLoaded:
-                success()
-            case .error(let error):
-                print("Error: \(error?.localizedDescription ?? "Unknown")")
+            Task{
+                SVProgressHUD.show()
+                await viewModel.getTitleTips(param: TipParam(type: "thumbnail"))
+                await SVProgressHUD.dismiss()
+                await success()
             }
         }
     }
+   
     
     func success() {
-        if let dict = viewModel.getTipsDict {
-            if dict.status == "success" {
-                tip = dict.data.first ?? TitleTipsModel()
+        SVProgressHUD.dismiss()
+         let dict = viewModel.tipsResponse
+            if dict?.status == "success" {
+                tip = dict?.data.first ?? TitleTipsModel()
             } else {
-                print("API error: \(dict.status ?? "")")
+                print("API error: \(dict?.status ?? "")")
             }
-        }
+        
     }
    
 }

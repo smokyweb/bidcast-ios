@@ -8,6 +8,7 @@
 import SwiftUI
 import AlertToast
 import SwiftfulLoadingIndicators
+import SVProgressHUD
 
 struct NotifyMeBottomSheet: View {
     
@@ -117,8 +118,8 @@ struct NotifyMeBottomSheet: View {
         }
         .background(Color.white)
         .cornerRadius(20)
-        .onAppear {
-            observeEvents()
+        .onReceive(viewModel.$notifyLiveUserResponseDict){ repsones in
+            
         }
         .toast(isPresenting: $showHUD) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
@@ -139,37 +140,19 @@ struct NotifyMeBottomSheet: View {
     
     // MARK: – Actions
     private func notifyUser() {
-        let param = NotifyLiveUserRequest(live_user_id: userId)
-        viewModel.notifyLiveUser(parameter: param)
+        Task{
+            
+            let param = NotifyLiveUserRequest(live_user_id: userId)
+            SVProgressHUD.show()
+            await viewModel.notifyLiveUser(parameter: param)
+        }
     }
 
     
-    // MARK: – View-model events
-    private func observeEvents() {
-        viewModel.eventHandler = { event in
-            switch event {
-            case .loading:
-                isLoading = true
-            case .stopLoading:
-                isLoading = false
-            case .dataLoaded:
-                handleSuccess()
-            case .error(let err):
-                isLoading = false
-                alertType = .sheetType(
-                    icon: .alert,
-                    title: "Error",
-                    message: err?.localizedDescription ?? "Unknown error",
-                    primaryBtnText: "",
-                    secondaryBtnText: "Ok",
-                    sheetThemeColor: .pinkBtn
-                )
-                showError = true
-            }
-        }
-    }
+   
     
     private func handleSuccess() {
+        SVProgressHUD.dismiss()
         let response = viewModel.notifyLiveUserResponseDict
         if response?.status == "success" {
             onDismiss()

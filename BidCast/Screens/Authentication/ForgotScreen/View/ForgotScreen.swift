@@ -9,12 +9,13 @@ import SwiftUI
 import BottomSheet
 import AlertToast
 import SwiftfulLoadingIndicators
+import SVProgressHUD
 
 struct ForgotScreen: View {
     
     @Environment(\.presentationMode) var presentationMode
     @State var isRemeber: Bool = false
-    @State var isLoading: Bool = false
+   
     @State var request: ForgetRequest = ForgetRequest(email: "")
     @State var navigateToOTP: Bool = false
     @State var showError: Bool = false
@@ -48,10 +49,9 @@ struct ForgotScreen: View {
                             floatingLabel: AppString.email.localized,
                             placeholder: AppString.enterEmail.localized,
                             icon: .icMail,
-                            text: $request.email
-                        ) { email in
-                            self.request.email = email
-                        }
+                            text: $request.email, enteredText:  { email in
+                                self.request.email = email
+                            })
                         .textContentType(.username)
                         
                         PrimaryButton(
@@ -71,7 +71,11 @@ struct ForgotScreen: View {
                                     showhud = true
                                     return
                                 }
-                                self.viewModel.forgotEmail(parameters: self.request)
+                                Task{
+                                    SVProgressHUD.show()
+                                    await  self.viewModel.forgotEmail(parameters: self.request)
+                                }
+                               
                             },
                             btnTextColor: .white
                         )
@@ -82,16 +86,12 @@ struct ForgotScreen: View {
                 .padding(.top, 20)
             }
 
-            if isLoading {
-                LoadingIndicator()
-            }
-
             CusNavLink(doNavigate: $navigateToOTP, destination: VerifyOtpScreen())
         }
         .frame(width: screenWidth, height: screenHeight)
         .onAppear {
             UIScrollView.appearance().bounces = false
-            observe()
+           
         }
         .onDisappear {
             DispatchQueue.main.async {
@@ -100,6 +100,9 @@ struct ForgotScreen: View {
         }
         .onTapGesture {
             UIApplication.shared.endEditing()
+        }
+        .onReceive(viewModel.$forgotResponseDict) { respone in
+            handleSuccess()
         }
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
@@ -126,32 +129,10 @@ struct ForgotScreen: View {
         }
     }
 
-    //MARK: observe
-    func observe() {
-        self.viewModel.eventHandler = { event in
-            switch event {
-            case .loading:
-                self.isLoading = true
-            case .stopLoading:
-                self.isLoading = false
-            case .dataLoaded:
-                handleSuccess()
-            case .error(let error):
-                alertType = .sheetType(
-                    icon: .alert,
-                    title: AppString.error.localized,
-                    message: error?.localizedDescription ?? "",
-                    primaryBtnText: "",
-                    secondaryBtnText: AppString.ok.localized,
-                    sheetThemeColor: .pinkBtn
-                )
-                showError = true
-            }
-        }
-    }
-    
+  
     func handleSuccess() {
-        let response = viewModel.forgotResponceDict
+        SVProgressHUD.dismiss()
+        let response = viewModel.forgotResponseDict
         
         if response.status == "success" {
             UserDefaultsManager.shared.setValue(request.email, forKey: .mailId)

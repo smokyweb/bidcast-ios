@@ -7,99 +7,86 @@
 //
 import SwiftUI
 import RichText
-import SwiftfulLoadingIndicators
+import SVProgressHUD
 
 struct PrivacyPolicyScreen: View {
     
-        //MARK: - Vairable Initialised
     @Environment(\.presentationMode) var presentationMode
-    @State var isLoading: Bool = false
-    @State var privacyPolicy: String = ""
-    @State var navigateToMenu: Bool = false
-    @State var navigateToNotification: Bool = false
-    @State var notiCount: Int = 0
-        //MARK: View Modal
-    var viewModal = MenuOptionsViewModal()
     
-        //MARK: - Primary View
+    @State var viewModal = MenuOptionsViewModel()
+    @State private var privacyPolicy: String = ""
+    @State private var isLoading: Bool = false
+    @State private var errorMessage: String? = nil
+    
     var body: some View {
         ZStack {
-            VStack(spacing: 0, content: {
+            VStack(spacing: 0) {
                 PrimaryHeader(
                     title: "Privacy Policy".localized,
-                    isForLogo : false, leadingImgArr: [.sideArrow],
+                    isForLogo: false,
+                    leadingImgArr: [.sideArrow],
                     trailingImgArr: [],
                     onClickLeading: { _ in
-                        self.presentationMode.wrappedValue.dismiss()
+                        presentationMode.wrappedValue.dismiss()
                     },
                     count: .constant(0)
                 )
-                .background(.white)
+                .background(Color.white)
+                
                 VStack(alignment: .leading) {
-                   
-                    ScrollView(showsIndicators: false){
+                    if let errorMessage = errorMessage {
+                        Text(errorMessage)
+                            .foregroundColor(.red)
+                            .padding()
+                    }
+                    
+                    ScrollView(showsIndicators: false) {
                         RichText(html: privacyPolicy)
                             .customCSS("""
-            body {
-                font-size: 16px;
-            }
-        """)
+                                body { font-size: 16px; }
+                            """)
                             .font(.custom(nunitoLight, fixedSize: 16))
                             .multilineTextAlignment(.leading)
-                            .padding([.top,.leading,.trailing])
+                            .padding([.top, .leading, .trailing])
                     }
                     Spacer()
                 }
                 .padding(.bottom, bottomPadding)
-                .background(.text.opacity(0.05))
+                .background(Color.text.opacity(0.05))
                 .padding(.top, -topPadding)
                 
                 Spacer()
-            })
-            .refreshable {
-                isLoading = true
-                self.viewModal.getPrivacyDetails()
-                observe()
             }
-            
-            if isLoading {
-                LoadingIndicator()
+            .refreshable {
+                await fetchPrivacyPolicy()
             }
         }
         .edgesIgnoringSafeArea(.bottom)
         .task {
-            self.viewModal.getPrivacyDetails()
+            await fetchPrivacyPolicy()
         }
-        .onAppear(perform: {
-            observe()
-        })
-
-    }
-    
-        //MARK: - View Modal Observer
-    func observe() {
-        self.viewModal.eventHandler = {
-            event in
-            switch event {
-                case .loading:
-                    isLoading = true
-                case .stopLoading:
-                    isLoading = false
-                case .dataLoaded:
-                    handleSuccess()
-                case .error(let error):
-                    print("Error >> \(error?.localizedDescription ?? "")")
-            }
-        }
-    }
-    
-        //MARK: - View Modal Success Handler
-    func handleSuccess() {
-        if let response = viewModal.privacyResponse {
+        .onReceive(viewModal.$privacyResponse) { response in
+            
+            SVProgressHUD.dismiss()
             if response.status == "success" {
-                privacyPolicy = response.data.page_content ?? ""
+                privacyPolicy = response.data?.page_content ?? ""
+                errorMessage = nil
+            } else {
+                errorMessage = response.message ?? "Failed to load privacy policy"
             }
         }
+        .onReceive(viewModal.$errorMessage) { error in
+            if let error = error {
+                errorMessage = error
+                SVProgressHUD.dismiss()
+            }
+        }
+    }
+    
+    @MainActor
+    private func fetchPrivacyPolicy() async {
+        SVProgressHUD.show()
+        await viewModal.getPrivacyDetails()
     }
 }
 

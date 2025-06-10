@@ -8,6 +8,7 @@
 import SwiftUI
 import AlertToast
 import SwiftfulLoadingIndicators
+import SVProgressHUD
 
 struct PreferncesScreen: View {
     @Environment(\.presentationMode) var presentationMode
@@ -105,7 +106,12 @@ struct PreferncesScreen: View {
                             suggest_my_account: suggestMyAccount ? 1 : 0,
                             haptic_feedback: hapticFeedback ? 1 : 0
                         )
-                        viewModel.updatePreference(parameters: request)
+                        Task{
+                            SVProgressHUD.show()
+                            await viewModel.updatePreference(parameters: request)
+                            await SVProgressHUD.dismiss()
+                            await getPreferenceSuccess()
+                        }
                     },
                     btnTextColor: .white
                 )
@@ -115,23 +121,26 @@ struct PreferncesScreen: View {
             }
             .disabled(isLoading)
             
-            if isLoading {
-                VStack {
-                    LoadingIndicator()
-                }
-            }
+            
         }
         .onAppear {
             UIScrollView.appearance().bounces = false
-            observe()
+            
         }
         .onDisappear {
             UIScrollView.appearance().bounces = true
         }
         .onFirstAppear {
-            self.isLoading = true
-            viewModel.getPreferenceContent()
+           
+            Task{
+                SVProgressHUD.show()
+                await viewModel.getPreferenceContent()
+                await SVProgressHUD.dismiss()
+                await getPreferenceSuccess()
+               
+            }
         }
+        
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }
@@ -153,24 +162,9 @@ struct PreferncesScreen: View {
         }
     }
     
-    private func observe() {
-        viewModel.eventHandler = { event in
-            switch event {
-            case .loading:
-                isLoading = true
-            case .stopLoading:
-                isLoading = false
-            case .dataLoaded:
-                getPreferenceSuccess()
-            case .error(let error):
-                alertType = .sheetType(icon: .alert, title: "Error", message: error?.localizedDescription ?? "", primaryBtnText: "", secondaryBtnText: "Ok", sheetThemeColor: .pinkBtn)
-                showError = true
-            }
-        }
-    }
     
     private func getPreferenceSuccess() {
-        guard let data = viewModel.preferenceResponceDict?.data else { return }
+        guard let data = viewModel.preferenceResponse.data else { return }
         selectedCountry = data.countryOfResidence ?? "United States"
         directMessages = data.directMessage ?? false
         receiveGifts = data.receiveGifts ?? false

@@ -7,108 +7,69 @@
 
 import Foundation
 
-final class LiveShowsViewModel {
-    
-    var addressDict = ResponseModel<AddressModel>()
-    var getLiveShowsDict = ResponseModel<[LiveShowsModel]>()
-   
-    var requestType = ""
-    
-    var eventHandler: ((_ event: Event) -> Void)? // Data Binding Closure
 
-    func storeAddress(parameters: AddressRequest) {
-        self.requestType = "store"
-        self.eventHandler?(.loading)
-        APIManager.shared.requestPost(
-            modelType: ResponseModel<AddressModel>.self, // response type
-            type: APIEndPoint.storeAddress(param: parameters),
-            header: true) { result in
-                self.eventHandler?(.stopLoading)
-                switch result {
-                case .success(let data):
-                    self.addressDict = data
-                    self.eventHandler?(.dataLoaded)
-                case .failure(let error):
-                    self.eventHandler?(.error(error))
-                }
-            }
+@MainActor
+final class LiveShowsViewModel: ObservableObject {
+    
+    // MARK: - Published Properties
+    @Published var addressResponse = ResponseModel<AddressModel>()
+    @Published var liveShowsResponse = ResponseModel<[LiveShowsModel]>()
+    @Published var errorMessage: String?
+    @Published var requestType: String = ""
+    
+    // MARK: - Store Address
+    func storeAddress(parameters: AddressRequest) async {
+        requestType = "store"
+        do {
+            let response: ResponseModel<AddressModel> = try await APIManager.shared.request(
+                type: APIEndPoint.storeAddress(param: parameters),
+                header: true
+            )
+            self.addressResponse = response
+        } catch {
+            self.errorMessage = error.localizedDescription
+        }
     }
-    
-    
-    func getLiveShows() {
-        self.eventHandler?(.loading)
-        self.requestType = "get"
-        APIManager.shared
-            .dictionaryRequest(
-                modelType: ResponseModel<[LiveShowsModel]>.self,
+
+    // MARK: - Get Live Shows
+    func getLiveShows() async {
+        requestType = "get"
+        do {
+            let response: ResponseModel<[LiveShowsModel]> = try await APIManager.shared.request(
                 type: APIEndPoint.getLiveShows,
-                header: true) {
-                    result in
-                    self.eventHandler?(.stopLoading)
-                    switch result {
-                    case .success(let data):
-                        self.getLiveShowsDict = data
-                        print(data)
-                        self.eventHandler?(.dataLoaded)
-                        return
-                    case .failure(let error):
-                        self.eventHandler?(.error(error))
-                        return
-                        
-                    }
-                }
-        
+                header: true
+            )
+            self.liveShowsResponse = response
+        } catch {
+            self.errorMessage = error.localizedDescription
+        }
     }
-    
-    func setDefaultAddress(parameters: AddressDefaultParam) {
-        self.requestType = "default"
-        self.eventHandler?(.loading)
-        APIManager.shared.requestPost(
-            modelType: ResponseModel<AddressModel>.self, // response type
-            type: APIEndPoint.setDefaultAddress(param: parameters),
-            header: true) { result in
-                self.eventHandler?(.stopLoading)
-                switch result {
-                case .success(let data):
-                    self.addressDict = data
-                    self.eventHandler?(.dataLoaded)
-                case .failure(let error):
-                    self.eventHandler?(.error(error))
-                }
-            }
+
+    // MARK: - Set Default Address
+    func setDefaultAddress(parameters: AddressDefaultParam) async {
+        requestType = "default"
+        do {
+            let response: ResponseModel<AddressModel> = try await APIManager.shared.request(
+                type: APIEndPoint.setDefaultAddress(param: parameters),
+                header: true
+            )
+            self.addressResponse = response
+        } catch {
+            self.errorMessage = error.localizedDescription
+        }
     }
-    
-    func DeleteAddress(parameters: AddressDefaultParam) {
-        self.requestType = "delete"
-        self.eventHandler?(.loading)
-        APIManager.shared.requestPost(
-            modelType: ResponseModel<AddressModel>.self, // response type
-            type: APIEndPoint.deleteAddress(param: parameters),
-            header: true) { result in
-                self.eventHandler?(.stopLoading)
-                switch result {
-                case .success(let data):
-//                    self.addressDict = data
-//                    self.getAddresses()
-                    self.eventHandler?(.dataLoaded)
-                case .failure(let error):
-                    self.eventHandler?(.error(error))
-                }
-            }
+
+    // MARK: - Delete Address
+    func deleteAddress(parameters: AddressDefaultParam) async {
+        requestType = "delete"
+        do {
+            let response: ResponseModel<AddressModel> = try await APIManager.shared.request(
+                type: APIEndPoint.deleteAddress(param: parameters),
+                header: true
+            )
+           
+        } catch {
+            self.errorMessage = error.localizedDescription
+        }
     }
-    
 }
-
-
-extension LiveShowsViewModel {
-    
-    enum Event {
-        case loading
-        case stopLoading
-        case dataLoaded
-        case error(Error?)
-        
-    }
-    
-}
-

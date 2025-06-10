@@ -7,6 +7,7 @@
 
 import SwiftUI
 import RichText
+import SVProgressHUD
 
 struct ShowTips: View {
     
@@ -67,34 +68,26 @@ struct ShowTips: View {
         .edgesIgnoringSafeArea(.bottom)
         .toolbar(.hidden,for: .tabBar)
         .onAppear {
-            observe()
             
-            viewModel.getShowTips()
-        }
-    }
-    func observe() {
-        self.viewModel.eventHandler = { event in
-            switch event {
-            case .loading:
-                self.isLoading = true
-            case .stopLoading:
-                self.isLoading = false
-            case .dataLoaded:
+            Task{
+                SVProgressHUD.show()
+                await viewModel.getShowTips()
+                await SVProgressHUD.dismiss()
                 success()
-            case .error(let error):
-                print("Error: \(error?.localizedDescription ?? "Unknown")")
             }
         }
     }
     
+    
     func success() {
-        if let dict = viewModel.getLessonDict {
-            if dict.status == "success" {
-                tips = dict.data
+        SVProgressHUD.dismiss()
+        let dict = viewModel.lessonsResponse
+            if dict?.status == "success" {
+                tips = dict?.data ?? [LessonModel]()
             } else {
-                print("API error: \(dict.status ?? "")")
+                print("API error: \(dict?.status ?? "")")
             }
-        }
+        
     }
 }
 

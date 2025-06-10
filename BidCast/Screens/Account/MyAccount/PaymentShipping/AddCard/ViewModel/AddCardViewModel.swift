@@ -8,91 +8,101 @@
 
 import Foundation
 
-final class AddCardViewModel {
+final class AddCardViewModel: ObservableObject {
     
-    var addressDict = ResponseModel<AddressModel>()
-    var cardDict = ResponseModel<[CardModel]>()
-   var addCardDict = ResponseModel<CardModel>()
-    var requestType = ""
+    @Published var cardDict = ResponseModel<[CardModel]>()
+    @Published var addCardDict = ResponseModel<CardModel>()
+    @Published var errorMessage: String? = nil
     
-    var eventHandler: ((_ event: Event) -> Void)? // Data Binding Closure
-
-    func addCard(parameters: AddCardRequest) {
-        self.requestType = "add"
-        self.eventHandler?(.loading)
-        APIManager.shared.requestPost(
-            modelType: ResponseModel<CardModel>.self, // response type
-            type: APIEndPoint.AddCard(param: parameters),
-            header: true) { result in
-                self.eventHandler?(.stopLoading)
-                switch result {
-                case .success(let data):
-                    self.addCardDict = data
-                    self.eventHandler?(.dataLoaded)
-                case .failure(let error):
-                    self.eventHandler?(.error(error))
+    
+    @MainActor
+    func addCard(parameters: AddCardRequest) async  {
+       
+            do {
+                if let response: ResponseModel<CardModel> = try await APIManager.shared.request(
+                    type: APIEndPoint.AddCard(param: parameters),
+                    header: true) {
+                    self.addCardDict = response
                 }
-            }
+            }catch let error{
+                if let dataError = error as? DataError {
+                    switch dataError {
+                    case .invalidCode(let message):
+                        self.errorMessage = message ?? "Invalid code error"
+                    case .invalidResponse(let data):
+                        if let data = data,
+                           let json = try? JSONSerialization.jsonObject(with: data, options: []) {
+                            self.errorMessage = "Invalid response: \(json)"
+                        } else {
+                            self.errorMessage = "Invalid response with no data"
+                        }
+                    default:
+                        self.errorMessage = error.localizedDescription
+                    }
+                } else {
+                    self.errorMessage = error.localizedDescription
+                }
+            
+        }
     }
-    
-    
-    func getCard() {
-        self.eventHandler?(.loading)
-        self.requestType = "get"
-        APIManager.shared
-            .dictionaryRequest(
-                modelType: ResponseModel<[CardModel]>.self,
+
+    @MainActor
+    func getCard() async throws {
+        do {
+            if let response: ResponseModel<CardModel> = try await APIManager.shared.request(
                 type: APIEndPoint.getCard,
                 header: true) {
-                    result in
-                    self.eventHandler?(.stopLoading)
-                    switch result {
-                    case .success(let data):
-                        self.cardDict = data
-                        print(data)
-                        self.eventHandler?(.dataLoaded)
-                        return
-                    case .failure(let error):
-                        self.eventHandler?(.error(error))
-                        return
-                        
-                    }
-                }
-        
-    }
-    
-   
-    func deleteCard(parameters: DeleteCardRequest) {
-        self.requestType = "delete"
-        self.eventHandler?(.loading)
-        APIManager.shared.requestPost(
-            modelType: ResponseModel<CardModel>.self, // response type
-            type: APIEndPoint.deleteCard(param: parameters),
-            header: true) { result in
-                self.eventHandler?(.stopLoading)
-                switch result {
-                case .success(let data):
-//                    self.addressDict = data
-                    self.getCard()
-                    self.eventHandler?(.dataLoaded)
-                case .failure(let error):
-                    self.eventHandler?(.error(error))
-                }
+                self.addCardDict = response
             }
+        }catch let error{
+            if let dataError = error as? DataError {
+                switch dataError {
+                case .invalidCode(let message):
+                    self.errorMessage = message ?? "Invalid code error"
+                case .invalidResponse(let data):
+                    if let data = data,
+                       let json = try? JSONSerialization.jsonObject(with: data, options: []) {
+                        self.errorMessage = "Invalid response: \(json)"
+                    } else {
+                        self.errorMessage = "Invalid response with no data"
+                    }
+                default:
+                    self.errorMessage = error.localizedDescription
+                }
+            } else {
+                self.errorMessage = error.localizedDescription
+            }
+            
+        }
     }
-    
-}
 
-
-extension AddCardViewModel {
-    
-    enum Event {
-        case loading
-        case stopLoading
-        case dataLoaded
-        case error(Error?)
-        
+    @MainActor
+    func deleteCard(parameters: DeleteCardRequest) async throws {
+        do{
+            if let response: ResponseModel<CardModel> = try await APIManager.shared.request(
+                type: APIEndPoint.deleteCard(param: parameters),
+                header: true) {
+                try await getCard()
+            }
+        }catch let error{
+            if let dataError = error as? DataError {
+                switch dataError {
+                case .invalidCode(let message):
+                    self.errorMessage = message ?? "Invalid code error"
+                case .invalidResponse(let data):
+                    if let data = data,
+                       let json = try? JSONSerialization.jsonObject(with: data, options: []) {
+                        self.errorMessage = "Invalid response: \(json)"
+                    } else {
+                        self.errorMessage = "Invalid response with no data"
+                    }
+                default:
+                    self.errorMessage = error.localizedDescription
+                }
+            } else {
+                self.errorMessage = error.localizedDescription
+            }
+            
+        }
     }
-    
 }
-

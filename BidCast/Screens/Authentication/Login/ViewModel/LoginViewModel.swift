@@ -1,62 +1,60 @@
 //
 //  LoginViewModel.swift
-// BidSwipe
+//  BidSwipe
 //
 //  Created by Abdul-JAM-E-157 on 18/01/24.
 //
 
 import Foundation
 
-
-final class LoginViewModel:NSObject {
+@MainActor
+final class LoginViewModel: ObservableObject {
     
-    var loginResponceDict: ResponseModal<LoginModel>?
-    var linkedInResponse: ResponseModal<LinkedInDataResponse>?
+    // MARK: - Published Properties
+    @Published var loginResponse = ResponseModel<LoginModel>()
    
+    @Published var errorMessage: String? = nil
+    @Published var requestType: String = ""
+    
     var employerId: String?
-    var requestType: String = ""
-    
-    var eventHandler: ((_ event: Event) -> Void)? // Data Binding Closure
-	    
-    func logIn(parameters: SignInRequest) {
-        self.eventHandler?(.loading)
-        requestType = "Login"
-        APIManager.shared.requestPost(
-            modelType: ResponseModal<LoginModel>.self, // response type
-            type: APIEndPoint.login(param: parameters),
-            header: false) { result in
-                self.eventHandler?(.stopLoading)
-                switch result {
-                    case .success(let data):
-                        self.loginResponceDict = data
-                    self.employerId = "\(self.loginResponceDict?.data.id ?? 0)"
-                    UserDefaultsManager.shared.setValue(self.employerId, forKey: .employerId)
-                        self.eventHandler?(.dataLoaded)
-                    case .failure(let error):
-                        self.eventHandler?(.error(error))
-                }
-            }
-    }
-    
-    func saveDeviceDetail(parameter: DeviceDetailModal) {
-        self.eventHandler?(.loading)
-        requestType = "SaveDeviceDetail"
-        APIManager.shared.requestPost(
-            modelType: ResponseModal<SignInData>.self, // response type
-            type: APIEndPoint.saveDeviceDetail(param: parameter),
-            header: true) { result in
-                self.eventHandler?(.stopLoading)
-                switch result {
-                    case .success(let data):
-                        print(data)
-                        self.eventHandler?(.dataLoaded)
-                    case .failure(let error):
-                        self.eventHandler?(.error(error))
-                }
-            }
-    }
-    
-    
-  
-}
 
+    // MARK: - Login
+    func logIn(parameters: SignInRequest) async {
+        do {
+            self.requestType = "Login"
+            if let response: ResponseModel<LoginModel> = try await APIManager.shared.request(
+                type: APIEndPoint.login(param: parameters),
+                header: false
+            ) {
+                self.loginResponse = response
+                
+            }
+        } catch {
+            handle(error: error)
+        }
+    }
+
+    
+   
+
+    // MARK: - Centralized Error Handler
+    private func handle(error: Error) {
+        if let dataError = error as? DataError {
+            switch dataError {
+            case .invalidCode(let message):
+                self.errorMessage = message ?? "Invalid code error"
+            case .invalidResponse(let data):
+                if let data = data,
+                   let json = try? JSONSerialization.jsonObject(with: data, options: []) {
+                    self.errorMessage = "Invalid response: \(json)"
+                } else {
+                    self.errorMessage = "Invalid response with no data"
+                }
+            default:
+                self.errorMessage = error.localizedDescription
+            }
+        } else {
+            self.errorMessage = error.localizedDescription
+        }
+    }
+}
