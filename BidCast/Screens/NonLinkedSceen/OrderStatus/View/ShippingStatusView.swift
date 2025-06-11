@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ShippingStatusView: View {
-    var order: OrderModel
+    var order:  ProductPurchaseModel?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -23,14 +23,14 @@ struct ShippingStatusView: View {
                 ShippingStepView(
                     icon: "checkmark.circle.fill",
                     title: "Order Confirmed",
-                    subtitle: "\(order.date) - 10:30 AM",
+                    subtitle: formatDateTime(order?.product?.createdAt),
                     iconColor: .red
                 )
 
                 ShippingStepView(
                     icon: "circle.dashed",
                     title: "Preparing Package",
-                    subtitle: "In Progress",
+                    subtitle: order?.product?.status ?? "",
                     iconColor: .red
                 )
             }

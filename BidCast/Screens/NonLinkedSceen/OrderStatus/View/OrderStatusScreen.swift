@@ -6,13 +6,24 @@
 //
 
 import SwiftUI
-
-import SwiftUI
+import SVProgressHUD
+import AlertToast
 
 struct OrderStatusScreen: View {
     @Environment(\.presentationMode) var presentationMode
-    var order: OrderModel?
-
+    @StateObject var viewModel = OrderStatusViewModel()
+    @State private var productDetail : ProductPurchaseModel?
+    @State private var recieptUrl : String?
+    @State private var isLoading = false
+    @State private var showError = false
+    @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+    @State private var showhud = false
+    @State private var hudMsg = ""
+    @State var productID : Int = 2
+    @State var shippingID : Int = 1
+    @State var orderID : Int = 0
+    
+    
     var body: some View {
         VStack(spacing: 0) {
             // ✅ Custom Header
@@ -28,7 +39,7 @@ struct OrderStatusScreen: View {
             )
             .background(Color.white)
             .frame(height: 50)
-
+            
             ScrollView {
                 VStack(spacing: 24) {
                     // 📦 Preparing Icon
@@ -38,46 +49,52 @@ struct OrderStatusScreen: View {
                             .scaledToFit()
                             .frame(width: 40, height: 40)
                             .foregroundColor(.red)
-
+                        
                         Text("Preparing Your Order")
                             .font(.title3).bold()
-
+                        
                         Text("The seller is preparing your package for shipping")
                             .font(.subheadline)
                             .foregroundColor(.gray)
                             .multilineTextAlignment(.center)
                     }
                     .padding(.top, 16)
-
+                    
                     // 📦 Product Details
-                    if let order = order {
+                    if let order = productDetail {
                         OrderProductCardView(order: order)
                         ShippingStatusView(order: order)
                         DeliveryAddressView(order: order)
                     }
-
+                    
                     // 📃 Equal Width Buttons
                     HStack(spacing: 16) {
                         GeometryReader { geometry in
                             HStack(spacing: 16) {
-                                OutlinedButtonView(title: "Receipt")
-                                    .frame(width: (geometry.size.width - 16) / 2)
-                                OutlinedButtonView(title: "Shipping Details")
-                                    .frame(width: (geometry.size.width - 16) / 2)
+                                OutlinedButtonView(title: "Receipt", onTap: {
+                                    fetchReciept()
+                                })
+                                .frame(width: (geometry.size.width - 16) / 2)
+
+                                OutlinedButtonView(title: "Shipping Details", onTap: {
+                                    // Optionally handle this as well
+                                })
+                                .frame(width: (geometry.size.width - 16) / 2)
                             }
                         }
                         .frame(height: 44)
                     }
                     .padding(.vertical, 8)
 
+                    
                     // 🛡️ Buyer Protection
                     BuyerProtectionView()
-
+                    
                     Spacer()
                 }
                 .padding()
             }
-
+            
             // 🔙 Home Button
             Button(action: {
                 presentationMode.wrappedValue.dismiss()
@@ -93,42 +110,70 @@ struct OrderStatusScreen: View {
             }
         }
         .background(Color(red: 240/255, green: 247/255, blue: 255/255).ignoresSafeArea())
+        .onDisappear {
+            UIScrollView.appearance().bounces = true
+        }
+        .onFirstAppear {
+            fetchPurchaseDetail()
+        }
+        .toast(isPresenting: $showhud) {
+            AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
+        }
+        .bottomSheet(
+            isPresented: $showError,
+            height: screenHeight / 2.3,
+            topBarCornerRadius: 25,
+            showTopIndicator: false
+        ) {
+            CommonBottomSheet(
+                sheetType: $alertType,
+                onPrimaryClick: {
+                    withAnimation { showError = false }
+                },
+                onSecondaryClick: {
+                    withAnimation { showError = false }
+                }
+            )
+        }
     }
-}
-
-struct OrderModel {
-    var id: String
-    var date: String
-    var productName: String
-    var productColor: String
-    var seller: String
-    var quantity: Int
-    var category: String
-    var address: String
-    var cityStateZip: String
-}
-
-struct ShippingStepView: View {
-    var icon: String
-    var title: String
-    var subtitle: String
-    var iconColor: Color
-
-    var body: some View {
-        HStack(alignment: .top, spacing: 12) {
-            Image(systemName: icon)
-                .font(.title3)
-                .foregroundColor(iconColor)
-                .frame(width: 24, height: 24)
-
-            VStack(alignment: .leading, spacing: 4) {
-                Text(title)
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundColor(.black)
-                Text(subtitle)
-                    .font(.system(size: 13))
-                    .foregroundColor(.gray)
-            }
+    
+    func fetchPurchaseDetail(){
+        Task {
+            SVProgressHUD.show()
+            let param = ProductPurchaseDetailRequest(shipping_id: shippingID,product_id: productID)
+            await viewModel.getPurchaseDetail(parameters: param)
+            await SVProgressHUD.dismiss()
+            getPurchaseSuccess()
+        }
+    }
+    
+    func fetchReciept(){
+        Task {
+            SVProgressHUD.show()
+            let param = OrderRecieptRequest(order_id: orderID)
+            await viewModel.getReceipt(parameters: param)
+            await SVProgressHUD.dismiss()
+            getPurchaseSuccess()
+        }
+    }
+    
+    func getPurchaseSuccess() {
+        SVProgressHUD.dismiss()
+        let response = viewModel.purchaseDetailResponse
+        if response.status == "success" {
+            productDetail = response.data
+        }else {
+            
+        }
+    }
+    
+    func getRecieptSuccess() {
+        SVProgressHUD.dismiss()
+        let response = viewModel.recieptResponse
+        if response.status == "success" {
+            recieptUrl = response.data
+        } else {
+            
         }
     }
 }

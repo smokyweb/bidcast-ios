@@ -21,10 +21,11 @@ struct ProductDetailSheet: View {
     @State private var showMakeOfferSheet = false
     @State private var selectedImageIndex = 0
     var onDismiss: () -> Void = {}
+    @State private var productDetail : ProductDetailsModel?
     
     @State  var productImages: [String] = [] // Image URLs or asset names
     @State  var productTitle: String = ""
-    @State  var productPrice: String = ""
+    @State  var productPrice: Double = 0.0
     @State  var condition: String = ""
     @State  var location: String = ""
     @State var postedTime: String = ""
@@ -33,7 +34,14 @@ struct ProductDetailSheet: View {
     @Binding var productID : Int
     @State var sellerImage : String = ""
     @State var offerArr = [Double]()
-    
+    @State  var productDescription: String = ""
+    @State  var shippingAddress: String = ""
+    @State  var shippingID: Int = 0
+    @State  var cardID: String = ""
+    @State  var promoCode : String = ""
+    @State  var shippingCharges : Int = 0
+    @State  var taxAmount : Int = 0
+
     
     var body: some View {
         VStack(spacing: 0) {
@@ -221,14 +229,17 @@ struct ProductDetailSheet: View {
         .bottomSheet(isPresented: $showBuyNowSheet, height: screenHeight * 0.98) {
             BuyNowBottomSheetView(
                 isPresented: $showBuyNowSheet,
-                productImage: Image(systemName: "headphones"),
-                productTitle: "Premium Wireless Headphones",
-                productColor: "White",
-                cardLastDigits: "4242",
-                shippingAddress: "123 Main St, Apt 4B New York, NY 10001",
-                subtotal: 299.99,
+                productImage: productImages.first ?? "",
+                productTitle: productTitle,
+                productColor: productDescription,
+                shippingAddress: shippingAddress,
+                subtotal: productPrice,
                 shipping: 9.99,
                 tax: 24.00,
+                shippingID: shippingID,
+                productID: productID,
+                shippingCharges: shippingCharges,
+                taxAmount: taxAmount,
                 onConfirmPurchase: {
                     print("Purchase confirmed!")
                     showBuyNowSheet = false
@@ -236,6 +247,7 @@ struct ProductDetailSheet: View {
             )
             .presentationDetents([.medium, .large])
         }
+
         .onAppear {
             UIScrollView.appearance().bounces = false
            
@@ -296,15 +308,18 @@ struct ProductDetailSheet: View {
         let response = viewModel.productDetailsResponseDict
         let data = viewModel.productDetailsResponseDict?.data
         if response?.status == "success" {
+            productDetail = response?.data
             productImages =  data?.images ?? []
             productTitle = data?.description ?? ""
-            productPrice = "\(data?.pricing ?? 0)"
+            productPrice = Double(data?.pricing ?? 0)
             condition =  "New" //currently No Key for this
             location = data?.shippingAdress?.streetAddress ?? ""
             postedTime = data?.createdAt ?? ""
             sellerName =  data?.user?.name ?? ""
             sellerImage = data?.user?.profileImage ?? ""
             sellerStatus = data?.user?.sellerVerification == false ? "Non Verified Seller" : "Verified Seller"
+            shippingAddress = data?.shippingAdress?.streetAddress ?? ""
+            shippingID = data?.shippingAdress?.id ?? 0
             offerArr.removeAll()
             if let price = data?.pricing {
                     let percentages: [Double] = [0.05, 0.10, 0.15, 0.20]

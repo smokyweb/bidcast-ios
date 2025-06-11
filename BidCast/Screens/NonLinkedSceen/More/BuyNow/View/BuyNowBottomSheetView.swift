@@ -6,26 +6,55 @@
 //
 
 import SwiftUI
+import SVProgressHUD
+import AlertToast
 
 struct BuyNowBottomSheetView: View {
+    @Environment(\.presentationMode) var presentationMode
+    @StateObject var viewModel = BuyNowViewModel()
+    @State var cardViewModel = PaymentViewModel()
+    @State var cardArr : [CardModel] = []
+    @State var selectedCardIndex: Int = 0
+    @State var orderDetails : BuyNowModel?
+    @State private var isLoading = false
+    @State private var showError = false
+    @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+    @State private var showhud = false
+    @State private var hudMsg = ""
     @Binding var isPresented: Bool
     @State private var isGift = false
-    @State private var promoCode = ""
+    @State var navigateToOrderStatus : Bool = false
+    @State var navigateToGiftScreen : Bool = false
     
-    var productImage: Image
-    var productTitle: String
-    var productColor: String
-    var cardLastDigits: String
-    var shippingAddress: String
-    var subtotal: Double
-    var shipping: Double
-    var tax: Double
+    var orderID : Int = 0
+    @State private var promoCode = ""
+    var productImage: String = ""
+    var productTitle: String = ""
+    var productColor: String = ""
+    var shippingAddress: String = ""
+    var subtotal: Double = 0.0
+    var shipping: Double = 0.0
+    var tax: Double = 0.0
+    var shippingID: Int = 0
+    var productID : Int = 0
+    var cardID: String = ""
+    var shippingCharges : Int = 0
+    var taxAmount : Int = 0
+    var sendAsGift : Int = 0
+    var giftUserID : Int = 0
+    var giftMsg : String = ""
+    
     var onConfirmPurchase: () -> Void
-
+    
     var total: Double {
         subtotal + shipping + tax
     }
+    
+    var selectedCardID: String {
+        cardArr.indices.contains(selectedCardIndex) ? (cardArr[selectedCardIndex].card_id ?? "") : ""
+    }
 
+    
     var body: some View {
         ScrollView {
             VStack(spacing: 16) {
@@ -41,12 +70,14 @@ struct BuyNowBottomSheetView: View {
                     }
                 }
                 Divider()
-
+                
                 // Product Info
                 HStack(spacing: 12) {
-                    productImage
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
+                    AsyncImage(url: URL(string: productImage)) { image in
+                        image.resizable()
+                    }placeholder: {
+                        Color.gray.opacity(0.3)
+                    }
                         .frame(width: 56, height: 56)
                         .cornerRadius(8)
                     VStack(alignment: .leading) {
@@ -56,17 +87,22 @@ struct BuyNowBottomSheetView: View {
                     Spacer()
                 }
                 Divider()
-
+                
                 // Gift Toggle
                 HStack {
                     Label("Send as a gift?", systemImage: "gift")
                     Spacer()
                     Toggle("", isOn: $isGift)
                         .labelsHidden()
+                        .onChange(of: isGift) { newValue in
+                            if newValue {
+                                navigateToGiftScreen = true
+                            }
+                        }
                 }
                 .padding(.vertical, 8)
                 Divider()
-
+                
                 // Payment Method
                 HStack {
                     VStack(alignment: .leading) {
@@ -75,14 +111,15 @@ struct BuyNowBottomSheetView: View {
                             Image("visa") // Replace with actual asset if needed
                                 .resizable()
                                 .frame(width: 32, height: 20)
-                            Text("•••• \(cardLastDigits)")
+                            Text("•••• \(cardArr[safe: selectedCardIndex]?.last4 ?? "0000")")
+
                         }
                     }
                     Spacer()
                     Button("Change") {}.foregroundColor(.red)
                 }
                 Divider()
-
+                
                 // Shipping Address
                 HStack {
                     VStack(alignment: .leading) {
@@ -93,7 +130,7 @@ struct BuyNowBottomSheetView: View {
                     Button("Change") {}.foregroundColor(.red)
                 }
                 Divider()
-
+                
                 // Promo Code
                 TextField("Enter promo code", text: $promoCode)
                     .padding(.horizontal)
@@ -103,7 +140,7 @@ struct BuyNowBottomSheetView: View {
                             .stroke(Color.gray.opacity(0.4), lineWidth: 1)
                     )
                 Divider()
-
+                
                 // Summary
                 VStack(spacing: 4) {
                     SummaryRow(label: "Subtotal", value: subtotal)
@@ -112,9 +149,20 @@ struct BuyNowBottomSheetView: View {
                     Divider()
                     SummaryRow(label: "Total", value: total, isBold: true)
                 }
-
+                
+//                // Confirm Button
+//                Button(action: onConfirmPurchase) {
+//                    Text("Confirm Purchase")
+//                        .foregroundColor(.white)
+//                        .frame(maxWidth: .infinity)
+//                        .padding()
+//                        .background(Color.red)
+//                        .cornerRadius(14)
+//                }
                 // Confirm Button
-                Button(action: onConfirmPurchase) {
+                Button(action: {
+                    BuyProductRequest()
+                }) {
                     Text("Confirm Purchase")
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
@@ -122,26 +170,156 @@ struct BuyNowBottomSheetView: View {
                         .background(Color.red)
                         .cornerRadius(14)
                 }
+
             }
             .padding()
+            CusNavLink(
+                doNavigate: $navigateToGiftScreen,
+                destination: SendGiftScreen(
+                    orderID: orderID, promoCode: promoCode,
+                    productImage: productImage,
+                    productTitle: productTitle,
+                    productColor: productColor,
+                    shippingAddress: shippingAddress,
+                    subtotal: subtotal,
+                    shipping: shipping,
+                    tax: tax,
+                    shippingID: shippingID,
+                    productID: productID,
+                    cardID: selectedCardID,
+                    shippingCharges: shippingCharges,
+                    taxAmount: taxAmount,
+                    sendAsGift: 1,
+                    total: Int(subtotal)
+                )
+            )
+            CusNavLink(doNavigate: $navigateToOrderStatus, destination: OrderStatusScreen())
         }
         .background(Color.white)
         .clipShape(RoundedRectangle(cornerRadius: 20))
+        .onFirstAppear {
+            fetchOrderDetail()
+            getCard()
+        }
+        .toast(isPresenting: $showhud) {
+            AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
+        }
+        .bottomSheet(
+            isPresented: $showError,
+            height: screenHeight / 2.3,
+            topBarCornerRadius: 25,
+            showTopIndicator: false
+        ) {
+            CommonBottomSheet(
+                sheetType: $alertType,
+                onPrimaryClick: {
+                    withAnimation { showError = false }
+                },
+                onSecondaryClick: {
+                    withAnimation { showError = false }
+                }
+            )
+        }
+    }
+    
+    //MARK: fetchOrderDetail.
+    func fetchOrderDetail(){
+        Task {
+            SVProgressHUD.show()
+            let param = ProductOrderDetailRequest(order_id: orderID)
+            await viewModel.getMyOrderList(parameters: param)
+            await SVProgressHUD.dismiss()
+            orderSuccess()
+        }
+    }
+    
+    //MARK: getCard.
+    func getCard(){
+        Task {
+            SVProgressHUD.show()
+            await self.cardViewModel.getCard()
+            await SVProgressHUD.dismiss()
+            cardSuccess()
+        }
+    }
+    
+    //MARK: cardSuccess.
+    func cardSuccess() {
+        SVProgressHUD.dismiss()
+        let response = cardViewModel.cardDict
+        if response.status == "success" {
+            cardArr = cardViewModel.cardDict.data ?? [CardModel]()
+           
+        } else {
+            showError = true
+            alertType = .sheetType(
+                icon: .alert,
+                title: response.error_type?.capitalized ?? "",
+                message: response.message?.capitalized ?? "",
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
+            )
+        }
+    }
+    
+    //MARK: BuyProductRequest.
+    func BuyProductRequest() {
+        Task {
+            SVProgressHUD.show()
+            
+            guard cardArr.indices.contains(selectedCardIndex),
+                  let selectedCardID = cardArr[selectedCardIndex].card_id else {
+                hudMsg = "No valid card selected"
+                showhud = true
+                return
+            }
+
+            var param = ProductOrderRequest(
+                shipping_id: shippingID,
+                product_id: productID,
+                card_id: selectedCardID,
+                promo_code: promoCode,
+                send_as_gift: isGift ? 1 : 0,
+                shipping_charges: shippingCharges,
+                tax_amount: taxAmount,
+                sub_total: Int(subtotal),
+                total: Int(total)
+            )
+
+            if isGift {
+                param.gift_user_id = giftUserID
+                param.gift_msg = giftMsg
+            }
+
+
+            await viewModel.BuyProductRequest(parameters: param)
+            await SVProgressHUD.dismiss()
+            BuyProductSuccess()
+        }
     }
 
-}
-
-struct SummaryRow: View {
-    var label: String
-    var value: Double
-    var isBold: Bool = false
-
-    var body: some View {
-        HStack {
-            Text(label).font(isBold ? .headline : .subheadline)
-            Spacer()
-            Text(String(format: "$%.2f", value))
-                .font(isBold ? .headline : .subheadline)
+    //MARK: orderSuccess.
+    func orderSuccess() {
+        SVProgressHUD.dismiss()
+        let response = viewModel.buyNowResponse
+        if response.status == "success" {
+            orderDetails = response.data
+        } else {
+            
+        }
+    }
+    
+    //MARK: BuyProductSuccess.
+    func BuyProductSuccess() {
+        SVProgressHUD.dismiss()
+        let response = viewModel.productOrderResponse
+        if response.status == "success" {
+            navigateToOrderStatus = true
+        } else {
+            
         }
     }
 }
+
+
+

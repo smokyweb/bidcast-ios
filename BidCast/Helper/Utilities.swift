@@ -185,3 +185,9 @@ func formatDateTime(_ isoDate: String?) -> String {
         formatter.dateFormat = "MMM dd, yyyy, HH:mm"
         return formatter.string(from: date)
     }
+
+extension Collection {
+    subscript(safe index: Index) -> Element? {
+        return indices.contains(index) ? self[index] : nil
+    }
+}

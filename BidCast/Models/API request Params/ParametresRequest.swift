@@ -504,8 +504,8 @@ struct ProductOrderRequest : Encodable{
     var card_id: String
     var promo_code: String
     var send_as_gift: Int
-    var gift_user_id: Int
-    var gift_msg: String
+    var gift_user_id: Int?
+    var gift_msg: String?
     var shipping_charges: Int
     var tax_amount: Int
     var sub_total: Int
@@ -544,7 +544,7 @@ struct PromoCodeRequest : Encodable{
 }
 
 struct OrderRecieptRequest : Encodable{
-    var order_id : String
+    var order_id : Int
 }
 
 
@@ -552,3 +552,5 @@ struct OrderRecieptRequest : Encodable{
 struct TransactionRequest : Encodable {
     var id : String? = ""
 }
+
+

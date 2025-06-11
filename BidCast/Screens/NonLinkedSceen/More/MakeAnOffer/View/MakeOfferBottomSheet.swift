@@ -120,5 +120,6 @@ struct MakeOfferBottomSheet: View {
         .padding()
         .background(Color.white)
         .clipShape(RoundedRectangle(cornerRadius: 20))
+        
     }
 }

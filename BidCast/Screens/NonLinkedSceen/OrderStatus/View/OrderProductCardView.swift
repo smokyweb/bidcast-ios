@@ -8,20 +8,23 @@
 import SwiftUI
 
 struct OrderProductCardView: View {
-    var order: OrderModel
+    var order:  ProductPurchaseModel?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Image("headphones")
-                    .resizable()
-                    .frame(width: 60, height: 60)
-                    .cornerRadius(8)
+                AsyncImage(url: URL(string: order?.product?.images?.first ?? "")) { image in
+                    image.resizable()
+                }placeholder: {
+                    Color.gray.opacity(0.3)
+                }
+                .frame(width: 60, height: 60)
+                .cornerRadius(8)
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(order.productName)
+                    Text(order?.product?.title ?? "")
                         .font(.headline)
-                    Text(order.productColor)
+                    Text(order?.product?.description ?? "")
                         .foregroundColor(.gray)
                         .font(.subheadline)
                 }
@@ -30,11 +33,11 @@ struct OrderProductCardView: View {
             Divider()
 
             VStack(spacing: 6) {
-                InfoRow(label: "Order ID", value: "#\(order.id)")
-                InfoRow(label: "Order Date", value: order.date)
-                InfoRow(label: "Sold By", value: order.seller)
-                InfoRow(label: "Quantity", value: "\(order.quantity)")
-                InfoRow(label: "Category", value: order.category)
+                InfoRow(label: "Order ID", value: "\(order?.product?.id ?? 0)")
+                InfoRow(label: "Order Date", value: formatDateTime(order?.product?.createdAt))
+                InfoRow(label: "Sold By", value: "\(order?.product?.userID ?? 0)")
+                InfoRow(label: "Quantity", value: "\(order?.product?.purchasedQuantity ?? 0)")
+                InfoRow(label: "Category", value: "\(order?.product?.categoryID ?? 0)")
             }
             .font(.subheadline)
             .foregroundColor(.gray)

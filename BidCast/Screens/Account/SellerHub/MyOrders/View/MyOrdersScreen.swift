@@ -9,23 +9,10 @@ import SwiftUI
 import AlertToast
 import SVProgressHUD
 
-struct Order: Identifiable {
-    let id = UUID()
-    let orderNumber: String
-    let date: String
-    let name: String
-    let location: String
-    let image: Image
-    let amount: String
-    let status: String
-    let statusColor: Color
-}
-
 // MARK: - MyOrdersScreen
 struct MyOrdersScreen: View {
     @Environment(\.presentationMode) var presentationMode
     @StateObject var viewModel = MyOrdersViewModel()
-    @StateObject var profileViewModel = ProfileViewModel()
     @State private var myOrderListArr : [MyOrderModel] = []
     @State private var isLoading = false
     @State private var showError = false
