@@ -20,6 +20,8 @@ struct MediaPickerView: View {
     @State private var showPhotoLibrary = false
     @State private var showPickerOptions = false
     
+    @Binding var uploadedImageUrls: [String]
+    
     var body: some View {
         VStack(alignment: .leading) {
             VStack {
@@ -83,6 +85,7 @@ struct MediaPickerView: View {
                                     // Delete Button
                                     Button(action: {
                                         selectedMedia.remove(at: index)
+                                        uploadedImageUrls.remove(at: index)
                                     }) {
                                         Image(systemName: "xmark.circle.fill")
                                             .resizable()
@@ -121,17 +124,26 @@ struct MediaPickerView: View {
         .sheet(isPresented: $showCameraPicker) {
             ImagePicker(sourceType: .camera) { image,url  in
                 if let image = image,
-                   selectedMedia.count < maxMediaCount,
-                   !selectedMedia.contains(image) {
-                    selectedMedia.append(image)
-                }
+                           selectedMedia.count < maxMediaCount,
+                           !selectedMedia.contains(image) {
+                            selectedMedia.append(image)
+                        }
+
+                        if let url = url {
+                            uploadedImageUrls.append(url)
+                        }
             }
         }
         .sheet(isPresented: $showPhotoLibrary) {
-            PhotoPicker(count: maxMediaCount) { images in
+            PhotoPicker(count: maxMediaCount) { images,urls in
                 let remaining = maxMediaCount - selectedMedia.count
-                let limited = Array(images.prefix(remaining))
-                selectedMedia.append(contentsOf: limited)
+                let limitedImages = Array(images.prefix(remaining))
+                let limitedUrls = Array(urls.prefix(remaining))
+                
+                selectedMedia.append(contentsOf: limitedImages)
+                uploadedImageUrls.append(contentsOf: limitedUrls)
+                
+                
             }
         }
     }

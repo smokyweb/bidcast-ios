@@ -23,20 +23,25 @@ struct ListProductScreen: View {
     @State var hudMsg: String = ""
     @State var showError: Bool = false
     
-    @State private var categoryNames: [String] = []
-    @State private var selectedCategory = ""
-    @State private var categoryList: [CategoryDataModel] = []
+    @State var categoryNames: [String] = []
+    @State var selectedCategory = ""
+    @State var categoryList: [CategoryDataModel] = []
+    
+    @State var shippingAddressName: [String] = []
+    @State var shippingId = ""
+    @State var ShippingAddress: [AddressModel] = []
     
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @State var request : StoreProductParam = StoreProductParam(category_id: "", title: "", description: "", quantity: "", pricing: "", flash_sale: "0", accept_offers: "0", reserve_for_live: "0", shipping_profile_id: "", status: "")
     
-    var viewModel = ListProductViewModel()
+    @State var viewModel = ListProductViewModel()
+    @State var imageUrls: [String] = []
     
     var body: some View {
         
         ZStack {
             VStack{
-                VStack(spacing: 0, content: {
+                VStack{
                     PrimaryHeader(
                         title: "List a Product".localized,
                         isForLogo : false, leadingImgArr: [.sideArrow],
@@ -46,23 +51,23 @@ struct ListProductScreen: View {
                         },
                         count: .constant(0)
                     )
-                })
-                
+                   
+                }
                 
                 ScrollView(showsIndicators:false){
                     
-                    MediaPickerView()
+                    MediaPickerView(uploadedImageUrls: $imageUrls)
                     
                     VStack(alignment:.leading,spacing: 8){
                         Text("Product Details".localized)
-                            .font(.headline)
+                            .font(.custom(poppinsBold, size: 14.0))
                             .padding(.top,8)
                             .padding([.leading,.trailing],8)
                         
                         DropDownSelection(
                             options: $categoryNames, floatingLabel:"Category",
                             hint: "Select Category",
-                            selected: $categorySelect,
+                            selected: $request.category_id,
                             anchor: .bottom,
                             onOptionSelected: { value in
                                 if let id = categoryList.first(where: { $0.name == value })?.id {
@@ -79,7 +84,7 @@ struct ListProductScreen: View {
                             request.title = email
                         }
                         .keyboardType(.alphabet)
-                        .padding([.leading,.trailing],4)
+//                        .padding([.leading,.trailing],4)
                         
                         DescriptionFieldView(){ message in
                             request.description = message
@@ -88,7 +93,7 @@ struct ListProductScreen: View {
                             request.quantity = email
                         }
                         .keyboardType(.numberPad)
-                        .padding([.leading,.trailing],6)
+//                        .padding([.leading,.trailing],6)
                         
                         
                         PrimaryButton(title: "Add Variants", isOutLine: false, onButtonClick: {
@@ -102,7 +107,7 @@ struct ListProductScreen: View {
                     
                     VStack(alignment:.leading,spacing: 12){
                         Text("Pricing".localized)
-                            .font(.headline)
+                            .font(.custom(poppinsBold, size: 14.0))
                             .padding(.top,8)
                             .padding([.leading,.trailing],8)
                         
@@ -111,7 +116,7 @@ struct ListProductScreen: View {
                         }
                         //                    .textContentType(.username)
                         .keyboardType(.alphabet)
-                        .padding([.leading,.trailing],4)
+//                        .padding([.leading,.trailing],4)
                         
                         MenuCell( title: "Flash Sale",fontValue: 18.0,menuImg: "",isSelectable: true, isTappedSwitch: $isTappedFlash,onToggle: { value in
                             if value == true{
@@ -149,15 +154,20 @@ struct ListProductScreen: View {
                             .padding([.leading,.trailing],8)
                         
                         DropDownSelection(
-                            options: $categoyList,
+                            options: $shippingAddressName,
                             floatingLabel:"Shipping Profile",
                             hint: "Select Profile",
-                            selected: $categorySelect,
-                            anchor: .top
+                            selected: $shippingId,
+                            anchor: .top,
+                            onOptionSelected: { value in
+                                if let id = ShippingAddress.first(where: { $0.name == value })?.id {
+                                    request.shipping_profile_id = "\(id)"
+                                    shippingId = value
+                                } else {
+                                    request.shipping_profile_id = ""
+                                }
+                            }
                         )
-                        .onChange(of: categorySelect) { newValue in
-                            request.shipping_profile_id = "\(UserDefaults.userId)"
-                        }
                         .padding(.bottom,8)
                         .padding([.leading,.trailing],8)
                         
@@ -171,6 +181,13 @@ struct ListProductScreen: View {
                         print(request)
                     }, onSecButtonClick: {
                         print(request)
+                        print(imageUrls)
+                        Task{
+                            SVProgressHUD.show()
+                            await viewModel.storeProduct(param: request, images: imageUrls, key: "images[]")
+                            await SVProgressHUD.dismiss()
+                            await storeSuccess()
+                        }
                     }, height: 45, firstBtnTitleColor: .darkGray, secBtnTitleColor: .white, firstBtnBgColor: .white, secBtnBgColor:.darkBlue)
 
                 }
@@ -181,6 +198,7 @@ struct ListProductScreen: View {
                     CommonBottomSheet(
                         sheetType: $alertType,
                         onPrimaryClick: {
+                            self.presentationMode.wrappedValue.dismiss()
                             withAnimation { showError = false }
                         }, onSecondaryClick: {
                             withAnimation { showError = false }
@@ -192,17 +210,22 @@ struct ListProductScreen: View {
             }
 //            .padding([.leading,.trailing],12)
         }
-        .edgesIgnoringSafeArea(.top)
+//        .edgesIgnoringSafeArea(.top/)
         .background(.bg.opacity(0.5))
         .onFirstAppear(perform: {
             Task{
                 SVProgressHUD.show()
                 await viewModel.getCategoryList()
+                
+                await categorySuccess()
+                
+                await viewModel.getAddresses()
+                await SVProgressHUD.dismiss()
+                await shippingAddressSuccess()
+                
+                
             }
         })
-        .onReceive(viewModel.$categoryResponse){ response in
-            
-        }
         .onTapGesture {
             UIApplication.shared.endEditing()
         }
@@ -217,7 +240,6 @@ struct ListProductScreen: View {
         if response?.status == "success" {
             self.categoryList = response?.data ?? [CategoryDataModel]()
             self.categoryNames = response?.data.map { $0.name ?? "No Category" } ?? [String]()
-                    
                 } else {
                     alertType = .sheetType(
                         icon: .alert,
@@ -229,6 +251,49 @@ struct ListProductScreen: View {
                     showError = true
                 
             
+        }
+    }
+    
+    func shippingAddressSuccess() {
+       
+        let response = viewModel.addressesResponse
+        if response?.status == "success" {
+            self.ShippingAddress = response?.data ?? [AddressModel]()
+            self.shippingAddressName = response?.data.map { $0.name ?? "No Category" } ?? [String]()
+                } else {
+                    alertType = .sheetType(
+                        icon: .alert,
+                        title: response?.error_type?.capitalized ?? "",
+                        message: response?.message?.capitalized ?? "",
+                        primaryBtnText: "",
+                        secondaryBtnText: AppString.ok.localized
+                    )
+                    showError = true
+                
+            
+        }
+    }
+    
+    func storeSuccess(){
+        let response = viewModel.storeProductResponse
+        if response?.status == "success"{
+            alertType = .sheetType(
+                icon: .success,
+                title: response?.status?.capitalized ?? "",
+                message: response?.message?.capitalized ?? "",
+                primaryBtnText: AppString.ok.localized,
+                secondaryBtnText: ""
+            )
+            showError = true
+        }else{
+            alertType = .sheetType(
+                icon: .alert,
+                title: response?.error_type?.capitalized ?? "",
+                message: response?.message?.capitalized ?? "",
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
+            )
+            showError = true
         }
     }
 }

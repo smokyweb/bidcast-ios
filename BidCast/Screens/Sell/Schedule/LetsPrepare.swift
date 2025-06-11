@@ -18,6 +18,7 @@ struct LetsPrepare: View {
     var viewModel = ScheduleViewModel()
     
     @State var navigateToTips  = false
+    @State var navigateToCreateScreen = false
     
     private var currentProgress: Double {
         guard !prepare.isEmpty else { return 0 }
@@ -52,8 +53,12 @@ struct LetsPrepare: View {
                             index: idx + 1,
                             isCurrent: idx == currentIndex
                         ) {
-                            
-                            goToNextStep()
+                            if idx == 0 {
+                                
+                            }else if idx == 1 {
+                                navigateToCreateScreen = true
+                            }
+//                            goToNextStep()
                         }
                         .onTapGesture {
                             if !prepare[idx].isLocked { currentIndex = idx }
@@ -80,6 +85,7 @@ struct LetsPrepare: View {
             .padding(.horizontal,18)
 //            .background(.green)
             CusNavLink(doNavigate: $navigateToTips, destination: ShowTips())
+            CusNavLink(doNavigate: $navigateToCreateScreen, destination: CreateProductScreen())
         }
         .edgesIgnoringSafeArea(.bottom)
         .background(.bg.opacity(0.5))

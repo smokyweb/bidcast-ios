@@ -297,13 +297,106 @@ final class APIManager {
     
     
     
+//    func uploadImage<T: Decodable>(
+//        type: EndPointType,
+//        urlArray: [String]? = nil,
+//        mimeType: String,
+//        keyName: String,
+//        parameters: [String: Any],
+//        modelType: T.Type,
+//        header: Bool,
+//        completion: @escaping Handler<T>
+//    ) {
+//        print("Upload File API Request - - - - - - - - - - >>>>>")
+//        guard let url = type.url else {
+//            completion(.failure(.invalidURL))
+//            return
+//        }
+//        print("URL >> \(url)")
+//        var request = URLRequest(url: url)
+//        request.httpMethod = type.method.rawValue
+//        print("Method >> \(type.method.rawValue)")
+//        
+//        let boundary = generateBoundary()
+//        
+//        var media =  [MediaData1]()
+//
+//        urlArray?.forEach { url in
+//            if url.contains("media") {
+//                guard let med = MediaData1(withURL:"\(url)", forKey: keyName, mimeType: mimeType) else {
+//                    return }
+//                media.append(med)
+//            } else {
+//                guard let med = MediaData1(withURL: url, forKey: keyName, mimeType: mimeType) else {
+//                    return
+//                }
+//                media.append(med)
+//            }
+//        }
+//        
+//        print(media as Any)
+//   
+//        let params  = parameters
+//        
+//        print(params)
+//        
+//        request.allHTTPHeaderFields = type.headers
+//        if header {
+//            if header{
+//                request.allHTTPHeaderFields = ["Authorization":"Bearer \(UserDefaults.accessToken)"]
+//            }
+//        }
+//        
+//        request.allHTTPHeaderFields = [ "Accept": "application/json",
+//            "Content-Type": "multipart/form-data; boundary=\(boundary)"
+//        ]
+//        
+//        print(media as Any)
+//        
+//        let dataBody = createDataBody1(withParameters: params, media: media, boundary: boundary)
+//        
+//        request.httpBody = dataBody
+//        
+//        print("Headers >>> \(request.allHTTPHeaderFields ?? [:])")
+//        
+//        print(request)
+//        let config = URLSessionConfiguration.default
+//        config.waitsForConnectivity = true
+//        config.timeoutIntervalForResource = 120
+//        
+//        URLSession(configuration: config).dataTask(with: request) { data, response, error in
+//            print(response as Any)
+//            guard let data, error == nil else {
+//                completion(.failure(.invalidData))
+//                return
+//            }
+//            guard let response = response as? HTTPURLResponse,
+//                  200 ... 599 ~= response.statusCode else {
+//                do {
+//                    let products = try JSONDecoder().decode(modelType, from: data)
+//                    completion(.success(products))
+//                }catch {
+//                    completion(.failure(.invalidResponse(data)))
+//                }
+//                return
+//            }
+//            do {
+//                print("API Response >>> \n\(data.prettyPrintedJSONString ?? "")")
+//                let products = try JSONDecoder().decode(modelType, from: data)
+//                completion(.success(products))
+//            }catch {
+//                completion(.failure(.network(error)))
+//            }
+//            
+//        }.resume()
+//    }
     func uploadImage<T: Decodable>(
         type: EndPointType,
         urlArray: [String]? = nil,
         mimeType: String,
         keyName: String,
         parameters: [String: Any],
-        modelType: T.Type,
+        modalType: T.Type,
         header: Bool,
         completion: @escaping Handler<T>
     ) {
@@ -320,17 +413,19 @@ final class APIManager {
         let boundary = generateBoundary()
         
         var media =  [MediaData1]()
-
         urlArray?.forEach { url in
             if url.contains("media") {
                 guard let med = MediaData1(withURL:"\(url)", forKey: keyName, mimeType: mimeType) else {
                     return }
+                print("✅ Loaded image at path: \(url)")
                 media.append(med)
             } else {
                 guard let med = MediaData1(withURL: url, forKey: keyName, mimeType: mimeType) else {
                     return
                 }
+                print("✅ Loaded image at path: \(url)")
                 media.append(med)
+                
             }
         }
         
@@ -347,7 +442,8 @@ final class APIManager {
             }
         }
         
-        request.allHTTPHeaderFields = [ "Accept": "application/json",
+        request.allHTTPHeaderFields = [
+            "Accept": "application/json",
             "Content-Type": "multipart/form-data; boundary=\(boundary)"
         ]
         
@@ -362,10 +458,10 @@ final class APIManager {
         print(request)
         let config = URLSessionConfiguration.default
         config.waitsForConnectivity = true
-        config.timeoutIntervalForResource = 120
+//        config.timeoutIntervalForResource = 400
+//        config.timeoutIntervalForResource = 120
         
         URLSession(configuration: config).dataTask(with: request) { data, response, error in
-            print(response as Any)
             guard let data, error == nil else {
                 completion(.failure(.invalidData))
                 return
@@ -373,7 +469,7 @@ final class APIManager {
             guard let response = response as? HTTPURLResponse,
                   200 ... 599 ~= response.statusCode else {
                 do {
-                    let products = try JSONDecoder().decode(modelType, from: data)
+                    let products = try JSONDecoder().decode(modalType, from: data)
                     completion(.success(products))
                 }catch {
                     completion(.failure(.invalidResponse(data)))
@@ -382,7 +478,7 @@ final class APIManager {
             }
             do {
                 print("API Response >>> \n\(data.prettyPrintedJSONString ?? "")")
-                let products = try JSONDecoder().decode(modelType, from: data)
+                let products = try JSONDecoder().decode(modalType, from: data)
                 completion(.success(products))
             }catch {
                 completion(.failure(.network(error)))
@@ -676,26 +772,37 @@ final class APIManager {
         let fileName: String
         let data: Data
         let mimeType: String
-        
+
         init?(withURL url: String?, forKey key: String, mimeType type: String) {
-            self.key = key
-            self.mimeType = type
-            self.fileName = "\(arc4random()).\(type.split(separator: "/").last ?? "")"
-            if let url = url {
-                do {
-//                    self.data = try Data(contentsOf: URL(string: url)!, options: Data.ReadingOptions.alwaysMapped)
-                    let fileURL = URL(fileURLWithPath: url)
-                    self.data = try Data(contentsOf: fileURL, options: .alwaysMapped)
-                    let image = UIImage(data: self.data)
-                    print(image)
-                } catch _ {
-                    self.data = Data()
-                }
-            }else{
-                self.data = Data()
+            guard let url = url else {
+                print("❌ URL is nil.")
+                return nil
+            }
+
+            let fileURL: URL
+            if let u = URL(string: url), u.scheme == "file" {
+                fileURL = u
+            } else {
+                fileURL = URL(fileURLWithPath: url)
+            }
+
+            guard FileManager.default.fileExists(atPath: fileURL.path) else {
+                print("❌ File does not exist at path: \(fileURL.path)")
+                return nil
+            }
+
+            do {
+                self.data = try Data(contentsOf: fileURL, options: .alwaysMapped)
+                self.key = key
+                self.mimeType = type
+                self.fileName = "\(UUID().uuidString).\(type.split(separator: "/").last ?? "jpg")"
+            } catch {
+                print("❌ Failed to load data from fileURL: \(fileURL), error: \(error.localizedDescription)")
+                return nil
             }
         }
     }
+
     
     
 }

@@ -16,7 +16,7 @@ struct DescriptionFieldView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(title)
-                .font(.subheadline)
+                .font(.custom(poppinsBold, size: 13.0))
                 .foregroundColor(.black)
             
             ZStack(alignment: .topLeading) {
@@ -33,7 +33,7 @@ struct DescriptionFieldView: View {
                 
                 
                 TextEditor(text: $description)
-                    .font(.custom(nunitoBlack, size: 14.0))
+                    .font(.custom(poppinsRegular, size: 13.0))
                     .padding(.all, 4)
                     .background(Color.clear)
                     .frame(minHeight: 100)

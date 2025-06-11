@@ -13,7 +13,8 @@ struct CreateProductScreen: View {
     @State private var title = ""
     @State private var description = ""
     @State private var quantity = 1
-
+    @State var imageUrls : [String] = [""]
+    @State var navigateToSalesFormat = false
     var body: some View {
         VStack(spacing: 16) {
             // Header
@@ -47,7 +48,7 @@ struct CreateProductScreen: View {
                     Text("Photos")
                         .font(.subheadline).bold()
                     
-                    MediaPickerView(title:"")
+                    MediaPickerView(title:"",uploadedImageUrls: $imageUrls)
                         .frame(height:150)
                         .padding(.horizontal,-12)
                     
@@ -154,7 +155,7 @@ struct CreateProductScreen: View {
                     }
                     
                     Button(action: {
-                        // Continue
+                        navigateToSalesFormat = true
                     }) {
                         Text("Continue")
                             .font(.headline)
@@ -169,6 +170,7 @@ struct CreateProductScreen: View {
                 .padding(.horizontal)
                 .padding(.bottom, 16)
             }
+            CusNavLink(doNavigate: $navigateToSalesFormat, destination: SalesFormatScreen())
         }
         .background(Color(.systemGroupedBackground).ignoresSafeArea())
     }

@@ -14,7 +14,7 @@ import PhotosUI
 //MARK: For Multi Selection
 struct PhotoPicker: UIViewControllerRepresentable {
     var count : Int = 0
-    var onImagesPicked: ([UIImage]) -> Void
+    var onImagesPicked: ([UIImage],[String]) -> Void
     
 
     func makeCoordinator() -> Coordinator {
@@ -34,35 +34,61 @@ struct PhotoPicker: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: PHPickerViewController, context: Context) {}
 
     class Coordinator: NSObject, PHPickerViewControllerDelegate {
-        var onImagesPicked: ([UIImage]) -> Void
+        var onImagesPicked: ([UIImage],[String]) -> Void
 
-        init(onImagesPicked: @escaping ([UIImage]) -> Void) {
+        init(onImagesPicked: @escaping ([UIImage],[String]) -> Void) {
             self.onImagesPicked = onImagesPicked
         }
 
         func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
-            picker.dismiss(animated: true)
+                   picker.dismiss(animated: true)
 
-            let group = DispatchGroup()
-            var images: [UIImage] = []
+                   let group = DispatchGroup()
+                   var images: [UIImage] = []
+                   var urls: [String] = []
 
-            for result in results {
-                if result.itemProvider.canLoadObject(ofClass: UIImage.self) {
-                    group.enter()
-                    result.itemProvider.loadObject(ofClass: UIImage.self) { object, _ in
-                        if let image = object as? UIImage {
-                            images.append(image)
-                        }
-                        group.leave()
-                    }
-                }
-            }
+                   for result in results {
+                       group.enter()
 
-            group.notify(queue: .main) {
-                self.onImagesPicked(images)
-            }
-        }
-    }
+                       if let itemProvider = result.itemProvider.copy() as? NSItemProvider {
+                           if itemProvider.hasItemConformingToTypeIdentifier(UTType.image.identifier) {
+                               itemProvider.loadFileRepresentation(forTypeIdentifier: UTType.image.identifier) { url, error in
+                                   defer { group.leave() }
+                                   guard let fileURL = url else { return }
+
+                                   let targetURL = FileManager.default.temporaryDirectory.appendingPathComponent(fileURL.lastPathComponent)
+
+                                   do {
+                                       if FileManager.default.fileExists(atPath: targetURL.path) {
+                                           try FileManager.default.removeItem(at: targetURL)
+                                       }
+                                       try FileManager.default.copyItem(at: fileURL, to: targetURL)
+
+                                       if let data = try? Data(contentsOf: targetURL),
+                                          let image = UIImage(data: data),
+                                          let compressedData = image.jpegData(compressionQuality: 0.6) {
+
+                                           let compressedURL = FileManager.default.temporaryDirectory.appendingPathComponent("compressed_\(UUID().uuidString).jpg")
+                                           try compressedData.write(to: compressedURL)
+
+                                           urls.append(compressedURL.path) // ✅
+                                           images.append(UIImage(data: compressedData) ?? image)
+                                       }
+                                   } catch {
+                                       print("❌ Error copying or compressing image:", error.localizedDescription)
+                                   }
+                               }
+                           } else {
+                               group.leave()
+                           }
+                       }
+                   }
+
+                   group.notify(queue: .main) {
+                       self.onImagesPicked(images, urls)
+                   }
+               }
+           }
 }
 
 
@@ -95,7 +121,7 @@ struct ImagePicker: UIViewControllerRepresentable {
         func imagePickerController(_ picker: UIImagePickerController,
                                    didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
             if let selectedImage = info[.originalImage] as? UIImage {
-                if let imageData = selectedImage.jpegData(compressionQuality: 0.1) {
+                if let imageData = selectedImage.jpegData(compressionQuality: 0.6) {
                     
                     if let compressedImage = UIImage(data: imageData) {
                         
@@ -114,7 +140,7 @@ struct ImagePicker: UIViewControllerRepresentable {
                         }
                     }
                 }else {
-                    if let imageData = selectedImage.jpegData(compressionQuality: 0.1) {
+                    if let imageData = selectedImage.jpegData(compressionQuality: 0.6) {
                         let tempDirectoryURL = FileManager.default.temporaryDirectory
                         let imageURL = tempDirectoryURL.appendingPathComponent("selectedImage.jpg")
                         

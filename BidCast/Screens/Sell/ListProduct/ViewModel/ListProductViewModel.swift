@@ -14,6 +14,7 @@ final class ListProductViewModel: ObservableObject {
     @Published var categoryResponse: ResponseModal<[CategoryDataModel]>?
     @Published var storeProductResponse: ResponseModal<StoreProductModel>?
     @Published var errorMessage: String?
+    @Published var addressesResponse : ResponseModal<[AddressModel]>?
     @Published var requestType: String = ""
     
     // MARK: - Get Category List
@@ -30,44 +31,52 @@ final class ListProductViewModel: ObservableObject {
         }
     }
     
- 
-    @MainActor
-    final class ListProductViewModel: ObservableObject {
+    
+    
+    func storeProduct(param: StoreProductParam, images: [String], key: String) {
+        self.requestType = "store"
+        var parameters = [String: Any]()
         
-        @Published var storeProductResponse: ResponseModal<StoreProductModel>?
-        @Published var errorMessage: String?
-        @Published var requestType: String = ""
+        do {
+            parameters = try param.asDictionary()
+        } catch {
+            self.errorMessage = "Invalid parameters: \(error.localizedDescription)"
+            return
+        }
         
-        func storeProduct(param: StoreProductParam, images: [String], key: String) {
-            self.requestType = "store"
-            var parameters = [String: Any]()
-            
-            do {
-                parameters = try param.asDictionary()
-            } catch {
-                self.errorMessage = "Invalid parameters: \(error.localizedDescription)"
-                return
-            }
-            
-            APIManager.shared.uploadImage(
-                type: APIEndPoint.storeProduct(param: param),
-                urlArray: images,
-                mimeType: "image/png",
-                keyName: key,
-                parameters: parameters,
-                modelType: ResponseModal<StoreProductModel>.self,
-                header: true
-            ) { result in
-                DispatchQueue.main.async {
-                    switch result {
-                    case .success(let data):
-                        self.storeProductResponse = data
-                    case .failure(let error):
-                        self.errorMessage = error.localizedDescription
-                    }
+        APIManager.shared.uploadImage(
+            type: APIEndPoint.storeProduct(param: param),
+            urlArray: images,
+            mimeType: "image/jpeg",
+            keyName: key,
+            parameters: parameters,
+            modalType: ResponseModal<StoreProductModel>.self,
+            header: true
+        ) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let data):
+                    self.storeProductResponse = data
+                case .failure(let error):
+                    self.errorMessage = error.localizedDescription
                 }
             }
         }
     }
-
+    
+    // MARK: - Get Addresses
+    func getAddresses() async {
+       
+        do {
+           if  let response: ResponseModal<[AddressModel]> = try await APIManager.shared.request(
+                type: APIEndPoint.getAddress,
+                header: true
+           ){
+               addressesResponse = response
+           }
+        } catch {
+            self.errorMessage = error.localizedDescription
+        }
+       
+    }
 }
