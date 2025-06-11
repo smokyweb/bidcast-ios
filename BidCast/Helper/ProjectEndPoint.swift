@@ -68,6 +68,7 @@ enum APIEndPoint{
     case searching(param : SearchingRequest)
     case promo(param : PromoCodeRequest)
     case getReferralCode
+    case orderReciept(param : OrderRecieptRequest)
     
     
     
@@ -290,6 +291,8 @@ extension APIEndPoint: EndPointType {
             return "promo/verify-code"
         case .getReferralCode:
             return "referral-code/fetch"
+        case .orderReciept:
+            return "product/order-receipt"
 
             
             
@@ -571,7 +574,8 @@ extension APIEndPoint: EndPointType {
             return .post
         case .getReferralCode:
             return .get
-            
+        case .orderReciept:
+            return .post
             
             
             
@@ -863,6 +867,8 @@ extension APIEndPoint: EndPointType {
             return param
         case .getReferralCode:
             return nil
+        case .orderReciept(param: let param):
+            return param
             
             //MARK: Extenson
         case .AddCard(param: let param):

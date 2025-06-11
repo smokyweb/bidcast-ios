@@ -167,3 +167,21 @@ let alertStlyeSuccess: AlertToast.AlertStyle = .style(backgroundColor: .green, t
 //    }
 //
 //}
+
+
+func formatDateTime(_ isoDate: String?) -> String {
+        guard let isoDate = isoDate else {
+            return "N/A"
+        }
+
+        let isoFormatter = ISO8601DateFormatter()
+        isoFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+
+        guard let date = isoFormatter.date(from: isoDate) else {
+            return "N/A"
+        }
+
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMM dd, yyyy, HH:mm"
+        return formatter.string(from: date)
+    }

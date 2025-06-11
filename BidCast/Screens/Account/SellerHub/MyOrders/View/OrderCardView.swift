@@ -6,40 +6,52 @@
 //
 
 import SwiftUICore
+import SwiftUI
 
 // MARK: - Order Card View
 struct OrderCardView: View {
-    let order: Order
+    let order: MyOrderModel?
+    var statusColor: Color {
+            switch order?.status {
+            case "Processing": return .darkGreen
+            case "NewOrder": return .darkBlue
+            case "Completed": return .darkYellow
+            default: return .gray
+            }
+        }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text(order.orderNumber)
+                Text(order?.orderID ?? "")
                     .fontWeight(.semibold)
                 Spacer()
-                Text(order.status)
+                Text(order?.status ?? "")
                     .font(.caption)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 4)
-                    .background(order.statusColor.opacity(0.2))
-                    .foregroundColor(order.statusColor)
+                    .background(statusColor.opacity(0.2))
+                    .foregroundColor(statusColor)
                     .cornerRadius(10)
             }
 
-            Text(order.date)
+            Text(formatDateTime(order?.product?.createdAt))
                 .font(.caption)
                 .foregroundColor(.gray)
 
             HStack(spacing: 12) {
-                order.image
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 40, height: 40)
-                    .clipShape(Circle())
+                AsyncImage(url: URL(string: order?.product?.images?.first ?? "")) { image in
+                    image.resizable()
+                }placeholder: {
+                    Color.gray.opacity(0.3)
+                }
+                .scaledToFill()
+                .frame(width: 40, height: 40)
+                .clipShape(Circle())
                 VStack(alignment: .leading) {
-                    Text(order.name)
+                    Text(order?.product?.title ?? "")
                         .fontWeight(.semibold)
-                    Text(order.location)
+                    Text(order?.product?.description ?? "")
                         .font(.caption)
                         .foregroundColor(.gray)
                 }
@@ -50,7 +62,7 @@ struct OrderCardView: View {
                     .font(.subheadline)
                     .foregroundColor(.gray)
                 Spacer()
-                Text(order.amount)
+                Text("\(order?.product?.pricing ?? 0)")
                     .fontWeight(.semibold)
             }
         }

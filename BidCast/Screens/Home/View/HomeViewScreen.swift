@@ -92,8 +92,6 @@ struct HomeViewScreen: View {
             .onReceive(viewModel.$liveShowsResponse){ reponse in
                
             }
-            
-       
     }
    
 

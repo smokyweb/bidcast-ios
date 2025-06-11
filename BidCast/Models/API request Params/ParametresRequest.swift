@@ -543,6 +543,9 @@ struct PromoCodeRequest : Encodable{
     var promo_code : String
 }
 
+struct OrderRecieptRequest : Encodable{
+    var order_id : String
+}
 
 
 //MARK: extension
