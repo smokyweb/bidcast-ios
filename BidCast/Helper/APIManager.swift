@@ -390,6 +390,76 @@ final class APIManager {
 //            
 //        }.resume()
 //    }
+    func uploadImage1<T: Decodable>(
+        type: EndPointType,
+        urlArray: [String]? = nil,
+        mimeType: String,
+        keyName: String,
+        parameters: [String: Any],
+        modalType: T.Type,
+        header: Bool
+    ) async throws -> T {
+        
+        guard let url = type.url else {
+            throw DataError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = type.method.rawValue
+
+        // Prepare multipart media
+        var media = [MediaData1]()
+        urlArray?.forEach { path in
+            if let item = MediaData1(withURL: path, forKey: keyName, mimeType: mimeType) {
+                media.append(item)
+            }
+        }
+        
+        let boundary = generateBoundary()
+        let body = createDataBody1(withParameters: parameters, media: media, boundary: boundary)
+        request.httpBody = body
+
+        // Headers
+        var headers = type.headers
+        if header {
+            headers?["Authorization"] = "Bearer \(UserDefaults.accessToken)"
+        }
+        headers?["Accept"] = "application/json"
+        headers?["Content-Type"] = "multipart/form-data; boundary=\(boundary)"
+        request.allHTTPHeaderFields = headers
+
+        // Execute request
+        let config = URLSessionConfiguration.default
+        config.waitsForConnectivity = true
+        let (data, response) = try await URLSession(configuration: config).data(for: request)
+
+        print("API Response >>> \n\(data.prettyPrintedJSONString ?? "")")
+
+        // Status check
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw DataError.invalidResponse(data)
+        }
+
+        if !(200...299).contains(httpResponse.statusCode) {
+            do {
+                let decodedError = try JSONDecoder().decode(ApiError.self, from: data)
+               
+                throw DataError.invalidCode("Unknown server error")
+            } catch {
+                print(error)
+                throw error
+            }
+        }
+
+        // Decode final response
+        do {
+            return try JSONDecoder().decode(T.self, from: data)
+        } catch {
+            print("❌ Decoding error: \(error)")
+            throw error
+        }
+    }
+
     func uploadImage<T: Decodable>(
         type: EndPointType,
         urlArray: [String]? = nil,
@@ -463,6 +533,7 @@ final class APIManager {
         
         URLSession(configuration: config).dataTask(with: request) { data, response, error in
             guard let data, error == nil else {
+                print(error as Any)
                 completion(.failure(.invalidData))
                 return
             }
@@ -472,6 +543,7 @@ final class APIManager {
                     let products = try JSONDecoder().decode(modalType, from: data)
                     completion(.success(products))
                 }catch {
+                    print(error as Any)
                     completion(.failure(.invalidResponse(data)))
                 }
                 return
@@ -481,6 +553,7 @@ final class APIManager {
                 let products = try JSONDecoder().decode(modalType, from: data)
                 completion(.success(products))
             }catch {
+                print(error)
                 completion(.failure(.network(error)))
             }
             

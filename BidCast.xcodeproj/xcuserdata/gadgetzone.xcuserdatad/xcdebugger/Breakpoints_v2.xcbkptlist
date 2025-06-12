@@ -7,22 +7,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "E24890A6-896F-4EFA-BEB6-820BB28AA510"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "BidCast/Screens/Account/MyAccount/VerifyIdentityScreen/ViewModel/TrustedBuyerViewModel.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "37"
-            endingLineNumber = "37"
-            landmarkName = "TrustedBuyerViewModel"
-            landmarkType = "3">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "FFD42033-E05D-4021-B2B2-60E547155FB6"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
@@ -32,8 +16,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "323"
             endingLineNumber = "323"
-            landmarkName = "uploadImage(type:urlArray:mimeType:keyName:parameters:modelType:header:completion:)"
-            landmarkType = "7">
+            landmarkName = "APIManager"
+            landmarkType = "3">
             <Locations>
                <Location
                   uuid = "FFD42033-E05D-4021-B2B2-60E547155FB6 - de8015979ec65273"
@@ -78,8 +62,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "326"
             endingLineNumber = "326"
-            landmarkName = "uploadImage(type:urlArray:mimeType:keyName:parameters:modelType:header:completion:)"
-            landmarkType = "7">
+            landmarkName = "APIManager"
+            landmarkType = "3">
             <Locations>
                <Location
                   uuid = "ED812164-1B61-44F8-A97E-FADF80BEDCF0 - 6e4c4b3b747adbe7"
@@ -124,8 +108,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "330"
             endingLineNumber = "330"
-            landmarkName = "uploadImage(type:urlArray:mimeType:keyName:parameters:modelType:header:completion:)"
-            landmarkType = "7">
+            landmarkName = "APIManager"
+            landmarkType = "3">
             <Locations>
                <Location
                   uuid = "822B5563-96F4-46BC-A9A6-61E314500ABD - 6e4c4b3b747adb6b"
@@ -170,8 +154,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "332"
             endingLineNumber = "332"
-            landmarkName = "uploadImage(type:urlArray:mimeType:keyName:parameters:modelType:header:completion:)"
-            landmarkType = "7">
+            landmarkName = "APIManager"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -186,8 +170,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "355"
             endingLineNumber = "355"
-            landmarkName = "uploadImage(type:urlArray:mimeType:keyName:parameters:modelType:header:completion:)"
-            landmarkType = "7">
+            landmarkName = "APIManager"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -202,8 +186,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "357"
             endingLineNumber = "357"
-            landmarkName = "uploadImage(type:urlArray:mimeType:keyName:parameters:modelType:header:completion:)"
-            landmarkType = "7">
+            landmarkName = "APIManager"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -216,9 +200,9 @@
             filePath = "BidCast/Helper/APIManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "557"
-            endingLineNumber = "557"
-            landmarkName = "uploadImageWithMultipleKeys1(type:urlArray:mimeType:keyName:parameters:modelType:header:completion:)"
+            startingLineNumber = "630"
+            endingLineNumber = "630"
+            landmarkName = "uploadImageWithMultipleKeys(type:urlArray:mimeType:keyName:parameters:modelType:header:completion:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -232,9 +216,9 @@
             filePath = "BidCast/Helper/APIManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "573"
-            endingLineNumber = "573"
-            landmarkName = "uploadImageWithMultipleKeys1(type:urlArray:mimeType:keyName:parameters:modelType:header:completion:)"
+            startingLineNumber = "646"
+            endingLineNumber = "646"
+            landmarkName = "uploadImageWithMultipleKeys(type:urlArray:mimeType:keyName:parameters:modelType:header:completion:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -248,40 +232,10 @@
             filePath = "BidCast/Helper/APIManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "583"
-            endingLineNumber = "583"
-            landmarkName = "uploadImageWithMultipleKeys1(type:urlArray:mimeType:keyName:parameters:modelType:header:completion:)"
+            startingLineNumber = "656"
+            endingLineNumber = "656"
+            landmarkName = "uploadImageWithMultipleKeys(type:urlArray:mimeType:keyName:parameters:modelType:header:completion:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "7A175DB9-8FB1-48AB-946A-3B25170669EB - b1054bd11dc445cb"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "BidCast.APIManager.uploadImageWithMultipleKeys1&lt;&#x3c4;_0_0 where &#x3c4;_0_0: Swift.Decodable&gt;(type: BidCast.EndPointType, urlArray: Swift.Optional&lt;Swift.Array&lt;Swift.Array&lt;Swift.String&gt;&gt;&gt;, mimeType: Swift.Array&lt;Swift.String&gt;, keyName: Swift.Array&lt;Swift.String&gt;, parameters: Swift.Dictionary&lt;Swift.String, Any&gt;, modelType: &#x3c4;_0_0.Type, header: Swift.Bool, completion: (Swift.Result&lt;&#x3c4;_0_0, BidCast.DataError&gt;) -&gt; ()) -&gt; ()"
-                  moduleName = "BidCast.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/gadgetzone/Documents/Live/bidcast/BidCast/Helper/APIManager.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "583"
-                  endingLineNumber = "583">
-               </Location>
-               <Location
-                  uuid = "7A175DB9-8FB1-48AB-946A-3B25170669EB - d1edef1061dbb8e2"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #2 @Sendable (Swift.Optional&lt;Foundation.Data&gt;, Swift.Optional&lt;__C.NSURLResponse&gt;, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in BidCast.APIManager.uploadImageWithMultipleKeys1&lt;&#x3c4;_0_0 where &#x3c4;_0_0: Swift.Decodable&gt;(type: BidCast.EndPointType, urlArray: Swift.Optional&lt;Swift.Array&lt;Swift.Array&lt;Swift.String&gt;&gt;&gt;, mimeType: Swift.Array&lt;Swift.String&gt;, keyName: Swift.Array&lt;Swift.String&gt;, parameters: Swift.Dictionary&lt;Swift.String, Any&gt;, modelType: &#x3c4;_0_0.Type, header: Swift.Bool, completion: (Swift.Result&lt;&#x3c4;_0_0, BidCast.DataError&gt;) -&gt; ()) -&gt; ()"
-                  moduleName = "BidCast.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/gadgetzone/Documents/Live/bidcast/BidCast/Helper/APIManager.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "583"
-                  endingLineNumber = "583">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -294,9 +248,9 @@
             filePath = "BidCast/Helper/APIManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "553"
-            endingLineNumber = "553"
-            landmarkName = "uploadImageWithMultipleKeys1(type:urlArray:mimeType:keyName:parameters:modelType:header:completion:)"
+            startingLineNumber = "626"
+            endingLineNumber = "626"
+            landmarkName = "uploadImageWithMultipleKeys(type:urlArray:mimeType:keyName:parameters:modelType:header:completion:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -310,10 +264,40 @@
             filePath = "BidCast/Helper/APIManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "587"
-            endingLineNumber = "587"
-            landmarkName = "uploadImageWithMultipleKeys1(type:urlArray:mimeType:keyName:parameters:modelType:header:completion:)"
+            startingLineNumber = "660"
+            endingLineNumber = "660"
+            landmarkName = "uploadImageWithMultipleKeys(type:urlArray:mimeType:keyName:parameters:modelType:header:completion:)"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "0C377D9B-0367-411E-BF84-9446A576DCE3 - 73d7a7af0f89e2e8"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 @Sendable (Swift.Optional&lt;Foundation.Data&gt;, Swift.Optional&lt;__C.NSURLResponse&gt;, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in BidCast.APIManager.uploadImageWithMultipleKeys&lt;&#x3c4;_0_0 where &#x3c4;_0_0: Swift.Decodable&gt;(type: BidCast.EndPointType, urlArray: Swift.Optional&lt;Swift.Array&lt;Swift.Array&lt;Swift.String&gt;&gt;&gt;, mimeType: Swift.Array&lt;Swift.String&gt;, keyName: Swift.Array&lt;Swift.String&gt;, parameters: Swift.Dictionary&lt;Swift.String, Any&gt;, modelType: &#x3c4;_0_0.Type, header: Swift.Bool, completion: (Swift.Result&lt;&#x3c4;_0_0, BidCast.DataError&gt;) -&gt; ()) -&gt; ()"
+                  moduleName = "BidCast.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/gadgetzone/Documents/Live/bidcast/BidCast/Helper/APIManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "660"
+                  endingLineNumber = "660">
+               </Location>
+               <Location
+                  uuid = "0C377D9B-0367-411E-BF84-9446A576DCE3 - 73d7a7af0f89e2e8"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 @Sendable (Swift.Optional&lt;Foundation.Data&gt;, Swift.Optional&lt;__C.NSURLResponse&gt;, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in BidCast.APIManager.uploadImageWithMultipleKeys&lt;&#x3c4;_0_0 where &#x3c4;_0_0: Swift.Decodable&gt;(type: BidCast.EndPointType, urlArray: Swift.Optional&lt;Swift.Array&lt;Swift.Array&lt;Swift.String&gt;&gt;&gt;, mimeType: Swift.Array&lt;Swift.String&gt;, keyName: Swift.Array&lt;Swift.String&gt;, parameters: Swift.Dictionary&lt;Swift.String, Any&gt;, modelType: &#x3c4;_0_0.Type, header: Swift.Bool, completion: (Swift.Result&lt;&#x3c4;_0_0, BidCast.DataError&gt;) -&gt; ()) -&gt; ()"
+                  moduleName = "BidCast.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/gadgetzone/Documents/Live/bidcast/BidCast/Helper/APIManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "660"
+                  endingLineNumber = "660">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -326,38 +310,38 @@
             filePath = "BidCast/Helper/APIManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "535"
-            endingLineNumber = "535"
-            landmarkName = "uploadImageWithMultipleKeys1(type:urlArray:mimeType:keyName:parameters:modelType:header:completion:)"
+            startingLineNumber = "608"
+            endingLineNumber = "608"
+            landmarkName = "uploadImageWithMultipleKeys(type:urlArray:mimeType:keyName:parameters:modelType:header:completion:)"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "26DCA52F-CA2C-4689-B5DF-20D13947BE54 - b1054bd11dc44ffa"
+                  uuid = "26DCA52F-CA2C-4689-B5DF-20D13947BE54 - f8bc411f7afe921d"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "BidCast.APIManager.uploadImageWithMultipleKeys1&lt;&#x3c4;_0_0 where &#x3c4;_0_0: Swift.Decodable&gt;(type: BidCast.EndPointType, urlArray: Swift.Optional&lt;Swift.Array&lt;Swift.Array&lt;Swift.String&gt;&gt;&gt;, mimeType: Swift.Array&lt;Swift.String&gt;, keyName: Swift.Array&lt;Swift.String&gt;, parameters: Swift.Dictionary&lt;Swift.String, Any&gt;, modelType: &#x3c4;_0_0.Type, header: Swift.Bool, completion: (Swift.Result&lt;&#x3c4;_0_0, BidCast.DataError&gt;) -&gt; ()) -&gt; ()"
+                  symbolName = "closure #1 (Swift.String) -&gt; () in BidCast.APIManager.uploadImageWithMultipleKeys&lt;&#x3c4;_0_0 where &#x3c4;_0_0: Swift.Decodable&gt;(type: BidCast.EndPointType, urlArray: Swift.Optional&lt;Swift.Array&lt;Swift.Array&lt;Swift.String&gt;&gt;&gt;, mimeType: Swift.Array&lt;Swift.String&gt;, keyName: Swift.Array&lt;Swift.String&gt;, parameters: Swift.Dictionary&lt;Swift.String, Any&gt;, modelType: &#x3c4;_0_0.Type, header: Swift.Bool, completion: (Swift.Result&lt;&#x3c4;_0_0, BidCast.DataError&gt;) -&gt; ()) -&gt; ()"
                   moduleName = "BidCast.debug.dylib"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/gadgetzone/Documents/Live/bidcast/BidCast/Helper/APIManager.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "536"
-                  endingLineNumber = "536">
+                  startingLineNumber = "608"
+                  endingLineNumber = "608">
                </Location>
                <Location
-                  uuid = "26DCA52F-CA2C-4689-B5DF-20D13947BE54 - b1054bd11dc44ffa"
+                  uuid = "26DCA52F-CA2C-4689-B5DF-20D13947BE54 - f8bc411f7afe921d"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "BidCast.APIManager.uploadImageWithMultipleKeys1&lt;&#x3c4;_0_0 where &#x3c4;_0_0: Swift.Decodable&gt;(type: BidCast.EndPointType, urlArray: Swift.Optional&lt;Swift.Array&lt;Swift.Array&lt;Swift.String&gt;&gt;&gt;, mimeType: Swift.Array&lt;Swift.String&gt;, keyName: Swift.Array&lt;Swift.String&gt;, parameters: Swift.Dictionary&lt;Swift.String, Any&gt;, modelType: &#x3c4;_0_0.Type, header: Swift.Bool, completion: (Swift.Result&lt;&#x3c4;_0_0, BidCast.DataError&gt;) -&gt; ()) -&gt; ()"
+                  symbolName = "closure #1 (Swift.String) -&gt; () in BidCast.APIManager.uploadImageWithMultipleKeys&lt;&#x3c4;_0_0 where &#x3c4;_0_0: Swift.Decodable&gt;(type: BidCast.EndPointType, urlArray: Swift.Optional&lt;Swift.Array&lt;Swift.Array&lt;Swift.String&gt;&gt;&gt;, mimeType: Swift.Array&lt;Swift.String&gt;, keyName: Swift.Array&lt;Swift.String&gt;, parameters: Swift.Dictionary&lt;Swift.String, Any&gt;, modelType: &#x3c4;_0_0.Type, header: Swift.Bool, completion: (Swift.Result&lt;&#x3c4;_0_0, BidCast.DataError&gt;) -&gt; ()) -&gt; ()"
                   moduleName = "BidCast.debug.dylib"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/gadgetzone/Documents/Live/bidcast/BidCast/Helper/APIManager.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "536"
-                  endingLineNumber = "536">
+                  startingLineNumber = "608"
+                  endingLineNumber = "608">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -372,9 +356,9 @@
             filePath = "BidCast/Helper/APIManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "540"
-            endingLineNumber = "540"
-            landmarkName = "uploadImageWithMultipleKeys1(type:urlArray:mimeType:keyName:parameters:modelType:header:completion:)"
+            startingLineNumber = "613"
+            endingLineNumber = "613"
+            landmarkName = "uploadImageWithMultipleKeys(type:urlArray:mimeType:keyName:parameters:modelType:header:completion:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -388,9 +372,9 @@
             filePath = "BidCast/Helper/APIManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "543"
-            endingLineNumber = "543"
-            landmarkName = "uploadImageWithMultipleKeys1(type:urlArray:mimeType:keyName:parameters:modelType:header:completion:)"
+            startingLineNumber = "616"
+            endingLineNumber = "616"
+            landmarkName = "uploadImageWithMultipleKeys(type:urlArray:mimeType:keyName:parameters:modelType:header:completion:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -404,25 +388,9 @@
             filePath = "BidCast/Helper/APIManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "546"
-            endingLineNumber = "546"
-            landmarkName = "uploadImageWithMultipleKeys1(type:urlArray:mimeType:keyName:parameters:modelType:header:completion:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "056DECB0-85C9-496B-A4C6-1A41FC5EECD4"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "BidCast/Screens/Account/MyAccount/VerifyIdentityScreen/ViewModel/TrustedBuyerViewModel.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "45"
-            endingLineNumber = "45"
-            landmarkName = "addTrustedBuyer(param:keysValue:mimeTypes:musics:)"
+            startingLineNumber = "619"
+            endingLineNumber = "619"
+            landmarkName = "uploadImageWithMultipleKeys(type:urlArray:mimeType:keyName:parameters:modelType:header:completion:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -440,6 +408,38 @@
             endingLineNumber = "36"
             landmarkName = "body"
             landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "3E6C5A3A-E23E-4638-833F-FBAFF9DE8D02"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BidCast/Screens/Account/MyAccount/VerifyIdentityScreen/View/TrustedBuyerScreen.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "265"
+            endingLineNumber = "265"
+            landmarkName = "handleSuccess()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "4047BA62-2E9F-4192-A9C2-2181EB7A37CD"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BidCast/Screens/Account/MyAccount/VerifyIdentityScreen/View/TrustedBuyerScreen.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "274"
+            endingLineNumber = "274"
+            landmarkName = "handleSuccess()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

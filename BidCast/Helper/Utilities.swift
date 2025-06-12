@@ -168,7 +168,7 @@ let alertStlyeSuccess: AlertToast.AlertStyle = .style(backgroundColor: .green, t
 //
 //}
 
-
+//MARK: formatDateTime.
 func formatDateTime(_ isoDate: String?) -> String {
         guard let isoDate = isoDate else {
             return "N/A"
@@ -186,8 +186,54 @@ func formatDateTime(_ isoDate: String?) -> String {
         return formatter.string(from: date)
     }
 
+//MARK: Collection.
 extension Collection {
     subscript(safe index: Index) -> Element? {
         return indices.contains(index) ? self[index] : nil
+    }
+}
+
+//MARK: compressAndSaveImage.
+func compressAndSaveImage(data: Data, maxFileSizeKB: Int = 2048) -> URL? {
+    guard let image = UIImage(data: data) else { return nil }
+
+    var compressionQuality: CGFloat = 0.8
+    let minCompression: CGFloat = 0.2
+    let maxSizeBytes = maxFileSizeKB * 1024
+
+    var compressedData = image.jpegData(compressionQuality: compressionQuality)
+
+    while let currentData = compressedData, currentData.count > maxSizeBytes && compressionQuality > minCompression {
+        compressionQuality -= 0.1
+        compressedData = image.jpegData(compressionQuality: compressionQuality)
+    }
+
+    guard let finalData = compressedData, finalData.count <= maxSizeBytes else {
+        print("⚠️ Compression failed or still too big, falling back to original.")
+        return nil
+    }
+
+    let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("compressed_\(UUID().uuidString).jpg")
+    do {
+        try finalData.write(to: tempURL)
+        print("✅ Compressed image saved, size: \(finalData.count / 1024) KB")
+        return tempURL
+    } catch {
+        print("❌ Failed to write compressed image:", error)
+        return nil
+    }
+}
+
+//MARK: saveImageToTemporaryDirectory.
+func saveImageToTemporaryDirectory(data: Data) -> URL? {
+    let tempDir = FileManager.default.temporaryDirectory
+    let fileName = "\(Int(Date().timeIntervalSince1970)).png"
+    let fileURL = tempDir.appendingPathComponent(fileName)
+    do {
+        try data.write(to: fileURL)
+        return fileURL
+    } catch {
+        print("Error writing image to file:", error)
+        return nil
     }
 }

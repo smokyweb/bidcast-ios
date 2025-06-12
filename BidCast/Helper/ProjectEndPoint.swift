@@ -50,7 +50,7 @@ enum APIEndPoint{
     case storePhoneNumber(param : StorePhoneNumberRequest)
     case otpVerify(param : VerifyOtpRequest)
     case storePaymentMethod(param : StorePaymentMethodRequest)
-    case buyerIdentityStore(param : [String:Any])
+    case buyerIdentityStore
     case buyerIdentityList
     case sellerIdentityFetch
     case notificationListing

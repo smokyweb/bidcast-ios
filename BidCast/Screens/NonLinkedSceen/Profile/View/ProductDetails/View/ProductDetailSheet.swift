@@ -219,7 +219,7 @@ struct ProductDetailSheet: View {
                     }
                     
                 }
-            ) { selectedOffer in
+            ){ selectedOffer in
                 print("User selected offer: \(selectedOffer)")
                 
             }
