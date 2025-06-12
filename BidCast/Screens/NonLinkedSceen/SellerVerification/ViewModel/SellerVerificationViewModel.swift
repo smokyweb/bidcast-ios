@@ -7,47 +7,91 @@
 
 import Foundation
 
-//final class SellerVerificationViewModel : ObservableObject {
-//    
-//    var preferenceResponceDict : ResponseModal<PreferenceDataModel>?
-//    
-//    var eventHandler: ((_ event: Event) -> Void)? // Data Binding Closure
-//
-//    func getPreferenceContent(){
-//        self.eventHandler?(.loading)
-//        APIManager.shared.requestPost(
-//            modelType: ResponseModal<PreferenceDataModel>.self, // response type
-//            type: APIEndPoint.getPreference,
-//            header: true) { result in
-//                self.eventHandler?(.stopLoading)
-//                switch result {
-//                case .success(let data):
-//                    self.preferenceResponceDict = data
-//                    self.eventHandler?(.dataLoaded)
-//                case .failure(let error):
-//                    self.eventHandler?(.error(error))
-//                }
-//            }
-//    }
-//
-//    //MARK: updatePreference.
-//    func updatePreference(parameters: UpdatePreferenceRequest) {
-//        self.eventHandler?(.loading)
-//        APIManager.shared.requestPost(
-//            modelType: ResponseModal<PreferenceDataModel>.self,
-//            type: APIEndPoint.updatePreference(param: parameters),
-//            header: true) { result in
-//                self.eventHandler?(.stopLoading)
-//                switch result {
-//                case .success(let data):
-//                    self.preferenceResponceDict = data
-//                    self.eventHandler?(.dataLoaded)
-//                case .failure(let error):
-//                    self.eventHandler?(.error(error))
-//                }
-//            }
-//    }
-//}
+import Foundation
+import Combine
+
+final class SellerVerificationViewModel: ObservableObject {
+    
+    @Published var storeIDCardDict: ResponseModel<StoreIDCardModel>?
+    @Published var storePhoneNumberDict = ResponseModel<SellerPhoneNumberModel>()
+    @Published var otpVerifyDict = ResponseModel<SellerOtpVerifyModel>()
+    @Published var paymentDetailDict = ResponseModel<SellerIdentityFetch>()
+    @Published var errorMessage: String?
+    @Published var requestType: String = ""
+    
+//MARK: storeIDCard.
+    func storeIDCard(
+        parameters: [String: Any],
+        images: [[String]]? = nil,
+        mimeType: [String],
+        keysValue: [String],
+        uploadImages: [String]? = nil
+    ) async {
+        requestType = "storeIDCard"
+        do {
+            let response: ResponseModel<StoreIDCardModel>? = try await APIManager.shared.uploadImageWithMultipleKeys(
+                type: APIEndPoint.buyerIdentityStore,
+                urlArray: images,
+                mimeType: mimeType,
+                keyName: keysValue,
+                parameters: parameters,
+                modelType: ResponseModel<StoreIDCardModel>?.self,
+                header: true
+            )
+            self.storeIDCardDict = response
+        } catch {
+            self.errorMessage = error.localizedDescription
+        }
+    }
+
+        
+    // MARK: - storePhoneNumber
+    func storePhoneNumber(parameters: StorePhoneNumberRequest) async {
+        requestType = "storePhoneNumber"
+        do {
+            let response: ResponseModel<SellerPhoneNumberModel> = try await APIManager.shared.request(
+                type: APIEndPoint.storePhoneNumber(param: parameters),
+                header: true
+            )
+            self.storePhoneNumberDict = response
+        } catch {
+            self.handle(error: error)
+        }
+    }
+    
+    // MARK: - otpVerify
+    func otpVerify(parameters: OtpVerifyRequest) async {
+        requestType = "otpVerify"
+        do {
+            let response: ResponseModel<SellerOtpVerifyModel> = try await APIManager.shared.request(
+                type: APIEndPoint.otpVerify(param: parameters),
+                header: true
+            )
+            self.otpVerifyDict = response
+        } catch {
+            self.handle(error: error)
+        }
+    }
+    
+    // MARK: - fetchSellerDetail
+    func fetchSellerPaymentDetail() async {
+        requestType = "sellerPayment"
+        do {
+            let response: ResponseModel<SellerIdentityFetch> = try await APIManager.shared.request(
+                type: APIEndPoint.sellerIdentityFetch,
+                header: true
+            )
+            self.paymentDetailDict = response
+        } catch {
+            self.handle(error: error)
+        }
+    }
+    // MARK: - Error Handling
+    private func handle(error: Error) {
+        self.errorMessage = error.localizedDescription
+    }
+}
+
 
 
 

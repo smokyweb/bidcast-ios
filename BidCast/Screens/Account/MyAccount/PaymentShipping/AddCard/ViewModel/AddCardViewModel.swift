@@ -12,6 +12,7 @@ final class AddCardViewModel: ObservableObject {
     
     @Published var cardDict = ResponseModel<[CardModel]>()
     @Published var addCardDict = ResponseModel<CardModel>()
+    @Published var sellerStorePaymentDict = ResponseModel<Int>()
     @Published var errorMessage: String? = nil
     
     
@@ -23,6 +24,37 @@ final class AddCardViewModel: ObservableObject {
                     type: APIEndPoint.AddCard(param: parameters),
                     header: true) {
                     self.addCardDict = response
+                }
+            }catch let error{
+                if let dataError = error as? DataError {
+                    switch dataError {
+                    case .invalidCode(let message):
+                        self.errorMessage = message ?? "Invalid code error"
+                    case .invalidResponse(let data):
+                        if let data = data,
+                           let json = try? JSONSerialization.jsonObject(with: data, options: []) {
+                            self.errorMessage = "Invalid response: \(json)"
+                        } else {
+                            self.errorMessage = "Invalid response with no data"
+                        }
+                    default:
+                        self.errorMessage = error.localizedDescription
+                    }
+                } else {
+                    self.errorMessage = error.localizedDescription
+                }
+            
+        }
+    }
+    
+    @MainActor
+    func addSellerCard(parameters: StorePaymentMethodRequest) async  {
+       
+            do {
+                if let response: ResponseModel<Int> = try await APIManager.shared.request(
+                    type: APIEndPoint.storePaymentMethod(param: parameters),
+                    header: true) {
+                    self.sellerStorePaymentDict = response
                 }
             }catch let error{
                 if let dataError = error as? DataError {

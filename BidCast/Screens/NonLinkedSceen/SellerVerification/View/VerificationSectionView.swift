@@ -16,6 +16,9 @@ struct VerificationSectionView: View {
     var actions: [String]? = nil
     var actionLabel: String? = nil
     var showDashedCard: Bool = false
+    var isActionEnabled: Bool = true
+    var onAction: ((String) async -> Void)? = nil
+    var onActionTap: (() -> Void)? = nil
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -25,7 +28,7 @@ struct VerificationSectionView: View {
                     .frame(width: 36, height: 36)
                     .background(Circle().fill(Color.gray.opacity(0.2)))
 
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading) {
                     Text(title).font(.headline)
                     Text(subtitle).font(.subheadline).foregroundColor(.gray)
                 }
@@ -33,62 +36,47 @@ struct VerificationSectionView: View {
                 Spacer()
 
                 if let statusText = statusText {
-                    Text(statusText)
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
+                    Text(statusText).font(.subheadline).foregroundColor(.gray)
                 } else if status == .completed {
-                    Image(systemName: "checkmark")
-                        .foregroundColor(.green)
+                    Image(systemName: "checkmark").foregroundColor(.green)
                 } else if let label = actionLabel {
-                    if label == "Verify" {
-                        Button(action: {
-                            // Handle verify action
-                        }) {
-                            Text(label)
-                                .font(.subheadline)
-                                .foregroundColor(.white)
-                                .padding(.horizontal, 24)
-                                .padding(.vertical, 10)
-                                .background(Color.blue)
-                                .cornerRadius(12)
+                    Button(action: {
+                        if isActionEnabled {
+                            onActionTap?()
                         }
-                    } else {
-                        Button(label) {
-                            // Handle other button action
-                        }
-                        .foregroundColor(.blue)
-                    }
+                    }) {
+                        Text(label)
+                            .font(.subheadline)
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 24)
+                            .padding(.vertical, 10)
+                            .background(isActionEnabled ? Color.blue : Color.gray)
+                            .cornerRadius(12)
+                    }.disabled(!isActionEnabled)
                 }
-
             }
 
             if let actions = actions {
                 HStack(spacing: 16) {
                     ForEach(actions, id: \.self) { action in
-                        Button(action: {
-                            // Handle action here
-                        }) {
+                        Button {
+                            Task { await onAction?(action) }
+                        } label: {
                             VStack(spacing: 8) {
                                 Image(systemName: action == "ID Card" ? "doc.text.viewfinder" : "camera.fill")
                                     .font(.system(size: 20))
-                                    .foregroundColor(.black)
                                 Text(action)
                                     .font(.subheadline)
-                                    .foregroundColor(.black)
                             }
-                            .frame(maxWidth: .infinity)
                             .padding()
+                            .frame(maxWidth: .infinity)
                             .background(Color.white)
                             .cornerRadius(12)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                            )
+                            .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.gray.opacity(0.3)))
                         }
                     }
                 }
             }
-
 
             if showDashedCard {
                 RoundedRectangle(cornerRadius: 12)

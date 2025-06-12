@@ -13,7 +13,9 @@ struct AddCardScreen: View {
     @State private var cardNumber = ""
     @State private var cvv = ""
     @State private var expiryDate = ""
+    var isNavFrom: String = ""
     @State var viewModel = AddCardViewModel()
+    var onSuccess: (() -> Void)?
     @Environment(\.presentationMode) var presentationMode
     @ObservedObject var stpCard = StripeCardViewModel()
     
@@ -151,9 +153,15 @@ struct AddCardScreen: View {
                                                print("Stripe token: \(token)")
                                                
                                                Task {
-                                                   await viewModel.addCard(parameters: AddCardRequest(card_token: token))
-                                                   await SVProgressHUD.dismiss()
-                                                   handleResponse()
+                                                   if isNavFrom == "SellerVerification"{
+                                                       await viewModel.addSellerCard(parameters: StorePaymentMethodRequest(card_token: token))
+                                                       await SVProgressHUD.dismiss()
+                                                       handleSellerCardResponse()
+                                                   }else{
+                                                       await viewModel.addCard(parameters: AddCardRequest(card_token: token))
+                                                       await SVProgressHUD.dismiss()
+                                                       handleResponse()
+                                                   }
                                                }
                                                
                                            case .failure(let error):
@@ -217,7 +225,6 @@ struct AddCardScreen: View {
         }
     }
     
- 
 
     func handleResponse() {
             let response = viewModel.addCardDict
@@ -241,6 +248,30 @@ struct AddCardScreen: View {
                 showError = true
             }
         }
+    
+    private func handleSellerCardResponse() {
+        let response = viewModel.sellerStorePaymentDict
+        if response.status == "success" {
+            DispatchQueue.main.async {
+                hudMsg = "Card added successfully"
+                showhud = true
+                onSuccess?()
+                self.presentationMode.wrappedValue.dismiss()
+            }
+        } else {
+            DispatchQueue.main.async {
+                alertType = .sheetType(
+                    icon: .alert,
+                    title: response.error_type?.capitalized ?? "Error",
+                    message: response.message?.capitalized ?? "Something went wrong.",
+                    primaryBtnText: "",
+                    secondaryBtnText: "OK"
+                )
+                showError = true
+            }
+        }
+    }
+
     
 }
 

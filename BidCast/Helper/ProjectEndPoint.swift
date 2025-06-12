@@ -48,7 +48,7 @@ enum APIEndPoint{
     case fetchProduct(param : FetchProductRequest)
     case storeIDCard(param : [String:Any])
     case storePhoneNumber(param : StorePhoneNumberRequest)
-    case otpVerify(param : VerifyOtpRequest)
+    case otpVerify(param : OtpVerifyRequest)
     case storePaymentMethod(param : StorePaymentMethodRequest)
     case buyerIdentityStore
     case buyerIdentityList
@@ -250,11 +250,11 @@ extension APIEndPoint: EndPointType {
         case .storeIDCard:
             return "store-id-card"
         case .storePhoneNumber:
-            return "store-phone-number"
+            return "seller-identity/store-phone-number"
         case .otpVerify:
             return "otp-verify"
         case .storePaymentMethod:
-            return "store-payment-method"
+            return "seller-identity/store-payment-method"
         case .buyerIdentityStore:
             return "buyer-identity/store"
         case .buyerIdentityList:

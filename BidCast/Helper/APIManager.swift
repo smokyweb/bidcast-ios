@@ -567,115 +567,69 @@ final class APIManager {
         keyName: [String],
         parameters: [String: Any],
         modelType: T.Type,
-        header: Bool,
-        completion: @escaping Handler<T>
-    ) {
-        print("Upload File API Request - - - - - - - - - - >>>>>")
+        header: Bool
+    ) async throws -> T {
+        
         guard let url = type.url else {
-            completion(.failure(.invalidURL))
-            return
+            throw DataError.invalidURL
         }
-        print("URL >> \(url)")
+        
         var request = URLRequest(url: url)
         request.httpMethod = type.method.rawValue
-        print("Method >> \(type.method.rawValue)")
         
         let boundary = generateBoundary()
+        var media = [MediaData1]()
         
-        var media =  [MediaData1]()
-        
-        
-        for (index,key) in keyName.enumerated()  {
-//            if key == "images[]" {
-//                uploadImages?.forEach { url in
-//                    if url.contains("media") {
-//                        guard let med = MediaData1(withURL:"\(url)", forKey: "images[]", mimeType: "image/png") else {
-//                            return }
-//                        media.append(med)
-//                    } else {
-//                        guard let med = MediaData1(withURL: url, forKey: "images[]", mimeType: "image/png") else {
-//                            return
-//                        }
-//                        
-//                        media.append(med)
-//                    }
-//                }
-//            }
-//            else {
-//                for (index,mime) in mimeType.enumerated()  {
-                    urlArray?[index].forEach { url in
-                        if url.contains("media") {
-                            guard let med = MediaData1(withURL:"\(url)", forKey: key, mimeType: mimeType[index]) else {
-                                return }
-                            media.append(med)
-                        } else {
-                            guard let med = MediaData1(withURL: url, forKey: key, mimeType: mimeType[index]) else {
-                                return
-                            }
-                            
-                            media.append(med)
-                        }
-                    }
-//                }
-//            }
-        }
-
-        print(media as Any)
-   
-        let params  = parameters
-        
-        print(params)
-        
-        request.allHTTPHeaderFields = type.headers
-        if header {
-            if header{
-                request.allHTTPHeaderFields = ["Authorization":"Bearer \(UserDefaults.accessToken)"]
+        for (index, key) in keyName.enumerated() {
+            urlArray?[index].forEach { url in
+                if let med = MediaData1(withURL: url, forKey: key, mimeType: mimeType[index]) {
+                    media.append(med)
+                }
             }
         }
         
-        request.allHTTPHeaderFields = [
-            "Accept": "application/json",
-            "Content-Type": "multipart/form-data; boundary=\(boundary)"
-        ]
-        
-        print(media as Any)
-        
-        let dataBody = createDataBody1(withParameters: params, media: media, boundary: boundary)
-        
+        let dataBody = createDataBody1(withParameters: parameters, media: media, boundary: boundary)
         request.httpBody = dataBody
+
+        var headers = type.headers
+        if header {
+            headers?["Authorization"] = "Bearer \(UserDefaults.accessToken)"
+        }
+        headers?["Accept"] = "application/json"
+        headers?["Content-Type"] = "multipart/form-data; boundary=\(boundary)"
+        request.allHTTPHeaderFields = headers
         
-        print("Headers >>> \(request.allHTTPHeaderFields ?? [:])")
-        
-        print(request)
         let config = URLSessionConfiguration.default
         config.waitsForConnectivity = true
         config.timeoutIntervalForResource = 300
         
-        URLSession(configuration: config).dataTask(with: request) { data, response, error in
-            guard let data, error == nil else {
-                completion(.failure(.invalidData))
-                return
-            }
-            guard let response = response as? HTTPURLResponse,
-                  200 ... 599 ~= response.statusCode else {
-                do {
-                    let products = try JSONDecoder().decode(modelType, from: data)
-                    completion(.success(products))
-                }catch {
-                    completion(.failure(.invalidResponse(data)))
-                }
-                return
-            }
+        let (data, response) = try await URLSession(configuration: config).data(for: request)
+
+        print("API Response >>> \n\(data.prettyPrintedJSONString ?? "")")
+        
+        guard let httpResponse = response as? HTTPURLResponse,
+              200...299 ~= httpResponse.statusCode else {
             do {
-                print("API Response >>> \n\(data.prettyPrintedJSONString ?? "")")
-                let products = try JSONDecoder().decode(modelType, from: data)
-                completion(.success(products))
-            }catch {
-                completion(.failure(.network(error)))
+                let apiError = try JSONDecoder().decode(ApiError.self, from: data)
+                if let message = apiError.message {
+                    throw DataError.invalidCode(message)
+                } else if let errors = apiError.errors {
+                    if ((errors.email?.isEmpty) == nil) {
+                        throw DataError.invalidCode(errors.email)
+                    }
+                    if ((errors.password?.isEmpty) == nil) {
+                        throw DataError.invalidCode(errors.password)
+                    }
+                }
+                throw DataError.invalidCode("Unknown error")
+            } catch {
+                throw error
             }
-            
-        }.resume()
+        }
+
+        return try JSONDecoder().decode(T.self, from: data)
     }
+
     
     
     func uploadImageWithMultipleKeys1<T: Decodable>(

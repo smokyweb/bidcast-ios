@@ -225,7 +225,7 @@ struct TrustedBuyerScreen: View {
                 }
             }
             
-            CusNavLink(doNavigate: $navigateToProfile, destination: ProfileScreen())
+            CusNavLink(doNavigate: $navigateToProfile, destination: AccountScreen())
         }
         .onAppear {
             UIScrollView.appearance().bounces = false

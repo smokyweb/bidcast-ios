@@ -465,7 +465,7 @@ struct StoreIDCardRequest : Encodable{
 }
 
 struct StorePhoneNumberRequest : Encodable{
-    var phone_number : Int
+    var phone_number : String
 }
 
 struct OtpVerifyRequest : Encodable{

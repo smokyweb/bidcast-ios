@@ -234,6 +234,8 @@
 		D49A956E2DD71E3E006044A7 /* ContactUs.swift in Sources */ = {isa = PBXBuildFile; fileRef = D49A956B2DD71E3E006044A7 /* ContactUs.swift */; };
 		D49A95732DD75EAF006044A7 /* FAQViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D49A95722DD75EAE006044A7 /* FAQViewModel.swift */; };
 		D4A500E12DFAA74D008799B1 /* StepCircle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A500E02DFAA74D008799B1 /* StepCircle.swift */; };
+		D4A500E32DFAC474008799B1 /* OTPVerificationScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A500E22DFAC474008799B1 /* OTPVerificationScreen.swift */; };
+		D4A500E52DFAFC9B008799B1 /* CardDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A500E42DFAFC9B008799B1 /* CardDetailsView.swift */; };
 		D4A7F9042DDDA8C5001FC705 /* AddressesScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A7F9032DDDA8C5001FC705 /* AddressesScreen.swift */; };
 		D4A7F9092DDDB7CA001FC705 /* AddressesList.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A7F9082DDDB7CA001FC705 /* AddressesList.swift */; };
 		D4B615CE2DE8280200924A3D /* NotifyMeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B615C92DE8280200924A3D /* NotifyMeModel.swift */; };
@@ -672,6 +674,8 @@
 		D49A956B2DD71E3E006044A7 /* ContactUs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactUs.swift; sourceTree = "<group>"; };
 		D49A95722DD75EAE006044A7 /* FAQViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FAQViewModel.swift; sourceTree = "<group>"; };
 		D4A500E02DFAA74D008799B1 /* StepCircle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepCircle.swift; sourceTree = "<group>"; };
+		D4A500E22DFAC474008799B1 /* OTPVerificationScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OTPVerificationScreen.swift; sourceTree = "<group>"; };
+		D4A500E42DFAFC9B008799B1 /* CardDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardDetailsView.swift; sourceTree = "<group>"; };
 		D4A7F9032DDDA8C5001FC705 /* AddressesScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressesScreen.swift; sourceTree = "<group>"; };
 		D4A7F9082DDDB7CA001FC705 /* AddressesList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressesList.swift; sourceTree = "<group>"; };
 		D4B615C72DE8280200924A3D /* NotifyMeBottomSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotifyMeBottomSheet.swift; sourceTree = "<group>"; };
@@ -2420,6 +2424,8 @@
 			children = (
 				D4B615FF2DE8612300924A3D /* SellerVerificationScreen.swift */,
 				D4B6160E2DE8663D00924A3D /* VerificationSectionView.swift */,
+				D4A500E22DFAC474008799B1 /* OTPVerificationScreen.swift */,
+				D4A500E42DFAFC9B008799B1 /* CardDetailsView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -3892,6 +3898,7 @@
 				99C909A92DC8CD930054620B /* Reachability.swift in Sources */,
 				D4BA9C0C2DE4856900DFF6E6 /* ShowsModel.swift in Sources */,
 				99C909AA2DC8CD930054620B /* Logger.swift in Sources */,
+				D4A500E32DFAC474008799B1 /* OTPVerificationScreen.swift in Sources */,
 				D4CAECB42DE7383D00705CD7 /* ShopModel.swift in Sources */,
 				D4CAEC8C2DE71FB800705CD7 /* PromoteShowViewModel.swift in Sources */,
 				99C909AB2DC8CD930054620B /* IAPManager.swift in Sources */,
@@ -4027,6 +4034,7 @@
 				99C9083B2DC8CD6A0054620B /* VideoResumeSheet.swift in Sources */,
 				D4B615D02DE8280200924A3D /* NotifyMeViewModel.swift in Sources */,
 				99C9083C2DC8CD6A0054620B /* JobListCardImg.swift in Sources */,
+				D4A500E52DFAFC9B008799B1 /* CardDetailsView.swift in Sources */,
 				99C907C42DC8CC990054620B /* AppDelegate.swift in Sources */,
 				D4B615FC2DE83C4800924A3D /* CreateClipModel.swift in Sources */,
 				99C907C52DC8CC990054620B /* SceneDelegate.swift in Sources */,
