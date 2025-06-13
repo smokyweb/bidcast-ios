@@ -7,6 +7,7 @@
 
 import SwiftUI
 import AlertToast
+import SVProgressHUD
 
 // MARK: - Show Model
 struct Show: Identifiable {
@@ -28,6 +29,9 @@ struct ShowsScreen: View {
     
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject private var appRootManager: AppRootManager
+    
+    @State var viewModel = ShowsViewModel()
+    @State var showsData = [HomeModel]()
 
     // Sample data
     let shows = [
@@ -54,6 +58,19 @@ struct ShowsScreen: View {
 
             // MARK: - Segmented Control
             CustomSegmentedControl(preselectedIndex: $segment, options: ShowScreenSegment.allCases)
+                .onChange(of: segment) { newSegment in
+                    Task{
+                        SVProgressHUD.show()
+                        if segment == .pastShows{
+                            await viewModel.getLiveSHows(param: GetLiveShowsRequest(type: "past"))
+                        }else{
+                            await viewModel.getLiveSHows(param: GetLiveShowsRequest(type: "upcoming"))
+                        }
+                       
+                        await SVProgressHUD.dismiss()
+                        await scheduleSuccess()
+                    }
+                }
                 .padding(.horizontal)
 
             // MARK: - Scrollable Content
@@ -66,8 +83,9 @@ struct ShowsScreen: View {
                             .foregroundColor(.gray)
                             .padding()
                     } else {
-                        ForEach(shows) { show in
-                            ShowCardView(show: show)
+                        ForEach(showsData.indices,id: \.self) { index in
+                            let data = showsData[index]
+                            ShowCardView(show: data)
                         }
                     }
                     Spacer().frame(height: 80)
@@ -92,6 +110,20 @@ struct ShowsScreen: View {
         .background(Color(UIColor.systemGroupedBackground))
         .toast(isPresenting: $showhud) {
             AlertToast(type: .regular, title: hudMsg)
+        }
+        .onAppear{
+            Task{
+                SVProgressHUD.show()
+                await viewModel.getLiveSHows(param: GetLiveShowsRequest(type: "upcoming"))
+                await SVProgressHUD.dismiss()
+                await scheduleSuccess()
+            }
+        }
+    }
+    func scheduleSuccess(){
+        let response = viewModel.scheduledShow
+        if response?.status == "success"{
+            showsData = response?.data ?? [HomeModel]()
         }
     }
 }

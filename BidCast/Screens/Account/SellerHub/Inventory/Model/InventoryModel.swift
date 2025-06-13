@@ -19,7 +19,8 @@ struct InventoryModel: Codable {
 struct InventoryDataModel: Codable {
     var id, categoryID: Int?
     var title, description: String?
-    var quantity, pricing: Int?
+    var quantity : Int?
+    var pricing: Float?
     var flashSale, acceptOffers, reserveForLive: Bool?
     var shippingProfileID: Int?
     var status: String?

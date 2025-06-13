@@ -38,5 +38,8 @@ struct User: Codable,Identifiable {
     var username: String?
     var email: String?
     var profile_image: String?
+    var thumbnail: String?
     var bio: String?
+    var is_active: Bool?
+    var referral_code: String?
 }

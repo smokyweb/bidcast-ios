@@ -82,6 +82,7 @@ enum APIEndPoint{
     case getCard
     case getTransactionList(param : TransactionRequest)
     case getProduct(param:ProductRequest)
+    case getScheduledShow(param:GetLiveShowsRequest)
     
     //MARK: OLD
     
@@ -312,6 +313,8 @@ extension APIEndPoint: EndPointType {
             return "store-schedule-show"
         case .getProduct:
             return "get-product"
+        case .getScheduledShow:
+            return "get-my-schedule-show"
             
             //MARK: Old
             
@@ -454,6 +457,7 @@ extension APIEndPoint: EndPointType {
         case .removeSavedJob:
             return "save-job"
      
+       
         }
     }
     
@@ -593,6 +597,8 @@ extension APIEndPoint: EndPointType {
         case .storeScheduleShow:
             return .post
         case .getProduct:
+            return .post
+        case .getScheduledShow:
             return .post
             
             //MARK: Old
@@ -740,6 +746,7 @@ extension APIEndPoint: EndPointType {
             return .post
        
        
+       
         }
     }
     
@@ -883,6 +890,8 @@ extension APIEndPoint: EndPointType {
         case .storeScheduleShow(param: let param):
             return param
         case .getProduct(param: let param):
+            return param
+        case .getScheduledShow(param: let param):
             return param
             
             //MARK: Old
@@ -1032,6 +1041,7 @@ extension APIEndPoint: EndPointType {
       
        
       
+        
         }
     }
     

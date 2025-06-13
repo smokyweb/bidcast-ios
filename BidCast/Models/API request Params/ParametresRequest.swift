@@ -575,3 +575,7 @@ struct StoreScheduleShowRequest: Encodable {
 struct ProductRequest : Encodable {
     var category_id : String
 }
+
+struct GetLiveShowsRequest : Encodable{
+    var type : String
+}

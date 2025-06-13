@@ -123,7 +123,7 @@ struct WalletScreen: View {
     @State var dataTransaction = [TransactionModel]()
     
     @State var viewModel = WalletViewModel()
-    
+    @State var selectedButton: WalletSegment = .all
     var body: some View {
         VStack(spacing: 0) {
             
@@ -151,6 +151,9 @@ struct WalletScreen: View {
                                       payouts: data?.payoutHistory ?? [Payout]())
                         
                     case .transactions:
+                        VStack(spacing: 10) {
+                            SegmentedControlView(segments: WalletSegment.allCases, selectedSegment: $selectedButton, isWithBorder: true)
+                        }
                         ForEach(dataTransaction.indices, id: \.self) { index in
                             let data = dataTransaction[index]
                             TransactionsTabView(

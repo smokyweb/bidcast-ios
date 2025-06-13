@@ -11,14 +11,12 @@ struct TransactionsTabView: View {
    @State var title = ""
     @State var subLabel = ""
     @State var price = ""
-    @State var selectedButton: WalletSegment = .all
+    
     
     var body: some View {
       
             VStack(spacing: 15) {
-                VStack(spacing: 10) {
-                    SegmentedControlView(segments: WalletSegment.allCases, selectedSegment: $selectedButton, isWithBorder: true)
-                }
+                
                 
                     ListCell(
                         isComeFrom: "Wallet",

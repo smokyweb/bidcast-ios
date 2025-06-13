@@ -11,28 +11,45 @@ import SwiftUI
 
 // MARK: - Show Card View
 struct ShowCardView: View {
-    let show: Show
+    let show: HomeModel
 
     var body: some View {
         HStack {
-            Rectangle()
-                .fill(Color.gray.opacity(0.3))
-                .frame(width: 60, height: 60)
-                .cornerRadius(8)
-
+            AsyncImage(url: URL(string: show.img_thumbnail?.first ?? "")) { phase in
+                switch phase {
+                case .empty:
+                    ProgressView()
+                        .frame(width: 60, height: 60)
+                case .success(let image):
+                    image
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 60, height: 60)
+                        .cornerRadius(8.0)
+                case .failure:
+                    Image(systemName: "person.crop.circle.fill")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 60, height: 60)
+                        .foregroundColor(.gray)
+                        .cornerRadius(8.0)
+                @unknown default:
+                    EmptyView()
+                }
+            }
             VStack(alignment: .leading, spacing: 5) {
-                Text(show.title)
-                    .fontWeight(.semibold)
+                Text(show.title ?? "")
+                    .font(.custom(poppinsBold, size: 14.0))
 
-                Text(show.date)
-                    .font(.subheadline)
+                Text(show.date ?? "")
+                    .font(.custom(poppinsSemiBold, size: 13.0))
                     .foregroundColor(.gray)
 
                 HStack {
-                    Label(show.time, systemImage: "clock")
-                        .font(.caption)
-                    Label("\(show.rsvps) RSVPs", systemImage: "person.3")
-                        .font(.caption)
+                    Label(show.time ?? "", systemImage: "clock")
+                        .font(.custom(poppinsSemiBold, size: 13.0))
+                    Label("\(show.viewer_count ?? 0) RSVPs", systemImage: "person.3")
+                        .font(.custom(poppinsSemiBold, size: 13.0))
                 }
             }
             Spacer()
