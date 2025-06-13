@@ -23,7 +23,7 @@ struct SelectCategoryScreen: View {
     @State private var categoryList: [CategoryDataModel] = []
     @State private var auctionTypeList: [AuctionDataModel] = []
     @State var navigateToThumbnail : Bool = false
-    
+    @State var request = StoreScheduleShowRequest(title: "", date: "", time: "", category_id: "", auction_type_id: "", product_ids: "", thumbnail: [""])
     @Binding var title : String
     
     var viewModel = SelectCategoryViewModel()
@@ -31,22 +31,23 @@ struct SelectCategoryScreen: View {
     
     var body: some View {
         VStack {
-            // Top Header
-            PrimaryHeader(
-                title: "Select Category".localized,
-                isForLogo: false,
-                leadingImgArr: [.icBack],
-                trailingImgArr: [],
-                onClickLeading: { _ in
-                    self.presentationMode.wrappedValue.dismiss()
-                },
-                count: .constant(0)
-            )
-            .background(Color.white)
             
-            // Label
+            VStack{
+                PrimaryHeader(
+                    title: "Select Category".localized,
+                    isForLogo: false,
+                    leadingImgArr: [.icBack],
+                    trailingImgArr: [],
+                    onClickLeading: { _ in
+                        self.presentationMode.wrappedValue.dismiss()
+                    },
+                    count: .constant(0)
+                )
+            }
+            
+          
             TitleWithLine(title: "Select the category that most accurately describes your show, and how you would like to sell.", lineLength: 0)
-                .padding([.leading,.trailing] ,40)
+//                .padding([.leading,.trailing] ,40)
             
             VStack(spacing: 10) {
                 // Drop Down for Category
@@ -58,11 +59,16 @@ struct SelectCategoryScreen: View {
                     showLeadingIcon: false,
                     showTrailingIcon: false,
                     showDropDownIcon: true,
-                    anchor: .top
+                    onOptionSelected: { value in
+                        if let id = categoryList.first(where: { $0.name == value })?.id {
+                            request.category_id = "\(id)"
+                            
+                        } else {
+                            request.category_id = ""
+                        }
+                    }, anchor: .top
                 )
-                .onChange(of: selectedCategory) { newValue in
-                    print("The catory count \(categoryNames)")
-                }
+                
                 
                 // Drop Down for Auction Type
                 DropDownTextField(
@@ -73,21 +79,31 @@ struct SelectCategoryScreen: View {
                     showLeadingIcon: false,
                     showTrailingIcon: false,
                     showDropDownIcon: true,
+                    onOptionSelected: { value in
+                        if let id = auctionTypeList.first(where: { $0.name == value })?.id {
+                            request.auction_type_id = "\(id)"
+                            
+                        } else {
+                            request.auction_type_id = ""
+                        }
+                    },
                     anchor: .bottom
                 )
                 
                 Spacer()
                 PrimaryButton(title: AppString.continueBtn.localized, isOutLine: false, onButtonClick: {
+                    request.title = title
+                    print("Store title,category,auction \(request)")
                     navigateToThumbnail = true
+                    
                 },cornerRadius : 12.0, btnTextColor: .white)
                 .padding(.bottom, 0)
             }
             .zIndex(1400.0)
             .padding(.top , 10)
-            .padding(.horizontal)
-            CusNavLink(doNavigate: $navigateToThumbnail, destination: SelectThumbnailScreen())
+//            .padding(.horizontal)
+            CusNavLink(doNavigate: $navigateToThumbnail, destination: SelectThumbnailScreen(request:$request))
         }
-        .edgesIgnoringSafeArea(.top)
         .background(Color.bg.opacity(0.5))
         .onAppear {
             
@@ -95,15 +111,11 @@ struct SelectCategoryScreen: View {
                 SVProgressHUD.show()
                 await self.viewModel.getCategoryList()
                 await SVProgressHUD.dismiss()
-                categorySuccess()
+                await categorySuccess()
                 
             }
         }
        
-        .onReceive(viewModel.$auctionResponse){ response in
-           
-          
-        }
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }
@@ -121,6 +133,7 @@ struct SelectCategoryScreen: View {
         }
     }
     
+   
     
     func categorySuccess() {
         let response = viewModel.categoryResponse
@@ -131,7 +144,7 @@ struct SelectCategoryScreen: View {
                 SVProgressHUD.show()
                 await  self.viewModel.getAuctionList()
                 await SVProgressHUD.dismiss()
-                auctionSuccess()
+                await auctionSuccess()
             }
         } else {
             alertType = .sheetType(

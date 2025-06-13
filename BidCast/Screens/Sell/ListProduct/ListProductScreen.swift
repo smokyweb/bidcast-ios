@@ -22,6 +22,7 @@ struct ListProductScreen: View {
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
     @State var showError: Bool = false
+    @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     
     @State var categoryNames: [String] = []
     @State var selectedCategory = ""
@@ -31,7 +32,7 @@ struct ListProductScreen: View {
     @State var shippingId = ""
     @State var ShippingAddress: [AddressModel] = []
     
-    @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+   
     @State var request : StoreProductParam = StoreProductParam(category_id: "", title: "", description: "", quantity: "", pricing: "", flash_sale: "0", accept_offers: "0", reserve_for_live: "0", shipping_profile_id: "", status: "")
     
     @State var viewModel = ListProductViewModel()

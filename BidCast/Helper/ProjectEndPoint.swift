@@ -69,6 +69,7 @@ enum APIEndPoint{
     case promo(param : PromoCodeRequest)
     case getReferralCode
     case orderReciept(param : OrderRecieptRequest)
+    case storeScheduleShow(param : StoreScheduleShowRequest)
     
     
     
@@ -80,6 +81,7 @@ enum APIEndPoint{
     case deleteCard(param:DeleteCardRequest)
     case getCard
     case getTransactionList(param : TransactionRequest)
+    case getProduct(param:ProductRequest)
     
     //MARK: OLD
     
@@ -306,6 +308,10 @@ extension APIEndPoint: EndPointType {
             return "get-card"
         case .getTransactionList:
             return "transaction-history/listing"
+        case .storeScheduleShow:
+            return "store-schedule-show"
+        case .getProduct:
+            return "get-product"
             
             //MARK: Old
             
@@ -447,11 +453,7 @@ extension APIEndPoint: EndPointType {
             return "get_jobs?category=\(param.category)&job_title=\(param.job_title)&salary=\(param.salary)"
         case .removeSavedJob:
             return "save-job"
-        case .removeSavedJob:
-            return "save-job"
-        case .removeSavedJob:
-            return "save-job"
-      
+     
         }
     }
     
@@ -587,6 +589,10 @@ extension APIEndPoint: EndPointType {
         case .getCard:
             return .get
         case .getTransactionList:
+            return .post
+        case .storeScheduleShow:
+            return .post
+        case .getProduct:
             return .post
             
             //MARK: Old
@@ -732,14 +738,8 @@ extension APIEndPoint: EndPointType {
             return .post
         case .Business:
             return .post
-            
-            
-            
-            
        
        
-       
-        
         }
     }
     
@@ -880,7 +880,10 @@ extension APIEndPoint: EndPointType {
             
         case .getTransactionList(param: let param):
                 return param
-            
+        case .storeScheduleShow(param: let param):
+            return param
+        case .getProduct(param: let param):
+            return param
             
             //MARK: Old
             
@@ -1026,6 +1029,8 @@ extension APIEndPoint: EndPointType {
             return param
             
         
+      
+       
       
         }
     }

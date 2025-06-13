@@ -553,4 +553,25 @@ struct TransactionRequest : Encodable {
     var id : String? = ""
 }
 
+struct StoreScheduleShowRequest: Encodable {
+    var title: String
+    var date: String
+    var time: String
+    var category_id: String
+    var auction_type_id: String
+    var product_ids: String
+    var thumbnail : [String]
 
+    enum CodingKeys: String, CodingKey {
+        case title
+        case date
+        case time
+        case category_id
+        case auction_type_id
+        case product_ids = "product_ids[]"
+        case thumbnail = "thumbnail[]"
+    }
+}
+struct ProductRequest : Encodable {
+    var category_id : String
+}

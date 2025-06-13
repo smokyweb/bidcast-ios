@@ -19,6 +19,7 @@ struct LetsPrepare: View {
     
     @State var navigateToTips  = false
     @State var navigateToCreateScreen = false
+    @State var navigateToCreateShow = false
     
     private var currentProgress: Double {
         guard !prepare.isEmpty else { return 0 }
@@ -54,7 +55,7 @@ struct LetsPrepare: View {
                             isCurrent: idx == currentIndex
                         ) {
                             if idx == 0 {
-                                
+                                navigateToCreateShow = true
                             }else if idx == 1 {
                                 navigateToCreateScreen = true
                             }
@@ -85,7 +86,8 @@ struct LetsPrepare: View {
             .padding(.horizontal,18)
 //            .background(.green)
             CusNavLink(doNavigate: $navigateToTips, destination: ShowTips())
-            CusNavLink(doNavigate: $navigateToCreateScreen, destination: CreateProductScreen())
+            CusNavLink(doNavigate: $navigateToCreateShow, destination: ShowTitleTips())
+//            CusNavLink(doNavigate: $navigateToCreateScreen, destination: CreateProductScreen())
         }
         .edgesIgnoringSafeArea(.bottom)
         .background(.bg.opacity(0.5))

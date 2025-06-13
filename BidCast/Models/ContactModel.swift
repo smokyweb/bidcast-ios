@@ -36,9 +36,10 @@ struct CategoryModel : Codable{
 
 struct CategoryDataModel : Codable{
     var id : Int?
-    var name : String?
-    var image : String?
-    var color : String?
+    var name: String?
+    var image: String?
+    var thumbnail: String?
+    var color: String?
 }
 
 struct AuctionModel : Codable{

@@ -1292,6 +1292,7 @@
 			children = (
 				35CCE0192DD8780600760CEE /* ViewModel */,
 				35CCE0182DD877FC00760CEE /* Model */,
+				35BA4A492DE87C1100EEC92A /* Add Product */,
 				3576EACF2DDDA0E800177C7D /* ShowTitleTips.swift */,
 				358B9D142DDEFB9900932250 /* SelectShowScreen.swift */,
 				3576EAD32DDDD96900177C7D /* SelectThumbnailScreen.swift */,
@@ -2461,7 +2462,6 @@
 			children = (
 				35BA4A4F2DE883BE00EEC92A /* CompleteProfile */,
 				35BA4A4C2DE8805800EEC92A /* ReferAndEarn */,
-				35BA4A492DE87C1100EEC92A /* Add Product */,
 				35BA4A462DE878E300EEC92A /* SalesFormat */,
 				35BA4A432DE870C500EEC92A /* CreateProduct */,
 				35BA4A402DE86E7100EEC92A /* SendGift */,

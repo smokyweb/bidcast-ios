@@ -131,7 +131,7 @@ struct ShowTitleTips: View {
     func success() {
         let dict = viewModel.tipsResponse
         if dict?.status == "success" {
-            tip = dict?.data.first ?? TitleTipsModel()
+            tip = dict?.data ?? TitleTipsModel()
             } else {
                 print("API error: \(dict?.status ?? "")")
             }

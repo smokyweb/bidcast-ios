@@ -55,8 +55,9 @@ struct TabbarScreen: View {
                 }
             }
             
-            CusNavLink(doNavigate: $navigateTogetStarted, destination: GetStartedScreen())
+//            CusNavLink(doNavigate: $navigateTogetStarted, destination: GetStartedScreen())
             //CusNavLink(doNavigate: $navigateToLesson, destination: SelectShowScreen())
+            CusNavLink(doNavigate: $navigateTogetStarted, destination: LetsPrepare())
             CusNavLink(doNavigate: $navigateTolist, destination: ListProductScreen())
         }
         //

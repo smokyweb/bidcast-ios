@@ -20,8 +20,8 @@ struct FSCalendarView: UIViewRepresentable {
         }
 
         func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
-            let now = Calendar.current.startOfDay(for: Date())
-            let thisDate = Calendar.current.startOfDay(for: date)
+            let now = Calendar.currentWithTimeZone.startOfDay(for: Date())
+                       let thisDate = Calendar.currentWithTimeZone.startOfDay(for: date)
             if thisDate < now {
                 
             }else{
@@ -30,8 +30,8 @@ struct FSCalendarView: UIViewRepresentable {
         }
         
         func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, titleDefaultColorFor date: Date) -> UIColor? {
-                let now = Calendar.current.startOfDay(for: Date())
-                let thisDate = Calendar.current.startOfDay(for: date)
+            let now = Calendar.currentWithTimeZone.startOfDay(for: Date())
+                       let thisDate = Calendar.currentWithTimeZone.startOfDay(for: date)
 
                 if thisDate < now {
                     return .lightGray  // Color for past dates
@@ -42,8 +42,8 @@ struct FSCalendarView: UIViewRepresentable {
         
        
         func calendar(_ calendar: FSCalendar, shouldSelect date: Date, at monthPosition: FSCalendarMonthPosition) -> Bool {
-            let now = Calendar.current.startOfDay(for: Date())
-            let thisDate = Calendar.current.startOfDay(for: date)
+            let now = Calendar.currentWithTimeZone.startOfDay(for: Date())
+                       let thisDate = Calendar.currentWithTimeZone.startOfDay(for: date)
 
             if thisDate < now {
                 return false  // Color for past dates
@@ -72,5 +72,13 @@ struct FSCalendarView: UIViewRepresentable {
 
     func updateUIView(_ uiView: FSCalendar, context: Context) {
         uiView.select(selectedDate)
+    }
+}
+
+extension Calendar {
+    static var currentWithTimeZone: Calendar {
+        var calendar = Calendar.current
+        calendar.timeZone = TimeZone.current // or use TimeZone(identifier: "America/New_York") if needed
+        return calendar
     }
 }

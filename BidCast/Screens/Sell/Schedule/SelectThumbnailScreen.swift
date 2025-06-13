@@ -23,6 +23,7 @@ struct SelectThumbnailScreen: View {
     @State private var showPhotoLibrary = false
     @State private var showPickerOptions = false
     @State private var selectedMedia =  UIImage()
+    @Binding var request : StoreScheduleShowRequest
     
     var body: some View {
         VStack(spacing:18){
@@ -102,11 +103,12 @@ struct SelectThumbnailScreen: View {
             .padding(.horizontal,Leading)
             //            .background(.green)
             PrimaryButton(title: "Continue to next step",isOutLine: false,onButtonClick: {
+                print("request \(request)")
                 navigateToSelectTime = true
              
             },cornerRadius: 12, btnTextColor: .white)
             
-            CusNavLink(doNavigate: $navigateToSelectTime, destination: SelectShowScreen())
+            CusNavLink(doNavigate: $navigateToSelectTime, destination: SelectShowScreen(request:$request))
             
         }
         .edgesIgnoringSafeArea([.top,.bottom])
@@ -125,6 +127,8 @@ struct SelectThumbnailScreen: View {
             ImagePicker(sourceType: .camera) { image,url in
                 if let image = image{
                     selectedMedia = image
+                    request.thumbnail.removeAll()
+                    request.thumbnail.append(url ?? "")
                 }
             }
         }
@@ -132,6 +136,8 @@ struct SelectThumbnailScreen: View {
             ImagePicker(sourceType: .photoLibrary){ image,url in
                 if let image = image{
                     selectedMedia = image
+                    request.thumbnail.removeAll()
+                    request.thumbnail.append(url ?? "")
                 }
             }
         }
@@ -151,7 +157,7 @@ struct SelectThumbnailScreen: View {
         SVProgressHUD.dismiss()
          let dict = viewModel.tipsResponse
             if dict?.status == "success" {
-                tip = dict?.data.first ?? TitleTipsModel()
+                tip = dict?.data ?? TitleTipsModel()
             } else {
                 print("API error: \(dict?.status ?? "")")
             }

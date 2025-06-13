@@ -19,7 +19,9 @@ final class ScheduleViewModel: ObservableObject {
     
     // MARK: - Published Properties
     @Published var lessonsResponse: ResponseModal<[LessonModel]>?
-    @Published var tipsResponse: ResponseModal<[TitleTipsModel]>?
+    @Published var tipsResponse: ResponseModal<TitleTipsModel>?
+    @Published var productResponse: ResponseModal<[ProductDataModel]>?
+    @Published var storeShowResponse : ResponseModal<StoreScheduleShowModel>?
     @Published var errorMessage: String? = nil
     @Published var requestType: String = ""
 
@@ -97,13 +99,60 @@ final class ScheduleViewModel: ObservableObject {
     func getTitleTips(param: TipParam) async {
         requestType = "titleTips"
         do {
-            let response: ResponseModal<[TitleTipsModel]> = try await APIManager.shared.request(
+            let response: ResponseModal<TitleTipsModel> = try await APIManager.shared.request(
                 type: APIEndPoint.getAllTips(param: param),
                 header: true
             )
             tipsResponse = response
         } catch {
             handle(error: error)
+        }
+    }
+    
+    func getProductList(parameters: ProductRequest) async {
+        do {
+            let response: ResponseModal<[ProductDataModel]> = try await APIManager.shared.request(
+                type: APIEndPoint.getProduct(param: parameters),
+                header: true
+            )
+            self.productResponse = response
+        } catch {
+            handle(error: error)
+        }
+    }
+    
+    func storeScheduleShow(parameters: StoreScheduleShowRequest) async {
+        do {
+            let response: ResponseModal<StoreScheduleShowModel> = try await APIManager.shared.request(
+                type: APIEndPoint.storeScheduleShow(param: parameters),
+                header: true
+            )
+            self.storeShowResponse = response
+        } catch {
+            handle(error: error)
+        }
+    }
+    
+    func storeScheduleShow(parameters: StoreScheduleShowRequest,images: [String], key: String) async {
+        var parameter = [String:Any]()
+        do {
+            parameter = try parameters.asDictionary()
+        } catch {
+            print(error.localizedDescription)
+        }
+        do {
+            let response: ResponseModal<StoreScheduleShowModel> = try await APIManager.shared.uploadImage1(
+                type: APIEndPoint.storeScheduleShow(param: parameters),
+                urlArray: images,
+                mimeType: "image",
+                keyName: key,
+                parameters: parameter,
+                modalType:  ResponseModal<StoreScheduleShowModel>.self,
+                header: true
+            )
+            self.storeShowResponse = response
+        } catch {
+            self.errorMessage = error.localizedDescription
         }
     }
 

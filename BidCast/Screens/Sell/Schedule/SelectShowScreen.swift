@@ -18,8 +18,11 @@ struct SelectShowScreen: View {
     var viewModel = ScheduleViewModel()
     @State var title = ""
     @State var navigateToSelectCategory  = false
+    @State var navigateToAddProduct  = false
     @State var selectedDate  = Date()
+    @State var selectedTime  = Date()
     @State var date = Date()
+    @Binding var request : StoreScheduleShowRequest
     
     var body: some View {
         VStack(spacing:18){
@@ -35,8 +38,7 @@ struct SelectShowScreen: View {
                     count: .constant(0)
                 )
                 .background(.white)
-            }.frame(height: 80)
-            
+            }
             ScrollView(showsIndicators: false) {
                 VStack(alignment:.leading,spacing: 16) {
                     VStack(alignment:.leading,spacing: 24){
@@ -54,7 +56,9 @@ struct SelectShowScreen: View {
                         }
                         .padding(.top,4)
                         
-                        TimePickerView(selectedDate: $selectedDate)
+                        TimePickerView(selectedDate: $selectedDate,onTImeSelected: { time in
+                            selectedTime = time
+                        })
                     }
                     .padding(.horizontal,Leading/2)
                     .background(.white)
@@ -66,11 +70,21 @@ struct SelectShowScreen: View {
             .padding(.horizontal,Leading)
             //            .background(.green)
             PrimaryButton(title: "Continue to next step",isOutLine: false,onButtonClick: {
+                print("date : \(selectedDate) time : \(selectedTime)")
                 
+                let selectedDateStr = formatDate(selectedDate, format: "yyyy-MM-dd")
+                    let selectedTimeStr = formatDate(selectedTime, format: "hh:mm")
+
+                    print("📆 Date in local time: \(selectedDateStr)")
+                    print("⏰ Time in local time: \(selectedTimeStr)")
+                request.date = selectedDateStr
+                request.time = selectedTimeStr
+                print(request)
+                navigateToAddProduct = true
 //                navigateToSelectCategory = true
             },cornerRadius: 12, btnTextColor: .white)
             
-//            CusNavLink(doNavigate: $navigateToSelectCategory, destination: SelectCategoryScreen(title: $title))
+            CusNavLink(doNavigate: $navigateToAddProduct, destination: AddProductsScreen(request:$request))
            
         }
     
@@ -84,10 +98,18 @@ struct SelectShowScreen: View {
         }
     }
     
+    func formatDate(_ date: Date, format: String = "yyyy-MM-dd HH:mm") -> String {
+        let formatter = DateFormatter()
+        formatter.timeZone = .current // Use device's timezone
+        formatter.locale = .current   // Respect user's locale (e.g., AM/PM or 24hr)
+        formatter.dateFormat = format
+        return formatter.string(from: date)
+    }
+    
     func success() {
         let dict = viewModel.tipsResponse
         if dict?.status == "success" {
-            tip = dict?.data.first ?? TitleTipsModel()
+            tip = dict?.data ?? TitleTipsModel()
             } else {
                 print("API error: \(dict?.status ?? "")")
             }
@@ -102,9 +124,9 @@ struct SelectShowScreen: View {
     //    }
 }
 
-#Preview {
-    SelectShowScreen()
-}
+//#Preview {
+//    SelectShowScreen()
+//}
 
 
 //import SwiftUI
@@ -114,18 +136,23 @@ struct TimePickerView: View {
     @State var selectedTime: Date? = nil
 
     let intervalMinutes = 60
-    let calendar = Calendar.current
+    let calendar: Calendar = {
+            var cal = Calendar.current
+            cal.timeZone = TimeZone.current
+            return cal
+        }()
 
     let columns = [
         GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())
     ]
-
+    var onTImeSelected : (Date ) -> () = {_ in }
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
 
             LazyVGrid(columns: columns, spacing: 16) {
                 ForEach(filteredSlots(date: selectedDate), id: \.self) { time in
                     Button(action: {
+                        onTImeSelected(time)
                         selectedTime = time
                     }) {
                         Text(formatTime(time))
@@ -151,6 +178,8 @@ struct TimePickerView: View {
 
     func formatTime(_ date: Date) -> String {
         let formatter = DateFormatter()
+        formatter.locale = Locale.current
+        formatter.timeZone = TimeZone.current
         let format = DateFormatter.dateFormat(fromTemplate: "j:mm", options: 0, locale: Locale.current)!
         formatter.dateFormat = format
         return formatter.string(from: date)
@@ -179,7 +208,8 @@ struct TimePickerView: View {
 
     static func generateTimeSlots(from start: String, to end: String, intervalMinutes: Int) -> [Date] {
         let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm"
+        formatter.timeZone = TimeZone.current
+               formatter.dateFormat = "HH:mm"
 
         guard
             let startTime = formatter.date(from: start),
