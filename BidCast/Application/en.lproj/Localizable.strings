@@ -1,10 +1,11 @@
-/* 
+/*
   Localizable.strings
   BidCast
 
   Created by JAM_E_329 on 14/05/25.
   
 */
+
 "Activity" = "Activity";
 "Password" = "Password";
 "Email Address" = "Email Address";
@@ -58,7 +59,6 @@
 "Go live and sell to your audience" = "Go live and sell to your audience";
 "Manage your store and listings" = "Manage your store and listings";
 "Sell" = "Sell";
-"Seller Hub" = "Seller Hub";
 "My Account" = "My Account";
 "Inventory" = "Inventory";
 "Shows" = "Shows";
@@ -89,9 +89,6 @@
 "Sorting" = "Sorting";
 "Credits" = "Credits";
 "Coupons" = "Coupons";
-
-
-"First Name" = "First Name";
 "Subject" = "Subject";
 "Message" = "Message";
 "Send Message" = "Send Message";
@@ -99,12 +96,90 @@
 "We're here to help! Send us your queries and we'll get back to you soon" = "We're here to help! Send us your queries and we'll get back to you soon";
 "FAQ" = "FAQ";
 "Enter Full Name" = "Enter Full Name";
-"Contact Us" = "Contact Us";
 "Enter Subject" = "Enter Subject";
 "Enter Your Message Here" = "Enter Your Message Here";
-
 "Media" = "Media";
 "Product Details" = "Product Details";
 "Category" = "Category";
 "Show Tips" = "Show Tips";
 "Lets Prepare Your show" = "Lets Prepare Your show";
+"Show Title" = "Show Title";
+"Enter title" = "Enter title";
+"Tips for a Great Title" = "Tips for a Great Title";
+"Good Example" = "Good Example";
+"Continue to next step" = "Continue to next step";
+"title" = "title";
+"success" = "success";
+"Select Category" = "Select Category";
+"Select the category that most accurately describes your show, and how you would like to sell." = "Select the category that most accurately describes your show, and how you would like to sell.";
+"Select Auction Type" = "Select Auction Type";
+"No Auction" = "No Auction";
+"defaultUser" = "defaultUser";
+"Sign In" = "Sign In";
+"Decline" = "Decline";
+"Accept" = "Accept";
+"Oops" = "Oops";
+"Lost Connection" = "Lost Connection";
+"Whoops, no internet connection found.\nPlease check your connection." = "Whoops, no internet connection found.\nPlease check your connection.";
+"Try Again" = "Try Again";
+"Are you sure you want to logout?" = "Are you sure you want to logout?";
+"Cancel" = "Cancel";
+"Logout" = "Logout";
+"token" = "token";
+"Login Again" = "Login Again";
+"My Listing" = "My Listing";
+"Header Title" = "Header Title";
+"Search for..." = "Search for...";
+"Tell Us about yourself" = "Tell Us about yourself";
+"Complete Profile" = "Complete Profile";
+"Complete Your Profile" = "Complete Your Profile";
+"Let others know who you are" = "Let others know who you are";
+"Upload photo" = "Upload photo";
+"Full Name" = "Full Name";
+"Enter your full name" = "Enter your full name";
+"Choose a username" = "Choose a username";
+"Username" = "Username";
+"Bio" = "Bio";
+"Refer a Friend" = "Refer a Friend";
+"Share & Earn Rewards" = "Share & Earn Rewards";
+"Invite friends and earn rewards when they join" = "Invite friends and earn rewards when they join";
+"Copy" = "Copy";
+"How It Works" = "How It Works";
+"Share Your Link" = "Share Your Link";
+"Send your unique referral link to friends" = "Send your unique referral link to friends";
+"When they sign up using your link" = "When they sign up using your link";
+"Friends Join" = "Friends Join";
+"Get $10 credit for each friend who joins" = "Get $10 credit for each friend who joins";
+"Earn Rewards" = "Earn Rewards";
+"Choose Sales Format" = "Choose Sales Format";
+"Set a competitive starting price that will attract potential buyers. A well-priced item increases your chances of a successful sale and can lead to better bidding activity." = "Set a competitive starting price that will attract potential buyers. A well-priced item increases your chances of a successful sale and can lead to better bidding activity.";
+"Select Format" = "Select Format";
+"Buy It Now" = "Buy It Now";
+"Starting Bid" = "Starting Bid";
+"Minimum starting bid is $1.00" = "Minimum starting bid is $1.00";
+"Enable Allow Offers to let buyers offer a different price for your product. You may counter, accept, or simply decline the offer." = "Enable Allow Offers to let buyers offer a different price for your product. You may counter, accept, or simply decline the offer.";
+"Allow Offers" = "Allow Offers";
+"Create Product" = "Create Product";
+"Detailed product listings help buyers make informed decisions and increase your chances of making a sale." = "Detailed product listings help buyers make informed decisions and increase your chances of making a sale.";
+"Photos" = "Photos";
+"Add up to 8 photos" = "Add up to 8 photos";
+"Electronics" = "Electronics";
+"Apparel" = "Apparel";
+"Select category" = "Select category";
+"Other" = "Other";
+"Enter product title" = "Enter product title";
+"Description" = "Description";
+"Quantity Available" = "Quantity Available";
+"Use Product Library" = "Use Product Library";
+"Send as a Gift" = "Send as a Gift";
+"Gift to a Friend" = "Gift to a Friend";
+"Send this purchase as a gift to someone special" = "Send this purchase as a gift to someone special";
+"Find your friend" = "Find your friend";
+"Search by username or email" = "Search by username or email";
+"Add a gift message (optional)" = "Add a gift message (optional)";
+"store" = "store";
+"Condition" = "Condition";
+"Location" = "Location";
+"Posted" = "Posted";
+"Buy Now" = "Buy Now";
+"Make Offer" = "Make Offer";
