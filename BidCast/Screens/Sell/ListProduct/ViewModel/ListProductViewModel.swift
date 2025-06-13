@@ -33,36 +33,33 @@ final class ListProductViewModel: ObservableObject {
     
     
     
-    func storeProduct(param: StoreProductParam, images: [String], key: String) {
+    func storeProduct(param: StoreProductParam, images: [String], key: String) async {
         self.requestType = "store"
-        var parameters = [String: Any]()
         
         do {
-            parameters = try param.asDictionary()
-        } catch {
-            self.errorMessage = "Invalid parameters: \(error.localizedDescription)"
-            return
-        }
-        
-        APIManager.shared.uploadImage(
-            type: APIEndPoint.storeProduct(param: param),
-            urlArray: images,
-            mimeType: "image/jpeg",
-            keyName: key,
-            parameters: parameters,
-            modalType: ResponseModal<StoreProductModel>.self,
-            header: true
-        ) { result in
+            let parameters = try param.asDictionary()
+            
+            let response: ResponseModal<StoreProductModel> = try await APIManager.shared.uploadImage(
+                type: APIEndPoint.storeProduct(param: param),
+                urlArray: images,
+                mimeType: "image/jpeg",
+                keyName: key,
+                parameters: parameters,
+                modalType: ResponseModal<StoreProductModel>.self,
+                header: true
+            )
+            
             DispatchQueue.main.async {
-                switch result {
-                case .success(let data):
-                    self.storeProductResponse = data
-                case .failure(let error):
-                    self.errorMessage = error.localizedDescription
-                }
+                self.storeProductResponse = response
+            }
+
+        } catch {
+            DispatchQueue.main.async {
+                self.errorMessage = error.localizedDescription
             }
         }
     }
+
     
     // MARK: - Get Addresses
     func getAddresses() async {

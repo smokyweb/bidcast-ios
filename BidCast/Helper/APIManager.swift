@@ -467,98 +467,77 @@ final class APIManager {
         keyName: String,
         parameters: [String: Any],
         modalType: T.Type,
-        header: Bool,
-        completion: @escaping Handler<T>
-    ) {
+        header: Bool
+    ) async throws -> T {
         print("Upload File API Request - - - - - - - - - - >>>>>")
+
         guard let url = type.url else {
-            completion(.failure(.invalidURL))
-            return
+            throw DataError.invalidURL
         }
+
         print("URL >> \(url)")
         var request = URLRequest(url: url)
         request.httpMethod = type.method.rawValue
         print("Method >> \(type.method.rawValue)")
-        
+
         let boundary = generateBoundary()
-        
-        var media =  [MediaData1]()
+
+        var media = [MediaData1]()
         urlArray?.forEach { url in
-            if url.contains("media") {
-                guard let med = MediaData1(withURL:"\(url)", forKey: keyName, mimeType: mimeType) else {
-                    return }
-                print("✅ Loaded image at path: \(url)")
-                media.append(med)
-            } else {
-                guard let med = MediaData1(withURL: url, forKey: keyName, mimeType: mimeType) else {
-                    return
-                }
-                print("✅ Loaded image at path: \(url)")
-                media.append(med)
-                
+            guard let med = MediaData1(withURL: url, forKey: keyName, mimeType: mimeType) else {
+                return
             }
+            print("✅ Loaded image at path: \(url)")
+            media.append(med)
         }
-        
-        print(media as Any)
-   
-        let params  = parameters
-        
+
+        print(media)
+
+        let params = parameters
         print(params)
-        
-        request.allHTTPHeaderFields = type.headers
+
         if header {
-            if header{
-                request.allHTTPHeaderFields = ["Authorization":"Bearer \(UserDefaults.accessToken)"]
-            }
+            request.setValue("Bearer \(UserDefaults.accessToken)", forHTTPHeaderField: "Authorization")
         }
-        
-        request.allHTTPHeaderFields = [
-            "Accept": "application/json",
-            "Content-Type": "multipart/form-data; boundary=\(boundary)"
-        ]
-        
-        print(media as Any)
-        
+
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+
         let dataBody = createDataBody1(withParameters: params, media: media, boundary: boundary)
-        
         request.httpBody = dataBody
-        
+
         print("Headers >>> \(request.allHTTPHeaderFields ?? [:])")
-        
-        print(request)
+
         let config = URLSessionConfiguration.default
         config.waitsForConnectivity = true
-//        config.timeoutIntervalForResource = 400
-//        config.timeoutIntervalForResource = 120
-        
-        URLSession(configuration: config).dataTask(with: request) { data, response, error in
-            guard let data, error == nil else {
-                print(error as Any)
-                completion(.failure(.invalidData))
-                return
-            }
-            guard let response = response as? HTTPURLResponse,
-                  200 ... 599 ~= response.statusCode else {
-                do {
-                    let products = try JSONDecoder().decode(modalType, from: data)
-                    completion(.success(products))
-                }catch {
-                    print(error as Any)
-                    completion(.failure(.invalidResponse(data)))
-                }
-                return
-            }
+
+        let (data, response) = try await URLSession(configuration: config).data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw DataError.invalidResponse(data)
+        }
+
+        if !(200...299).contains(httpResponse.statusCode) {
             do {
-                print("API Response >>> \n\(data.prettyPrintedJSONString ?? "")")
-                let products = try JSONDecoder().decode(modalType, from: data)
-                completion(.success(products))
-            }catch {
-                print(error)
-                completion(.failure(.network(error)))
+                let errorObj = try JSONDecoder().decode(ApiError.self, from: data)
+                
+                throw DataError.invalidResponse(data)
+            } catch {
+                print("Error decoding error response: \(error)")
+                throw DataError.invalidResponse(data)
             }
-            
-        }.resume()
+        }
+
+        do {
+            print("API Response >>> \n\(data.prettyPrintedJSONString ?? "")")
+            let decodedObject = try JSONDecoder().decode(modalType, from: data)
+            return decodedObject
+        } catch {
+            print("Decoding error: \(error)")
+            throw DataError.network(error)
+        }
     }
+
     
     func uploadImageWithMultipleKeys<T: Decodable>(
         type: EndPointType,

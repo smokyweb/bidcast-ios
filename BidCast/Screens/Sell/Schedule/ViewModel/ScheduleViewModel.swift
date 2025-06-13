@@ -122,38 +122,30 @@ final class ScheduleViewModel: ObservableObject {
         }
     }
     
-    func storeScheduleShow(param: StoreScheduleShowRequest, images: [String], key: String) {
+    func storeScheduleShow(param: StoreScheduleShowRequest, images: [String], key: String) async {
         self.requestType = "store"
-        var parameters = [String: Any]()
         
         do {
-            parameters = try param.asDictionary()
+            let parameters = try param.asDictionary()
+
+            let response: ResponseModal<StoreScheduleShowModel> = try await APIManager.shared.uploadImage(
+                type: APIEndPoint.storeScheduleShow(param: param),
+                urlArray: images,
+                mimeType: "image/jpeg",
+                keyName: key,
+                parameters: parameters,
+                modalType: ResponseModal<StoreScheduleShowModel>.self,
+                header: true
+            )
+            
+            self.storeShowResponse = response
+            
         } catch {
-            self.errorMessage = "Invalid parameters: \(error.localizedDescription)"
-            return
-        }
-        
-        APIManager.shared.uploadImage(
-            type: APIEndPoint.storeScheduleShow(param: param),
-            urlArray: images,
-            mimeType: "image/jpeg",
-            keyName: key,
-            parameters: parameters,
-            modalType: ResponseModal<StoreScheduleShowModel>.self,
-            header: true
-        ) { result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let data):
-                    self.isStoreAPIDone = true
-                    self.storeShowResponse = data
-                case .failure(let error):
-                    self.isStoreAPIDone = true
-                    self.errorMessage = error.localizedDescription
-                }
-            }
+            self.errorMessage = "Error: \(error.localizedDescription)"
+            handle(error: error)
         }
     }
+
     
     
     // MARK: - Centralized Error Handler

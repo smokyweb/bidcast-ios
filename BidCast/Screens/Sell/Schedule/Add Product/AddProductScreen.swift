@@ -151,6 +151,7 @@ struct AddProductsScreen: View {
                     thumbImage.append(thumbNail)
                     await viewModel.storeScheduleShow(param: request,images: [thumbNail],key: "thumbnail[]")
                     await SVProgressHUD.dismiss()
+                    await storeSuccess()
                    
                 }
             }) {
@@ -163,6 +164,8 @@ struct AddProductsScreen: View {
                     .cornerRadius(12)
             }
             .padding([.horizontal, .bottom])
+            
+           
         }
         .navigationBarHidden(true)
         .onAppear{
@@ -173,12 +176,12 @@ struct AddProductsScreen: View {
                 await productSuccess()
             }
         }
-        .onChange(of: viewModel.isStoreAPIDone){ done in
-            SVProgressHUD.dismiss()
-            if done{
-                storeSuccess()
-            }
-        }
+//        .onChange(of: viewModel.isStoreAPIDone){ done in
+//            SVProgressHUD.dismiss()
+//            if done{
+//                storeSuccess()
+//            }
+//        }
         .bottomSheet(isPresented: $showError, height: screenHeight/2.2, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: { showError = true }, content: {
             CommonBottomSheet(
                 sheetType: $alertType,
@@ -189,6 +192,7 @@ struct AddProductsScreen: View {
                     withAnimation { showError = false }
                 })
         })
+        CusNavLink(doNavigate: $navigateToTab, destination: TabbarScreen())
     }
     func productSuccess(){
         let response = viewModel.productResponse
