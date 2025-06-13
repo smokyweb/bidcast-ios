@@ -23,6 +23,7 @@ struct SelectShowScreen: View {
     @State var selectedTime  = Date()
     @State var date = Date()
     @Binding var request : StoreScheduleShowRequest
+    @Binding var thumbNail : String
     
     var body: some View {
         VStack(spacing:18){
@@ -84,7 +85,7 @@ struct SelectShowScreen: View {
 //                navigateToSelectCategory = true
             },cornerRadius: 12, btnTextColor: .white)
             
-            CusNavLink(doNavigate: $navigateToAddProduct, destination: AddProductsScreen(request:$request))
+            CusNavLink(doNavigate: $navigateToAddProduct, destination: AddProductsScreen(request:$request,thumbNail: $thumbNail))
            
         }
     

@@ -23,7 +23,7 @@ struct SelectCategoryScreen: View {
     @State private var categoryList: [CategoryDataModel] = []
     @State private var auctionTypeList: [AuctionDataModel] = []
     @State var navigateToThumbnail : Bool = false
-    @State var request = StoreScheduleShowRequest(title: "", date: "", time: "", category_id: "", auction_type_id: "", product_ids: "", thumbnail: [""])
+    @State var request = StoreScheduleShowRequest(title: "", date: "", time: "", category_id: "", auction_type_id: "", product_ids: "")
     @Binding var title : String
     
     var viewModel = SelectCategoryViewModel()

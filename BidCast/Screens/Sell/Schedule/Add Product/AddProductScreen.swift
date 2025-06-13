@@ -12,6 +12,7 @@ struct AddProductsScreen: View {
     @State private var productCount = 1
     @Environment(\.presentationMode) var presentationMode
     @Binding var request : StoreScheduleShowRequest
+    @Binding var thumbNail : String
     @State var productData = [ProductDataModel]()
     @State var viewModel = ScheduleViewModel()
     
@@ -32,7 +33,7 @@ struct AddProductsScreen: View {
                 PrimaryHeader(
                     title: "Add Products".localized,
                     isForLogo : false ,
-                    trailingImgArr: [.cancel],
+                    leadingImgArr:[.icBack],
                     onClickLeading: { _ in
                         self.presentationMode.wrappedValue.dismiss()
                     },
@@ -146,9 +147,11 @@ struct AddProductsScreen: View {
                 print(request)
                 Task{
                     SVProgressHUD.show()
-                    await viewModel.storeScheduleShow(parameters: request,images: request.thumbnail,key: "thumbanail[]")
+                    var thumbImage = [String]()
+                    thumbImage.append(thumbNail)
+                    await viewModel.storeScheduleShow(param: request,images: [thumbNail],key: "thumbnail[]")
                     await SVProgressHUD.dismiss()
-                    await storeSuccess()
+                   
                 }
             }) {
                 Text("Finish")
@@ -165,9 +168,15 @@ struct AddProductsScreen: View {
         .onAppear{
             Task{
                 SVProgressHUD.show()
-                await viewModel.getProductList(parameters: ProductRequest(category_id: request.category_id))
+                await viewModel.getProductList(parameters: UserProductRequest(user_id: UserDefaults.userId))
                 await SVProgressHUD.dismiss()
                 await productSuccess()
+            }
+        }
+        .onChange(of: viewModel.isStoreAPIDone){ done in
+            SVProgressHUD.dismiss()
+            if done{
+                storeSuccess()
             }
         }
         .bottomSheet(isPresented: $showError, height: screenHeight/2.2, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: { showError = true }, content: {
@@ -189,6 +198,7 @@ struct AddProductsScreen: View {
     }
     
     func storeSuccess(){
+        SVProgressHUD.dismiss()
         let response = viewModel.storeShowResponse
         if response?.status == "success"{
             alertType = .sheetType(

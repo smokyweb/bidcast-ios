@@ -24,6 +24,7 @@ struct SelectThumbnailScreen: View {
     @State private var showPickerOptions = false
     @State private var selectedMedia =  UIImage()
     @Binding var request : StoreScheduleShowRequest
+    @State var thumbNail = ""
     
     var body: some View {
         VStack(spacing:18){
@@ -108,7 +109,7 @@ struct SelectThumbnailScreen: View {
              
             },cornerRadius: 12, btnTextColor: .white)
             
-            CusNavLink(doNavigate: $navigateToSelectTime, destination: SelectShowScreen(request:$request))
+            CusNavLink(doNavigate: $navigateToSelectTime, destination: SelectShowScreen(request:$request,thumbNail: $thumbNail))
             
         }
         .edgesIgnoringSafeArea([.top,.bottom])
@@ -127,8 +128,8 @@ struct SelectThumbnailScreen: View {
             ImagePicker(sourceType: .camera) { image,url in
                 if let image = image{
                     selectedMedia = image
-                    request.thumbnail.removeAll()
-                    request.thumbnail.append(url ?? "")
+                    thumbNail.removeAll()
+                    thumbNail = url ?? ""
                 }
             }
         }
@@ -136,8 +137,8 @@ struct SelectThumbnailScreen: View {
             ImagePicker(sourceType: .photoLibrary){ image,url in
                 if let image = image{
                     selectedMedia = image
-                    request.thumbnail.removeAll()
-                    request.thumbnail.append(url ?? "")
+                    thumbNail.removeAll()
+                    thumbNail = url ?? ""
                 }
             }
         }

@@ -24,6 +24,7 @@ final class ScheduleViewModel: ObservableObject {
     @Published var storeShowResponse : ResponseModal<StoreScheduleShowModel>?
     @Published var errorMessage: String? = nil
     @Published var requestType: String = ""
+    @Published var isStoreAPIDone = false
 
     // MARK: - Get Lessons
     func getLesson() async {
@@ -109,10 +110,10 @@ final class ScheduleViewModel: ObservableObject {
         }
     }
     
-    func getProductList(parameters: ProductRequest) async {
+    func getProductList(parameters: UserProductRequest) async {
         do {
             let response: ResponseModal<[ProductDataModel]> = try await APIManager.shared.request(
-                type: APIEndPoint.getProduct(param: parameters),
+                type: APIEndPoint.getUserProduct(param: parameters),
                 header: true
             )
             self.productResponse = response
@@ -121,41 +122,40 @@ final class ScheduleViewModel: ObservableObject {
         }
     }
     
-    func storeScheduleShow(parameters: StoreScheduleShowRequest) async {
+    func storeScheduleShow(param: StoreScheduleShowRequest, images: [String], key: String) {
+        self.requestType = "store"
+        var parameters = [String: Any]()
+        
         do {
-            let response: ResponseModal<StoreScheduleShowModel> = try await APIManager.shared.request(
-                type: APIEndPoint.storeScheduleShow(param: parameters),
-                header: true
-            )
-            self.storeShowResponse = response
+            parameters = try param.asDictionary()
         } catch {
-            handle(error: error)
+            self.errorMessage = "Invalid parameters: \(error.localizedDescription)"
+            return
+        }
+        
+        APIManager.shared.uploadImage(
+            type: APIEndPoint.storeScheduleShow(param: param),
+            urlArray: images,
+            mimeType: "image/jpeg",
+            keyName: key,
+            parameters: parameters,
+            modalType: ResponseModal<StoreScheduleShowModel>.self,
+            header: true
+        ) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let data):
+                    self.isStoreAPIDone = true
+                    self.storeShowResponse = data
+                case .failure(let error):
+                    self.isStoreAPIDone = true
+                    self.errorMessage = error.localizedDescription
+                }
+            }
         }
     }
     
-    func storeScheduleShow(parameters: StoreScheduleShowRequest,images: [String], key: String) async {
-        var parameter = [String:Any]()
-        do {
-            parameter = try parameters.asDictionary()
-        } catch {
-            print(error.localizedDescription)
-        }
-        do {
-            let response: ResponseModal<StoreScheduleShowModel> = try await APIManager.shared.uploadImage1(
-                type: APIEndPoint.storeScheduleShow(param: parameters),
-                urlArray: images,
-                mimeType: "image",
-                keyName: key,
-                parameters: parameter,
-                modalType:  ResponseModal<StoreScheduleShowModel>.self,
-                header: true
-            )
-            self.storeShowResponse = response
-        } catch {
-            self.errorMessage = error.localizedDescription
-        }
-    }
-
+    
     // MARK: - Centralized Error Handler
     private func handle(error: Error) {
         errorMessage = error.localizedDescription
