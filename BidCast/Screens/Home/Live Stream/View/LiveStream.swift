@@ -26,11 +26,12 @@ struct LiveStream: View {
         Comment(username: "trapwoc212", message: "White gold"),
         Comment(username: "trapwoc212", message: "White gold")
     ]
+    
     @State var id : String = ""
     @GestureState private var dragOffset = CGSize.zero
     @State var navigateToProfile = false
     @State private var swipeConfirmed = false
-    @State private var currentStreamIndex = 0
+    @Binding var currentStreamIndex : Int
     @State private var verticalDragOffset = CGSize.zero
     @GestureState private var verticalGestureOffset = CGSize.zero
     @State var roomID = [String]()
@@ -42,20 +43,18 @@ struct LiveStream: View {
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @State var showError: Bool = false
     @Binding var userId : String
-
+    
+    @Environment(\.presentationMode) var presentationMode
+    
+    @ObservedObject var zegoManager = ZegoManager.shared
+    
     var localUserID = "viewer_\(UserDefaults.userId)"
     
     var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: .top) {
-//                Image("IMG_1340")
-//                    .resizable()
-//                    .scaledToFill()
-//                    .frame(width: geometry.size.width, height: geometry.size.height)
-//                    .clipped()
-//                    .edgesIgnoringSafeArea(.all)
                 if streamID.count != 0 {
-                    ZegoPreviewView(streamID: streamID[0], isLocal: false)
+                    ZegoPreviewView(streamID: streamID[currentStreamIndex])
                         .frame(width: geometry.size.width, height: geometry.size.height)
                         .edgesIgnoringSafeArea(.all)
                     
@@ -290,11 +289,28 @@ struct LiveStream: View {
             )
             CusNavLink(doNavigate: $navigateToProfile, destination: ProfileScreen(id:$id))
         }
+        .bottomSheet(isPresented: $zegoManager.streamInterrupted, height: screenHeight / 2.5, topBarCornerRadius: 25, showTopIndicator: false) {
+            CommonBottomSheet(
+                sheetType: $zegoManager.alertType,
+                onPrimaryClick: {
+                    withAnimation {
+                        zegoManager.resetError()
+                        self.presentationMode.wrappedValue.dismiss()
+                    }
+                },
+                onSecondaryClick: {
+                    withAnimation {
+                        zegoManager.resetError()
+                    }
+                }
+            )
+        }
         .foregroundColor(.white)
         .onAppear{
+            ZegoExpressEngine.shared().setEventHandler(ZegoManager.shared)
             Task{
                 SVProgressHUD.show()
-                await self.viewModel.getLiveShows(param:GetLiveShowsRequest(type: ""))
+                await self.viewModel.getLiveShows(param:GetLiveShowsRequest(type: "live"))
                 await SVProgressHUD.dismiss()
                 await  success()
                 
@@ -304,6 +320,7 @@ struct LiveStream: View {
         .onDisappear{
             logoutRoom()
         }
+        
         
     }
    
@@ -316,7 +333,7 @@ struct LiveStream: View {
                 roomID = liveShowsData.compactMap { $0.room_id }
                 streamID = roomID
                 if !liveShowsData.isEmpty {
-                    let initialRoomID = liveShowsData[0].room_id ?? ""
+                    let initialRoomID = liveShowsData[currentStreamIndex].room_id ?? ""
                     loginRoom(roomId: initialRoomID)
                 }
             } else {
@@ -329,48 +346,26 @@ struct LiveStream: View {
                     secondaryBtnText: AppString.ok.localized
                 )
             }
-            
-        
     }
-    func createEngine() {
-        var zegoEngine: ZegoExpressEngine?
-        let profile = ZegoEngineProfile()
-        let appID = 1005763407
-        let appSign = "73678be720c3ea2d871376882d27d21d5c2bc891363547424458f9febc8bf423"
-        profile.appID = UInt32(appID)
-        profile.appSign = appSign
-        profile.scenario = .broadcast
-        zegoEngine =  ZegoExpressEngine.createEngine(with: profile, eventHandler: nil)
-        
-        if zegoEngine != nil {
-            print("Engine exists")
-        } else {
-            print("Engine not created")
-        }
-    }
+  
+    
     func loginRoom(roomId : String) {
        
         let user = ZegoUser(userID: localUserID)
-        // Users must log in to the same room to call each other.
         let roomConfig = ZegoRoomConfig()
-        // onRoomUserUpdate callback can be received when "isUserStatusNotify" parameter value is "true".
+        
         roomConfig.isUserStatusNotify = true
-        // log in to a room
+      
         ZegoExpressEngine.shared().loginRoom(roomId, user: user, config: roomConfig) { errorCode, extendedData in
             if errorCode == 0 {
-                // Login room successful
-//                if self.isHost{
-//                    self.startPreview()
-//                    self.startPublish()
-//                }
+
             } else {
-                // Login room failed
-//                self.view.makeToast("loginRoom faild \(errorCode)", duration: 2.0, position: .center)
+               
             }
         }
     }
 
-    private func logoutRoom() {
+    func logoutRoom() {
         ZegoExpressEngine.shared().logoutRoom()
     }
 }
@@ -379,33 +374,36 @@ struct LiveStream: View {
 
 struct ZegoPreviewView: UIViewRepresentable {
     let streamID: String
-    let isLocal: Bool
-
-    func makeUIView(context: Context) -> UIView {
-        let view = UIView()
-        view.backgroundColor = .black
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            let canvas = ZegoCanvas(view: view)
-            if isLocal {
-                ZegoExpressEngine.shared().startPreview(canvas)
-                ZegoExpressEngine.shared().startPublishingStream(streamID)
-            } else {
-                ZegoExpressEngine.shared().startPlayingStream(streamID, canvas: canvas)
-            }
+    func makeCoordinator() -> Coordinator {
+            Coordinator(streamID: streamID)
         }
 
-        return view
+        class Coordinator {
+            var streamID: String
+            init(streamID: String) {
+                self.streamID = streamID
+            }
+        }
+    func makeUIView(context: Context) -> UIView {
+        let view = UIView(frame: UIScreen.main.bounds)
+                view.backgroundColor = .black
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                    let canvas = ZegoCanvas(view: view)
+                    canvas.viewMode = .aspectFill
+                    ZegoExpressEngine.shared().startPlayingStream(streamID, canvas: canvas)
+                }
+
+                return view
     }
 
     func updateUIView(_ uiView: UIView, context: Context) {
-        // Optional: handle dynamic stream change if needed
+       
     }
 
-    static func dismantleUIView(_ uiView: UIView, coordinator: ()) {
-        // Always stop everything cleanly
-        ZegoExpressEngine.shared().stopPreview()
-        ZegoExpressEngine.shared().stopPublishingStream()
-        ZegoExpressEngine.shared().stopPlayingStream("")
+    static func dismantleUIView(_ uiView: UIView, coordinator: (Coordinator)) {
+     
+//        ZegoExpressEngine.shared().stopPreview()
+//        ZegoExpressEngine.shared().stopPublishingStream()
+        ZegoExpressEngine.shared().stopPlayingStream(coordinator.streamID)
     }
 }

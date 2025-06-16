@@ -27,7 +27,7 @@ struct ShowsScreen: View {
     @State private var showhud: Bool = false
     @State private var hudMsg: String = ""
     @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
-    
+    @State var isLive = false
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject private var appRootManager: AppRootManager
     
@@ -92,6 +92,7 @@ struct ShowsScreen: View {
                             let data = showsData[index]
                             ShowCardView(show: data,onTap: {
                                 showID = "\(data.id ?? 0)"
+                                isLive = data.is_live ?? false
                                 navigateToReherseal = true
                             })
                         }
@@ -114,7 +115,7 @@ struct ShowsScreen: View {
                 .padding(.vertical, 0)
                 .background(Color(UIColor.systemGroupedBackground))
             }
-            CusNavLink(doNavigate: $navigateToReherseal, destination: RehearsalScreen(showUd: $showID))
+            CusNavLink(doNavigate: $navigateToReherseal, destination: RehearsalScreen(showUd: $showID,isLive: isLive))
         }
         .background(Color(UIColor.systemGroupedBackground))
         .toast(isPresenting: $showhud) {
@@ -154,35 +155,3 @@ enum ShowScreenSegment: String, CaseIterable, CustomStringConvertible {
 
 
 
-
-
-struct ZegoRehearsalScreen: UIViewRepresentable {
-
-    func makeUIView(context: Context) -> UIView {
-        let view = UIView()
-        view.backgroundColor = .black
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            let canvas = ZegoCanvas(view: view)
-//            if isLocal {
-                ZegoExpressEngine.shared().startPreview(canvas)
-//                ZegoExpressEngine.shared().startPublishingStream(streamID)
-//            } else {
-//                ZegoExpressEngine.shared().startPlayingStream(streamID, canvas: canvas)
-//            }
-        }
-
-        return view
-    }
-
-    func updateUIView(_ uiView: UIView, context: Context) {
-        // Optional: handle dynamic stream change if needed
-    }
-
-    static func dismantleUIView(_ uiView: UIView, coordinator: ()) {
-        // Always stop everything cleanly
-        ZegoExpressEngine.shared().stopPreview()
-        ZegoExpressEngine.shared().stopPublishingStream()
-        ZegoExpressEngine.shared().stopPlayingStream("")
-    }
-}

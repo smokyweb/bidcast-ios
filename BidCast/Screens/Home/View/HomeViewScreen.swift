@@ -12,6 +12,7 @@ struct HomeViewScreen: View {
     @State private var selectedButton: HomeButton = .For_you
     @Environment(\.presentationMode) var presentationMode
     @State var navigateToLiveStream = false
+    @State var index = 0
     let images = Array(1...10)
        
        let columns = [
@@ -49,8 +50,8 @@ struct HomeViewScreen: View {
                         SingleTitleLabel(title: "Live Now | Popular | coming Soon" ,textColor: .black,fontValue: 18.0)
                         LazyVGrid(columns: columns, spacing: 12) {
 //                            let liveData = Array(0..<liveShowsData.count)
-                            ForEach(liveShowsData, id: \.id) { item in
-//                                let item = liveShowsData[index]
+                            ForEach(liveShowsData.indices, id: \.self) { index in
+                                let item = liveShowsData[index]
                                 
                                 ImageCollectionView(profileImg: item.user?.profile_image ?? "",
                                                     profileName: item.user?.name ?? "",
@@ -61,8 +62,9 @@ struct HomeViewScreen: View {
                                                     categorySize: 8,
                                                     title2Size: 12.0){
                                     
-                                           print("babumoshai tapped the card!")
-                                    userId = "\(item.user?.id ?? 0)"
+                                           print("babumoshai tapped the card!,inex \(index)")
+                                            self.index = index
+                                            userId = "\(item.user?.id ?? 0)"
                                            navigateToLiveStream = true
                                        }
                                            .background(.bg)
@@ -77,7 +79,7 @@ struct HomeViewScreen: View {
                 .padding([.leading,.trailing],12)
                 .padding(.top , 10)
                 
-                CusNavLink(doNavigate: $navigateToLiveStream, destination: LiveStream(userId : $userId))
+                CusNavLink(doNavigate: $navigateToLiveStream, destination: LiveStream(currentStreamIndex :self.$index, userId : $userId ))
             }
             .background(.white)
             .onAppear{

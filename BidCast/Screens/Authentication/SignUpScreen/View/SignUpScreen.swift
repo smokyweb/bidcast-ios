@@ -34,31 +34,33 @@ struct SignUpScreen: View {
     var viewModel = SignupViewModel()
     
     var body: some View {
-        ZStack {
+//        ZStack {
             VStack(spacing: 0) {
-                PrimaryHeader(title: AppString.createAccount.localized, leadingImgArr: [.icBack], onClickLeading:  { _ in
-                   
-                    self.presentationMode.wrappedValue.dismiss()
-                }, count: .constant(0))
+                VStack{
+                    PrimaryHeader(title: AppString.createAccount.localized, leadingImgArr: [.icBack], onClickLeading:  { _ in
+                        
+                        self.presentationMode.wrappedValue.dismiss()
+                    }, count: .constant(0))
+                }
                 
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 15) {
                         TitleWithLine(title: AppString.createYourAccount, lineLength: sepratorLine)
                         AuthTextField(floatingLabel: AppString.firstName.localized, placeholder: AppString.enterFirstName.localized, icon: .menuProfile, text: $request.firstName, enteredText: {
-                                value in
-                                request.firstName = value
-                            })
-                            .textContentType(.givenName)
+                            value in
+                            request.firstName = value
+                        })
+                        .textContentType(.givenName)
                         AuthTextField(floatingLabel: AppString.lastName.localized, placeholder: AppString.enterLastName.localized, icon: .menuProfile, text: $request.lastName, enteredText: {
-                                value in
-                                request.lastName = value
-                            })
-                            .textContentType(.familyName)
-
+                            value in
+                            request.lastName = value
+                        })
+                        .textContentType(.familyName)
+                        
                         AuthTextField(floatingLabel: AppString.email.localized, placeholder: AppString.enterEmail.localized, icon: .icMail, text: $request.email, enteredText: {
-                                value in
-                                request.email = value
-                            }).textContentType(.username)
+                            value in
+                            request.email = value
+                        }).textContentType(.username)
                         
                         AuthTextField(floatingLabel: AppString.password.localized, placeholder: AppString.enterPassword.localized, icon: .passwordLock, text: $request.password, isPassword: true, enteredText: {
                             value in
@@ -69,9 +71,9 @@ struct SignUpScreen: View {
                             value in
                             request.passwordConf = value
                         }).textContentType(.newPassword)
-                            
                         
-                    }.padding([.leading, .trailing])
+                    }
+//                    }.padding([.leading, .trailing])
                     VStack {
                         PrimaryButton(title: AppString.submit.localized, isOutLine: false, onButtonClick: {
                             
@@ -118,15 +120,17 @@ struct SignUpScreen: View {
                             Task{
                                 SVProgressHUD.show()
                                 await self.viewModel.registerUser(parameters: request)
+                                await SVProgressHUD.dismiss()
+                                await handleSuccess()
                             }
                             },btnTextColor: .white)
                     }
                     .padding([.top, .bottom], 16)
-                    .padding([.leading, .trailing])
+//                    .padding([.leading, .trailing])
                     .zIndex(1300.0)
                     
                 }
-                .padding(.top, -topPadding)
+//                .padding(.top, -topPadding)
                 .onTapGesture(perform: {
                     UIApplication.shared.endEditing()
                 })
@@ -134,16 +138,12 @@ struct SignUpScreen: View {
                 Spacer()
                 
             }
-            .onAppear(){
-               
-            }
+           
            
             .onTapGesture {
                 UIApplication.shared.endEditing()
             }
-            .onReceive(viewModel.$signUpResponse){ response in
-                handleSuccess()
-            }
+           
             
             .toast(isPresenting: $showhud) {
                 AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)}
@@ -168,7 +168,6 @@ struct SignUpScreen: View {
             })
             
            
-        }
     }
     
    

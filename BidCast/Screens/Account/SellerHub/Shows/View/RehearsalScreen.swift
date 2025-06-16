@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Foundation
+import ZegoExpressEngine
 import SVProgressHUD
 
 struct RehearsalScreen: View {
@@ -16,14 +17,17 @@ struct RehearsalScreen: View {
     var isLocal: Bool = true
     @Environment(\.presentationMode) var presentaionMode
     @State var viewModel = ShowsViewModel()
+    @State var isLive : Bool = false
+    @State var roomId = ""
+    
+    @State var isMicOn: Bool = true
+    @State var isUsingFrontCamera: Bool = true
     
     var body: some View {
         ZStack {
             
-            ZegoRehearsalScreen()
-//                .edgesIgnoringSafeArea(.all)
-            
-            // Top overlay
+            ZegoRehearsalScreen(isLive: $isLive,streamID: roomId )
+
             VStack {
                 HStack {
                     HStack(spacing: 8) {
@@ -43,7 +47,7 @@ struct RehearsalScreen: View {
                         }
                         
                         Spacer()
-                        Text("Rehearsal")
+                        Text(isLive ? "Live" : "Rehearsal")
                             .font(.caption)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
@@ -69,18 +73,20 @@ struct RehearsalScreen: View {
                 Spacer()
                 VStack(spacing: 20) {
                     Button(action: {
-                        // Mic test logic
+                        isMicOn.toggle()
+                        ZegoExpressEngine.shared().muteMicrophone(!isMicOn)
                     }) {
                         VStack {
-                            Image(systemName: "mic.fill")
-                            Text("Mic Test")
+                            Image(systemName: isMicOn ? "mic.fill" : "mic.slash.fill")
+                            Text(isMicOn ? "Mic On" : "Mic Off")
                         }
                         .padding(8)
                         .foregroundColor(.white)
                     }
                     
                     Button(action: {
-                        // Camera switch logic
+                        isUsingFrontCamera.toggle()
+                        ZegoExpressEngine.shared().useFrontCamera(isUsingFrontCamera)
                     }) {
                         VStack {
                             Image(systemName: "arrow.triangle.2.circlepath.camera")
@@ -139,12 +145,19 @@ struct RehearsalScreen: View {
                 Button(action: {
                     Task{
                         SVProgressHUD.show()
-                        await viewModel.UpdateLiveShows(param: LiveShowUpdateRequest(schedule_show_id: showUd, is_live: "true"))
+                        var is_Live = ""
+                        if isLive{
+                            is_Live = "false"
+                           
+                        }else{
+                            is_Live = "true"
+                        }
+                        await viewModel.UpdateLiveShows(param: LiveShowUpdateRequest(schedule_show_id: showUd, is_live: is_Live))
                         await SVProgressHUD.dismiss()
                         await success()
                     }
                 }) {
-                    Text("Start Show")
+                    Text( isLive ? "End Show " : "Start Show")
                         .fontWeight(.bold)
                         .frame(maxWidth: .infinity)
                         .padding()
@@ -156,12 +169,124 @@ struct RehearsalScreen: View {
                 .padding(.bottom, 20)
             }
         }
+        .onAppear{
+            logoutRoom()
+        }
+        .onDisappear{
+            logoutRoom()
+        }
     }
     
     func success(){
         let response = viewModel.updateStatusRespone
         if response?.status == "success"{
-            self.streamId = "\(response?.data?.id ?? 0)"
+//            self.streamId = "\(response?.data?.id ?? 0)"
+            let data = response?.data ?? UpdateStatusModel()
+            
+            isLive = data.is_live ?? false
+            
+            let roomId = "live_room_\(data.user_id ?? 0)_\(data.id ?? 0)"
+            self.roomId = roomId
+            if data.is_live == false {
+                logoutRoom()
+                FirebaseManager.shared.checkAndDeleteLiveSession(roomId: roomId)
+                return
+            }
+            
+            let product = ProductData(category: "\(data.products?.first?.category_id ?? 0)", id: "\(data.products?.first?.id ?? 0)", image: "\(data.products?.first?.images?.first ?? "")", name: "\(data.products?.first?.title ?? "")", price: "\(data.products?.first?.pricing ?? 0.0)")
+            
+            let seller = SellerModel(followed: data.user?.is_followed ?? false, id: "\(data.user?.id ?? 0 )", name: data.user?.name ?? "", rating: data.user?.rating ?? "")
+            FirebaseManager.shared.createLiveSession(showId:"\(data.id ?? 0)", userId: "\(data.user_id ?? 0)", product: product, seller: seller, thumbnail: data.thumbnail?.first ?? "", time: data.time ?? "")
+            
+            
+            let user = ZegoUser(userID: "\(data.user_id ?? 0)", userName: data.user?.name ?? "")
+            let roomConfig = ZegoRoomConfig()
+            
+            
+            ZegoExpressEngine.shared().loginRoom(
+                roomId,
+                user: user,
+                config: roomConfig
+            ) { errorCode, _ in
+                if errorCode == 0 {
+                    print("✅ Logged into room: \(roomId)")
+                    ZegoExpressEngine.shared().startPublishingStream(roomId)
+                } else {
+                    print("❌ Failed to login to room: \(errorCode)")
+                }
+            }
+
         }
+    }
+    func logoutRoom() {
+        ZegoExpressEngine.shared().logoutRoom()
+    }
+    
+}
+struct ProductData {
+    let category: String
+    let id: String
+    let image: String
+    let name: String
+    let price: String
+
+    func toDictionary() -> [String: Any] {
+        return [
+            "category": category,
+            "id": id,
+            "image": image,
+            "name": name,
+            "price": price
+        ]
+    }
+}
+
+struct SellerModel {
+    let followed: Bool
+    let id: String
+    let name: String
+    let rating: String
+
+    func toDictionary() -> [String: Any] {
+        return [
+            "followed": followed,
+            "id": id,
+            "name": name,
+            "rating": rating
+        ]
+    }
+}
+
+
+
+struct ZegoRehearsalScreen: UIViewRepresentable {
+    @Binding var isLive : Bool
+    @State var streamID = ""
+   
+   
+
+    func makeUIView(context: Context) -> UIView {
+        let view = UIView()
+        view.backgroundColor = .black
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            let canvas = ZegoCanvas(view: view)
+            ZegoExpressEngine.shared().enableCamera(true)
+
+                ZegoExpressEngine.shared().startPreview(canvas)
+
+        }
+
+        return view
+    }
+
+    func updateUIView(_ uiView: UIView, context: Context) {
+        // Optional: handle dynamic stream change if needed
+    }
+
+    static func dismantleUIView(_ uiView: UIView, coordinator: ()) {
+        // Always stop everything cleanly
+//        ZegoExpressEngine.shared().stopPreview()
+        ZegoExpressEngine.shared().stopPublishingStream()
+        ZegoExpressEngine.shared().stopPlayingStream("")
     }
 }

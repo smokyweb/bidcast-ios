@@ -328,6 +328,7 @@ struct AccountScreen: View {
         DispatchQueue.main.async {
             UserDefaultsManager.shared.clearAllValues()
             DispatchQueue.main.async {
+                UserDefaults.accessToken.removeAll()
                 appRootManager.currentRoot = .authentication
                 self.presentationMode.wrappedValue.dismiss()
             }

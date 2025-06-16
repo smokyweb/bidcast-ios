@@ -8,15 +8,10 @@
 import Foundation
 import UIKit
 import SVProgressHUD
-//import OneSignalFramework
-//import OneSignalCore
-//import OneSignalExtension
-//import Firebase
-//import FirebaseCore
-//import GooglePlaces
 import IQKeyboardManagerSwift
 import Stripe
 import ZegoExpressEngine
+import FirebaseCore
 
 
 
@@ -47,7 +42,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         ////        Messaging.messaging().delegate = self
         //
         
-        self.createEngine()
+        ZegoManager.shared.createEngine()
         SVProgressHUD.setDefaultStyle(.custom)
         SVProgressHUD.setDefaultMaskType(.custom)
         SVProgressHUD.setDefaultAnimationType(.native)
@@ -59,7 +54,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         IQKeyboardManager.shared.keyboardDistance = 10
         IQKeyboardManager.shared.enableAutoToolbar = true
         STPAPIClient.shared.publishableKey = "pk_test_51RQLxjQEbmPLLc7GaDeFTplB9lwTK5t9ZvpHVd1CtK4XtWsmktQvN3hoZW0ZZ0kSu0PFJ6R63D9X3PSMAq8tg5Sh00Vzh05MeU"
-       
+        FirebaseApp.configure()
         
         if #available(iOS 10.0, *) {
             // For iOS 10 display notification (sent via APNS)
@@ -112,24 +107,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         sceneConfig.delegateClass = SceneDelegate.self
         return sceneConfig
     }
-    func createEngine() {
-        var zegoEngine: ZegoExpressEngine?
-        let profile = ZegoEngineProfile()
-      
-        
-        var appID = 1005763407
-        var appSign = "73678be720c3ea2d871376882d27d21d5c2bc891363547424458f9febc8bf423"
-        profile.appID = UInt32(appID)
-        profile.appSign = appSign
-        profile.scenario = .broadcast
-        zegoEngine =  ZegoExpressEngine.createEngine(with: profile, eventHandler: nil)
-        
-        if zegoEngine != nil {
-            print("Engine exists")
-        } else {
-            print("Engine not created")
-        }
-    }
+    
 
    
 
