@@ -38,7 +38,7 @@ enum APIEndPoint{
     case updatePreference(param : UpdatePreferenceRequest)
     case notifyLiveUser(param : NotifyLiveUserRequest)
     case deleteAddress(param:AddressDefaultParam)
-    case getLiveShows
+    case getLiveShows(param:GetLiveShowsRequest)
     case getProfileById(param:ProfileParamRequest)
     case getUserProduct(param : UserProductRequest)
     case followUnfollow(param:FollowRequest)
@@ -83,6 +83,7 @@ enum APIEndPoint{
     case getTransactionList(param : TransactionRequest)
     case getProduct(param:ProductRequest)
     case getScheduledShow(param:GetLiveShowsRequest)
+    case UpdateShowStatus(param:LiveShowUpdateRequest)
     
     //MARK: OLD
     
@@ -315,6 +316,8 @@ extension APIEndPoint: EndPointType {
             return "get-product"
         case .getScheduledShow:
             return "get-my-schedule-show"
+        case .UpdateShowStatus:
+            return "schedule-show/update-live-status"
             
             //MARK: Old
             
@@ -458,6 +461,7 @@ extension APIEndPoint: EndPointType {
             return "save-job"
      
        
+       
         }
     }
     
@@ -599,6 +603,8 @@ extension APIEndPoint: EndPointType {
         case .getProduct:
             return .post
         case .getScheduledShow:
+            return .post
+        case .UpdateShowStatus:
             return .post
             
             //MARK: Old
@@ -747,6 +753,7 @@ extension APIEndPoint: EndPointType {
        
        
        
+        
         }
     }
     
@@ -817,8 +824,8 @@ extension APIEndPoint: EndPointType {
             return param
         case .deleteAddress(param: let param):
             return param
-        case .getLiveShows:
-            return nil
+        case .getLiveShows(param: let param):
+            return param
         case .getProfileById(param: let param):
             return param
         case .getUserProduct(param: let param):
@@ -892,6 +899,8 @@ extension APIEndPoint: EndPointType {
         case .getProduct(param: let param):
             return param
         case .getScheduledShow(param: let param):
+            return param
+        case .UpdateShowStatus(param: let param):
             return param
             
             //MARK: Old
@@ -1042,6 +1051,7 @@ extension APIEndPoint: EndPointType {
        
       
         
+    
         }
     }
     

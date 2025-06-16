@@ -30,11 +30,11 @@ final class HomeViewModel: ObservableObject {
 //    }
 
     // MARK: - Get Live Shows
-    func getLiveShows() async {
+    func getLiveShows(param:GetLiveShowsRequest) async {
         self.requestType = "get"
         do {
             let response: ResponseModel<[HomeModel]> = try await APIManager.shared.request(
-                type: APIEndPoint.getLiveShows,
+                type: APIEndPoint.getLiveShows(param: param),
                 header: true
             )
             self.liveShowsResponse = response

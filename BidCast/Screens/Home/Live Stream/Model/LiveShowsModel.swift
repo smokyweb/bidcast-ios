@@ -16,10 +16,14 @@ struct LiveShowsModel: Codable,Identifiable {
     var user_id: Int?
     var category_id: Int?
     var product_ids: [String]?
+    var room_id : String?
     var auction_type_id: Int?
     var thumbnail: [String]?
+    var img_thumbnail : [String]?
+    var is_live : Bool?
     var category: Category?
     var user: User?
+    var viewer_count : Int?
 }
 
 struct Category: Codable,Identifiable {
@@ -27,6 +31,7 @@ struct Category: Codable,Identifiable {
     var name: String?
     var image: String?
     var color: String?
+    var thumbnail : String?
 }
 
 struct User: Codable,Identifiable {
@@ -42,4 +47,6 @@ struct User: Codable,Identifiable {
     var bio: String?
     var is_active: Bool?
     var referral_code: String?
+    var rating: String?
+    var is_followed: Bool?
 }

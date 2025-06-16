@@ -11,7 +11,7 @@ final class ShowsViewModel: ObservableObject {
     
     // MARK: - Published Properties
     @Published var scheduledShow: ResponseModelPaginate<[HomeModel]>?
-  
+    @Published var updateStatusRespone : ResponseModelPaginate<UpdateStatusModel>?
     @Published var errorMessage: String? = nil
     @Published var requestType: String = ""
     
@@ -24,6 +24,19 @@ final class ShowsViewModel: ObservableObject {
                 header: true
             )
             scheduledShow = response
+        } catch {
+            handle(error: error)
+        }
+    }
+    
+    func UpdateLiveShows(param:LiveShowUpdateRequest) async {
+        requestType = "lesson"
+        do {
+            let response: ResponseModelPaginate<UpdateStatusModel> = try await APIManager.shared.request(
+                type: APIEndPoint.UpdateShowStatus(param: param),
+                header: true
+            )
+            updateStatusRespone = response
         } catch {
             handle(error: error)
         }

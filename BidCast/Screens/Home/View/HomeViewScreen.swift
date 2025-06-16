@@ -32,10 +32,10 @@ struct HomeViewScreen: View {
                     PrimaryHeader(
                         title: "",
                         isForLogo: true,
-                        leadingImgArr: [.appName], // logo on left
+                        leadingImgArr: [.appName],
                         trailingImgArr: [.search,.notification],
                         onClickLeading: { index in
-                            // maybe open menu or do nothing
+                            
                         },
                         onClickTrailing: nil,
                         count: .constant(0)
@@ -80,11 +80,10 @@ struct HomeViewScreen: View {
                 CusNavLink(doNavigate: $navigateToLiveStream, destination: LiveStream(userId : $userId))
             }
             .background(.white)
-//            .edgesIgnoringSafeArea(.top)
             .onAppear{
                 Task{
                     SVProgressHUD.show()
-                   await self.viewModel.getLiveShows()
+                    await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: "live"))
                     await SVProgressHUD.dismiss()
                     await self.success()
                 }

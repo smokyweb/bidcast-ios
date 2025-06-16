@@ -1,5 +1,5 @@
 {
-  "originHash" : "972d9a883eeb02e200e63ba3e6ac4441f3f287594b486c263a03cd1c12246eb2",
+  "originHash" : "131049a7e0be085173038d5fd5c4ec248b148e6f601c44a24440cd180297c6f5",
   "pins" : [
     {
       "identity" : "activityindicatorview",
@@ -26,6 +26,15 @@
       "state" : {
         "revision" : "6b21007153365235418f3943a960a1f9546592e0",
         "version" : "1.0.12"
+      }
+    },
+    {
+      "identity" : "express-video-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/zegolibrary/express-video-ios",
+      "state" : {
+        "revision" : "d27a43f5553933eeb53c84c77c9f7101ad3c5eaf",
+        "version" : "3.21.0"
       }
     },
     {

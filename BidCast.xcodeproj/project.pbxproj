@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3504BCAA2DFFE3D70069182D /* ZegoExpressEngine in Frameworks */ = {isa = PBXBuildFile; productRef = 3504BCA92DFFE3D70069182D /* ZegoExpressEngine */; };
+		3504BCAC2E00040A0069182D /* RehearsalScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3504BCAB2E00040A0069182D /* RehearsalScreen.swift */; };
 		354163882DDB16BC00026B34 /* StepCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 354163872DDB16BC00026B34 /* StepCard.swift */; };
 		3541638A2DDB178300026B34 /* ShowTips.swift in Sources */ = {isa = PBXBuildFile; fileRef = 354163892DDB178300026B34 /* ShowTips.swift */; };
 		3541638E2DDB370C00026B34 /* ListProductViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3541638D2DDB370C00026B34 /* ListProductViewModel.swift */; };
@@ -460,6 +462,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3504BCAB2E00040A0069182D /* RehearsalScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RehearsalScreen.swift; sourceTree = "<group>"; };
 		354163872DDB16BC00026B34 /* StepCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepCard.swift; sourceTree = "<group>"; };
 		354163892DDB178300026B34 /* ShowTips.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowTips.swift; sourceTree = "<group>"; };
 		3541638D2DDB370C00026B34 /* ListProductViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListProductViewModel.swift; sourceTree = "<group>"; };
@@ -913,6 +916,7 @@
 				35F63D6B2DDCBE5B00D29878 /* Stripe in Frameworks */,
 				35A0450D2DC8DEC30067C447 /* AlertToast in Frameworks */,
 				35F63D6F2DDCBE5B00D29878 /* StripeCardScan in Frameworks */,
+				3504BCAA2DFFE3D70069182D /* ZegoExpressEngine in Frameworks */,
 				355AE9682DD1D51A00CD3D17 /* IQKeyboardManagerSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2672,6 +2676,7 @@
 		D4BA9C052DE4856900DFF6E6 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				3504BCAB2E00040A0069182D /* RehearsalScreen.swift */,
 				D4BA9C042DE4856900DFF6E6 /* ShowsScreen.swift */,
 				D4BA9C0E2DE48D2A00DFF6E6 /* ShowCardView.swift */,
 			);
@@ -3500,6 +3505,7 @@
 				35F63D7A2DDCBE5B00D29878 /* StripePaymentsUI */,
 				358B9D172DDF049600932250 /* FSCalendar */,
 				354652682DF2EE5900EB353F /* SVProgressHUD */,
+				3504BCA92DFFE3D70069182D /* ZegoExpressEngine */,
 			);
 			productName = BidCast;
 			productReference = 99DF9E3F2DC4F35D008C15B2 /* BidCast.app */;
@@ -3593,6 +3599,7 @@
 				35F63D692DDCBE5B00D29878 /* XCRemoteSwiftPackageReference "stripe-ios" */,
 				358B9D162DDF049600932250 /* XCRemoteSwiftPackageReference "FSCalendar" */,
 				354652672DF2EE5900EB353F /* XCRemoteSwiftPackageReference "SVProgressHUD" */,
+				3504BCA82DFFE3D70069182D /* XCRemoteSwiftPackageReference "express-video-ios" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 99DF9E402DC4F35D008C15B2 /* Products */;
@@ -3917,6 +3924,7 @@
 				D4BB9A132DE5C95A00C1BCBC /* PayoutRowView.swift in Sources */,
 				99C909B12DC8CD930054620B /* NavigationContainer.swift in Sources */,
 				99C909B22DC8CD930054620B /* APIManager.swift in Sources */,
+				3504BCAC2E00040A0069182D /* RehearsalScreen.swift in Sources */,
 				D4CAEC5C2DE6F50600705CD7 /* ReferralCodeCardView.swift in Sources */,
 				35BA4A422DE86E8300EEC92A /* SendGiftScreen.swift in Sources */,
 				D4CAEC572DE6F11F00705CD7 /* AffiliateProgramViewModel.swift in Sources */,
@@ -4234,6 +4242,7 @@
 				INFOPLIST_FILE = BidCast/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = BidSwipe;
 				INFOPLIST_KEY_NSCameraUsageDescription = "We need camera access to let you capture photos.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "WeNeed microphone access fo audio streaming";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "We need access to save photos to your photo library.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We need access to your photo library to let you select photos.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
@@ -4279,6 +4288,7 @@
 				INFOPLIST_FILE = BidCast/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = BidSwipe;
 				INFOPLIST_KEY_NSCameraUsageDescription = "We need camera access to let you capture photos.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "WeNeed microphone access fo audio streaming";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "We need access to save photos to your photo library.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We need access to your photo library to let you select photos.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
@@ -4441,6 +4451,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		3504BCA82DFFE3D70069182D /* XCRemoteSwiftPackageReference "express-video-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/zegolibrary/express-video-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.21.0;
+			};
+		};
 		354652672DF2EE5900EB353F /* XCRemoteSwiftPackageReference "SVProgressHUD" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SVProgressHUD/SVProgressHUD.git";
@@ -4524,6 +4542,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		3504BCA92DFFE3D70069182D /* ZegoExpressEngine */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3504BCA82DFFE3D70069182D /* XCRemoteSwiftPackageReference "express-video-ios" */;
+			productName = ZegoExpressEngine;
+		};
 		354652682DF2EE5900EB353F /* SVProgressHUD */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 354652672DF2EE5900EB353F /* XCRemoteSwiftPackageReference "SVProgressHUD" */;

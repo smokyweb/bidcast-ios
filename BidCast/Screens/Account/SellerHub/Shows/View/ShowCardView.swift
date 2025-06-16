@@ -12,7 +12,7 @@ import SwiftUI
 // MARK: - Show Card View
 struct ShowCardView: View {
     let show: HomeModel
-
+    var onTap : () -> () = { }
     var body: some View {
         HStack {
             AsyncImage(url: URL(string: show.img_thumbnail?.first ?? "")) { phase in
@@ -60,5 +60,8 @@ struct ShowCardView: View {
         .cornerRadius(12)
         .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
         .padding(.horizontal)
+        .onTapGesture {
+            onTap()
+        }
     }
 }
