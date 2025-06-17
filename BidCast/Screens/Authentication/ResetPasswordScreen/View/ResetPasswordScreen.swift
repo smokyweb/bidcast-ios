@@ -31,7 +31,19 @@ struct ResetPasswordScreen: View {
     @State var hudMsg: String = ""
 
     var body: some View {
-        ZStack(alignment: .top) {
+        VStack {
+            VStack{
+                PrimaryHeader(
+                    title: AppString.resetPassword,
+                    leadingImgArr: [.icBack],
+                    onClickLeading: { _ in
+                        self.navigateToLogin = true
+                    },
+                    count: .constant(0)
+                )
+                 
+            }
+            
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 25) {
                     Color.clear.frame(height: 5)
@@ -43,20 +55,18 @@ struct ResetPasswordScreen: View {
                         placeholder: AppString.enterPassword.localized,
                         icon: .bag,
                         text: $password,
-                        isPassword: true
-                    ) { password in
-                        request.password = password
-                    }
+                        isPassword: true, enteredText:  { password in
+                            request.password = password
+                        })
 
                     AuthTextField(
                         floatingLabel: AppString.confirmPassword.localized,
                         placeholder: AppString.confirmPassword.localized,
                         icon: .bag,
                         text: $confPassword,
-                        isPassword: true
-                    ) { password in
-                        confPassword = password
-                    }
+                        isPassword: true, enteredText:  { password in
+                            confPassword = password
+                        })
                     .padding(.bottom, 16)
 
                     PrimaryButton(title: AppString.submit.localized, isOutLine: false,onButtonClick: {
@@ -87,36 +97,20 @@ struct ResetPasswordScreen: View {
                             Task{
                                 SVProgressHUD.show()
                                 await viewModel.resetPassword(parameters: request)
+                                await SVProgressHUD.dismiss()
+                                handleSuccess()
                             }
                         }
                     },btnTextColor: .white)
                 }
-                .padding(.horizontal)
-                .padding(.top, 80)
-                .padding(.bottom, 32)
+//                .padding(.horizontal)
+//                .padding(.top, 80)
+//                .padding(.bottom, 32)
             }
-
-            PrimaryHeader(
-                title: AppString.resetPassword,
-                leadingImgArr: [.icBack],
-                onClickLeading: { _ in
-                    self.navigateToLogin = true
-                },
-                count: .constant(0)
-            )
-            .frame(height: 80)
-            .background(Color.white)
-            .shadow(radius: 2)
-
-            if isLoading {
-                LoadingIndicator()
-            }
+            
+           
 
             CusNavLink(doNavigate: $navigateToLogin, destination: LoginScreen())
-        }
-        .frame(width: screenWidth, height: screenHeight)
-        .onAppear {
-           
         }
         .onTapGesture {
             UIApplication.shared.endEditing()
@@ -124,9 +118,7 @@ struct ResetPasswordScreen: View {
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }
-        .onReceive(viewModel.$resetPasswordResponse){ response in
-            handleSuccess()
-        }
+      
         .bottomSheet(isPresented: $showError, height: screenHeight / 2, topBarCornerRadius: 25, showTopIndicator: false) {
             CommonBottomSheet(
                 sheetType: $alertType,
@@ -156,18 +148,18 @@ struct ResetPasswordScreen: View {
                     message: response.message.capitalized,
                     primaryBtnText: AppString.proceedToLogin.localized,
                     secondaryBtnText: "",
-                    sheetThemeColor: .green
+                    sheetThemeColor: .secondary
                 )
                 showError = true
             }
         } else {
             alertType = .sheetType(
                 icon: .alert,
-                title: response.status.capitalized,
-                message: response.message.capitalized,
+                title: "Failed",
+                message: viewModel.errorMessage ?? "",
                 primaryBtnText: "",
                 secondaryBtnText: AppString.ok.localized,
-                sheetThemeColor: .pinkBtn
+                sheetThemeColor: .secondary
             )
             withAnimation(.snappy) {
                 showError = true

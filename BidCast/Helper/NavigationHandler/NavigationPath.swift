@@ -7,9 +7,17 @@
 
 import Foundation
 
-final class AppRootManager: ObservableObject {
+class AppRootManager: ObservableObject {
     
-    @Published var currentRoot: eAppRoots = .splash
+    @Published var currentRoot: eAppRoots
+
+        init() {
+            if let _: Bool = UserDefaultsManager.shared.value(forKey: .isLoggedIn) {
+                currentRoot = .tabBar
+            } else {
+                currentRoot = .authentication
+            }
+        }
     
     enum eAppRoots {
         case splash

@@ -53,6 +53,7 @@ struct ForgotScreen: View {
                                 self.request.email = email
                             })
                         .textContentType(.username)
+                        .keyboardType(.emailAddress)
                         
                         PrimaryButton(
                             title: AppString.submit.localized,
@@ -74,16 +75,17 @@ struct ForgotScreen: View {
                                 Task{
                                     SVProgressHUD.show()
                                     await  self.viewModel.forgotEmail(parameters: self.request)
+                                    handleSuccess()
                                 }
                                
                             },
                             btnTextColor: .white
                         )
                     }
-                    .padding(.horizontal)
-                    .padding(.bottom, 32)
+//                    .padding(.horizontal)
+//                    .padding(.bottom, 32)
                 }
-                .padding(.top, 20)
+//                .padding(.top, 20)
             }
 
             CusNavLink(doNavigate: $navigateToOTP, destination: VerifyOtpScreen())
@@ -100,9 +102,6 @@ struct ForgotScreen: View {
         }
         .onTapGesture {
             UIApplication.shared.endEditing()
-        }
-        .onReceive(viewModel.$forgotResponseDict) { respone in
-            handleSuccess()
         }
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
@@ -141,7 +140,7 @@ struct ForgotScreen: View {
             isPassword = true
             withAnimation(.snappy) { navigateToOTP = true }
         } else {
-            alertType = .sheetType(icon: .alert, title: response.status.capitalized, message: response.message.capitalized, primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .defaultTheme)
+            alertType = .sheetType(icon: .alert, title: "Failed", message: viewModel.errorMessage ?? "", primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .defaultTheme)
             withAnimation(.snappy) { showError = true }
         }
     }

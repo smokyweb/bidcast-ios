@@ -219,7 +219,7 @@ struct LoginScreen: View {
                 alertType = .sheetType(icon: .success, title: dict.status?.capitalized ?? "", message: AppString.chooseLanguage.localized, primaryBtnText: AppString.continueBtn.localized , secondaryBtnText: "", sheetThemeColor: .secondary)
                 withAnimation(.snappy) { navigateTotab = true }
             }else{
-                alertType = .sheetType(icon: .alert, title: dict.status?.capitalized ?? "", message: dict.message ?? "", primaryBtnText: AppString.ok.localized, secondaryBtnText: "", sheetThemeColor: .secondary)
+                alertType = .sheetType(icon: .alert, title: "Failed".capitalized, message: viewModel.errorMessage ?? "", primaryBtnText: AppString.ok.localized, secondaryBtnText: "", sheetThemeColor: .secondary)
                 withAnimation(.snappy) { showError = true }
             }
         
@@ -232,16 +232,13 @@ struct LoginScreen: View {
 }
 extension LoginScreen{
     func isValidPhone(phone: String) -> Bool {
-        // Reject if the phone number is all zeros
         if Set(phone).count == 1 && phone.first == "0" {
             return false
         }
         
-        // Regex pattern: Only digits, length between 7 and 12
         let phoneRegex = "^[0-9]{10,12}$"
         let phoneTest = NSPredicate(format: "SELF MATCHES %@", phoneRegex)
         
-        // Check if the phone number matches the regex pattern
         return phoneTest.evaluate(with: phone)
     }
 }

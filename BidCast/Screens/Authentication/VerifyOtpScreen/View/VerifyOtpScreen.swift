@@ -39,7 +39,17 @@ struct VerifyOtpScreen: View {
     @State var hudMsg: String = ""
     
     var body: some View {
-        ZStack(alignment: .top) {
+        VStack {
+            VStack{
+                PrimaryHeader(
+                    title: AppString.verifyOtp.localized ,
+                    leadingImgArr: [.icBack],
+                    onClickLeading: { _ in
+                        self.navigateToLogin = true
+                    },
+                    count: .constant(0)
+                )
+            }
             ScrollView(showsIndicators: false) {
                 
                 VStack(alignment: .leading, spacing: 20) {
@@ -49,9 +59,10 @@ struct VerifyOtpScreen: View {
                         pinDots
                         Button(action: {
                             if let mail: String = UserDefaultsManager.shared.value(forKey: .mailId) {
-                                request.email = mail
+                                forgetOtpRequest.email = mail
                                 Task {
                                     await forgetOtpModel.forgotEmail(parameters: forgetOtpRequest)
+                                    handleForgetPassSuccess()
                                 }
                             }
                         }, label: {
@@ -60,7 +71,7 @@ struct VerifyOtpScreen: View {
                                 .foregroundStyle(.red)
                         }).padding(.trailing, 35)
                     })
-                    .padding([.leading , .trailing], Leading)
+//                    .padding([.leading , .trailing], Leading)
                     
                     PrimaryButton(title: AppString.submit.localized,isOutLine: false,onButtonClick: {
                         
@@ -81,7 +92,10 @@ struct VerifyOtpScreen: View {
                             if let codeInt = Int(pin) {
                                 request.code = codeInt
                                 Task {
+                                    SVProgressHUD.show()
                                     await viewModel.verifyCode(parameters: request)
+                                    await SVProgressHUD.dismiss()
+                                    handleSuccess()
                                 }
                             } else {
                                 hudMsg = AppString.otpNumeric.localized
@@ -90,69 +104,12 @@ struct VerifyOtpScreen: View {
                         }
                     },btnTextColor: .white)
                 }
-                .padding(.horizontal)
-                .padding(.top, 80)
-                .padding(.bottom, 32)
-                
-                if isLoading {
-                    LoadingIndicator()
-                }
-                
                 CusNavLink(doNavigate: $navigateToResetPassword, destination: ResetPasswordScreen())
             }
-            // Primary Header
-            PrimaryHeader(
-                title: AppString.verifyOtp.localized ,
-                leadingImgArr: [.icBack],
-                onClickLeading: { _ in
-                    self.navigateToLogin = true
-                },
-                count: .constant(0)
-            )
-            
-            .frame(height: 80)
-            .shadow(radius: 2)
+
         }
-        .frame(width: screenWidth, height: screenHeight)
-        .onReceive( viewModel.$verifyResponse) { response in
-            SVProgressHUD.dismiss()
-            handleSuccess()
-        }
+//        .frame(width: screenWidth, height: screenHeight)
         
-        .onReceive(viewModel.$errorMessage) { errorMsg in
-            SVProgressHUD.dismiss()
-            if let msg = errorMsg {
-                alertType = .sheetType(
-                    icon: .alert,
-                    title: AppString.error.localized,
-                    message: msg,
-                    primaryBtnText: "",
-                    secondaryBtnText: AppString.ok.localized,
-                    sheetThemeColor: .pinkBtn
-                )
-                showError = true
-            }
-        }
-        
-        .onReceive(forgetOtpModel.$forgotResponseDict) { response in
-            SVProgressHUD.dismiss()
-            handleForgetPassSuccess()
-        }
-        
-        .onReceive(forgetOtpModel.$errorMessage) { errorMsg in
-            SVProgressHUD.dismiss()
-            if let msg = errorMsg {
-                alertType = .sheetType(
-                    icon: .alert,
-                    title: AppString.error.localized,
-                    message: msg,
-                    primaryBtnText: "",
-                    secondaryBtnText: AppString.ok.localized,
-                    sheetThemeColor: .pinkBtn
-                )
-                showError = true
-            }
-        }
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }
@@ -177,12 +134,12 @@ struct VerifyOtpScreen: View {
         let response = viewModel.verifyResponse
         if response.status == "success" {
             UserDefaultsManager.shared.setValue(request.email, forKey: .mailId)
-            alertType = .sheetType(icon: .success, title: response.status.capitalized, message: response.message.capitalized, primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .green)
+            alertType = .sheetType(icon: .success, title: response.status.capitalized, message: response.message.capitalized, primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .secondary)
             showError = true
             isPassword = true
             withAnimation(.snappy) { navigateToResetPassword = true }
         } else {
-            alertType = .sheetType(icon: .alert, title: response.status.capitalized, message: response.message.capitalized, primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .pinkBtn)
+            alertType = .sheetType(icon: .alert, title: "Failed", message: viewModel.errorMessage ?? "", primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .red)
             withAnimation(.snappy) { showError = true }
         }
     }
@@ -191,11 +148,11 @@ struct VerifyOtpScreen: View {
         let response = forgetOtpModel.forgotResponseDict
         if response.status == "success" {
             UserDefaultsManager.shared.setValue(request.email, forKey: .mailId)
-            alertType = .sheetType(icon: .success, title: response.status.capitalized, message: response.message.capitalized, primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .green)
+            alertType = .sheetType(icon: .success, title: response.status.capitalized, message: response.message.capitalized, primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .secondary)
             showError = true
-            isPassword = true
+            isPassword = false
         } else {
-            alertType = .sheetType(icon: .alert, title: response.status.capitalized, message: response.message.capitalized, primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .pinkBtn)
+            alertType = .sheetType(icon: .alert, title: "Failed", message: viewModel.errorMessage ?? "", primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .red)
             withAnimation(.snappy) { showError = true }
         }
     }

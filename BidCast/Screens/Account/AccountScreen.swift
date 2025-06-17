@@ -11,7 +11,7 @@ import SVProgressHUD
 struct AccountScreen: View {
     
     @Environment(\.presentationMode) var presentationMode
-    @EnvironmentObject private var appRootManager: AppRootManager
+    @EnvironmentObject var appRootManager: AppRootManager
     @State var userLogOut: Bool = false
     @State var isLoading: Bool = false
     @State var showAlert: Bool = false
@@ -301,14 +301,14 @@ struct AccountScreen: View {
         .edgesIgnoringSafeArea(.bottom)
         .background(.bg.opacity(0.5))
        
-        .bottomSheet(isPresented: $userLogOut, height: screenHeight/2, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: { userLogOut = true }, content: {
+        .bottomSheet(isPresented: $userLogOut, height: screenHeight/2, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: {  }, content: {
             LogOutSheet(onLogoutClick: {
                 withAnimation(.snappy) { userLogOut = false }
                 Task{
                     SVProgressHUD.show()
                     await viewModal.logOut()
-                    await SVProgressHUD.show()
-                    await handleSuccess()
+                    SVProgressHUD.show()
+                    handleSuccess()
                 }
                
             }, onCancelClick: {
@@ -326,11 +326,15 @@ struct AccountScreen: View {
     }
     func handleUserLogout() {
         DispatchQueue.main.async {
+            UserDefaults.accessToken.removeAll()
             UserDefaultsManager.shared.clearAllValues()
-            DispatchQueue.main.async {
-                UserDefaults.accessToken.removeAll()
-                appRootManager.currentRoot = .authentication
-                self.presentationMode.wrappedValue.dismiss()
+            UserDefaultsManager.shared.remove(forKey: .isLoggedIn)
+            UserDefaultsManager.shared.remove(forKey: .userDetail)
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                withAnimation {
+                    appRootManager.currentRoot = .splash
+                }
             }
         }
     }
