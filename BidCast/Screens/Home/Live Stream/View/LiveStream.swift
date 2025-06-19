@@ -47,6 +47,7 @@ struct LiveStream: View {
     @Environment(\.presentationMode) var presentationMode
     
     @ObservedObject var zegoManager = ZegoManager.shared
+//    @ObservedObject var chatManager = ZegoChatManager.shared
     
     var localUserID = "viewer_\(UserDefaults.userId)"
     

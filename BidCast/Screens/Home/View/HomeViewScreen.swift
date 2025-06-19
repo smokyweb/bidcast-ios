@@ -45,9 +45,31 @@ struct HomeViewScreen: View {
                 }
                 
                 ScrollView(showsIndicators:false){
-                    VStack(alignment: .leading,spacing: 4){
+                    VStack(alignment: .leading,spacing: 12){
                         SegmentedControlView(segments: HomeButton.allCases, selectedSegment:$selectedButton, isWithBorder: true)
-                        SingleTitleLabel(title: "Live Now | Popular | coming Soon" ,textColor: .black,fontValue: 18.0)
+                        ButtonTitleLabel(
+                                titles: ["Live Now", "Popular", "Coming Soon"],
+                                fontValue: 18,
+                                textColor: .blue
+                            ) { selected in
+                                print("Tapped:", selected)
+                                Task{
+                                    SVProgressHUD.show()
+                                    liveShowsData.removeAll()
+                                    var selection = ""
+                                    if selected == "Live Now"{
+                                        selection = "live"
+                                    }else if selected == "Popular"{
+                                        selection = "popular"
+                                    }else{
+                                        selection = "upcoming"
+                                    }
+                                    await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: selection))
+                                    await SVProgressHUD.dismiss()
+                                    self.success()
+                                }
+                            }
+                        
                         LazyVGrid(columns: columns, spacing: 12) {
 //                            let liveData = Array(0..<liveShowsData.count)
                             ForEach(liveShowsData.indices, id: \.self) { index in
@@ -133,3 +155,43 @@ enum HomeButton: String, CaseIterable, CustomStringConvertible {
 }
 
 
+
+struct ButtonTitleLabel: View {
+    
+    var titles: [String] = ["Live Now", "Popular", "Coming Soon"]
+    var fontName = poppinsRegular
+    var selectedFontName = poppinsSemiBold
+    var fontValue: CGFloat = 23
+    var textColor: Color = .gray
+    var selectedColor: Color = .black
+    var separatorColor: Color = .gray
+    var spacing: CGFloat = 12
+    var onTap: ((String) -> Void)? = nil
+    
+    @State var selectedTitle: String = "Live Now"
+    
+    var body: some View {
+        HStack(spacing: spacing) {
+            ForEach(titles.indices, id: \.self) { index in
+                HStack(spacing: spacing) {
+                    let title = titles[index]
+                    
+                    Text(title)
+                        .font(.custom(title == selectedTitle ? selectedFontName : fontName, fixedSize: fontValue))
+                        .foregroundColor(title == selectedTitle ? selectedColor : separatorColor)
+                        .onTapGesture {
+                            selectedTitle = title
+                            onTap?(title)
+                        }
+                    
+                    if index < titles.count - 1 {
+                        Text("|")
+                            .foregroundColor(separatorColor)
+                            .font(.custom(fontName, fixedSize: fontValue))
+                    }
+                }
+            }
+        }
+        .padding(.horizontal, 16)
+    }
+}

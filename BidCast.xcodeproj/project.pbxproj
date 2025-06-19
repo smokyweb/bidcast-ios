@@ -80,6 +80,8 @@
 		35AC64722DD4827D00B5E13E /* ImageCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35AC64712DD4827D00B5E13E /* ImageCollectionView.swift */; };
 		35AC64742DD48C0300B5E13E /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35AC64732DD48C0300B5E13E /* SearchView.swift */; };
 		35AC64782DD4A8AD00B5E13E /* ListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35AC64772DD4A7D700B5E13E /* ListCell.swift */; };
+		35B424A42E04327500626E02 /* ZegoChat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B424A32E04327500626E02 /* ZegoChat.swift */; };
+		35B424A72E043D0E00626E02 /* ZIM in Frameworks */ = {isa = PBXBuildFile; productRef = 35B424A62E043D0E00626E02 /* ZIM */; };
 		35B44F172DD7053B00FBCBC4 /* AboutUsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B44F162DD7053B00FBCBC4 /* AboutUsScreen.swift */; };
 		35B44F1C2DD705C200FBCBC4 /* ABoutUsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B44F1B2DD705C200FBCBC4 /* ABoutUsModel.swift */; };
 		35B44F1E2DD705E100FBCBC4 /* AboutUsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B44F1D2DD705E100FBCBC4 /* AboutUsViewModel.swift */; };
@@ -529,6 +531,7 @@
 		35AC64712DD4827D00B5E13E /* ImageCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCollectionView.swift; sourceTree = "<group>"; };
 		35AC64732DD48C0300B5E13E /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		35AC64772DD4A7D700B5E13E /* ListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListCell.swift; sourceTree = "<group>"; };
+		35B424A32E04327500626E02 /* ZegoChat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZegoChat.swift; sourceTree = "<group>"; };
 		35B44F162DD7053B00FBCBC4 /* AboutUsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutUsScreen.swift; sourceTree = "<group>"; };
 		35B44F1B2DD705C200FBCBC4 /* ABoutUsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ABoutUsModel.swift; sourceTree = "<group>"; };
 		35B44F1D2DD705E100FBCBC4 /* AboutUsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutUsViewModel.swift; sourceTree = "<group>"; };
@@ -953,6 +956,7 @@
 				3504BCC12E000A3D0069182D /* FirebaseAuthCombine-Community in Frameworks */,
 				3504BCC52E000A3D0069182D /* FirebaseCrashlytics in Frameworks */,
 				35B44F212DD7152600FBCBC4 /* RichText in Frameworks */,
+				35B424A72E043D0E00626E02 /* ZIM in Frameworks */,
 				358B9D182DDF049600932250 /* FSCalendar in Frameworks */,
 				35F63D6D2DDCBE5B00D29878 /* StripeApplePay in Frameworks */,
 				3504BCC32E000A3D0069182D /* FirebaseCore in Frameworks */,
@@ -2102,6 +2106,7 @@
 				35C202512DEF0DEB00492F2D /* StripeManager.swift */,
 				3504BCE42E000A610069182D /* FireBase.swift */,
 				3504BCE62E00418F0069182D /* ZegoManager.swift */,
+				35B424A32E04327500626E02 /* ZegoChat.swift */,
 			);
 			path = Helper;
 			sourceTree = "<group>";
@@ -3593,6 +3598,7 @@
 				3504BCDE2E000A3D0069182D /* FirebaseStorage */,
 				3504BCE02E000A3D0069182D /* FirebaseStorageCombine-Community */,
 				3504BCE22E000A3D0069182D /* FirebaseVertexAI */,
+				35B424A62E043D0E00626E02 /* ZIM */,
 			);
 			productName = BidCast;
 			productReference = 99DF9E3F2DC4F35D008C15B2 /* BidCast.app */;
@@ -3688,6 +3694,7 @@
 				354652672DF2EE5900EB353F /* XCRemoteSwiftPackageReference "SVProgressHUD" */,
 				3504BCA82DFFE3D70069182D /* XCRemoteSwiftPackageReference "express-video-ios" */,
 				3504BCAD2E000A3D0069182D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				35B424A52E043D0E00626E02 /* XCRemoteSwiftPackageReference "zim-ios" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 99DF9E402DC4F35D008C15B2 /* Products */;
@@ -3856,6 +3863,7 @@
 				99C909D52DC8CDDC0054620B /* AboutUsResponseModel.swift in Sources */,
 				D4C4D79A2DD3263A00274E51 /* SingleTitleLabel.swift in Sources */,
 				99C909D62DC8CDDC0054620B /* CombineDataModel.swift in Sources */,
+				35B424A42E04327500626E02 /* ZegoChat.swift in Sources */,
 				D4BB99FD2DE59E9F00C1BCBC /* SellerStatusModel.swift in Sources */,
 				D4BB9A0F2DE5AB4D00C1BCBC /* OrderCardView.swift in Sources */,
 				99C909D72DC8CDDC0054620B /* LinkedInStatusModel.swift in Sources */,
@@ -4613,6 +4621,14 @@
 				minimumVersion = 1.2.1;
 			};
 		};
+		35B424A52E043D0E00626E02 /* XCRemoteSwiftPackageReference "zim-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/zegolibrary/zim-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.20.0;
+			};
+		};
 		35B44F1F2DD7152600FBCBC4 /* XCRemoteSwiftPackageReference "RichText" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/NuPlay/RichText.git";
@@ -4814,6 +4830,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 35A0451A2DC8E19E0067C447 /* XCRemoteSwiftPackageReference "ActivityIndicatorView" */;
 			productName = ActivityIndicatorView;
+		};
+		35B424A62E043D0E00626E02 /* ZIM */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 35B424A52E043D0E00626E02 /* XCRemoteSwiftPackageReference "zim-ios" */;
+			productName = ZIM;
 		};
 		35B44F202DD7152600FBCBC4 /* RichText */ = {
 			isa = XCSwiftPackageProductDependency;

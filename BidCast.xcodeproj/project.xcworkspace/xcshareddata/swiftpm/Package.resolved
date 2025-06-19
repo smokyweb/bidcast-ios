@@ -1,5 +1,5 @@
 {
-  "originHash" : "41ab54fcaeabacf087ff0a2f46594b6120d67e9fc7e4859894097768d41ed4e4",
+  "originHash" : "0047be52d9064b5dde4a7c1d668df3dd5bfb77d6e592462a117a29b9524609d7",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -287,6 +287,15 @@
       "state" : {
         "revision" : "85858c0246dcd781228301f9928519f75ce89758",
         "version" : "0.0.4"
+      }
+    },
+    {
+      "identity" : "zim-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/zegolibrary/zim-ios",
+      "state" : {
+        "revision" : "d2a5293fad16af0a23838dba53064265d08d47a1",
+        "version" : "2.20.0"
       }
     }
   ],
