@@ -32,7 +32,7 @@ struct MoreOptionsScreen: View {
                 // Header
                 HStack {
                     Text("More Options")
-                        .font(.headline)
+                        .font(.custom(poppinsBold, size: 15.0))
                     Spacer()
                     Button(action: {
                         isPresented = false
@@ -111,6 +111,7 @@ struct MoreOptionsScreen: View {
             }
             .padding()
         }
+        .edgesIgnoringSafeArea(.top)
         .background(Color.white)
         .cornerRadius(20)
     }

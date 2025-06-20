@@ -26,111 +26,115 @@ struct ShareShowBottomSheetView: View {
     ]
     
     var body: some View {
-        VStack(spacing: 16) {
-            // Header
-            HStack {
-                Text("Share Show")
-                    .font(.title2).bold()
-                Spacer()
-                Button { isPresented = false } label: {
-                    Image(systemName: "xmark")
-                        .foregroundColor(.gray)
-                        .imageScale(.large)
-                }
-            }
-            
-            // Show Preview
-            VStack(alignment: .leading, spacing: 12) {
-                HStack(spacing: 12) {
-                    Circle()
-                        .fill(Color.gray.opacity(0.3))
-                        .frame(width: 40, height: 40)
-                        .overlay(Image(systemName: "person.crop.circle.fill").resizable().scaledToFit().padding(6))
-                    VStack(alignment: .leading) {
-                        Text(showTitle)
-                            .font(.headline)
-                        Text("@\(username)")
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
-                    }
-                }
-                
+        ScrollView(showsIndicators: false){
+            VStack(spacing: 16) {
+                // Header
                 HStack {
+                    Text("Share Show")
+                        .font(.title2).bold()
                     Spacer()
-                    showImage
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 100, height: 100)
-                        .cornerRadius(12)
-                    Spacer()
+                    Button { isPresented = false } label: {
+                        Image(systemName: "xmark")
+                            .foregroundColor(.gray)
+                            .imageScale(.large)
+                    }
                 }
                 
-                Text(message)
-                    .font(.subheadline)
-                    .multilineTextAlignment(.leading)
-                    .lineLimit(nil) // Allow unlimited lines
-                    .fixedSize(horizontal: false, vertical: true) // Ensure it wraps
-                
-            }
-            
-            .padding()
-            .background(Color(.systemGray6))
-            .cornerRadius(20)
-            
-            // Share Icons
-            HStack(spacing: 24) {
-                ForEach(shareOptions, id: \.0) { name, icon in
-                    VStack {
-                        Button { onShare(name) } label: {
-                            Circle()
-                                .fill(Color(.systemGray6))
-                                .frame(width: 50, height: 50)
-                                .overlay(Image(systemName: icon))
+                // Show Preview
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack(spacing: 12) {
+                        Circle()
+                            .fill(Color.gray.opacity(0.3))
+                            .frame(width: 40, height: 40)
+                            .overlay(Image(systemName: "person.crop.circle.fill").resizable().scaledToFit().padding(6))
+                        VStack(alignment: .leading) {
+                            Text(showTitle)
+                                .font(.headline)
+                            Text("@\(username)")
+                                .font(.subheadline)
+                                .foregroundColor(.gray)
                         }
-                        Text(name)
-                            .font(.caption)
                     }
-                }
-            }
-            
-            // Actions
-            VStack(spacing: 12) {
-                Button(action: onSavePDF) {
+                    
                     HStack {
-                        Image(systemName: "doc.richtext")
-                            .foregroundColor(.red)
-                        Text("Save as PDF")
-                            .foregroundColor(.black)
                         Spacer()
-                        Image(systemName: "chevron.right")
-                            .foregroundColor(.gray)
+                        showImage
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 100, height: 100)
+                            .cornerRadius(12)
+                        Spacer()
                     }
-                    .padding()
-                    .background(Color(.systemGray6))
-                    .cornerRadius(14)
+                    
+                    Text(message)
+                        .padding()
+                        .font(.subheadline)
+                        .multilineTextAlignment(.leading)
+                        .lineLimit(nil) // Allow unlimited lines
+                        .fixedSize(horizontal: false, vertical: true) // Ensure it wraps
+                    
                 }
                 
-                Button(action: onShareEmail) {
-                    HStack {
-                        Image(systemName: "envelope")
-                            .foregroundColor(.gray)
-                        Text("Share via Email")
-                            .foregroundColor(.black)
-                        Spacer()
-                        Image(systemName: "chevron.right")
-                            .foregroundColor(.gray)
+                //            .padding()
+                .background(Color(.systemGray6))
+                .cornerRadius(20)
+                
+                // Share Icons
+                HStack(spacing: 24) {
+                    ForEach(shareOptions, id: \.0) { name, icon in
+                        VStack {
+                            Button { onShare(name) } label: {
+                                Circle()
+                                    .fill(Color(.systemGray6))
+                                    .frame(width: 50, height: 50)
+                                    .overlay(Image(systemName: icon))
+                            }
+                            Text(name)
+                                .font(.caption)
+                        }
                     }
-                    .padding()
-                    .background(Color(.systemGray6))
-                    .cornerRadius(14)
                 }
+                
+                // Actions
+                VStack(spacing: 12) {
+                    Button(action: onSavePDF) {
+                        HStack {
+                            Image(systemName: "doc.richtext")
+                                .foregroundColor(.red)
+                            Text("Save as PDF")
+                                .foregroundColor(.black)
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .foregroundColor(.gray)
+                        }
+                        .padding()
+                        .background(Color(.systemGray6))
+                        .cornerRadius(14)
+                    }
+                    
+                    Button(action: onShareEmail) {
+                        HStack {
+                            Image(systemName: "envelope")
+                                .foregroundColor(.gray)
+                            Text("Share via Email")
+                                .foregroundColor(.black)
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .foregroundColor(.gray)
+                        }
+                        .padding()
+                        .background(Color(.systemGray6))
+                        .cornerRadius(14)
+                    }
+                }
+                
+                Spacer()
             }
-            
-            Spacer()
+                    .edgesIgnoringSafeArea(.top)
+            .padding()
+            .background(Color.white)
+            .cornerRadius(20)
         }
-        .padding()
-        .background(Color.white)
-        .cornerRadius(20)
     }
 }
 

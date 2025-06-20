@@ -248,7 +248,7 @@ struct RehearsalScreen: View {
         }
         .bottomSheet(
             isPresented: $showSellSheet,
-            height: screenHeight * 0.75, // Adjust as needed
+            height: screenHeight * 0.65, // Adjust as needed
             topBarCornerRadius: 20,
             contentBackgroundColor: Color(.systemBackground),
             topBarBackgroundColor: Color(.systemBackground),
@@ -302,7 +302,7 @@ struct RehearsalScreen: View {
                                   print("Email sent")
                               }
                           )
-                          .presentationDetents([.height(500)])
+//                          .presentationDetents([.height(500)])
                           .presentationDragIndicator(.visible)
                        case .switchView:
                     EmptyView()

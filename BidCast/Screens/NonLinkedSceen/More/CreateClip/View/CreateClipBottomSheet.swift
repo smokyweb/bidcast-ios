@@ -25,7 +25,7 @@ struct CreateClipBottomSheetView: View {
                         .foregroundColor(.gray)
                 }
                 Text("Create Clip")
-                    .font(.title3.bold())
+                    .font(.custom(poppinsBold, size: 15.0))
                 Spacer()
             }
 
@@ -47,9 +47,14 @@ struct CreateClipBottomSheetView: View {
                     .font(.title3)
                     .foregroundColor(.gray)
                 VStack(alignment: .leading) {
-                    Text("Trim Clip").font(.headline)
-                    Text("Last 30 seconds").font(.subheadline).foregroundColor(.gray)
+                    Text("Trim Clip")
+                        .font(.custom(poppinsBold, size: 15.0))
+                    Text("Last 30 seconds")
+                    
+                        .font(.custom(poppinsBold, size: 13.0))
+                        .foregroundColor(.gray)
                 }
+                
                 Spacer()
                 Button("Edit") {
                     // Future enhancement: custom trimming
@@ -68,6 +73,7 @@ struct CreateClipBottomSheetView: View {
                 }
             }) {
                 Text("Create Clip")
+                    .font(.custom(poppinsBold, size: 15.0))
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .padding()
@@ -77,6 +83,7 @@ struct CreateClipBottomSheetView: View {
 
         }
         .padding()
+        .edgesIgnoringSafeArea(.top)
         .background(Color.white)
         .clipShape(RoundedRectangle(cornerRadius: 20))
         .onAppear {

@@ -26,8 +26,7 @@ struct PromoteShowSheet: View {
         VStack(spacing: 0) {
             HStack {
                 Text("Promote Show")
-                    .font(.title2)
-                    .bold()
+                    .font(.custom(poppinsBold, size: 15.0))
                 Spacer()
                 Button(action: onClose) {
                     Image(systemName: "xmark")
@@ -45,8 +44,9 @@ struct PromoteShowSheet: View {
                 .padding([.horizontal, .bottom])
             }
         }
+        .edgesIgnoringSafeArea(.top)
         .background(Color.white)
         .cornerRadius(20)
-        .padding()
+//        .padding()
     }
 }
