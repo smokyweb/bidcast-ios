@@ -19,13 +19,7 @@ struct Comment: Identifiable, Equatable {
 
 struct LiveStream: View {
     @State private var commentText = ""
-    @State private var comments: [Comment] = [
-        Comment(username: "trapwoc212", message: "White gold black diamond black silver"),
-        Comment(username: "trapwoc212", message: "White gold"),
-        Comment(username: "trapwoc212", message: "White gold"),
-        Comment(username: "trapwoc212", message: "White gold"),
-        Comment(username: "trapwoc212", message: "White gold")
-    ]
+    @State var comments: [Comment] = []
     
     @State var id : String = ""
     @GestureState private var dragOffset = CGSize.zero
@@ -43,329 +37,358 @@ struct LiveStream: View {
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @State var showError: Bool = false
     @Binding var userId : String
+   
     
     @Environment(\.presentationMode) var presentationMode
     
     @ObservedObject var zegoManager = ZegoManager.shared
-//    @ObservedObject var chatManager = ZegoChatManager.shared
+    //    @ObservedObject var chatManager = ZegoChatManager.shared
     
-    var localUserID = "viewer_\(UserDefaults.userId)"
+    var localUserID = "\(UserDefaults.userId)"
     
     var body: some View {
-        GeometryReader { geometry in
-            ZStack(alignment: .top) {
-                if streamID.count != 0 {
-                    ZegoPreviewView(streamID: streamID[currentStreamIndex])
-                        .frame(width: geometry.size.width, height: geometry.size.height)
-                        .edgesIgnoringSafeArea(.all)
-                    
-                }
-                VStack {
-                    HStack(spacing: 12) {
-                        Button(action:{
-                            id = userId
-                            navigateToProfile = true
-                        }){
-                        Image("user1")
-                            .resizable()
-                            .frame(width: 40, height: 40)
-                            .clipShape(Circle())
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("swiftbid")
-                                .foregroundColor(.white)
-                                .bold()
-                            HStack(spacing: 6) {
-                                Image(systemName: "sparkles")
-                                    .foregroundColor(.yellow)
-                                Text("99")
-                                    .foregroundColor(.yellow)
-                            }
+      
+            GeometryReader { geometry in
+                if liveShowsData.count != 0{
+                    ZStack(alignment: .top) {
+                        if streamID.count != 0 {
+                            ZegoPreviewView(streamID: streamID[currentStreamIndex])
+                                .frame(width: geometry.size.width, height: geometry.size.height)
+                                .edgesIgnoringSafeArea(.all)
+                            
                         }
-                    }
-                        Spacer()
-                        Button(action: {}) {
-                            Text("Follow")
-                                .foregroundColor(.black)
-                                .padding(.horizontal, 10)
-                                .padding(.vertical, 4)
-                                .background(Color.yellow)
-                                .cornerRadius(10)
-                        }
-                    }
-                    .padding(.horizontal)
-                    .padding(.top, 30)
-                    
-                    Spacer()
-                    
-                    // Floating action icons on the right
-                    VStack(spacing: 16) {
-                        Button(action: {}) {
-                            Image(systemName: "info.circle")
-                                .font(.title2)
-                                .foregroundColor(.white)
-                        }
-                        Button(action: {}) {
-                            Image(systemName: "ellipsis.circle")
-                                .font(.title2)
-                                .foregroundColor(.white)
-                        }
-                        Button(action: {}) {
-                            ZStack(alignment: .topTrailing) {
-                                Image(systemName: "cart")
-                                    .font(.title2)
-                                    .foregroundColor(.white)
-                                Circle()
-                                    .fill(Color.red)
-                                    .frame(width: 14, height: 14)
-                                    .overlay(Text("7").font(.caption2).foregroundColor(.white))
-                            }
-                        }
-                    }
-                    .padding(.trailing)
-                    .frame(maxWidth: .infinity, alignment: .trailing)
-                    
-                    // Comments Section
-                    HStack{
-                        ScrollViewReader { scrollProxy in
-                            ScrollView(.vertical, showsIndicators: false) {
-                                VStack(alignment: .leading, spacing: 8) {
-                                    ForEach(comments) { comment in
-                                        HStack(alignment: .center, spacing: 6) {
-                                                Image("defaultUser")
-                                                    .resizable()
-                                                    .scaledToFit()
-                                                    .frame(width: 24, height: 24)
-                                                    .clipShape(Circle())
-                                            VStack(alignment: .leading) {
-                                                Text(comment.username)
-                                                    .font(.caption)
-                                                    .bold()
-                                                    .foregroundColor(.white)
-                                                Text(comment.message)
-                                                    .font(.footnote)
-                                                    .foregroundColor(.white)
-                                            }
-                                            Spacer()
+                        VStack {
+                            HStack(spacing: 12) {
+                                Button(action:{
+                                    id = userId
+                                    navigateToProfile = true
+                                }){
+                                    CustomProfileImage(url: liveShowsData[currentStreamIndex].user?.profile_image ?? "", isCircular: true)
+                                   
+                                    
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(liveShowsData[currentStreamIndex].user?.name ?? "")
+                                            .foregroundColor(.white)
+                                            .bold()
+                                        HStack(spacing: 6) {
+                                            Image(systemName: "sparkles")
+                                                .foregroundColor(.yellow)
+                                            Text("99")
+                                                .foregroundColor(.yellow)
                                         }
-                                        .id(comment.id)
                                     }
                                 }
-                                .padding(.horizontal)
+                                Spacer()
+                                   
+                                   HStack(spacing: 4) {
+                                       Image(systemName: "eye.fill")
+                                           .foregroundColor(.black)
+                                       Text("\(liveShowsData[currentStreamIndex].viewer_count ?? 0)")
+                                           .foregroundColor(.black)
+                                           .font(.custom(poppinsSemiBold, size: 13.0))
+                                   }
+                                Button(action: {}) {
+                                    Text("Follow")
+                                        .font(.custom(poppinsSemiBold, size: 13.0))
+                                        .foregroundColor(.black)
+                                        .padding(.horizontal, 10)
+                                        .padding(.vertical, 4)
+                                        .background(Color.yellow)
+                                        .cornerRadius(10)
+                                }
+                                   Button(action: {
+                                      
+                                   }) {
+                                       Image(systemName: "xmark.circle.fill")
+                                           .foregroundColor(.danger)
+                                           .font(.custom(poppinsSemiBold, size: 20.0))
+                                   }
+                               
                             }
-                            .onChange(of: comments) { _ in
-                                withAnimation {
-                                    scrollProxy.scrollTo(comments.last?.id, anchor: .bottom)
+                            .padding(.horizontal)
+                            .padding(.top, 30)
+                            
+                            Spacer()
+                            
+                            // Floating action icons on the right
+                            VStack(spacing: 16) {
+                                Button(action: {}) {
+                                    Image(systemName: "info.circle")
+                                        .font(.title2)
+                                        .foregroundColor(.white)
+                                }
+                                Button(action: {}) {
+                                    Image(systemName: "ellipsis.circle")
+                                        .font(.title2)
+                                        .foregroundColor(.white)
+                                }
+                                Button(action: {}) {
+                                    ZStack(alignment: .topTrailing) {
+                                        Image(systemName: "cart")
+                                            .font(.title2)
+                                            .foregroundColor(.white)
+                                        Circle()
+                                            .fill(Color.red)
+                                            .frame(width: 14, height: 14)
+                                            .overlay(Text("7").font(.caption2).foregroundColor(.white))
+                                    }
                                 }
                             }
-                            .frame(width:screenWidth - 50,height: 150)
+                            .padding(.trailing)
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                            
+                            // Comments Section
+                            if ZegoManager.shared.isCommentsAvailable {
+                                HStack{
+                                    ScrollViewReader { scrollProxy in
+                                        ScrollView(.vertical, showsIndicators: false) {
+                                            VStack(alignment: .leading, spacing: 8) {
+                                                ForEach(zegoManager.incomingComments) { comment in
+                                                    HStack(alignment: .center, spacing: 6) {
+//                                                        Image("defaultUser")
+//                                                            .resizable()
+//                                                            .scaledToFit()
+//                                                            .frame(width: 24, height: 24)
+//                                                            .clipShape(Circle())
+                                                        VStack(alignment: .leading) {
+                                                            Text(comment.username)
+                                                                .font(.custom(poppinsSemiBold, size: 12.0))
+                                                                .bold()
+                                                                .foregroundColor(.white)
+                                                            Text(comment.message)
+                                                                .font(.footnote)
+                                                                .foregroundColor(.white)
+                                                        }
+                                                        Spacer()
+                                                    }
+                                                    .id(comment.id)
+                                                }
+                                            }
+                                            .padding(.horizontal)
+                                        }
+                                        .onChange(of: zegoManager.incomingComments) { _ in
+                                            withAnimation {
+                                               
+                                                if let lastID = zegoManager.incomingComments.last?.id {
+                                                    scrollProxy.scrollTo(lastID, anchor: .bottom)
+                                                }
+                                            }
+                                        }
+                                        .frame(width:screenWidth - 50,height: 150)
+                                        .background(Color.black.opacity(0.3))
+                                        .cornerRadius(10)
+                                        .padding(.horizontal)
+                                    }
+                                    Spacer()
+                                }
+                            }
+                            
+                            HStack(spacing: 12) {
+                                CustomProfileImage(url: liveShowsData[currentStreamIndex].category?.image ?? "", isCircular: false,cornerRadius: 8.0,size: 60.0)
+                               
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("Item Name")
+                                        .font(.custom(poppinsBold, size: 13.0))
+                                        .foregroundColor(.black)
+                                    HStack(spacing: 6) {
+                                        Text("Tag")
+                                            .font(.custom(poppinsSemiBold, size: 12.0))
+                                            .padding(4)
+                                            .background(Color.purple.opacity(0.7))
+                                            .cornerRadius(4)
+                                        Text("Tag")
+                                            .font(.custom(poppinsSemiBold, size: 12.0))
+                                            .padding(4)
+                                            .background(Color.pink.opacity(0.7))
+                                            .cornerRadius(4)
+                                    }
+                                    Text("Lorem ipsum dolor sit amet")
+                                        .font(.custom(poppinsSemiBold, size: 12.0))
+                                        .foregroundColor(.white)
+                                }
+                                Spacer()
+                                
+                            }
+                            .padding()
                             .background(Color.black.opacity(0.3))
                             .cornerRadius(10)
                             .padding(.horizontal)
-                        }
-                        Spacer()
-                    }
-                    
-                    // Item info with tags and thumbnail
-                    HStack(spacing: 12) {
-                        Image("sports")
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: 60, height: 60)
-                            .clipped()
-                            .cornerRadius(8)
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("Item Name")
-                                .font(.subheadline)
-                                .bold()
-                                .foregroundColor(.black)
-                            HStack(spacing: 6) {
-                                Text("Tag")
-                                    .font(.caption)
-                                    .padding(4)
-                                    .background(Color.purple.opacity(0.7))
-                                    .cornerRadius(4)
-                                Text("Tag")
-                                    .font(.caption)
-                                    .padding(4)
-                                    .background(Color.pink.opacity(0.7))
-                                    .cornerRadius(4)
-                            }
-                            Text("Lorem ipsum dolor sit amet")
-                                .font(.caption2)
-                                .foregroundColor(.white)
-                        }
-                        Spacer()
-                        
-                    }
-                    .padding()
-                    .background(Color.black.opacity(0.3))
-                    .cornerRadius(10)
-                    .padding(.horizontal)
-                    
-                    // Swipe to Bid Button
-                    ZStack(alignment: .leading) {
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(Color.black.opacity(0.3))
-                            .frame(height: 50)
-                        
-                        Text("Swipe to Bid")
-                            .foregroundColor(.white)
-                            .padding(.leading)
-                        Spacer()
-                        RoundedRectangle(cornerRadius: 10)
-                            .strokeBorder(Color.white, lineWidth: 2)
-                            .frame(width: 50, height: 40)
-                            .overlay(
-                                Text(swipeConfirmed ? "✓" : "→")
+                            
+                            // Swipe to Bid Button
+                            ZStack(alignment: .leading) {
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(Color.black.opacity(0.3))
+                                    .frame(height: 50)
+                                
+                                Text("Swipe to Bid")
+                                    .font(.custom(poppinsSemiBold, size: 14.0))
                                     .foregroundColor(.white)
-                                    .bold()
-                            )
-                            .offset(x: (screenWidth / 2 - 50) + dragOffset.width)
-                            .gesture(
-                                DragGesture()
-                                    .updating($dragOffset) { value, state, _ in
-                                        if value.translation.width >= 0 {
-                                            // Clamp drag to not exceed right edge minus handle width and padding
-                                            let maxDrag = screenWidth - 40 - (screenWidth / 2 - 50)
-                                            state = CGSize(width: min(value.translation.width, maxDrag), height: 0)
-                                        }
-                                    }
-                                    .onEnded { value in
-                                        let maxDrag = screenWidth - 40 - (screenWidth / 2 - 50)
-                                        if value.translation.width > maxDrag * 0.8 {
-                                            swipeConfirmed = true
-                                            // Trigger bid action here
+                                    .padding(.leading)
+                                Spacer()
+                                RoundedRectangle(cornerRadius: 10)
+                                    .strokeBorder(Color.white, lineWidth: 2)
+                                    .frame(width: 50, height: 40)
+                                    .overlay(
+                                        Text(swipeConfirmed ? "✓" : "→")
+                                            .foregroundColor(.white)
+                                            .bold()
+                                    )
+                                    .offset(x: (screenWidth / 2 - 50) + dragOffset.width)
+                                    .gesture(
+                                        DragGesture()
+                                            .updating($dragOffset) { value, state, _ in
+                                                if value.translation.width >= 0 {
+                                                    
+                                                    let maxDrag = screenWidth - 40 - (screenWidth / 2 - 50)
+                                                    state = CGSize(width: min(value.translation.width, maxDrag), height: 0)
+                                                }
+                                            }
+                                            .onEnded { value in
+                                                let maxDrag = screenWidth - 40 - (screenWidth / 2 - 50)
+                                                if value.translation.width > maxDrag * 0.8 {
+                                                    swipeConfirmed = true
+                                                    
+                                                } else {
+                                                    swipeConfirmed = false
+                                                }
+                                            }
+                                    )
+                                    .animation(.spring(), value: dragOffset)
+                            }
+                            .padding(.horizontal)
+                            
+                            // Comment Input
+                            HStack {
+                                TextField("Say something...", text: $commentText)
+                                    .font(.custom(poppinsSemiBold, size: 13.0))
+                                    .foregroundStyle(.black)
+                                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                                    .frame(height: 40)
+                                Button(action: {
+                                    guard !commentText.isEmpty else { return }
+                                    let roomId = liveShowsData[currentStreamIndex].room_id ?? ""
+                                    ZegoExpressEngine.shared().sendBroadcastMessage(commentText, roomID: roomId) { errorCode, messageID in
+                                        if errorCode == 0 {
+                                            print("✅ Broadcast message sent successfully, msgID: \(messageID)")
                                         } else {
-                                            swipeConfirmed = false
+                                            print("❌ Failed to send broadcast message, errorCode: \(errorCode)")
                                         }
                                     }
-                            )
-                            .animation(.spring(), value: dragOffset)
+                                    
+                                    commentText = ""
+                                }) {
+                                    Image(systemName: "paperplane.fill")
+                                        .foregroundColor(.black)
+                                }
+                            }
+                            .padding()
+                            .background(Color.black.opacity(0.6))
+                        }
                     }
-                    .padding(.horizontal)
+                    .gesture(
+                        DragGesture()
+                            .updating($verticalGestureOffset) { value, state, _ in
+                                
+                                if abs(value.translation.height) > abs(value.translation.width) {
+                                    state = value.translation
+                                }
+                            }
+                            .onEnded { value in
+                                let verticalAmount = value.translation.height
+                                
+                                if verticalAmount < -100 { // Swipe Up
+                                    withAnimation {
+                                        currentStreamIndex = min(currentStreamIndex + 1, streamID.count - 1)
+                                        print("Switched to stream index: \(currentStreamIndex)")
+                                    }
+                                } else if verticalAmount > 100 { // Swipe Down
+                                    withAnimation {
+                                        currentStreamIndex = max(currentStreamIndex - 1, 0)
+                                        print("Switched to stream index: \(currentStreamIndex)")
+                                    }
+                                }
+                            }
+                    )
+                    CusNavLink(doNavigate: $navigateToProfile, destination: ProfileScreen(id:$id))
+                }
+            }
+            .bottomSheet(isPresented: $zegoManager.streamInterrupted, height: screenHeight / 2.5, topBarCornerRadius: 25, showTopIndicator: false) {
+                CommonBottomSheet(
+                    sheetType: $zegoManager.alertType,
+                    onPrimaryClick: {
+                        withAnimation {
+                            zegoManager.resetError()
+                            self.presentationMode.wrappedValue.dismiss()
+                        }
+                    },
+                    onSecondaryClick: {
+                        withAnimation {
+                            zegoManager.resetError()
+                        }
+                    }
+                )
+            }
+            .foregroundColor(.white)
+            .onAppear{
+                Task{
+                    SVProgressHUD.show()
+                    await self.viewModel.getLiveShows(param:GetLiveShowsRequest(type: "live"))
+                    await SVProgressHUD.dismiss()
+                    success()
                     
-                    // Comment Input
-                    HStack {
-                        TextField("Say something...", text: $commentText)
-                            .font(.custom(poppinsSemiBold, size: 13.0))
-                            .foregroundStyle(.black)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .frame(height: 40)
-                        Button(action: {
-                            guard !commentText.isEmpty else { return }
-                            comments.append(Comment(username: "You", message: commentText))
-                            commentText = ""
-                        }) {
-                            Image(systemName: "paperplane.fill")
-                                .foregroundColor(.black)
-                        }
-                    }
-                    .padding()
-                    .background(Color.black.opacity(0.6))
+                    
                 }
             }
-            .gesture(
-                DragGesture()
-                    .updating($verticalGestureOffset) { value, state, _ in
-                        // Only track vertical drag
-                        if abs(value.translation.height) > abs(value.translation.width) {
-                            state = value.translation
-                        }
-                    }
-                    .onEnded { value in
-                        let verticalAmount = value.translation.height
-
-                        if verticalAmount < -100 { // Swipe Up
-                            withAnimation {
-                                currentStreamIndex = min(currentStreamIndex + 1, streamID.count - 1)
-                                print("Switched to stream index: \(currentStreamIndex)")
-                            }
-                        } else if verticalAmount > 100 { // Swipe Down
-                            withAnimation {
-                                currentStreamIndex = max(currentStreamIndex - 1, 0)
-                                print("Switched to stream index: \(currentStreamIndex)")
-                            }
-                        }
-                    }
-            )
-            CusNavLink(doNavigate: $navigateToProfile, destination: ProfileScreen(id:$id))
-        }
-        .bottomSheet(isPresented: $zegoManager.streamInterrupted, height: screenHeight / 2.5, topBarCornerRadius: 25, showTopIndicator: false) {
-            CommonBottomSheet(
-                sheetType: $zegoManager.alertType,
-                onPrimaryClick: {
-                    withAnimation {
-                        zegoManager.resetError()
-                        self.presentationMode.wrappedValue.dismiss()
-                    }
-                },
-                onSecondaryClick: {
-                    withAnimation {
-                        zegoManager.resetError()
-                    }
-                }
-            )
-        }
-        .foregroundColor(.white)
-        .onAppear{
-            ZegoExpressEngine.shared().setEventHandler(ZegoManager.shared)
-            Task{
-                SVProgressHUD.show()
-                await self.viewModel.getLiveShows(param:GetLiveShowsRequest(type: "live"))
-                await SVProgressHUD.dismiss()
-                await  success()
-                
-               
+            .onDisappear{
+                logoutRoom()
             }
-        }
-        .onDisappear{
-            logoutRoom()
-        }
-        
+            
+            
         
     }
-   
-
+    
+    
     func success() {
         SVProgressHUD.dismiss()
         let response = viewModel.liveShowsResponse
-            if response.status == "success" {
-                liveShowsData = response.data ?? [LiveShowsModel]()
-                roomID = liveShowsData.compactMap { $0.room_id }
-                streamID = roomID
-                if !liveShowsData.isEmpty {
-                    let initialRoomID = liveShowsData[currentStreamIndex].room_id ?? ""
-                    loginRoom(roomId: initialRoomID)
-                }
-            } else {
-                showError = true
-                alertType = .sheetType(
-                    icon: .alert,
-                    title: response.error_type?.capitalized ?? "",
-                    message: response.message?.capitalized ?? "",
-                    primaryBtnText: "",
-                    secondaryBtnText: AppString.ok.localized
-                )
+        if response.status == "success" {
+            liveShowsData = response.data ?? [LiveShowsModel]()
+            roomID = liveShowsData.compactMap { $0.room_id }
+            streamID = roomID
+            if !liveShowsData.isEmpty {
+                let initialRoomID = liveShowsData[currentStreamIndex].room_id ?? ""
+                loginRoom(roomId: initialRoomID)
+//                ZegoExpressEngine.shared().setEventHandler(ZegoManager.shared)
             }
+        } else {
+            showError = true
+            alertType = .sheetType(
+                icon: .alert,
+                title: response.error_type?.capitalized ?? "",
+                message: response.message?.capitalized ?? "",
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
+            )
+        }
     }
-  
+    
     
     func loginRoom(roomId : String) {
-       
-        let user = ZegoUser(userID: localUserID)
+        
+        let user = ZegoUser(userID: "\(UserDefaults.userId)",userName: UserDefaults.userName)
         let roomConfig = ZegoRoomConfig()
         
         roomConfig.isUserStatusNotify = true
-      
+        
         ZegoExpressEngine.shared().loginRoom(roomId, user: user, config: roomConfig) { errorCode, extendedData in
             if errorCode == 0 {
-
+                print("login room success")
             } else {
-               
+                print("login fail error")
             }
         }
     }
-
+    
     func logoutRoom() {
         ZegoExpressEngine.shared().logoutRoom()
     }
@@ -376,35 +399,36 @@ struct LiveStream: View {
 struct ZegoPreviewView: UIViewRepresentable {
     let streamID: String
     func makeCoordinator() -> Coordinator {
-            Coordinator(streamID: streamID)
+        Coordinator(streamID: streamID)
+    }
+    
+    class Coordinator {
+        var streamID: String
+        init(streamID: String) {
+            self.streamID = streamID
         }
-
-        class Coordinator {
-            var streamID: String
-            init(streamID: String) {
-                self.streamID = streamID
-            }
-        }
+    }
     func makeUIView(context: Context) -> UIView {
         let view = UIView(frame: UIScreen.main.bounds)
-                view.backgroundColor = .black
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                    let canvas = ZegoCanvas(view: view)
-                    canvas.viewMode = .aspectFill
-                    ZegoExpressEngine.shared().startPlayingStream(streamID, canvas: canvas)
-                }
-
-                return view
+        view.backgroundColor = .black
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            let canvas = ZegoCanvas(view: view)
+            canvas.viewMode = .aspectFill
+            ZegoExpressEngine.shared().startPlayingStream(streamID, canvas: canvas)
+        }
+        
+        return view
     }
-
+    
     func updateUIView(_ uiView: UIView, context: Context) {
-       
+        
     }
-
+    
     static func dismantleUIView(_ uiView: UIView, coordinator: (Coordinator)) {
-     
-//        ZegoExpressEngine.shared().stopPreview()
-//        ZegoExpressEngine.shared().stopPublishingStream()
+        
         ZegoExpressEngine.shared().stopPlayingStream(coordinator.streamID)
     }
 }
+
+
+

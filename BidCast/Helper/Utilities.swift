@@ -109,6 +109,9 @@ let buttonTitle = 18.0
 let headerTitle = 20.0
 let sepratorLine = 38.0
 
+let appID = 1005763407
+let appSign = "73678be720c3ea2d871376882d27d21d5c2bc891363547424458f9febc8bf423"
+
 func generateFeedback(type: UIImpactFeedbackGenerator.FeedbackStyle = .light) {
     let impactHeavy = UIImpactFeedbackGenerator(style: type)
     impactHeavy.impactOccurred()

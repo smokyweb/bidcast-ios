@@ -1,72 +1,86 @@
-////
-////  ZegoChat.swift
-////  BidCast
-////
-////  Created by Ankit-JAM-E-294 on 19/06/25.
-////
 //
+//  ZegoChat.swift
+//  BidCast
+//
+//  Created by Ankit-JAM-E-294 on 19/06/25.
+//
+
+
+
 //import Foundation
 //import ZIM
-//import SwiftUI
 //
-//class ZegoChatManager: NSObject, ZIMEventHandler, ObservableObject {
+//class ZegoChatManager: NSObject {
+//    
 //    static let shared = ZegoChatManager()
-//
 //    private var zim: ZIM?
 //    
-//    @Published var messages: [Comment] = []
-//
-//    private override init() {
-//        super.init()
-//    }
-//
-//    func initZIM(appID: UInt32, appSign: String, userID: String, userName: String) {
+//    // MARK: - Initialize and Login
+//    func initialize(appID: UInt32, userID: String, userName: String) {
 //        let config = ZIMAppConfig()
 //        config.appID = appID
+//
 //        zim = ZIM.create(with: config)
 //        zim?.setEventHandler(self)
 //
-//        let userInfo = ZIMUserInfo()
-//        userInfo.userID = userID
-//        userInfo.userName = userName
+//        let user = zim?.ZIMUser()
+//        user.userID = userID
+//        user.userName = userName
 //
-//        zim?.login(with: userInfo, token: nil) { _, error in
+//        zim?.login(with: user, config: nil) { userInfo, error in
 //            if let error = error {
-//                print("ZIM login error: \(error.code) \(error.message ?? "")")
+//                print("❌ ZIM Login failed: \(error.code), \(error.message ?? "")")
 //            } else {
-//                print("ZIM login success")
+//                print("✅ ZIM Login success: \(userInfo.userID)")
 //            }
 //        }
 //    }
-//
+//    
+//    // MARK: - Join Room
 //    func joinRoom(roomID: String) {
-//        zim?.joinRoom(by: roomID) { _, error in
+//        let config = ZIMRoomConfig()
+//        zim?.enterRoom(with: roomID, config: config) { roomInfo, error in
 //            if let error = error {
-//                print("Join room error: \(error.code)")
+//                print("❌ Enter room failed: \(error.code), \(error.message ?? "")")
 //            } else {
-//                print("Joined room: \(roomID)")
+//                print("✅ Joined room: \(roomInfo?.roomID ?? "")")
 //            }
 //        }
 //    }
 //
-//    func sendMessage(_ message: String, in roomID: String, from username: String) {
-//        let msg = ZIMTextMessage(message: message)
-//        zim?.sendRoomMessage(msg, to: roomID) { _, error in
+//    // MARK: - Send Message
+//    func sendMessage(_ text: String, toRoom roomID: String) {
+//        let message = ZIMTextMessage(content: text)
+//        zim?.sendRoomMessage(message, toRoom: roomID, config: nil) { message, error in
 //            if let error = error {
-//                print("Send message failed: \(error.code)")
+//                print("❌ Message send failed: \(error.code), \(error.message ?? "")")
+//            } else {
+//                print("✅ Message sent: \(text)")
 //            }
-//        }
-//        DispatchQueue.main.async {
-//            self.messages.append(Comment(username: username, message: message))
 //        }
 //    }
 //
-//    func zim(_ zim: ZIM, roomMessageReceivedReceived messageList: [ZIMMessage], fromRoomID roomID: String) {
+//    // MARK: - Logout
+//    func logout() {
+//        zim?.logout { error in
+//            if let error = error {
+//                print("⚠️ Logout error: \(error.message ?? "")")
+//            } else {
+//                print("🔒 Logged out")
+//            }
+//        }
+//        ZIM.destroy()
+//    }
+//}
+//
+//
+//extension ZegoChatManager: ZIMEventHandler {
+//    
+//    func zim(_ zim: ZIM, receiveRoomMessage messageList: [ZIMMessage], fromRoom roomID: String) {
 //        for message in messageList {
 //            if let textMsg = message as? ZIMTextMessage {
-//                DispatchQueue.main.async {
-//                    self.messages.append(Comment(username: message.senderUserID, message: textMsg.message))
-//                }
+//                print("📩 Received in room \(roomID): \(textMsg.content)")
+//                // You can now update your chat UI
 //            }
 //        }
 //    }

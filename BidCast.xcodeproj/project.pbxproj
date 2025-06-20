@@ -100,6 +100,7 @@
 		35C202522DEF0DEB00492F2D /* StripeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35C202512DEF0DEB00492F2D /* StripeManager.swift */; };
 		35C202572DEF128300492F2D /* AddCardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35C202562DEF127900492F2D /* AddCardViewModel.swift */; };
 		35C2025B2DEF12A200492F2D /* AddCardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35C2025A2DEF129900492F2D /* AddCardModel.swift */; };
+		35C376202E057C5500DDBBC6 /* CustomProfileImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35C3761F2E057C5500DDBBC6 /* CustomProfileImage.swift */; };
 		35CA09D92DD5BCE4002ABB83 /* LabelWithButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CA09D82DD5BCE4002ABB83 /* LabelWithButton.swift */; };
 		35CA09DE2DD5CC29002ABB83 /* CustomSegmentedControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CA09DC2DD5CBB8002ABB83 /* CustomSegmentedControl.swift */; };
 		35CA09E02DD5D2B1002ABB83 /* TwoVerticalLabelCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CA09DF2DD5D2B1002ABB83 /* TwoVerticalLabelCell.swift */; };
@@ -550,6 +551,7 @@
 		35C202512DEF0DEB00492F2D /* StripeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StripeManager.swift; sourceTree = "<group>"; };
 		35C202562DEF127900492F2D /* AddCardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCardViewModel.swift; sourceTree = "<group>"; };
 		35C2025A2DEF129900492F2D /* AddCardModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCardModel.swift; sourceTree = "<group>"; };
+		35C3761F2E057C5500DDBBC6 /* CustomProfileImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomProfileImage.swift; sourceTree = "<group>"; };
 		35CA09D82DD5BCE4002ABB83 /* LabelWithButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelWithButton.swift; sourceTree = "<group>"; };
 		35CA09DC2DD5CBB8002ABB83 /* CustomSegmentedControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSegmentedControl.swift; sourceTree = "<group>"; };
 		35CA09DF2DD5D2B1002ABB83 /* TwoVerticalLabelCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwoVerticalLabelCell.swift; sourceTree = "<group>"; };
@@ -1857,6 +1859,7 @@
 				35CCE00D2DD8603700760CEE /* DescriptionFieldView.swift */,
 				35B44F252DD7446000FBCBC4 /* MediaPickerView.swift */,
 				35B44F272DD74CCA00FBCBC4 /* PhotoPicker.swift */,
+				35C3761F2E057C5500DDBBC6 /* CustomProfileImage.swift */,
 				35CA09DF2DD5D2B1002ABB83 /* TwoVerticalLabelCell.swift */,
 				35CA09E12DD5D996002ABB83 /* VerticalLabelImageCell.swift */,
 				35CA09DC2DD5CBB8002ABB83 /* CustomSegmentedControl.swift */,
@@ -4143,6 +4146,7 @@
 				D4A500E52DFAFC9B008799B1 /* CardDetailsView.swift in Sources */,
 				99C907C42DC8CC990054620B /* AppDelegate.swift in Sources */,
 				D4B615FC2DE83C4800924A3D /* CreateClipModel.swift in Sources */,
+				35C376202E057C5500DDBBC6 /* CustomProfileImage.swift in Sources */,
 				99C907C52DC8CC990054620B /* SceneDelegate.swift in Sources */,
 				D4B616192DE86C9700924A3D /* OrderStatusScreen.swift in Sources */,
 				D4CAEC942DE7202F00705CD7 /* PromoteShowSheet.swift in Sources */,

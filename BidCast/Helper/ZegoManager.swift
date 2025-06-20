@@ -15,12 +15,13 @@ class ZegoManager: NSObject, ZegoEventHandler , ObservableObject {
     @Published var streamInterrupted: Bool = false
        @Published var errorTitle: String = "Stream Ended"
        @Published var errorMessage: String = "The live stream was interrupted or stopped."
+    @Published var incomingComments: [Comment] = []
     @Published var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
-
+    @Published var isCommentsAvailable : Bool = false
     
     private override init() {
         super.init()
-        ZegoExpressEngine.shared().setEventHandler(self)
+//        ZegoExpressEngine.shared().setEventHandler(self)
     }
 
     func createEngine() {
@@ -28,12 +29,13 @@ class ZegoManager: NSObject, ZegoEventHandler , ObservableObject {
         profile.appID = 1005763407
         profile.appSign = "73678be720c3ea2d871376882d27d21d5c2bc891363547424458f9febc8bf423"
         profile.scenario = .broadcast
-//        profile.application = UIApplication.shared
 
         ZegoExpressEngine.createEngine(with: profile, eventHandler: self)
 
         print("✅ Zego Engine created.")
+//        ZegoExpressEngine.shared().setEventHandler(self)
     }
+   
 
     // MARK: - ZegoEventHandler Methods
 
@@ -75,5 +77,21 @@ class ZegoManager: NSObject, ZegoEventHandler , ObservableObject {
                 }
             }
         }
-    
+    func onIMRecvBroadcastMessage(_ roomID: String, messageList: [ZegoBroadcastMessageInfo]) {
+        print("📥 [\(roomID)] Received \(messageList.count) broadcast messages")
+        for msg in messageList {
+            print("🗣️ \(msg.fromUser.userName): \(msg.message)")
+        }
+        
+        DispatchQueue.main.async {
+            if !messageList.isEmpty {
+                self.isCommentsAvailable = true
+                self.incomingComments.append(contentsOf: messageList.map {
+                    Comment(username: $0.fromUser.userName, message: $0.message)
+                })
+            } else {
+                self.isCommentsAvailable = false
+            }
+        }
+    }
 }
