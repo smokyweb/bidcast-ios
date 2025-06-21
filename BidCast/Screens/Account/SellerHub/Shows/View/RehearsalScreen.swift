@@ -20,47 +20,47 @@ struct RehearsalScreen: View {
     @State var viewModel = ShowsViewModel()
     @State var isLive: Bool = false
     @State var roomId = ""
-
     @State var isMicOn: Bool = true
     @State var isUsingFrontCamera: Bool = true
-
     @State private var showTopBadge: Bool = true
     @State private var showReadyModal: Bool = false
     @State private var showWelcomeDialog: Bool = false
-
-    @State private var showPreLiveControls: Bool = true
+    @State private var showPreLiveControls: Bool = false
     @State private var showLiveControls: Bool = false
-    
-    
     @State private var verifiedOnly = false
-    
     @State private var currentBottomSheet: SideMenu?
     @State private var showSellSheet: Bool = false
-    
     @State private var showButton: Bool = false
-
+    
+    @State private var commentText = ""
+    @State var comments: [Comment] = []
+    @State var liveRoomId = ""
+    
+    @State private var previewResetTrigger = false
+    
+    @State private var showStartTime: Date? = nil
+    @State private var liveElapsedTime: String = "00:00:00"
+    
     var body: some View {
         ZStack {
             ZegoRehearsalScreen(isLive: $isLive, streamID: roomId)
-
+                .id(previewResetTrigger)
+            
             VStack {
                 HStack {
                     HStack(spacing: 8) {
-                        Image("profile_icon")
-                            .resizable()
-                            .frame(width: 32, height: 32)
-                            .clipShape(Circle())
-
+                        CustomProfileImage(url: UserDefaults.profileURL,isCircular: true)
+                        
                         VStack(alignment: .leading, spacing: 2) {
-                            Text("swiftbid")
+                            Text(UserDefaults.userName.capitalizingFirstLetter())
                                 .foregroundColor(.white)
-                                .font(.caption)
-
-                            Text("Show Time 00:00:01")
+                                .font(.custom(poppinsSemiBold, size: 14.0))
+                            
+                            Text("Show Time \(liveElapsedTime)")
                                 .foregroundColor(.white)
-                                .font(.caption2)
+                                .font(.custom(poppinsRegular, size: 11.0))
                         }
-
+                        
                         Spacer()
                         Text(isLive ? "Live" : "Rehearsal")
                             .font(.caption)
@@ -69,21 +69,24 @@ struct RehearsalScreen: View {
                             .background(Color.red)
                             .cornerRadius(4)
                             .foregroundColor(.white)
-
+                        
                         Button(action: {
                             self.presentaionMode.wrappedValue.dismiss()
                         }) {
-                            Image(systemName: "xmark.circle.fill")
-                                .foregroundColor(.white)
+                            Image(.cancel)
+                                .resizable()
+                                .renderingMode(.template)
+                                .foregroundColor(.danger)
+                                .frame(width: 32,height: 32)
                         }
                     }
                     .padding(.horizontal)
                 }
                 .padding(.top, 40)
-
+                
                 Spacer()
             }
-
+            
             // 🔳 Ready Modal
             if showReadyModal {
                 Color.black.opacity(0.4).edgesIgnoringSafeArea(.all)
@@ -91,11 +94,11 @@ struct RehearsalScreen: View {
                     Text("Show Starts at 4:00 PM")
                         .foregroundColor(.white)
                         .font(.caption)
-
+                    
                     Text("Ready to Begin?")
                         .font(.headline)
                         .foregroundColor(.white)
-
+                    
                     Button(action: {
                         showReadyModal = false
                         showWelcomeDialog = true
@@ -114,7 +117,7 @@ struct RehearsalScreen: View {
                 .cornerRadius(12)
                 .frame(width: 300)
             }
-
+            
             // ✅ Welcome Dialog
             if showWelcomeDialog {
                 Color.black.opacity(0.4).edgesIgnoringSafeArea(.all)
@@ -123,19 +126,20 @@ struct RehearsalScreen: View {
                         .resizable()
                         .frame(width: 50, height: 50)
                         .foregroundColor(.white)
-
+                    
                     Text("Welcome to your Auction")
                         .font(.headline)
                         .foregroundColor(.white)
-
+                    
                     Text("You may edit and begin your auction from here")
                         .font(.subheadline)
                         .foregroundColor(.white)
                         .multilineTextAlignment(.center)
-
+                    
                     Button(action: {
                         showWelcomeDialog = false
                         showButton = true
+                        showPreLiveControls = true
                     }) {
                         Text("Ok")
                             .foregroundColor(.white)
@@ -150,7 +154,7 @@ struct RehearsalScreen: View {
                 .background(Color.gray.opacity(0.95))
                 .cornerRadius(12)
             }
-
+            
             // 🎛️ Dynamic Side Controls
             VStack {
                 Spacer()
@@ -163,7 +167,7 @@ struct RehearsalScreen: View {
                         SideButton(label: "Switch", icon: "arrow.left.arrow.right",action: .switchView)
                         ShopButton(action: .shop)
                     }
-
+                    
                     if showLiveControls {
                         Button(action: {
                             isMicOn.toggle()
@@ -177,7 +181,7 @@ struct RehearsalScreen: View {
                             .padding(8)
                             .foregroundColor(.white)
                         }
-
+                        
                         Button(action: {
                             isUsingFrontCamera.toggle()
                             ZegoExpressEngine.shared().useFrontCamera(isUsingFrontCamera)
@@ -190,40 +194,99 @@ struct RehearsalScreen: View {
                             .padding(8)
                             .foregroundColor(.white)
                         }
-
+                        
                         ShopButton(action: .shop)
                     }
                 }
                 .padding(.trailing)
-                .padding(.bottom, 100)
+                .padding(.bottom, 150)
                 .frame(maxWidth: .infinity, alignment: .trailing)
             }
-
+            
             // 💬 Bottom Chat & Start Button
+            
             VStack(alignment: .leading, spacing: 8) {
                 Spacer()
-
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack {
-                        Image(systemName: "person.crop.circle")
-                        Text("goodgirlsteph97").font(.custom(poppinsBold, size: 13.0))
-                        Text("Mod")
-                            .font(.custom(poppinsBold, size: 13.0))
-                            .padding(4)
-                            .background(Color.gray.opacity(0.3))
-                            .cornerRadius(4)
-                        Text("🔥 XL")
-                            .font(.custom(poppinsBold, size: 13.0))
-                            .foregroundColor(.orange)
-                    }.foregroundColor(.white)
-
-                    HStack {
-                        Text("trapwoc212").font(.custom(poppinsBold, size: 13.0))
-                        Text("White gold").font(.custom(poppinsSemiBold, size: 12.0))
-                    }.foregroundColor(.white)
+                if comments.count > 0{
+                    ScrollViewReader { proxy in
+                        ScrollView {
+                            VStack(alignment: .leading, spacing: 8) {
+                                ForEach(comments) { comment in
+                                    HStack {
+                                        Text(comment.username)
+                                            .font(.custom(poppinsSemiBold, size: 14.0))
+                                            .foregroundColor(.yellow)
+                                        
+                                        Text(comment.message)
+                                            .font(.custom(poppinsRegular, size: 13.0))
+                                            .foregroundColor(.white)
+                                    }
+                                    .padding(.trailing,40)
+                                    .padding(.leading,Leading)
+                                    .id(comment.id) // 💡 For scroll targeting
+                                }
+                            }
+                        }
+                        .onChange(of: comments) { _ in
+                            // 💬 Auto scroll to last message
+                            if let last = comments.last {
+                                withAnimation {
+                                    proxy.scrollTo(last.id, anchor: .bottom)
+                                }
+                            }
+                        }
+                    }
+                    .frame(maxHeight: 150)
                 }
-                .padding(.horizontal)
+                
+                
                 if showButton{
+                    if showLiveControls{
+                        HStack {
+                            ZStack(alignment: .trailing) {
+                                TextField("", text: $commentText, prompt: Text("Say something...")
+                                    .foregroundColor(.white)
+                                    .font(.custom(poppinsSemiBold, size: 13.0))
+                                )
+                                .font(.custom(poppinsSemiBold, size: 13.0))
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 14)
+                                .padding(.trailing, commentText.isEmpty ? 14 : 36) // extra space for send button
+                                .frame(height: 40)
+                                .background(Color.clear)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 20)
+                                        .stroke(Color.white, lineWidth: 1)
+                                )
+                                
+                                if !commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                                    Button(action: {
+                                        let textToSend = commentText.trimmingCharacters(in: .whitespacesAndNewlines)
+                                        ZegoExpressEngine.shared().sendBroadcastMessage(commentText, roomID: liveRoomId) { errorCode, messageID in
+                                            
+                                            if errorCode == 0 {
+                                                let newComment = Comment(username: UserDefaults.userName.capitalizingFirstLetter(), message: textToSend)
+                                                comments.append(newComment)
+                                                print("✅ Broadcast message sent successfully, msgID: \(messageID)")
+                                            } else {
+                                                print("❌ Failed to send broadcast message, errorCode: \(errorCode)")
+                                            }
+                                        }
+                                        commentText = ""
+                                    }) {
+                                        Image(systemName: "paperplane.fill")
+                                            .resizable()
+                                            .frame(width: 16, height: 16)
+                                            .foregroundColor(.white)
+                                            .padding(10)
+                                    }
+                                    .transition(.opacity)
+                                    .animation(.easeInOut(duration: 0.2), value: commentText)
+                                }
+                            }
+                        }
+                        .padding(.horizontal)
+                    }
                     Button(action: {
                         Task {
                             SVProgressHUD.show()
@@ -245,6 +308,7 @@ struct RehearsalScreen: View {
                     .padding(.bottom, 20)
                 }
             }
+            
         }
         .bottomSheet(
             isPresented: $showSellSheet,
@@ -258,7 +322,7 @@ struct RehearsalScreen: View {
             },
             content: {
                 switch currentBottomSheet {
-                       case .more:
+                case .more:
                     MoreOptionsScreen(
                         isPresented: $showSellSheet,
                         isVerifiedBuyersOn: $verifiedOnly,
@@ -273,40 +337,40 @@ struct RehearsalScreen: View {
                         onZoomIn: { print("Zoom In") },
                         onMicToggle: { print("Mic Toggled") }
                     )
-                       case .promote:
+                case .promote:
                     PromoteShowSheet(boosts: exampleBoosts) {
-                               showSellSheet = false
-                           }
-                       case .clip:
+                        showSellSheet = false
+                    }
+                case .clip:
                     CreateClipBottomSheetView(
-                                    isPresented: $showSellSheet,
-                                    videoURL: URL(string: "https://example.com/video.mp4")!,
-                                    onCreateClip: { start, end in
-                                        print("Clip range: \(start.seconds) to \(end.seconds)")
-                                    }
-                                )
-                       case .share:
+                        isPresented: $showSellSheet,
+                        videoURL: URL(string: "https://example.com/video.mp4")!,
+                        onCreateClip: { start, end in
+                            print("Clip range: \(start.seconds) to \(end.seconds)")
+                        }
+                    )
+                case .share:
                     ShareShowBottomSheetView(
-                              isPresented: $showSellSheet,
-                              showTitle: "John's Live Show",
-                              username: "johnsmith",
-                              showImage: Image("icWatch"),
-                              message: "Live auction starting in 5 minutes! Don’t miss out on exclusive items.",
-                              onShare: { platform in
-                                  print("Shared to \(platform)")
-                              },
-                              onSavePDF: {
-                                  print("PDF Saved")
-                              },
-                              onShareEmail: {
-                                  print("Email sent")
-                              }
-                          )
-//                          .presentationDetents([.height(500)])
-                          .presentationDragIndicator(.visible)
-                       case .switchView:
+                        isPresented: $showSellSheet,
+                        showTitle: "John's Live Show",
+                        username: "johnsmith",
+                        showImage: Image("icWatch"),
+                        message: "Live auction starting in 5 minutes! Don’t miss out on exclusive items.",
+                        onShare: { platform in
+                            print("Shared to \(platform)")
+                        },
+                        onSavePDF: {
+                            print("PDF Saved")
+                        },
+                        onShareEmail: {
+                            print("Email sent")
+                        }
+                    )
+                    //                          .presentationDetents([.height(500)])
+                    .presentationDragIndicator(.visible)
+                case .switchView:
                     EmptyView()
-                       case .shop:
+                case .shop:
                     ShopBottomSheetView(
                         isPresented: $showSellSheet,
                         products: [
@@ -314,10 +378,10 @@ struct RehearsalScreen: View {
                             Product(imageName: "IMG_1340", title: "AirPods Max", subtitle: "Buy Now: $549", detail: "0 Bids", statusColor: .green)
                         ]
                     )
-                       case .none:
-                           EmptyView()
-                       }
-               
+                case .none:
+                    EmptyView()
+                }
+                
             }
         )
         .onAppear {
@@ -342,7 +406,9 @@ struct RehearsalScreen: View {
             self.roomId = roomId
             if data.is_live == false {
                 logoutRoom()
+                self.comments.removeAll()
                 FirebaseManager.shared.checkAndDeleteLiveSession(roomId: roomId)
+                previewResetTrigger.toggle()
                 self.showLiveControls = false
                 self.showPreLiveControls = true
                 return
@@ -365,6 +431,7 @@ struct RehearsalScreen: View {
             ) { errorCode, _ in
                 if errorCode == 0 {
                     print("✅ Logged into room: \(roomId)")
+                    self.liveRoomId = roomId
                     ZegoExpressEngine.shared().startPublishingStream(roomId)
                     self.showLiveControls = true
                     self.showPreLiveControls = false
@@ -372,94 +439,114 @@ struct RehearsalScreen: View {
                     print("❌ Failed to login to room: \(errorCode)")
                 }
             }
-
+            
+            if data.is_live == true {
+                self.showStartTime = Date() // Start counting from now
+                startLiveTimer()
+            }
+            
         }
     }
+    
+    func startLiveTimer() {
+        Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+            if let start = showStartTime, isLive {
+                let elapsed = Int(Date().timeIntervalSince(start))
+                let hours = elapsed / 3600
+                let minutes = (elapsed % 3600) / 60
+                let seconds = elapsed % 60
+                liveElapsedTime = String(format: "%02d:%02d:%02d", hours, minutes, seconds)
+            } else {
+                timer.invalidate()
+            }
+        }
+    }
+    
     func logoutRoom() {
         ZegoExpressEngine.shared().logoutRoom()
     }
     
     @ViewBuilder
     func SideButton(label: String, icon: String, action: SideMenu) -> some View {
-          Button(action: {
-              if action == .switchView {
-                         isUsingFrontCamera.toggle()
-                         ZegoExpressEngine.shared().useFrontCamera(isUsingFrontCamera)
-                     } else {
-                         currentBottomSheet = action
-                         showSellSheet = true
-                     }
-          }) {
-              VStack {
-                  Image(systemName: icon)
-                  Text(label)
-                      .font(.custom(poppinsThin, size: 12.0))
-              }
-              .padding(8)
-              .foregroundColor(.white)
-          }
-      }
-
-      @ViewBuilder
+        Button(action: {
+            if action == .switchView {
+                isUsingFrontCamera.toggle()
+                ZegoExpressEngine.shared().useFrontCamera(isUsingFrontCamera)
+            } else {
+                currentBottomSheet = action
+                showSellSheet = true
+            }
+        }) {
+            VStack {
+                Image(systemName: icon)
+                Text(label)
+                    .font(.custom(poppinsThin, size: 12.0))
+            }
+            .padding(8)
+            .foregroundColor(.white)
+        }
+    }
+    
+    @ViewBuilder
     func ShopButton(action : SideMenu) -> some View {
-          Button(action: {
-              if action == .switchView {
-                         isUsingFrontCamera.toggle()
-                         ZegoExpressEngine.shared().useFrontCamera(isUsingFrontCamera)
-                     } else {
-                         currentBottomSheet = action
-                         showSellSheet = true
-                     }
-          }) {
-              ZStack {
-                  VStack {
-                      Image(systemName: "bag.fill")
-                      Text("Shop")
-                          .font(.custom(poppinsThin, size: 12.0))
-                  }
-                  .padding(8)
-                  .foregroundColor(.white)
-
-                  Circle()
-                      .fill(Color.red)
-                      .frame(width: 20, height: 20)
-                      .overlay(Text("7").foregroundColor(.white).font(.caption))
-                      .offset(x: 12, y: -30)
-              }
-          }
-      }
+        Button(action: {
+            if action == .switchView {
+                isUsingFrontCamera.toggle()
+                ZegoExpressEngine.shared().useFrontCamera(isUsingFrontCamera)
+            } else {
+                currentBottomSheet = action
+                showSellSheet = true
+            }
+        }) {
+            ZStack {
+                VStack {
+                    Image(systemName: "bag.fill")
+                    Text("Shop")
+                        .font(.custom(poppinsThin, size: 12.0))
+                }
+                .padding(8)
+                .foregroundColor(.white)
+                
+                Circle()
+                    .fill(Color.red)
+                    .frame(width: 20, height: 20)
+                    .overlay(Text("7").foregroundColor(.white).font(.caption))
+                    .offset(x: 12, y: -30)
+            }
+        }
+    }
     
     var exampleBoosts: [ShowBoost] {
-               [
-                   ShowBoost(
-                       title: "15 Minute Boost",
-                       subtitle: "Quick visibility boost",
-                       description: "Get featured in the top shows for 15 minutes",
-                       price: "$3.99",
-                       iconName: "bolt.fill",
-                       gradient: LinearGradient(colors: [.pink, .purple], startPoint: .topLeading, endPoint: .bottomTrailing),
-                       action: { print("Selected 15 Minute Boost") }
-                   ),
-                   ShowBoost(
-                       title: "Full Show Promote",
-                       subtitle: "Extended visibility",
-                       description: "Stay featured for your entire show duration",
-                       price: "$7.99",
-                       iconName: "star.fill",
-                       gradient: LinearGradient(colors: [.blue, .teal], startPoint: .topLeading, endPoint: .bottomTrailing),
-                       action: { print("Selected Full Show Promote") }
-                   ),
-                   ShowBoost(
-                       title: "Community Boost",
-                       subtitle: "Power of the crowd",
-                       description: "Rally your community for massive exposure",
-                       price: "$12.99",
-                       iconName: "person.3.fill",
-                       gradient: LinearGradient(colors: [.orange, .red], startPoint: .topLeading, endPoint: .bottomTrailing),
-                       action: { print("Selected Community Boost") }
-                   )
-               ]
-           }
+        [
+            ShowBoost(
+                title: "15 Minute Boost",
+                subtitle: "Quick visibility boost",
+                description: "Get featured in the top shows for 15 minutes",
+                price: "$3.99",
+                iconName: "bolt.fill",
+                gradient: LinearGradient(colors: [.pink, .purple], startPoint: .topLeading, endPoint: .bottomTrailing),
+                action: { print("Selected 15 Minute Boost") }
+            ),
+            ShowBoost(
+                title: "Full Show Promote",
+                subtitle: "Extended visibility",
+                description: "Stay featured for your entire show duration",
+                price: "$7.99",
+                iconName: "star.fill",
+                gradient: LinearGradient(colors: [.blue, .teal], startPoint: .topLeading, endPoint: .bottomTrailing),
+                action: { print("Selected Full Show Promote") }
+            ),
+            ShowBoost(
+                title: "Community Boost",
+                subtitle: "Power of the crowd",
+                description: "Rally your community for massive exposure",
+                price: "$12.99",
+                iconName: "person.3.fill",
+                gradient: LinearGradient(colors: [.orange, .red], startPoint: .topLeading, endPoint: .bottomTrailing),
+                action: { print("Selected Community Boost") }
+            )
+        ]
+    }
     
 }
 struct ProductData {
@@ -468,7 +555,7 @@ struct ProductData {
     let image: String
     let name: String
     let price: String
-
+    
     func toDictionary() -> [String: Any] {
         return [
             "category": category,
@@ -485,7 +572,7 @@ struct SellerModel {
     let id: String
     let name: String
     let rating: String
-
+    
     func toDictionary() -> [String: Any] {
         return [
             "followed": followed,
@@ -501,27 +588,26 @@ struct SellerModel {
 struct ZegoRehearsalScreen: UIViewRepresentable {
     @Binding var isLive : Bool
     @State var streamID = ""
-   
-   
-
+    
+    
     func makeUIView(context: Context) -> UIView {
         let view = UIView()
         view.backgroundColor = .black
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             let canvas = ZegoCanvas(view: view)
             ZegoExpressEngine.shared().enableCamera(true)
-
-                ZegoExpressEngine.shared().startPreview(canvas)
-
+            
+            ZegoExpressEngine.shared().startPreview(canvas)
+            
         }
-
+        
         return view
     }
-
+    
     func updateUIView(_ uiView: UIView, context: Context) {
         // Optional: handle dynamic stream change if needed
     }
-
+    
     static func dismantleUIView(_ uiView: UIView, coordinator: ()) {
         ZegoExpressEngine.shared().stopPublishingStream()
         ZegoExpressEngine.shared().stopPlayingStream("")

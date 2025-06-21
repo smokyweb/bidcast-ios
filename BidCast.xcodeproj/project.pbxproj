@@ -552,6 +552,7 @@
 		35C202562DEF127900492F2D /* AddCardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCardViewModel.swift; sourceTree = "<group>"; };
 		35C2025A2DEF129900492F2D /* AddCardModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCardModel.swift; sourceTree = "<group>"; };
 		35C3761F2E057C5500DDBBC6 /* CustomProfileImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomProfileImage.swift; sourceTree = "<group>"; };
+		35C376212E0588EE00DDBBC6 /* ZegoBridgeHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZegoBridgeHeader.h; sourceTree = "<group>"; };
 		35CA09D82DD5BCE4002ABB83 /* LabelWithButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelWithButton.swift; sourceTree = "<group>"; };
 		35CA09DC2DD5CBB8002ABB83 /* CustomSegmentedControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSegmentedControl.swift; sourceTree = "<group>"; };
 		35CA09DF2DD5D2B1002ABB83 /* TwoVerticalLabelCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwoVerticalLabelCell.swift; sourceTree = "<group>"; };
@@ -2195,6 +2196,7 @@
 				99DF9E702DC4F367008C15B2 /* BidCast.entitlements */,
 				D4DDE88B2DDC923F00A24973 /* GoogleService-Info.plist */,
 				99DF9E732DC4F367008C15B2 /* ContentView.swift */,
+				35C376212E0588EE00DDBBC6 /* ZegoBridgeHeader.h */,
 			);
 			path = BidCast;
 			sourceTree = "<group>";
@@ -4369,6 +4371,7 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = /Users/jamtech/Documents/GitHub/bidcast/BidCast/ZegoBridgeHeader.h;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				XROS_DEPLOYMENT_TARGET = 2.4;
@@ -4415,6 +4418,7 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = /Users/jamtech/Documents/GitHub/bidcast/BidCast/ZegoBridgeHeader.h;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				XROS_DEPLOYMENT_TARGET = 2.4;

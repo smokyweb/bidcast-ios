@@ -30,15 +30,12 @@ struct LiveStream: View {
     @GestureState private var verticalGestureOffset = CGSize.zero
     @State var roomID = [String]()
     @State var streamID = [String]()
-    
     var viewModel = LiveShowsViewModel()
     @State var liveShowsData = [LiveShowsModel]()
     @State var isLoading: Bool = false
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @State var showError: Bool = false
     @Binding var userId : String
-   
-    
     @Environment(\.presentationMode) var presentationMode
     
     @ObservedObject var zegoManager = ZegoManager.shared
@@ -46,6 +43,11 @@ struct LiveStream: View {
     
     var localUserID = "\(UserDefaults.userId)"
     
+    
+    @State private var previewResetTrigger = false
+    
+    @State private var showStartTime: Date? = nil
+    @State private var liveElapsedTime: String = "00:00:00"
     var body: some View {
       
             GeometryReader { geometry in
@@ -53,7 +55,7 @@ struct LiveStream: View {
                     ZStack(alignment: .top) {
                         if streamID.count != 0 {
                             ZegoPreviewView(streamID: streamID[currentStreamIndex])
-                                .frame(width: geometry.size.width, height: geometry.size.height)
+                                .frame(width: geometry.size.width, height: geometry.size.height + 50)
                                 .edgesIgnoringSafeArea(.all)
                             
                         }
@@ -97,7 +99,8 @@ struct LiveStream: View {
                                         .cornerRadius(10)
                                 }
                                    Button(action: {
-                                      
+                                       logoutRoom()
+                                       self.presentationMode.wrappedValue.dismiss()
                                    }) {
                                        Image(systemName: "xmark.circle.fill")
                                            .foregroundColor(.danger)
@@ -135,6 +138,7 @@ struct LiveStream: View {
                                 }
                             }
                             .padding(.trailing)
+                            .padding(.bottom, 180)
                             .frame(maxWidth: .infinity, alignment: .trailing)
                             
                             // Comments Section
@@ -258,31 +262,53 @@ struct LiveStream: View {
                             .padding(.horizontal)
                             
                             // Comment Input
+                         
                             HStack {
-                                TextField("Say something...", text: $commentText)
+                                ZStack(alignment: .trailing) {
+                                    TextField("", text: $commentText, prompt: Text("Say something...")
+                                        .foregroundColor(.white)
+                                        .font(.custom(poppinsSemiBold, size: 13.0))
+                                    )
                                     .font(.custom(poppinsSemiBold, size: 13.0))
-                                    .foregroundStyle(.black)
-                                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 14)
+                                    .padding(.trailing, commentText.isEmpty ? 14 : 36) // extra space for send button
                                     .frame(height: 40)
-                                Button(action: {
-                                    guard !commentText.isEmpty else { return }
-                                    let roomId = liveShowsData[currentStreamIndex].room_id ?? ""
-                                    ZegoExpressEngine.shared().sendBroadcastMessage(commentText, roomID: roomId) { errorCode, messageID in
-                                        if errorCode == 0 {
-                                            print("✅ Broadcast message sent successfully, msgID: \(messageID)")
-                                        } else {
-                                            print("❌ Failed to send broadcast message, errorCode: \(errorCode)")
-                                        }
-                                    }
+                                    .background(Color.clear)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 20)
+                                            .stroke(Color.white, lineWidth: 1)
+                                    )
                                     
-                                    commentText = ""
-                                }) {
-                                    Image(systemName: "paperplane.fill")
-                                        .foregroundColor(.black)
+                                    if !commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                                        Button(action: {
+                                            let textToSend = commentText.trimmingCharacters(in: .whitespacesAndNewlines)
+                                            let roomId = liveShowsData[currentStreamIndex].room_id ?? ""
+                                            ZegoExpressEngine.shared().sendBroadcastMessage(commentText, roomID: roomId) { errorCode, messageID in
+                                                
+                                                if errorCode == 0 {
+                                                    let newComment = Comment(username: UserDefaults.userName.capitalizingFirstLetter(), message: textToSend)
+                                                    comments.append(newComment)
+                                                    print("✅ Broadcast message sent successfully, msgID: \(messageID)")
+                                                } else {
+                                                    print("❌ Failed to send broadcast message, errorCode: \(errorCode)")
+                                                }
+                                            }
+                                            commentText = ""
+                                        }) {
+                                            Image(systemName: "paperplane.fill")
+                                                .resizable()
+                                                .frame(width: 16, height: 16)
+                                                .foregroundColor(.white)
+                                                .padding(10)
+                                        }
+                                        .transition(.opacity)
+                                        .animation(.easeInOut(duration: 0.2), value: commentText)
+                                    }
                                 }
                             }
-                            .padding()
-                            .background(Color.black.opacity(0.6))
+                            .padding(.horizontal)
+                            .padding(.bottom,80)
                         }
                     }
                     .gesture(
@@ -382,7 +408,7 @@ struct LiveStream: View {
         
         ZegoExpressEngine.shared().loginRoom(roomId, user: user, config: roomConfig) { errorCode, extendedData in
             if errorCode == 0 {
-                print("login room success")
+                print("✅ Login callback | room: \(roomId) | errorCode: \(errorCode)")
             } else {
                 print("login fail error")
             }

@@ -30,21 +30,21 @@ struct ListCell: View {
         HStack(alignment: .center,spacing: 10){
             HStack{
                 if isComeFrom != "Wallet"{
-                    AsyncImage(url: URL(string:image.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")) { phase in
-                        switch phase {
-                        case .success(let image):
-                            image
-                                .resizable()
-                                .renderingMode(.template)
-                                .frame(width: 30,height: 30)
-                            
-                        default:
-                            Image(image)
-                                .resizable()
-                        }
-                    }
-                    .scaledToFill()
-                    .frame(width: 40,height: 40)
+//                    AsyncImage(url: URL(string:image.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")) { phase in
+//                        switch phase {
+//                        case .success(let image):
+//                            image
+//                                .resizable()
+//                                .renderingMode(.template)
+//                                .frame(width: 30,height: 30)
+//                            
+//                        default:
+//                            Image(image)
+//                                .resizable()
+//                        }
+//                    }
+                    CustomProfileImage(url: image,isCircular: false,size: 30)
+                        .frame(width: 40,height: 40)
                     .background(Color(hex: tintColot) ?? .clear)
                     .mask {
                         if isComeFrom == "ShippingScreen" {

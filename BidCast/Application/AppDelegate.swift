@@ -42,7 +42,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         ////        Messaging.messaging().delegate = self
         //
         
-        ZegoManager.shared.createEngine()
+//        ZegoManager.shared.createEngine()
         SVProgressHUD.setDefaultStyle(.custom)
         SVProgressHUD.setDefaultMaskType(.custom)
         SVProgressHUD.setDefaultAnimationType(.native)

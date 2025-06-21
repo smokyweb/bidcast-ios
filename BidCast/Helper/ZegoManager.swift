@@ -30,18 +30,20 @@ class ZegoManager: NSObject, ZegoEventHandler , ObservableObject {
         profile.appSign = "73678be720c3ea2d871376882d27d21d5c2bc891363547424458f9febc8bf423"
         profile.scenario = .broadcast
 
-        ZegoExpressEngine.createEngine(with: profile, eventHandler: self)
+        ZegoExpressEngine.createEngine(with: profile, eventHandler: nil)
 
-        print("✅ Zego Engine created.")
-//        ZegoExpressEngine.shared().setEventHandler(self)
+           print("✅ Zego Engine created.")
+
+           DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+               ZegoExpressEngine.shared().setEventHandler(self)
+//               ZegoExpressEngine.shared().enableIM(true)
+               print("✅ Zego event handler attached.")
+           }
     }
    
 
     // MARK: - ZegoEventHandler Methods
 
-//    func onPlayerStateUpdate(_ streamID: String, state: ZegoPlayerState, errorCode: Int32, extendedData: [AnyHashable : Any]?) {
-//        print("🎥 onPlayerStateUpdate - Stream: \(streamID), State: \(state.rawValue), Error: \(errorCode)")
-//    }
 
     func onPlayerRecvSEI(_ streamID: String, data: Data) {
         print("📡 Received SEI data on stream: \(streamID)")

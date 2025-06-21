@@ -202,6 +202,7 @@ struct LoginScreen: View {
                 UserDefaults.accessToken = dict.data?.token ?? ""
                 UserDefaults.userId = dict.data?.id ?? 0
                 UserDefaults.userName = dict.data?.name ?? ""
+                UserDefaults.profileURL = dict.data?.profile_image ?? ""
                 
                 UserDefaultsManager.shared.setValue(dict.data?.token, forKey: .token)
                 UserDefaultsManager.shared.setModel(dict.data, forKey: .userDetail)
@@ -244,7 +245,7 @@ extension LoginScreen{
 }
 
 //
-#Preview {
-    LoginScreen()
-}
-
+//#Preview {
+//    LoginScreen()
+//}
+//

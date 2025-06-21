@@ -82,7 +82,7 @@ struct AccountScreen: View {
             }
             ScrollView(showsIndicators: false){
                 VStack(alignment: .leading,spacing: 4){
-                    ListCell(image: "defaultUser", title: "John Smith",subLabel : "Seller since 2003",titleFontName: poppinsSemiBold,titleFontSize: 18.0,subLabelFontName: poppinsRegular,subLabelFontSize: 14.0,isVectorImgHidden: true)
+                    ListCell(image: UserDefaults.profileURL, title: UserDefaults.userName.capitalizingFirstLetter() ,subLabel : "Seller since 2003",titleFontName: poppinsSemiBold,titleFontSize: 18.0,subLabelFontName: poppinsRegular,subLabelFontSize: 14.0,isVectorImgHidden: true)
                         .padding(.all,1)
                         .frame(height: 80)
                     
@@ -340,9 +340,9 @@ struct AccountScreen: View {
     }
 }
 
-#Preview {
-    AccountScreen()
-}
+//#Preview {
+//    AccountScreen()
+//}
 
 
 enum AccountSegment : String, CaseIterable, CustomStringConvertible{
