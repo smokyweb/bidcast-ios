@@ -21,14 +21,13 @@ struct TabbarScreen: View {
     @State private var isHazardous = false
     @ObservedObject var languageManager = LanguageManager.shared
     @Environment(\.presentationMode) var presentationMode
-    
     @State private var showOptions = true
     @State private var verifiedOnly = false
     
     var body: some View {
         ZStack {
             TabView(selection: $selectedTab) {
-                NavigationContainer { HomeViewScreen() }
+                NavigationContainer { HomeViewScreen(showCategory: .constant(""), comeFromExploreScreen: .constant(false)) }
                     .tabItem { Label("Home", systemImage: "house") }
                 
                 NavigationContainer { ExploreViewScreen() }

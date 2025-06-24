@@ -8,6 +8,7 @@
 import SwiftUI
 import RichText
 import SwiftfulLoadingIndicators
+import AlertToast
 
 struct SelectShowScreen: View {
     
@@ -24,6 +25,9 @@ struct SelectShowScreen: View {
     @State var date = Date()
     @Binding var request : StoreScheduleShowRequest
     @Binding var thumbNail : String
+    
+    @State var showhud: Bool = false
+    @State var hudMsg: String = ""
     
     var body: some View {
         VStack(spacing:18){
@@ -81,6 +85,38 @@ struct SelectShowScreen: View {
                 request.date = selectedDateStr
                 request.time = selectedTimeStr
                 print(request)
+                
+                guard !request.title.isEmpty else {
+                    hudMsg = "Please enter title"
+                        showhud = true
+                        return
+                }
+                guard !request.category_id.isEmpty else {
+                    hudMsg = "Please enter category type"
+                        showhud = true
+                        return
+                }
+                guard !request.auction_type_id.isEmpty else {
+                    hudMsg = "Please enter auction type"
+                        showhud = true
+                        return
+                }
+                guard !thumbNail.isEmpty else {
+                    hudMsg = "Please select thumbnail image"
+                        showhud = true
+                        return
+                }
+                guard !request.date.isEmpty else {
+                    hudMsg = "Please enter date"
+                        showhud = true
+                        return
+                }
+                guard !request.time.isEmpty else {
+                    hudMsg = "Please select time"
+                        showhud = true
+                        return
+                }
+                
                 navigateToAddProduct = true
 //                navigateToSelectCategory = true
             },cornerRadius: 12, btnTextColor: .white)
@@ -92,10 +128,8 @@ struct SelectShowScreen: View {
         .edgesIgnoringSafeArea([.top,.bottom])
         .background(.bg.opacity(0.5))
         .toolbar(.hidden,for: .tabBar)
-        .onAppear {
-           
-            
-//            viewModel.getTitleTips(param: TipParam(type: "title"))
+        .toast(isPresenting: $showhud) {
+            AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }
     }
     

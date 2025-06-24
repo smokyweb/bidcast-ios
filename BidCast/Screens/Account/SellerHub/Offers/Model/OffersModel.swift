@@ -9,19 +9,15 @@ import Foundation
 
 // MARK: - OfferListModel
 struct OfferListModel : Codable {
-    var id, userID, productID, amount: Int?
-    var status, createdAt: String?
+    var id, user_id, product_id : Int?
+    var amount: String?
+    var status, created_at: String?
     var user: UserDetail?
     var product: ProductModel?
-
-    enum CodingKeys: String, CodingKey {
-        case id
-        case userID = "user_id"
-        case productID = "product_id"
-        case amount, status
-        case createdAt = "created_at"
-        case user, product
-    }
+    var schedule_show_id : Int?
+    var bid_price : Int?
+    var created_by : Int?
+             
 }
 
 // MARK: - ProductModel

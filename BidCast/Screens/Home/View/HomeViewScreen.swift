@@ -19,24 +19,27 @@ struct HomeViewScreen: View {
            GridItem(.flexible()),
            GridItem(.flexible())
        ]
-    
+    @Binding var showCategory : String
     @State var viewModel = HomeViewModel()
     @State var liveShowsData = [HomeModel]()
     @State var isLoading: Bool = false
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @State var showError: Bool = false
     @State var userId = ""
+    @Binding var comeFromExploreScreen : Bool
     
     var body: some View {
             VStack(spacing:0){
                 VStack{
                     PrimaryHeader(
-                        title: "",
-                        isForLogo: true,
-                        leadingImgArr: [.appName],
+                        title: comeFromExploreScreen ? showCategory.capitalizingFirstLetter() : "",
+                        isForLogo: comeFromExploreScreen ? false : true,
+                        leadingImgArr: [comeFromExploreScreen ? .icBack : .appName],
                         trailingImgArr: [.search,.notification],
                         onClickLeading: { index in
-                            
+                            if comeFromExploreScreen{
+                                self.presentationMode.wrappedValue.dismiss()
+                            }
                         },
                         onClickTrailing: nil,
                         count: .constant(0)
@@ -107,9 +110,9 @@ struct HomeViewScreen: View {
             .onAppear{
                 Task{
                     SVProgressHUD.show()
-                    await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: "live"))
+                    await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: "live",category: showCategory))
                     await SVProgressHUD.dismiss()
-                    await self.success()
+                    self.success()
                 }
             }
             .onReceive(viewModel.$liveShowsResponse){ reponse in
@@ -138,9 +141,9 @@ struct HomeViewScreen: View {
     }
 }
 
-#Preview {
-    HomeViewScreen()
-}
+//#Preview {
+//    HomeViewScreen()
+//}
 
 enum HomeButton: String, CaseIterable, CustomStringConvertible {
     case For_you = "For You"

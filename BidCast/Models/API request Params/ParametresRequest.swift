@@ -282,6 +282,12 @@ struct ResponseModelPaginate<T: Codable>: Codable {
     var total, total_pages,total_records, current_page, per_page: Int?
 }
 
+struct ResponseModelOffer<T: Codable>: Codable {
+    var status, message, error_type: String?
+    var data: T?
+    var total,totalPage,currentPage, perPage,pending,accepted,declined: Int?
+}
+
 //MARK: - Login
 struct SignInRequest:Encodable {
     var email:String
@@ -578,6 +584,7 @@ struct ProductRequest : Encodable {
 
 struct GetLiveShowsRequest : Encodable{
     var type : String? = ""
+    var category : String? = ""
 }
 
 struct LiveShowUpdateRequest : Encodable {

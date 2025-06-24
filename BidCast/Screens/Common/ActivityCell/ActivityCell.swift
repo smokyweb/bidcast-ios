@@ -12,25 +12,19 @@ struct ActivityCell: View {
     var isFor: String?
     var onDecline: (() -> Void)?
     var onAccept: (() -> Void)?
+    @Binding var status : String
     
     var body: some View {
         VStack(spacing: 10) {
             // ── First row ─────────────────────────────
             if isFor == "Message" || isFor == "Bids" || isFor == "Offers" || isFor == "OffersScreen" {
                 HStack(alignment: .center, spacing: 10) {
-                    AsyncImage(url: URL(string: offerListing?.user?.profileImage ?? "")) { image in
-                        image.resizable()
-                    } placeholder: {
-                        Color.gray.opacity(0.3)
-                    }
-                    .frame(width: 40, height: 40)
-                    .clipShape(Circle())
-                    .overlay(Circle().stroke(Color.white, lineWidth: 1))
+                    CustomProfileImage(url: offerListing?.user?.profileImage ?? "",isCircular: true)
                     .padding(.leading, 16)
                     
                     VStack(alignment: .leading, spacing: 0) {
                         TitleWithLine(title: offerListing?.user?.name ?? "Unknown", lineLength: 0, textColor: .black, fontName: robotoMedium, fontValue: 16, divderHeight: 0)
-                        if let dateString = offerListing?.createdAt,
+                        if let dateString = offerListing?.created_at,
                            let date = parseISO8601Date(dateString) {
                             let timeAgo = timeAgoSinceDate(date)
                             TitleWithLine(title: "Placed an Offer • \(timeAgo)", lineLength: 0, textColor: .lightGray, fontName: robotoRegular, fontValue: 14, divderHeight: 0)
@@ -40,7 +34,7 @@ struct ActivityCell: View {
 
                     if isFor != "OffersScreen" {
                         Spacer()
-                        Text("₹\(offerListing?.amount ?? 0)")
+                        Text("₹\(offerListing?.amount ?? "")")
                             .font(.custom(poppinsSemiBold, fixedSize: 12.0))
                             .foregroundStyle(.text)
                             .foregroundColor(.black)
@@ -54,13 +48,7 @@ struct ActivityCell: View {
             // ── Second row ─────────────────────────────
             if isFor == "Bids" || isFor == "Offer" || isFor == "Purchases" || isFor == "Saved Items" || isFor == "Offers" || isFor == "OffersScreen"  {
                 HStack(alignment: .center, spacing: 10) {
-                    AsyncImage(url: URL(string: offerListing?.product?.images?.first ?? "")) { image in
-                        image.resizable()
-                    } placeholder: {
-                        Color.gray.opacity(0.2)
-                    }
-                    .frame(width: 64, height: 64)
-                    .cornerRadius(12)
+                    CustomProfileImage(url: offerListing?.product?.images?.first  ?? "",isCircular: false,cornerRadius: 12, size: 64)
                     .padding(.leading, 16)
                     
                     VStack(alignment: .leading, spacing: 0) {
@@ -68,13 +56,13 @@ struct ActivityCell: View {
                         TitleWithLine(title: "Asking Price: ₹\(offerListing?.product?.pricing ?? 0)", lineLength: 0, textColor: .lightGray, fontName: robotoRegular, fontValue: 14, divderHeight: 0)
                         
                         if isFor == "OffersScreen" {
-                            TitleWithLine(title: "Placed on: \(formattedDate(offerListing?.createdAt))", lineLength: 0, textColor: .lightGray, fontValue: 12, divderHeight: 0)
+                            TitleWithLine(title: "Placed on: \(formattedDate(offerListing?.created_at))", lineLength: 0, textColor: .lightGray, fontValue: 12, divderHeight: 0)
                         }
                     }
                     
                     if isFor != "OffersScreen" && isFor !=  "Offers"{
                         
-                        SingleTitleLabel(title: "₹\(offerListing?.amount ?? 0)", lineLength: 0, textColor: .success, fontValue: 12)
+                        SingleTitleLabel(title: "₹\(offerListing?.amount ?? "")", lineLength: 0, textColor: .success, fontValue: 12)
                             .padding(.trailing, 8)
                         
                     }
@@ -84,15 +72,19 @@ struct ActivityCell: View {
 
             // ── Third row ─────────────────────────────
             if isFor == "Offers" || isFor == "OffersScreen" {
-                HStack(alignment: .center, spacing: 10) {
-                    // Assuming TwoButton supports actions
-                    TwoButton(
-                        onFirstButtonClick: { onDecline?() },
-                        onSecButtonClick: { onAccept?() }
-                    )
+                if status == "pending"{
+                    HStack(alignment: .center, spacing: 10) {
+                        // Assuming TwoButton supports actions
+                        
+                        TwoButton(
+                            onFirstButtonClick: { onDecline?() },
+                            onSecButtonClick: { onAccept?() }
+                        )
+                    }
+                    
+                    .frame(height: 50)
+                    .padding(.bottom, 16)
                 }
-                .frame(height: 50)
-                .padding(.bottom, 16)
             }
         }
         .frame(maxWidth: .infinity)
@@ -138,4 +130,12 @@ func parseISO8601Date(_ dateString: String) -> Date? {
     let formatter = ISO8601DateFormatter()
     formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
     return formatter.date(from: dateString)
+}
+
+enum statusSegmentType : String, CaseIterable{
+    case accepted = "accepted"
+    case dedclined = "declined"
+    case pending = "pending"
+    
+    
 }

@@ -70,13 +70,6 @@ enum APIEndPoint{
     case getReferralCode
     case orderReciept(param : OrderRecieptRequest)
     case storeScheduleShow(param : StoreScheduleShowRequest)
-    
-    
-    
-    
-    
-    
-    //MARK: Extension
     case AddCard(param:AddCardRequest)
     case deleteCard(param:DeleteCardRequest)
     case getCard
@@ -84,6 +77,7 @@ enum APIEndPoint{
     case getProduct(param:ProductRequest)
     case getScheduledShow(param:GetLiveShowsRequest)
     case UpdateShowStatus(param:LiveShowUpdateRequest)
+    case getBidList
     
     //MARK: OLD
     
@@ -179,12 +173,8 @@ extension APIEndPoint: EndPointType {
         switch self {
         case .login:
             return "login"
-            //        case .updateProfile:
-            //            return "update-profile"
         case .singUp:
             return "register"
-            //        case .getRoll:
-            //            return "get-role"
         case .contact:
             return "contact-us"
         case .verifyOTP:
@@ -297,11 +287,6 @@ extension APIEndPoint: EndPointType {
             return "referral-code/fetch"
         case .orderReciept:
             return "product/order-receipt"
-
-            
-            
-            //MARK: Extenion
-            
         case .AddCard:
             return "add-card"
         case .deleteCard:
@@ -318,6 +303,8 @@ extension APIEndPoint: EndPointType {
             return "get-my-schedule-show"
         case .UpdateShowStatus:
             return "schedule-show/update-live-status"
+        case .getBidList:
+            return "bid/fetch"
             
             //MARK: Old
             
@@ -462,6 +449,7 @@ extension APIEndPoint: EndPointType {
      
        
        
+       
         }
     }
     
@@ -586,10 +574,6 @@ extension APIEndPoint: EndPointType {
             return .get
         case .orderReciept:
             return .post
-            
-            
-            
-            //MARK: Extension
         case .AddCard:
             return .post
         case .deleteCard:
@@ -606,6 +590,8 @@ extension APIEndPoint: EndPointType {
             return .post
         case .UpdateShowStatus:
             return .post
+        case .getBidList:
+            return .get
             
             //MARK: Old
             
@@ -695,8 +681,6 @@ extension APIEndPoint: EndPointType {
             return .get
         case .getNotification:
             return .get
-        case .deleteNotification:
-            return .post
         case .updateNotification:
             return .post
         case .getNotificationCount:
@@ -751,9 +735,6 @@ extension APIEndPoint: EndPointType {
         case .Business:
             return .post
        
-       
-       
-        
         }
     }
     
@@ -883,8 +864,6 @@ extension APIEndPoint: EndPointType {
             return nil
         case .orderReciept(param: let param):
             return param
-            
-            //MARK: Extenson
         case .AddCard(param: let param):
             return param
         case .deleteCard(param: let param):
@@ -902,6 +881,8 @@ extension APIEndPoint: EndPointType {
             return param
         case .UpdateShowStatus(param: let param):
             return param
+        case .getBidList:
+            return nil
             
             //MARK: Old
             
@@ -1045,13 +1026,6 @@ extension APIEndPoint: EndPointType {
             return nil
         case .removeSavedJob(let param):
             return param
-            
-        
-      
-       
-      
-        
-    
         }
     }
     

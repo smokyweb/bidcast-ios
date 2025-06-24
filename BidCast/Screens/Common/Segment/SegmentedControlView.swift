@@ -13,14 +13,14 @@ struct SegmentedControlView<T: Hashable & CustomStringConvertible>: View {
     var isWithBorder: Bool = false
     var onSegmentChanged: ((T) -> Void)?
     var fontTitle : String = poppinsRegular
-    var fontSize : Double = 14.0
+    var fontSize : Double = 13.0
     
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) { // Make the HStack scrollable
             HStack(spacing: 8) {
                 ForEach(segments.indices, id: \.self) { index in
                     let segment = segments[index]
-                    VStack {
+                    VStack(alignment:.leading) {
                         Button(action: {
                             selectedSegment = segment
                             onSegmentChanged?(segment)
@@ -54,7 +54,7 @@ struct SegmentedControlView<T: Hashable & CustomStringConvertible>: View {
             }
 //            .padding(.horizontal) // Add horizontal padding around the entire HStack for spacing
         }
-        .frame(maxWidth: .infinity) // Make sure it takes up full width
+//        .frame(maxWidth: .infinity) // Make sure it takes up full width
     }
     
     //MARK: getForegroundColor.

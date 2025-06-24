@@ -103,9 +103,11 @@ struct LiveStream: View {
                                 logoutRoom()
                                 self.presentationMode.wrappedValue.dismiss()
                             }) {
-                                Image(systemName: "xmark.circle.fill")
+                                Image(.cancel)
+                                    .resizable()
+                                    .renderingMode(.template)
                                     .foregroundColor(.danger)
-                                    .font(.custom(poppinsSemiBold, size: 20.0))
+                                    .frame(width: 32,height: 32)
                             }
                             
                         }

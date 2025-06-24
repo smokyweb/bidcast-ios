@@ -25,7 +25,7 @@ struct TwoVerticalLabelCell<T: Hashable & CustomStringConvertible>: View {
         dataModel: [T],
         topLabel: @escaping (T) -> String,
         bottomLabel: @escaping (T) -> String,
-        selection: Binding<T?>? = nil, // ✅ optional parameter
+        selection: Binding<T?>? = nil,
         h1fontname: String = poppinsSemiBold,
         h1fontSize: Double = 20.0,
         h2fontname: String = poppinsRegular,

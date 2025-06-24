@@ -232,6 +232,9 @@ struct PrimaryHeader: View {
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 100, height: 40)
                             .clipped()
+                            .onTapGesture {
+                                onClickLeading?(0) 
+                            }
 //                            .cornerRadius(8)
                     } else {
                         ForEach(leadingImgArr.indices, id: \.self) { ind in
@@ -258,7 +261,7 @@ struct PrimaryHeader: View {
                     .foregroundColor(.black)
                     .lineLimit(1)
                 
-                Spacer()
+//                Spacer()
                 Spacer()
                 
                 // Trailing icons

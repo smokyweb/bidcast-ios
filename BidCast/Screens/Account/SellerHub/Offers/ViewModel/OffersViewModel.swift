@@ -10,15 +10,28 @@ import Foundation
 @MainActor
 final class OffersViewModel: ObservableObject {
     
-    @Published var offerListResponse = ResponseModel<[OfferListModel]>()
+    @Published var offerListResponse = ResponseModelOffer<[OfferListModel]>()
     @Published var offerUpdateResponse = ResponseModel<OfferUpdateStatus>()
     @Published var errorMessage: String? = nil
 
     // MARK: - Get Preference
     func getOfferList() async {
         do {
-            let response: ResponseModel<[OfferListModel]> = try await APIManager.shared.request(
+            let response: ResponseModelOffer<[OfferListModel]> = try await APIManager.shared.request(
                 type: APIEndPoint.makeOfferList,
+                header: true
+            )
+            self.offerListResponse = response
+        } catch {
+            self.handle(error: error)
+        }
+    }
+    
+    // MARK: - Get Preference
+    func getBidList() async {
+        do {
+            let response: ResponseModelOffer<[OfferListModel]> = try await APIManager.shared.request(
+                type: APIEndPoint.getBidList,
                 header: true
             )
             self.offerListResponse = response

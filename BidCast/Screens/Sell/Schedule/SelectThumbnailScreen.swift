@@ -9,6 +9,7 @@ import SwiftUI
 import RichText
 import SwiftfulLoadingIndicators
 import SVProgressHUD
+import AlertToast
 
 struct SelectThumbnailScreen: View {
     
@@ -25,6 +26,9 @@ struct SelectThumbnailScreen: View {
     @State private var selectedMedia =  UIImage()
     @Binding var request : StoreScheduleShowRequest
     @State var thumbNail = ""
+    @State var showhud: Bool = false
+    @State var hudMsg: String = ""
+    
     
     var body: some View {
         VStack(spacing:18){
@@ -53,19 +57,19 @@ struct SelectThumbnailScreen: View {
                     VStack(alignment:.leading,spacing: 24){
                         let tipsData = tip.tips ?? [TipsData]()
                         let example = tip.example ?? [String]()
-                       
+                        
                         ForEach(tipsData.indices, id: \.self) { tip in
                             let tips = tipsData[tip]
                             VStack(spacing:12){
-                            TipsCardView(image:tips.icon ?? "" , title: tips.title ?? "", description: tips.description ?? "")
+                                TipsCardView(image:tips.icon ?? "" , title: tips.title ?? "", description: tips.description ?? "")
                             }
-//                            .padding(.all,Leading/2)
+                            //                            .padding(.all,Leading/2)
                             .background(.white)
                             .cornerRadius(10)
                             
                         }
                         
-                       
+                        
                         VStack(alignment:.leading){
                             Text("Good Example")
                                 .font(.custom(poppinsBold, size: 16.0))
@@ -89,24 +93,37 @@ struct SelectThumbnailScreen: View {
                                 }
                             }
                         }
-                        
-//                        .padding(.all,Leading/2)
-                        
                     }
                     
                 }
-                //                .padding(.horizontal,Leading)
-                //                .background(.red.opacity(0.4))
-                
-                
             }
             .padding(.top,10)
             .padding(.horizontal,Leading)
             //            .background(.green)
             PrimaryButton(title: "Continue to next step",isOutLine: false,onButtonClick: {
                 print("request \(request)")
+                guard !request.title.isEmpty else {
+                    hudMsg = "Please enter title"
+                        showhud = true
+                        return
+                }
+                guard !request.category_id.isEmpty else {
+                    hudMsg = "Please enter category type"
+                        showhud = true
+                        return
+                }
+                guard !request.auction_type_id.isEmpty else {
+                    hudMsg = "Please enter auction type"
+                        showhud = true
+                        return
+                }
+                guard !thumbNail.isEmpty else {
+                    hudMsg = "Please select thumbnail image"
+                        showhud = true
+                        return
+                }
                 navigateToSelectTime = true
-             
+                
             },cornerRadius: 12, btnTextColor: .white)
             
             CusNavLink(doNavigate: $navigateToSelectTime, destination: SelectShowScreen(request:$request,thumbNail: $thumbNail))
@@ -123,6 +140,9 @@ struct SelectThumbnailScreen: View {
                 showPhotoLibrary = true
             }
             Button("Cancel", role: .cancel) {}
+        }
+        .toast(isPresenting: $showhud) {
+            AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }
         .sheet(isPresented: $showCameraPicker) {
             ImagePicker(sourceType: .camera) { image,url in
@@ -148,23 +168,23 @@ struct SelectThumbnailScreen: View {
                 SVProgressHUD.show()
                 await viewModel.getTitleTips(param: TipParam(type: "thumbnail"))
                 await SVProgressHUD.dismiss()
-                await success()
+                success()
             }
         }
     }
-   
+    
     
     func success() {
         SVProgressHUD.dismiss()
-         let dict = viewModel.tipsResponse
-            if dict?.status == "success" {
-                tip = dict?.data ?? TitleTipsModel()
-            } else {
-                print("API error: \(dict?.status ?? "")")
-            }
+        let dict = viewModel.tipsResponse
+        if dict?.status == "success" {
+            tip = dict?.data ?? TitleTipsModel()
+        } else {
+            print("API error: \(dict?.status ?? "")")
+        }
         
     }
-   
+    
 }
 
 

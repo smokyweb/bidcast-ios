@@ -9,41 +9,27 @@ import SwiftUI
 import SVProgressHUD
 
 struct ExploreViewScreen: View {
-   
+    
     @Environment(\.presentationMode) var presentationMode
     
     let count = Array(0...5)
-       
-       let columns = [
-           GridItem(.flexible()),
-           GridItem(.flexible())
-       ]
+    
+    let columns = [
+        GridItem(.flexible()),
+        GridItem(.flexible())
+    ]
     var imageName : [ImageResource] = [.gaming,.sports,.jewelery,.fashion,.vinyl]
     var tabName = ["Gaming","Sports","Jewellery ","Fashion","Vinyl Records"]
     var subLabel = ["864 Live","1.2K Live","640 Live","640 Live","640 Live"]
     var viewModel = SelectCategoryViewModel()
+    @State var category : String = ""
+    @State var navigateToCategoryDetailScreen = false
     
     @State var categoryList = [CategoryDataModel]()
     @State var isLoading = false
     
     var body: some View {
         VStack(alignment:.leading,spacing:0){
-//            VStack{
-//            PrimaryHeader(
-//                title: "",
-//                isForLogo : true, leadingImgArr: [.appName],
-//                trailingImgArr: [.search,.notification],
-//                onClickLeading: { _ in
-//                    self.presentationMode.wrappedValue.dismiss()
-//                },
-//                count: .constant(0)
-//            )
-//            .padding(.horizontal,12)
-//            .frame(height: 40)
-//            .background(.white)
-//        }
-//            .padding(.horizontal,12)
-//            .background(.white)
             VStack{
                 PrimaryHeader(
                     title: "",
@@ -51,57 +37,51 @@ struct ExploreViewScreen: View {
                     leadingImgArr: [.appName], // logo on left
                     trailingImgArr: [.search,.notification],
                     onClickLeading: { index in
-                        // maybe open menu or do nothing
+                        
                     },
                     onClickTrailing: nil,
                     count: .constant(0)
                 )
-               
+                
             }
             ScrollView(showsIndicators: false){
                 VStack(alignment: .leading,spacing: 8){
-                        SearchView()
-                        
-                        SingleTitleLabel(title: "Recommended | Popular | All" ,textColor: .black,fontValue: 18.0)
+                    SearchView()
+                    
+                    SingleTitleLabel(title: "Recommended | Popular | All" ,textColor: .black,fontValue: 18.0)
                         .padding(.horizontal,8)
-//                        let data = self.viewModel.categoryDict?.data ?? [CategoryDataModel]()
-                        ForEach(0 ..< categoryList.count, id: \.self) { ind in
-//                            print("\(ind)")
-//                            print(self.title[ind])
-                            ListCell(image: categoryList[ind].image ?? "", title: categoryList[ind].name ?? "", vectorImg: .icArrowUp,subLabel : "BidSwipe",tintColot: categoryList[ind].color ?? "")
-                                .padding(.horizontal,8)
-                           
-                        }
-                       
+                    ForEach(0 ..< categoryList.count, id: \.self) { ind in                            ListCell(image: categoryList[ind].image ?? "", title: categoryList[ind].name ?? "", vectorImg: .icArrowUp,subLabel : "BidSwipe",tintColot: categoryList[ind].color ?? "",onTapMenuCell: {
+                        category = categoryList[ind].name ?? ""
+                        navigateToCategoryDetailScreen = true
+                    })
+                    .padding(.horizontal,8)
+                        
                     }
-                   
+                    
                 }
+                
+            }
             .padding(.top,8)
             .padding(.horizontal,12)
-              
+            CusNavLink(doNavigate: $navigateToCategoryDetailScreen, destination: HomeViewScreen(showCategory:$category,comeFromExploreScreen : $navigateToCategoryDetailScreen))
+        }
+        
+        .background(.bg.opacity(0.4))
+        .onAppear {
+            Task {
+                SVProgressHUD.show()
+                await self.viewModel.getCategoryList()
+                await SVProgressHUD.dismiss()
+                self.categoryList = viewModel.categoryResponse.data ?? [CategoryDataModel]()
             }
-            
-            .background(.bg.opacity(0.4))
-//            .edgesIgnoringSafeArea(.top)
-            .onAppear {
-                Task {
-                    SVProgressHUD.show()
-                    await self.viewModel.getCategoryList()
-                    await SVProgressHUD.dismiss()
-                    self.categoryList = viewModel.categoryResponse.data ?? [CategoryDataModel]()
-                }
-            }
-           
-            
-       
+        }
+        
+        
+        
     }
     
-   
-
-   
-}
-
-#Preview {
-    ExploreViewScreen()
+    
+    
+    
 }
 

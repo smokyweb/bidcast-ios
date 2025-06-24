@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SVProgressHUD
+import AlertToast
 
 struct AddProductsScreen: View {
     @State private var productCount = 1
@@ -145,13 +146,49 @@ struct AddProductsScreen: View {
             // Finish Button
             Button(action: {
                 print(request)
+                guard !request.title.isEmpty else {
+                    hudMsg = "Please enter title"
+                        showhud = true
+                        return
+                }
+                guard !request.category_id.isEmpty else {
+                    hudMsg = "Please enter category type"
+                        showhud = true
+                        return
+                }
+                guard !request.auction_type_id.isEmpty else {
+                    hudMsg = "Please enter auction type"
+                        showhud = true
+                        return
+                }
+                guard !thumbNail.isEmpty else {
+                    hudMsg = "Please select thumbnail image"
+                        showhud = true
+                        return
+                }
+                guard !request.date.isEmpty else {
+                    hudMsg = "Please enter date"
+                        showhud = true
+                        return
+                }
+                guard !request.time.isEmpty else {
+                    hudMsg = "Please select time"
+                        showhud = true
+                        return
+                }
+                guard !request.product_ids.isEmpty else {
+                    hudMsg = "Please select product"
+                        showhud = true
+                        return
+                }
+                
                 Task{
                     SVProgressHUD.show()
                     var thumbImage = [String]()
                     thumbImage.append(thumbNail)
                     await viewModel.storeScheduleShow(param: request,images: [thumbNail],key: "thumbnail[]")
                     await SVProgressHUD.dismiss()
-                    await storeSuccess()
+                    storeSuccess()
                    
                 }
             }) {
@@ -173,15 +210,12 @@ struct AddProductsScreen: View {
                 SVProgressHUD.show()
                 await viewModel.getProductList(parameters: UserProductRequest(user_id: UserDefaults.userId))
                 await SVProgressHUD.dismiss()
-                await productSuccess()
+                productSuccess()
             }
         }
-//        .onChange(of: viewModel.isStoreAPIDone){ done in
-//            SVProgressHUD.dismiss()
-//            if done{
-//                storeSuccess()
-//            }
-//        }
+        .toast(isPresenting: $showhud) {
+            AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
+        }
         .bottomSheet(isPresented: $showError, height: screenHeight/2.2, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: { showError = true }, content: {
             CommonBottomSheet(
                 sheetType: $alertType,

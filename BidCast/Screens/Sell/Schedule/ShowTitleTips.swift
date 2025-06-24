@@ -9,6 +9,7 @@ import SwiftUI
 import RichText
 import SwiftfulLoadingIndicators
 import SVProgressHUD
+import AlertToast
 
 struct ShowTitleTips: View {
     
@@ -20,7 +21,8 @@ struct ShowTitleTips: View {
     @State var title = ""
     @State var navigateToSelectCategory  = false
     
-    
+    @State var showhud: Bool = false
+    @State var hudMsg: String = ""
     
     var body: some View {
         VStack(spacing:18){
@@ -105,14 +107,19 @@ struct ShowTitleTips: View {
             .padding(.horizontal,Leading)
             //            .background(.green)
             PrimaryButton(title: "Continue to next step",isOutLine: false,onButtonClick: {
-                
+                guard !title.isEmpty else {
+                    hudMsg = "Please enter title"
+                        showhud = true
+                        return
+                }
                 navigateToSelectCategory = true
             },cornerRadius: 12, btnTextColor: .white)
             
             CusNavLink(doNavigate: $navigateToSelectCategory, destination: SelectCategoryScreen(title: $title))
            
         }
-    
+        .toast(isPresenting: $showhud) {
+            AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)}
         .edgesIgnoringSafeArea([.top,.bottom])
         .background(.bg.opacity(0.5))
         .toolbar(.hidden,for: .tabBar)
@@ -121,7 +128,7 @@ struct ShowTitleTips: View {
                 SVProgressHUD.show()
                 await viewModel.getTitleTips(param: TipParam(type: "title"))
                 await SVProgressHUD.dismiss()
-                await success()
+                success()
             }
         }
         

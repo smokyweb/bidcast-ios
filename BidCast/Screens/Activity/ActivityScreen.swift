@@ -51,26 +51,45 @@ struct ActivityScreen: View {
 
                     switch selected {
                     case .message:
-                        ActivityCell(isFor: selected.rawValue)
+                        ActivityCell(isFor: selected.rawValue, status: .constant(""))
                     case .bid:
-                        ActivityCell(isFor: selected.rawValue)
-                    case .offer:
+                        if offerList.isEmpty {
+                        NoDataView(message: "No bids Found")
+                    } else {
                         ForEach(offerList, id: \.id) { offer in
                             ActivityCell(
                                 offerListing: offer,
-                                isFor: "Offers",
+                                isFor: "Bids",
                                 onDecline: {
                                     handleOfferAction(offer: offer, newStatus: "rejected")
                                 },
                                 onAccept: {
                                     handleOfferAction(offer: offer, newStatus: "accepted")
-                                }
+                                }, status: .constant("pending")
                             )
                         }
+                    }
+                    case .offer:
+                        if offerList.isEmpty {
+                        NoDataView(message: "No offers Found")
+                        } else {
+                            ForEach(offerList, id: \.id) { offer in
+                                ActivityCell(
+                                    offerListing: offer,
+                                    isFor: "Offers",
+                                    onDecline: {
+                                        handleOfferAction(offer: offer, newStatus: "rejected")
+                                    },
+                                    onAccept: {
+                                        handleOfferAction(offer: offer, newStatus: "accepted")
+                                    }, status: .constant("pending")
+                                )
+                            }
+                        }
                     case .purchases:
-                        ActivityCell(isFor: selected.rawValue)
+                        ActivityCell(isFor: selected.rawValue, status:  .constant("pending"))
                     case .savedItems:
-                        ActivityCell(isFor: selected.rawValue)
+                        ActivityCell(isFor: selected.rawValue,status:  .constant("pending"))
                     }
                 }
             }
@@ -103,13 +122,17 @@ struct ActivityScreen: View {
             // fetchMessages()
             break
         case .bid:
-            // fetchBids()
-            break
+            SVProgressHUD.show()
+            self.offerList.removeAll()
+            await viewModel.getBidList()
+            await SVProgressHUD.dismiss()
+            getOfferSuccess()
         case .offer:
             SVProgressHUD.show()
+            self.offerList.removeAll()
             await viewModel.getOfferList()
             await SVProgressHUD.dismiss()
-            await getOfferSuccess()
+            getOfferSuccess()
         case .purchases:
             // fetchPurchases()
             break
@@ -119,13 +142,13 @@ struct ActivityScreen: View {
         }
     }
 
-    // Handle success response for fetching offers
+   
     func getOfferSuccess() {
         SVProgressHUD.dismiss()
         if viewModel.offerListResponse.status == "success" {
             offerList = viewModel.offerListResponse.data ?? []
         } else {
-            // Optional: handle error
+           
         }
     }
 
@@ -166,3 +189,5 @@ enum Segment: String, CaseIterable, CustomStringConvertible {
     
     var description: String { rawValue }
 }
+
+

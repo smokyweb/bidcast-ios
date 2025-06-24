@@ -26,27 +26,30 @@ struct OffersScreen: View {
     var body: some View {
         VStack(spacing: 0) {
             // MARK: - Top Header (fixed)
-            PrimaryHeader(
-                title: "Offers",
-                isForLogo : true,
-                leadingImgArr: [.appName],
-                trailingImgArr: [.icSetting],
-                onClickLeading: { _ in
-                    self.presentationMode.wrappedValue.dismiss()
-                },
-                count: .constant(0)
-            )
-            .padding(.horizontal)
-            .padding(.bottom, 10)
-            .frame(height : 10)
-
-
+            VStack{
+                PrimaryHeader(
+                    title: "Offers",
+                    isForLogo : true,
+                    leadingImgArr: [.appName],
+                    trailingImgArr: [.icSetting],
+                    onClickLeading: { _ in
+                        self.presentationMode.wrappedValue.dismiss()
+                    },
+                    count: .constant(0)
+                )
+            }
             // MARK: - Scrollable Show List
             ScrollView {
                 VStack(spacing: 10) {
-                    TwoVerticalLabelCell(dataModel: OffersValue.allCases,topLabel: {$0.labelOlt },bottomLabel: { $0.description.localized})
+                    TwoVerticalLabelCell(dataModel: OffersValue.allCases,
+                                         topLabel: { offer in offerCount(for: offer) },
+                                         bottomLabel: { $0.description.localized})
                     ForEach(offerList, id: \.id) { txn in
-                        ActivityCell(offerListing: txn, isFor: "OffersScreen")
+                        ActivityCell(offerListing: txn, isFor: "OffersScreen",onDecline: {
+                            handleOfferAction(offer: txn, newStatus: "rejected")
+                        }, onAccept: {
+                            handleOfferAction(offer: txn, newStatus: "accepted")
+                        }, status:.constant(txn.status ?? ""))
                             .padding([.leading, .trailing], 15)
                     }
                 }
@@ -70,7 +73,7 @@ struct OffersScreen: View {
                 SVProgressHUD.show()
                 await viewModel.getOfferList()
                 await SVProgressHUD.dismiss()
-                await getOfferSuccess()
+                getOfferSuccess()
             }
         }
         
@@ -94,6 +97,30 @@ struct OffersScreen: View {
             )
         }
     }
+    func handleOfferAction(offer: OfferListModel, newStatus: String) {
+        let param = OfferUpdateStatusRequest(offer_id: offer.id ?? 0, status: newStatus)
+        SVProgressHUD.show()
+        
+        Task {
+            do {
+                // Call the async updateOfferStatus
+                await viewModel.updateOfferStatus(parameters: param)
+                await viewModel.getOfferList()
+                await SVProgressHUD.dismiss()
+                if viewModel.offerListResponse.status == "success" {
+                    self.offerList = viewModel.offerListResponse.data ?? []
+                    self.hudMsg = "Offer \(newStatus)"
+                } else {
+                    self.hudMsg = "Failed to refresh offers"
+                }
+                self.showhud = true
+            } catch {
+                await SVProgressHUD.dismiss()
+                self.hudMsg = "Failed to update offer"
+                self.showhud = true
+            }
+        }
+    }
     
     func getOfferSuccess() {
         SVProgressHUD.dismiss()
@@ -104,6 +131,16 @@ struct OffersScreen: View {
            
         }
     }
+    func offerCount(for offer: OffersValue) -> String {
+            switch offer {
+            case .pending:
+                return "\(viewModel.offerListResponse.pending ?? 0)"
+            case .accepted:
+                return "\(viewModel.offerListResponse.accepted ?? 0)"
+            case .decline:
+                return "\(viewModel.offerListResponse.declined ?? 0)"
+            }
+        }
 }
 
 

@@ -94,6 +94,21 @@ struct SelectCategoryScreen: View {
                 PrimaryButton(title: AppString.continueBtn.localized, isOutLine: false, onButtonClick: {
                     request.title = title
                     print("Store title,category,auction \(request)")
+                    guard !request.title.isEmpty else {
+                        hudMsg = "Please enter title"
+                            showhud = true
+                            return
+                    }
+                    guard !request.category_id.isEmpty else {
+                        hudMsg = "Please enter category type"
+                            showhud = true
+                            return
+                    }
+                    guard !request.auction_type_id.isEmpty else {
+                        hudMsg = "Please enter auction type"
+                            showhud = true
+                            return
+                    }
                     navigateToThumbnail = true
                     
                 },cornerRadius : 12.0, btnTextColor: .white)
