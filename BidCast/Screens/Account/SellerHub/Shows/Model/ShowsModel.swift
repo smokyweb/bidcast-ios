@@ -50,3 +50,36 @@ struct UpdateStatusModel : Codable {
     }
 
     
+struct ProductData {
+    let category: String
+    let id: String
+    let image: String
+    let name: String
+    let price: String
+    
+    func toDictionary() -> [String: Any] {
+        return [
+            "category": category,
+            "id": id,
+            "image": image,
+            "name": name,
+            "price": price
+        ]
+    }
+}
+
+struct SellerModel {
+    let followed: Bool
+    let id: String
+    let name: String
+    let rating: String
+    
+    func toDictionary() -> [String: Any] {
+        return [
+            "followed": followed,
+            "id": id,
+            "name": name,
+            "rating": rating
+        ]
+    }
+}
