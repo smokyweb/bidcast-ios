@@ -120,8 +120,6 @@ struct PreferncesScreen: View {
                 .background(Color.white.ignoresSafeArea(edges: .bottom))
             }
             .disabled(isLoading)
-            
-            
         }
         .onAppear {
             UIScrollView.appearance().bounces = false
@@ -131,7 +129,6 @@ struct PreferncesScreen: View {
             UIScrollView.appearance().bounces = true
         }
         .onFirstAppear {
-           
             Task{
                 SVProgressHUD.show()
                 await viewModel.getPreferenceContent()
