@@ -27,6 +27,7 @@ struct HomeViewScreen: View {
     @State var showError: Bool = false
     @State var userId = ""
     @Binding var comeFromExploreScreen : Bool
+    @State var navigateToNoti : Bool = false
     
     var body: some View {
             VStack(spacing:0){
@@ -41,10 +42,11 @@ struct HomeViewScreen: View {
                                 self.presentationMode.wrappedValue.dismiss()
                             }
                         },
-                        onClickTrailing: nil,
+                        onClickTrailing: { index in
+                            navigateToNoti = true
+                        },
                         count: .constant(0)
                     )
-                   
                 }
                 
                 ScrollView(showsIndicators:false){
@@ -105,6 +107,7 @@ struct HomeViewScreen: View {
                 .padding(.top , 10)
                 
                 CusNavLink(doNavigate: $navigateToLiveStream, destination: LiveStream(currentStreamIndex :self.$index, userId : $userId ))
+                CusNavLink(doNavigate: $navigateToNoti, destination: NotificationScreen())
             }
             .background(.white)
             .onAppear{

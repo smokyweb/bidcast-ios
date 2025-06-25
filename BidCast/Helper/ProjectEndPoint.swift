@@ -44,6 +44,7 @@ enum APIEndPoint{
     case followUnfollow(param:FollowRequest)
     
     
+    
     //MARK: Faz
     case fetchProduct(param : FetchProductRequest)
     case storeIDCard(param : [String:Any])
@@ -78,6 +79,7 @@ enum APIEndPoint{
     case getScheduledShow(param:GetLiveShowsRequest)
     case UpdateShowStatus(param:LiveShowUpdateRequest)
     case getBidList
+    case getNotificationListing
     
     //MARK: OLD
     
@@ -259,6 +261,8 @@ extension APIEndPoint: EndPointType {
             return "notification/listing"
         case .deleteNotification:
             return "notification/delete"
+        case .getNotificationListing:
+            return "notification/listing"
         case .getLiveShow:
             return "get-live-show"
         case .getMyScheduleShow:
@@ -503,6 +507,10 @@ extension APIEndPoint: EndPointType {
             
         case .storeAddress:
             return .post
+        case .deleteNotification:
+            return .post
+        case .getNotificationListing:
+            return .post
             
         case .getAddress:
             return .get
@@ -544,8 +552,6 @@ extension APIEndPoint: EndPointType {
             return .get
         case .notificationListing:
             return .get
-        case .deleteNotification:
-            return .post
         case .getLiveShow:
             return .post
         case .getMyScheduleShow:
@@ -815,6 +821,10 @@ extension APIEndPoint: EndPointType {
             return param
             
             //MARK: Faz
+        case .deleteNotification(param: let param):
+            return param
+        case .getNotificationListing:
+            return nil
         case .fetchProduct(param: let param):
             return param
         case .storeIDCard:
@@ -833,8 +843,6 @@ extension APIEndPoint: EndPointType {
             return nil
         case .notificationListing:
             return nil
-        case .deleteNotification(param: let param):
-            return param
         case .getLiveShow:
             return nil
         case .getMyScheduleShow(param: let param):
@@ -973,8 +981,6 @@ extension APIEndPoint: EndPointType {
             return nil
         case .getNotification:
             return  nil
-        case .deleteNotification:
-            return nil
         case .updateNotification(let param):
             return param
         case .getNotificationCount:

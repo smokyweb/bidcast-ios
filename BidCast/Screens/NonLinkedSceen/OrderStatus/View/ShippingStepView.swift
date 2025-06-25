@@ -2,7 +2,7 @@
 //  ShippingStepView.swift
 //  BidCast
 //
-//  Created by jam 1 TB on 11/06/25.
+//  Created by JAM_E_329 on 11/06/25.
 //
 
 import SwiftUI

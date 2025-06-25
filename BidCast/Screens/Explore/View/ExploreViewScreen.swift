@@ -27,6 +27,7 @@ struct ExploreViewScreen: View {
     
     @State var categoryList = [CategoryDataModel]()
     @State var isLoading = false
+    @State var navigateToNoti : Bool = false
     
     var body: some View {
         VStack(alignment:.leading,spacing:0){
@@ -39,7 +40,9 @@ struct ExploreViewScreen: View {
                     onClickLeading: { index in
                         
                     },
-                    onClickTrailing: nil,
+                    onClickTrailing: { index in
+                        navigateToNoti = true
+                    },
                     count: .constant(0)
                 )
                 
@@ -64,6 +67,7 @@ struct ExploreViewScreen: View {
             .padding(.top,8)
             .padding(.horizontal,12)
             CusNavLink(doNavigate: $navigateToCategoryDetailScreen, destination: HomeViewScreen(showCategory:$category,comeFromExploreScreen : $navigateToCategoryDetailScreen))
+            CusNavLink(doNavigate: $navigateToNoti, destination: NotificationScreen())
         }
         
         .background(.bg.opacity(0.4))

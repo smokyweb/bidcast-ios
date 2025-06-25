@@ -467,6 +467,10 @@
 		D4DDE8892DDC893200A24973 /* Roboto-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D4DDE84A2DDC893200A24973 /* Roboto-ThinItalic.ttf */; };
 		D4DDE88A2DDC893200A24973 /* Roboto_Condensed-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D4DDE8152DDC893200A24973 /* Roboto_Condensed-Black.ttf */; };
 		D4DDE88C2DDC923F00A24973 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D4DDE88B2DDC923F00A24973 /* GoogleService-Info.plist */; };
+		D4DDF6292E0BC9A3007AD383 /* NotificationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4DDF6262E0BC9A3007AD383 /* NotificationViewModel.swift */; };
+		D4DDF62A2E0BC9A3007AD383 /* NotificationScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4DDF6222E0BC9A3007AD383 /* NotificationScreen.swift */; };
+		D4DDF62B2E0BC9A3007AD383 /* NotificationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4DDF6242E0BC9A3007AD383 /* NotificationModel.swift */; };
+		D4DDF62D2E0BD358007AD383 /* NotificationCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4DDF62C2E0BD358007AD383 /* NotificationCardView.swift */; };
 		D4E569CE2DD461120005A78E /* ProfileDetailCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E569CD2DD461120005A78E /* ProfileDetailCell.swift */; };
 		D4E569D12DD46A3B0005A78E /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = D4E569CF2DD46A3B0005A78E /* Localizable.strings */; };
 		D4E569D72DD46BA10005A78E /* LanguageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E569D62DD46BA10005A78E /* LanguageManager.swift */; };
@@ -914,6 +918,10 @@
 		D4DDE84E2DDC893200A24973 /* Roboto-Italic-VariableFont_wdth,wght.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Italic-VariableFont_wdth,wght.ttf"; sourceTree = "<group>"; };
 		D4DDE84F2DDC893200A24973 /* Roboto-VariableFont_wdth,wght.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-VariableFont_wdth,wght.ttf"; sourceTree = "<group>"; };
 		D4DDE88B2DDC923F00A24973 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		D4DDF6222E0BC9A3007AD383 /* NotificationScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationScreen.swift; sourceTree = "<group>"; };
+		D4DDF6242E0BC9A3007AD383 /* NotificationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationModel.swift; sourceTree = "<group>"; };
+		D4DDF6262E0BC9A3007AD383 /* NotificationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationViewModel.swift; sourceTree = "<group>"; };
+		D4DDF62C2E0BD358007AD383 /* NotificationCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCardView.swift; sourceTree = "<group>"; };
 		D4E569CD2DD461120005A78E /* ProfileDetailCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileDetailCell.swift; sourceTree = "<group>"; };
 		D4E569D02DD46A3B0005A78E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		D4E569D22DD46A5B0005A78E /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -2033,6 +2041,7 @@
 				99C908402DC8CD790054620B /* FlowStack */,
 				99C9088A2DC8CD790054620B /* Common */,
 				99C909152DC8CD790054620B /* Authentication */,
+				D4DDF6282E0BC9A3007AD383 /* Notification */,
 			);
 			path = Screens;
 			sourceTree = "<group>";
@@ -3525,6 +3534,41 @@
 			path = Roboto;
 			sourceTree = "<group>";
 		};
+		D4DDF6232E0BC9A3007AD383 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				D4DDF6222E0BC9A3007AD383 /* NotificationScreen.swift */,
+				D4DDF62C2E0BD358007AD383 /* NotificationCardView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		D4DDF6252E0BC9A3007AD383 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				D4DDF6242E0BC9A3007AD383 /* NotificationModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		D4DDF6272E0BC9A3007AD383 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				D4DDF6262E0BC9A3007AD383 /* NotificationViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		D4DDF6282E0BC9A3007AD383 /* Notification */ = {
+			isa = PBXGroup;
+			children = (
+				D4DDF6232E0BC9A3007AD383 /* View */,
+				D4DDF6252E0BC9A3007AD383 /* Model */,
+				D4DDF6272E0BC9A3007AD383 /* ViewModel */,
+			);
+			path = Notification;
+			sourceTree = "<group>";
+		};
 		D4E569CC2DD461040005A78E /* ProfileDetailCell */ = {
 			isa = PBXGroup;
 			children = (
@@ -3908,6 +3952,7 @@
 				99C909E12DC8CDDC0054620B /* UserProfileUpdateResponseModal.swift in Sources */,
 				99C909E22DC8CDDC0054620B /* InterviewScheduleModal.swift in Sources */,
 				99C909E32DC8CDDC0054620B /* NotificationResponseModel.swift in Sources */,
+				D4DDF62D2E0BD358007AD383 /* NotificationCardView.swift in Sources */,
 				D4BA9C1A2DE49D1300DFF6E6 /* WalletModel.swift in Sources */,
 				99C909E42DC8CDDC0054620B /* LinkedInUserDetail.swift in Sources */,
 				D41711E02DF7FF1300ED39BC /* TrustedBuyerViewModel.swift in Sources */,
@@ -4013,6 +4058,9 @@
 				D4A500E32DFAC474008799B1 /* OTPVerificationScreen.swift in Sources */,
 				D4CAECB42DE7383D00705CD7 /* ShopModel.swift in Sources */,
 				D4CAEC8C2DE71FB800705CD7 /* PromoteShowViewModel.swift in Sources */,
+				D4DDF6292E0BC9A3007AD383 /* NotificationViewModel.swift in Sources */,
+				D4DDF62A2E0BC9A3007AD383 /* NotificationScreen.swift in Sources */,
+				D4DDF62B2E0BC9A3007AD383 /* NotificationModel.swift in Sources */,
 				99C909AB2DC8CD930054620B /* IAPManager.swift in Sources */,
 				99C909AC2DC8CD930054620B /* UIView+Extension.swift in Sources */,
 				35F8B5662DED978800FE0778 /* ProfileViewModel.swift in Sources */,
@@ -4375,7 +4423,7 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = /Users/jamtech/Documents/GitHub/bidcast/BidCast/ZegoBridgeHeader.h;
+				SWIFT_OBJC_BRIDGING_HEADER = /Users/gadgetzone/Documents/Live/bidcast/BidCast/ZegoBridgeHeader.h;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				XROS_DEPLOYMENT_TARGET = 2.4;
@@ -4422,7 +4470,7 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = /Users/jamtech/Documents/GitHub/bidcast/BidCast/ZegoBridgeHeader.h;
+				SWIFT_OBJC_BRIDGING_HEADER = /Users/gadgetzone/Documents/Live/bidcast/BidCast/ZegoBridgeHeader.h;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				XROS_DEPLOYMENT_TARGET = 2.4;
