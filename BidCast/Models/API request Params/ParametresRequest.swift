@@ -250,11 +250,6 @@ struct EmployerScheduleRequest: Codable{
     var employer_id: String
 }
 
-//MARK: - Save Device Detail
-struct DeviceDetailModal: Encodable {
-    var device_token, device_platform, device_version: String
-}
-
 //MARK: - Read Notification
 struct ReadNotification: Encodable {
     var id: [String]
@@ -313,6 +308,15 @@ struct SignUpRequest:Encodable {
     }
 }
 
+//MARK: - DeviceDetail
+struct DeviceDetailRequest : Encodable{
+    var device_token : String
+    var platform : String
+    var app_version : String
+    var time_zone : String
+}
+
+
 //MARK: - Contact US
 struct ContactUsRequest:Encodable {
     var name:String
@@ -352,13 +356,6 @@ struct ResetPasswordRequest:Encodable {
     var password:String
     var password_confirmation:String
 }
-
-struct DeviceDetailParam: Encodable{
-    var device_token,platform,app_version : String
-    var lat,long: String
-    var timezone : String
-}
-
 
 //MARK: DeleteProfileRequest.
 struct DeleteProfileRequest : Encodable{

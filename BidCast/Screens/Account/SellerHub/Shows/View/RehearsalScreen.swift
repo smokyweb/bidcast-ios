@@ -215,6 +215,11 @@ struct RehearsalScreen: View {
                             VStack(alignment: .leading, spacing: 8) {
                                 ForEach(comments) { comment in
                                     HStack {
+                                        Image(comment.image)
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(width: 24, height: 24)
+                                            .clipShape(Circle())
                                         Text(comment.username)
                                             .font(.custom(poppinsSemiBold, size: 14.0))
                                             .foregroundColor(.yellow)
@@ -265,17 +270,17 @@ struct RehearsalScreen: View {
                                     Button(action: {
                                         print("📨 Sending message: \(commentText)")
                                         let textToSend = commentText.trimmingCharacters(in: .whitespacesAndNewlines)
-                                        //                                        ZegoExpressEngine.shared().sendBroadcastMessage(commentText, roomID: liveRoomId) { errorCode, messageID in
-                                        //
-                                        //                                            if errorCode == 0 {
-                                        //                                                let newComment = Comment(username: UserDefaults.userName.capitalizingFirstLetter(), message: textToSend)
-                                        //                                                comments.append(newComment)
-                                        //                                                print("✅ Broadcast message sent successfully, msgID: \(messageID)")
-                                        //                                            } else {
-                                        //                                                print("❌ Failed to send broadcast message, errorCode: \(errorCode)")
-                                        //                                            }
-                                        //                                        }
-                                        chatManager.sendMessage(textToSend)
+                                        ZegoExpressEngine.shared().sendBroadcastMessage(commentText, roomID: liveRoomId) { errorCode, messageID in
+                                            
+                                            if errorCode == 0 {
+                                                let newComment = Comment(image: UserDefaults.profileURL,username: UserDefaults.userName.capitalizingFirstLetter(), message: textToSend)
+                                                comments.append(newComment)
+                                                print("✅ Broadcast message sent successfully, msgID: \(messageID)")
+                                            } else {
+                                                print("❌ Failed to send broadcast message, errorCode: \(errorCode)")
+                                            }
+                                        }
+//                                        chatManager.sendMessage(textToSend)
                                         commentText = ""
                                     }) {
                                         Image(systemName: "paperplane.fill")

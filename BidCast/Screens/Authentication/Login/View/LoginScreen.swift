@@ -191,9 +191,9 @@ struct LoginScreen: View {
         }
     }
     
-    func success() {
+    func success() async {
         
-        SVProgressHUD.dismiss()
+        await SVProgressHUD.dismiss()
            let dict = viewModel.loginResponse
             if dict.status == "success" {
                 UserDefaults.isFirstLogin = 1
@@ -203,7 +203,7 @@ struct LoginScreen: View {
                 UserDefaults.userId = dict.data?.id ?? 0
                 UserDefaults.userName = dict.data?.name ?? ""
                 UserDefaults.profileURL = dict.data?.profile_image ?? ""
-                
+                await self.saveDeviceDetail()
                 UserDefaultsManager.shared.setValue(dict.data?.token, forKey: .token)
                 UserDefaultsManager.shared.setModel(dict.data, forKey: .userDetail)
                     UserDefaultsManager.shared.setValue(isRemeber, forKey: .rememberMe)
@@ -230,7 +230,17 @@ struct LoginScreen: View {
         UserDefaults.userEmail = mail
         UserDefaults.password = password
     }
+    
+    //MARK: saveDeviceDetail.
+    func saveDeviceDetail() async{
+        let deviceTimeZone = getDeviceTimeZone()
+        let bundleVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
+        let param = DeviceDetailRequest(device_token: UserDefaults.accessToken, platform: UIDevice.current.systemName.lowercased(), app_version: bundleVersion, time_zone: deviceTimeZone)
+        print("Device Detail is:- \(param)")
+        await self.viewModel.saveDeviceDetail(parameters: param)
+    }
 }
+
 extension LoginScreen{
     func isValidPhone(phone: String) -> Bool {
         if Set(phone).count == 1 && phone.first == "0" {

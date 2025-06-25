@@ -13,6 +13,7 @@ import ZegoExpressEngine
 
 struct Comment: Identifiable, Equatable {
     let id = UUID()
+    let image : String
     let username: String
     let message: String
 }
@@ -145,18 +146,18 @@ struct LiveStream: View {
                         .frame(maxWidth: .infinity, alignment: .trailing)
                         
                         // Comments Section
-                        if ZegoManager.shared.isCommentsAvailable {
+                        if comments.count > 0 {
                             HStack{
                                 ScrollViewReader { scrollProxy in
                                     ScrollView(.vertical, showsIndicators: false) {
                                         VStack(alignment: .leading, spacing: 8) {
-                                            ForEach(zegoManager.incomingComments) { comment in
+                                            ForEach(comments) { comment in
                                                 HStack(alignment: .center, spacing: 6) {
-                                                    //                                                        Image("defaultUser")
-                                                    //                                                            .resizable()
-                                                    //                                                            .scaledToFit()
-                                                    //                                                            .frame(width: 24, height: 24)
-                                                    //                                                            .clipShape(Circle())
+                                                    Image(comment.image)
+                                                        .resizable()
+                                                        .scaledToFit()
+                                                        .frame(width: 24, height: 24)
+                                                        .clipShape(Circle())
                                                     VStack(alignment: .leading) {
                                                         Text(comment.username)
                                                             .font(.custom(poppinsSemiBold, size: 12.0))
@@ -173,10 +174,10 @@ struct LiveStream: View {
                                         }
                                         .padding(.horizontal)
                                     }
-                                    .onChange(of: zegoManager.incomingComments) { _ in
+                                    .onChange(of: comments) { _ in
                                         withAnimation {
                                             
-                                            if let lastID = zegoManager.incomingComments.last?.id {
+                                            if let lastID = comments.last?.id {
                                                 scrollProxy.scrollTo(lastID, anchor: .bottom)
                                             }
                                         }
@@ -290,7 +291,7 @@ struct LiveStream: View {
                                         ZegoExpressEngine.shared().sendBroadcastMessage(commentText, roomID: roomId) { errorCode, messageID in
                                             
                                             if errorCode == 0 {
-                                                let newComment = Comment(username: UserDefaults.userName.capitalizingFirstLetter(), message: textToSend)
+                                                let newComment = Comment(image: UserDefaults.profileURL,username: UserDefaults.userName.capitalizingFirstLetter(), message: textToSend)
                                                 comments.append(newComment)
                                                 print("✅ Broadcast message sent successfully, msgID: \(messageID)")
                                             } else {

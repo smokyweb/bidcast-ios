@@ -89,7 +89,7 @@ class ZegoManager: NSObject, ZegoEventHandler , ObservableObject {
             if !messageList.isEmpty {
                 self.isCommentsAvailable = true
                 self.incomingComments.append(contentsOf: messageList.map {
-                    Comment(username: $0.fromUser.userName, message: $0.message)
+                    Comment(image : UserDefaults.profileURL,username: $0.fromUser.userName, message: $0.message)
                 })
             } else {
                 self.isCommentsAvailable = false

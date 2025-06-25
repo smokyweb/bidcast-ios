@@ -80,6 +80,7 @@ enum APIEndPoint{
     case UpdateShowStatus(param:LiveShowUpdateRequest)
     case getBidList
     case getNotificationListing
+    case saveDeviceDetail(param : DeviceDetailRequest)
     
     //MARK: OLD
     
@@ -133,7 +134,6 @@ enum APIEndPoint{
     case scheduleInterviewForMatchedJob(param: ScheduleInterviewRequest)
     case getCompanyDetailsJob(param: String)
     case getSpecificJobDetail(param: String)
-    case saveDeviceDetail(param: DeviceDetailModal)
     case getEmployeeDetail(id: String, job: String)
     case getNotification(param: String)
     case updateNotification(param: ReadNotification)
@@ -397,7 +397,7 @@ extension APIEndPoint: EndPointType {
         case .getSpecificJobDetail(let param):
             return "get-job-details/\(param)"
         case .saveDeviceDetail:
-            return "device-details"
+            return "upsert-device-details"
         case .getEmployeeDetail(let id, let jobId):
             return "get_user_details?id=\(id)&job_id=\(jobId)"
         case .getMatchesCandidates(let page, let job_id):

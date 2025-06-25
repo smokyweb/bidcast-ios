@@ -12,7 +12,9 @@ final class LoginViewModel: ObservableObject {
     
     // MARK: - Published Properties
     @Published var loginResponse = ResponseModel<LoginModel>()
-   
+    @Published var deviceDetailResponse = ResponseModel<DeviceDetailModal>()
+    
+    
     @Published var errorMessage: String? = nil
     @Published var requestType: String = ""
     
@@ -33,9 +35,22 @@ final class LoginViewModel: ObservableObject {
             handle(error: error)
         }
     }
-
     
-   
+    
+    // MARK: - saveDeviceDetail
+    func saveDeviceDetail(parameters: DeviceDetailRequest) async {
+        do {
+            self.requestType = "DeviceDetail"
+            if let response: ResponseModel<DeviceDetailModal> = try await APIManager.shared.request(
+                type: APIEndPoint.saveDeviceDetail(param: parameters),
+                header: true
+            ) {
+                self.deviceDetailResponse = response
+            }
+        } catch {
+            handle(error: error)
+        }
+    }
 
     // MARK: - Centralized Error Handler
     private func handle(error: Error) {

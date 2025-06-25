@@ -40,6 +40,21 @@ final class OffersViewModel: ObservableObject {
         }
     }
     
+    // MARK: - getItemList
+    func getItemList() async {
+        do {
+            let response: ResponseModelOffer<[OfferListModel]> = try await APIManager.shared.request(
+                type: APIEndPoint.getBidList,
+                header: true
+            )
+            self.offerListResponse = response
+        } catch {
+            self.handle(error: error)
+        }
+    }
+    
+    
+    
     // MARK: - updateOfferList Preference
     func updateOfferStatus(parameters: OfferUpdateStatusRequest) async {
         do {
