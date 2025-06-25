@@ -589,4 +589,8 @@ struct LiveShowUpdateRequest : Encodable {
     var is_live : String
 }
 
+struct ItemListRequest : Encodable {
+    var type : String
+}
+
 

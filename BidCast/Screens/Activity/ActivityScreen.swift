@@ -17,12 +17,12 @@ struct ActivityScreen: View {
     @State private var hudMsg: String = ""
     @StateObject var viewModel = OffersViewModel()
     @State var offerList: [OfferListModel] = []
-
+    
     @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
-
+    
     @State private var selected: Segment = .message
     @Environment(\.presentationMode) var presentationMode
-
+    
     var body: some View {
         VStack(spacing: 0) {
             VStack {
@@ -38,7 +38,7 @@ struct ActivityScreen: View {
                     count: .constant(0)
                 )
             }
-
+            
             ScrollView {
                 VStack(spacing: 20) {
                     SegmentedControlView(
@@ -48,30 +48,30 @@ struct ActivityScreen: View {
                         fontTitle: robotoMedium,
                         fontSize: 14.0
                     )
-
+                    
                     switch selected {
                     case .message:
                         ActivityCell(isFor: selected.rawValue, status: .constant(""))
                     case .bid:
                         if offerList.isEmpty {
-                        NoDataView(message: "No bids Found")
-                    } else {
-                        ForEach(offerList, id: \.id) { offer in
-                            ActivityCell(
-                                offerListing: offer,
-                                isFor: "Bids",
-                                onDecline: {
-                                    handleOfferAction(offer: offer, newStatus: "rejected")
-                                },
-                                onAccept: {
-                                    handleOfferAction(offer: offer, newStatus: "accepted")
-                                }, status: .constant("pending")
-                            )
+                            NoDataView(message: "No bids Found")
+                        } else {
+                            ForEach(offerList, id: \.id) { offer in
+                                ActivityCell(
+                                    offerListing: offer,
+                                    isFor: "Bids",
+                                    onDecline: {
+                                        handleOfferAction(offer: offer, newStatus: "rejected")
+                                    },
+                                    onAccept: {
+                                        handleOfferAction(offer: offer, newStatus: "accepted")
+                                    }, status: .constant("pending")
+                                )
+                            }
                         }
-                    }
                     case .offer:
                         if offerList.isEmpty {
-                        NoDataView(message: "No offers Found")
+                            NoDataView(message: "No offers Found")
                         } else {
                             ForEach(offerList, id: \.id) { offer in
                                 ActivityCell(
@@ -87,9 +87,30 @@ struct ActivityScreen: View {
                             }
                         }
                     case .purchases:
-                        ActivityCell(isFor: selected.rawValue, status:  .constant("pending"))
+                        if offerList.isEmpty {
+                            NoDataView(message: "No List Found")
+                        }
+                        else {
+                            ForEach(offerList, id: \.id) { offer in
+                                ActivityCell(
+                                    offerListing: offer,
+                                    isFor: "Purchases", status: .constant("pending")
+                                )
+                            }
+                        }
+                        
                     case .savedItems:
-                        ActivityCell(isFor: selected.rawValue,status:  .constant("pending"))
+                        if offerList.isEmpty {
+                            NoDataView(message: "No List Found")
+                        }
+                        else {
+                            ForEach(offerList, id: \.id) { offer in
+                                ActivityCell(
+                                    offerListing: offer,
+                                    isFor: "Saved Items",status: .constant("pending")
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -114,7 +135,7 @@ struct ActivityScreen: View {
             }
         }
     }
-
+    
     // Fetch data based on the selected segment
     func fetchData(for segment: Segment) async {
         switch segment {
@@ -134,24 +155,30 @@ struct ActivityScreen: View {
             await SVProgressHUD.dismiss()
             getOfferSuccess()
         case .purchases:
-            // fetchPurchases()
-            break
+            SVProgressHUD.show()
+            self.offerList.removeAll()
+            await viewModel.getItemList(parameters: ItemListRequest(type: "purchased"))
+            await SVProgressHUD.dismiss()
+            getOfferSuccess()
         case .savedItems:
-            // fetchSavedItems()
-            break
+            SVProgressHUD.show()
+            self.offerList.removeAll()
+            await viewModel.getItemList(parameters: ItemListRequest(type: "saved"))
+            await SVProgressHUD.dismiss()
+            getOfferSuccess()
         }
     }
-
-   
+    
+    
     func getOfferSuccess() {
         SVProgressHUD.dismiss()
         if viewModel.offerListResponse.status == "success" {
             offerList = viewModel.offerListResponse.data ?? []
         } else {
-           
+            
         }
     }
-
+    
     func handleOfferAction(offer: OfferListModel, newStatus: String) {
         let param = OfferUpdateStatusRequest(offer_id: offer.id ?? 0, status: newStatus)
         SVProgressHUD.show()

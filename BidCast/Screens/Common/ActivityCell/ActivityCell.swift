@@ -44,7 +44,7 @@ struct ActivityCell: View {
                 .frame(height: 50)
                 .padding([.top, .bottom], 12)
             }
-            
+          
             // ── Second row ─────────────────────────────
             if isFor == "Bids" || isFor == "Offer" || isFor == "Purchases" || isFor == "Saved Items" || isFor == "Offers" || isFor == "OffersScreen"  {
                 HStack(alignment: .center, spacing: 10) {

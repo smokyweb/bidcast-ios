@@ -49,7 +49,6 @@ struct ProductDetails: Codable {
     var images: [String]?
     var thumbnail: [String]?
     var createdAt: String?
-    var seller: SellerDetails?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -67,10 +66,6 @@ struct ProductDetails: Codable {
         case images, thumbnail
         case createdAt = "created_at"
     }
-}
-
-struct SellerDetails: Codable {
-    
 }
 
 

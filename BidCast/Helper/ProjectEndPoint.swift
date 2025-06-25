@@ -79,6 +79,7 @@ enum APIEndPoint{
     case getScheduledShow(param:GetLiveShowsRequest)
     case UpdateShowStatus(param:LiveShowUpdateRequest)
     case getBidList
+    case getItemList(param: ItemListRequest)
     case getNotificationListing
     case saveDeviceDetail(param : DeviceDetailRequest)
     
@@ -309,6 +310,8 @@ extension APIEndPoint: EndPointType {
             return "schedule-show/update-live-status"
         case .getBidList:
             return "bid/fetch"
+        case .getItemList:
+            return "product/fetch-by-status"
             
             //MARK: Old
             
@@ -598,6 +601,8 @@ extension APIEndPoint: EndPointType {
             return .post
         case .getBidList:
             return .get
+        case .getItemList:
+            return .post
             
             //MARK: Old
             
@@ -891,6 +896,8 @@ extension APIEndPoint: EndPointType {
             return param
         case .getBidList:
             return nil
+        case .getItemList(param: let param):
+            return param
             
             //MARK: Old
             
