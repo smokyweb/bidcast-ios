@@ -328,14 +328,16 @@ struct LiveStream: View {
                             
                             if verticalAmount < -100 { // Swipe Up
                                 withAnimation {
-                                    currentStreamIndex = min(currentStreamIndex + 1, streamID.count - 1)
-                                    print("Switched to stream index: \(currentStreamIndex)")
-                                }
+                                       ZegoExpressEngine.shared().stopPlayingStream(streamID[currentStreamIndex])
+                                       currentStreamIndex = min(currentStreamIndex + 1, streamID.count - 1)
+                                       print("Switched to stream index: \(currentStreamIndex)")
+                                   }
                             } else if verticalAmount > 100 { // Swipe Down
                                 withAnimation {
-                                    currentStreamIndex = max(currentStreamIndex - 1, 0)
-                                    print("Switched to stream index: \(currentStreamIndex)")
-                                }
+                                        ZegoExpressEngine.shared().stopPlayingStream(streamID[currentStreamIndex])
+                                        currentStreamIndex = max(currentStreamIndex - 1, 0)
+                                        print("Switched to stream index: \(currentStreamIndex)")
+                                    }
                             }
                         }
                 )
@@ -462,10 +464,18 @@ struct ZegoPreviewView: UIViewRepresentable {
         
         return view
     }
-    
     func updateUIView(_ uiView: UIView, context: Context) {
-        
-    }
+            // Stop the previous stream
+            ZegoExpressEngine.shared().stopPlayingStream(context.coordinator.streamID)
+
+            // Start the new stream
+            let canvas = ZegoCanvas(view: uiView)
+            canvas.viewMode = .aspectFill
+            ZegoExpressEngine.shared().startPlayingStream(streamID, canvas: canvas)
+
+            // Update coordinator's streamID
+            context.coordinator.streamID = streamID
+        }
     
     static func dismantleUIView(_ uiView: UIView, coordinator: (Coordinator)) {
         
