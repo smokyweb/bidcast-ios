@@ -251,20 +251,18 @@ struct PrimaryHeader: View {
                         }
                     }
                 }
+                .frame(width: 100,alignment: .leading)
                 
                 Spacer()
                 
-                // Title
                 Text(title)
                     .font(.custom(robotoSemiBold, fixedSize: 18))
                     .fontWeight(.bold)
                     .foregroundColor(.black)
                     .lineLimit(1)
                 
-//                Spacer()
                 Spacer()
                 
-                // Trailing icons
                 HStack(spacing: 8) {
                     ForEach(trailingImgArr.indices, id: \.self) { ind in
                         Button(action: {
@@ -286,6 +284,7 @@ struct PrimaryHeader: View {
                         }
                     }
                 }
+                .frame(width: 80, alignment: .trailing)
             }
             .padding(.horizontal, 12)
             .frame(height: 50)

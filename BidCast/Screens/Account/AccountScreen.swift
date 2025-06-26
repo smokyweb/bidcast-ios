@@ -50,21 +50,6 @@ struct AccountScreen: View {
     
     var body: some View {
         VStack{
-//            VStack{
-//                PrimaryHeader(
-//                    title: "Account".localized,
-//                    isForLogo : true, leadingImgArr: [.appName],
-//                    trailingImgArr: [],
-//                    onClickLeading: { _ in
-//                        self.presentationMode.wrappedValue.dismiss()
-//                    },
-//                    count: .constant(0)
-//                )
-//                .padding(.horizontal,12)
-//                .background(.white)
-//                
-//            }.padding(.horizontal,12)
-//                .background(.white)
             VStack{
                 PrimaryHeader(
                     title: "Account".localized,
@@ -245,7 +230,7 @@ struct AccountScreen: View {
             .padding(.horizontal,8)
           
             .background(.bg.opacity(0.5))
-            .padding(.bottom,-200)
+            .padding(.bottom,UIDevice.current.hasNotch ? -210 : -110)
             
             //MARK: My Account navigation
             CusNavLink(doNavigate: $navigateToAboutUs, destination: AboutUsScreen())
@@ -497,3 +482,10 @@ enum AccountMenuSection : String, CaseIterable, CustomStringConvertible{
             return NSLocalizedString(rawValue, comment: "")
         }
 }
+extension UIDevice {
+    var hasNotch: Bool {
+        let bottom = UIApplication.shared.keyWindow?.safeAreaInsets.bottom ?? 0
+        return bottom > 0
+    }
+}
+ 

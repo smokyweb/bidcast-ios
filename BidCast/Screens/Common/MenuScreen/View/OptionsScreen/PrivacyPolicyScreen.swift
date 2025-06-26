@@ -19,8 +19,8 @@ struct PrivacyPolicyScreen: View {
     @State private var errorMessage: String? = nil
     
     var body: some View {
-        ZStack {
-            VStack(spacing: 0) {
+        VStack(spacing: 0) {
+            VStack{
                 PrimaryHeader(
                     title: "Privacy Policy".localized,
                     isForLogo: false,
@@ -31,39 +31,60 @@ struct PrivacyPolicyScreen: View {
                     },
                     count: .constant(0)
                 )
-                .background(Color.white)
+            }
+            .background(Color.white)
+            
+            VStack(alignment: .leading) {
+                if let errorMessage = errorMessage {
+                    Text(errorMessage)
+                        .foregroundColor(.red)
+                        .padding()
+                }
                 
-                VStack(alignment: .leading) {
-                    if let errorMessage = errorMessage {
-                        Text(errorMessage)
-                            .foregroundColor(.red)
-                            .padding()
-                    }
-                    
-                    ScrollView(showsIndicators: false) {
-                        RichText(html: privacyPolicy)
-                            .customCSS("""
+                ScrollView(showsIndicators: false) {
+                    RichText(html: privacyPolicy)
+                        .customCSS("""
                                 body { font-size: 16px; }
                             """)
-                            .font(.custom(nunitoLight, fixedSize: 16))
-                            .multilineTextAlignment(.leading)
-                            .padding([.top, .leading, .trailing])
-                    }
-                    Spacer()
+                        .font(.custom(nunitoLight, fixedSize: 16))
+                        .multilineTextAlignment(.leading)
+                        .padding([.leading, .trailing])
+                        .padding(.all)
                 }
-                .padding(.bottom, bottomPadding)
-                .background(Color.text.opacity(0.05))
-                .padding(.top, -topPadding)
                 
-                Spacer()
+                //                .padding(.bottom, bottomPadding)
+                .background(Color.text.opacity(0.05))
+                //                .padding(.top, -topPadding)
+                
+//                Spacer()
             }
             .refreshable {
+                SVProgressHUD.show()
                 await fetchPrivacyPolicy()
+                let response = viewModal.privacyResponse
+                
+                await SVProgressHUD.dismiss()
+                if response.status == "success" {
+                    privacyPolicy = response.data?.page_content ?? ""
+                    errorMessage = nil
+                } else {
+                    errorMessage = response.message ?? "Failed to load privacy policy"
+                }
             }
         }
-        .edgesIgnoringSafeArea(.bottom)
+        
         .task {
+            SVProgressHUD.show()
             await fetchPrivacyPolicy()
+            let response = viewModal.privacyResponse
+            
+            await SVProgressHUD.dismiss()
+            if response.status == "success" {
+                privacyPolicy = response.data?.page_content ?? ""
+                errorMessage = nil
+            } else {
+                errorMessage = response.message ?? "Failed to load privacy policy"
+            }
         }
         .onReceive(viewModal.$privacyResponse) { response in
             

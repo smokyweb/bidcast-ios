@@ -8,11 +8,11 @@
 import SwiftUI
 import RichText
 import SwiftfulLoadingIndicators
+import SVProgressHUD
 
 struct AboutUsScreen: View {
     
     @Environment(\.presentationMode) var presentationMode
-    @State var isLoading: Bool = false
     @State var navigateToMenu: Bool = false
     @State var navigateToNotification: Bool = false
     @State var notiCount: Int = 0
@@ -29,16 +29,18 @@ struct AboutUsScreen: View {
     var body: some View {
         ZStack {
             VStack(spacing: 0, content: {
-                PrimaryHeader(
-                    title: "About Us".localized,
-                    isForLogo : false, leadingImgArr: [.sideArrow],
-                    trailingImgArr: [],
-                    onClickLeading: { _ in
-                        self.presentationMode.wrappedValue.dismiss()
-                    },
-                    count: .constant(0)
-                )
-                .background(.white)
+                VStack{
+                    PrimaryHeader(
+                        title: "About Us".localized,
+                        isForLogo : false, leadingImgArr: [.sideArrow],
+                        trailingImgArr: [],
+                        onClickLeading: { _ in
+                            self.presentationMode.wrappedValue.dismiss()
+                        },
+                        count: .constant(0)
+                    )
+                    .background(.white)
+                }
                 ScrollView(showsIndicators: false){
                     VStack(alignment: .leading, spacing: 16) {
                         
@@ -72,9 +74,11 @@ struct AboutUsScreen: View {
                 .background(.text.opacity(0.05))
                 .padding(.top, 2)
                 .refreshable {
-                    self.isLoading = true
                     Task{
+                        SVProgressHUD.show()
                         await viewModel.getAboutContent()
+                        await SVProgressHUD.dismiss()
+                        success()
                     }
                     
                 }
@@ -82,35 +86,20 @@ struct AboutUsScreen: View {
                 Spacer()
             })
             
-            //            .bottomSheet(isPresented: $showError, height: screenHeight/2, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: { showError = true }, content: {
-            //                CommonBottomSheet(
-            //                    sheetType: $alertType,
-            //                    onPrimaryClick: {
-            //                        withAnimation { showError = false }
-            //                    }, onSecondaryClick: {
-            //                        withAnimation { showError = false }
-            //                    })
-            //            })
-            
-            if isLoading {
-                LoadingIndicator()
+        }
+            .onFirstAppear(perform: {
+                Task{
+                    SVProgressHUD.show()
+                    await viewModel.getAboutContent()
+                    await SVProgressHUD.dismiss()
+                    success()
+                }
+            })
+            .onTapGesture {
+                UIApplication.shared.endEditing()
             }
             
         }
-        .edgesIgnoringSafeArea(.top)
-        .onFirstAppear(perform: {
-            self.isLoading = true
-            Task{
-                await viewModel.getAboutContent()
-            }
-        })
-        .onReceive(viewModel.$aboutResponse){ response in
-            success()
-        }
-        .onTapGesture {
-            UIApplication.shared.endEditing()
-        }
-        
     }
     
     
@@ -124,7 +113,10 @@ struct AboutUsScreen: View {
             alertType = .sheetType(icon: .alert, title: dict.status?.capitalized ?? "", message: dict.message ?? "", primaryBtnText: "", secondaryBtnText: "Ok", sheetThemeColor: .pinkBtn)
             withAnimation(.snappy) { showError = true }
         }
+        
+        
     }
+    
 }
 
 #Preview {

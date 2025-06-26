@@ -28,18 +28,17 @@ struct ContactUs: View {
         ZStack(alignment: .bottom) {
             VStack(spacing: 0) {
                 // Header
-                PrimaryHeader(
-                    title: "Contact Us",
-                    isForLogo: false,
-                    leadingImgArr: [.icBack],
-                    onClickLeading: { _ in
-                        self.presentationMode.wrappedValue.dismiss()
-                    },
-                    count: .constant(0)
-                )
-                .frame(height: 50)
-                .background(Color.red)
-                .shadow(radius: 2)
+                VStack{
+                    PrimaryHeader(
+                        title: "Contact Us",
+                        isForLogo: false,
+                        leadingImgArr: [.icBack],
+                        onClickLeading: { _ in
+                            self.presentationMode.wrappedValue.dismiss()
+                        },
+                        count: .constant(0)
+                    )
+                }
 
                 // Scrollable Form
                 ScrollView(showsIndicators: false) {
@@ -56,7 +55,7 @@ struct ContactUs: View {
                         .padding()
                         .background(Color.platinum)
                         .cornerRadius(12)
-                        .padding(.horizontal, 16)
+//                        .padding(.horizontal, 16)
                         .padding(.top, 16)
 
                         // Form Fields
@@ -95,7 +94,7 @@ struct ContactUs: View {
                                 enteredText: { request.message = $0 }
                             )
                         }
-                        .padding(.horizontal, 16)
+//                        .padding(.horizontal, 16)
 
                         // List Section
                         VStack(spacing: 16) {
@@ -106,7 +105,7 @@ struct ContactUs: View {
                                     subLabel: subLabel[ind],
                                     isVectorImgHidden: true
                                 )
-//                                .padding(.horizontal)
+                                .padding(.horizontal)
                             }
                         }
 
@@ -118,7 +117,7 @@ struct ContactUs: View {
 
             // Bottom Fixed Button
             VStack(spacing: 0) {
-                PrimaryButton(title: AppString.sendMessage.localized, isOutLine: false) {
+                PrimaryButton(title: AppString.sendMessage.localized, isOutLine: true) {
                     withAnimation {
                         UIApplication.shared.endEditing()
                         guard !request.name.isEmpty else {
@@ -144,19 +143,15 @@ struct ContactUs: View {
                         Task{
                             SVProgressHUD.show()
                             await self.viewModel.contactUs(parameters: request)
+                            await SVProgressHUD.dismiss()
+                            self.success()
                         }
                     }
                 }
-                .padding(.horizontal)
             }
             .background(Color.white)
             .shadow(radius: 3)
            
-        }
-        .onReceive(viewModel.$contactModel){ response in
-            SVProgressHUD.dismiss()
-            self.success()
-            
         }
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)}

@@ -15,17 +15,17 @@ struct SalesTaxScreen: View {
     @State var navigateToCreateAddress = false
       var body: some View {
           VStack {
+              VStack{
               PrimaryHeader(
-                  title: "Sales Tax Exemption".localized,
-                  isForLogo : false, leadingImgArr: [.icBack],
-                  trailingImgArr: [],
-                  onClickLeading: { _ in
-                      self.presentationMode.wrappedValue.dismiss()
-                  },
-                  count: .constant(0)
+                title: "Sales Tax Exemption".localized,
+                isForLogo : false, leadingImgArr: [.icBack],
+                trailingImgArr: [],
+                onClickLeading: { _ in
+                    self.presentationMode.wrappedValue.dismiss()
+                },
+                count: .constant(0)
               )
-              .background(.white)
-              .frame(height: 50)
+          }
               ScrollView(showsIndicators:false){
                   ListCell(image: "defaultUser", title: "John Smith",subLabel : "ID: #12345678",isVectorImgHidden: true)
                       .padding(.all,1)

@@ -25,27 +25,27 @@ struct FAQScreen: View {
     var body: some View {
         VStack(spacing: 0) {
             // Primary Header
-            PrimaryHeader(
-                title: "FAQ",
-                isForLogo: false,
-                leadingImgArr: [.icBack],
-                trailingImgArr: [.search],
-                onClickLeading: { _ in
-                    self.presentationMode.wrappedValue.dismiss()
-                },
-                count: .constant(0)
-            )
-            .frame(height: 50)
-            .background(Color.white)
-            .shadow(radius: 2)
+            VStack{
+                PrimaryHeader(
+                    title: "FAQ",
+                    isForLogo: false,
+                    leadingImgArr: [.icBack],
+                    trailingImgArr: [.search],
+                    onClickLeading: { _ in
+                        self.presentationMode.wrappedValue.dismiss()
+                    },
+                    count: .constant(0)
+                )
+            }
 
             // Segmented Control
             SegmentedControlView(segments: FAQButton.allCases, selectedSegment: $selectedButton, isWithBorder: true)
                 .padding(.top, 20)
+                .padding(.horizontal)
 
             // FAQ List
             ScrollView {
-                VStack(spacing: 20) {
+                VStack(spacing: 12) {
                     if faqList.isEmpty {
                         Text("No FAQ data available")
                             .foregroundColor(.gray)
@@ -71,10 +71,9 @@ struct FAQScreen: View {
             Task{
                 SVProgressHUD.show()
                 await self.viewModel.getFAQ()
+                await SVProgressHUD.dismiss()
+                success()
             }
-        }
-        .onReceive(viewModel.$faqModel){response in
-            
         }
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
@@ -102,7 +101,7 @@ struct FAQScreen: View {
         SVProgressHUD.dismiss()
         let response = viewModel.faqModel
         if response.status == "success" {
-            self.faqList = response.data ?? [] // ✅ Update UI-bound list
+            self.faqList = response.data ?? [] 
         } else {
             alertType = .sheetType(
                 icon: .alert,

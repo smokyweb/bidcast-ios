@@ -19,7 +19,7 @@ struct FAQCell: View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Text(title)
-                    .font(.headline)
+                    .font(.custom(poppinsSemiBold, size: 13.0))
                 Spacer()
                 Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
                     .foregroundColor(.mediumGray)
@@ -30,7 +30,7 @@ struct FAQCell: View {
 
             if isExpanded {
                 Text(content)
-                    .font(.body)
+                    .font(.custom(poppinsRegular, size: 12.0))
                     .transition(.opacity)
             }
         }

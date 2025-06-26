@@ -8,6 +8,7 @@
 import SwiftUI
 import RichText
 import SwiftfulLoadingIndicators
+import SVProgressHUD
 
 struct TermsOfServicesScreen: View {
     
@@ -15,12 +16,12 @@ struct TermsOfServicesScreen: View {
     
     @StateObject private var viewModal = MenuOptionsViewModel()
     @State private var termsOfService: String = ""
-    @State private var isLoading: Bool = false
     @State private var errorMessage: String? = nil
     
     var body: some View {
         ZStack {
             VStack(spacing: 0) {
+                VStack{
                 PrimaryHeader(
                     title: "Terms and Conditions".localized,
                     isForLogo: false,
@@ -32,6 +33,7 @@ struct TermsOfServicesScreen: View {
                     count: .constant(0)
                 )
                 .background(Color.white)
+            }
                 
                 VStack(alignment: .leading) {
                     if let errorMessage = errorMessage {
@@ -58,19 +60,26 @@ struct TermsOfServicesScreen: View {
                 Spacer()
             }
             .refreshable {
+                SVProgressHUD.show()
                 await fetchTermsOfService()
+                let response  = viewModal.termsResponse
+                await SVProgressHUD.dismiss()
+                if response.status == "success" {
+                    termsOfService = response.data?.page_content ?? ""
+                    errorMessage = nil
+                } else {
+                    errorMessage = response.message ?? "Failed to load terms of service"
+                }
             }
             
-            if isLoading {
-                LoadingIndicator()
-            }
+          
         }
-        .edgesIgnoringSafeArea(.top)
+//        .edgesIgnoringSafeArea(.top)
         .task {
+            SVProgressHUD.show()
             await fetchTermsOfService()
-        }
-        .onReceive(viewModal.$termsResponse) { response in
-            isLoading = false
+            let response  = viewModal.termsResponse
+            await SVProgressHUD.dismiss()
             if response.status == "success" {
                 termsOfService = response.data?.page_content ?? ""
                 errorMessage = nil
@@ -78,17 +87,10 @@ struct TermsOfServicesScreen: View {
                 errorMessage = response.message ?? "Failed to load terms of service"
             }
         }
-        .onReceive(viewModal.$errorMessage) { error in
-            if let error = error {
-                errorMessage = error
-                isLoading = false
-            }
-        }
     }
     
     @MainActor
     private func fetchTermsOfService() async {
-        isLoading = true
         await viewModal.getTermsOfService()
     }
 }
