@@ -87,19 +87,19 @@ struct AboutUsScreen: View {
             })
             
         }
-            .onFirstAppear(perform: {
-                Task{
-                    SVProgressHUD.show()
-                    await viewModel.getAboutContent()
-                    await SVProgressHUD.dismiss()
-                    success()
-                }
-            })
-            .onTapGesture {
-                UIApplication.shared.endEditing()
+        .onFirstAppear(perform: {
+            Task{
+                SVProgressHUD.show()
+                await viewModel.getAboutContent()
+                await SVProgressHUD.dismiss()
+                success()
             }
-            
+        })
+        .onTapGesture {
+            UIApplication.shared.endEditing()
         }
+        
+        
     }
     
     

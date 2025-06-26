@@ -43,7 +43,7 @@ struct ListCell: View {
 //                                .resizable()
 //                        }
 //                    }
-                    CustomProfileImage(url: image,isCircular: false,size: 30)
+                    CustomProfileImage(url: image,isCircular: false,size: 42)
                         .frame(width: 40,height: 40)
                     .background(Color(hex: tintColot) ?? .clear)
                     .mask {

@@ -41,7 +41,7 @@ struct RehearsalScreen: View {
     @State private var showStartTime: Date? = nil
     @State private var liveElapsedTime: String = "00:00:00"
     
-    @StateObject var chatManager = ZIMChatManager(userID: "\(UserDefaults.userId)", userName: UserDefaults.userName)
+//    @StateObject var chatManager = ZIMChatManager(userID: "\(UserDefaults.userId)", userName: UserDefaults.userName)
     
     var body: some View {
         ZStack {
@@ -396,10 +396,10 @@ struct RehearsalScreen: View {
         .onAppear {
             logoutRoom()
             showTopBadge = true
-            chatManager.loginCompletion = {
-                print("✅ ChatManager login completed")
-                chatManager.updateRoomID(newRoomID: roomId)
-            }
+//            chatManager.loginCompletion = {
+//                print("✅ ChatManager login completed")
+//                chatManager.updateRoomID(newRoomID: roomId)
+//            }
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                 showReadyModal = true
             }
@@ -446,7 +446,7 @@ struct RehearsalScreen: View {
                     print("✅ Logged into room: \(roomId)")
                     self.liveRoomId = roomId
                     
-                    chatManager.updateRoomID(newRoomID: liveRoomId)
+//                    chatManager.updateRoomID(newRoomID: liveRoomId)
                     
                     ZegoExpressEngine.shared().startPublishingStream(roomId)
                     self.showLiveControls = true
@@ -480,8 +480,8 @@ struct RehearsalScreen: View {
     
     func logoutRoom() {
         ZegoExpressEngine.shared().logoutRoom()
-        chatManager.leaveCurrentRoom()
-        chatManager.logout()
+//        chatManager.leaveCurrentRoom()
+//        chatManager.logout()
     }
     
     @ViewBuilder

@@ -41,7 +41,7 @@ struct LiveStream: View {
     
     @ObservedObject var zegoManager = ZegoManager.shared
     //    @ObservedObject var chatManager = ZegoChatManager.shared
-    @State var chatManager = ZIMChatManager(userID: "\(UserDefaults.userId)", userName: UserDefaults.userName)
+//    @State var chatManager = ZIMChatManager(userID: "\(UserDefaults.userId)", userName: UserDefaults.userName)
     
     var localUserID = "\(UserDefaults.userId)"
     
@@ -362,13 +362,13 @@ struct LiveStream: View {
         }
         .foregroundColor(.white)
         .onAppear{
-            chatManager.loginCompletion = {
-                print("babumoshai, ZIM login complete callback!")
-                chatManager.loginCompletion = {
-                    // Join room after ZIM login success
-                    chatManager.updateRoomID(newRoomID: liveShowsData[currentStreamIndex].room_id ?? "")
-                }
-            }
+//            chatManager.loginCompletion = {
+//                print("babumoshai, ZIM login complete callback!")
+//                chatManager.loginCompletion = {
+//                    // Join room after ZIM login success
+//                    chatManager.updateRoomID(newRoomID: liveShowsData[currentStreamIndex].room_id ?? "")
+//                }
+//            }
             Task{
                 SVProgressHUD.show()
                 await self.viewModel.getLiveShows(param:GetLiveShowsRequest(type: "live"))
@@ -397,7 +397,7 @@ struct LiveStream: View {
             if !liveShowsData.isEmpty {
                 let initialRoomID = liveShowsData[currentStreamIndex].room_id ?? ""
                 loginRoom(roomId: initialRoomID)
-                chatManager.updateRoomID(newRoomID: initialRoomID)
+//                chatManager.updateRoomID(newRoomID: initialRoomID)
                 //                chatManager.login()
             }
         } else {
@@ -421,9 +421,9 @@ struct LiveStream: View {
         ZegoExpressEngine.shared().loginRoom(roomId, user: user, config: roomConfig) { errorCode, extendedData in
             if errorCode == 0 {
                 print("✅ Login callback | room: \(roomId) | errorCode: \(errorCode)")
-                chatManager.loginCompletion = {
-                    chatManager.updateRoomID(newRoomID: roomId) // 🔥 Update only when login is ready
-                }
+//                chatManager.loginCompletion = {
+//                    chatManager.updateRoomID(newRoomID: roomId) // 🔥 Update only when login is ready
+//                }
             } else {
                 print("login fail error")
             }
@@ -433,8 +433,8 @@ struct LiveStream: View {
     
     func logoutRoom() {
         ZegoExpressEngine.shared().logoutRoom()
-        chatManager.leaveCurrentRoom()
-        chatManager.logout()
+//        chatManager.leaveCurrentRoom()
+//        chatManager.logout()
         
     }
 }

@@ -14,7 +14,7 @@ struct CustomProfileImage: View {
     var size: CGFloat = 40
 
     var body: some View {
-        AsyncImage(url: URL(string: url ?? "")) { phase in
+        AsyncImage(url: URL(string: url?.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")) { phase in
             switch phase {
             case .empty:
                 ProgressView()

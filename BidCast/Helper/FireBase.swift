@@ -13,7 +13,6 @@ import FirebaseDatabase
 class FirebaseManager {
     static let shared = FirebaseManager()
     private let databaseRef = Database.database().reference()
-
     private init() {}
 
     func createLiveSession(showId: String,
@@ -73,9 +72,24 @@ class FirebaseManager {
     
     func getCurrentTimeFormatted() -> String {
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd_hh:mm:ss_a" // e.g. 2025-06-16_03:42:18_PM
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "yyyy-MM-dd_hh:mm:ss_a" 
         formatter.amSymbol = "am"
         formatter.pmSymbol = "pm"
         return formatter.string(from: Date())
     }
+    
+    func getLiveSessionData(roomId: String, completion: @escaping (_ data: [String: Any]?) -> Void) {
+        let ref = databaseRef.child("live_sessions").child(roomId)
+        ref.observeSingleEvent(of: .value) { snapshot in
+            if snapshot.exists(), let data = snapshot.value as? [String: Any] {
+                print("✅ Live session data fetched for room: \(roomId)")
+                completion(data)
+            } else {
+                print("ℹ️ No live session data found for room: \(roomId)")
+                completion(nil)
+            }
+        }
+    }
+   
 }
