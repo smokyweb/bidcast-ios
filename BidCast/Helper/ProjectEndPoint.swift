@@ -65,7 +65,6 @@ enum APIEndPoint{
     case makeOffer(param : MakeOfferRequest)
     case makeOfferList
     case offerUpdateStatus(param : OfferUpdateStatusRequest)
-    case transactionListing(param : TransactionHistoryListingRequest)
     case searching(param : SearchingRequest)
     case promo(param : PromoCodeRequest)
     case getReferralCode
@@ -82,6 +81,11 @@ enum APIEndPoint{
     case getItemList(param: ItemListRequest)
     case getNotificationListing
     case saveDeviceDetail(param : DeviceDetailRequest)
+    case getWalletInfo
+    case getPayOutHistory
+    case getKycDetails
+    case checkKYC
+    case fundTransfer(param : FundTransferRequest)
     
     //MARK: OLD
     
@@ -282,8 +286,6 @@ extension APIEndPoint: EndPointType {
             return "offer/lists"
         case .offerUpdateStatus:
             return "offer/update-status"
-        case .transactionListing:
-            return "transaction-history/listing"
         case .searching:
             return "user/searching"
         case .promo:
@@ -312,6 +314,8 @@ extension APIEndPoint: EndPointType {
             return "bid/fetch"
         case .getItemList:
             return "product/fetch-by-status"
+        case .getWalletInfo:
+            return "wallet-info"
             
             //MARK: Old
             
@@ -453,10 +457,14 @@ extension APIEndPoint: EndPointType {
             return "get_jobs?category=\(param.category)&job_title=\(param.job_title)&salary=\(param.salary)"
         case .removeSavedJob:
             return "save-job"
-     
-       
-       
-       
+        case .getPayOutHistory:
+            return "stripe/payout-history"
+        case .getKycDetails:
+            return "stripe/kyc-details"
+        case .checkKYC:
+            return "stripe/check-Kyc"
+        case .fundTransfer:
+            return "stripe/fund-transfer"
         }
     }
     
@@ -572,8 +580,6 @@ extension APIEndPoint: EndPointType {
         case .makeOfferList:
             return .post
         case .offerUpdateStatus:
-            return .post
-        case .transactionListing:
             return .post
         case .searching:
             return .post
@@ -745,6 +751,16 @@ extension APIEndPoint: EndPointType {
             return .post
         case .Business:
             return .post
+        case .getWalletInfo:
+            return .get
+        case .getPayOutHistory:
+            return .post
+        case .getKycDetails:
+            return .get
+        case .checkKYC:
+            return .post
+        case .fundTransfer:
+            return .post
        
         }
     }
@@ -866,8 +882,6 @@ extension APIEndPoint: EndPointType {
         case .makeOfferList:
             return nil
         case .offerUpdateStatus(param: let param):
-            return param
-        case .transactionListing(param: let param):
             return param
         case .searching(param: let param):
             return param
@@ -1038,6 +1052,16 @@ extension APIEndPoint: EndPointType {
         case .filterJobSearch:
             return nil
         case .removeSavedJob(let param):
+            return param
+        case .getWalletInfo:
+            return nil
+        case .getPayOutHistory:
+            return nil
+        case .getKycDetails:
+            return nil
+        case .checkKYC:
+            return nil
+        case .fundTransfer(let param):
             return param
         }
     }

@@ -594,3 +594,7 @@ struct ItemListRequest : Encodable {
 }
 
 
+struct FundTransferRequest : Encodable {
+    var amount : Int
+}
+

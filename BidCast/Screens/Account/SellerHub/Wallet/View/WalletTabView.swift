@@ -6,19 +6,22 @@
 //
 
 import SwiftUI
- 
+
 struct WalletTabView: View {
     
-    var summary: WalletSummary
+    var summary: WalletInfoModel
     var payouts: [Payout]
     
     // Currency formatting helper
-    private func money(_ value: Double) -> String {
-        "\(summary.currencySymbol)" + String(format: "%,.2f", value)
+    private func formatAmount(_ amount: Double?) -> String {
+        guard let amount = amount else { return "0.0" }
+        return String(format: "%.2f", amount)
     }
-    let transactions = [
-        Transaction(title: "Purchase from John", date: Date(timeIntervalSince1970: 1742841600), amount: 1250.00, isOutgoing: true)
-    ]
+    
+    private func formatDoubleAmount(_ amount: Double?) -> String {
+        guard let amount = amount else { return "0.0" }
+        return String(format: "%.2f", amount)
+    }
     
     @State var categoryList: [CategoryDataModel] = [
         CategoryDataModel(id: 1, name: "Electronics", image: "electronics_icon", color: "#FF5733")
@@ -33,40 +36,40 @@ struct WalletTabView: View {
                         Text("Available Balance")
                             .font(.footnote)
                             .foregroundColor(.gray)
-                        Text(money(summary.availableBalance ?? 0.0))
+                        Text(formatAmount(summary.avaiableBalance))
                             .font(.system(size: 34, weight: .bold))
                     }
                     .padding(.vertical, 16)
                     .frame(maxWidth: .infinity)
                     .background(Color.white)
-
+                    
                     HStack(spacing: 12) {
                         WalletStatTile(
                             title: "Available for\nPayout",
-                            value: money(summary.availableForPayout ?? 0.0),
+                            value: formatAmount(Double(summary.avaiableForPayout ?? 0)),
                             iconName: "arrow.up.arrow.down"
                         )
                         WalletStatTile(
                             title: "Processing",
-                            value: money(summary.processing ?? 0.0 ),
+                            value: formatAmount(summary.processing),
                             iconName: "lock.rotation"
                         )
                     }
                     VStack(spacing: 16) {
-                            ForEach(0 ..< categoryList.count, id: \.self) { ind in
-                                ListCell( isComeFrom: "Wallet",image: categoryList[ind].image ?? "", title: categoryList[ind].name ?? "", vectorImg: .icArrowUp,subLabel : "BidSwipe",tintColot: categoryList[ind].color ?? "")
-                                    .padding([.leading ,.trailing] ,0)
-                                
-                            }
+                        ForEach(0 ..< categoryList.count, id: \.self) { ind in
+                            ListCell( isComeFrom: "Wallet",image: categoryList[ind].image ?? "", title: categoryList[ind].name ?? "", vectorImg: .icArrowUp,subLabel : "BidSwipe",tintColot: categoryList[ind].color ?? "")
+                                .padding([.leading ,.trailing] ,0)
+                            
                         }
-
+                    }
+                    
                     if !payouts.isEmpty {
                         Text("Payout History")
                             .fontWeight(.semibold)
-
+                        
                         VStack(spacing: 0) {
                             ForEach(payouts) { payout in
-                                PayoutRowView(payout: payout, currencySymbol: summary.currencySymbol)
+                                PayoutRowView(payout: payout, currencySymbol: "$")
                                 if payout.id != payouts.last?.id {
                                     Divider()
                                 }

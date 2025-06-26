@@ -7,6 +7,7 @@
 
 import Foundation
 
+// MARK: - TransactionModel
 struct TransactionModel : Codable {
     var id : Int?
     var user_id : Int?
@@ -22,4 +23,23 @@ struct TransactionModel : Codable {
     var discount : Int?
     var payment_intent_id : String?
     var charge_id : String?
+}
+
+// MARK: - WalletInfoModel
+struct WalletInfoModel: Codable {
+    var processing: Double?
+    var avaiableForPayout: Int?
+    var avaiableBalance: Double?
+
+    enum CodingKeys: String, CodingKey {
+        case processing
+        case avaiableForPayout = "avaiable_for_payout"
+        case avaiableBalance = "avaiable_balance"
+    }
+}
+
+
+// MARK: - PayOutHistoryModel
+struct PayOutHistoryModel: Codable {
+
 }

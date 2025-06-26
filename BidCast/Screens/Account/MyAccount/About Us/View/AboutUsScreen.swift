@@ -10,22 +10,22 @@ import RichText
 import SwiftfulLoadingIndicators
 
 struct AboutUsScreen: View {
-
+    
     @Environment(\.presentationMode) var presentationMode
     @State var isLoading: Bool = false
     @State var navigateToMenu: Bool = false
     @State var navigateToNotification: Bool = false
     @State var notiCount: Int = 0
-//    @State private var player : AVPlayer?
-
+    //    @State private var player : AVPlayer?
+    
     @State var showError: Bool = false
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
-
+    
     @State var aboutUsContent = String()
-
-
+    
+    
     var viewModel = AboutUsViewModel()
-
+    
     var body: some View {
         ZStack {
             VStack(spacing: 0, content: {
@@ -40,12 +40,12 @@ struct AboutUsScreen: View {
                 )
                 .background(.white)
                 ScrollView(showsIndicators: false){
-                VStack(alignment: .leading, spacing: 16) {
-
-//                    TitleWithLine(title: "About Us", lineLength: 36)
-//                        .padding()
-
-
+                    VStack(alignment: .leading, spacing: 16) {
+                        
+                        //                    TitleWithLine(title: "About Us", lineLength: 36)
+                        //                        .padding()
+                        
+                        
                         RichText(html: aboutUsContent)
                             .customCSS("""
                 body {
@@ -61,12 +61,12 @@ struct AboutUsScreen: View {
                         list-style-type: disc; /* Ensure bullet points are displayed */
                     }
                 """)
-
-
+                        
+                        
                             .font(.custom(nunitoLight, fixedSize: 16))
                             .multilineTextAlignment(.leading)
                     }
-
+                    
                 }
                 .padding([.horizontal, .vertical])
                 .background(.text.opacity(0.05))
@@ -76,26 +76,26 @@ struct AboutUsScreen: View {
                     Task{
                         await viewModel.getAboutContent()
                     }
-                   
+                    
                 }
-
+                
                 Spacer()
             })
-          
-//            .bottomSheet(isPresented: $showError, height: screenHeight/2, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: { showError = true }, content: {
-//                CommonBottomSheet(
-//                    sheetType: $alertType,
-//                    onPrimaryClick: {
-//                        withAnimation { showError = false }
-//                    }, onSecondaryClick: {
-//                        withAnimation { showError = false }
-//                    })
-//            })
-
+            
+            //            .bottomSheet(isPresented: $showError, height: screenHeight/2, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: { showError = true }, content: {
+            //                CommonBottomSheet(
+            //                    sheetType: $alertType,
+            //                    onPrimaryClick: {
+            //                        withAnimation { showError = false }
+            //                    }, onSecondaryClick: {
+            //                        withAnimation { showError = false }
+            //                    })
+            //            })
+            
             if isLoading {
                 LoadingIndicator()
             }
-
+            
         }
         .edgesIgnoringSafeArea(.top)
         .onFirstAppear(perform: {
@@ -110,24 +110,21 @@ struct AboutUsScreen: View {
         .onTapGesture {
             UIApplication.shared.endEditing()
         }
-
-    }
-
-  
-
-    func success() {
-         let dict = viewModel.aboutResponse
-
-            if dict.status == "success" {
-                aboutUsContent = dict.data?.page_content ?? ""
-            }else{
-                alertType = .sheetType(icon: .alert, title: dict.status?.capitalized ?? "", message: dict.message ?? "", primaryBtnText: "", secondaryBtnText: "Ok", sheetThemeColor: .pinkBtn)
-                withAnimation(.snappy) { showError = true }
-            }
         
-
     }
-
+    
+    
+    
+    func success() {
+        let dict = viewModel.aboutResponse
+        
+        if dict.status == "success" {
+            aboutUsContent = dict.data?.page_content ?? ""
+        }else{
+            alertType = .sheetType(icon: .alert, title: dict.status?.capitalized ?? "", message: dict.message ?? "", primaryBtnText: "", secondaryBtnText: "Ok", sheetThemeColor: .pinkBtn)
+            withAnimation(.snappy) { showError = true }
+        }
+    }
 }
 
 #Preview {

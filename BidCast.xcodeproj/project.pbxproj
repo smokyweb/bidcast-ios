@@ -264,6 +264,8 @@
 		99DF9E832DC4F370008C15B2 /* BidCastUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99DF9E802DC4F370008C15B2 /* BidCastUITestsLaunchTests.swift */; };
 		D41711DE2DF7FEF700ED39BC /* TrustedBuyerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D41711DD2DF7FEF700ED39BC /* TrustedBuyerModel.swift */; };
 		D41711E02DF7FF1300ED39BC /* TrustedBuyerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D41711DF2DF7FF1300ED39BC /* TrustedBuyerViewModel.swift */; };
+		D4181BC32E0D4B15002962A3 /* KycModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4181BBC2E0D4B15002962A3 /* KycModel.swift */; };
+		D4181BC72E0D4B15002962A3 /* KycViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4181BBE2E0D4B15002962A3 /* KycViewModel.swift */; };
 		D49A95682DD704CD006044A7 /* FAQScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D49A95672DD704CD006044A7 /* FAQScreen.swift */; };
 		D49A956A2DD70952006044A7 /* FAQCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D49A95692DD70952006044A7 /* FAQCell.swift */; };
 		D49A956E2DD71E3E006044A7 /* ContactUs.swift in Sources */ = {isa = PBXBuildFile; fileRef = D49A956B2DD71E3E006044A7 /* ContactUs.swift */; };
@@ -715,6 +717,8 @@
 		99DF9E802DC4F370008C15B2 /* BidCastUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BidCastUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		D41711DD2DF7FEF700ED39BC /* TrustedBuyerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrustedBuyerModel.swift; sourceTree = "<group>"; };
 		D41711DF2DF7FF1300ED39BC /* TrustedBuyerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrustedBuyerViewModel.swift; sourceTree = "<group>"; };
+		D4181BBC2E0D4B15002962A3 /* KycModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KycModel.swift; sourceTree = "<group>"; };
+		D4181BBE2E0D4B15002962A3 /* KycViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KycViewModel.swift; sourceTree = "<group>"; };
 		D49A95672DD704CD006044A7 /* FAQScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FAQScreen.swift; sourceTree = "<group>"; };
 		D49A95692DD70952006044A7 /* FAQCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FAQCell.swift; sourceTree = "<group>"; };
 		D49A956B2DD71E3E006044A7 /* ContactUs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactUs.swift; sourceTree = "<group>"; };
@@ -795,7 +799,7 @@
 		D4BB9A0E2DE5AB4D00C1BCBC /* OrderCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderCardView.swift; sourceTree = "<group>"; };
 		D4BB9A102DE5C92100C1BCBC /* TransactionsTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionsTabView.swift; sourceTree = "<group>"; };
 		D4BB9A122DE5C95A00C1BCBC /* PayoutRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PayoutRowView.swift; sourceTree = "<group>"; };
-		D4BB9A142DE5C9ED00C1BCBC /* WalletTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletTabView.swift; sourceTree = "<group>"; };
+		D4BB9A142DE5C9ED00C1BCBC /* WalletTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletTabView.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		D4BB9A162DE5D22A00C1BCBC /* PromoteToolsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromoteToolsView.swift; sourceTree = "<group>"; };
 		D4BB9A192DE5D22A00C1BCBC /* PromoteToolsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromoteToolsModel.swift; sourceTree = "<group>"; };
 		D4BB9A1B2DE5D22A00C1BCBC /* PromoteToolsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromoteToolsViewModel.swift; sourceTree = "<group>"; };
@@ -2031,6 +2035,7 @@
 		99C909162DC8CD790054620B /* Screens */ = {
 			isa = PBXGroup;
 			children = (
+				D4181BC02E0D4B15002962A3 /* Kyc */,
 				D4B6160D2DE8622100924A3D /* NonLinkedSceen */,
 				355AE97A2DD1FC1300CD3D17 /* Activity */,
 				355AE9792DD1FC0D00CD3D17 /* Sell */,
@@ -2253,6 +2258,39 @@
 				D41711DF2DF7FF1300ED39BC /* TrustedBuyerViewModel.swift */,
 			);
 			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		D4181BBB2E0D4B15002962A3 /* View */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		D4181BBD2E0D4B15002962A3 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				D4181BBC2E0D4B15002962A3 /* KycModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		D4181BBF2E0D4B15002962A3 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				D4181BBE2E0D4B15002962A3 /* KycViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		D4181BC02E0D4B15002962A3 /* Kyc */ = {
+			isa = PBXGroup;
+			children = (
+				D4181BBB2E0D4B15002962A3 /* View */,
+				D4181BBD2E0D4B15002962A3 /* Model */,
+				D4181BBF2E0D4B15002962A3 /* ViewModel */,
+			);
+			path = Kyc;
 			sourceTree = "<group>";
 		};
 		D49A95662DD704BF006044A7 /* FAQ */ = {
@@ -4131,6 +4169,8 @@
 				99C9081B2DC8CD6A0054620B /* InterviewScheduledSheet.swift in Sources */,
 				D4C4D7972DD31C2D00274E51 /* ActivityCell.swift in Sources */,
 				99C9081C2DC8CD6A0054620B /* DropDown.swift in Sources */,
+				D4181BC32E0D4B15002962A3 /* KycModel.swift in Sources */,
+				D4181BC72E0D4B15002962A3 /* KycViewModel.swift in Sources */,
 				D4A7F9042DDDA8C5001FC705 /* AddressesScreen.swift in Sources */,
 				99C9081D2DC8CD6A0054620B /* TitleWithLine.swift in Sources */,
 				99C9081E2DC8CD6A0054620B /* JobListingCard.swift in Sources */,
@@ -4423,7 +4463,7 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = /Users/jamtech/Documents/GitHub/bidcast/BidCast/ZegoBridgeHeader.h;
+				SWIFT_OBJC_BRIDGING_HEADER = /Users/gadgetzone/Documents/Live/bidcast/BidCast/ZegoBridgeHeader.h;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				XROS_DEPLOYMENT_TARGET = 2.4;
@@ -4470,7 +4510,7 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = /Users/jamtech/Documents/GitHub/bidcast/BidCast/ZegoBridgeHeader.h;
+				SWIFT_OBJC_BRIDGING_HEADER = /Users/gadgetzone/Documents/Live/bidcast/BidCast/ZegoBridgeHeader.h;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				XROS_DEPLOYMENT_TARGET = 2.4;

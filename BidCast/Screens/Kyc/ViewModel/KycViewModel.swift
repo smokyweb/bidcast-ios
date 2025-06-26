@@ -1,5 +1,5 @@
 //
-//  WalletViewModel.swift
+//  KycViewModel.swift
 //  BidCast
 //
 //  Created by JAM_E_329 on 19/05/25.
@@ -9,51 +9,51 @@
 import Foundation
 
 @MainActor
-final class WalletViewModel: ObservableObject {
+final class KycViewModel: ObservableObject {
     
-    @Published var transactionDict = ResponseModel<[TransactionModel]>()
-    @Published var walletInfoDict = ResponseModel<WalletInfoModel>()
-    @Published var payOutHistoryDict = ResponseModel<PayOutHistoryModel>()
+    @Published var kycDetailsDict = ResponseModel<KycDetailsModel>()
+    @Published var checkKycDict = ResponseModel<CheckKycModel>()
+    @Published var fundTransferDict = ResponseModel<FundTransferModel>()
     @Published var errorMessage: String? = nil
 
-    
 
-    // MARK: - Get Cards
-    func getTransaction(param:TransactionRequest) async {
+    
+    // MARK: - Get checkKycDetail.
+    func getKycDetail() async {
         do {
-            if let response: ResponseModel<[TransactionModel]> = try await APIManager.shared.request(
-                type: APIEndPoint.getTransactionList(param: param),
+            if let response: ResponseModel<KycDetailsModel> = try await APIManager.shared.request(
+                type: APIEndPoint.getKycDetails,
                 header: true
             ) {
-                self.transactionDict = response
+                self.kycDetailsDict = response
             }
         } catch {
             handle(error: error)
         }
     }
     
-    // MARK: - Get WalletInfo
-    func getWalletInfo() async {
+    // MARK: - Get checkKycDetail.
+    func checkKycDetail() async {
         do {
-            if let response: ResponseModel<WalletInfoModel> = try await APIManager.shared.request(
-                type: APIEndPoint.getWalletInfo,
+            if let response: ResponseModel<CheckKycModel> = try await APIManager.shared.request(
+                type: APIEndPoint.checkKYC,
                 header: true
             ) {
-                self.walletInfoDict = response
+                self.checkKycDict = response
             }
         } catch {
             handle(error: error)
         }
     }
     
-    // MARK: - Get PayOutHistory
-    func getPayOutHistory() async {
+    // MARK: - fundTransfer.
+    func fundTransfer(param : FundTransferRequest) async {
         do {
-            if let response: ResponseModel<PayOutHistoryModel> = try await APIManager.shared.request(
-                type: APIEndPoint.getPayOutHistory,
+            if let response: ResponseModel<FundTransferModel> = try await APIManager.shared.request(
+                type: APIEndPoint.fundTransfer(param: param),
                 header: true
             ) {
-                self.payOutHistoryDict = response
+                self.fundTransferDict = response
             }
         } catch {
             handle(error: error)
