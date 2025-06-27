@@ -40,8 +40,6 @@ struct LiveStream: View {
     @Environment(\.presentationMode) var presentationMode
     
     @ObservedObject var zegoManager = ZegoManager.shared
-    //    @ObservedObject var chatManager = ZegoChatManager.shared
-//    @State var chatManager = ZIMChatManager(userID: "\(UserDefaults.userId)", userName: UserDefaults.userName)
     
     var localUserID = "\(UserDefaults.userId)"
     
@@ -288,16 +286,17 @@ struct LiveStream: View {
                                     Button(action: {
                                         let textToSend = commentText.trimmingCharacters(in: .whitespacesAndNewlines)
                                         let roomId = liveShowsData[currentStreamIndex].room_id ?? ""
-                                        ZegoExpressEngine.shared().sendBroadcastMessage(commentText, roomID: roomId) { errorCode, messageID in
-                                            
-                                            if errorCode == 0 {
-                                                let newComment = Comment(image: UserDefaults.profileURL,username: UserDefaults.userName.capitalizingFirstLetter(), message: textToSend)
-                                                comments.append(newComment)
-                                                print("✅ Broadcast message sent successfully, msgID: \(messageID)")
-                                            } else {
-                                                print("❌ Failed to send broadcast message, errorCode: \(errorCode)")
-                                            }
-                                        }
+//                                        ZegoExpressEngine.shared().sendBroadcastMessage(commentText, roomID: roomId) { errorCode, messageID in
+//                                            
+//                                            if errorCode == 0 {
+//                                                let newComment = Comment(image: UserDefaults.profileURL,username: UserDefaults.userName.capitalizingFirstLetter(), message: textToSend)
+//                                                comments.append(newComment)
+//                                                print("✅ Broadcast message sent successfully, msgID: \(messageID)")
+//                                            } else {
+//                                                print("❌ Failed to send broadcast message, errorCode: \(errorCode)")
+//                                            }
+//                                        }
+                                        ZIMChatManager.shared.sendMessage(message: commentText,roomId: roomId)
                                         commentText = ""
                                     }) {
                                         Image(systemName: "paperplane.fill")
@@ -362,13 +361,7 @@ struct LiveStream: View {
         }
         .foregroundColor(.white)
         .onAppear{
-//            chatManager.loginCompletion = {
-//                print("babumoshai, ZIM login complete callback!")
-//                chatManager.loginCompletion = {
-//                    // Join room after ZIM login success
-//                    chatManager.updateRoomID(newRoomID: liveShowsData[currentStreamIndex].room_id ?? "")
-//                }
-//            }
+            ZIMChatManager.shared.login(userID: "\(UserDefaults.userId)", userName: UserDefaults.userName)
             Task{
                 SVProgressHUD.show()
                 await self.viewModel.getLiveShows(param:GetLiveShowsRequest(type: "live"))
@@ -397,8 +390,7 @@ struct LiveStream: View {
             if !liveShowsData.isEmpty {
                 let initialRoomID = liveShowsData[currentStreamIndex].room_id ?? ""
                 loginRoom(roomId: initialRoomID)
-//                chatManager.updateRoomID(newRoomID: initialRoomID)
-                //                chatManager.login()
+                ZIMChatManager.shared.joinRoom(roomID: initialRoomID)
             }
         } else {
             showError = true

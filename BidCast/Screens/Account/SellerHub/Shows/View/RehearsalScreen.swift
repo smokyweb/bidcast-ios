@@ -41,6 +41,7 @@ struct RehearsalScreen: View {
     @State private var showStartTime: Date? = nil
     @State private var liveElapsedTime: String = "00:00:00"
     
+//    @StateObject var zegoChat = ZIMChatManager()
 //    @StateObject var chatManager = ZIMChatManager(userID: "\(UserDefaults.userId)", userName: UserDefaults.userName)
     
     var body: some View {
@@ -270,17 +271,17 @@ struct RehearsalScreen: View {
                                     Button(action: {
                                         print("📨 Sending message: \(commentText)")
                                         let textToSend = commentText.trimmingCharacters(in: .whitespacesAndNewlines)
-                                        ZegoExpressEngine.shared().sendBroadcastMessage(commentText, roomID: liveRoomId) { errorCode, messageID in
-                                            
-                                            if errorCode == 0 {
-                                                let newComment = Comment(image: UserDefaults.profileURL,username: UserDefaults.userName.capitalizingFirstLetter(), message: textToSend)
-                                                comments.append(newComment)
-                                                print("✅ Broadcast message sent successfully, msgID: \(messageID)")
-                                            } else {
-                                                print("❌ Failed to send broadcast message, errorCode: \(errorCode)")
-                                            }
-                                        }
-//                                        chatManager.sendMessage(textToSend)
+//                                        ZegoExpressEngine.shared().sendBroadcastMessage(commentText, roomID: liveRoomId) { errorCode, messageID in
+//                                            
+//                                            if errorCode == 0 {
+//                                                let newComment = Comment(image: UserDefaults.profileURL,username: UserDefaults.userName.capitalizingFirstLetter(), message: textToSend)
+//                                                comments.append(newComment)
+//                                                print("✅ Broadcast message sent successfully, msgID: \(messageID)")
+//                                            } else {
+//                                                print("❌ Failed to send broadcast message, errorCode: \(errorCode)")
+//                                            }
+//                                        }
+                                        ZIMChatManager.shared.sendMessage(message: commentText,roomId: self.liveRoomId)
                                         commentText = ""
                                     }) {
                                         Image(systemName: "paperplane.fill")
@@ -302,7 +303,7 @@ struct RehearsalScreen: View {
                             let is_Live = isLive ? "false" : "true"
                             await viewModel.UpdateLiveShows(param: LiveShowUpdateRequest(schedule_show_id: showUd, is_live: is_Live))
                             await SVProgressHUD.dismiss()
-                            await success()
+                            success()
                         }
                     }) {
                         Text(isLive ? "End Show" : "Start Show")
@@ -396,6 +397,8 @@ struct RehearsalScreen: View {
         .onAppear {
             logoutRoom()
             showTopBadge = true
+            
+            ZIMChatManager.shared.login(userID: "\(UserDefaults.userId)", userName: UserDefaults.userName)
 //            chatManager.loginCompletion = {
 //                print("✅ ChatManager login completed")
 //                chatManager.updateRoomID(newRoomID: roomId)
@@ -449,6 +452,7 @@ struct RehearsalScreen: View {
 //                    chatManager.updateRoomID(newRoomID: liveRoomId)
                     
                     ZegoExpressEngine.shared().startPublishingStream(roomId)
+                    ZIMChatManager.shared.joinRoom(roomID: roomId)
                     self.showLiveControls = true
                     self.showPreLiveControls = false
                 } else {
@@ -480,6 +484,7 @@ struct RehearsalScreen: View {
     
     func logoutRoom() {
         ZegoExpressEngine.shared().logoutRoom()
+//        ZIMChatManager.shared.logout()
 //        chatManager.leaveCurrentRoom()
 //        chatManager.logout()
     }

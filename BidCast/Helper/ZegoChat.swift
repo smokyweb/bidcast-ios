@@ -59,17 +59,30 @@ class ZIMChatManager: NSObject, ObservableObject {
         }
     }
     
-    func sendMessage(message: String) {
+    func sendMessage(message: String,roomId : String) {
         let zimMessage = ZIMTextMessage(message: message)
         let sendConfig = ZIMMessageSendConfig()
            // Optional: adjust settings
-           sendConfig.priority = .medium
+        sendConfig.priority = .high
            
         let notification = ZIMMessageSendNotification()
+        guard let zim = zim else {
+            print("❌ Babumoshai, ZIM not initialized!")
+            return
+        }
         
-        zim?.sendMessage(
+        guard !userID.isEmpty else {
+            print("❌ Babumoshai, user not logged in!")
+            return
+        }
+        
+        guard !roomId.isEmpty else {
+            print("❌ Babumoshai, roomID is empty!")
+            return
+        }
+        zim.sendMessage(
             zimMessage,
-                    toConversationID: roomID,
+                    toConversationID: roomId,
                     conversationType: .room,
                     config: sendConfig,
                     notification: notification
@@ -85,7 +98,7 @@ class ZIMChatManager: NSObject, ObservableObject {
                     self.messages.append(newComment)
                 }
             } else {
-                print("❌ Message failed babumoshai: \(errorInfo.message ?? "")")
+                print("❌ Message failed babumoshai: \(errorInfo.message)")
             }
         }
     }
@@ -96,16 +109,27 @@ class ZIMChatManager: NSObject, ObservableObject {
     }
     
     extension ZIMChatManager: ZIMEventHandler {
-    
-        func zim(_ zim: ZIM, roomMessageReceived roomID: String, messageList: [ZIMMessage]) {
-            for msg in messageList {
-                if let textMsg = msg as? ZIMTextMessage {
-                    DispatchQueue.main.async {
-                        let newComment = Comment(image: "", username: msg.senderUserID, message: textMsg.message)
-                        self.messages.append(newComment)
-                    }
-                }
+        func zim(_ zim: ZIM, connectionStateChanged state: ZIMConnectionState, event: ZIMConnectionEvent, extendedData: [AnyHashable : Any]) {
+                print("🔥 Babumoshai, connection state changed: \(state.rawValue)")
+                
             }
-        }
+        func zim(_ zim: ZIM, roomMessageReceived roomID: String, messageList: [ZIMMessage]) {
+               print("📥 Babumoshai, received \(messageList.count) message(s) in room: \(roomID)")
+
+               for msg in messageList {
+                   if let textMsg = msg as? ZIMTextMessage {
+                       DispatchQueue.main.async {
+                           let newComment = Comment(
+                               image: "",  // You can later attach sender profile image here
+                               username: msg.senderUserID,
+                               message: textMsg.message
+                           )
+                           self.messages.append(newComment)
+                       }
+                   } else {
+                       print("⚠️ Babumoshai, unsupported message type received.")
+                   }
+               }
+           }
     }
 

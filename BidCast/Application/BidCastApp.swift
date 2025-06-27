@@ -11,7 +11,7 @@ import SwiftUI
 struct BidCastApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject private var appRootManager = AppRootManager()
-    
+//    @State var ZIMChatManager = ZIMChatManager()
     init() {
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
@@ -30,6 +30,7 @@ struct BidCastApp: App {
         
         print("🚀 App starting")
         ZegoManager.shared.createEngine()
+        ZIMChatManager.shared.initialize(appID: 1005763407, appSign: "73678be720c3ea2d871376882d27d21d5c2bc891363547424458f9febc8bf423")
         
     }
     var body: some Scene {
