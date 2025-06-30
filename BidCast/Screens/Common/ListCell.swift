@@ -16,6 +16,7 @@ struct ListCell: View {
     var image : String = ""
     var title = "Gaming"
     var vectorImg : ImageResource?
+    var angle  = 90.0
     var subLabel = "Live"
     var tintColot = ""
     var titleFontName = poppinsMedium
@@ -78,7 +79,7 @@ struct ListCell: View {
                         .resizable()
                         .scaledToFill()
                         .frame(width: 24,height: 24)
-                        .rotationEffect(Angle(degrees: 90.0))
+                        .rotationEffect(Angle(degrees: angle))
                         .padding(.trailing ,8)
                 }
                 if isDisplayPrice{

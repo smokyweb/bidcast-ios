@@ -53,54 +53,57 @@ struct HomeViewScreen: View {
                     VStack(alignment: .leading,spacing: 12){
                         SegmentedControlView(segments: HomeButton.allCases, selectedSegment:$selectedButton, isWithBorder: true)
                         ButtonTitleLabel(
-                                titles: ["Live Now", "Popular", "Coming Soon"],
-                                fontValue: 18,
-                                textColor: .blue
-                            ) { selected in
-                                print("Tapped:", selected)
-                                Task{
-                                    SVProgressHUD.show()
-                                    liveShowsData.removeAll()
-                                    var selection = ""
-                                    if selected == "Live Now"{
-                                        selection = "live"
-                                    }else if selected == "Popular"{
-                                        selection = "popular"
-                                    }else{
-                                        selection = "upcoming"
+                            titles: ["Live Now", "Popular", "Coming Soon"],
+                            fontValue: 18,
+                            textColor: .blue
+                        ) { selected in
+                            print("Tapped:", selected)
+                            Task{
+                                SVProgressHUD.show()
+                                liveShowsData.removeAll()
+                                var selection = ""
+                                if selected == "Live Now"{
+                                    selection = "live"
+                                }else if selected == "Popular"{
+                                    selection = "popular"
+                                }else{
+                                    selection = "upcoming"
+                                }
+                                await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: selection))
+                                await SVProgressHUD.dismiss()
+                                self.success()
+                            }
+                        }
+                        if liveShowsData.isEmpty{
+                            NoDataView(message: "No Shows found")
+                        }else{
+                            LazyVGrid(columns: columns, spacing: 12) {
+                                //                            let liveData = Array(0..<liveShowsData.count)
+                                ForEach(liveShowsData.indices, id: \.self) { index in
+                                    let item = liveShowsData[index]
+                                    
+                                    ImageCollectionView(profileImg: item.user?.profile_image ?? "",
+                                                        profileName: item.user?.name ?? "",
+                                                        textSize: 13.0,
+                                                        image: item.thumbnail?.first ?? "",
+                                                        category: item.category?.name ?? "",
+                                                        title2:item.title ?? "",
+                                                        categorySize: 8,
+                                                        title2Size: 12.0){
+                                        
+                                        print("babumoshai tapped the card!,inex \(index)")
+                                        self.index = index
+                                        userId = "\(item.user?.id ?? 0)"
+                                        navigateToLiveStream = true
                                     }
-                                    await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: selection))
-                                    await SVProgressHUD.dismiss()
-                                    self.success()
+                                                        .background(.bg)
+                                                        .frame(maxWidth: .infinity)
+                                                        .frame(height: 280)
+                                    
+                                                        .cornerRadius(10)
                                 }
                             }
-                        
-                        LazyVGrid(columns: columns, spacing: 12) {
-//                            let liveData = Array(0..<liveShowsData.count)
-                            ForEach(liveShowsData.indices, id: \.self) { index in
-                                let item = liveShowsData[index]
-                                
-                                ImageCollectionView(profileImg: item.user?.profile_image ?? "",
-                                                    profileName: item.user?.name ?? "",
-                                                    textSize: 13.0,
-                                                    image: item.thumbnail?.first ?? "",
-                                                    category: item.category?.name ?? "",
-                                                    title2:item.title ?? "",
-                                                    categorySize: 8,
-                                                    title2Size: 12.0){
-                                    
-                                           print("babumoshai tapped the card!,inex \(index)")
-                                            self.index = index
-                                            userId = "\(item.user?.id ?? 0)"
-                                           navigateToLiveStream = true
-                                       }
-                                           .background(.bg)
-                                           .frame(maxWidth: .infinity)
-                                           .frame(height: 280)
-                                         
-                                           .cornerRadius(10)
-                                   }
-                               }
+                    }
                     }
                 }
                 .padding([.leading,.trailing],12)

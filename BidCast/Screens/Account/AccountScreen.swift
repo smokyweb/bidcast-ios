@@ -42,6 +42,9 @@ struct AccountScreen: View {
     @State var navigateToAffilateProgram : Bool = false
     @State var navigateToAnalytics : Bool = false
     
+    @State var navigateToProfile : Bool = false
+    
+    
     @State var viewModal = MenuOptionsViewModel()
     let columns = [
         GridItem(.flexible()),
@@ -67,7 +70,9 @@ struct AccountScreen: View {
             }
             ScrollView(showsIndicators: false){
                 VStack(alignment: .leading,spacing: 4){
-                    ListCell(image: UserDefaults.profileURL, title: UserDefaults.userName.capitalizingFirstLetter() ,subLabel : "Seller since 2003",titleFontName: poppinsSemiBold,titleFontSize: 18.0,subLabelFontName: poppinsRegular,subLabelFontSize: 14.0,isVectorImgHidden: true)
+                    ListCell(image: UserDefaults.profileURL, title: UserDefaults.userName.capitalizingFirstLetter() ,vectorImg : .circleEditPencil,angle:0.0, subLabel : "Seller since 2003",titleFontName: poppinsSemiBold,titleFontSize: 18.0,subLabelFontName: poppinsRegular,subLabelFontSize: 14.0,isVectorImgHidden: false,onTapMenuCell: {
+                        self.navigateToProfile = true
+                    })
                         .padding(.all,1)
                         .frame(height: 80)
                     
@@ -232,6 +237,7 @@ struct AccountScreen: View {
             .background(.bg.opacity(0.5))
             .padding(.bottom,UIDevice.current.hasNotch ? -210 : -110)
             
+            CusNavLink(doNavigate: $navigateToProfile, destination: CompleteProfileScreen())
             //MARK: My Account navigation
             CusNavLink(doNavigate: $navigateToAboutUs, destination: AboutUsScreen())
             CusNavLink(doNavigate: $navigateToPremierShop, destination: PremierShopScreen())

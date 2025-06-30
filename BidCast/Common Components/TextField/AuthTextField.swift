@@ -20,6 +20,7 @@ struct AuthTextField: View {
     @State var showPassword: Bool = true
     var isIconDisplay : Bool = true
     @FocusState var isFocused: Bool
+    @State var isForPrice: Bool = false
     
    
     var isRequiredValue: ((Int) -> Void)?
@@ -106,7 +107,29 @@ struct AuthTextField: View {
                                         filtered = formatted
                                         text = filtered
                                     self.enteredText?(text)
-                                    } else {
+                                    } else if isForPrice {
+                                        // ✅ Keep only digits
+                                        var filteredText = value.filter { $0.isNumber }
+
+                                        // Remove leading zeros unless input is just "0" or "00"
+                                        while filteredText.count > 1 && filteredText.first == "0" {
+                                            filteredText.removeFirst()
+                                        }
+
+                                        if filteredText.isEmpty {
+                                            text = "0.00"
+                                        } else if filteredText.count == 1 {
+                                            text = "0.0" + filteredText
+                                        } else if filteredText.count == 2 {
+                                            text = "0." + filteredText
+                                        } else {
+                                            let integerPart = String(filteredText.dropLast(2))
+                                            let decimalPart = String(filteredText.suffix(2))
+                                            text = "\(integerPart).\(decimalPart)"
+                                        }
+                                        
+                                        self.enteredText?(text)
+                                    }else{
                                         filtered = String(filtered.prefix(maxDigits))
                                         self.enteredText?(value)
                                     }

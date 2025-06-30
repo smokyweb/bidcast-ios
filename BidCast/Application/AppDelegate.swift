@@ -46,9 +46,9 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         SVProgressHUD.setDefaultStyle(.custom)
         SVProgressHUD.setDefaultMaskType(.custom)
         SVProgressHUD.setDefaultAnimationType(.native)
-        SVProgressHUD.setForegroundColor(.primary)
-        SVProgressHUD.setBackgroundColor(.black)
-        SVProgressHUD.setBackgroundLayerColor(.black.withAlphaComponent(0.8))
+        SVProgressHUD.setForegroundColor(.secondary)
+        SVProgressHUD.setBackgroundColor(.bg)
+        SVProgressHUD.setBackgroundLayerColor(.black.withAlphaComponent(0.4))
         IQKeyboardManager.shared.isEnabled = true
         IQKeyboardManager.shared.resignOnTouchOutside = true
         IQKeyboardManager.shared.keyboardDistance = 10

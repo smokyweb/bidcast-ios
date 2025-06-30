@@ -68,9 +68,10 @@ struct ListProductScreen: View {
                         DropDownSelection(
                             options: $categoryNames, floatingLabel:"Category",
                             hint: "Select Category",
-                            selected: $request.category_id,
+                            selected: $selectedCategory,
                             anchor: .bottom,
                             onOptionSelected: { value in
+                                selectedCategory = value
                                 if let id = categoryList.first(where: { $0.name == value })?.id {
                                     request.category_id = "\(id)"
                                 } else {
@@ -81,18 +82,18 @@ struct ListProductScreen: View {
                         .zIndex(1201.0)
                         .padding([.leading,.trailing],8)
                         
-                        AuthTextField(floatingLabel: "Title".localized, placeholder: "Enter Product title".localized, icon: .menuProfile, text: $request.title ,isIconDisplay : false) { email in
-                            request.title = email
-                        }
+                        AuthTextField(floatingLabel: "Title".localized, placeholder: "Enter Product title".localized, icon: .menuProfile, text: $request.title ,isIconDisplay : false, enteredText:  { title in
+                            request.title = title
+                        })
                         .keyboardType(.alphabet)
 //                        .padding([.leading,.trailing],4)
                         
                         DescriptionFieldView(){ message in
                             request.description = message
                         }
-                        AuthTextField(floatingLabel: "Quantity".localized, placeholder: "Enter Quantity".localized, icon: .menuProfile, text: $request.quantity ,isIconDisplay : false) { email in
-                            request.quantity = email
-                        }
+                        AuthTextField(floatingLabel: "Quantity".localized, placeholder: "Enter Quantity".localized, icon: .menuProfile, text: $request.quantity ,isIconDisplay : false, enteredText:  { quantity in
+                            request.quantity = quantity
+                        })
                         .keyboardType(.numberPad)
 //                        .padding([.leading,.trailing],6)
                         
@@ -112,21 +113,19 @@ struct ListProductScreen: View {
                             .padding(.top,8)
                             .padding([.leading,.trailing],8)
                         
-                        AuthTextField(floatingLabel: "Buy it Now Price".localized, placeholder: "0.00".localized, icon: .menuProfile, text: $request.pricing ,isIconDisplay : true) { email in
-                            request.pricing = email
-                        }
-                        //                    .textContentType(.username)
-                        .keyboardType(.alphabet)
-//                        .padding([.leading,.trailing],4)
+                        AuthTextField(floatingLabel: "Buy it Now Price".localized, placeholder: "0.00".localized, icon: .menuProfile, text: $request.pricing,isIconDisplay : true, isForPrice:true, enteredText:  { price in
+                            request.pricing = price
+                        })
+                        .keyboardType(.numberPad)
                         
-                        MenuCell( title: "Flash Sale",fontValue: 18.0,menuImg: "",isSelectable: true, isTappedSwitch: $isTappedFlash,onToggle: { value in
+                        MenuCell( title: "Flash Sale",fontValue: 16.0,menuImg: "",isSelectable: true, isTappedSwitch: $isTappedFlash,onToggle: { value in
                             if value == true{
                                 request.flash_sale = "1"
                             }else{
                                 request.flash_sale = "0"
                             }
                         })
-                        MenuCell( title: "Accept offers",fontValue: 18.0,menuImg: "",isSelectable: true, isTappedSwitch: $isTappedAccept,onToggle: { value in
+                        MenuCell( title: "Accept offers",fontValue: 16.0,menuImg: "",isSelectable: true, isTappedSwitch: $isTappedAccept,onToggle: { value in
                             print(value)
                             if value == true{
                                 request.accept_offers = "1"
@@ -134,7 +133,7 @@ struct ListProductScreen: View {
                                 request.accept_offers = "0"
                             }
                         })
-                        MenuCell( title: "Reserve for Live",fontValue: 18.0,menuImg: "",isSelectable: true, isTappedSwitch: $isTappedReserve,onToggle: { value in
+                        MenuCell( title: "Reserve for Live",fontValue: 16.0,menuImg: "",isSelectable: true, isTappedSwitch: $isTappedReserve,onToggle: { value in
                             print(value)
                             if value == true{
                                 request.reserve_for_live = "1"
@@ -187,7 +186,7 @@ struct ListProductScreen: View {
                             SVProgressHUD.show()
                             await viewModel.storeProduct(param: request, images: imageUrls, key: "images[]")
                             await SVProgressHUD.dismiss()
-                            await storeSuccess()
+                            storeSuccess()
                         }
                     }, height: 45, firstBtnTitleColor: .darkGray, secBtnTitleColor: .white, firstBtnBgColor: .white, secBtnBgColor:.darkBlue)
 
@@ -218,11 +217,11 @@ struct ListProductScreen: View {
                 SVProgressHUD.show()
                 await viewModel.getCategoryList()
                 
-                await categorySuccess()
+                categorySuccess()
                 
                 await viewModel.getAddresses()
                 await SVProgressHUD.dismiss()
-                await shippingAddressSuccess()
+                shippingAddressSuccess()
                 
                 
             }
