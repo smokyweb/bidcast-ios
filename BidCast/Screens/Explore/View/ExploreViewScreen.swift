@@ -48,24 +48,19 @@ struct ExploreViewScreen: View {
                 
             }
             ScrollView(showsIndicators: false){
-                VStack(alignment: .leading,spacing: 8){
+                VStack(alignment: .leading,spacing: 12){
                     SearchView()
-                    
                     SingleTitleLabel(title: "Recommended | Popular | All" ,textColor: .black,fontValue: 18.0)
-                        .padding(.horizontal,8)
                     ForEach(0 ..< categoryList.count, id: \.self) { ind in                            ListCell(image: categoryList[ind].image ?? "", title: categoryList[ind].name ?? "", vectorImg: .icArrowUp,subLabel : "BidSwipe",tintColot: categoryList[ind].color ?? "",onTapMenuCell: {
                         category = categoryList[ind].name ?? ""
                         navigateToCategoryDetailScreen = true
                     })
-                    .padding(.horizontal,8)
-                        
+                    .padding(.horizontal,0)
                     }
-                    
                 }
-                
             }
-            .padding(.top,8)
-            .padding(.horizontal,12)
+            .padding(.top,20)
+            .padding(.horizontal,13)
             CusNavLink(doNavigate: $navigateToCategoryDetailScreen, destination: HomeViewScreen(showCategory:$category,comeFromExploreScreen : $navigateToCategoryDetailScreen))
             CusNavLink(doNavigate: $navigateToNoti, destination: NotificationScreen())
         }
@@ -79,13 +74,6 @@ struct ExploreViewScreen: View {
                 self.categoryList = viewModel.categoryResponse.data ?? [CategoryDataModel]()
             }
         }
-        
-        
-        
     }
-    
-    
-    
-    
 }
 

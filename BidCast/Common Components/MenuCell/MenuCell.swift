@@ -44,7 +44,6 @@ struct MenuCell: View {
                         .frame(width: 24,height: 24)
                         .padding(.trailing ,10)
                 }else{
-                    
                     Rectangle()
                         .fill(isTappedSwitch ? .tabBar : .bg)
                         .frame(width: 44,height: 28)

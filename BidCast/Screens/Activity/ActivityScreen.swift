@@ -17,6 +17,7 @@ struct ActivityScreen: View {
     @State private var hudMsg: String = ""
     @StateObject var viewModel = OffersViewModel()
     @State var offerList: [OfferListModel] = []
+    @State var messageList = []
     
     @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     
@@ -41,17 +42,22 @@ struct ActivityScreen: View {
             
             ScrollView {
                 VStack(spacing: 20) {
-                    SegmentedControlView(
-                        segments: Segment.allCases,
-                        selectedSegment: $selected,
-                        isWithBorder: false,
-                        fontTitle: robotoMedium,
-                        fontSize: 14.0
-                    )
-                    
+                    VStack(alignment: .leading){
+                        SegmentedControlView(
+                            segments: Segment.allCases,
+                            selectedSegment: $selected,
+                            isWithBorder: false,
+                            fontTitle: robotoMedium,
+                            fontSize: 14.0
+                        )
+                    }
                     switch selected {
                     case .message:
-                        ActivityCell(isFor: selected.rawValue, status: .constant(""))
+                        if messageList.isEmpty {
+                            NoDataView(message: "No message Found")
+                        }else{
+                            ActivityCell(isFor: selected.rawValue, status: .constant(""))
+                        }
                     case .bid:
                         if offerList.isEmpty {
                             NoDataView(message: "No bids Found")

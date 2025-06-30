@@ -163,8 +163,6 @@ struct SignUpScreen: View {
                         withAnimation { showError = false }
                     })
             })
-            
-           
     }
     
    

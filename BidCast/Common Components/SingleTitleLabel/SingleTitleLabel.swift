@@ -13,7 +13,7 @@ struct SingleTitleLabel: View {
     var lineLength: CGFloat = 32
     var textColor : Color?
     var fontName = poppinsSemiBold
-    var fontValue : CGFloat = 23
+    var fontValue : CGFloat = 18
     
     var body: some View {
         HStack {
@@ -23,7 +23,7 @@ struct SingleTitleLabel: View {
                     .foregroundStyle(.text)
                     .foregroundColor(textColor)
             }
-           .padding([.leading ,.trailing], Leading)
+            .padding([.leading ,.trailing], 7.0)
             Spacer()
         }
     }

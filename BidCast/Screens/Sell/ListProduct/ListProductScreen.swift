@@ -52,9 +52,7 @@ struct ListProductScreen: View {
                         },
                         count: .constant(0)
                     )
-                   
                 }
-                
                 ScrollView(showsIndicators:false){
                     
                     MediaPickerView(uploadedImageUrls: $imageUrls)
@@ -117,6 +115,7 @@ struct ListProductScreen: View {
                             request.pricing = price
                         })
                         .keyboardType(.numberPad)
+                        .padding(.horizontal , 12)
                         
                         MenuCell( title: "Flash Sale",fontValue: 16.0,menuImg: "",isSelectable: true, isTappedSwitch: $isTappedFlash,onToggle: { value in
                             if value == true{
@@ -204,9 +203,6 @@ struct ListProductScreen: View {
                             withAnimation { showError = false }
                         })
                 })
-                
-              
-                
             }
 //            .padding([.leading,.trailing],12)
         }
@@ -229,9 +225,6 @@ struct ListProductScreen: View {
         .onTapGesture {
             UIApplication.shared.endEditing()
         }
-        
-    
-    
     }
 
     func categorySuccess() {

@@ -224,15 +224,15 @@ struct MenuScreen: View {
         }
     }
     
-    func handleUserLogout() {
-        DispatchQueue.main.async {
-            UserDefaultsManager.shared.clearAllValues()
-            DispatchQueue.main.async {
-                appRootManager.currentRoot = .authentication
-                self.presentationMode.wrappedValue.dismiss()
-            }
-        }
-    }
+//    func handleUserLogout() {
+//        DispatchQueue.main.async {
+//            UserDefaultsManager.shared.clearAllValues()
+//            DispatchQueue.main.async {
+//                appRootManager.currentRoot = .authentication
+//                self.presentationMode.wrappedValue.dismiss()
+//            }
+//        }
+//    }
     
     func handleMenuClick(option: String) {
         withAnimation(.snappy) {
@@ -300,7 +300,7 @@ struct MenuScreen: View {
    
     func handleSuccess() {
         if viewModel.logOutResponse != nil {
-            handleUserLogout()
+//            handleUserLogout()
         }
     }
 }

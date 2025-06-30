@@ -23,6 +23,7 @@ struct TabbarScreen: View {
     @Environment(\.presentationMode) var presentationMode
     @State private var showOptions = true
     @State private var verifiedOnly = false
+    @State private var navigateToAccountScreen = false
     
     var body: some View {
         ZStack {
@@ -58,6 +59,8 @@ struct TabbarScreen: View {
             //CusNavLink(doNavigate: $navigateToLesson, destination: SelectShowScreen())
             CusNavLink(doNavigate: $navigateTogetStarted, destination: LetsPrepare())
             CusNavLink(doNavigate: $navigateTolist, destination: ListProductScreen())
+            CusNavLink(doNavigate: $navigateToAccountScreen, destination: AccountScreen(isNavFrom : true))
+            
         }
         //
         
@@ -78,6 +81,8 @@ struct TabbarScreen: View {
                         navigateTogetStarted = true
                     } else if tappedTab == .listProduct {
                         navigateTolist = true
+                    }else if tappedTab == .sellerHub{
+                        navigateToAccountScreen = true
                     }
                 } onTapCancel: {
                     showSellSheet = false

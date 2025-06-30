@@ -23,8 +23,8 @@ struct SellScreen: View {
             Spacer()
             VStack{
                 LabelWithButton(
-                    title: "Sell".localized,
-                    trailingImgArr: [.cancel],
+                    title: "Sell On Bidcast".localized,
+                    trailingImgArr: [.icCancel],
                     onClickTrailing: { _ in
                         self.onTapCancel()
 //                        self.presentationMode.wrappedValue.dismiss()
@@ -38,31 +38,27 @@ struct SellScreen: View {
                         switch ind {
                         case 0: onTap(.listProduct)
                         case 1: onTap(.lesson)
+                        case 2: onTap(.sellerHub)
                         default: break
                         }
                     }
                     )
-                   
                 }
+                .frame(height: 80)
+                .padding([.leading,.trailing],12)
+
             }
             .padding(.bottom,20)
-            .background(.bg)
-           
-            
+            .background(.white)
             CusNavLink(doNavigate: $navigateToLisProduct, destination: ListProductScreen())
 //            CusNavLink(doNavigate: $navigateTolesson, destination: LessonScreen())
 //            CusNavLink(doNavigate: $navigateTolesson, destination: SelectShowScreen())
         }
         .frame(maxWidth: .infinity,maxHeight: .infinity)
         .padding(.all,2)
-//        .background(.black.opacity(0.5))
         .edgesIgnoringSafeArea(.all)
     }
 }
-
-//#Preview {
-//    SellScreen()
-//}
 
 
 enum SellTabOption {

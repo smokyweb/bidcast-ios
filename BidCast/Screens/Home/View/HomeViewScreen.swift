@@ -14,11 +14,11 @@ struct HomeViewScreen: View {
     @State var navigateToLiveStream = false
     @State var index = 0
     let images = Array(1...10)
-       
-       let columns = [
-           GridItem(.flexible()),
-           GridItem(.flexible())
-       ]
+    
+    let columns = [
+        GridItem(.flexible()),
+        GridItem(.flexible())
+    ]
     @Binding var showCategory : String
     @State var viewModel = HomeViewModel()
     @State var liveShowsData = [HomeModel]()
@@ -30,117 +30,121 @@ struct HomeViewScreen: View {
     @State var navigateToNoti : Bool = false
     
     var body: some View {
-            VStack(spacing:0){
-                VStack{
-                    PrimaryHeader(
-                        title: comeFromExploreScreen ? showCategory.capitalizingFirstLetter() : "",
-                        isForLogo: comeFromExploreScreen ? false : true,
-                        leadingImgArr: [comeFromExploreScreen ? .icBack : .appName],
-                        trailingImgArr: [.search,.notification],
-                        onClickLeading: { index in
-                            if comeFromExploreScreen{
-                                self.presentationMode.wrappedValue.dismiss()
-                            }
-                        },
-                        onClickTrailing: { index in
+        VStack(spacing:0){
+            VStack{
+                PrimaryHeader(
+                    title: comeFromExploreScreen ? showCategory.capitalizingFirstLetter() : "",
+                    isForLogo: comeFromExploreScreen ? false : true,
+                    leadingImgArr: [comeFromExploreScreen ? .icBack : .appName],
+                    trailingImgArr: [.search,.notification],
+                    onClickLeading: { index in
+                        if comeFromExploreScreen{
+                            self.presentationMode.wrappedValue.dismiss()
+                        }
+                    },
+                    onClickTrailing: { index in
+                        if index == 0{
+                            print("For Search Navigation")
+                        }else{
                             navigateToNoti = true
-                        },
-                        count: .constant(0)
-                    )
-                }
-                
-                ScrollView(showsIndicators:false){
-                    VStack(alignment: .leading,spacing: 12){
-                        SegmentedControlView(segments: HomeButton.allCases, selectedSegment:$selectedButton, isWithBorder: true)
-                        ButtonTitleLabel(
-                            titles: ["Live Now", "Popular", "Coming Soon"],
-                            fontValue: 18,
-                            textColor: .blue
-                        ) { selected in
-                            print("Tapped:", selected)
-                            Task{
-                                SVProgressHUD.show()
-                                liveShowsData.removeAll()
-                                var selection = ""
-                                if selected == "Live Now"{
-                                    selection = "live"
-                                }else if selected == "Popular"{
-                                    selection = "popular"
-                                }else{
-                                    selection = "upcoming"
+                        }
+                    },
+                    count: .constant(0)
+                )
+            }
+            
+            ScrollView(showsIndicators:false){
+                VStack(alignment: .leading,spacing: 12){
+                    SegmentedControlView(segments: HomeButton.allCases, selectedSegment:$selectedButton, isWithBorder: true)
+                    ButtonTitleLabel(
+                        titles: ["Live Now", "Popular", "Coming Soon"],
+                        fontValue: 18,
+                        textColor: .blue
+                    ) { selected in
+                        print("Tapped:", selected)
+                        Task{
+                            SVProgressHUD.show()
+                            liveShowsData.removeAll()
+                            var selection = ""
+                            if selected == "Live Now"{
+                                selection = "live"
+                            }else if selected == "Popular"{
+                                selection = "popular"
+                            }else{
+                                selection = "upcoming"
+                            }
+                            await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: selection))
+                            await SVProgressHUD.dismiss()
+                            self.success()
+                        }
+                    }
+                    if liveShowsData.isEmpty{
+                        NoDataView(message: "No Shows found")
+                    }else{
+                        LazyVGrid(columns: columns, spacing: 12) {
+                            //                            let liveData = Array(0..<liveShowsData.count)
+                            ForEach(liveShowsData.indices, id: \.self) { index in
+                                let item = liveShowsData[index]
+                                
+                                ImageCollectionView(profileImg: item.user?.profile_image ?? "",
+                                                    profileName: item.user?.name ?? "",
+                                                    textSize: 12.0,
+                                                    image: item.thumbnail?.first ?? "",
+                                                    category: item.category?.name ?? "",
+                                                    title2:item.title ?? "",
+                                                    categorySize: 8,
+                                                    title2Size: 12.0){
+                                    
+                                    print("babumoshai tapped the card!,inex \(index)")
+                                    self.index = index
+                                    userId = "\(item.user?.id ?? 0)"
+                                    navigateToLiveStream = true
                                 }
-                                await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: selection))
-                                await SVProgressHUD.dismiss()
-                                self.success()
+                                                    .background(.bg)
+                                                    .frame(maxWidth: .infinity)
+                                                    .frame(height: 280)
+                                
+                                                    .cornerRadius(10)
                             }
                         }
-                        if liveShowsData.isEmpty{
-                            NoDataView(message: "No Shows found")
-                        }else{
-                            LazyVGrid(columns: columns, spacing: 12) {
-                                //                            let liveData = Array(0..<liveShowsData.count)
-                                ForEach(liveShowsData.indices, id: \.self) { index in
-                                    let item = liveShowsData[index]
-                                    
-                                    ImageCollectionView(profileImg: item.user?.profile_image ?? "",
-                                                        profileName: item.user?.name ?? "",
-                                                        textSize: 13.0,
-                                                        image: item.thumbnail?.first ?? "",
-                                                        category: item.category?.name ?? "",
-                                                        title2:item.title ?? "",
-                                                        categorySize: 8,
-                                                        title2Size: 12.0){
-                                        
-                                        print("babumoshai tapped the card!,inex \(index)")
-                                        self.index = index
-                                        userId = "\(item.user?.id ?? 0)"
-                                        navigateToLiveStream = true
-                                    }
-                                                        .background(.bg)
-                                                        .frame(maxWidth: .infinity)
-                                                        .frame(height: 280)
-                                    
-                                                        .cornerRadius(10)
-                                }
-                            }
-                    }
                     }
                 }
-                .padding([.leading,.trailing],12)
-                .padding(.top , 10)
-                
-                CusNavLink(doNavigate: $navigateToLiveStream, destination: LiveStream(currentStreamIndex :self.$index, userId : $userId ))
-                CusNavLink(doNavigate: $navigateToNoti, destination: NotificationScreen())
             }
-            .background(.white)
-            .onAppear{
-                Task{
-                    SVProgressHUD.show()
-                    await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: "live",category: showCategory))
-                    await SVProgressHUD.dismiss()
-                    self.success()
-                }
+            .padding([.leading,.trailing],12)
+            .padding(.top , 10)
+            
+            CusNavLink(doNavigate: $navigateToLiveStream, destination: LiveStream(currentStreamIndex :self.$index, userId : $userId ))
+            CusNavLink(doNavigate: $navigateToNoti, destination: NotificationScreen())
+        }
+        .background(.white)
+        .onAppear{
+            Task{
+                SVProgressHUD.show()
+                await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: "live",category: showCategory))
+                await SVProgressHUD.dismiss()
+                self.success()
             }
-            .onReceive(viewModel.$liveShowsResponse){ reponse in
-               
-            }
+        }
+        .onReceive(viewModel.$liveShowsResponse){ reponse in
+            
+        }
     }
-   
-
+    
+    
     func success() {
         let response = viewModel.liveShowsResponse
-            if response.status == "success" {
-                liveShowsData = response.data ?? [HomeModel]()
-                
-            } else {
-                showError = true
-                alertType = .sheetType(
-                    icon: .alert,
-                    title: response.error_type?.capitalized ?? "",
-                    message: response.message?.capitalized ?? "",
-                    primaryBtnText: "",
-                    secondaryBtnText: AppString.ok.localized
-                )
+        if response.status == "success" {
+            liveShowsData = response.data ?? [HomeModel]()
+            
+        } else {
+            showError = true
+            alertType = .sheetType(
+                icon: .alert,
+                title: response.error_type?.capitalized ?? "",
+                message: response.message?.capitalized ?? "",
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
+            )
             
             
         }
@@ -170,7 +174,7 @@ struct ButtonTitleLabel: View {
     var titles: [String] = ["Live Now", "Popular", "Coming Soon"]
     var fontName = poppinsRegular
     var selectedFontName = poppinsSemiBold
-    var fontValue: CGFloat = 23
+    var fontValue: CGFloat = 18
     var textColor: Color = .gray
     var selectedColor: Color = .black
     var separatorColor: Color = .gray
@@ -201,6 +205,6 @@ struct ButtonTitleLabel: View {
                 }
             }
         }
-        .padding(.horizontal, 16)
+        .padding(.horizontal, 6)
     }
 }

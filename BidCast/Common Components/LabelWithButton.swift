@@ -22,7 +22,7 @@ struct LabelWithButton: View {
             HStack {
 
                 Text(title)
-                    .font(.custom(nunitoBlack, fixedSize: 18))
+                    .font(.custom(poppinsSemiBold, fixedSize: 20))
                     .padding(.leading,8)
                     .fontWeight(.heavy)
                     .foregroundStyle(.black)

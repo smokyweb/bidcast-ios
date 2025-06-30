@@ -41,6 +41,7 @@ struct AccountScreen: View {
     @State var navigateToPremierShop : Bool = false
     @State var navigateToAffilateProgram : Bool = false
     @State var navigateToAnalytics : Bool = false
+    @State var isNavFrom : Bool = false
     
     @State var navigateToProfile : Bool = false
     
@@ -66,7 +67,6 @@ struct AccountScreen: View {
                     onClickTrailing: nil,
                     count: .constant(0)
                 )
-               
             }
             ScrollView(showsIndicators: false){
                 VStack(alignment: .leading,spacing: 4){
@@ -291,7 +291,7 @@ struct AccountScreen: View {
         }
         .edgesIgnoringSafeArea(.bottom)
         .background(.bg.opacity(0.5))
-       
+        .toolbar(isNavFrom ? .hidden : .visible, for: .tabBar)
         .bottomSheet(isPresented: $userLogOut, height: screenHeight/2, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: {  }, content: {
             LogOutSheet(onLogoutClick: {
                 withAnimation(.snappy) { userLogOut = false }
@@ -317,15 +317,20 @@ struct AccountScreen: View {
     }
     func handleUserLogout() {
         DispatchQueue.main.async {
-            UserDefaults.accessToken.removeAll()
+//            UserDefaults.accessToken.removeAll()
             UserDefaultsManager.shared.clearAllValues()
-            UserDefaultsManager.shared.remove(forKey: .isLoggedIn)
-            UserDefaultsManager.shared.remove(forKey: .userDetail)
+//            UserDefaultsManager.shared.remove(forKey: .isLoggedIn)
+//            UserDefaultsManager.shared.remove(forKey: .userDetail)
 
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                withAnimation {
-                    appRootManager.currentRoot = .splash
-                }
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+//                withAnimation {
+//                    appRootManager.currentRoot = .splash
+//                }
+//            }
+            DispatchQueue.main.async {
+                print("🔎 Logout called at \(Date())")
+                appRootManager.currentRoot = .authentication
+                self.presentationMode.wrappedValue.dismiss()
             }
         }
     }

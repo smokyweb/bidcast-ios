@@ -13,7 +13,7 @@ struct SegmentedControlView<T: Hashable & CustomStringConvertible>: View {
     var isWithBorder: Bool = false
     var onSegmentChanged: ((T) -> Void)?
     var fontTitle : String = poppinsRegular
-    var fontSize : Double = 13.0
+    var fontSize : Double = 16.0
     
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) { // Make the HStack scrollable
@@ -60,7 +60,7 @@ struct SegmentedControlView<T: Hashable & CustomStringConvertible>: View {
     //MARK: getForegroundColor.
     private func getForegroundColor(for segment: T) -> Color {
         if isWithBorder {
-            return selectedSegment == segment ? .white : .mediumGray
+            return selectedSegment == segment ? .white : .navyBlue
         } else {
             return selectedSegment == segment ? .darkBlue : .mediumGray
         }

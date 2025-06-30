@@ -45,7 +45,7 @@ struct ListCell: View {
 //                        }
 //                    }
                     CustomProfileImage(url: image,isCircular: false,size: 42)
-                        .frame(width: 40,height: 40)
+                        .frame(width: 50,height: 50)
                     .background(Color(hex: tintColot) ?? .clear)
                     .mask {
                         if isComeFrom == "ShippingScreen" {
@@ -61,7 +61,7 @@ struct ListCell: View {
 //                    .scaledToFill()
 //                    .frame(width: 40,height: 40)
 //                    .padding(.leading ,10)
-                VStack(alignment: .leading,spacing: 6) {
+                VStack(alignment: .leading,spacing: 3) {
                     Text(title)
                         .font(.custom(titleFontName, fixedSize: titleFontSize))
                         .foregroundStyle(.black)
@@ -74,13 +74,15 @@ struct ListCell: View {
                         .padding(.leading, 10)
                 }
                 Spacer()
-                if !isVectorImgHidden{
-                    Image(vectorImg ?? .defaultUser )
+                if !isVectorImgHidden {
+                    Image(vectorImg ?? .defaultUser)
                         .resizable()
+                        .renderingMode(.template)
                         .scaledToFill()
-                        .frame(width: 24,height: 24)
+                        .frame(width: 24, height: 24)
                         .rotationEffect(Angle(degrees: angle))
-                        .padding(.trailing ,8)
+                        .foregroundColor(.black)
+                        .padding(.trailing, 8)
                 }
                 if isDisplayPrice{
                     Text(price)
@@ -92,8 +94,8 @@ struct ListCell: View {
             }
             .frame(maxWidth: .infinity )
         }
-        .frame(height: 60)
-        .background(.white)
+        .frame(height: 72)
+        .background(.ghostwhite)
         .cornerRadius(8.0)
         .padding([.leading,.trailing], 0)
         .edgesIgnoringSafeArea(.all)
