@@ -12,7 +12,7 @@ class AppRootManager: ObservableObject {
     @Published var currentRoot: eAppRoots
 
         init() {
-            if let _: Bool = UserDefaultsManager.shared.value(forKey: .isLoggedIn) {
+            if !UserDefaults.accessToken.isEmpty {
                 currentRoot = .tabBar
             } else {
                 currentRoot = .authentication

@@ -12,4 +12,5 @@
 #endif /* ZegoBridgeHeader_h */
 
 #import <ZegoExpressEngine/ZegoExpressEngine.h>
+#import "ZIM/ZIM.h"
 

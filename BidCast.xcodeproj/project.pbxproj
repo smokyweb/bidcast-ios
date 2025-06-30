@@ -114,6 +114,7 @@
 		35CCE01B2DD8781B00760CEE /* ScheduleViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CCE01A2DD8781B00760CEE /* ScheduleViewModel.swift */; };
 		35CCE01D2DD8782600760CEE /* ScheduleModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CCE01C2DD8782600760CEE /* ScheduleModel.swift */; };
 		35CCE01F2DD8A8BC00760CEE /* SellingTips.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CCE01E2DD8A8BC00760CEE /* SellingTips.swift */; };
+		35D6B0012E12A00D00068445 /* KeyboardResponder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35D6B0002E12A00D00068445 /* KeyboardResponder.swift */; };
 		35F63D682DDC5DF100D29878 /* SwiftfulLoadingIndicators in Frameworks */ = {isa = PBXBuildFile; productRef = 35F63D672DDC5DF100D29878 /* SwiftfulLoadingIndicators */; };
 		35F63D6B2DDCBE5B00D29878 /* Stripe in Frameworks */ = {isa = PBXBuildFile; productRef = 35F63D6A2DDCBE5B00D29878 /* Stripe */; };
 		35F63D6D2DDCBE5B00D29878 /* StripeApplePay in Frameworks */ = {isa = PBXBuildFile; productRef = 35F63D6C2DDCBE5B00D29878 /* StripeApplePay */; };
@@ -573,6 +574,7 @@
 		35CCE01A2DD8781B00760CEE /* ScheduleViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleViewModel.swift; sourceTree = "<group>"; };
 		35CCE01C2DD8782600760CEE /* ScheduleModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleModel.swift; sourceTree = "<group>"; };
 		35CCE01E2DD8A8BC00760CEE /* SellingTips.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SellingTips.swift; sourceTree = "<group>"; };
+		35D6B0002E12A00D00068445 /* KeyboardResponder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardResponder.swift; sourceTree = "<group>"; };
 		35F8B5582DED805100FE0778 /* LiveShowsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveShowsViewModel.swift; sourceTree = "<group>"; };
 		35F8B55A2DED816300FE0778 /* LiveShowsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveShowsModel.swift; sourceTree = "<group>"; };
 		35F8B55C2DED843A00FE0778 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
@@ -1889,6 +1891,7 @@
 				99C9086E2DC8CD790054620B /* MenuScreen */,
 				99C908782DC8CD790054620B /* NewsScreen */,
 				99C908842DC8CD790054620B /* SplashScreen */,
+				35D6B0002E12A00D00068445 /* KeyboardResponder.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -4170,6 +4173,7 @@
 				D4C4D7972DD31C2D00274E51 /* ActivityCell.swift in Sources */,
 				99C9081C2DC8CD6A0054620B /* DropDown.swift in Sources */,
 				D4181BC32E0D4B15002962A3 /* KycModel.swift in Sources */,
+				35D6B0012E12A00D00068445 /* KeyboardResponder.swift in Sources */,
 				D4181BC72E0D4B15002962A3 /* KycViewModel.swift in Sources */,
 				D4A7F9042DDDA8C5001FC705 /* AddressesScreen.swift in Sources */,
 				99C9081D2DC8CD6A0054620B /* TitleWithLine.swift in Sources */,

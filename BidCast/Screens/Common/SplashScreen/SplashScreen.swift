@@ -12,18 +12,11 @@ struct SplashScreen: View {
     @EnvironmentObject private var appRootManager: AppRootManager
 
     func handleUserLogin() {
-        if let _: Bool = UserDefaultsManager.shared.value(forKey: .isLoggedIn) {
-//            if let userData: LoginModel = UserDefaultsManager.shared.getModel(forKey: .userDetail) {
+        if !UserDefaults.accessToken.isEmpty {
                 withAnimation(.snappy) {
-//                    if userData.role_id == 2 {
                         DispatchQueue.main.async {
                             appRootManager.currentRoot = .tabBar
                         }
-//                    }else{
-//                        DispatchQueue.main.async {
-//                            appRootManager.currentRoot = .authentication
-//                        }
-//                    }
                 }
            
         } else {
@@ -42,16 +35,11 @@ struct SplashScreen: View {
                 .padding(.leading,-20)
                 .ignoresSafeArea(.all)
         }
-        .onFirstAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                  
-                   guard appRootManager.currentRoot == .splash else {
-                       print("🚫 Splash exited early")
-                       return
-                   }
-                   handleUserLogin()
-               }
-        }
+        .onAppear(perform: {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3, execute: {
+                handleUserLogin()
+            })
+        })
 
     }
 }

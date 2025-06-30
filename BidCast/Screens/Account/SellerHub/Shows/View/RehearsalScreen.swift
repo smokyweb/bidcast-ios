@@ -41,8 +41,19 @@ struct RehearsalScreen: View {
     @State private var showStartTime: Date? = nil
     @State private var liveElapsedTime: String = "00:00:00"
     
-//    @StateObject var zegoChat = ZIMChatManager()
-//    @StateObject var chatManager = ZIMChatManager(userID: "\(UserDefaults.userId)", userName: UserDefaults.userName)
+    @ObservedObject var chatManager = ZIMChatManager.shared
+    
+    var sheetHeight: CGFloat {
+        switch currentBottomSheet {
+        case .more: return screenHeight * 0.65
+        case .promote: return screenHeight * 0.4
+        case .clip: return screenHeight * 0.5
+        case .share: return 500 // Or screenHeight * 0.5
+        case .shop: return screenHeight * 0.7
+        case .endShow: return screenHeight * 0.4
+        default: return screenHeight * 0.65
+        }
+    }
     
     var body: some View {
         ZStack {
@@ -74,7 +85,14 @@ struct RehearsalScreen: View {
                             .foregroundColor(.white)
                         
                         Button(action: {
-                            self.presentaionMode.wrappedValue.dismiss()
+                            if !isLive{
+                                self.presentaionMode.wrappedValue.dismiss()
+                            }else{
+                                self.showSellSheet = true
+                                currentBottomSheet = .endShow
+                            }
+//
+                           
                         }) {
                             Image(.cancel)
                                 .resizable()
@@ -210,11 +228,11 @@ struct RehearsalScreen: View {
             
             VStack(alignment: .leading, spacing: 8) {
                 Spacer()
-                if comments.count > 0{
+                if chatManager.messages.count > 0{
                     ScrollViewReader { proxy in
                         ScrollView {
                             VStack(alignment: .leading, spacing: 8) {
-                                ForEach(comments) { comment in
+                                ForEach(chatManager.messages) { comment in
                                     HStack {
                                         Image(comment.image)
                                             .resizable()
@@ -235,9 +253,9 @@ struct RehearsalScreen: View {
                                 }
                             }
                         }
-                        .onChange(of: comments) { _ in
+                        .onChange(of: chatManager.messages) { _ in
                             // 💬 Auto scroll to last message
-                            if let last = comments.last {
+                            if let last = chatManager.messages.last {
                                 withAnimation {
                                     proxy.scrollTo(last.id, anchor: .bottom)
                                 }
@@ -271,17 +289,7 @@ struct RehearsalScreen: View {
                                     Button(action: {
                                         print("📨 Sending message: \(commentText)")
                                         let textToSend = commentText.trimmingCharacters(in: .whitespacesAndNewlines)
-//                                        ZegoExpressEngine.shared().sendBroadcastMessage(commentText, roomID: liveRoomId) { errorCode, messageID in
-//                                            
-//                                            if errorCode == 0 {
-//                                                let newComment = Comment(image: UserDefaults.profileURL,username: UserDefaults.userName.capitalizingFirstLetter(), message: textToSend)
-//                                                comments.append(newComment)
-//                                                print("✅ Broadcast message sent successfully, msgID: \(messageID)")
-//                                            } else {
-//                                                print("❌ Failed to send broadcast message, errorCode: \(errorCode)")
-//                                            }
-//                                        }
-                                        ZIMChatManager.shared.sendMessage(message: commentText,roomId: self.liveRoomId)
+                                        ZIMChatManager.shared.sendMessage(message: textToSend,roomId: self.liveRoomId)
                                         commentText = ""
                                     }) {
                                         Image(systemName: "paperplane.fill")
@@ -296,33 +304,36 @@ struct RehearsalScreen: View {
                             }
                         }
                         .padding(.horizontal)
+                        .padding(.bottom,8)
                     }
-                    Button(action: {
-                        Task {
-                            SVProgressHUD.show()
-                            let is_Live = isLive ? "false" : "true"
-                            await viewModel.UpdateLiveShows(param: LiveShowUpdateRequest(schedule_show_id: showUd, is_live: is_Live))
-                            await SVProgressHUD.dismiss()
-                            success()
+                    if !isLive{
+                        Button(action: {
+                            Task {
+                                SVProgressHUD.show()
+                                let is_Live = "true"
+                                await viewModel.UpdateLiveShows(param: LiveShowUpdateRequest(schedule_show_id: showUd, is_live: is_Live))
+                                await SVProgressHUD.dismiss()
+                                success()
+                            }
+                        }) {
+                            Text("Start Show")
+                                .font(.custom(poppinsBold, size: 13.0))
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(Color.red)
+                                .foregroundColor(.white)
+                                .cornerRadius(12)
                         }
-                    }) {
-                        Text(isLive ? "End Show" : "Start Show")
-                            .font(.custom(poppinsBold, size: 13.0))
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.red)
-                            .foregroundColor(.white)
-                            .cornerRadius(12)
+                        .padding(.horizontal)
+                        .padding(.bottom, 20)
                     }
-                    .padding(.horizontal)
-                    .padding(.bottom, 20)
                 }
             }
             
         }
         .bottomSheet(
             isPresented: $showSellSheet,
-            height: screenHeight * 0.65, // Adjust as needed
+            height: sheetHeight, // Adjust as needed
             topBarCornerRadius: 20,
             contentBackgroundColor: Color(.systemBackground),
             topBarBackgroundColor: Color(.systemBackground),
@@ -388,6 +399,25 @@ struct RehearsalScreen: View {
                             Product(imageName: "IMG_1340", title: "AirPods Max", subtitle: "Buy Now: $549", detail: "0 Bids", statusColor: .green)
                         ]
                     )
+                case .endShow:
+                    EndShowBottomSheetView(
+                        isPresented: $showSellSheet,
+                        onCreateRaid: {
+                            print("Raid Created")
+                        },
+                        onEndShow: {
+                            Task {
+                                SVProgressHUD.show()
+                                let is_Live = "false"
+                                await viewModel.UpdateLiveShows(param: LiveShowUpdateRequest(schedule_show_id: showUd, is_live: is_Live))
+                                await SVProgressHUD.dismiss()
+                                success()
+                            }
+                           
+                           
+                            self.isLive = false
+                        }
+                    )
                 case .none:
                     EmptyView()
                 }
@@ -399,10 +429,6 @@ struct RehearsalScreen: View {
             showTopBadge = true
             
             ZIMChatManager.shared.login(userID: "\(UserDefaults.userId)", userName: UserDefaults.userName)
-//            chatManager.loginCompletion = {
-//                print("✅ ChatManager login completed")
-//                chatManager.updateRoomID(newRoomID: roomId)
-//            }
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                 showReadyModal = true
             }
@@ -449,19 +475,18 @@ struct RehearsalScreen: View {
                     print("✅ Logged into room: \(roomId)")
                     self.liveRoomId = roomId
                     
-//                    chatManager.updateRoomID(newRoomID: liveRoomId)
-                    
                     ZegoExpressEngine.shared().startPublishingStream(roomId)
                     ZIMChatManager.shared.joinRoom(roomID: roomId)
                     self.showLiveControls = true
                     self.showPreLiveControls = false
+                    self.isLive = true
                 } else {
                     print("❌ Failed to login to room: \(errorCode)")
                 }
             }
             
             if data.is_live == true {
-                self.showStartTime = Date() // Start counting from now
+                self.showStartTime = Date()
                 startLiveTimer()
             }
             
@@ -484,9 +509,10 @@ struct RehearsalScreen: View {
     
     func logoutRoom() {
         ZegoExpressEngine.shared().logoutRoom()
-//        ZIMChatManager.shared.logout()
-//        chatManager.leaveCurrentRoom()
-//        chatManager.logout()
+        ZIMChatManager.shared.logout()
+        chatManager.messages.removeAll()
+        self.isLive = false
+        showSellSheet = false
     }
     
     @ViewBuilder
@@ -607,5 +633,5 @@ struct ZegoRehearsalScreen: UIViewRepresentable {
 
 
 enum SideMenu {
-    case more, promote, clip, share, switchView, shop
+    case more, promote, clip, share, switchView, shop,endShow
 }

@@ -317,20 +317,15 @@ struct AccountScreen: View {
     }
     func handleUserLogout() {
         DispatchQueue.main.async {
-//            UserDefaults.accessToken.removeAll()
-            UserDefaultsManager.shared.clearAllValues()
+            UserDefaults.accessToken.removeAll()
+//            UserDefaultsManager.shared.clearAllValues()
 //            UserDefaultsManager.shared.remove(forKey: .isLoggedIn)
 //            UserDefaultsManager.shared.remove(forKey: .userDetail)
 
-//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-//                withAnimation {
-//                    appRootManager.currentRoot = .splash
-//                }
-//            }
-            DispatchQueue.main.async {
-                print("🔎 Logout called at \(Date())")
-                appRootManager.currentRoot = .authentication
-                self.presentationMode.wrappedValue.dismiss()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                withAnimation {
+                    appRootManager.currentRoot = .authentication
+                }
             }
         }
     }

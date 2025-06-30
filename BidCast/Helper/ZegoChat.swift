@@ -17,11 +17,20 @@ class ZIMChatManager: NSObject, ObservableObject {
         var roomID = ""
     
         func initialize(appID: UInt32, appSign: String) {
+            self.messages.removeAll()
+            if zim != nil {
+                    print("⚠️ Babumoshai, ZIM already initialized! Returning existing instance.")
+                    return
+                }
+                print("✅ Babumoshai, initializing ZIM at \(Date())")
             let config = ZIMAppConfig()
             config.appID = appID
             config.appSign = appSign
             zim = ZIM.create(with: config)
-            zim?.setEventHandler(self)
+//            zim?.setEventHandler(self)
+            zim?.setEventHandler(ZIMGlobalEventHandler.shared)
+            print("🧩 Babumoshai, ZIM instance memory: \(Unmanaged.passUnretained(zim!).toOpaque())")
+            
         }
     
         func login(userID: String, userName: String) {
@@ -36,21 +45,25 @@ class ZIMChatManager: NSObject, ObservableObject {
                 if errorInfo.code.rawValue == 0 {
                     print("✅ ZIM login success babumoshai!")
                 } else {
-                    print("❌ ZIM login failed babumoshai: \(errorInfo.message ?? "")")
+                    print("❌ ZIM login failed babumoshai: \(errorInfo.message)")
                 }
             }
         }
     
     func joinRoom(roomID: String) {
+        guard let zim = zim else {
+               print("❌ Babumoshai, ZIM not initialized!")
+               return
+           }
+        zim.setEventHandler(ZIMGlobalEventHandler.shared)
         self.roomID = roomID
-
         let roomInfo = ZIMRoomInfo()
         roomInfo.roomID = roomID
 
         let config = ZIMRoomAdvancedConfig()
 //        config.isUserStatusNotify = true
 
-        zim?.enterRoom(with: roomInfo, config: config) { roomFullInfo, errorInfo in
+        zim.enterRoom(with: roomInfo, config: config) { roomFullInfo, errorInfo in
             if errorInfo.code.rawValue == 0 {
                 print("✅ Babumoshai, joined ZIM room: \(roomID)")
             } else {
@@ -70,7 +83,7 @@ class ZIMChatManager: NSObject, ObservableObject {
             print("❌ Babumoshai, ZIM not initialized!")
             return
         }
-        
+        zim.setEventHandler(ZIMGlobalEventHandler.shared)
         guard !userID.isEmpty else {
             print("❌ Babumoshai, user not logged in!")
             return
@@ -106,30 +119,42 @@ class ZIMChatManager: NSObject, ObservableObject {
         func logout() {
             zim?.logout()
         }
+    func handleIncomingMessage(username: String, message: String) {
+        let newComment = Comment(
+            image: "",  // Add profile image if you have
+            username: username,
+            message: message
+        )
+        DispatchQueue.main.async {
+            self.messages.append(newComment)
+        }
     }
-    
-    extension ZIMChatManager: ZIMEventHandler {
-        func zim(_ zim: ZIM, connectionStateChanged state: ZIMConnectionState, event: ZIMConnectionEvent, extendedData: [AnyHashable : Any]) {
-                print("🔥 Babumoshai, connection state changed: \(state.rawValue)")
+    }
+
+
+
+class ZIMGlobalEventHandler: NSObject, ZIMEventHandler {
+    static let shared = ZIMGlobalEventHandler()
+
+    func zim(_ zim: ZIM, connectionStateChanged state: ZIMConnectionState, event: ZIMConnectionEvent, extendedData: [AnyHashable : Any]) {
+        print("🔥 Babumoshai, GLOBAL connection state changed: \(state.rawValue)")
+    }
+    func zim(_ zim: ZIM, roomMessageReceived messageList: [ZIMMessage], info: ZIMMessageReceivedInfo, fromRoomID: String) {
+        print("📥 Babumoshai, GLOBAL received \(messageList.count) message(s) in room:  at \(Date())")
+        for msg in messageList {
+            if let textMsg = msg as? ZIMTextMessage {
+                print("💬 Babumoshai, GLOBAL message content: \(textMsg.message) from: \(msg.senderUserID)")
                 
+                DispatchQueue.main.async {
+                    ZIMChatManager.shared.handleIncomingMessage(
+                        username: msg.senderUserID,
+                        message: textMsg.message
+                    )
+                }
+            } else {
+                print("⚠️ Babumoshai, GLOBAL unsupported message type received.")
             }
-        func zim(_ zim: ZIM, roomMessageReceived roomID: String, messageList: [ZIMMessage]) {
-               print("📥 Babumoshai, received \(messageList.count) message(s) in room: \(roomID)")
-
-               for msg in messageList {
-                   if let textMsg = msg as? ZIMTextMessage {
-                       DispatchQueue.main.async {
-                           let newComment = Comment(
-                               image: "",  // You can later attach sender profile image here
-                               username: msg.senderUserID,
-                               message: textMsg.message
-                           )
-                           self.messages.append(newComment)
-                       }
-                   } else {
-                       print("⚠️ Babumoshai, unsupported message type received.")
-                   }
-               }
-           }
+        }
     }
 
+}

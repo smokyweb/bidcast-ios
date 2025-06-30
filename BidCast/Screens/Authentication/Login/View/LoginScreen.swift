@@ -53,7 +53,7 @@ struct LoginScreen: View {
             ZStack {
                 VStack(alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/) {
                     Image(.logo1)
-                        .frame(width: screenWidth, height: screenHeight/3)
+                        .frame(width: screenWidth, height: screenHeight/3.8)
                         .edgesIgnoringSafeArea(.top)
                     Spacer()
                 }
@@ -157,7 +157,7 @@ struct LoginScreen: View {
                 
               
                 CusNavLink(doNavigate: $navigateToForgot, destination: ForgotScreen())
-                CusNavLink(doNavigate: $navigateTotab, destination: TabbarScreen())
+//                CusNavLink(doNavigate: $navigateTotab, destination: TabbarScreen())
                 CusNavLink(doNavigate: $navigateToLanguage, destination: LanguagePickerView())
                 CusNavLink(doNavigate: $navigateToSignUp, destination: SignUpScreen())
 
@@ -218,7 +218,12 @@ struct LoginScreen: View {
                 UserDefaultsManager.shared.setValue(dict.data?.roles?.name ??  "", forKey: .userRole)
                   
                 alertType = .sheetType(icon: .success, title: dict.status?.capitalized ?? "", message: AppString.chooseLanguage.localized, primaryBtnText: AppString.continueBtn.localized , secondaryBtnText: "", sheetThemeColor: .secondary)
-                withAnimation(.snappy) { navigateTotab = true }
+//                withAnimation(.snappy) { navigateTotab = true }
+                DispatchQueue.main.async {
+                           withAnimation {
+                               appRootManager.currentRoot = .tabBar
+                           }
+                       }
             }else{
                 alertType = .sheetType(icon: .alert, title: "Failed".capitalized, message: viewModel.errorMessage ?? "", primaryBtnText: AppString.ok.localized, secondaryBtnText: "", sheetThemeColor: .secondary)
                 withAnimation(.snappy) { showError = true }

@@ -11,7 +11,6 @@ import SwiftUI
 struct BidCastApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject private var appRootManager = AppRootManager()
-//    @State var ZIMChatManager = ZIMChatManager()
     init() {
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
@@ -42,16 +41,18 @@ struct BidCastApp: App {
                     NavigationContainer {
                         SplashScreen()
                     }
+                    .id(appRootManager.currentRoot.hashValue)
                     
                 case .authentication:
                     NavigationContainer {
                         AuthenticationStack()
                     }
-                    
+                    .id(appRootManager.currentRoot.hashValue)
                 case .tabBar:
                     NavigationContainer{
                         TabbarScreen()
                     }
+                    .id(appRootManager.currentRoot.hashValue)
                 }
                 
             }

@@ -40,14 +40,17 @@ struct LiveStream: View {
     @Environment(\.presentationMode) var presentationMode
     
     @ObservedObject var zegoManager = ZegoManager.shared
-    
+    @ObservedObject var chatManager = ZIMChatManager.shared
+    @StateObject private var keyboardResponder = KeyboardResponder()
     var localUserID = "\(UserDefaults.userId)"
-    
-    
     @State private var previewResetTrigger = false
-    
     @State private var showStartTime: Date? = nil
     @State private var liveElapsedTime: String = "00:00:00"
+    
+    var tabBarHeight: CGFloat {
+        UIApplication.shared.windows.first?.safeAreaInsets.bottom ?? 49
+    }
+    
     var body: some View {
         
         GeometryReader { geometry in
@@ -144,12 +147,12 @@ struct LiveStream: View {
                         .frame(maxWidth: .infinity, alignment: .trailing)
                         
                         // Comments Section
-                        if comments.count > 0 {
+                        if chatManager.messages.count > 0 {
                             HStack{
                                 ScrollViewReader { scrollProxy in
                                     ScrollView(.vertical, showsIndicators: false) {
                                         VStack(alignment: .leading, spacing: 8) {
-                                            ForEach(comments) { comment in
+                                            ForEach(chatManager.messages) { comment in
                                                 HStack(alignment: .center, spacing: 6) {
                                                     Image(comment.image)
                                                         .resizable()
@@ -172,10 +175,10 @@ struct LiveStream: View {
                                         }
                                         .padding(.horizontal)
                                     }
-                                    .onChange(of: comments) { _ in
+                                    .onChange(of: chatManager.messages) { _ in
                                         withAnimation {
                                             
-                                            if let lastID = comments.last?.id {
+                                            if let lastID = chatManager.messages.last?.id {
                                                 scrollProxy.scrollTo(lastID, anchor: .bottom)
                                             }
                                         }
@@ -286,16 +289,6 @@ struct LiveStream: View {
                                     Button(action: {
                                         let textToSend = commentText.trimmingCharacters(in: .whitespacesAndNewlines)
                                         let roomId = liveShowsData[currentStreamIndex].room_id ?? ""
-//                                        ZegoExpressEngine.shared().sendBroadcastMessage(commentText, roomID: roomId) { errorCode, messageID in
-//                                            
-//                                            if errorCode == 0 {
-//                                                let newComment = Comment(image: UserDefaults.profileURL,username: UserDefaults.userName.capitalizingFirstLetter(), message: textToSend)
-//                                                comments.append(newComment)
-//                                                print("✅ Broadcast message sent successfully, msgID: \(messageID)")
-//                                            } else {
-//                                                print("❌ Failed to send broadcast message, errorCode: \(errorCode)")
-//                                            }
-//                                        }
                                         ZIMChatManager.shared.sendMessage(message: commentText,roomId: roomId)
                                         commentText = ""
                                     }) {
@@ -311,10 +304,12 @@ struct LiveStream: View {
                             }
                         }
                         .padding(.horizontal)
-                        .padding(.bottom,80)
+                        .padding(.bottom, keyboardResponder.currentHeight == 0 ? (tabBarHeight + 20) : keyboardResponder.currentHeight)
+                        .animation(.easeOut(duration: 0.25), value: keyboardResponder.currentHeight)
                     }
                 }
                 .gesture(
+                   
                     DragGesture()
                         .updating($verticalGestureOffset) { value, state, _ in
                             
@@ -342,7 +337,12 @@ struct LiveStream: View {
                 )
                 CusNavLink(doNavigate: $navigateToProfile, destination: ProfileScreen(id:$id))
             }
-        }
+        }.gesture(
+            TapGesture().onEnded { _ in
+                hideKeyboard()
+            }
+        )
+
         .bottomSheet(isPresented: $zegoManager.streamInterrupted, height: screenHeight / 2.5, topBarCornerRadius: 25, showTopIndicator: false) {
             CommonBottomSheet(
                 sheetType: $zegoManager.alertType,
@@ -425,8 +425,10 @@ struct LiveStream: View {
     
     func logoutRoom() {
         ZegoExpressEngine.shared().logoutRoom()
+        
 //        chatManager.leaveCurrentRoom()
-//        chatManager.logout()
+        chatManager.logout()
+        chatManager.messages.removeAll()
         
     }
 }
@@ -457,16 +459,14 @@ struct ZegoPreviewView: UIViewRepresentable {
         return view
     }
     func updateUIView(_ uiView: UIView, context: Context) {
-            // Stop the previous stream
-            ZegoExpressEngine.shared().stopPlayingStream(context.coordinator.streamID)
-
-            // Start the new stream
-            let canvas = ZegoCanvas(view: uiView)
-            canvas.viewMode = .aspectFill
-            ZegoExpressEngine.shared().startPlayingStream(streamID, canvas: canvas)
-
-            // Update coordinator's streamID
-            context.coordinator.streamID = streamID
+        ZegoExpressEngine.shared().stopPlayingStream(context.coordinator.streamID)
+           
+           DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+               let canvas = ZegoCanvas(view: uiView)
+               canvas.viewMode = .aspectFill
+               ZegoExpressEngine.shared().startPlayingStream(streamID, canvas: canvas)
+               context.coordinator.streamID = streamID
+           }
         }
     
     static func dismantleUIView(_ uiView: UIView, coordinator: (Coordinator)) {
