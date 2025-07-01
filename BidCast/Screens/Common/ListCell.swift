@@ -95,7 +95,7 @@ struct ListCell: View {
             .frame(maxWidth: .infinity )
         }
         .frame(height: 72)
-        .background(.ghostwhite)
+        .background(.ghostWhite)
         .cornerRadius(8.0)
         .padding([.leading,.trailing], 0)
         .edgesIgnoringSafeArea(.all)
