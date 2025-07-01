@@ -20,7 +20,9 @@ struct TwoVerticalLabelCell<T: Hashable & CustomStringConvertible>: View {
     var h1fontSize = 20.0
     var h2fontname = poppinsRegular
     var h2fontSize = 12.0
-    
+
+    let columns: [GridItem]
+
     init(
         dataModel: [T],
         topLabel: @escaping (T) -> String,
@@ -29,20 +31,23 @@ struct TwoVerticalLabelCell<T: Hashable & CustomStringConvertible>: View {
         h1fontname: String = poppinsSemiBold,
         h1fontSize: Double = 20.0,
         h2fontname: String = poppinsRegular,
-        h2fontSize: Double = 12.0
+        h2fontSize: Double = 12.0,
+        columnsPerRow: Int = 3, // 🔥 You can control columns here
+        spacing: CGFloat = 16 // 🔥 Control item spacing here
     ) {
         self.dataModel = dataModel
         self.topLabel = topLabel
         self.bottomLabel = bottomLabel
-        self._selection = selection ?? .constant(nil) // ✅ fallback to .constant(nil)
+        self._selection = selection ?? .constant(nil)
         self.h1fontname = h1fontname
         self.h1fontSize = h1fontSize
         self.h2fontname = h2fontname
         self.h2fontSize = h2fontSize
+        self.columns = Array(repeating: GridItem(.flexible(), spacing: spacing), count: columnsPerRow)
     }
 
     var body: some View {
-        HStack(alignment: .center, spacing: 6) {
+        LazyVGrid(columns: columns, alignment: .center, spacing: 12) {
             ForEach(dataModel, id: \.self) { item in
                 VStack(alignment: .center, spacing: 8) {
                     Text(topLabel(item))
@@ -53,19 +58,21 @@ struct TwoVerticalLabelCell<T: Hashable & CustomStringConvertible>: View {
                         .font(.custom(h2fontname, fixedSize: h2fontSize))
                         .foregroundColor(.lightText)
                 }
-                .frame(width: 90, height: 90)
+                .frame(maxWidth: .infinity,minHeight: 70) // 🟢 Auto-stretch to fit the cell
+                .aspectRatio(1, contentMode: .fill) // 🟢 Square cells
                 .background(selection == item ? Color.blue.opacity(0.1) : Color.white)
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
                         .stroke(selection == item ? Color.blue : Color.clear, lineWidth: 1)
                 )
                 .cornerRadius(12)
-                .padding(12)
+                .contentShape(Rectangle())
                 .onTapGesture {
                     selection = item
                 }
             }
         }
-        .padding(.horizontal, 8)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 12)
     }
 }

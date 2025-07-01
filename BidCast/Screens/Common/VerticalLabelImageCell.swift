@@ -18,33 +18,27 @@ struct VerticalLabelImageCell: View {
     var onTap: (() -> Void)? = nil
     
     var body: some View {
-        HStack(alignment: .center,spacing: 6){
-           
-                Button(action: {
-                    onTap?()
-                }) {
-                    VStack(alignment: .center,spacing: 8){
-                        Image(topLabel)
-                            .resizable()
-                            .frame(width: 32, height: 32)
-                        
-                        Text(bottomLabel)
-                            .font(.custom(fontName, fixedSize: fontSize))
-//                            .bold()
-                            .foregroundStyle(.text)
-                            .foregroundColor(.black)
-                        
-                    }
-                    .frame(height: 100)
-                    .frame(maxWidth: .infinity)
-                    .background(.white)
-                    .cornerRadius(12)
-                    .padding(.all,4)
-                }
-            }
-//        .background(.red)
-        .padding([.leading,.trailing],4)
-    }
+           Button(action: {
+               onTap?()
+           }) {
+               VStack(alignment: .center, spacing: 8) {
+                   Image(topLabel)
+                       .resizable()
+                       .scaledToFit()
+                       .frame(width: 32, height: 32)
+                   
+                   Text(bottomLabel)
+                       .font(.custom(fontName, fixedSize: fontSize))
+                       .foregroundStyle(.text)
+               }
+               .frame(maxWidth: .infinity, minHeight: 100)
+               .background(Color.white)
+               .cornerRadius(12)
+               .padding(4)
+               .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
+           }
+//           .padding(.horizontal, 4)
+       }
 }
 
 #Preview {

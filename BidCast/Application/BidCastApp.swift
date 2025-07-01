@@ -11,6 +11,8 @@ import SwiftUI
 struct BidCastApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject private var appRootManager = AppRootManager()
+    @State private var accountNavigationPath = NavigationPath()
+    
     init() {
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
@@ -38,18 +40,18 @@ struct BidCastApp: App {
                 switch appRootManager.currentRoot {
                     
                 case .splash:
-                    NavigationContainer {
+                    NavigationContainer(navigationPath: $accountNavigationPath) {
                         SplashScreen()
                     }
                     .id(appRootManager.currentRoot.hashValue)
                     
                 case .authentication:
-                    NavigationContainer {
+                    NavigationContainer(navigationPath: $accountNavigationPath) {
                         AuthenticationStack()
                     }
                     .id(appRootManager.currentRoot.hashValue)
                 case .tabBar:
-                    NavigationContainer{
+                    NavigationContainer(navigationPath: $accountNavigationPath){
                         TabbarScreen()
                     }
                     .id(appRootManager.currentRoot.hashValue)

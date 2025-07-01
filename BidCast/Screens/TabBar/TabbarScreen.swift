@@ -9,61 +9,81 @@ import SwiftUI
 
 struct TabbarScreen: View {
     @State private var selectedTab = 0
+    @State private var previousTab = 0
     @State private var showSellSheet = false
     @State private var selectedSellTab: SellTabOption? = nil
     @State private var navigateTogetStarted = false
     @State private var navigateTolist = false
-    @State private var navigateToseller = false
-    @State private var isGift = false
-    @State private var promoCode = ""
-    @State private var weight = ""
-    @State private var selectedUnit = "Oz"
-    @State private var isHazardous = false
-    @ObservedObject var languageManager = LanguageManager.shared
-    @Environment(\.presentationMode) var presentationMode
-    @State private var showOptions = true
-    @State private var verifiedOnly = false
     @State private var navigateToAccountScreen = false
+    @ObservedObject var languageManager = LanguageManager.shared
     
+    @State private var homeNavigationPath = NavigationPath()
+    @State private var exploreNavigationPath = NavigationPath()
+    @State private var activityNavigationPath = NavigationPath()
+    @State private var accountNavigationPath = NavigationPath()
+    
+    @State private var homeViewID = UUID()
+    @State private var exploreViewID = UUID()
+    @State private var activityViewID = UUID()
+    @State private var accountViewID = UUID()
+
+
     var body: some View {
         ZStack {
             TabView(selection: $selectedTab) {
-                NavigationContainer { HomeViewScreen(showCategory: .constant(""), comeFromExploreScreen: .constant(false)) }
-                    .tabItem { Label("Home", systemImage: "house") }
                 
-                NavigationContainer { ExploreViewScreen() }
+                NavigationContainer(navigationPath: $homeNavigationPath) { HomeViewScreen(showCategory: .constant(""), comeFromExploreScreen: .constant(false)) }
+                    .id(homeViewID)
+                    .tabItem { Label("Home", systemImage: "house") }
+                    .tag(0)
+                
+                NavigationContainer(navigationPath: $exploreNavigationPath) { ExploreViewScreen() }
+                    .id(exploreViewID)
                     .tabItem { Label("Explore", systemImage: "safari.fill") }
+                    .tag(1)
                 
                 Color.clear
-                    .tabItem {
-                        Label("Sell",
-                              systemImage: "plus.circle.fill")
-                    }
+                    .tabItem { Label("Sell", systemImage: "plus.circle.fill") }
                     .tag(2)
                 
-                
-                NavigationContainer { ActivityScreen() }
+                NavigationContainer(navigationPath: $activityNavigationPath) { ActivityScreen() }
+                    .id(activityViewID)
                     .tabItem { Label("Activity", systemImage: "suit.heart.fill") }
+                    .tag(3)
                 
-                NavigationContainer { AccountScreen() }
+                NavigationContainer(navigationPath: $accountNavigationPath) { AccountScreen() }
+                    .id(accountViewID)
                     .tabItem { Label("Account", systemImage: "person.fill") }
+                    .tag(4)
             }
             .onChange(of: selectedTab) { newTab in
                 if newTab == 2 {
+                    
                     showSellSheet = true
-                    selectedTab = 0
+                  
+                    selectedTab = previousTab
+                } else {
+                    previousTab = newTab
+                    homeNavigationPath = NavigationPath()
+                    exploreNavigationPath = NavigationPath()
+                    activityNavigationPath = NavigationPath()
+                    accountNavigationPath = NavigationPath()
+                    
+                    homeViewID = UUID()
+                    exploreViewID = UUID()
+                    activityViewID = UUID()
+                    accountViewID = UUID()
+                           
+                    
+                  
                 }
             }
             
-//            CusNavLink(doNavigate: $navigateTogetStarted, destination: GetStartedScreen())
-            //CusNavLink(doNavigate: $navigateToLesson, destination: SelectShowScreen())
+            // Navigation Links
             CusNavLink(doNavigate: $navigateTogetStarted, destination: LetsPrepare())
             CusNavLink(doNavigate: $navigateTolist, destination: ListProductScreen())
-            CusNavLink(doNavigate: $navigateToAccountScreen, destination: AccountScreen(isNavFrom : true))
-            
+            CusNavLink(doNavigate: $navigateToAccountScreen, destination: AccountScreen(isNavFrom: true))
         }
-        //
-        
         .bottomSheet(
             isPresented: $showSellSheet,
             height: screenHeight / 2.6,
@@ -73,7 +93,6 @@ struct TabbarScreen: View {
             showTopIndicator: false,
             onDismiss: {
                 showSellSheet = false
-                
             },
             content: {
                 SellScreen { tappedTab in
@@ -81,16 +100,15 @@ struct TabbarScreen: View {
                         navigateTogetStarted = true
                     } else if tappedTab == .listProduct {
                         navigateTolist = true
-                    }else if tappedTab == .sellerHub{
+                    } else if tappedTab == .sellerHub {
                         navigateToAccountScreen = true
                     }
                 } onTapCancel: {
                     showSellSheet = false
-                    
                 }
                 .presentationDetents([.fraction(0.35)])
-            })
-   
+            }
+        )
     }
 }
 

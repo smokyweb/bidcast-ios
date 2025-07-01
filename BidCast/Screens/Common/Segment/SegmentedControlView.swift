@@ -12,15 +12,15 @@ struct SegmentedControlView<T: Hashable & CustomStringConvertible>: View {
     @Binding var selectedSegment: T
     var isWithBorder: Bool = false
     var onSegmentChanged: ((T) -> Void)?
-    var fontTitle : String = poppinsRegular
-    var fontSize : Double = 16.0
-    
+    var fontTitle: String = poppinsRegular
+    var fontSize: Double = 13.0
+
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) { // Make the HStack scrollable
+        ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
                 ForEach(segments.indices, id: \.self) { index in
                     let segment = segments[index]
-                    VStack(alignment:.leading) {
+                    VStack(spacing: 0) {
                         Button(action: {
                             selectedSegment = segment
                             onSegmentChanged?(segment)
@@ -28,35 +28,29 @@ struct SegmentedControlView<T: Hashable & CustomStringConvertible>: View {
                             Text(segment.description)
                                 .font(.custom(fontTitle, size: fontSize))
                                 .foregroundColor(getForegroundColor(for: segment))
-                                .padding(.vertical, 6)
-                                .padding(.horizontal, 6)
+                                .padding(.vertical, 8)
+                                .padding(.horizontal, 16) // Dynamic width padding
                                 .background(
                                     Capsule()
                                         .fill(getBackgroundColor(for: segment))
                                 )
-                               
                         }
-                        
-                        .frame(height: 40)
-                        .padding(.vertical,2)
-                        
+                        .padding(.vertical, 2)
+
                         // Line under selected segment
-                        if !isWithBorder {
-                            if selectedSegment == segment {
-                                Rectangle()
-                                    .frame(height: 2)
-                                    .foregroundColor(getLineColor(for: segment))
-                                    .padding(.bottom, -1)
-                            }
+                        if !isWithBorder && selectedSegment == segment {
+                            Rectangle()
+                                .frame(height: 2)
+                                .foregroundColor(getLineColor(for: segment))
+                                .padding(.top, 4)
                         }
                     }
                 }
             }
-//            .padding(.horizontal) // Add horizontal padding around the entire HStack for spacing
+            .padding(.horizontal, 8)
         }
-//        .frame(maxWidth: .infinity) // Make sure it takes up full width
     }
-    
+
     //MARK: getForegroundColor.
     private func getForegroundColor(for segment: T) -> Color {
         if isWithBorder {
@@ -65,7 +59,7 @@ struct SegmentedControlView<T: Hashable & CustomStringConvertible>: View {
             return selectedSegment == segment ? .darkBlue : .mediumGray
         }
     }
-    
+
     //MARK: getBackgroundColor.
     private func getBackgroundColor(for segment: T) -> Color {
         if isWithBorder {
@@ -74,7 +68,7 @@ struct SegmentedControlView<T: Hashable & CustomStringConvertible>: View {
             return selectedSegment == segment ? .clear : .clear
         }
     }
-    
+
     //MARK: getLineColor.
     private func getLineColor(for segment: T) -> Color {
         if isWithBorder {

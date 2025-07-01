@@ -54,7 +54,7 @@ struct PrimaryButton: View {
                                     .frame(width: 24,height: 24)
                             }
                             Text(title)
-                                .font(.custom(poppinsBold, fixedSize: buttonTitle))
+                                .font(.custom(poppinsSemiBold, fixedSize: buttonTitle))
 //                                .bold()
                                 .foregroundColor(btnTextColor)
                             //                                .foregroundStyle()

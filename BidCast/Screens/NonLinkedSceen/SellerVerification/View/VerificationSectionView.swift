@@ -29,14 +29,19 @@ struct VerificationSectionView: View {
                     .background(Circle().fill(Color.gray.opacity(0.2)))
 
                 VStack(alignment: .leading) {
-                    Text(title).font(.headline)
-                    Text(subtitle).font(.subheadline).foregroundColor(.gray)
+                    Text(title)
+                        .font(.custom(poppinsSemiBold, size: 14.0))
+                    Text(subtitle)
+                        .font(.custom(poppinsRegular, size: 13.0))
+                        .foregroundColor(.gray)
                 }
 
                 Spacer()
 
                 if let statusText = statusText {
-                    Text(statusText).font(.subheadline).foregroundColor(.gray)
+                    Text(statusText)
+                        .font(.custom(poppinsSemiBold, size: 13.0))
+                        .foregroundColor(.gray)
                 } else if status == .completed {
                     Image(systemName: "checkmark").foregroundColor(.green)
                 } else if let label = actionLabel {
@@ -46,7 +51,7 @@ struct VerificationSectionView: View {
                         }
                     }) {
                         Text(label)
-                            .font(.subheadline)
+                            .font(.custom(poppinsSemiBold, size: 13.0))
                             .foregroundColor(.white)
                             .padding(.horizontal, 24)
                             .padding(.vertical, 10)
@@ -66,7 +71,7 @@ struct VerificationSectionView: View {
                                 Image(systemName: action == "ID Card" ? "doc.text.viewfinder" : "camera.fill")
                                     .font(.system(size: 20))
                                 Text(action)
-                                    .font(.subheadline)
+                                    .font(.custom(poppinsSemiBold, size: 13.0))
                             }
                             .padding()
                             .frame(maxWidth: .infinity)
@@ -88,7 +93,7 @@ struct VerificationSectionView: View {
                                 .font(.system(size: 28))
                                 .foregroundColor(.gray)
                             Text("No payment method added")
-                                .font(.subheadline)
+                                .font(.custom(poppinsSemiBold, size: 13.0))
                                 .foregroundColor(.gray)
                         }
                     )

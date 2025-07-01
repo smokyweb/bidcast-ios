@@ -200,30 +200,31 @@ struct SellerVerificationScreen: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            PrimaryHeader(
-                title: "Seller Verification",
-                isForLogo: false,
-                leadingImgArr: [.icBack],
-                trailingImgArr: [],
-                onClickLeading: { _ in self.presentationMode.wrappedValue.dismiss() },
-                count: .constant(0)
-            )
-            .padding(.horizontal)
-            .frame(height: 70)
+            VStack{
+                PrimaryHeader(
+                    title: "Seller Verification",
+                    isForLogo: false,
+                    leadingImgArr: [.icBack],
+                    trailingImgArr: [],
+                    onClickLeading: { _ in self.presentationMode.wrappedValue.dismiss() },
+                    count: .constant(0)
+                )
+            }
+           
 
             ScrollView {
-                VStack(spacing: 24) {
+                VStack(spacing: 18) {
                     // Progress Bar
                     VStack(alignment: .leading) {
                         Text("Verification Progress")
-                            .font(.subheadline)
+                            .font(.custom(poppinsSemiBold, size: 13.0))
                             .foregroundColor(.gray)
 
                         ProgressView(value: Double(currentStep), total: totalSteps)
                             .accentColor(.blue)
 
                         Text("\(currentStep) of \(Int(totalSteps))")
-                            .font(.caption.bold())
+                            .font(.custom(poppinsSemiBold, size: 11.0))
                             .frame(maxWidth: .infinity, alignment: .trailing)
                             .foregroundColor(.black)
                     }
@@ -296,6 +297,7 @@ struct SellerVerificationScreen: View {
                 manualVerificationComplete = true
             }) {
                 Text("Complete Verification")
+                    .font(.custom(poppinsSemiBold, size: 16.0))
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .padding()
@@ -416,10 +418,10 @@ private struct IDVerificationCard: View {
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text("ID Verification")
-                        .font(.headline)
+                        .font(.custom(poppinsSemiBold, size: 14.0))
                         .foregroundColor(.black)
                     Text("Upload your ID card & take a selfie")
-                        .font(.subheadline)
+                        .font(.custom(poppinsRegular, size: 13.0))
                         .foregroundColor(.gray)
                 }
 
@@ -450,7 +452,7 @@ private struct IDVerificationCard: View {
                             Image(systemName: "creditcard.fill")
                                 .font(.system(size: 24))
                             Text("ID Card")
-                                .font(.subheadline)
+                                .font(.custom(poppinsSemiBold, size: 11.0))
                         }
                         .frame(width: boxSize, height: 100)
                         .foregroundColor(.gray)
@@ -474,7 +476,7 @@ private struct IDVerificationCard: View {
                             Image(systemName: "person.crop.circle")
                                 .font(.system(size: 24))
                             Text("Selfie")
-                                .font(.subheadline)
+                                .font(.custom(poppinsSemiBold, size: 11.0))
                         }
                         .frame(width: boxSize, height: 100)
                         .foregroundColor(.gray)

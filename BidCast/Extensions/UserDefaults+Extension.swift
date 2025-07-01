@@ -88,6 +88,14 @@ extension UserDefaults{
             return self.standard.value(forKey: "access_token") as? String ?? ""
         }
     }
+    static var creationYear:String {
+        set(input){
+            self.standard.setValue(input, forKey: "creationYear")
+        }
+        get{
+            return self.standard.value(forKey: "creationYear") as? String ?? ""
+        }
+    }
     static var profileURL:String {
         set(input){
             self.standard.setValue(input, forKey: "img_Url")

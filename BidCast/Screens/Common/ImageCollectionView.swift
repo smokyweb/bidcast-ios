@@ -73,10 +73,11 @@ struct ImageCollectionView: View {
                     }
                 }
             }
-            .frame(height: 160)
+            .frame(maxWidth: .infinity,minHeight: 160)
+//            .frame(height: 160)
             VStack(alignment: .leading,spacing: 4){
                 Text(title2)
-                    .font(.custom(poppinsRegular, fixedSize: title2Size))
+                    .font(.custom(poppinsSemiBold, fixedSize: title2Size))
                     .foregroundStyle(.black)
                     .foregroundColor(.black)
                 Text(category)

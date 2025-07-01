@@ -42,16 +42,13 @@ struct AccountScreen: View {
     @State var navigateToAffilateProgram : Bool = false
     @State var navigateToAnalytics : Bool = false
     @State var isNavFrom : Bool = false
+    @State var navigateToSellerVerification = false
     
     @State var navigateToProfile : Bool = false
     
     
     @State var viewModal = MenuOptionsViewModel()
-    let columns = [
-        GridItem(.flexible()),
-        GridItem(.flexible())
-    ]
-    
+    let columns = Array(repeating: GridItem(.flexible(), spacing: 12), count: 2)
     var body: some View {
         VStack{
             VStack{
@@ -97,98 +94,66 @@ struct AccountScreen: View {
                         //Seller hub
                         TwoVerticalLabelCell(dataModel: Credit.allCases,topLabel: {$0.labelOlt },bottomLabel: { $0.description.localized})
                         
-                        LazyVGrid(columns: columns, spacing: 2) {
+                        LazyVGrid(columns: columns, spacing: 12) { // ✅ uniform vertical spacing
                             ForEach(0 ..< TabSection.allCases.count, id: \.self) { index in
-                                VerticalLabelImageCell(topLabel: TabSection.allCases[index].img , bottomLabel:TabSection.allCases[index].description.localized
-                                ){
-                                    if index == 0 {
-                                        withAnimation {
-                                            navigateToInventry = true
-                                        }
-                                    }else if index == 1 {
-                                        withAnimation {
-                                            navigateToShows = true
-                                        }
-                                    }else if index == 2 {
-                                        withAnimation {
-                                            navigateToMyOrder = true
-                                        }
-                                    }else if index == 3 {
-                                        withAnimation {
-                                            navigateToWallet = true
-                                        }
-                                    }else if index == 4 {
-                                        withAnimation {
-                                            navigateToOffers = true
-                                        }
-                                    }else if index == 5 {
-                                        withAnimation {
-                                            navigateTips = true
-                                        }
-                                    }else if index == 6{
-                                        withAnimation {
-                                            navigateToShipping = true
-                                        }
-                                    }else if index == 7{
-                                        withAnimation {
-                                            navigateToAffilateProgram = true
-                                        }
-                                    }else if index == 8{
-                                        withAnimation {
-                                            navigateToSellerTraining = true
-                                        }
-                                    }else if index == 9{
-                                        withAnimation {
-                                            navigateToPremierShop = true
-                                        }
-                                    }else if index == 10{
-                                        withAnimation {
-                                            navigateToSellerStatus = true
-                                        }
-                                    }else if index == 11{
-                                        withAnimation {
-                                            navigateToAnalytics = true
+                                VerticalLabelImageCell(
+                                    topLabel: TabSection.allCases[index].img,
+                                    bottomLabel: TabSection.allCases[index].description.localized
+                                ) {
+                                    withAnimation {
+                                        switch index {
+                                        case 0: navigateToInventry = true
+                                        case 1: navigateToShows = true
+                                        case 2: navigateToMyOrder = true
+                                        case 3: navigateToWallet = true
+                                        case 4: navigateToOffers = true
+                                        case 5: navigateTips = true
+                                        case 6: navigateToShipping = true
+                                        case 7: navigateToAffilateProgram = true
+                                        case 8: navigateToSellerTraining = true
+                                        case 9: navigateToPremierShop = true
+                                        case 10: navigateToSellerStatus = true
+                                        case 11: navigateToAnalytics = true
+                                        case 12: navigateToSellerVerification = true
+                                        default: break
                                         }
                                     }
                                 }
+                                .aspectRatio(1, contentMode: .fill)
                             }
                         }
-//                        .padding([.leading,.trailing],8)
+                        .padding(.horizontal, 4)
+                        .padding(.vertical, 6)
+
                         MenuCell(title: "Vacation Mode", textColor: .black, fontValue: 16.0, menuImg:"vacation", vectorImg: .vacation,isSelectable: true,isTappedSwitch: $isTappedSwitch,
                                  onToggle: { newValue in
                             print("Vacation Mode state is now \(newValue ? "ON" : "OFF")")
                         })
-//                        .padding([.leading,.trailing],8)
                         
                     }else{
-                        //My Account section
-                        TwoVerticalLabelCell(dataModel: AccountCredit.allCases,topLabel: {$0.labelOlt },bottomLabel: { $0.description})
+                        TwoVerticalLabelCell(dataModel: AccountCredit.allCases,topLabel: {$0.labelOlt },bottomLabel: { $0.description},columnsPerRow: 2)
                         
-                        LazyVGrid(columns: columns, spacing: 2) {
+                        LazyVGrid(columns: columns, spacing: 12) {
                             ForEach(0 ..< AccountTabSection.allCases.count, id: \.self) { index in
-                                VerticalLabelImageCell(topLabel: AccountTabSection.allCases[index].img , bottomLabel:AccountTabSection.allCases[index].description ){
-                                    if index == 0{
-                                        withAnimation {
-                                            navigateToPayment = true
-                                        }
-                                    }else if index == 1 {
-                                        withAnimation {
-                                            navigateToAddress = true
-                                        }
-                                    }else if index == 2  {
-                                        withAnimation {
-                                            navigateToTrustedBuyer = true
-                                        }
-                                    }else if index == 4 {
-                                        withAnimation {
-                                            navigateToPreference = true
+                                VerticalLabelImageCell(
+                                    topLabel: AccountTabSection.allCases[index].img,
+                                    bottomLabel: AccountTabSection.allCases[index].description
+                                ) {
+                                    withAnimation {
+                                        switch index {
+                                        case 0: navigateToPayment = true
+                                        case 1: navigateToAddress = true
+                                        case 2: navigateToTrustedBuyer = true
+                                        case 4: navigateToPreference = true
+                                        default: break
                                         }
                                     }
                                 }
-                                
+                                .aspectRatio(1, contentMode: .fill)
                             }
                         }
-//                        .padding([.leading,.trailing],8)
+                        .padding(.horizontal, 4)
+                        .padding(.vertical, 6)
                         
                         ForEach(0 ..< AccountMenuSection.allCases.count,id :\.self) { index in
                             
@@ -237,7 +202,6 @@ struct AccountScreen: View {
                             })
                             
                             .frame(height:70)
-//                            .padding([.leading,.trailing],8)
                         }
                     }
                    
@@ -246,7 +210,7 @@ struct AccountScreen: View {
             .padding(.horizontal,8)
           
             .background(.bg.opacity(0.5))
-            .padding(.bottom,UIDevice.current.hasNotch ? -210 : -110)
+            .padding(.bottom,isNavFrom ? -300 : UIDevice.current.hasNotch ? -220 : -110)
             
             CusNavLink(doNavigate: $navigateToProfile, destination: CompleteProfileScreen())
             //MARK: My Account navigation
@@ -262,7 +226,7 @@ struct AccountScreen: View {
             CusNavLink(doNavigate: $navigateToPreference, destination: PreferncesScreen())
             CusNavLink(doNavigate: $navigateToPayment, destination: PaymentAndShipping_Screen())
             CusNavLink(doNavigate: $navigateToTrustedBuyer, destination: TrustedBuyerScreen())
-//            CusNavLink(doNavigate: $navigateToTrustedBuyer, destination: SellerVerificationScreen())
+            CusNavLink(doNavigate: $navigateToSellerVerification, destination: SellerVerificationScreen())
             
             
             
@@ -329,9 +293,6 @@ struct AccountScreen: View {
     func handleUserLogout() {
         DispatchQueue.main.async {
             UserDefaults.accessToken.removeAll()
-//            UserDefaultsManager.shared.clearAllValues()
-//            UserDefaultsManager.shared.remove(forKey: .isLoggedIn)
-//            UserDefaultsManager.shared.remove(forKey: .userDetail)
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                 withAnimation {
@@ -395,6 +356,7 @@ enum TabSection : String, CaseIterable, CustomStringConvertible{
     case premier = "Premier Shop"
     case sellerStatus = "Seller Status"
     case sellerAna = "Seller Analytics"
+    case sellerVerificatiob = "Seller Verification"
     
     var description: String {
             return NSLocalizedString(rawValue, comment: "")
@@ -428,6 +390,8 @@ enum TabSection : String, CaseIterable, CustomStringConvertible{
             return .analysis
         case .sellerAna:
             return .analysis
+        case .sellerVerificatiob:
+            return .seller
         }
     }
 }

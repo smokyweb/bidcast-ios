@@ -105,7 +105,7 @@ let Leading = 16.0
 let Trailing = 16.0
 let flotingLabel = 13.0
 let placeHolder = 13.0
-let buttonTitle = 18.0
+let buttonTitle = 16.0
 let headerTitle = 20.0
 let sepratorLine = 38.0
 

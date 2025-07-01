@@ -58,7 +58,7 @@ struct DropDownSelection: View {
                             .rotationEffect(.init(degrees: showOption ? 0 : -90))
                         
                     })
-                    .padding(.horizontal, 15)
+                    .padding(.horizontal, 16)
                     .frame(width: size.width, height: size.height)
                     .background(scheme == .dark ? .black : .white)
                     .contentShape(.rect)

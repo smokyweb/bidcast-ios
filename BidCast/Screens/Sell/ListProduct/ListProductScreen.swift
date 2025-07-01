@@ -61,7 +61,7 @@ struct ListProductScreen: View {
                         Text("Product Details".localized)
                             .font(.custom(poppinsBold, size: 14.0))
                             .padding(.top,8)
-                            .padding([.leading,.trailing],8)
+                            .padding([.leading,.trailing],16.0)
                         
                         DropDownSelection(
                             options: $categoryNames, floatingLabel:"Category",
@@ -78,7 +78,7 @@ struct ListProductScreen: View {
                             }
                         )
                         .zIndex(1201.0)
-                        .padding([.leading,.trailing],8)
+                        .padding([.leading,.trailing],16)
                         
                         AuthTextField(floatingLabel: "Title".localized, placeholder: "Enter Product title".localized, icon: .menuProfile, text: $request.title ,isIconDisplay : false, enteredText:  { title in
                             request.title = title
@@ -98,24 +98,24 @@ struct ListProductScreen: View {
                         
                         PrimaryButton(title: "Add Variants", isOutLine: false, onButtonClick: {
                             print("hell")
-                        },width: screenWidth - 45, imageName: "plus_btn", btnColor: .white)
+                        }, imageName: "plus_btn", btnColor: .white)
                     }
                     
                     .background(.white)
                     .cornerRadius(12)
-                    .padding(.all,12)
+                    .padding(.horizontal,12)
                     
-                    VStack(alignment:.leading,spacing: 12){
+                    VStack(alignment:.leading,spacing: 8){
                         Text("Pricing".localized)
                             .font(.custom(poppinsBold, size: 14.0))
                             .padding(.top,8)
-                            .padding([.leading,.trailing],8)
+                            .padding([.leading,.trailing],16.0)
                         
                         AuthTextField(floatingLabel: "Buy it Now Price".localized, placeholder: "0.00".localized, icon: .menuProfile, text: $request.pricing,isIconDisplay : true, isForPrice:true, enteredText:  { price in
                             request.pricing = price
                         })
                         .keyboardType(.numberPad)
-                        .padding(.horizontal , 12)
+//                        .padding(.horizontal , 16)
                         
                         MenuCell( title: "Flash Sale",fontValue: 16.0,menuImg: "",isSelectable: true, isTappedSwitch: $isTappedFlash,onToggle: { value in
                             if value == true{
@@ -124,6 +124,8 @@ struct ListProductScreen: View {
                                 request.flash_sale = "0"
                             }
                         })
+                        .padding(.vertical,4)
+                        .padding([.leading,.trailing],8)
                         MenuCell( title: "Accept offers",fontValue: 16.0,menuImg: "",isSelectable: true, isTappedSwitch: $isTappedAccept,onToggle: { value in
                             print(value)
                             if value == true{
@@ -132,6 +134,8 @@ struct ListProductScreen: View {
                                 request.accept_offers = "0"
                             }
                         })
+                        .padding(.vertical,4)
+                        .padding([.leading,.trailing],8)
                         MenuCell( title: "Reserve for Live",fontValue: 16.0,menuImg: "",isSelectable: true, isTappedSwitch: $isTappedReserve,onToggle: { value in
                             print(value)
                             if value == true{
@@ -140,17 +144,19 @@ struct ListProductScreen: View {
                                 request.reserve_for_live = "0"
                             }
                         })
+                        .padding(.vertical,4)
+                        .padding([.leading,.trailing],8)
                     }
                     
                     .background(.white)
                     .cornerRadius(12)
-                    .padding(.all,12)
+                    .padding(.horizontal,12)
                     
-                    VStack(alignment:.leading,spacing: 12){
+                    VStack(alignment:.leading,spacing: 8){
                         Text("Shipping".localized)
-                            .font(.headline)
+                            .font(.custom(poppinsBold, size: 14.0))
                             .padding(.top,8)
-                            .padding([.leading,.trailing],8)
+                            .padding([.leading,.trailing],16.0)
                         
                         DropDownSelection(
                             options: $shippingAddressName,
@@ -168,24 +174,125 @@ struct ListProductScreen: View {
                             }
                         )
                         .padding(.bottom,8)
-                        .padding([.leading,.trailing],8)
+                        .padding([.leading,.trailing],16)
                         
                     }
                     
                     .background(.white)
                     .cornerRadius(12)
-                    .padding(.all,12)
+                    .padding(.horizontal,12)
                     
                     TwoButton(titleOne: "Save Draft", titleTwo: "Publish", onFirstButtonClick: {
                         print(request)
-                    }, onSecButtonClick: {
-                        print(request)
                         print(imageUrls)
+                        guard !imageUrls.isEmpty else{
+                            hudMsg = "Please select images"
+                            showhud = true
+                            return
+                        }
+                        guard !request.category_id.isEmpty else{
+                            hudMsg = "Please select category"
+                            showhud = true
+                            return
+                        }
+                        guard !request.title.isEmpty else{
+                            hudMsg = "Please enter title"
+                            showhud = true
+                            return
+                        }
+                        guard !request.description.isEmpty else{
+                            hudMsg = "Please enter description"
+                            showhud = true
+                            return
+                        }
+                        guard !request.quantity.isEmpty else{
+                            hudMsg = "Please enter quantity"
+                            showhud = true
+                            return
+                        }
+                        guard !request.pricing.isEmpty else{
+                            hudMsg = "Please enter pricing"
+                            showhud = true
+                            return
+                        }
+                        guard !request.shipping_profile_id.isEmpty else{
+                            hudMsg = "Please select shipping address"
+                            showhud = true
+                            return
+                        }
+                        request.status = "draft"
                         Task{
                             SVProgressHUD.show()
                             await viewModel.storeProduct(param: request, images: imageUrls, key: "images[]")
                             await SVProgressHUD.dismiss()
-                            storeSuccess()
+                            if self.viewModel.errorMessage != "" || self.viewModel.errorMessage != nil{
+                                storeSuccess()
+                            }else{
+                                alertType = .sheetType(
+                                    icon: .alert,
+                                    title: "Failed",
+                                    message: viewModel.errorMessage ?? "",
+                                    primaryBtnText: "",
+                                    secondaryBtnText: AppString.ok.localized
+                                )
+                                showError = true
+                            }
+                        }
+                    }, onSecButtonClick: {
+                        print(request)
+                        print(imageUrls)
+                        guard !imageUrls.isEmpty else{
+                            hudMsg = "Please select images"
+                            showhud = true
+                            return
+                        }
+                        guard !request.category_id.isEmpty else{
+                            hudMsg = "Please select category"
+                            showhud = true
+                            return
+                        }
+                        guard !request.title.isEmpty else{
+                            hudMsg = "Please enter title"
+                            showhud = true
+                            return
+                        }
+                        guard !request.description.isEmpty else{
+                            hudMsg = "Please enter description"
+                            showhud = true
+                            return
+                        }
+                        guard !request.quantity.isEmpty else{
+                            hudMsg = "Please enter quantity"
+                            showhud = true
+                            return
+                        }
+                        guard !request.pricing.isEmpty else{
+                            hudMsg = "Please enter pricing"
+                            showhud = true
+                            return
+                        }
+                        guard !request.shipping_profile_id.isEmpty else{
+                            hudMsg = "Please select shipping address"
+                            showhud = true
+                            return
+                        }
+                        request.status = "active"
+                        Task{
+                            SVProgressHUD.show()
+                            await viewModel.storeProduct(param: request, images: imageUrls, key: "images[]")
+                            await SVProgressHUD.dismiss()
+                            if self.viewModel.errorMessage != "" || self.viewModel.errorMessage != nil{
+                                storeSuccess()
+                            }else{
+                                alertType = .sheetType(
+                                    icon: .alert,
+                                    title: "Failed",
+                                    message: viewModel.errorMessage ?? "",
+                                    primaryBtnText: "",
+                                    secondaryBtnText: AppString.ok.localized
+                                )
+                                showError = true
+                            }
                         }
                     }, height: 45, firstBtnTitleColor: .darkGray, secBtnTitleColor: .white, firstBtnBgColor: .white, secBtnBgColor:.darkBlue)
 
@@ -193,7 +300,13 @@ struct ListProductScreen: View {
                 .edgesIgnoringSafeArea(.top)
                 .padding(.all,12)
                 .background(.bg.opacity(0.5))
-                .bottomSheet(isPresented: $showError, height: screenHeight/2, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: { showError = true }, content: {
+                .bottomSheet(isPresented: $showError, height: screenHeight/2, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: {
+                    if self.viewModel.errorMessage != "" || self.viewModel.errorMessage != nil{
+                        showError = true
+                    }else{
+                        showError = false
+                    }
+                }, content: {
                     CommonBottomSheet(
                         sheetType: $alertType,
                         onPrimaryClick: {

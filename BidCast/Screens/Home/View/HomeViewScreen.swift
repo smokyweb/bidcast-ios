@@ -15,10 +15,7 @@ struct HomeViewScreen: View {
     @State var index = 0
     let images = Array(1...10)
     
-    let columns = [
-        GridItem(.flexible()),
-        GridItem(.flexible())
-    ]
+    let columns = Array(repeating: GridItem(.flexible(), spacing: 12), count: 2)
     @Binding var showCategory : String
     @State var viewModel = HomeViewModel()
     @State var liveShowsData = [HomeModel]()
@@ -58,7 +55,7 @@ struct HomeViewScreen: View {
                     SegmentedControlView(segments: HomeButton.allCases, selectedSegment:$selectedButton, isWithBorder: true)
                     ButtonTitleLabel(
                         titles: ["Live Now", "Popular", "Coming Soon"],
-                        fontValue: 18,
+                        fontValue: 16,
                         textColor: .blue
                     ) { selected in
                         print("Tapped:", selected)
@@ -73,13 +70,14 @@ struct HomeViewScreen: View {
                             }else{
                                 selection = "upcoming"
                             }
-                            await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: selection))
+                            await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: selection,category: showCategory))
                             await SVProgressHUD.dismiss()
                             self.success()
                         }
                     }
                     if liveShowsData.isEmpty{
                         NoDataView(message: "No Shows found")
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }else{
                         LazyVGrid(columns: columns, spacing: 12) {
                             //                            let liveData = Array(0..<liveShowsData.count)
@@ -87,13 +85,13 @@ struct HomeViewScreen: View {
                                 let item = liveShowsData[index]
                                 
                                 ImageCollectionView(profileImg: item.user?.profile_image ?? "",
-                                                    profileName: item.user?.name ?? "",
-                                                    textSize: 12.0,
+                                                    profileName: item.user?.name ?? "".capitalizingFirstLetter(),
+                                                    textSize: 14.0,
                                                     image: item.thumbnail?.first ?? "",
                                                     category: item.category?.name ?? "",
                                                     title2:item.title ?? "",
-                                                    categorySize: 8,
-                                                    title2Size: 12.0){
+                                                    categorySize: 9,
+                                                    title2Size: 13.0){
                                     
                                     print("babumoshai tapped the card!,inex \(index)")
                                     self.index = index
@@ -101,12 +99,13 @@ struct HomeViewScreen: View {
                                     navigateToLiveStream = true
                                 }
                                                     .background(.bg)
-                                                    .frame(maxWidth: .infinity)
-                                                    .frame(height: 280)
+//                                                    .frame(maxWidth: .infinity)
+//                                                    .frame(height: 280)
                                 
                                                     .cornerRadius(10)
                             }
                         }
+                        .padding(.vertical,3)
                     }
                 }
             }

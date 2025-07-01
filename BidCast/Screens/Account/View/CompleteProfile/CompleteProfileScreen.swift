@@ -271,6 +271,7 @@ struct CompleteProfileScreen: View {
                         self.request.username = accountDetail.username ?? ""
                         self.request.bio = accountDetail.bio ?? ""
                         self.profileImageUrl = accountDetail.profile_image ?? ""
+                        UserDefaults.profileURL = self.profileImageUrl
                     }else{
                         
                     }
@@ -337,6 +338,7 @@ struct CompleteProfileScreen: View {
                                     self.request.username = accountDetail.username ?? ""
                                     self.request.bio = accountDetail.bio ?? ""
                                     self.profileImageUrl = accountDetail.profile_image ?? ""
+                                    UserDefaults.profileURL = self.profileImageUrl
                                 }else{
                                     
                                 }
@@ -356,26 +358,5 @@ struct CompleteProfileScreen: View {
         }
     }
     
-    func getSuccess(){
-        let response = viewModel.accountInfo
-        if response.status == "success"{
-            alertType = .sheetType(
-                icon: .success,
-                title: response.status?.capitalized ?? "",
-                message: response.message?.capitalized ?? "",
-                primaryBtnText: AppString.ok.localized,
-                secondaryBtnText: ""
-            )
-            showError = true
-        }else{
-            alertType = .sheetType(
-                icon: .alert,
-                title: response.error_type?.capitalized ?? "",
-                message: response.message?.capitalized ?? "",
-                primaryBtnText: "",
-                secondaryBtnText: AppString.ok.localized
-            )
-            showError = true
-        }
-    }
+  
 }

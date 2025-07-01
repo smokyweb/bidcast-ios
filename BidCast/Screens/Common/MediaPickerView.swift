@@ -29,12 +29,12 @@ struct MediaPickerView: View {
                     HStack {
                         if title != ""{
                             Text(title.localized)
-                                .font(.headline)
+                                .font(.custom(poppinsBold, size: 14.0))
                         }
                         Spacer()
                         Text("\(selectedMedia.count)/\(maxMediaCount)")
                             .foregroundColor(.gray)
-                            .font(.subheadline)
+                            .font(.custom(poppinsSemiBold, size: 11.0))
                     }
                     
                     ScrollView(.horizontal, showsIndicators: false) {

@@ -19,7 +19,7 @@ struct ListCell: View {
     var angle  = 90.0
     var subLabel = "Live"
     var tintColot = ""
-    var titleFontName = poppinsMedium
+    var titleFontName = poppinsSemiBold
     var titleFontSize = 16.0
     var subLabelFontName = poppinsRegular
     var subLabelFontSize = 14.0
@@ -27,34 +27,45 @@ struct ListCell: View {
     var isDisplayPrice = false
     var price = ""
     var onTapMenuCell: (() -> Void)? = nil
+    var isForIcon = false
     var body: some View {
         HStack(alignment: .center,spacing: 10){
             HStack{
                 if isComeFrom != "Wallet"{
-//                    AsyncImage(url: URL(string:image.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")) { phase in
-//                        switch phase {
-//                        case .success(let image):
-//                            image
-//                                .resizable()
-//                                .renderingMode(.template)
-//                                .frame(width: 30,height: 30)
-//                            
-//                        default:
-//                            Image(image)
-//                                .resizable()
-//                        }
-//                    }
-                    CustomProfileImage(url: image,isCircular: false,size: 42)
-                        .frame(width: 50,height: 50)
-                    .background(Color(hex: tintColot) ?? .clear)
-                    .mask {
-                        if isComeFrom == "ShippingScreen" {
-                            Circle()
-                        } else {
-                            RoundedRectangle(cornerRadius: 8)
-                        }
+                    //                    AsyncImage(url: URL(string:image.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")) { phase in
+                    //                        switch phase {
+                    //                        case .success(let image):
+                    //                            image
+                    //                                .resizable()
+                    //                                .renderingMode(.template)
+                    //                                .frame(width: 30,height: 30)
+                    //
+                    //                        default:
+                    //                            Image(image)
+                    //                                .resizable()
+                    //                        }
+                    //                    }
+                    if isForIcon{
+                        Image(image)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 42,height: 42)
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                            .padding(.leading ,10)
+                        
+                    }else{
+                        CustomProfileImage(url: image,isCircular: false,size: 42)
+                            .frame(width: 50,height: 50)
+                            .background(Color(hex: tintColot) ?? .clear)
+                            .mask {
+                                if isComeFrom == "ShippingScreen" {
+                                    Circle()
+                                } else {
+                                    RoundedRectangle(cornerRadius: 8)
+                                }
+                            }
+                            .padding(.leading ,10)
                     }
-                    .padding(.leading ,10)
                 }
 //                Image(image)
 //                    .resizable()

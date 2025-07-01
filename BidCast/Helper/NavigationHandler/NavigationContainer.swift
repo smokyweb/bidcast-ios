@@ -15,7 +15,10 @@ struct NavigationContainer<Content: View>: View {
     
     @State var route: [String] = []
     
-    init(@ViewBuilder content: () -> Content) {
+    @Binding var navigationPath: NavigationPath
+    
+    init(navigationPath: Binding<NavigationPath>, @ViewBuilder content: () -> Content) {
+        self._navigationPath = navigationPath
         self.content = content()
     }
 

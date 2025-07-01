@@ -41,7 +41,7 @@ struct SellScreen: View {
                         case 2: onTap(.sellerHub)
                         default: break
                         }
-                    }
+                    },isForIcon: true
                     )
                 }
                 .frame(height: 80)
@@ -51,8 +51,6 @@ struct SellScreen: View {
             .padding(.bottom,20)
             .background(.white)
             CusNavLink(doNavigate: $navigateToLisProduct, destination: ListProductScreen())
-//            CusNavLink(doNavigate: $navigateTolesson, destination: LessonScreen())
-//            CusNavLink(doNavigate: $navigateTolesson, destination: SelectShowScreen())
         }
         .frame(maxWidth: .infinity,maxHeight: .infinity)
         .padding(.all,2)

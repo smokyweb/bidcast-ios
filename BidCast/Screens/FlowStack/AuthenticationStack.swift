@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct AuthenticationStack: View {
+    @State private var accountNavigationPath = NavigationPath()
     var body: some View {
-        NavigationContainer {
+        NavigationContainer(navigationPath: $accountNavigationPath) {
             LoginScreen()
         }
     }

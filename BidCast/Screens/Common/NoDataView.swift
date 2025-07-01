@@ -14,20 +14,21 @@ struct NoDataView: View {
     var message: String = "No Data Found"
 
     var body: some View {
-        VStack(spacing: 16) {
-            Spacer()
-            Image(imageName)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 150, height: 150)
-                .foregroundColor(.gray.opacity(0.6))
+        GeometryReader { geometry in
+                  VStack(spacing: 16) {
+                      Image(imageName)
+                          .resizable()
+                          .scaledToFit()
+                          .frame(width: 150, height: 150)
+                          .foregroundColor(.gray.opacity(0.6))
 
-            Text(message)
-                .font(.custom(poppinsRegular, size: 16))
-                .foregroundColor(.gray)
-            Spacer()
-        }
-        .padding()
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                      Text(message)
+                          .font(.custom(poppinsSemiBold, size: 16))
+                          .foregroundColor(.gray)
+                          .multilineTextAlignment(.center)
+                  }
+                  .frame(width: geometry.size.width, height: geometry.size.height)
+                  .position(x: geometry.size.width / 2, y: screenHeight/3 )
+              }
     }
 }
