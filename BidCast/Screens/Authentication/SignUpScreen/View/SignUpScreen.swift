@@ -31,7 +31,6 @@ struct SignUpScreen: View {
     var viewModel = SignupViewModel()
     
     var body: some View {
-//        ZStack {
             VStack(spacing: 0) {
                 VStack{
                     PrimaryHeader(title: AppString.createAccount.localized, leadingImgArr: [.icBack], onClickLeading:  { _ in
@@ -41,6 +40,11 @@ struct SignUpScreen: View {
                 }
                 
                 ScrollView(showsIndicators: false) {
+                    VStack(alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/) {
+                        Image(.logo1)
+                            .frame(width: screenWidth, height: screenHeight/3.8)
+                            .edgesIgnoringSafeArea(.top)
+                    }
                     VStack(alignment: .leading, spacing: 15) {
                         TitleWithLine(title: AppString.createYourAccount, lineLength: sepratorLine)
                         AuthTextField(floatingLabel: AppString.firstName.localized, placeholder: AppString.enterFirstName.localized, icon: .menuProfile, text: $request.firstName, enteredText: {
@@ -48,29 +52,32 @@ struct SignUpScreen: View {
                             request.firstName = value
                         })
                         .textContentType(.givenName)
+                        .keyboardType(.alphabet)
                         AuthTextField(floatingLabel: AppString.lastName.localized, placeholder: AppString.enterLastName.localized, icon: .menuProfile, text: $request.lastName, enteredText: {
                             value in
                             request.lastName = value
                         })
-                        .textContentType(.familyName)
+                        .keyboardType(.alphabet)
                         
                         AuthTextField(floatingLabel: AppString.email.localized, placeholder: AppString.enterEmail.localized, icon: .icMail, text: $request.email, enteredText: {
                             value in
                             request.email = value
                         }).textContentType(.username)
+                            .keyboardType(.emailAddress)
                         
                         AuthTextField(floatingLabel: AppString.password.localized, placeholder: AppString.enterPassword.localized, icon: .passwordLock, text: $request.password, isPassword: true, enteredText: {
                             value in
                             request.password = value
                         }).textContentType(.password)
+                            .keyboardType(.alphabet)
                         
                         AuthTextField(floatingLabel: AppString.confirmPassword.localized, placeholder: AppString.confirmPassword.localized, icon: .passwordLock, text: $request.passwordConf, isPassword: true, enteredText: {
                             value in
                             request.passwordConf = value
                         }).textContentType(.newPassword)
+                            .keyboardType(.alphabet)
                         
                     }
-//                    }.padding([.leading, .trailing])
                     VStack {
                         PrimaryButton(title: AppString.submit.localized, isOutLine: false, onButtonClick: {
                             
@@ -90,6 +97,11 @@ struct SignUpScreen: View {
                                     showhud = true
                                     return
                                 }
+                            guard request.email.isValidEmail() else{
+                                hudMsg = AppString.pleaseEnterValidEmailAddress.localized
+                                showhud = true
+                                return
+                            }
                             guard !request.password.isEmpty else {
                                 hudMsg = AppString.pleaseEnterPassword.localized
                                 showhud = true
@@ -116,18 +128,22 @@ struct SignUpScreen: View {
                             print("Parameters for register user :- \(request)")
                             Task{
                                 SVProgressHUD.show()
+                                viewModel.errorMessage?.removeAll()
                                 await self.viewModel.registerUser(parameters: request)
                                 await SVProgressHUD.dismiss()
-                                await handleSuccess()
+                                if viewModel.errorMessage == nil{
+                                    handleSuccess()
+                                }else{
+                                    alertType = .sheetType(icon: .alert, title: "Failed", message:viewModel.errorMessage ?? "", primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .secondary)
+                                    showError = true
+                                }
                             }
                             },btnTextColor: .white)
                     }
                     .padding([.top, .bottom], 16)
-//                    .padding([.leading, .trailing])
                     .zIndex(1300.0)
                     
                 }
-//                .padding(.top, -topPadding)
                 .onTapGesture(perform: {
                     UIApplication.shared.endEditing()
                 })
@@ -144,7 +160,18 @@ struct SignUpScreen: View {
             
             .toast(isPresenting: $showhud) {
                 AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)}
-			.bottomSheet(isPresented: $showError, height: screenHeight/2.5, topBarCornerRadius: 25, showTopIndicator: false, content: {
+            .bottomSheet(isPresented: $showError, height: screenHeight/2.5, topBarCornerRadius: 25, showTopIndicator: false,onDismiss: {
+                if viewModel.errorMessage == nil{
+                    let response = viewModel.signUpResponse
+                    if response.status == "success" {
+                        self.presentationMode.wrappedValue.dismiss()
+                    }else{
+                        withAnimation { showError = false }
+                    }
+                }else{
+                    withAnimation { showError = false }
+                }
+            }, content: {
                 CommonBottomSheet(
                     sheetType: $alertType,
                     onPrimaryClick: {

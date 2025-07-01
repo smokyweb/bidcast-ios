@@ -70,15 +70,26 @@ struct AccountScreen: View {
             }
             ScrollView(showsIndicators: false){
                 VStack(alignment: .leading,spacing: 4){
-                    ListCell(image: UserDefaults.profileURL, title: UserDefaults.userName.capitalizingFirstLetter() ,vectorImg : .circleEditPencil,angle:0.0, subLabel : "Seller since 2003",titleFontName: poppinsSemiBold,titleFontSize: 18.0,subLabelFontName: poppinsRegular,subLabelFontSize: 14.0,isVectorImgHidden: false,onTapMenuCell: {
+                    ListCell(image: UserDefaults.profileURL.isEmpty ? "user_dummy" : UserDefaults.profileURL,
+                             title: UserDefaults.userName.capitalizingFirstLetter() ,
+                             vectorImg : .circleEditPencil,angle:0.0,
+                             subLabel : "Seller since 2003",
+                             titleFontName: poppinsSemiBold,
+                             titleFontSize: 18.0,
+                             subLabelFontName: poppinsRegular,
+                             subLabelFontSize: 14.0,
+                             isVectorImgHidden: false,
+                             onTapMenuCell: {
+                        
                         self.navigateToProfile = true
+                        
                     })
-                        .padding(.all,1)
-                        .frame(height: 80)
+                    .padding(.all,1)
+                    .frame(height: 80)
                     
-                        CustomSegmentedControl(preselectedIndex: $segment ,
-                                               options: AccountSegment.allCases)
-                       
+                    CustomSegmentedControl(preselectedIndex: $segment ,
+                                           options: AccountSegment.allCases)
+                    
                     
                    
                     

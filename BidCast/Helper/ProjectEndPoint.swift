@@ -86,6 +86,8 @@ enum APIEndPoint{
     case getKycDetails
     case checkKYC
     case fundTransfer(param : FundTransferRequest)
+    case getprofile
+    case updateProfile(param:UpdateProfileRequest)
     
     //MARK: OLD
     
@@ -316,6 +318,10 @@ extension APIEndPoint: EndPointType {
             return "product/fetch-by-status"
         case .getWalletInfo:
             return "wallet-info"
+        case .getprofile:
+            return "get-profile"
+        case .updateProfile:
+            return "update-profile"
             
             //MARK: Old
             
@@ -465,6 +471,7 @@ extension APIEndPoint: EndPointType {
             return "stripe/check-Kyc"
         case .fundTransfer:
             return "stripe/fund-transfer"
+       
         }
     }
     
@@ -608,6 +615,10 @@ extension APIEndPoint: EndPointType {
         case .getBidList:
             return .get
         case .getItemList:
+            return .post
+        case .getprofile:
+            return .get
+        case .updateProfile(param: let param):
             return .post
             
             //MARK: Old
@@ -762,6 +773,7 @@ extension APIEndPoint: EndPointType {
         case .fundTransfer:
             return .post
        
+        
         }
     }
     
@@ -911,6 +923,10 @@ extension APIEndPoint: EndPointType {
         case .getBidList:
             return nil
         case .getItemList(param: let param):
+            return param
+        case .getprofile:
+            return nil
+        case .updateProfile(param: let param):
             return param
             
             //MARK: Old
@@ -1063,6 +1079,7 @@ extension APIEndPoint: EndPointType {
             return nil
         case .fundTransfer(let param):
             return param
+        
         }
     }
     

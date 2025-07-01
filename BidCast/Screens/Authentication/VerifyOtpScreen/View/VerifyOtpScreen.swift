@@ -14,15 +14,20 @@ import SVProgressHUD
 struct VerifyOtpScreen: View {
     
     // MARK: - Static Properties
+    @EnvironmentObject var appRootManager: AppRootManager
+    
     @State var isRemeber: Bool = false
     @State var isLoading: Bool = false
+    
     @State var forgetOtpRequest: ForgetRequest = ForgetRequest(email: "")
     @State var request: VerifyOtpRequest = VerifyOtpRequest(email: "", code: 0)
+    
     @State var pin: String = ""
     @State var maxDigits: Int = 4
     @State var navigateToResetPassword: Bool = false
     @State var navigateToLogin: Bool = false
     @State var isPassword: Bool = false
+    
     @FocusState private var focusedField: Int?
     @State private var focusedIndex: Int? = 0
 
@@ -45,7 +50,9 @@ struct VerifyOtpScreen: View {
                     title: AppString.verifyOtp.localized ,
                     leadingImgArr: [.icBack],
                     onClickLeading: { _ in
-                        self.navigateToLogin = true
+                        withAnimation {
+                            appRootManager.currentRoot = .authentication
+                        }
                     },
                     count: .constant(0)
                 )
@@ -55,23 +62,28 @@ struct VerifyOtpScreen: View {
                 VStack(alignment: .leading, spacing: 20) {
                     Color.clear.frame(height: 5)
                     TitleWithLine(title: headingText, lineLength: sepratorLine)
+                    SingleTitleLabel(title: AppString.successOtpMessage.localized, textColor: .mediumLightGray, fontValue: 13.0)
                     VStack(alignment: .trailing, spacing: 12, content: {
-                        pinDots
+                        PinInputView(pin: $pin)
                         Button(action: {
+                            UIApplication.shared.endEditing()
                             if let mail: String = UserDefaultsManager.shared.value(forKey: .mailId) {
                                 forgetOtpRequest.email = mail
+                                
                                 Task {
+                                    SVProgressHUD.show()
+                                    self.viewModel.errorMessage?.removeAll()
                                     await forgetOtpModel.forgotEmail(parameters: forgetOtpRequest)
+                                    await SVProgressHUD.dismiss()
                                     handleForgetPassSuccess()
                                 }
                             }
                         }, label: {
                             Text(AppString.resendOtp.localized)
                                 .font(.custom(poppinsMedium, fixedSize: 13))
-                                .foregroundStyle(.red)
+                                .foregroundStyle(.secondary)
                         }).padding(.trailing, 35)
                     })
-//                    .padding([.leading , .trailing], Leading)
                     
                     PrimaryButton(title: AppString.submit.localized,isOutLine: false,onButtonClick: {
                         
@@ -113,7 +125,7 @@ struct VerifyOtpScreen: View {
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }
-        .bottomSheet(isPresented: $showError, height: screenHeight / 2, topBarCornerRadius: 25, showTopIndicator: false, content: {
+        .bottomSheet(isPresented: $showError, height: screenHeight / 2.5, topBarCornerRadius: 25, showTopIndicator: false, content: {
             CommonBottomSheet(
                 sheetType: $alertType,
                 onPrimaryClick: {
@@ -139,7 +151,7 @@ struct VerifyOtpScreen: View {
             isPassword = true
             withAnimation(.snappy) { navigateToResetPassword = true }
         } else {
-            alertType = .sheetType(icon: .alert, title: "Failed", message: viewModel.errorMessage ?? "", primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .red)
+            alertType = .sheetType(icon: .alert, title: "Failed", message: viewModel.errorMessage ?? "", primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .secondary)
             withAnimation(.snappy) { showError = true }
         }
     }
@@ -147,7 +159,7 @@ struct VerifyOtpScreen: View {
     func handleForgetPassSuccess() {
         let response = forgetOtpModel.forgotResponseDict
         if response.status == "success" {
-            UserDefaultsManager.shared.setValue(request.email, forKey: .mailId)
+            UserDefaultsManager.shared.setValue(forgetOtpRequest.email, forKey: .mailId)
             alertType = .sheetType(icon: .success, title: response.status.capitalized, message: response.message.capitalized, primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .secondary)
             showError = true
             isPassword = false
@@ -156,14 +168,31 @@ struct VerifyOtpScreen: View {
             withAnimation(.snappy) { showError = true }
         }
     }
-    private func getImageName(at index: Int) -> String {
-        if index >= pin.count {
-            return ""
+   
+    
+}
+
+#Preview {
+    VerifyOtpScreen()
+}
+
+
+struct PinInputView: View {
+    
+    @Binding var pin: String
+    @State private var isCursorVisible = true
+    @FocusState private var focusedField: Int?
+    
+    var maxDigits = 4 // You can change this to your desired PIN length
+    
+    var body: some View {
+        VStack {
+            pinDots
         }
-        if pin.digit.count > 0 {
-            return pin.digit[index].numberStrings
+        .onAppear {
+            startCursorTimer()
+            focusedField = 0
         }
-        return ""
     }
     
     private var pinDots: some View {
@@ -176,45 +205,65 @@ struct VerifyOtpScreen: View {
                         .background(RoundedRectangle(cornerRadius: 10)
                             .fill(.white))
                         .frame(width: 50, height: 50)
-                    backgroundField
-                    let otp = self.getImageName(at: index)
-                    Text(otp)
-                        .font(.custom(poppinsSemiBold, fixedSize: 18))
-                        .foregroundColor(.black)
-                        .padding(.leading, 5)
+                    
+                    
+                    if index < pin.count {
+                        let otp = self.getImageName(at: index)
+                        Text(otp)
+                            .font(.custom(poppinsSemiBold, size: 16.0))
+                            .foregroundColor(.black)
+                    }
+                   
+                    else if index == pin.count && isCursorVisible {
+                        Rectangle()
+                            .fill(Color.black)
+                            .frame(width: 2, height: 25)
+                            .animation(.easeInOut(duration: 0.5).repeatForever(), value: isCursorVisible)
+                    }
                 }
                 .onTapGesture {
-                    focusedIndex = index
+                    UIApplication.shared.endEditing()
+                    focusedField = 0
                 }
-                .focused($focusedField, equals: index)
             }
             Spacer()
         }
+        .background(
+            hiddenTextField
+        )
         .onChange(of: pin) { newValue in
-            if newValue.count > 0 && newValue.count < maxDigits {
-                focusedField = newValue.count
-            } else if newValue.count == maxDigits {
+            if newValue.count == maxDigits {
                 UIApplication.shared.endEditing()
             }
         }
     }
     
-    private var backgroundField: some View {
+    private var hiddenTextField: some View {
         let boundPin = Binding<String>(get: { self.pin }, set: { newValue in
-            self.pin = newValue
-            focusedField = newValue.count < maxDigits ? newValue.count : nil
+            if newValue.count <= maxDigits {
+                self.pin = newValue
+            }
         })
         return TextField("", text: boundPin)
-            .font(.custom(nunitoSemiBold, fixedSize: 20))
+            .keyboardType(.numberPad)
             .accentColor(.clear)
             .tint(.clear)
             .foregroundColor(.clear)
-            .keyboardType(.numberPad)
             .submitLabel(.done)
-            .frame(width: 50, height: 50)
+            .focused($focusedField, equals: 0)
+            .frame(width: 0, height: 0)
+            .opacity(0.01)
     }
-}
-
-#Preview {
-    VerifyOtpScreen()
+    
+    private func startCursorTimer() {
+        Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { _ in
+            isCursorVisible.toggle()
+        }
+    }
+    
+    private func getImageName(at index: Int) -> String {
+        let pinArray = Array(pin)
+        guard index < pinArray.count else { return "" }
+        return String(pinArray[index])
+    }
 }

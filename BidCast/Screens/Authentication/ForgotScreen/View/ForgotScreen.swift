@@ -15,7 +15,7 @@ struct ForgotScreen: View {
     
     @Environment(\.presentationMode) var presentationMode
     @State var isRemeber: Bool = false
-   
+    
     @State var request: ForgetRequest = ForgetRequest(email: "")
     @State var navigateToOTP: Bool = false
     @State var showError: Bool = false
@@ -27,9 +27,9 @@ struct ForgotScreen: View {
     var viewModel = ForgotViewModel()
     
     var body: some View {
-        ZStack(alignment: .top) {
-            
-            VStack(spacing: 0) {
+        
+        VStack(spacing: 0) {
+            VStack{
                 PrimaryHeader(
                     title: AppString.forgetPassword.localized,
                     leadingImgArr: [.icBack],
@@ -38,62 +38,59 @@ struct ForgotScreen: View {
                     },
                     count: .constant(0)
                 )
-
-                ScrollView(showsIndicators: false) {
-                    VStack(alignment: .leading, spacing: 25) {
-                        Color.clear.frame(height: 5)
-                        TitleWithLine(title: AppString.forgetPassword, lineLength: sepratorLine)
-                        SingleTitleLabel(title: AppString.emailAddressNotAssociated.localized, textColor: .mediumLightGray, fontValue: 13.0)
-                        
-                        AuthTextField(
-                            floatingLabel: AppString.email.localized,
-                            placeholder: AppString.enterEmail.localized,
-                            icon: .icMail,
-                            text: $request.email, enteredText:  { email in
-                                self.request.email = email
-                            })
-                        .textContentType(.username)
-                        .keyboardType(.emailAddress)
-                        
-                        PrimaryButton(
-                            title: AppString.submit.localized,
-                            isOutLine: false,
-                            onButtonClick: {
-                                UIApplication.shared.endEditing()
-                                
-                                guard !request.email.isEmpty else {
-                                    hudMsg = AppString.pleaseEnterEmail.localized
-                                    showhud = true
-                                    return
-                                }
-                                
-                                guard request.email.isValidEmail() else {
-                                    hudMsg = AppString.pleaseEnterValidEmailAddress.localized
-                                    showhud = true
-                                    return
-                                }
-                                Task{
-                                    SVProgressHUD.show()
-                                    await  self.viewModel.forgotEmail(parameters: self.request)
-                                    handleSuccess()
-                                }
-                               
-                            },
-                            btnTextColor: .white
-                        )
-                    }
-//                    .padding(.horizontal)
-//                    .padding(.bottom, 32)
-                }
-//                .padding(.top, 20)
             }
-
+            ScrollView(showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 25) {
+                    Color.clear.frame(height: 5)
+                    TitleWithLine(title: AppString.forgetPassword, lineLength: sepratorLine)
+                    SingleTitleLabel(title: AppString.emailAddressNotAssociated.localized, textColor: .mediumLightGray, fontValue: 13.0)
+                    
+                    AuthTextField(
+                        floatingLabel: AppString.email.localized,
+                        placeholder: AppString.enterEmail.localized,
+                        icon: .icMail,
+                        text: $request.email, enteredText:  { email in
+                            self.request.email = email
+                        })
+                    .textContentType(.username)
+                    .keyboardType(.emailAddress)
+                    
+                    PrimaryButton(
+                        title: AppString.submit.localized,
+                        isOutLine: false,
+                        onButtonClick: {
+                            UIApplication.shared.endEditing()
+                            
+                            guard !request.email.isEmpty else {
+                                hudMsg = AppString.pleaseEnterEmail.localized
+                                showhud = true
+                                return
+                            }
+                            
+                            guard request.email.isValidEmail() else {
+                                hudMsg = AppString.pleaseEnterValidEmailAddress.localized
+                                showhud = true
+                                return
+                            }
+                            Task{
+                                SVProgressHUD.show()
+                                self.viewModel.errorMessage?.removeAll()
+                                await  self.viewModel.forgotEmail(parameters: self.request)
+                                handleSuccess()
+                            }
+                            
+                        },
+                        btnTextColor: .white
+                    )
+                }
+            }
+            
+            
             CusNavLink(doNavigate: $navigateToOTP, destination: VerifyOtpScreen())
         }
-        .frame(width: screenWidth, height: screenHeight)
         .onAppear {
             UIScrollView.appearance().bounces = false
-           
+            
         }
         .onDisappear {
             DispatchQueue.main.async {
@@ -110,7 +107,13 @@ struct ForgotScreen: View {
             isPresented: $showError,
             height: screenHeight / 2.3,
             topBarCornerRadius: 25,
-            showTopIndicator: false
+            showTopIndicator: false,onDismiss: {
+                if isPassword {
+                    withAnimation(.snappy) { navigateToOTP = true }
+                } else {
+                    withAnimation { showError = false }
+                }
+            }
         ) {
             CommonBottomSheet(
                 sheetType: $alertType,
@@ -127,8 +130,8 @@ struct ForgotScreen: View {
             )
         }
     }
-
-  
+    
+    
     func handleSuccess() {
         SVProgressHUD.dismiss()
         let response = viewModel.forgotResponseDict

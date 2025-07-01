@@ -19,11 +19,11 @@ struct AppString{
     static let login = "Login".localized
     static let newUser = "New User?".localized
     static let createAccount = "Create Account".localized
-    static let pleaseEnterEmail = "Please Enter Email".localized
-    static let pleaseEnterPassword = "Please Enter Password".localized
+    static let pleaseEnterEmail = "Please enter email address".localized
+    static let pleaseEnterPassword = "Please enter Password".localized
     static let confirmPassword = "Confirm Password".localized
     static let confirmNewPassword = "Confirm New Password".localized
-    static let pleaseEnterNewPassword = "Please Enter New Password".localized
+    static let pleaseEnterNewPassword = "Please enter New Password".localized
     static let pleaseConfirmPassword = "Please Confirm Password".localized
     static let passwordNotLessThan =  "Password can not be less than 8 characters".localized
     static let passwordNotMatched =  "Password and Confirm Password can not be different".localized
@@ -51,8 +51,8 @@ struct AppString{
     static let enterFirstName = "Enter First Name".localized
     static let lastName = "Last Name".localized
     static let enterLastName = "Enter Last Name".localized
-    static let pleaseEnterFirstName = "Please Enter First Name".localized
-    static let pleaseEnterLastName = "Please Enter Last Name".localized
+    static let pleaseEnterFirstName = "Please enter First Name".localized
+    static let pleaseEnterLastName = "Please enter Last Name".localized
     static let backToLogin  = "Back to Login".localized
     static let selectALanguage  = "Select a language".localized
     static let fullName = "First Name".localized
@@ -68,4 +68,6 @@ struct AppString{
     static let forgetPassword = "Forgot Password".localized
     static let enterCodeSent = "Enter the code sent to your email address."
     static let newShow =  "New Show".localized
+    static let successOtpMessage = "Success! Please enter the code that was sent to the email associated with your account."
+    static let successNewPassword = "Success! Please enter your new password below."
 }

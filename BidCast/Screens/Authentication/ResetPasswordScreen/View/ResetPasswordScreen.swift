@@ -14,6 +14,9 @@ import SVProgressHUD
 struct ResetPasswordScreen: View {
 
     // MARK: - Static Properties
+    
+    @EnvironmentObject var appRootManager: AppRootManager
+    
     @State var isRemeber: Bool = false
     @State var isLoading: Bool = false
     @State var confPassword: String = ""
@@ -37,7 +40,9 @@ struct ResetPasswordScreen: View {
                     title: AppString.resetPassword,
                     leadingImgArr: [.icBack],
                     onClickLeading: { _ in
-                        self.navigateToLogin = true
+                        withAnimation {
+                            appRootManager.currentRoot = .authentication
+                        }
                     },
                     count: .constant(0)
                 )
@@ -45,11 +50,11 @@ struct ResetPasswordScreen: View {
             }
             
             ScrollView(showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 25) {
+                VStack(alignment: .leading, spacing: 16) {
                     Color.clear.frame(height: 5)
 
                     TitleWithLine(title: AppString.resetPassword, lineLength: 48)
-
+                    SingleTitleLabel(title: AppString.successNewPassword.localized, textColor: .mediumLightGray, fontValue: 13.0)
                     AuthTextField(
                         floatingLabel: AppString.enterPassword.localized,
                         placeholder: AppString.enterPassword.localized,
@@ -96,16 +101,28 @@ struct ResetPasswordScreen: View {
                             request.password_confirmation = confPassword
                             Task{
                                 SVProgressHUD.show()
+                                self.viewModel.errorMessage?.removeAll()
                                 await viewModel.resetPassword(parameters: request)
                                 await SVProgressHUD.dismiss()
-                                handleSuccess()
+                                if viewModel.errorMessage == nil {
+                                    handleSuccess()
+                                }else{
+                                    alertType = .sheetType(
+                                        icon: .alert,
+                                        title: "Failed",
+                                        message: viewModel.errorMessage ?? "",
+                                        primaryBtnText: "",
+                                        secondaryBtnText: AppString.ok.localized,
+                                        sheetThemeColor: .secondary
+                                    )
+                                    withAnimation(.snappy) {
+                                        showError = true
+                                    }
+                                }
                             }
                         }
                     },btnTextColor: .white)
                 }
-//                .padding(.horizontal)
-//                .padding(.top, 80)
-//                .padding(.bottom, 32)
             }
             
            
@@ -119,13 +136,24 @@ struct ResetPasswordScreen: View {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }
       
-        .bottomSheet(isPresented: $showError, height: screenHeight / 2, topBarCornerRadius: 25, showTopIndicator: false) {
+        .bottomSheet(isPresented: $showError, height: screenHeight / 2.5, topBarCornerRadius: 25, showTopIndicator: false,onDismiss: {
+            if viewModel.errorMessage != nil || viewModel.errorMessage != ""{
+                showError = true
+            }else{
+                withAnimation{
+                    showError = false
+                }
+               
+            }
+        }) {
             CommonBottomSheet(
                 sheetType: $alertType,
                 onPrimaryClick: {
                     withAnimation { showError = false }
                     if alertType.primaryBtnText == AppString.proceedToLogin.localized {
-                        navigateToLogin = true
+                        withAnimation {
+                            appRootManager.currentRoot = .authentication
+                        }
                     }
                 },
                 onSecondaryClick: {

@@ -59,15 +59,15 @@ struct LoginScreen: View {
                 }
                 VStack(alignment: .leading, spacing: 15) {
                     Group {
-                        AuthTextField(floatingLabel: AppString.email.localized, placeholder: AppString.enterEmail.localized, icon: .menuProfile, text: $request.email) { email in
+                        AuthTextField(floatingLabel: AppString.email.localized, placeholder: AppString.enterEmail.localized, icon: .menuProfile, text: $request.email, enteredText:  { email in
                             self.request.email = email
-                        }
+                        })
                         .textContentType(.username)
                         .keyboardType(.emailAddress)
                         
-                        AuthTextField(floatingLabel: AppString.password.localized, placeholder: AppString.enterPassword.localized, icon: .passwordLock, text: $request.password, isPassword: true) { password in
+                        AuthTextField(floatingLabel: AppString.password.localized, placeholder: AppString.enterPassword.localized, icon: .passwordLock, text: $request.password, isPassword: true, enteredText:  { password in
                             self.request.password = password
-                        }
+                        })
                         .textContentType(.password)
                     }
                     
@@ -156,7 +156,6 @@ struct LoginScreen: View {
                 }
                 
                 CusNavLink(doNavigate: $navigateToForgot, destination: ForgotScreen())
-//                CusNavLink(doNavigate: $navigateTotab, destination: TabbarScreen())
                 CusNavLink(doNavigate: $navigateToLanguage, destination: LanguagePickerView())
                 CusNavLink(doNavigate: $navigateToSignUp, destination: SignUpScreen())
 
@@ -196,13 +195,14 @@ struct LoginScreen: View {
            let dict = viewModel.loginResponse
             if dict.status == "success" {
                 UserDefaults.isFirstLogin = 1
-//                if dict?.data.role_id != "1" {
                 loginDetail = dict.data ?? LoginModel()
                 UserDefaults.accessToken = dict.data?.token ?? ""
                 UserDefaults.userId = dict.data?.id ?? 0
                 UserDefaults.userName = dict.data?.name ?? ""
                 UserDefaults.profileURL = dict.data?.profile_image ?? ""
+                SVProgressHUD.show()
                 await self.saveDeviceDetail()
+                await SVProgressHUD.dismiss()
                 UserDefaultsManager.shared.setValue(dict.data?.token, forKey: .token)
                 UserDefaultsManager.shared.setModel(dict.data, forKey: .userDetail)
                     UserDefaultsManager.shared.setValue(isRemeber, forKey: .rememberMe)
@@ -217,7 +217,6 @@ struct LoginScreen: View {
                 UserDefaultsManager.shared.setValue(dict.data?.roles?.name ??  "", forKey: .userRole)
                   
                 alertType = .sheetType(icon: .success, title: dict.status?.capitalized ?? "", message: AppString.chooseLanguage.localized, primaryBtnText: AppString.continueBtn.localized , secondaryBtnText: "", sheetThemeColor: .secondary)
-//                withAnimation(.snappy) { navigateTotab = true }
                 DispatchQueue.main.async {
                            withAnimation {
                                appRootManager.currentRoot = .tabBar

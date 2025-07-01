@@ -97,6 +97,7 @@
 		35BA4A4B2DE87C2300EEC92A /* AddProductScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35BA4A4A2DE87C2300EEC92A /* AddProductScreen.swift */; };
 		35BA4A4E2DE8806A00EEC92A /* ReferEarnScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35BA4A4D2DE8806A00EEC92A /* ReferEarnScreen.swift */; };
 		35BA4A512DE883E800EEC92A /* CompleteProfileScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35BA4A502DE883E800EEC92A /* CompleteProfileScreen.swift */; };
+		35BDF0382E13C88700412446 /* AccountViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35BDF0372E13C88700412446 /* AccountViewModel.swift */; };
 		35C202502DEEFFE300492F2D /* AddCardScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35C2024F2DEEFFDD00492F2D /* AddCardScreen.swift */; };
 		35C202522DEF0DEB00492F2D /* StripeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35C202512DEF0DEB00492F2D /* StripeManager.swift */; };
 		35C202572DEF128300492F2D /* AddCardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35C202562DEF127900492F2D /* AddCardViewModel.swift */; };
@@ -556,6 +557,7 @@
 		35BA4A4A2DE87C2300EEC92A /* AddProductScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddProductScreen.swift; sourceTree = "<group>"; };
 		35BA4A4D2DE8806A00EEC92A /* ReferEarnScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferEarnScreen.swift; sourceTree = "<group>"; };
 		35BA4A502DE883E800EEC92A /* CompleteProfileScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompleteProfileScreen.swift; sourceTree = "<group>"; };
+		35BDF0372E13C88700412446 /* AccountViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountViewModel.swift; sourceTree = "<group>"; };
 		35C2024F2DEEFFDD00492F2D /* AddCardScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCardScreen.swift; sourceTree = "<group>"; };
 		35C202512DEF0DEB00492F2D /* StripeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StripeManager.swift; sourceTree = "<group>"; };
 		35C202562DEF127900492F2D /* AddCardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCardViewModel.swift; sourceTree = "<group>"; };
@@ -1114,9 +1116,9 @@
 		355AE9782DD1FC0400CD3D17 /* Account */ = {
 			isa = PBXGroup;
 			children = (
-				355AE97B2DD1FC3900CD3D17 /* AccountScreen.swift */,
-				D4A7F8FB2DDD9A75001FC705 /* MyAccount */,
-				D4A7F8FA2DDD9A6E001FC705 /* SellerHub */,
+				35BDF0352E13C71000412446 /* Model */,
+				35BDF0362E13C71E00412446 /* View */,
+				35BDF0342E13C6FF00412446 /* ViewModel */,
 			);
 			path = Account;
 			sourceTree = "<group>";
@@ -1336,6 +1338,31 @@
 				35BA4A502DE883E800EEC92A /* CompleteProfileScreen.swift */,
 			);
 			path = CompleteProfile;
+			sourceTree = "<group>";
+		};
+		35BDF0342E13C6FF00412446 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				35BDF0372E13C88700412446 /* AccountViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		35BDF0352E13C71000412446 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		35BDF0362E13C71E00412446 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				35BA4A4F2DE883BE00EEC92A /* CompleteProfile */,
+				D4A7F8FB2DDD9A75001FC705 /* MyAccount */,
+				D4A7F8FA2DDD9A6E001FC705 /* SellerHub */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 		35C2024E2DEEFFD500492F2D /* AddCard */ = {
@@ -2043,6 +2070,7 @@
 				355AE97A2DD1FC1300CD3D17 /* Activity */,
 				355AE9792DD1FC0D00CD3D17 /* Sell */,
 				355AE9782DD1FC0400CD3D17 /* Account */,
+				355AE97B2DD1FC3900CD3D17 /* AccountScreen.swift */,
 				355AE9732DD1F97900CD3D17 /* Explore */,
 				355AE9722DD1F96D00CD3D17 /* Home */,
 				355AE96F2DD1F93600CD3D17 /* TabBar */,
@@ -2587,7 +2615,6 @@
 		D4B6160D2DE8622100924A3D /* NonLinkedSceen */ = {
 			isa = PBXGroup;
 			children = (
-				35BA4A4F2DE883BE00EEC92A /* CompleteProfile */,
 				35BA4A4C2DE8805800EEC92A /* ReferAndEarn */,
 				35BA4A462DE878E300EEC92A /* SalesFormat */,
 				35BA4A432DE870C500EEC92A /* CreateProduct */,
@@ -3993,6 +4020,7 @@
 				99C909E12DC8CDDC0054620B /* UserProfileUpdateResponseModal.swift in Sources */,
 				99C909E22DC8CDDC0054620B /* InterviewScheduleModal.swift in Sources */,
 				99C909E32DC8CDDC0054620B /* NotificationResponseModel.swift in Sources */,
+				35BDF0382E13C88700412446 /* AccountViewModel.swift in Sources */,
 				D4DDF62D2E0BD358007AD383 /* NotificationCardView.swift in Sources */,
 				D4BA9C1A2DE49D1300DFF6E6 /* WalletModel.swift in Sources */,
 				99C909E42DC8CDDC0054620B /* LinkedInUserDetail.swift in Sources */,
@@ -4369,6 +4397,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OBJC_BRIDGING_HEADER = /Users/jamtech/Documents/GitHub/bidcast/BidCast/ZegoBridgeHeader.h;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -4424,6 +4453,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OBJC_BRIDGING_HEADER = /Users/jamtech/Documents/GitHub/bidcast/BidCast/ZegoBridgeHeader.h;
 			};
 			name = Release;
 		};
@@ -4467,7 +4497,7 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = /Users/gadgetzone/Documents/Live/bidcast/BidCast/ZegoBridgeHeader.h;
+				SWIFT_OBJC_BRIDGING_HEADER = /Users/jamtech/Documents/GitHub/bidcast/BidCast/ZegoBridgeHeader.h;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				XROS_DEPLOYMENT_TARGET = 2.4;
@@ -4514,7 +4544,7 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = /Users/gadgetzone/Documents/Live/bidcast/BidCast/ZegoBridgeHeader.h;
+				SWIFT_OBJC_BRIDGING_HEADER = /Users/jamtech/Documents/GitHub/bidcast/BidCast/ZegoBridgeHeader.h;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				XROS_DEPLOYMENT_TARGET = 2.4;

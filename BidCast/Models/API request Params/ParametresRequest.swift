@@ -598,3 +598,9 @@ struct FundTransferRequest : Encodable {
     var amount : Int
 }
 
+struct UpdateProfileRequest : Encodable {
+    var first_name  : String
+    var last_name : String
+    var username  : String
+    var bio : String
+}
