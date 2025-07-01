@@ -79,7 +79,7 @@ struct LoginScreen: View {
                         }, label: {
                             Image(systemName: isRemeber ? "checkmark.square.fill" : "square")
                                 .frame(width: 25, height: 25)
-                                .tint(.red)
+                                .tint(.secondary)
                             
                             Text(AppString.rememberMe.localized)
                                 .font(.custom(poppinsMedium, fixedSize: placeHolder))
@@ -142,7 +142,7 @@ struct LoginScreen: View {
                         }, label: {
                             Text(AppString.createAccount.localized)
                                 .font(.custom(poppinsBold, fixedSize: placeHolder))
-                                .foregroundStyle(.red)
+                                .foregroundStyle(.secondary)
                         })
                         Spacer()
                     }.padding([.top, .bottom], 12)
@@ -155,7 +155,6 @@ struct LoginScreen: View {
                     AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
                 }
                 
-              
                 CusNavLink(doNavigate: $navigateToForgot, destination: ForgotScreen())
 //                CusNavLink(doNavigate: $navigateTotab, destination: TabbarScreen())
                 CusNavLink(doNavigate: $navigateToLanguage, destination: LanguagePickerView())
