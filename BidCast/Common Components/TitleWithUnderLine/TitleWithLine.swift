@@ -26,7 +26,7 @@ struct TitleWithLine: View {
                     .foregroundColor(textColor)
                 Divider()
                     .frame(width: lineLength, height: divderHeight)
-                    .background(.red)
+                    .background(.defaultTheme)
             }
             .padding([.leading ,.trailing], Leading)
             Spacer()
