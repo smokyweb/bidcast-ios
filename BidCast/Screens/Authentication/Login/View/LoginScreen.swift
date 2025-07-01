@@ -79,11 +79,11 @@ struct LoginScreen: View {
                         }, label: {
                             Image(systemName: isRemeber ? "checkmark.square.fill" : "square")
                                 .frame(width: 25, height: 25)
-                                .tint(.secondary)
+                                .tint(.defaultTheme)
                             
                             Text(AppString.rememberMe.localized)
                                 .font(.custom(poppinsMedium, fixedSize: placeHolder))
-                                .foregroundStyle(.gray)
+                                .foregroundStyle(.defaultTheme)
                         })
                         
                         Spacer()
@@ -142,7 +142,7 @@ struct LoginScreen: View {
                         }, label: {
                             Text(AppString.createAccount.localized)
                                 .font(.custom(poppinsBold, fixedSize: placeHolder))
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(.defaultTheme)
                         })
                         Spacer()
                     }.padding([.top, .bottom], 12)
