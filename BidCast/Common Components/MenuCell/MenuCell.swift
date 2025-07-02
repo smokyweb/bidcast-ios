@@ -10,7 +10,7 @@ import SwiftUI
 struct MenuCell: View {
     var title : String = "About Us"
     var textColor : Color?
-    var fontName = poppinsMedium
+    var fontName = poppinsSemiBold
     var fontValue : CGFloat = 16.0
     var menuImg : String = "defaultUser"
     var vectorImg : ImageResource = .vacation

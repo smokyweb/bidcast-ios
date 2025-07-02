@@ -117,7 +117,7 @@ struct ListProductScreen: View {
                         .keyboardType(.numberPad)
 //                        .padding(.horizontal , 16)
                         
-                        MenuCell( title: "Flash Sale",fontValue: 16.0,menuImg: "",isSelectable: true, isTappedSwitch: $isTappedFlash,onToggle: { value in
+                        MenuCell( title: "Flash Sale",fontValue: 14.0,menuImg: "",isSelectable: true, isTappedSwitch: $isTappedFlash,onToggle: { value in
                             if value == true{
                                 request.flash_sale = "1"
                             }else{
@@ -126,7 +126,7 @@ struct ListProductScreen: View {
                         })
                         .padding(.vertical,4)
                         .padding([.leading,.trailing],8)
-                        MenuCell( title: "Accept offers",fontValue: 16.0,menuImg: "",isSelectable: true, isTappedSwitch: $isTappedAccept,onToggle: { value in
+                        MenuCell( title: "Accept offers",fontValue: 14.0,menuImg: "",isSelectable: true, isTappedSwitch: $isTappedAccept,onToggle: { value in
                             print(value)
                             if value == true{
                                 request.accept_offers = "1"
@@ -136,7 +136,7 @@ struct ListProductScreen: View {
                         })
                         .padding(.vertical,4)
                         .padding([.leading,.trailing],8)
-                        MenuCell( title: "Reserve for Live",fontValue: 16.0,menuImg: "",isSelectable: true, isTappedSwitch: $isTappedReserve,onToggle: { value in
+                        MenuCell( title: "Reserve for Live",fontValue: 14.0,menuImg: "",isSelectable: true, isTappedSwitch: $isTappedReserve,onToggle: { value in
                             print(value)
                             if value == true{
                                 request.reserve_for_live = "1"
