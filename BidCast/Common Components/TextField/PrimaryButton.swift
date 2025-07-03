@@ -12,6 +12,8 @@ struct PrimaryButton: View {
     //MARK: inputs
     var title: String = "Sign In"
     var isOutLine = true
+    @State var custFontName: String = poppinsBold
+    @State var custFontSize: Double = buttonTitle
     
     //MARK: Properties
     var onButtonClick: (() -> Void)?
@@ -23,6 +25,7 @@ struct PrimaryButton: View {
     var btnTextColor : Color = .darkBlue
     var btnColor: ColorResource = .defaultTheme
     var foregroundColor : Color = .black
+   
     
     var body: some View {
         Button(action: { withAnimation {
@@ -34,7 +37,7 @@ struct PrimaryButton: View {
                     .background(Color.defaultTheme)
                     .overlay {
                         Text(title)
-                            .font(.custom(poppinsBold, fixedSize: buttonTitle))
+                            .font(.custom(custFontName, fixedSize: custFontSize))
 //                            .bold()
                             .foregroundColor(.white)
                     }
@@ -54,7 +57,7 @@ struct PrimaryButton: View {
                                     .frame(width: 24,height: 24)
                             }
                             Text(title)
-                                .font(.custom(poppinsSemiBold, fixedSize: buttonTitle))
+                                .font(.custom(custFontName, fixedSize: custFontSize))
 //                                .bold()
                                 .foregroundColor(btnTextColor)
                             //                                .foregroundStyle()

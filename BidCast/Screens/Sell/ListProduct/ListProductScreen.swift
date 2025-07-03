@@ -112,12 +112,16 @@ struct ListProductScreen: View {
                             request.quantity = quantity
                         })
                         .keyboardType(.numberPad)
-//                        .padding([.leading,.trailing],6)
+                        .padding([.bottom],4)
                         
-                        
-                        PrimaryButton(title: "Add Variants", isOutLine: false, onButtonClick: {
+                        PrimaryButton(
+                            title: "Add Variants",
+                            isOutLine: false,
+                            custFontName : robotoRegular,
+                            custFontSize : 16.0,
+                            onButtonClick: {
                             print("hell")
-                        }, imageName: "plus_btn", btnColor: .white)
+                        }, imageName: "ic_Plus", btnColor: .white)
                     }
                     
                     .background(.white)

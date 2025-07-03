@@ -35,8 +35,7 @@ struct DescriptionFieldView: View {
                         .foregroundColor(Color.gray)
                         .padding(.all, 8)
                 }
-                
-                
+
                 TextEditor(text: $description)
                     .font(.custom(custPlaceHolderName, size: custPlaceHolderFontSize))
                     .padding(.all, 4)
@@ -48,6 +47,7 @@ struct DescriptionFieldView: View {
                     }
             }
         }
-        .padding()
+        .padding([.top,.bottom], 4)
+        .padding([.leading,.trailing],16)
     }
 }
