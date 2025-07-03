@@ -21,7 +21,6 @@ struct AuthTextField: View {
     var isIconDisplay : Bool = true
     @FocusState var isFocused: Bool
     @State var isForPrice: Bool = false
-    
    
     var isRequiredValue: ((Int) -> Void)?
     var width: CGFloat = screenWidth - 30
@@ -31,14 +30,19 @@ struct AuthTextField: View {
     @State var isForCVV: Bool = false
     @State var isForExpiry: Bool = false
     @State var isForCardNumber: Bool = false
+    @State var custFontName: String = poppinsBold
+    @State var custFontSize: Double = 13.0
+    @State var custPlaceHolderName : String = poppinsMedium
+    @State var custPlaceHolderFontSize : Double = placeHolder
+    
+    
     var enteredText: ((String) -> Void)?
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             
             if floatingLabel != "" {
                 Text(floatingLabel)
-                    .font(.custom(poppinsBold, fixedSize: 13))
-                    .bold()
+                    .font(.custom(custFontName, fixedSize: custFontSize))
                     .foregroundStyle(.text)
             }
             
@@ -72,7 +76,7 @@ struct AuthTextField: View {
                     } else {
                         TextField(placeholder, text: $text)
                         
-                            .font(.custom(poppinsMedium, fixedSize: placeHolder))
+                            .font(.custom(custPlaceHolderName, fixedSize: custPlaceHolderFontSize))
                             .autocorrectionDisabled(true)
                             .autocapitalization(.none)
                             .foregroundStyle(.text)

@@ -23,16 +23,12 @@ struct ListProductScreen: View {
     @State var hudMsg: String = ""
     @State var showError: Bool = false
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
-    
     @State var categoryNames: [String] = []
     @State var selectedCategory = ""
     @State var categoryList: [CategoryDataModel] = []
-    
     @State var shippingAddressName: [String] = []
     @State var shippingId = ""
     @State var ShippingAddress: [AddressModel] = []
-    
-   
     @State var request : StoreProductParam = StoreProductParam(category_id: "", title: "", description: "", quantity: "", pricing: "", flash_sale: "0", accept_offers: "0", reserve_for_live: "0", shipping_profile_id: "", status: "")
     
     @State var viewModel = ListProductViewModel()
@@ -59,7 +55,7 @@ struct ListProductScreen: View {
                     
                     VStack(alignment:.leading,spacing: 8){
                         Text("Product Details".localized)
-                            .font(.custom(poppinsBold, size: 14.0))
+                            .font(.custom(robotoMedium, size: 14.0))
                             .padding(.top,8)
                             .padding([.leading,.trailing],16.0)
                         
@@ -68,6 +64,10 @@ struct ListProductScreen: View {
                             hint: "Select Category",
                             selected: $selectedCategory,
                             anchor: .bottom,
+                            custFontName: robotoRegular,
+                            custFontSize:  14.0,
+                            custCategory : robotoRegular,
+                            custCategorySize : 16.0,
                             onOptionSelected: { value in
                                 selectedCategory = value
                                 if let id = categoryList.first(where: { $0.name == value })?.id {
@@ -79,17 +79,36 @@ struct ListProductScreen: View {
                         )
                         .zIndex(1201.0)
                         .padding([.leading,.trailing],16)
-                        
-                        AuthTextField(floatingLabel: "Title".localized, placeholder: "Enter Product title".localized, icon: .menuProfile, text: $request.title ,isIconDisplay : false, enteredText:  { title in
+                        AuthTextField(
+                                      floatingLabel: "Title".localized,
+                                      placeholder: "Enter Product title".localized,
+                                      icon: .menuProfile,
+                                      text: $request.title ,
+                                      isIconDisplay : false,
+                                      custFontName : robotoRegular,
+                                      custFontSize : 13.0,
+                                      custPlaceHolderName : robotoRegular,
+                                      custPlaceHolderFontSize : 16.0 ,
+                                      enteredText:  { title in
                             request.title = title
                         })
                         .keyboardType(.alphabet)
-//                        .padding([.leading,.trailing],4)
+                        .padding([.top,.bottom],4)
                         
-                        DescriptionFieldView(){ message in
+                        DescriptionFieldView(
+                            custFontName : robotoRegular,
+                            custFontSize : 13.0,
+                            custPlaceHolderName : robotoRegular,
+                            custPlaceHolderFontSize : 16.0)
+                        { message in
                             request.description = message
                         }
-                        AuthTextField(floatingLabel: "Quantity".localized, placeholder: "Enter Quantity".localized, icon: .menuProfile, text: $request.quantity ,isIconDisplay : false, enteredText:  { quantity in
+                        AuthTextField(floatingLabel: "Quantity".localized, placeholder: "Enter Quantity".localized, icon: .menuProfile, text: $request.quantity ,isIconDisplay : false,
+                                      custFontName : robotoRegular,
+                                      custFontSize : 13.0,
+                                      custPlaceHolderName : robotoRegular,
+                                      custPlaceHolderFontSize : 16.0 ,
+                                      enteredText:  { quantity in
                             request.quantity = quantity
                         })
                         .keyboardType(.numberPad)
@@ -111,7 +130,12 @@ struct ListProductScreen: View {
                             .padding(.top,8)
                             .padding([.leading,.trailing],16.0)
                         
-                        AuthTextField(floatingLabel: "Buy it Now Price".localized, placeholder: "0.00".localized, icon: .menuProfile, text: $request.pricing,isIconDisplay : true, isForPrice:true, enteredText:  { price in
+                        AuthTextField(floatingLabel: "Buy it Now Price".localized, placeholder: "0.00".localized, icon: .menuProfile, text: $request.pricing,isIconDisplay : true, isForPrice:true,
+                                      custFontName : robotoRegular,
+                                      custFontSize : 13.0,
+                                      custPlaceHolderName : robotoRegular,
+                                      custPlaceHolderFontSize : 16.0 ,
+                                      enteredText:  { price in
                             request.pricing = price
                         })
                         .keyboardType(.numberPad)
@@ -180,7 +204,7 @@ struct ListProductScreen: View {
                     
                     .background(.white)
                     .cornerRadius(12)
-                    .padding(.horizontal,12)
+                    .padding(.all,12)
                     
                     TwoButton(titleOne: "Save Draft", titleTwo: "Publish", onFirstButtonClick: {
                         print(request)
@@ -297,8 +321,8 @@ struct ListProductScreen: View {
                     }, height: 45, firstBtnTitleColor: .darkGray, secBtnTitleColor: .white, firstBtnBgColor: .white, secBtnBgColor:.darkBlue)
 
                 }
-                .edgesIgnoringSafeArea(.top)
-                .padding(.all,12)
+//                .edgesIgnoringSafeArea(.top)
+                .padding(.all,0)
                 .background(.bg.opacity(0.5))
                 .bottomSheet(isPresented: $showError, height: screenHeight/2, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: {
                     if self.viewModel.errorMessage != "" || self.viewModel.errorMessage != nil{

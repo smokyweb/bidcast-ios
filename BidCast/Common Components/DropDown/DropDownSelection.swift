@@ -20,6 +20,10 @@ struct DropDownSelection: View {
     var anchor: Anchor = .bottom
     var maxWidth: CGFloat = screenWidth - 30
     var cornerRadius: CGFloat = 9
+    @State var custFontName: String = poppinsBold
+    @State var custFontSize: Double = 13.0
+    @State var custCategory : String = poppinsMedium
+    @State var custCategorySize : Double = 13.0
     
     var onOptionSelected: ((String) -> Void)?
     
@@ -31,7 +35,7 @@ struct DropDownSelection: View {
         VStack(alignment: .leading, spacing: 8) {
             if floatingLabel != "" {
                 Text(floatingLabel)
-                    .font(.custom(poppinsBold, fixedSize: 13))
+                    .font(.custom(custFontName, fixedSize: custFontSize))
                     .bold()
                     .foregroundStyle(.text)
                     .multilineTextAlignment(.leading)
@@ -46,7 +50,7 @@ struct DropDownSelection: View {
                     
                     HStack(spacing: 0, content: {
                         Text(selected == "" ? hint : selected )
-                            .font(.custom(poppinsMedium, fixedSize: 13))
+                            .font(.custom(custCategory, fixedSize: custCategorySize))
                             .foregroundStyle(selected == "" ? .gray : .text)
                         Spacer()
                         Image(.arrowForward)

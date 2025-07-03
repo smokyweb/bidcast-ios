@@ -12,11 +12,16 @@ struct DescriptionFieldView: View {
     @State private var description: String = ""
     var title : String = "Description"
     var placeholder : String = "Enter your Description"
+    @State var custFontName: String = poppinsBold
+    @State var custFontSize: Double = 13.0
+    @State var custPlaceHolderName : String = poppinsRegular
+    @State var custPlaceHolderFontSize : Double = placeHolder
     var enteredText: ((String) -> Void)?
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(title)
-                .font(.custom(poppinsBold, size: 13.0))
+                .font(.custom(custFontName, size: custFontSize))
                 .foregroundColor(.black)
             
             ZStack(alignment: .topLeading) {
@@ -33,7 +38,7 @@ struct DescriptionFieldView: View {
                 
                 
                 TextEditor(text: $description)
-                    .font(.custom(poppinsRegular, size: 13.0))
+                    .font(.custom(custPlaceHolderName, size: custPlaceHolderFontSize))
                     .padding(.all, 4)
                     .background(Color.clear)
                     .frame(minHeight: 100)

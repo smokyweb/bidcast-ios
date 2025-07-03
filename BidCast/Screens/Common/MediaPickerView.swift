@@ -29,13 +29,14 @@ struct MediaPickerView: View {
                     HStack {
                         if title != ""{
                             Text(title.localized)
-                                .font(.custom(poppinsBold, size: 14.0))
+                                .font(.custom(robotoMedium, size: 16.0))
                         }
                         Spacer()
                         Text("\(selectedMedia.count)/\(maxMediaCount)")
                             .foregroundColor(.gray)
-                            .font(.custom(poppinsSemiBold, size: 11.0))
+                            .font(.custom(robotoRegular, size: 14.0))
                     }
+                    .padding(.bottom , 10)
                     
                     ScrollView(.horizontal, showsIndicators: false) {
                         LazyHStack(spacing: 16) {
@@ -48,6 +49,7 @@ struct MediaPickerView: View {
                                     RoundedRectangle(cornerRadius: 12)
                                         .stroke(Color.blue, lineWidth: 2)
                                         .background(Color(.systemGray6))
+                                        .cornerRadius(12)
                                     Image(systemName: "camera.fill")
                                         .font(.system(size: 24))
                                         .foregroundColor(.black)
@@ -64,6 +66,7 @@ struct MediaPickerView: View {
                                         RoundedRectangle(cornerRadius: 12)
                                             .stroke(style: StrokeStyle(lineWidth: 1, dash: [5]))
                                             .background(Color(.systemGray6))
+                                            .cornerRadius(12)
                                         Image(systemName: "plus")
                                             .font(.system(size: 24))
                                             .foregroundColor(.black)
@@ -105,8 +108,6 @@ struct MediaPickerView: View {
                 }
                 .padding(.all, 12)
             }
-            
-            
             .background(.white)
             .cornerRadius(12)
             .padding(.all, 12)

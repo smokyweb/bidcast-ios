@@ -48,10 +48,11 @@ struct SearchView: View {
                         .foregroundColor(.gray)
                         .frame(width: 20, height: 20)
                 }
+                .padding(.all, 4)
                 .accessibilityLabel("Clear search text")
             }
         }
-        .frame(height: 50)
+        .frame(height: 42)
 //        .background(Color(.systemGray6))
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .overlay(

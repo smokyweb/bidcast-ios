@@ -106,9 +106,9 @@ struct ListCell: View {
             .frame(maxWidth: .infinity )
         }
         .frame(height: 72)
-        .background(.ghostWhite)
+        .background(isComeFrom == "Explore" ? .white : .ghostWhite)
         .cornerRadius(8.0)
-        .padding([.leading,.trailing], 0)
+        .padding([.leading,.trailing], 2)
         .edgesIgnoringSafeArea(.all)
         .shadow(color: .squirrelGrey.opacity(0.5), radius: 2, x: 0, y: 0)
         .onTapGesture {
