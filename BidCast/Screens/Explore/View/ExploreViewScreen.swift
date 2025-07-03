@@ -55,7 +55,9 @@ struct ExploreViewScreen: View {
                 VStack(alignment: .leading,spacing: 12){
                     SearchView()
                     SingleTitleLabel(title: "Recommended | Popular | All" ,textColor: .black,fontValue: 18.0)
-                    ForEach(0 ..< categoryList.count, id: \.self) { ind in                            ListCell(isComeFrom: "Explore",image: categoryList[ind].image ?? "", title: categoryList[ind].name ?? "", vectorImg: .icArrowUp,subLabel : "BidSwipe",tintColot: categoryList[ind].color ?? "",onTapMenuCell: {
+
+                    ForEach(0 ..< categoryList.count, id: \.self) { ind in
+                        ListCell(image: categoryList[ind].image ?? "", title: categoryList[ind].name ?? "", vectorImg: .icArrowUp,subLabel : "BidSwipe",tintColot: categoryList[ind].color ?? "",onTapMenuCell: {
                         category = categoryList[ind].name ?? ""
                         navigateToCategoryDetailScreen = true
                         

@@ -36,7 +36,7 @@ struct NotificationCardView: View {
         .padding(.vertical, 12)
         .background(Color.white)
         .cornerRadius(12)
-        .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
+        .shadow(color: .black.opacity(0.4), radius: 2, x: 0, y: 0)
         .contentShape(Rectangle())
     }
 }
@@ -46,7 +46,7 @@ extension String {
     func convertToTimeAgo() -> String {
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        formatter.timeZone = TimeZone(secondsFromGMT: 0) // because your string ends in "Z" = UTC
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
 
         guard let date = formatter.date(from: self) else {
             return self

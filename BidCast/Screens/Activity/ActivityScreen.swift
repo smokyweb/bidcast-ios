@@ -22,6 +22,8 @@ struct ActivityScreen: View {
     @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     
     @State private var selected: Segment = .message
+    
+    @State var navigateToNotification = false
     @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
@@ -35,28 +37,32 @@ struct ActivityScreen: View {
                     onClickLeading: { _ in
                         self.presentationMode.wrappedValue.dismiss()
                     },
-                    onClickTrailing: nil,
+                    onClickTrailing: {  _ in
+                       
+                        navigateToNotification = true
+                    },
                     count: .constant(0)
+                )
+            }
+            VStack(alignment: .leading,spacing: 6){
+                SegmentedControlView(
+                    segments: Segment.allCases,
+                    selectedSegment: $selected,
+                    isWithBorder: false,
+                    fontTitle: robotoMedium,
+                    fontSize: 14.0
                 )
             }
             
             ScrollView {
-                VStack(spacing: 20) {
-                    VStack(alignment: .leading){
-                        SegmentedControlView(
-                            segments: Segment.allCases,
-                            selectedSegment: $selected,
-                            isWithBorder: false,
-                            fontTitle: robotoMedium,
-                            fontSize: 14.0
-                        )
-                    }
+                VStack(spacing: 12) {
+                   
                     switch selected {
                     case .message:
                         if messageList.isEmpty {
                             NoDataView(message: "No message Found")
                         }else{
-                            ActivityCell(isFor: selected.rawValue, status: .constant(""))
+                            ActivityCell(isFor: selected.rawValue, status: "")
                         }
                     case .bid:
                         if offerList.isEmpty {
@@ -71,14 +77,18 @@ struct ActivityScreen: View {
                                     },
                                     onAccept: {
                                         handleOfferAction(offer: offer, newStatus: "accepted")
-                                    }, status: .constant("pending")
+                                    }, status: offer.status ?? ""
                                 )
                             }
                         }
                     case .offer:
+                        TwoVerticalLabelCell(dataModel: OffersValue.allCases,
+                                             topLabel: { offer in offerCount(for: offer) },
+                                             bottomLabel: { $0.description.localized})
                         if offerList.isEmpty {
                             NoDataView(message: "No offers Found")
                         } else {
+                            
                             ForEach(offerList, id: \.id) { offer in
                                 ActivityCell(
                                     offerListing: offer,
@@ -88,19 +98,18 @@ struct ActivityScreen: View {
                                     },
                                     onAccept: {
                                         handleOfferAction(offer: offer, newStatus: "accepted")
-                                    }, status: .constant("pending")
+                                    }, status: offer.status ?? ""
                                 )
                             }
                         }
                     case .purchases:
                         if offerList.isEmpty {
                             NoDataView(message: "No List Found")
-                        }
-                        else {
+                        }else {
                             ForEach(offerList, id: \.id) { offer in
                                 ActivityCell(
                                     offerListing: offer,
-                                    isFor: "Purchases", status: .constant("pending")
+                                    isFor: "Purchases", status: offer.status ?? ""
                                 )
                             }
                         }
@@ -113,14 +122,17 @@ struct ActivityScreen: View {
                             ForEach(offerList, id: \.id) { offer in
                                 ActivityCell(
                                     offerListing: offer,
-                                    isFor: "Saved Items",status: .constant("pending")
+                                    isFor: "Saved Items",status: offer.status ?? ""
                                 )
                             }
                         }
                     }
                 }
             }
+            .padding(.top,4)
             .padding(.horizontal, 8)
+            
+            CusNavLink(doNavigate: $navigateToNotification, destination: NotificationScreen())
         }
         .background(Color(.systemGroupedBackground))
         .toast(isPresenting: $showhud) {
@@ -191,7 +203,7 @@ struct ActivityScreen: View {
         
         Task {
             do {
-                // Call the async updateOfferStatus
+                
                 await viewModel.updateOfferStatus(parameters: param)
                 await viewModel.getOfferList()
                 await SVProgressHUD.dismiss()
@@ -209,6 +221,16 @@ struct ActivityScreen: View {
             }
         }
     }
+    func offerCount(for offer: OffersValue) -> String {
+            switch offer {
+            case .pending:
+                return "\(viewModel.offerListResponse.pending ?? 0)"
+            case .accepted:
+                return "\(viewModel.offerListResponse.accepted ?? 0)"
+            case .decline:
+                return "\(viewModel.offerListResponse.declined ?? 0)"
+            }
+        }
 }
 
 

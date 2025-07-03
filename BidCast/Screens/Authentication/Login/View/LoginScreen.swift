@@ -18,14 +18,11 @@ import SVProgressHUD
 struct LoginScreen: View {
     
     @EnvironmentObject private var appRootManager: AppRootManager
-//    @EnvironmentObject var coreDataManager: CoreDataProvider
     @Environment(\.managedObjectContext) var viewContext
     @ObservedObject var languageManager = LanguageManager.shared
 
     
-//    @FetchRequest(sortDescriptors: []) private var loginDetailList: FetchedResults<Login>
-    
-    @State var isRemeber: Bool = true
+    @State var isRemeber: Bool = false
     @State var showError: Bool = false
     @State var navigateToForgot: Bool = false
     @State var navigateToLanguage: Bool = false
@@ -43,10 +40,13 @@ struct LoginScreen: View {
     @State var hudMsg: String = ""
     
     @State var request: SignInRequest = SignInRequest(email: "", password: "")
-    
     @State var loginDetail: LoginModel = LoginModel()
     
-    var viewModel = LoginViewModel()
+    @State var viewModel = LoginViewModel()
+    @State var privacyViewModel = MenuOptionsViewModel()
+    
+    @State var navigateToPrivacy = false
+    @State var navigateToTerms = false
     
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -73,9 +73,9 @@ struct LoginScreen: View {
                     
                     HStack {
                         Button(action: {
-                            withAnimation{
+//                            withAnimation{
                                 isRemeber.toggle()
-                            }
+//                            }
                         }, label: {
                             Image(systemName: isRemeber ? "checkmark.square.fill" : "square")
                                 .frame(width: 25, height: 25)
@@ -83,7 +83,7 @@ struct LoginScreen: View {
                             
                             Text(AppString.rememberMe.localized)
                                 .font(.custom(poppinsMedium, fixedSize: placeHolder))
-                                .foregroundStyle(.defaultTheme)
+                                .foregroundStyle(.black)
                         })
                         
                         Spacer()
@@ -146,7 +146,23 @@ struct LoginScreen: View {
                         })
                         Spacer()
                     }.padding([.top, .bottom], 12)
-
+                    HStack{
+                        Spacer()
+                        let item = ["Privacy Policy", "Terms of service"]
+                        ButtonTitleLabel(
+                            titles: item,
+                            fontValue: 13,
+                            textColor: .mediumGray
+                        ) { selected in
+                            print("Tapped:", selected)
+                            if selected == item[0]{
+                                navigateToPrivacy = true
+                            }else{
+                                navigateToTerms = true
+                            }
+                        }
+                        Spacer()
+                    }
                 }
                 .padding([.leading, .trailing])
                 .padding(.top, screenHeight/3)
@@ -158,6 +174,8 @@ struct LoginScreen: View {
                 CusNavLink(doNavigate: $navigateToForgot, destination: ForgotScreen())
                 CusNavLink(doNavigate: $navigateToLanguage, destination: LanguagePickerView())
                 CusNavLink(doNavigate: $navigateToSignUp, destination: SignUpScreen())
+                CusNavLink(doNavigate: $navigateToPrivacy, destination: PrivacyPolicyScreen())
+                CusNavLink(doNavigate: $navigateToTerms, destination: TermsOfServicesScreen())
 
             }
            

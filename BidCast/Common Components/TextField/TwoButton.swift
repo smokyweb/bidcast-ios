@@ -26,16 +26,19 @@ struct TwoButton: View {
     var firstBtnBgColor: Color = .red
     var secBtnBgColor: Color = .success
     
+    var isHidefirstBtn = false
+    var isHideSecBtn = false
+    
     var body: some View {
         HStack(alignment: .center, spacing: 20) {
-            
-            // First Button
-            Button(action: {
-                withAnimation {
-                    self.onFirstButtonClick?()
-                }
-            }) {
-                Text(titleOne)
+            if !isHidefirstBtn{
+                // First Button
+                Button(action: {
+                    withAnimation {
+                        self.onFirstButtonClick?()
+                    }
+                }) {
+                    Text(titleOne)
                     .font(.custom(nunitoBold, fixedSize: 18))
                     .foregroundStyle(Color(firstBtnTitleColor))
                     .frame(maxWidth: .infinity)
@@ -43,29 +46,32 @@ struct TwoButton: View {
                     .background(firstBtnBgColor)
                     .cornerRadius(cornerRadius)
             }
-            .shadow(color: .gray.opacity(0.3), radius: 2, x: 0, y: 1)
-            .padding(.leading, 16)
-            
-            // Second Button
-            Button(action: {
-                withAnimation {
-                    self.onSecButtonClick?()
-                }
-            }) {
-                Text(titleTwo)
-                    .font(.custom(nunitoBold, fixedSize: 18))
-                    .foregroundStyle(Color(secBtnTitleColor))
-                    .frame(maxWidth: .infinity)
-                    .frame(height: height)
-                    .background(secBtnBgColor)
-                    .cornerRadius(cornerRadius)
-            }
-            .shadow(color: .gray.opacity(0.3), radius: 2, x: 0, y: 1)
-//            .overlay(
-//                RoundedRectangle(cornerRadius: cornerRadius)
-//                    .stroke(Color.defaultTheme, lineWidth: 1)
-//            )
-            .padding(.trailing, 16)
+                .shadow(color: .gray.opacity(0.3), radius: 2, x: 0, y: 1)
+//                .padding(.horizontal, 16)
         }
+            // Second Button
+            if !isHideSecBtn {
+                Button(action: {
+                    withAnimation {
+                        self.onSecButtonClick?()
+                    }
+                }) {
+                    Text(titleTwo)
+                        .font(.custom(nunitoBold, fixedSize: 18))
+                        .foregroundStyle(Color(secBtnTitleColor))
+                        .frame(maxWidth: .infinity)
+                        .frame(height: height)
+                        .background(secBtnBgColor)
+                        .cornerRadius(cornerRadius)
+                }
+                .shadow(color: .gray.opacity(0.3), radius: 2, x: 0, y: 1)
+                //            .overlay(
+                //                RoundedRectangle(cornerRadius: cornerRadius)
+                //                    .stroke(Color.defaultTheme, lineWidth: 1)
+                //            )
+//                .padding(.trailing, 16)
+            }
+        }
+        .padding(.horizontal, 16)
     }
 }

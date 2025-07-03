@@ -31,57 +31,60 @@ struct NotificationScreen: View {
                 },
                 count: .constant(0)
             )
-
-            // MARK: Notification List (Swipe-enabled)
-            List {
-                ForEach(notiListArr, id: \.id) { notification in
-                    if let title = notification.title,
-                       let message = notification.message,
-                       let createdAt = notification.createdAt {
-
-                        NotificationCardView(
-                            title: title,
-                            message: message,
-                            timeAgo: createdAt.convertToTimeAgo()
-                        )
-                        .listRowSeparator(.hidden)
-                        .swipeActions {
-                            Button(role: .destructive) {
-                                if let id = notification.id {
-                                    notiListArr.removeAll { $0.id == id }
-                                    let param = DeleteNotificationRequest(id: id)
-                                    Task {
-                                        await viewModel.DeleteNotification(param: param)
-                                        DeleteNotificationSuccess()
+            if notiListArr.count == 0{
+                NoDataView(message: "No Notitification Found")
+            }else{
+                List {
+                    ForEach(notiListArr, id: \.id) { notification in
+                        if let title = notification.title,
+                           let message = notification.message,
+                           let createdAt = notification.createdAt {
+                            
+                            NotificationCardView(
+                                title: title,
+                                message: message,
+                                timeAgo: createdAt.convertToTimeAgo()
+                            )
+                            .listRowSeparator(.hidden)
+                            .swipeActions {
+                                Button(role: .destructive) {
+                                    if let id = notification.id {
+                                        notiListArr.removeAll { $0.id == id }
+                                        let param = DeleteNotificationRequest(id: id)
+                                        Task {
+                                            await viewModel.DeleteNotification(param: param)
+                                            DeleteNotificationSuccess()
+                                        }
                                     }
+                                }label: {
+                                    Image("ic_delete")
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(width: 24, height: 24)
+                                        .clipped()
+                                    
                                 }
-                            }label: {
-                                Image("ic_delete")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: 24, height: 24)
-                                    .clipped()
-
+                                .tint(.clear)
                             }
-                            .tint(.clear)
                         }
                     }
                 }
-            }
-            .listStyle(.plain)
-            .listRowBackground(Color.clear)
-
+                .listStyle(.plain)
+                .listRowBackground(Color.clear)
+            
             // MARK: Clear All Button
             Button(action: {
-//                notiListArr.removeAll()
-//                let param = DeleteNotificationRequest(id: 0)
-//                Task {
-//                    await viewModel.DeleteNotification(param: param)
-//                    DeleteNotificationSuccess()
-//                }
+                notiListArr.removeAll()
+                let param = DeleteNotificationRequest(id: 0)
+                Task {
+                    SVProgressHUD.show()
+                    await viewModel.DeleteNotification(param: param)
+                    await SVProgressHUD.dismiss()
+                    DeleteNotificationSuccess()
+                }
             }) {
-                Text("CLEAR ALL")
-                    .fontWeight(.bold)
+                Text("Clear All")
+                    .font(.custom(poppinsBold, size: buttonTitle))
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .padding()
@@ -90,6 +93,7 @@ struct NotificationScreen: View {
                     .padding(.horizontal)
                     .padding(.bottom, 10)
             }
+        }
         }
         .onAppear {
             Task {

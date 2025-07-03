@@ -12,7 +12,7 @@ struct ActivityCell: View {
     var isFor: String?
     var onDecline: (() -> Void)?
     var onAccept: (() -> Void)?
-    @Binding var status : String
+    var status : String
     
     var body: some View {
         VStack(spacing: 10) {
@@ -74,11 +74,32 @@ struct ActivityCell: View {
             if isFor == "Offers" || isFor == "OffersScreen" {
                 if status == "pending"{
                     HStack(alignment: .center, spacing: 10) {
-                        // Assuming TwoButton supports actions
                         
-                        TwoButton(
+                        TwoButton(titleOne:"Decline",titleTwo: "Accept",
                             onFirstButtonClick: { onDecline?() },
                             onSecButtonClick: { onAccept?() }
+                        )
+                    }
+                    
+                    .frame(height: 50)
+                    .padding(.bottom, 16)
+                }else if status == "accepted"{
+                    HStack(alignment: .center, spacing: 10) {
+                        
+                        TwoButton(titleTwo: "Accepted",
+                            onFirstButtonClick: {  },
+                            onSecButtonClick: {  },isHidefirstBtn: true,isHideSecBtn: false
+                        )
+                    }
+                    
+                    .frame(height: 50)
+                    .padding(.bottom, 16)
+                }else{
+                    HStack(alignment: .center, spacing: 10) {
+                        
+                        TwoButton(titleOne:"Rejected",
+                            onFirstButtonClick: { },
+                            onSecButtonClick: {  },isHidefirstBtn: false,isHideSecBtn: true
                         )
                     }
                     

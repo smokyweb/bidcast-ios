@@ -17,7 +17,7 @@ struct OffersScreen: View {
     @State private var hudMsg: String = ""
     @StateObject var viewModel = OffersViewModel()
     @State private var offerList: [OfferListModel] = []
-
+     @State var status : String = ""
     @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     
     @Environment(\.presentationMode) var presentationMode
@@ -49,7 +49,7 @@ struct OffersScreen: View {
                             handleOfferAction(offer: txn, newStatus: "rejected")
                         }, onAccept: {
                             handleOfferAction(offer: txn, newStatus: "accepted")
-                        }, status:.constant(txn.status ?? ""))
+                        }, status: txn.status ?? "")
                             .padding([.leading, .trailing], 15)
                     }
                 }
@@ -149,7 +149,7 @@ enum OffersValue : String, CaseIterable, CustomStringConvertible{
     
     case pending = "Pending"
     case accepted = "Accepted"
-    case decline = "Decline"
+    case decline = "Declined"
     
     var description: String {
             return NSLocalizedString(rawValue, comment: "")

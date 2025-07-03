@@ -47,7 +47,7 @@ struct TermsOfServicesScreen: View {
                             .customCSS("""
                                 body { font-size: 16px; }
                             """)
-                            .font(.custom(nunitoLight, fixedSize: 16))
+                            .font(.custom(poppinsRegular, fixedSize: 16))
                             .multilineTextAlignment(.leading)
                             .padding([.top, .leading, .trailing])
                     }

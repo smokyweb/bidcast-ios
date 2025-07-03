@@ -485,7 +485,7 @@ struct BuyerIdentityStoreRequest : Encodable{
 
 
 struct DeleteNotificationRequest : Encodable{
-    var id : Int
+    var id : Int?
 }
 
 struct GetMyScheduleShowRequest : Encodable{
