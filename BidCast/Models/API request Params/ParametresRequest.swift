@@ -385,6 +385,7 @@ struct LogoutRequest : Encodable{
 //MARK: InventoryRequest
 struct InventoryRequest : Encodable{
     var status : String
+    var page : Int
 }
 
 //MARK: Store Product param

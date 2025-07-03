@@ -209,8 +209,9 @@ import SwiftUI
 struct PrimaryHeader: View {
     var title: String = "Header Title"
     var isForLogo: Bool = false
+    var isForBoth = false
     
-    var leadingImgArr: [ImageResource] = []
+    var leadingImgArr: [ImageResource] = [.icBack,.appName]
     var trailingImgArr: [ImageResource] = []
     
     var onClickLeading: ((Int) -> Void)?
@@ -226,7 +227,22 @@ struct PrimaryHeader: View {
             HStack {
                 // Leading icons
                 HStack(spacing: 8) {
-                    if isForLogo {
+                    if isForBoth{
+                        ForEach(leadingImgArr.indices, id: \.self) { ind in
+                            Button(action: {
+                                withAnimation { onClickLeading?(ind) }
+                            }) {
+                                Image(leadingImgArr[ind])
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(maxWidth:.infinity)
+                                    .frame(height: 24)
+                                    .tint(.black)
+                                    .clipped()
+                                   
+                            }
+                        }
+                    }else if isForLogo {
                         Image(.appName)
                             .resizable()
                             .aspectRatio(contentMode: .fit)

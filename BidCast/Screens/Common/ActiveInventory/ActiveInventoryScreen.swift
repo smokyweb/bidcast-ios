@@ -42,21 +42,19 @@ struct ActiveInventoryScreen: View {
                     }
                 }
 
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: 2) {
                     TitleWithLine(title: inventory.title ?? "No Title", lineLength: 0, textColor: .black, fontName: poppinsSemiBold,fontValue: 16, divderHeight: 0)
-                    TitleWithLine(title: inventory.description ?? "No Description", lineLength: 0, textColor: .gray,fontName: poppinsRegular,fontValue: 14, divderHeight: 0)
-                    TitleWithLine(title: "Quantity: \(inventory.quantity ?? 0)", lineLength: 0, textColor: .gray,fontName: poppinsSemiBold ,fontValue: 16, divderHeight: 0)
+                    TitleWithLine(title: inventory.description ?? "No Description", lineLength: 0, textColor: .gray,fontName: poppinsRegular,fontValue: 13, divderHeight: 0)
+                    TitleWithLine(title: "Quantity: \(inventory.quantity ?? 0)", lineLength: 0, textColor: .gray,fontName: poppinsSemiBold ,fontValue: 14, divderHeight: 0)
                 }
 
                 Spacer()
 
-                SingleTitleLabel(title: inventory.status ?? "Unknown", lineLength: 0, textColor: .green,fontName: poppinsRegular, fontValue: 14)
+                SingleTitleLabel(title: inventory.status?.capitalizingFirstLetter() ?? "", lineLength: 0, textColor: .green,fontName: poppinsSemiBold, fontValue: 14)
                     .padding(.trailing, 20)
-//                    .padding(.bottom, -20)
             }
-            .padding([.top, .bottom], 16)
+            .padding([.top, .bottom], 8)
         }
-//        .frame(maxWidth: .infinity)
         .background(Color.white)
         .cornerRadius(12.0)
         .padding(5)
