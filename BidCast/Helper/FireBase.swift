@@ -12,7 +12,7 @@ import FirebaseDatabase
 
 class FirebaseManager {
     static let shared = FirebaseManager()
-    private let databaseRef = Database.database().reference()
+    let databaseRef = Database.database().reference()
     private init() {}
 
     func createLiveSession(showId: String,
@@ -91,5 +91,45 @@ class FirebaseManager {
             }
         }
     }
-   
+    func fetchAllLiveSessions(completion: @escaping (_ sessions: [String]) -> Void) {
+           let ref = databaseRef.child("live_sessions")
+           ref.observeSingleEvent(of: .value) { snapshot in
+               guard let value = snapshot.value as? [String: Any] else {
+                   print("ℹ️ No live sessions found in Firebase.")
+                   completion([])
+                   return
+               }
+
+               // ✅ Extract all room IDs
+               let roomIds = Array(value.keys)
+               print("✅ Firebase room IDs: \(roomIds)")
+               completion(roomIds)
+           }
+       }
+    
+    func observeLiveSessionRemoval(roomId: String, onRemoved: @escaping () -> Void) {
+        let ref = databaseRef.child("live_sessions").child(roomId)
+        ref.observe(.childRemoved) { snapshot in
+            print("🔥 Live session node removed: \(snapshot)")
+            onRemoved()
+        }
+        
+        // Also observe if the whole node disappears
+        ref.observe(.value) { snapshot in
+            if !snapshot.exists() {
+                print("🔥 Live session no longer exists: \(roomId)")
+                onRemoved()
+            }
+        }
+    }
+    
+    func observeNewLiveSessionNodes(onNewSession: @escaping () -> Void) {
+        let ref = databaseRef.child("live_sessions")
+        
+        // Listen for new child nodes (new sessions)
+        ref.observe(.childAdded) { snapshot in
+            print("🆕 New live session added: \(snapshot.key)")
+            onNewSession()
+        }
+    }
 }

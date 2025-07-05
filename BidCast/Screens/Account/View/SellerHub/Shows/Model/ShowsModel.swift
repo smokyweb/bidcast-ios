@@ -50,7 +50,7 @@ struct UpdateStatusModel : Codable {
     }
 
     
-struct ProductData {
+struct ProductData : Codable {
     let category: String
     let id: String
     let image: String
@@ -68,7 +68,7 @@ struct ProductData {
     }
 }
 
-struct SellerModel {
+struct SellerModel : Codable {
     let followed: Bool
     let id: String
     let name: String

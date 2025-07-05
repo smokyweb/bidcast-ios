@@ -32,17 +32,17 @@ struct TransactionRowView: View {
             }
             VStack(alignment: .leading, spacing: 4) {
                 Text(transaction.title)
-                    .font(.headline)
+                    .font(.custom(poppinsSemiBold, size: 14.0))
                     .foregroundColor(.primary)
                 Text(transaction.date, style: .date)
-                    .font(.subheadline)
+                    .font(.custom(poppinsSemiBold, size: 12.0))
                     .foregroundColor(.gray)
             }
  
             Spacer()
  
             Text(transaction.amount, format: .currency(code: "USD"))
-                .font(.headline)
+                .font(.custom(poppinsSemiBold, size: 14.0))
                 .foregroundColor(.primary)
         }
         .padding(.vertical, 8)

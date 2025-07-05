@@ -22,19 +22,18 @@ struct WalletScreen: View {
     @State var selectedButton: WalletSegment = .all
     var body: some View {
         VStack(spacing: 0) {
+            VStack{
+                // MARK: Top-Header (fixed)
+                PrimaryHeader(
+                    title: "Wallet",
+                    isForBoth: true,
+                    leadingImgArr: [.icBack,.appName],
+                    trailingImgArr: [.icSetting],
+                    onClickLeading: { _ in presentationMode.wrappedValue.dismiss() },
+                    count: .constant(0)
+                )
+            }
             
-            // MARK: Top-Header (fixed)
-            PrimaryHeader(
-                title: "Wallet",
-                isForLogo: true,
-                leadingImgArr: [.appName],
-                trailingImgArr: [.icSetting],
-                onClickLeading: { _ in presentationMode.wrappedValue.dismiss() },
-                count: .constant(0)
-            )
-            .padding(.horizontal)
-            .padding(.bottom, 10)
-            .frame(height: 50)
             CustomSegmentedControl(preselectedIndex: $segment,
                                    options: WalletScreenSegment.allCases)
                 .padding(.horizontal)

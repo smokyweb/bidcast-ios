@@ -35,19 +35,19 @@ struct ShippingsScreen: View {
     var body: some View {
         VStack(spacing: 0) {
             // MARK: - Top Header (fixed)
-            PrimaryHeader(
-                title: "Shipping",
-                isForLogo : true,
-                leadingImgArr: [.appName],
-                trailingImgArr: [.icBack],
-                onClickLeading: { _ in
-                    self.presentationMode.wrappedValue.dismiss()
-                },
-                count: .constant(0)
-            )
-            .padding(.horizontal)
-            .padding(.bottom, 10)
-            .frame(height : 10)
+            VStack{
+                PrimaryHeader(
+                    title: "Shipping",
+                    isForBoth : true,
+                    leadingImgArr: [.icBack,.appName],
+                    trailingImgArr: [],
+                    onClickLeading: { _ in
+                        self.presentationMode.wrappedValue.dismiss()
+                    },
+                    count: .constant(0)
+                )
+            }
+           
 
 
             // MARK: - Scrollable Show List

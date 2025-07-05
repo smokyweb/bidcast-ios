@@ -20,7 +20,7 @@ struct CompleteProfileScreen: View {
     @State private var profileImage: UIImage? = nil
     @State var profileImageUrl = ""
     @State private var showImagePicker: Bool = false
-    
+    @State var email = ""
     @State private var showhud: Bool = false
     @State private var hudMsg: String = ""
     @State private var showError: Bool = false
@@ -183,6 +183,18 @@ struct CompleteProfileScreen: View {
                     )
                     .textContentType(.username)
                     .keyboardType(.default)
+                    AuthTextField(
+                        floatingLabel: "Email Address",
+                        placeholder: "Enter email",
+                        icon: .menuProfile,
+                        text: $email,
+                        enteredText: { value in
+                           
+                        }
+                    )
+                    .disabled(true)
+                    .textContentType(.username)
+                    .keyboardType(.default)
                     
                     AuthTextField(
                         floatingLabel: "Bio",
@@ -266,6 +278,7 @@ struct CompleteProfileScreen: View {
                     await SVProgressHUD.dismiss()
                     if viewModel.errorMessage == "" || viewModel.errorMessage == nil {
                         self.accountDetail = self.viewModel.accountInfo.data ?? ProfileModel()
+                        self.email = accountDetail.email ?? ""
                         self.request.first_name = accountDetail.first_name ?? ""
                         self.request.last_name = accountDetail.last_name ?? ""
                         self.request.username = accountDetail.username ?? ""

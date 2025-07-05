@@ -47,19 +47,18 @@ struct ShowsScreen: View {
     var body: some View {
         VStack(spacing: 0) {
             // MARK: - Top Header (fixed)
-            PrimaryHeader(
-                title: "",
-                isForLogo: true,
-                leadingImgArr: [.appName],
-                trailingImgArr: [.search, .notification],
-                onClickLeading: { _ in
-                    self.presentationMode.wrappedValue.dismiss()
-                },
-                count: .constant(0)
-            )
-            .padding(.horizontal)
-            .padding(.bottom, 10)
-            .frame(height: 50)
+            VStack{
+                PrimaryHeader(
+                    title: "",
+                    isForBoth: true,
+                    leadingImgArr: [.icBack,.appName],
+                    trailingImgArr: [.search, .notification],
+                    onClickLeading: { _ in
+                        self.presentationMode.wrappedValue.dismiss()
+                    },
+                    count: .constant(0)
+                )
+            }
 
             // MARK: - Segmented Control
             CustomSegmentedControl(preselectedIndex: $segment, options: ShowScreenSegment.allCases)
@@ -124,9 +123,13 @@ struct ShowsScreen: View {
         .onAppear{
             Task{
                 SVProgressHUD.show()
-                await viewModel.getLiveSHows(param: GetLiveShowsRequest(type: "upcoming"))
+                if segment == .pastShows{
+                    await viewModel.getLiveSHows(param: GetLiveShowsRequest(type: "past"))
+                }else{
+                    await viewModel.getLiveSHows(param: GetLiveShowsRequest(type: "upcoming"))
+                }
                 await SVProgressHUD.dismiss()
-                await scheduleSuccess()
+                scheduleSuccess()
             }
         }
     }

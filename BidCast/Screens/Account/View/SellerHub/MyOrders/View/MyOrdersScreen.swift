@@ -20,24 +20,26 @@ struct MyOrdersScreen: View {
     @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @State private var showhud = false
     @State private var hudMsg = ""
+    @State var newOrder = ""
+    @State var completedOrder = ""
+    @State var ProcessingOrder = ""
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            VStack(spacing: 0) {
-                // MARK: - Top Header (fixed)
-                PrimaryHeader(
-                    title: "My Orders",
-                    isForLogo: true,
-                    leadingImgArr: [.appName],
-                    trailingImgArr: [.icSetting],
-                    onClickLeading: { _ in
-                        self.presentationMode.wrappedValue.dismiss()
-                    },
-                    count: .constant(0)
-                )
-                .padding(.horizontal)
-                .padding(.bottom, 10)
-                .frame(height: 30)
+            VStack(spacing: 4) {
+                VStack{
+                    // MARK: - Top Header (fixed)
+                    PrimaryHeader(
+                        title: "My Orders",
+                        isForBoth: true,
+                        leadingImgArr: [.icBack,.appName],
+                        trailingImgArr: [.icSetting],
+                        onClickLeading: { _ in
+                            self.presentationMode.wrappedValue.dismiss()
+                        },
+                        count: .constant(0)
+                    )
+                }
 
 
                 // MARK: - Scrollable Order List
@@ -45,7 +47,9 @@ struct MyOrdersScreen: View {
                     VStack(spacing: 16) {
                         TwoVerticalLabelCell(
                             dataModel: MyOrderValue.allCases,
-                            topLabel: { $0.labelOlt },
+                            topLabel: { order in
+                                offerCount(for: order)
+                            },
                             bottomLabel: { $0.description.localized },
                             selection: $selectedOrderType
                         )
@@ -110,10 +114,25 @@ struct MyOrdersScreen: View {
         let response = viewModel.myOrderResponse
         if response.status == "success" {
             myOrderListArr = response.data ?? []
+            newOrder = "\(response.new_order_count ?? 0)"
+            completedOrder = "\(response.completed_order_count ?? 0)"
+            ProcessingOrder = "\(response.processing_order_count ?? 0)"
+
+
         } else {
            
         }
     }
+    func offerCount(for offer: MyOrderValue) -> String {
+            switch offer {
+            case .newOrders:
+                return "\(viewModel.myOrderResponse.new_order_count ?? 0)"
+            case .processing:
+                return "\(viewModel.myOrderResponse.processing_order_count ?? 0)"
+            case .completed:
+                return "\(viewModel.myOrderResponse.completed_order_count  ?? 0)"
+            }
+        }
 }
 
 //MARK: API Call Passing Param.

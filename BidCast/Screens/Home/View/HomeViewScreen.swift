@@ -80,7 +80,6 @@ struct HomeViewScreen: View {
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }else{
                         LazyVGrid(columns: columns, spacing: 12) {
-                            //                            let liveData = Array(0..<liveShowsData.count)
                             ForEach(liveShowsData.indices, id: \.self) { index in
                                 let item = liveShowsData[index]
                                 
@@ -99,9 +98,6 @@ struct HomeViewScreen: View {
                                     navigateToLiveStream = true
                                 }
                                                     .background(.bg)
-//                                                    .frame(maxWidth: .infinity)
-//                                                    .frame(height: 280)
-                                
                                                     .cornerRadius(10)
                             }
                         }
@@ -117,23 +113,70 @@ struct HomeViewScreen: View {
         }
         .background(.white)
         .onAppear{
+            NotificationCenter.default.addObserver(forName: Notification.Name("Notification"), object: nil, queue: .main) { notification in
+                if let userInfo = notification.userInfo {
+                    print("🔔 Babumoshai, Notification Payload: \(userInfo)")
+                    let type = userInfo["type"] as? String ?? ""
+                           let senderName = userInfo["sender_name"] as? String ?? ""
+                           let senderImage = userInfo["sender_image"] as? String ?? ""
+                           let title = userInfo["title"] as? String ?? ""
+                           let body = userInfo["body"] as? String ?? ""
+
+                    if type == "bid_show_start" {
+//                        navigateToLiveStream = true
+                    }
+                }
+            }
             Task{
+                liveShowsData.removeAll()
                 SVProgressHUD.show()
                 await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: "live",category: showCategory))
                 await SVProgressHUD.dismiss()
                 self.success()
             }
-        }
-        .onReceive(viewModel.$liveShowsResponse){ reponse in
             
+            FirebaseManager.shared.observeNewLiveSessionNodes {
+                   print("🔥 New session detected, refreshing the list babumoshai!")
+                Task{
+                    liveShowsData.removeAll()
+                    SVProgressHUD.show()
+                    await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: "live",category: showCategory))
+                    await SVProgressHUD.dismiss()
+                    self.success()
+                }
+               }
         }
+     
     }
     
     
     func success() {
         let response = viewModel.liveShowsResponse
         if response.status == "success" {
-            liveShowsData = response.data ?? [HomeModel]()
+            FirebaseManager.shared.fetchAllLiveSessions { firebaseRoomIds in
+                let validShows = response.data?.filter { show in
+                                   guard let roomId = show.room_id else { return false }
+                                   return firebaseRoomIds.contains(roomId)
+                               }
+                
+                DispatchQueue.main.async {
+                    if validShows?.isEmpty == true {
+//                        showError = true
+                        alertType = .sheetType(
+                            icon: .alert,
+                            title: response.error_type?.capitalized ?? "",
+                            message: response.message?.capitalized ?? "",
+                            primaryBtnText: "",
+                            secondaryBtnText: AppString.ok.localized
+                        )
+                    }else{
+                        liveShowsData = validShows ?? [HomeModel]()
+//                        liveShowsData = response.data ?? [HomeModel]()
+                    }
+                }
+            }
+            
+           
             
         } else {
             showError = true

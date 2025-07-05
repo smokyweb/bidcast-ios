@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SVProgressHUD
+import AlertToast
 
 struct ProfileScreen: View {
     
@@ -19,19 +20,21 @@ struct ProfileScreen: View {
     @State var profileData = ProfileModel()
     @State var showSellSheet = false
     @State var showNotify = false
-   
+   @State var profileId = 0
     @State  var showhud = false
     @State  var hudMsg = ""
     @State  var productData = ProductListingDataModel()
     @State var isFollowing = false
     @State var productId : Int = 0
     @State var productArr = [ProductListingDataModel]()
-
+    
+    @State var showToast = false
+    @State var toastMessage = ""
     var body: some View {
         VStack(spacing: 0) {
             ScrollView {
                 VStack(spacing: 16) {
-                    ProfileHeaderView(name: profileData.name ?? "", email: profileData.username ?? "", profileImage: profileData.profile_image ?? "", followers: "\(profileData.follower_count ?? 0)", following: "\(profileData.following_count ?? 0)" , bio: profileData.bio ?? "",onTapNotify: {
+                    ProfileHeaderView(name: profileData.name?.capitalizingFirstLetter() ?? "", email: profileData.username ?? "", profileImage: profileData.profile_image ?? "", followers: "\(profileData.follower_count ?? 0)", following: "\(profileData.following_count ?? 0)" , bio: profileData.bio ?? "",onTapNotify: {
                         showNotify = true
                     })
                     
@@ -70,10 +73,16 @@ struct ProfileScreen: View {
 
                           )
                       }
+            .toast(isPresenting: $showToast) {
+                AlertToast(displayMode: .hud, type: .regular, title: toastMessage)
+                
+            }
             .bottomSheet(isPresented: $showNotify,height: screenHeight * 0.45) {
                    NotifyMeBottomSheet(
-                       profileImage: profileData.profile_image ?? "" ,
+                    userId: $profileId, profileImage: profileData.profile_image ?? "" ,
                        username: profileData.username ?? "",
+                    showParentToast: $showToast,
+                            parentToastMessage: $toastMessage,
                        onDismiss: {
                            self.showNotify = false
                        }
@@ -101,6 +110,7 @@ struct ProfileScreen: View {
         if response.status == "success" {
             profileData = response.data ?? ProfileModel()
             isFollowing = profileData.is_following ?? false
+            profileId = profileData.id ?? 0
             Task{
                 await self.viewModel.productDetails(parameters: UserProductRequest(user_id: Int(id) ?? 0))
                 await SVProgressHUD.dismiss()
@@ -213,10 +223,10 @@ struct ProfileHeaderView: View {
             HStack(spacing:8){
                 VStack{
                     Text(name)
-                        .font(.custom(poppinsBold, size: 20.0))
+                        .font(.custom(poppinsBold, size: 16.0))
 //                        .fontWeight(.bold)
                     Text(email)
-                        .font(.custom(poppinsRegular, size: 14.0))
+                        .font(.custom(poppinsRegular, size: 11.0))
                         .foregroundColor(.gray)
                 }
                 Spacer()
@@ -259,12 +269,15 @@ struct ProfileHeaderView: View {
            
             
             HStack(spacing: 16) {
-                Text("\(followers) Followers").bold()
-                Text("\(following) Following").foregroundColor(.gray)
+                Text("\(followers) Followers")
+                    .font(.custom(poppinsSemiBold, size: 13.0))
+                Text("\(following) Following")
+                    .font(.custom(poppinsSemiBold, size: 13.0))
+                    .foregroundColor(.gray)
             }
             
             Text(bio)
-                .font(.body)
+                .font(.custom(poppinsRegular, size: 13.0))
                 .foregroundColor(.gray)
         }.padding(.horizontal,8)
     }
@@ -315,6 +328,7 @@ struct ProfileTabsView: View {
             ForEach(tabs, id: \.self) { tab in
                 VStack {
                     Text(tab)
+                        .font(.custom(poppinsSemiBold, size: 13.0))
                         .fontWeight(selectedTab == tab ? .bold : .regular)
                         .foregroundColor(selectedTab == tab ? .blue : .gray)
                     if selectedTab == tab {
@@ -338,6 +352,7 @@ struct SearchAndFiltersView: View {
         VStack(spacing: 8) {
             HStack {
                 TextField("What are you looking for?", text: .constant(""))
+                    .font(.custom(poppinsRegular, size: 13.0))
                     .padding(.leading, 12)
                 Image(systemName: "slider.horizontal.3")
                     .padding(.trailing, 12)
@@ -417,9 +432,13 @@ var productName = "Product Name"
                            }
 
             VStack(alignment: .leading) {
-                Text(productName).fontWeight(.semibold)
-                Text(description).foregroundColor(.gray).font(.subheadline)
-                Text(pricing).fontWeight(.bold)
+                Text(productName)
+                    .font(.custom(poppinsSemiBold, size: 13.0))
+                Text(description)
+                    .foregroundColor(.gray)
+                    .font(.custom(poppinsSemiBold, size: 11.0))
+                Text(pricing)
+                    .font(.custom(poppinsBold, size: 13.0))
             }
             Spacer()
         }
@@ -440,7 +459,7 @@ struct TabIcon: View {
             Image(systemName: systemImage)
                 .foregroundColor(selected ? .purple : .gray)
             Text(title)
-                .font(.caption)
+                .font(.custom(poppinsRegular, size: 13.0))
                 .foregroundColor(selected ? .purple : .gray)
         }
         .frame(maxWidth: .infinity)

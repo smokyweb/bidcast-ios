@@ -38,7 +38,7 @@ struct ShowCardView: View {
                 }
             }
             VStack(alignment: .leading, spacing: 5) {
-                Text(show.title ?? "")
+                Text(show.title?.capitalizingFirstLetter() ?? "")
                     .font(.custom(poppinsBold, size: 14.0))
 
                 Text(show.date ?? "")

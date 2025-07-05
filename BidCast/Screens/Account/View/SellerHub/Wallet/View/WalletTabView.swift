@@ -34,10 +34,10 @@ struct WalletTabView: View {
                     
                     VStack(spacing: 4) {
                         Text("Available Balance")
-                            .font(.footnote)
+                            .font(.custom(poppinsRegular, size: 11.0))
                             .foregroundColor(.gray)
                         Text(formatAmount(summary.avaiableBalance))
-                            .font(.system(size: 34, weight: .bold))
+                            .font(.custom(poppinsSemiBold, size: 20.0))
                     }
                     .padding(.vertical, 16)
                     .frame(maxWidth: .infinity)

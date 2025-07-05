@@ -42,8 +42,8 @@ struct SelectThumbnailScreen: View {
                     },
                     count: .constant(0)
                 )
-                .background(.white)
-            }.frame(height: 80)
+                
+            }
             
             ScrollView(showsIndicators: false) {
                 VStack(alignment:.leading,spacing: 16) {
@@ -129,7 +129,7 @@ struct SelectThumbnailScreen: View {
             CusNavLink(doNavigate: $navigateToSelectTime, destination: SelectShowScreen(request:$request,thumbNail: $thumbNail))
             
         }
-        .edgesIgnoringSafeArea([.top,.bottom])
+        .edgesIgnoringSafeArea(.bottom)
         .background(.bg.opacity(0.5))
         .toolbar(.hidden,for: .tabBar)
         .confirmationDialog("Select Media Source", isPresented: $showPickerOptions) {

@@ -256,7 +256,7 @@ struct LoginScreen: View {
     func saveDeviceDetail() async{
         let deviceTimeZone = getDeviceTimeZone()
         let bundleVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
-        let param = DeviceDetailRequest(device_token: UserDefaults.accessToken, platform: UIDevice.current.systemName.lowercased(), app_version: bundleVersion, time_zone: deviceTimeZone)
+        let param = DeviceDetailRequest(device_token: UserDefaults.FCMToken, platform: UIDevice.current.systemName.lowercased(), app_version: bundleVersion, time_zone: deviceTimeZone)
         print("Device Detail is:- \(param)")
         await self.viewModel.saveDeviceDetail(parameters: param)
     }

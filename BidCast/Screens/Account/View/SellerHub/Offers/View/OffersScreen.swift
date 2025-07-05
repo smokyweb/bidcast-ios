@@ -29,8 +29,8 @@ struct OffersScreen: View {
             VStack{
                 PrimaryHeader(
                     title: "Offers",
-                    isForLogo : true,
-                    leadingImgArr: [.appName],
+                    isForBoth : true,
+                    leadingImgArr: [.icBack,.appName],
                     trailingImgArr: [.icSetting],
                     onClickLeading: { _ in
                         self.presentationMode.wrappedValue.dismiss()

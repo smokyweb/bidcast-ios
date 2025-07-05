@@ -26,9 +26,12 @@ struct NotifyMeBottomSheet: View {
     @State private var navToProfile = false
     
     // MARK: – Inputs from parent
-    let userId: Int = 5
+    @Binding var userId : Int
     let profileImage: String
     let username: String
+    
+    @Binding var showParentToast: Bool
+    @Binding var parentToastMessage: String
     var onDismiss: () -> Void = {}
     
     // MARK: – View
@@ -62,7 +65,7 @@ struct NotifyMeBottomSheet: View {
                                        }
                         
                         Text("@\(username)")
-                            .font(.headline)
+                            .font(.custom(poppinsSemiBold, size: 14.0))
                             .foregroundColor(.black)
                     }
                     
@@ -118,11 +121,10 @@ struct NotifyMeBottomSheet: View {
         }
         .background(Color.white)
         .cornerRadius(20)
-        .onReceive(viewModel.$notifyLiveUserResponseDict){ repsones in
-            
-        }
+     
         .toast(isPresenting: $showHUD) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
+            
         }
         .bottomSheet(
             isPresented: $showError,
@@ -145,6 +147,8 @@ struct NotifyMeBottomSheet: View {
             let param = NotifyLiveUserRequest(live_user_id: userId)
             SVProgressHUD.show()
             await viewModel.notifyLiveUser(parameter: param)
+            await SVProgressHUD.dismiss()
+            handleSuccess()
         }
     }
 
@@ -155,8 +159,11 @@ struct NotifyMeBottomSheet: View {
         SVProgressHUD.dismiss()
         let response = viewModel.notifyLiveUserResponseDict
         if response?.status == "success" {
-            onDismiss()
-            
+            parentToastMessage = response?.message ?? "Notification set!"
+                   showParentToast = true
+                   
+                   onDismiss()
+          
         } else {
             alertType = .sheetType(icon: .alert, title: response?.status?.capitalized ?? "", message: response?.message?.capitalized ?? "", primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .defaultTheme)
             withAnimation(.snappy) { showError = true }

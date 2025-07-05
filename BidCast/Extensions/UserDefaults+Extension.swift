@@ -64,6 +64,15 @@ extension UserDefaults{
         }
     }
     
+    static var FCMToken:String {
+        set(input){
+            self.standard.setValue(input, forKey: "FCMToken")
+        }
+        get{
+            return self.standard.value(forKey: "FCMToken") as? String ?? ""
+        }
+    }
+    
     static var pdfURL: URL? {
             get {
                 if let urlString = self.standard.string(forKey: "pdfURL") {

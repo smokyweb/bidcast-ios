@@ -17,9 +17,9 @@ struct RewardInfoCardView: View {
 
             VStack(alignment: .leading, spacing: 4) {
                 Text("Earn $100 Reward")
-                    .font(.headline)
+                    .font(.custom(poppinsSemiBold, size: 14.0))
                 Text("When your referral makes their first sale")
-                    .font(.caption)
+                    .font(.custom(poppinsRegular, size: 11.0))
                     .foregroundColor(.gray)
             }
 

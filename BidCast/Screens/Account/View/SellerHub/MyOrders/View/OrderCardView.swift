@@ -27,7 +27,7 @@ struct OrderCardView: View {
                     .fontWeight(.semibold)
                 Spacer()
                 Text(order?.status ?? "")
-                    .font(.caption)
+                    .font(.custom(poppinsSemiBold, size: 13.0))
                     .padding(.horizontal, 10)
                     .padding(.vertical, 4)
                     .background(statusColor.opacity(0.2))
@@ -36,7 +36,7 @@ struct OrderCardView: View {
             }
 
             Text(formatDateTime(order?.product?.createdAt))
-                .font(.caption)
+                .font(.custom(poppinsSemiBold, size: 13.0))
                 .foregroundColor(.gray)
 
             HStack(spacing: 12) {
@@ -49,10 +49,10 @@ struct OrderCardView: View {
                 .frame(width: 40, height: 40)
                 .clipShape(Circle())
                 VStack(alignment: .leading) {
-                    Text(order?.product?.title ?? "")
-                        .fontWeight(.semibold)
+                    Text(order?.product?.title?.capitalizingFirstLetter() ?? "")
+                        .font(.custom(poppinsSemiBold, size: 14.0))
                     Text(order?.product?.description ?? "")
-                        .font(.caption)
+                        .font(.custom(poppinsRegular, size: 13.0))
                         .foregroundColor(.gray)
                 }
             }
@@ -63,7 +63,7 @@ struct OrderCardView: View {
                     .foregroundColor(.gray)
                 Spacer()
                 Text("\(order?.product?.pricing ?? 0)")
-                    .fontWeight(.semibold)
+                    .font(.custom(poppinsSemiBold, size: 13.0))
             }
         }
         .padding()

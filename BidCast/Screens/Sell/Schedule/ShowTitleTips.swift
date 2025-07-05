@@ -37,8 +37,8 @@ struct ShowTitleTips: View {
                     },
                     count: .constant(0)
                 )
-                .background(.white)
-            }.frame(height: 80)
+                
+            }
             
             ScrollView(showsIndicators: false) {
                 VStack(alignment:.leading,spacing: 16) {
@@ -120,7 +120,7 @@ struct ShowTitleTips: View {
         }
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)}
-        .edgesIgnoringSafeArea([.top,.bottom])
+        .edgesIgnoringSafeArea(.bottom)
         .background(.bg.opacity(0.5))
         .toolbar(.hidden,for: .tabBar)
         .onAppear {

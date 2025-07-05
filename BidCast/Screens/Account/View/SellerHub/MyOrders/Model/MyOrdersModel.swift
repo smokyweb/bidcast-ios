@@ -81,3 +81,9 @@ struct ShippingTrackingModel: Codable {
         case createdAt = "created_at"
     }
 }
+
+struct ResponseModelOrder<T: Codable>: Codable {
+    var status, message, error_type: String?
+    var data: T?
+    var new_order_count, completed_order_count,processing_order_count: Int?
+}

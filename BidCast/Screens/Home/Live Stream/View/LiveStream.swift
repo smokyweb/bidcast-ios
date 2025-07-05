@@ -10,6 +10,7 @@ import SwiftUI
 import SwiftUI
 import SVProgressHUD
 import ZegoExpressEngine
+import AlertToast
 
 struct Comment: Identifiable, Equatable {
     let id = UUID()
@@ -23,7 +24,7 @@ struct LiveStream: View {
     @State var comments: [Comment] = []
     
     @State var id : String = ""
-    @GestureState private var dragOffset = CGSize.zero
+    @State var dragOffset = CGSize.zero
     @State var navigateToProfile = false
     @State private var swipeConfirmed = false
     @Binding var currentStreamIndex : Int
@@ -33,12 +34,15 @@ struct LiveStream: View {
     @State var streamID = [String]()
     var viewModel = LiveShowsViewModel()
     @State var liveShowsData = [LiveShowsModel]()
+    @State var BiddingDetail = BiddingModel()
     @State var isLoading: Bool = false
-    @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+    @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "Stream Ended", message: "The live stream has ended.", primaryBtnText: "", secondaryBtnText: "")
     @State var showError: Bool = false
     @Binding var userId : String
     @Environment(\.presentationMode) var presentationMode
     
+    @State var titleStream = "Stream Ended"
+    @State var messageStream = "The live stream has ended."
     @ObservedObject var zegoManager = ZegoManager.shared
     @ObservedObject var chatManager = ZIMChatManager.shared
     @StateObject private var keyboardResponder = KeyboardResponder()
@@ -47,9 +51,23 @@ struct LiveStream: View {
     @State private var showStartTime: Date? = nil
     @State private var liveElapsedTime: String = "00:00:00"
     
+    @State  var currentRoomID = ""
+    @State var streamInterrrupted = false
+    
     var tabBarHeight: CGFloat {
         UIApplication.shared.windows.first?.safeAreaInsets.bottom ?? 49
     }
+    
+    @State var showHud = false
+    @State var hudMsg = ""
+    //MARK: - for swipe
+           @State private var currentPrice: Int = 1
+           @State private var countdown: Int = 5
+           @State private var isBiddingActive: Bool = false
+           @State private var priceTimer: Timer?
+           @State private var countdownTimer: Timer?
+    
+           let totalSwipeWidth: CGFloat = UIScreen.main.bounds.width - 80
     
     var body: some View {
         
@@ -58,6 +76,7 @@ struct LiveStream: View {
                 ZStack(alignment: .top) {
                     if streamID.count != 0 {
                         ZegoPreviewView(streamID: streamID[currentStreamIndex])
+                            .offset(y: verticalDragOffset.height)
                             .frame(width: geometry.size.width, height: geometry.size.height + 50)
                             .edgesIgnoringSafeArea(.all)
                         
@@ -79,6 +98,7 @@ struct LiveStream: View {
                                         Image(systemName: "sparkles")
                                             .foregroundColor(.yellow)
                                         Text("99")
+                                            .font(.custom(poppinsSemiBold, size: 13.0))
                                             .foregroundColor(.yellow)
                                     }
                                 }
@@ -118,35 +138,44 @@ struct LiveStream: View {
                         
                         Spacer()
                         
-                        // Floating action icons on the right
-                        VStack(spacing: 16) {
+                        //MARK: Side menu
+                      
+                        VStack(spacing: 20) {
+                            Spacer()
                             Button(action: {}) {
-                                Image(systemName: "info.circle")
+                                Image(systemName: "gift")
                                     .font(.title2)
                                     .foregroundColor(.white)
                             }
                             Button(action: {}) {
-                                Image(systemName: "ellipsis.circle")
+                                Image(systemName: "paperclip")
                                     .font(.title2)
                                     .foregroundColor(.white)
                             }
                             Button(action: {}) {
-                                ZStack(alignment: .topTrailing) {
-                                    Image(systemName: "cart")
-                                        .font(.title2)
-                                        .foregroundColor(.white)
-                                    Circle()
-                                        .fill(Color.red)
-                                        .frame(width: 14, height: 14)
-                                        .overlay(Text("7").font(.caption2).foregroundColor(.white))
-                                }
+                                Image(systemName: "arrowshape.turn.up.right")
+                                    .font(.title2)
+                                    .foregroundColor(.white)
+                            }
+                            Button(action: {}) {
+                                Image(systemName: "wallet.pass")
+                                    .font(.title2)
+                                    .foregroundColor(.white)
+                            }
+                            Button(action: {}) {
+                                Image(systemName: "cart")
+                                    .font(.title2)
+                                    .foregroundColor(.white)
                             }
                         }
                         .padding(.trailing)
-                        .padding(.bottom, 180)
+                        .padding(.bottom, 200)
                         .frame(maxWidth: .infinity, alignment: .trailing)
                         
-                        // Comments Section
+                        Spacer()
+                        
+                        
+                        //MARK: Comment section
                         if chatManager.messages.count > 0 {
                             HStack{
                                 ScrollViewReader { scrollProxy in
@@ -190,13 +219,14 @@ struct LiveStream: View {
                                 }
                                 Spacer()
                             }
+                            .padding(.bottom,50)
                         }
-                        
+                        //MARK: Product Details
                         HStack(spacing: 12) {
                             CustomProfileImage(url: liveShowsData[currentStreamIndex].category?.image ?? "", isCircular: false,cornerRadius: 8.0,size: 60.0)
                             
                             VStack(alignment: .leading, spacing: 4) {
-                                Text("Item Name")
+                                Text(BiddingDetail.product?.name.capitalizingFirstLetter() ?? "")
                                     .font(.custom(poppinsBold, size: 13.0))
                                     .foregroundColor(.black)
                                 HStack(spacing: 6) {
@@ -223,50 +253,78 @@ struct LiveStream: View {
                         .cornerRadius(10)
                         .padding(.horizontal)
                         
-                        // Swipe to Bid Button
-                        ZStack(alignment: .leading) {
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(Color.black.opacity(0.3))
-                                .frame(height: 50)
-                            
-                            Text("Swipe to Bid")
-                                .font(.custom(poppinsSemiBold, size: 14.0))
-                                .foregroundColor(.white)
-                                .padding(.leading)
-                            Spacer()
-                            RoundedRectangle(cornerRadius: 10)
-                                .strokeBorder(Color.white, lineWidth: 2)
-                                .frame(width: 50, height: 40)
-                                .overlay(
-                                    Text(swipeConfirmed ? "✓" : "→")
+                       
+                        //MARK: Swipe fearture
+                        HStack(spacing: 0) {
+                                // 3/4 Swipe Area
+                                ZStack(alignment: .leading) {
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .fill(.black.opacity(0.3))
+                                        .frame(height: 60)
+
+                                  
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .fill(.defaultTheme)
+                                        .frame(width: 50, height: 40)
+                                        .overlay(
+                                            Text(swipeConfirmed ? "✓" : "→")
+                                                .foregroundColor(.white)
+                                                .bold()
+                                        )
+                                        .offset(x: min(dragOffset.width + 110, totalSwipeWidth - 90))
+                                        .gesture(
+                                            DragGesture()
+                                                .onChanged { value in
+                                                    if value.translation.width >= 0 {
+                                                        dragOffset = value.translation
+                                                    }
+                                                }
+                                                .onEnded { value in
+                                                    if value.translation.width > totalSwipeWidth * 0.8 {
+                                                        swipeConfirmed = true
+                                                        dragOffset = .zero
+                                                        incrementPrice()
+                                                    } else {
+                                                        swipeConfirmed = false
+                                                        dragOffset = .zero
+                                                    }
+                                                }
+                                        )
+                                        .animation(.easeOut, value: dragOffset)
+                                    
+                                    Text("Swipe to Bid")
+                                        .font(.custom(poppinsSemiBold, size: 14.0))
                                         .foregroundColor(.white)
-                                        .bold()
-                                )
-                                .offset(x: (screenWidth / 2 - 50) + dragOffset.width)
-                                .gesture(
-                                    DragGesture()
-                                        .updating($dragOffset) { value, state, _ in
-                                            if value.translation.width >= 0 {
-                                                
-                                                let maxDrag = screenWidth - 40 - (screenWidth / 2 - 50)
-                                                state = CGSize(width: min(value.translation.width, maxDrag), height: 0)
-                                            }
-                                        }
-                                        .onEnded { value in
-                                            let maxDrag = screenWidth - 40 - (screenWidth / 2 - 50)
-                                            if value.translation.width > maxDrag * 0.8 {
-                                                swipeConfirmed = true
-                                                
-                                            } else {
-                                                swipeConfirmed = false
-                                            }
-                                        }
-                                )
-                                .animation(.spring(), value: dragOffset)
-                        }
-                        .padding(.horizontal)
+                                        .padding(.leading)
+
+                                }
+//                                .frame(width: UIScreen.main.bounds.width * 0.75)
+
+                                // 1/4 Price & Timer Area
+                                VStack {
+                                    Text("$ \(String(format: "%.2f", Double(currentPrice)))")
+                                        .font(.custom(poppinsBold, size: 18))
+                                        .foregroundColor(.white)
+                                        .padding(.vertical, 4)
+
+                                    Text(String(format: "00:00:%02d", countdown))
+                                        .font(.custom(poppinsSemiBold, size: 14))
+                                        .foregroundColor(.white)
+                                }
+                                .frame(width: UIScreen.main.bounds.width * 0.25)
+                                .background(.defaultTheme)
+                                .cornerRadius(10)
+                            }
+                            .padding(.horizontal)
+                            .onAppear {
+                                if !isBiddingActive {
+                                    startCountdown()
+                                    isBiddingActive = true
+                                }
+                            }
                         
-                        // Comment Input
+                        
+                        //MARK: Add Comment section
                         
                         HStack {
                             ZStack(alignment: .trailing) {
@@ -287,7 +345,6 @@ struct LiveStream: View {
                                 
                                 if !commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                                     Button(action: {
-                                        let textToSend = commentText.trimmingCharacters(in: .whitespacesAndNewlines)
                                         let roomId = liveShowsData[currentStreamIndex].room_id ?? ""
                                         ZIMChatManager.shared.sendMessage(message: commentText,roomId: roomId)
                                         commentText = ""
@@ -304,34 +361,65 @@ struct LiveStream: View {
                             }
                         }
                         .padding(.horizontal)
+                        .padding(.bottom)
                         .padding(.bottom, keyboardResponder.currentHeight == 0 ? (tabBarHeight + 20) : keyboardResponder.currentHeight)
                         .animation(.easeOut(duration: 0.25), value: keyboardResponder.currentHeight)
                     }
                 }
                 .gesture(
-                   
                     DragGesture()
                         .updating($verticalGestureOffset) { value, state, _ in
-                            
+                           
                             if abs(value.translation.height) > abs(value.translation.width) {
                                 state = value.translation
                             }
                         }
+                        .onChanged { value in
+                          
+                            withAnimation {
+                                verticalDragOffset = value.translation
+                            }
+                        }
                         .onEnded { value in
                             let verticalAmount = value.translation.height
+                            let swipeThreshold: CGFloat = 100
                             
-                            if verticalAmount < -100 { // Swipe Up
-                                withAnimation {
-                                       ZegoExpressEngine.shared().stopPlayingStream(streamID[currentStreamIndex])
-                                       currentStreamIndex = min(currentStreamIndex + 1, streamID.count - 1)
-                                       print("Switched to stream index: \(currentStreamIndex)")
-                                   }
-                            } else if verticalAmount > 100 { // Swipe Down
-                                withAnimation {
+                            if verticalAmount < -swipeThreshold {
+                                if currentStreamIndex < streamID.count - 1 {
+                                    withAnimation(.easeInOut) {
                                         ZegoExpressEngine.shared().stopPlayingStream(streamID[currentStreamIndex])
-                                        currentStreamIndex = max(currentStreamIndex - 1, 0)
-                                        print("Switched to stream index: \(currentStreamIndex)")
+                                        currentStreamIndex += 1
+                                        verticalDragOffset = .zero // Reset swipe offset
                                     }
+                                    
+                                    let newRoomId = liveShowsData[currentStreamIndex].room_id ?? ""
+                                    loginRoom(roomId: newRoomId)
+                                    fetchBiddingDetail(roomId: newRoomId)
+                                } else {
+                                    withAnimation {
+                                        verticalDragOffset = .zero // If last item, reset
+                                    }
+                                }
+                            } else if verticalAmount > swipeThreshold { // Swipe Down
+                                if currentStreamIndex > 0 {
+                                    withAnimation(.easeInOut) {
+                                        ZegoExpressEngine.shared().stopPlayingStream(streamID[currentStreamIndex])
+                                        currentStreamIndex -= 1
+                                        verticalDragOffset = .zero // Reset swipe offset
+                                    }
+                                    
+                                    let newRoomId = liveShowsData[currentStreamIndex].room_id ?? ""
+                                    loginRoom(roomId: newRoomId)
+                                    fetchBiddingDetail(roomId: newRoomId)
+                                } else {
+                                    withAnimation {
+                                        verticalDragOffset = .zero // If first item, reset
+                                    }
+                                }
+                            } else {
+                                withAnimation {
+                                    verticalDragOffset = .zero // If not enough swipe, reset
+                                }
                             }
                         }
                 )
@@ -342,40 +430,51 @@ struct LiveStream: View {
                 hideKeyboard()
             }
         )
-
-        .bottomSheet(isPresented: $zegoManager.streamInterrupted, height: screenHeight / 2.5, topBarCornerRadius: 25, showTopIndicator: false) {
+        .toast(isPresenting: $showHud) {
+            AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
+        }
+            
+        
+        
+        .bottomSheet(isPresented: $streamInterrrupted, height: screenHeight / 2.2, topBarCornerRadius: 25, showTopIndicator: false,onDismiss: {
+            streamInterrrupted = true
+        }) {
             CommonBottomSheet(
-                sheetType: $zegoManager.alertType,
+                sheetType: $alertType,
                 onPrimaryClick: {
                     withAnimation {
-                        zegoManager.resetError()
+                        streamInterrrupted = false
+                        logoutRoom()
                         self.presentationMode.wrappedValue.dismiss()
                     }
                 },
                 onSecondaryClick: {
                     withAnimation {
-                        zegoManager.resetError()
+                        streamInterrrupted = false
+                        self.presentationMode.wrappedValue.dismiss()
                     }
                 }
             )
         }
+        .edgesIgnoringSafeArea(.bottom)
+       
+        .toolbar(.hidden,for: .tabBar)
         .foregroundColor(.white)
         .onAppear{
             ZIMChatManager.shared.login(userID: "\(UserDefaults.userId)", userName: UserDefaults.userName)
             Task{
                 SVProgressHUD.show()
+                liveShowsData.removeAll()
+                roomID.removeAll()
+                streamID.removeAll()
                 await self.viewModel.getLiveShows(param:GetLiveShowsRequest(type: "live"))
                 await SVProgressHUD.dismiss()
                 success()
-                
-                
             }
         }
         .onDisappear{
             logoutRoom()
         }
-        
-        
         
     }
     
@@ -384,14 +483,30 @@ struct LiveStream: View {
         SVProgressHUD.dismiss()
         let response = viewModel.liveShowsResponse
         if response.status == "success" {
-            liveShowsData = response.data ?? [LiveShowsModel]()
-            roomID = liveShowsData.compactMap { $0.room_id }
-            streamID = roomID
-            if !liveShowsData.isEmpty {
-                let initialRoomID = liveShowsData[currentStreamIndex].room_id ?? ""
-                loginRoom(roomId: initialRoomID)
-                ZIMChatManager.shared.joinRoom(roomID: initialRoomID)
+            
+            FirebaseManager.shared.fetchAllLiveSessions { firebaseRoomIds in
+                let validShows = response.data?.filter { show in
+                    guard let roomId = show.room_id else { return false }
+                    return firebaseRoomIds.contains(roomId)
+                }
+                
+                DispatchQueue.main.async {
+                    if validShows?.isEmpty == true {
+                        
+                    }else{
+                        liveShowsData = validShows ?? [LiveShowsModel]()
+                        roomID = liveShowsData.compactMap { $0.room_id }
+                        streamID = roomID
+                        if !liveShowsData.isEmpty {
+                            let initialRoomID = liveShowsData[currentStreamIndex].room_id ?? ""
+                            loginRoom(roomId: initialRoomID)
+                            fetchBiddingDetail(roomId: initialRoomID)
+                            ZIMChatManager.shared.joinRoom(roomID: initialRoomID)
+                        }
+                    }
+                }
             }
+            
         } else {
             showError = true
             alertType = .sheetType(
@@ -413,24 +528,86 @@ struct LiveStream: View {
         ZegoExpressEngine.shared().loginRoom(roomId, user: user, config: roomConfig) { errorCode, extendedData in
             if errorCode == 0 {
                 print("✅ Login callback | room: \(roomId) | errorCode: \(errorCode)")
-//                chatManager.loginCompletion = {
-//                    chatManager.updateRoomID(newRoomID: roomId) // 🔥 Update only when login is ready
-//                }
+                currentRoomID = roomId
+                FirebaseManager.shared.observeLiveSessionRemoval(roomId: roomId) {
+                    let streamTitle = self.titleStream
+                    let streamMessage = self.messageStream
+                    showHud = true
+                    hudMsg = "Live stream has been ended"
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2){
+                        logoutRoom()
+                        self.presentationMode.wrappedValue.dismiss()
+                    }
+//                    print("🔥 STREAM REMOVED CALLBACK TRIGGERED 🔥")
+//                    alertType = .sheetType(icon: .alert,
+//                                           title: streamTitle,
+//                                           message: streamMessage,
+//                                           primaryBtnText: "",
+//                                           secondaryBtnText: AppString.ok.localized,
+//                                           sheetThemeColor: .defaultTheme)
+//                    
+//                      
+//                           withAnimation(.snappy) {
+//                               streamInterrrupted = false
+//                           }
+                       
+                    
+                    
+                }
             } else {
                 print("login fail error")
             }
         }
     }
-    
+    func fetchBiddingDetail(roomId: String) {
+        FirebaseManager.shared.getLiveSessionData(roomId: roomId) { data in
+            guard let data = data else { return }
+            DispatchQueue.main.async {
+                if let jsonData = try? JSONSerialization.data(withJSONObject: data) {
+                    do {
+                        let model = try JSONDecoder().decode(BiddingModel.self, from: jsonData)
+                        self.BiddingDetail = model
+                        if let priceString = self.BiddingDetail.product?.price,
+                           let priceDouble = Double(priceString) {
+                            self.currentPrice = Int(priceDouble)
+                        }
+                    } catch {
+                        print("❌ Decoding Error: \(error)")
+                    }
+                }
+            
+            }
+        }
+    }
     
     func logoutRoom() {
         ZegoExpressEngine.shared().logoutRoom()
-        
-//        chatManager.leaveCurrentRoom()
         chatManager.logout()
         chatManager.messages.removeAll()
+        if let currentRoomId = liveShowsData[safe: currentStreamIndex]?.room_id {
+            FirebaseManager.shared.databaseRef.child("live_sessions").child(currentRoomId).removeAllObservers()
+        }
         
     }
+       
+   
+    func startCountdown() {
+            Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+                if countdown > 0 {
+                    countdown -= 1
+                } else {
+                    incrementPrice()
+                }
+            }
+        }
+
+        func incrementPrice() {
+            let range = (currentPrice / 10) * 10
+            let increment = (range / 10 + 1)
+            currentPrice += increment
+            countdown = 5
+        }
 }
 
 
@@ -460,14 +637,14 @@ struct ZegoPreviewView: UIViewRepresentable {
     }
     func updateUIView(_ uiView: UIView, context: Context) {
         ZegoExpressEngine.shared().stopPlayingStream(context.coordinator.streamID)
-           
-           DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-               let canvas = ZegoCanvas(view: uiView)
-               canvas.viewMode = .aspectFill
-               ZegoExpressEngine.shared().startPlayingStream(streamID, canvas: canvas)
-               context.coordinator.streamID = streamID
-           }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            let canvas = ZegoCanvas(view: uiView)
+            canvas.viewMode = .aspectFill
+            ZegoExpressEngine.shared().startPlayingStream(streamID, canvas: canvas)
+            context.coordinator.streamID = streamID
         }
+    }
     
     static func dismantleUIView(_ uiView: UIView, coordinator: (Coordinator)) {
         

@@ -20,14 +20,14 @@ struct PayoutRowView: View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
                 Text(amountString)
-                    .fontWeight(.semibold)
+                    .font(.custom(poppinsSemiBold, size: 13.0))
                 Text(dateString ?? "")
-                    .font(.footnote)
+                    .font(.custom(poppinsRegular, size: 13.0))
                     .foregroundColor(.gray)
             }
             Spacer()
             Text(payout?.status ?? "")
-                .font(.footnote)
+                .font(.custom(poppinsRegular, size: 13.0))
                 .foregroundColor(.green)   // adjust per-status if needed
         }
         .padding(.horizontal)

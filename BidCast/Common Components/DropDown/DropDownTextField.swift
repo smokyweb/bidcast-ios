@@ -46,7 +46,7 @@ struct DropDownTextField: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
                 Text(floatingLabel)
-                    .font(.custom(nunitoBold, fixedSize: 15))
+                .font(.custom(poppinsBold, fixedSize: 13))
                     .bold()
                     .foregroundStyle(.text)
                 
@@ -78,7 +78,7 @@ struct DropDownTextField: View {
                             
                                 //MARK: - Text Input field
                             TextField(hint, text: $text)
-                                .font(.custom(nunitoMedium, fixedSize: 16))
+                                .font(.custom(poppinsSemiBold, fixedSize: 13))
                                 .foregroundStyle(.text)
                                 .keyboardShortcut(.cancelAction)
                                 .autocorrectionDisabled(true)
@@ -236,7 +236,7 @@ struct DropDownTextField: View {
                     HStack(spacing: 0, content: {
                         Text(ind)
                             .lineLimit(1)
-                            .font(.custom(nunitoMedium, fixedSize: 16))
+                            .font(.custom(poppinsSemiBold, fixedSize: 13))
                         Spacer()
                         Image(systemName: "checkmark")
                             .opacity(selected == ind ? 1 : 0)

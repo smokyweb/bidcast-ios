@@ -42,7 +42,7 @@ struct SelectShowScreen: View {
                     },
                     count: .constant(0)
                 )
-                .background(.white)
+                
             }
             ScrollView(showsIndicators: false) {
                 VStack(alignment:.leading,spacing: 16) {
@@ -125,7 +125,7 @@ struct SelectShowScreen: View {
            
         }
     
-        .edgesIgnoringSafeArea([.top,.bottom])
+        .edgesIgnoringSafeArea(.bottom)
         .background(.bg.opacity(0.5))
         .toolbar(.hidden,for: .tabBar)
         .toast(isPresenting: $showhud) {

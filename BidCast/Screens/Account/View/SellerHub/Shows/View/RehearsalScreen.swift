@@ -456,9 +456,18 @@ struct RehearsalScreen: View {
                 return
             }
             
+            
+            
+            
+            
             let product = ProductData(category: "\(data.products?.first?.category_id ?? 0)", id: "\(data.products?.first?.id ?? 0)", image: "\(data.products?.first?.images?.first ?? "")", name: "\(data.products?.first?.title ?? "")", price: "\(data.products?.first?.pricing ?? 0.0)")
             
             let seller = SellerModel(followed: data.user?.is_followed ?? false, id: "\(data.user?.id ?? 0 )", name: data.user?.name ?? "", rating: data.user?.rating ?? "")
+            
+            
+            
+            
+            
             FirebaseManager.shared.createLiveSession(showId:"\(data.id ?? 0)", userId: "\(data.user_id ?? 0)", product: product, seller: seller, thumbnail: data.thumbnail?.first ?? "", time: data.time ?? "")
             
             

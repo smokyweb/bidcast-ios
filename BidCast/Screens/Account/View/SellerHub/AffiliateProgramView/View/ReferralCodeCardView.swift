@@ -21,16 +21,16 @@ struct ReferralCodeCardView: View {
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Share Your Link")
-                        .font(.headline)
+                        .font(.custom(poppinsSemiBold, size: 13.0))
                     Text("Invite sellers using your unique code")
-                        .font(.caption)
+                        .font(.custom(poppinsRegular, size: 11.0))
                         .foregroundColor(.gray)
                 }
             }
 
             HStack {
                 Text(code)
-                    .font(.subheadline)
+                    .font(.custom(poppinsSemiBold, size: 13.0))
                     .padding(.horizontal)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 Button(action: {
@@ -47,6 +47,7 @@ struct ReferralCodeCardView: View {
 
             Button(action: onShare) {
                 Text("Share Invite Link")
+                    .font(.custom(poppinsSemiBold, size: 13.0))
                     .frame(maxWidth: .infinity)
                     .padding()
                     .background(Color.red)

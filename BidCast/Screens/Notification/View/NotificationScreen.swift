@@ -73,26 +73,26 @@ struct NotificationScreen: View {
                 .listRowBackground(Color.clear)
             
             // MARK: Clear All Button
-            Button(action: {
-                notiListArr.removeAll()
-                let param = DeleteNotificationRequest(id: 0)
-                Task {
-                    SVProgressHUD.show()
-                    await viewModel.DeleteNotification(param: param)
-                    await SVProgressHUD.dismiss()
-                    DeleteNotificationSuccess()
-                }
-            }) {
-                Text("Clear All")
-                    .font(.custom(poppinsBold, size: buttonTitle))
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.blue)
-                    .cornerRadius(12)
-                    .padding(.horizontal)
-                    .padding(.bottom, 10)
-            }
+//            Button(action: {
+//                notiListArr.removeAll()
+//                let param = DeleteNotificationRequest(id: 0)
+//                Task {
+//                    SVProgressHUD.show()
+//                    await viewModel.DeleteNotification(param: param)
+//                    await SVProgressHUD.dismiss()
+//                    DeleteNotificationSuccess()
+//                }
+//            }) {
+//                Text("Clear All")
+//                    .font(.custom(poppinsBold, size: buttonTitle))
+//                    .foregroundColor(.white)
+//                    .frame(maxWidth: .infinity)
+//                    .padding()
+//                    .background(Color.blue)
+//                    .cornerRadius(12)
+//                    .padding(.horizontal)
+//                    .padding(.bottom, 10)
+//            }
         }
         }
         .onAppear {

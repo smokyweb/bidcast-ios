@@ -31,8 +31,8 @@ struct TipsScreen: View {
             VStack{
                 PrimaryHeader(
                     title: "Tips",
-                    isForLogo : true,
-                    leadingImgArr: [.appName],
+                    isForBoth : true,
+                    leadingImgArr: [.icBack,.appName],
                     trailingImgArr: [.notification],
                     onClickLeading: { _ in
                         self.presentationMode.wrappedValue.dismiss()

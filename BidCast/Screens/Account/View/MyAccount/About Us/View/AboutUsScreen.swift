@@ -6,122 +6,255 @@
 //
 
 import SwiftUI
-import RichText
-import SwiftfulLoadingIndicators
 import SVProgressHUD
 
 struct AboutUsScreen: View {
     
     @Environment(\.presentationMode) var presentationMode
-    @State var navigateToMenu: Bool = false
-    @State var navigateToNotification: Bool = false
-    @State var notiCount: Int = 0
-    //    @State private var player : AVPlayer?
-    
     @State var showError: Bool = false
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
-    
-    @State var aboutUsContent = String()
-    
-    
-    var viewModel = AboutUsViewModel()
+    @State var viewModel = AboutUsViewModel()
+    @State var aboutUsData = AboutUsModel()
     
     var body: some View {
-        ZStack {
-            VStack(spacing: 0, content: {
-                VStack{
-                    PrimaryHeader(
-                        title: "About Us".localized,
-                        isForLogo : false, leadingImgArr: [.sideArrow],
-                        trailingImgArr: [],
-                        onClickLeading: { _ in
-                            self.presentationMode.wrappedValue.dismiss()
-                        },
-                        count: .constant(0)
-                    )
-                    .background(.white)
-                }
-                ScrollView(showsIndicators: false){
-                    VStack(alignment: .leading, spacing: 16) {
-                        
-                        //                    TitleWithLine(title: "About Us", lineLength: 36)
-                        //                        .padding()
-                        
-                        
-                        RichText(html: aboutUsContent)
-                            .customCSS("""
-                body {
-                        font-size: 16px;
-                        line-height: 1.5; /* Improve readability */
-                    }
-                    ul {
-                        margin: 0; /* Remove default margin */
-                        padding-left: 20px; /* Indent for bullets */
-                    }
-                    li {
-                        margin-bottom: 8px; /* Space between list items */
-                        list-style-type: disc; /* Ensure bullet points are displayed */
-                    }
-                """)
-                        
-                        
-                            .font(.custom(nunitoLight, fixedSize: 16))
-                            .multilineTextAlignment(.leading)
-                    }
-                    
-                }
-                .padding([.horizontal, .vertical])
-                .background(.text.opacity(0.05))
-                .padding(.top, 2)
-                .refreshable {
-                    Task{
-                        SVProgressHUD.show()
-                        await viewModel.getAboutContent()
-                        await SVProgressHUD.dismiss()
-                        success()
-                    }
-                    
-                }
-                
-                Spacer()
-            })
+        VStack(spacing: 0) {
             
-        }
-        .onFirstAppear(perform: {
-            Task{
-                SVProgressHUD.show()
-                await viewModel.getAboutContent()
-                await SVProgressHUD.dismiss()
-                success()
+            // Header
+            VStack{
+                PrimaryHeader(
+                    title: "About Us".localized,
+                    isForLogo: false,
+                    leadingImgArr: [.sideArrow],
+                    trailingImgArr: [],
+                    onClickLeading: { _ in
+                        self.presentationMode.wrappedValue.dismiss()
+                    },
+                    count: .constant(0)
+                )
             }
-        })
-        .onTapGesture {
-            UIApplication.shared.endEditing()
+            
+            // Dynamic Content
+                ScrollView(showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: 16) {
+                        let data = aboutUsData
+                        // Company Logo and Name
+                        VStack(spacing: 8) {
+                            AsyncImage(url: URL(string: data.logo ?? "")) { image in
+                                image.resizable()
+                            } placeholder: {
+                                ProgressView()
+                            }
+                            .frame(width: 100, height: 40)
+//                            .clipShape(Circle())
+                            
+                            Text(data.company_name ?? "")
+                                .font(.custom(poppinsSemiBold, size: 20))
+                            
+                            Text(data.platform_name ?? "")
+                                .font(.custom(poppinsRegular, size: 14))
+                                .foregroundColor(.gray)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.top)
+                        
+                        Divider()
+                        
+                        // Mission Section
+                        Text("Our Mission")
+                            .font(.custom(poppinsSemiBold, size: 16))
+                        
+                        Text(data.mission ?? "")
+                            .font(.custom(poppinsRegular, size: 14))
+                            .foregroundColor(.gray)
+                        
+                        Divider()
+                        
+                        // Key Features Section
+                        Text("Key Features")
+                            .font(.custom(poppinsSemiBold, size: 16))
+                        
+                        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
+                            ForEach(data.features ?? [Feature](), id: \.title) { feature in
+                                FeatureCardView(feature: feature)
+                            }
+                        }
+                        
+                        Divider()
+                        
+                        // Impact Section
+                        Text("Our Impact")
+                            .font(.custom(poppinsSemiBold, size: 16))
+                        
+                        HStack {
+                            ForEach(data.impact ?? [Impact](), id: \.label) { impact in
+                                VStack {
+                                    Text(impact.value ?? "")
+                                        .font(.custom(poppinsSemiBold, size: 18))
+                                        .foregroundColor(.red)
+                                    
+                                    Text(impact.label ?? "")
+                                        .font(.custom(poppinsRegular, size: 14))
+                                        .foregroundColor(.gray)
+                                }
+                                .frame(maxWidth: .infinity)
+                            }
+                        }
+                        
+                        Divider()
+                        
+                        // Team Section
+                        Text("Our Team")
+                            .font(.custom(poppinsSemiBold, size: 16))
+                        
+                        ScrollView(.horizontal, showsIndicators: false) {
+                          
+                                HStack(spacing: 40) {
+                                       ForEach(data.team ?? [TeamMember](), id: \.name) { member in
+                                           TeamMemberView(member: member)
+                                       }
+                                   }
+                            
+                        }
+                        
+                        Divider()
+                        
+                        // Contact Info
+                        VStack(alignment: .leading, spacing: 8) {
+                            VStack(alignment: .leading, spacing: 8) {
+                                HStack(spacing: 8) {
+                                    Image(systemName: "envelope.fill")
+                                        .foregroundColor(.red)
+                                    Text(data.contact_email ?? "")
+                                        .font(.custom(poppinsRegular, size: 14))
+                                    Spacer()
+                                }
+                                .padding()
+                                .background(Color.white)
+                                .cornerRadius(10)
+                                .shadow(radius: 2)
+                                
+                                HStack(spacing: 8) {
+                                    Image(systemName: "phone.fill")
+                                        .foregroundColor(.red)
+                                    Text(data.contact_phone ?? "")
+                                        .font(.custom(poppinsRegular, size: 14))
+                                    Spacer()
+                                }
+                                .padding()
+                                .background(Color.white)
+                                .cornerRadius(10)
+                                .shadow(radius: 2)
+                            }
+                           
+                        }
+
+                        
+                        // Social Media Links
+                        HStack(spacing: 20) {
+                            ForEach(data.social_media ?? [SocialMedia](), id: \.platform) { social in
+                                if let urlString = social.url?.url, let url = URL(string: urlString) {
+                                    Link(destination: url) {
+                                        Image(systemName: socialIcon(platform: social.url?.platform ?? ""))
+                                            .font(.title2)
+                                            .foregroundColor(.black)
+                                    }
+                                }
+                            }
+                        }
+                        .padding(.top, 8)
+                        
+                        Spacer()
+                    }
+                    .padding()
+                }
+                .refreshable {
+                    await loadData()
+                }
+            
+            
+            Spacer()
         }
-        
-        
+        .background(Color(.systemGray6))
+        .onFirstAppear {
+            Task { await loadData() }
+        }
     }
     
-    
-    
-    func success() {
-        let dict = viewModel.aboutResponse
+    func loadData() async {
+        SVProgressHUD.show()
+        await viewModel.getAboutContent()
+        await SVProgressHUD.dismiss()
         
-        if dict.status == "success" {
-            aboutUsContent = dict.data?.page_content ?? ""
-        }else{
-            alertType = .sheetType(icon: .alert, title: dict.status?.capitalized ?? "", message: dict.message ?? "", primaryBtnText: "", secondaryBtnText: "Ok", sheetThemeColor: .pinkBtn)
+        if viewModel.aboutResponse.status != "success" {
+            alertType = .sheetType(icon: .alert, title: "Error", message: viewModel.aboutResponse.message ?? "Something went wrong.", primaryBtnText: "", secondaryBtnText: "OK", sheetThemeColor: .pinkBtn)
             withAnimation(.snappy) { showError = true }
+        }else{
+            aboutUsData =  self.viewModel.aboutResponse.data ?? AboutUsModel()
         }
-        
-        
     }
     
+    func socialIcon(platform: String) -> String {
+        switch platform.lowercased() {
+        case "linkdin": return "link"
+        case "facebook": return "f.circle.fill"
+        case "instagram": return "camera.circle.fill"
+        case "skype": return "phone.circle.fill"
+        default: return "globe"
+        }
+    }
 }
 
-#Preview {
-    AboutUsScreen()
+struct FeatureCardView: View {
+    var feature: Feature
+
+    var body: some View {
+        VStack(spacing: 8) {
+            AsyncImage(url: URL(string: feature.icon ?? "")) { image in
+                image.resizable()
+            } placeholder: {
+                ProgressView()
+            }
+            .frame(width: 40, height: 40)
+            
+            Text(feature.title ?? "")
+                .font(.custom(poppinsSemiBold, size: 14))
+            
+            Text(feature.description ?? "")
+                .font(.custom(poppinsRegular, size: 12))
+                .foregroundColor(.gray)
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity, minHeight: 140)
+        .padding()
+        .background(Color.white)
+        .cornerRadius(10)
+        .shadow(radius: 2)
+        
+        .shadow(radius: 2)
+    }
 }
 
 
+struct TeamMemberView: View {
+    var member: TeamMember
 
+    var body: some View {
+        VStack {
+            AsyncImage(url: URL(string: member.image ?? "")) { image in
+                image.resizable()
+            } placeholder: {
+                ProgressView()
+            }
+            .frame(width: 80, height: 80)
+            .clipShape(Circle())
+
+            Text(member.name ?? "" )
+                .font(.custom(poppinsSemiBold, size: 14))
+
+            Text(member.role ?? "")
+                .font(.custom(poppinsRegular, size: 12))
+                .foregroundColor(.gray)
+        }
+        
+    }
+}

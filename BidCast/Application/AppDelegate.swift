@@ -12,6 +12,7 @@ import IQKeyboardManagerSwift
 import Stripe
 import ZegoExpressEngine
 import FirebaseCore
+import FirebaseMessaging
 
 
 
@@ -54,23 +55,11 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         IQKeyboardManager.shared.keyboardDistance = 10
         IQKeyboardManager.shared.enableAutoToolbar = true
         STPAPIClient.shared.publishableKey = "pk_test_51RQLxjQEbmPLLc7GaDeFTplB9lwTK5t9ZvpHVd1CtK4XtWsmktQvN3hoZW0ZZ0kSu0PFJ6R63D9X3PSMAq8tg5Sh00Vzh05MeU"
+      
         FirebaseApp.configure()
+        UNUserNotificationCenter.current().delegate = self
+        Messaging.messaging().delegate = self
         
-        if #available(iOS 10.0, *) {
-            // For iOS 10 display notification (sent via APNS)
-            //            UNUserNotificationCenter.current().delegate = self
-            
-            let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
-            UNUserNotificationCenter.current().requestAuthorization(
-                options: authOptions,
-                completionHandler: { _, _ in }
-            )
-        } else {
-            let settings: UIUserNotificationSettings =
-                .init(types: [.alert, .badge, .sound], categories: nil)
-            application.registerUserNotificationSettings(settings)
-        }
-        application.registerForRemoteNotifications()
         
         NSSetUncaughtExceptionHandler { exception in
             Log.e("Error Handling: \(exception)")
@@ -81,6 +70,19 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         UITextField.appearance().tintColor = .text
         UIScrollView.appearance().bounces = true
         UIApplication.shared.setStatusBarStyle(.lightContent, animated: true)
+        
+        
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+            if let error = error {
+                print("Error requesting authorization: \(error)")
+            }
+            
+            if granted {
+                DispatchQueue.main.async {
+                    application.registerForRemoteNotifications()
+                }
+            }
+        }
         
         return true
     }
@@ -97,5 +99,73 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         let sceneConfig: UISceneConfiguration = UISceneConfiguration(name: nil, sessionRole: connectingSceneSession.role)
         sceneConfig.delegateClass = SceneDelegate.self
         return sceneConfig
+    }
+}
+extension AppDelegate: UNUserNotificationCenterDelegate,MessagingDelegate {
+    
+    
+    
+    //MARK: Redirect other screen
+    private func redirectNotification(with payload: [AnyHashable: Any]) {
+        let center = UNUserNotificationCenter.current()
+        center.requestAuthorization(options: [.alert, .badge]) { granted, error in
+            if granted {
+                DispatchQueue.main.async {
+                    NotificationCenter.default.post(
+                        name: Notification.Name("Notification"),
+                        object: nil,
+                        userInfo: payload
+                    )
+                }
+            } else {
+                print("❌ Notification permission denied")
+            }
+        }
+    }
+    
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        Messaging.messaging().apnsToken = deviceToken
+    }
+    
+    // Called when FCM token is received or updated
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+        if let token = fcmToken {
+            print("FCM token: \(token)")
+            UserDefaults.FCMToken = token
+            
+        }
+    }
+    
+    
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        print("Failed to register for remote notifications: \(error.localizedDescription)")
+    }
+    
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                willPresent notification: UNNotification,
+                                withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        let userInfo = notification.request.content.userInfo
+        print("will Receive \(userInfo)")
+        completionHandler([.alert, .sound, .badge])
+    }
+    
+    
+    // MARK: Use for app kill state and background
+    func application(_ application: UIApplication,
+                     didReceiveRemoteNotification userInfo: [AnyHashable: Any],
+                     fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        
+        self.redirectNotification(with: userInfo) // ✅ Pass directly
+        completionHandler(.newData)
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                didReceive response: UNNotificationResponse,
+                                withCompletionHandler completionHandler: @escaping () -> Void) {
+        
+        let userInfo = response.notification.request.content.userInfo
+        self.redirectNotification(with: userInfo) // ✅ Pass directly
+        completionHandler()
     }
 }

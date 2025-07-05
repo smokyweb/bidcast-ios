@@ -45,55 +45,55 @@ class ZegoManager: NSObject, ZegoEventHandler , ObservableObject {
     // MARK: - ZegoEventHandler Methods
     
     
-    func onPlayerRecvSEI(_ streamID: String, data: Data) {
-        print("📡 Received SEI data on stream: \(streamID)")
-    }
-    
-    func onRoomStreamUpdate(_ roomID: String, updateType: ZegoUpdateType, streamList: [ZegoStream], extendedData: [AnyHashable : Any]?) {
-        print("🔄 Stream Update - RoomID: \(roomID), UpdateType: \(updateType.rawValue), StreamCount: \(streamList.count)")
-    }
-    
-    func onDebugError(_ errorCode: Int32, funcName: String, info: String) {
-        print("🐞 Debug Error - \(funcName): \(errorCode) - \(info)")
-    }
+//    func onPlayerRecvSEI(_ streamID: String, data: Data) {
+//        print("📡 Received SEI data on stream: \(streamID)")
+//    }
+//    
+//    func onRoomStreamUpdate(_ roomID: String, updateType: ZegoUpdateType, streamList: [ZegoStream], extendedData: [AnyHashable : Any]?) {
+//        print("🔄 Stream Update - RoomID: \(roomID), UpdateType: \(updateType.rawValue), StreamCount: \(streamList.count)")
+//    }
+//    
+//    func onDebugError(_ errorCode: Int32, funcName: String, info: String) {
+//        print("🐞 Debug Error - \(funcName): \(errorCode) - \(info)")
+//    }
     
     func resetError() {
         streamInterrupted = false
     }
     
-    func onPlayerStateUpdate(_ streamID: String, state: ZegoPlayerState, errorCode: Int32, extendedData: [AnyHashable : Any]?) {
-        print("🔴 StreamID: \(streamID) | State: \(state.rawValue) | Error: \(errorCode)")
-        
-        if state == .noPlay || errorCode != 0 {
-            DispatchQueue.main.async {
-                self.errorTitle = "Stream Ended"
-                self.errorMessage = "Stream has been stopped or interrupted."
-                self.streamInterrupted = true
-                self.alertType = .sheetType(
-                    icon: .alert,
-                    title:  self.errorTitle,
-                    message: self.errorMessage,
-                    primaryBtnText: AppString.ok.localized,
-                    secondaryBtnText:""
-                )
-            }
-        }
-    }
-    func onIMRecvBroadcastMessage(_ roomID: String, messageList: [ZegoBroadcastMessageInfo]) {
-        print("📥 [\(roomID)] Received \(messageList.count) broadcast messages")
-        for msg in messageList {
-            print("🗣️ \(msg.fromUser.userName): \(msg.message)")
-        }
-        
-        DispatchQueue.main.async {
-            if !messageList.isEmpty {
-                self.isCommentsAvailable = true
-                self.incomingComments.append(contentsOf: messageList.map {
-                    Comment(image : UserDefaults.profileURL,username: $0.fromUser.userName, message: $0.message)
-                })
-            } else {
-                self.isCommentsAvailable = false
-            }
-        }
-    }
+//    func onPlayerStateUpdate(_ streamID: String, state: ZegoPlayerState, errorCode: Int32, extendedData: [AnyHashable : Any]?) {
+//        print("🔴 StreamID: \(streamID) | State: \(state.rawValue) | Error: \(errorCode)")
+//        
+//        if state == .noPlay || errorCode != 0 {
+//            DispatchQueue.main.async {
+//                self.errorTitle = "Stream Ended"
+//                self.errorMessage = "Stream has been stopped or interrupted."
+//                self.streamInterrupted = true
+//                self.alertType = .sheetType(
+//                    icon: .alert,
+//                    title:  self.errorTitle,
+//                    message: self.errorMessage,
+//                    primaryBtnText: AppString.ok.localized,
+//                    secondaryBtnText:""
+//                )
+//            }
+//        }
+//    }
+//    func onIMRecvBroadcastMessage(_ roomID: String, messageList: [ZegoBroadcastMessageInfo]) {
+//        print("📥 [\(roomID)] Received \(messageList.count) broadcast messages")
+//        for msg in messageList {
+//            print("🗣️ \(msg.fromUser.userName): \(msg.message)")
+//        }
+//        
+//        DispatchQueue.main.async {
+//            if !messageList.isEmpty {
+//                self.isCommentsAvailable = true
+//                self.incomingComments.append(contentsOf: messageList.map {
+//                    Comment(image : UserDefaults.profileURL,username: $0.fromUser.userName, message: $0.message)
+//                })
+//            } else {
+//                self.isCommentsAvailable = false
+//            }
+//        }
+//    }
 }

@@ -14,7 +14,7 @@ struct VerticalLabelImageCell: View {
     let bottomLabel: String
     
     var fontName = poppinsRegular
-    var fontSize = 14.0
+    var fontSize = 13.0
     var onTap: (() -> Void)? = nil
     
     var body: some View {

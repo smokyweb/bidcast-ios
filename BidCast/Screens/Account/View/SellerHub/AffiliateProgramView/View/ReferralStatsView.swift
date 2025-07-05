@@ -18,11 +18,10 @@ struct ReferralStatsView: View {
             HStack {
                 VStack {
                     Text("\(stats.totalReferrals)")
-                        .font(.title3)
-                        .bold()
+                        .font(.custom(poppinsSemiBold, size: 13.0))
                         .foregroundColor(.red)
                     Text("Total Referrals")
-                        .font(.caption)
+                        .font(.custom(poppinsRegular, size: 11.0))
                         .foregroundColor(.gray)
                 }
 
@@ -30,11 +29,10 @@ struct ReferralStatsView: View {
 
                 VStack {
                     Text("$\(Int(stats.earnings))")
-                        .font(.title3)
-                        .bold()
+                        .font(.custom(poppinsSemiBold, size: 13.0))
                         .foregroundColor(.red)
                     Text("Earnings")
-                        .font(.caption)
+                        .font(.custom(poppinsRegular, size: 11.0))
                         .foregroundColor(.gray)
                 }
             }

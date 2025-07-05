@@ -32,26 +32,25 @@ struct AffiliateProgramScreen: View {
     var body: some View {
         VStack(spacing: 0) {
             // Fixed Header
-            PrimaryHeader(
-                title: "Affiliate Program",
-                leadingImgArr: [.icBack],
-                onClickLeading: { _ in
-                    self.presentationMode.wrappedValue.dismiss()
-                },
-                count: .constant(0)
-            )
-            .frame(height: 50)
-            .background(Color.white)
-            .zIndex(1)
-
+            VStack{
+                PrimaryHeader(
+                    title: "Affiliate Program",
+                    isForBoth: true,
+                    leadingImgArr: [.icBack,.appName],
+                    onClickLeading: { _ in
+                        self.presentationMode.wrappedValue.dismiss()
+                    },
+                    count: .constant(0)
+                )
+            }
+           
             ScrollView {
                 VStack(spacing: 24) {
                     VStack(spacing: 8) {
                         Text("Earn $100 Per Referral")
-                            .font(.title2)
-                            .bold()
+                            .font(.custom(poppinsBold, size: 16.0))
                         Text("Invite sellers and earn rewards when they succeed")
-                            .font(.subheadline)
+                            .font(.custom(poppinsSemiBold, size: 14.0))
                             .foregroundColor(.gray)
                             .multilineTextAlignment(.center)
                     }
@@ -69,6 +68,7 @@ struct AffiliateProgramScreen: View {
                             HStack {
                                 Image(systemName: "square.and.arrow.up")
                                 Text("Share Invite")
+                                    .font(.custom(poppinsSemiBold, size: 13.0))
                             }
                             .foregroundColor(.blue)
                             .padding(.horizontal, 12)
@@ -85,6 +85,7 @@ struct AffiliateProgramScreen: View {
                             HStack {
                                 Image(systemName: "doc.on.doc")
                                 Text("Copy Code")
+                                    .font(.custom(poppinsSemiBold, size: 13.0))
                             }
                             .foregroundColor(.green)
                             .padding(.horizontal, 12)

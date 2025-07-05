@@ -24,6 +24,8 @@ struct LiveShowsModel: Codable,Identifiable {
     var category: Category?
     var user: User?
     var viewer_count : Int?
+    var product : ProductData?
+    var seller : SellerModel?
 }
 
 struct Category: Codable,Identifiable {
@@ -49,4 +51,24 @@ struct User: Codable,Identifiable {
     var referral_code: String?
     var rating: String?
     var is_followed: Bool?
+}
+
+
+struct BiddingModel: Codable,Identifiable {
+    var id: Int?
+    var title: String?
+    var date: String?
+    var time: String?
+    var user_id: Int?
+    var category_id: Int?
+   
+    var room_id : String?
+    var auction_type_id: Int?
+   
+    var is_live : Bool?
+    var category: Category?
+    var user: User?
+    var viewer_count : Int?
+    var product : ProductData?
+    var seller : SellerModel?
 }

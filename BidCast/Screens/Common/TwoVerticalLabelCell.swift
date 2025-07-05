@@ -17,7 +17,7 @@ struct TwoVerticalLabelCell<T: Hashable & CustomStringConvertible>: View {
     @Binding var selection: T?
 
     var h1fontname = poppinsSemiBold
-    var h1fontSize = 20.0
+    var h1fontSize = 18.0
     var h2fontname = poppinsRegular
     var h2fontSize = 12.0
 
@@ -29,7 +29,7 @@ struct TwoVerticalLabelCell<T: Hashable & CustomStringConvertible>: View {
         bottomLabel: @escaping (T) -> String,
         selection: Binding<T?>? = nil,
         h1fontname: String = poppinsSemiBold,
-        h1fontSize: Double = 20.0,
+        h1fontSize: Double = 18.0,
         h2fontname: String = poppinsRegular,
         h2fontSize: Double = 12.0,
         columnsPerRow: Int = 3, // 🔥 You can control columns here

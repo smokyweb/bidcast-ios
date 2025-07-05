@@ -40,8 +40,7 @@ struct AddProductsScreen: View {
                     },
                     count: .constant(0)
                 )
-            }.frame(height:40)
-                .background(.white)
+            }
             ScrollView{
             // Placeholder for banner/image box
             RoundedRectangle(cornerRadius: 12)
@@ -208,7 +207,7 @@ struct AddProductsScreen: View {
         .onAppear{
             Task{
                 SVProgressHUD.show()
-                await viewModel.getProductList(parameters: UserProductRequest(user_id: UserDefaults.userId))
+                await viewModel.getProductList(parameters: UserProductRequest(user_id: UserDefaults.userId,category_id:request.category_id))
                 await SVProgressHUD.dismiss()
                 productSuccess()
             }

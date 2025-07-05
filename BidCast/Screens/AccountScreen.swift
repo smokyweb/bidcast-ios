@@ -70,11 +70,11 @@ struct AccountScreen: View {
                     ListCell(image: UserDefaults.profileURL.isEmpty ? "user_dummy" : UserDefaults.profileURL,
                              title: UserDefaults.userName.capitalizingFirstLetter() ,
                              vectorImg : .circleEditPencil,angle:0.0,
-                             subLabel : "Seller since 2003",
+                             subLabel : "Seller since 2025",
                              titleFontName: poppinsSemiBold,
-                             titleFontSize: 18.0,
+                             titleFontSize: 16.0,
                              subLabelFontName: poppinsRegular,
-                             subLabelFontSize: 14.0,
+                             subLabelFontSize: 12.0,
                              isVectorImgHidden: false,
                              onTapMenuCell: {
                         
@@ -125,7 +125,7 @@ struct AccountScreen: View {
                         .padding(.horizontal, 4)
                         .padding(.vertical, 6)
 
-                        MenuCell(title: "Vacation Mode", textColor: .black, fontValue: 16.0, menuImg:"vacation", vectorImg: .vacation,isSelectable: true,isTappedSwitch: $isTappedSwitch,
+                        MenuCell(title: "Vacation Mode", textColor: .black, fontValue: 14.0, menuImg:"vacation", vectorImg: .vacation,isSelectable: true,isTappedSwitch: $isTappedSwitch,
                                  onToggle: { newValue in
                             print("Vacation Mode state is now \(newValue ? "ON" : "OFF")")
                         })
@@ -157,7 +157,7 @@ struct AccountScreen: View {
                         
                         ForEach(0 ..< AccountMenuSection.allCases.count,id :\.self) { index in
                             
-                            MenuCell(title: AccountMenuSection.allCases[index].description, textColor: .black, fontValue: 16.0, menuImg:"vacation", vectorImg: .icArrowUp ,isSelectable: false,isTappedSwitch: $isTappedSwitch,
+                            MenuCell(title: AccountMenuSection.allCases[index].description, textColor: .black, fontValue: 14.0, menuImg:"vacation", vectorImg: .icArrowUp ,isSelectable: false,isTappedSwitch: $isTappedSwitch,
                                      onToggle: { newValue in
                                 
                                 print("Vacation Mode state is now \(newValue ? "ON" : "OFF")")

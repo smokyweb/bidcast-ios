@@ -16,7 +16,7 @@ struct CustomSegmentedControl<T: Hashable & CustomStringConvertible>: View {
     // this color is coming theme library
     let color = Color.bg.opacity(0.5)
     var fontName = poppinsMedium
-    var fontSize = 16.0
+    var fontSize = 14.0
 
     var body: some View {
         HStack(spacing: 0) {
