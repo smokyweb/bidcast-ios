@@ -40,6 +40,7 @@ struct CategoryDataModel : Codable{
     var image: String?
     var thumbnail: String?
     var color: String?
+    var subLabel : String?
 }
 
 struct AuctionModel : Codable{

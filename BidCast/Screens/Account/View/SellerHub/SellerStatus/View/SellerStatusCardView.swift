@@ -12,13 +12,13 @@ struct SellerStatusCardView: View {
     let section: SellerStatusSection
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Text(section.title)
-                    .fontWeight(.semibold)
+                    .font(.custom(poppinsSemiBold, size: 16.0))
                 Spacer()
                 Text(section.statusText)
-                    .font(.caption)
+                    .font(.custom(poppinsRegular, size: 12.0))
                     .padding(.horizontal, 10)
                     .padding(.vertical, 4)
                     .background(section.statusColor.opacity(0.2))
@@ -26,13 +26,13 @@ struct SellerStatusCardView: View {
                     .cornerRadius(10)
             }
 
-            HStack(alignment: .top, spacing: 8) {
+            HStack(alignment: .center, spacing: 8) {
                 section.icon
                     .resizable()
                     .frame(width: 20, height: 20)
                     .foregroundColor(.gray)
                 Text(section.subtitle)
-                    .font(.subheadline)
+                    .font(.custom(poppinsRegular, size: 12.0))
                     .foregroundColor(.gray)
             }
         }
@@ -40,6 +40,6 @@ struct SellerStatusCardView: View {
         .background(Color.white)
         .cornerRadius(12)
         .shadow(color: Color.gray.opacity(0.2), radius: 4, x: 0, y: 2)
-        .padding([.leading,.trailing] , 10)
+        .padding([.leading,.trailing] , 12)
     }
 }

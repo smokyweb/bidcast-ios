@@ -13,15 +13,17 @@ struct BenefitView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             Image(systemName: benefit.icon)
-                .font(.title2)
+                .font(.custom(poppinsSemiBold, size: 18.0))
                 .foregroundColor(.red)
             Text(benefit.title)
-                .font(.headline)
+                .font(.custom(poppinsSemiBold, size: 13.0))
             Text(benefit.description)
-                .font(.caption)
+                .font(.custom(poppinsRegular, size: 12.0))
                 .foregroundColor(.gray)
         }
         .padding()
+        .frame(maxWidth: .infinity,maxHeight: .infinity)
+        .aspectRatio(1, contentMode: .fill)
         .background(Color(.systemGray6))
         .cornerRadius(12)
     }

@@ -16,7 +16,7 @@ struct TipsScreen: View {
     @State private var hudMsg: String = ""
     @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     let transactions = [
-        Transaction(title: "Purchase from John", date: Date(timeIntervalSince1970: 1742841600), amount: 1250.00, isOutgoing: true)
+        Transaction(title: "Sarah JohnSon", date: Date(timeIntervalSince1970: 1742841600), amount: 10.00, isOutgoing: true)
     ]
     
     @Environment(\.presentationMode) var presentationMode
@@ -50,18 +50,21 @@ struct TipsScreen: View {
                     
                     ForEach(transactions) { txn in
                         TransactionRowView(transaction: txn)
-                            .padding(.horizontal)
+                            .padding(.horizontal,8)
+                            .background(.white)
+                            .cornerRadius(12)
+                            .padding(.horizontal,12)
                     }
                 }
                 .padding(.top)
             }.safeAreaInset(edge: .bottom) {
                 // MARK: - Fixed Bottom Button
-                PrimaryButton(title: AppString.submit.localized, isOutLine: false, onButtonClick: {
-                    // Action
-                },btnTextColor: .white)
-                .padding(.horizontal)
-                .padding(.vertical, 0)
-                .background(Color(UIColor.systemGroupedBackground))
+//                PrimaryButton(title: AppString.submit.localized, isOutLine: false, onButtonClick: {
+//                    // Action
+//                },btnTextColor: .white)
+//                .padding(.horizontal)
+//                .padding(.vertical, 0)
+//                .background(Color(UIColor.systemGroupedBackground))
             }
         }
         .background(Color(UIColor.systemGroupedBackground))
@@ -77,7 +80,7 @@ enum TipsValue : String, CaseIterable, CustomStringConvertible{
     
     case tipsToday = "Tips today"
     case totalTips = "Total tips"
-    case totalTi = "Testing"
+//    case totalTi = "Testing"
     
     var description: String {
             return NSLocalizedString(rawValue, comment: "")
@@ -90,8 +93,8 @@ enum TipsValue : String, CaseIterable, CustomStringConvertible{
             return "284"
         case .totalTips:
             return "$5.2K"
-        case .totalTi :
-            return "$5.2K"
+//        case .totalTi :
+//            return "$5.2K"
 
         }
     }

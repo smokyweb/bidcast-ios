@@ -66,12 +66,6 @@ class SceneDelegate: NSObject, UIWindowSceneDelegate {
             return false
         }
         
-        // Handle the URL that your app is opened with.
-        // For example, extract the authorization code from the URL and continue the OAuth flow.
-//        if let code = url.queryParameters?["code"] {
-//            print("Authorization code: \(code)")
-//            // Continue the OAuth flow by exchanging the code for an access token.
-//        }
         return true
     }
 }

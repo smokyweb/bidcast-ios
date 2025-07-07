@@ -31,24 +31,7 @@ struct TwoButton: View {
     
     var body: some View {
         HStack(alignment: .center, spacing: 20) {
-            if !isHidefirstBtn{
-                // First Button
-                Button(action: {
-                    withAnimation {
-                        self.onFirstButtonClick?()
-                    }
-                }) {
-                    Text(titleOne)
-                    .font(.custom(nunitoBold, fixedSize: 18))
-                    .foregroundStyle(Color(firstBtnTitleColor))
-                    .frame(maxWidth: .infinity)
-                    .frame(height: height)
-                    .background(firstBtnBgColor)
-                    .cornerRadius(cornerRadius)
-            }
-                .shadow(color: .gray.opacity(0.3), radius: 2, x: 0, y: 1)
-//                .padding(.horizontal, 16)
-        }
+            
             // Second Button
             if !isHideSecBtn {
                 Button(action: {
@@ -57,7 +40,7 @@ struct TwoButton: View {
                     }
                 }) {
                     Text(titleTwo)
-                        .font(.custom(nunitoBold, fixedSize: 18))
+                        .font(.custom(robotoRegular, fixedSize: 18))
                         .foregroundStyle(Color(secBtnTitleColor))
                         .frame(maxWidth: .infinity)
                         .frame(height: height)
@@ -71,6 +54,24 @@ struct TwoButton: View {
                 //            )
 //                .padding(.trailing, 16)
             }
+            if !isHidefirstBtn{
+                // First Button
+                Button(action: {
+                    withAnimation {
+                        self.onFirstButtonClick?()
+                    }
+                }) {
+                    Text(titleOne)
+                        .font(.custom(robotoRegular, fixedSize: 18))
+                    .foregroundStyle(Color(firstBtnTitleColor))
+                    .frame(maxWidth: .infinity)
+                    .frame(height: height)
+                    .background(firstBtnBgColor)
+                    .cornerRadius(cornerRadius)
+            }
+                .shadow(color: .gray.opacity(0.3), radius: 2, x: 0, y: 1)
+//                .padding(.horizontal, 16)
+        }
         }
         .padding(.horizontal, 16)
     }

@@ -10,6 +10,8 @@ import SVProgressHUD
 import AlertToast
 
 struct AddProductsScreen: View {
+    @EnvironmentObject  var appRootManager: AppRootManager
+    
     @State private var productCount = 1
     @Environment(\.presentationMode) var presentationMode
     @Binding var request : StoreScheduleShowRequest
@@ -49,75 +51,80 @@ struct AddProductsScreen: View {
                 .padding(.horizontal)
             Spacer()
             // Added Product Section
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Added Product")
-                    .fontWeight(.semibold)
-                ForEach(productData.indices, id:\.self ){ index in
-                    let data = productData[index]
-                    let idStr = "\(data.id ?? -1)"
-                    let isSelected = selectedProductIDs.contains(idStr)
-                    HStack {
-                        if let urlString = data.images?.first, let url = URL(string: urlString) {
-                                    AsyncImage(url: url) { image in
-                                        image.resizable()
-                                    } placeholder: {
-                                        Color.gray
-                                    }
-                                    .frame(width: 50, height: 50)
-                                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                                } else {
-                                    Image("fashion") // Fallback asset
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 50, height: 50)
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Added Product")
+                        .font(.custom(poppinsSemiBold, size: 13.0))
+                    if productData.isEmpty{
+                        Text("No product found")
+                            .font(.custom(poppinsSemiBold, size: 13.0))
+                    }else{
+                        ForEach(productData.indices, id:\.self ){ index in
+                        let data = productData[index]
+                        let idStr = "\(data.id ?? -1)"
+                        let isSelected = selectedProductIDs.contains(idStr)
+                        HStack {
+                            if let urlString = data.images?.first, let url = URL(string: urlString) {
+                                AsyncImage(url: url) { image in
+                                    image.resizable()
+                                } placeholder: {
+                                    Color.gray
                                 }
-                        
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(data.title ?? "Untitled")
-                                .font(.custom(poppinsBold, size: 14.0))
-                            Text(data.category?.name ?? "Unknown Category")
-                                .font(.custom(poppinsSemiBold, size: 13.0))
-                                .foregroundColor(.gray)
-                            Text("Quantity: \(data.quantity ?? 0)")
-                                .font(.custom(poppinsSemiBold, size: 13.0))
-                                .foregroundColor(.gray)
-                        }
-                        
-                        Spacer()
-                        
-                        Button(action: {
-                            // Edit product
-                        }) {
-                            Image(systemName: "square.and.pencil")
-                        }
-                        
-                        Button(action: {
-                            // Delete product
-                        }) {
-                            Image(systemName: "trash")
-                                .foregroundColor(.red)
-                        }
-                        
-                        Button(action: {
-                            if isSelected {
-                                selectedProductIDs.removeAll { $0 == idStr }
+                                .frame(width: 50, height: 50)
+                                .clipShape(RoundedRectangle(cornerRadius: 8))
                             } else {
-                                selectedProductIDs.append(idStr)
+                                Image("fashion") // Fallback asset
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 50, height: 50)
                             }
-                            request.product_ids = selectedProductIDs.joined(separator: ",")
-                        }) {
-                            Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                                .foregroundColor(isSelected ? .green : .gray)
+                            
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(data.title ?? "Untitled")
+                                    .font(.custom(poppinsBold, size: 14.0))
+                                Text(data.category?.name ?? "Unknown Category")
+                                    .font(.custom(poppinsSemiBold, size: 13.0))
+                                    .foregroundColor(.gray)
+                                Text("Quantity: \(data.quantity ?? 0)")
+                                    .font(.custom(poppinsSemiBold, size: 13.0))
+                                    .foregroundColor(.gray)
+                            }
+                            
+                            Spacer()
+                            
+                            Button(action: {
+                                // Edit product
+                            }) {
+                                Image(systemName: "square.and.pencil")
+                            }
+                            
+                            Button(action: {
+                                // Delete product
+                            }) {
+                                Image(systemName: "trash")
+                                    .foregroundColor(.red)
+                            }
+                            
+                            Button(action: {
+                                if isSelected {
+                                    selectedProductIDs.removeAll { $0 == idStr }
+                                } else {
+                                    selectedProductIDs.append(idStr)
+                                }
+                                request.product_ids = selectedProductIDs.joined(separator: ",")
+                            }) {
+                                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                                    .foregroundColor(isSelected ? .green : .gray)
+                            }
                         }
                     }
+                        .padding()
+                        .background(Color.white)
+                        .cornerRadius(12)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(Color.gray.opacity(0.3))
+                        )
                 }
-                .padding()
-                .background(Color.white)
-                .cornerRadius(12)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color.gray.opacity(0.3))
-                )
             }
             .padding(.horizontal)
             
@@ -185,9 +192,22 @@ struct AddProductsScreen: View {
                     SVProgressHUD.show()
                     var thumbImage = [String]()
                     thumbImage.append(thumbNail)
+                    self.viewModel.errorMessage = ""
                     await viewModel.storeScheduleShow(param: request,images: [thumbNail],key: "thumbnail[]")
                     await SVProgressHUD.dismiss()
-                    storeSuccess()
+                    
+                    if viewModel.errorMessage == nil || viewModel.errorMessage == "" {
+                        storeSuccess()
+                    }else{
+                        alertType = .sheetType(
+                            icon: .alert,
+                            title: "Error",
+                            message: viewModel.errorMessage ?? "",
+                            primaryBtnText: AppString.ok.localized,
+                            secondaryBtnText:""
+                        )
+                        showError = true
+                    }
                    
                 }
             }) {
@@ -208,19 +228,45 @@ struct AddProductsScreen: View {
             Task{
                 SVProgressHUD.show()
                 await viewModel.getProductList(parameters: UserProductRequest(user_id: UserDefaults.userId,category_id:request.category_id))
+//                await viewModel.getProduct(parameters: ProductRequest(category_id : request.category_id))
                 await SVProgressHUD.dismiss()
-                productSuccess()
+                if viewModel.errorMessage == "" || viewModel.errorMessage == nil {
+                    productSuccess()
+                }else{
+                    alertType = .sheetType(
+                        icon: .alert,
+                        title: "No product found",
+                        message: "No product found for the selected category",
+                        primaryBtnText: AppString.ok.localized,
+                        secondaryBtnText:""
+                    )
+                    showError = true
+                }
             }
         }
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }
-        .bottomSheet(isPresented: $showError, height: screenHeight/2.2, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: { showError = true }, content: {
+        .bottomSheet(isPresented: $showError, height: screenHeight/2.8, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: {
+            if viewModel.errorMessage != nil || viewModel.errorMessage != "" {
+                showError = true
+            }else{
+               
+                showError = false
+            }
+        }, content: {
             CommonBottomSheet(
                 sheetType: $alertType,
                 onPrimaryClick: {
-                    navigateToTab = true
-                    withAnimation { showError = false }
+                    if viewModel.errorMessage == nil || viewModel.errorMessage == "" {
+                        navigateToTab = true
+                        withAnimation { showError = false }
+                        
+                    }else{
+                        withAnimation { showError = false }
+                       
+                    }
+                   
                 }, onSecondaryClick: {
                     withAnimation { showError = false }
                 })

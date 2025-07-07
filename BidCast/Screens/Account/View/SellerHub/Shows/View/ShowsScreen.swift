@@ -66,13 +66,15 @@ struct ShowsScreen: View {
                     Task{
                         SVProgressHUD.show()
                         if segment == .pastShows{
+                            showsData.removeAll()
                             await viewModel.getLiveSHows(param: GetLiveShowsRequest(type: "past"))
                         }else{
+                            showsData.removeAll()
                             await viewModel.getLiveSHows(param: GetLiveShowsRequest(type: "upcoming"))
                         }
                        
                         await SVProgressHUD.dismiss()
-                        await scheduleSuccess()
+                        scheduleSuccess()
                     }
                 }
                 .padding(.horizontal)
@@ -80,12 +82,8 @@ struct ShowsScreen: View {
             // MARK: - Scrollable Content
             ScrollView {
                 VStack(spacing: 10) {
-                    if isLoading {
-                        ProgressView().padding()
-                    } else if shows.isEmpty {
-                        Text("No shows available.")
-                            .foregroundColor(.gray)
-                            .padding()
+                 if showsData.isEmpty {
+                     NoDataView(message: "No Shows found")
                     } else {
                         ForEach(showsData.indices,id: \.self) { index in
                             let data = showsData[index]
@@ -102,17 +100,17 @@ struct ShowsScreen: View {
             }
             .safeAreaInset(edge: .bottom) {
                 // MARK: - Fixed Bottom Button
-                PrimaryButton(
-                    title: AppString.submit.localized,
-                    isOutLine: false,
-                    onButtonClick: {
-                        // Action
-                    },
-                    btnTextColor: .white
-                )
-                .padding(.horizontal)
-                .padding(.vertical, 0)
-                .background(Color(UIColor.systemGroupedBackground))
+//                PrimaryButton(
+//                    title: AppString.submit.localized,
+//                    isOutLine: false,
+//                    onButtonClick: {
+//                        // Action
+//                    },
+//                    btnTextColor: .white
+//                )
+//                .padding(.horizontal)
+//                .padding(.vertical, 0)
+//                .background(Color(UIColor.systemGroupedBackground))
             }
             CusNavLink(doNavigate: $navigateToReherseal, destination: RehearsalScreen(showUd: $showID,isLive: isLive))
         }

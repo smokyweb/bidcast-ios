@@ -38,8 +38,8 @@ struct LetsPrepare: View {
                     },
                     count: .constant(0)
                 )
-                .background(.white)
-            }.frame(height: 40)
+               
+            }
             
             ProgressView(value: currentProgress, total: 1)
                 .progressViewStyle(LinearProgressViewStyle())
@@ -70,6 +70,7 @@ struct LetsPrepare: View {
                         Spacer()
                         Image(systemName: "questionmark.circle")
                         Text("Need help? Contact our support team")
+                            .font(.custom(poppinsRegular, size: 12.0))
                         Spacer()
                     }
                     
@@ -84,10 +85,8 @@ struct LetsPrepare: View {
 //                .background(.yellow)
             }
             .padding(.horizontal,18)
-//            .background(.green)
             CusNavLink(doNavigate: $navigateToTips, destination: ShowTips())
             CusNavLink(doNavigate: $navigateToCreateShow, destination: ShowTitleTips())
-//            CusNavLink(doNavigate: $navigateToCreateScreen, destination: CreateProductScreen())
         }
         .edgesIgnoringSafeArea(.bottom)
         .background(.bg.opacity(0.5))

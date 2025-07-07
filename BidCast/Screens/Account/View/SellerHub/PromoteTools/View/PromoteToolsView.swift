@@ -28,95 +28,105 @@ struct ToolItem: Identifiable {
 struct PromoteToolsView: View {
     let stats: [StatItem] = [
         StatItem(value: "284", label: "Shows"),
-        StatItem(value: "12.4k", label: "Views"),
+        StatItem(value: "12.4K", label: "Views"),
         StatItem(value: "892", label: "Followers")
     ]
     @State private var navigateToLesson = false
     @Environment(\.presentationMode) var presentationMode
-
+    
     let tools: [ToolItem] = [
-        ToolItem(iconName: "square.and.arrow.up", title: "Share", subtitle: "Share your show on social media", iconColor: .red),
-        ToolItem(iconName: "rectangle.stack.badge.plus", title: "Ads", subtitle: "Create ads for your shows", iconColor: .red),
-        ToolItem(iconName: "person.2.fill", title: "Audience", subtitle: "Grow your audience", iconColor: .red),
-        ToolItem(iconName: "chart.bar.fill", title: "Analytics", subtitle: "Track performance", iconColor: .red)
+        ToolItem(iconName: "square.and.arrow.up", title: "Share", subtitle: "Share your show on social media", iconColor: .defaultTheme),
+        ToolItem(iconName: "rectangle.stack.badge.plus", title: "Ads", subtitle: "Create ads for your shows", iconColor: .defaultTheme),
+        ToolItem(iconName: "person.2.fill", title: "Audience", subtitle: "Grow your audience", iconColor: .defaultTheme),
+        ToolItem(iconName: "chart.bar.fill", title: "Analytics", subtitle: "Track performance", iconColor: .defaultTheme)
     ]
-
+    
     var body: some View {
-            VStack(spacing: 0) {
+        VStack(spacing: 0) {
+            VStack{
                 // Fixed PrimaryHeader at the top
                 PrimaryHeader(
                     title: "Promote",
-                    isForLogo: true,
-                    leadingImgArr: [.appName],
+                    isForBoth: true,
+                    leadingImgArr: [.icBack,.appName],
                     trailingImgArr: [.icSetting],
                     onClickLeading: { _ in
                         self.presentationMode.wrappedValue.dismiss()
                     },
                     count: .constant(0)
                 )
-                .padding(.horizontal)
-                .padding(.bottom, 10)
-                .frame(height: 50)
-
-                // Scrollable content below the header
-                ScrollView {
-                    VStack(spacing: 24) {
-                        
-//                        ForEach(0 ..< categoryList.count, id: \.self) { ind in
-//    //                            print("\(ind)")
-//    //                            print(self.title[ind])
-//                            ListCell( isComeFrom: "ShippingScreen",image: categoryList[ind].image ?? "", title: categoryList[ind].name ?? "", vectorImg: .icArrowUp,subLabel : "BidSwipe",tintColot: categoryList[ind].color ?? "")
-//                               
-//                           
-//                        }
-                        
-                        // Stats
-                        HStack {
-                            ForEach(stats) { stat in
-                                StatView(stat: stat)
-                            }
-                        }
-                        .padding(.horizontal)
-
-                        // Tools Grid
-                        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
-                            ForEach(tools) { tool in
-                                ToolGridItemView(tool: tool)
-                            }
-                        }
-                        .padding(.horizontal)
-
-                        // Learn More Section
-                        VStack(spacing: 12) {
-                            Text("Learn How to Promote")
-                                .font(.headline)
-                                .foregroundColor(.white)
-                            Text("Get tips and strategies to grow your live shows")
-                                .font(.subheadline)
-                                .foregroundColor(.white.opacity(0.9))
-                            Button(action: {
-                                navigateToLesson = true
-                            }) {
-                                Text("Start Learning")
-                                    .fontWeight(.semibold)
-                                    .padding()
-                                    .frame(maxWidth: .infinity)
-                                    .background(Color.white)
-                                    .foregroundColor(.red)
-                                    .cornerRadius(10)
-                            }
-                        }
-                        .padding()
-                        .background(Color.red)
-                        .cornerRadius(20)
-                        .padding(.horizontal)
-                    }
-                    .padding(.top)
-                }
             }
+            
+            
+            // Scrollable content below the header
+            ScrollView {
+                VStack(spacing: 24) {
+                    HStack{
+                        Image("promote")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 50,height: 50)
+                            
+                        
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Promote Your Shows")
+                                .font(.custom(poppinsSemiBold, size: 18.0))
+                                .fontWeight(.semibold)
+                            Text("Reach more buyers and grow your audience")
+                                .font(.custom(poppinsRegular, size: 14.0))
+                                .foregroundColor(.gray)
+                        }
+                        .padding(.horizontal)
+                        Spacer()
+                    }.padding(.horizontal)
+                    
+                    // Stats
+                    HStack {
+                        ForEach(stats) { stat in
+                            StatView(stat: stat)
+                        }
+                    }
+                    .padding(.horizontal)
+                    
+                    // Tools Grid
+                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
+                        ForEach(tools) { tool in
+                            ToolGridItemView(tool: tool)
+                        }
+                    }
+                    .padding(.horizontal)
+                    
+                    // Learn More Section
+                    VStack(spacing: 12) {
+                        Text("Learn How to Promote")
+                            .font(.custom(poppinsSemiBold, size: 16.0))
+                            .foregroundColor(.white)
+                        Text("Get tips and strategies to grow your live shows")
+                            .font(.custom(poppinsSemiBold, size: 14.0))
+                            .foregroundColor(.white.opacity(0.9))
+                        Button(action: {
+                            navigateToLesson = true
+                        }) {
+                            Text("Start Learning")
+                                .font(.custom(poppinsSemiBold, size: 13.0))
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .background(Color.white)
+                                .foregroundColor(.defaultTheme)
+                                .cornerRadius(10)
+                        }
+                    }
+                    .padding()
+                    .background(.defaultTheme)
+                    .cornerRadius(20)
+                    .padding(.horizontal)
+                }
+               
+            }
+        }
         CusNavLink(doNavigate: $navigateToLesson, destination: CombinedLessonTipsView())
     }
-
+    
 }
 
 // MARK: - Preview

@@ -20,10 +20,10 @@ struct ShippingsScreen: View {
     
     
     @State var categoryList: [CategoryDataModel] = [
-        CategoryDataModel(id: 1, name: "Electronics", image: "electronics_icon", color: "#FF5733"),
-        CategoryDataModel(id: 2, name: "Fashion", image: "fashion_icon", color: "#33C1FF"),
-        CategoryDataModel(id: 3, name: "Home", image: "home_icon", color: "#28A745"),
-        CategoryDataModel(id: 4, name: "Books", image: "books_icon", color: "#FFC300")
+        CategoryDataModel(id: 1, name: "Free Pickup", image: "shop", color: "#E5E7EB",subLabel: "Local pickup settings"),
+        CategoryDataModel(id: 2, name: "Domestic Shipments", image: "shipping", color: "#E5E7EB",subLabel:"National delivery options"),
+        CategoryDataModel(id: 3, name: "Shipping Costs", image: "dollar", color: "#E5E7EB",subLabel:"Manage shipping rates"),
+        CategoryDataModel(id: 4, name: "Shipping Profile", image: "ic_setting", color: "#E5E7EB",subLabel:"Custom shipping profiles")
     ]
     
     let transactions = [
@@ -58,7 +58,7 @@ struct ShippingsScreen: View {
                     ForEach(0 ..< categoryList.count, id: \.self) { ind in
 //                            print("\(ind)")
 //                            print(self.title[ind])
-                        ListCell( isComeFrom: "ShippingScreen",image: categoryList[ind].image ?? "", title: categoryList[ind].name ?? "", vectorImg: .icArrowUp,subLabel : "BidSwipe",tintColot: categoryList[ind].color ?? "")
+                        ListCell( isComeFrom: "ShippingScreen",image: categoryList[ind].image ?? "", title: categoryList[ind].name ?? "", vectorImg: .icArrowUp,subLabel : categoryList[ind].subLabel ?? "", tintColot: categoryList[ind].color ?? "",imgViewSize : 40.0,imgSize:24.0)
                             .padding(.horizontal,Leading)
                            
                        
@@ -81,7 +81,7 @@ enum ShippingValue : String, CaseIterable, CustomStringConvertible{
     
     case pending = "Pending"
     case delivered = "Delivered"
-    case returns = "Return"
+    case returns = "Returns"
     
     var description: String {
             return NSLocalizedString(rawValue, comment: "")

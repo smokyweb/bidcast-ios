@@ -28,11 +28,19 @@ struct CustomProfileImage: View {
                     .applyClip(isCircular: isCircular, cornerRadius: cornerRadius)
 
             case .failure:
-                Image("defaultUser")
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: size, height: size)
-                    .applyClip(isCircular: isCircular, cornerRadius: cornerRadius)
+                if url?.contains("http") == true{
+                    Image("defaultUser")
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: size, height: size)
+                        .applyClip(isCircular: isCircular, cornerRadius: cornerRadius)
+                }else{
+                    Image(url ?? "")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: size, height: size)
+                        .applyClip(isCircular: isCircular, cornerRadius: cornerRadius)
+                }
 
             @unknown default:
                 EmptyView()
@@ -40,7 +48,7 @@ struct CustomProfileImage: View {
         }
     }
 }
-private extension View {
+extension View {
     func applyClip(isCircular: Bool, cornerRadius: CGFloat) -> some View {
         Group {
             if isCircular {

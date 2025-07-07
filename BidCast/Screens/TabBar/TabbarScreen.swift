@@ -58,31 +58,22 @@ struct TabbarScreen: View {
             }
             .onChange(of: selectedTab) { newTab in
                 if newTab == 2 {
-                    
-                    showSellSheet = true
-                  
-                    selectedTab = previousTab
-                } else {
-                    previousTab = newTab
-                    homeNavigationPath = NavigationPath()
-                    exploreNavigationPath = NavigationPath()
-                    activityNavigationPath = NavigationPath()
-                    accountNavigationPath = NavigationPath()
-                    
-                    homeViewID = UUID()
-                    exploreViewID = UUID()
-                    activityViewID = UUID()
-                    accountViewID = UUID()
-                           
-                    
-                  
-                }
+                     
+                      showSellSheet = true
+
+                     
+                      selectedTab = previousTab
+                  } else {
+                   
+                      resetNavigation(for: newTab)
+                      previousTab = newTab
+                  }
             }
             
             // Navigation Links
             CusNavLink(doNavigate: $navigateTogetStarted, destination: LetsPrepare())
             CusNavLink(doNavigate: $navigateTolist, destination: ListProductScreen())
-            CusNavLink(doNavigate: $navigateToAccountScreen, destination: AccountScreen(isNavFrom: true))
+            CusNavLink(doNavigate: $navigateToAccountScreen, destination: AccountScreen(isNavFrom: true,comeFromSeller: true))
         }
         .bottomSheet(
             isPresented: $showSellSheet,
@@ -109,6 +100,24 @@ struct TabbarScreen: View {
                 .presentationDetents([.fraction(0.35)])
             }
         )
+    }
+    func resetNavigation(for tab: Int) {
+        switch tab {
+        case 0:
+            homeNavigationPath = NavigationPath()
+            homeViewID = UUID()
+        case 1:
+            exploreNavigationPath = NavigationPath()
+            exploreViewID = UUID()
+        case 3:
+            activityNavigationPath = NavigationPath()
+            activityViewID = UUID()
+        case 4:
+            accountNavigationPath = NavigationPath()
+            accountViewID = UUID()
+        default:
+            break
+        }
     }
 }
 

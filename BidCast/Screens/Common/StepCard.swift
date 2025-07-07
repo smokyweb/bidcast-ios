@@ -30,15 +30,23 @@ struct StepCard: View {
                     } else {
                         Text("\(index)")
                             .foregroundColor(.white)
-                            .font(.subheadline)
+                            .font(.custom(poppinsSemiBold, size: 13.0))
                     }
                 }
                 .padding(.leading,8)
                 VStack(alignment: .leading, spacing: 4) {
                     Text(prepare.title ?? "")
-                        .font(.headline)
+                        .font(.custom(poppinsSemiBold, size: 13.0))
                         .foregroundColor(prepare.isLocked ? .gray : .primary)
                     RichText(html: prepare.description ?? "")
+                        .customCSS(
+ """
+ body {
+ font-size: 12px;
+ }                      
+ """
+                        )
+                        .font(.custom(poppinsRegular, fixedSize: 12))
                     
                 }
 //                Spacer()

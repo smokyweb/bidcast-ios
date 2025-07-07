@@ -27,47 +27,52 @@ struct AnalyticsScreen: View {
     ]
 
     var body: some View {
-            VStack(spacing: 0) {
-                // Fixed PrimaryHeader at the top
+        VStack(spacing: 0) {
+            // Fixed PrimaryHeader at the top
+            VStack{
                 PrimaryHeader(
                     title: "Analytics",
-                    isForLogo: true,
-                    leadingImgArr: [.appName],
+                    isForBoth: true,
+                    leadingImgArr: [.icBack,.appName],
                     trailingImgArr: [.icSetting],
                     onClickLeading: { _ in
                         self.presentationMode.wrappedValue.dismiss()
                     },
                     count: .constant(0)
                 )
-                .padding(.horizontal)
-                .padding(.bottom, 10)
-                .frame(height: 40)
-
-                // Scrollable content below the header
-                ScrollView {
-                    VStack(spacing: 0) {
+            }
+            
+            // Scrollable content below the header
+            ScrollView {
+                VStack(spacing: 8) {
+                    
+                    ListCell(image: UserDefaults.profileURL, title: UserDefaults.userName,subLabel : "Seller since 2025",isVectorImgHidden: true)
+                        .padding(.bottom,1)
+                        .frame(height: 80)
+                    
+                    CustomSegmentedControl(preselectedIndex: $segment ,
+                                           options: AnalyticsSegment.allCases)
+                    .padding(.horizontal , 16)
+                    
+                    VStack(alignment: .leading, spacing: 12) {
                         
-                        ListCell(image: "defaultUser", title: "John Smith",subLabel : "Seller since 2003",isVectorImgHidden: true)
-                            .padding(.all,1)
-    //                        .padding([.leading,.trailing],18)
-                            .frame(height: 80)
-                        
-                        CustomSegmentedControl(preselectedIndex: $segment ,
-                                               options: AnalyticsSegment.allCases)
-                        .padding(.horizontal , 15)
-                  
-                        VStack(alignment: .leading, spacing: 12) {
-                            Text("Premier Benefits")
-                                .font(.headline)
                             
                             VStack(spacing: 16) {
-                                ForEach(tools, id: \.iconName) { tool in
-                                    ToolGridAnalyticsView(tool: tool)
-                                }
+                                ToolGridAnalyticsView(
+                                    title: "Sales Performance",
+                                    chartData: [0.3, 0.7, 0.5, 0.9, 0.4],
+                                    chartType: .bar
+                                )
+
+                                ToolGridAnalyticsView(
+                                    title: "Visitor Analytics",
+                                    chartData: [0.2, 0.4, 0.6, 0.3, 0.8],
+                                    chartType: .line
+                                )
                             }
                             .padding(.vertical)
                         }
-                        .padding(.horizontal)
+//                        .padding(.horizontal)
                         .padding(.top,10)
                         
                         // Tools Grid

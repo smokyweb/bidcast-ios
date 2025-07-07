@@ -13,10 +13,10 @@ struct StatView: View {
     var body: some View {
         VStack {
             Text(stat.value)
-                .font(.title2)
+                .font(.custom(poppinsSemiBold, size: 20.0))
                 .bold()
             Text(stat.label)
-                .font(.caption)
+                .font(.custom(poppinsRegular, size: 11.0))
                 .foregroundColor(.gray)
         }
         .frame(maxWidth: .infinity, minHeight: 80)

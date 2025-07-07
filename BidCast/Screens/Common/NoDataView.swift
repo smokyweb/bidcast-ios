@@ -12,7 +12,7 @@ import SwiftUI
 struct NoDataView: View {
     var imageName: String = "noData" // Provide your asset name
     var message: String = "No Data Found"
-
+var yPosition = screenHeight/3
     var body: some View {
         GeometryReader { geometry in
                   VStack(spacing: 16) {
@@ -28,7 +28,7 @@ struct NoDataView: View {
                           .multilineTextAlignment(.center)
                   }
                   .frame(width: geometry.size.width, height: geometry.size.height)
-                  .position(x: geometry.size.width / 2, y: screenHeight/3 )
+                  .position(x: geometry.size.width / 2, y:yPosition )
               }
     }
 }

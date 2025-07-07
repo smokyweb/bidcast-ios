@@ -436,7 +436,7 @@ struct UpdatePreferenceRequest: Encodable{
 
 struct UserProductRequest: Encodable{
     var user_id : Int
-    var category_id : String?
+    var category_id : String? = ""
 }
 
 struct NotifyLiveUserRequest: Encodable{

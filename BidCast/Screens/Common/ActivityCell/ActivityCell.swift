@@ -23,7 +23,7 @@ struct ActivityCell: View {
                     .padding(.leading, 16)
                     
                     VStack(alignment: .leading, spacing: 0) {
-                        TitleWithLine(title: offerListing?.user?.name ?? "Unknown", lineLength: 0, textColor: .black, fontName: robotoMedium, fontValue: 16, divderHeight: 0)
+                        TitleWithLine(title: offerListing?.user?.name?.capitalizingFirstLetter() ?? "Unknown", lineLength: 0, textColor: .black, fontName: robotoMedium, fontValue: 16, divderHeight: 0)
                         if let dateString = offerListing?.created_at,
                            let date = parseISO8601Date(dateString) {
                             let timeAgo = timeAgoSinceDate(date)
@@ -34,7 +34,7 @@ struct ActivityCell: View {
 
                     if isFor != "OffersScreen" {
                         Spacer()
-                        Text("₹\(offerListing?.amount ?? "")")
+                        Text("$\(offerListing?.amount ?? "")")
                             .font(.custom(poppinsSemiBold, fixedSize: 12.0))
                             .foregroundStyle(.text)
                             .foregroundColor(.black)
@@ -52,8 +52,8 @@ struct ActivityCell: View {
                     .padding(.leading, 16)
                     
                     VStack(alignment: .leading, spacing: 0) {
-                        TitleWithLine(title: offerListing?.product?.title ?? "Product", lineLength: 0, textColor: .black, fontName: robotoMedium, fontValue: 16, divderHeight: 0)
-                        TitleWithLine(title: "Asking Price: ₹\(offerListing?.product?.pricing ?? 0)", lineLength: 0, textColor: .lightGray, fontName: robotoRegular, fontValue: 14, divderHeight: 0)
+                        TitleWithLine(title: offerListing?.product?.title?.capitalizingFirstLetter() ?? "Product", lineLength: 0, textColor: .black, fontName: robotoMedium, fontValue: 16, divderHeight: 0)
+                        TitleWithLine(title: "Asking Price: $\(offerListing?.product?.pricing ?? 0)", lineLength: 0, textColor: .lightGray, fontName: robotoRegular, fontValue: 14, divderHeight: 0)
                         
                         if isFor == "OffersScreen" {
                             TitleWithLine(title: "Placed on: \(formattedDate(offerListing?.created_at))", lineLength: 0, textColor: .lightGray, fontValue: 12, divderHeight: 0)
@@ -62,7 +62,7 @@ struct ActivityCell: View {
                     
                     if isFor != "OffersScreen" && isFor !=  "Offers"{
                         
-                        SingleTitleLabel(title: "₹\(offerListing?.amount ?? "")", lineLength: 0, textColor: .success, fontValue: 12)
+                        SingleTitleLabel(title: "$\(offerListing?.amount ?? "")", lineLength: 0, textColor: .success, fontValue: 12)
                             .padding(.trailing, 8)
                         
                     }

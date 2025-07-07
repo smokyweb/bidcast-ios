@@ -46,7 +46,10 @@ struct WalletScreen: View {
                                       payouts: data?.payoutHistory ?? [Payout]())
                         
                     case .transactions:
-                        VStack(spacing: 10) {
+                        if dataTransaction.count == 0{
+                            NoDataView(message: "No Transaction history found")
+                        }else{
+                            VStack(spacing: 10) {
                             SegmentedControlView(segments: WalletSegment.allCases, selectedSegment: $selectedButton, isWithBorder: true)
                         }
                         ForEach(dataTransaction.indices, id: \.self) { index in
@@ -57,6 +60,7 @@ struct WalletScreen: View {
                                 price: "\(data.total ?? 0)"
                             )
                         }
+                    }
                     }
                     
                     Spacer(minLength: 90)
@@ -124,14 +128,14 @@ struct WalletStatTile: View {
                 .font(.title2)
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
-                    .font(.footnote)
+                    .font(.custom(poppinsSemiBold, size: 13.0))
                     .foregroundColor(.gray)
                 Text(value)
-                    .font(.title3.bold())
+                    .font(.custom(poppinsSemiBold, size: 11.0))
             }
         }
         .padding()
-        .frame(maxWidth: .infinity, minHeight: 120, alignment: .topLeading)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .background(Color.white)
         .cornerRadius(12)
         .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)

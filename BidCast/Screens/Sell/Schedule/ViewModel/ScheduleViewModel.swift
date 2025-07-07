@@ -122,6 +122,18 @@ final class ScheduleViewModel: ObservableObject {
         }
     }
     
+    func getProduct(parameters: ProductRequest) async {
+        do {
+            let response: ResponseModal<[ProductDataModel]> = try await APIManager.shared.request(
+                type: APIEndPoint.getProduct(param: parameters),
+                header: true
+            )
+            self.productResponse = response
+        } catch {
+            handle(error: error)
+        }
+    }
+    
     func storeScheduleShow(param: StoreScheduleShowRequest, images: [String], key: String) async {
         self.requestType = "store"
         
@@ -141,7 +153,6 @@ final class ScheduleViewModel: ObservableObject {
             self.storeShowResponse = response
             
         } catch {
-            self.errorMessage = "Error: \(error.localizedDescription)"
             handle(error: error)
         }
     }
@@ -149,7 +160,23 @@ final class ScheduleViewModel: ObservableObject {
     
     
     // MARK: - Centralized Error Handler
-    private func handle(error: Error) {
-        errorMessage = error.localizedDescription
+     func handle(error: Error) {
+        if let dataError = error as? DataError {
+            switch dataError {
+            case .invalidCode(let message):
+                self.errorMessage = message ?? "Invalid code error"
+            case .invalidResponse(let data):
+                if let data = data,
+                   let json = try? JSONSerialization.jsonObject(with: data, options: []) {
+                    self.errorMessage = "Invalid response: \(json)"
+                } else {
+                    self.errorMessage = "Invalid response with no data"
+                }
+            default:
+                self.errorMessage = error.localizedDescription
+            }
+        } else {
+            self.errorMessage = error.localizedDescription
+        }
     }
 }

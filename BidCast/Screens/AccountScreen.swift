@@ -45,7 +45,7 @@ struct AccountScreen: View {
     @State var navigateToSellerVerification = false
     
     @State var navigateToProfile : Bool = false
-    
+    @State var comeFromSeller = false
     
     @State var viewModal = MenuOptionsViewModel()
     let columns = Array(repeating: GridItem(.flexible(), spacing: 12), count: 2)
@@ -54,8 +54,8 @@ struct AccountScreen: View {
             VStack{
                 PrimaryHeader(
                     title: "Account".localized,
-                    isForLogo: true,
-                    leadingImgArr: [.appName], // logo on left
+                    isForLogo: comeFromSeller ? false : true,
+                    leadingImgArr: comeFromSeller ? [.icBack] : [.appName], // logo on left
                     trailingImgArr: [],
                     onClickLeading: { index in
                         self.presentationMode.wrappedValue.dismiss()

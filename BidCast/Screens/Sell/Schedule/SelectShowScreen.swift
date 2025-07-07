@@ -107,7 +107,7 @@ struct SelectShowScreen: View {
                         return
                 }
                 guard !request.date.isEmpty else {
-                    hudMsg = "Please enter date"
+                    hudMsg = "Please select date"
                         showhud = true
                         return
                 }

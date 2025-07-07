@@ -130,7 +130,7 @@ struct ListProductScreen: View {
                     
                     VStack(alignment:.leading,spacing: 8){
                         Text("Pricing".localized)
-                            .font(.custom(poppinsBold, size: 14.0))
+                            .font(.custom(robotoMedium, size: 14.0))
                             .padding(.top,8)
                             .padding([.leading,.trailing],16.0)
                         
@@ -145,7 +145,7 @@ struct ListProductScreen: View {
                         .keyboardType(.numberPad)
 //                        .padding(.horizontal , 16)
                         
-                        MenuCell( title: "Flash Sale",fontValue: 14.0,menuImg: "",isSelectable: true, isTappedSwitch: $isTappedFlash,onToggle: { value in
+                        MenuCell( title: "Flash Sale",fontName: robotoRegular,fontValue: 14.0,menuImg: "",isSelectable: true, isTappedSwitch: $isTappedFlash,onToggle: { value in
                             if value == true{
                                 request.flash_sale = "1"
                             }else{
@@ -154,7 +154,7 @@ struct ListProductScreen: View {
                         })
                         .padding(.vertical,4)
                         .padding([.leading,.trailing],8)
-                        MenuCell( title: "Accept offers",fontValue: 14.0,menuImg: "",isSelectable: true, isTappedSwitch: $isTappedAccept,onToggle: { value in
+                        MenuCell( title: "Accept offers",fontName: robotoRegular,fontValue: 14.0,menuImg: "",isSelectable: true, isTappedSwitch: $isTappedAccept,onToggle: { value in
                             print(value)
                             if value == true{
                                 request.accept_offers = "1"
@@ -164,7 +164,7 @@ struct ListProductScreen: View {
                         })
                         .padding(.vertical,4)
                         .padding([.leading,.trailing],8)
-                        MenuCell( title: "Reserve for Live",fontValue: 14.0,menuImg: "",isSelectable: true, isTappedSwitch: $isTappedReserve,onToggle: { value in
+                        MenuCell( title: "Reserve for Live",fontName: robotoRegular,fontValue: 14.0,menuImg: "",isSelectable: true, isTappedSwitch: $isTappedReserve,onToggle: { value in
                             print(value)
                             if value == true{
                                 request.reserve_for_live = "1"
@@ -182,7 +182,7 @@ struct ListProductScreen: View {
                     
                     VStack(alignment:.leading,spacing: 8){
                         Text("Shipping".localized)
-                            .font(.custom(poppinsBold, size: 14.0))
+                            .font(.custom(robotoMedium, size: 14.0))
                             .padding(.top,8)
                             .padding([.leading,.trailing],16.0)
                         
@@ -191,7 +191,10 @@ struct ListProductScreen: View {
                             floatingLabel:"Shipping Profile",
                             hint: "Select Profile",
                             selected: $shippingId,
-                            anchor: .top,
+                            anchor: .top,custFontName: robotoRegular,
+                            custFontSize:  14.0,
+                            custCategory : robotoRegular,
+                            custCategorySize : 16.0,
                             onOptionSelected: { value in
                                 if let id = ShippingAddress.first(where: { $0.name == value })?.id {
                                     request.shipping_profile_id = "\(id)"

@@ -28,6 +28,8 @@ struct ListCell: View {
     var price = ""
     var onTapMenuCell: (() -> Void)? = nil
     var isForIcon = false
+    var imgViewSize = 50.0
+    var imgSize = 42.0
     var body: some View {
         HStack(alignment: .center,spacing: 10){
             HStack{
@@ -54,8 +56,8 @@ struct ListCell: View {
                             .padding(.leading ,10)
                         
                     }else{
-                        CustomProfileImage(url: image,isCircular: false,size: 42)
-                            .frame(width: 50,height: 50)
+                        CustomProfileImage(url: image,isCircular: false,size: imgSize)
+                            .frame(width: imgViewSize,height: imgViewSize)
                             .background(Color(hex: tintColot) ?? .clear)
                             .mask {
                                 if isComeFrom == "ShippingScreen" {

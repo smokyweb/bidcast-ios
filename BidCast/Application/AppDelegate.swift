@@ -22,28 +22,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         self.languageSelection()
-//        STPAPIClient.shared.publishableKey = "pk_test_51RQLxjQEbmPLLc7GaDeFTplB9lwTK5t9ZvpHVd1CtK4XtWsmktQvN3hoZW0ZZ0kSu0PFJ6R63D9X3PSMAq8tg5Sh00Vzh05MeU"
-        // Remove this method to stop OneSignal Debugging
-        //        OneSignal.Debug.setLogLevel(.LL_VERBOSE)
-        //        let observer = MyPushSubscriptionObserver()
-        //        OneSignal.User.pushSubscription.addObserver(observer)
-        //
-        //        OneSignal.initialize("973c5938-5a1c-410e-8389-02b74b38f6c6", withLaunchOptions: launchOptions)
-        //
-        //        OneSignal.Notifications.requestPermission({ accepted in
-        //            Log.s("User accepted notifications: \(accepted)")
-        //            Log.s("User ID: \(OneSignal.User)")
-        //            UserDefaultsManager.shared.setValue(OneSignal.User.onesignalId ?? "", forKey: .deviceToken)
-        //            DispatchQueue.main.async {
-        //                UIApplication.shared.registerForRemoteNotifications()
-        //            }
-        //        }, fallbackToSettings: true)
-        //
-        //        FirebaseApp.configure()
-        ////        Messaging.messaging().delegate = self
-        //
-        
-//      ZegoManager.shared.createEngine()
         SVProgressHUD.setDefaultStyle(.custom)
         SVProgressHUD.setDefaultMaskType(.custom)
         SVProgressHUD.setDefaultAnimationType(.native)

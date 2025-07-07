@@ -13,12 +13,12 @@ struct ToolGridItemView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Image(systemName: tool.iconName)
-                .font(.title2)
+                .font(.custom(poppinsSemiBold, size: 16.0))
                 .foregroundColor(tool.iconColor)
             Text(tool.title)
-                .font(.headline)
+                .font(.custom(poppinsSemiBold, size: 16.0))
             Text(tool.subtitle)
-                .font(.caption)
+                .font(.custom(poppinsRegular, size: 14.0))
                 .foregroundColor(.gray)
         }
         .padding()

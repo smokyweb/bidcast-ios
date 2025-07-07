@@ -70,6 +70,7 @@ struct AffiliateProgramScreen: View {
                                 Text("Share Invite")
                                     .font(.custom(poppinsSemiBold, size: 13.0))
                             }
+                            .frame(maxWidth:.infinity)
                             .foregroundColor(.blue)
                             .padding(.horizontal, 12)
                             .padding(.vertical, 10)
@@ -87,6 +88,7 @@ struct AffiliateProgramScreen: View {
                                 Text("Copy Code")
                                     .font(.custom(poppinsSemiBold, size: 13.0))
                             }
+                            .frame(maxWidth:.infinity)
                             .foregroundColor(.green)
                             .padding(.horizontal, 12)
                             .padding(.vertical, 10)

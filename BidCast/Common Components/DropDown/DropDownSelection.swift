@@ -36,7 +36,7 @@ struct DropDownSelection: View {
             if floatingLabel != "" {
                 Text(floatingLabel)
                     .font(.custom(custFontName, fixedSize: custFontSize))
-                    .bold()
+//                    .bold()
                     .foregroundStyle(.text)
                     .multilineTextAlignment(.leading)
             }

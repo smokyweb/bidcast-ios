@@ -24,7 +24,7 @@ struct WalletTabView: View {
     }
     
     @State var categoryList: [CategoryDataModel] = [
-        CategoryDataModel(id: 1, name: "Electronics", image: "electronics_icon", color: "#FF5733")
+        CategoryDataModel(id: 1, name: "Early Payout", image: "electronics_icon", color: "#FF5733")
     ]
     
     var body: some View {
@@ -36,7 +36,7 @@ struct WalletTabView: View {
                         Text("Available Balance")
                             .font(.custom(poppinsRegular, size: 11.0))
                             .foregroundColor(.gray)
-                        Text(formatAmount(summary.avaiableBalance))
+                        Text("$\(formatAmount(summary.avaiableBalance))")
                             .font(.custom(poppinsSemiBold, size: 20.0))
                     }
                     .padding(.vertical, 16)
@@ -57,16 +57,15 @@ struct WalletTabView: View {
                     }
                     VStack(spacing: 16) {
                         ForEach(0 ..< categoryList.count, id: \.self) { ind in
-                            ListCell( isComeFrom: "Wallet",image: categoryList[ind].image ?? "", title: categoryList[ind].name ?? "", vectorImg: .icArrowUp,subLabel : "BidSwipe",tintColot: categoryList[ind].color ?? "")
+                            ListCell( isComeFrom: "Wallet",image: categoryList[ind].image ?? "", title: categoryList[ind].name ?? "", vectorImg: .icArrowUp,subLabel : "You're eligible for early payout",tintColot: categoryList[ind].color ?? "")
                                 .padding([.leading ,.trailing] ,0)
+                                .padding(.vertical,1)
                             
                         }
                     }
-                    
+                    Text("Payout History")
+                        .font(.custom(poppinsSemiBold, size: 14.0))
                     if !payouts.isEmpty {
-                        Text("Payout History")
-                            .fontWeight(.semibold)
-                        
                         VStack(spacing: 0) {
                             ForEach(payouts) { payout in
                                 PayoutRowView(payout: payout, currencySymbol: "$")
@@ -78,9 +77,30 @@ struct WalletTabView: View {
                         .background(Color.white)
                         .cornerRadius(12)
                         .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                    }else{
+                        HStack{
+                            Spacer()
+                            VStack(alignment:.center, spacing: 16) {
+                                Spacer()
+                                
+                                Image("noData")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 150, height: 150)
+                                    .foregroundColor(.gray.opacity(0.6))
+                                
+                                Text("No Payout history found")
+                                    .font(.custom(poppinsSemiBold, size: 13))
+                                    .foregroundColor(.gray)
+                                    .multilineTextAlignment(.center)
+                                
+                                Spacer()
+                            }
+                            Spacer()
+                        }
                     }
                 }
-                .frame(maxWidth: .infinity)
+//                .frame(maxWidth: .infinity)
             }
         }
         .ignoresSafeArea(edges: .horizontal)

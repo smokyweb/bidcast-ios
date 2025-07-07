@@ -22,14 +22,22 @@ struct TransactionRowView: View {
     var body: some View {
         HStack {
             if isComeFrom != "Wallet"{
-                Circle()
-                    .fill(Color(.systemGray6))
-                    .frame(width: 40, height: 40)
-                    .overlay(
-                        Image(systemName: transaction.isOutgoing ? "arrow.right.arrow.left" : "arrow.left.arrow.right")
-                            .foregroundColor(.red)
-                    )
+                
+                        Image("user_dummy" )
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 50, height: 50)
+                            .applyClip(isCircular: true, cornerRadius: 8)
+                    
             }
+            
+//                .fill(Color(.systemGray6))
+//                .frame(width: 40, height: 40)
+//                .overlay(
+//                    Image(systemName: transaction.isOutgoing ? "arrow.right.arrow.left" : "arrow.left.arrow.right")
+//                        .foregroundColor(.red)
+//                )
+            
             VStack(alignment: .leading, spacing: 4) {
                 Text(transaction.title)
                     .font(.custom(poppinsSemiBold, size: 14.0))
@@ -43,7 +51,7 @@ struct TransactionRowView: View {
  
             Text(transaction.amount, format: .currency(code: "USD"))
                 .font(.custom(poppinsSemiBold, size: 14.0))
-                .foregroundColor(.primary)
+                .foregroundColor(.darkGreen)
         }
         .padding(.vertical, 8)
     }

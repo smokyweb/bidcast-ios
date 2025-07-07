@@ -27,13 +27,13 @@ struct AuthTextField: View {
     var height: CGFloat = 40
     var cornerRadius : CGFloat = 8.0
     
-    @State var isForCVV: Bool = false
-    @State var isForExpiry: Bool = false
-    @State var isForCardNumber: Bool = false
-    @State var custFontName: String = poppinsBold
-    @State var custFontSize: Double = 13.0
-    @State var custPlaceHolderName : String = poppinsMedium
-    @State var custPlaceHolderFontSize : Double = placeHolder
+     var isForCVV: Bool = false
+     var isForExpiry: Bool = false
+     var isForCardNumber: Bool = false
+     var custFontName: String = poppinsBold
+     var custFontSize: Double = 13.0
+     var custPlaceHolderName : String = poppinsMedium
+     var custPlaceHolderFontSize : Double = placeHolder
     
     
     var enteredText: ((String) -> Void)?

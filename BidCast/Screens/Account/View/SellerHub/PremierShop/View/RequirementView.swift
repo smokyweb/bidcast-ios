@@ -15,7 +15,7 @@ struct RequirementView: View {
             Image(systemName: requirement.isMet ? "checkmark.circle.fill" : "xmark.circle.fill")
                 .foregroundColor(requirement.isMet ? .green : .gray)
             
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: 6) {
                 Text(requirement.title)
                     .font(.subheadline)
                     .bold()
