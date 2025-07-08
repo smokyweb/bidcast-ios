@@ -42,6 +42,7 @@ enum APIEndPoint{
     case getProfileById(param:ProfileParamRequest)
     case getUserProduct(param : UserProductRequest)
     case followUnfollow(param:FollowRequest)
+    case countUpdate(param:countRequest)
     
     
     
@@ -246,6 +247,8 @@ extension APIEndPoint: EndPointType {
             return "get-user-product"
         case .followUnfollow:
             return "follow-unfollow"
+        case .countUpdate:
+            return "zegocloud/webhook"
             
             //MARK: Faz
         case .fetchProduct:
@@ -472,6 +475,7 @@ extension APIEndPoint: EndPointType {
         case .fundTransfer:
             return "stripe/fund-transfer"
        
+        
         }
     }
     
@@ -618,7 +622,9 @@ extension APIEndPoint: EndPointType {
             return .post
         case .getprofile:
             return .get
-        case .updateProfile(param: let param):
+        case .updateProfile:
+            return .post
+        case .countUpdate:
             return .post
             
             //MARK: Old
@@ -774,6 +780,7 @@ extension APIEndPoint: EndPointType {
             return .post
        
         
+        
         }
     }
     
@@ -928,6 +935,8 @@ extension APIEndPoint: EndPointType {
             return nil
         case .updateProfile(param: let param):
             return param
+        case .countUpdate(param: let param):
+            return param
             
             //MARK: Old
             
@@ -1080,6 +1089,7 @@ extension APIEndPoint: EndPointType {
         case .fundTransfer(let param):
             return param
         
+       
         }
     }
     

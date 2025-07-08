@@ -41,8 +41,7 @@ struct LiveStream: View {
     @Binding var userId : String
     @Environment(\.presentationMode) var presentationMode
     
-    @State var titleStream = "Stream Ended"
-    @State var messageStream = "The live stream has ended."
+   
     @ObservedObject var zegoManager = ZegoManager.shared
     @ObservedObject var chatManager = ZIMChatManager.shared
     @StateObject private var keyboardResponder = KeyboardResponder()
@@ -52,7 +51,6 @@ struct LiveStream: View {
     @State private var liveElapsedTime: String = "00:00:00"
     
     @State  var currentRoomID = ""
-    @State var streamInterrrupted = false
     
     var tabBarHeight: CGFloat {
         UIApplication.shared.windows.first?.safeAreaInsets.bottom ?? 49
@@ -430,27 +428,31 @@ struct LiveStream: View {
                 hideKeyboard()
             }
         )
-        .toast(isPresenting: $showHud) {
-            AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
+//        .toast(isPresenting: $showHud) {
+//            AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
+//        }
+        .toast(isPresenting: $showHud,duration: 2.0) {
+            AlertToast(displayMode: .alert, type: .regular, title: hudMsg)
+            
         }
             
         
         
-        .bottomSheet(isPresented: $streamInterrrupted, height: screenHeight / 2.2, topBarCornerRadius: 25, showTopIndicator: false,onDismiss: {
-            streamInterrrupted = true
+        .bottomSheet(isPresented: $showError, height: screenHeight / 2.2, topBarCornerRadius: 25, showTopIndicator: false,onDismiss: {
+            showError = true
         }) {
             CommonBottomSheet(
                 sheetType: $alertType,
                 onPrimaryClick: {
                     withAnimation {
-                        streamInterrrupted = false
+                        showError = false
                         logoutRoom()
                         self.presentationMode.wrappedValue.dismiss()
                     }
                 },
                 onSecondaryClick: {
                     withAnimation {
-                        streamInterrrupted = false
+                        showError = false
                         self.presentationMode.wrappedValue.dismiss()
                     }
                 }
@@ -461,6 +463,7 @@ struct LiveStream: View {
         .toolbar(.hidden,for: .tabBar)
         .foregroundColor(.white)
         .onAppear{
+            UserDefaults.isLiveEnded = false
             ZIMChatManager.shared.login(userID: "\(UserDefaults.userId)", userName: UserDefaults.userName)
             Task{
                 SVProgressHUD.show()
@@ -472,9 +475,9 @@ struct LiveStream: View {
                 success()
             }
         }
-        .onDisappear{
-            logoutRoom()
-        }
+//        .onDisappear{
+//            logoutRoom()
+//        }
         
     }
     
@@ -502,6 +505,9 @@ struct LiveStream: View {
                             loginRoom(roomId: initialRoomID)
                             fetchBiddingDetail(roomId: initialRoomID)
                             ZIMChatManager.shared.joinRoom(roomID: initialRoomID)
+                            Task{
+                                await viewModel.CountUppdate(parameters: countRequest(room_id: initialRoomID, event: "user_join_room"))
+                            }
                         }
                     }
                 }
@@ -530,28 +536,24 @@ struct LiveStream: View {
                 print("✅ Login callback | room: \(roomId) | errorCode: \(errorCode)")
                 currentRoomID = roomId
                 FirebaseManager.shared.observeLiveSessionRemoval(roomId: roomId) {
-                    let streamTitle = self.titleStream
-                    let streamMessage = self.messageStream
-                    showHud = true
-                    hudMsg = "Live stream has been ended"
-                    
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2){
-                        logoutRoom()
-                        self.presentationMode.wrappedValue.dismiss()
-                    }
-//                    print("🔥 STREAM REMOVED CALLBACK TRIGGERED 🔥")
-//                    alertType = .sheetType(icon: .alert,
-//                                           title: streamTitle,
-//                                           message: streamMessage,
-//                                           primaryBtnText: "",
-//                                           secondaryBtnText: AppString.ok.localized,
-//                                           sheetThemeColor: .defaultTheme)
-//                    
-//                      
-//                           withAnimation(.snappy) {
-//                               streamInterrrupted = false
-//                           }
-                       
+//                    let streamTitle = self.titleStream
+//                    let streamMessage = self.messageStream
+//                    showHud = true
+//                    hudMsg = "Live stream has been ended"
+//                    UserDefaults.isLiveEnded = true
+//                    DispatchQueue.main.asyncAfter(deadline: .now() + 2){
+//                        logoutRoom()
+//                        self.presentationMode.wrappedValue.dismiss()
+//                    }
+                    print("🔥 STREAM REMOVED CALLBACK TRIGGERED 🔥")
+                    alertType = .sheetType(
+                        icon: .alert,
+                        title: FirebaseManager.shared.titleMsg,
+                        message: FirebaseManager.shared.streamMsg,
+                        primaryBtnText: "",
+                        secondaryBtnText: AppString.ok.localized
+                    )
+                    showError = true
                     
                     
                 }
@@ -587,6 +589,9 @@ struct LiveStream: View {
         chatManager.messages.removeAll()
         if let currentRoomId = liveShowsData[safe: currentStreamIndex]?.room_id {
             FirebaseManager.shared.databaseRef.child("live_sessions").child(currentRoomId).removeAllObservers()
+        }
+        Task{
+            await viewModel.CountUppdate(parameters: countRequest(room_id: liveShowsData[safe: currentStreamIndex]?.room_id ?? "", event: "user_leave_room"))
         }
         
     }

@@ -606,3 +606,8 @@ struct UpdateProfileRequest : Encodable {
     var username  : String
     var bio : String
 }
+
+struct countRequest : Encodable {
+    var room_id : String
+    var event : String
+}

@@ -11,6 +11,7 @@ import AlertToast
 
 struct ProfileScreen: View {
     
+    
     @State var viewModel = ProfileViewModel()
     @Binding var id : String
     
@@ -41,7 +42,9 @@ struct ProfileScreen: View {
                     ProfileActionsView(isFollowing: $isFollowing ,
                                        onTapFollow: {
                         Task{
+                            SVProgressHUD.show()
                             await self.viewModel.followUnfollow(parameters: FollowRequest(following_id: id))
+                            await SVProgressHUD.dismiss()
                             profileSuccess()
                         }
                     },
@@ -74,7 +77,7 @@ struct ProfileScreen: View {
                           )
                       }
             .toast(isPresenting: $showToast) {
-                AlertToast(displayMode: .hud, type: .regular, title: toastMessage)
+                AlertToast(displayMode: .alert, type: .regular, title: toastMessage)
                 
             }
             .bottomSheet(isPresented: $showNotify,height: screenHeight * 0.45) {
@@ -112,9 +115,10 @@ struct ProfileScreen: View {
             isFollowing = profileData.is_following ?? false
             profileId = profileData.id ?? 0
             Task{
+                SVProgressHUD.show()
                 await self.viewModel.productDetails(parameters: UserProductRequest(user_id: Int(id) ?? 0))
                 await SVProgressHUD.dismiss()
-                await success()
+                 success()
             }
         } else {
             showError = true
@@ -144,6 +148,7 @@ struct ProfileScreen: View {
 
 struct ProfileHeaderView: View {
     @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var appRootManager: AppRootManager
     var name = "Sarah Williams"
     var email = "@sarahwilliams"
     var profileImage = "user1"

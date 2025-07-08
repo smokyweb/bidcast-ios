@@ -7,12 +7,19 @@
 
 import Foundation
 import FirebaseDatabase
+import UIKit
+import AVFoundation
+import BottomSheet
+import SwiftUICore
 
 
 
 class FirebaseManager {
     static let shared = FirebaseManager()
     let databaseRef = Database.database().reference()
+    @State var titleMsg : String = ""
+    @State var streamMsg : String = ""
+   
     private init() {}
 
     func createLiveSession(showId: String,
@@ -110,7 +117,14 @@ class FirebaseManager {
     func observeLiveSessionRemoval(roomId: String, onRemoved: @escaping () -> Void) {
         let ref = databaseRef.child("live_sessions").child(roomId)
         ref.observe(.childRemoved) { snapshot in
+            self.titleMsg = "Stream Ended"
+            self.streamMsg = "Live Stream has been ended."
+//            UserDefaults.isLiveEnded = true
+//            self.titleStream = "Stream Ended"
+//            self.messageStream = "The live stream has ended."
+           
             print("🔥 Live session node removed: \(snapshot)")
+           
             onRemoved()
         }
         

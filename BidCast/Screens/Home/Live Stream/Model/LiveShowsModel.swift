@@ -72,3 +72,8 @@ struct BiddingModel: Codable,Identifiable {
     var product : ProductData?
     var seller : SellerModel?
 }
+
+struct countModel : Codable {
+    var status : String?
+    var viewer_count : Int?
+}

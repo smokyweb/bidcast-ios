@@ -69,7 +69,7 @@ struct TabbarScreen: View {
                       previousTab = newTab
                   }
             }
-            
+          
             // Navigation Links
             CusNavLink(doNavigate: $navigateTogetStarted, destination: LetsPrepare())
             CusNavLink(doNavigate: $navigateTolist, destination: ListProductScreen())

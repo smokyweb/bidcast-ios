@@ -55,6 +55,16 @@ extension UserDefaults{
         }
     }
     
+    static var isLiveEnded:Bool {
+        set(input){
+            self.standard.setValue(input, forKey: "isLiveEnded")
+        }
+        get{
+            
+            return self.standard.value(forKey: "isLiveEnded") as? Bool ?? false
+        }
+    }
+    
     static var accessToken:String {
         set(input){
             self.standard.setValue(input, forKey: "access_token1")

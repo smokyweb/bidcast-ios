@@ -14,8 +14,11 @@ final class LiveShowsViewModel: ObservableObject {
     // MARK: - Published Properties
     @Published var addressResponse = ResponseModel<AddressModel>()
     @Published var liveShowsResponse = ResponseModel<[LiveShowsModel]>()
+    @Published var countResponse = countModel()
     @Published var errorMessage: String?
     @Published var requestType: String = ""
+    @Published var titleStream : String = "Stream Ended"
+    @Published var messageStream : String = "The live stream has ended."
     
     // MARK: - Store Address
     func storeAddress(parameters: AddressRequest) async {
@@ -67,6 +70,21 @@ final class LiveShowsViewModel: ObservableObject {
                 type: APIEndPoint.deleteAddress(param: parameters),
                 header: true
             )
+           
+        } catch {
+            self.errorMessage = error.localizedDescription
+        }
+    }
+    
+    func CountUppdate(parameters: countRequest) async {
+        requestType = "count"
+        do {
+           if let response: countModel = try await APIManager.shared.request(
+                type: APIEndPoint.countUpdate(param: parameters),
+                header: true
+           ){
+               self.countResponse = response
+           }
            
         } catch {
             self.errorMessage = error.localizedDescription
