@@ -28,22 +28,32 @@ struct ProfileScreen: View {
     @State var isFollowing = false
     @State var productId : Int = 0
     @State var productArr = [ProductListingDataModel]()
-    
+    @State var isForFollow = false
     @State var showToast = false
     @State var toastMessage = ""
+    
+    @State private var selectedTab = "Shop"
     var body: some View {
         VStack(spacing: 0) {
             ScrollView {
                 VStack(spacing: 16) {
-                    ProfileHeaderView(name: profileData.name?.capitalizingFirstLetter() ?? "", email: profileData.username ?? "", profileImage: profileData.profile_image ?? "", followers: "\(profileData.follower_count ?? 0)", following: "\(profileData.following_count ?? 0)" , bio: profileData.bio ?? "",onTapNotify: {
+                    ProfileHeaderView(name: profileData.name?.capitalizingFirstLetter() ?? "",
+                                      email: profileData.username ?? "",
+                                      profileImage: profileData.profile_image ?? "",
+                                      followers: "\(profileData.follower_count ?? 0)",
+                                      following: "\(profileData.following_count ?? 0)" ,
+                                      bio: profileData.bio ?? "Professional photographer specializing in portrait and wedding photography. Available for bookings worldwide.",
+                                      onTapNotify: {
                         showNotify = true
                     })
                     
                     ProfileActionsView(isFollowing: $isFollowing ,
                                        onTapFollow: {
+                        isForFollow = true
                         Task{
                             SVProgressHUD.show()
                             await self.viewModel.followUnfollow(parameters: FollowRequest(following_id: id))
+                            await viewModel.getProfile(param: ProfileParamRequest(id: id))
                             await SVProgressHUD.dismiss()
                             profileSuccess()
                         }
@@ -52,7 +62,34 @@ struct ProfileScreen: View {
                         //MEssage chat
                         
                     })
-                    ProfileTabsView()
+                    
+                    ProfileTabsView(selectedTab: $selectedTab) { tab in
+                        print("Selected Tab: \(tab)")
+                        Task {
+                            switch tab {
+                            case "Shop":
+                                print("")
+                                Task{
+                                    SVProgressHUD.show()
+                                    await self.viewModel.productDetails(parameters: UserProductRequest(user_id: Int(id) ?? 0))
+                                    await SVProgressHUD.dismiss()
+                                     success()
+                                }
+//                                await viewModel.fetchShopItems()
+                            case "Shows":
+                                print("")
+//                                await viewModel.fetchShows()
+                            case "Reviews":
+                                print("")
+//                                await viewModel.fetchReviews()
+                            case "Clips":
+                                print("")
+//                                await viewModel.fetchClips()
+                            default:
+                                break
+                            }
+                        }
+                    }
                     SearchAndFiltersView()
                     ProductListView(prouduct: $productArr,onTapProduct: { index in
                         productData = productArr[index]
@@ -114,11 +151,13 @@ struct ProfileScreen: View {
             profileData = response.data ?? ProfileModel()
             isFollowing = profileData.is_following ?? false
             profileId = profileData.id ?? 0
-            Task{
-                SVProgressHUD.show()
-                await self.viewModel.productDetails(parameters: UserProductRequest(user_id: Int(id) ?? 0))
-                await SVProgressHUD.dismiss()
-                 success()
+            if !isForFollow{
+                Task{
+                    SVProgressHUD.show()
+                    await self.viewModel.productDetails(parameters: UserProductRequest(user_id: Int(id) ?? 0))
+                    await SVProgressHUD.dismiss()
+                    success()
+                }
             }
         } else {
             showError = true
@@ -269,6 +308,7 @@ struct ProfileHeaderView: View {
                                     .shadow(radius: 2)
                             }
                         }
+                
             }
             
            
@@ -299,16 +339,19 @@ struct ProfileActionsView: View {
                 self.onTapFollow()
             }
             .frame(maxWidth: .infinity)
+            .frame(height: 18)
             .padding()
             .background(Color(UIColor.systemGray5))
+            .foregroundColor(.defaultTheme)
             .cornerRadius(12)
 
             Button("Message") {
                 self.onTapMessage()
             }
             .frame(maxWidth: .infinity)
+            .frame(height: 18)
             .padding()
-            .background(Color.blue)
+            .background(.defaultTheme)
             .foregroundColor(.white)
             .cornerRadius(12)
 
@@ -316,40 +359,41 @@ struct ProfileActionsView: View {
                 // Handle action
             }) {
                 Image(systemName: "dollarsign.circle")
-                    .foregroundColor(.primary)
+                    .foregroundColor(.defaultTheme)
                     .font(.title2)
             }
         }
-        .padding(.horizontal,13)
+        .padding(.horizontal,12)
     }
 }
 
 struct ProfileTabsView: View {
     let tabs = ["Shop", "Shows", "Reviews", "Clips"]
-    @State private var selectedTab = "Shop"
-
+    @Binding var selectedTab: String
+    var onTabSelected: (String) -> Void = { _ in }
     var body: some View {
-        HStack {
-            ForEach(tabs, id: \.self) { tab in
-                VStack {
-                    Text(tab)
-                        .font(.custom(poppinsSemiBold, size: 13.0))
-                        .fontWeight(selectedTab == tab ? .bold : .regular)
-                        .foregroundColor(selectedTab == tab ? .blue : .gray)
-                    if selectedTab == tab {
-                        Capsule().fill(Color.blue).frame(height: 3)
-                    } else {
-                        Capsule().fill(Color.clear).frame(height: 3)
+            HStack {
+                ForEach(tabs, id: \.self) { tab in
+                    VStack {
+                        Text(tab)
+                            .font(.custom(poppinsSemiBold, size: 13.0))
+                            .fontWeight(selectedTab == tab ? .bold : .regular)
+                            .foregroundColor(selectedTab == tab ? .blue : .gray)
+                        if selectedTab == tab {
+                            Capsule().fill(Color.blue).frame(height: 3)
+                        } else {
+                            Capsule().fill(Color.clear).frame(height: 3)
+                        }
                     }
+                    .onTapGesture {
+                        selectedTab = tab
+                        onTabSelected(tab)
+                    }
+                    .frame(maxWidth: .infinity)
                 }
-                .onTapGesture {
-                    selectedTab = tab
-                }
-                .frame(maxWidth: .infinity)
             }
+            .padding(.horizontal, 13)
         }
-        .padding(.horizontal,13)
-    }
 }
 
 struct SearchAndFiltersView: View {
@@ -376,9 +420,11 @@ struct SearchAndFiltersView: View {
                     .background(Color(UIColor.systemGray5))
                     .cornerRadius(8)
                 }
+               
             }
+            .padding(.horizontal)
         }
-        .padding(.horizontal,13)
+        .padding(.horizontal,12)
     }
 }
 

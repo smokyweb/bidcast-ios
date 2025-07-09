@@ -17,8 +17,7 @@ import SwiftUICore
 class FirebaseManager {
     static let shared = FirebaseManager()
     let databaseRef = Database.database().reference()
-    @State var titleMsg : String = ""
-    @State var streamMsg : String = ""
+ 
    
     private init() {}
 
@@ -117,11 +116,7 @@ class FirebaseManager {
     func observeLiveSessionRemoval(roomId: String, onRemoved: @escaping () -> Void) {
         let ref = databaseRef.child("live_sessions").child(roomId)
         ref.observe(.childRemoved) { snapshot in
-            self.titleMsg = "Stream Ended"
-            self.streamMsg = "Live Stream has been ended."
-//            UserDefaults.isLiveEnded = true
-//            self.titleStream = "Stream Ended"
-//            self.messageStream = "The live stream has ended."
+            
            
             print("🔥 Live session node removed: \(snapshot)")
            
@@ -144,6 +139,55 @@ class FirebaseManager {
         ref.observe(.childAdded) { snapshot in
             print("🆕 New live session added: \(snapshot.key)")
             onNewSession()
+        }
+    }
+    
+    func updateProductPrice(roomId: String, newPrice: String) {
+        databaseRef.child("live_sessions").child(roomId).child("product").child("price").setValue(newPrice)
+    }
+    
+    func observeProductChanges(
+         roomId: String,
+         onChange: @escaping (ProductData?) -> Void
+     ) {
+         databaseRef
+             .child("live_sessions")
+             .child(roomId)
+             .child("product")
+             .observe(.value) { snapshot in
+
+                 guard let data = snapshot.value else {
+                     onChange(nil)
+                     return
+                 }
+
+                 if let jsonData = try? JSONSerialization.data(withJSONObject: data) {
+                     do {
+                         let model = try JSONDecoder().decode(ProductData.self, from: jsonData)
+                         onChange(model)
+                     } catch {
+                         print("❌ Decoding Product Error: \(error)")
+                         onChange(nil)
+                     }
+                 } else {
+                     onChange(nil)
+                 }
+             }
+     }
+    
+    func observeViewerCount(
+        roomId: String,
+        onChange: @escaping (Int) -> Void
+    ) {
+        let ref = databaseRef.child("live_sessions").child(roomId).child("viewerCount")
+        ref.observe(.value) { snapshot in
+            if let countString = snapshot.value as? String, let count = Int(countString) {
+                onChange(count)
+            } else if let count = snapshot.value as? Int {
+                onChange(count)
+            } else {
+                onChange(0) // Default if missing or malformed
+            }
         }
     }
 }

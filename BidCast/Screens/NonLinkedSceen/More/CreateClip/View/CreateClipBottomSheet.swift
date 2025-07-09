@@ -16,7 +16,7 @@ struct CreateClipBottomSheetView: View {
     @State private var player: AVPlayer?
 
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 12) {
             // Header
             HStack {
                 Button(action: { isPresented = false }) {
@@ -25,9 +25,11 @@ struct CreateClipBottomSheetView: View {
                         .foregroundColor(.gray)
                 }
                 Text("Create Clip")
-                    .font(.custom(poppinsBold, size: 15.0))
+                    .font(.custom(poppinsBold, size: 16.0))
                 Spacer()
             }
+            .padding(.top,-12)
+            .padding(.horizontal)
 
             // Video Player
             if let player = player {
@@ -44,14 +46,13 @@ struct CreateClipBottomSheetView: View {
             // Clip Details
             HStack(alignment: .center) {
                 Image(systemName: "scissors")
-                    .font(.title3)
+                    .font(.custom(poppinsSemiBold, size: 13.0))
                     .foregroundColor(.gray)
                 VStack(alignment: .leading) {
                     Text("Trim Clip")
-                        .font(.custom(poppinsBold, size: 15.0))
+                        .font(.custom(poppinsSemiBold, size: 13.0))
                     Text("Last 30 seconds")
-                    
-                        .font(.custom(poppinsBold, size: 13.0))
+                        .font(.custom(poppinsSemiBold, size: 13.0))
                         .foregroundColor(.gray)
                 }
                 
@@ -73,7 +74,7 @@ struct CreateClipBottomSheetView: View {
                 }
             }) {
                 Text("Create Clip")
-                    .font(.custom(poppinsBold, size: 15.0))
+                    .font(.custom(poppinsBold, size: 14.0))
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .padding()
@@ -82,8 +83,8 @@ struct CreateClipBottomSheetView: View {
             }
 
         }
-        .padding()
         .edgesIgnoringSafeArea(.top)
+        .padding()
         .background(Color.white)
         .clipShape(RoundedRectangle(cornerRadius: 20))
         .onAppear {

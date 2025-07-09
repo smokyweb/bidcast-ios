@@ -18,66 +18,118 @@ struct ActivityCell: View {
         VStack(spacing: 10) {
             // ── First row ─────────────────────────────
             if isFor == "Message" || isFor == "Bids" || isFor == "Offers" || isFor == "OffersScreen" {
+                
                 HStack(alignment: .center, spacing: 10) {
-                    CustomProfileImage(url: offerListing?.user?.profileImage ?? "",isCircular: true)
+                    
+                    CustomProfileImage(
+                        url: offerListing?.user?.profileImage ?? "",
+                        isCircular: true
+                    )
                     .padding(.leading, 16)
                     
                     VStack(alignment: .leading, spacing: 0) {
-                        TitleWithLine(title: offerListing?.user?.name?.capitalizingFirstLetter() ?? "Unknown", lineLength: 0, textColor: .black, fontName: robotoMedium, fontValue: 16, divderHeight: 0)
+                        TitleWithLine(
+                            title: offerListing?.user?.name?.capitalizingFirstLetter() ?? "Unknown",
+                            lineLength: 0,
+                            textColor: .black,
+                            fontName: robotoMedium,
+                            fontValue: 16,
+                            divderHeight: 0
+                        )
+                        
                         if let dateString = offerListing?.created_at,
                            let date = parseISO8601Date(dateString) {
                             let timeAgo = timeAgoSinceDate(date)
-                            TitleWithLine(title: "Placed an Offer • \(timeAgo)", lineLength: 0, textColor: .lightGray, fontName: robotoRegular, fontValue: 14, divderHeight: 0)
-                    
+                            
+                            TitleWithLine(title: "Placed an Offer • \(timeAgo)",
+                                          lineLength: 0,
+                                          textColor: .lightGray,
+                                          fontName: robotoRegular,
+                                          fontValue: 14,
+                                          divderHeight: 0)
                         }
                     }
-
+                    
                     if isFor != "OffersScreen" {
                         Spacer()
-                        Text("$\(offerListing?.amount ?? "")")
+                        let bidPrice = "\(offerListing?.product?.pricing ?? 0.0)"
+                        let amt = offerListing?.amount ?? ""
+                        Text("$\(isFor == "Bids" ? bidPrice : amt)")
                             .font(.custom(poppinsSemiBold, fixedSize: 12.0))
                             .foregroundStyle(.text)
                             .foregroundColor(.black)
                             .padding(.trailing, 12)
                     }
                 }
-                .frame(height: 50)
-                .padding([.top, .bottom], 12)
+//                .frame(height: 50)
+                .padding([.top, .bottom], 8)
             }
-          
+            Divider()
+            
             // ── Second row ─────────────────────────────
             if isFor == "Bids" || isFor == "Offer" || isFor == "Purchases" || isFor == "Saved Items" || isFor == "Offers" || isFor == "OffersScreen"  {
+                
                 HStack(alignment: .center, spacing: 10) {
-                    CustomProfileImage(url: offerListing?.product?.images?.first  ?? "",isCircular: false,cornerRadius: 12, size: 64)
+                    CustomProfileImage(
+                        url: offerListing?.product?.images?.first  ?? "",
+                        isCircular: false,
+                        cornerRadius: 12,
+                        size: 64
+                    )
                     .padding(.leading, 16)
                     
                     VStack(alignment: .leading, spacing: 0) {
-                        TitleWithLine(title: offerListing?.product?.title?.capitalizingFirstLetter() ?? "Product", lineLength: 0, textColor: .black, fontName: robotoMedium, fontValue: 16, divderHeight: 0)
-                        TitleWithLine(title: "Asking Price: $\(offerListing?.product?.pricing ?? 0)", lineLength: 0, textColor: .lightGray, fontName: robotoRegular, fontValue: 14, divderHeight: 0)
+                        TitleWithLine(
+                            title: offerListing?.product?.title?.capitalizingFirstLetter() ?? "Product",
+                            lineLength: 0,
+                            textColor: .black,
+                            fontName: robotoMedium,
+                            fontValue: 16,
+                            divderHeight: 0
+                        )
+                        
+                        TitleWithLine(
+                            title: isFor == "Bids" ? "Asking Price : $\(offerListing?.bid_price ?? 0)" : "Price : $\(offerListing?.product?.pricing ?? 0)",
+                            lineLength: 0,
+                            textColor: .lightGray,
+                            fontName: robotoRegular,
+                            fontValue: 14,
+                            divderHeight: 0
+                        )
                         
                         if isFor == "OffersScreen" {
-                            TitleWithLine(title: "Placed on: \(formattedDate(offerListing?.created_at))", lineLength: 0, textColor: .lightGray, fontValue: 12, divderHeight: 0)
+                            TitleWithLine(title: "Placed on: \(formattedDate(offerListing?.created_at))",
+                                          lineLength: 0,
+                                          textColor: .lightGray,
+                                          fontValue: 12,
+                                          divderHeight: 0)
                         }
                     }
                     
-                    if isFor != "OffersScreen" && isFor !=  "Offers"{
+                    if isFor != "OffersScreen" && isFor !=  "Offers" && isFor !=  "Bids"{
                         
-                        SingleTitleLabel(title: "$\(offerListing?.amount ?? "")", lineLength: 0, textColor: .success, fontValue: 12)
-                            .padding(.trailing, 8)
+                        SingleTitleLabel(
+                            title: "$\(offerListing?.amount ?? "")",
+                            lineLength: 0,
+                            textColor: .success,
+                            fontValue: 12)
+                        .padding(.trailing, 8)
                         
                     }
                 }
-                .padding([.top, .bottom], 16)
+                .padding(.bottom, 8)
+                .padding([.top, .bottom], 8)
             }
-
+            
             // ── Third row ─────────────────────────────
             if isFor == "Offers" || isFor == "OffersScreen" {
                 if status == "pending"{
                     HStack(alignment: .center, spacing: 10) {
                         
-                        TwoButton(titleOne:"Decline",titleTwo: "Accept",
-                            onFirstButtonClick: { onDecline?() },
-                            onSecButtonClick: { onAccept?() }
+                        TwoButton(titleOne:"Decline",
+                                  titleTwo: "Accept",
+                                  onFirstButtonClick: { onDecline?() },
+                                  onSecButtonClick: { onAccept?() }
                         )
                     }
                     
@@ -87,8 +139,10 @@ struct ActivityCell: View {
                     HStack(alignment: .center, spacing: 10) {
                         
                         TwoButton(titleTwo: "Accepted",
-                            onFirstButtonClick: {  },
-                            onSecButtonClick: {  },isHidefirstBtn: true,isHideSecBtn: false
+                                  onFirstButtonClick: {  },
+                                  onSecButtonClick: {  },
+                                  isHidefirstBtn: true,
+                                  isHideSecBtn: false
                         )
                     }
                     
@@ -98,8 +152,10 @@ struct ActivityCell: View {
                     HStack(alignment: .center, spacing: 10) {
                         
                         TwoButton(titleOne:"Rejected",
-                            onFirstButtonClick: { },
-                            onSecButtonClick: {  },isHidefirstBtn: false,isHideSecBtn: true
+                                  onFirstButtonClick: { },
+                                  onSecButtonClick: {  },
+                                  isHidefirstBtn: false,
+                                  isHideSecBtn: true
                         )
                     }
                     
@@ -114,7 +170,7 @@ struct ActivityCell: View {
         .padding(5)
         .shadow(color: Color(.squirrelGrey).opacity(0.5), radius: 2, x: 0, y: 0)
     }
-
+    
     func formattedDate(_ isoDate: String?) -> String {
         guard let isoDate = isoDate,
               let date = ISO8601DateFormatter().date(from: isoDate) else { return "N/A" }

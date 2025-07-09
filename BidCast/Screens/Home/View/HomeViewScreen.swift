@@ -26,6 +26,8 @@ struct HomeViewScreen: View {
     @Binding var comeFromExploreScreen : Bool
     @State var navigateToNoti : Bool = false
     
+    @State var navigateToProfile = false
+    
     var body: some View {
         VStack(spacing:0){
             VStack{
@@ -90,15 +92,21 @@ struct HomeViewScreen: View {
                                                     category: item.category?.name ?? "",
                                                     title2:item.title ?? "",
                                                     categorySize: 9,
-                                                    title2Size: 13.0){
+                                                    title2Size: 13.0,
+                                                    onTapProfile: {
+                                    userId = "\(item.user?.id ?? 0)"
+                                    navigateToProfile = true
+                                    
+                                },onTapMainImage: {
                                     
                                     print("babumoshai tapped the card!,inex \(index)")
                                     self.index = index
                                     userId = "\(item.user?.id ?? 0)"
                                     navigateToLiveStream = true
-                                }
-                                                    .background(.bg)
-                                                    .cornerRadius(10)
+                                   
+                                })
+                                .background(.bg)
+                                .cornerRadius(10)
                             }
                         }
                         .padding(.vertical,3)
@@ -109,6 +117,7 @@ struct HomeViewScreen: View {
             .padding(.top , 10)
             
             CusNavLink(doNavigate: $navigateToLiveStream, destination: LiveStream(currentStreamIndex :self.$index, userId : $userId ))
+            CusNavLink(doNavigate: $navigateToProfile, destination: ProfileScreen(id:$userId))
             CusNavLink(doNavigate: $navigateToNoti, destination: NotificationScreen())
         }
         .background(.white)
@@ -117,10 +126,10 @@ struct HomeViewScreen: View {
                 if let userInfo = notification.userInfo {
                     print("🔔 Babumoshai, Notification Payload: \(userInfo)")
                     let type = userInfo["type"] as? String ?? ""
-                           let senderName = userInfo["sender_name"] as? String ?? ""
-                           let senderImage = userInfo["sender_image"] as? String ?? ""
-                           let title = userInfo["title"] as? String ?? ""
-                           let body = userInfo["body"] as? String ?? ""
+//                           let senderName = userInfo["sender_name"] as? String ?? ""
+//                           let senderImage = userInfo["sender_image"] as? String ?? ""
+//                           let title = userInfo["title"] as? String ?? ""
+//                           let body = userInfo["body"] as? String ?? ""
 
                     if type == "bid_show_start" {
 //                        navigateToLiveStream = true

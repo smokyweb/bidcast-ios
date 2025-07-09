@@ -17,10 +17,10 @@ struct OptionButtonView: View {
         Button(action: action) {
             VStack {
                 Image(systemName: icon)
-                    .font(.title2)
+                    .font(.custom(poppinsSemiBold, size: 13.0))
                     .foregroundColor(color)
                 Text(label)
-                    .font(.caption)
+                    .font(.custom(poppinsRegular, size: 11.0))
                     .multilineTextAlignment(.center)
             }
             .padding()

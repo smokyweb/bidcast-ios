@@ -43,10 +43,6 @@ enum APIEndPoint{
     case getUserProduct(param : UserProductRequest)
     case followUnfollow(param:FollowRequest)
     case countUpdate(param:countRequest)
-    
-    
-    
-    //MARK: Faz
     case fetchProduct(param : FetchProductRequest)
     case storeIDCard(param : [String:Any])
     case storePhoneNumber(param : StorePhoneNumberRequest)
@@ -89,6 +85,7 @@ enum APIEndPoint{
     case fundTransfer(param : FundTransferRequest)
     case getprofile
     case updateProfile(param:UpdateProfileRequest)
+    case storeBid(param:StoreBidRequest)
     
     //MARK: OLD
     
@@ -249,8 +246,6 @@ extension APIEndPoint: EndPointType {
             return "follow-unfollow"
         case .countUpdate:
             return "zegocloud/webhook"
-            
-            //MARK: Faz
         case .fetchProduct:
             return "fetch-product"
         case .storeIDCard:
@@ -325,6 +320,8 @@ extension APIEndPoint: EndPointType {
             return "get-profile"
         case .updateProfile:
             return "update-profile"
+        case .storeBid:
+            return "bid/store"
             
             //MARK: Old
             
@@ -476,6 +473,7 @@ extension APIEndPoint: EndPointType {
             return "stripe/fund-transfer"
        
         
+      
         }
     }
     
@@ -625,6 +623,8 @@ extension APIEndPoint: EndPointType {
         case .updateProfile:
             return .post
         case .countUpdate:
+            return .post
+        case .storeBid:
             return .post
             
             //MARK: Old
@@ -778,9 +778,6 @@ extension APIEndPoint: EndPointType {
             return .post
         case .fundTransfer:
             return .post
-       
-        
-        
         }
     }
     
@@ -937,6 +934,8 @@ extension APIEndPoint: EndPointType {
             return param
         case .countUpdate(param: let param):
             return param
+        case .storeBid(param: let param):
+            return param
             
             //MARK: Old
             
@@ -1090,6 +1089,7 @@ extension APIEndPoint: EndPointType {
             return param
         
        
+        
         }
     }
     

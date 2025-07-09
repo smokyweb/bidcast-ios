@@ -16,6 +16,8 @@ final class LiveShowsViewModel: ObservableObject {
     @Published var liveShowsResponse = ResponseModel<[LiveShowsModel]>()
     @Published var countResponse = countModel()
     @Published var errorMessage: String?
+    @Published var BidResponse = ResponseModel<BidModel>()
+    @Published var followDict = ResponseModel<[String]>()
     @Published var requestType: String = ""
     @Published var titleStream : String = "Stream Ended"
     @Published var messageStream : String = "The live stream has ended."
@@ -49,32 +51,32 @@ final class LiveShowsViewModel: ObservableObject {
     }
 
     // MARK: - Set Default Address
-    func setDefaultAddress(parameters: AddressDefaultParam) async {
-        requestType = "default"
-        do {
-            let response: ResponseModel<AddressModel> = try await APIManager.shared.request(
-                type: APIEndPoint.setDefaultAddress(param: parameters),
-                header: true
-            )
-            self.addressResponse = response
-        } catch {
-            self.errorMessage = error.localizedDescription
-        }
-    }
-
-    // MARK: - Delete Address
-    func deleteAddress(parameters: AddressDefaultParam) async {
-        requestType = "delete"
-        do {
-            let response: ResponseModel<AddressModel> = try await APIManager.shared.request(
-                type: APIEndPoint.deleteAddress(param: parameters),
-                header: true
-            )
-           
-        } catch {
-            self.errorMessage = error.localizedDescription
-        }
-    }
+//    func setDefaultAddress(parameters: AddressDefaultParam) async {
+//        requestType = "default"
+//        do {
+//            let response: ResponseModel<AddressModel> = try await APIManager.shared.request(
+//                type: APIEndPoint.setDefaultAddress(param: parameters),
+//                header: true
+//            )
+//            self.addressResponse = response
+//        } catch {
+//            self.errorMessage = error.localizedDescription
+//        }
+//    }
+//
+//    // MARK: - Delete Address
+//    func deleteAddress(parameters: AddressDefaultParam) async {
+//        requestType = "delete"
+//        do {
+//            let response: ResponseModel<AddressModel> = try await APIManager.shared.request(
+//                type: APIEndPoint.deleteAddress(param: parameters),
+//                header: true
+//            )
+//           
+//        } catch {
+//            self.errorMessage = error.localizedDescription
+//        }
+//    }
     
     func CountUppdate(parameters: countRequest) async {
         requestType = "count"
@@ -87,6 +89,58 @@ final class LiveShowsViewModel: ObservableObject {
            }
            
         } catch {
+            self.errorMessage = error.localizedDescription
+        }
+    }
+    
+    func storeBid(parameters: StoreBidRequest) async {
+        requestType = "store"
+        do {
+            let response: ResponseModel<BidModel> = try await APIManager.shared.request(
+                type: APIEndPoint.storeBid(param: parameters),
+                header: true
+            )
+            self.BidResponse = response
+        } catch {
+            self.errorMessage = error.localizedDescription
+        }
+    }
+    
+    func followUnfollow(parameters: FollowRequest) async {
+        do {
+            self.requestType = "follow"
+            if let response : ResponseModel<[String]> = try await APIManager.shared.request(
+                type: APIEndPoint.followUnfollow(param: parameters),
+                header: true
+           ) {
+               
+           }
+            
+            // Refresh profile after follow/unfollow
+//            await getProfile(param: ProfileParamRequest(id: parameters.following_id))
+        } catch {
+            handle(error: error)
+        }
+    }
+    
+    
+    func handle(error: Error) {
+        if let dataError = error as? DataError {
+            switch dataError {
+            case .invalidCode(let message):
+                self.errorMessage = message ?? "Invalid code error"
+            case .invalidResponse(let data):
+                if let data = data,
+                   let json = try? JSONSerialization.jsonObject(with: data, options: []) {
+                    self.errorMessage = "Invalid response: \(json)"
+                    print(errorMessage)
+                } else {
+                    self.errorMessage = "Invalid response with no data"
+                }
+            default:
+                self.errorMessage = error.localizedDescription
+            }
+        } else {
             self.errorMessage = error.localizedDescription
         }
     }

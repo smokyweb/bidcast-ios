@@ -77,3 +77,13 @@ struct countModel : Codable {
     var status : String?
     var viewer_count : Int?
 }
+
+struct BidModel : Codable {
+    var schedule_show_id : Int?
+    var user_id : Int?
+    var bid_price : Int?
+    var product_id :Int?
+    var created_by : Int?
+    var created_at : String?
+    var id : Int?
+}

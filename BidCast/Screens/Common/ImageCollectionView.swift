@@ -17,82 +17,116 @@ struct ImageCollectionView: View {
     var title2 = "Stream Time"
     var categorySize = 8.0
     var title2Size = 12.0
-    var onTap: () -> Void = {}
+    
+    var onTapProfile: () -> Void = {}
+    var onTapMainImage: () -> Void = {}
     
     var body: some View {
-        
-        VStack(alignment: .leading,spacing: 8){
-            HStack(alignment:.center){
-                AsyncImage(url: URL(string: profileImg)) { phase in
-                    switch phase {
-                    case .empty:
-                        ProgressView()
-                            .frame(width: 40, height: 40)
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 40, height: 40)
-                            .clipShape(Circle())
-                    case .failure:
+        VStack(alignment: .leading, spacing: 8) {
+            
+            // ───────── Profile Row Button ─────────
+            Button {
+                onTapProfile()
+            } label: {
+                HStack(alignment: .center) {
+                    if let profileURL = URL(string: profileImg),
+                       !profileImg.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        AsyncImage(url: profileURL) { phase in
+                            switch phase {
+                            case .empty:
+                                ProgressView()
+                                    .frame(width: 40, height: 40)
+                            case .success(let image):
+                                image
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 40, height: 40)
+                                    .clipShape(Circle())
+                            case .failure:
+                                Image(systemName: "person.crop.circle.fill")
+                                    .resizable()
+                                    .frame(width: 40, height: 40)
+                                    .foregroundColor(.gray)
+                            @unknown default:
+                                EmptyView()
+                            }
+                        }
+                    } else {
                         Image(systemName: "person.crop.circle.fill")
                             .resizable()
                             .frame(width: 40, height: 40)
                             .foregroundColor(.gray)
-                    @unknown default:
-                        EmptyView()
                     }
+                    
+                    
+                    Text(profileName)
+                        .bold()
+                        .font(.custom(poppinsBold, fixedSize: textSize))
+                        .foregroundStyle(.black)
+                        .foregroundColor(.black)
+                    
+                    Spacer()
                 }
-                Text(profileName)
-                    .bold()
-                    .font(.custom(poppinsBold, fixedSize: textSize))
-                    .foregroundStyle(.black)
-                    .foregroundColor(.black)
-                Spacer()
             }
-            GeometryReader { geometry in
-                AsyncImage(url: URL(string: image.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")) { phase in
-                    switch phase {
-                    case .empty:
-                        ProgressView()
-                            .frame(width: geometry.size.width, height: 160)
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: geometry.size.width, height: 160)
-                            .clipped()
-                    case .failure:
+            .buttonStyle(.plain)
+            
+            Button {
+                onTapMainImage()
+            } label: {
+                GeometryReader { geometry in
+                    if let imageURLString = image.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
+                       !image.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+                       let imageURL = URL(string: imageURLString) {
+                        
+                        AsyncImage(url: imageURL) { phase in
+                            switch phase {
+                            case .empty:
+                                ProgressView()
+                                    .frame(width: geometry.size.width, height: 160)
+                            case .success(let image):
+                                image
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: geometry.size.width, height: 160)
+                                    .clipped()
+                            case .failure:
+                                Image(systemName: "photo")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: geometry.size.width, height: 160)
+                                    .foregroundColor(.gray)
+                            @unknown default:
+                                EmptyView()
+                            }
+                        }
+                        
+                    } else {
+                       
                         Image(systemName: "photo")
                             .resizable()
                             .scaledToFit()
                             .frame(width: geometry.size.width, height: 160)
                             .foregroundColor(.gray)
-                    @unknown default:
-                        EmptyView()
                     }
                 }
+                .frame(maxWidth: .infinity, minHeight: 160)
             }
-            .frame(maxWidth: .infinity,minHeight: 160)
-//            .frame(height: 160)
-            VStack(alignment: .leading,spacing: 4){
+            .buttonStyle(.plain)
+            
+            // ───────── Title & Category ─────────
+            VStack(alignment: .leading, spacing: 4) {
                 Text(title2)
                     .font(.custom(poppinsSemiBold, fixedSize: title2Size))
                     .foregroundStyle(.black)
                     .foregroundColor(.black)
+                
                 Text(category)
                     .font(.custom(poppinsRegular, fixedSize: categorySize))
                     .foregroundStyle(.black)
                     .foregroundColor(.black)
             }
+            
         }
-        .padding(.all,8)
-        .onTapGesture {
-            onTap()
-        }
+        .padding(8)
     }
 }
-
-//#Preview {
-//    ImageCollectionView()
-//}

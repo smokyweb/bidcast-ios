@@ -13,6 +13,7 @@ final class ShowsViewModel: ObservableObject {
     @Published var scheduledShow: ResponseModelPaginate<[HomeModel]>?
     @Published var updateStatusRespone : ResponseModelPaginate<UpdateStatusModel>?
     @Published var errorMessage: String? = nil
+    @Published var countResponse = countModel()
     @Published var requestType: String = ""
     
     // MARK: - Get Lessons
@@ -42,6 +43,20 @@ final class ShowsViewModel: ObservableObject {
         }
     }
     
+    func CountUppdate(parameters: countRequest) async {
+        requestType = "count"
+        do {
+           if let response: countModel = try await APIManager.shared.request(
+                type: APIEndPoint.countUpdate(param: parameters),
+                header: true
+           ){
+               self.countResponse = response
+           }
+           
+        } catch {
+            self.errorMessage = error.localizedDescription
+        }
+    }
     
     func handle(error: Error) {
         errorMessage = error.localizedDescription

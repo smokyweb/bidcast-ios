@@ -38,10 +38,11 @@ struct LiveStream: View {
     @State var isLoading: Bool = false
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "Stream Ended", message: "The live stream has ended.", primaryBtnText: "", secondaryBtnText: "")
     @State var showError: Bool = false
+    @State var viewwerCount = 0
     @Binding var userId : String
     @Environment(\.presentationMode) var presentationMode
     
-   
+    
     @ObservedObject var zegoManager = ZegoManager.shared
     @ObservedObject var chatManager = ZIMChatManager.shared
     @StateObject private var keyboardResponder = KeyboardResponder()
@@ -59,13 +60,13 @@ struct LiveStream: View {
     @State var showHud = false
     @State var hudMsg = ""
     //MARK: - for swipe
-           @State private var currentPrice: Int = 1
-           @State private var countdown: Int = 5
-           @State private var isBiddingActive: Bool = false
-           @State private var priceTimer: Timer?
-           @State private var countdownTimer: Timer?
+    @State private var currentPrice: Int = 1
+    @State private var countdown: Int = 10
+    @State private var isBiddingActive: Bool = false
+    @State private var priceTimer: Timer?
+    @State var countdownTimer: Timer?
     
-           let totalSwipeWidth: CGFloat = UIScreen.main.bounds.width - 80
+    let totalSwipeWidth: CGFloat = UIScreen.main.bounds.width - 80
     
     var body: some View {
         
@@ -106,7 +107,7 @@ struct LiveStream: View {
                             HStack(spacing: 4) {
                                 Image(systemName: "eye.fill")
                                     .foregroundColor(.black)
-                                Text("\(liveShowsData[currentStreamIndex].viewer_count ?? 0)")
+                                Text("\(viewwerCount)")
                                     .foregroundColor(.black)
                                     .font(.custom(poppinsSemiBold, size: 13.0))
                             }
@@ -137,7 +138,7 @@ struct LiveStream: View {
                         Spacer()
                         
                         //MARK: Side menu
-                      
+                        
                         VStack(spacing: 20) {
                             Spacer()
                             Button(action: {}) {
@@ -220,47 +221,47 @@ struct LiveStream: View {
                             .padding(.bottom,50)
                         }
                         //MARK: Product Details
-                        HStack(spacing: 12) {
-                            CustomProfileImage(url: liveShowsData[currentStreamIndex].category?.image ?? "", isCircular: false,cornerRadius: 8.0,size: 60.0)
-                            
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(BiddingDetail.product?.name.capitalizingFirstLetter() ?? "")
-                                    .font(.custom(poppinsBold, size: 13.0))
-                                    .foregroundColor(.black)
-                                HStack(spacing: 6) {
-                                    Text("Tag")
+                        if let product = BiddingDetail.product {
+                            HStack(spacing: 12) {
+                                CustomProfileImage(url: BiddingDetail.product?.image ?? "", isCircular: false,cornerRadius: 8.0,size: 60.0)
+                                
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(BiddingDetail.product?.name.capitalizingFirstLetter() ?? "")
+                                        .font(.custom(poppinsBold, size: 13.0))
+                                        .foregroundColor(.black)
+                                    HStack(spacing: 6) {
+                                        Text("Tag")
+                                            .font(.custom(poppinsSemiBold, size: 12.0))
+                                            .padding(4)
+                                            .background(Color.purple.opacity(0.7))
+                                            .cornerRadius(4)
+                                        Text("Tag")
+                                            .font(.custom(poppinsSemiBold, size: 12.0))
+                                            .padding(4)
+                                            .background(Color.pink.opacity(0.7))
+                                            .cornerRadius(4)
+                                    }
+                                    Text("Lorem ipsum dolor sit amet")
                                         .font(.custom(poppinsSemiBold, size: 12.0))
-                                        .padding(4)
-                                        .background(Color.purple.opacity(0.7))
-                                        .cornerRadius(4)
-                                    Text("Tag")
-                                        .font(.custom(poppinsSemiBold, size: 12.0))
-                                        .padding(4)
-                                        .background(Color.pink.opacity(0.7))
-                                        .cornerRadius(4)
+                                        .foregroundColor(.white)
                                 }
-                                Text("Lorem ipsum dolor sit amet")
-                                    .font(.custom(poppinsSemiBold, size: 12.0))
-                                    .foregroundColor(.white)
+                                Spacer()
+                                
                             }
-                            Spacer()
+                            .padding()
+                            .background(Color.black.opacity(0.3))
+                            .cornerRadius(10)
+                            .padding(.horizontal)
                             
-                        }
-                        .padding()
-                        .background(Color.black.opacity(0.3))
-                        .cornerRadius(10)
-                        .padding(.horizontal)
-                        
-                       
-                        //MARK: Swipe fearture
-                        HStack(spacing: 0) {
+                            //MARK: Swipe fearture
+                            HStack(spacing: 0) {
                                 // 3/4 Swipe Area
                                 ZStack(alignment: .leading) {
                                     RoundedRectangle(cornerRadius: 10)
                                         .fill(.black.opacity(0.3))
                                         .frame(height: 60)
-
-                                  
+                                    
+                                    
                                     RoundedRectangle(cornerRadius: 10)
                                         .fill(.defaultTheme)
                                         .frame(width: 50, height: 40)
@@ -278,7 +279,7 @@ struct LiveStream: View {
                                                     }
                                                 }
                                                 .onEnded { value in
-                                                    if value.translation.width > totalSwipeWidth * 0.8 {
+                                                    if value.translation.width > totalSwipeWidth * 0.5 {
                                                         swipeConfirmed = true
                                                         dragOffset = .zero
                                                         incrementPrice()
@@ -294,17 +295,17 @@ struct LiveStream: View {
                                         .font(.custom(poppinsSemiBold, size: 14.0))
                                         .foregroundColor(.white)
                                         .padding(.leading)
-
+                                    
                                 }
-//                                .frame(width: UIScreen.main.bounds.width * 0.75)
-
+                                //                                .frame(width: UIScreen.main.bounds.width * 0.75)
+                                
                                 // 1/4 Price & Timer Area
                                 VStack {
                                     Text("$ \(String(format: "%.2f", Double(currentPrice)))")
-                                        .font(.custom(poppinsBold, size: 18))
+                                        .font(.custom(poppinsBold, size: 14))
                                         .foregroundColor(.white)
                                         .padding(.vertical, 4)
-
+                                    
                                     Text(String(format: "00:00:%02d", countdown))
                                         .font(.custom(poppinsSemiBold, size: 14))
                                         .foregroundColor(.white)
@@ -320,6 +321,12 @@ struct LiveStream: View {
                                     isBiddingActive = true
                                 }
                             }
+                        }
+                        else {
+                            
+                            Text("Waiting for next product...")
+                                .foregroundColor(.white)
+                        }
                         
                         
                         //MARK: Add Comment section
@@ -367,13 +374,13 @@ struct LiveStream: View {
                 .gesture(
                     DragGesture()
                         .updating($verticalGestureOffset) { value, state, _ in
-                           
+                            
                             if abs(value.translation.height) > abs(value.translation.width) {
                                 state = value.translation
                             }
                         }
                         .onChanged { value in
-                          
+                            
                             withAnimation {
                                 verticalDragOffset = value.translation
                             }
@@ -428,17 +435,14 @@ struct LiveStream: View {
                 hideKeyboard()
             }
         )
-//        .toast(isPresenting: $showHud) {
-//            AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
-//        }
-        .toast(isPresenting: $showHud,duration: 2.0) {
-            AlertToast(displayMode: .alert, type: .regular, title: hudMsg)
+        
+        .toast(isPresenting: $showHud,duration: 1.5) {
+            AlertToast(displayMode: .alert, type: .regular, title: hudMsg ,style: .style(backgroundColor: .black.opacity(0.4), titleColor: .white))
+            
+            
             
         }
-            
-        
-        
-        .bottomSheet(isPresented: $showError, height: screenHeight / 2.2, topBarCornerRadius: 25, showTopIndicator: false,onDismiss: {
+        .bottomSheet(isPresented: $showError, height: screenHeight / 2.8, topBarCornerRadius: 25, showTopIndicator: false,onDismiss: {
             showError = true
         }) {
             CommonBottomSheet(
@@ -459,7 +463,7 @@ struct LiveStream: View {
             )
         }
         .edgesIgnoringSafeArea(.bottom)
-       
+        
         .toolbar(.hidden,for: .tabBar)
         .foregroundColor(.white)
         .onAppear{
@@ -475,9 +479,9 @@ struct LiveStream: View {
                 success()
             }
         }
-//        .onDisappear{
-//            logoutRoom()
-//        }
+        //        .onDisappear{
+        //            logoutRoom()
+        //        }
         
     }
     
@@ -535,23 +539,20 @@ struct LiveStream: View {
             if errorCode == 0 {
                 print("✅ Login callback | room: \(roomId) | errorCode: \(errorCode)")
                 currentRoomID = roomId
+                FirebaseManager.shared.observeViewerCount(roomId: roomId) { newCount in
+                    print("👀 Viewer Count Updated: \(newCount)")
+                   viewwerCount = newCount
+                }
                 FirebaseManager.shared.observeLiveSessionRemoval(roomId: roomId) {
-//                    let streamTitle = self.titleStream
-//                    let streamMessage = self.messageStream
-//                    showHud = true
-//                    hudMsg = "Live stream has been ended"
-//                    UserDefaults.isLiveEnded = true
-//                    DispatchQueue.main.asyncAfter(deadline: .now() + 2){
-//                        logoutRoom()
-//                        self.presentationMode.wrappedValue.dismiss()
-//                    }
+                    let streamTitle = "Stream Ended"
+                    let streamMessage = "The host has ended the live stream."
                     print("🔥 STREAM REMOVED CALLBACK TRIGGERED 🔥")
                     alertType = .sheetType(
                         icon: .alert,
-                        title: FirebaseManager.shared.titleMsg,
-                        message: FirebaseManager.shared.streamMsg,
-                        primaryBtnText: "",
-                        secondaryBtnText: AppString.ok.localized
+                        title: streamTitle,
+                        message: streamMessage,
+                        primaryBtnText: AppString.ok.localized,
+                        secondaryBtnText:""
                     )
                     showError = true
                     
@@ -578,10 +579,11 @@ struct LiveStream: View {
                         print("❌ Decoding Error: \(error)")
                     }
                 }
-            
+                
             }
         }
     }
+    
     
     func logoutRoom() {
         ZegoExpressEngine.shared().logoutRoom()
@@ -595,24 +597,111 @@ struct LiveStream: View {
         }
         
     }
-       
-   
+    
+    func incrementPrice() {
+        
+        let range = (currentPrice / 10) * 10
+        let increment = (range / 10 + 1)
+        let newPrice = currentPrice + increment
+        
+        
+        if let currentRoomId = liveShowsData[safe: currentStreamIndex]?.room_id {
+            let data = liveShowsData[safe: currentStreamIndex]
+            FirebaseManager.shared.updateProductPrice(roomId: currentRoomId, newPrice: "\(newPrice)")
+            Task{
+                let apram = StoreBidRequest(schedule_show_id: "\(data?.id ?? 0)", user_id: "\(UserDefaults.userId)", product_id: BiddingDetail.product?.id ?? "", bid_price: "\(newPrice)")
+                await self.viewModel.storeBid(parameters: apram)
+            }
+        }
+        
+        // Update local state to match
+        currentPrice = newPrice
+        
+        // Restart countdown for next round
+        countdown = 10
+        startCountdown()
+    }
+    
     func startCountdown() {
-            Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
-                if countdown > 0 {
-                    countdown -= 1
-                } else {
-                    incrementPrice()
+        countdownTimer?.invalidate()
+        
+        countdownTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+            if countdown > 0 {
+                countdown -= 1
+            } else {
+                timer.invalidate()
+                checkIfUserWon()
+            }
+        }
+        
+    }
+    
+    func checkIfUserWon() {
+        guard let currentRoomId = liveShowsData[safe: currentStreamIndex]?.room_id else { return }
+        
+        FirebaseManager.shared.getLiveSessionData(roomId: currentRoomId) { data in
+            guard let data = data else { return }
+            if let jsonData = try? JSONSerialization.data(withJSONObject: data) {
+                do {
+                    let model = try JSONDecoder().decode(BiddingModel.self, from: jsonData)
+                    if let priceString = model.product?.price,
+                       let latestFirebasePrice = Int(priceString) {
+                        
+                        if latestFirebasePrice == self.currentPrice {
+                            // ✅ YOU WIN!
+                            DispatchQueue.main.async {
+                                hudMsg = "You Win! Product Sold!"
+                                showHud = true
+                                
+                                stopCountdown()
+                                
+                                
+                                BiddingDetail = BiddingModel()
+                                currentPrice = 0
+                                isBiddingActive = false
+                            }
+                        } else {
+                            // Someone outbid → update local price
+                            DispatchQueue.main.async {
+                                currentPrice = latestFirebasePrice
+                                incrementPrice()
+                            }
+                        }
+                    }
+                } catch {
+                    print("❌ Decoding Error: \(error)")
                 }
             }
         }
-
-        func incrementPrice() {
-            let range = (currentPrice / 10) * 10
-            let increment = (range / 10 + 1)
-            currentPrice += increment
-            countdown = 5
+    }
+    
+    func stopCountdown() {
+        countdownTimer?.invalidate()
+        countdownTimer = nil
+    }
+    
+    
+    func observeProduct() {
+        guard let currentRoomId = liveShowsData[safe: currentStreamIndex]?.room_id else { return }
+        
+        FirebaseManager.shared.observeProductChanges(roomId: currentRoomId) { model in
+            DispatchQueue.main.async {
+                if let model = model {
+                    BiddingDetail.product = model
+                    let priceString = model.price
+                    if let priceDouble = Double(priceString) {
+                        currentPrice = Int(priceDouble)
+                    }
+                    countdown = 10
+                    startCountdown()
+                } else {
+                    // Product removed or nil
+                    BiddingDetail.product = nil
+                    isBiddingActive = false
+                }
+            }
         }
+    }
 }
 
 

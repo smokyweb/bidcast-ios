@@ -43,13 +43,14 @@ struct RehearsalScreen: View {
     
     @ObservedObject var chatManager = ZIMChatManager.shared
     
+    @State var viewwerCount = 0
     var sheetHeight: CGFloat {
         switch currentBottomSheet {
-        case .more: return screenHeight * 0.65
-        case .promote: return screenHeight * 0.4
-        case .clip: return screenHeight * 0.5
-        case .share: return 500 // Or screenHeight * 0.5
-        case .shop: return screenHeight * 0.7
+        case .more: return screenHeight * 0.7
+        case .promote: return screenHeight * 0.7
+        case .clip: return screenHeight * 0.6
+        case .share: return screenHeight * 0.6 // Or screenHeight * 0.5
+        case .shop: return screenHeight * 0.8
         case .endShow: return screenHeight * 0.4
         default: return screenHeight * 0.65
         }
@@ -424,6 +425,7 @@ struct RehearsalScreen: View {
                 
             }
         )
+        .toolbar(.hidden,for: .tabBar)
         .onAppear {
             logoutRoom()
             showTopBadge = true
@@ -489,6 +491,10 @@ struct RehearsalScreen: View {
                     self.showLiveControls = true
                     self.showPreLiveControls = false
                     self.isLive = true
+                    FirebaseManager.shared.observeViewerCount(roomId: "live_room_123_456") { newCount in
+                        print("👀 Viewer Count Updated: \(newCount)")
+                       viewwerCount = newCount
+                    }
                 } else {
                     print("❌ Failed to login to room: \(errorCode)")
                 }
@@ -520,8 +526,13 @@ struct RehearsalScreen: View {
         ZegoExpressEngine.shared().logoutRoom()
         ZIMChatManager.shared.logout()
         chatManager.messages.removeAll()
-        self.isLive = false
         showSellSheet = false
+        if isLive{
+            Task{
+                await viewModel.CountUppdate(parameters: countRequest(room_id:self.liveRoomId , event: "stream_stopped"))
+            }
+        }
+        self.isLive = false
     }
     
     @ViewBuilder
@@ -635,6 +646,7 @@ struct ZegoRehearsalScreen: UIViewRepresentable {
     }
     
     static func dismantleUIView(_ uiView: UIView, coordinator: ()) {
+        
         ZegoExpressEngine.shared().stopPublishingStream()
         ZegoExpressEngine.shared().stopPlayingStream("")
     }

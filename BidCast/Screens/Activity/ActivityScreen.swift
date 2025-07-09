@@ -55,7 +55,7 @@ struct ActivityScreen: View {
             }
             
             ScrollView {
-                VStack(spacing: 12) {
+                VStack(spacing: 6) {
                    
                     switch selected {
                     case .message:

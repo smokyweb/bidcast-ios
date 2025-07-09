@@ -26,14 +26,14 @@ struct PromoteShowSheet: View {
         VStack(spacing: 0) {
             HStack {
                 Text("Promote Show")
-                    .font(.custom(poppinsBold, size: 15.0))
+                    .font(.custom(poppinsBold, size: 16.0))
                 Spacer()
                 Button(action: onClose) {
                     Image(systemName: "xmark")
                         .foregroundColor(.gray)
                 }
             }
-            .padding()
+            .padding(.horizontal)
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {

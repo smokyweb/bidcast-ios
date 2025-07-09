@@ -108,9 +108,11 @@ struct CommonBottomSheet: View {
             
             Text(sheetType.title)
                 .font(.custom(poppinsBold, fixedSize: 24))
+                .foregroundStyle(.black)
             
             Text(sheetType.message)
                 .font(.custom(poppinsMedium, fixedSize: 16))
+                .foregroundStyle(.black)
                 .padding(.horizontal, 45)
                 .multilineTextAlignment(.center)
             
@@ -162,3 +164,46 @@ struct CommonBottomSheet: View {
 //#Preview {
 //    CommonBottomSheet()
 //}
+struct SimpleImageOKBottomSheet: View {
+  var image: ImageResource
+  var title: String
+  var message: String
+  var themeColor: ColorResource = .defaultTheme
+  var buttonText: String = "OK"
+  var onOK: (() -> Void)?
+
+  var body: some View {
+    VStack(spacing: 16) {
+      Image(image)
+        .resizable()
+        .frame(width: 40, height: 40)
+        .padding()
+        .background(Color(themeColor))
+        .foregroundStyle(.white)
+        .clipShape(Circle())
+
+      Text(title)
+        .font(.custom(poppinsBold, fixedSize: 24))
+        .multilineTextAlignment(.center)
+
+      Text(message)
+        .font(.custom(poppinsMedium, fixedSize: 16))
+        .multilineTextAlignment(.center)
+        .padding(.horizontal, 24)
+
+      PrimaryButton(
+        title: buttonText,
+        isOutLine: false,
+        onButtonClick: {
+          onOK?()
+        },
+        width: screenWidth / 1.5,
+        height: 40,
+        btnTextColor: .white,
+        btnColor: themeColor
+      )
+      .padding(.top, 10)
+    }
+    .padding()
+  }
+}

@@ -12,7 +12,7 @@ final class ProfileViewModel: ObservableObject {
     
     @Published var getProfileDict = ResponseModel<ProfileModel>()
     @Published var productDetailsResponseDict: ResponseModalPaginate<[ProductListingDataModel]>?
-    @Published var followDict = ResponseModel<[String]>()
+    @Published var followDict = ResponseModel<FolloweModel>()
     @Published var errorMessage: String? = nil
     @Published var requestType = ""
     
@@ -60,15 +60,16 @@ final class ProfileViewModel: ObservableObject {
     
     // MARK: - Follow / Unfollow
     func followUnfollow(parameters: FollowRequest) async {
+        self.requestType = "follow"
         do {
-            self.requestType = "follow"
-            _ = try await APIManager.shared.request(
+            
+            if let response : ResponseModel<FolloweModel> = try await APIManager.shared.request(
                 type: APIEndPoint.followUnfollow(param: parameters),
                 header: true
-            ) as ResponseModel<[String]>
+            ) {
+                self.followDict = response
+            }
             
-            // Refresh profile after follow/unfollow
-            await getProfile(param: ProfileParamRequest(id: parameters.following_id))
         } catch {
             handle(error: error)
         }

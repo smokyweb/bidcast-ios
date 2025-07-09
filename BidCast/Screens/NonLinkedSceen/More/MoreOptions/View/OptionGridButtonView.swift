@@ -20,13 +20,13 @@ struct OptionGridButtonView: View {
                 Image(systemName: icon)
                     .foregroundColor(isSelected ? .red : .black)
                 Text(label)
-                    .bold()
+                    .font(.custom(poppinsSemiBold, size: 13.0))
                     .foregroundColor(.black)
                 Spacer()
             }
             .padding()
             .frame(maxWidth: .infinity)
-            .background(isSelected ? Color.red.opacity(0.1) : Color(.systemGray6))
+            .background(isSelected ? Color.defaultTheme.opacity(0.1) : Color(.systemGray6))
             .cornerRadius(12)
         }
     }

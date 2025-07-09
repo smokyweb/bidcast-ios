@@ -27,12 +27,12 @@ struct MoreOptionsScreen: View {
     let columns = [GridItem(.flexible()), GridItem(.flexible())]
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 16) {
+      
+            VStack(spacing: 12) {
                 // Header
                 HStack {
                     Text("More Options")
-                        .font(.custom(poppinsBold, size: 15.0))
+                        .font(.custom(poppinsBold, size: 16.0))
                     Spacer()
                     Button(action: {
                         isPresented = false
@@ -41,17 +41,19 @@ struct MoreOptionsScreen: View {
                             .foregroundColor(.gray)
                     }
                 }
-
+                .padding(.horizontal)
+                ScrollView {
                 // Verified Buyers Toggle
                 Toggle(isOn: $isVerifiedBuyersOn) {
                     VStack(alignment: .leading, spacing: 4) {
                         HStack {
-                            Text("Verified Buyers").bold()
+                            Text("Verified Buyers")
+                                .font(.custom(poppinsSemiBold, size: 13.0))
                             Image(systemName: "questionmark.circle")
                                 .foregroundColor(.gray)
                         }
                         Text("When on, allows bids from verified buyers only")
-                            .font(.caption)
+                            .font(.custom(poppinsRegular, size: 11.0))
                             .foregroundColor(.gray)
                     }
                 }
@@ -95,7 +97,7 @@ struct MoreOptionsScreen: View {
                 // Broadcasting Options
                 VStack(spacing: 12) {
                     Text("Broadcasting Options")
-                        .font(.subheadline)
+                        .font(.custom(poppinsSemiBold, size: 13.0))
                         .foregroundColor(.gray)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.horizontal, 0)
@@ -112,6 +114,7 @@ struct MoreOptionsScreen: View {
             .padding()
         }
         .edgesIgnoringSafeArea(.top)
+//        .padding(.top,-12)
         .background(Color.white)
         .cornerRadius(20)
     }

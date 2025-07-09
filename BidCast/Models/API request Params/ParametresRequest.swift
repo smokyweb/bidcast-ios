@@ -611,3 +611,10 @@ struct countRequest : Encodable {
     var room_id : String
     var event : String
 }
+
+struct StoreBidRequest : Encodable{
+    var schedule_show_id : String
+    var user_id : String
+    var product_id : String
+    var bid_price : String
+}

@@ -15,13 +15,13 @@ struct BoostCardView: View {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(boost.title)
-                        .font(.headline)
+                        .font(.custom(poppinsSemiBold, size: 14.0))
                         .foregroundColor(.white)
                     Text(boost.subtitle)
-                        .font(.subheadline)
+                        .font(.custom(poppinsSemiBold, size: 12.0))
                         .foregroundColor(.white.opacity(0.8))
                     Text(boost.description)
-                        .font(.caption)
+                        .font(.custom(poppinsRegular, size: 11.0))
                         .foregroundColor(.white.opacity(0.7))
                 }
                 Spacer()
@@ -32,7 +32,7 @@ struct BoostCardView: View {
 
             Button(action: boost.action) {
                 Text("Select • \(boost.price)")
-                    .fontWeight(.bold)
+                    .font(.custom(poppinsSemiBold, size: 14.0))
                     .padding(.vertical, 10)
                     .frame(maxWidth: .infinity)
                     .background(Color.white)

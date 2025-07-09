@@ -46,3 +46,7 @@ struct ProductListingDataModel: Codable {
     }
 }
 
+
+struct FolloweModel : Codable{
+    var status : Bool?
+}

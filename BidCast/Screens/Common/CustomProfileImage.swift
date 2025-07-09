@@ -12,39 +12,47 @@ struct CustomProfileImage: View {
     var isCircular: Bool = true
     var cornerRadius: CGFloat = 8
     var size: CGFloat = 40
-
+    
     var body: some View {
-        AsyncImage(url: URL(string: url?.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")) { phase in
-            switch phase {
-            case .empty:
-                ProgressView()
-                    .frame(width: size, height: size)
-
-            case .success(let image):
-                image
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: size, height: size)
-                    .applyClip(isCircular: isCircular, cornerRadius: cornerRadius)
-
-            case .failure:
-                if url?.contains("http") == true{
-                    Image("defaultUser")
+        if let url = url, !url.isEmpty {
+            AsyncImage(url: URL(string: url.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")) { phase in
+                switch phase {
+                case .empty:
+                    ProgressView()
+                        .frame(width: size, height: size)
+                    
+                case .success(let image):
+                    image
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: size, height: size)
                         .applyClip(isCircular: isCircular, cornerRadius: cornerRadius)
-                }else{
-                    Image(url ?? "")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: size, height: size)
-                        .applyClip(isCircular: isCircular, cornerRadius: cornerRadius)
+                    
+                case .failure:
+                    if url.contains("http") {
+                        Image("defaultUser")
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: size, height: size)
+                            .applyClip(isCircular: isCircular, cornerRadius: cornerRadius)
+                    } else {
+                        Image(url)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: size, height: size)
+                            .applyClip(isCircular: isCircular, cornerRadius: cornerRadius)
+                    }
+                    
+                @unknown default:
+                    EmptyView()
                 }
-
-            @unknown default:
-                EmptyView()
             }
+        } else {
+            Image("defaultUser")
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+                .frame(width: size, height: size)
+                .applyClip(isCircular: isCircular, cornerRadius: cornerRadius)
         }
     }
 }
