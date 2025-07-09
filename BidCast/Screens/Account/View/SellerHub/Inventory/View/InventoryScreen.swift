@@ -22,7 +22,7 @@ struct InventoryScreen: View {
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
     @State var status = "active"
-    @State private var currentPage = 1
+    @State var currentPage = 1
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     
     var body: some View {

@@ -76,7 +76,7 @@ enum APIEndPoint{
     case UpdateShowStatus(param:LiveShowUpdateRequest)
     case getBidList
     case getItemList(param: ItemListRequest)
-    case getNotificationListing
+    case getNotificationListing(param:PageRequest)
     case saveDeviceDetail(param : DeviceDetailRequest)
     case getWalletInfo
     case getPayOutHistory
@@ -266,8 +266,8 @@ extension APIEndPoint: EndPointType {
             return "notification/listing"
         case .deleteNotification:
             return "notification/delete"
-        case .getNotificationListing:
-            return "notification/listing"
+        case .getNotificationListing(param:let param):
+            return "notification/listing?page=\(param.page)"
         case .getLiveShow:
             return "get-live-show"
         case .getMyScheduleShow:

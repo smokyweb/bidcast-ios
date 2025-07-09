@@ -20,6 +20,8 @@ struct NotificationScreen: View {
     @State var navigateToCreate = false
     @State var isDefault = false
     var viewModel = NotificationViewModel()
+    
+    @State var currentPage = 1
 
     var body: some View {
         VStack(spacing: 0) {
@@ -35,7 +37,8 @@ struct NotificationScreen: View {
                 NoDataView(message: "No Notitification Found")
             }else{
                 List {
-                    ForEach(notiListArr, id: \.id) { notification in
+                    ForEach(notiListArr.indices, id: \.self) { index in
+                        let notification = notiListArr[index]
                         if let title = notification.title,
                            let message = notification.message,
                            let createdAt = notification.createdAt {
@@ -66,42 +69,43 @@ struct NotificationScreen: View {
                                 }
                                 .tint(.clear)
                             }
+                            .onAppear {
+                                handlePagination(index: index)
+                            }
                         }
                     }
                 }
                 .listStyle(.plain)
                 .listRowBackground(Color.clear)
-            
-            // MARK: Clear All Button
-//            Button(action: {
-//                notiListArr.removeAll()
-//                let param = DeleteNotificationRequest(id: 0)
-//                Task {
-//                    SVProgressHUD.show()
-//                    await viewModel.DeleteNotification(param: param)
-//                    await SVProgressHUD.dismiss()
-//                    DeleteNotificationSuccess()
-//                }
-//            }) {
-//                Text("Clear All")
-//                    .font(.custom(poppinsBold, size: buttonTitle))
-//                    .foregroundColor(.white)
-//                    .frame(maxWidth: .infinity)
-//                    .padding()
-//                    .background(Color.blue)
-//                    .cornerRadius(12)
-//                    .padding(.horizontal)
-//                    .padding(.bottom, 10)
-//            }
-        }
+                
+                //             MARK: Clear All Button
+                Button(action: {
+                   
+                    let param = DeleteNotificationRequest()
+                    Task {
+                        SVProgressHUD.show()
+                        notiListArr.removeAll()
+                        await viewModel.DeleteNotification(param: param)
+                        await SVProgressHUD.dismiss()
+                        DeleteNotificationSuccess()
+                    }
+                }) {
+                    Text("Clear All")
+                        .font(.custom(poppinsSemiBold, size: buttonTitle))
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(.defaultTheme)
+                        .cornerRadius(12)
+                        .padding(.horizontal)
+                        .padding(.bottom, 10)
+                }
+            }
         }
         .onAppear {
-            Task {
-                SVProgressHUD.show()
-                await viewModel.GetNotification()
-                await SVProgressHUD.dismiss()
-                NotificationSuccess()
-            }
+            
+            fetchNotification(page: currentPage)
+           
         }
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
@@ -123,13 +127,41 @@ struct NotificationScreen: View {
             )
         }
     }
+    
+    func handlePagination(index: Int) {
+        let isLastItem = index == notiListArr.count - 1
+        let canFetchMore = (viewModel.notiListingDict?.total ?? 0) > notiListArr.count
+
+        if isLastItem && canFetchMore {
+            fetchMoreNotificartion()
+        }
+    }
+    
+    // MARK: - Fetch Inventory List
+    func fetchNotification(page: Int) {
+        Task{
+            SVProgressHUD.show()
+            let param = PageRequest(page: page)
+            await viewModel.GetNotification(param: param)
+            await SVProgressHUD.dismiss()
+            NotificationSuccess()
+        }
+    }
+    func fetchMoreNotificartion() {
+        Task {
+            currentPage += 1
+            let request = PageRequest(page: currentPage)
+            await viewModel.GetNotification(param: request)
+            NotificationSuccess()
+        }
+    }
 
     //MARK: NotificationSuccess.
     func NotificationSuccess() {
         SVProgressHUD.dismiss()
         let response = viewModel.notiListingDict
         if response?.status == "success" {
-            notiListArr = response?.data ?? []
+            notiListArr.append(contentsOf: response?.data ?? [])
         } else {
             showError = true
             alertType = .sheetType(
@@ -149,7 +181,9 @@ struct NotificationScreen: View {
         if response?.status == "success" {
             Task {
                 SVProgressHUD.show()
-                await viewModel.GetNotification()
+                notiListArr.removeAll()
+                let param = PageRequest(page: 1)
+                await viewModel.GetNotification(param: param)
                 await SVProgressHUD.dismiss()
                 NotificationSuccess()
             }

@@ -11,7 +11,7 @@ import Foundation
 final class NotificationViewModel: ObservableObject {
     
     @Published var deleteNotiDict: ResponseModal<DeleteNotificationModel>?
-    @Published var notiListingDict : ResponseModal<[NotificationListingModel]>?
+    @Published var notiListingDict : ResponseModalPaginate<[NotificationListingModel]>?
     @Published var errorMessage: String? = nil
     
     var request: String = ""
@@ -31,11 +31,11 @@ final class NotificationViewModel: ObservableObject {
     }
     
     // MARK: - GetNotification
-    func GetNotification() async {
+    func GetNotification(param:PageRequest) async {
         self.request = "NotificationListing"
         do {
-            let response: ResponseModal<[NotificationListingModel]> = try await APIManager.shared.request(
-                type: APIEndPoint.getNotificationListing,
+            let response: ResponseModalPaginate<[NotificationListingModel]> = try await APIManager.shared.request(
+                type: APIEndPoint.getNotificationListing(param: param),
                 header: true
             )
             self.notiListingDict = response

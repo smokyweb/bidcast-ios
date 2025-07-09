@@ -618,3 +618,7 @@ struct StoreBidRequest : Encodable{
     var product_id : String
     var bid_price : String
 }
+
+struct PageRequest : Encodable{
+    var page : Int
+}
