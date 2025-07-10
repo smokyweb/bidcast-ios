@@ -20,14 +20,16 @@ struct StepCard: View {
             HStack(alignment: .top, spacing: 8) {
                 ZStack {
                     Circle()
-                        .fill(prepare.isLocked ? Color(.systemGray4) : Color.blue)
+                        .fill(prepare.isLocked ? Color(.systemGray4) : Color.defaultTheme)
                         .frame(width: 32, height: 32)
                     
                     if prepare.isLocked {
-                        Image(systemName: "lock.fill")
-                            .foregroundColor(.white)
-                            .font(.footnote)
-                    } else {
+                           Image(systemName: "lock.fill")
+                               .foregroundColor(.white)
+                       } else if prepare.isDone ?? false {
+                           Image(systemName: "checkmark")
+                               .foregroundColor(.white)
+                       } else {
                         Text("\(index)")
                             .foregroundColor(.white)
                             .font(.custom(poppinsSemiBold, size: 13.0))
@@ -37,7 +39,7 @@ struct StepCard: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(prepare.title ?? "")
                         .font(.custom(poppinsSemiBold, size: 13.0))
-                        .foregroundColor(prepare.isLocked ? .gray : .primary)
+                        .foregroundColor(prepare.isLocked ? .gray : .defaultTheme)
                     RichText(html: prepare.description ?? "")
                         .customCSS(
  """
@@ -63,7 +65,7 @@ struct StepCard: View {
 
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(isCurrent ? Color.blue : Color.clear, lineWidth: 2)
+                .stroke(isCurrent ? Color.defaultTheme : Color.clear, lineWidth: 2)
                 .background(
                     RoundedRectangle(cornerRadius: 14)
                         .fill(Color.white)

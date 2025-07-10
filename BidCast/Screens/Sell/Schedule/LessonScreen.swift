@@ -9,6 +9,7 @@ import SwiftUI
 import RichText
 import AVFoundation
 import AVKit
+import SVProgressHUD
 
 struct LessonScreen: View {
     
@@ -39,12 +40,17 @@ struct LessonScreen: View {
             )
             .background(.white)
 //            .frame(height: 80)
-//            CusNavLink(doNavigate: $navigateToSell, destination: SellingTips())
+            
         }
         .background(.red)
         .frame(height: 40)
             ZStack(alignment: .bottom) {
-                Color(#colorLiteral(red: 0.17, green: 0.22, blue: 0.28, alpha: 1)).ignoresSafeArea()
+                if #available(iOS 17.0, *) {
+                    Color(Color.bg.opacity(0.4))
+                        .ignoresSafeArea()
+                } else {
+                    // Fallback on earlier versions
+                }
                 
                 if !lessons.isEmpty {
                     let lesson = lessons[currentIndex]
@@ -54,7 +60,8 @@ struct LessonScreen: View {
                         HStack {
                             Spacer()
                             Text("Lesson \(currentIndex + 1)/\(lessons.count )")
-                                .foregroundColor(.white.opacity(0.8))
+                                .font(.custom(poppinsSemiBold, size: 11.0))
+                                .foregroundColor(.black.opacity(0.8))
                         }
                         .padding(.horizontal, 20)
                         .padding(.top, 12)
@@ -62,12 +69,12 @@ struct LessonScreen: View {
                         // Title & subtitle
                         VStack(spacing: 6) {
                             Text(lesson.title ?? "")
-                                .font(.title3.bold())
+                                .font(.custom(poppinsSemiBold, size: 16.0))
                                 .multilineTextAlignment(.center)
-                                .foregroundColor(.white)
+                                .foregroundColor(.black)
                             Text("Watch this lesson to unlock the next chapter")
-                                .font(.footnote)
-                                .foregroundColor(.white.opacity(0.7))
+                                .font(.custom(poppinsRegular, size: 12.0))
+                                .foregroundColor(.black.opacity(0.7))
                         }
                         .padding(.horizontal, 16)
                         
@@ -75,9 +82,9 @@ struct LessonScreen: View {
                         if let player = player {
                             VideoPlayer(player: player)
                                 .frame(height: UIScreen.main.bounds.height * 0.5)
-                                .cornerRadius(10)
+//                                .cornerRadius(10)
                                 .overlay(
-                                    RoundedRectangle(cornerRadius: 10)
+                                    Rectangle()
                                         .stroke(Color.white.opacity(0.15), lineWidth: 1)
                                 )
                         }
@@ -99,11 +106,11 @@ struct LessonScreen: View {
                                    Button("Previous") {
                                        goToPreviousLesson()
                                    }
-                                   .font(.headline)
+                                   .font(.custom(poppinsSemiBold, size: 13.0))
                                    .padding(.vertical, 10)
                                    .frame(width: 120)
-                                   .background(Color.gray)
-                                   .foregroundColor(.white)
+                                   .background(Color.white)
+                                   .foregroundColor(.defaultTheme)
                                    .cornerRadius(8)
                                    .shadow(radius: 3)
                                }
@@ -111,25 +118,25 @@ struct LessonScreen: View {
                               
                             
                             Spacer()
-                            if showNextButton {
+//                            if showNextButton {
                                     Button("Next") {
                                         goToNextLesson()
                                     }
-                                    .font(.headline)
+                                    .font(.custom(poppinsSemiBold, size: 13.0))
                                     .padding(.vertical, 10)
                                     .frame(width: 120)
-                                    .background(Color(red: 1, green: 0.42, blue: 0.46))
+                                    .background(Color.defaultTheme)
                                     .foregroundColor(.white)
                                     .cornerRadius(8)
                                     .shadow(radius: 3)
-                                }
+//                                }
                         }
                         .padding(.horizontal, 24)
                         
                         // Controls
                         VStack(spacing: 8) {
                             ProgressView(value: playbackProgress)
-                                .tint(.blue)
+                                .tint(.defaultTheme)
                                 .padding(.horizontal, 20)
                             
                             HStack {
@@ -141,25 +148,31 @@ struct LessonScreen: View {
                                 Spacer()
                                 Label("Sound", systemImage: "speaker.wave.2.fill")
                                 Spacer()
-                                Image(systemName: "captions.bubble.fill")
+//                                Image(systemName: "captions.bubble.fill")
                             }
-                            .foregroundColor(.white)
+                            .foregroundColor(.black)
                             .padding(.horizontal, 24)
                             .padding(.bottom, 10)
                         }
-                        .background(Color.black.opacity(0.85))
+                        .background(Color.bg.opacity(0.4))
                     }
                 } else {
                     ProgressView(value: playbackProgress)
-                        .tint(.blue)
+                        .tint(.defaultTheme)
                         .padding(.horizontal, 20)
                 }
+                
+                CusNavLink(doNavigate: $navigateToSell, destination: SellingTips())
             }
             .toolbar(.hidden,for: .tabBar)
             .onAppear {
-                observe()
-                
-//                viewModel.getLesson()
+               
+                Task{
+                    SVProgressHUD.show()
+                    await viewModel.getLesson()
+                    await SVProgressHUD.dismiss()
+                    success()
+                }
             }
             .onDisappear {
                 if let token = timeObserverToken, let currentPlayer = player {
@@ -179,6 +192,7 @@ struct LessonScreen: View {
                 navigateToSell = true
                 print("All lessons finished")
             }
+            playbackProgress = 0.0
         }
     
     func goToPreviousLesson() {
@@ -188,6 +202,7 @@ struct LessonScreen: View {
         }else{
             showPreviousButton = false
         }
+        playbackProgress = 0.0
     }
         
         func togglePlayPause() {
@@ -241,30 +256,17 @@ struct LessonScreen: View {
     }
 
         
-        func observe() {
-//            self.viewModel.eventHandler = { event in
-//                switch event {
-//                    case .loading:
-//                        self.isLoading = true
-//                    case .stopLoading:
-//                        self.isLoading = false
-//                    case .dataLoaded:
-//                        success()
-//                    case .error(let error):
-//                        print("Error: \(error?.localizedDescription ?? "Unknown")")
-//                }
-//            }
-        }
+
 
         func success() {
-//            if let dict = viewModel.getLessonDict {
-//                if dict.status == "success" {
-//                    lessons = dict.data
-//                    playCurrentVideo()
-//                } else {
-//                    print("API error: \(dict.status ?? "")")
-//                }
-//            }
+            if let dict = viewModel.lessonsResponse {
+                if dict.status == "success" {
+                    lessons = dict.data
+                    playCurrentVideo()
+                } else {
+                    print("API error: \(dict.status ?? "")")
+                }
+            }
         }
 
 }

@@ -28,6 +28,11 @@ struct AddProductsScreen: View {
     
     @State var navigateToTab = false
     
+    @Binding var fromPrepare : Bool
+    @Binding var backToPrepare : Bool
+    var delegate: ShowStepDelegate?
+    
+    
     var body: some View {
         VStack(spacing: 16) {
             
@@ -187,28 +192,32 @@ struct AddProductsScreen: View {
                         showhud = true
                         return
                 }
-                
-                Task{
-                    SVProgressHUD.show()
-                    var thumbImage = [String]()
-                    thumbImage.append(thumbNail)
-                    self.viewModel.errorMessage = ""
-                    await viewModel.storeScheduleShow(param: request,images: [thumbNail],key: "thumbnail[]")
-                    await SVProgressHUD.dismiss()
-                    
-                    if viewModel.errorMessage == nil || viewModel.errorMessage == "" {
-                        storeSuccess()
-                    }else{
-                        alertType = .sheetType(
-                            icon: .alert,
-                            title: "Error",
-                            message: viewModel.errorMessage ?? "",
-                            primaryBtnText: AppString.ok.localized,
-                            secondaryBtnText:""
-                        )
-                        showError = true
+                if fromPrepare{
+                    backToPrepare = false
+                    delegate?.didUpdateRequest(request)
+                }else{
+                    Task{
+                        SVProgressHUD.show()
+                        var thumbImage = [String]()
+                        thumbImage.append(thumbNail)
+                        self.viewModel.errorMessage = ""
+                        await viewModel.storeScheduleShow(param: request,images: [thumbNail],key: "thumbnail[]")
+                        await SVProgressHUD.dismiss()
+                        
+                        if viewModel.errorMessage == nil || viewModel.errorMessage == "" {
+                            storeSuccess()
+                        }else{
+                            alertType = .sheetType(
+                                icon: .alert,
+                                title: "Error",
+                                message: viewModel.errorMessage ?? "",
+                                primaryBtnText: AppString.ok.localized,
+                                secondaryBtnText:""
+                            )
+                            showError = true
+                        }
+                        
                     }
-                   
                 }
             }) {
                 Text("Finish")

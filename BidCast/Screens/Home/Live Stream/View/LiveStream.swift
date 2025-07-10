@@ -509,9 +509,9 @@ struct LiveStream: View {
                             loginRoom(roomId: initialRoomID)
                             fetchBiddingDetail(roomId: initialRoomID)
                             ZIMChatManager.shared.joinRoom(roomID: initialRoomID)
-                            Task{
-                                await viewModel.CountUppdate(parameters: countRequest(room_id: initialRoomID, event: "user_join_room"))
-                            }
+//                            Task{
+//                                await viewModel.CountUppdate(parameters: countRequest(room_id: initialRoomID, event: "user_join_room"))
+//                            }
                         }
                     }
                 }
@@ -592,9 +592,9 @@ struct LiveStream: View {
         if let currentRoomId = liveShowsData[safe: currentStreamIndex]?.room_id {
             FirebaseManager.shared.databaseRef.child("live_sessions").child(currentRoomId).removeAllObservers()
         }
-        Task{
-            await viewModel.CountUppdate(parameters: countRequest(room_id: liveShowsData[safe: currentStreamIndex]?.room_id ?? "", event: "user_leave_room"))
-        }
+//        Task{
+//            await viewModel.CountUppdate(parameters: countRequest(room_id: liveShowsData[safe: currentStreamIndex]?.room_id ?? "", event: "user_leave_room"))
+//        }
         
     }
     

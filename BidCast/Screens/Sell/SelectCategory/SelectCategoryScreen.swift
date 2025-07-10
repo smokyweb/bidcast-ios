@@ -23,11 +23,12 @@ struct SelectCategoryScreen: View {
     @State private var categoryList: [CategoryDataModel] = []
     @State private var auctionTypeList: [AuctionDataModel] = []
     @State var navigateToThumbnail : Bool = false
-    @State var request = StoreScheduleShowRequest(title: "", date: "", time: "", category_id: "", auction_type_id: "", product_ids: "")
+    @Binding var request : StoreScheduleShowRequest
     @Binding var title : String
-    
+    @Binding var fromPrepare : Bool
+    @Binding var backToPrepare : Bool
     var viewModel = SelectCategoryViewModel()
-    
+    var delegate: ShowStepDelegate?
     
     var body: some View {
         VStack {
@@ -117,7 +118,7 @@ struct SelectCategoryScreen: View {
             .zIndex(1400.0)
             .padding(.top , 10)
 //            .padding(.horizontal)
-            CusNavLink(doNavigate: $navigateToThumbnail, destination: SelectThumbnailScreen(request:$request))
+            CusNavLink(doNavigate: $navigateToThumbnail, destination: SelectThumbnailScreen(request:$request,fromPrepare: $fromPrepare,backToPrepare: $backToPrepare,delegate: delegate))
         }
         .background(Color.bg.opacity(0.5))
         .onAppear {
@@ -126,7 +127,7 @@ struct SelectCategoryScreen: View {
                 SVProgressHUD.show()
                 await self.viewModel.getCategoryList()
                 await SVProgressHUD.dismiss()
-                await categorySuccess()
+                categorySuccess()
                 
             }
         }
@@ -159,7 +160,7 @@ struct SelectCategoryScreen: View {
                 SVProgressHUD.show()
                 await  self.viewModel.getAuctionList()
                 await SVProgressHUD.dismiss()
-                await auctionSuccess()
+                auctionSuccess()
             }
         } else {
             alertType = .sheetType(

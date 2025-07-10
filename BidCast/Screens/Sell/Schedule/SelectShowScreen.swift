@@ -25,9 +25,11 @@ struct SelectShowScreen: View {
     @State var date = Date()
     @Binding var request : StoreScheduleShowRequest
     @Binding var thumbNail : String
-    
+    @Binding var comeFromPrepareScreen : Bool
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
+    
+    var delegate: ShowStepDelegate?
     
     var body: some View {
         VStack(spacing:18){
@@ -74,54 +76,58 @@ struct SelectShowScreen: View {
             .padding(.top,10)
             .padding(.horizontal,Leading)
             //            .background(.green)
-            PrimaryButton(title: "Continue to next step",isOutLine: false,onButtonClick: {
+            PrimaryButton(title: "Continue",isOutLine: false,onButtonClick: {
                 print("date : \(selectedDate) time : \(selectedTime)")
                 
                 let selectedDateStr = formatDate(selectedDate, format: "yyyy-MM-dd")
-                    let selectedTimeStr = formatDate(selectedTime, format: "hh:mm")
+                    let selectedTimeStr = formatDate(selectedTime, format: "HH:mm")
 
                     print("📆 Date in local time: \(selectedDateStr)")
                     print("⏰ Time in local time: \(selectedTimeStr)")
                 request.date = selectedDateStr
                 request.time = selectedTimeStr
                 print(request)
-                
-                guard !request.title.isEmpty else {
-                    hudMsg = "Please enter title"
+                if comeFromPrepareScreen {
+                    delegate?.didUpdateRequest(request)
+                    presentationMode.wrappedValue.dismiss()
+                }else{
+                    guard !request.title.isEmpty else {
+                        hudMsg = "Please enter title"
                         showhud = true
                         return
-                }
-                guard !request.category_id.isEmpty else {
-                    hudMsg = "Please enter category type"
+                    }
+                    guard !request.category_id.isEmpty else {
+                        hudMsg = "Please enter category type"
                         showhud = true
                         return
-                }
-                guard !request.auction_type_id.isEmpty else {
-                    hudMsg = "Please enter auction type"
+                    }
+                    guard !request.auction_type_id.isEmpty else {
+                        hudMsg = "Please enter auction type"
                         showhud = true
                         return
-                }
-                guard !thumbNail.isEmpty else {
-                    hudMsg = "Please select thumbnail image"
+                    }
+                    guard !thumbNail.isEmpty else {
+                        hudMsg = "Please select thumbnail image"
                         showhud = true
                         return
-                }
-                guard !request.date.isEmpty else {
-                    hudMsg = "Please select date"
+                    }
+                    guard !request.date.isEmpty else {
+                        hudMsg = "Please select date"
                         showhud = true
                         return
-                }
-                guard !request.time.isEmpty else {
-                    hudMsg = "Please select time"
+                    }
+                    guard !request.time.isEmpty else {
+                        hudMsg = "Please select time"
                         showhud = true
                         return
+                    }
+                    
+                    navigateToAddProduct = true
                 }
-                
-                navigateToAddProduct = true
 //                navigateToSelectCategory = true
             },cornerRadius: 12, btnTextColor: .white)
             
-            CusNavLink(doNavigate: $navigateToAddProduct, destination: AddProductsScreen(request:$request,thumbNail: $thumbNail))
+            CusNavLink(doNavigate: $navigateToAddProduct, destination: AddProductsScreen(request:$request,thumbNail: $thumbNail,fromPrepare: .constant(false),backToPrepare: .constant(false)))
            
         }
     
@@ -195,7 +201,7 @@ struct TimePickerView: View {
                             .frame(maxWidth: .infinity)
                             .padding()
                             .foregroundColor(selectedTime == time ? .white : .black)
-                            .background(selectedTime == time ? Color.red : Color.white)
+                            .background(selectedTime == time ? Color.defaultTheme : Color.white)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 10)
                                     .stroke(Color.gray.opacity(0.3), lineWidth: 1)

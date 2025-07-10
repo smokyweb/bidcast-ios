@@ -19,9 +19,10 @@ class ZegoManager: NSObject, ZegoEventHandler , ObservableObject {
     @Published var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @Published var isCommentsAvailable : Bool = false
     @StateObject var zimChat = ZIMChatManager()
+    
     private override init() {
         super.init()
-        //        ZegoExpressEngine.shared().setEventHandler(self)
+      
     }
     
     func createEngine() {

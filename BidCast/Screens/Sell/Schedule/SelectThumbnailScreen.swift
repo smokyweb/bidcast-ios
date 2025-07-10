@@ -25,11 +25,13 @@ struct SelectThumbnailScreen: View {
     @State private var showPickerOptions = false
     @State private var selectedMedia =  UIImage()
     @Binding var request : StoreScheduleShowRequest
+    @State var navigateToProuct = false
     @State var thumbNail = ""
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
-    
-    
+    @Binding var fromPrepare : Bool
+    @Binding var backToPrepare : Bool
+    var delegate: ShowStepDelegate?
     var body: some View {
         VStack(spacing:18){
             VStack{
@@ -100,7 +102,7 @@ struct SelectThumbnailScreen: View {
             .padding(.top,10)
             .padding(.horizontal,Leading)
             //            .background(.green)
-            PrimaryButton(title: "Continue to next step",isOutLine: false,onButtonClick: {
+            PrimaryButton(title: "Continue",isOutLine: false,onButtonClick: {
                 print("request \(request)")
                 guard !request.title.isEmpty else {
                     hudMsg = "Please enter title"
@@ -122,11 +124,19 @@ struct SelectThumbnailScreen: View {
                         showhud = true
                         return
                 }
-                navigateToSelectTime = true
+                if fromPrepare{
+//                    delegate?.didUpdateRequest(request)
+//                    presentationMode.wrappedValue.dismiss()
+                    navigateToProuct = true
+                }else{
+                    navigateToSelectTime = true
+                }
                 
             },cornerRadius: 12, btnTextColor: .white)
             
-            CusNavLink(doNavigate: $navigateToSelectTime, destination: SelectShowScreen(request:$request,thumbNail: $thumbNail))
+            CusNavLink(doNavigate: $navigateToSelectTime, destination: SelectShowScreen(request:$request,thumbNail: $thumbNail, comeFromPrepareScreen: .constant(false)))
+            
+            CusNavLink(doNavigate: $navigateToProuct, destination: AddProductsScreen(request:$request,thumbNail: $thumbNail,fromPrepare: $fromPrepare,backToPrepare: $backToPrepare,delegate: delegate))
             
         }
         .edgesIgnoringSafeArea(.bottom)

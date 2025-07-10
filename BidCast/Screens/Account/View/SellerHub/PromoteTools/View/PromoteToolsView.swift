@@ -124,7 +124,8 @@ struct PromoteToolsView: View {
                
             }
         }
-        CusNavLink(doNavigate: $navigateToLesson, destination: CombinedLessonTipsView())
+        CusNavLink(doNavigate: $navigateToLesson, destination: LessonScreen())
+//        CusNavLink(doNavigate: $navigateToLesson, destination: CombinedLessonTipsView())
     }
     
 }

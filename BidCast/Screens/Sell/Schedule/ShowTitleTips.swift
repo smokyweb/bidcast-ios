@@ -14,15 +14,18 @@ import AlertToast
 struct ShowTitleTips: View {
     
     @Environment(\.presentationMode) var presentationMode
+    @Binding var request : StoreScheduleShowRequest
     @State private var currentIndex = 0
     @State var tip =  TitleTipsModel()
     @State var isLoading  = false
     var viewModel = ScheduleViewModel()
     @State var title = ""
     @State var navigateToSelectCategory  = false
-    
+    @Binding var fromPrepare : Bool
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
+    @Binding var backToPrepare : Bool
+    var delegate: ShowStepDelegate?
     
     var body: some View {
         VStack(spacing:18){
@@ -107,15 +110,18 @@ struct ShowTitleTips: View {
             .padding(.horizontal,Leading)
             //            .background(.green)
             PrimaryButton(title: "Continue to next step",isOutLine: false,onButtonClick: {
-                guard !title.isEmpty else {
+                request.title = title
+                guard !request.title.isEmpty else {
                     hudMsg = "Please enter title"
                         showhud = true
                         return
                 }
+                print(request)
+                
                 navigateToSelectCategory = true
             },cornerRadius: 12, btnTextColor: .white)
             
-            CusNavLink(doNavigate: $navigateToSelectCategory, destination: SelectCategoryScreen(title: $title))
+            CusNavLink(doNavigate: $navigateToSelectCategory, destination: SelectCategoryScreen(request:$request,title: $title,fromPrepare: $fromPrepare,backToPrepare: $backToPrepare, delegate: delegate))
            
         }
         .toast(isPresenting: $showhud) {

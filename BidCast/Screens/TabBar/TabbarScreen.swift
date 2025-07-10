@@ -71,7 +71,8 @@ struct TabbarScreen: View {
             }
           
             // Navigation Links
-            CusNavLink(doNavigate: $navigateTogetStarted, destination: LetsPrepare())
+//            CusNavLink(doNavigate: $navigateTogetStarted, destination: LetsPrepare())
+            CusNavLink(doNavigate: $navigateTogetStarted, destination: GetStartedScreen())
             CusNavLink(doNavigate: $navigateTolist, destination: ListProductScreen())
             CusNavLink(doNavigate: $navigateToAccountScreen, destination: AccountScreen(isNavFrom: true,comeFromSeller: true))
         }

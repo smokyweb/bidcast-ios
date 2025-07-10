@@ -19,6 +19,8 @@ struct ShowTips: View {
     @State var navigateToSelectCategory = false
     @State var navigateToShowTitle = false
     
+    
+    
     private var currentProgress: Double {
         guard !tips.isEmpty else { return 0 }
         return Double(currentIndex) / Double(tips.count - 1)
@@ -63,7 +65,7 @@ struct ShowTips: View {
                 navigateToShowTitle = true
             },cornerRadius: 12, btnTextColor: .white)
 //            CusNavLink(doNavigate: $navigateToSelectCategory, destination: SelectCategoryScreen())
-            CusNavLink(doNavigate: $navigateToShowTitle, destination: ShowTitleTips())
+//            CusNavLink(doNavigate: $navigateToShowTitle, destination: ShowTitleTips( fromPrepare: .constant(false), backToPrepare: .constant(false)))
         }
         .edgesIgnoringSafeArea(.bottom)
         .toolbar(.hidden,for: .tabBar)

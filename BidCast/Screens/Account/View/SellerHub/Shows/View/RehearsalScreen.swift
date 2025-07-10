@@ -527,11 +527,11 @@ struct RehearsalScreen: View {
         ZIMChatManager.shared.logout()
         chatManager.messages.removeAll()
         showSellSheet = false
-        if isLive{
-            Task{
-                await viewModel.CountUppdate(parameters: countRequest(room_id:self.liveRoomId , event: "stream_stopped"))
-            }
-        }
+//        if isLive{
+//            Task{
+//                await viewModel.CountUppdate(parameters: countRequest(room_id:self.liveRoomId , event: "stream_stopped"))
+//            }
+//        }
         self.isLive = false
     }
     
