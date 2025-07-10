@@ -88,7 +88,7 @@ struct SelectShowScreen: View {
                 request.time = selectedTimeStr
                 print(request)
                 if comeFromPrepareScreen {
-                    delegate?.didUpdateRequest(request)
+                    delegate?.didUpdateRequest(request, thumbNail: "")
                     presentationMode.wrappedValue.dismiss()
                 }else{
                     guard !request.title.isEmpty else {

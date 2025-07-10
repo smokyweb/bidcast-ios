@@ -194,7 +194,7 @@ struct AddProductsScreen: View {
                 }
                 if fromPrepare{
                     backToPrepare = false
-                    delegate?.didUpdateRequest(request)
+                    delegate?.didUpdateRequest(request,thumbNail: self.thumbNail)
                 }else{
                     Task{
                         SVProgressHUD.show()

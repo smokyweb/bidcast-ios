@@ -128,10 +128,10 @@ struct LetsPrepare: View,ShowStepDelegate {
         }
        
     }
-    func didUpdateRequest(_ request: StoreScheduleShowRequest) {
+    func didUpdateRequest(_ request: StoreScheduleShowRequest,thumbNail:String) {
         didLoadPrepare = true
             self.request = request
-            print("✅ Parent got updated request:", request)
+            print("✅ Parent got updated request:\(request) thumbail \(thumbNail)")
         if prepare.indices.contains(currentIndex) {
               prepare[currentIndex].isDone = true
           }
@@ -192,5 +192,5 @@ struct LetsPrepare: View,ShowStepDelegate {
 
 
 protocol ShowStepDelegate {
-    func didUpdateRequest(_ request: StoreScheduleShowRequest)
+    func didUpdateRequest(_ request: StoreScheduleShowRequest,thumbNail: String)
 }
