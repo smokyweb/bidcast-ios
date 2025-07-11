@@ -9,6 +9,7 @@ import SwiftUI
 
 @main
 struct BidCastApp: App {
+    
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject private var appRootManager = AppRootManager()
     @State private var accountNavigationPath = NavigationPath()
