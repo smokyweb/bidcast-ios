@@ -2234,15 +2234,15 @@
 			isa = PBXGroup;
 			children = (
 				35B44F292DD74F4A00FBCBC4 /* Info.plist */,
-				99C907C72DC8CD560054620B /* CoreDataStore */,
-				99C9080D2DC8CD6A0054620B /* Common Components */,
 				99C907BE2DC8CC5A0054620B /* Application */,
 				99C909D42DC8CDDC0054620B /* Models */,
 				99C909162DC8CD790054620B /* Screens */,
+				99C9080D2DC8CD6A0054620B /* Common Components */,
 				99C909EC2DC8CDF90054620B /* Preview Content */,
 				99C9098C2DC8CD930054620B /* Extensions */,
 				99C909A02DC8CD930054620B /* Helper */,
 				99C907C62DC8CD250054620B /* Resources */,
+				99C907C72DC8CD560054620B /* CoreDataStore */,
 				99DF9E702DC4F367008C15B2 /* BidCast.entitlements */,
 				D4DDE88B2DDC923F00A24973 /* GoogleService-Info.plist */,
 				99DF9E732DC4F367008C15B2 /* ContentView.swift */,
