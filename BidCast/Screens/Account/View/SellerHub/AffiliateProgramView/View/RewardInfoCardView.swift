@@ -11,9 +11,9 @@ struct RewardInfoCardView: View {
     var body: some View {
         HStack(spacing: 12) {
             Circle()
-                .fill(Color.green.opacity(0.1))
+                .fill(Color.darkGreen.opacity(0.1))
                 .frame(width: 40, height: 40)
-                .overlay(Image(systemName: "dollarsign.circle").foregroundColor(.green))
+                .overlay(Image(systemName: "dollarsign.circle").foregroundColor(.darkGreen))
 
             VStack(alignment: .leading, spacing: 4) {
                 Text("Earn $100 Reward")

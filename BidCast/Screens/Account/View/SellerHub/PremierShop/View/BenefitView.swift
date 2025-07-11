@@ -14,7 +14,7 @@ struct BenefitView: View {
         VStack(alignment: .leading, spacing: 6) {
             Image(systemName: benefit.icon)
                 .font(.custom(poppinsSemiBold, size: 18.0))
-                .foregroundColor(.red)
+                .foregroundColor(.defaultTheme)
             Text(benefit.title)
                 .font(.custom(poppinsSemiBold, size: 13.0))
             Text(benefit.description)

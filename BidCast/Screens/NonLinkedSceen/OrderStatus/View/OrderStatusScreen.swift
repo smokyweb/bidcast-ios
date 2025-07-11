@@ -103,7 +103,7 @@ struct OrderStatusScreen: View {
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(Color.red)
+                    .background(Color.defaultTheme)
                     .cornerRadius(16)
                     .padding(.horizontal)
                     .padding(.bottom, 8)

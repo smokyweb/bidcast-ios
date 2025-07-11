@@ -149,7 +149,7 @@ struct CreateProductScreen: View {
                             .frame(maxWidth: .infinity)
                             .frame(height: 50)
                             .padding()
-                            .background(Color.red)
+                            .background(Color.defaultTheme)
                             .foregroundColor(.white)
                             .cornerRadius(12)
                     }
@@ -162,7 +162,7 @@ struct CreateProductScreen: View {
                             .frame(maxWidth: .infinity)
                             .frame(height: 50)
                             .padding()
-                            .background(Color.red)
+                            .background(Color.defaultTheme)
                             .foregroundColor(.white)
                             .cornerRadius(12)
                     }

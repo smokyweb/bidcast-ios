@@ -20,10 +20,10 @@ struct AnalyticsScreen: View {
     @Environment(\.presentationMode) var presentationMode
 
     let tools: [ToolItem] = [
-        ToolItem(iconName: "square.and.arrow.up", title: "Share", subtitle: "Share your show on social media", iconColor: .red),
-        ToolItem(iconName: "rectangle.stack.badge.plus", title: "Ads", subtitle: "Create ads for your shows", iconColor: .red),
-        ToolItem(iconName: "person.2.fill", title: "Audience", subtitle: "Grow your audience", iconColor: .red),
-        ToolItem(iconName: "chart.bar.fill", title: "Analytics", subtitle: "Track performance", iconColor: .red)
+        ToolItem(iconName: "square.and.arrow.up", title: "Share", subtitle: "Share your show on social media", iconColor: .defaultTheme),
+        ToolItem(iconName: "rectangle.stack.badge.plus", title: "Ads", subtitle: "Create ads for your shows", iconColor: .defaultTheme),
+        ToolItem(iconName: "person.2.fill", title: "Audience", subtitle: "Grow your audience", iconColor: .defaultTheme),
+        ToolItem(iconName: "chart.bar.fill", title: "Analytics", subtitle: "Track performance", iconColor: .defaultTheme)
     ]
 
     var body: some View {

@@ -71,7 +71,7 @@ struct AffiliateProgramScreen: View {
                                     .font(.custom(poppinsSemiBold, size: 13.0))
                             }
                             .frame(maxWidth:.infinity)
-                            .foregroundColor(.blue)
+                            .foregroundColor(.defaultTheme)
                             .padding(.horizontal, 12)
                             .padding(.vertical, 10)
                             .background(Color.blue.opacity(0.1))
@@ -89,10 +89,10 @@ struct AffiliateProgramScreen: View {
                                     .font(.custom(poppinsSemiBold, size: 13.0))
                             }
                             .frame(maxWidth:.infinity)
-                            .foregroundColor(.green)
+                            .foregroundColor(.darkGreen)
                             .padding(.horizontal, 12)
                             .padding(.vertical, 10)
-                            .background(Color.green.opacity(0.1))
+                            .background(Color.darkGreen.opacity(0.1))
                             .cornerRadius(10)
                         }
                     }

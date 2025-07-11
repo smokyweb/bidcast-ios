@@ -66,7 +66,7 @@ struct MakeOfferBottomSheet: View {
                         .padding()
                         .background(
                             RoundedRectangle(cornerRadius: 12)
-                                .stroke(selectedOffer == offer ? Color.red : Color.gray.opacity(0.3), lineWidth: selectedOffer == offer ? 2 : 1)
+                                .stroke(selectedOffer == offer ? Color.defaultTheme : Color.gray.opacity(0.3), lineWidth: selectedOffer == offer ? 2 : 1)
                         )
                     }
                 }
@@ -112,7 +112,7 @@ struct MakeOfferBottomSheet: View {
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(Color.red)
+                    .background(Color.defaultTheme)
                     .cornerRadius(20)
             }
 

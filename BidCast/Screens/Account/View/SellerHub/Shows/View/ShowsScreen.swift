@@ -98,20 +98,20 @@ struct ShowsScreen: View {
                 }
                 .padding(.top)
             }
-            .safeAreaInset(edge: .bottom) {
-                // MARK: - Fixed Bottom Button
-//                PrimaryButton(
-//                    title: AppString.submit.localized,
-//                    isOutLine: false,
-//                    onButtonClick: {
-//                        // Action
-//                    },
-//                    btnTextColor: .white
-//                )
-//                .padding(.horizontal)
-//                .padding(.vertical, 0)
-//                .background(Color(UIColor.systemGroupedBackground))
-            }
+//            .safeAreaInset(edge: .bottom) {
+//                // MARK: - Fixed Bottom Button
+////                PrimaryButton(
+////                    title: AppString.submit.localized,
+////                    isOutLine: false,
+////                    onButtonClick: {
+////                        // Action
+////                    },
+////                    btnTextColor: .white
+////                )
+////                .padding(.horizontal)
+////                .padding(.vertical, 0)
+////                .background(Color(UIColor.systemGroupedBackground))
+//            }
             CusNavLink(doNavigate: $navigateToReherseal, destination: RehearsalScreen(showUd: $showID,isLive: isLive))
         }
         .background(Color(UIColor.systemGroupedBackground))

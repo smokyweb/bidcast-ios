@@ -50,7 +50,7 @@ struct EndShowBottomSheetView: View {
                     .fontWeight(.semibold)
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(Color.red)
+                    .background(Color.defaultTheme)
                     .cornerRadius(16)
             }
 

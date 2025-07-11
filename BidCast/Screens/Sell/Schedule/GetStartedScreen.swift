@@ -46,7 +46,7 @@ struct GetStartedScreen: View {
                     
                     GuidelineRow(
                         icon: "nosign",
-                        iconColor: Color.red.opacity(0.3),
+                        iconColor: Color.defaultTheme.opacity(0.3),
                         title: "Do Not Sell Counterfeits",
                         description: "Only sell authentic and legitimate products"
                     )
@@ -60,7 +60,7 @@ struct GetStartedScreen: View {
                     
                     GuidelineRow(
                         icon: "shippingbox",
-                        iconColor: Color.green.opacity(0.3),
+                        iconColor: Color.darkGreen.opacity(0.3),
                         title: "Ship Quickly & Safely",
                         description: "Use appropriate packaging and ship within 3 days"
                     )

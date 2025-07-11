@@ -126,7 +126,7 @@ struct SalesFormatScreen: View {
                         .font(.headline)
                         .frame(maxWidth: .infinity)
                         .frame(height: 50)
-                        .background(Color.red)
+                        .background(Color.defaultTheme)
                         .foregroundColor(.white)
                         .cornerRadius(12)
                 }

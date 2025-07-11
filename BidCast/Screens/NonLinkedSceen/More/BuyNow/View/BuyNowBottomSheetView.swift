@@ -156,7 +156,7 @@ struct BuyNowBottomSheetView: View {
 //                        .foregroundColor(.white)
 //                        .frame(maxWidth: .infinity)
 //                        .padding()
-//                        .background(Color.red)
+//                        .background(Color.defaultTheme)
 //                        .cornerRadius(14)
 //                }
                 // Confirm Button
@@ -167,7 +167,7 @@ struct BuyNowBottomSheetView: View {
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color.red)
+                        .background(Color.defaultTheme)
                         .cornerRadius(14)
                 }
 

@@ -85,7 +85,7 @@ struct RehearsalScreen: View {
                             .font(.caption)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
-                            .background(Color.red)
+                            .background(Color.defaultTheme)
                             .cornerRadius(4)
                             .foregroundColor(.white)
                         
@@ -133,7 +133,7 @@ struct RehearsalScreen: View {
                             .foregroundColor(.white)
                             .padding()
                             .frame(maxWidth: .infinity)
-                            .background(Color.red)
+                            .background(Color.defaultTheme)
                             .cornerRadius(8)
                     }
                     .padding(.horizontal)
@@ -171,7 +171,7 @@ struct RehearsalScreen: View {
                             .foregroundColor(.white)
                             .padding()
                             .frame(maxWidth: .infinity)
-                            .background(Color.red)
+                            .background(Color.defaultTheme)
                             .cornerRadius(8)
                     }
                     .padding(.horizontal)
@@ -325,7 +325,7 @@ struct RehearsalScreen: View {
                                 .font(.custom(poppinsBold, size: 13.0))
                                 .frame(maxWidth: .infinity)
                                 .padding()
-                                .background(Color.red)
+                                .background(Color.defaultTheme)
                                 .foregroundColor(.white)
                                 .cornerRadius(12)
                         }
@@ -342,7 +342,7 @@ struct RehearsalScreen: View {
                             .font(.custom(poppinsBold, size: 13.0))
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(Color.red)
+                            .background(Color.defaultTheme)
                             .foregroundColor(.white)
                             .cornerRadius(12)
                     }
@@ -601,7 +601,7 @@ struct RehearsalScreen: View {
                 .foregroundColor(.white)
                 
                 Circle()
-                    .fill(Color.red)
+                    .fill(Color.defaultTheme)
                     .frame(width: 20, height: 20)
                     .overlay(Text("7").foregroundColor(.white).font(.caption))
                     .offset(x: 12, y: -30)

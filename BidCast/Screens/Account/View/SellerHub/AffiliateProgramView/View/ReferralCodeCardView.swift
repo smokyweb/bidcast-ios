@@ -50,7 +50,7 @@ struct ReferralCodeCardView: View {
                     .font(.custom(poppinsSemiBold, size: 13.0))
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(Color.red)
+                    .background(Color.defaultTheme)
                     .foregroundColor(.white)
                     .cornerRadius(8)
             }

@@ -67,7 +67,7 @@ struct ShopBottomSheetView: View {
                         Text(tab.rawValue)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 10)
-                            .background(selectedTab == tab ? Color.red : Color(.systemGray5))
+                            .background(selectedTab == tab ? Color.defaultTheme : Color(.systemGray5))
                             .foregroundColor(selectedTab == tab ? .white : .black)
                             .cornerRadius(20)
                     }
@@ -123,7 +123,7 @@ struct ShopBottomSheetView: View {
                         .foregroundColor(.white)
                         .font(.title)
                         .frame(width: 60, height: 60)
-                        .background(Color.red)
+                        .background(Color.defaultTheme)
                         .clipShape(Circle())
                         .shadow(radius: 4)
                 }

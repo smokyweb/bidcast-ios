@@ -5,154 +5,6 @@
 //  Created by JAM_E_329 on 26/05/25.
 //
 
-//import SwiftUI
-//import AlertToast
-//import SVProgressHUD
-//
-//enum VerificationStatus {
-//    case completed, pending
-//}
-//
-//struct SellerVerificationScreen: View {
-//    @Environment(\.presentationMode) var presentationMode
-//    @State var viewModel = SellerVerificationViewModel()
-//    @State var navigateToProfile: Bool = false
-//    @State private var isLoading = false
-//    @State private var showError = false
-//    @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
-//    @State private var showhud = false
-//    @State private var hudMsg = ""
-//
-//    var body: some View {
-//        VStack(spacing: 0) {
-//            
-//            // Custom Primary Header
-//            PrimaryHeader(
-//                title: "Seller Verification",
-//                isForLogo: false,
-//                leadingImgArr: [.icBack],
-//                trailingImgArr: [],
-//                onClickLeading: { _ in
-//                    self.presentationMode.wrappedValue.dismiss()
-//                },
-//                count: .constant(0)
-//            )
-//            .background(Color.white)
-//            .padding(.horizontal)
-//            .frame(height: 70)
-//
-//            ScrollView {
-//                VStack(alignment: .leading, spacing: 24) {
-//                    
-//                    // Progress Section
-//                    VStack(alignment: .leading, spacing: 8) {
-//                        Text("Verification Progress")
-//                            .font(.subheadline)
-//                            .foregroundColor(.gray)
-//                        
-//                        ProgressView(value: 2, total: 4)
-//                            .accentColor(.blue)
-//                        
-//                        Text("2 of 4")
-//                            .font(.caption.bold())
-//                            .frame(maxWidth: .infinity, alignment: .trailing)
-//                            .foregroundColor(.black)
-//                    }
-//                    .padding(.horizontal)
-//
-//                    // ID Verification
-//                    VerificationSectionView(
-//                        icon: "idcard.fill",
-//                        title: "ID Verification",
-//                        subtitle: "Upload your ID card & take a selfie",
-//                        status: .completed,
-//                        actions: ["ID Card", "Selfie"]
-//                    )
-//
-//                    // Phone Verification
-//                    VerificationSectionView(
-//                        icon: "phone.fill",
-//                        title: "Phone Verification",
-//                        subtitle: "Verify your phone number",
-//                        status: .pending,
-//                        actionLabel: "Verify"
-//                    )
-//
-//                    // Payment Method
-//                    VerificationSectionView(
-//                        icon: "creditcard.fill",
-//                        title: "Payment Method",
-//                        subtitle: "Add your payment details",
-//                        status: .pending,
-//                        actionLabel: "Add",
-//                        showDashedCard: true
-//                    )
-//
-//                    // Manual Verification
-//                    VerificationSectionView(
-//                        icon: "person.crop.circle.badge.checkmark",
-//                        title: "Manual Verification",
-//                        subtitle: "Final review by our team",
-//                        statusText: "Pending"
-//                    )
-//                }
-//                .padding()
-//            }
-//
-//            // Bottom Action Button
-//            Button(action: {
-//                print("Complete Verification tapped")
-//            }) {
-//                Text("Complete Verification")
-//                    .foregroundColor(.white)
-//                    .frame(maxWidth: .infinity)
-//                    .padding()
-//                    .background(Color.blue)
-//                    .cornerRadius(16)
-//            }
-//            .padding()
-//        }
-//        .background(Color(.systemGroupedBackground))
-//        .ignoresSafeArea(edges: .bottom)
-//        .onAppear {
-//            UIScrollView.appearance().bounces = false
-//            
-//        }
-//        .onDisappear {
-//            UIScrollView.appearance().bounces = true
-//        }
-//        .toast(isPresenting: $showhud) {
-//            AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
-//        }
-//        .bottomSheet(
-//            isPresented: $showError,
-//            height: screenHeight / 2.3,
-//            topBarCornerRadius: 25,
-//            showTopIndicator: false
-//        ) {
-//            CommonBottomSheet(
-//                sheetType: $alertType,
-//                onPrimaryClick: {
-//                    withAnimation(.snappy) { navigateToProfile = true
-//                        showError = false  }
-//                },
-//                onSecondaryClick: {
-//                    withAnimation { showError = false }
-//                }
-//            )
-//        }
-//    }
-//    //MARK: handleSuccess.
-//    func handleIDVerificationSuccess() {
-//        SVProgressHUD.dismiss()
-//        let response = viewModel.storeIDCardDict
-//        if response?.status == "success" {
-//    
-//        } else {
-//           
-//        }
-//    }
-//}
 
 import SwiftUI
 import AlertToast
@@ -221,7 +73,7 @@ struct SellerVerificationScreen: View {
                             .foregroundColor(.gray)
 
                         ProgressView(value: Double(currentStep), total: totalSteps)
-                            .accentColor(.blue)
+                            .accentColor(.defaultTheme)
 
                         Text("\(currentStep) of \(Int(totalSteps))")
                             .font(.custom(poppinsSemiBold, size: 11.0))
@@ -275,7 +127,7 @@ struct SellerVerificationScreen: View {
                         CardDetailsView(card: card)
                     } else if paymentMethodComplete {
                         Text("No Payment Method Found")
-                            .font(.subheadline)
+                            .font(.custom(poppinsSemiBold, size: 13.0))
                             .foregroundColor(.gray)
                             .padding()
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -301,7 +153,7 @@ struct SellerVerificationScreen: View {
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(currentStep == Int(totalSteps - 1) ? Color.blue : Color.gray)
+                    .background(currentStep == Int(totalSteps - 1) ? Color.defaultTheme : Color.gray)
                     .cornerRadius(16)
             }
             .padding()
@@ -413,7 +265,7 @@ private struct IDVerificationCard: View {
                 Image(systemName: "idcard.fill")
                     .foregroundColor(.white)
                     .padding(6)
-                    .background(Color.green.opacity(0.8))
+                    .background(.darkGreen)
                     .clipShape(Circle())
 
                 VStack(alignment: .leading, spacing: 4) {

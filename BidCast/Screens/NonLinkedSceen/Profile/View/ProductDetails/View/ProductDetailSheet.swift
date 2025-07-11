@@ -187,7 +187,7 @@ struct ProductDetailSheet: View {
                     Text("Buy Now")
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color.red)
+                        .background(Color.defaultTheme)
                         .foregroundColor(.white)
                         .cornerRadius(30)
                 }
@@ -197,7 +197,7 @@ struct ProductDetailSheet: View {
                     Text("Make Offer")
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color.red.opacity(0.8))
+                        .background(Color.defaultTheme.opacity(0.8))
                         .foregroundColor(.white)
                         .cornerRadius(30)
                 }

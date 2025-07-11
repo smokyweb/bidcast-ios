@@ -320,7 +320,7 @@ struct SellingTips: View {
 //                        .frame(height: 10)
 //                        .foregroundColor(.white)
 //                        .padding()
-//                        .background(Color.red)
+//                        .background(Color.defaultTheme)
 //                        .cornerRadius(8)
 //                    }
 //                    .padding(.horizontal)

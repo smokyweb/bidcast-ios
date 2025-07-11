@@ -16,7 +16,7 @@ struct ToolGridAnalyticsView: View {
        var body: some View {
            VStack(alignment: .leading, spacing: 8) {
                        Text(title)
-                           .font(.system(size: 14, weight: .semibold))
+                   .font(.custom(poppinsSemiBold, size: 13.0))
 
                        RoundedRectangle(cornerRadius: 8)
                            .fill(Color(.systemGray6))
@@ -50,7 +50,7 @@ struct TemporaryBarChartView: View {
         HStack(alignment: .bottom, spacing: 8) {
             ForEach(data.indices, id: \.self) { index in
                 Capsule()
-                    .fill(Color.red)
+                    .fill(.defaultTheme)
                     .frame(width: 12, height: CGFloat(data[index]) * 100)
             }
         }
@@ -78,7 +78,7 @@ struct TemporaryLineGraphView: View {
                     path.addLine(to: CGPoint(x: x, y: y))
                 }
             }
-            .stroke(Color.red, lineWidth: 2)
+            .stroke(Color.defaultTheme, lineWidth: 2)
         }
         .frame(height: 100)
     }

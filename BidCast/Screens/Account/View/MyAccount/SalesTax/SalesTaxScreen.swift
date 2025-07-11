@@ -41,7 +41,7 @@ struct SalesTaxScreen: View {
                                          .foregroundColor(.green)
                                          .padding(.horizontal, 12)
                                          .padding(.vertical, 4)
-                                         .background(Color.green.opacity(0.2))
+                                         .background(Color.darkGreen.opacity(0.2))
                                          .cornerRadius(20)
                                  }
                                  

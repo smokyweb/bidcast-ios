@@ -224,7 +224,7 @@ struct AddProductsScreen: View {
                     .fontWeight(.semibold)
                     .frame(maxWidth: .infinity)
                     .frame(height: 50)
-                    .background(Color.red)
+                    .background(Color.defaultTheme)
                     .foregroundColor(.white)
                     .cornerRadius(12)
             }

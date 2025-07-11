@@ -292,7 +292,7 @@ struct PrimaryHeader: View {
                                 
                                 if ind == 0 && count > 0 {
                                     Circle()
-                                        .fill(Color.red)
+                                        .fill(Color.defaultTheme)
                                         .frame(width: 8, height: 8)
                                         .offset(x: 6, y: -6)
                                 }

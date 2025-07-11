@@ -16,9 +16,9 @@ import SwiftUI
 //            .padding(.vertical, 12)
 //            .overlay(
 //                RoundedRectangle(cornerRadius: 16)
-//                    .stroke(Color.red, lineWidth: 1)
+//                    .stroke(Color.defaultTheme, lineWidth: 1)
 //            )
-//            .foregroundColor(Color.red)
+//            .foregroundColor(Color.defaultTheme)
 //    }
 //}
 
@@ -36,9 +36,9 @@ struct OutlinedButtonView: View {
                 .padding(.vertical, 12)
                 .overlay(
                     RoundedRectangle(cornerRadius: 16)
-                        .stroke(Color.red, lineWidth: 1)
+                        .stroke(Color.defaultTheme, lineWidth: 1)
                 )
-                .foregroundColor(Color.red)
+                .foregroundColor(Color.defaultTheme)
         }
     }
 }

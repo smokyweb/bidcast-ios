@@ -69,7 +69,7 @@ struct CompleteProfileScreen: View {
                                           Image(systemName: "xmark.circle.fill")
                                               .foregroundColor(.white)
                                               .padding(8)
-                                              .background(Color.red)
+                                              .background(Color.defaultTheme)
                                               .clipShape(Circle())
                                               .shadow(radius: 1)
                                       }

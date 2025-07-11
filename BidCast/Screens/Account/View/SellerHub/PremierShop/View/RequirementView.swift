@@ -13,14 +13,14 @@ struct RequirementView: View {
     var body: some View {
         HStack(alignment: .top, spacing: 8) {
             Image(systemName: requirement.isMet ? "checkmark.circle.fill" : "xmark.circle.fill")
-                .foregroundColor(requirement.isMet ? .green : .gray)
+                .foregroundColor(requirement.isMet ? .darkGreen : .gray)
             
             VStack(alignment: .leading, spacing: 6) {
                 Text(requirement.title)
-                    .font(.subheadline)
-                    .bold()
+                    .font(.custom(poppinsSemiBold, size: 13.0))
+                    
                 Text(requirement.description)
-                    .font(.caption)
+                    .font(.custom(poppinsRegular, size: 11.0))
                     .foregroundColor(.gray)
             }
         }
