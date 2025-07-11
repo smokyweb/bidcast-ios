@@ -27,6 +27,7 @@ struct HomeViewScreen: View {
     @State var navigateToNoti : Bool = false
     
     @State var navigateToProfile = false
+    @State private var showSearchView: Bool = false
     
     var body: some View {
         VStack(spacing:0){
@@ -43,7 +44,9 @@ struct HomeViewScreen: View {
                     },
                     onClickTrailing: { index in
                         if index == 0{
-                            print("For Search Navigation")
+                            withAnimation {
+                                showSearchView.toggle()
+                            }
                         }else{
                             navigateToNoti = true
                         }
@@ -54,6 +57,10 @@ struct HomeViewScreen: View {
             
             ScrollView(showsIndicators:false){
                 VStack(alignment: .leading,spacing: 12){
+                    if showSearchView {
+                        SearchView()
+                            .transition(.move(edge: .top).combined(with: .opacity))
+                    }
                     SegmentedControlView(segments: HomeButton.allCases, selectedSegment:$selectedButton, isWithBorder: true)
                     ButtonTitleLabel(
                         titles: ["Live Now", "Popular", "Coming Soon"],

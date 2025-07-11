@@ -13,6 +13,7 @@ final class ProfileViewModel: ObservableObject {
     @Published var getProfileDict = ResponseModel<ProfileModel>()
     @Published var productDetailsResponseDict: ResponseModalPaginate<[ProductListingDataModel]>?
     @Published var followDict = ResponseModel<FolloweModel>()
+    @Published var getMyScheduleShowResponseDict: ResponseModalPaginate<[GetMyScheduleShowModel]>?
     @Published var errorMessage: String? = nil
     @Published var requestType = ""
     
@@ -68,6 +69,23 @@ final class ProfileViewModel: ObservableObject {
                 header: true
             ) {
                 self.followDict = response
+            }
+            
+        } catch {
+            handle(error: error)
+        }
+    }
+    
+    // MARK: - GetMyScheduleShowRequest
+    func getMyScheduleShow(parameters: GetMyScheduleShowRequest) async {
+        self.requestType = "scheduleShow"
+        do {
+            
+            if let response : ResponseModalPaginate<[GetMyScheduleShowModel]> = try await APIManager.shared.request(
+                type: APIEndPoint.getMyScheduleShow(param: parameters),
+                header: true
+            ) {
+                self.getMyScheduleShowResponseDict = response
             }
             
         } catch {

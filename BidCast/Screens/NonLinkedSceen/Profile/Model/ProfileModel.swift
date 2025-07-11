@@ -51,3 +51,35 @@ struct ProductListingDataModel: Codable {
 struct FolloweModel : Codable{
     var status : Bool?
 }
+
+// MARK: - GetMyScheduleShow
+struct GetMyScheduleShowModel : Codable {
+    var id: Int?
+    var title, date, time: String?
+    var userID, categoryID: Int?
+    var productIDS: [String]?
+    var auctionTypeID: Int?
+    var thumbnail: [String]?
+    var imgThumbnail: [String]?
+    var isLive: Bool?
+    var viewerCount, latestViewerCount: Int?
+    var category: Category?
+    var user: User?
+
+    enum CodingKeys: String, CodingKey {
+        case id, title, date, time
+        case userID = "user_id"
+        case categoryID = "category_id"
+        case productIDS = "product_ids"
+        case auctionTypeID = "auction_type_id"
+        case thumbnail
+        case imgThumbnail = "img_thumbnail"
+        case isLive = "is_live"
+        case viewerCount = "viewer_count"
+        case latestViewerCount = "latest_viewer_count"
+        case category, user
+    }
+}
+
+
+

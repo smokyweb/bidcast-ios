@@ -491,7 +491,8 @@ struct DeleteNotificationRequest : Encodable{
 }
 
 struct GetMyScheduleShowRequest : Encodable{
-    var type : String
+    var type : String?
+    var user_id : Int?
 }
 
 struct ProductOrderListingRequest : Encodable{
