@@ -103,7 +103,6 @@ struct NotificationScreen: View {
             }
         }
         .onAppear {
-            
             fetchNotification(page: currentPage)
            
         }
@@ -147,6 +146,7 @@ struct NotificationScreen: View {
             NotificationSuccess()
         }
     }
+    
     func fetchMoreNotificartion() {
         Task {
             currentPage += 1

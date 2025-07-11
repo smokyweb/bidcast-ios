@@ -17,12 +17,13 @@ struct OffersScreen: View {
     @State private var hudMsg: String = ""
     @StateObject var viewModel = OffersViewModel()
     @State private var offerList: [OfferListModel] = []
-     @State var status : String = ""
+    @State var status : String = ""
     @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+    @State var currentPage = 1
     
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject private var appRootManager: AppRootManager
-
+    
     var body: some View {
         VStack(spacing: 0) {
             // MARK: - Top Header (fixed)
@@ -44,17 +45,29 @@ struct OffersScreen: View {
                     TwoVerticalLabelCell(dataModel: OffersValue.allCases,
                                          topLabel: { offer in offerCount(for: offer) },
                                          bottomLabel: { $0.description.localized})
-                    ForEach(offerList, id: \.id) { txn in
-                        ActivityCell(offerListing: txn, isFor: "OffersScreen",onDecline: {
-                            handleOfferAction(offer: txn, newStatus: "rejected")
-                        }, onAccept: {
-                            handleOfferAction(offer: txn, newStatus: "accepted")
-                        }, status: txn.status ?? "")
-                            .padding([.leading, .trailing], 15)
+                    ForEach(offerList.indices, id: \.self) { i in
+                        let txn = offerList[i]
+                        ActivityCell(
+                            offerListing: txn,
+                            isFor: "OffersScreen",
+                            onDecline: {
+                                handleOfferAction(offer: txn, newStatus: "rejected")
+                            },
+                            onAccept: {
+                                handleOfferAction(offer: txn, newStatus: "accepted")
+                            },
+                            status: txn.status ?? ""
+                        )
+                        .padding([.leading, .trailing], 15)
+                        .onAppear {
+                            Task {
+                                await handlePagination(index: i)
+                            }
+                        }
                     }
                 }
                 .padding(.top)
-               
+                
             }
         }
         .background(Color(UIColor.systemGroupedBackground))
@@ -71,7 +84,8 @@ struct OffersScreen: View {
         .onAppear{
             Task{
                 SVProgressHUD.show()
-                await viewModel.getOfferList()
+                let param = PageRequest(page: currentPage)
+                await viewModel.getOfferList(param: param)
                 await SVProgressHUD.dismiss()
                 getOfferSuccess()
             }
@@ -98,14 +112,15 @@ struct OffersScreen: View {
         }
     }
     func handleOfferAction(offer: OfferListModel, newStatus: String) {
-        let param = OfferUpdateStatusRequest(offer_id: offer.id ?? 0, status: newStatus)
+        let param = OfferUpdateStatusRequest(offer_id: offer.id ?? 0, status: newStatus, page: currentPage)
         SVProgressHUD.show()
         
         Task {
             do {
                 // Call the async updateOfferStatus
                 await viewModel.updateOfferStatus(parameters: param)
-                await viewModel.getOfferList()
+                let param = PageRequest(page: currentPage)
+                await viewModel.getOfferList(param: param)
                 await SVProgressHUD.dismiss()
                 if viewModel.offerListResponse.status == "success" {
                     self.offerList = viewModel.offerListResponse.data ?? []
@@ -122,25 +137,44 @@ struct OffersScreen: View {
         }
     }
     
+    func handlePagination(index: Int) async {
+        let isLastItem = index == offerList.count - 1
+        let totalItems = viewModel.offerListResponse.total ?? 0
+        let canFetchMore = totalItems > offerList.count
+        
+        if isLastItem && canFetchMore {
+            let nextPage = currentPage + 1
+            let param = PageRequest(page: nextPage)
+            await viewModel.getOfferList(param: param)
+            
+            if viewModel.offerListResponse.status == "success" {
+                currentPage = nextPage
+                offerList.append(contentsOf: viewModel.offerListResponse.data ?? [])
+            }
+        }
+    }
+    
+    
     func getOfferSuccess() {
         SVProgressHUD.dismiss()
         let response = viewModel.offerListResponse
         if response.status == "success" {
             offerList = response.data ?? []
         } else {
-           
+            
         }
     }
+    
     func offerCount(for offer: OffersValue) -> String {
-            switch offer {
-            case .pending:
-                return "\(viewModel.offerListResponse.pending ?? 0)"
-            case .accepted:
-                return "\(viewModel.offerListResponse.accepted ?? 0)"
-            case .decline:
-                return "\(viewModel.offerListResponse.declined ?? 0)"
-            }
+        switch offer {
+        case .pending:
+            return "\(viewModel.offerListResponse.pending ?? 0)"
+        case .accepted:
+            return "\(viewModel.offerListResponse.accepted ?? 0)"
+        case .decline:
+            return "\(viewModel.offerListResponse.declined ?? 0)"
         }
+    }
 }
 
 
@@ -152,8 +186,8 @@ enum OffersValue : String, CaseIterable, CustomStringConvertible{
     case decline = "Declined"
     
     var description: String {
-            return NSLocalizedString(rawValue, comment: "")
-        }
+        return NSLocalizedString(rawValue, comment: "")
+    }
     
     var labelOlt : String{
         switch self {
@@ -164,7 +198,7 @@ enum OffersValue : String, CaseIterable, CustomStringConvertible{
             return "45"
         case .decline :
             return "23"
-
+            
         }
     }
 }

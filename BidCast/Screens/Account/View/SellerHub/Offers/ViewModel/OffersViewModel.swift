@@ -16,10 +16,10 @@ final class OffersViewModel: ObservableObject {
     @Published var errorMessage: String? = nil
 
     // MARK: - Get Preference
-    func getOfferList() async {
+    func getOfferList(param : PageRequest) async {
         do {
             let response: ResponseModelOffer<[OfferListModel]> = try await APIManager.shared.request(
-                type: APIEndPoint.makeOfferList,
+                type: APIEndPoint.makeOfferList(param: param),
                 header: true
             )
             self.offerListResponse = response
@@ -29,10 +29,10 @@ final class OffersViewModel: ObservableObject {
     }
     
     // MARK: - Get Preference
-    func getBidList() async {
+    func getBidList(param : PageRequest) async {
         do {
             let response: ResponseModelOffer<[OfferListModel]> = try await APIManager.shared.request(
-                type: APIEndPoint.getBidList,
+                type: APIEndPoint.getBidList(param: param),
                 header: true
             )
             self.offerListResponse = response

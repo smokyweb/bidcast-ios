@@ -17,6 +17,7 @@ struct ActivityScreen: View {
     @State private var hudMsg: String = ""
     @StateObject var viewModel = OffersViewModel()
     @State var offerList: [OfferListModel] = []
+    @State var currentPage = 1
     @State var messageList = []
     
     @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
@@ -68,7 +69,8 @@ struct ActivityScreen: View {
                         if offerList.isEmpty {
                             NoDataView(message: "No bids Found")
                         } else {
-                            ForEach(offerList, id: \.id) { offer in
+                            ForEach(offerList.indices, id: \.self) { i in
+                                let offer = offerList[i]
                                 ActivityCell(
                                     offerListing: offer,
                                     isFor: "Bids",
@@ -77,19 +79,28 @@ struct ActivityScreen: View {
                                     },
                                     onAccept: {
                                         handleOfferAction(offer: offer, newStatus: "accepted")
-                                    }, status: offer.status ?? ""
+                                    },
+                                    status: offer.status ?? ""
                                 )
+                                .onAppear {
+                                    Task {
+                                        await handlePagination(index: i)
+                                    }
+                                }
                             }
                         }
                     case .offer:
-                        TwoVerticalLabelCell(dataModel: OffersValue.allCases,
-                                             topLabel: { offer in offerCount(for: offer) },
-                                             bottomLabel: { $0.description.localized})
+                        TwoVerticalLabelCell(
+                            dataModel: OffersValue.allCases,
+                            topLabel: { offer in offerCount(for: offer) },
+                            bottomLabel: { $0.description.localized }
+                        )
+                        
                         if offerList.isEmpty {
                             NoDataView(message: "No offers Found")
                         } else {
-                            
-                            ForEach(offerList, id: \.id) { offer in
+                            ForEach(offerList.indices, id: \.self) { i in
+                                let offer = offerList[i]
                                 ActivityCell(
                                     offerListing: offer,
                                     isFor: "Offers",
@@ -98,34 +109,55 @@ struct ActivityScreen: View {
                                     },
                                     onAccept: {
                                         handleOfferAction(offer: offer, newStatus: "accepted")
-                                    }, status: offer.status ?? ""
+                                    },
+                                    status: offer.status ?? ""
                                 )
+                                .onAppear {
+                                    Task {
+                                        await handlePagination(index: i)
+                                    }
+                                }
                             }
                         }
+
                     case .purchases:
                         if offerList.isEmpty {
                             NoDataView(message: "No List Found")
-                        }else {
-                            ForEach(offerList, id: \.id) { offer in
+                        } else {
+                            ForEach(offerList.indices, id: \.self) { i in
+                                let offer = offerList[i]
                                 ActivityCell(
                                     offerListing: offer,
-                                    isFor: "Purchases", status: offer.status ?? ""
+                                    isFor: "Purchases",
+                                    status: offer.status ?? ""
                                 )
+                                .onAppear {
+                                    Task {
+                                        await handlePagination(index: i)
+                                    }
+                                }
                             }
                         }
-                        
+
                     case .savedItems:
                         if offerList.isEmpty {
                             NoDataView(message: "No List Found")
-                        }
-                        else {
-                            ForEach(offerList, id: \.id) { offer in
+                        } else {
+                            ForEach(offerList.indices, id: \.self) { i in
+                                let offer = offerList[i]
                                 ActivityCell(
                                     offerListing: offer,
-                                    isFor: "Saved Items",status: offer.status ?? ""
+                                    isFor: "Saved Items",
+                                    status: offer.status ?? ""
                                 )
+                                .onAppear {
+                                    Task {
+                                        await handlePagination(index: i)
+                                    }
+                                }
                             }
                         }
+
                     }
                 }
             }
@@ -156,38 +188,51 @@ struct ActivityScreen: View {
     
     // Fetch data based on the selected segment
     func fetchData(for segment: Segment) async {
+        currentPage = 1
         switch segment {
         case .message:
-            // fetchMessages()
             break
         case .bid:
             SVProgressHUD.show()
-            self.offerList.removeAll()
-            await viewModel.getBidList()
+            offerList.removeAll()
+            let request = PageRequest(page: currentPage)
+            await viewModel.getBidList(param: request)
             await SVProgressHUD.dismiss()
-            getOfferSuccess()
+            if viewModel.offerListResponse.status == "success" {
+                offerList = viewModel.offerListResponse.data ?? []
+            }
         case .offer:
             SVProgressHUD.show()
-            self.offerList.removeAll()
-            await viewModel.getOfferList()
+            offerList.removeAll()
+            let request = PageRequest(page: currentPage)
+            await viewModel.getOfferList(param: request)
             await SVProgressHUD.dismiss()
-            getOfferSuccess()
+            if viewModel.offerListResponse.status == "success" {
+                offerList = viewModel.offerListResponse.data ?? []
+            }
         case .purchases:
             SVProgressHUD.show()
-            self.offerList.removeAll()
-            await viewModel.getItemList(parameters: ItemListRequest(type: "purchased"))
+            offerList.removeAll()
+            let request = ItemListRequest(type: "purchased", page: currentPage)
+            await viewModel.getItemList(parameters: request)
             await SVProgressHUD.dismiss()
-            getOfferSuccess()
+            if viewModel.itemListResponse.status == "success" {
+                offerList = viewModel.itemListResponse.data ?? []
+            }
         case .savedItems:
             SVProgressHUD.show()
-            self.offerList.removeAll()
-            await viewModel.getItemList(parameters: ItemListRequest(type: "saved"))
+            offerList.removeAll()
+            let request = ItemListRequest(type: "saved", page: currentPage)
+            await viewModel.getItemList(parameters: request)
             await SVProgressHUD.dismiss()
-            getOfferSuccess()
+            if viewModel.itemListResponse.status == "success" {
+                offerList = viewModel.itemListResponse.data ?? []
+            }
         }
     }
+
     
-    
+    //MARK: fetchListing.
     func getOfferSuccess() {
         SVProgressHUD.dismiss()
         if viewModel.offerListResponse.status == "success" {
@@ -197,15 +242,70 @@ struct ActivityScreen: View {
         }
     }
     
+    func handlePagination(index: Int) async {
+        let isLastItem = index == offerList.count - 1
+        let totalItems: Int
+
+        switch selected {
+        case .bid, .offer:
+            totalItems = viewModel.offerListResponse.total ?? 0
+        case .purchases, .savedItems:
+            totalItems = viewModel.itemListResponse.total ?? 0
+        default:
+            totalItems = 0
+        }
+
+        let canFetchMore = totalItems > offerList.count
+
+        if isLastItem && canFetchMore {
+            let nextPage = currentPage + 1
+            switch selected {
+            case .bid:
+                let request = PageRequest(page: nextPage)
+                await viewModel.getBidList(param: request)
+                if viewModel.offerListResponse.status == "success" {
+                    currentPage = nextPage
+                    offerList.append(contentsOf: viewModel.offerListResponse.data ?? [])
+                }
+            case .offer:
+                let request = PageRequest(page: nextPage)
+                await viewModel.getOfferList(param: request)
+                if viewModel.offerListResponse.status == "success" {
+                    currentPage = nextPage
+                    offerList.append(contentsOf: viewModel.offerListResponse.data ?? [])
+                }
+            case .purchases:
+                let request = ItemListRequest(type: "purchased", page: nextPage)
+                await viewModel.getItemList(parameters: request)
+                if viewModel.itemListResponse.status == "success" {
+                    currentPage = nextPage
+                    offerList.append(contentsOf: viewModel.itemListResponse.data ?? [])
+                }
+            case .savedItems:
+                let request = ItemListRequest(type: "saved", page: nextPage)
+                await viewModel.getItemList(parameters: request)
+                if viewModel.itemListResponse.status == "success" {
+                    currentPage = nextPage
+                    offerList.append(contentsOf: viewModel.itemListResponse.data ?? [])
+                }
+            default:
+                break
+            }
+        }
+    }
+
+    
+
     func handleOfferAction(offer: OfferListModel, newStatus: String) {
-        let param = OfferUpdateStatusRequest(offer_id: offer.id ?? 0, status: newStatus)
+        let param = OfferUpdateStatusRequest(offer_id: offer.id ?? 0, status: newStatus, page: currentPage)
         SVProgressHUD.show()
         
         Task {
             do {
                 
                 await viewModel.updateOfferStatus(parameters: param)
-                await viewModel.getOfferList()
+                let param = PageRequest(page: currentPage)
+                await viewModel.getOfferList(param: param)
                 await SVProgressHUD.dismiss()
                 if viewModel.offerListResponse.status == "success" {
                     self.offerList = viewModel.offerListResponse.data ?? []
@@ -221,6 +321,7 @@ struct ActivityScreen: View {
             }
         }
     }
+    
     func offerCount(for offer: OffersValue) -> String {
             switch offer {
             case .pending:

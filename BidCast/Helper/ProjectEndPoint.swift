@@ -60,7 +60,7 @@ enum APIEndPoint{
     case productOrder(param : ProductOrderRequest)
     case productOrderDetails(param : ProductOrderDetailRequest)
     case makeOffer(param : MakeOfferRequest)
-    case makeOfferList
+    case makeOfferList(param: PageRequest)
     case offerUpdateStatus(param : OfferUpdateStatusRequest)
     case searching(param : SearchingRequest)
     case promo(param : PromoCodeRequest)
@@ -74,7 +74,7 @@ enum APIEndPoint{
     case getProduct(param:ProductRequest)
     case getScheduledShow(param:GetLiveShowsRequest)
     case UpdateShowStatus(param:LiveShowUpdateRequest)
-    case getBidList
+    case getBidList(param:PageRequest)
     case getItemList(param: ItemListRequest)
     case getNotificationListing(param:PageRequest)
     case saveDeviceDetail(param : DeviceDetailRequest)
@@ -282,10 +282,11 @@ extension APIEndPoint: EndPointType {
             return "product/order-details"
         case .makeOffer:
             return "offer/make"
-        case .makeOfferList:
-            return "offer/lists"
-        case .offerUpdateStatus:
-            return "offer/update-status"
+        case .makeOfferList(param:let param):
+            return "offer/lists?page=\(param.page)"
+        case .offerUpdateStatus(param:let param):
+            return "offer/update-status=\(param.offer_id)&page=\(param.page)"
+            return ""
         case .searching:
             return "user/searching"
         case .promo:
@@ -310,10 +311,10 @@ extension APIEndPoint: EndPointType {
             return "get-my-schedule-show"
         case .UpdateShowStatus:
             return "schedule-show/update-live-status"
-        case .getBidList:
-            return "bid/fetch"
-        case .getItemList:
-            return "product/fetch-by-status"
+        case .getBidList(param:let param):
+            return "bid/fetch?page=\(param.page)"
+        case .getItemList(let param):
+            return "product/fetch-by-status?type=\(param.type)&page=\(param.page)"
         case .getWalletInfo:
             return "wallet-info"
         case .getprofile:

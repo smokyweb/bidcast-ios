@@ -14,8 +14,6 @@ import SVProgressHUD
 struct AddressesScreen: View {
     
     @State var sampleAddresses = [AddressModel]()
-    
-    
     @Environment(\.presentationMode) var presentationMode
     @State var showError: Bool = false
     @State var isLoading: Bool = false
@@ -155,8 +153,6 @@ struct AddressesScreen: View {
             }
            
         }
-    
-    
 }
 
 //#Preview {
