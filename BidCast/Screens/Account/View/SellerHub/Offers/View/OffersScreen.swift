@@ -137,6 +137,7 @@ struct OffersScreen: View {
         }
     }
     
+
     func handlePagination(index: Int) async {
         let isLastItem = index == offerList.count - 1
         let totalItems = viewModel.offerListResponse.total ?? 0

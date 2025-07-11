@@ -437,6 +437,7 @@ struct UpdatePreferenceRequest: Encodable{
 struct UserProductRequest: Encodable{
     var user_id : Int
     var category_id : String? = ""
+    var page : Int
 }
 
 struct NotifyLiveUserRequest: Encodable{
@@ -493,6 +494,7 @@ struct DeleteNotificationRequest : Encodable{
 struct GetMyScheduleShowRequest : Encodable{
     var type : String?
     var user_id : Int?
+    var page : Int
 }
 
 struct ProductOrderListingRequest : Encodable{

@@ -240,8 +240,8 @@ extension APIEndPoint: EndPointType {
             return "get-live-show"
         case .getProfileById:
             return "get-profile-by-id"
-        case .getUserProduct:
-            return "get-user-product"
+        case .getUserProduct(param:let param):
+            return "get-user-product?=\(param.user_id)&page=\(param.page)"
         case .followUnfollow:
             return "follow-unfollow"
         case .countUpdate:
@@ -270,8 +270,8 @@ extension APIEndPoint: EndPointType {
             return "notification/listing?page=\(param.page)"
         case .getLiveShow:
             return "get-live-show"
-        case .getMyScheduleShow:
-            return "get-my-schedule-show"
+        case .getMyScheduleShow(param:let param):
+            return "get-my-schedule-show?=\(param.type)&user_id=\(param.user_id)&page=\(param.page)"
         case .productOrderListing:
             return "product/order-listing"
         case .productPurchaseDetail:

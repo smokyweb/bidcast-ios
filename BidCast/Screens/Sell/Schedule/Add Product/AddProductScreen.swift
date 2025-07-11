@@ -13,6 +13,7 @@ struct AddProductsScreen: View {
     @EnvironmentObject  var appRootManager: AppRootManager
     
     @State private var productCount = 1
+    @State var currentPage = 1
     @Environment(\.presentationMode) var presentationMode
     @Binding var request : StoreScheduleShowRequest
     @Binding var thumbNail : String
@@ -236,7 +237,7 @@ struct AddProductsScreen: View {
         .onAppear{
             Task{
                 SVProgressHUD.show()
-                await viewModel.getProductList(parameters: UserProductRequest(user_id: UserDefaults.userId,category_id:request.category_id))
+                await viewModel.getProductList(parameters: UserProductRequest(user_id: UserDefaults.userId,category_id:request.category_id, page: currentPage))
 //                await viewModel.getProduct(parameters: ProductRequest(category_id : request.category_id))
                 await SVProgressHUD.dismiss()
                 if viewModel.errorMessage == "" || viewModel.errorMessage == nil {

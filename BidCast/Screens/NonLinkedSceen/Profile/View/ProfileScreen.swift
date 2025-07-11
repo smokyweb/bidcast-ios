@@ -9,6 +9,14 @@ import SwiftUI
 import SVProgressHUD
 import AlertToast
 
+enum ProfileTabType {
+    case shop
+    case shows
+    case reviews
+    case clips
+}
+
+
 struct ProfileScreen: View {
     
     
@@ -16,6 +24,7 @@ struct ProfileScreen: View {
     @Binding var id : String
     
     @State var isLoading: Bool = false
+    @State var currentPage = 1
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @State var showError: Bool = false
     @State var profileData = ProfileModel()
@@ -42,7 +51,6 @@ struct ProfileScreen: View {
         ReviewModel(username: "Dan", profileImageName: "user1", rating: 2.5),
         ReviewModel(username: "Eve", profileImageName: "user1", rating: 4.0)
     ]
-    
     
     @State private var selectedTab = "Shop"
     var body: some View {
@@ -83,14 +91,14 @@ struct ProfileScreen: View {
                                 print("")
                                 Task{
                                     SVProgressHUD.show()
-                                    await self.viewModel.productDetails(parameters: UserProductRequest(user_id: Int(id) ?? 0))
+                                    await self.viewModel.productDetails(parameters: UserProductRequest(user_id: Int(id) ?? 0,page : currentPage ?? 0))
                                     await SVProgressHUD.dismiss()
                                     success()
                                 }
                                 //                                await viewModel.fetchShopItems()
                             case "Shows":
                                 SVProgressHUD.show()
-                                await self.viewModel.getMyScheduleShow(parameters: GetMyScheduleShowRequest(type: "upcoming", user_id: Int(id)))
+                                await self.viewModel.getMyScheduleShow(parameters: GetMyScheduleShowRequest(type: "upcoming", user_id: Int(id),page : currentPage))
                                 await SVProgressHUD.dismiss()
                                 scheduleShowSuccess()
                             case "Reviews":
@@ -104,26 +112,37 @@ struct ProfileScreen: View {
                             }
                         }
                     }
-                    if selectedTab == "Shop"{
+                    if selectedTab == "Shop" {
                         SearchAndFiltersView()
-                        ProductListView(prouduct: $productArr,onTapProduct: { index in
-                            productData = productArr[index]
-                            productId = productData.id ?? 0
-                            showSellSheet = true
-                            print("Selected product id: \(productData.id ?? 0)")
-                            print("index fdor sheegt \(index)")
-                        })
-                        
+                        ProductListView(
+                            prouduct: $productArr,
+                            onTapProduct: { index in
+                                productData = productArr[index]
+                                productId = productData.id ?? 0
+                                showSellSheet = true
+                            },
+                            onItemAppear: { index in
+                                Task {
+                                    await handlePagination(for: .shop, index: index)
+                                }
+                            }
+                        )
                     }
+
                     else if selectedTab == "Shows" {
-                        ForEach(scheduleShowArr, id: \.id) { data in
-                            ShowMyScheduleCardView(show: data, onTap: {
-                                showID = "\(data.id ?? 0)"
-                                isLive = data.isLive ?? false
+                        ForEach(scheduleShowArr.indices, id: \.self) { i in
+                            let show = scheduleShowArr[i]
+                            ShowMyScheduleCardView(show: show, onTap: {
+                                showID = "\(show.id ?? 0)"
+                                isLive = show.isLive ?? false
                                 navigateToReherseal = false
                             })
+                            .onAppear {
+                                Task {
+                                    await handlePagination(for: .shows, index: i)
+                                }
+                            }
                         }
-                        
                     }
                     else if selectedTab == "Reviews"{
                         ForEach(reviewList) { review in
@@ -176,7 +195,7 @@ struct ProfileScreen: View {
             print(param)
             Task{
                 SVProgressHUD.show()
-                await self.viewModel.getProfile(param:param )
+                await self.viewModel.getProfile(param:param)
                 await SVProgressHUD.dismiss()
                 profileSuccess()
             }
@@ -195,7 +214,7 @@ struct ProfileScreen: View {
             if !isForFollow{
                 Task{
                     SVProgressHUD.show()
-                    await self.viewModel.productDetails(parameters: UserProductRequest(user_id: Int(id) ?? 0))
+                    await self.viewModel.productDetails(parameters: UserProductRequest(user_id: Int(id) ?? 0, page: currentPage))
                     await SVProgressHUD.dismiss()
                     success()
                 }
@@ -238,6 +257,47 @@ struct ProfileScreen: View {
         }
     }
     
+    func handlePagination(for tab: ProfileTabType, index: Int) async {
+        let nextPage = currentPage + 1
+        switch tab {
+        case .shop:
+            let isLast = index == productArr.count - 1
+            let total = viewModel.productDetailsResponseDict?.total ?? 0
+
+            if isLast && productArr.count < total {
+                SVProgressHUD.show()
+                await viewModel.productDetails(parameters: UserProductRequest(user_id: Int(id) ?? 0, page: nextPage))
+                await SVProgressHUD.dismiss()
+                if viewModel.productDetailsResponseDict?.status == "success" {
+                    currentPage = nextPage
+                    productArr.append(contentsOf: viewModel.productDetailsResponseDict?.data ?? [])
+                }
+            }
+
+        case .shows:
+            let isLast = index == scheduleShowArr.count - 1
+            let total = viewModel.getMyScheduleShowResponseDict?.total ?? 0
+
+            if isLast && scheduleShowArr.count < total {
+                SVProgressHUD.show()
+                await viewModel.getMyScheduleShow(parameters: GetMyScheduleShowRequest(type: "upcoming", user_id: Int(id) ?? 0, page: nextPage))
+                await SVProgressHUD.dismiss()
+                if viewModel.getMyScheduleShowResponseDict?.status == "success" {
+                    currentPage = nextPage
+                    scheduleShowArr.append(contentsOf: viewModel.getMyScheduleShowResponseDict?.data ?? [])
+                }
+            }
+
+        case .reviews:
+            // Add this once your review API is paginated
+            break
+
+        case .clips:
+            // Add this once your clips API is paginated
+            break
+        }
+    }
+
     
 }
 
@@ -485,24 +545,33 @@ struct SearchAndFiltersView: View {
 }
 
 struct ProductListView: View {
-    @Binding var prouduct : [ProductListingDataModel]
+    @Binding var prouduct: [ProductListingDataModel]
     @State var onTap = false
-    var onTapProduct :(Int) -> () = {_ in }
+    var onTapProduct: (Int) -> () = { _ in }
+    var onItemAppear: ((Int) -> Void)? = nil
+
     var body: some View {
         VStack(spacing: 12) {
-            ForEach(prouduct.indices , id:\.self){ index in
+            ForEach(prouduct.indices, id: \.self) { index in
                 let item = prouduct[index]
-                ProductCardView(imageName: item.images?.first ?? "", productName: item.title ?? "", description: item.description ?? "", pricing: "$\(item.pricing ?? 0)")
-                    .onTapGesture {
-                        self.onTap.toggle()
-                        print("ontap \(index) / \(self.onTap)")
-                        self.onTapProduct(index)
-                    }
-                
+                ProductCardView(
+                    imageName: item.images?.first ?? "",
+                    productName: item.title ?? "",
+                    description: item.description ?? "",
+                    pricing: "$\(item.pricing ?? 0)"
+                )
+                .onTapGesture {
+                    self.onTap.toggle()
+                    self.onTapProduct(index)
+                }
+                .onAppear {
+                    onItemAppear?(index)
+                }
             }
         }
     }
 }
+
 
 struct ProductCardView: View {
     var imageName: String = "ic_bidder"
