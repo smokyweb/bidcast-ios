@@ -15,6 +15,7 @@ struct TabbarScreen: View {
     @State private var navigateTogetStarted = false
     @State private var navigateTolist = false
     @State private var navigateToAccountScreen = false
+    @State var navigateToTitle = false
     @ObservedObject var languageManager = LanguageManager.shared
     
     @State private var homeNavigationPath = NavigationPath()
@@ -26,6 +27,8 @@ struct TabbarScreen: View {
     @State private var exploreViewID = UUID()
     @State private var activityViewID = UUID()
     @State private var accountViewID = UUID()
+    
+    @State var request : StoreScheduleShowRequest = StoreScheduleShowRequest(title: "", date: "", time: "", category_id: "", auction_type_id: "", product_ids: "")
 
 
     var body: some View {
@@ -73,6 +76,12 @@ struct TabbarScreen: View {
             // Navigation Links
 //            CusNavLink(doNavigate: $navigateTogetStarted, destination: LetsPrepare())
             CusNavLink(doNavigate: $navigateTogetStarted, destination: GetStartedScreen())
+            CusNavLink(doNavigate: $navigateToTitle,
+                       destination: ShowTitleTips(request:$request,
+                        fromPrepare:.constant(false),
+                        backToPrepare: $navigateToTitle
+                       )
+            )
             CusNavLink(doNavigate: $navigateTolist, destination: ListProductScreen())
             CusNavLink(doNavigate: $navigateToAccountScreen, destination: AccountScreen(isNavFrom: true,comeFromSeller: true))
         }
@@ -89,7 +98,11 @@ struct TabbarScreen: View {
             content: {
                 SellScreen { tappedTab in
                     if tappedTab == .lesson {
-                        navigateTogetStarted = true
+                        if UserDefaults.isFirstShowCreated{
+                            navigateToTitle = true
+                        }else{
+                            navigateTogetStarted = true
+                        }
                     } else if tappedTab == .listProduct {
                         navigateTolist = true
                     } else if tappedTab == .sellerHub {

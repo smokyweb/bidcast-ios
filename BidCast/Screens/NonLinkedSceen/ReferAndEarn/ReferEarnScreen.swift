@@ -50,6 +50,7 @@ struct ReferEarnScreen: View {
             // Referral Link Section
             HStack {
                 TextField("", text: $referralLink)
+                    .font(.custom(poppinsSemiBold, size: 12.0))
                     .textFieldStyle(PlainTextFieldStyle())
                     .padding(.vertical, 12)
                     .padding(.horizontal)
@@ -63,6 +64,7 @@ struct ReferEarnScreen: View {
                     HStack {
                         Image(systemName: "doc.on.doc.fill")
                         Text("Copy")
+                            .font(.custom(poppinsSemiBold, size: 13.0))
                     }
                     .foregroundColor(.white)
                     .padding(.horizontal, 12)
@@ -76,13 +78,13 @@ struct ReferEarnScreen: View {
             // How It Works Section
             VStack(alignment: .leading, spacing: 14) {
                 Text("How It Works")
-                    .fontWeight(.semibold)
+                    .font(.custom(poppinsSemiBold, size: 13.0))
 
                 InfoRow(icon: "square.and.arrow.up.fill", iconColor: .blue, title: "Share Your Link", subtitle: "Send your unique referral link to friends")
                 InfoRow(icon: "person.2.fill", iconColor: .purple, title: "Friends Join", subtitle: "When they sign up using your link")
                 InfoRow(icon: "dollarsign.circle.fill", iconColor: .green, title: "Earn Rewards", subtitle: "Get $10 credit for each friend who joins")
             }
-            .padding(.horizontal)
+//            .padding(.horizontal)
 
             Spacer()
 

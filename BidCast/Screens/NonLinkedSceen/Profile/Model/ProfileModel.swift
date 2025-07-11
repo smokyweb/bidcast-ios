@@ -18,6 +18,7 @@ struct ProfileModel : Codable{
     var follower_count : Int?
     var following_count : Int?
     var is_following : Bool?
+    var is_FirstShowCreated : Bool?
 }
 
 

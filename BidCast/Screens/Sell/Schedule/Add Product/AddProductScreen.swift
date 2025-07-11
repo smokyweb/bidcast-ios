@@ -268,7 +268,7 @@ struct AddProductsScreen: View {
                 sheetType: $alertType,
                 onPrimaryClick: {
                     if viewModel.errorMessage == nil || viewModel.errorMessage == "" {
-                        navigateToTab = true
+                        backToPrepare = false
                         withAnimation { showError = false }
                         
                     }else{

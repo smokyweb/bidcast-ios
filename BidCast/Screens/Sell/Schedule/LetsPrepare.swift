@@ -34,6 +34,7 @@ struct LetsPrepare: View,ShowStepDelegate {
     @State var navigateToshowTitle = false
     @State var navigateToRehearsal = false
     @State var navigateToReferScreen = false
+    @State var navigateForLive = false
     
     private var currentProgress: Double {
         guard !prepare.isEmpty else { return 0 }
@@ -79,6 +80,8 @@ struct LetsPrepare: View,ShowStepDelegate {
                                 navigateToRehearsal = true
                             }else if idx == 3{
                                 storeScheduleSHow()
+                            }else if idx == 4{
+                                navigateForLive = true
                             }
                             //                            goToNextStep()
                         }
@@ -112,9 +115,10 @@ struct LetsPrepare: View,ShowStepDelegate {
             
             
             
-            CusNavLink(doNavigate: $navigateToSelectShow, destination: SelectShowScreen(request: $request, thumbNail: $thumbNAil, comeFromPrepareScreen: .constant(true),delegate: self))
+            CusNavLink(doNavigate: $navigateToSelectShow, destination: SelectShowScreen(request: $request, thumbNail: $thumbNAil, comeFromPrepareScreen: .constant(true),backToPrepare: .constant(false), delegate: self))
             
             CusNavLink(doNavigate: $navigateToRehearsal, destination: RehearsalScreen(showUd: .constant(""),comeFromPrepare: true ))
+            CusNavLink(doNavigate: $navigateForLive, destination: RehearsalScreen(showUd: .constant("\(viewModel.storeShowResponse?.data.id ?? 0)"),comeFromPrepare: false,comeForLive: true ))
             
             CusNavLink(doNavigate: $navigateToshowTitle, destination: ShowTitleTips(request : $request,fromPrepare:.constant(true),backToPrepare: $navigateToshowTitle, delegate: self))
             CusNavLink(doNavigate: $navigateToReferScreen, destination: ReferEarnScreen())
@@ -178,6 +182,21 @@ struct LetsPrepare: View,ShowStepDelegate {
                     currentIndex = nextIndex
                     print("🔓 Next unlocked: ", prepare)
                     navigateToRehearsal = false
+                    
+                }else if navigateToReferScreen{
+                    if prepare.indices.contains(currentIndex) {
+                        prepare[currentIndex].isDone = true
+                    }
+                    
+                    // ✅ Unlock next step:
+                    let nextIndex = currentIndex + 1
+                    if prepare.indices.contains(nextIndex) {
+                        prepare[nextIndex].status = "unlocked"
+                    }
+                    
+                    currentIndex = nextIndex
+                    print("🔓 Next unlocked: ", prepare)
+                    navigateToReferScreen = false
                 }
             }
         }

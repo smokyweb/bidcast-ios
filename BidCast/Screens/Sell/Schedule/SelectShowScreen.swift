@@ -27,6 +27,7 @@ struct SelectShowScreen: View {
     @Binding var thumbNail : String
     @Binding var comeFromPrepareScreen : Bool
     @State var showhud: Bool = false
+    @Binding var backToPrepare : Bool
     @State var hudMsg: String = ""
     
     var delegate: ShowStepDelegate?
@@ -127,7 +128,7 @@ struct SelectShowScreen: View {
 //                navigateToSelectCategory = true
             },cornerRadius: 12, btnTextColor: .white)
             
-            CusNavLink(doNavigate: $navigateToAddProduct, destination: AddProductsScreen(request:$request,thumbNail: $thumbNail,fromPrepare: .constant(false),backToPrepare: .constant(false)))
+            CusNavLink(doNavigate: $navigateToAddProduct, destination: AddProductsScreen(request:$request,thumbNail: $thumbNail,fromPrepare: .constant(false),backToPrepare: $backToPrepare))
            
         }
     

@@ -12,22 +12,10 @@ final class HomeViewModel: ObservableObject {
     // MARK: - Published Properties
     @Published var addressResponse = ResponseModel<AddressModel>()
     @Published var liveShowsResponse = ResponseModel<[HomeModel]>()
+    @Published var accountInfo = ResponseModel<ProfileModel>()
     @Published var errorMessage: String?
     @Published var requestType = ""
 
-    // MARK: - Store Address
-//    func storeAddress(parameters: AddressRequest) async {
-//        self.requestType = "store"
-//        do {
-//            let response: ResponseModel<AddressModel> = try await APIManager.shared.request(
-//                type: APIEndPoint.storeAddress(param: parameters),
-//                header: true
-//            )
-//            self.addressResponse = response
-//        } catch {
-//            handle(error)
-//        }
-//    }
 
     // MARK: - Get Live Shows
     func getLiveShows(param:GetLiveShowsRequest) async {
@@ -42,34 +30,19 @@ final class HomeViewModel: ObservableObject {
             handle(error)
         }
     }
-
-//    // MARK: - Set Default Address
-//    func setDefaultAddress(parameters: AddressDefaultParam) async {
-//        self.requestType = "default"
-//        do {
-//            let response: ResponseModel<AddressModel> = try await APIManager.shared.request(
-//                type: APIEndPoint.setDefaultAddress(param: parameters),
-//                header: true
-//            )
-//            self.addressResponse = response
-//        } catch {
-//            handle(error)
-//        }
-//    }
-
-//    // MARK: - Delete Address
-//    func deleteAddress(parameters: AddressDefaultParam) async {
-//        self.requestType = "delete"
-//        do {
-//            let response:  ResponseModel<AddressModel> = try await APIManager.shared.request(
-//                type: APIEndPoint.deleteAddress(param: parameters),
-//                header: true
-//            )
-//            // Optional: refetch addresses or update UI state
-//        } catch {
-//            handle(error)
-//        }
-//    }
+    
+    func getProfile() async {
+        requestType = "get"
+        do {
+            let response: ResponseModel<ProfileModel> = try await APIManager.shared.request(
+                type: APIEndPoint.getprofile,
+                header: true
+            )
+            self.accountInfo = response
+        } catch {
+            self.errorMessage = error.localizedDescription
+        }
+    }
 
     // MARK: - Handle Error
     private func handle(_ error: Error) {

@@ -65,6 +65,16 @@ extension UserDefaults{
         }
     }
     
+    static var isFirstShowCreated:Bool {
+        set(input){
+            self.standard.setValue(input, forKey: "isFirstShowCreated")
+        }
+        get{
+            
+            return self.standard.value(forKey: "isFirstShowCreated") as? Bool ?? false
+        }
+    }
+    
     static var accessToken:String {
         set(input){
             self.standard.setValue(input, forKey: "access_token1")

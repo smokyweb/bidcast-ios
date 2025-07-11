@@ -465,7 +465,7 @@ struct LiveStream: View {
         .edgesIgnoringSafeArea(.bottom)
         
         .toolbar(.hidden,for: .tabBar)
-        .foregroundColor(.white)
+        .foregroundColor(.black)
         .onAppear{
             UserDefaults.isLiveEnded = false
             ZIMChatManager.shared.login(userID: "\(UserDefaults.userId)", userName: UserDefaults.userName)

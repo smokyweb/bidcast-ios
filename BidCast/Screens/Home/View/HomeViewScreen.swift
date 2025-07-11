@@ -142,6 +142,16 @@ struct HomeViewScreen: View {
                 await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: "live",category: showCategory))
                 await SVProgressHUD.dismiss()
                 self.success()
+                await self.viewModel.getProfile()
+                if viewModel.errorMessage == "" || viewModel.errorMessage == nil {
+                    let response = self.viewModel.accountInfo.data
+                    UserDefaults.isFirstShowCreated = response?.is_FirstShowCreated ?? false
+                    UserDefaults.profileURL = response?.profile_image ?? ""
+                    UserDefaults.userName = response?.name ?? ""
+                   
+                }else{
+                    
+                }
             }
             
             FirebaseManager.shared.observeNewLiveSessionNodes {
