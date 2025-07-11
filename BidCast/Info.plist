@@ -2,16 +2,16 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>FirebaseAppDelegateProxyEnabled</key>
-    <false/>
-    <key>FirebaseAutomaticScreenReportingEnabled</key>
-    <false/>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>io.bidcast.refresh</string>
+	</array>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
+	<key>FirebaseAutomaticScreenReportingEnabled</key>
+	<false/>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
-    <key>BGTaskSchedulerPermittedIdentifiers</key>
-    <array>
-        <string>io.bidcast.refresh</string>
-    </array>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Poppins-Black.ttf</string>
@@ -75,13 +75,11 @@
 		<string>RobotoFlex-Regular.ttf</string>
 		<string>RobotoFlex-Italic.ttf</string>
 	</array>
-    <key>UIBackgroundModes</key>
-    <array>
-        <string>remote-notification</string>
-        <string>fetch</string>
-        <string>processing</string>
-    </array>
-    <key>UIInterfaceOrientation</key>
-    <string>UIInterfaceOrientationPortrait</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
+	<key>UIInterfaceOrientation</key>
+	<string>UIInterfaceOrientationPortrait</string>
 </dict>
 </plist>

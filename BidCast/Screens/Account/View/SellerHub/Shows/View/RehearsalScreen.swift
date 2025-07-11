@@ -43,6 +43,10 @@ struct RehearsalScreen: View {
     
     @ObservedObject var chatManager = ZIMChatManager.shared
     
+    @State var comeFromPrepare = false
+    @State var comeForLive = false
+   
+    
     @State var viewwerCount = 0
     var sheetHeight: CGFloat {
         switch currentBottomSheet {
@@ -329,6 +333,22 @@ struct RehearsalScreen: View {
                         .padding(.bottom, 20)
                     }
                 }
+                if comeFromPrepare && !comeForLive{
+                    Button(action: {
+                       
+                        self.presentaionMode.wrappedValue.dismiss()
+                    }) {
+                        Text("Continue")
+                            .font(.custom(poppinsBold, size: 13.0))
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.red)
+                            .foregroundColor(.white)
+                            .cornerRadius(12)
+                    }
+                    .padding(.horizontal)
+                    .padding(.bottom, 20)
+                }
             }
             
         }
@@ -432,7 +452,11 @@ struct RehearsalScreen: View {
             
             ZIMChatManager.shared.login(userID: "\(UserDefaults.userId)", userName: UserDefaults.userName)
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                showReadyModal = true
+                if comeFromPrepare && !comeForLive{
+                    showReadyModal = false
+                }else{
+                    showReadyModal = true
+                }
             }
         }
         .onDisappear {

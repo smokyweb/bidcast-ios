@@ -7,8 +7,6 @@
 
 import SwiftUI
 
-import SwiftUI
-
 struct ReferEarnScreen: View {
     @State private var referralLink = "https://bidcast.com/ref/user123"
     @Environment(\.presentationMode) var presentationMode
@@ -40,10 +38,10 @@ struct ReferEarnScreen: View {
             // Title & Subtitle
             VStack(spacing: 4) {
                 Text("Share & Earn Rewards")
-                    .font(.title3)
-                    .fontWeight(.semibold)
+                    .font(.custom(poppinsSemiBold, size: 13.0))
+                   
                 Text("Invite friends and earn rewards when they join")
-                    .font(.subheadline)
+                    .font(.custom(poppinsSemiBold, size: 13.0))
                     .foregroundColor(.gray)
             }
             .multilineTextAlignment(.center)
@@ -69,7 +67,7 @@ struct ReferEarnScreen: View {
                     .foregroundColor(.white)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 10)
-                    .background(Color.blue)
+                    .background(Color.defaultTheme)
                     .cornerRadius(10)
                 }
             }
@@ -90,13 +88,13 @@ struct ReferEarnScreen: View {
 
             // Continue Button
             Button(action: {
-                // Handle continue
+                self.presentationMode.wrappedValue.dismiss()
             }) {
                 Text("Continue")
                     .fontWeight(.semibold)
                     .frame(maxWidth: .infinity)
                     .frame(height: 50)
-                    .background(Color.blue)
+                    .background(Color.defaultTheme)
                     .foregroundColor(.white)
                     .cornerRadius(12)
             }
@@ -121,10 +119,10 @@ struct InfoRow: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
-                    .fontWeight(.semibold)
-                    .font(.subheadline)
+                    .font(.custom(poppinsSemiBold, size: 13.0))
+                   
                 Text(subtitle)
-                    .font(.footnote)
+                    .font(.custom(poppinsRegular, size: 11.0))
                     .foregroundColor(.gray)
             }
         }

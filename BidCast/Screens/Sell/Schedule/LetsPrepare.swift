@@ -15,8 +15,16 @@ struct LetsPrepare: View,ShowStepDelegate {
     @State private var currentIndex = 0
     @State var prepare =  [LessonModel]()
     @State var isLoading  = false
+    
+    @State var showhud: Bool = false
+    @State var hudMsg: String = ""
+    @State var showError: Bool = false
+    
     var viewModel = ScheduleViewModel()
     @State var request : StoreScheduleShowRequest = StoreScheduleShowRequest(title: "", date: "", time: "", category_id: "", auction_type_id: "", product_ids: "")
+    
+    @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+    
     @State var navigateToTips  = false
     @State var navigateToCreateScreen = false
     @State var navigateToCreateShow = false
@@ -24,6 +32,8 @@ struct LetsPrepare: View,ShowStepDelegate {
     @State var navigateToSelectShow = false
     @State var didLoadPrepare = false
     @State var navigateToshowTitle = false
+    @State var navigateToRehearsal = false
+    @State var navigateToReferScreen = false
     
     private var currentProgress: Double {
         guard !prepare.isEmpty else { return 0 }
@@ -65,6 +75,10 @@ struct LetsPrepare: View,ShowStepDelegate {
                                 
                                 navigateToshowTitle = true
 //                                navigateToCreateScreen = true
+                            }else if idx == 2{
+                                navigateToRehearsal = true
+                            }else if idx == 3{
+                                storeScheduleSHow()
                             }
                             //                            goToNextStep()
                         }
@@ -100,7 +114,11 @@ struct LetsPrepare: View,ShowStepDelegate {
             
             CusNavLink(doNavigate: $navigateToSelectShow, destination: SelectShowScreen(request: $request, thumbNail: $thumbNAil, comeFromPrepareScreen: .constant(true),delegate: self))
             
+            CusNavLink(doNavigate: $navigateToRehearsal, destination: RehearsalScreen(showUd: .constant(""),comeFromPrepare: true ))
+            
             CusNavLink(doNavigate: $navigateToshowTitle, destination: ShowTitleTips(request : $request,fromPrepare:.constant(true),backToPrepare: $navigateToshowTitle, delegate: self))
+            CusNavLink(doNavigate: $navigateToReferScreen, destination: ReferEarnScreen())
+            
             
             
             
@@ -112,6 +130,30 @@ struct LetsPrepare: View,ShowStepDelegate {
         .edgesIgnoringSafeArea(.bottom)
         .background(.bg.opacity(0.5))
         .toolbar(.hidden,for: .tabBar)
+        .bottomSheet(isPresented: $showError, height: screenHeight/2.8, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: {
+            if viewModel.errorMessage != nil || viewModel.errorMessage != "" {
+                showError = true
+            }else{
+               
+                showError = false
+            }
+        }, content: {
+            CommonBottomSheet(
+                sheetType: $alertType,
+                onPrimaryClick: {
+                    if viewModel.errorMessage == nil || viewModel.errorMessage == "" {
+                        navigateToReferScreen = true
+                        withAnimation { showError = false }
+                        
+                    }else{
+                        withAnimation { showError = false }
+                       
+                    }
+                   
+                }, onSecondaryClick: {
+                    withAnimation { showError = false }
+                })
+        })
         .onAppear {
             if !didLoadPrepare {
                 didLoadPrepare = true
@@ -120,6 +162,22 @@ struct LetsPrepare: View,ShowStepDelegate {
                     await viewModel.getLetsPrepare()
                     await SVProgressHUD.dismiss()
                     success()
+                }
+            }else{
+                if navigateToRehearsal{
+                    if prepare.indices.contains(currentIndex) {
+                        prepare[currentIndex].isDone = true
+                    }
+                    
+                    // ✅ Unlock next step:
+                    let nextIndex = currentIndex + 1
+                    if prepare.indices.contains(nextIndex) {
+                        prepare[nextIndex].status = "unlocked"
+                    }
+                    
+                    currentIndex = nextIndex
+                    print("🔓 Next unlocked: ", prepare)
+                    navigateToRehearsal = false
                 }
             }
         }
@@ -131,6 +189,7 @@ struct LetsPrepare: View,ShowStepDelegate {
     func didUpdateRequest(_ request: StoreScheduleShowRequest,thumbNail:String) {
         didLoadPrepare = true
             self.request = request
+        self.thumbNAil = thumbNail
             print("✅ Parent got updated request:\(request) thumbail \(thumbNail)")
         if prepare.indices.contains(currentIndex) {
               prepare[currentIndex].isDone = true
@@ -145,6 +204,67 @@ struct LetsPrepare: View,ShowStepDelegate {
           currentIndex = nextIndex
           print("🔓 Next unlocked: ", prepare)
         }
+    
+    func storeScheduleSHow(){
+        guard !request.title.isEmpty else {
+            hudMsg = "Please enter title"
+                showhud = true
+                return
+        }
+        guard !request.category_id.isEmpty else {
+            hudMsg = "Please enter category type"
+                showhud = true
+                return
+        }
+        guard !request.auction_type_id.isEmpty else {
+            hudMsg = "Please enter auction type"
+                showhud = true
+                return
+        }
+        guard !thumbNAil.isEmpty else {
+            hudMsg = "Please select thumbnail image"
+                showhud = true
+                return
+        }
+        guard !request.date.isEmpty else {
+            hudMsg = "Please enter date"
+                showhud = true
+                return
+        }
+        guard !request.time.isEmpty else {
+            hudMsg = "Please select time"
+                showhud = true
+                return
+        }
+        guard !request.product_ids.isEmpty else {
+            hudMsg = "Please select product"
+                showhud = true
+                return
+        }
+            Task{
+                SVProgressHUD.show()
+                var thumbImage = [String]()
+                thumbImage.append(thumbNAil)
+                self.viewModel.errorMessage = ""
+                await viewModel.storeScheduleShow(param: request,images: [thumbNAil],key: "thumbnail[]")
+                await SVProgressHUD.dismiss()
+                
+                if viewModel.errorMessage == nil || viewModel.errorMessage == "" {
+                    storeSuccess()
+                }else{
+                    alertType = .sheetType(
+                        icon: .alert,
+                        title: "Error",
+                        message: viewModel.errorMessage ?? "",
+                        primaryBtnText: AppString.ok.localized,
+                        secondaryBtnText:""
+                    )
+                    showError = true
+                }
+                
+            }
+        
+    }
     
     func success() {
         let dict = viewModel.lessonsResponse
@@ -164,6 +284,30 @@ struct LetsPrepare: View,ShowStepDelegate {
             print("API error: \(dict?.status ?? "")")
         }
         
+    }
+    
+    func storeSuccess(){
+        SVProgressHUD.dismiss()
+        let response = viewModel.storeShowResponse
+        if response?.status == "success"{
+            alertType = .sheetType(
+                icon: .success,
+                title: response?.error_type?.capitalized ?? "",
+                message: response?.message?.capitalized ?? "",
+                primaryBtnText: AppString.ok.localized,
+                secondaryBtnText:""
+            )
+            showError = true
+        }else{
+            alertType = .sheetType(
+                icon: .alert,
+                title: response?.error_type?.capitalized ?? "",
+                message: response?.message?.capitalized ?? "",
+                primaryBtnText: "",
+                secondaryBtnText:AppString.ok.localized
+            )
+            showError = true
+        }
     }
     
     private func goToNextStep() {
