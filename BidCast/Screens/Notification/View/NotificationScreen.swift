@@ -127,6 +127,7 @@ struct NotificationScreen: View {
         }
     }
     
+    //MARK: handlePagination.
     func handlePagination(index: Int) {
         let isLastItem = index == notiListArr.count - 1
         let canFetchMore = (viewModel.notiListingDict?.total ?? 0) > notiListArr.count
@@ -147,6 +148,7 @@ struct NotificationScreen: View {
         }
     }
     
+    //MARK: fetchMoreNotificartion.
     func fetchMoreNotificartion() {
         Task {
             currentPage += 1

@@ -303,8 +303,8 @@ extension APIEndPoint: EndPointType {
             return "delete-card"
         case .getCard:
             return "get-card"
-        case .getTransactionList:
-            return "transaction-history/listing"
+        case .getTransactionList(param:let param):
+            return "transaction-history/listing?page=\(param.page)"
         case .storeScheduleShow:
             return "store-schedule-show"
         case .getProduct:
@@ -924,7 +924,7 @@ extension APIEndPoint: EndPointType {
             return nil
             
         case .getTransactionList(param: let param):
-                return param
+                return nil
         case .storeScheduleShow(param: let param):
             return param
         case .getProduct(param: let param):

@@ -575,6 +575,7 @@ struct OrderRecieptRequest : Encodable{
 //MARK: extension
 struct TransactionRequest : Encodable {
     var id : String? = ""
+    var page : Int
 }
 
 struct StoreScheduleShowRequest: Encodable {

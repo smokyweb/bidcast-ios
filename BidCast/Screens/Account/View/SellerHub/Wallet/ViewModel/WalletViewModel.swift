@@ -11,7 +11,7 @@ import Foundation
 @MainActor
 final class WalletViewModel: ObservableObject {
     
-    @Published var transactionDict = ResponseModel<[TransactionModel]>()
+    @Published var transactionDict = ResponseModelPaginate<[TransactionModel]>()
     @Published var walletInfoDict = ResponseModel<WalletInfoModel>()
     @Published var payOutHistoryDict = ResponseModel<PayOutHistoryModel>()
     @Published var errorMessage: String? = nil
@@ -21,10 +21,10 @@ final class WalletViewModel: ObservableObject {
     // MARK: - Get Cards
     func getTransaction(param:TransactionRequest) async {
         do {
-            if let response: ResponseModel<[TransactionModel]> = try await APIManager.shared.request(
+            if let response: ResponseModelPaginate<[TransactionModel]> = try await APIManager.shared.request(
                 type: APIEndPoint.getTransactionList(param: param),
                 header: true
-            ) {
+            ){
                 self.transactionDict = response
             }
         } catch {

@@ -13,6 +13,12 @@ struct WalletScreen: View {
     
     @State private var segment: WalletScreenSegment = .wallet
     @Environment(\.presentationMode) private var presentationMode
+    @State var showError: Bool = false
+    @State var isLoading: Bool = false
+    @State var showhud: Bool = false
+    @State var currentPage = 1
+    @State var hudMsg: String = ""
+    @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @State var data: WalletData?
     @State var dataTransaction = [TransactionModel]()
     @State var dataPayOutHistory = PayOutHistoryModel()
@@ -36,7 +42,7 @@ struct WalletScreen: View {
             
             CustomSegmentedControl(preselectedIndex: $segment,
                                    options: WalletScreenSegment.allCases)
-                .padding(.horizontal)
+            .padding(.horizontal)
             ScrollView {
                 VStack(spacing: 20) {
                     
@@ -50,17 +56,21 @@ struct WalletScreen: View {
                             NoDataView(message: "No Transaction history found")
                         }else{
                             VStack(spacing: 10) {
-                            SegmentedControlView(segments: WalletSegment.allCases, selectedSegment: $selectedButton, isWithBorder: true)
+                                SegmentedControlView(segments: WalletSegment.allCases, selectedSegment: $selectedButton, isWithBorder: true)
+                            }
+                            ForEach(dataTransaction.indices, id: \.self) { index in
+                                let data = dataTransaction[index]
+                                TransactionsTabView(
+                                    title: data.source_type ?? "",
+                                    subLabel: data.card_number ?? "",
+                                    price: "\(data.total ?? 0)"
+                                )
+                                .onAppear{
+                                    handlePaginationForTransaction(index: index)
+                                }
+                            }
+                            
                         }
-                        ForEach(dataTransaction.indices, id: \.self) { index in
-                            let data = dataTransaction[index]
-                            TransactionsTabView(
-                                title: data.source_type ?? "",
-                                subLabel: data.card_number ?? "",
-                                price: "\(data.total ?? 0)"
-                            )
-                        }
-                    }
                     }
                     
                     Spacer(minLength: 90)
@@ -82,41 +92,15 @@ struct WalletScreen: View {
         }
         .onChange(of: segment) { newValue in
             if newValue == .transactions {
-                Task {
-                    SVProgressHUD.show()
-                    await viewModel.getTransaction(param: TransactionRequest())
-                    await SVProgressHUD.dismiss()
-                    success()
-                }
+                fetchTransaction(page: currentPage)
             }
         }
         .background(Color(UIColor.systemGroupedBackground).ignoresSafeArea())
     }
-    
-    func success(){
-        let response  = viewModel.transactionDict
-        if response.status == "success"{
-            dataTransaction = response.data ?? [TransactionModel]()
-        }
-    }
-    
-    func walletInfosuccess(){
-        let response  = viewModel.walletInfoDict
-        if response.status == "success"{
-            dataWallet = response.data ?? WalletInfoModel()
-        }
-    }
-    
-    func payOutHistroysuccess(){
-        let response  = viewModel.payOutHistoryDict
-        if response.status == "success"{
-            dataPayOutHistory = response.data ?? PayOutHistoryModel()
-        }
-    }
 }
 
 
-/// Square tile (icon + title + big value)
+// Square tile (icon + title + big value)
 struct WalletStatTile: View {
     var title: String
     var value: String
@@ -143,6 +127,98 @@ struct WalletStatTile: View {
 }
 
 
+//MARK: API LOGIC For Transaction.
+extension WalletScreen{
+    
+    // MARK: - Fetch Inventory List
+    func fetchTransaction(page: Int) {
+        Task{
+            SVProgressHUD.show()
+            await viewModel.getTransaction(param: TransactionRequest(page: currentPage))
+            await SVProgressHUD.dismiss()
+            transactionSuccess()
+        }
+    }
+    
+    //MARK: fetchMoreNotificartion.
+    func fetchMoreTransaction() {
+        Task {
+            currentPage += 1
+            await viewModel.getTransaction(param: TransactionRequest(page: currentPage))
+            transactionSuccess()
+        }
+    }
+    
+    //MARK: handlePagination.
+    func handlePaginationForTransaction(index: Int) {
+        let isLastItem = index == dataTransaction.count - 1
+        let canFetchMore = (viewModel.transactionDict.total ?? 0) > dataTransaction.count
+        
+        if isLastItem && canFetchMore {
+            fetchMoreTransaction()
+        }
+    }
+    
+    //MARK: transactionSuccess.
+    func transactionSuccess(){
+        let response  = viewModel.transactionDict
+        if response.status == "success" {
+            let newData = response.data ?? [TransactionModel]()
+            
+            if currentPage == 1 {
+                dataTransaction = newData
+            } else {
+                dataTransaction.append(contentsOf: newData)
+            }
+        } else {
+            showError = true
+            alertType = .sheetType(
+                icon: .alert,
+                title: response.error_type?.capitalized ?? "",
+                message: response.message?.capitalized ?? "",
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
+            )
+        }
+    }
+
+    
+    //MARK: payOutHistroysuccess.
+    func payOutHistroysuccess(){
+        let response  = viewModel.payOutHistoryDict
+        if response.status == "success"{
+            dataPayOutHistory = response.data ?? PayOutHistoryModel()
+        }else{
+            showError = true
+            alertType = .sheetType(
+                icon: .alert,
+                title: response.error_type?.capitalized ?? "",
+                message: response.message?.capitalized ?? "",
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
+            )
+            
+        }
+    }
+    
+    //MARK: walletInfosuccess.
+    func walletInfosuccess(){
+        let response  = viewModel.walletInfoDict
+        if response.status == "success"{
+            dataWallet = response.data ?? WalletInfoModel()
+        }else{
+            showError = true
+            alertType = .sheetType(
+                icon: .alert,
+                title: response.error_type?.capitalized ?? "",
+                message: response.message?.capitalized ?? "",
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
+            )
+            
+        }
+    }
+}
 
 
 // MARK: - WalletData.
