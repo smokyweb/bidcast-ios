@@ -18,33 +18,50 @@ struct ReviewCard: View {
     var username: String
     var profileImage: Image
     var rating: Double
+    var comment: String? = nil
 
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(alignment: .top, spacing: 12) {
+            // 1. Profile image
             profileImage
                 .resizable()
                 .scaledToFill()
-                .frame(width: 50, height: 50)
+                .frame(width: 48, height: 48)
                 .clipShape(Circle())
 
+            // 2. Labels + Rating
             VStack(alignment: .leading, spacing: 4) {
-                Text(username)
-                    .font(.headline)
+                HStack {
+                    // Username
+                    Text(username)
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundColor(.black)
 
-                HStack(spacing: 4) {
-                    ForEach(0..<5) { index in
-                        Image(systemName: starType(for: index))
-                            .resizable()
-                            .frame(width: 14, height: 14)
-                            .foregroundColor(index < Int(ceil(rating)) ? .defaultTheme : .gray.opacity(0.4))
+                    Spacer()
+
+                    // Star Rating (Right aligned)
+                    HStack(spacing: 2) {
+                        ForEach(0..<5) { index in
+                            Image(systemName: starType(for: index))
+                                .resizable()
+                                .frame(width: 12, height: 12)
+                                .foregroundColor(index < Int(floor(rating)) ? .defaultTheme : .gray.opacity(0.4))
+                        }
                     }
                 }
+
+                // Comment below
+                if let comment = comment, !comment.isEmpty {
+                    Text(comment)
+                        .font(.system(size: 13))
+                        .foregroundColor(.black)
+                }
             }
-            Spacer()
         }
         .padding()
-        .background(Color(.white))
+        .background(.white)
         .cornerRadius(12)
+        .padding(.horizontal)
     }
 
     private func starType(for index: Int) -> String {
@@ -57,3 +74,6 @@ struct ReviewCard: View {
         }
     }
 }
+
+
+

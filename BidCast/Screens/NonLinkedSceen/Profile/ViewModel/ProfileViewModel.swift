@@ -14,6 +14,8 @@ final class ProfileViewModel: ObservableObject {
     @Published var productDetailsResponseDict: ResponseModalPaginate<[ProductListingDataModel]>?
     @Published var followDict = ResponseModel<FolloweModel>()
     @Published var getMyScheduleShowResponseDict: ResponseModalPaginate<[GetMyScheduleShowModel]>?
+    @Published var getTotalRatingResponseDict: ResponseModal<TotalRating>?
+    @Published var addRatingResponseDict: ResponseModal<AddRatigModel>?
     @Published var errorMessage: String? = nil
     @Published var requestType = ""
     
@@ -86,6 +88,40 @@ final class ProfileViewModel: ObservableObject {
                 header: true
             ) {
                 self.getMyScheduleShowResponseDict = response
+            }
+            
+        } catch {
+            handle(error: error)
+        }
+    }
+    
+    // MARK: - getTotalRating
+    func getTotalRating(parameters: GetTotalRatingRequest) async {
+        self.requestType = "totalRating"
+        do {
+            
+            if let response : ResponseModal<TotalRating> = try await APIManager.shared.request(
+                type: APIEndPoint.getTotalRating(param: parameters),
+                header: true
+            ) {
+                self.getTotalRatingResponseDict = response
+            }
+            
+        } catch {
+            handle(error: error)
+        }
+    }
+    
+    // MARK: - addRating
+    func addRating(parameters: AddRatingRequest) async {
+        self.requestType = "addRating"
+        do {
+            
+            if let response : ResponseModal<AddRatigModel> = try await APIManager.shared.request(
+                type: APIEndPoint.addRating(param: parameters),
+                header: true
+            ) {
+                self.addRatingResponseDict = response
             }
             
         } catch {

@@ -22,11 +22,11 @@ struct HomeViewScreen: View {
     @State var isLoading: Bool = false
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @State var showError: Bool = false
-    @State var userId = ""
+    @State var userId = "48"
     @Binding var comeFromExploreScreen : Bool
     @State var navigateToNoti : Bool = false
     
-    @State var navigateToProfile = false
+    @State var navigateToProfile = true
     @State private var showSearchView: Bool = false
     
     var body: some View {

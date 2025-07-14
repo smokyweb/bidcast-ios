@@ -70,4 +70,11 @@ struct AppString{
     static let newShow =  "New Show".localized
     static let successOtpMessage = "Success! Please enter the code that was sent to the email associated with your account."
     static let successNewPassword = "Success! Please enter your new password below."
+    static let addOverallRating = "Please add overall rating"
+    static let addshippingRating = "Please add shipping rating"
+    static let addpackagingRating = "Please add packaging rating"
+    static let addaccuracyRating = "Please add accuracy rating"
+    static let adddescriptionRating = "Please add description rating"
+    static let addComment = "Please add comment"
+    
 }

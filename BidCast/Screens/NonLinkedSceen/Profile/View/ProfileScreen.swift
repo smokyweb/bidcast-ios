@@ -38,6 +38,7 @@ struct ProfileScreen: View {
     @State var productId : Int = 0
     @State var productArr = [ProductListingDataModel]()
     @State var scheduleShowArr = [GetMyScheduleShowModel]()
+    @State var totalRatingArr = [RatingDetail]()
     @State var isForFollow = false
     @State var showToast = false
     @State var toastMessage = ""
@@ -53,6 +54,9 @@ struct ProfileScreen: View {
     ]
     
     @State private var selectedTab = "Shop"
+    //Review Variab
+
+    
     var body: some View {
         VStack(spacing: 0) {
             ScrollView {
@@ -65,7 +69,7 @@ struct ProfileScreen: View {
                                       bio: profileData.bio ?? "Professional photographer specializing in portrait and wedding photography. Available for bookings worldwide.",
                                       onTapNotify: {
                         showNotify = true
-                    })
+                    },sellerID : $id)
                     
                     ProfileActionsView(isFollowing: $isFollowing ,
                                        onTapFollow: {
@@ -91,7 +95,7 @@ struct ProfileScreen: View {
                                 print("")
                                 Task{
                                     SVProgressHUD.show()
-                                    await self.viewModel.productDetails(parameters: UserProductRequest(user_id: Int(id) ?? 0,page : currentPage ?? 0))
+                                    await self.viewModel.productDetails(parameters: UserProductRequest(user_id: Int(id) ?? 0,page : currentPage))
                                     await SVProgressHUD.dismiss()
                                     success()
                                 }
@@ -102,8 +106,10 @@ struct ProfileScreen: View {
                                 await SVProgressHUD.dismiss()
                                 scheduleShowSuccess()
                             case "Reviews":
-                                print("")
-                                //                                await viewModel.fetchReviews()
+                                SVProgressHUD.show()
+                                await self.viewModel.getTotalRating(parameters: GetTotalRatingRequest(seller_id: 7))
+                                await SVProgressHUD.dismiss()
+                                ratingSuccess()
                             case "Clips":
                                 print("")
                                 //                                await viewModel.fetchClips()
@@ -144,20 +150,19 @@ struct ProfileScreen: View {
                             }
                         }
                     }
-                    else if selectedTab == "Reviews"{
-                        ForEach(reviewList) { review in
-                             ReviewCard(
-                                 username: review.username,
-                                 profileImage: Image(review.profileImageName),
-                                 rating: review.rating
-                             )
-                             .padding(.horizontal, 12)
-                         }
+                    else if selectedTab == "Reviews" {
+                        ForEach(totalRatingArr, id: \.id) { review in
+                            ReviewCard(
+                                username: review.user.name ?? "",
+                                profileImage: Image("defaultUser"),
+                                rating: Double(review.overallRating ?? "0.0") ?? 0.0,
+                                comment: review.comment
+                            )
+                            .padding(.horizontal,0)
+                        }
                     }else{
                         
                     }
-                    
-                 
                 }
                 //                .padding()
             }
@@ -257,6 +262,19 @@ struct ProfileScreen: View {
         }
     }
     
+    //MARK: ratingSuccess.
+    func ratingSuccess(){
+        SVProgressHUD.dismiss()
+        let response = viewModel.getTotalRatingResponseDict
+        if response?.status == "success" {
+            totalRatingArr = response?.data.ratings ?? []
+            
+        } else {
+            alertType = .sheetType(icon: .alert, title: response?.status?.capitalized ?? "", message: response?.message?.capitalized ?? "", primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .defaultTheme)
+            withAnimation(.snappy) { showError = true }
+        }
+    }
+    
     func handlePagination(for tab: ProfileTabType, index: Int) async {
         let nextPage = currentPage + 1
         switch tab {
@@ -297,33 +315,39 @@ struct ProfileScreen: View {
             break
         }
     }
-
-    
 }
 
+//MARK: ProfileHeaderView
 struct ProfileHeaderView: View {
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var appRootManager: AppRootManager
-    var name = "Sarah Williams"
-    var email = "@sarahwilliams"
-    var profileImage = "user1"
-    var followers = "2.4K"
-    var following = "856"
-    var bio = "Professional photographer specializing in portrait and wedding photography. Available for bookings worldwide."
-    var onTapNotify : () -> () = {}
+
+    var name : String
+    var email : String
+    var profileImage : String
+    var followers : String
+    var following : String
+    var bio : String
+    var onTapNotify: () -> () = {}
+    var onTapMore: () -> () = {}
+    
+    @Binding var sellerID : String
+    @State private var navigateToRating = false
+    @State private var showMoreMenu = false
+
     var body: some View {
         ZStack(alignment: .topLeading) {
             // Background image
             VStack(spacing: 0) {
-                Image("IMG_2678") // Replace with your image
+                Image("IMG_2678")
                     .resizable()
                     .scaledToFill()
                     .frame(height: 200)
                     .clipped()
                 Spacer()
             }
-            
-            
+
+            // Back Button
             Button(action: {
                 presentationMode.wrappedValue.dismiss()
             }) {
@@ -337,22 +361,15 @@ struct ProfileHeaderView: View {
             }
             .padding(.top, 30)
             .padding(.leading, 16)
-            .zIndex(1)
-            
-            // Foreground content
+            .zIndex(2)
+
+            // Profile Image
             VStack(alignment: .leading, spacing: 4) {
                 HStack {
-                    //                           Image(profileImage)
-                    //                               .resizable()
-                    //                               .clipShape(Circle())
-                    //                               .overlay(Circle().stroke(Color.white, lineWidth: 2))
-                    //                               .frame(width: 80, height: 80)
-                    //                               .offset(x: 16, y: 160)
                     AsyncImage(url: URL(string: profileImage)) { phase in
                         switch phase {
                         case .empty:
-                            ProgressView()
-                                .frame(width: 80, height: 80)
+                            ProgressView().frame(width: 80, height: 80)
                         case .success(let image):
                             image
                                 .resizable()
@@ -372,24 +389,90 @@ struct ProfileHeaderView: View {
                         }
                     }
                     Spacer()
-                    
-                    
                 }
             }
+
+            // Tap outside to dismiss menu
+            if showMoreMenu {
+                Color.black.opacity(0.001)
+                    .ignoresSafeArea()
+                    .onTapGesture {
+                        withAnimation {
+                            showMoreMenu = false
+                        }
+                    }
+                    .zIndex(1)
+            }
+
+            // More menu
+            if showMoreMenu {
+                VStack(alignment: .leading, spacing: 0) {
+                    Button(action: {
+                        showMoreMenu = false
+                        navigateToRating = true
+                    }) {
+                        Text("Rate Seller")
+                            .font(.custom(poppinsRegular, size: 14))
+                            .foregroundColor(.black)
+                            .padding(.vertical, 12)
+                            .padding(.horizontal, 16)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+
+                    Divider()
+
+                    Button(action: {
+                        showMoreMenu = false
+                        // Handle Block Seller
+                    }) {
+                        Text("Block Seller")
+                            .font(.custom(poppinsRegular, size: 14))
+                            .foregroundColor(.black)
+                            .padding(.vertical, 12)
+                            .padding(.horizontal, 16)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+
+                    Divider()
+
+                    Button(action: {
+                        showMoreMenu = false
+                        // Handle Report
+                    }) {
+                        Text("Report")
+                            .font(.custom(poppinsRegular, size: 14))
+                            .foregroundColor(.black)
+                            .padding(.vertical, 12)
+                            .padding(.horizontal, 16)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                }
+                .background(Color.white)
+                .cornerRadius(12)
+                .shadow(radius: 8)
+                .frame(width: 180)
+                .padding(.top, 80) // Align under button
+                .padding(.trailing, 16)
+                .frame(maxWidth: .infinity, alignment: .topTrailing)
+                .transition(.opacity.combined(with: .move(edge: .top)))
+                .zIndex(2)
+            }
         }
-        .frame(height: 220) // Height of header section
-        
+        .frame(height: 220)
+
         VStack(alignment: .leading, spacing: 8) {
-            HStack(spacing:8){
-                VStack{
+            HStack(spacing: 8) {
+                VStack(alignment: .leading) {
                     Text(name)
                         .font(.custom(poppinsBold, size: 16.0))
-                    //                        .fontWeight(.bold)
+
                     Text(email)
                         .font(.custom(poppinsRegular, size: 11.0))
                         .foregroundColor(.gray)
                 }
+
                 Spacer()
+
                 HStack(spacing: 12) {
                     Button(action: {
                         onTapNotify()
@@ -401,7 +484,7 @@ struct ProfileHeaderView: View {
                             .clipShape(Circle())
                             .shadow(radius: 2)
                     }
-                    
+
                     Button(action: {
                         // Share action
                     }) {
@@ -412,9 +495,11 @@ struct ProfileHeaderView: View {
                             .clipShape(Circle())
                             .shadow(radius: 2)
                     }
-                    
+
                     Button(action: {
-                        // More options action
+                        withAnimation {
+                            showMoreMenu.toggle()
+                        }
                     }) {
                         Image(systemName: "ellipsis")
                             .foregroundColor(.black)
@@ -424,11 +509,8 @@ struct ProfileHeaderView: View {
                             .shadow(radius: 2)
                     }
                 }
-                
             }
-            
-            
-            
+
             HStack(spacing: 16) {
                 Text("\(followers) Followers")
                     .font(.custom(poppinsSemiBold, size: 13.0))
@@ -436,14 +518,18 @@ struct ProfileHeaderView: View {
                     .font(.custom(poppinsSemiBold, size: 13.0))
                     .foregroundColor(.gray)
             }
-            
+
             Text(bio)
                 .font(.custom(poppinsRegular, size: 13.0))
                 .foregroundColor(.gray)
-        }.padding(.horizontal,8)
+        }
+        .padding(.horizontal, 8)
+        CusNavLink(doNavigate: $navigateToRating, destination: RateSellerView(sellerID: Int(sellerID) ?? 0, sellerImage: profileImage, sellerName: name))
     }
 }
 
+
+//MARK: ProfileActionsView.
 struct ProfileActionsView: View {
     @Binding var isFollowing: Bool
     var onTapFollow :() -> () = { }

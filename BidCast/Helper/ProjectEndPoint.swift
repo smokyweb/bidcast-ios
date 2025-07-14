@@ -55,6 +55,8 @@ enum APIEndPoint{
     case deleteNotification(param : DeleteNotificationRequest)
     case getLiveShow
     case getMyScheduleShow(param : GetMyScheduleShowRequest)
+    case getTotalRating(param : GetTotalRatingRequest)
+    case addRating(param : AddRatingRequest)
     case productOrderListing(param : ProductOrderListingRequest)
     case productPurchaseDetail(param : ProductPurchaseDetailRequest)
     case productOrder(param : ProductOrderRequest)
@@ -472,8 +474,10 @@ extension APIEndPoint: EndPointType {
             return "stripe/check-Kyc"
         case .fundTransfer:
             return "stripe/fund-transfer"
-       
-        
+        case .getTotalRating(let param):
+            return "get-seller-rating?seller_id=\(param.seller_id)"
+        case .addRating:
+            return "seller-rating"
       
         }
     }
@@ -778,6 +782,10 @@ extension APIEndPoint: EndPointType {
         case .checkKYC:
             return .post
         case .fundTransfer:
+            return .post
+        case .getTotalRating:
+            return .get
+        case .addRating:
             return .post
         }
     }
@@ -1088,8 +1096,10 @@ extension APIEndPoint: EndPointType {
             return nil
         case .fundTransfer(let param):
             return param
-        
-       
+        case .getTotalRating:
+            return nil
+        case .addRating(let param):
+            return param
         
         }
     }

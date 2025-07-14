@@ -497,6 +497,20 @@ struct GetMyScheduleShowRequest : Encodable{
     var page : Int
 }
 
+struct GetTotalRatingRequest : Encodable{
+    var seller_id : Int
+}
+
+struct AddRatingRequest : Encodable{
+    var seller_id : Int
+    var overall_rating : Double
+    var shipping_rating : Double
+    var packaging_rating : Double
+    var accuracy_rating : Double
+    var comment : String
+}
+
+
 struct ProductOrderListingRequest : Encodable{
     var type : String
 }

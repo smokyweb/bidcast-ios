@@ -81,5 +81,60 @@ struct GetMyScheduleShowModel : Codable {
     }
 }
 
+// MARK: - TotalRating
+struct TotalRating: Codable {
+    var totalReviews: Int?
+    var ratings: [RatingDetail]?
+
+    enum CodingKeys: String, CodingKey {
+        case totalReviews = "total_reviews"
+        case ratings
+    }
+}
+
+// MARK: - RatingDetail
+struct RatingDetail: Codable {
+    var id, userID, sellerID: Int?
+    var overallRating, shippingRating, packagingRating, accuracyRating: String?
+    var comment, createdAt, updatedAt: String?
+    var user: User
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case userID = "user_id"
+        case sellerID = "seller_id"
+        case overallRating = "overall_rating"
+        case shippingRating = "shipping_rating"
+        case packagingRating = "packaging_rating"
+        case accuracyRating = "accuracy_rating"
+        case comment
+        case createdAt = "created_at"
+        case updatedAt = "updated_at"
+        case user
+    }
+}
+
+// MARK: - AddRatigModel
+struct AddRatigModel: Codable {
+    var id, userID, sellerID: Int?
+    var overallRating, shippingRating, packagingRating, accuracyRating: Double?
+    var comment, createdAt, updatedAt: String?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case userID = "user_id"
+        case sellerID = "seller_id"
+        case overallRating = "overall_rating"
+        case shippingRating = "shipping_rating"
+        case packagingRating = "packaging_rating"
+        case accuracyRating = "accuracy_rating"
+        case comment
+        case createdAt = "created_at"
+        case updatedAt = "updated_at"
+    }
+}
+
+
+
 
 
