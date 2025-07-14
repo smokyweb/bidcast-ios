@@ -22,7 +22,7 @@ struct HomeViewScreen: View {
     @State var isLoading: Bool = false
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @State var showError: Bool = false
-    @State var userId = "48"
+    @State var userId = ""
     @Binding var comeFromExploreScreen : Bool
     @State var navigateToNoti : Bool = false
     
