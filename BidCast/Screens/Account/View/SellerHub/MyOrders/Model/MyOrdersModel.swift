@@ -86,4 +86,5 @@ struct ResponseModelOrder<T: Codable>: Codable {
     var status, message, error_type: String?
     var data: T?
     var new_order_count, completed_order_count,processing_order_count: Int?
+    var total,totalPage,currentPage,perPage : Int?
 }

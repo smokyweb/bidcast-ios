@@ -23,7 +23,8 @@ struct MyOrdersScreen: View {
     @State var newOrder = ""
     @State var completedOrder = ""
     @State var ProcessingOrder = ""
-
+    @State var currentPage = 1
+    
     var body: some View {
         ZStack(alignment: .bottom) {
             VStack(spacing: 4) {
@@ -40,8 +41,8 @@ struct MyOrdersScreen: View {
                         count: .constant(0)
                     )
                 }
-
-
+                
+                
                 // MARK: - Scrollable Order List
                 ScrollView {
                     VStack(spacing: 16) {
@@ -98,41 +99,6 @@ struct MyOrdersScreen: View {
             )
         }
     }
-    
-    func fetchOrders(for type: MyOrderValue) {
-        Task {
-            SVProgressHUD.show()
-            let param = ProductOrderListingRequest(type: type.apiValue)
-            await viewModel.getMyOrderList(parameters: param)
-            await SVProgressHUD.dismiss()
-            getOrderSuccess()
-        }
-    }
-
-    func getOrderSuccess() {
-        SVProgressHUD.dismiss()
-        let response = viewModel.myOrderResponse
-        if response.status == "success" {
-            myOrderListArr = response.data ?? []
-            newOrder = "\(response.new_order_count ?? 0)"
-            completedOrder = "\(response.completed_order_count ?? 0)"
-            ProcessingOrder = "\(response.processing_order_count ?? 0)"
-
-
-        } else {
-           
-        }
-    }
-    func offerCount(for offer: MyOrderValue) -> String {
-            switch offer {
-            case .newOrders:
-                return "\(viewModel.myOrderResponse.new_order_count ?? 0)"
-            case .processing:
-                return "\(viewModel.myOrderResponse.processing_order_count ?? 0)"
-            case .completed:
-                return "\(viewModel.myOrderResponse.completed_order_count  ?? 0)"
-            }
-        }
 }
 
 //MARK: API Call Passing Param.
@@ -146,10 +112,72 @@ extension MyOrderValue {
     }
 }
 
+//MARK: API CALL LOGIC.
+extension MyOrdersScreen{
+    //MARK: fetchOrders.
+    func fetchOrders(for type: MyOrderValue) {
+        Task {
+            SVProgressHUD.show()
+            let param = ProductOrderListingRequest(type: type.apiValue, page: currentPage)
+            await viewModel.getMyOrderList(parameters: param)
+            await SVProgressHUD.dismiss()
+            getOrderSuccess()
+        }
+    }
+    
+    //MARK: getOrderSuccess.
+    func getOrderSuccess() {
+        SVProgressHUD.dismiss()
+        let response = viewModel.myOrderResponse
+        if response.status == "success" {
+            myOrderListArr = response.data ?? []
+            newOrder = "\(response.new_order_count ?? 0)"
+            completedOrder = "\(response.completed_order_count ?? 0)"
+            ProcessingOrder = "\(response.processing_order_count ?? 0)"
+        } else {
+            showError = true
+            alertType = .sheetType(
+                icon: .alert,
+                title: response.error_type?.capitalized ?? "",
+                message: response.message?.capitalized ?? "",
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
+            )
+        }
+    }
+    
+    //MARK: fetchMoreOrder.
+    func fetchMoreOrder() {
+        currentPage += 1
+        fetchOrders(for: selectedOrderType ?? .newOrders)
+    }
+    
+    //MARK: handlePagination
+    func handlePagination(index: Int) {
+        let isLastItem = index == myOrderListArr.count - 1
+        let canFetchMore = (viewModel.myOrderResponse.total ?? 0) > myOrderListArr.count
+        
+        if isLastItem && canFetchMore {
+            fetchMoreOrder()
+        }
+    }
+    
+    //MARK: offerCount.
+    func offerCount(for offer: MyOrderValue) -> String {
+        switch offer {
+        case .newOrders:
+            return "\(viewModel.myOrderResponse.new_order_count ?? 0)"
+        case .processing:
+            return "\(viewModel.myOrderResponse.processing_order_count ?? 0)"
+        case .completed:
+            return "\(viewModel.myOrderResponse.completed_order_count  ?? 0)"
+        }
+    }
+}
+
 // MARK: - MyOrderValue
 enum MyOrderValue: String, CaseIterable, CustomStringConvertible {
     case newOrders, processing, completed
-
     var labelOlt: String {
         switch self {
         case .newOrders: return "24"
@@ -157,7 +185,7 @@ enum MyOrderValue: String, CaseIterable, CustomStringConvertible {
         case .completed: return "892"
         }
     }
-
+    
     var description: String {
         switch self {
         case .newOrders: return "New Orders"

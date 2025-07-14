@@ -26,7 +26,7 @@ struct HomeViewScreen: View {
     @Binding var comeFromExploreScreen : Bool
     @State var navigateToNoti : Bool = false
     
-    @State var navigateToProfile = true
+    @State var navigateToProfile = false
     @State private var showSearchView: Bool = false
     
     var body: some View {

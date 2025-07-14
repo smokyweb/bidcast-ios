@@ -274,8 +274,8 @@ extension APIEndPoint: EndPointType {
             return "get-live-show"
         case .getMyScheduleShow(param:let param):
             return "get-my-schedule-show?=\(param.type)&user_id=\(param.user_id)&page=\(param.page)"
-        case .productOrderListing:
-            return "product/order-listing"
+        case .productOrderListing(param:let param):
+            return "product/order-listing?type=\(param.type)&page=\(param.page)"
         case .productPurchaseDetail:
             return "product/purchase-details"
         case .productOrder:
@@ -895,7 +895,7 @@ extension APIEndPoint: EndPointType {
             return param
             
         case .productOrderListing(param: let param):
-            return param
+            return nil
         case .productPurchaseDetail(param: let param):
             return param
         case .productOrder(param: let param):
