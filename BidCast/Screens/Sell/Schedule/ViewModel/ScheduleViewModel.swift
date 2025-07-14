@@ -20,7 +20,8 @@ final class ScheduleViewModel: ObservableObject {
     // MARK: - Published Properties
     @Published var lessonsResponse: ResponseModal<[LessonModel]>?
     @Published var tipsResponse: ResponseModal<TitleTipsModel>?
-    @Published var productResponse: ResponseModal<[ProductDataModel]>?
+    @Published var productResponse: ResponseModalPaginate<[ProductDataModel]>?
+    @Published var getProductResponse: ResponseModal<[ProductDataModel]>?
     @Published var storeShowResponse : ResponseModal<StoreScheduleShowModel>?
     @Published var errorMessage: String? = nil
     @Published var requestType: String = ""
@@ -112,7 +113,7 @@ final class ScheduleViewModel: ObservableObject {
     
     func getProductList(parameters: UserProductRequest) async {
         do {
-            let response: ResponseModal<[ProductDataModel]> = try await APIManager.shared.request(
+            let response: ResponseModalPaginate<[ProductDataModel]> = try await APIManager.shared.request(
                 type: APIEndPoint.getUserProduct(param: parameters),
                 header: true
             )
@@ -128,7 +129,7 @@ final class ScheduleViewModel: ObservableObject {
                 type: APIEndPoint.getProduct(param: parameters),
                 header: true
             )
-            self.productResponse = response
+            self.getProductResponse = response
         } catch {
             handle(error: error)
         }

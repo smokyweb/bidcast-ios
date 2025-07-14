@@ -50,13 +50,13 @@ struct AddProductsScreen: View {
                 )
             }
             ScrollView{
-            // Placeholder for banner/image box
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color.gray.opacity(0.1))
-                .frame(height: 80)
-                .padding(.horizontal)
-            Spacer()
-            // Added Product Section
+                // Placeholder for banner/image box
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color.gray.opacity(0.1))
+                    .frame(height: 80)
+                    .padding(.horizontal)
+                Spacer()
+                // Added Product Section
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Added Product")
                         .font(.custom(poppinsSemiBold, size: 13.0))
@@ -65,64 +65,64 @@ struct AddProductsScreen: View {
                             .font(.custom(poppinsSemiBold, size: 13.0))
                     }else{
                         ForEach(productData.indices, id:\.self ){ index in
-                        let data = productData[index]
-                        let idStr = "\(data.id ?? -1)"
-                        let isSelected = selectedProductIDs.contains(idStr)
-                        HStack {
-                            if let urlString = data.images?.first, let url = URL(string: urlString) {
-                                AsyncImage(url: url) { image in
-                                    image.resizable()
-                                } placeholder: {
-                                    Color.gray
-                                }
-                                .frame(width: 50, height: 50)
-                                .clipShape(RoundedRectangle(cornerRadius: 8))
-                            } else {
-                                Image("fashion") // Fallback asset
-                                    .resizable()
-                                    .scaledToFit()
+                            let data = productData[index]
+                            let idStr = "\(data.id ?? -1)"
+                            let isSelected = selectedProductIDs.contains(idStr)
+                            HStack {
+                                if let urlString = data.images?.first, let url = URL(string: urlString) {
+                                    AsyncImage(url: url) { image in
+                                        image.resizable()
+                                    } placeholder: {
+                                        Color.gray
+                                    }
                                     .frame(width: 50, height: 50)
-                            }
-                            
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(data.title ?? "Untitled")
-                                    .font(.custom(poppinsBold, size: 14.0))
-                                Text(data.category?.name ?? "Unknown Category")
-                                    .font(.custom(poppinsSemiBold, size: 13.0))
-                                    .foregroundColor(.gray)
-                                Text("Quantity: \(data.quantity ?? 0)")
-                                    .font(.custom(poppinsSemiBold, size: 13.0))
-                                    .foregroundColor(.gray)
-                            }
-                            
-                            Spacer()
-                            
-                            Button(action: {
-                                // Edit product
-                            }) {
-                                Image(systemName: "square.and.pencil")
-                            }
-                            
-                            Button(action: {
-                                // Delete product
-                            }) {
-                                Image(systemName: "trash")
-                                    .foregroundColor(.red)
-                            }
-                            
-                            Button(action: {
-                                if isSelected {
-                                    selectedProductIDs.removeAll { $0 == idStr }
+                                    .clipShape(RoundedRectangle(cornerRadius: 8))
                                 } else {
-                                    selectedProductIDs.append(idStr)
+                                    Image("fashion") // Fallback asset
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 50, height: 50)
                                 }
-                                request.product_ids = selectedProductIDs.joined(separator: ",")
-                            }) {
-                                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                                    .foregroundColor(isSelected ? .green : .gray)
+                                
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(data.title ?? "Untitled")
+                                        .font(.custom(poppinsBold, size: 14.0))
+                                    Text(data.category?.name ?? "Unknown Category")
+                                        .font(.custom(poppinsSemiBold, size: 13.0))
+                                        .foregroundColor(.gray)
+                                    Text("Quantity: \(data.quantity ?? 0)")
+                                        .font(.custom(poppinsSemiBold, size: 13.0))
+                                        .foregroundColor(.gray)
+                                }
+                                
+                                Spacer()
+                                
+                                Button(action: {
+                                    // Edit product
+                                }) {
+                                    Image(systemName: "square.and.pencil")
+                                }
+                                
+                                Button(action: {
+                                    // Delete product
+                                }) {
+                                    Image(systemName: "trash")
+                                        .foregroundColor(.red)
+                                }
+                                
+                                Button(action: {
+                                    if isSelected {
+                                        selectedProductIDs.removeAll { $0 == idStr }
+                                    } else {
+                                        selectedProductIDs.append(idStr)
+                                    }
+                                    request.product_ids = selectedProductIDs.joined(separator: ",")
+                                }) {
+                                    Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                                        .foregroundColor(isSelected ? .green : .gray)
+                                }
                             }
                         }
-                    }
                         .padding()
                         .background(Color.white)
                         .cornerRadius(12)
@@ -130,68 +130,68 @@ struct AddProductsScreen: View {
                             RoundedRectangle(cornerRadius: 12)
                                 .stroke(Color.gray.opacity(0.3))
                         )
+                    }
                 }
-            }
-            .padding(.horizontal)
-            
-                Spacer()
-            // Add More Section
-            VStack(alignment: .leading, spacing: 4) {
-                HStack {
-                    Text("Add More Products")
-                        .fontWeight(.semibold)
-                    Spacer()
-                    Text("\(productCount)/100")
-                        .foregroundColor(.gray)
-                        .font(.footnote)
-                }
+                .padding(.horizontal)
                 
-                VStack(spacing: 16) {
-                    addProductOption(text: "Add another product")
-                    addProductOption(text: "Select from product Inventory")
+                Spacer()
+                // Add More Section
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack {
+                        Text("Add More Products")
+                            .fontWeight(.semibold)
+                        Spacer()
+                        Text("\(productCount)/100")
+                            .foregroundColor(.gray)
+                            .font(.footnote)
+                    }
+                    
+                    VStack(spacing: 16) {
+                        addProductOption(text: "Add another product")
+                        addProductOption(text: "Select from product Inventory")
+                    }
                 }
+                .padding(.horizontal)
             }
-            .padding(.horizontal)
-        }
             
-
+            
             // Finish Button
             Button(action: {
                 print(request)
                 guard !request.title.isEmpty else {
                     hudMsg = "Please enter title"
-                        showhud = true
-                        return
+                    showhud = true
+                    return
                 }
                 guard !request.category_id.isEmpty else {
                     hudMsg = "Please enter category type"
-                        showhud = true
-                        return
+                    showhud = true
+                    return
                 }
                 guard !request.auction_type_id.isEmpty else {
                     hudMsg = "Please enter auction type"
-                        showhud = true
-                        return
+                    showhud = true
+                    return
                 }
                 guard !thumbNail.isEmpty else {
                     hudMsg = "Please select thumbnail image"
-                        showhud = true
-                        return
+                    showhud = true
+                    return
                 }
                 guard !request.date.isEmpty else {
                     hudMsg = "Please enter date"
-                        showhud = true
-                        return
+                    showhud = true
+                    return
                 }
                 guard !request.time.isEmpty else {
                     hudMsg = "Please select time"
-                        showhud = true
-                        return
+                    showhud = true
+                    return
                 }
                 guard !request.product_ids.isEmpty else {
                     hudMsg = "Please select product"
-                        showhud = true
-                        return
+                    showhud = true
+                    return
                 }
                 if fromPrepare{
                     backToPrepare = false
@@ -231,28 +231,11 @@ struct AddProductsScreen: View {
             }
             .padding([.horizontal, .bottom])
             
-           
+            
         }
         .navigationBarHidden(true)
         .onAppear{
-            Task{
-                SVProgressHUD.show()
-                await viewModel.getProductList(parameters: UserProductRequest(user_id: UserDefaults.userId,category_id:request.category_id, page: currentPage))
-//                await viewModel.getProduct(parameters: ProductRequest(category_id : request.category_id))
-                await SVProgressHUD.dismiss()
-                if viewModel.errorMessage == "" || viewModel.errorMessage == nil {
-                    productSuccess()
-                }else{
-                    alertType = .sheetType(
-                        icon: .alert,
-                        title: "No product found",
-                        message: "No product found for the selected category",
-                        primaryBtnText: AppString.ok.localized,
-                        secondaryBtnText:""
-                    )
-                    showError = true
-                }
-            }
+            fetchProduct(page: currentPage)
         }
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
@@ -261,7 +244,7 @@ struct AddProductsScreen: View {
             if viewModel.errorMessage != nil || viewModel.errorMessage != "" {
                 showError = true
             }else{
-               
+                
                 showError = false
             }
         }, content: {
@@ -274,22 +257,86 @@ struct AddProductsScreen: View {
                         
                     }else{
                         withAnimation { showError = false }
-                       
+                        
                     }
-                   
+                    
                 }, onSecondaryClick: {
                     withAnimation { showError = false }
                 })
         })
         CusNavLink(doNavigate: $navigateToTab, destination: TabbarScreen())
     }
+    
+    
+    // MARK: - Add Product Tile
+    private func addProductOption(text: String) -> some View {
+        VStack {
+            Image(systemName: "plus")
+                .foregroundColor(.gray)
+            Text(text)
+                .foregroundColor(.gray)
+                .font(.subheadline)
+        }
+        .frame(maxWidth: .infinity)
+        .frame(height: 120)
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color.gray.opacity(0.4), style: StrokeStyle(lineWidth: 1, dash: [4]))
+        )
+    }
+}
+
+//MARK: API LOGIC.
+extension AddProductsScreen{
+    
+    // MARK: - Fetch Inventory List
+    func fetchProduct(page: Int) {
+        Task{
+            SVProgressHUD.show()
+            await viewModel.getProductList(parameters: UserProductRequest(user_id: UserDefaults.userId, category_id: request.category_id, page: page))
+            await SVProgressHUD.dismiss()
+            productSuccess()
+        }
+    }
+    
+    //MARK: fetchMoreProduct.
+    func fetchMoreProduct() {
+        Task {
+            currentPage += 1
+            await viewModel.getProductList(parameters: UserProductRequest(user_id: UserDefaults.userId, category_id: request.category_id, page: currentPage))
+            productSuccess()
+        }
+    }
+    
+    //MARK: handlePagination.
+    func handlePagination(index: Int) {
+        let isLastItem = index == productData.count - 1
+        let canFetchMore = (viewModel.productResponse?.total ?? 0) > productData.count
+
+        if isLastItem && canFetchMore {
+            fetchMoreProduct()
+        }
+    }
+    
+    
+    //MARK: productSuccess.
     func productSuccess(){
         let response = viewModel.productResponse
         if response?.status == "success"{
             productData = response?.data ?? [ProductDataModel]()
+        }else{
+            showError = true
+            alertType = .sheetType(
+                icon: .alert,
+                title: response?.error_type?.capitalized ?? "",
+                message: response?.message?.capitalized ?? "",
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
+            )
         }
     }
     
+    //MARK: storeSuccess.
     func storeSuccess(){
         SVProgressHUD.dismiss()
         let response = viewModel.storeShowResponse
@@ -312,23 +359,6 @@ struct AddProductsScreen: View {
             )
             showError = true
         }
-    }
-
-    // MARK: - Add Product Tile
-    private func addProductOption(text: String) -> some View {
-        VStack {
-            Image(systemName: "plus")
-                .foregroundColor(.gray)
-            Text(text)
-                .foregroundColor(.gray)
-                .font(.subheadline)
-        }
-        .frame(maxWidth: .infinity)
-        .frame(height: 120)
-        .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(Color.gray.opacity(0.4), style: StrokeStyle(lineWidth: 1, dash: [4]))
-        )
     }
 }
 
