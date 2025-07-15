@@ -64,7 +64,7 @@ class ZegoManager: NSObject, ZegoEventHandler , ObservableObject {
     
 //    func onPlayerStateUpdate(_ streamID: String, state: ZegoPlayerState, errorCode: Int32, extendedData: [AnyHashable : Any]?) {
 //        print("🔴 StreamID: \(streamID) | State: \(state.rawValue) | Error: \(errorCode)")
-//        
+//
 //        if state == .noPlay || errorCode != 0 {
 //            DispatchQueue.main.async {
 //                self.errorTitle = "Stream Ended"
@@ -85,7 +85,7 @@ class ZegoManager: NSObject, ZegoEventHandler , ObservableObject {
 //        for msg in messageList {
 //            print("🗣️ \(msg.fromUser.userName): \(msg.message)")
 //        }
-//        
+//
 //        DispatchQueue.main.async {
 //            if !messageList.isEmpty {
 //                self.isCommentsAvailable = true
@@ -98,3 +98,4 @@ class ZegoManager: NSObject, ZegoEventHandler , ObservableObject {
 //        }
 //    }
 }
+

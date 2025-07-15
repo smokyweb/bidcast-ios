@@ -18,14 +18,14 @@ struct OptionGridButtonView: View {
         Button(action: action) {
             HStack {
                 Image(systemName: icon)
-                    .foregroundColor(isSelected ? .red : .black)
+                    .foregroundColor(isSelected ? .defaultTheme : .black)
                 Text(label)
                     .font(.custom(poppinsSemiBold, size: 13.0))
                     .foregroundColor(.black)
                 Spacer()
             }
             .padding()
-            .frame(maxWidth: .infinity)
+            .frame(maxWidth: .infinity,maxHeight: .infinity)
             .background(isSelected ? Color.defaultTheme.opacity(0.1) : Color(.systemGray6))
             .cornerRadius(12)
         }

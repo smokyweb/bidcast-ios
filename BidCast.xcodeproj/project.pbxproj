@@ -4509,7 +4509,7 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = /Users/gadgetzone/Documents/Live/bidcast/BidCast/ZegoBridgeHeader.h;
+				SWIFT_OBJC_BRIDGING_HEADER = /Users/jamtech/Documents/GitHub/bidcast/BidCast/ZegoBridgeHeader.h;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				XROS_DEPLOYMENT_TARGET = 2.4;
@@ -4558,7 +4558,7 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = /Users/gadgetzone/Documents/Live/bidcast/BidCast/ZegoBridgeHeader.h;
+				SWIFT_OBJC_BRIDGING_HEADER = /Users/jamtech/Documents/GitHub/bidcast/BidCast/ZegoBridgeHeader.h;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				XROS_DEPLOYMENT_TARGET = 2.4;

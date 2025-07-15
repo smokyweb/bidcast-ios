@@ -139,237 +139,289 @@ struct LiveStream: View {
                         
                         //MARK: Side menu
                         
-                        VStack(spacing: 20) {
-                            Spacer()
-                            Button(action: {}) {
-                                Image(systemName: "gift")
-                                    .font(.title2)
-                                    .foregroundColor(.white)
-                            }
-                            Button(action: {}) {
-                                Image(systemName: "paperclip")
-                                    .font(.title2)
-                                    .foregroundColor(.white)
-                            }
-                            Button(action: {}) {
-                                Image(systemName: "arrowshape.turn.up.right")
-                                    .font(.title2)
-                                    .foregroundColor(.white)
-                            }
-                            Button(action: {}) {
-                                Image(systemName: "wallet.pass")
-                                    .font(.title2)
-                                    .foregroundColor(.white)
-                            }
-                            Button(action: {}) {
-                                Image(systemName: "cart")
-                                    .font(.title2)
-                                    .foregroundColor(.white)
-                            }
-                        }
-                        .padding(.trailing)
-                        .padding(.bottom, 200)
-                        .frame(maxWidth: .infinity, alignment: .trailing)
-                        
-                        Spacer()
-                        
-                        
-                        //MARK: Comment section
-                        if chatManager.messages.count > 0 {
-                            HStack{
-                                ScrollViewReader { scrollProxy in
-                                    ScrollView(.vertical, showsIndicators: false) {
-                                        VStack(alignment: .leading, spacing: 8) {
-                                            ForEach(chatManager.messages) { comment in
-                                                HStack(alignment: .center, spacing: 6) {
-                                                    Image(comment.image)
-                                                        .resizable()
-                                                        .scaledToFit()
-                                                        .frame(width: 24, height: 24)
-                                                        .clipShape(Circle())
-                                                    VStack(alignment: .leading) {
-                                                        Text(comment.username)
-                                                            .font(.custom(poppinsSemiBold, size: 12.0))
-                                                            .bold()
-                                                            .foregroundColor(.white)
-                                                        Text(comment.message)
-                                                            .font(.footnote)
-                                                            .foregroundColor(.white)
+                        VStack(alignment: .leading, spacing: 12){
+                            
+                            //MARK: Comment section
+                            if chatManager.messages.count > 0 {
+                                HStack{
+                                    ScrollViewReader { scrollProxy in
+                                        ScrollView(.vertical, showsIndicators: false) {
+                                            VStack(alignment: .leading, spacing: 8) {
+                                                ForEach(chatManager.messages) { comment in
+                                                    HStack(alignment: .center, spacing: 6) {
+                                                        CustomProfileImage(url: comment.image, isCircular: true,size: 24)
+//                                                        Image(comment.image)
+//                                                            .resizable()
+//                                                            .scaledToFit()
+//                                                            .frame(width: 24, height: 24)
+//                                                            .clipShape(Circle())
+                                                        VStack(alignment: .leading) {
+                                                            Text(comment.username.capitalizingFirstLetter())
+                                                                .font(.custom(poppinsSemiBold, size: 14.0))
+                                                                
+                                                                .foregroundColor(.white)
+                                                            Text(comment.message)
+                                                                .font(.custom(poppinsRegular, size: 12.0))
+                                                                .foregroundColor(.white)
+                                                        }
+                                                        Spacer()
                                                     }
-                                                    Spacer()
+                                                    .id(comment.id)
                                                 }
-                                                .id(comment.id)
                                             }
+                                            .padding(.horizontal,8)
+                                            .padding(.vertical,4)
                                         }
+                                        .frame(width:screenWidth - 80,height: 150)
+                                        .background(Color.black.opacity(0.3))
+                                        .cornerRadius(10)
                                         .padding(.horizontal)
-                                    }
-                                    .onChange(of: chatManager.messages) { _ in
-                                        withAnimation {
-                                            
-                                            if let lastID = chatManager.messages.last?.id {
-                                                scrollProxy.scrollTo(lastID, anchor: .bottom)
+                                        .onChange(of: chatManager.messages) { _ in
+                                            withAnimation {
+                                                if let lastID = chatManager.messages.last?.id {
+                                                    scrollProxy.scrollTo(lastID, anchor: .bottom)
+                                                }
                                             }
                                         }
                                     }
-                                    .frame(width:screenWidth - 50,height: 150)
+                                    //
+                                }
+                                
+                            }
+                            //                        Spacer()
+                            
+                            VStack(alignment: .leading,spacing: 12){
+                                //MARK: Product Details
+                                if let product = BiddingDetail.product {
+                                    HStack(spacing: 12) {
+                                        CustomProfileImage(url: product.image, isCircular: false,cornerRadius: 8.0,size: 60.0)
+                                        
+                                        VStack(alignment: .leading, spacing: 4) {
+                                            Text(BiddingDetail.product?.name.capitalizingFirstLetter() ?? "")
+                                                .font(.custom(poppinsBold, size: 13.0))
+                                                .foregroundColor(.black)
+                                            HStack(spacing: 6) {
+                                                Text("Tag")
+                                                    .font(.custom(poppinsSemiBold, size: 12.0))
+                                                    .padding(4)
+                                                    .background(Color.purple.opacity(0.7))
+                                                    .cornerRadius(4)
+                                                Text("Tag")
+                                                    .font(.custom(poppinsSemiBold, size: 12.0))
+                                                    .padding(4)
+                                                    .background(Color.pink.opacity(0.7))
+                                                    .cornerRadius(4)
+                                            }
+                                            Text("Lorem ipsum dolor sit amet")
+                                                .font(.custom(poppinsSemiBold, size: 12.0))
+                                                .foregroundColor(.white)
+                                        }
+                                        //                                Spacer()
+                                        
+                                    }
+                                    .padding()
+                                    .frame(maxWidth: .infinity)
                                     .background(Color.black.opacity(0.3))
                                     .cornerRadius(10)
                                     .padding(.horizontal)
-                                }
-                                Spacer()
-                            }
-                            .padding(.bottom,50)
-                        }
-                        //MARK: Product Details
-                        if let product = BiddingDetail.product {
-                            HStack(spacing: 12) {
-                                CustomProfileImage(url: BiddingDetail.product?.image ?? "", isCircular: false,cornerRadius: 8.0,size: 60.0)
-                                
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(BiddingDetail.product?.name.capitalizingFirstLetter() ?? "")
-                                        .font(.custom(poppinsBold, size: 13.0))
-                                        .foregroundColor(.black)
-                                    HStack(spacing: 6) {
-                                        Text("Tag")
-                                            .font(.custom(poppinsSemiBold, size: 12.0))
-                                            .padding(4)
-                                            .background(Color.purple.opacity(0.7))
-                                            .cornerRadius(4)
-                                        Text("Tag")
-                                            .font(.custom(poppinsSemiBold, size: 12.0))
-                                            .padding(4)
-                                            .background(Color.pink.opacity(0.7))
-                                            .cornerRadius(4)
-                                    }
-                                    Text("Lorem ipsum dolor sit amet")
-                                        .font(.custom(poppinsSemiBold, size: 12.0))
-                                        .foregroundColor(.white)
-                                }
-                                Spacer()
-                                
-                            }
-                            .padding()
-                            .background(Color.black.opacity(0.3))
-                            .cornerRadius(10)
-                            .padding(.horizontal)
-                            
-                            //MARK: Swipe fearture
-                            HStack(spacing: 0) {
-                                // 3/4 Swipe Area
-                                ZStack(alignment: .leading) {
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .fill(.black.opacity(0.3))
-                                        .frame(height: 60)
                                     
-                                    
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .fill(.defaultTheme)
-                                        .frame(width: 50, height: 40)
-                                        .overlay(
-                                            Text(swipeConfirmed ? "✓" : "→")
+                                    //MARK: Swipe fearture
+                                    HStack(spacing: 0) {
+                                        // 3/4 Swipe Area
+                                        ZStack(alignment: .leading) {
+                                            RoundedRectangle(cornerRadius: 10)
+                                                .fill(.black.opacity(0.3))
+                                                .frame(height: 60)
+                                            
+                                            
+                                            RoundedRectangle(cornerRadius: 10)
+                                                .fill(.defaultTheme)
+                                                .frame(width: 50, height: 40)
+                                                .overlay(
+                                                    Text(swipeConfirmed ? "✓" : "→")
+                                                        .foregroundColor(.white)
+                                                        .bold()
+                                                )
+                                                .offset(x: min(dragOffset.width + 110, totalSwipeWidth - 90))
+                                                .gesture(
+                                                    DragGesture()
+                                                        .onChanged { value in
+                                                            if value.translation.width >= 0 {
+                                                                dragOffset = value.translation
+                                                            }
+                                                        }
+                                                        .onEnded { value in
+                                                            if value.translation.width > totalSwipeWidth * 0.5 {
+                                                                swipeConfirmed = true
+                                                                dragOffset = .zero
+                                                                incrementPrice()
+                                                            } else {
+                                                                swipeConfirmed = false
+                                                                dragOffset = .zero
+                                                            }
+                                                        }
+                                                )
+                                                .animation(.easeOut, value: dragOffset)
+                                            
+                                            Text("Swipe to Bid")
+                                                .font(.custom(poppinsSemiBold, size: 14.0))
                                                 .foregroundColor(.white)
-                                                .bold()
-                                        )
-                                        .offset(x: min(dragOffset.width + 110, totalSwipeWidth - 90))
-                                        .gesture(
-                                            DragGesture()
-                                                .onChanged { value in
-                                                    if value.translation.width >= 0 {
-                                                        dragOffset = value.translation
-                                                    }
-                                                }
-                                                .onEnded { value in
-                                                    if value.translation.width > totalSwipeWidth * 0.5 {
-                                                        swipeConfirmed = true
-                                                        dragOffset = .zero
-                                                        incrementPrice()
-                                                    } else {
-                                                        swipeConfirmed = false
-                                                        dragOffset = .zero
-                                                    }
-                                                }
-                                        )
-                                        .animation(.easeOut, value: dragOffset)
-                                    
-                                    Text("Swipe to Bid")
-                                        .font(.custom(poppinsSemiBold, size: 14.0))
-                                        .foregroundColor(.white)
-                                        .padding(.leading)
-                                    
-                                }
-                                //                                .frame(width: UIScreen.main.bounds.width * 0.75)
-                                
-                                // 1/4 Price & Timer Area
-                                VStack {
-                                    Text("$ \(String(format: "%.2f", Double(currentPrice)))")
-                                        .font(.custom(poppinsBold, size: 14))
-                                        .foregroundColor(.white)
-                                        .padding(.vertical, 4)
-                                    
-                                    Text(String(format: "00:00:%02d", countdown))
-                                        .font(.custom(poppinsSemiBold, size: 14))
-                                        .foregroundColor(.white)
-                                }
-                                .frame(width: UIScreen.main.bounds.width * 0.25)
-                                .background(.defaultTheme)
-                                .cornerRadius(10)
-                            }
-                            .padding(.horizontal)
-                            .onAppear {
-                                if !isBiddingActive {
-                                    startCountdown()
-                                    isBiddingActive = true
-                                }
-                            }
-                        }
-                        else {
-                            
-                            Text("Waiting for next product...")
-                                .foregroundColor(.white)
-                        }
-                        
-                        
-                        //MARK: Add Comment section
-                        
-                        HStack {
-                            ZStack(alignment: .trailing) {
-                                TextField("", text: $commentText, prompt: Text("Say something...")
-                                    .foregroundColor(.white)
-                                    .font(.custom(poppinsSemiBold, size: 13.0))
-                                )
-                                .font(.custom(poppinsSemiBold, size: 13.0))
-                                .foregroundColor(.white)
-                                .padding(.horizontal, 14)
-                                .padding(.trailing, commentText.isEmpty ? 14 : 36) // extra space for send button
-                                .frame(height: 40)
-                                .background(Color.clear)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 20)
-                                        .stroke(Color.white, lineWidth: 1)
-                                )
-                                
-                                if !commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                                    Button(action: {
-                                        let roomId = liveShowsData[currentStreamIndex].room_id ?? ""
-                                        ZIMChatManager.shared.sendMessage(message: commentText,roomId: roomId)
-                                        commentText = ""
-                                    }) {
-                                        Image(systemName: "paperplane.fill")
-                                            .resizable()
-                                            .frame(width: 16, height: 16)
-                                            .foregroundColor(.white)
-                                            .padding(10)
+                                                .padding(.leading)
+                                            
+                                        }
+                                        //                                .frame(width: UIScreen.main.bounds.width * 0.75)
+                                        
+                                        // 1/4 Price & Timer Area
+                                        VStack {
+                                            Text("$ \(String(format: "%.2f", Double(currentPrice)))")
+                                                .font(.custom(poppinsBold, size: 14))
+                                                .foregroundColor(.white)
+                                                .padding(.vertical, 4)
+                                            
+                                            Text(String(format: "00:00:%02d", countdown))
+                                                .font(.custom(poppinsSemiBold, size: 14))
+                                                .foregroundColor(.white)
+                                        }
+                                        .frame(width: UIScreen.main.bounds.width * 0.25)
+                                        .background(.defaultTheme)
+                                        .cornerRadius(10)
                                     }
-                                    .transition(.opacity)
-                                    .animation(.easeInOut(duration: 0.2), value: commentText)
+                                    .padding(.horizontal)
+                                    .onAppear {
+                                        if !isBiddingActive {
+                                            startCountdown()
+                                            isBiddingActive = true
+                                        }
+                                    }
+                                }else {
+                                    
+                                    Text("Waiting for next product...")
+                                        .foregroundColor(.white)
+                                        .padding(.horizontal)
                                 }
+                                
+                                
+                                
+                                //MARK: Add Comment section
+                                
+                                HStack {
+                                    ZStack(alignment: .trailing) {
+                                        TextField("", text: $commentText, prompt: Text("Say something...")
+                                            .foregroundColor(.white)
+                                            .font(.custom(poppinsSemiBold, size: 13.0))
+                                        )
+                                        .font(.custom(poppinsSemiBold, size: 13.0))
+                                        .foregroundColor(.white)
+                                        .padding(.horizontal, 14)
+                                        .padding(.trailing, commentText.isEmpty ? 14 : 36) // extra space for send button
+                                        .frame(height: 40)
+                                        .background(Color.clear)
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 20)
+                                                .stroke(Color.white, lineWidth: 1)
+                                        )
+                                        
+                                        if !commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                                            Button(action: {
+                                                let roomId = liveShowsData[currentStreamIndex].room_id ?? ""
+                                                ZIMChatManager.shared.sendMessage(message: commentText,roomId: roomId,image: UserDefaults.profileURL,name: UserDefaults.userName)
+                                                commentText = ""
+                                            }) {
+                                                Image(systemName: "paperplane.fill")
+                                                    .resizable()
+                                                    .frame(width: 16, height: 16)
+                                                    .foregroundColor(.white)
+                                                    .padding(10)
+                                            }
+                                            .transition(.opacity)
+                                            .animation(.easeInOut(duration: 0.2), value: commentText)
+                                        }
+                                    }
+                                }
+                                .padding(.horizontal)
+                                .padding(.bottom,32)
+                                .padding(.bottom, keyboardResponder.currentHeight == 0 ? (tabBarHeight + 20) : keyboardResponder.currentHeight)
+                                .animation(.easeOut(duration: 0.25), value: keyboardResponder.currentHeight)
                             }
                         }
-                        .padding(.horizontal)
-                        .padding(.bottom)
-                        .padding(.bottom, keyboardResponder.currentHeight == 0 ? (tabBarHeight + 20) : keyboardResponder.currentHeight)
-                        .animation(.easeOut(duration: 0.25), value: keyboardResponder.currentHeight)
                     }
+                    VStack(spacing: 20) {
+                        
+                        Button(action: {}) {
+                            Image(systemName: "gift")
+                                .resizable()
+                                .scaledToFit()
+                                .fontWeight(.heavy)
+                                .font(.custom(poppinsExtraBold, size: 22.0))
+                                .frame(width: 20, height: 20)
+                                .foregroundColor(.black)
+                        }
+                        .padding()
+                        .background(
+                               Circle()
+                                   .fill(Color.white)
+                           )
+                        Button(action: {}) {
+                            Image(systemName: "paperclip")
+                                .resizable()
+                                .scaledToFit()
+                                .fontWeight(.heavy)
+                                .font(.custom(poppinsExtraBold, size: 22.0))
+                                .frame(width: 20, height: 20)
+                                .foregroundColor(.black)
+                        }
+                        .padding()
+                        .background(
+                               Circle()
+                                   .fill(Color.white)
+                           )
+                        Button(action: {}) {
+                            Image(systemName: "arrowshape.turn.up.right")
+                                .resizable()
+                                .scaledToFit()
+                                .fontWeight(.heavy)
+                                .font(.custom(poppinsExtraBold, size: 22.0))
+                                .frame(width: 20, height: 20)
+                                .foregroundColor(.black)
+                        }
+                        .padding()
+                        .background(
+                               Circle()
+                                   .fill(Color.white)
+                           )
+                        Button(action: {}) {
+                            Image(systemName: "wallet.pass")
+                                .resizable()
+                                .scaledToFit()
+                                .fontWeight(.heavy)
+                                .font(.custom(poppinsExtraBold, size: 22.0))
+                                .frame(width: 20, height: 20)
+                                .foregroundColor(.black)
+                        }
+                        .padding()
+                        .background(
+                               Circle()
+                                   .fill(Color.white)
+                           )
+                        Button(action: {}) {
+                            Image(systemName: "cart")
+                                .resizable()
+                                .scaledToFit()
+                                .fontWeight(.heavy)
+                                .font(.custom(poppinsExtraBold, size: 22.0))
+                                .frame(width: 20, height: 20)
+                                .foregroundColor(.black)
+                        }
+                        .padding()
+                        .background(
+                               Circle()
+                                   .fill(Color.white)
+                           )
+                    }
+                    .position(
+                              x: geometry.size.width - 40,
+                              y: geometry.size.height / 2
+                          )
                 }
                 .gesture(
                     DragGesture()

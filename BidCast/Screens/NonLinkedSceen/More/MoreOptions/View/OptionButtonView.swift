@@ -17,7 +17,8 @@ struct OptionButtonView: View {
         Button(action: action) {
             VStack {
                 Image(systemName: icon)
-                    .font(.custom(poppinsSemiBold, size: 13.0))
+                    .fontWeight(.heavy)
+                    .font(.custom(poppinsExtraBold, size: 22.0))
                     .foregroundColor(color)
                 Text(label)
                     .font(.custom(poppinsRegular, size: 11.0))
@@ -25,7 +26,7 @@ struct OptionButtonView: View {
             }
             .padding()
             .foregroundColor(.black)
-            .frame(maxWidth: .infinity)
+            .frame(maxWidth: .infinity,maxHeight: .infinity)
             .background(Color(.systemGray6))
             .cornerRadius(12)
         }

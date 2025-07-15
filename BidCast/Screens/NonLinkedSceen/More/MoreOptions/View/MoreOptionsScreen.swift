@@ -12,6 +12,7 @@ struct MoreOptionsScreen: View {
 
     @Binding var isPresented: Bool
     @Binding var isVerifiedBuyersOn: Bool
+    @Binding var isMicOn : Bool
 
     var onEndShow: () -> Void
     var onCloneItems: () -> Void
@@ -38,7 +39,9 @@ struct MoreOptionsScreen: View {
                         isPresented = false
                     }) {
                         Image(systemName: "xmark")
-                            .foregroundColor(.gray)
+                            .fontWeight(.heavy)
+                            .font(.custom(poppinsExtraBold, size: 22.0))
+                            .foregroundColor(.black)
                     }
                 }
                 .padding(.horizontal)
@@ -57,7 +60,7 @@ struct MoreOptionsScreen: View {
                             .foregroundColor(.gray)
                     }
                 }
-
+                .padding(.horizontal,4)
                 Divider()
 
                 // Option Buttons Grid
@@ -105,7 +108,7 @@ struct MoreOptionsScreen: View {
                     HStack(spacing: 16) {
                         OptionButtonView(label: "Rotate Camera", icon: "arrow.triangle.2.circlepath.camera", action: onRotateCamera)
                         OptionButtonView(label: "Zoom In", icon: "magnifyingglass", action: onZoomIn)
-                        OptionButtonView(label: "Mic", icon: "mic", action: onMicToggle)
+                        OptionButtonView(label: "Mic", icon: isMicOn ? "mic.fill" : "mic.slash.fill", action: onMicToggle)
                     }
                 }
 

@@ -81,8 +81,15 @@ struct RehearsalScreen: View {
                         }
                         
                         Spacer()
+                        HStack(spacing: 4) {
+                            Image(systemName: "eye.fill")
+                                .foregroundColor(.black)
+                            Text("\(viewwerCount)")
+                                .foregroundColor(.black)
+                                .font(.custom(poppinsSemiBold, size: 13.0))
+                        }
                         Text(isLive ? "Live" : "Rehearsal")
-                            .font(.caption)
+                            .font(.custom(poppinsRegular, size: 12.0))
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
                             .background(Color.defaultTheme)
@@ -185,7 +192,7 @@ struct RehearsalScreen: View {
             VStack {
                 Spacer()
                 VStack(spacing: 20) {
-                    if showPreLiveControls {
+                    if showLiveControls {
                         SideButton(label: "More", icon: "ellipsis.circle",action: .more)
                         SideButton(label: "Promote", icon: "megaphone.fill",action: .promote)
                         SideButton(label: "Clip", icon: "scissors",action: .clip)
@@ -194,18 +201,29 @@ struct RehearsalScreen: View {
                         ShopButton(action: .shop)
                     }
                     
-                    if showLiveControls {
+                    if showPreLiveControls {
+                        Spacer()
                         Button(action: {
                             isMicOn.toggle()
                             ZegoExpressEngine.shared().muteMicrophone(!isMicOn)
                         }) {
                             VStack {
                                 Image(systemName: isMicOn ? "mic.fill" : "mic.slash.fill")
-                                Text(isMicOn ? "Mic On" : "Mic Off")
-                                    .font(.custom(poppinsThin, size: 12.0))
+                                    .resizable()
+                                    .scaledToFit()
+                                    .fontWeight(.heavy)
+                                    .font(.custom(poppinsExtraBold, size: 22.0))
+                                    .frame(width: 20, height: 20)
+                                    .foregroundColor(.black)
+//                                Text(isMicOn ? "Mic On" : "Mic Off")
+//                                    .font(.custom(poppinsThin, size: 12.0))
                             }
-                            .padding(8)
-                            .foregroundColor(.white)
+                            .padding()
+                            .background(
+                                   Circle()
+                                       .fill(Color.white)
+                               )
+                            
                         }
                         
                         Button(action: {
@@ -214,14 +232,24 @@ struct RehearsalScreen: View {
                         }) {
                             VStack {
                                 Image(systemName: "arrow.triangle.2.circlepath.camera")
-                                Text("Switch")
-                                    .font(.custom(poppinsThin, size: 12.0))
+                                    .resizable()
+                                    .scaledToFit()
+                                    .fontWeight(.heavy)
+                                    .font(.custom(poppinsExtraBold, size: 22.0))
+                                    .frame(width: 20, height: 20)
+                                    .foregroundColor(.black)
+//                                Text("Switch")
+//                                    .font(.custom(poppinsThin, size: 12.0))
                             }
-                            .padding(8)
-                            .foregroundColor(.white)
+                            .padding()
+                            .background(
+                                   Circle()
+                                       .fill(Color.white)
+                               )
                         }
                         
                         ShopButton(action: .shop)
+                        Spacer()
                     }
                 }
                 .padding(.trailing)
@@ -239,17 +267,18 @@ struct RehearsalScreen: View {
                             VStack(alignment: .leading, spacing: 8) {
                                 ForEach(chatManager.messages) { comment in
                                     HStack {
-                                        Image(comment.image)
-                                            .resizable()
-                                            .scaledToFit()
-                                            .frame(width: 24, height: 24)
-                                            .clipShape(Circle())
-                                        Text(comment.username)
+                                        CustomProfileImage(url: comment.image, isCircular: true,size: 24)
+//                                        Image(comment.image)
+//                                            .resizable()
+//                                            .scaledToFit()
+//                                            .frame(width: 24, height: 24)
+//                                            .clipShape(Circle())
+                                        Text(comment.username.capitalizingFirstLetter())
                                             .font(.custom(poppinsSemiBold, size: 14.0))
-                                            .foregroundColor(.yellow)
+                                            .foregroundColor(.white)
                                         
                                         Text(comment.message)
-                                            .font(.custom(poppinsRegular, size: 13.0))
+                                            .font(.custom(poppinsRegular, size: 12.0))
                                             .foregroundColor(.white)
                                     }
                                     .padding(.trailing,40)
@@ -294,7 +323,7 @@ struct RehearsalScreen: View {
                                     Button(action: {
                                         print("📨 Sending message: \(commentText)")
                                         let textToSend = commentText.trimmingCharacters(in: .whitespacesAndNewlines)
-                                        ZIMChatManager.shared.sendMessage(message: textToSend,roomId: self.liveRoomId)
+                                        ZIMChatManager.shared.sendMessage(message: textToSend,roomId: self.liveRoomId,image: UserDefaults.profileURL,name: UserDefaults.userName)
                                         commentText = ""
                                     }) {
                                         Image(systemName: "paperplane.fill")
@@ -352,6 +381,8 @@ struct RehearsalScreen: View {
             }
             
         }
+        .navigationBarHidden(true)
+        .toolbar(.hidden,for: .tabBar)
         .bottomSheet(
             isPresented: $showSellSheet,
             height: sheetHeight, // Adjust as needed
@@ -368,6 +399,7 @@ struct RehearsalScreen: View {
                     MoreOptionsScreen(
                         isPresented: $showSellSheet,
                         isVerifiedBuyersOn: $verifiedOnly,
+                        isMicOn : $isMicOn,
                         onEndShow: { print("End Show") },
                         onCloneItems: { print("Clone Items") },
                         onTipSettings: { print("Tip Settings") },
@@ -375,9 +407,17 @@ struct RehearsalScreen: View {
                         onAddCoupons: { print("Add Coupons") },
                         onRaid: { print("Raid") },
                         onCreatePoll: { print("Create Poll") },
-                        onRotateCamera: { print("Rotate Camera") },
+                        onRotateCamera: {
+                            print("Rotate Camera")
+                            isUsingFrontCamera.toggle()
+                            ZegoExpressEngine.shared().useFrontCamera(isUsingFrontCamera)
+                        },
                         onZoomIn: { print("Zoom In") },
-                        onMicToggle: { print("Mic Toggled") }
+                        onMicToggle: {
+                            isMicOn.toggle()
+                            ZegoExpressEngine.shared().muteMicrophone(!isMicOn)
+                            print("Mic Toggled")
+                        }
                     )
                 case .promote:
                     PromoteShowSheet(boosts: exampleBoosts) {
@@ -445,7 +485,7 @@ struct RehearsalScreen: View {
                 
             }
         )
-        .toolbar(.hidden,for: .tabBar)
+        
         .onAppear {
             logoutRoom()
             showTopBadge = true
@@ -483,14 +523,9 @@ struct RehearsalScreen: View {
             }
             
             
-            
-            
-            
             let product = ProductData(category: "\(data.products?.first?.category_id ?? 0)", id: "\(data.products?.first?.id ?? 0)", image: "\(data.products?.first?.images?.first ?? "")", name: "\(data.products?.first?.title ?? "")", price: "\(data.products?.first?.pricing ?? 0.0)")
             
             let seller = SellerModel(followed: data.user?.is_followed ?? false, id: "\(data.user?.id ?? 0 )", name: data.user?.name ?? "", rating: data.user?.rating ?? "")
-            
-            
             
             
             
@@ -515,7 +550,7 @@ struct RehearsalScreen: View {
                     self.showLiveControls = true
                     self.showPreLiveControls = false
                     self.isLive = true
-                    FirebaseManager.shared.observeViewerCount(roomId: "live_room_123_456") { newCount in
+                    FirebaseManager.shared.observeViewerCount(roomId: self.liveRoomId) { newCount in
                         print("👀 Viewer Count Updated: \(newCount)")
                        viewwerCount = newCount
                     }
@@ -551,11 +586,6 @@ struct RehearsalScreen: View {
         ZIMChatManager.shared.logout()
         chatManager.messages.removeAll()
         showSellSheet = false
-//        if isLive{
-//            Task{
-//                await viewModel.CountUppdate(parameters: countRequest(room_id:self.liveRoomId , event: "stream_stopped"))
-//            }
-//        }
         self.isLive = false
     }
     
@@ -572,11 +602,20 @@ struct RehearsalScreen: View {
         }) {
             VStack {
                 Image(systemName: icon)
-                Text(label)
-                    .font(.custom(poppinsThin, size: 12.0))
+                    .resizable()
+                    .scaledToFit()
+                    .fontWeight(.heavy)
+                    .font(.custom(poppinsExtraBold, size: 22.0))
+                    .frame(width: 20, height: 20)
+                    .foregroundColor(.black)
+//                Text(label)
+//                    .font(.custom(poppinsThin, size: 12.0))
             }
-            .padding(8)
-            .foregroundColor(.white)
+            .padding()
+            .background(
+                   Circle()
+                       .fill(Color.white)
+               )
         }
     }
     
@@ -594,16 +633,28 @@ struct RehearsalScreen: View {
             ZStack {
                 VStack {
                     Image(systemName: "bag.fill")
-                    Text("Shop")
-                        .font(.custom(poppinsThin, size: 12.0))
+                        .resizable()
+                        .scaledToFit()
+                        .fontWeight(.heavy)
+                        .font(.custom(poppinsExtraBold, size: 22.0))
+                        .frame(width: 20, height: 20)
+                        .foregroundColor(.black)
+//                    Text("Shop")
+//                        .font(.custom(poppinsThin, size: 12.0))
                 }
-                .padding(8)
-                .foregroundColor(.white)
+                .padding()
+                .background(
+                       Circle()
+                           .fill(Color.white)
+                   )
                 
                 Circle()
                     .fill(Color.defaultTheme)
                     .frame(width: 20, height: 20)
-                    .overlay(Text("7").foregroundColor(.white).font(.caption))
+                    .overlay(Text("7")
+                        .foregroundColor(.black)
+                        .font(.custom(poppinsRegular, size: 13.0))
+                    )
                     .offset(x: 12, y: -30)
             }
         }
