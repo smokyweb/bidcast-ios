@@ -150,6 +150,63 @@
 "Processing" = "Đang xử lý";
 "Completed" = "Hoàn thành";
 
+//MARK: Wallet Screen()
+"Wallet" = "Ví";
+"No Transaction history found" = "Không tìm thấy lịch sử giao dịch";
+"Available Balance" = "Số dư khả dụng";
+"Early Payout" = "Thanh toán sớm";
+"Available for\nPayout" = "Có sẵn để\nthanh toán";
+"Processing" = "Đang xử lý";
+"You're eligible for early payout" = "Bạn đủ điều kiện để nhận thanh toán sớm";
+"Payout History" = "Lịch sử thanh toán";
+"No Payout history found" = "Không tìm thấy lịch sử thanh toán";
+"All" = "Tất cả";
+"Complete" = "Hoàn tất";
+"Withdrawal" = "Rút tiền";
+"Transactions" = "Giao dịch";
+
+//MARK: Offer Screen.
+"Offers" = "Ưu đãi";
+"Pending" = "Đang chờ xử lý";
+"Accepted" = "Đã chấp nhận";
+"Declined" = "Đã từ chối";
+"Placed an Offer •" = "Đã đặt một ưu đãi •";
+"Asking Price :" = "Giá yêu cầu:";
+"Price :" = "Giá:";
+"Placed on:" = "Được tạo vào:";
+"Decline" = "Từ chối";
+"Accept" = "Chấp nhận";
+"Accepted" = "Đã chấp nhận";
+"Rejected" = "Đã từ chối";
+"Just now" = "Vừa xong";
+"ago" = "trước";
+
+//MARK: Tips Screen.
+"Tips" = "Tiền boa";
+"Tips today" = "Tiền boa hôm nay";
+"Total tips" = "Tổng tiền boa";
+
+//MARK: Shipping Screen.
+"Shipping" = "Vận chuyển";
+"Pending" = "Đang chờ";
+"Delivered" = "Đã giao";
+"Returns" = "Trả hàng";
+
+//MARK: Affiliate Program.
+"Affiliate Program" = "Chương trình liên kết";
+"Earn $100 Per Referral" = "Nhận $100 cho mỗi lượt giới thiệu";
+"Invite sellers and earn rewards when they succeed" = "Mời người bán và nhận phần thưởng khi họ thành công";
+"Share Your Link" = "Chia sẻ liên kết của bạn";
+"Invite sellers using your unique code" = "Mời người bán bằng mã giới thiệu của bạn";
+"Share Invite Link" = "Chia sẻ liên kết mời";
+"Join with my referral code:" = "Tham gia với mã giới thiệu của tôi:";
+"Code copied!" = "Đã sao chép mã!";
+"Copy Code" = "Sao chép mã";
+"Earn $100 Reward" = "Nhận thưởng $100";
+"When your referral makes their first sale" = "Khi người bạn giới thiệu có đơn hàng đầu tiên";
+"Your Referral Stats" = "Thống kê giới thiệu của bạn";
+"Total Referrals" = "Tổng lượt giới thiệu";
+"Earnings" = "Thu nhập";
 
 
 

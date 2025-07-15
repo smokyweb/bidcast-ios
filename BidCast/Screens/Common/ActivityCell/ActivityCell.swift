@@ -41,7 +41,7 @@ struct ActivityCell: View {
                            let date = parseISO8601Date(dateString) {
                             let timeAgo = timeAgoSinceDate(date)
                             
-                            TitleWithLine(title: "Placed an Offer • \(timeAgo)",
+                            TitleWithLine(title: "Placed an Offer • \(timeAgo)".localized,
                                           lineLength: 0,
                                           textColor: .lightGray,
                                           fontName: robotoRegular,
@@ -89,7 +89,7 @@ struct ActivityCell: View {
                         )
                         
                         TitleWithLine(
-                            title: isFor == "Bids" ? "Asking Price : $\(offerListing?.bid_price ?? 0)" : "Price : $\(offerListing?.product?.pricing ?? 0)",
+                            title: isFor == "Bids" ? "Asking Price : $\(offerListing?.bid_price ?? 0)".localized : "Price : $\(offerListing?.product?.pricing ?? 0)".localized,
                             lineLength: 0,
                             textColor: .lightGray,
                             fontName: robotoRegular,
@@ -98,7 +98,7 @@ struct ActivityCell: View {
                         )
                         
                         if isFor == "OffersScreen" {
-                            TitleWithLine(title: "Placed on: \(formattedDate(offerListing?.created_at))",
+                            TitleWithLine(title: "Placed on: \(formattedDate(offerListing?.created_at))".localized,
                                           lineLength: 0,
                                           textColor: .lightGray,
                                           fontValue: 12,
@@ -126,8 +126,8 @@ struct ActivityCell: View {
                 if status == "pending"{
                     HStack(alignment: .center, spacing: 10) {
                         
-                        TwoButton(titleOne:"Decline",
-                                  titleTwo: "Accept",
+                        TwoButton(titleOne: AppString.Decline.localized,
+                                  titleTwo: AppString.Accept.localized,
                                   onFirstButtonClick: { onDecline?() },
                                   onSecButtonClick: { onAccept?() }
                         )
@@ -138,7 +138,7 @@ struct ActivityCell: View {
                 }else if status == "accepted"{
                     HStack(alignment: .center, spacing: 10) {
                         
-                        TwoButton(titleTwo: "Accepted",
+                        TwoButton(titleTwo: AppString.Accepted,
                                   onFirstButtonClick: {  },
                                   onSecButtonClick: {  },
                                   isHidefirstBtn: true,
@@ -151,7 +151,7 @@ struct ActivityCell: View {
                 }else{
                     HStack(alignment: .center, spacing: 10) {
                         
-                        TwoButton(titleOne:"Rejected",
+                        TwoButton(titleOne: AppString.Rejected,
                                   onFirstButtonClick: { },
                                   onSecButtonClick: {  },
                                   isHidefirstBtn: false,
@@ -213,6 +213,4 @@ enum statusSegmentType : String, CaseIterable{
     case accepted = "accepted"
     case dedclined = "declined"
     case pending = "pending"
-    
-    
 }

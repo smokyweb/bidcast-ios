@@ -186,6 +186,64 @@
 "Processing" = "В обработке";
 "Completed" = "Завершено";
 
+//MARK: Wallet Screen()
+"Wallet" = "Кошелек";
+"No Transaction history found" = "История транзакций не найдена";
+"Available Balance" = "Доступный баланс";
+"Early Payout" = "Ранняя выплата";
+"Available for\nPayout" = "Доступно для\nвыплаты";
+"Processing" = "Обработка";
+"You're eligible for early payout" = "Вы имеете право на раннюю выплату";
+"Payout History" = "История выплат";
+"No Payout history found" = "История выплат не найдена";
+"All" = "Все";
+"Complete" = "Завершено";
+"Withdrawal" = "Вывод средств";
+"Transactions" = "Транзакции";
+
+//MARK: Offer Screen.
+"Offers" = "Предложения";
+"Pending" = "В ожидании";
+"Accepted" = "Принято";
+"Declined" = "Отклонено";
+"Placed an Offer •" = "Сделано предложение •";
+"Asking Price :" = "Запрашиваемая цена:";
+"Price :" = "Цена:";
+"Placed on:" = "Сделано:";
+"Decline" = "Отклонить";
+"Accept" = "Принять";
+"Accepted" = "Принято";
+"Rejected" = "Отклонено";
+"Just now" = "Только что";
+"ago" = "назад";
+
+//MARK: Tips Screen.
+"Tips" = "Чаевые";
+"Tips today" = "Чаевые сегодня";
+"Total tips" = "Всего чаевых";
+
+//MARK: Shipping Screen.
+"Shipping" = "Доставка";
+"Pending" = "В ожидании";
+"Delivered" = "Доставлено";
+"Returns" = "Возвраты";
+
+//MARK: Affiliate Program.
+"Affiliate Program" = "Партнерская программа";
+"Earn $100 Per Referral" = "Заработайте $100 за каждого приглашенного";
+"Invite sellers and earn rewards when they succeed" = "Приглашайте продавцов и получайте награды за их успех";
+"Share Your Link" = "Поделитесь своей ссылкой";
+"Invite sellers using your unique code" = "Пригласите продавцов, используя ваш уникальный код";
+"Share Invite Link" = "Поделиться ссылкой-приглашением";
+"Join with my referral code:" = "Присоединяйтесь с моим реферальным кодом:";
+"Code copied!" = "Код скопирован!";
+"Copy Code" = "Скопировать код";
+"Earn $100 Reward" = "Заработайте $100 бонуса";
+"When your referral makes their first sale" = "Когда ваш приглашенный совершит первую продажу";
+"Your Referral Stats" = "Ваша статистика по рефералам";
+"Total Referrals" = "Всего рефералов";
+"Earnings" = "Заработок";
+
 
 
 

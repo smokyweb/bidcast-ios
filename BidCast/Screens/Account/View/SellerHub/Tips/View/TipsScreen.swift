@@ -30,7 +30,7 @@ struct TipsScreen: View {
             // MARK: - Top Header (fixed)
             VStack{
                 PrimaryHeader(
-                    title: "Tips",
+                    title: AppString.Tips,
                     isForBoth : true,
                     leadingImgArr: [.icBack,.appName],
                     trailingImgArr: [.notification],
@@ -80,11 +80,11 @@ enum TipsValue : String, CaseIterable, CustomStringConvertible{
     
     case tipsToday = "Tips today"
     case totalTips = "Total tips"
-//    case totalTi = "Testing"
+    //    case totalTi = "Testing"
     
     var description: String {
-            return NSLocalizedString(rawValue, comment: "")
-        }
+        return NSLocalizedString(rawValue, comment: "")
+    }
     
     var labelOlt : String{
         switch self {

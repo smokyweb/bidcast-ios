@@ -12,7 +12,7 @@ struct ReferralStatsView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Your Referral Stats")
+            Text(AppString.YourReferralStatus)
                 .font(.headline)
 
             HStack {
@@ -20,7 +20,7 @@ struct ReferralStatsView: View {
                     Text("\(stats.totalReferrals)")
                         .font(.custom(poppinsSemiBold, size: 13.0))
                         .foregroundColor(.defaultTheme)
-                    Text("Total Referrals")
+                    Text(AppString.TotalReferrals)
                         .font(.custom(poppinsRegular, size: 11.0))
                         .foregroundColor(.gray)
                 }
@@ -31,7 +31,7 @@ struct ReferralStatsView: View {
                     Text("$\(Int(stats.earnings))")
                         .font(.custom(poppinsSemiBold, size: 13.0))
                         .foregroundColor(.defaultTheme)
-                    Text("Earnings")
+                    Text(AppString.Earnings)
                         .font(.custom(poppinsRegular, size: 11.0))
                         .foregroundColor(.gray)
                 }

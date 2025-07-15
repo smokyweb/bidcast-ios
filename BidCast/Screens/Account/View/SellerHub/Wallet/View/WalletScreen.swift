@@ -31,7 +31,7 @@ struct WalletScreen: View {
             VStack{
                 // MARK: Top-Header (fixed)
                 PrimaryHeader(
-                    title: "Wallet",
+                    title: AppString.Account,
                     isForBoth: true,
                     leadingImgArr: [.icBack,.appName],
                     trailingImgArr: [.icSetting],
@@ -53,7 +53,7 @@ struct WalletScreen: View {
                         
                     case .transactions:
                         if dataTransaction.count == 0{
-                            NoDataView(message: "No Transaction history found")
+                            NoDataView(message: AppString.NoTransactionHistoryFound)
                         }else{
                             VStack(spacing: 10) {
                                 SegmentedControlView(segments: WalletSegment.allCases, selectedSegment: $selectedButton, isWithBorder: true)
@@ -239,5 +239,7 @@ enum WalletScreenSegment: String, CaseIterable, CustomStringConvertible {
     case wallet        = "Wallet"
     case transactions  = "Transactions"
     
-    var description: String { rawValue }
+    var description: String {
+        return NSLocalizedString(rawValue, comment: "")
+    }
 }

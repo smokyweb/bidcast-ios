@@ -151,6 +151,63 @@
 "Processing" = "処理中";
 "Completed" = "完了";
 
+//MARK: Wallet Screen()
+"Wallet" = "ウォレット";
+"No Transaction history found" = "取引履歴が見つかりません";
+"Available Balance" = "利用可能残高";
+"Early Payout" = "早期支払い";
+"Available for\nPayout" = "支払い可能額\n";
+"Processing" = "処理中";
+"You're eligible for early payout" = "早期支払いの対象です";
+"Payout History" = "支払い履歴";
+"No Payout history found" = "支払い履歴が見つかりません";
+"All" = "すべて";
+"Complete" = "完了";
+"Withdrawal" = "出金";
+"Transactions" = "取引";
+
+//MARK: Offer Screen.
+"Offers" = "オファー";
+"Pending" = "保留中";
+"Accepted" = "承認済み";
+"Declined" = "辞退済み";
+"Placed an Offer •" = "オファーを出しました •";
+"Asking Price :" = "希望価格：";
+"Price :" = "価格：";
+"Placed on:" = "作成日：";
+"Decline" = "辞退";
+"Accept" = "承認";
+"Accepted" = "承認済み";
+"Rejected" = "拒否済み";
+"Just now" = "たった今";
+"ago" = "前";
+
+//MARK: Tips Screen.
+"Tips" = "チップ";
+"Tips today" = "今日のチップ";
+"Total tips" = "合計チップ";
+
+//MARK: Shipping Screen.
+"Shipping" = "配送";
+"Pending" = "保留中";
+"Delivered" = "配達済み";
+"Returns" = "返品";
+
+//MARK: Affiliate Program.
+"Affiliate Program" = "アフィリエイトプログラム";
+"Earn $100 Per Referral" = "紹介ごとに$100を獲得";
+"Invite sellers and earn rewards when they succeed" = "販売者を招待して成功すると報酬を獲得できます";
+"Share Your Link" = "リンクを共有する";
+"Invite sellers using your unique code" = "あなたの専用コードで販売者を招待してください";
+"Share Invite Link" = "招待リンクを共有する";
+"Join with my referral code:" = "私の紹介コードで参加：";
+"Code copied!" = "コードがコピーされました！";
+"Copy Code" = "コードをコピー";
+"Earn $100 Reward" = "$100の報酬を獲得";
+"When your referral makes their first sale" = "紹介者が初めて販売したとき";
+"Your Referral Stats" = "あなたの紹介統計";
+"Total Referrals" = "紹介数合計";
+"Earnings" = "収益";
 
 
 

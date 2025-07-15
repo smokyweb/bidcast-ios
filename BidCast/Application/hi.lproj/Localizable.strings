@@ -149,6 +149,63 @@
 "Processing" = "प्रोसेस हो रहा है";
 "Completed" = "पूरा हो गया";
 
+//MARK: Wallet Screen()
+"Wallet" = "वॉलेट";
+"No Transaction history found" = "कोई लेनदेन इतिहास नहीं मिला";
+"Available Balance" = "उपलब्ध शेष राशि";
+"Early Payout" = "शीघ्र भुगतान";
+"Available for\nPayout" = "भुगतान के लिए\nउपलब्ध";
+"Processing" = "प्रोसेस हो रहा है";
+"You're eligible for early payout" = "आप शीघ्र भुगतान के पात्र हैं";
+"Payout History" = "भुगतान इतिहास";
+"No Payout history found" = "कोई भुगतान इतिहास नहीं मिला";
+"All" = "सभी";
+"Complete" = "पूर्ण";
+"Withdrawal" = "निकासी";
+"Transactions" = "लेनदेन";
+
+//MARK: Offer Screen.
+"Offers" = "ऑफ़र";
+"Pending" = "लंबित";
+"Accepted" = "स्वीकृत";
+"Declined" = "अस्वीकृत";
+"Placed an Offer •" = "ऑफ़र दिया गया •";
+"Asking Price :" = "मांग मूल्य :";
+"Price :" = "मूल्य :";
+"Placed on:" = "दिया गया:";
+"Decline" = "अस्वीकार करें";
+"Accept" = "स्वीकार करें";
+"Accepted" = "स्वीकृत";
+"Rejected" = "अस्वीकृत";
+"Just now" = "अभी-अभी";
+"ago" = "पहले";
+
+//MARK: Tips Screen.
+"Tips" = "टिप्स";
+"Tips today" = "आज की टिप्स";
+"Total tips" = "कुल टिप्स";
+
+//MARK: Shipping Screen.
+"Shipping" = "शिपिंग";
+"Pending" = "लंबित";
+"Delivered" = "डिलीवर हो गया";
+"Returns" = "रिटर्न";
+
+//MARK: Affiliate Program.
+"Affiliate Program" = "एफ़िलिएट प्रोग्राम";
+"Earn $100 Per Referral" = "हर रेफरल पर $100 कमाएं";
+"Invite sellers and earn rewards when they succeed" = "विक्रेताओं को आमंत्रित करें और उनके सफल होने पर इनाम पाएं";
+"Share Your Link" = "अपना लिंक साझा करें";
+"Invite sellers using your unique code" = "अपने यूनिक कोड से विक्रेताओं को आमंत्रित करें";
+"Share Invite Link" = "निमंत्रण लिंक साझा करें";
+"Join with my referral code:" = "मेरे रेफरल कोड के साथ जुड़ें:";
+"Code copied!" = "कोड कॉपी हो गया!";
+"Copy Code" = "कोड कॉपी करें";
+"Earn $100 Reward" = "$100 इनाम पाएं";
+"When your referral makes their first sale" = "जब आपका रेफरल पहली बिक्री करता है";
+"Your Referral Stats" = "आपकी रेफरल स्थिति";
+"Total Referrals" = "कुल रेफरल";
+"Earnings" = "आय";
 
 
 

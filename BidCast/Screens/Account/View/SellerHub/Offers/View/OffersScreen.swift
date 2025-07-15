@@ -29,7 +29,7 @@ struct OffersScreen: View {
             // MARK: - Top Header (fixed)
             VStack{
                 PrimaryHeader(
-                    title: "Offers",
+                    title: AppString.Offers,
                     isForBoth : true,
                     leadingImgArr: [.icBack,.appName],
                     trailingImgArr: [.icSetting],

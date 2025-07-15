@@ -37,7 +37,7 @@ struct ShippingsScreen: View {
             // MARK: - Top Header (fixed)
             VStack{
                 PrimaryHeader(
-                    title: "Shipping",
+                    title: AppString.Shipping,
                     isForBoth : true,
                     leadingImgArr: [.icBack,.appName],
                     trailingImgArr: [],
@@ -48,8 +48,6 @@ struct ShippingsScreen: View {
                 )
             }
            
-
-
             // MARK: - Scrollable Show List
             ScrollView {
                 VStack(spacing: 10) {
@@ -60,8 +58,6 @@ struct ShippingsScreen: View {
 //                            print(self.title[ind])
                         ListCell( isComeFrom: "ShippingScreen",image: categoryList[ind].image ?? "", title: categoryList[ind].name ?? "", vectorImg: .icArrowUp,subLabel : categoryList[ind].subLabel ?? "", tintColot: categoryList[ind].color ?? "",imgViewSize : 40.0,imgSize:24.0)
                             .padding(.horizontal,Leading)
-                           
-                       
                     }
                 }
                 .padding(.top)
@@ -84,8 +80,8 @@ enum ShippingValue : String, CaseIterable, CustomStringConvertible{
     case returns = "Returns"
     
     var description: String {
-            return NSLocalizedString(rawValue, comment: "")
-        }
+        return NSLocalizedString(rawValue, comment: "")
+    }
     
     var labelOlt : String{
         switch self {

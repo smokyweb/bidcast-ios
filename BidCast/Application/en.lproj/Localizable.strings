@@ -145,7 +145,7 @@
 "Active" = "Active";
 "Draft" = "Draft";
 "Inactive" = "Inactive";
-"What are you looking for?" = "What are you looking for?"
+"What are you looking for?" = "What are you looking for?";
 
 
 //MARK: Shows Screeen.
@@ -157,6 +157,67 @@
 "New Orders"  = "New Orders";
 "Processing" = "Processing";
 "Completed" = "Completed";
+
+
+//MARK: Wallet Screen()
+"Wallet" = "Wallet";
+"No Transaction history found" = "No Transaction history found";
+"Available Balance" = "Available Balance";
+"Early Payout" = "Early Payout";
+"Available for\nPayout" = "Available for\nPayout";
+"Processing" = "Processing";
+"You're eligible for early payout" = "You're eligible for early payout";
+"Payout History" = "Payout History";
+"No Payout history found" = "No Payout history found";
+"All" = "All";
+"Complete" = "Complete";
+"Withdrawal" = "Withdrawal";
+"Transactions" = "Transactions";
+
+//MARK: Offer Screen.
+"Offers" = "Offers";
+"Pending" = "Pending";
+"Accepted" = "Accepted";
+"Declined" = "Declined";
+"Placed an Offer •" = "Placed an Offer •";
+"Asking Price :" = "Asking Price :";
+"Price :" = "Price :";
+"Placed on:" = "Placed on:";
+"Decline" = "Decline";
+"Accept" = "Accept";
+"Accepted" = "Accepted";
+"Rejected" = "Rejected";
+"Just now" = "Just now";
+"ago" = "ago";
+
+//MARK: Tips Screen.
+"Tips" = "Tips";
+"Tips today" = "Tips today";
+"Total tips" = "Total tips";
+
+//MARK: Shipping Screen.
+"Shipping" = "Shipping";
+"Pending" = "Pending";
+"Delivered" = "Delivered";
+"Returns" = "Returns";
+
+//MARK: Affiliate Program.
+"Affiliate Program" = "Affiliate Program";
+"Earn $100 Per Referral" = "Earn $100 Per Referral";
+"Invite sellers and earn rewards when they succeed" = "Invite sellers and earn rewards when they succeed";
+"Share Your Link" = "Share Your Link";
+"Invite sellers using your unique code" = "Invite sellers using your unique code";
+"Share Invite Link" = "Share Invite Link";
+"Join with my referral code:" = "Join with my referral code:";
+"Code copied!" = "Code copied!";
+"Copy Code" = "Copy Code";
+"Earn $100 Reward" = "Earn $100 Reward";
+"When your referral makes their first sale" = "When your referral makes their first sale";
+"Your Referral Stats" = "Your Referral Stats";
+"Total Referrals" = "Total Referrals";
+"Earnings" = "Earnings";
+
+//MARK: We have to work from Seller Training.
 
 
 

@@ -44,7 +44,7 @@ enum WalletSegment: String, CaseIterable, CustomStringConvertible {
     case withdrawal = "Withdrawal"
 
     var description: String {
-        return rawValue
+        return NSLocalizedString(rawValue, comment: "")
     }
 }
 

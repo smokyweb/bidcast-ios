@@ -151,6 +151,65 @@
 "Processing" = "En Proceso";
 "Completed" = "Completado";
 
+//MARK: Wallet Screen()
+"Wallet" = "Billetera";
+"No Transaction history found" = "No se encontró historial de transacciones";
+"Available Balance" = "Saldo disponible";
+"Early Payout" = "Pago anticipado";
+"Available for\nPayout" = "Disponible para\npago";
+"Processing" = "Procesando";
+"You're eligible for early payout" = "Eres elegible para pago anticipado";
+"Payout History" = "Historial de pagos";
+"No Payout history found" = "No se encontró historial de pagos";
+"All" = "Todos";
+"Complete" = "Completado";
+"Withdrawal" = "Retiro";
+"Transactions" = "Transacciones";
+
+//MARK: Offer Screen.
+"Offers" = "Ofertas";
+"Pending" = "Pendiente";
+"Accepted" = "Aceptado";
+"Declined" = "Rechazado";
+"Placed an Offer •" = "Hizo una oferta •";
+"Asking Price :" = "Precio solicitado:";
+"Price :" = "Precio:";
+"Placed on:" = "Realizado el:";
+"Decline" = "Rechazar";
+"Accept" = "Aceptar";
+"Accepted" = "Aceptado";
+"Rejected" = "Rechazado";
+"Just now" = "Justo ahora";
+"ago" = "hace";
+
+//MARK: Tips Screen.
+"Tips" = "Propinas";
+"Tips today" = "Propinas de hoy";
+"Total tips" = "Propinas totales";
+
+//MARK: Shipping Screen.
+"Shipping" = "Envíos";
+"Pending" = "Pendiente";
+"Delivered" = "Entregado";
+"Returns" = "Devoluciones";
+
+//MARK: Affiliate Program.
+"Affiliate Program" = "Programa de Afiliados";
+"Earn $100 Per Referral" = "Gana $100 por cada referido";
+"Invite sellers and earn rewards when they succeed" = "Invita a vendedores y gana recompensas cuando tengan éxito";
+"Share Your Link" = "Comparte tu enlace";
+"Invite sellers using your unique code" = "Invita a vendedores con tu código único";
+"Share Invite Link" = "Compartir enlace de invitación";
+"Join with my referral code:" = "Únete con mi código de referido:";
+"Code copied!" = "¡Código copiado!";
+"Copy Code" = "Copiar código";
+"Earn $100 Reward" = "Gana $100 de recompensa";
+"When your referral makes their first sale" = "Cuando tu referido realice su primera venta";
+"Your Referral Stats" = "Tus estadísticas de referido";
+"Total Referrals" = "Referidos totales";
+"Earnings" = "Ganancias";
+
+
 
 
 

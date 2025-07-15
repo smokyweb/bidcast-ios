@@ -100,11 +100,35 @@ struct AppString{
     static let UploadPhoto = "Upload Photo".localized
     static let Inventory = "Inventory".localized
     static let NoInventoryFound = "No inventory found".localized
-    static let whatAreYouLookingFor = "What are you looking for?"
-    static let MyOrders = "My Orders"
-    
-    
-    
-    
-    
+    static let whatAreYouLookingFor = "What are you looking for?".localized
+    static let MyOrders = "My Orders".localized
+    static let Wallet = "Wallet".localized
+    static let NoTransactionHistoryFound = "No Transaction history found".localized
+    static let AvailableBalance = "Available Balance".localized
+    static let EarlyPayout = "Early Payout".localized
+    static let avaialbelForPayOut = "Available for\nPayout".localized
+    static let Processing = "Processing".localized
+    static let  YouAreEligibleForEarlyPayout  = "You're eligible for early payout".localized
+    static let PayoutHistory = "Payout History".localized
+    static let NoPayoutHistoryFound = "No Payout history found".localized
+    static let Offers = "Offers".localized
+    static let Decline = "Decline".localized
+    static let Accept = "Accept".localized
+    static let Accepted = "Accepted".localized
+    static let Rejected = "Rejected".localized
+    static let Tips = "Tips".localized
+    static let Shipping = "Shipping".localized
+    static let AffiliateProgram = "Affiliate Program".localized
+    static let Earn$100PerReferral = "Earn $100 Per Referral".localized
+    static let InviteSellersandEarnRewards = "Invite sellers and earn rewards when they succeed".localized
+    static let ShareYourLink = "Share Your Link".localized
+    static let InviteSellers = "Invite sellers using your unique code".localized
+    static let ShareInviteLink = "Share Invite Link"
+    static let CodeCopied = "Code copied!"
+    static let CopyCode = "Copy Code"
+    static let  Earn$100Reward = "Earn $100 Reward"
+    static let  WhenYourReferral = "When your referral makes their first sale"
+    static let YourReferralStatus = "Your Referral Stats"
+    static let  TotalReferrals  = "Total Referrals"
+    static let Earnings = "Earnings"
 }

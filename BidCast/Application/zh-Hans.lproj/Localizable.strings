@@ -149,6 +149,66 @@
 "Processing" = "处理中";
 "Completed" = "已完成";
 
+//MARK: Wallet Screen()
+"Wallet" = "钱包";
+"No Transaction history found" = "未找到交易记录";
+"Available Balance" = "可用余额";
+"Early Payout" = "提前付款";
+"Available for\nPayout" = "可用于\n付款";
+"Processing" = "处理中";
+"You're eligible for early payout" = "您有资格获得提前付款";
+"Payout History" = "付款历史";
+"No Payout history found" = "未找到付款记录";
+"All" = "全部";
+"Complete" = "已完成";
+"Withdrawal" = "提现";
+"Transactions" = "交易";
+
+//MARK: Offer Screen.
+"Offers" = "报价";
+"Pending" = "待处理";
+"Accepted" = "已接受";
+"Declined" = "已拒绝";
+"Placed an Offer •" = "已出价 •";
+"Asking Price :" = "要价：";
+"Price :" = "价格：";
+"Placed on:" = "出价时间：";
+"Decline" = "拒绝";
+"Accept" = "接受";
+"Accepted" = "已接受";
+"Rejected" = "已拒绝";
+"Just now" = "刚刚";
+"ago" = "之前";
+
+//MARK: Tips Screen.
+"Tips" = "小费";
+"Tips today" = "今日小费";
+"Total tips" = "总小费";
+
+//MARK: Shipping Screen.
+"Shipping" = "配送";
+"Pending" = "待发货";
+"Delivered" = "已送达";
+"Returns" = "退货";
+
+//MARK: Affiliate Program.
+"Affiliate Program" = "联盟计划";
+"Earn $100 Per Referral" = "每推荐一人可赚 $100";
+"Invite sellers and earn rewards when they succeed" = "邀请卖家，成功后获得奖励";
+"Share Your Link" = "分享您的链接";
+"Invite sellers using your unique code" = "使用您的专属邀请码邀请卖家";
+"Share Invite Link" = "分享邀请链接";
+"Join with my referral code:" = "使用我的推荐码加入：";
+"Code copied!" = "代码已复制！";
+"Copy Code" = "复制代码";
+"Earn $100 Reward" = "赚取 $100 奖励";
+"When your referral makes their first sale" = "当您的推荐人完成首次销售时";
+"Your Referral Stats" = "您的推荐统计";
+"Total Referrals" = "总推荐人数";
+"Earnings" = "收益";
+
+
+
 
 
 

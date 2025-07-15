@@ -149,6 +149,63 @@
 "Processing" = "처리 중";
 "Completed" = "완료됨";
 
+//MARK: Wallet Screen()
+"Wallet" = "지갑";
+"No Transaction history found" = "거래 내역이 없습니다";
+"Available Balance" = "사용 가능한 잔액";
+"Early Payout" = "조기 지급";
+"Available for\nPayout" = "지급 가능 금액\n";
+"Processing" = "처리 중";
+"You're eligible for early payout" = "조기 지급 대상입니다";
+"Payout History" = "지급 내역";
+"No Payout history found" = "지급 내역이 없습니다";
+"All" = "전체";
+"Complete" = "완료";
+"Withdrawal" = "출금";
+"Transactions" = "거래";
+
+//MARK: Offer Screen.
+"Offers" = "제안";
+"Pending" = "대기 중";
+"Accepted" = "수락됨";
+"Declined" = "거절됨";
+"Placed an Offer •" = "제안함 •";
+"Asking Price :" = "요청 가격:";
+"Price :" = "가격:";
+"Placed on:" = "제안 날짜:";
+"Decline" = "거절";
+"Accept" = "수락";
+"Accepted" = "수락됨";
+"Rejected" = "거절됨";
+"Just now" = "방금 전";
+"ago" = "전";
+
+//MARK: Tips Screen.
+"Tips" = "팁";
+"Tips today" = "오늘 받은 팁";
+"Total tips" = "총 팁";
+
+//MARK: Shipping Screen.
+"Shipping" = "배송";
+"Pending" = "대기 중";
+"Delivered" = "배송 완료";
+"Returns" = "반품";
+
+//MARK: Affiliate Program.
+"Affiliate Program" = "제휴 프로그램";
+"Earn $100 Per Referral" = "추천당 $100 획득";
+"Invite sellers and earn rewards when they succeed" = "판매자를 초대하고 성공 시 보상을 받으세요";
+"Share Your Link" = "링크 공유하기";
+"Invite sellers using your unique code" = "고유 코드를 사용하여 판매자를 초대하세요";
+"Share Invite Link" = "초대 링크 공유";
+"Join with my referral code:" = "내 추천 코드로 가입:";
+"Code copied!" = "코드가 복사되었습니다!";
+"Copy Code" = "코드 복사";
+"Earn $100 Reward" = "$100 보상 받기";
+"When your referral makes their first sale" = "추천인이 첫 판매를 완료하면";
+"Your Referral Stats" = "나의 추천 통계";
+"Total Referrals" = "총 추천 수";
+"Earnings" = "수익";
 
 
 

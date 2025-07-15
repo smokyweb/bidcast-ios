@@ -150,6 +150,64 @@
 "Processing" = "Processando";
 "Completed" = "Concluído";
 
+//MARK: Wallet Screen()
+"Wallet" = "Carteira";
+"No Transaction history found" = "Nenhum histórico de transações encontrado";
+"Available Balance" = "Saldo disponível";
+"Early Payout" = "Pagamento antecipado";
+"Available for\nPayout" = "Disponível para\npagamento";
+"Processing" = "Processando";
+"You're eligible for early payout" = "Você está elegível para pagamento antecipado";
+"Payout History" = "Histórico de pagamentos";
+"No Payout history found" = "Nenhum histórico de pagamentos encontrado";
+"All" = "Todos";
+"Complete" = "Concluído";
+"Withdrawal" = "Saque";
+"Transactions" = "Transações";
+
+//MARK: Offer Screen.
+"Offers" = "Ofertas";
+"Pending" = "Pendente";
+"Accepted" = "Aceito";
+"Declined" = "Recusado";
+"Placed an Offer •" = "Fez uma oferta •";
+"Asking Price :" = "Preço pedido:";
+"Price :" = "Preço:";
+"Placed on:" = "Feito em:";
+"Decline" = "Recusar";
+"Accept" = "Aceitar";
+"Accepted" = "Aceito";
+"Rejected" = "Rejeitado";
+"Just now" = "Agora mesmo";
+"ago" = "atrás";
+
+//MARK: Tips Screen.
+"Tips" = "Gorjetas";
+"Tips today" = "Gorjetas de hoje";
+"Total tips" = "Total de gorjetas";
+
+//MARK: Shipping Screen.
+"Shipping" = "Envio";
+"Pending" = "Pendente";
+"Delivered" = "Entregue";
+"Returns" = "Devoluções";
+
+//MARK: Affiliate Program.
+"Affiliate Program" = "Programa de Afiliados";
+"Earn $100 Per Referral" = "Ganhe $100 por indicação";
+"Invite sellers and earn rewards when they succeed" = "Convide vendedores e ganhe recompensas quando tiverem sucesso";
+"Share Your Link" = "Compartilhe seu link";
+"Invite sellers using your unique code" = "Convide vendedores com seu código exclusivo";
+"Share Invite Link" = "Compartilhar link de convite";
+"Join with my referral code:" = "Junte-se com meu código de indicação:";
+"Code copied!" = "Código copiado!";
+"Copy Code" = "Copiar código";
+"Earn $100 Reward" = "Ganhe $100 de recompensa";
+"When your referral makes their first sale" = "Quando sua indicação fizer a primeira venda";
+"Your Referral Stats" = "Suas estatísticas de indicação";
+"Total Referrals" = "Total de indicações";
+"Earnings" = "Ganhos";
+
 
 
 

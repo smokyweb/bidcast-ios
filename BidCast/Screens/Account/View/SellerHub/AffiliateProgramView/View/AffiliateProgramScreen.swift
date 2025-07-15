@@ -34,7 +34,7 @@ struct AffiliateProgramScreen: View {
             // Fixed Header
             VStack{
                 PrimaryHeader(
-                    title: "Affiliate Program",
+                    title: AppString.AffiliateProgram,
                     isForBoth: true,
                     leadingImgArr: [.icBack,.appName],
                     onClickLeading: { _ in
@@ -47,9 +47,9 @@ struct AffiliateProgramScreen: View {
             ScrollView {
                 VStack(spacing: 24) {
                     VStack(spacing: 8) {
-                        Text("Earn $100 Per Referral")
+                        Text(AppString.Earn$100PerReferral.localized)
                             .font(.custom(poppinsBold, size: 16.0))
-                        Text("Invite sellers and earn rewards when they succeed")
+                        Text(AppString.InviteSellersandEarnRewards.localized)
                             .font(.custom(poppinsSemiBold, size: 14.0))
                             .foregroundColor(.gray)
                             .multilineTextAlignment(.center)
@@ -61,7 +61,7 @@ struct AffiliateProgramScreen: View {
                     // 🔥 Share + Copy Buttons
                     HStack(spacing: 16) {
                         Button(action: {
-                            let message = "Join with my referral code: \(referralCode)"
+                            let message = "Join with my referral code: \(referralCode)".localized
                             let activityVC = UIActivityViewController(activityItems: [message], applicationActivities: nil)
                             UIApplication.shared.windows.first?.rootViewController?.present(activityVC, animated: true, completion: nil)
                         }) {
@@ -80,12 +80,12 @@ struct AffiliateProgramScreen: View {
 
                         Button(action: {
                             UIPasteboard.general.string = referralCode
-                            hudMsg = "Code copied!"
+                            hudMsg = AppString.CodeCopied
                             showhud = true
                         }) {
                             HStack {
                                 Image(systemName: "doc.on.doc")
-                                Text("Copy Code")
+                                Text(AppString.CopyCode)
                                     .font(.custom(poppinsSemiBold, size: 13.0))
                             }
                             .frame(maxWidth:.infinity)

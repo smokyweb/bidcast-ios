@@ -20,9 +20,9 @@ struct ReferralCodeCardView: View {
                     .overlay(Image(systemName: "link").foregroundColor(.purple))
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Share Your Link")
+                    Text(AppString.ShareYourLink)
                         .font(.custom(poppinsSemiBold, size: 13.0))
-                    Text("Invite sellers using your unique code")
+                    Text(AppString.InviteSellers)
                         .font(.custom(poppinsRegular, size: 11.0))
                         .foregroundColor(.gray)
                 }
@@ -46,7 +46,7 @@ struct ReferralCodeCardView: View {
             .cornerRadius(8)
 
             Button(action: onShare) {
-                Text("Share Invite Link")
+                Text(AppString.ShareInviteLink)
                     .font(.custom(poppinsSemiBold, size: 13.0))
                     .frame(maxWidth: .infinity)
                     .padding()

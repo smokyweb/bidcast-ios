@@ -16,9 +16,9 @@ struct RewardInfoCardView: View {
                 .overlay(Image(systemName: "dollarsign.circle").foregroundColor(.darkGreen))
 
             VStack(alignment: .leading, spacing: 4) {
-                Text("Earn $100 Reward")
+                Text(AppString.Earn$100Reward)
                     .font(.custom(poppinsSemiBold, size: 14.0))
-                Text("When your referral makes their first sale")
+                Text(AppString.WhenYourReferral)
                     .font(.custom(poppinsRegular, size: 11.0))
                     .foregroundColor(.gray)
             }
