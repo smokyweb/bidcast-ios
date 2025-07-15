@@ -30,7 +30,7 @@ struct InventoryScreen: View {
             // MARK: - Header
             VStack{
                 PrimaryHeader(
-                    title: "Inventory".localized,
+                    title: AppString.Inventory.localized,
                     isForBoth: true,
                     leadingImgArr: [.icBack,.appName], // logo on left
                     trailingImgArr: [],
@@ -62,7 +62,7 @@ struct InventoryScreen: View {
             ScrollView {
                 VStack(spacing: 4) {
                     if inventoryList.count == 0{
-                        NoDataView( message: "No inventory found")
+                        NoDataView( message: AppString.NoInventoryFound.localized)
                     }else{
                         ForEach(0 ..< inventoryList.count, id: \.self) { index in
                             let inventory = inventoryList[index]

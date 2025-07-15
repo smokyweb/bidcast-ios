@@ -138,7 +138,12 @@
 "Photo Library" = "Photo Library";
 "Cancel" = "Cancel" ;
 "Upload Photo" = "Upload Photo";
-
+"Inventory" = "Inventory";
+"No inventory found" = "No inventory found";
+"Active" = "Active";
+"Draft" = "Draft";
+"Inactive" = "Inactive";
+"What are you looking for?" = "What are you looking for?"
 
 
 

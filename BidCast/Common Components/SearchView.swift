@@ -25,7 +25,7 @@ struct SearchView: View {
                 .accessibilityHidden(true)
             
             // Text Field
-            TextField("What are you looking for?", text: $searchText)
+            TextField(AppString.whatAreYouLookingFor.localized, text: $searchText)
                 .font(.custom(poppinsMedium, fixedSize: 14))
                 .keyboardType(.default)
                 .autocorrectionDisabled(true)
