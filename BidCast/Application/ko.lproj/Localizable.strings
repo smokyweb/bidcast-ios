@@ -131,6 +131,24 @@
 "Cancel" = "취소";
 "Upload Photo" = "사진 업로드";
 
+//MARK: Inventory Screen.
+"Inventory" = "재고";
+"No inventory found" = "재고를 찾을 수 없습니다";
+"Active" = "활성";
+"Draft" = "임시 저장";
+"Inactive" = "비활성";
+"What are you looking for?" = "무엇을 찾고 계신가요?";
+
+//MARK: Shows Screen.
+"Shows" = "쇼";
+"Past Shows" = "지난 쇼";
+
+//MARK: MyOrder Screen.
+"My Orders" = "내 주문";
+"New Orders"  = "신규 주문";
+"Processing" = "처리 중";
+"Completed" = "완료됨";
+
 
 
 

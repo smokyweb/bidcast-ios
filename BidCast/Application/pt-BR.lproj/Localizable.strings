@@ -132,6 +132,23 @@
 "Cancel" = "Cancelar";
 "Upload Photo" = "Enviar Foto";
 
+//MARK: Inventory Screen.
+"Inventory" = "Estoque";
+"No inventory found" = "Nenhum item de estoque encontrado";
+"Active" = "Ativo";
+"Draft" = "Rascunho";
+"Inactive" = "Inativo";
+"What are you looking for?" = "O que você está procurando?";
+
+//MARK: Shows Screen.
+"Shows" = "Apresentações";
+"Past Shows" = "Apresentações Passadas";
+
+//MARK: MyOrder Screen.
+"My Orders" = "Meus Pedidos";
+"New Orders"  = "Novos Pedidos";
+"Processing" = "Processando";
+"Completed" = "Concluído";
 
 
 

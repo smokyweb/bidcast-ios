@@ -168,6 +168,25 @@
 "Cancel" = "Отмена";
 "Upload Photo" = "Загрузить фото";
 
+//MARK: Inventory Screen.
+"Inventory" = "Инвентарь";
+"No inventory found" = "Инвентарь не найден";
+"Active" = "Активный";
+"Draft" = "Черновик";
+"Inactive" = "Неактивный";
+"What are you looking for?" = "Что вы ищете?";
+
+//MARK: Shows Screen.
+"Shows" = "Шоу";
+"Past Shows" = "Прошедшие шоу";
+
+//MARK: MyOrder Screen.
+"My Orders" = "Мои заказы";
+"New Orders"  = "Новые заказы";
+"Processing" = "В обработке";
+"Completed" = "Завершено";
+
+
 
 
 

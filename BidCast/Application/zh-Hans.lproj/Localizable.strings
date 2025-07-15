@@ -131,6 +131,24 @@
 "Cancel" = "取消";
 "Upload Photo" = "上传照片";
 
+//MARK: Inventory Screen.
+"Inventory" = "库存";
+"No inventory found" = "未找到库存";
+"Active" = "启用";
+"Draft" = "草稿";
+"Inactive" = "未启用";
+"What are you looking for?" = "您在寻找什么？";
+
+//MARK: Shows Screen.
+"Shows" = "节目";
+"Past Shows" = "往期节目";
+
+//MARK: MyOrder Screen.
+"My Orders" = "我的订单";
+"New Orders"  = "新订单";
+"Processing" = "处理中";
+"Completed" = "已完成";
+
 
 
 

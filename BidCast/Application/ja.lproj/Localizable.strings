@@ -133,6 +133,24 @@
 "Cancel" = "キャンセル";
 "Upload Photo" = "写真をアップロード";
 
+//MARK: Inventory Screen.
+"Inventory" = "在庫";
+"No inventory found" = "在庫が見つかりません";
+"Active" = "有効";
+"Draft" = "下書き";
+"Inactive" = "無効";
+"What are you looking for?" = "何をお探しですか？";
+
+//MARK: Shows Screen.
+"Shows" = "ショー";
+"Past Shows" = "過去のショー";
+
+//MARK: MyOrder Screen.
+"My Orders" = "注文履歴";
+"New Orders"  = "新しい注文";
+"Processing" = "処理中";
+"Completed" = "完了";
+
 
 
 

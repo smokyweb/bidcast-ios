@@ -132,6 +132,24 @@
 "Cancel" = "Hủy";
 "Upload Photo" = "Tải ảnh lên";
 
+//MARK: Inventory Screen.
+"Inventory" = "Hàng tồn kho";
+"No inventory found" = "Không tìm thấy hàng tồn kho";
+"Active" = "Đang hoạt động";
+"Draft" = "Bản nháp";
+"Inactive" = "Không hoạt động";
+"What are you looking for?" = "Bạn đang tìm kiếm gì?";
+
+//MARK: Shows Screen.
+"Shows" = "Chương trình";
+"Past Shows" = "Chương trình đã qua";
+
+//MARK: MyOrder Screen.
+"My Orders" = "Đơn hàng của tôi";
+"New Orders"  = "Đơn hàng mới";
+"Processing" = "Đang xử lý";
+"Completed" = "Hoàn thành";
+
 
 
 

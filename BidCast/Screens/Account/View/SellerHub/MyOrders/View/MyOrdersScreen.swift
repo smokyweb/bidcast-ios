@@ -31,7 +31,7 @@ struct MyOrdersScreen: View {
                 VStack{
                     // MARK: - Top Header (fixed)
                     PrimaryHeader(
-                        title: "My Orders",
+                        title: AppString.MyOrders,
                         isForBoth: true,
                         leadingImgArr: [.icBack,.appName],
                         trailingImgArr: [.icSetting],
@@ -178,6 +178,7 @@ extension MyOrdersScreen{
 // MARK: - MyOrderValue
 enum MyOrderValue: String, CaseIterable, CustomStringConvertible {
     case newOrders, processing, completed
+
     var labelOlt: String {
         switch self {
         case .newOrders: return "24"
@@ -185,15 +186,17 @@ enum MyOrderValue: String, CaseIterable, CustomStringConvertible {
         case .completed: return "892"
         }
     }
-    
+
     var description: String {
         switch self {
-        case .newOrders: return "New Orders"
-        case .processing: return "Processing"
-        case .completed: return "Completed"
+        case .newOrders: return NSLocalizedString("New Orders", comment: "")
+        case .processing: return NSLocalizedString("Processing", comment: "")
+        case .completed: return NSLocalizedString("Completed", comment: "")
         }
     }
 }
+
+
 #Preview {
     MyOrdersScreen()
 }

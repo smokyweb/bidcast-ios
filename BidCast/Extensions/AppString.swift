@@ -101,6 +101,7 @@ struct AppString{
     static let Inventory = "Inventory".localized
     static let NoInventoryFound = "No inventory found".localized
     static let whatAreYouLookingFor = "What are you looking for?"
+    static let MyOrders = "My Orders"
     
     
     

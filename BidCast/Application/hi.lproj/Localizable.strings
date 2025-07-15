@@ -131,6 +131,24 @@
 "Cancel" = "रद्द करें";
 "Upload Photo" = "फोटो अपलोड करें";
 
+//MARK: Inventory Screen.
+"Inventory" = "स्टॉक";
+"No inventory found" = "कोई स्टॉक नहीं मिला";
+"Active" = "सक्रिय";
+"Draft" = "ड्राफ्ट";
+"Inactive" = "निष्क्रिय";
+"What are you looking for?" = "आप क्या ढूंढ़ रहे हैं?";
+
+//MARK: Shows Screen.
+"Shows" = "शो";
+"Past Shows" = "पिछले शो";
+
+//MARK: MyOrder Screen.
+"My Orders" = "मेरे ऑर्डर";
+"New Orders" = "नए ऑर्डर";
+"Processing" = "प्रोसेस हो रहा है";
+"Completed" = "पूरा हो गया";
+
 
 
 

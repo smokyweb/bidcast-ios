@@ -138,12 +138,28 @@
 "Photo Library" = "Photo Library";
 "Cancel" = "Cancel" ;
 "Upload Photo" = "Upload Photo";
+
+//MARK: Inventory Screen.
 "Inventory" = "Inventory";
 "No inventory found" = "No inventory found";
 "Active" = "Active";
 "Draft" = "Draft";
 "Inactive" = "Inactive";
 "What are you looking for?" = "What are you looking for?"
+
+
+//MARK: Shows Screeen.
+"Shows" = "Shows";
+"Past Shows" = "Past Shows";
+
+//MARK: MyOrder Screen.
+"My Orders" = "My Orders";
+"New Orders"  = "New Orders";
+"Processing" = "Processing";
+"Completed" = "Completed";
+
+
+
 
 
 
