@@ -5,6 +5,141 @@
   Created by JAM_E_329 on 14/05/25.
   
 */
+
+//MARK: Login Screen.
+"Email Address" = "Endereço de e-mail";
+"Enter Email Address" = "Digite o endereço de e-mail";
+"Password" = "Senha";
+"Enter Password" = "Digite a senha";
+"Remember Me" = "Lembrar de mim";
+"Forgot Password?" = "Esqueceu a senha?";
+"Login" = "Entrar";
+"New User?" = "Novo usuário?";
+"Create Account" = "Criar conta";
+"Please enter email address" = "Por favor, digite o endereço de e-mail";
+"Please enter Password" = "Por favor, digite a senha";
+"Password can not be less than 8 characters" = "A senha não pode ter menos de 8 caracteres";
+"Terms of service" = "Termos de serviço";
+"Privacy Policy" = "Política de privacidade";
+
+//MARK: SignUP Screen.
+"Create Account" = "Criar conta";
+"Create Your Account" = "Crie sua conta";
+"First Name" = "Nome";
+"Enter First Name" = "Digite o nome";
+"Last Name" = "Sobrenome";
+"Enter Last Name" = "Digite o sobrenome";
+"Email Address" = "Endereço de e-mail";
+"Enter Email Address" = "Digite o endereço de e-mail";
+"Password" = "Senha";
+"Enter Password" = "Digite a senha";
+"Confirm Password" = "Confirmar senha";
+"Submit" = "Enviar";
+"Please enter First Name" = "Por favor, digite o nome";
+"Please enter Last Name" = "Por favor, digite o sobrenome";
+"Please enter email address" = "Por favor, digite o endereço de e-mail";
+"Please enter a valid mail address" = "Por favor, digite um endereço de e-mail válido";
+"Please enter Password" = "Por favor, digite a senha";
+"Password can not be less than 8 characters" = "A senha não pode ter menos de 8 caracteres";
+"Please Confirm Password" = "Por favor, confirme a senha";
+"Password and Confirm Password can not be different" = "A senha e a confirmação não podem ser diferentes";
+
+//MARK: Forgot Password Screen.
+"Forgot Password" = "Esqueceu a senha";
+"Please enter the email address associated with your account" = "Por favor, digite o e-mail associado à sua conta";
+"Email Address" = "Endereço de e-mail";
+"Enter Email Address" = "Digite o endereço de e-mail";
+"Submit" = "Enviar";
+"Please enter email address" = "Por favor, digite o endereço de e-mail";
+"Please enter a valid mail address" = "Por favor, digite um endereço de e-mail válido";
+
+//MARK: Verify OTP
+"Enter Code" = "Digite o código";
+"Verify OTP" = "Verificar OTP";
+"Success! Please enter the code that was sent to the email associated with your account." = "Sucesso! Digite o código que foi enviado para o e-mail associado à sua conta.";
+"Resend OTP" = "Reenviar OTP";
+"Submit" = "Enviar";
+"OTP can not be empty" = "O OTP não pode estar vazio";
+"Enter OTP" = "Digite o OTP";
+"OTP must be numeric" = "O OTP deve ser numérico";
+
+//MARK: Reset Password
+"Reset Password" = "Redefinir senha";
+"Success! Please enter your new password below." = "Sucesso! Digite sua nova senha abaixo.";
+"Enter Password" = "Digite a senha";
+"Confirm Password" = "Confirmar senha";
+"Submit" = "Enviar";
+
+//MARK: Account Screen.
+"Account" = "Conta";
+"Seller Hub" = "Central do Vendedor";
+"My Account" = "Minha Conta";
+"Items" = "Itens";
+"Revenue" = "Receita";
+"Sorting" = "Classificação";
+"Inventory" = "Estoque";
+"Shows" = "Apresentações";
+"My Orders" = "Meus Pedidos";
+"Wallet" = "Carteira";
+"Offers" = "Ofertas";
+"Tips" = "Dicas";
+"Shipping" = "Envio";
+"Affiliate Program" = "Programa de Afiliados";
+"Seller Training" = "Treinamento para Vendedores";
+"Premier Shop" = "Loja Premium";
+"Seller Status" = "Status do Vendedor";
+"Seller Analytics" = "Análises do Vendedor";
+"Seller Verification" = "Verificação do Vendedor";
+"Credits" = "Créditos";
+"Coupons" = "Cupons";
+"Payment & Shipping" = "Pagamento e Envio";
+"Addresses" = "Endereços";
+"Trusted Buyer" = "Comprador Confiável";
+"Notifications" = "Notificações";
+"Preference" = "Preferências";
+"About Us" = "Sobre Nós";
+"Contact Us" = "Fale Conosco";
+"Sales tax Exemption" = "Isenção de Imposto sobre Vendas";
+"Terms & Conditions" = "Termos e Condições";
+"Privacy & Policy" = "Privacidade e Política";
+"F.A.Q" = "Perguntas Frequentes";
+"Logout" = "Sair";
+"Vacation Mode" = "Modo Férias";
+
+
+//MARK: Complete Profile.
+"Complete Profile" = "Completar Perfil";
+"Complete Your Profile" = "Complete seu Perfil";
+"First Name" = "Nome";
+"Enter First Name" = "Digite seu nome";
+"Last Name" = "Sobrenome";
+"Enter Last Name" = "Digite seu sobrenome";
+"Username" = "Nome de usuário";
+"Enter User Name" = "Digite seu nome de usuário";
+"Email Address" = "Endereço de e-mail";
+"Enter Email Address" = "Digite seu e-mail";
+"Bio" = "Biografia";
+"Tell us about yourself" = "Fale um pouco sobre você";
+"Update" = "Atualizar";
+"Please upload your profile image" = "Por favor, envie sua foto de perfil";
+"Please enter your first name" = "Por favor, digite seu nome";
+"Please enter your last name" = "Por favor, digite seu sobrenome";
+"Please enter a username" = "Por favor, digite um nome de usuário";
+"Please enter a bio" = "Por favor, digite uma biografia";
+"Select Media Source" = "Selecionar fonte de mídia";
+"Camera" = "Câmera";
+"Photo Library" = "Galeria de Fotos";
+"Cancel" = "Cancelar";
+"Upload Photo" = "Enviar Foto";
+
+
+
+
+
+
+
+
+
 "Activity" = "Atividade";
 "Password" = "Senha";
 "Email Address" = "Endereço de e-mail";

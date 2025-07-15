@@ -5,6 +5,138 @@
  Created by JAM_E_329 on 14/05/25.
   
 */
+
+//MARK: Login Screen.
+"Email Address" = "メールアドレス";
+"Enter Email Address" = "メールアドレスを入力してください";
+"Password" = "パスワード";
+"Enter Password" = "パスワードを入力してください";
+"Remember Me" = "ログイン情報を記憶する";
+"Forgot Password?" = "パスワードをお忘れですか？";
+"Login" = "ログイン";
+"New User?" = "新規ユーザーですか？";
+"Create Account" = "アカウント作成";
+"Please enter email address" = "メールアドレスを入力してください";
+"Please enter Password" = "パスワードを入力してください";
+"Password can not be less than 8 characters" = "パスワードは8文字以上で入力してください";
+"Terms of service" = "利用規約";
+"Privacy Policy" = "プライバシーポリシー";
+
+//MARK: SignUP Screen.
+"Create Account" = "アカウント作成";
+"Create Your Account" = "アカウントを作成する";
+"First Name" = "名";
+"Enter First Name" = "名を入力してください";
+"Last Name" = "姓";
+"Enter Last Name" = "姓を入力してください";
+"Email Address" = "メールアドレス";
+"Enter Email Address" = "メールアドレスを入力してください";
+"Password" = "パスワード";
+"Enter Password" = "パスワードを入力してください";
+"Confirm Password" = "パスワード確認";
+"Submit" = "送信";
+"Please enter First Name" = "名を入力してください";
+"Please enter Last Name" = "姓を入力してください";
+"Please enter email address" = "メールアドレスを入力してください";
+"Please enter a valid mail address" = "有効なメールアドレスを入力してください";
+"Please enter Password" = "パスワードを入力してください";
+"Password can not be less than 8 characters" = "パスワードは8文字以上で入力してください";
+"Please Confirm Password" = "パスワード確認を入力してください";
+"Password and Confirm Password can not be different" = "パスワードと確認用パスワードが一致しません";
+
+//MARK: Forgot Password Screen.
+"Forgot Password" = "パスワードをお忘れですか";
+"Please enter the email address associated with your account" = "アカウントに関連付けられているメールアドレスを入力してください";
+"Email Address" = "メールアドレス";
+"Enter Email Address" = "メールアドレスを入力してください";
+"Submit" = "送信";
+"Please enter email address" = "メールアドレスを入力してください";
+"Please enter a valid mail address" = "有効なメールアドレスを入力してください";
+
+//MARK: Verify OTP
+"Enter Code" = "コードを入力";
+"Verify OTP" = "OTPを確認する";
+"Success! Please enter the code that was sent to the email associated with your account." = "成功しました！アカウントに関連付けられたメールに送信されたコードを入力してください。";
+"Resend OTP" = "OTPを再送信";
+"Submit" = "送信";
+"OTP can not be empty" = "OTPは空にできません";
+"Enter OTP" = "OTPを入力してください";
+"OTP must be numeric" = "OTPは数字のみで入力してください";
+
+//MARK: Reset Password
+"Reset Password" = "パスワードをリセット";
+"Success! Please enter your new password below." = "成功しました！新しいパスワードを入力してください。";
+"Enter Password" = "パスワードを入力してください";
+"Confirm Password" = "パスワード確認";
+"Submit" = "送信";
+
+
+//MARK: Account Screen.
+"Account" = "アカウント";
+"Seller Hub" = "セラーハブ";
+"My Account" = "マイアカウント";
+"Items" = "商品";
+"Revenue" = "収益";
+"Sorting" = "並び替え";
+"Inventory" = "在庫";
+"Shows" = "ショー";
+"My Orders" = "注文履歴";
+"Wallet" = "ウォレット";
+"Offers" = "オファー";
+"Tips" = "ヒント";
+"Shipping" = "配送";
+"Affiliate Program" = "アフィリエイトプログラム";
+"Seller Training" = "販売者向けトレーニング";
+"Premier Shop" = "プレミアショップ";
+"Seller Status" = "販売者ステータス";
+"Seller Analytics" = "販売者分析";
+"Seller Verification" = "販売者認証";
+"Credits" = "クレジット";
+"Coupons" = "クーポン";
+"Payment & Shipping" = "支払いと配送";
+"Addresses" = "住所";
+"Trusted Buyer" = "信頼できる購入者";
+"Notifications" = "通知";
+"Preference" = "設定";
+"About Us" = "会社情報";
+"Contact Us" = "お問い合わせ";
+"Sales tax Exemption" = "消費税免除";
+"Terms & Conditions" = "利用規約";
+"Privacy & Policy" = "プライバシーポリシー";
+"F.A.Q" = "よくある質問";
+"Logout" = "ログアウト";
+"Vacation Mode" = "バケーションモード";
+
+
+//MARK: Complete Profile.
+"Complete Profile" = "プロフィールを完成させる";
+"Complete Your Profile" = "プロフィールを完成させてください";
+"First Name" = "名";
+"Enter First Name" = "名を入力してください";
+"Last Name" = "姓";
+"Enter Last Name" = "姓を入力してください";
+"Username" = "ユーザー名";
+"Enter User Name" = "ユーザー名を入力してください";
+"Email Address" = "メールアドレス";
+"Enter Email Address" = "メールアドレスを入力してください";
+"Bio" = "自己紹介";
+"Tell us about yourself" = "あなたについて教えてください";
+"Update" = "更新";
+"Please upload your profile image" = "プロフィール画像をアップロードしてください";
+"Please enter your first name" = "名を入力してください";
+"Please enter your last name" = "姓を入力してください";
+"Please enter a username" = "ユーザー名を入力してください";
+"Please enter a bio" = "自己紹介を入力してください";
+"Select Media Source" = "メディアソースを選択";
+"Camera" = "カメラ";
+"Photo Library" = "フォトライブラリ";
+"Cancel" = "キャンセル";
+"Upload Photo" = "写真をアップロード";
+
+
+
+
+
 "Activity" = "アクティビティ";
 "Email Address" = "メールアドレス";
 "Password" = "パスワード"; 

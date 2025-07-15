@@ -5,6 +5,135 @@
   Created by JAM_E_329 on 14/05/25.
   
 */
+
+//MARK: Login Screen.
+"Email Address" = "电子邮箱地址";
+"Enter Email Address" = "请输入电子邮箱地址";
+"Password" = "密码";
+"Enter Password" = "请输入密码";
+"Remember Me" = "记住我";
+"Forgot Password?" = "忘记密码？";
+"Login" = "登录";
+"New User?" = "新用户？";
+"Create Account" = "创建账户";
+"Please enter email address" = "请输入电子邮箱地址";
+"Please enter Password" = "请输入密码";
+"Password can not be less than 8 characters" = "密码不能少于8个字符";
+"Terms of service" = "服务条款";
+"Privacy Policy" = "隐私政策";
+
+//MARK: SignUP Screen.
+"Create Account" = "创建账户";
+"Create Your Account" = "创建您的账户";
+"First Name" = "名字";
+"Enter First Name" = "请输入名字";
+"Last Name" = "姓氏";
+"Enter Last Name" = "请输入姓氏";
+"Email Address" = "电子邮箱地址";
+"Enter Email Address" = "请输入电子邮箱地址";
+"Password" = "密码";
+"Enter Password" = "请输入密码";
+"Confirm Password" = "确认密码";
+"Submit" = "提交";
+"Please enter First Name" = "请输入名字";
+"Please enter Last Name" = "请输入姓氏";
+"Please enter email address" = "请输入电子邮箱地址";
+"Please enter a valid mail address" = "请输入有效的电子邮箱地址";
+"Please enter Password" = "请输入密码";
+"Password can not be less than 8 characters" = "密码不能少于8个字符";
+"Please Confirm Password" = "请确认密码";
+"Password and Confirm Password can not be different" = "密码与确认密码不一致";
+
+//MARK: Forgot Password Screen.
+"Forgot Password" = "忘记密码";
+"Please enter the email address associated with your account" = "请输入与您的账户关联的电子邮箱地址";
+"Email Address" = "电子邮箱地址";
+"Enter Email Address" = "请输入电子邮箱地址";
+"Submit" = "提交";
+"Please enter email address" = "请输入电子邮箱地址";
+"Please enter a valid mail address" = "请输入有效的电子邮箱地址";
+
+//MARK: Verify OTP
+"Enter Code" = "请输入验证码";
+"Verify OTP" = "验证验证码";
+"Success! Please enter the code that was sent to the email associated with your account." = "成功！请输入发送到您账户关联邮箱的验证码。";
+"Resend OTP" = "重新发送验证码";
+"Submit" = "提交";
+"OTP can not be empty" = "验证码不能为空";
+"Enter OTP" = "请输入验证码";
+"OTP must be numeric" = "验证码必须为数字";
+
+//MARK: Reset Password
+"Reset Password" = "重置密码";
+"Success! Please enter your new password below." = "成功！请输入您的新密码。";
+"Enter Password" = "请输入密码";
+"Confirm Password" = "确认密码";
+"Submit" = "提交";
+
+//MARK: Account Screen.
+"Account" = "账户";
+"Seller Hub" = "卖家中心";
+"My Account" = "我的账户";
+"Items" = "商品";
+"Revenue" = "收入";
+"Sorting" = "排序";
+"Inventory" = "库存";
+"Shows" = "展示";
+"My Orders" = "我的订单";
+"Wallet" = "钱包";
+"Offers" = "优惠";
+"Tips" = "提示";
+"Shipping" = "运输";
+"Affiliate Program" = "联盟计划";
+"Seller Training" = "卖家培训";
+"Premier Shop" = "高级商店";
+"Seller Status" = "卖家状态";
+"Seller Analytics" = "卖家分析";
+"Seller Verification" = "卖家认证";
+"Credits" = "积分";
+"Coupons" = "优惠券";
+"Payment & Shipping" = "付款与配送";
+"Addresses" = "地址";
+"Trusted Buyer" = "可信买家";
+"Notifications" = "通知";
+"Preference" = "偏好设置";
+"About Us" = "关于我们";
+"Contact Us" = "联系我们";
+"Sales tax Exemption" = "免销售税";
+"Terms & Conditions" = "条款与条件";
+"Privacy & Policy" = "隐私政策";
+"F.A.Q" = "常见问题";
+"Logout" = "退出登录";
+"Vacation Mode" = "假期模式";
+
+//MARK: Complete Profile.
+"Complete Profile" = "完善个人资料";
+"Complete Your Profile" = "请完善您的个人资料";
+"First Name" = "名字";
+"Enter First Name" = "请输入名字";
+"Last Name" = "姓氏";
+"Enter Last Name" = "请输入姓氏";
+"Username" = "用户名";
+"Enter User Name" = "请输入用户名";
+"Email Address" = "电子邮箱地址";
+"Enter Email Address" = "请输入电子邮箱地址";
+"Bio" = "个人简介";
+"Tell us about yourself" = "请介绍一下自己";
+"Update" = "更新";
+"Please upload your profile image" = "请上传您的头像";
+"Please enter your first name" = "请输入您的名字";
+"Please enter your last name" = "请输入您的姓氏";
+"Please enter a username" = "请输入用户名";
+"Please enter a bio" = "请输入个人简介";
+"Select Media Source" = "选择媒体来源";
+"Camera" = "相机";
+"Photo Library" = "照片图库";
+"Cancel" = "取消";
+"Upload Photo" = "上传照片";
+
+
+
+
 "Activity" = "活动";
 "Email Address" = "电子邮件地址";
 "Email" = "电子邮件";

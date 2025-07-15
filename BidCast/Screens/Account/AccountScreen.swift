@@ -53,7 +53,7 @@ struct AccountScreen: View {
         VStack{
             VStack{
                 PrimaryHeader(
-                    title: "Account".localized,
+                    title: AppString.Account.localized,
                     isForLogo: comeFromSeller ? false : true,
                     leadingImgArr: comeFromSeller ? [.icBack] : [.appName], // logo on left
                     trailingImgArr: [],
@@ -313,8 +313,8 @@ enum AccountSegment : String, CaseIterable, CustomStringConvertible{
     case Account = "My Account"
     
     var description: String {
-            return NSLocalizedString(rawValue, comment: "")
-        }
+        return NSLocalizedString(rawValue, comment: "").localized
+    }
 }
 
 

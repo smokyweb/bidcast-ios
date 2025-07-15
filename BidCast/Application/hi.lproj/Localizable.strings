@@ -1,10 +1,143 @@
 /* 
   Localizable.strings
   BidCast
-
   Created by JAM_E_329 on 14/05/25.
   
 */
+
+//MARK: Login Screen.
+"Email Address" = "ईमेल पता";
+"Enter Email Address" = "ईमेल पता दर्ज करें";
+"Password" = "पासवर्ड";
+"Enter Password" = "पासवर्ड दर्ज करें";
+"Remember Me" = "मुझे याद रखें";
+"Forgot Password?" = "पासवर्ड भूल गए?";
+"Login" = "लॉग इन करें";
+"New User?" = "नया उपयोगकर्ता?";
+"Create Account" = "खाता बनाएँ";
+"Please enter email address" = "कृपया ईमेल पता दर्ज करें";
+"Please enter Password" = "कृपया पासवर्ड दर्ज करें";
+"Password can not be less than 8 characters" = "पासवर्ड 8 अक्षरों से कम नहीं हो सकता";
+"Terms of service" = "सेवा की शर्तें";
+"Privacy Policy" = "गोपनीयता नीति";
+
+//MARK: SignUP Screen.
+"Create Account" = "खाता बनाएँ";
+"Create Your Account" = "अपना खाता बनाएँ";
+"First Name" = "पहला नाम";
+"Enter First Name" = "पहला नाम दर्ज करें";
+"Last Name" = "अंतिम नाम";
+"Enter Last Name" = "अंतिम नाम दर्ज करें";
+"Email Address" = "ईमेल पता";
+"Enter Email Address" = "ईमेल पता दर्ज करें";
+"Password" = "पासवर्ड";
+"Enter Password" = "पासवर्ड दर्ज करें";
+"Confirm Password" = "पासवर्ड की पुष्टि करें";
+"Submit" = "सबमिट करें";
+"Please enter First Name" = "कृपया पहला नाम दर्ज करें";
+"Please enter Last Name" = "कृपया अंतिम नाम दर्ज करें";
+"Please enter email address" = "कृपया ईमेल पता दर्ज करें";
+"Please enter a valid mail address" = "कृपया मान्य ईमेल पता दर्ज करें";
+"Please enter Password" = "कृपया पासवर्ड दर्ज करें";
+"Password can not be less than 8 characters" = "पासवर्ड 8 अक्षरों से कम नहीं हो सकता";
+"Please Confirm Password" = "कृपया पासवर्ड की पुष्टि करें";
+"Password and Confirm Password can not be different" = "पासवर्ड और पुष्टि पासवर्ड अलग नहीं हो सकते";
+
+//MARK: Forgot Password Screen.
+"Forgot Password" = "पासवर्ड भूल गए";
+"Please enter the email address associated with your account" = "कृपया अपने खाते से संबद्ध ईमेल पता दर्ज करें";
+"Email Address" = "ईमेल पता";
+"Enter Email Address" = "ईमेल पता दर्ज करें";
+"Submit" = "सबमिट करें";
+"Please enter email address" = "कृपया ईमेल पता दर्ज करें";
+"Please enter a valid mail address" = "कृपया मान्य ईमेल पता दर्ज करें";
+
+//MARK: Verify OTP
+"Enter Code" = "कोड दर्ज करें";
+"Verify OTP" = "ओटीपी सत्यापित करें";
+"Success! Please enter the code that was sent to the email associated with your account." = "सफलता! कृपया उस ईमेल पर भेजा गया कोड दर्ज करें जो आपके खाते से जुड़ा है।";
+"Resend OTP" = "ओटीपी दोबारा भेजें";
+"Submit" = "सबमिट करें";
+"OTP can not be empty" = "ओटीपी खाली नहीं हो सकता";
+"Enter OTP" = "ओटीपी दर्ज करें";
+"OTP must be numeric" = "ओटीपी केवल संख्यात्मक होना चाहिए";
+
+//MARK: Reset Password
+"Reset Password" = "पासवर्ड रीसेट करें";
+"Success! Please enter your new password below." = "सफलता! कृपया नीचे अपना नया पासवर्ड दर्ज करें।";
+"Enter Password" = "पासवर्ड दर्ज करें";
+"Confirm Password" = "पासवर्ड की पुष्टि करें";
+"Submit" = "सबमिट करें";
+
+//MARK: Account Screen.
+"Account" = "खाता";
+"Seller Hub" = "विक्रेता केंद्र";
+"My Account" = "मेरा खाता";
+"Items" = "आइटम्स";
+"Revenue" = "राजस्व";
+"Sorting" = "क्रमबद्ध करना";
+"Inventory" = "स्टॉक सूची";
+"Shows" = "शो";
+"My Orders" = "मेरे ऑर्डर";
+"Wallet" = "वॉलेट";
+"Offers" = "ऑफर";
+"Tips" = "टिप्स";
+"Shipping" = "शिपिंग";
+"Affiliate Program" = "एफ़िलिएट प्रोग्राम";
+"Seller Training" = "विक्रेता प्रशिक्षण";
+"Premier Shop" = "प्रीमियर शॉप";
+"Seller Status" = "विक्रेता की स्थिति";
+"Seller Analytics" = "विक्रेता विश्लेषण";
+"Seller Verification" = "विक्रेता सत्यापन";
+"Credits" = "क्रेडिट्स";
+"Coupons" = "कूपन";
+"Payment & Shipping" = "भुगतान और शिपिंग";
+"Addresses" = "पते";
+"Trusted Buyer" = "विश्वसनीय खरीदार";
+"Notifications" = "सूचनाएँ";
+"Preference" = "पसंद";
+"About Us" = "हमारे बारे में";
+"Contact Us" = "संपर्क करें";
+"Sales tax Exemption" = "बिक्री कर में छूट";
+"Terms & Conditions" = "नियम और शर्तें";
+"Privacy & Policy" = "गोपनीयता नीति";
+"F.A.Q" = "सामान्य प्रश्न";
+"Logout" = "लॉगआउट";
+"Vacation Mode" = "अवकाश मोड";
+
+
+//MARK: Complete Profile.
+"Complete Profile" = "प्रोफ़ाइल पूरा करें";
+"Complete Your Profile" = "अपनी प्रोफ़ाइल पूरी करें";
+"First Name" = "पहला नाम";
+"Enter First Name" = "पहला नाम दर्ज करें";
+"Last Name" = "अंतिम नाम";
+"Enter Last Name" = "अंतिम नाम दर्ज करें";
+"Username" = "उपयोगकर्ता नाम";
+"Enter User Name" = "उपयोगकर्ता नाम दर्ज करें";
+"Email Address" = "ईमेल पता";
+"Enter Email Address" = "ईमेल पता दर्ज करें";
+"Bio" = "जैव विवरण";
+"Tell us about yourself" = "अपने बारे में बताएं";
+"Update" = "अपडेट करें";
+"Please upload your profile image" = "कृपया अपनी प्रोफ़ाइल छवि अपलोड करें";
+"Please enter your first name" = "कृपया अपना पहला नाम दर्ज करें";
+"Please enter your last name" = "कृपया अपना अंतिम नाम दर्ज करें";
+"Please enter a username" = "कृपया एक उपयोगकर्ता नाम दर्ज करें";
+"Please enter a bio" = "कृपया एक जैव विवरण दर्ज करें";
+"Select Media Source" = "मीडिया स्रोत चुनें";
+"Camera" = "कैमरा";
+"Photo Library" = "फोटो लाइब्रेरी";
+"Cancel" = "रद्द करें";
+"Upload Photo" = "फोटो अपलोड करें";
+
+
+
+
+
+
+
+
 
 "Activity" = "गतिविधि";
 "Password" = "पासवर्ड";

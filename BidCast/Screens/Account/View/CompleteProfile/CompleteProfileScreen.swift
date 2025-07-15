@@ -40,7 +40,7 @@ struct CompleteProfileScreen: View {
         VStack(spacing: 0) {
             VStack(alignment: .leading, spacing: 12){
                 PrimaryHeader(
-                    title: "Complete Profile".localized,
+                    title: AppString.CompleteProfile.localized,
                     leadingImgArr: [.icBack],
                     onClickLeading: { _ in
                         self.presentationMode.wrappedValue.dismiss()
@@ -140,17 +140,17 @@ struct CompleteProfileScreen: View {
                               }
 
                         
-                        Text("Upload Photo")
+                        Text(AppString.UploadPhoto.localized)
                             .foregroundColor(.blue)
                             .font(.custom(poppinsRegular, size: 13.0))
                             .padding(.top, 8)
                     }
                     
-                    TitleWithLine(title: "Complete Your Profile", lineLength: sepratorLine)
+                    TitleWithLine(title: AppString.CompleteYourProfile, lineLength: sepratorLine)
                     
                     AuthTextField(
-                        floatingLabel: "First Name",
-                        placeholder: "Enter your first name",
+                        floatingLabel: AppString.firstName.localized,
+                        placeholder: AppString.enterFirstName.localized,
                         icon: .menuProfile,
                         text: $request.first_name,
                         enteredText: { value in
@@ -161,8 +161,8 @@ struct CompleteProfileScreen: View {
                     .keyboardType(.default)
                     
                     AuthTextField(
-                        floatingLabel: "Last Name",
-                        placeholder: "Enter your last name",
+                        floatingLabel: AppString.lastName.localized,
+                        placeholder: AppString.enterLastName.localized,
                         icon: .menuProfile,
                         text: $request.last_name,
                         enteredText: { value in
@@ -173,8 +173,8 @@ struct CompleteProfileScreen: View {
                     .keyboardType(.default)
                     
                     AuthTextField(
-                        floatingLabel: "Username",
-                        placeholder: "Choose a username",
+                        floatingLabel: AppString.Username.localized,
+                        placeholder: AppString.EnterUserName.localized,
                         icon: .menuProfile,
                         text: $request.username,
                         enteredText: { value in
@@ -184,8 +184,8 @@ struct CompleteProfileScreen: View {
                     .textContentType(.username)
                     .keyboardType(.default)
                     AuthTextField(
-                        floatingLabel: "Email Address",
-                        placeholder: "Enter email",
+                        floatingLabel: AppString.email.localized,
+                        placeholder: AppString.enterEmail.localized,
                         icon: .menuProfile,
                         text: $email,
                         enteredText: { value in
@@ -197,8 +197,8 @@ struct CompleteProfileScreen: View {
                     .keyboardType(.default)
                     
                     AuthTextField(
-                        floatingLabel: "Bio",
-                        placeholder: "Tell us about yourself",
+                        floatingLabel: AppString.Bio.localized,
+                        placeholder: AppString.TellUsAboutYourself,
                         icon: .icMail,
                         text: $request.bio,
                         enteredText: { value in
@@ -207,35 +207,35 @@ struct CompleteProfileScreen: View {
                     )
                     .keyboardType(.default)
                     
-                    PrimaryButton(title: "Update", isOutLine: false, onButtonClick: {
+                    PrimaryButton(title: AppString.Update.localized, isOutLine: false, onButtonClick: {
                         UIApplication.shared.endEditing()
                         
                         guard profileImageUrl != nil else {
-                            hudMsg = "Please upload your profile image."
+                            hudMsg = AppString.PleaseUploadYourProfileImage.localized
                             showhud = true
                             return
                         }
                         
                         guard !request.first_name.isEmpty else {
-                            hudMsg = "Please enter your first name."
+                            hudMsg = AppString.PleaseEnterYourFirstName.localized
                             showhud = true
                             return
                         }
                         
                         guard !request.last_name.isEmpty else {
-                            hudMsg = "Please enter your last name."
+                            hudMsg = AppString.PleaseEnterYourLastName.localized
                             showhud = true
                             return
                         }
                         
                         guard !request.username.isEmpty else {
-                            hudMsg = "Please enter a username."
+                            hudMsg = AppString.PleaseEnteraUsername
                             showhud = true
                             return
                         }
                         
                         guard !request.bio.isEmpty else {
-                            hudMsg = "Please enter a bio."
+                            hudMsg = AppString.PleaseEnteraBio.localized
                             showhud = true
                             return
                         }
@@ -296,14 +296,14 @@ struct CompleteProfileScreen: View {
             .onTapGesture {
                 UIApplication.shared.endEditing()
             }
-            .confirmationDialog("Select Media Source", isPresented: $showPickerOptions) {
-                Button("Camera") {
+            .confirmationDialog(AppString.SelectMediaSource, isPresented: $showPickerOptions) {
+                Button(AppString.Camera) {
                     showCameraPicker = true
                 }
-                Button("Photo Library") {
+                Button(AppString.PhotoLibrary) {
                     showPhotoLibrary = true
                 }
-                Button("Cancel", role: .cancel) {}
+                Button(AppString.Cancel, role: .cancel) {}
             }
             .sheet(isPresented: $showCameraPicker) {
                 ImagePicker(sourceType: .camera) { image,url  in

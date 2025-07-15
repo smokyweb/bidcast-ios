@@ -9,6 +9,7 @@ import SwiftUI
 import SVProgressHUD
 
 struct HomeViewScreen: View {
+    
     @State private var selectedButton: HomeButton = .For_you
     @Environment(\.presentationMode) var presentationMode
     @State var navigateToLiveStream = false

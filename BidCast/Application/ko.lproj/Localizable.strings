@@ -5,6 +5,136 @@
   Created by JAM_E_329 on 14/05/25.
   
 */
+
+//MARK: Login Screen.
+"Email Address" = "이메일 주소";
+"Enter Email Address" = "이메일 주소를 입력하세요";
+"Password" = "비밀번호";
+"Enter Password" = "비밀번호를 입력하세요";
+"Remember Me" = "로그인 상태 유지";
+"Forgot Password?" = "비밀번호를 잊으셨나요?";
+"Login" = "로그인";
+"New User?" = "신규 사용자이신가요?";
+"Create Account" = "계정 만들기";
+"Please enter email address" = "이메일 주소를 입력해주세요";
+"Please enter Password" = "비밀번호를 입력해주세요";
+"Password can not be less than 8 characters" = "비밀번호는 8자 이상이어야 합니다";
+"Terms of service" = "이용 약관";
+"Privacy Policy" = "개인정보 처리방침";
+
+//MARK: SignUP Screen.
+"Create Account" = "계정 만들기";
+"Create Your Account" = "계정을 생성하세요";
+"First Name" = "이름";
+"Enter First Name" = "이름을 입력하세요";
+"Last Name" = "성";
+"Enter Last Name" = "성을 입력하세요";
+"Email Address" = "이메일 주소";
+"Enter Email Address" = "이메일 주소를 입력하세요";
+"Password" = "비밀번호";
+"Enter Password" = "비밀번호를 입력하세요";
+"Confirm Password" = "비밀번호 확인";
+"Submit" = "제출";
+"Please enter First Name" = "이름을 입력해주세요";
+"Please enter Last Name" = "성을 입력해주세요";
+"Please enter email address" = "이메일 주소를 입력해주세요";
+"Please enter a valid mail address" = "유효한 이메일 주소를 입력해주세요";
+"Please enter Password" = "비밀번호를 입력해주세요";
+"Password can not be less than 8 characters" = "비밀번호는 8자 이상이어야 합니다";
+"Please Confirm Password" = "비밀번호를 확인해주세요";
+"Password and Confirm Password can not be different" = "비밀번호와 비밀번호 확인이 일치하지 않습니다";
+
+//MARK: Forgot Password Screen.
+"Forgot Password" = "비밀번호 찾기";
+"Please enter the email address associated with your account" = "계정에 연결된 이메일 주소를 입력해주세요";
+"Email Address" = "이메일 주소";
+"Enter Email Address" = "이메일 주소를 입력하세요";
+"Submit" = "제출";
+"Please enter email address" = "이메일 주소를 입력해주세요";
+"Please enter a valid mail address" = "유효한 이메일 주소를 입력해주세요";
+
+//MARK: Verify OTP
+"Enter Code" = "코드를 입력하세요";
+"Verify OTP" = "OTP 확인";
+"Success! Please enter the code that was sent to the email associated with your account." = "성공! 계정과 연결된 이메일로 전송된 코드를 입력해주세요.";
+"Resend OTP" = "OTP 재전송";
+"Submit" = "제출";
+"OTP can not be empty" = "OTP는 비워둘 수 없습니다";
+"Enter OTP" = "OTP를 입력하세요";
+"OTP must be numeric" = "OTP는 숫자여야 합니다";
+
+//MARK: Reset Password
+"Reset Password" = "비밀번호 재설정";
+"Success! Please enter your new password below." = "성공! 아래에 새 비밀번호를 입력해주세요.";
+"Enter Password" = "비밀번호를 입력하세요";
+"Confirm Password" = "비밀번호 확인";
+"Submit" = "제출";
+
+//MARK: Account Screen.
+"Account" = "계정";
+"Seller Hub" = "판매자 센터";
+"My Account" = "내 계정";
+"Items" = "상품";
+"Revenue" = "수익";
+"Sorting" = "정렬";
+"Inventory" = "재고";
+"Shows" = "쇼";
+"My Orders" = "내 주문";
+"Wallet" = "지갑";
+"Offers" = "제안";
+"Tips" = "팁";
+"Shipping" = "배송";
+"Affiliate Program" = "제휴 프로그램";
+"Seller Training" = "판매자 교육";
+"Premier Shop" = "프리미어 샵";
+"Seller Status" = "판매자 상태";
+"Seller Analytics" = "판매자 분석";
+"Seller Verification" = "판매자 인증";
+"Credits" = "크레딧";
+"Coupons" = "쿠폰";
+"Payment & Shipping" = "결제 및 배송";
+"Addresses" = "주소";
+"Trusted Buyer" = "신뢰받는 구매자";
+"Notifications" = "알림";
+"Preference" = "환경설정";
+"About Us" = "회사 소개";
+"Contact Us" = "문의하기";
+"Sales tax Exemption" = "판매세 면제";
+"Terms & Conditions" = "이용 약관";
+"Privacy & Policy" = "개인정보 보호정책";
+"F.A.Q" = "자주 묻는 질문";
+"Logout" = "로그아웃";
+"Vacation Mode" = "휴가 모드";
+
+//MARK: Complete Profile.
+"Complete Profile" = "프로필 완성하기";
+"Complete Your Profile" = "프로필을 완성해주세요";
+"First Name" = "이름";
+"Enter First Name" = "이름을 입력하세요";
+"Last Name" = "성";
+"Enter Last Name" = "성을 입력하세요";
+"Username" = "사용자 이름";
+"Enter User Name" = "사용자 이름을 입력하세요";
+"Email Address" = "이메일 주소";
+"Enter Email Address" = "이메일 주소를 입력하세요";
+"Bio" = "소개";
+"Tell us about yourself" = "자기소개를 입력해주세요";
+"Update" = "업데이트";
+"Please upload your profile image" = "프로필 사진을 업로드해주세요";
+"Please enter your first name" = "이름을 입력해주세요";
+"Please enter your last name" = "성을 입력해주세요";
+"Please enter a username" = "사용자 이름을 입력해주세요";
+"Please enter a bio" = "소개를 입력해주세요";
+"Select Media Source" = "미디어 소스를 선택하세요";
+"Camera" = "카메라";
+"Photo Library" = "사진 앨범";
+"Cancel" = "취소";
+"Upload Photo" = "사진 업로드";
+
+
+
+
+
 "Activity" = "활동";
 "Email Address" = "이메일 주소";
 "Email" = "이메일";

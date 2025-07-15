@@ -19,6 +19,8 @@ struct AppString{
     static let login = "Login".localized
     static let newUser = "New User?".localized
     static let createAccount = "Create Account".localized
+    static let privacyPolicy = "Privacy Policy"
+    static let termOfService = "Terms of service"
     static let pleaseEnterEmail = "Please enter email address".localized
     static let pleaseEnterPassword = "Please enter Password".localized
     static let confirmPassword = "Confirm Password".localized
@@ -76,5 +78,29 @@ struct AppString{
     static let addaccuracyRating = "Please add accuracy rating"
     static let adddescriptionRating = "Please add description rating"
     static let addComment = "Please add comment"
+    static let Account = "Account"
+    static let SellerHub = "Seller Hub"
+    static let MyAccount = "My Account"
+    static let CompleteProfile = "Complete Profile"
+    static let CompleteYourProfile = "Complete Your Profile"
+    static let Username = "Username"
+    static let EnterUserName = "Enter User Name"
+    static let Bio = "Bio"
+    static let TellUsAboutYourself = "Tell us about yourself"
+    static let Update = "Update"
+    static let PleaseUploadYourProfileImage = "Please upload your profile image"
+    static let  PleaseEnterYourFirstName = "Please enter your first name"
+    static let PleaseEnterYourLastName = "Please enter your last name"
+    static let PleaseEnteraUsername = "Please enter a username"
+    static let PleaseEnteraBio = "Please enter a bio"
+    static let SelectMediaSource = "Select Media Source"
+    static let Camera = "Camera"
+    static let PhotoLibrary = "Photo Library"
+    static let Cancel = "Cancel"
+    static let UploadPhoto = "Upload Photo"
+    
+    
+    
+    
     
 }

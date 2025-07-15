@@ -148,7 +148,7 @@ struct LoginScreen: View {
                     }.padding([.top, .bottom], 12)
                     HStack{
                         Spacer()
-                        let item = ["Privacy Policy", "Terms of service"]
+                        let item = [AppString.privacyPolicy.localized, AppString.termOfService.localized]
                         ButtonTitleLabel(
                             titles: item,
                             fontValue: 13,

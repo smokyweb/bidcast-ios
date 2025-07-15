@@ -6,17 +6,145 @@
   
 */
 
-"Activity" = "Activity";
-"Password" = "Password";
+//MARK: Login Screen.
 "Email Address" = "Email Address";
-"Email" = "Email";
 "Enter Email Address" = "Enter Email Address";
+"Password" = "Password";
 "Enter Password" = "Enter Password";
 "Remember Me" = "Remember Me";
 "Forgot Password?" = "Forgot Password?";
 "Login" = "Login";
 "New User?" = "New User?";
 "Create Account" = "Create Account";
+"Please enter email address" = "Please enter email address";
+"Please enter Password" = "Please enter Password";
+"Password can not be less than 8 characters" = "Password can not be less than 8 characters";
+"Terms of service" = "Terms of service";
+"Privacy Policy" = "Privacy Policy";
+
+
+//MARK: SignUP Screen.
+"Create Account" = "Create Account";
+"Create Your Account" = "Create Your Account";
+"First Name" = "First Name";
+"Enter First Name" = "Enter First Name";
+"Last Name" = "Last Name";
+"Enter Last Name" = "Enter Last Name";
+"Email Address" = "Email Address";
+"Enter Email Address" = "Enter Email Address";
+"Password" = "Password";
+"Enter Password" = "Enter Password";
+"Confirm Password" = "Confirm Password";
+"Submit" = "Submit";
+"Please enter First Name" = "Please enter First Name";
+"Please enter Last Name" = "Please enter Last Name";
+"Please enter email address" = "Please enter email address";
+"Please enter a valid mail address" = "Please enter a valid mail address";
+"Please enter Password" = "Please enter Password";
+"Password can not be less than 8 characters" = "Password can not be less than 8 characters";
+"Please Confirm Password" = "Please Confirm Password";
+"Password and Confirm Password can not be different" = "Password and Confirm Password can not be different";
+
+
+
+//MARK: Forgot Password Screen.
+"Forgot Password" = "Forgot Password";
+"Please enter the email address associated with your account" = "Please enter the email address associated with your account";
+"Email Address" = "Email Address";
+"Enter Email Address" = "Enter Email Address";
+"Submit" = "Submit";
+"Please enter email address" = "Please enter email address";
+"Please enter a valid mail address" = "Please enter a valid mail address";
+
+
+//MARK: Verify OTP
+"Enter Code" = "Enter Code";
+"Verify OTP" = "Verify OTP";
+"Success! Please enter the code that was sent to the email associated with your account." = "Success! Please enter the code that was sent to the email associated with your account.";
+"Resend OTP" = "Resend OTP";
+"Submit" = "Submit";
+"OTP can not be empty" = "OTP can not be empty";
+"Enter OTP" = "Enter OTP";
+"OTP must be numeric" = "OTP must be numeric";
+
+
+//MARK: Reset Password
+"Reset Password" = "Reset Password";
+"Success! Please enter your new password below." = "Success! Please enter your new password below.";
+"Enter Password" = "Enter Password";
+"Confirm Password" = "Confirm Password";
+"Submit" = "Submit";
+
+
+
+//MARK: Account Screen.
+"Account" = "Account";
+"Seller Hub" = "Seller Hub";
+"My Account" = "My Account";
+"Items" = "Items";
+"Revenue" = "Revenue";
+"Sorting" = "Sorting";
+"Inventory" = "Inventory";
+"Shows" = "Shows";
+"My Orders" = "My Orders";
+"Wallet" = "Wallet";
+"Offers" = "Offers";
+"Tips" = "Tips";
+"Shipping" = "Shipping";
+"Affiliate Program" = "Affiliate Program";
+"Seller Training" = "Seller Training";
+"Premier Shop" = "Premier Shop";
+"Seller Status" = "Seller Status";
+"Seller Analytics" = "Seller Analytics";
+"Seller Verification" = "Seller Verification";
+"Credits" = "Credits";
+"Coupons" = "Coupons";
+"Payment & Shipping" = "Payment & Shipping";
+"Addresses" = "Addresses";
+"Trusted Buyer" = "Trusted Buyer";
+"Notifications" = "Notifications";
+"Preference" = "Preference";
+"About Us" = "About Us";
+"Contact Us" = "Contact Us";
+"Sales tax Exemption" = "Sales tax Exemption";
+"Terms & Conditions" = "Terms & Conditions";
+"Privacy & Policy" = "Privacy & Policy";
+"F.A.Q" = "F.A.Q";
+"Logout" = "Logout";
+"Vacation Mode" = "Vacation Mode";
+
+
+//MARK: Complete Profile.
+"Complete Profile" =  "Complete Profile";
+"Complete Your Profile" = "Complete Your Profile";
+"First Name" = "First Name";
+"Enter First Name" = "Enter First Name";
+"Last Name" = "Last Name";
+"Enter Last Name" = "Enter Last Name";
+"Username" = "Username";
+"Enter User Name" = "Enter User Name";
+"Email Address" = "Email Address";
+"Enter Email Address" = "Enter Email Address";
+"Bio" = "Bio";
+"Tell us about yourself" = "Tell us about yourself";
+"Update" = "Update";
+"Please upload your profile image" = "Please upload your profile image";
+"Please enter your first name" = "Please enter your first name";
+"Please enter your last name" = "Please enter your last name";
+"Please enter a username" = "Please enter a username";
+"Please enter a bio" = "Please enter a bio";
+"Select Media Source" = "Select Media Source";
+"Camera" = "Camera";
+"Photo Library" = "Photo Library";
+"Cancel" = "Cancel" ;
+"Upload Photo" = "Upload Photo";
+
+
+
+
+
+"Activity" = "Activity";
+"Email" = "Email";
 "Please Enter Email" = "Please Enter Email";
 "Please Enter Password" = "Please Enter Password";
 "Confirm Password" = "Confirm Password";

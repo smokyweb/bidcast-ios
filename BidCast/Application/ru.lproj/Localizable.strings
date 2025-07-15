@@ -5,6 +5,171 @@
   Created by JAM_E_329 on 14/05/25.
   
 */
+//MARK: Login Screen.
+"Email Address" = "Электронная почта";
+"Enter Email Address" = "Введите адрес электронной почты";
+"Password" = "Пароль";
+"Enter Password" = "Введите пароль";
+"Remember Me" = "Запомнить меня";
+"Forgot Password?" = "Забыли пароль?";
+"Login" = "Войти";
+"New User?" = "Новый пользователь?";
+"Create Account" = "Создать аккаунт";
+"Please enter email address" = "Пожалуйста, введите адрес электронной почты";
+"Please enter Password" = "Пожалуйста, введите пароль";
+"Password can not be less than 8 characters" = "Пароль не может быть короче 8 символов";
+"Terms of service" = "Условия обслуживания";
+"Privacy Policy" = "Политика конфиденциальности";
+
+//MARK: SignUP Screen.
+"Create Account" = "Создать аккаунт";
+"Create Your Account" = "Создайте свой аккаунт";
+"First Name" = "Имя";
+"Enter First Name" = "Введите имя";
+"Last Name" = "Фамилия";
+"Enter Last Name" = "Введите фамилию";
+"Email Address" = "Электронная почта";
+"Enter Email Address" = "Введите адрес электронной почты";
+"Password" = "Пароль";
+"Enter Password" = "Введите пароль";
+"Confirm Password" = "Подтвердите пароль";
+"Submit" = "Отправить";
+"Please enter First Name" = "Пожалуйста, введите имя";
+"Please enter Last Name" = "Пожалуйста, введите фамилию";
+"Please enter email address" = "Пожалуйста, введите адрес электронной почты";
+"Please enter a valid mail address" = "Пожалуйста, введите корректный адрес электронной почты";
+"Please enter Password" = "Пожалуйста, введите пароль";
+"Password can not be less than 8 characters" = "Пароль не может быть короче 8 символов";
+"Please Confirm Password" = "Пожалуйста, подтвердите пароль";
+"Password and Confirm Password can not be different" = "Пароль и подтверждение пароля не должны отличаться";
+
+//MARK: Forgot Password Screen.
+"Forgot Password" = "Забыли пароль";
+"Please enter the email address associated with your account" = "Пожалуйста, введите адрес электронной почты, связанный с вашей учетной записью";
+"Email Address" = "Электронная почта";
+"Enter Email Address" = "Введите адрес электронной почты";
+"Submit" = "Отправить";
+"Please enter email address" = "Пожалуйста, введите адрес электронной почты";
+"Please enter a valid mail address" = "Пожалуйста, введите корректный адрес электронной почты";
+
+//MARK: Verify OTP
+"Enter Code" = "Введите код";
+"Verify OTP" = "Подтвердить OTP";
+"Success! Please enter the code that was sent to the email associated with your account." = "Успешно! Пожалуйста, введите код, отправленный на вашу электронную почту.";
+"Resend OTP" = "Отправить OTP повторно";
+"Submit" = "Отправить";
+"OTP can not be empty" = "OTP не может быть пустым";
+"Enter OTP" = "Введите OTP";
+"OTP must be numeric" = "OTP должен состоять из цифр";
+
+//MARK: Reset Password
+"Reset Password" = "Сбросить пароль";
+"Success! Please enter your new password below." = "Успешно! Пожалуйста, введите новый пароль ниже.";
+"Enter Password" = "Введите пароль";
+"Confirm Password" = "Подтвердите пароль";
+"Submit" = "Отправить";
+
+
+//MARK: Account Screen.
+"Account" = "Аккаунт";
+"Seller Hub" = "Центр продавца";
+"My Account" = "Мой аккаунт";
+"Items" = "Товары";
+"Revenue" = "Доход";
+"Sorting" = "Сортировка";
+"Inventory" = "Инвентарь";
+"Shows" = "Шоу";
+"My Orders" = "Мои заказы";
+"Wallet" = "Кошелёк";
+"Offers" = "Предложения";
+"Tips" = "Советы";
+"Shipping" = "Доставка";
+"Affiliate Program" = "Партнёрская программа";
+"Seller Training" = "Обучение продавцов";
+"Premier Shop" = "Премиум магазин";
+"Seller Status" = "Статус продавца";
+"Seller Analytics" = "Аналитика продавца";
+"Seller Verification" = "Подтверждение продавца";
+"Credits" = "Кредиты";
+"Coupons" = "Купоны";
+"Payment & Shipping" = "Оплата и доставка";
+"Addresses" = "Адреса";
+"Trusted Buyer" = "Надёжный покупатель";
+"Notifications" = "Уведомления";
+"Preference" = "Настройки";
+"About Us" = "О нас";
+"Contact Us" = "Связаться с нами";
+"Sales tax Exemption" = "Освобождение от налога с продаж";
+"Terms & Conditions" = "Правила и условия";
+"Privacy & Policy" = "Политика конфиденциальности";
+"F.A.Q" = "Часто задаваемые вопросы";
+"Logout" = "Выйти";
+"Vacation Mode" = "Режим отпуска";
+
+//MARK: Account Screen.
+"Account" = "アカウント";
+"Seller Hub" = "セラーハブ";
+"My Account" = "マイアカウント";
+"Items" = "商品";
+"Revenue" = "収益";
+"Sorting" = "並び替え";
+"Inventory" = "在庫";
+"Shows" = "ショー";
+"My Orders" = "注文履歴";
+"Wallet" = "ウォレット";
+"Offers" = "オファー";
+"Tips" = "ヒント";
+"Shipping" = "配送";
+"Affiliate Program" = "アフィリエイトプログラム";
+"Seller Training" = "販売者向けトレーニング";
+"Premier Shop" = "プレミアショップ";
+"Seller Status" = "販売者ステータス";
+"Seller Analytics" = "販売者分析";
+"Seller Verification" = "販売者認証";
+"Credits" = "クレジット";
+"Coupons" = "クーポン";
+"Payment & Shipping" = "支払いと配送";
+"Addresses" = "住所";
+"Trusted Buyer" = "信頼できる購入者";
+"Notifications" = "通知";
+"Preference" = "設定";
+"About Us" = "会社情報";
+"Contact Us" = "お問い合わせ";
+"Sales tax Exemption" = "消費税免除";
+"Terms & Conditions" = "利用規約";
+"Privacy & Policy" = "プライバシーポリシー";
+"F.A.Q" = "よくある質問";
+"Logout" = "ログアウト";
+"Vacation Mode" = "バケーションモード";
+
+
+//MARK: Complete Profile.
+"Complete Profile" = "Заполнить профиль";
+"Complete Your Profile" = "Заполните свой профиль";
+"First Name" = "Имя";
+"Enter First Name" = "Введите имя";
+"Last Name" = "Фамилия";
+"Enter Last Name" = "Введите фамилию";
+"Username" = "Имя пользователя";
+"Enter User Name" = "Введите имя пользователя";
+"Email Address" = "Электронная почта";
+"Enter Email Address" = "Введите адрес электронной почты";
+"Bio" = "О себе";
+"Tell us about yourself" = "Расскажите о себе";
+"Update" = "Обновить";
+"Please upload your profile image" = "Пожалуйста, загрузите фотографию профиля";
+"Please enter your first name" = "Пожалуйста, введите имя";
+"Please enter your last name" = "Пожалуйста, введите фамилию";
+"Please enter a username" = "Пожалуйста, введите имя пользователя";
+"Please enter a bio" = "Пожалуйста, введите информацию о себе";
+"Select Media Source" = "Выберите источник медиа";
+"Camera" = "Камера";
+"Photo Library" = "Фотогалерея";
+"Cancel" = "Отмена";
+"Upload Photo" = "Загрузить фото";
+
+
+
 
 "Activity" = "Активность";
 "Email Address" = "Адрес электронной почты";

@@ -5,6 +5,137 @@
   Created by JAM_E_329 on 14/05/25.
   
 */
+
+//MARK: Login Screen.
+"Email Address" = "Địa chỉ email";
+"Enter Email Address" = "Nhập địa chỉ email";
+"Password" = "Mật khẩu";
+"Enter Password" = "Nhập mật khẩu";
+"Remember Me" = "Ghi nhớ tôi";
+"Forgot Password?" = "Quên mật khẩu?";
+"Login" = "Đăng nhập";
+"New User?" = "Người dùng mới?";
+"Create Account" = "Tạo tài khoản";
+"Please enter email address" = "Vui lòng nhập địa chỉ email";
+"Please enter Password" = "Vui lòng nhập mật khẩu";
+"Password can not be less than 8 characters" = "Mật khẩu không được ít hơn 8 ký tự";
+"Terms of service" = "Điều khoản dịch vụ";
+"Privacy Policy" = "Chính sách bảo mật";
+
+//MARK: SignUP Screen.
+"Create Account" = "Tạo tài khoản";
+"Create Your Account" = "Tạo tài khoản của bạn";
+"First Name" = "Tên";
+"Enter First Name" = "Nhập tên";
+"Last Name" = "Họ";
+"Enter Last Name" = "Nhập họ";
+"Email Address" = "Địa chỉ email";
+"Enter Email Address" = "Nhập địa chỉ email";
+"Password" = "Mật khẩu";
+"Enter Password" = "Nhập mật khẩu";
+"Confirm Password" = "Xác nhận mật khẩu";
+"Submit" = "Gửi";
+"Please enter First Name" = "Vui lòng nhập tên";
+"Please enter Last Name" = "Vui lòng nhập họ";
+"Please enter email address" = "Vui lòng nhập địa chỉ email";
+"Please enter a valid mail address" = "Vui lòng nhập địa chỉ email hợp lệ";
+"Please enter Password" = "Vui lòng nhập mật khẩu";
+"Password can not be less than 8 characters" = "Mật khẩu không được ít hơn 8 ký tự";
+"Please Confirm Password" = "Vui lòng xác nhận mật khẩu";
+"Password and Confirm Password can not be different" = "Mật khẩu và xác nhận mật khẩu phải giống nhau";
+
+//MARK: Forgot Password Screen.
+"Forgot Password" = "Quên mật khẩu";
+"Please enter the email address associated with your account" = "Vui lòng nhập địa chỉ email liên kết với tài khoản của bạn";
+"Email Address" = "Địa chỉ email";
+"Enter Email Address" = "Nhập địa chỉ email";
+"Submit" = "Gửi";
+"Please enter email address" = "Vui lòng nhập địa chỉ email";
+"Please enter a valid mail address" = "Vui lòng nhập địa chỉ email hợp lệ";
+
+//MARK: Verify OTP
+"Enter Code" = "Nhập mã";
+"Verify OTP" = "Xác minh OTP";
+"Success! Please enter the code that was sent to the email associated with your account." = "Thành công! Vui lòng nhập mã được gửi đến email liên kết với tài khoản của bạn.";
+"Resend OTP" = "Gửi lại OTP";
+"Submit" = "Gửi";
+"OTP can not be empty" = "OTP không được để trống";
+"Enter OTP" = "Nhập OTP";
+"OTP must be numeric" = "OTP phải là số";
+
+//MARK: Reset Password
+"Reset Password" = "Đặt lại mật khẩu";
+"Success! Please enter your new password below." = "Thành công! Vui lòng nhập mật khẩu mới của bạn bên dưới.";
+"Enter Password" = "Nhập mật khẩu";
+"Confirm Password" = "Xác nhận mật khẩu";
+"Submit" = "Gửi";
+
+
+//MARK: Account Screen.
+"Account" = "Tài khoản";
+"Seller Hub" = "Trung tâm người bán";
+"My Account" = "Tài khoản của tôi";
+"Items" = "Sản phẩm";
+"Revenue" = "Doanh thu";
+"Sorting" = "Sắp xếp";
+"Inventory" = "Hàng tồn kho";
+"Shows" = "Buổi phát sóng";
+"My Orders" = "Đơn hàng của tôi";
+"Wallet" = "Ví";
+"Offers" = "Ưu đãi";
+"Tips" = "Mẹo";
+"Shipping" = "Vận chuyển";
+"Affiliate Program" = "Chương trình liên kết";
+"Seller Training" = "Đào tạo người bán";
+"Premier Shop" = "Cửa hàng cao cấp";
+"Seller Status" = "Trạng thái người bán";
+"Seller Analytics" = "Phân tích người bán";
+"Seller Verification" = "Xác minh người bán";
+"Credits" = "Tín dụng";
+"Coupons" = "Phiếu giảm giá";
+"Payment & Shipping" = "Thanh toán & Vận chuyển";
+"Addresses" = "Địa chỉ";
+"Trusted Buyer" = "Người mua đáng tin cậy";
+"Notifications" = "Thông báo";
+"Preference" = "Tùy chọn";
+"About Us" = "Về chúng tôi";
+"Contact Us" = "Liên hệ chúng tôi";
+"Sales tax Exemption" = "Miễn thuế bán hàng";
+"Terms & Conditions" = "Điều khoản & Điều kiện";
+"Privacy & Policy" = "Chính sách bảo mật";
+"F.A.Q" = "Câu hỏi thường gặp";
+"Logout" = "Đăng xuất";
+"Vacation Mode" = "Chế độ nghỉ phép";
+
+//MARK: Complete Profile.
+"Complete Profile" = "Hoàn tất hồ sơ";
+"Complete Your Profile" = "Hoàn tất hồ sơ của bạn";
+"First Name" = "Tên";
+"Enter First Name" = "Nhập tên của bạn";
+"Last Name" = "Họ";
+"Enter Last Name" = "Nhập họ của bạn";
+"Username" = "Tên người dùng";
+"Enter User Name" = "Nhập tên người dùng";
+"Email Address" = "Địa chỉ email";
+"Enter Email Address" = "Nhập địa chỉ email";
+"Bio" = "Giới thiệu bản thân";
+"Tell us about yourself" = "Hãy giới thiệu về bạn";
+"Update" = "Cập nhật";
+"Please upload your profile image" = "Vui lòng tải ảnh hồ sơ lên";
+"Please enter your first name" = "Vui lòng nhập tên của bạn";
+"Please enter your last name" = "Vui lòng nhập họ của bạn";
+"Please enter a username" = "Vui lòng nhập tên người dùng";
+"Please enter a bio" = "Vui lòng nhập phần giới thiệu bản thân";
+"Select Media Source" = "Chọn nguồn phương tiện";
+"Camera" = "Máy ảnh";
+"Photo Library" = "Thư viện ảnh";
+"Cancel" = "Hủy";
+"Upload Photo" = "Tải ảnh lên";
+
+
+
+
+
 "Activity" = "Hoạt động";
 "Email Address" = "Địa chỉ Email";
 "Email" = "Email";
