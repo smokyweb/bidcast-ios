@@ -503,6 +503,7 @@ struct RehearsalScreen: View {
             logoutRoom()
         }
     }
+    
     func success(){
         let response = viewModel.updateStatusRespone
         if response?.status == "success"{
