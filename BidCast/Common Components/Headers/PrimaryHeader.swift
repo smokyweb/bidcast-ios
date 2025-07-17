@@ -273,7 +273,7 @@ struct PrimaryHeader: View {
                 
                 Text(title)
                     .font(.custom(robotoSemiBold, fixedSize: 18))
-                    .fontWeight(.bold)
+                    .frame(maxWidth: .infinity)
                     .foregroundColor(.black)
                     .lineLimit(1)
                 

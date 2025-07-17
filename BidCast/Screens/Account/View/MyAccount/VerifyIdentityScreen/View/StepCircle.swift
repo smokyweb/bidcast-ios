@@ -15,16 +15,16 @@ struct StepCircle: View {
     var body: some View {
         VStack(spacing: 4) {
             Circle()
-                .fill(isActive ? Color.blue : Color.gray.opacity(0.4))
+                .fill(isActive ? Color.defaultTheme : Color.gray.opacity(0.4))
                 .frame(width: 28, height: 28)
                 .overlay(
                     Text(step)
-                        .font(.caption)
+                        .font(.custom(poppinsSemiBold, size: 11.0))
                         .foregroundColor(.white)
                 )
             Text(label)
-                .font(.caption)
-                .foregroundColor(isActive ? .blue : .gray)
+                .font(.custom(poppinsRegular, size: 12.0))
+                .foregroundColor(isActive ? .defaultTheme : .gray)
         }
         .frame(maxWidth: .infinity)
     }

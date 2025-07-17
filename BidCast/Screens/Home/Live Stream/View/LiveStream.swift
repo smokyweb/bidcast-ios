@@ -17,6 +17,7 @@ struct Comment: Identifiable, Equatable {
     let image : String
     let username: String
     let message: String
+    let userId : String
 }
 
 struct LiveStream: View {

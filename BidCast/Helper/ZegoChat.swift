@@ -118,22 +118,27 @@ class ZIMChatManager: NSObject, ObservableObject {
     
     func sendMessage(message: String, roomId: String,image : String,name:String) {
         let payload: [String: Any] = [
-            "text": message,
-            "username": name,
-            "avatarUrl": image
+            "userName": name,
+            "userImage": image,
+            "userId": UserDefaults.userId
         ]
         
+        // Serialize extended data to JSON string
         guard let jsonData = try? JSONSerialization.data(withJSONObject: payload) else {
-            print("❌ Failed to serialize JSON")
+            print("❌ Failed to serialize extended JSON")
             return
         }
-        let jsonString = String(data: jsonData, encoding: .utf8) ?? message
+        let extendedData = String(data: jsonData, encoding: .utf8) ?? ""
         
-        let zimMessage = ZIMTextMessage(message: jsonString)
+        // ✅ Use only message text here
+        let zimMessage = ZIMTextMessage(message: message)
+        zimMessage.extendedData = extendedData // attach extended data
+        
         let sendConfig = ZIMMessageSendConfig()
         sendConfig.priority = .high
         
         let notification = ZIMMessageSendNotification()
+        
         guard let zim = zim else {
             print("❌ Babumoshai, ZIM not initialized!")
             return
@@ -150,8 +155,9 @@ class ZIMChatManager: NSObject, ObservableObject {
                 print("✅ Message sent babumoshai!")
                 let newComment = Comment(
                     image: image,
-                    username: self.userName,
-                    message: message
+                    username: name,
+                    message: message,
+                    userId: "\(UserDefaults.userId)"
                 )
                 DispatchQueue.main.async {
                     self.messages.append(newComment)
@@ -160,28 +166,20 @@ class ZIMChatManager: NSObject, ObservableObject {
                 print("❌ Message failed babumoshai: \(errorInfo.message)")
             }
         }
+    
     }
     
     
     func logout() {
         zim?.logout()
     }
-    //    func handleIncomingMessage(username: String, message: String) {
-    //        let newComment = Comment(
-    //            image: "",  // Add profile image if you have
-    //            username: username,
-    //            message: message
-    //        )
-    //        DispatchQueue.main.async {
-    //            self.messages.append(newComment)
-    //        }
-    //    }
     
-    func handleIncomingMessage(username: String, message: String, userImage: String) {
+    func handleIncomingMessage(username: String, message: String, userImage: String,userId:String) {
         let newComment = Comment(
-            image: userImage,
+            image:userImage,
             username: username,
-            message: message
+            message:message ,
+            userId:userId
         )
         DispatchQueue.main.async {
             self.messages.append(newComment)
@@ -197,47 +195,33 @@ class ZIMGlobalEventHandler: NSObject, ZIMEventHandler {
     func zim(_ zim: ZIM, connectionStateChanged state: ZIMConnectionState, event: ZIMConnectionEvent, extendedData: [AnyHashable : Any]) {
         print("🔥 Babumoshai, GLOBAL connection state changed: \(state.rawValue)")
     }
-    //    func zim(_ zim: ZIM, roomMessageReceived messageList: [ZIMMessage], info: ZIMMessageReceivedInfo, fromRoomID: String) {
-    //        print("📥 Babumoshai, GLOBAL received \(messageList.count) message(s) in room:  at \(Date())")
-    //        for msg in messageList {
-    //            if let textMsg = msg as? ZIMTextMessage {
-    //                print("💬 Babumoshai, GLOBAL message content: \(textMsg.message) from: \(msg.senderUserID)")
-    //
-    //                DispatchQueue.main.async {
-    //                    ZIMChatManager.shared.handleIncomingMessage(
-    //                        username: msg.senderUserID,
-    //                        message: textMsg.message
-    //                    )
-    //                }
-    //            } else {
-    //                print("⚠️ Babumoshai, GLOBAL unsupported message type received.")
-    //            }
-    //        }
-    //    }
     func zim(_ zim: ZIM, roomMessageReceived messageList: [ZIMMessage], info: ZIMMessageReceivedInfo, fromRoomID: String) {
         for msg in messageList {
             if let textMsg = msg as? ZIMTextMessage {
-                print("💬 Babumoshai, raw: \(textMsg.message)")
+                print("💬 raw text: \(textMsg.message)")
+                print("📦  extended data: \(textMsg.extendedData)")
                 
-                if let data = textMsg.message.data(using: .utf8),
-                   let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-                   let text = json["text"] as? String {
-                    let username = json["username"] as? String ?? msg.senderUserID
-                    let avatarUrl = json["avatarUrl"] as? String ?? ""
+                var username = msg.senderUserID
+                var avatarUrl = ""
+                var userId = msg.senderUserID
+                let extended = textMsg.extendedData
+                // ✅ Now parse user info from `extendedData`
+                if let data = extended.data(using: .utf8),
+                   let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
                     
-                    ZIMChatManager.shared.handleIncomingMessage(
-                        username: username,
-                        message: text,
-                        userImage: avatarUrl
-                    )
-                } else {
-                    ZIMChatManager.shared.handleIncomingMessage(
-                        username: msg.senderUserID,
-                        message: textMsg.message,
-                        userImage: ""
-                    )
+                    username = json["userName"] as? String ?? msg.senderUserID
+                    avatarUrl = json["userImage"] as? String ?? ""
+                    userId = json["userId"] as? String ?? msg.senderUserID
                 }
+                
+                ZIMChatManager.shared.handleIncomingMessage(
+                    username: username,
+                    message: textMsg.message,
+                    userImage: avatarUrl,
+                    userId: userId
+                )
             }
         }
     }
+
 }

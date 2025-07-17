@@ -4,11 +4,11 @@
 //
 //  Created by Ankit-JAM-E-294 on 27/05/25.
 //
-
 import SwiftUI
 import _PhotosUI_SwiftUI
 import AlertToast
 import SVProgressHUD
+import UIKit
 
 struct TrustedBuyerScreen: View {
     @Environment(\.presentationMode) var presentationMode
@@ -19,221 +19,194 @@ struct TrustedBuyerScreen: View {
     @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @State private var showhud = false
     @State private var hudMsg = ""
-    
+
     @State private var selectedPhoto: PhotosPickerItem? = nil
     @State private var uploadedImage: Image? = nil
     @State private var isPhotoSelected = false
     @State var navigateToCreateAddress = false
+    @State var imageURL = ""
+    
+    @State private var showImageSourceActionSheet = false
+    @State private var showImagePicker = false
+    @State private var imagePickerSourceType: UIImagePickerController.SourceType = .photoLibrary
+
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
+            // Header
             PrimaryHeader(
-                title: "Become a Trusted Buyer".localized,
-                isForLogo : false, leadingImgArr: [.icBack],
+                title: "Trusted Buyer".localized,
+                isForLogo: false,
+                leadingImgArr: [.icBack],
                 trailingImgArr: [],
-                onClickLeading: { _ in
-                    self.presentationMode.wrappedValue.dismiss()
+                onClickLeading: { index in
+                    presentationMode.wrappedValue.dismiss()
                 },
                 count: .constant(0)
             )
-            .background(.white)
-            .frame(height: 50)
-            ScrollView {
-                VStack(spacing: 24) {
-                    
+
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 20) {
+
                     // MARK: - Step Header
                     VStack(spacing: 8) {
                         Image(systemName: "person.crop.circle.badge.checkmark")
                             .resizable()
-                            .frame(width: 50, height: 50)
-                            .foregroundColor(.blue)
-                        
+                            .frame(width: 60, height: 50)
+                            .foregroundColor(.defaultTheme)
+
                         Text("Verify Your Identity")
-                            .font(.title2)
-                            .bold()
+                            .font(.custom(poppinsSemiBold, size: 13))
+
                         Text("To become a Trusted Buyer, we need to verify your identity. This helps create a safe trading environment.")
-                            .font(.subheadline)
+                            .font(.custom(poppinsRegular, size: 12))
                             .foregroundColor(.gray)
                             .multilineTextAlignment(.center)
-                            .padding(.horizontal)
+                            .padding(.horizontal, 32)
                     }
-                    .padding(.top)
-                    
+                    .padding(.top, 20)
+
                     // MARK: - Step Indicator
                     HStack(spacing: 0) {
-                        StepCircle(step: "1", label: "Upload", isActive: true)
+                        StepCircle(step: "1", label: "Upload", isActive: false)
                         Rectangle()
                             .fill(Color.gray.opacity(0.4))
                             .frame(height: 1)
                             .frame(maxWidth: .infinity)
-                        StepCircle(step: "2", label: "Review", isActive: true)
+                        StepCircle(step: "2", label: "Review", isActive: false)
                         Rectangle()
                             .fill(Color.gray.opacity(0.4))
                             .frame(height: 1)
                             .frame(maxWidth: .infinity)
                         StepCircle(step: "3", label: "Verified", isActive: false)
                     }
-                    .padding(.horizontal)
-                    
+                    .padding(.horizontal, 12)
+
                     // MARK: - Upload Card
                     VStack(alignment: .leading, spacing: 16) {
                         Text("Upload ID Photo")
-                            .font(.headline)
-                        
+                            .font(.custom(poppinsSemiBold, size: 13))
+
                         Text("Please upload a clear photo of your valid government-issued ID (driver’s license or passport).")
-                            .font(.subheadline)
+                            .font(.custom(poppinsRegular, size: 12))
                             .foregroundColor(.gray)
-                        
-                        VStack {
-                            VStack {
-                                if let image = uploadedImage {
-                                    HStack {
-                                        Spacer()
-                                        image
-                                            .resizable()
-                                            .scaledToFit()
-                                            .frame(height: 150)
-                                            .cornerRadius(8)
-                                        Spacer()
-                                    }
-                                } else {
-                                    VStack(spacing: 8) {
-                                        Image(systemName: "idcard")
-                                            .resizable()
-                                            .frame(width: 40, height: 30)
-                                            .foregroundColor(.gray)
-                                        Text("Tap to upload your ID photo")
-                                            .foregroundColor(.gray)
-                                    }
-                                    .frame(height: 150)
+
+                        VStack(spacing: 12) {
+                            if let image = uploadedImage {
+                                image
+                                    .resizable()
+                                    .scaledToFit()
                                     .frame(maxWidth: .infinity)
-                                    .background(
-                                        RoundedRectangle(cornerRadius: 12)
-                                            .stroke(Color.gray.opacity(0.4), style: StrokeStyle(lineWidth: 1, dash: [5]))
-                                    )
+                                    .frame(height: 150)
+                                    .cornerRadius(8)
+                            } else {
+                                VStack(spacing: 8) {
+                                    Image(systemName: "idcard")
+                                        .resizable()
+                                        .frame(width: 40, height: 30)
+                                        .foregroundColor(.gray)
+                                    Text("Tap to upload your ID photo")
+                                        .font(.custom(poppinsRegular, size: 11))
+                                        .foregroundColor(.gray)
                                 }
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 150)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .stroke(Color.gray.opacity(0.4), style: StrokeStyle(lineWidth: 1, dash: [5]))
+                                )
                             }
 
-                            
-                            PhotosPicker(selection: $selectedPhoto, matching: .images) {
+                            Button {
+                                showImageSourceActionSheet = true
+                            } label: {
                                 Text("Choose File")
-                                    .font(.body.bold())
+                                    .font(.custom(poppinsBold, size: 11))
                                     .padding()
                                     .frame(width: 150)
-                                    .background(Color.blue)
+                                    .background(.defaultTheme)
                                     .foregroundColor(.white)
                                     .cornerRadius(75)
                             }
-                            .onChange(of: selectedPhoto) { newItem in
-                                Task {
-                                    if let data = try? await newItem?.loadTransferable(type: Data.self),
-                                       let uiImage = UIImage(data: data) {
-                                        uploadedImage = Image(uiImage: uiImage)
-                                        isPhotoSelected = true
-                                    }
-                                }
-                            }
+                            .frame(width: 150)
+//                            .onChange(of: selectedPhoto) { newItem in
+//                                Task {
+//                                    if let data = try? await newItem?.loadTransferable(type: Data.self),
+//                                       let uiImage = UIImage(data: data) {
+//                                        uploadedImage = Image(uiImage: uiImage)
+//                                        isPhotoSelected = true
+//                                    }
+//                                }
+//                            }
                         }
                     }
-                    .padding()
-                    .background(Color(.secondarySystemBackground))
-                    .cornerRadius(16)
-                    .padding(.horizontal)
-                    
+                    .padding(16)
+                    .background(Color.bg.opacity(0.4))
+                    .cornerRadius(12)
+                    .padding(.horizontal, 12)
+
                     // MARK: - Requirements Checklist
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Requirements")
-                            .font(.headline)
-                        HStack(spacing: 8) {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundColor(.green)
-                            Text("Government-issued ID (driver’s license or passport)")
-                                .foregroundColor(.primary)
-                        }
-                        
-                        HStack(spacing: 8) {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundColor(.green)
-                            Text("Clear, well-lit photo")
-                                .foregroundColor(.primary)
-                        }
-                        
-                        HStack(spacing: 8) {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundColor(.green)
-                            Text("All corners visible")
-                                .foregroundColor(.primary)
-                        }
-                        
-                        HStack(spacing: 8) {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundColor(.green)
-                            Text("Verification usually takes 3 business days")
-                                .foregroundColor(.primary)
-                        }
+                            .font(.custom(poppinsSemiBold, size: 13))
+                            .padding(.bottom, 8)
+
+                        requirementItem("Government-issued ID (driver’s license or passport)")
+                        requirementItem("Clear, well-lit photo")
+                        requirementItem("All corners visible")
+                        requirementItem("Verification usually takes 3 business days")
                     }
-                    .padding()
-                    .background(Color(.secondarySystemBackground))
-                    .cornerRadius(16)
-                    .padding(.horizontal)
-                    
+                    .padding(16)
+                    .background(Color.bg.opacity(0.4))
+                    .cornerRadius(12)
+                    .padding(.horizontal, 12)
+
                     // MARK: - Submit Button
-                    Button(action: {
-                        Task {
-                            guard let selectedPhoto else { return }
-                            do {
-                                // Load the image data
-                                let imageData = try await selectedPhoto.loadTransferable(type: Data.self)
-                                
-                                // Ensure it's not nil or empty
-                                guard let data = imageData, !data.isEmpty else {
-                                    print("❌ Image data is empty")
-                                    return
-                                }
-                                
-                                // Try compressing and saving
-                                let imageURL = compressAndSaveImage(data: data) ?? saveImageToTemporaryDirectory(data: data)
-                                
-                                guard let path = imageURL?.path else {
-                                    print("❌ Could not save image to file")
-                                    return
-                                }
-                                
-                                print("📸 Final Image Path:", path)
-                                
-                                // Upload the image
-                                Task{
-                                    SVProgressHUD.show()
-                                    await self.viewModel.addTrustedBuyer(images: [path], key: "image")
-                                    await SVProgressHUD.dismiss()
-                                    await handleSuccess()
-                                }
-                            } catch {
-                                print("❌ Failed to load image:", error)
-                            }
-                        }
-                    }){
+                    Button(action: handleSubmit) {
                         Text("Submit for Review")
+                            .font(.custom(poppinsSemiBold, size: 13))
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(Color.blue)
+                            .background(isPhotoSelected ? Color.defaultTheme : Color.gray.opacity(0.4))
                             .foregroundColor(.white)
                             .cornerRadius(12)
                     }
-                    .padding(.horizontal)
-                    .padding(.bottom)
                     .disabled(!isPhotoSelected)
+                    .padding(.horizontal, 12)
+                    .padding(.bottom, 32)
                 }
+                .frame(maxWidth: .infinity)
             }
-            
+
             CusNavLink(doNavigate: $navigateToProfile, destination: AccountScreen())
         }
-        .onAppear {
-            UIScrollView.appearance().bounces = false
-            
+        .fullScreenCover(isPresented: $showImagePicker) {
+            ImagePicker(sourceType: imagePickerSourceType) { image,url  in
+                if let image = image {
+                    uploadedImage = Image(uiImage: image)
+                    self.imageURL = url ?? ""
+                    isPhotoSelected = true
+                }
+            }
         }
-        .onDisappear {
-            UIScrollView.appearance().bounces = true
+        .actionSheet(isPresented: $showImageSourceActionSheet) {
+            ActionSheet(
+                title: Text("Select Photo"),
+                message: Text("Choose a source"),
+                buttons: [
+                    .default(Text("Take Photo")) {
+                        imagePickerSourceType = .camera
+                        showImagePicker = true
+                    },
+                    .default(Text("Photo Library")) {
+                        imagePickerSourceType = .photoLibrary
+                        showImagePicker = true
+                    },
+                    .cancel()
+                ]
+            )
         }
+        .onAppear { UIScrollView.appearance().bounces = false }
+        .onDisappear { UIScrollView.appearance().bounces = true }
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }
@@ -246,17 +219,71 @@ struct TrustedBuyerScreen: View {
             CommonBottomSheet(
                 sheetType: $alertType,
                 onPrimaryClick: {
-                    withAnimation(.snappy) { navigateToProfile = true
-                        showError = false  }
+                    withAnimation(.snappy) {
+                       
+                        showError = false
+                    }
                 },
                 onSecondaryClick: {
-                    withAnimation { showError = false }
+                    withAnimation {
+                        showError = false
+                    }
                 }
             )
         }
     }
+
+    // MARK: - Submit Handler
+    func handleSubmit() {
+//        guard let selectedPhoto else { return }
+        guard  !imageURL.isEmpty else{
+            hudMsg = "Please select image"
+            showhud = true
+            return
+        }
+        
+        Task {
     
-    //MARK: handleSuccess.
+//                let imageData = try await selectedPhoto.loadTransferable(type: Data.self)
+//                guard let data = imageData, !data.isEmpty else { return }
+//
+//                let imageURL = compressAndSaveImage(data: data) ?? saveImageToTemporaryDirectory(data: data)
+//                guard let path = imageURL?.path else { return }
+
+                SVProgressHUD.show()
+            await viewModel.addTrustedBuyer(images: [imageURL], key: "image")
+                await SVProgressHUD.dismiss()
+            if self.viewModel.errorMessage == nil || self.viewModel.errorMessage == ""{
+                handleSuccess()
+            }else{
+                alertType = .sheetType(
+                    icon: .alert,
+                    title: "Error",
+                    message: viewModel.errorMessage ?? "",
+                    primaryBtnText: "",
+                    secondaryBtnText: AppString.ok.localized
+                )
+                showError = true
+            }
+//            } catch {
+//                print("❌ Failed to load image:", error)
+//            }
+        }
+    }
+
+    func requirementItem(_ text: String) -> some View {
+        HStack(spacing: 8) {
+            Image(systemName: "checkmark.circle.fill")
+                .foregroundColor(.darkGreen)
+            Text(text)
+                .font(.custom(poppinsRegular, size: 12))
+                .foregroundColor(.defaultTheme)
+            
+            Spacer()
+        }
+        .frame(maxWidth: .infinity)
+    }
+
     func handleSuccess() {
         SVProgressHUD.dismiss()
         let response = viewModel.addTrustedBuyerDict
@@ -268,7 +295,6 @@ struct TrustedBuyerScreen: View {
                 primaryBtnText: AppString.ok.localized,
                 secondaryBtnText: ""
             )
-            showError = true
         } else {
             alertType = .sheetType(
                 icon: .alert,
@@ -277,8 +303,8 @@ struct TrustedBuyerScreen: View {
                 primaryBtnText: "",
                 secondaryBtnText: AppString.ok.localized
             )
-            showError = true
         }
+        showError = true
     }
 }
 
