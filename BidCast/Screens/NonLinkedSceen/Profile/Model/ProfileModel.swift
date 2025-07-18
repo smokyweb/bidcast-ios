@@ -19,8 +19,18 @@ struct ProfileModel : Codable{
     var following_count : Int?
     var is_following : Bool?
     var is_FirstShowCreated : Bool?
+    var seller_identity_status : String?
+    var buyer_identity_status : String?
+    var is_active : Bool?
+    var role : RoleModel?
 }
 
+struct RoleModel : Codable {
+    var created_at : String?
+    var id : Int?
+    var name : String?
+    var updated_at : String?
+}
 
 struct ProductListingDataModel: Codable {
     var id, userID, categoryID: Int?

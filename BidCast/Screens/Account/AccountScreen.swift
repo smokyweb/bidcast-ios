@@ -165,7 +165,10 @@ struct AccountScreen: View {
                             },onTapMenuCell: {
                                 if index == 0 {
                                     withAnimation {
-                                        navigateToAboutUs = true
+//                                        navigateToAboutUs = true
+                                        if let url = URL(string: "https://backend.bidcast.betaplanets.com/about-us") {
+                                               UIApplication.shared.open(url)
+                                           }
                                     }
                                 }else
                                 if index == 1{
@@ -180,17 +183,26 @@ struct AccountScreen: View {
                                 }else
                                 if index == 3{
                                     withAnimation {
-                                        navigateToTerms = true
+//                                        navigateToTerms = true
+                                        if let url = URL(string: "https://backend.bidcast.betaplanets.com/terms-condition") {
+                                               UIApplication.shared.open(url)
+                                           }
                                     }
                                 }else
                                 if index == 4{
                                     withAnimation {
-                                        navigateToPrivacy = true
+//                                        navigateToPrivacy = true
+                                        if let url = URL(string: "https://backend.bidcast.betaplanets.com/privacy-policy") {
+                                               UIApplication.shared.open(url)
+                                           }
                                     }
                                 }
                                 else if index == 5 {
                                     withAnimation {
-                                        navigateToFAQ = true
+//                                        navigateToFAQ = true
+                                        if let url = URL(string: "https://backend.bidcast.betaplanets.com/faq") {
+                                               UIApplication.shared.open(url)
+                                           }
                                     }
                                 }
                                 else if index == 6 {
@@ -225,7 +237,7 @@ struct AccountScreen: View {
             CusNavLink(doNavigate: $navigateToShipping, destination: ShippingsScreen())
             CusNavLink(doNavigate: $navigateToPreference, destination: PreferncesScreen())
             CusNavLink(doNavigate: $navigateToPayment, destination: PaymentAndShipping_Screen())
-            CusNavLink(doNavigate: $navigateToTrustedBuyer, destination: TrustedBuyerScreen())
+            CusNavLink(doNavigate: $navigateToTrustedBuyer, destination: TrustedBuyerScreen(comeFromHome: .constant(false)))
             CusNavLink(doNavigate: $navigateToSellerVerification, destination: SellerVerificationScreen())
             
             
@@ -293,6 +305,8 @@ struct AccountScreen: View {
     func handleUserLogout() {
         DispatchQueue.main.async {
             UserDefaults.accessToken.removeAll()
+            UserDefaults.sellerVerafied.removeAll()
+            UserDefaults.buyerVerafied.removeAll()
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                 withAnimation {

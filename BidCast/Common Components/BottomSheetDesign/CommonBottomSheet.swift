@@ -18,68 +18,76 @@ enum BottomSheetType {
         sheetThemeColor: ColorResource = .defaultTheme,
         isButtonVertical: Bool = true,
         buttonHeight: CGFloat = 40,
-        buttonWidth: CGFloat = screenWidth/1.5)
+        buttonWidth: CGFloat = screenWidth/1.5,
+        contentSize : CGFloat = 16.0
+    )
     
     var icon: ImageResource {
         switch self {
-            case .sheetType(icon: let icon, _, _, _, _, _, _, _, _):
+            case .sheetType(icon: let icon, _, _, _, _, _, _, _, _,_):
                 return icon
         }
     }
     
     var title: String {
         switch self {
-            case .sheetType(_, title: let title, _, _, _, _, _, _, _):
+            case .sheetType(_, title: let title, _, _, _, _, _, _, _,_):
                 return title
         }
     }
     
     var message: String {
         switch self {
-            case .sheetType(_, _, message: let message, _, _, _, _, _, _):
+            case .sheetType(_, _, message: let message, _, _, _, _, _, _,_):
                 return message
         }
     }
     
     var primaryBtnText: String {
         switch self {
-            case .sheetType(_, _, _, primaryBtnText: let primaryBtnText, _, _, _, _, _):
+            case .sheetType(_, _, _, primaryBtnText: let primaryBtnText, _, _, _, _, _,_):
                 return primaryBtnText
         }
     }
     
     var secondaryBtnText: String {
         switch self {
-            case .sheetType(_, _, _, _, secondaryBtnText: let secondaryBtnText, _, _, _, _):
+            case .sheetType(_, _, _, _, secondaryBtnText: let secondaryBtnText, _, _, _, _,_):
                 return secondaryBtnText
         }
     }
     
     var sheetThemeColor: ColorResource {
         switch self {
-            case .sheetType(_, _, _, _, _, sheetThemeColor: let color, _, _, _):
+            case .sheetType(_, _, _, _, _, sheetThemeColor: let color, _, _, _,_):
                 return color
         }
     }
     
     var isBtnVertical: Bool {
         switch self {
-            case .sheetType(_, _, _, _, _, _, isButtonVertical: let isBtnVertical, _, _):
+            case .sheetType(_, _, _, _, _, _, isButtonVertical: let isBtnVertical, _, _,_):
                 return isBtnVertical
         }
     }
     
     var btnWidth: CGFloat {
         switch self {
-            case .sheetType(_, _, _, _, _, _, _, _, buttonWidth: let width):
+            case .sheetType(_, _, _, _, _, _, _, _, buttonWidth: let width,_):
                 return width
         }
     }
     
     var btnHeight: CGFloat {
         switch self {
-            case .sheetType(_, _, _, _, _, _, _, buttonHeight: let height, _):
+            case .sheetType(_, _, _, _, _, _, _, buttonHeight: let height, _, _):
                 return height
+        }
+    }
+    var contentSize: CGFloat {
+        switch self {
+        case .sheetType(_, _, _, _, _, _, _, _,_,contentSize:let size):
+                return size
         }
     }
 }
@@ -111,7 +119,7 @@ struct CommonBottomSheet: View {
                 .foregroundStyle(.black)
             
             Text(sheetType.message)
-                .font(.custom(poppinsMedium, fixedSize: 16))
+                .font(.custom(poppinsMedium, fixedSize: sheetType.contentSize))
                 .foregroundStyle(.black)
                 .padding(.horizontal, 45)
                 .multilineTextAlignment(.center)

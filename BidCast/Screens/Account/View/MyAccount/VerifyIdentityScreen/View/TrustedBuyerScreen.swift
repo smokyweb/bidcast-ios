@@ -29,6 +29,7 @@ struct TrustedBuyerScreen: View {
     @State private var showImageSourceActionSheet = false
     @State private var showImagePicker = false
     @State private var imagePickerSourceType: UIImagePickerController.SourceType = .photoLibrary
+    @Binding var comeFromHome : Bool
 
     var body: some View {
         VStack(spacing: 0) {
@@ -214,13 +215,20 @@ struct TrustedBuyerScreen: View {
             isPresented: $showError,
             height: screenHeight / 2.3,
             topBarCornerRadius: 25,
-            showTopIndicator: false
+            showTopIndicator: false,onDismiss: {
+                showError = true
+            }
         ) {
             CommonBottomSheet(
                 sheetType: $alertType,
                 onPrimaryClick: {
                     withAnimation(.snappy) {
-                       
+                        if  comeFromHome == false{
+                            self.presentationMode.wrappedValue.dismiss()
+                        }else{
+                            comeFromHome = false
+                        }
+                        
                         showError = false
                     }
                 },
@@ -308,6 +316,6 @@ struct TrustedBuyerScreen: View {
     }
 }
 
-#Preview {
-    TrustedBuyerScreen()
-}
+//#Preview {
+//    TrustedBuyerScreen()
+//}

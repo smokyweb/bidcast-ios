@@ -262,6 +262,25 @@ extension UserDefaults{
             return self.standard.value(forKey: "userName") as? String ?? ""
         }
     }
+    static var sellerVerafied : String{
+        set(input){
+            self.standard.setValue(input, forKey: "sellerVerafied")
+        }
+        get{
+            
+            return self.standard.value(forKey: "sellerVerafied") as? String ?? ""
+        }
+    }
+    
+    static var buyerVerafied : String{
+        set(input){
+            self.standard.setValue(input, forKey: "buyerVerafied")
+        }
+        get{
+            
+            return self.standard.value(forKey: "buyerVerafied") as? String ?? ""
+        }
+    }
     static var isFirstLogin:Int{
         set(input){
             self.standard.setValue(input, forKey: "isFirstLogin")

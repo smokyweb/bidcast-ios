@@ -124,7 +124,7 @@ struct HomeViewScreen: View {
             .padding([.leading,.trailing],12)
             .padding(.top , 10)
             
-            CusNavLink(doNavigate: $navigateToLiveStream, destination: LiveStream(currentStreamIndex :self.$index, userId : $userId ))
+            CusNavLink(doNavigate: $navigateToLiveStream, destination: LiveStream(currentStreamIndex :self.$index, userId : $userId,comeFromHome: $navigateToLiveStream ))
             CusNavLink(doNavigate: $navigateToProfile, destination: ProfileScreen(id:$userId))
             CusNavLink(doNavigate: $navigateToNoti, destination: NotificationScreen())
         }
@@ -156,6 +156,8 @@ struct HomeViewScreen: View {
                     UserDefaults.isFirstShowCreated = response?.is_FirstShowCreated ?? false
                     UserDefaults.profileURL = response?.profile_image ?? ""
                     UserDefaults.userName = response?.name ?? ""
+                    UserDefaults.buyerVerafied = response?.buyer_identity_status ?? ""
+                    UserDefaults.sellerVerafied = response?.seller_identity_status ?? ""
                    
                 }else{
                     

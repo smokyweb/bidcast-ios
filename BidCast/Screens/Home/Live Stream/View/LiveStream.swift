@@ -53,6 +53,7 @@ struct LiveStream: View {
     @State private var liveElapsedTime: String = "00:00:00"
     
     @State  var currentRoomID = ""
+    @State var showVerificationSheet = false
     
     var tabBarHeight: CGFloat {
         UIApplication.shared.windows.first?.safeAreaInsets.bottom ?? 49
@@ -68,6 +69,9 @@ struct LiveStream: View {
     @State var countdownTimer: Timer?
     
     let totalSwipeWidth: CGFloat = UIScreen.main.bounds.width - 80
+    
+    @State var navigateToBuyer = false
+    @Binding var comeFromHome : Bool
     
     var body: some View {
         
@@ -151,11 +155,6 @@ struct LiveStream: View {
                                                 ForEach(chatManager.messages) { comment in
                                                     HStack(alignment: .center, spacing: 6) {
                                                         CustomProfileImage(url: comment.image, isCircular: true,size: 24)
-//                                                        Image(comment.image)
-//                                                            .resizable()
-//                                                            .scaledToFit()
-//                                                            .frame(width: 24, height: 24)
-//                                                            .clipShape(Circle())
                                                         VStack(alignment: .leading) {
                                                             Text(comment.username.capitalizingFirstLetter())
                                                                 .font(.custom(poppinsSemiBold, size: 14.0))
@@ -270,9 +269,7 @@ struct LiveStream: View {
                                                 .padding(.leading)
                                             
                                         }
-                                        //                                .frame(width: UIScreen.main.bounds.width * 0.75)
                                         
-                                        // 1/4 Price & Timer Area
                                         VStack {
                                             Text("$ \(String(format: "%.2f", Double(currentPrice)))")
                                                 .font(.custom(poppinsBold, size: 14))
@@ -482,6 +479,7 @@ struct LiveStream: View {
                         }
                 )
                 CusNavLink(doNavigate: $navigateToProfile, destination: ProfileScreen(id:$id))
+                CusNavLink(doNavigate: $navigateToBuyer, destination: TrustedBuyerScreen(comeFromHome:$comeFromHome))
             }
         }.gesture(
             TapGesture().onEnded { _ in
@@ -511,6 +509,26 @@ struct LiveStream: View {
                     withAnimation {
                         showError = false
                         self.presentationMode.wrappedValue.dismiss()
+                    }
+                }
+            )
+        }
+        .bottomSheet(isPresented: $showVerificationSheet, height: screenHeight / 2.8, topBarCornerRadius: 25, showTopIndicator: false,onDismiss: {
+            showVerificationSheet = true
+        }) {
+            CommonBottomSheet(
+                sheetType: $alertType,
+                onPrimaryClick: {
+                    withAnimation {
+                        navigateToBuyer = true
+                        showVerificationSheet = false
+                       
+                    }
+                },
+                onSecondaryClick: {
+                    withAnimation {
+                        showVerificationSheet = false
+                       
                     }
                 }
             )
@@ -562,9 +580,24 @@ struct LiveStream: View {
                             loginRoom(roomId: initialRoomID)
                             fetchBiddingDetail(roomId: initialRoomID)
                             ZIMChatManager.shared.joinRoom(roomID: initialRoomID)
-//                            Task{
-//                                await viewModel.CountUppdate(parameters: countRequest(room_id: initialRoomID, event: "user_join_room"))
-//                            }
+                            //                            Task{
+                            //                                await viewModel.CountUppdate(parameters: countRequest(room_id: initialRoomID, event: "user_join_room"))
+                            //                            }
+                            if UserDefaults.buyerVerafied != "verified" {
+                                alertType = .sheetType(
+                                    icon: .info,
+                                    title: "Become a Verified Buyer!",
+                                    message: "Before you interact with live shows.you need to become a verified buyer.",
+                                    primaryBtnText: "OK",
+                                    secondaryBtnText: "",
+                                    buttonWidth:screenWidth - 24,
+                                    contentSize: 12.0
+                                )
+                                withAnimation(.snappy){
+                                    showVerificationSheet = true
+                                }
+                               
+                            }
                         }
                     }
                 }
@@ -600,6 +633,7 @@ struct LiveStream: View {
                     let streamTitle = "Stream Ended"
                     let streamMessage = "The host has ended the live stream."
                     print("🔥 STREAM REMOVED CALLBACK TRIGGERED 🔥")
+                    showVerificationSheet = false
                     alertType = .sheetType(
                         icon: .alert,
                         title: streamTitle,
@@ -645,10 +679,6 @@ struct LiveStream: View {
         if let currentRoomId = liveShowsData[safe: currentStreamIndex]?.room_id {
             FirebaseManager.shared.databaseRef.child("live_sessions").child(currentRoomId).removeAllObservers()
         }
-//        Task{
-//            await viewModel.CountUppdate(parameters: countRequest(room_id: liveShowsData[safe: currentStreamIndex]?.room_id ?? "", event: "user_leave_room"))
-//        }
-        
     }
     
     func incrementPrice() {

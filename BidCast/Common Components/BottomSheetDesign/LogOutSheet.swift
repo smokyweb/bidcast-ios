@@ -21,7 +21,7 @@ struct LogOutSheet: View {
                 .resizable()
                 .frame(width: 35, height: 35)
                 .padding(.all, 10)
-                .background(.pinkBtn)
+                .background(.defaultTheme)
                 .foregroundStyle(.white)
                 .clipShape(Circle())
             

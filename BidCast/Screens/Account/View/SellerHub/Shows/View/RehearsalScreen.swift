@@ -45,9 +45,14 @@ struct RehearsalScreen: View {
     
     @State var comeFromPrepare = false
     @State var comeForLive = false
-   
+    
+    @State var showSellerSheet = false
+   @State var navigateToSeller = false
     
     @State var viewwerCount = 0
+    
+    @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "Stream Ended", message: "The live stream has ended.", primaryBtnText: "", secondaryBtnText: "")
+    
     var sheetHeight: CGFloat {
         switch currentBottomSheet {
         case .more: return screenHeight * 0.7
@@ -171,8 +176,23 @@ struct RehearsalScreen: View {
                     
                     Button(action: {
                         showWelcomeDialog = false
-                        showButton = true
-                        showPreLiveControls = true
+                        if UserDefaults.sellerVerafied == "verified"{
+                            showButton = true
+                            showPreLiveControls = true
+                        }else{
+                            alertType = .sheetType(
+                                icon: .info,
+                                title: "Become a Verified Seller!",
+                                message: "Before you interact with live shows.you need to become a verified seller.",
+                                primaryBtnText: "OK",
+                                secondaryBtnText: "",
+                                buttonWidth:screenWidth - 24,
+                                contentSize: 12.0
+                            )
+                            withAnimation(.snappy){
+                                showSellerSheet = true
+                            }
+                        }
                     }) {
                         Text("Ok")
                             .foregroundColor(.white)
@@ -379,7 +399,7 @@ struct RehearsalScreen: View {
                     .padding(.bottom, 20)
                 }
             }
-            
+            CusNavLink(doNavigate: $navigateToSeller, destination: SellerVerificationScreen())
         }
         .navigationBarHidden(true)
         .toolbar(.hidden,for: .tabBar)
@@ -485,6 +505,27 @@ struct RehearsalScreen: View {
                 
             }
         )
+        
+        .bottomSheet(isPresented: $showSellerSheet, height: screenHeight / 2.5, topBarCornerRadius: 25, showTopIndicator: false,onDismiss: {
+            showSellerSheet = false
+        }) {
+            CommonBottomSheet(
+                sheetType: $alertType,
+                onPrimaryClick: {
+                    withAnimation {
+                        navigateToSeller = true
+                        showSellerSheet = false
+                       
+                    }
+                },
+                onSecondaryClick: {
+                    withAnimation {
+                        showSellerSheet = false
+                       
+                    }
+                }
+            )
+        }
         
         .onAppear {
             logoutRoom()
