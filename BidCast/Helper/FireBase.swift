@@ -17,7 +17,8 @@ import SwiftUICore
 class FirebaseManager {
     static let shared = FirebaseManager()
     let databaseRef = Database.database().reference()
- 
+    private var newSessionHandle: DatabaseHandle?
+
    
     private init() {}
 
@@ -189,5 +190,12 @@ class FirebaseManager {
                 onChange(0) // Default if missing or malformed
             }
         }
+    }
+    func removeNewSessionObserver() {
+      if let handle = newSessionHandle {
+        databaseRef.child("live_sessions").removeObserver(withHandle: handle)
+        newSessionHandle = nil
+        print("✅ Removed new session observer")
+      }
     }
 }

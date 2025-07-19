@@ -114,6 +114,8 @@ struct ShowsScreen: View {
 //            }
             CusNavLink(doNavigate: $navigateToReherseal, destination: RehearsalScreen(showUd: $showID,isLive: isLive))
         }
+        .navigationBarHidden(true)
+        .toolbar(.hidden,for: .tabBar)
         .background(Color(UIColor.systemGroupedBackground))
         .toast(isPresenting: $showhud) {
             AlertToast(type: .regular, title: hudMsg)

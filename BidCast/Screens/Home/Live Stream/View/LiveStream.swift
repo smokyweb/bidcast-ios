@@ -91,13 +91,14 @@ struct LiveStream: View {
                                 id = userId
                                 navigateToProfile = true
                             }){
-                                CustomProfileImage(url: liveShowsData[currentStreamIndex].user?.profile_image ?? "", isCircular: true)
+                                CustomProfileImage(url: liveShowsData[currentStreamIndex].user?.profile_image ?? "", isCircular: true,size: 50)
                                 
                                 
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text(liveShowsData[currentStreamIndex].user?.name ?? "")
+                                        .font(.custom(poppinsSemiBold, size: 13.0))
                                         .foregroundColor(.white)
-                                        .bold()
+                                       
                                     HStack(spacing: 6) {
                                         Image(systemName: "sparkles")
                                             .foregroundColor(.yellow)
@@ -158,7 +159,7 @@ struct LiveStream: View {
                                                         VStack(alignment: .leading) {
                                                             Text(comment.username.capitalizingFirstLetter())
                                                                 .font(.custom(poppinsSemiBold, size: 14.0))
-                                                                
+                                                            
                                                                 .foregroundColor(.white)
                                                             Text(comment.message)
                                                                 .font(.custom(poppinsRegular, size: 12.0))
@@ -172,7 +173,7 @@ struct LiveStream: View {
                                             .padding(.horizontal,8)
                                             .padding(.vertical,4)
                                         }
-                                        .frame(width:screenWidth - 80,height: 150)
+                                        .frame(width:screenWidth - 90,height: 150)
                                         .background(Color.black.opacity(0.3))
                                         .cornerRadius(10)
                                         .padding(.horizontal)
@@ -189,6 +190,59 @@ struct LiveStream: View {
                                 
                             }
                             //                        Spacer()
+                            //MARK: Add Comment section
+                          
+                            HStack {
+                                ZStack(alignment: .trailing) {
+                                    TextField("", text: $commentText, prompt: Text("Say something...")
+                                        .foregroundColor(.white)
+                                        .font(.custom(poppinsSemiBold, size: 13.0))
+                                    )
+                                    .padding(.horizontal, 8)
+                                    .padding(.trailing, commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? 14 : 40)
+                                    
+                                    .frame(height: 50)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .font(.custom(poppinsSemiBold, size: 13))
+                                    .foregroundColor(.white)
+                                    .cornerRadius(8)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .fill(Color.black.opacity(0.4))
+                                    )
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .stroke(Color.white, lineWidth: 1)
+                                    )
+                                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                                    
+                                    
+                                    if !commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                                        Button(action: {
+                                            let roomId = liveShowsData[currentStreamIndex].room_id ?? ""
+                                            ZIMChatManager.shared.sendMessage(message: commentText,roomId: roomId,image: UserDefaults.profileURL,name: UserDefaults.userName)
+                                            commentText = ""
+                                        }) {
+                                            Image(systemName: "paperplane.fill")
+                                                .resizable()
+                                                .frame(width: 16, height: 16)
+                                                .foregroundColor(.white)
+                                                .padding(10)
+                                        }
+                                        .transition(.opacity)
+                                        .animation(.easeInOut(duration: 0.2), value: commentText)
+                                    }
+                                }
+                               
+                            }
+                            .padding(.leading,16)
+                            .padding(.trailing, BiddingDetail.product != nil ? 54 : 16)
+                        
+                           
+                           
+//                            .padding(.bottom,32)
+//                            .padding(.bottom, keyboardResponder.currentHeight == 0 ? (tabBarHeight + 20) : 10)
+                            .animation(.easeOut(duration: 0.25), value: keyboardResponder.currentHeight)
                             
                             VStack(alignment: .leading,spacing: 12){
                                 //MARK: Product Details
@@ -216,7 +270,7 @@ struct LiveStream: View {
                                                 .font(.custom(poppinsSemiBold, size: 12.0))
                                                 .foregroundColor(.white)
                                         }
-                                        //                                Spacer()
+                                                                        Spacer()
                                         
                                     }
                                     .padding()
@@ -294,53 +348,13 @@ struct LiveStream: View {
                                 }else {
                                     
                                     Text("Waiting for next product...")
+                                        .font(.custom(poppinsSemiBold, size: 14.0))
                                         .foregroundColor(.white)
                                         .padding(.horizontal)
                                 }
-                                
-                                
-                                
-                                //MARK: Add Comment section
-                                
-                                HStack {
-                                    ZStack(alignment: .trailing) {
-                                        TextField("", text: $commentText, prompt: Text("Say something...")
-                                            .foregroundColor(.white)
-                                            .font(.custom(poppinsSemiBold, size: 13.0))
-                                        )
-                                        .font(.custom(poppinsSemiBold, size: 13.0))
-                                        .foregroundColor(.white)
-                                        .padding(.horizontal, 14)
-                                        .padding(.trailing, commentText.isEmpty ? 14 : 36) // extra space for send button
-                                        .frame(height: 40)
-                                        .background(Color.clear)
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 20)
-                                                .stroke(Color.white, lineWidth: 1)
-                                        )
-                                        
-                                        if !commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                                            Button(action: {
-                                                let roomId = liveShowsData[currentStreamIndex].room_id ?? ""
-                                                ZIMChatManager.shared.sendMessage(message: commentText,roomId: roomId,image: UserDefaults.profileURL,name: UserDefaults.userName)
-                                                commentText = ""
-                                            }) {
-                                                Image(systemName: "paperplane.fill")
-                                                    .resizable()
-                                                    .frame(width: 16, height: 16)
-                                                    .foregroundColor(.white)
-                                                    .padding(10)
-                                            }
-                                            .transition(.opacity)
-                                            .animation(.easeInOut(duration: 0.2), value: commentText)
-                                        }
-                                    }
-                                }
-                                .padding(.horizontal)
-                                .padding(.bottom,32)
-                                .padding(.bottom, keyboardResponder.currentHeight == 0 ? (tabBarHeight + 20) : keyboardResponder.currentHeight)
-                                .animation(.easeOut(duration: 0.25), value: keyboardResponder.currentHeight)
                             }
+                            .padding(.bottom,50)
+                            .padding(.bottom, keyboardResponder.currentHeight == 0 ? (tabBarHeight + 20) : 10)
                         }
                     }
                     VStack(spacing: 20) {
@@ -356,9 +370,9 @@ struct LiveStream: View {
                         }
                         .padding()
                         .background(
-                               Circle()
-                                   .fill(Color.white)
-                           )
+                            Circle()
+                                .fill(Color.white)
+                        )
                         Button(action: {}) {
                             Image(systemName: "paperclip")
                                 .resizable()
@@ -370,9 +384,9 @@ struct LiveStream: View {
                         }
                         .padding()
                         .background(
-                               Circle()
-                                   .fill(Color.white)
-                           )
+                            Circle()
+                                .fill(Color.white)
+                        )
                         Button(action: {}) {
                             Image(systemName: "arrowshape.turn.up.right")
                                 .resizable()
@@ -384,9 +398,9 @@ struct LiveStream: View {
                         }
                         .padding()
                         .background(
-                               Circle()
-                                   .fill(Color.white)
-                           )
+                            Circle()
+                                .fill(Color.white)
+                        )
                         Button(action: {}) {
                             Image(systemName: "wallet.pass")
                                 .resizable()
@@ -398,9 +412,9 @@ struct LiveStream: View {
                         }
                         .padding()
                         .background(
-                               Circle()
-                                   .fill(Color.white)
-                           )
+                            Circle()
+                                .fill(Color.white)
+                        )
                         Button(action: {}) {
                             Image(systemName: "cart")
                                 .resizable()
@@ -412,14 +426,14 @@ struct LiveStream: View {
                         }
                         .padding()
                         .background(
-                               Circle()
-                                   .fill(Color.white)
-                           )
+                            Circle()
+                                .fill(Color.white)
+                        )
                     }
                     .position(
-                              x: geometry.size.width - 40,
-                              y: geometry.size.height / 2
-                          )
+                        x: geometry.size.width - 40,
+                        y: geometry.size.height / 2
+                    )
                 }
                 .gesture(
                     DragGesture()
@@ -522,13 +536,13 @@ struct LiveStream: View {
                     withAnimation {
                         navigateToBuyer = true
                         showVerificationSheet = false
-                       
+                        
                     }
                 },
                 onSecondaryClick: {
                     withAnimation {
                         showVerificationSheet = false
-                       
+                        
                     }
                 }
             )
@@ -539,6 +553,7 @@ struct LiveStream: View {
         .foregroundColor(.black)
         .onAppear{
             UserDefaults.isLiveEnded = false
+            FirebaseManager.shared.removeNewSessionObserver()
             ZIMChatManager.shared.login(userID: "\(UserDefaults.userId)", userName: UserDefaults.userName)
             Task{
                 SVProgressHUD.show()
@@ -580,9 +595,6 @@ struct LiveStream: View {
                             loginRoom(roomId: initialRoomID)
                             fetchBiddingDetail(roomId: initialRoomID)
                             ZIMChatManager.shared.joinRoom(roomID: initialRoomID)
-                            //                            Task{
-                            //                                await viewModel.CountUppdate(parameters: countRequest(room_id: initialRoomID, event: "user_join_room"))
-                            //                            }
                             if UserDefaults.buyerVerafied != "verified" {
                                 alertType = .sheetType(
                                     icon: .info,
@@ -596,7 +608,7 @@ struct LiveStream: View {
                                 withAnimation(.snappy){
                                     showVerificationSheet = true
                                 }
-                               
+                                
                             }
                         }
                     }
@@ -627,7 +639,7 @@ struct LiveStream: View {
                 currentRoomID = roomId
                 FirebaseManager.shared.observeViewerCount(roomId: roomId) { newCount in
                     print("👀 Viewer Count Updated: \(newCount)")
-                   viewwerCount = newCount
+                    viewwerCount = newCount
                 }
                 FirebaseManager.shared.observeLiveSessionRemoval(roomId: roomId) {
                     let streamTitle = "Stream Ended"

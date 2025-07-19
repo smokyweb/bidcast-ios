@@ -102,6 +102,16 @@ struct RehearsalScreen: View {
                             .foregroundColor(.white)
                         
                         Button(action: {
+//                              enterPiPMode()
+                           }) {
+                              Image(systemName: "rectangle.inset.filled.and.person.filled") // Choose a good PiP icon
+                                 .resizable()
+                                 .renderingMode(.template)
+                                 .foregroundColor(.defaultTheme)
+                                 .frame(width: 30, height: 24)
+                           }
+                        
+                        Button(action: {
                             if !isLive{
                                 self.presentaionMode.wrappedValue.dismiss()
                             }else{
@@ -330,14 +340,17 @@ struct RehearsalScreen: View {
                                 )
                                 .font(.custom(poppinsSemiBold, size: 13.0))
                                 .foregroundColor(.white)
-                                .padding(.horizontal, 14)
+                                .padding(.horizontal, 8)
                                 .padding(.trailing, commentText.isEmpty ? 14 : 36) // extra space for send button
-                                .frame(height: 40)
-                                .background(Color.clear)
+                                .frame(height: 50)
+                                
                                 .overlay(
-                                    RoundedRectangle(cornerRadius: 20)
+                                    RoundedRectangle(cornerRadius: 8)
                                         .stroke(Color.white, lineWidth: 1)
+                                        
+                                       
                                 )
+                                .background(.black.opacity(0.4))
                                 
                                 if !commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                                     Button(action: {
@@ -348,8 +361,8 @@ struct RehearsalScreen: View {
                                     }) {
                                         Image(systemName: "paperplane.fill")
                                             .resizable()
-                                            .frame(width: 16, height: 16)
-                                            .foregroundColor(.white)
+                                            .frame(width: 24, height: 24)
+                                            .foregroundColor(.defaultTheme)
                                             .padding(10)
                                     }
                                     .transition(.opacity)
@@ -357,17 +370,21 @@ struct RehearsalScreen: View {
                                 }
                             }
                         }
-                        .padding(.horizontal)
+                        .padding(.horizontal,8)
                         .padding(.bottom,8)
                     }
                     if !isLive{
                         Button(action: {
-                            Task {
-                                SVProgressHUD.show()
-                                let is_Live = "true"
-                                await viewModel.UpdateLiveShows(param: LiveShowUpdateRequest(schedule_show_id: showUd, is_live: is_Live))
-                                await SVProgressHUD.dismiss()
-                                success()
+                            if UserDefaults.sellerVerafied == "verified"{
+                                Task {
+                                    SVProgressHUD.show()
+                                    let is_Live = "true"
+                                    await viewModel.UpdateLiveShows(param: LiveShowUpdateRequest(schedule_show_id: showUd, is_live: is_Live))
+                                    await SVProgressHUD.dismiss()
+                                    success()
+                                }
+                            }else{
+                                showSellerSheet = true
                             }
                         }) {
                             Text("Start Show")
@@ -733,6 +750,20 @@ struct RehearsalScreen: View {
             )
         ]
     }
+    
+//    func enterPiPMode() {
+//       guard let url = URL(string: "YOUR_STREAM_PLAYBACK_URL") else { return }
+//       let player = AVPlayer(url: url)
+//       let playerVC = AVPlayerViewController()
+//       playerVC.player = player
+//       playerVC.allowsPictureInPicturePlayback = true
+//       playerVC.entersFullScreenWhenPlaybackBegins = true
+//
+//       let rootVC = UIApplication.shared.windows.first?.rootViewController
+//       rootVC?.present(playerVC, animated: true) {
+//          player.play()
+//       }
+//    }
     
 }
 
