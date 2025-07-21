@@ -17,7 +17,7 @@ final class LiveShowsViewModel: ObservableObject {
     @Published var countResponse = countModel()
     @Published var errorMessage: String?
     @Published var BidResponse = ResponseModel<BidModel>()
-    @Published var followDict = ResponseModel<[String]>()
+    @Published var followDict = ResponseModel<FolloweModel>()
     @Published var requestType: String = ""
     @Published var titleStream : String = "Stream Ended"
     @Published var messageStream : String = "The live stream has ended."
@@ -109,11 +109,11 @@ final class LiveShowsViewModel: ObservableObject {
     func followUnfollow(parameters: FollowRequest) async {
         do {
             self.requestType = "follow"
-            if let response : ResponseModel<[String]> = try await APIManager.shared.request(
+            if let response : ResponseModel<FolloweModel> = try await APIManager.shared.request(
                 type: APIEndPoint.followUnfollow(param: parameters),
                 header: true
            ) {
-               
+                followDict = response
            }
             
             // Refresh profile after follow/unfollow

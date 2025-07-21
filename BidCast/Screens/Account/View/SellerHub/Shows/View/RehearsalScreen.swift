@@ -100,16 +100,16 @@ struct RehearsalScreen: View {
                             .background(Color.defaultTheme)
                             .cornerRadius(4)
                             .foregroundColor(.white)
-                        
-                        Button(action: {
-//                              enterPiPMode()
-                           }) {
-                              Image(systemName: "rectangle.inset.filled.and.person.filled") // Choose a good PiP icon
-                                 .resizable()
-                                 .renderingMode(.template)
-                                 .foregroundColor(.defaultTheme)
-                                 .frame(width: 30, height: 24)
-                           }
+//                        
+//                        Button(action: {
+////                              enterPiPMode()
+//                           }) {
+//                              Image(systemName: "rectangle.inset.filled.and.person.filled") // Choose a good PiP icon
+//                                 .resizable()
+//                                 .renderingMode(.template)
+//                                 .foregroundColor(.defaultTheme)
+//                                 .frame(width: 30, height: 24)
+//                           }
                         
                         Button(action: {
                             if !isLive{
@@ -492,10 +492,8 @@ struct RehearsalScreen: View {
                 case .shop:
                     ShopBottomSheetView(
                         isPresented: $showSellSheet,
-                        products: [
-                            Product(imageName: "IMG_1340", title: "iPhone 15 Pro", subtitle: "Starting bid: $999", detail: "05:23:45 left", statusColor: .red),
-                            Product(imageName: "IMG_1340", title: "AirPods Max", subtitle: "Buy Now: $549", detail: "0 Bids", statusColor: .green)
-                        ]
+                        userId : .constant("\(UserDefaults.userId)")
+                        
                     )
                 case .endShow:
                     EndShowBottomSheetView(
@@ -751,19 +749,6 @@ struct RehearsalScreen: View {
         ]
     }
     
-//    func enterPiPMode() {
-//       guard let url = URL(string: "YOUR_STREAM_PLAYBACK_URL") else { return }
-//       let player = AVPlayer(url: url)
-//       let playerVC = AVPlayerViewController()
-//       playerVC.player = player
-//       playerVC.allowsPictureInPicturePlayback = true
-//       playerVC.entersFullScreenWhenPlaybackBegins = true
-//
-//       let rootVC = UIApplication.shared.windows.first?.rootViewController
-//       rootVC?.present(playerVC, animated: true) {
-//          player.play()
-//       }
-//    }
     
 }
 
@@ -804,3 +789,11 @@ struct ZegoRehearsalScreen: UIViewRepresentable {
 enum SideMenu {
     case more, promote, clip, share, switchView, shop,endShow
 }
+
+
+//Task{
+//    SVProgressHUD.show()
+//    await self.viewModel.productDetails(parameters: UserProductRequest(user_id: Int(id) ?? 0,page : currentPage))
+//    await SVProgressHUD.dismiss()
+//    success()
+//}

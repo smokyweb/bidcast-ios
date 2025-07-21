@@ -249,22 +249,7 @@ struct AccountScreen: View {
             CusNavLink(doNavigate: $navigateToSellerTraining, destination: PromoteToolsView())
             CusNavLink(doNavigate: $navigateTips, destination: TipsScreen())
             CusNavLink(doNavigate: $navigateToWallet, destination: WalletScreen())
-            CusNavLink(doNavigate: $navigateToSellerStatus, destination:   SellerStatusScreen(sections: [
-                SellerStatusSection(
-                    title: "Marketplace Vendor Status",
-                    subtitle: "Vendor since Jan 2025\nSeller Rating: 4.8/5",
-                    icon: Image(systemName: "cart.fill"),
-                    statusText: "Active",
-                    statusColor: .green
-                ),
-                SellerStatusSection(
-                    title: "Live Sell Vendor Status",
-                    subtitle: "Application in Review\nSubmitted: Jan 15, 2025",
-                    icon: Image(systemName: "video.fill"),
-                    statusText: "Pending",
-                    statusColor: .orange
-                )
-            ]))
+            CusNavLink(doNavigate: $navigateToSellerStatus, destination:   SellerStatusScreen())
             CusNavLink(doNavigate: $navigateToMyOrder, destination: MyOrdersScreen())
             CusNavLink(doNavigate: $navigateToAffilateProgram, destination: AffiliateProgramScreen(
                 referralCode: "SELLER2025",

@@ -15,10 +15,11 @@ struct SummaryRow: View {
 
     var body: some View {
         HStack {
-            Text(label).font(isBold ? .headline : .subheadline)
+            Text(label)
+                .font(.custom(isBold ? poppinsBold : poppinsSemiBold, size: 13.0))
             Spacer()
             Text(String(format: "$%.2f", value))
-                .font(isBold ? .headline : .subheadline)
+                .font(.custom(isBold ? poppinsBold : poppinsSemiBold, size: 13.0))
         }
     }
 }

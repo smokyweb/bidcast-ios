@@ -17,7 +17,7 @@ struct EndShowBottomSheetView: View {
             // Header
             HStack {
                 Text("End Show")
-                    .font(.title2).bold()
+                    .font(.custom(poppinsBold, size: 15.0))
                 Spacer()
                 Button(action: { isPresented = false }) {
                     Image(systemName: "xmark")
@@ -30,12 +30,16 @@ struct EndShowBottomSheetView: View {
             Button(action: onCreateRaid) {
                 HStack {
                     Image(systemName: "person.3.fill")
+                        .font(.custom(poppinsSemiBold, size: 13.0))
+                        .frame(width: 40,height: 40)
                         .foregroundColor(.black)
                         .imageScale(.medium)
                     Text("Create a raid")
+                        .font(.custom(poppinsSemiBold, size: 13.0))
                         .foregroundColor(.black)
                     Spacer()
                     Image(systemName: "chevron.right")
+                        .font(.custom(poppinsSemiBold, size: 13.0))
                         .foregroundColor(.gray)
                 }
                 .padding()
@@ -46,6 +50,7 @@ struct EndShowBottomSheetView: View {
             // End Show Button
             Button(action: onEndShow) {
                 Text("End Show")
+                    .font(.custom(poppinsSemiBold, size: 13.0))
                     .foregroundColor(.white)
                     .fontWeight(.semibold)
                     .frame(maxWidth: .infinity)
@@ -56,6 +61,7 @@ struct EndShowBottomSheetView: View {
 
             Spacer()
         }
+        .edgesIgnoringSafeArea(.top)
         .padding()
         .background(Color.white)
         .cornerRadius(20)

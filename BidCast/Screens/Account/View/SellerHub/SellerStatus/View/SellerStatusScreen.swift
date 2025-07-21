@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SVProgressHUD
 
 // MARK: - SellerStatusSection
 struct SellerStatusSection: Identifiable {
@@ -21,8 +22,9 @@ struct SellerStatusSection: Identifiable {
 struct SellerStatusScreen: View {
     
     @Environment(\.presentationMode) var presentationMode
-    var sections: [SellerStatusSection] = []
     @State var navigateToContact = false
+    @State var viewModel = SellerStatusViewModel()
+    @State var sellerData = SellerDataModel ()
     var body: some View {
         VStack(spacing: 8){
             VStack {
@@ -42,9 +44,11 @@ struct SellerStatusScreen: View {
             // MARK: - Scrollable Content
             ScrollView {
                 VStack(spacing: 12) {
-                    ForEach(sections) { section in
-                        SellerStatusCardView(section: section)
-                    }
+                    let seller = sellerData.live_sell_vendor
+                    let market = sellerData.marketplace_vendor
+                    SellerStatusCardView(title: seller?.title ?? "", status: seller?.status ?? "", icon: "cart.fill", subtitle: seller?.submitted ?? "")
+                    SellerStatusCardView(title: market?.title ?? "", status: market?.status ?? "", icon: "video.fill", subtitle: market?.vendor_since ?? "")
+//
 //                    .padding(.horizontal, 16)
                     
                     Spacer(minLength: 80)
@@ -72,29 +76,24 @@ struct SellerStatusScreen: View {
             .padding(.bottom, 0)
             .background(Color(UIColor.systemGroupedBackground))
         }
+        
+        .onAppear{
+            Task{
+                SVProgressHUD.show()
+                await self.viewModel.getSellerStatus()
+                await SVProgressHUD.dismiss()
+                if self.viewModel.errorMessage == nil || self.viewModel.errorMessage == ""{
+                    self.sellerData = viewModel.sellerStatusResponse?.data ?? SellerDataModel()
+                }else{
+                    
+                }
+                
+            }
+        }
         CusNavLink(doNavigate: $navigateToContact, destination: ContactUs())
+           
     }
 }
 
 
 // MARK: - Preview
-#Preview {
-    SellerStatusScreen(sections: [
-        SellerStatusSection(
-            title: "Marketplace Vendor Status",
-            subtitle: "Vendor since Jan 2025\nSeller Rating: 4.8/5",
-            icon: Image(systemName: "cart.fill"),
-            statusText: "Active",
-            statusColor: .green
-        ),
-        SellerStatusSection(
-            title: "Live Sell Vendor Status",
-            subtitle: "Application in Review\nSubmitted: Jan 15, 2025",
-            icon: Image(systemName: "video.fill"),
-            statusText: "Pending",
-            statusColor: .orange
-        )
-    ])
-}
-
-

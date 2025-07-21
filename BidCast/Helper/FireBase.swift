@@ -31,7 +31,7 @@ class FirebaseManager {
                            completion: ((Bool) -> Void)? = nil) {
         
         let roomId = "live_room_\(userId)_\(showId)"
-        let currentTime = getCurrentTimeFormatted()
+        let currentTime = getCurrentTimestamp()
         let sessionData: [String: Any] = [
             "highestBid": "",
             "live": true,
@@ -84,6 +84,9 @@ class FirebaseManager {
         formatter.amSymbol = "am"
         formatter.pmSymbol = "pm"
         return formatter.string(from: Date())
+    }
+    func getCurrentTimestamp() -> TimeInterval {
+        return Date().timeIntervalSince1970
     }
     
     func getLiveSessionData(roomId: String, completion: @escaping (_ data: [String: Any]?) -> Void) {

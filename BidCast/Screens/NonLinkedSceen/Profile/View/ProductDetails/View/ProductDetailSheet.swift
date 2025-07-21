@@ -51,20 +51,20 @@ struct ProductDetailSheet: View {
                     onDismiss()
                 }) {
                     Image(systemName: "chevron.left")
-                        .font(.title2)
+                        .font(.custom(poppinsSemiBold, size: 14.0))
                         .foregroundColor(.black)
                 }
                 Spacer()
                 Button(action: {}) {
                     Image(systemName: "ellipsis")
-                        .font(.title2)
+                        .font(.custom(poppinsSemiBold, size: 14.0))
                         .foregroundColor(.gray)
                 }
                 Button(action: {
                     onDismiss()
                 }) {
                     Image(systemName: "xmark.circle.fill")
-                        .font(.title2)
+                        .font(.custom(poppinsSemiBold, size: 14.0))
                         .foregroundColor(.red)
                 }
             }
@@ -95,8 +95,12 @@ struct ProductDetailSheet: View {
                 }
                 
                 VStack(alignment: .leading) {
-                    Text(sellerName).font(.subheadline.bold())
-                    Text(sellerStatus).font(.caption).foregroundColor(.gray)
+                    Text(sellerName)
+                        .font(.custom(poppinsSemiBold, size: 13.0))
+                        .foregroundColor(.gray)
+                    Text(sellerStatus)
+                        .font(.custom(poppinsRegular, size: 11.0))
+                        .foregroundColor(.gray)
                 }
                 Spacer()
             }
@@ -138,37 +142,37 @@ struct ProductDetailSheet: View {
             VStack(alignment: .leading, spacing: 12) {
                 HStack {
                     Text(productTitle)
-                        .font(.headline)
+                        .font(.custom(poppinsSemiBold, size: 14.0))
                     Spacer()
                     Text("$\(productPrice)")
-                        .font(.title3.bold())
+                        .font(.custom(poppinsSemiBold, size: 14.0))
                 }
                 VStack(alignment: .leading, spacing: 6) {
                     HStack {
                         Text("Condition")
-                            .font(.caption.bold())
+                            .font(.custom(poppinsRegular, size: 12.0))
                             .frame(width: 80, alignment: .leading)
                         Spacer()
                         Text(condition)
-                            .font(.caption)
+                            .font(.custom(poppinsRegular, size: 12.0))
                     }
                     
                     HStack {
                         Text("Location")
-                            .font(.caption.bold())
+                            .font(.custom(poppinsRegular, size: 12.0))
                             .frame(width: 80, alignment: .leading)
                         Spacer()
                         Text(location)
-                            .font(.caption)
+                            .font(.custom(poppinsRegular, size: 12.0))
                     }
                     
                     HStack {
                         Text("Posted")
-                            .font(.caption.bold())
+                            .font(.custom(poppinsRegular, size: 12.0))
                             .frame(width: 80, alignment: .leading)
                         Spacer()
                         Text(postedTime)
-                            .font(.caption)
+                            .font(.custom(poppinsRegular, size: 12.0))
                     }
                 }
             }
@@ -185,6 +189,7 @@ struct ProductDetailSheet: View {
                     showBuyNowSheet.toggle()
                 }) {
                     Text("Buy Now")
+                        .font(.custom(poppinsSemiBold, size: 13.0))
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(Color.defaultTheme)
@@ -195,6 +200,7 @@ struct ProductDetailSheet: View {
                     showMakeOfferSheet.toggle()
                 }) {
                     Text("Make Offer")
+                        .font(.custom(poppinsSemiBold, size: 13.0))
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(Color.defaultTheme.opacity(0.8))

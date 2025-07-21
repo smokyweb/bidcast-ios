@@ -9,29 +9,32 @@ import SwiftUICore
 
 // MARK: - Reusable Card View
 struct SellerStatusCardView: View {
-    let section: SellerStatusSection
-
+    @State var title = ""
+    @State var status = ""
+    @State var icon = ""
+    @State var subtitle = ""
+    @State var statusColor = Color.darkGreen
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text(section.title)
+                Text(title)
                     .font(.custom(poppinsSemiBold, size: 16.0))
                 Spacer()
-                Text(section.statusText)
+                Text(status)
                     .font(.custom(poppinsRegular, size: 12.0))
                     .padding(.horizontal, 10)
                     .padding(.vertical, 4)
-                    .background(section.statusColor.opacity(0.2))
-                    .foregroundColor(section.statusColor)
+                    .background(statusColor.opacity(0.2))
+                    .foregroundColor(statusColor)
                     .cornerRadius(10)
             }
 
             HStack(alignment: .center, spacing: 8) {
-                section.icon
+                Image(systemName: icon)
                     .resizable()
                     .frame(width: 20, height: 20)
                     .foregroundColor(.gray)
-                Text(section.subtitle)
+                Text(subtitle)
                     .font(.custom(poppinsRegular, size: 12.0))
                     .foregroundColor(.gray)
             }

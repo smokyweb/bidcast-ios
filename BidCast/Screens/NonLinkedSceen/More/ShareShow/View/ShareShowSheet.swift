@@ -31,7 +31,7 @@ struct ShareShowBottomSheetView: View {
                 // Header
                 HStack {
                     Text("Share Show")
-                        .font(.title2).bold()
+                        .font(.custom(poppinsBold, size: 15.0))
                     Spacer()
                     Button { isPresented = false } label: {
                         Image(systemName: "xmark")
@@ -49,9 +49,9 @@ struct ShareShowBottomSheetView: View {
                             .overlay(Image(systemName: "person.crop.circle.fill").resizable().scaledToFit().padding(6))
                         VStack(alignment: .leading) {
                             Text(showTitle)
-                                .font(.headline)
+                                .font(.custom(poppinsSemiBold, size: 13.0))
                             Text("@\(username)")
-                                .font(.subheadline)
+                                .font(.custom(poppinsSemiBold, size: 11.0))
                                 .foregroundColor(.gray)
                         }
                     }
@@ -68,7 +68,7 @@ struct ShareShowBottomSheetView: View {
                     
                     Text(message)
                         .padding()
-                        .font(.subheadline)
+                        .font(.custom(poppinsSemiBold, size: 11.0))
                         .multilineTextAlignment(.leading)
                         .lineLimit(nil) // Allow unlimited lines
                         .fixedSize(horizontal: false, vertical: true) // Ensure it wraps
@@ -90,7 +90,7 @@ struct ShareShowBottomSheetView: View {
                                     .overlay(Image(systemName: icon))
                             }
                             Text(name)
-                                .font(.caption)
+                                .font(.custom(poppinsRegular, size: 11.0))
                         }
                     }
                 }

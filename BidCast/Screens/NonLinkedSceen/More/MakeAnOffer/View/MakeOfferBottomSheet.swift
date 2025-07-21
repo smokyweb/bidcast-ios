@@ -38,10 +38,11 @@ struct MakeOfferBottomSheet: View {
             // Listed Price
             HStack {
                 Text("Listed Price")
+                    .font(.custom(poppinsSemiBold, size: 13.0))
                     .foregroundColor(.gray)
                 Spacer()
                 Text("$\(Int(listedPrice))")
-                    .bold()
+                    .font(.custom(poppinsSemiBold, size: 13.0))
             }
 
             // Offer Options
@@ -56,10 +57,10 @@ struct MakeOfferBottomSheet: View {
                     } label: {
                         VStack {
                             Text("$ \(Int(offer))  off")
-                                .font(.headline)
+                                .font(.custom(poppinsBold, size: 14.0))
                                 .foregroundColor(.red)
                             Text("$ \(discount)")
-                                .font(.subheadline)
+                                .font(.custom(poppinsSemiBold, size: 12.0))
                                 .foregroundColor(.gray)
                         }
                         .frame(maxWidth: .infinity)
@@ -76,7 +77,7 @@ struct MakeOfferBottomSheet: View {
             VStack(spacing: 8) {
                 HStack {
                     Text("Custom Offer")
-                        .font(.headline)
+                        .font(.custom(poppinsSemiBold, size: 13.0))
                     Spacer()
                 }
                 TextField("Enter your own amount", text: $customOffer)
@@ -97,7 +98,7 @@ struct MakeOfferBottomSheet: View {
                 Image(systemName: "creditcard")
                     .foregroundColor(.gray)
                 Text("You won't be charged unless the seller accepts your offer")
-                    .font(.footnote)
+                    .font(.custom(poppinsRegular, size: 11.0))
                     .foregroundColor(.gray)
             }
             .padding(.top)
@@ -109,6 +110,7 @@ struct MakeOfferBottomSheet: View {
                 isPresented = false
             } label: {
                 Text("Send Offer")
+                    .font(.custom(poppinsSemiBold, size: 13.0))
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .padding()

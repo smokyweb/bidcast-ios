@@ -25,7 +25,7 @@ struct CreateClipBottomSheetView: View {
                         .foregroundColor(.gray)
                 }
                 Text("Create Clip")
-                    .font(.custom(poppinsBold, size: 16.0))
+                    .font(.custom(poppinsBold, size: 15.0))
                 Spacer()
             }
             .padding(.top,-12)

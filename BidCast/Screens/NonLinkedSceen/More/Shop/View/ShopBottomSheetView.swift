@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SVProgressHUD
 
 struct Product: Identifiable {
     let id = UUID()
@@ -22,49 +23,52 @@ enum ShopTab: String, CaseIterable {
     case freebie = "Freebie"
     case sold = "Sold"
 }
-
 struct ShopBottomSheetView: View {
     @Binding var isPresented: Bool
-    @State private var searchText = ""
-    @State private var selectedTab: ShopTab = .auction
-
-    let products: [Product]
-
-    var filteredProducts: [Product] {
-        products.filter {
-            searchText.isEmpty || $0.title.localizedCaseInsensitiveContains(searchText)
-        }
-    }
-
+    @State  var searchText = ""
+    @State  var selectedTab: ShopTab = .auction
+    @StateObject var viewModel = ProfileViewModel()
+    var filteredProducts: [ProductListingDataModel] {
+        viewModel.productDetailsResponseDict?.data.filter {
+            searchText.isEmpty || (($0.title?.localizedCaseInsensitiveContains(searchText)) != nil)} ?? [ProductListingDataModel]()
+      }
+    @Binding var userId : String
     var body: some View {
         VStack(spacing: 16) {
+            
             // Header
             HStack {
                 Text("Shop")
-                    .font(.title2).bold()
+                    .font(.custom(poppinsBold, size: 15))
                 Spacer()
-                Button(action: { isPresented = false }) {
+                Button {
+                    isPresented = false
+                } label: {
                     Image(systemName: "xmark")
                         .foregroundColor(.black)
-                        .imageScale(.large)
                 }
             }
-
+            
             // Search
             HStack {
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(.gray)
                 TextField("Search products...", text: $searchText)
+                    .font(.custom(poppinsSemiBold, size: 13))
             }
-            .padding()
+            .padding(.horizontal)
+            .frame(height: 40)
             .background(Color(.systemGray6))
             .cornerRadius(10)
-
+            
             // Tabs
             HStack(spacing: 10) {
                 ForEach(ShopTab.allCases, id: \.self) { tab in
-                    Button(action: { selectedTab = tab }) {
+                    Button {
+                        selectedTab = tab
+                    } label: {
                         Text(tab.rawValue)
+                            .font(.custom(poppinsSemiBold, size: 13))
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 10)
                             .background(selectedTab == tab ? Color.defaultTheme : Color(.systemGray5))
@@ -73,65 +77,83 @@ struct ShopBottomSheetView: View {
                     }
                 }
             }
-
+            
             Divider()
-
-            // Product List
+            
             ScrollView {
-                VStack(spacing: 12) {
-                    ForEach(filteredProducts) { product in
-                        HStack(spacing: 12) {
-                            Image(product.imageName)
-                                .resizable()
-                                .frame(width: 60, height: 60)
-                                .background(Color(.systemGray5))
-                                .cornerRadius(10)
-
-                            VStack(alignment: .leading) {
-                                Text(product.title).bold()
-                                Text(product.subtitle).font(.subheadline).foregroundColor(.gray)
-                                Text(product.detail)
-                                    .font(.subheadline)
-                                    .foregroundColor(product.statusColor)
-                            }
-
-                            Spacer()
-
-                            Button(action: {}) {
-                                Image(systemName: "square.and.pencil")
-                            }
-                            Button(action: {}) {
-                                Image(systemName: "trash")
-                            }
-                        }
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(12)
+                LazyVStack(spacing: 12) {
+                    ForEach(filteredProducts.indices, id: \.self) { index in
+                        productRow(filteredProducts[index])
                     }
                 }
             }
-
-            Spacer()
-
-            // Add Product Button
+            
+            // Add Product
             HStack {
                 Spacer()
-                Button(action: {
-                    // Handle action
-                }) {
+                Button {
+                    // Add new product action
+                } label: {
                     Image(systemName: "plus")
                         .foregroundColor(.white)
-                        .font(.title)
-                        .frame(width: 60, height: 60)
+                        .frame(width: 40, height: 40)
                         .background(Color.defaultTheme)
                         .clipShape(Circle())
                         .shadow(radius: 4)
                 }
-                .padding(.bottom)
+            }
+            .padding(.bottom)
+            
+        }
+        .edgesIgnoringSafeArea(.top)
+        .padding()
+        .background(.white)
+        .cornerRadius(20)
+        .onAppear {
+            Task{
+                SVProgressHUD.show()
+                await self.viewModel.productDetails(parameters: UserProductRequest(user_id: Int(userId) ?? 0, page: 1))
+                await SVProgressHUD.dismiss()
+//                if self.viewModel.errorMessage == nil {
+//                    filteredProducts = self.viewModel.productDetailsResponseDict?.data ?? [ProductListingDataModel]()
+//                }
             }
         }
-        .padding()
-        .background(Color.white)
-        .cornerRadius(20)
     }
+    
+
+    
+    func productRow(_ product: ProductListingDataModel) -> some View {
+            HStack(spacing: 12) {
+                CustomProfileImage(url: product.images?.first,isCircular: false,cornerRadius: 8,size: 60)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(product.title ?? "")
+                        .font(.custom(poppinsSemiBold, size: 13.0))
+//                    Text(product.description ?? "")
+//                        .font(.subheadline)
+//                        .foregroundColor(.gray)
+                    Text(product.description ?? "")
+                        .font(.custom(poppinsRegular, size: 11.0))
+                        .foregroundColor(product.status == "active" ? .darkGreen : .red)
+                }
+
+                Spacer()
+
+                Button {
+                    // Edit action
+                } label: {
+                    Image(systemName: "square.and.pencil")
+                }
+
+                Button {
+                    // Delete action
+                } label: {
+                    Image(systemName: "trash")
+                }
+            }
+            .padding()
+            .background(Color(.systemGray6))
+            .cornerRadius(12)
+        }
 }

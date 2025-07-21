@@ -88,6 +88,7 @@ enum APIEndPoint{
     case getprofile
     case updateProfile(param:UpdateProfileRequest)
     case storeBid(param:StoreBidRequest)
+    case sellerStatus
     
     //MARK: OLD
     
@@ -325,6 +326,8 @@ extension APIEndPoint: EndPointType {
             return "update-profile"
         case .storeBid:
             return "bid/store"
+        case .sellerStatus:
+            return "seller-status"
             
             //MARK: Old
             
@@ -479,6 +482,7 @@ extension APIEndPoint: EndPointType {
         case .addRating:
             return "seller-rating"
       
+        
         }
     }
     
@@ -558,6 +562,7 @@ extension APIEndPoint: EndPointType {
         case .followUnfollow:
             return .post
             
+            
             //MARK: Faz
         case .fetchProduct:
             return .post
@@ -631,6 +636,8 @@ extension APIEndPoint: EndPointType {
             return .post
         case .storeBid:
             return .post
+        case .sellerStatus:
+            return .get
             
             //MARK: Old
             
@@ -787,6 +794,7 @@ extension APIEndPoint: EndPointType {
             return .get
         case .addRating:
             return .post
+       
         }
     }
     
@@ -945,6 +953,8 @@ extension APIEndPoint: EndPointType {
             return param
         case .storeBid(param: let param):
             return param
+        case .sellerStatus:
+            return nil
             
             //MARK: Old
             
@@ -1101,6 +1111,7 @@ extension APIEndPoint: EndPointType {
         case .addRating(let param):
             return param
         
+       
         }
     }
     

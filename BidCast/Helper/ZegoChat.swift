@@ -15,6 +15,7 @@ class ZIMChatManager: NSObject, ObservableObject {
     var userID = ""
     var userName = ""
     var roomID = ""
+    var onJOin : () -> () = {  }
     
     func initialize(appID: UInt32, appSign: String) {
         self.messages.removeAll()
@@ -66,55 +67,12 @@ class ZIMChatManager: NSObject, ObservableObject {
         zim.enterRoom(with: roomInfo, config: config) { roomFullInfo, errorInfo in
             if errorInfo.code.rawValue == 0 {
                 print("✅ Babumoshai, joined ZIM room: \(roomID)")
+                self.onJOin()
             } else {
                 print("❌ Babumoshai, failed to join room: \(errorInfo.message)")
             }
         }
     }
-    
-    //    func sendMessage(message: String,roomId : String) {
-    //        let zimMessage = ZIMTextMessage(message: message)
-    //        let sendConfig = ZIMMessageSendConfig()
-    //           // Optional: adjust settings
-    //        sendConfig.priority = .high
-    //
-    //        let notification = ZIMMessageSendNotification()
-    //        guard let zim = zim else {
-    //            print("❌ Babumoshai, ZIM not initialized!")
-    //            return
-    //        }
-    //        zim.setEventHandler(ZIMGlobalEventHandler.shared)
-    //        guard !userID.isEmpty else {
-    //            print("❌ Babumoshai, user not logged in!")
-    //            return
-    //        }
-    //
-    //        guard !roomId.isEmpty else {
-    //            print("❌ Babumoshai, roomID is empty!")
-    //            return
-    //        }
-    //        zim.sendMessage(
-    //            zimMessage,
-    //                    toConversationID: roomId,
-    //                    conversationType: .room,
-    //                    config: sendConfig,
-    //                    notification: notification
-    //        ) { _, errorInfo in
-    //            if errorInfo.code.rawValue == 0 {
-    //                print("✅ Message sent babumoshai!")
-    //                let newComment = Comment(
-    //                    image: UserDefaults.profileURL,
-    //                    username: self.userName,
-    //                    message: message
-    //                )
-    //                DispatchQueue.main.async {
-    //                    self.messages.append(newComment)
-    //                }
-    //            } else {
-    //                print("❌ Message failed babumoshai: \(errorInfo.message)")
-    //            }
-    //        }
-    //    }
     
     func sendMessage(message: String, roomId: String,image : String,name:String) {
         let payload: [String: Any] = [

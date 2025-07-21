@@ -61,7 +61,7 @@ struct BuyNowBottomSheetView: View {
                 // Header
                 HStack {
                     Text("Buy Now")
-                        .font(.title3.bold())
+                        .font(.custom(poppinsSemiBold, size: 13.0))
                     Spacer()
                     Button(action: { isPresented = false }) {
                         Image(systemName: "xmark")
@@ -81,8 +81,11 @@ struct BuyNowBottomSheetView: View {
                         .frame(width: 56, height: 56)
                         .cornerRadius(8)
                     VStack(alignment: .leading) {
-                        Text(productTitle).font(.headline)
-                        Text(productColor).font(.subheadline).foregroundColor(.gray)
+                        Text(productTitle)
+                            .font(.custom(poppinsSemiBold, size: 13.0))
+                        Text(productColor)
+                            .font(.custom(poppinsSemiBold, size: 11.0))
+                            .foregroundColor(.gray)
                     }
                     Spacer()
                 }
@@ -106,12 +109,14 @@ struct BuyNowBottomSheetView: View {
                 // Payment Method
                 HStack {
                     VStack(alignment: .leading) {
-                        Text("Payment Method").font(.subheadline.bold())
+                        Text("Payment Method")
+                            .font(.custom(poppinsSemiBold, size: 13.0))
                         HStack {
                             Image("visa") // Replace with actual asset if needed
                                 .resizable()
                                 .frame(width: 32, height: 20)
                             Text("•••• \(cardArr[safe: selectedCardIndex]?.last4 ?? "0000")")
+                                .font(.custom(poppinsSemiBold, size: 13.0))
 
                         }
                     }
@@ -123,8 +128,10 @@ struct BuyNowBottomSheetView: View {
                 // Shipping Address
                 HStack {
                     VStack(alignment: .leading) {
-                        Text("Shipping Address").font(.subheadline.bold())
-                        Text(shippingAddress).font(.subheadline)
+                        Text("Shipping Address")
+                            .font(.custom(poppinsSemiBold, size: 12.0))
+                        Text(shippingAddress)
+                            .font(.custom(poppinsSemiBold, size: 12.0))
                     }
                     Spacer()
                     Button("Change") {}.foregroundColor(.red)
@@ -150,20 +157,13 @@ struct BuyNowBottomSheetView: View {
                     SummaryRow(label: "Total", value: total, isBold: true)
                 }
                 
-//                // Confirm Button
-//                Button(action: onConfirmPurchase) {
-//                    Text("Confirm Purchase")
-//                        .foregroundColor(.white)
-//                        .frame(maxWidth: .infinity)
-//                        .padding()
-//                        .background(Color.defaultTheme)
-//                        .cornerRadius(14)
-//                }
+
                 // Confirm Button
                 Button(action: {
                     BuyProductRequest()
                 }) {
                     Text("Confirm Purchase")
+                        .font(.custom(poppinsSemiBold, size: 13.0))
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding()
