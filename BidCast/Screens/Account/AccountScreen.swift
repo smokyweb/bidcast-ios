@@ -220,7 +220,6 @@ struct AccountScreen: View {
                 }
             }
             .padding(.horizontal,8)
-          
             .background(.bg.opacity(0.5))
             .padding(.bottom,isNavFrom ? -300 : UIDevice.current.hasNotch ? -220 : -110)
             

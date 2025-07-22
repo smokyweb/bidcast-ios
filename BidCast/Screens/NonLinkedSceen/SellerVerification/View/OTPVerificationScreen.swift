@@ -13,72 +13,72 @@ struct OTPVerificationScreen: View {
     @Environment(\.presentationMode) var presentationMode
     @ObservedObject var viewModel: SellerVerificationViewModel
     var onSuccess: () -> Void
-
+    
     @State private var phoneNumber: String = ""
     @State private var otpDigits: [String] = Array(repeating: "", count: 4)
     @State private var otpSent = false
     @State private var showhud = false
     @State private var hudMsg = ""
     @FocusState private var focusedField: Int?
-
+    
     var body: some View {
         VStack(spacing: 0) {
             VStack{
                 PrimaryHeader(
-                    title: "OTP Verification".localized,
-                    isForLogo: false,
+                    title: "OTP Verification",
                     leadingImgArr: [.icBack],
-                    trailingImgArr: [],
                     onClickLeading: { _ in
                         self.presentationMode.wrappedValue.dismiss()
                     },
                     count: .constant(0)
                 )
-               
             }
-
-            ScrollView {
-                VStack(spacing: 24) {
-                    VStack(spacing: 16) {
-                        AuthTextField(
-                            floatingLabel: "Phone Number",
-                            placeholder: "Enter phone number",
-                            icon: .icMail,
-                            text: $phoneNumber,
-                            isIconDisplay: false,
-                            enteredText: { phoneNumber = $0 }
-                        )
-                        .keyboardType(.numberPad)
-                        .disabled(otpSent)
-                        .opacity(otpSent ? 0.6 : 1.0)
-
-                        if !otpSent {
-                            Button("Send OTP") {
-                                Task { await sendOTP() }
-                            }
-                            .buttonStyle(.borderedProminent)
-                        }
-
-                        if otpSent {
-                            VStack(spacing: 12) {
-                                Text("Enter the 4-digit OTP sent to your phone")
-                                    .font(.subheadline)
-                                    .foregroundColor(.gray)
-
-                                otpBoxView()
-
-                                Button("Verify OTP") {
-                                    Task { await verifyOTP() }
+            ScrollView(showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 25) {
+                    Color.clear.frame(height: 5)
+                    TitleWithLine(title: "Verify OTP", lineLength: sepratorLine)
+                    AuthTextField(
+                        floatingLabel: "Phone Number",
+                        placeholder: "Enter phone number",
+                        icon: .icMail,
+                        text: $phoneNumber,
+                        isIconDisplay: false,
+                        enteredText: { phoneNumber = $0 }
+                    )
+                    .keyboardType(.numberPad)
+                    
+                    if !otpSent {
+                        PrimaryButton(
+                            title: "Send OTP",
+                            isOutLine: false,
+                            onButtonClick: {
+                                UIApplication.shared.endEditing()
+                                Task {
+                                    await sendOTP()
                                 }
-                                .buttonStyle(.bordered)
-                                .padding(.top)
-                            }
+                            },
+                            btnTextColor: .white
+                        )
+                    }
+                    
+                    if otpSent {
+                        VStack(spacing: 12) {
+                            Text("Enter the 4-digit OTP sent to your phone")
+                                .font(.subheadline)
+                                .foregroundColor(.gray)
+                            otpBoxView()
+                            PrimaryButton(
+                                title: "Verify OTP",
+                                isOutLine: false,
+                                onButtonClick: {
+                                    UIApplication.shared.endEditing()
+                                    Task { await verifyOTP() }
+                                },
+                                btnTextColor: .white
+                            )
                         }
                     }
-                    .padding(.top, 32)
-                    .padding(.horizontal)
                 }
-                .padding(.bottom, 32)
             }
         }
         .background(Color.white.ignoresSafeArea())
@@ -89,7 +89,7 @@ struct OTPVerificationScreen: View {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg)
         }
     }
-
+    
     // MARK: - OTP 4-digit Entry Boxes
     @ViewBuilder
     private func otpBoxView() -> some View {
@@ -116,7 +116,7 @@ struct OTPVerificationScreen: View {
             }
         }
     }
-
+    
     // MARK: - sendOTP
     private func sendOTP() async {
         SVProgressHUD.show()
@@ -125,7 +125,7 @@ struct OTPVerificationScreen: View {
         await SVProgressHUD.dismiss()
         sendOTPSuccess()
     }
-
+    
     // MARK: - sendOTPSuccess
     private func sendOTPSuccess() {
         let response = viewModel.storePhoneNumberDict
@@ -137,7 +137,7 @@ struct OTPVerificationScreen: View {
         }
         showhud = true
     }
-
+    
     private func verifyOTP() async {
         let otp = otpDigits.joined()
         guard let otpCode = Int(otp), otp.count == 4 else {
@@ -151,7 +151,7 @@ struct OTPVerificationScreen: View {
         await SVProgressHUD.dismiss()
         verifyOTPSuccess()
     }
-
+    
     private func verifyOTPSuccess() {
         let response = viewModel.storePhoneNumberDict
         if response.status == "success" {
