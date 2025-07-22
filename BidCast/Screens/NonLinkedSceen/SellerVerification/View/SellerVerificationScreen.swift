@@ -16,29 +16,33 @@ enum VerificationStatus {
 }
 
 struct SellerVerificationScreen: View {
+    
     @Environment(\.presentationMode) var presentationMode
     @StateObject var viewModel = SellerVerificationViewModel()
-
     @State private var navigateToOTP = false
     @State private var navigateToAddCard = false
     @State private var showhud = false
     @State private var hudMsg = ""
+    
     @State var cardDetails: CardDetails?
-
+    @State var cardNumber : String?
+    @State var cardTokenNumber : String?
+    
     @State private var idVerificationComplete = false
     @State private var phoneVerificationComplete = false
     @State private var paymentMethodComplete = false
     @State private var manualVerificationComplete = false
-
+    @State var navigateToProfile: Bool = false
+    
     @State private var idCardImageData: Data?
     @State private var selfieImageData: Data?
     @State private var selectedIDCardItem: PhotosPickerItem?
     @State private var selfieImage: UIImage? = nil
     @State private var selfiePath: String? = nil
-
+    
     @State private var showSelfieCamera: Bool = false
     @State private var showIDCardPicker: Bool = false
-
+    
     var currentStep: Int {
         var count = 0
         if idVerificationComplete { count += 1 }
@@ -47,9 +51,10 @@ struct SellerVerificationScreen: View {
         if manualVerificationComplete { count += 1 }
         return count
     }
-
+    
+    
     let totalSteps = 4.0
-
+    
     var body: some View {
         VStack(spacing: 0) {
             VStack{
@@ -62,8 +67,7 @@ struct SellerVerificationScreen: View {
                     count: .constant(0)
                 )
             }
-           
-
+            
             ScrollView {
                 VStack(spacing: 18) {
                     // Progress Bar
@@ -71,16 +75,16 @@ struct SellerVerificationScreen: View {
                         Text("Verification Progress")
                             .font(.custom(poppinsSemiBold, size: 13.0))
                             .foregroundColor(.gray)
-
+                        
                         ProgressView(value: Double(currentStep), total: totalSteps)
                             .accentColor(.defaultTheme)
-
+                        
                         Text("\(currentStep) of \(Int(totalSteps))")
                             .font(.custom(poppinsSemiBold, size: 11.0))
                             .frame(maxWidth: .infinity, alignment: .trailing)
                             .foregroundColor(.black)
                     }
-
+                    
                     // ID Verification Card
                     IDVerificationCard(
                         idCardImageData: $idCardImageData,
@@ -89,12 +93,10 @@ struct SellerVerificationScreen: View {
                         showSelfieCamera: $showSelfieCamera,
                         idVerificationComplete: $idVerificationComplete,
                         handleUpload: {
-                            SVProgressHUD.show()
-                            await handleIDUpload()
-                            await SVProgressHUD.dismiss()
+                            idVerificationComplete = true
                         }
                     )
-
+                    
                     // Phone Verification
                     VerificationSectionView(
                         icon: "phone.fill",
@@ -107,7 +109,7 @@ struct SellerVerificationScreen: View {
                             navigateToOTP = true
                         }
                     )
-
+                    
                     // Payment Method
                     VerificationSectionView(
                         icon: "creditcard.fill",
@@ -121,7 +123,7 @@ struct SellerVerificationScreen: View {
                             navigateToAddCard = true
                         }
                     )
-
+                    
                     // Show Card or Empty View
                     if let card = cardDetails {
                         CardDetailsView(card: card)
@@ -138,7 +140,7 @@ struct SellerVerificationScreen: View {
                         icon: "person.crop.circle.badge.checkmark",
                         title: "Manual Verification",
                         subtitle: "Final review by our team",
-                        statusText: manualVerificationComplete ? "Verified" : "Pending"
+                        statusText: manualVerificationComplete ? "Pending" : "Pending"
                     )
                 }
                 .padding()
@@ -146,18 +148,21 @@ struct SellerVerificationScreen: View {
 
             // Final Button
             Button(action: {
-                manualVerificationComplete = true
+                Task{
+                    await handleFinalUpload()
+                }
+               
             }) {
                 Text("Complete Verification")
-                    .font(.custom(poppinsSemiBold, size: 16.0))
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(currentStep == Int(totalSteps - 1) ? Color.defaultTheme : Color.gray)
-                    .cornerRadius(16)
+                     .font(.custom(poppinsSemiBold, size: 16.0))
+                     .foregroundColor(.white)
+                     .frame(maxWidth: .infinity)
+                     .padding()
+                     .background(manualVerificationComplete ? Color.defaultTheme : Color.gray)
+                     .cornerRadius(16)
             }
             .padding()
-            .disabled(currentStep != Int(totalSteps - 1))
+//            .disabled(!manualVerificationComplete)
         }
         .background(.white)
         .toast(isPresenting: $showhud) {
@@ -182,60 +187,92 @@ struct SellerVerificationScreen: View {
         }
         .background(Color.white)
         .navigationBarHidden(true)
-
+        
         CusNavLink(doNavigate: $navigateToOTP,
                    destination: OTPVerificationScreen(viewModel: viewModel, onSuccess: {
             phoneVerificationComplete = true
             navigateToOTP = false
         }))
-
+        
         CusNavLink(
             doNavigate: $navigateToAddCard,
-            destination: AddCardScreen(isNavFrom: "SellerVerification", onSuccess: {
-                fetchPaymentDetails()
-            }))
+            destination: AddCardScreen(
+                isNavFrom: "SellerVerification",
+                onSuccess: { cardToken in
+                    cardTokenNumber = cardToken
+                    paymentMethodComplete = true
+                    updateManualVerificationIfNeeded()
+                }
+            )
+        )
+        CusNavLink(doNavigate: $navigateToProfile, destination: AccountScreen())
     }
-
-    func handleIDUpload() async {
+    
+    //MARK: handleFinalUpload.
+    func handleFinalUpload() async {
+        SVProgressHUD.show()
         guard let idData = idCardImageData,
               let selfieData = selfieImageData,
               let idURL = compressAndSaveImage(data: idData),
-              let selfieURL = compressAndSaveImage(data: selfieData) else {
-            hudMsg = "Failed to prepare images"
-            showhud = true
+              let selfieURL = compressAndSaveImage(data: selfieData),
+              let cardToken = cardTokenNumber else {
+            
+            DispatchQueue.main.async {
+                hudMsg = "Missing required data"
+                showhud = true
+            }
             return
         }
-
-        hudMsg = "Uploading..."
-        showhud = true
-
-        let params: [String: Any] = [:]
+        
+        DispatchQueue.main.async {
+            hudMsg = "Uploading..."
+            showhud = true
+        }
+        
+        let params: [String: Any] = [
+            "cardToken": cardToken,
+            "phone_verification": phoneVerificationComplete == true ? 0 : 1
+        ]
+        print("Seller Verification Param : \(params)")
+        
         let images = [[idURL.path], [selfieURL.path]]
         let keys = ["id_card", "image"]
         let mime = ["image/jpeg", "image/jpeg"]
-        await viewModel.storeIDCard(parameters: params, images: images, mimeType: mime, keysValue: keys)
-        idUploadSuccess()
+        
+        await viewModel.SellerVerification(
+            parameters: params,
+            images: images,
+            mimeType: mime,
+            keysValue: keys
+        )
+        
+        DispatchQueue.main.async {
+            idUploadSuccess()
+        }
     }
 
+    //MARK: idUploadSuccess.
     func idUploadSuccess() {
-        if viewModel.storeIDCardDict?.status == "success" {
-            idVerificationComplete = true
-            hudMsg = "ID Verification Successful"
+        if viewModel.sellerVerificationDict?.status == "success" {
+            hudMsg = "Seller Verification Successfully"
+            navigateToProfile = true
+            SVProgressHUD.dismiss()
+            
         } else {
-            hudMsg = "ID Verification Failed"
+            SVProgressHUD.dismiss()
+            hudMsg = "Seller Verification Failed"
         }
         showhud = true
     }
-
-    func fetchPaymentDetails() {
-        Task {
-            SVProgressHUD.show()
-            await self.viewModel.fetchSellerPaymentDetail()
-            await SVProgressHUD.dismiss()
-            successPaymentDetail()
+    
+    private func updateManualVerificationIfNeeded() {
+        if idVerificationComplete && phoneVerificationComplete && paymentMethodComplete && !manualVerificationComplete {
+            manualVerificationComplete = true
         }
     }
 
+    
+    //MARK: successPaymentDetail.
     func successPaymentDetail() {
         if viewModel.paymentDetailDict.status == "success",
            let card = viewModel.paymentDetailDict.data?.cardDetails {
@@ -258,7 +295,7 @@ private struct IDVerificationCard: View {
     @Binding var showSelfieCamera: Bool
     @Binding var idVerificationComplete: Bool
     let handleUpload: () async -> Void
-
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
@@ -267,7 +304,7 @@ private struct IDVerificationCard: View {
                     .padding(6)
                     .background(.darkGreen)
                     .clipShape(Circle())
-
+                
                 VStack(alignment: .leading, spacing: 4) {
                     Text("ID Verification")
                         .font(.custom(poppinsSemiBold, size: 14.0))
@@ -276,18 +313,18 @@ private struct IDVerificationCard: View {
                         .font(.custom(poppinsRegular, size: 13.0))
                         .foregroundColor(.gray)
                 }
-
+                
                 Spacer()
-
+                
                 if idVerificationComplete {
                     Image(systemName: "checkmark")
                         .foregroundColor(.green)
                         .font(.headline)
                 }
             }
-
+            
             let boxSize = (UIScreen.main.bounds.width - 64) / 2
-
+            
             HStack(spacing: 12) {
                 Button {
                     showIDCardPicker = true
@@ -312,7 +349,7 @@ private struct IDVerificationCard: View {
                         .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.gray))
                     }
                 }
-
+                
                 Button {
                     showSelfieCamera = true
                 } label: {
@@ -337,7 +374,7 @@ private struct IDVerificationCard: View {
                     }
                 }
             }
-
+            
             if !idVerificationComplete && idCardImageData != nil && selfieImageData != nil {
                 Button("Upload") {
                     Task {

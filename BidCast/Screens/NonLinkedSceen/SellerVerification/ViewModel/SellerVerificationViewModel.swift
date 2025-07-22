@@ -16,6 +16,7 @@ final class SellerVerificationViewModel: ObservableObject {
     @Published var storePhoneNumberDict = ResponseModel<SellerPhoneNumberModel>()
     @Published var otpVerifyDict = ResponseModel<SellerOtpVerifyModel>()
     @Published var paymentDetailDict = ResponseModel<SellerIdentityFetch>()
+    @Published var sellerVerificationDict: ResponseModel<SellerVerificationModel>?
     @Published var errorMessage: String?
     @Published var requestType: String = ""
     
@@ -86,6 +87,32 @@ final class SellerVerificationViewModel: ObservableObject {
             self.handle(error: error)
         }
     }
+    
+    // MARK: - SellerVerification
+    func SellerVerification(
+        parameters: [String: Any],
+        images: [[String]]? = nil,
+        mimeType: [String],
+        keysValue: [String],
+        uploadImages: [String]? = nil
+    ) async {
+        requestType = "SellerVerification"
+        do {
+            let response: ResponseModel<SellerVerificationModel>? = try await APIManager.shared.uploadImageWithMultipleKeys(
+                type: APIEndPoint.sellerVerification,
+                urlArray: images,
+                mimeType: mimeType,
+                keyName: keysValue,
+                parameters: parameters,
+                modelType: ResponseModel<SellerVerificationModel>?.self,
+                header: true
+            )
+            self.sellerVerificationDict = response
+        } catch {
+            self.errorMessage = error.localizedDescription
+        }
+    }
+    
     // MARK: - Error Handling
     private func handle(error: Error) {
         self.errorMessage = error.localizedDescription

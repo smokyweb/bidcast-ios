@@ -18,8 +18,6 @@ import FirebaseMessaging
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     
-    
-    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         self.languageSelection()
         SVProgressHUD.setDefaultStyle(.custom)
@@ -61,7 +59,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
                 }
             }
         }
-        
         return true
     }
     
@@ -79,10 +76,10 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         return sceneConfig
     }
 }
+
+//MARK: AppDelegate, UNUserNotificationCenterDelegate, MessagingDelegate.
 extension AppDelegate: UNUserNotificationCenterDelegate,MessagingDelegate {
-    
-    
-    
+
     //MARK: Redirect other screen
     private func redirectNotification(with payload: [AnyHashable: Any]) {
         let center = UNUserNotificationCenter.current()

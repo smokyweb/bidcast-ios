@@ -49,6 +49,7 @@ enum APIEndPoint{
     case otpVerify(param : OtpVerifyRequest)
     case storePaymentMethod(param : StorePaymentMethodRequest)
     case buyerIdentityStore
+    case sellerVerification
     case buyerIdentityList
     case sellerIdentityFetch
     case notificationListing
@@ -261,6 +262,8 @@ extension APIEndPoint: EndPointType {
             return "seller-identity/store-payment-method"
         case .buyerIdentityStore:
             return "buyer-identity/store"
+        case .sellerVerification:
+            return "store-seller-verification"
         case .buyerIdentityList:
             return "buyer-identity/list"
         case .sellerIdentityFetch:
@@ -576,6 +579,8 @@ extension APIEndPoint: EndPointType {
             return .post
         case .buyerIdentityStore:
             return .post
+        case .sellerVerification:
+            return .post
         case .buyerIdentityList:
             return .get
         case .sellerIdentityFetch:
@@ -890,6 +895,8 @@ extension APIEndPoint: EndPointType {
         case .storePaymentMethod(param: let param):
             return param
         case .buyerIdentityStore:
+            return nil
+        case .sellerVerification:
             return nil
         case .buyerIdentityList:
             return nil

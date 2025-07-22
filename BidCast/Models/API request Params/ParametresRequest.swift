@@ -85,11 +85,13 @@ struct GetJobParameter: Codable {
     var type, search: String
 }
 
+//MARK: - CreateEventModel
 struct CreateEventModel: Codable{
     var status,message,error_type : String?
     var data: DataModel?
 }
 
+//MARK: - DataModel
 struct DataModel: Codable {
     var access_token: String?
     var expires_in: Int?
@@ -98,7 +100,7 @@ struct DataModel: Codable {
     var token_type: String?
 }
 
-//MARK: - Create Update Job Parameter
+//MARK: - JobUpsertParamter
 struct JobUpsertParamter: Codable {
     var id: Int?
     var title: String
@@ -112,13 +114,13 @@ struct JobUpsertParamter: Codable {
     var location_type_id: String
 }
 
-//MARK: - Swipe Job Parameter
+//MARK: - JobSwipePatamter
 struct JobSwipePatamter: Encodable {
     var job_id: Int
     var type: String
 }
     
-// MARK: - ContactUs
+// MARK: - ContactModelParam
 struct ContactModelParam: Encodable{
     var email : String
     var phone : String
@@ -126,6 +128,7 @@ struct ContactModelParam: Encodable{
     var image : String?
 }
 
+// MARK: - BusinessModelParam
 struct BusinessModelParam: Encodable{
     var ein_number : String
     var business_email : String
@@ -133,48 +136,54 @@ struct BusinessModelParam: Encodable{
     var file : String?
 }
 
-//MARK: - Create Work History Request
+//MARK: - CreateWorkHistoryRequest
 struct CreateWorkHistoryRequest: Codable {
     var current_job, job_title, contact, previous_work: String
 }
 
+//MARK: - UserPersonalInfo
 struct UserPersonalInfo: Codable {
     var first_name, last_name, email, location, password: String
     var phone, description, profile_image: String
 }
 
-
+//MARK: - SubCompanyParam
 struct SubCompanyParam: Codable {
     var first_name, last_name, email, user_name,phone: String
     var image: String
     var data : [AssignData]?
 }
 
-
+//MARK: - SubCompanyUserParam
 struct SubCompanyUserParam: Codable {
     var first_name, last_name,phone: String
     var image: String
 }
 
+//MARK: - SubCompanyParamUpdate
 struct SubCompanyParamUpdate: Codable {
     var first_name, last_name, email, user_id,phone: String
     var image: String
     var data : [AssignData]?
 }
 
+//MARK: - getSubCompanyParam
 struct getSubCompanyParam: Codable {
     var user_id: String?
 }
+
+//MARK: - AssignData
 struct AssignData: Codable {
     var permission, read,write,delete: String
 }
 
-//MARK: - Search Job/Employee Request
+//MARK: - SearchRequest
 struct SearchRequest: Encodable {
     var search, type: String
     var page: Int
 }
 
+//MARK: - SearchRequestByJobId
 struct SearchRequestByJobId: Encodable {
     var search, type: String
 //    var page: Int
@@ -188,6 +197,7 @@ struct SearchRequestByJobId: Encodable {
 //    var total, totalPage, currentPage, perPage: Int?
 //}
 
+//MARK: - ResponseModalPaginate
 struct ResponseModalPaginate<T: Codable>: Codable {
     var status: String?
     var message: String?
@@ -211,58 +221,63 @@ struct ResponseModalPaginate<T: Codable>: Codable {
 }
 
 
-//MARK: - Employee By Job ID
+//MARK: - EmployeeJobIdRequest
 struct EmployeeJobIdRequest: Encodable {
     var job_id, status,page: Int
 }
 
+//MARK: - EmployeeEducationRequest
 struct EmployeeEducationRequest: Encodable {
     var qualification_id: Int
     var institute_name: String
     var graduation_date: String
 }
 
+//MARK: - EmpLanguageRequest
 struct EmpLanguageRequest: Encodable {
     var language_id: String
 }
 
+//MARK: - PerformJobActionRequest
 struct PerformJobActionRequest: Codable {
     var status:String
     var  job_id, user_id: Int
    
 }
 
+//MARK: - EmployerAvailabilityRequest
 struct EmployerAvailabilityRequest: Codable {
     var day_name: [String]
     var duration, end_time, start_time: String
 }
 
+//MARK: - SaveJobRequest
 struct SaveJobRequest: Encodable {
     var job_id: Int
 }
 
+//MARK: - ScheduleInterviewRequest
 struct ScheduleInterviewRequest: Codable {
     var matched_id, scheduledDate, scheduledTime, timezone, scheduledEndTime: String
 }
 
+//MARK: - EmployerScheduleRequest
 struct EmployerScheduleRequest: Codable{
     var date:String
     var employer_id: String
 }
 
-//MARK: - Read Notification
+//MARK: - ReadNotification
 struct ReadNotification: Encodable {
     var id: [String]
 }
 
-//MARK: - Interview Status Model
+//MARK: - InterviewRescheduleStatusModel
 struct InterviewRescheduleStatusModel: Encodable {
     var status: String
     var employer_id, job_id: Int
 }
 
-
-//MARK: For BidCast
 
 //MARK: - Generic Response Model
 struct ResponseModel<T: Codable>: Codable {
@@ -277,6 +292,7 @@ struct ResponseModelPaginate<T: Codable>: Codable {
     var total, total_pages,total_records, current_page, per_page: Int?
 }
 
+//MARK: - ResponseModelOffer
 struct ResponseModelOffer<T: Codable>: Codable {
     var status, message, error_type: String?
     var data: T?
@@ -643,3 +659,11 @@ struct StoreBidRequest : Encodable{
 struct PageRequest : Encodable{
     var page : Int
 }
+
+struct sellerVerification {
+    var phone_verification : Int?
+    var cardToken : Int?
+}
+
+
+

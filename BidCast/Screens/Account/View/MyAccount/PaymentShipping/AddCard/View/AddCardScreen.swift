@@ -15,7 +15,7 @@ struct AddCardScreen: View {
     @State private var expiryDate = ""
     var isNavFrom: String = ""
     @State var viewModel = AddCardViewModel()
-    var onSuccess: (() -> Void)?
+    var onSuccess: ((String) -> Void)?
     @Environment(\.presentationMode) var presentationMode
     @ObservedObject var stpCard = StripeCardViewModel()
     
@@ -41,15 +41,15 @@ struct AddCardScreen: View {
                     onClickTrailing: nil,
                     count: .constant(0)
                 )
-               
+                
             }
-           
+            
             // Card mockup
             ZStack(alignment: .topLeading) {
                 RoundedRectangle(cornerRadius: 16)
                     .fill(Color.black)
                     .frame(height: 200)
-
+                
                 VStack(alignment: .leading, spacing: 12) {
                     Text("BANK NAME")
                         .font(.custom(poppinsMedium, size: 13.0))
@@ -58,13 +58,13 @@ struct AddCardScreen: View {
                         .font(.custom(poppinsMedium, size: 13.0))
                         .foregroundColor(.white)
                         .font(.headline)
-
+                    
                     TextField("Enter Name", text: $cardHolderName)
                         .foregroundColor(.white)
                         .font(.custom(poppinsMedium, size: 13.0))
                         .textFieldStyle(PlainTextFieldStyle())
                         .padding(.bottom, 10)
-
+                    
                     HStack {
                         Text(cvv.isEmpty ? "CVV" : cvv)
                             .font(.custom(poppinsMedium, size: 13.0))
@@ -78,7 +78,7 @@ struct AddCardScreen: View {
                 .padding()
             }
             .padding(.horizontal)
-
+            
             // Input fields
             Group {
                 AuthTextField(
@@ -92,7 +92,7 @@ struct AddCardScreen: View {
                     }
                 )
                 .keyboardType(.alphabet)
-//                .textContentType(.name)
+                //                .textContentType(.name)
                 
                 AuthTextField(
                     floatingLabel: "Card Number",
@@ -106,8 +106,8 @@ struct AddCardScreen: View {
                     }
                 )
                 .keyboardType(.numberPad)
-//                .textContentType(.name)
-
+                //                .textContentType(.name)
+                
                 HStack {
                     AuthTextField(
                         floatingLabel: "CVV",
@@ -121,7 +121,7 @@ struct AddCardScreen: View {
                         }
                     )
                     .keyboardType(.numberPad)
-//                    .textContentType(.name)
+                    //                    .textContentType(.name)
                     AuthTextField(
                         floatingLabel: "Expiry Date",
                         placeholder: "Enter expiry Date",
@@ -134,13 +134,13 @@ struct AddCardScreen: View {
                         }
                     )
                     .keyboardType(.numberPad)
-//                    .textContentType(.name)
+                    //                    .textContentType(.name)
                 }
             }
-//            .padding(.horizontal)
-
+            //            .padding(.horizontal)
+            
             Spacer()
-
+            
             PrimaryButton(
                 title: "Submit",
                 isOutLine: true,
@@ -148,55 +148,55 @@ struct AddCardScreen: View {
                     withAnimation {
                         UIApplication.shared.endEditing()
                         stpCard.addCard(cardNumber: cardNumber, exp: expiryDate, cvc: cvv) { result in
-                                           switch result {
-                                           case .success(let token):
-                                               print("Stripe token: \(token)")
-                                               
-                                               Task {
-                                                   if isNavFrom == "SellerVerification"{
-                                                       await viewModel.addSellerCard(parameters: StorePaymentMethodRequest(card_token: token))
-                                                       await SVProgressHUD.dismiss()
-                                                       handleSellerCardResponse()
-                                                   }else{
-                                                       await viewModel.addCard(parameters: AddCardRequest(card_token: token))
-                                                       await SVProgressHUD.dismiss()
-                                                       handleResponse()
-                                                   }
-                                               }
-                                               
-                                           case .failure(let error):
-                                               print("Error: \(error.localizedDescription)")
-                                           }
-                                       }
-//                        guard !request.type.isEmpty else {
-//                            hudMsg = "Please select address type"
-//                            showhud = true
-//                            return
-//                        }
-//                        
-//                        guard !request.name.isEmpty else {
-//                            hudMsg = "Please enter name of address"
-//                                showhud = true
-//                                return
-//                            }
-//                      
-//                        guard !request.phone_number.isEmpty else {
-//                            hudMsg = "Please enter phone number"
-//                                showhud = true
-//                                return
-//                            }
-//                        guard !request.street_address.isEmpty else {
-//                            hudMsg = "Please enter street address"
-//                                showhud = true
-//                                return
-//                            }
-//                        guard !request.pincode.isEmpty else {
-//                            hudMsg = "Please enter pin code"
-//                                showhud = true
-//                                return
-//                            }
-//                        let request = self.request
-//                        self.viewModel.storeAddress(parameters: request)
+                            switch result {
+                            case .success(let token):
+                                print("Stripe token: \(token)")
+                                
+                                Task {
+                                    if isNavFrom == "SellerVerification" {
+                                        await viewModel.addSellerCard(parameters: StorePaymentMethodRequest(card_token: token))
+                                        await SVProgressHUD.dismiss()
+                                        handleSellerCardResponse(stripeToken: token)
+                                    } else {
+                                        await viewModel.addCard(parameters: AddCardRequest(card_token: token))
+                                        await SVProgressHUD.dismiss()
+                                        handleResponse()
+                                    }
+                                }
+                                
+                            case .failure(let error):
+                                print("Error: \(error.localizedDescription)")
+                            }
+                        }
+                        //                        guard !request.type.isEmpty else {
+                        //                            hudMsg = "Please select address type"
+                        //                            showhud = true
+                        //                            return
+                        //                        }
+                        //
+                        //                        guard !request.name.isEmpty else {
+                        //                            hudMsg = "Please enter name of address"
+                        //                                showhud = true
+                        //                                return
+                        //                            }
+                        //
+                        //                        guard !request.phone_number.isEmpty else {
+                        //                            hudMsg = "Please enter phone number"
+                        //                                showhud = true
+                        //                                return
+                        //                            }
+                        //                        guard !request.street_address.isEmpty else {
+                        //                            hudMsg = "Please enter street address"
+                        //                                showhud = true
+                        //                                return
+                        //                            }
+                        //                        guard !request.pincode.isEmpty else {
+                        //                            hudMsg = "Please enter pin code"
+                        //                                showhud = true
+                        //                                return
+                        //                            }
+                        //                        let request = self.request
+                        //                        self.viewModel.storeAddress(parameters: request)
                     }
                 },
                 width: screenWidth - 40,
@@ -225,37 +225,37 @@ struct AddCardScreen: View {
         }
     }
     
-
-    func handleResponse() {
-            let response = viewModel.addCardDict
-            if response.status == "success" {
-                alertType = .sheetType(
-                    icon: .success,
-                    title: response.error_type?.capitalized ?? "Success",
-                    message: response.message?.capitalized ?? "Card added successfully.",
-                    primaryBtnText: "OK",
-                    secondaryBtnText: ""
-                )
-                showError = true
-            } else {
-                alertType = .sheetType(
-                    icon: .alert,
-                    title: response.error_type?.capitalized ?? "Error",
-                    message: response.message?.capitalized ?? "Something went wrong.",
-                    primaryBtnText: "",
-                    secondaryBtnText: "OK"
-                )
-                showError = true
-            }
-        }
     
-    private func handleSellerCardResponse() {
+    func handleResponse() {
+        let response = viewModel.addCardDict
+        if response.status == "success" {
+            alertType = .sheetType(
+                icon: .success,
+                title: response.error_type?.capitalized ?? "Success",
+                message: response.message?.capitalized ?? "Card added successfully.",
+                primaryBtnText: "OK",
+                secondaryBtnText: ""
+            )
+            showError = true
+        } else {
+            alertType = .sheetType(
+                icon: .alert,
+                title: response.error_type?.capitalized ?? "Error",
+                message: response.message?.capitalized ?? "Something went wrong.",
+                primaryBtnText: "",
+                secondaryBtnText: "OK"
+            )
+            showError = true
+        }
+    }
+    
+    private func handleSellerCardResponse(stripeToken: String) {
         let response = viewModel.sellerStorePaymentDict
         if response.status == "success" {
             DispatchQueue.main.async {
                 hudMsg = "Card added successfully"
                 showhud = true
-                onSuccess?()
+                onSuccess?(stripeToken) // ✅ Pass Stripe token instead of cardID
                 self.presentationMode.wrappedValue.dismiss()
             }
         } else {
@@ -271,8 +271,6 @@ struct AddCardScreen: View {
             }
         }
     }
-
-    
 }
 
 //struct AddDebitCardView_Previews: PreviewProvider {

@@ -103,5 +103,6 @@ struct VerificationSectionView: View {
         .background(Color.white)
         .cornerRadius(16)
         .shadow(color: Color.black.opacity(0.03), radius: 4, x: 0, y: 2)
+        
     }
 }

@@ -116,3 +116,10 @@ struct CardDetails: Codable {
 }
 
 
+//MARK: SellerVerificationModel.
+struct SellerVerificationModel: Codable {
+
+}
+
+
+
