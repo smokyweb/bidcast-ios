@@ -128,11 +128,11 @@ struct SellerVerificationScreen: View {
                     if let card = cardDetails {
                         CardDetailsView(card: card)
                     } else if paymentMethodComplete {
-                        Text("No Payment Method Found")
-                            .font(.custom(poppinsSemiBold, size: 13.0))
-                            .foregroundColor(.gray)
-                            .padding()
-                            .frame(maxWidth: .infinity, alignment: .leading)
+//                        Text("No Payment Method Found")
+//                            .font(.custom(poppinsSemiBold, size: 13.0))
+//                            .foregroundColor(.gray)
+//                            .padding()
+//                            .frame(maxWidth: .infinity, alignment: .leading)
                     }
 
                     // Manual Verification
@@ -265,12 +265,12 @@ struct SellerVerificationScreen: View {
         showhud = true
     }
     
+    //MARK: updateManualVerificationIfNeeded.
     private func updateManualVerificationIfNeeded() {
         if idVerificationComplete && phoneVerificationComplete && paymentMethodComplete && !manualVerificationComplete {
             manualVerificationComplete = true
         }
     }
-
     
     //MARK: successPaymentDetail.
     func successPaymentDetail() {
@@ -288,6 +288,7 @@ struct SellerVerificationScreen: View {
     }
 }
 
+//MARK: IDVerificationCard.
 private struct IDVerificationCard: View {
     @Binding var idCardImageData: Data?
     @Binding var selfieImageData: Data?

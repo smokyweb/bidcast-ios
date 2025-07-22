@@ -146,12 +146,13 @@ struct AddCardScreen: View {
                 isOutLine: true,
                 onButtonClick: {
                     withAnimation {
+                        SVProgressHUD.show()
                         UIApplication.shared.endEditing()
                         stpCard.addCard(cardNumber: cardNumber, exp: expiryDate, cvc: cvv) { result in
                             switch result {
                             case .success(let token):
                                 print("Stripe token: \(token)")
-                                
+                                SVProgressHUD.dismiss()
                                 Task {
                                     if isNavFrom == "SellerVerification" {
                                         await viewModel.addSellerCard(parameters: StorePaymentMethodRequest(card_token: token))
