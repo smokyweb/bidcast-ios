@@ -41,7 +41,6 @@ struct AddCardScreen: View {
                     onClickTrailing: nil,
                     count: .constant(0)
                 )
-                
             }
             
             // Card mockup
@@ -158,7 +157,7 @@ struct AddCardScreen: View {
                                         await viewModel.addSellerCard(parameters: StorePaymentMethodRequest(card_token: token))
                                         await SVProgressHUD.dismiss()
                                         handleSellerCardResponse(stripeToken: token)
-                                    } else {
+                                    }else {
                                         await viewModel.addCard(parameters: AddCardRequest(card_token: token))
                                         await SVProgressHUD.dismiss()
                                         handleResponse()

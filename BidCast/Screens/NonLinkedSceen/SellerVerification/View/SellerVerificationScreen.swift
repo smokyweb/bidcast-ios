@@ -210,7 +210,6 @@ struct SellerVerificationScreen: View {
     
     //MARK: handleFinalUpload.
     func handleFinalUpload() async {
-        SVProgressHUD.show()
         guard let idData = idCardImageData,
               let selfieData = selfieImageData,
               let idURL = compressAndSaveImage(data: idData),
@@ -223,7 +222,7 @@ struct SellerVerificationScreen: View {
             }
             return
         }
-        
+        SVProgressHUD.show()
         DispatchQueue.main.async {
             hudMsg = "Uploading..."
             showhud = true

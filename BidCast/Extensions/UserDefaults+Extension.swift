@@ -272,6 +272,26 @@ extension UserDefaults{
         }
     }
     
+    static var sellerAddress : Bool{
+        set(input){
+            self.standard.setValue(input, forKey: "sellerAddress")
+        }
+        get{
+            
+            return self.standard.value(forKey: "sellerAddress") as? Bool ?? false
+        }
+    }
+    
+    static var hasCardAdded : Bool{
+        set(input){
+            self.standard.setValue(input, forKey: "hasCardAdded")
+        }
+        get{
+            
+            return self.standard.value(forKey: "hasCardAdded") as? Bool ?? false
+        }
+    }
+    
     static var buyerVerafied : String{
         set(input){
             self.standard.setValue(input, forKey: "buyerVerafied")

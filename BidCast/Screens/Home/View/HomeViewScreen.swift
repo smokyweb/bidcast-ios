@@ -107,7 +107,7 @@ struct HomeViewScreen: View {
                                     
                                 },onTapMainImage: {
                                     
-                                    print("babumoshai tapped the card!,inex \(index)")
+                                    print(" tapped the card!,inex \(index)")
                                     self.index = index
                                     userId = "\(item.user?.id ?? 0)"
                                     navigateToLiveStream = true
@@ -124,7 +124,7 @@ struct HomeViewScreen: View {
             .padding([.leading,.trailing],12)
             .padding(.top , 10)
             
-            CusNavLink(doNavigate: $navigateToLiveStream, destination: LiveStream(currentStreamIndex :self.$index, userId : $userId,comeFromHome: $navigateToLiveStream ))
+            CusNavLink(doNavigate: $navigateToLiveStream, destination: LiveStream(currentStreamIndex :self.$index, userId : $userId,comeFromHome: $navigateToLiveStream))
             CusNavLink(doNavigate: $navigateToProfile, destination: ProfileScreen(id:$userId))
             CusNavLink(doNavigate: $navigateToNoti, destination: NotificationScreen())
         }
@@ -158,7 +158,8 @@ struct HomeViewScreen: View {
                     UserDefaults.userName = response?.name ?? ""
                     UserDefaults.buyerVerafied = response?.buyer_identity_status ?? ""
                     UserDefaults.sellerVerafied = response?.seller_identity_status ?? ""
-                   
+                    UserDefaults.sellerAddress = response?.has_shipping_address ?? false
+                    UserDefaults.hasCardAdded = response?.has_card_added ?? false
                 }else{
                     
                 }

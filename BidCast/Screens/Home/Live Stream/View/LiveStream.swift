@@ -34,6 +34,7 @@ struct LiveStream: View {
     @State var roomID = [String]()
     @State var streamID = [String]()
     var viewModel = LiveShowsViewModel()
+    @State var homeViewModel = HomeViewModel()
     @State var liveShowsData = [LiveShowsModel]()
     @State var BiddingDetail = BiddingModel()
     @State var isLoading: Bool = false
@@ -42,8 +43,7 @@ struct LiveStream: View {
     @State var viewwerCount = 0
     @Binding var userId : String
     @Environment(\.presentationMode) var presentationMode
-    
-    
+    @State var titleText: String = ""
     @ObservedObject var zegoManager = ZegoManager.shared
     @ObservedObject var chatManager = ZIMChatManager.shared
     @StateObject private var keyboardResponder = KeyboardResponder()
@@ -54,6 +54,11 @@ struct LiveStream: View {
     @State var isFollow = false
     @State  var currentRoomID = ""
     @State var showVerificationSheet = false
+    @State var showPaymentShipping = false
+    @State var navigateToAddCardScreen = false
+    @State var navigateToShipping : Bool = false
+    @State var navigateToSellerVerification = false
+    @State var hasTrustedBuyerSheetOpen = false
     
     var tabBarHeight: CGFloat {
         UIApplication.shared.windows.first?.safeAreaInsets.bottom ?? 49
@@ -472,6 +477,18 @@ struct LiveStream: View {
                               }
                         }
                 )
+                    .bottomSheet(isPresented: $showPaymentShipping, height: screenHeight / 2.8) {
+                        PaymentAndShippingInfoSheet(
+                            isPresented: $showPaymentShipping,
+                            onAddInfo: {
+                                if UserDefaults.sellerAddress != true {
+                                    navigateToShipping = true
+                                } else if UserDefaults.hasCardAdded != true {
+                                    navigateToAddCardScreen = true
+                                }
+                            }, buttonText: $titleText
+                        )
+                    }
                 CusNavLink(doNavigate: $navigateToProfile, destination: ProfileScreen(id:$id))
                 CusNavLink(doNavigate: $navigateToBuyer, destination: TrustedBuyerScreen(comeFromHome:$comeFromHome))
             }
@@ -509,6 +526,15 @@ struct LiveStream: View {
         }
         .bottomSheet(isPresented: $showVerificationSheet, height: screenHeight / 2.8, topBarCornerRadius: 25, showTopIndicator: false,onDismiss: {
             showVerificationSheet = false
+            if !showVerificationSheet{
+                    if UserDefaults.sellerAddress == false{
+                        showPaymentShipping = true
+                        titleText = "Add Address"
+                    }else if UserDefaults.hasCardAdded == false{
+                        navigateToAddCardScreen = true
+                        titleText = "Add Card"
+                    }
+            }
         }) {
             CommonBottomSheet(
                 sheetType: $alertType,
@@ -516,7 +542,17 @@ struct LiveStream: View {
                     withAnimation {
                         navigateToBuyer = true
                         showVerificationSheet = false
-                        
+                        if !showVerificationSheet{
+                            if !navigateToBuyer{
+                                if UserDefaults.sellerAddress == false{
+                                    showPaymentShipping = true
+                                    titleText = "Add Address"
+                                }else if UserDefaults.hasCardAdded == false{
+                                    navigateToAddCardScreen = true
+                                    titleText = "Add Card"
+                                }
+                            }
+                        }
                     }
                 },
                 onSecondaryClick: {
@@ -594,8 +630,11 @@ struct LiveStream: View {
                 roomID.removeAll()
                 streamID.removeAll()
                 await self.viewModel.getLiveShows(param:GetLiveShowsRequest(type: "live"))
-                await SVProgressHUD.dismiss()
                  success()
+                await self.homeViewModel.getProfile()
+                await SVProgressHUD.dismiss()
+                getProfileSuccess()
+                
                 
             }
         }
@@ -603,6 +642,28 @@ struct LiveStream: View {
         //            logoutRoom()
         //        }
         
+    }
+    //MARK: walletInfosuccess.
+    func getProfileSuccess(){
+        let response  = homeViewModel.accountInfo
+        if response.status == "success"{
+            let response = self.homeViewModel.accountInfo.data
+            UserDefaults.buyerVerafied = response?.buyer_identity_status ?? ""
+            UserDefaults.sellerVerafied = response?.seller_identity_status ?? ""
+            UserDefaults.sellerAddress = response?.has_shipping_address ?? false
+            UserDefaults.hasCardAdded = response?.has_card_added ?? false
+         
+        }else{
+            showError = true
+            alertType = .sheetType(
+                icon: .alert,
+                title: response.error_type?.capitalized ?? "",
+                message: response.message?.capitalized ?? "",
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
+            )
+            
+        }
     }
     
     
@@ -633,11 +694,6 @@ struct LiveStream: View {
                                 isFollow = true
                             }
                            
-                            
-                            
-                                
-                            
-                            
                             if UserDefaults.buyerVerafied != "verified" {
                                 alertType = .sheetType(
                                     icon: .info,

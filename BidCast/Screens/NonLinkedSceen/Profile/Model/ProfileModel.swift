@@ -22,8 +22,11 @@ struct ProfileModel : Codable{
     var seller_identity_status : String?
     var buyer_identity_status : String?
     var is_active : Bool?
+    var has_shipping_address : Bool?
+    var has_card_added : Bool?
     var role : RoleModel?
 }
+
 
 struct RoleModel : Codable {
     var created_at : String?

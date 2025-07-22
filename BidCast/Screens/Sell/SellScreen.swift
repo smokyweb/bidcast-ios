@@ -16,6 +16,7 @@ struct SellScreen: View {
     var subLabel = ["Create a listing for your item","Go live and sell to your audience","Manage your store and listings"]
     @State var navigateToLisProduct : Bool = false
     @State var navigateTolesson : Bool = false
+  
     
     var body: some View {
         VStack{
