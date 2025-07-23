@@ -20,6 +20,7 @@ struct LoginScreen: View {
     @EnvironmentObject private var appRootManager: AppRootManager
     @Environment(\.managedObjectContext) var viewContext
     @ObservedObject var languageManager = LanguageManager.shared
+    @EnvironmentObject var networkMonitor: NetworkMonitor
 
     
     @State var isRemeber: Bool = false
@@ -33,7 +34,7 @@ struct LoginScreen: View {
     @State var navigateToEmployer: Bool = false
     @State var navigateToCompanyUser: Bool = false
     @State var navigatetoUser: Bool = false
-
+    
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     
     @State var showhud: Bool = false
@@ -73,9 +74,9 @@ struct LoginScreen: View {
                     
                     HStack {
                         Button(action: {
-//                            withAnimation{
-                                isRemeber.toggle()
-//                            }
+                            //                            withAnimation{
+                            isRemeber.toggle()
+                            //                            }
                         }, label: {
                             Image(systemName: isRemeber ? "checkmark.square.fill" : "square")
                                 .frame(width: 25, height: 25)
@@ -103,6 +104,12 @@ struct LoginScreen: View {
                     
                     PrimaryButton(title: AppString.login.localized, isOutLine: false,onButtonClick: {
                         UIApplication.shared.endEditing()
+                        guard !networkMonitor.isConnected else {
+                            hudMsg = "No Internet Connection"
+                            showhud = true
+                            return
+                        }
+                        
                         guard !request.email.isEmpty else {
                             hudMsg = AppString.pleaseEnterEmail.localized
                             showhud = true
@@ -176,74 +183,74 @@ struct LoginScreen: View {
                 CusNavLink(doNavigate: $navigateToSignUp, destination: SignUpScreen())
                 CusNavLink(doNavigate: $navigateToPrivacy, destination: PrivacyPolicyScreen())
                 CusNavLink(doNavigate: $navigateToTerms, destination: TermsOfServicesScreen())
-
+                
             }
-           
+            
         }.id(languageManager.languageChanged)
-        .bottomSheet(isPresented: $showError, height: screenHeight/2.3, topBarCornerRadius: 25, showTopIndicator: false, content: {
-            CommonBottomSheet(
-                sheetType: $alertType,
-                onPrimaryClick: {
-                    withAnimation { showError = false }
-                    if alertType.primaryBtnText == AppString.continueBtn.localized {
-                        navigateToLanguage = true
-                    }
-                }, onSecondaryClick: {
-                    withAnimation { showError = false }
-                })
-        })
-        .onAppear {
-            UIScrollView.appearance().bounces = false
-        }
-        .onDisappear(perform: {
-            DispatchQueue.main.async {
-                UIScrollView.appearance().bounces = true
+            .bottomSheet(isPresented: $showError, height: screenHeight/2.3, topBarCornerRadius: 25, showTopIndicator: false, content: {
+                CommonBottomSheet(
+                    sheetType: $alertType,
+                    onPrimaryClick: {
+                        withAnimation { showError = false }
+                        if alertType.primaryBtnText == AppString.continueBtn.localized {
+                            navigateToLanguage = true
+                        }
+                    }, onSecondaryClick: {
+                        withAnimation { showError = false }
+                    })
+            })
+            .onAppear {
+                UIScrollView.appearance().bounces = false
             }
-        })
-
+            .onDisappear(perform: {
+                DispatchQueue.main.async {
+                    UIScrollView.appearance().bounces = true
+                }
+            })
         
-        .onTapGesture {
-            UIApplication.shared.endEditing()
-        }
+        
+            .onTapGesture {
+                UIApplication.shared.endEditing()
+            }
     }
     
     func success() async {
         
         await SVProgressHUD.dismiss()
-           let dict = viewModel.loginResponse
-            if dict.status == "success" {
-                UserDefaults.isFirstLogin = 1
-                loginDetail = dict.data ?? LoginModel()
-                UserDefaults.accessToken = dict.data?.token ?? ""
-                UserDefaults.userId = dict.data?.id ?? 0
-                UserDefaults.userName = dict.data?.name ?? ""
-                UserDefaults.profileURL = dict.data?.profile_image ?? ""
-                SVProgressHUD.show()
-                await self.saveDeviceDetail()
-                await SVProgressHUD.dismiss()
-                UserDefaultsManager.shared.setValue(dict.data?.token, forKey: .token)
-                UserDefaultsManager.shared.setModel(dict.data, forKey: .userDetail)
-                    UserDefaultsManager.shared.setValue(isRemeber, forKey: .rememberMe)
-                    if isRemeber {
-                        saveLoginDetail(mail: request.email, password: request.password)
-                    } else {
-                        saveLoginDetail(mail: "", password: "")
-                    }
-                    UserDefaultsManager.shared.setValue(true, forKey: .isLoggedIn)
-                   
-                UserDefaultsManager.shared.setValue(dict.data?.role_id, forKey: .userRoleId)
-                UserDefaultsManager.shared.setValue(dict.data?.roles?.name ??  "", forKey: .userRole)
-                  
-                alertType = .sheetType(icon: .success, title: dict.status?.capitalized ?? "", message: AppString.chooseLanguage.localized, primaryBtnText: AppString.continueBtn.localized , secondaryBtnText: "", sheetThemeColor: .secondary)
-                DispatchQueue.main.async {
-                           withAnimation {
-                               appRootManager.currentRoot = .tabBar
-                           }
-                       }
-            }else{
-                alertType = .sheetType(icon: .alert, title: "Failed".capitalized, message: viewModel.errorMessage ?? "", primaryBtnText: AppString.ok.localized, secondaryBtnText: "", sheetThemeColor: .secondary)
-                withAnimation(.snappy) { showError = true }
+        let dict = viewModel.loginResponse
+        if dict.status == "success" {
+            UserDefaults.isFirstLogin = 1
+            loginDetail = dict.data ?? LoginModel()
+            UserDefaults.accessToken = dict.data?.token ?? ""
+            UserDefaults.userId = dict.data?.id ?? 0
+            UserDefaults.userName = dict.data?.name ?? ""
+            UserDefaults.profileURL = dict.data?.profile_image ?? ""
+            SVProgressHUD.show()
+            await self.saveDeviceDetail()
+            await SVProgressHUD.dismiss()
+            UserDefaultsManager.shared.setValue(dict.data?.token, forKey: .token)
+            UserDefaultsManager.shared.setModel(dict.data, forKey: .userDetail)
+            UserDefaultsManager.shared.setValue(isRemeber, forKey: .rememberMe)
+            if isRemeber {
+                saveLoginDetail(mail: request.email, password: request.password)
+            } else {
+                saveLoginDetail(mail: "", password: "")
             }
+            UserDefaultsManager.shared.setValue(true, forKey: .isLoggedIn)
+            
+            UserDefaultsManager.shared.setValue(dict.data?.role_id, forKey: .userRoleId)
+            UserDefaultsManager.shared.setValue(dict.data?.roles?.name ??  "", forKey: .userRole)
+            
+            alertType = .sheetType(icon: .success, title: dict.status?.capitalized ?? "", message: AppString.chooseLanguage.localized, primaryBtnText: AppString.continueBtn.localized , secondaryBtnText: "", sheetThemeColor: .secondary)
+            DispatchQueue.main.async {
+                withAnimation {
+                    appRootManager.currentRoot = .tabBar
+                }
+            }
+        }else{
+            alertType = .sheetType(icon: .alert, title: "Failed".capitalized, message: viewModel.errorMessage ?? "", primaryBtnText: AppString.ok.localized, secondaryBtnText: "", sheetThemeColor: .secondary)
+            withAnimation(.snappy) { showError = true }
+        }
         
     }
     

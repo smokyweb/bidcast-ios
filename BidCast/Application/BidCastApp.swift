@@ -12,6 +12,7 @@ struct BidCastApp: App {
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject private var appRootManager = AppRootManager()
+    @StateObject var networkMonitor = NetworkMonitor.shared
     @State private var accountNavigationPath = NavigationPath()
     
     init() {
@@ -61,6 +62,7 @@ struct BidCastApp: App {
             }
             .environmentObject(appRootManager)
             .environmentObject(LanguageManager.shared)
+            .environmentObject(networkMonitor)
         }
     }
 }

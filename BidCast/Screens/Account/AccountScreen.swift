@@ -43,7 +43,6 @@ struct AccountScreen: View {
     @State var navigateToAnalytics : Bool = false
     @State var isNavFrom : Bool = false
     @State var navigateToSellerVerification = false
-    
     @State var navigateToProfile : Bool = false
     @State var comeFromSeller = false
     
@@ -461,6 +460,7 @@ enum AccountMenuSection : String, CaseIterable, CustomStringConvertible{
             return NSLocalizedString(rawValue, comment: "")
         }
 }
+
 extension UIDevice {
     var hasNotch: Bool {
         let bottom = UIApplication.shared.keyWindow?.safeAreaInsets.bottom ?? 0

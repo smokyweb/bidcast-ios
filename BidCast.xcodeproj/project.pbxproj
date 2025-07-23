@@ -397,6 +397,7 @@
 		D4CAECBD2DE73BCC00705CD7 /* EndShowModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4CAECB72DE73BCC00705CD7 /* EndShowModel.swift */; };
 		D4CAECBE2DE73BCC00705CD7 /* EndShowViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4CAECB92DE73BCC00705CD7 /* EndShowViewModel.swift */; };
 		D4CDF2A32DD21A6F00DA8161 /* SegmentedControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4CDF2A22DD21A6F00DA8161 /* SegmentedControlView.swift */; };
+		D4D2B91B2E30E783006F15E6 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D2B91A2E30E783006F15E6 /* NetworkMonitor.swift */; };
 		D4DAD3182E24E34A00738549 /* RateSellerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4DAD3172E24E34A00738549 /* RateSellerView.swift */; };
 		D4DDE8022DDC5CC100A24973 /* Poppins-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D4DDE8002DDC5CC000A24973 /* Poppins-ThinItalic.ttf */; };
 		D4DDE8032DDC5CC100A24973 /* Poppins-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D4DDE7FA2DDC5CC000A24973 /* Poppins-Medium.ttf */; };
@@ -855,6 +856,7 @@
 		D4CAECB72DE73BCC00705CD7 /* EndShowModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndShowModel.swift; sourceTree = "<group>"; };
 		D4CAECB92DE73BCC00705CD7 /* EndShowViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndShowViewModel.swift; sourceTree = "<group>"; };
 		D4CDF2A22DD21A6F00DA8161 /* SegmentedControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedControlView.swift; sourceTree = "<group>"; };
+		D4D2B91A2E30E783006F15E6 /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
 		D4DAD3172E24E34A00738549 /* RateSellerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateSellerView.swift; sourceTree = "<group>"; };
 		D4DDE7EE2DDC5CC000A24973 /* OFL.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = OFL.txt; sourceTree = "<group>"; };
 		D4DDE7EF2DDC5CC000A24973 /* Poppins-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-Black.ttf"; sourceTree = "<group>"; };
@@ -2165,6 +2167,7 @@
 				3504BCE42E000A610069182D /* FireBase.swift */,
 				3504BCE62E00418F0069182D /* ZegoManager.swift */,
 				35B424A32E04327500626E02 /* ZegoChat.swift */,
+				D4D2B91A2E30E783006F15E6 /* NetworkMonitor.swift */,
 			);
 			path = Helper;
 			sourceTree = "<group>";
@@ -4215,6 +4218,7 @@
 				D4BAA3D32DED7884001BA4DA /* PreferenceViewModel.swift in Sources */,
 				99C909622DC8CD790054620B /* PrivacyPolicyScreen.swift in Sources */,
 				D4BB9A212DE5D22A00C1BCBC /* PromoteToolsModel.swift in Sources */,
+				D4D2B91B2E30E783006F15E6 /* NetworkMonitor.swift in Sources */,
 				D4BB99E92DE5890D00C1BCBC /* OffersViewModel.swift in Sources */,
 				D4BA325B2DDB3C6F00FE4FD2 /* InventoryModel.swift in Sources */,
 				D4B616422DE87F1100924A3D /* OBSSetupViewModel.swift in Sources */,

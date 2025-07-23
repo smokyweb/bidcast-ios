@@ -15,6 +15,7 @@ struct VerifyOtpScreen: View {
     
     // MARK: - Static Properties
     @EnvironmentObject var appRootManager: AppRootManager
+    @EnvironmentObject var networkMonitor: NetworkMonitor
     
     @State var isRemeber: Bool = false
     @State var isLoading: Bool = false
@@ -104,6 +105,11 @@ struct VerifyOtpScreen: View {
                             if let codeInt = Int(pin) {
                                 request.code = codeInt
                                 Task {
+                                    guard !networkMonitor.isConnected else {
+                                        hudMsg = "No Internet Connection"
+                                        showhud = true
+                                        return
+                                    }
                                     SVProgressHUD.show()
                                     await viewModel.verifyCode(parameters: request)
                                     await SVProgressHUD.dismiss()

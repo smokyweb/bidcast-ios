@@ -15,6 +15,7 @@ struct ForgotScreen: View {
     
     @Environment(\.presentationMode) var presentationMode
     @State var isRemeber: Bool = false
+    @EnvironmentObject var networkMonitor: NetworkMonitor
     
     @State var request: ForgetRequest = ForgetRequest(email: "")
     @State var navigateToOTP: Bool = false
@@ -60,7 +61,11 @@ struct ForgotScreen: View {
                         isOutLine: false,
                         onButtonClick: {
                             UIApplication.shared.endEditing()
-                            
+                            guard !networkMonitor.isConnected else {
+                                hudMsg = "No Internet Connection"
+                                showhud = true
+                                return
+                            }
                             guard !request.email.isEmpty else {
                                 hudMsg = AppString.pleaseEnterEmail.localized
                                 showhud = true
