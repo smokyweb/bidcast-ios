@@ -90,6 +90,7 @@ enum APIEndPoint{
     case updateProfile(param:UpdateProfileRequest)
     case storeBid(param:StoreBidRequest)
     case sellerStatus
+    case setDefaultCard(param:CardDefaultRequest)
     
     //MARK: OLD
     
@@ -331,6 +332,8 @@ extension APIEndPoint: EndPointType {
             return "bid/store"
         case .sellerStatus:
             return "seller-status"
+        case .setDefaultCard:
+            return "set-default-card"
             
             //MARK: Old
             
@@ -486,6 +489,7 @@ extension APIEndPoint: EndPointType {
             return "seller-rating"
       
         
+       
         }
     }
     
@@ -643,6 +647,8 @@ extension APIEndPoint: EndPointType {
             return .post
         case .sellerStatus:
             return .get
+        case .setDefaultCard:
+            return .post
             
             //MARK: Old
             
@@ -800,6 +806,7 @@ extension APIEndPoint: EndPointType {
         case .addRating:
             return .post
        
+       
         }
     }
     
@@ -878,6 +885,7 @@ extension APIEndPoint: EndPointType {
             return param
         case .followUnfollow(param: let param):
             return param
+            
             
             //MARK: Faz
         case .deleteNotification(param: let param):
@@ -962,6 +970,8 @@ extension APIEndPoint: EndPointType {
             return param
         case .sellerStatus:
             return nil
+        case .setDefaultCard(param: let param):
+            return param
             
             //MARK: Old
             
@@ -1118,6 +1128,7 @@ extension APIEndPoint: EndPointType {
         case .addRating(let param):
             return param
         
+       
        
         }
     }

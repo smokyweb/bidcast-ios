@@ -66,6 +66,20 @@ final class PaymentViewModel: ObservableObject {
             handle(error: error)
         }
     }
+    
+    // MARK: - Set Default Address
+    func setDefaultCard(parameters: CardDefaultRequest) async {
+        do {
+            if let response: ResponseModel<AddressModel> = try await APIManager.shared.request(
+                type: APIEndPoint.setDefaultCard(param: parameters),
+                header: true
+            ) {
+                self.addressDict = response
+            }
+        } catch {
+            handle(error: error)
+        }
+    }
 
     // MARK: - Delete Address
     func deleteAddress(parameters: AddressDefaultParam) async {

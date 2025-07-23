@@ -10,27 +10,51 @@ struct CardCell: View {
     var image = ""
     var cardNo = ""
     var expires = ""
-  
+    var onTapDefault : () -> () = { }
     var onTapDelete : () -> () = { }
+    
+    @State var isDefault : Bool = false
     var body: some View {
         HStack {
             Image(systemName: image)
                 .resizable()
                 .frame(width: 40, height: 25)
-                .foregroundColor(.blue)
+                .foregroundColor(Color.defaultTheme)
             VStack(alignment: .leading) {
                 Text("•••• \(cardNo)")
-                    .font(.body)
+                    .font(.custom(poppinsSemiBold, size: 12.0))
                 Text("Expires \(expires)")
-                    .font(.caption)
+                    .font(.custom(poppinsRegular, size: 12.0))
                     .foregroundColor(.gray)
             }
+            if isDefault{
+                Text("Default")
+                    .font(.custom(poppinsSemiBold, size: 13.0))
+                    .padding(.horizontal, 4)
+                    .padding(.vertical, 4)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.white, lineWidth: 1)
+                    )
+                    .background(.lightBlue)
+                    .foregroundColor(.black)
+                    .cornerRadius(8)
+            }
             Spacer()
+
             Menu {
+                Button("Make Default", action: {
+                   
+                    onTapDefault()
+                })
+                .font(.custom(poppinsSemiBold, size: 13.0))
+                
                 Button("Delete", role: .destructive, action: {
-//                    print("Delete \(address.name ?? "")")
+                 
                     onTapDelete()
                 })
+                .font(.custom(poppinsSemiBold, size: 13.0))
+                
             } label: {
                 Image(systemName: "ellipsis")
                     .rotationEffect(.degrees(90))

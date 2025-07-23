@@ -16,31 +16,25 @@ struct ToggleCell: View {
     
     var body: some View {
         
-            HStack{
-                Text(title)
-                    .font(.custom(poppinsSemiBold, fixedSize: fontValue))
-                    .bold()
-                    .foregroundStyle(.text)
-                    .foregroundColor(textColor)
-                    .padding(.leading, 4)
-                Spacer()
-                
-                
-                Rectangle()
-                    .fill(isTappedSwitch ? .tabBar : .bg)
-                    .frame(width: 44,height: 28)
-                    .cornerRadius(14)
-                    .opacity(1)
-                    .onTapGesture {
-                        isTappedSwitch.toggle()
-                        onToggle?(isTappedSwitch)
-                    }
-                
-                
-        }
-        .frame(height: 30)
-        .background(.white)
-        .edgesIgnoringSafeArea(.all)
+        HStack {
+                   Text(title)
+                       .font(.custom(poppinsSemiBold, fixedSize: fontValue))
+                       .bold()
+                       .foregroundColor(textColor)
+//                       .padding(.leading, 4)
+                   
+                   Spacer()
+                   
+                   Toggle("", isOn: $isTappedSwitch)
+                       .labelsHidden()
+                       .toggleStyle(SwitchToggleStyle(tint: .defaultTheme))
+                       .onChange(of: isTappedSwitch) { newValue in
+                           onToggle?(newValue)
+                       }
+               }
+               .frame(height: 30)
+               .background(.white)
+           
        
     }
 }

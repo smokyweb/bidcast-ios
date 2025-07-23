@@ -156,11 +156,36 @@ struct AddCardScreen: View {
                                     if isNavFrom == "SellerVerification" {
                                         await viewModel.addSellerCard(parameters: StorePaymentMethodRequest(card_token: token))
                                         await SVProgressHUD.dismiss()
-                                        handleSellerCardResponse(stripeToken: token)
+                                        if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
+                                            handleSellerCardResponse(stripeToken: token)
+                                        }else{
+                                            alertType = .sheetType(
+                                                icon: .alert,
+                                                title: "Failed",
+                                                message: self.viewModel.errorMessage ?? "",
+                                                primaryBtnText: "",
+                                                secondaryBtnText: "OK"
+                                            )
+                                            showError = true
+                                        }
+                                       
                                     }else {
                                         await viewModel.addCard(parameters: AddCardRequest(card_token: token))
                                         await SVProgressHUD.dismiss()
-                                        handleResponse()
+                                        if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
+                                            handleResponse()
+                                        }else{
+                                            alertType = .sheetType(
+                                                icon: .alert,
+                                                title: "Failed",
+                                                message: self.viewModel.errorMessage ?? "",
+                                                primaryBtnText: "",
+                                                secondaryBtnText: "OK"
+                                            )
+                                            showError = true
+                                        }
+                                    
+                                       
                                     }
                                 }
                                 
@@ -168,35 +193,7 @@ struct AddCardScreen: View {
                                 print("Error: \(error.localizedDescription)")
                             }
                         }
-                        //                        guard !request.type.isEmpty else {
-                        //                            hudMsg = "Please select address type"
-                        //                            showhud = true
-                        //                            return
-                        //                        }
-                        //
-                        //                        guard !request.name.isEmpty else {
-                        //                            hudMsg = "Please enter name of address"
-                        //                                showhud = true
-                        //                                return
-                        //                            }
-                        //
-                        //                        guard !request.phone_number.isEmpty else {
-                        //                            hudMsg = "Please enter phone number"
-                        //                                showhud = true
-                        //                                return
-                        //                            }
-                        //                        guard !request.street_address.isEmpty else {
-                        //                            hudMsg = "Please enter street address"
-                        //                                showhud = true
-                        //                                return
-                        //                            }
-                        //                        guard !request.pincode.isEmpty else {
-                        //                            hudMsg = "Please enter pin code"
-                        //                                showhud = true
-                        //                                return
-                        //                            }
-                        //                        let request = self.request
-                        //                        self.viewModel.storeAddress(parameters: request)
+                       
                     }
                 },
                 width: screenWidth - 40,
@@ -211,9 +208,9 @@ struct AddCardScreen: View {
                 sheetType: $alertType,
                 onPrimaryClick: {
                     withAnimation { showError = false }
-                    let response = viewModel.cardDict
-                    if response.status == "success" {
+                    if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
                         self.presentationMode.wrappedValue.dismiss()
+                        withAnimation { showError = false }
                     }else{
                         withAnimation { showError = false }
                     }
@@ -255,7 +252,7 @@ struct AddCardScreen: View {
             DispatchQueue.main.async {
                 hudMsg = "Card added successfully"
                 showhud = true
-                onSuccess?(stripeToken) // ✅ Pass Stripe token instead of cardID
+                onSuccess?(stripeToken)
                 self.presentationMode.wrappedValue.dismiss()
             }
         } else {

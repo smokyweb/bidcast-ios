@@ -20,19 +20,21 @@ struct SellerStatusCardView: View {
                 Text(title)
                     .font(.custom(poppinsSemiBold, size: 16.0))
                 Spacer()
-                Text(status)
-                    .font(.custom(poppinsRegular, size: 12.0))
+                Text(status.capitalizingFirstLetter())
+                    .font(.custom(poppinsSemiBold, size: 14.0))
                     .padding(.horizontal, 10)
                     .padding(.vertical, 4)
+                    .frame(width: 80,height: 32)
                     .background(statusColor.opacity(0.2))
                     .foregroundColor(statusColor)
                     .cornerRadius(10)
+                  
             }
 
             HStack(alignment: .center, spacing: 8) {
                 Image(systemName: icon)
                     .resizable()
-                    .frame(width: 20, height: 20)
+                    .frame(width: 20, height: 16)
                     .foregroundColor(.gray)
                 Text(subtitle)
                     .font(.custom(poppinsRegular, size: 12.0))

@@ -44,16 +44,15 @@ struct SellerStatusScreen: View {
             // MARK: - Scrollable Content
             ScrollView {
                 VStack(spacing: 12) {
-                    var seller = sellerData.live_sell_vendor
-                    var market = sellerData.marketplace_vendor
+                    let seller = sellerData.live_sell_vendor
+                    let market = sellerData.marketplace_vendor
                     if seller != nil {
-                        SellerStatusCardView(title: seller?.title ?? "", status: seller?.status ?? "", icon: "cart.fill", subtitle: seller?.submitted ?? "")
+                        SellerStatusCardView(title: seller?.title ?? "", status: seller?.status ?? "", icon: "cart.fill", subtitle: seller?.submitted ?? "",statusColor: .darkGreen)
                     }
                     if market != nil {
-                        SellerStatusCardView(title: market?.title ?? "", status: market?.status ?? "", icon: "video.fill", subtitle: market?.vendor_since ?? "")
+                        SellerStatusCardView(title: market?.title ?? "", status: market?.status ?? "", icon: "video.fill", subtitle: market?.vendor_since ?? "",statusColor: .darkYellow)
                     }
-//
-//                    .padding(.horizontal, 16)
+
                     
                     Spacer(minLength: 80)
                 }

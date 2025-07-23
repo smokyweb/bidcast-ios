@@ -667,3 +667,6 @@ struct sellerVerification {
 
 
 
+struct CardDefaultRequest : Encodable {
+    var card_id : String
+}

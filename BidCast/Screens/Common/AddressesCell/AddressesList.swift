@@ -15,9 +15,9 @@ struct AddressListCell: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text(address.type ?? "")
+                Text(address.type?.capitalizingFirstLetter() ?? "")
                     .font(.custom(poppinsBold, size: 13.0))
-                    .padding(.horizontal, 4)
+//                    .padding(.horizontal, 2)
                     .padding(.vertical, 4)
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
@@ -46,10 +46,14 @@ struct AddressListCell: View {
                         print("Make Default for \(address.name ?? "")")
                         onTapDefault()
                     })
+                    .font(.custom(poppinsSemiBold, size: 13.0))
+                    
                     Button("Delete", role: .destructive, action: {
                         print("Delete \(address.name ?? "")")
                         onTapDelete()
                     })
+                    .font(.custom(poppinsSemiBold, size: 13.0))
+                    
                 } label: {
                     Image(systemName: "ellipsis")
                         .rotationEffect(.degrees(90))
@@ -58,22 +62,22 @@ struct AddressListCell: View {
                 }
             }
 
-            Text(address.name ?? "")
-                .font(.headline)
+            Text(address.name?.capitalizingFirstLetter() ?? "")
+                .font(.custom(poppinsSemiBold, size: 13.0))
 
-            Text(address.street_address ?? "")
-                .font(.subheadline)
+            Text(address.street_address?.capitalizingFirstLetter() ?? "")
+                .font(.custom(poppinsRegular, size: 13.0))
 
             Text(address.pincode ?? "")
-                .font(.subheadline)
+                .font(.custom(poppinsRegular, size: 13.0))
 
             Text(address.phone_number ?? "")
-                .font(.subheadline)
+                .font(.custom(poppinsRegular, size: 13.0))
         }
         .padding()
         .background(Color.white)
         .cornerRadius(12)
         .shadow(color: Color.gray.opacity(0.3), radius: 4, x: 0, y: 2)
-        .padding(.horizontal)
+//        .padding(.horizontal)
     }
 }

@@ -11,7 +11,7 @@ import Foundation
 final class AddCardViewModel: ObservableObject {
     
     @Published var cardDict = ResponseModel<[CardModel]>()
-    @Published var addCardDict = ResponseModel<CardModel>()
+    @Published var addCardDict = ResponseModel<[CardModel]>()
     @Published var sellerStorePaymentDict = ResponseModel<Int>()
     @Published var errorMessage: String? = nil
     
@@ -20,7 +20,7 @@ final class AddCardViewModel: ObservableObject {
     func addCard(parameters: AddCardRequest) async  {
        
             do {
-                if let response: ResponseModel<CardModel> = try await APIManager.shared.request(
+                if let response: ResponseModel<[CardModel]> = try await APIManager.shared.request(
                     type: APIEndPoint.AddCard(param: parameters),
                     header: true) {
                     self.addCardDict = response
@@ -81,7 +81,7 @@ final class AddCardViewModel: ObservableObject {
     @MainActor
     func getCard() async throws {
         do {
-            if let response: ResponseModel<CardModel> = try await APIManager.shared.request(
+            if let response: ResponseModel<[CardModel]> = try await APIManager.shared.request(
                 type: APIEndPoint.getCard,
                 header: true) {
                 self.addCardDict = response

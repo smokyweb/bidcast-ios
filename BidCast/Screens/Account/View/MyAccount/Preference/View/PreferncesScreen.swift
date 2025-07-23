@@ -37,18 +37,18 @@ struct PreferncesScreen: View {
     var body: some View {
         ZStack {
             VStack {
-                PrimaryHeader(
-                    title: "Preferences".localized,
-                    isForLogo: false,
-                    leadingImgArr: [.icBack],
-                    trailingImgArr: [],
-                    onClickLeading: { _ in
-                        presentationMode.wrappedValue.dismiss()
-                    },
-                    count: .constant(0)
-                )
-                .background(.white)
-                .frame(height: 50)
+                VStack{
+                    PrimaryHeader(
+                        title: "Preferences".localized,
+                        isForLogo: false,
+                        leadingImgArr: [.icBack],
+                        trailingImgArr: [],
+                        onClickLeading: { _ in
+                            presentationMode.wrappedValue.dismiss()
+                        },
+                        count: .constant(0)
+                    )
+                }
                 
                 List {
                     Section(header: Text("Account")) {
@@ -85,7 +85,7 @@ struct PreferncesScreen: View {
                         ToggleCell(title: "Suggest My Account", isTappedSwitch: $suggestMyAccount)
                         ToggleCell(title: "Haptic Feedback", isTappedSwitch: $hapticFeedback)
                     }.listRowSeparator(.hidden)
-                }
+                }.padding(.horizontal,-8)
                 
                 PrimaryButton(
                     title: AppString.submit.localized,
@@ -110,16 +110,16 @@ struct PreferncesScreen: View {
                             SVProgressHUD.show()
                             await viewModel.updatePreference(parameters: request)
                             await SVProgressHUD.dismiss()
-                            await getPreferenceSuccess()
+                            getPreferenceSuccess()
                         }
                     },
                     btnTextColor: .white
                 )
-                .padding(.horizontal, 16)
+//                .padding(.horizontal, 16)
                 .padding(.bottom, 0)
                 .background(Color.white.ignoresSafeArea(edges: .bottom))
             }
-            .disabled(isLoading)
+           
         }
         .onAppear {
             UIScrollView.appearance().bounces = false
@@ -133,7 +133,7 @@ struct PreferncesScreen: View {
                 SVProgressHUD.show()
                 await viewModel.getPreferenceContent()
                 await SVProgressHUD.dismiss()
-                await getPreferenceSuccess()
+                getPreferenceSuccess()
                
             }
         }
