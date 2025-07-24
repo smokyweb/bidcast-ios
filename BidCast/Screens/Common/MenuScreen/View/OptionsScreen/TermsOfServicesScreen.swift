@@ -13,6 +13,9 @@ import SVProgressHUD
 struct TermsOfServicesScreen: View {
     
     @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var networkMonitor: NetworkMonitor
+    @State var showhud: Bool = false
+       @State var hudMsg: String = ""
     
     @StateObject private var viewModal = MenuOptionsViewModel()
     @State private var termsOfService: String = ""
@@ -60,6 +63,11 @@ struct TermsOfServicesScreen: View {
                 Spacer()
             }
             .refreshable {
+               guard Reachability.isConnectedToNetwork() else {
+                    hudMsg = "No Internet Connection"
+                    showhud = true
+                    return
+                }
                 SVProgressHUD.show()
                 await fetchTermsOfService()
                 let response  = viewModal.termsResponse
@@ -76,6 +84,11 @@ struct TermsOfServicesScreen: View {
         }
 //        .edgesIgnoringSafeArea(.top)
         .task {
+           guard Reachability.isConnectedToNetwork() else {
+                hudMsg = "No Internet Connection"
+                showhud = true
+                return
+            }
             SVProgressHUD.show()
             await fetchTermsOfService()
             let response  = viewModal.termsResponse

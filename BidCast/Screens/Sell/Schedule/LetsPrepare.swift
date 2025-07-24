@@ -24,7 +24,7 @@ struct LetsPrepare: View,ShowStepDelegate {
     @State var request : StoreScheduleShowRequest = StoreScheduleShowRequest(title: "", date: "", time: "", category_id: "", auction_type_id: "", product_ids: "")
     
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
-    
+    @EnvironmentObject var networkMonitor: NetworkMonitor
     @State var navigateToTips  = false
     @State var navigateToCreateScreen = false
     @State var navigateToCreateShow = false
@@ -162,6 +162,11 @@ struct LetsPrepare: View,ShowStepDelegate {
             if !didLoadPrepare {
                 didLoadPrepare = true
                 Task{
+                   guard Reachability.isConnectedToNetwork() else {
+                        hudMsg = "No Internet Connection"
+                        showhud = true
+                        return
+                    }
                     SVProgressHUD.show()
                     await viewModel.getLetsPrepare()
                     await SVProgressHUD.dismiss()
@@ -261,6 +266,11 @@ struct LetsPrepare: View,ShowStepDelegate {
                 return
         }
             Task{
+               guard Reachability.isConnectedToNetwork() else {
+                    hudMsg = "No Internet Connection"
+                    showhud = true
+                    return
+                }
                 SVProgressHUD.show()
                 var thumbImage = [String]()
                 thumbImage.append(thumbNAil)

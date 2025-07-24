@@ -14,7 +14,7 @@ struct SignUpScreen: View {
     
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject private var appRootManager: AppRootManager
-    
+    @EnvironmentObject var networkMonitor: NetworkMonitor
     @State var searchText = ""
     @State var selectedCountry : String?
     @State var showingDropdown: Bool = false
@@ -127,6 +127,11 @@ struct SignUpScreen: View {
                         }
                         print("Parameters for register user :- \(request)")
                         Task{
+                           guard Reachability.isConnectedToNetwork() else {
+                                hudMsg = "No Internet Connection"
+                                showhud = true
+                                return
+                            }
                             SVProgressHUD.show()
                             viewModel.errorMessage?.removeAll()
                             await self.viewModel.registerUser(parameters: request)

@@ -25,6 +25,7 @@ struct CompleteProfileScreen: View {
     @State private var hudMsg: String = ""
     @State private var showError: Bool = false
     @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+    @EnvironmentObject var networkMonitor: NetworkMonitor
     
     @State private var showCameraPicker = false
     @State private var showPhotoLibrary = false
@@ -241,6 +242,11 @@ struct CompleteProfileScreen: View {
                         }
                         
                         Task{
+                           guard Reachability.isConnectedToNetwork() else {
+                                hudMsg = "No Internet Connection"
+                                showhud = true
+                                return
+                            }
                             SVProgressHUD.show()
                             await self.viewModel.UpdateProfile(param: request, images: [profileImageUrl], key: "profile_image")
                             await SVProgressHUD.dismiss()
@@ -273,6 +279,11 @@ struct CompleteProfileScreen: View {
             }
             .onAppear{
                 Task{
+                   guard Reachability.isConnectedToNetwork() else {
+                        hudMsg = "No Internet Connection"
+                        showhud = true
+                        return
+                    }
                     SVProgressHUD.show()
                     await viewModel.getProfile()
                     await SVProgressHUD.dismiss()
@@ -341,6 +352,11 @@ struct CompleteProfileScreen: View {
                         if viewModel.errorMessage == "" || viewModel.errorMessage == nil {
                             withAnimation { showError = false }
                             Task{
+                               guard Reachability.isConnectedToNetwork() else {
+                                    hudMsg = "No Internet Connection"
+                                    showhud = true
+                                    return
+                                }
                                 SVProgressHUD.show()
                                 await viewModel.getProfile()
                                 await SVProgressHUD.dismiss()

@@ -23,6 +23,7 @@ struct RateSellerView: View {
     var sellerName: String = "dom crush"
     
     @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var networkMonitor: NetworkMonitor
     @State var isLoading: Bool = false
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @State var showError: Bool = false
@@ -89,8 +90,13 @@ struct RateSellerView: View {
                         // MARK: - Submit Button
                         Button(action: {
                             Task {
+                               guard Reachability.isConnectedToNetwork() else {
+                                    hudMsg = "No Internet Connection"
+                                    showhud = true
+                                    return
+                                }
+
                                 SVProgressHUD.show()
-                                
                                 guard overAllRating != -1 else {
                                     await SVProgressHUD.dismiss()
                                     hudMsg = AppString.addOverallRating

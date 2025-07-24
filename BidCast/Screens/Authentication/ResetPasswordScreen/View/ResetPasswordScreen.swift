@@ -27,7 +27,7 @@ struct ResetPasswordScreen: View {
     // MARK: - View Model & Request
     @State var request: ResetPasswordRequest = ResetPasswordRequest(email: "", password: "", password_confirmation: "")
     var viewModel = ResetPasswordViewModel()
-
+    
     // MARK: - Custom Alert
     @State var showError: Bool = false
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
@@ -107,6 +107,11 @@ struct ResetPasswordScreen: View {
                             request.password = password
                             request.password_confirmation = confPassword
                             Task{
+                               guard Reachability.isConnectedToNetwork() else {
+                                    hudMsg = "No Internet Connection"
+                                    showhud = true
+                                    return
+                                }
                                 SVProgressHUD.show()
                                 self.viewModel.errorMessage?.removeAll()
                                 await viewModel.resetPassword(parameters: request)

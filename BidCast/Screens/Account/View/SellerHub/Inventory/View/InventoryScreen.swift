@@ -15,6 +15,7 @@ struct InventoryScreen: View {
     @State var segment: InventorySegment = .active
     @State var inventoryList: [InventoryDataModel] = []
     @State var request: InventoryRequest = InventoryRequest(status: "active", page: 1)
+    @EnvironmentObject var networkMonitor: NetworkMonitor
     var viewModel = InventoryViewModel()
     
     @State var showError: Bool = false
@@ -110,6 +111,11 @@ struct InventoryScreen: View {
     // MARK: - Fetch Inventory List
     func fetchInventory(for segment: InventorySegment,page: Int) {
         Task{
+           guard Reachability.isConnectedToNetwork() else {
+                hudMsg = "No Internet Connection"
+                showhud = true
+                return
+            }
             SVProgressHUD.show()
             request.status = segment.rawValue.lowercased()
             request.page = page

@@ -14,6 +14,7 @@ import AlertToast
 struct SelectThumbnailScreen: View {
     
     @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var networkMonitor: NetworkMonitor
     @State private var currentIndex = 0
     @State var tip =  TitleTipsModel()
     @State var isLoading  = false
@@ -175,6 +176,11 @@ struct SelectThumbnailScreen: View {
         .onAppear {
             
             Task{
+               guard Reachability.isConnectedToNetwork() else {
+                    hudMsg = "No Internet Connection"
+                    showhud = true
+                    return
+                }
                 SVProgressHUD.show()
                 await viewModel.getTitleTips(param: TipParam(type: "thumbnail"))
                 await SVProgressHUD.dismiss()

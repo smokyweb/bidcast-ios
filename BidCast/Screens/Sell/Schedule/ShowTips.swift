@@ -12,6 +12,9 @@ import SVProgressHUD
 struct ShowTips: View {
     
     @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var networkMonitor: NetworkMonitor
+    @State var showhud: Bool = false
+    @State var hudMsg: String = ""
     @State private var currentIndex = 0
     @State var tips =  [LessonModel]()
     @State var isLoading  = false
@@ -72,6 +75,11 @@ struct ShowTips: View {
         .onAppear {
             
             Task{
+               guard Reachability.isConnectedToNetwork() else {
+                    hudMsg = "No Internet Connection"
+                    showhud = true
+                    return
+                }
                 SVProgressHUD.show()
                 await viewModel.getShowTips()
                 await SVProgressHUD.dismiss()

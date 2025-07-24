@@ -12,6 +12,7 @@ import SVProgressHUD
 struct ProductDetailSheet: View {
     @Environment(\.presentationMode) var presentationMode
     @StateObject var viewModel = ProductDetailsViewModel()
+    @EnvironmentObject var networkMonitor: NetworkMonitor
     @State private var isLoading = false
     @State private var showError = false
     @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
@@ -217,6 +218,11 @@ struct ProductDetailSheet: View {
                 offerOptions: offerArr,onSendOffer : { text in
                     var text = "\(text ?? 0.0)"
                     Task{
+                       guard Reachability.isConnectedToNetwork() else {
+                            hudMsg = "No Internet Connection"
+                            showhud = true
+                            return
+                        }
                         SVProgressHUD.show()
                         let param = MakeOfferRequest(amount: text, product_id: productID)
                         await viewModel.MakeOffer(param: param)
@@ -266,6 +272,11 @@ struct ProductDetailSheet: View {
                 return
             }
             Task{
+               guard Reachability.isConnectedToNetwork() else {
+                    hudMsg = "No Internet Connection"
+                    showhud = true
+                    return
+                }
                 SVProgressHUD.show()
                 let param = FetchProductRequest(product_id: newValue)
                 await viewModel.getProductDetails(parameters: param)

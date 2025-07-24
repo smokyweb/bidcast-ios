@@ -12,6 +12,7 @@ import SVProgressHUD
 
 struct SendGiftScreen: View {
     @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var networkMonitor: NetworkMonitor
     @StateObject var viewModel = BuyNowViewModel()
     @State private var isLoading = false
     @State private var showError = false
@@ -141,6 +142,11 @@ struct SendGiftScreen: View {
     //MARK: BuyProductRequest.
     func BuyProductRequest() {
         Task {
+           guard Reachability.isConnectedToNetwork() else {
+                hudMsg = "No Internet Connection"
+                showhud = true
+                return
+            }
             SVProgressHUD.show()
             let param = ProductOrderRequest(
                 shipping_id: shippingID,

@@ -13,6 +13,9 @@ import SVProgressHUD
 struct NewsScreen: View {
     
     @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var networkMonitor: NetworkMonitor
+  @State var showhud: Bool = false
+     @State var hudMsg: String = ""
     @State var isLoading: Bool = false
     @State var showError: Bool = false
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
@@ -58,6 +61,11 @@ struct NewsScreen: View {
                 .refreshable {
                     generateFeedback(type: .medium)
                     Task{
+                       guard Reachability.isConnectedToNetwork() else {
+                            hudMsg = "No Internet Connection"
+                            showhud = true
+                            return
+                        }
                         SVProgressHUD.show()
                         newsContent.removeAll()
                         await viewModel.getNewsContent()

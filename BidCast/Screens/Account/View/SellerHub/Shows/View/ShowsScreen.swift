@@ -30,6 +30,7 @@ struct ShowsScreen: View {
     @State var isLive = false
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject private var appRootManager: AppRootManager
+    @EnvironmentObject var networkMonitor: NetworkMonitor
     
     @State var navigateToReherseal = false
     
@@ -66,6 +67,11 @@ struct ShowsScreen: View {
                     Task{
                         SVProgressHUD.show()
                         if segment == .pastShows{
+                           guard Reachability.isConnectedToNetwork() else {
+                                hudMsg = "No Internet Connection"
+                                showhud = true
+                                return
+                            }
                             showsData.removeAll()
                             await viewModel.getLiveSHows(param: GetLiveShowsRequest(type: "past"))
                         }else{
@@ -124,8 +130,18 @@ struct ShowsScreen: View {
             Task{
                 SVProgressHUD.show()
                 if segment == .pastShows{
+                   guard Reachability.isConnectedToNetwork() else {
+                        hudMsg = "No Internet Connection"
+                        showhud = true
+                        return
+                    }
                     await viewModel.getLiveSHows(param: GetLiveShowsRequest(type: "past"))
                 }else{
+                   guard Reachability.isConnectedToNetwork() else {
+                        hudMsg = "No Internet Connection"
+                        showhud = true
+                        return
+                    }
                     await viewModel.getLiveSHows(param: GetLiveShowsRequest(type: "upcoming"))
                 }
                 await SVProgressHUD.dismiss()

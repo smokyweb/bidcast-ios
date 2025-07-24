@@ -11,7 +11,7 @@ import SVProgressHUD
 
 struct ListProductScreen: View {
     @Environment(\.presentationMode) var presentationMode
-    
+    @EnvironmentObject var networkMonitor: NetworkMonitor
     @State var categorySelect : String = ""
     @State var categoyList = [String]()
     @State var productTitle = ""
@@ -256,6 +256,11 @@ struct ListProductScreen: View {
                         }
                         request.status = "draft"
                         Task{
+                           guard Reachability.isConnectedToNetwork() else {
+                                hudMsg = "No Internet Connection"
+                                showhud = true
+                                return
+                            }
                             SVProgressHUD.show()
                             await viewModel.storeProduct(param: request, images: imageUrls, key: "images[]")
                             await SVProgressHUD.dismiss()
@@ -312,6 +317,11 @@ struct ListProductScreen: View {
                         }
                         request.status = "active"
                         Task{
+                           guard Reachability.isConnectedToNetwork() else {
+                                hudMsg = "No Internet Connection"
+                                showhud = true
+                                return
+                            }
                             SVProgressHUD.show()
                             await viewModel.storeProduct(param: request, images: imageUrls, key: "images[]")
                             await SVProgressHUD.dismiss()
@@ -357,6 +367,11 @@ struct ListProductScreen: View {
         .background(.bg.opacity(0.5))
         .onFirstAppear(perform: {
             Task{
+               guard Reachability.isConnectedToNetwork() else {
+                    hudMsg = "No Internet Connection"
+                    showhud = true
+                    return
+                }
                 SVProgressHUD.show()
                 await viewModel.getCategoryList()
                 

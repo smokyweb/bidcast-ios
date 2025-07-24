@@ -20,6 +20,7 @@ struct AddressesScreen: View {
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+    @EnvironmentObject var networkMonitor: NetworkMonitor
     @State var navigateToCreate = false
     @State var isDefault = false
     var viewModel = AddressViewModel()
@@ -47,11 +48,21 @@ struct AddressesScreen: View {
                         AddressListCell(address: address,onTapDefault: {
 //                            print("indexx \(index)")
                             Task{
+                               guard Reachability.isConnectedToNetwork() else {
+                                    hudMsg = "No Internet Connection"
+                                    showhud = true
+                                    return
+                                }
                                 SVProgressHUD.show()
                                 await self.viewModel.setDefaultAddress(parameters: AddressDefaultParam(address_id: "\(address.id ?? 0)"))
                             }
                         },onTapDelete: {
                             Task{
+                               guard Reachability.isConnectedToNetwork() else {
+                                    hudMsg = "No Internet Connection"
+                                    showhud = true
+                                    return
+                                }
                                 SVProgressHUD.show()
                                 await self.viewModel.deleteAddress(parameters: AddressDefaultParam(address_id:"\(address.id ?? 0)"))
                             }
@@ -84,6 +95,11 @@ struct AddressesScreen: View {
         }
         .onAppear{
             Task{
+               guard Reachability.isConnectedToNetwork() else {
+                    hudMsg = "No Internet Connection"
+                    showhud = true
+                    return
+                }
                 SVProgressHUD.show()
                 await self.viewModel.getAddresses()
                 await SVProgressHUD.dismiss()
@@ -137,6 +153,11 @@ struct AddressesScreen: View {
     let response = viewModel.addressResponse
             if response.status == "success" {
                 Task{
+                   guard Reachability.isConnectedToNetwork() else {
+                        hudMsg = "No Internet Connection"
+                        showhud = true
+                        return
+                    }
                     SVProgressHUD.show()
                    await self.viewModel.getAddresses()
                 }

@@ -72,6 +72,11 @@ struct VerifyOtpScreen: View {
                                 forgetOtpRequest.email = mail
                                 
                                 Task {
+                                   guard Reachability.isConnectedToNetwork() else {
+                                        hudMsg = "No Internet Connection"
+                                        showhud = true
+                                        return
+                                    }
                                     SVProgressHUD.show()
                                     self.viewModel.errorMessage?.removeAll()
                                     await forgetOtpModel.forgotEmail(parameters: forgetOtpRequest)

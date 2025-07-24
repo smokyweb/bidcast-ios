@@ -12,10 +12,13 @@ struct HomeViewScreen: View {
     
     @State private var selectedButton: HomeButton = .For_you
     @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var networkMonitor: NetworkMonitor
+
+    @State var showhud: Bool = false
+    @State var hudMsg: String = ""
     @State var navigateToLiveStream = false
     @State var index = 0
     let images = Array(1...10)
-    
     let columns = Array(repeating: GridItem(.flexible(), spacing: 12), count: 2)
     @Binding var showCategory : String
     @State var viewModel = HomeViewModel()
@@ -70,6 +73,12 @@ struct HomeViewScreen: View {
                     ) { selected in
                         print("Tapped:", selected)
                         Task{
+                           guard Reachability.isConnectedToNetwork() else {
+                                hudMsg = "No Internet Connection"
+                                showhud = true
+                                return
+                            }
+
                             SVProgressHUD.show()
                             liveShowsData.removeAll()
                             var selection = ""
@@ -146,6 +155,11 @@ struct HomeViewScreen: View {
             }
             Task{
                 liveShowsData.removeAll()
+               guard Reachability.isConnectedToNetwork() else {
+                    hudMsg = "No Internet Connection"
+                    showhud = true
+                    return
+                }
                 SVProgressHUD.show()
                 await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: "live",category: showCategory))
                 await SVProgressHUD.dismiss()
@@ -168,6 +182,12 @@ struct HomeViewScreen: View {
             FirebaseManager.shared.observeNewLiveSessionNodes {
                    print("🔥 New session detected, refreshing the list babumoshai!")
                 Task{
+                   guard Reachability.isConnectedToNetwork() else {
+                        hudMsg = "No Internet Connection"
+                        showhud = true
+                        return
+                    }
+                    
                     liveShowsData.removeAll()
                     SVProgressHUD.show()
                     await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: "live",category: showCategory))

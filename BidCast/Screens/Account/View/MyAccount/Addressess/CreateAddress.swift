@@ -14,7 +14,7 @@ import SVProgressHUD
 struct CreateAddress: View {
 
     @Environment(\.presentationMode) var presentationMode
-    
+    @EnvironmentObject var networkMonitor: NetworkMonitor
     @State var addressType : [String] = ["Home","Office","Other"]
     @State var showError: Bool = false
     @State var isLoading: Bool = false
@@ -160,6 +160,11 @@ struct CreateAddress: View {
                         }
                         let request = self.request
                         Task {
+                           guard Reachability.isConnectedToNetwork() else {
+                                hudMsg = "No Internet Connection"
+                                showhud = true
+                                return
+                            }
                             SVProgressHUD.show()
                             await viewModel.storeAddress(parameters: request)
                         }
@@ -177,6 +182,11 @@ struct CreateAddress: View {
             }
         }
         .onReceive( viewModel.$addressResponse) { response in
+           guard Reachability.isConnectedToNetwork() else {
+                hudMsg = "No Internet Connection"
+                showhud = true
+                return
+            }
             SVProgressHUD.dismiss()
             success()
         }

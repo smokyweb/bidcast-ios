@@ -11,6 +11,7 @@ import SVProgressHUD
 struct ExploreViewScreen: View {
     
     @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var networkMonitor: NetworkMonitor
     
     let count = Array(0...5)
     
@@ -24,6 +25,9 @@ struct ExploreViewScreen: View {
     var viewModel = SelectCategoryViewModel()
     @State var category : String = ""
     @State var navigateToCategoryDetailScreen = false
+    @State var showhud: Bool = false
+    @State var hudMsg: String = ""
+
     
     @State var categoryList = [CategoryDataModel]()
     @State var isLoading = false
@@ -75,6 +79,11 @@ struct ExploreViewScreen: View {
         .background(.bg.opacity(0.4))
         .onAppear {
             Task {
+               guard Reachability.isConnectedToNetwork() else {
+                    hudMsg = "No Internet Connection"
+                    showhud = true
+                    return
+                }
                 SVProgressHUD.show()
                 await self.viewModel.getCategoryList()
                 await SVProgressHUD.dismiss()

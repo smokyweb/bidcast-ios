@@ -15,6 +15,7 @@ struct NotifyMeBottomSheet: View {
     // MARK: – Environment & VM
     @Environment(\.presentationMode) private var presentationMode
     @StateObject private var viewModel = NotifyMeViewModel()
+    @EnvironmentObject var networkMonitor: NetworkMonitor
     
     // MARK: – UI State
     @State private var isLoading    = false
@@ -143,7 +144,11 @@ struct NotifyMeBottomSheet: View {
     // MARK: – Actions
     private func notifyUser() {
         Task{
-            
+           guard Reachability.isConnectedToNetwork() else {
+                hudMsg = "No Internet Connection"
+                showHUD = true
+                return
+            }
             let param = NotifyLiveUserRequest(live_user_id: userId)
             SVProgressHUD.show()
             await viewModel.notifyLiveUser(parameter: param)
@@ -152,9 +157,6 @@ struct NotifyMeBottomSheet: View {
         }
     }
 
-    
-   
-    
     private func handleSuccess() {
         SVProgressHUD.dismiss()
         let response = viewModel.notifyLiveUserResponseDict

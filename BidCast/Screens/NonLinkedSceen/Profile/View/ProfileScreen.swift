@@ -39,6 +39,7 @@ struct ProfileScreen: View {
     @State var productArr = [ProductListingDataModel]()
     @State var scheduleShowArr = [GetMyScheduleShowModel]()
     @State var totalRatingArr = [RatingDetail]()
+    @EnvironmentObject var networkMonitor: NetworkMonitor
     @State var isForFollow = false
     @State var showToast = false
     @State var toastMessage = ""
@@ -76,6 +77,11 @@ struct ProfileScreen: View {
                         isForFollow = true
                         Task{
                             SVProgressHUD.show()
+                           guard Reachability.isConnectedToNetwork() else {
+                                hudMsg = "No Internet Connection"
+                                showhud = true
+                                return
+                            }
                             await self.viewModel.followUnfollow(parameters: FollowRequest(following_id: id))
                             await viewModel.getProfile(param: ProfileParamRequest(id: id))
                             await SVProgressHUD.dismiss()
@@ -94,6 +100,11 @@ struct ProfileScreen: View {
                             case "Shop":
                                 print("")
                                 Task{
+                                   guard Reachability.isConnectedToNetwork() else {
+                                        hudMsg = "No Internet Connection"
+                                        showhud = true
+                                        return
+                                    }
                                     SVProgressHUD.show()
                                     await self.viewModel.productDetails(parameters: UserProductRequest(user_id: Int(id) ?? 0,page : currentPage))
                                     await SVProgressHUD.dismiss()
@@ -101,11 +112,21 @@ struct ProfileScreen: View {
                                 }
                                 //                                await viewModel.fetchShopItems()
                             case "Shows":
+                               guard Reachability.isConnectedToNetwork() else {
+                                    hudMsg = "No Internet Connection"
+                                    showhud = true
+                                    return
+                                }
                                 SVProgressHUD.show()
                                 await self.viewModel.getMyScheduleShow(parameters: GetMyScheduleShowRequest(type: "upcoming", user_id: Int(id),page : currentPage))
                                 await SVProgressHUD.dismiss()
                                 scheduleShowSuccess()
                             case "Reviews":
+                               guard Reachability.isConnectedToNetwork() else {
+                                    hudMsg = "No Internet Connection"
+                                    showhud = true
+                                    return
+                                }
                                 SVProgressHUD.show()
                                 await self.viewModel.getTotalRating(parameters: GetTotalRatingRequest(seller_id: 7))
                                 await SVProgressHUD.dismiss()
@@ -199,6 +220,11 @@ struct ProfileScreen: View {
             let param = ProfileParamRequest(id: id)
             print(param)
             Task{
+               guard Reachability.isConnectedToNetwork() else {
+                    hudMsg = "No Internet Connection"
+                    showhud = true
+                    return
+                }
                 SVProgressHUD.show()
                 await self.viewModel.getProfile(param:param)
                 await SVProgressHUD.dismiss()
@@ -218,6 +244,11 @@ struct ProfileScreen: View {
             profileId = profileData.id ?? 0
             if !isForFollow{
                 Task{
+                   guard Reachability.isConnectedToNetwork() else {
+                        hudMsg = "No Internet Connection"
+                        showhud = true
+                        return
+                    }
                     SVProgressHUD.show()
                     await self.viewModel.productDetails(parameters: UserProductRequest(user_id: Int(id) ?? 0, page: currentPage))
                     await SVProgressHUD.dismiss()

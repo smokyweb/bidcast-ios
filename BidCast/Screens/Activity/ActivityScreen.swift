@@ -16,6 +16,7 @@ struct ActivityScreen: View {
     @State private var showhud: Bool = false
     @State private var hudMsg: String = ""
     @StateObject var viewModel = OffersViewModel()
+    @EnvironmentObject var networkMonitor: NetworkMonitor
     @State var offerList: [OfferListModel] = []
     @State var currentPage = 1
     @State var messageList = []
@@ -193,6 +194,11 @@ struct ActivityScreen: View {
         case .message:
             break
         case .bid:
+           guard Reachability.isConnectedToNetwork() else {
+                hudMsg = "No Internet Connection"
+                showhud = true
+                return
+            }
             SVProgressHUD.show()
             offerList.removeAll()
             let request = PageRequest(page: currentPage)
@@ -202,6 +208,11 @@ struct ActivityScreen: View {
                 offerList = viewModel.offerListResponse.data ?? []
             }
         case .offer:
+           guard Reachability.isConnectedToNetwork() else {
+                hudMsg = "No Internet Connection"
+                showhud = true
+                return
+            }
             SVProgressHUD.show()
             offerList.removeAll()
             let request = PageRequest(page: currentPage)
@@ -211,6 +222,11 @@ struct ActivityScreen: View {
                 offerList = viewModel.offerListResponse.data ?? []
             }
         case .purchases:
+           guard Reachability.isConnectedToNetwork() else {
+                hudMsg = "No Internet Connection"
+                showhud = true
+                return
+            }
             SVProgressHUD.show()
             offerList.removeAll()
             let request = ItemListRequest(type: "purchased", page: currentPage)
@@ -220,6 +236,11 @@ struct ActivityScreen: View {
                 offerList = viewModel.itemListResponse.data ?? []
             }
         case .savedItems:
+           guard Reachability.isConnectedToNetwork() else {
+                hudMsg = "No Internet Connection"
+                showhud = true
+                return
+            }
             SVProgressHUD.show()
             offerList.removeAll()
             let request = ItemListRequest(type: "saved", page: currentPage)
@@ -302,7 +323,11 @@ struct ActivityScreen: View {
         
         Task {
             do {
-                
+               guard Reachability.isConnectedToNetwork() else {
+                    hudMsg = "No Internet Connection"
+                    showhud = true
+                    return
+                }
                 await viewModel.updateOfferStatus(parameters: param)
                 let param = PageRequest(page: currentPage)
                 await viewModel.getOfferList(param: param)

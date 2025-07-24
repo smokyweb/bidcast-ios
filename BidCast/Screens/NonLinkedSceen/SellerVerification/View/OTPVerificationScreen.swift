@@ -12,6 +12,7 @@ import SVProgressHUD
 struct OTPVerificationScreen: View {
     @Environment(\.presentationMode) var presentationMode
     @ObservedObject var viewModel: SellerVerificationViewModel
+    @EnvironmentObject var networkMonitor: NetworkMonitor
     var onSuccess: () -> Void
     
     @State private var phoneNumber: String = ""
@@ -119,6 +120,11 @@ struct OTPVerificationScreen: View {
     
     // MARK: - sendOTP
     private func sendOTP() async {
+       guard Reachability.isConnectedToNetwork() else {
+            hudMsg = "No Internet Connection"
+            showhud = true
+            return
+        }
         SVProgressHUD.show()
         let req = StorePhoneNumberRequest(phone_number: phoneNumber)
         await viewModel.storePhoneNumber(parameters: req)

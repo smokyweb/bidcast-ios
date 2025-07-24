@@ -15,6 +15,7 @@ struct ShowTitleTips: View {
     
     @Environment(\.presentationMode) var presentationMode
     @Binding var request : StoreScheduleShowRequest
+    @EnvironmentObject var networkMonitor: NetworkMonitor
     @State private var currentIndex = 0
     @State var tip =  TitleTipsModel()
     @State var isLoading  = false
@@ -131,6 +132,11 @@ struct ShowTitleTips: View {
         .toolbar(.hidden,for: .tabBar)
         .onAppear {
             Task{
+               guard Reachability.isConnectedToNetwork() else {
+                    hudMsg = "No Internet Connection"
+                    showhud = true
+                    return
+                }
                 SVProgressHUD.show()
                 await viewModel.getTitleTips(param: TipParam(type: "title"))
                 await SVProgressHUD.dismiss()

@@ -17,6 +17,7 @@ struct FAQScreen: View {
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+    @EnvironmentObject var networkMonitor: NetworkMonitor
     @State private var expandedItemID: Int? = nil
     @State private var faqList: [FAQDataModel] = [] // ✅ Local FAQ list
 
@@ -69,6 +70,11 @@ struct FAQScreen: View {
         .background(Color.pearl)
         .onAppear {
             Task{
+               guard Reachability.isConnectedToNetwork() else {
+                    hudMsg = "No Internet Connection"
+                    showhud = true
+                    return
+                }
                 SVProgressHUD.show()
                 await self.viewModel.getFAQ()
                 await SVProgressHUD.dismiss()

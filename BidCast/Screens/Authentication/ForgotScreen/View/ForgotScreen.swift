@@ -78,6 +78,11 @@ struct ForgotScreen: View {
                                 return
                             }
                             Task{
+                               guard Reachability.isConnectedToNetwork() else {
+                                    hudMsg = "No Internet Connection"
+                                    showhud = true
+                                    return
+                                }
                                 SVProgressHUD.show()
                                 self.viewModel.errorMessage?.removeAll()
                                 await  self.viewModel.forgotEmail(parameters: self.request)

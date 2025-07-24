@@ -30,6 +30,9 @@ struct SellingTips: View {
     @State  var showNextButton = false
     
     @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var networkMonitor: NetworkMonitor
+    @State var showhud: Bool = false
+    @State var hudMsg: String = ""
     
     var body: some View {
         VStack(spacing:18){
@@ -123,6 +126,11 @@ struct SellingTips: View {
             .background(.bg.opacity(0.4))
             .onAppear {
                 Task{
+                   guard Reachability.isConnectedToNetwork() else {
+                        hudMsg = "No Internet Connection"
+                        showhud = true
+                        return
+                    }
                     SVProgressHUD.show()
                     await viewModel.getHowToSell()
                     await SVProgressHUD.dismiss()

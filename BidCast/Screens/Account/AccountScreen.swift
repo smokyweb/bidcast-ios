@@ -16,6 +16,9 @@ struct AccountScreen: View {
     @State var isLoading: Bool = false
     @State var showAlert: Bool = false
     @State var alertType: AlertType = .error(title: "", message: "", leftBtnText: "", rightBtnText: "")
+    @EnvironmentObject var networkMonitor: NetworkMonitor
+    @State var showhud: Bool = false
+    @State var hudMsg: String = ""
     @State var segment : AccountSegment = .sellerHub
     @State var selectedSegmentSourceType = 0
     @State var isTappedSwitch : Bool = false
@@ -266,6 +269,11 @@ struct AccountScreen: View {
             LogOutSheet(onLogoutClick: {
                 withAnimation(.snappy) { userLogOut = false }
                 Task{
+                   guard Reachability.isConnectedToNetwork() else {
+                        hudMsg = "No Internet Connection"
+                        showhud = true
+                        return
+                    }
                     SVProgressHUD.show()
                     await viewModal.logOut()
                     SVProgressHUD.show()

@@ -52,6 +52,9 @@ struct RehearsalScreen: View {
     @State var viewwerCount = 0
     
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "Stream Ended", message: "The live stream has ended.", primaryBtnText: "", secondaryBtnText: "")
+    @EnvironmentObject var networkMonitor: NetworkMonitor
+    @State var showhud: Bool = false
+    @State var hudMsg: String = ""
     
     var sheetHeight: CGFloat {
         switch currentBottomSheet {
@@ -377,6 +380,11 @@ struct RehearsalScreen: View {
                         Button(action: {
                             if UserDefaults.sellerVerafied == "verified"{
                                 Task {
+                                   guard Reachability.isConnectedToNetwork() else {
+                                        hudMsg = "No Internet Connection"
+                                        showhud = true
+                                        return
+                                    }
                                     SVProgressHUD.show()
                                     let is_Live = "true"
                                     await viewModel.UpdateLiveShows(param: LiveShowUpdateRequest(schedule_show_id: showUd, is_live: is_Live))

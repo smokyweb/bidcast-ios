@@ -29,6 +29,7 @@ struct SelectCategoryScreen: View {
     @Binding var backToPrepare : Bool
     var viewModel = SelectCategoryViewModel()
     var delegate: ShowStepDelegate?
+    @EnvironmentObject var networkMonitor: NetworkMonitor
     
     var body: some View {
         VStack {
@@ -124,6 +125,11 @@ struct SelectCategoryScreen: View {
         .onAppear {
             
             Task{
+               guard Reachability.isConnectedToNetwork() else {
+                    hudMsg = "No Internet Connection"
+                    showhud = true
+                    return
+                }
                 SVProgressHUD.show()
                 await self.viewModel.getCategoryList()
                 await SVProgressHUD.dismiss()
@@ -157,6 +163,11 @@ struct SelectCategoryScreen: View {
             self.categoryList = response.data ?? [CategoryDataModel]()
             self.categoryNames = (response.data ?? []).map { $0.name ?? "No Category" }
             Task{
+               guard Reachability.isConnectedToNetwork() else {
+                    hudMsg = "No Internet Connection"
+                    showhud = true
+                    return
+                }
                 SVProgressHUD.show()
                 await  self.viewModel.getAuctionList()
                 await SVProgressHUD.dismiss()
@@ -189,9 +200,6 @@ struct SelectCategoryScreen: View {
             )
             showError = true
         }
-        
-        
-        
     }
     
 }

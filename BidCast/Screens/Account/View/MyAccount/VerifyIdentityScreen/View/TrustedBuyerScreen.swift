@@ -17,6 +17,7 @@ struct TrustedBuyerScreen: View {
     @State private var isLoading = false
     @State private var showError = false
     @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+    @EnvironmentObject var networkMonitor: NetworkMonitor
     @State private var showhud = false
     @State private var hudMsg = ""
 
@@ -257,7 +258,11 @@ struct TrustedBuyerScreen: View {
 //
 //                let imageURL = compressAndSaveImage(data: data) ?? saveImageToTemporaryDirectory(data: data)
 //                guard let path = imageURL?.path else { return }
-
+           guard Reachability.isConnectedToNetwork() else {
+                hudMsg = "No Internet Connection"
+                showhud = true
+                return
+            }
                 SVProgressHUD.show()
             await viewModel.addTrustedBuyer(images: [imageURL], key: "image")
                 await SVProgressHUD.dismiss()

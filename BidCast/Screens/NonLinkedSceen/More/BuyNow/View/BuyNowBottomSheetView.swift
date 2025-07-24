@@ -18,6 +18,7 @@ struct BuyNowBottomSheetView: View {
     @State var orderDetails : BuyNowModel?
     @State private var isLoading = false
     @State private var showError = false
+    @EnvironmentObject var networkMonitor: NetworkMonitor
     @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @State private var showhud = false
     @State private var hudMsg = ""
@@ -225,6 +226,11 @@ struct BuyNowBottomSheetView: View {
     //MARK: fetchOrderDetail.
     func fetchOrderDetail(){
         Task {
+           guard Reachability.isConnectedToNetwork() else {
+                hudMsg = "No Internet Connection"
+                showhud = true
+                return
+            }
             SVProgressHUD.show()
             let param = ProductOrderDetailRequest(order_id: orderID)
             await viewModel.getMyOrderList(parameters: param)
@@ -236,6 +242,11 @@ struct BuyNowBottomSheetView: View {
     //MARK: getCard.
     func getCard(){
         Task {
+           guard Reachability.isConnectedToNetwork() else {
+                hudMsg = "No Internet Connection"
+                showhud = true
+                return
+            }
             SVProgressHUD.show()
             await self.cardViewModel.getCard()
             await SVProgressHUD.dismiss()
@@ -265,15 +276,19 @@ struct BuyNowBottomSheetView: View {
     //MARK: BuyProductRequest.
     func BuyProductRequest() {
         Task {
-            SVProgressHUD.show()
-            
+          
             guard cardArr.indices.contains(selectedCardIndex),
                   let selectedCardID = cardArr[selectedCardIndex].customerPaymentProfileId else {
                 hudMsg = "No valid card selected"
                 showhud = true
                 return
             }
-
+           guard Reachability.isConnectedToNetwork() else {
+                hudMsg = "No Internet Connection"
+                showhud = true
+                return
+            }
+            SVProgressHUD.show()
             var param = ProductOrderRequest(
                 shipping_id: shippingID,
                 product_id: productID,

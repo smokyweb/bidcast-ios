@@ -19,6 +19,7 @@ struct WalletScreen: View {
     @State var currentPage = 1
     @State var hudMsg: String = ""
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+    @EnvironmentObject var networkMonitor: NetworkMonitor
     @State var data: WalletData?
     @State var dataTransaction = [TransactionModel]()
     @State var dataPayOutHistory = PayOutHistoryModel()
@@ -82,6 +83,11 @@ struct WalletScreen: View {
         }
         .onAppear{
             Task{
+               guard Reachability.isConnectedToNetwork() else {
+                    hudMsg = "No Internet Connection"
+                    showhud = true
+                    return
+                }
                 SVProgressHUD.show()
                 await self.viewModel.getWalletInfo()
                 walletInfosuccess()
@@ -133,6 +139,11 @@ extension WalletScreen{
     // MARK: - Fetch Inventory List
     func fetchTransaction(page: Int) {
         Task{
+           guard Reachability.isConnectedToNetwork() else {
+                hudMsg = "No Internet Connection"
+                showhud = true
+                return
+            }
             SVProgressHUD.show()
             await viewModel.getTransaction(param: TransactionRequest(page: currentPage))
             await SVProgressHUD.dismiss()

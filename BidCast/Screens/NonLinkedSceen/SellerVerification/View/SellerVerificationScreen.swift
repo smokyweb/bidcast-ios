@@ -19,6 +19,7 @@ struct SellerVerificationScreen: View {
     
     @Environment(\.presentationMode) var presentationMode
     @StateObject var viewModel = SellerVerificationViewModel()
+    @EnvironmentObject var networkMonitor: NetworkMonitor
     @State private var navigateToOTP = false
     @State private var navigateToAddCard = false
     @State private var showhud = false
@@ -235,6 +236,11 @@ struct SellerVerificationScreen: View {
                 hudMsg = "Missing required data"
                 showhud = true
             }
+            return
+        }
+       guard Reachability.isConnectedToNetwork() else {
+            hudMsg = "No Internet Connection"
+            showhud = true
             return
         }
         SVProgressHUD.show()

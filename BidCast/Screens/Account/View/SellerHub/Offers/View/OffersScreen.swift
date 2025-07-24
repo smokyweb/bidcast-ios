@@ -19,6 +19,7 @@ struct OffersScreen: View {
     @State private var offerList: [OfferListModel] = []
     @State var status : String = ""
     @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+    @EnvironmentObject var networkMonitor: NetworkMonitor
     @State var currentPage = 1
     
     @Environment(\.presentationMode) var presentationMode
@@ -83,6 +84,11 @@ struct OffersScreen: View {
         }
         .onAppear{
             Task{
+               guard Reachability.isConnectedToNetwork() else {
+                    hudMsg = "No Internet Connection"
+                    showhud = true
+                    return
+                }
                 SVProgressHUD.show()
                 let param = PageRequest(page: currentPage)
                 await viewModel.getOfferList(param: param)
@@ -113,11 +119,15 @@ struct OffersScreen: View {
     }
     func handleOfferAction(offer: OfferListModel, newStatus: String) {
         let param = OfferUpdateStatusRequest(offer_id: offer.id ?? 0, status: newStatus, page: currentPage)
-        SVProgressHUD.show()
-        
         Task {
             do {
                 // Call the async updateOfferStatus
+               guard Reachability.isConnectedToNetwork() else {
+                    hudMsg = "No Internet Connection"
+                    showhud = true
+                    return
+                }
+                SVProgressHUD.show()
                 await viewModel.updateOfferStatus(parameters: param)
                 let param = PageRequest(page: currentPage)
                 await viewModel.getOfferList(param: param)
@@ -157,6 +167,11 @@ struct OffersScreen: View {
     
     
     func getOfferSuccess() {
+       guard Reachability.isConnectedToNetwork() else {
+            hudMsg = "No Internet Connection"
+            showhud = true
+            return
+        }
         SVProgressHUD.dismiss()
         let response = viewModel.offerListResponse
         if response.status == "success" {

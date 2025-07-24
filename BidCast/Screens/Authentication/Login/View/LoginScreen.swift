@@ -21,7 +21,6 @@ struct LoginScreen: View {
     @Environment(\.managedObjectContext) var viewContext
     @ObservedObject var languageManager = LanguageManager.shared
     @EnvironmentObject var networkMonitor: NetworkMonitor
-
     
     @State var isRemeber: Bool = false
     @State var showError: Bool = false
@@ -129,6 +128,11 @@ struct LoginScreen: View {
                         }
                         print("Parameters used for login:- \(self.request)")
                         Task{
+                           guard Reachability.isConnectedToNetwork() else {
+                                hudMsg = "No Internet Connection"
+                                showhud = true
+                                return
+                            }
                             SVProgressHUD.show()
                             await self.viewModel.logIn(parameters: self.request)
                             await SVProgressHUD.dismiss()

@@ -26,6 +26,9 @@ struct LessonScreen: View {
     @State private var player: AVPlayer? = nil
     @State var navigateToSell = false
     @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var networkMonitor: NetworkMonitor
+    @State var showhud: Bool = false
+    @State var hudMsg: String = ""
     
     var body: some View {
         VStack(spacing: 0) {
@@ -168,6 +171,11 @@ struct LessonScreen: View {
             .onAppear {
                
                 Task{
+                   guard Reachability.isConnectedToNetwork() else {
+                        hudMsg = "No Internet Connection"
+                        showhud = true
+                        return
+                    }
                     SVProgressHUD.show()
                     await viewModel.getLesson()
                     await SVProgressHUD.dismiss()

@@ -13,6 +13,7 @@ struct OrderStatusScreen: View {
     @Environment(\.presentationMode) var presentationMode
     @StateObject var viewModel = OrderStatusViewModel()
     @State private var productDetail : ProductPurchaseModel?
+    @EnvironmentObject var networkMonitor: NetworkMonitor
     @State private var recieptUrl : String?
     @State private var isLoading = false
     @State private var showError = false
@@ -139,6 +140,11 @@ struct OrderStatusScreen: View {
     
     func fetchPurchaseDetail(){
         Task {
+           guard Reachability.isConnectedToNetwork() else {
+                hudMsg = "No Internet Connection"
+                showhud = true
+                return
+            }
             SVProgressHUD.show()
             let param = ProductPurchaseDetailRequest(shipping_id: shippingID,product_id: productID)
             await viewModel.getPurchaseDetail(parameters: param)
@@ -149,6 +155,11 @@ struct OrderStatusScreen: View {
     
     func fetchReciept(){
         Task {
+           guard Reachability.isConnectedToNetwork() else {
+                hudMsg = "No Internet Connection"
+                showhud = true
+                return
+            }
             SVProgressHUD.show()
             let param = OrderRecieptRequest(order_id: orderID)
             await viewModel.getReceipt(parameters: param)
@@ -158,6 +169,11 @@ struct OrderStatusScreen: View {
     }
     
     func getPurchaseSuccess() {
+       guard Reachability.isConnectedToNetwork() else {
+            hudMsg = "No Internet Connection"
+            showhud = true
+            return
+        }
         SVProgressHUD.dismiss()
         let response = viewModel.purchaseDetailResponse
         if response.status == "success" {
@@ -168,6 +184,11 @@ struct OrderStatusScreen: View {
     }
     
     func getRecieptSuccess() {
+       guard Reachability.isConnectedToNetwork() else {
+            hudMsg = "No Internet Connection"
+            showhud = true
+            return
+        }
         SVProgressHUD.dismiss()
         let response = viewModel.recieptResponse
         if response.status == "success" {

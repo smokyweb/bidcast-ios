@@ -12,7 +12,9 @@ import SVProgressHUD
 struct PrivacyPolicyScreen: View {
     
     @Environment(\.presentationMode) var presentationMode
-    
+    @EnvironmentObject var networkMonitor: NetworkMonitor
+    @State var showhud: Bool = false
+     @State var hudMsg: String = ""
     @State var viewModal = MenuOptionsViewModel()
     @State private var privacyPolicy: String = ""
     @State private var isLoading: Bool = false
@@ -57,6 +59,11 @@ struct PrivacyPolicyScreen: View {
 //                Spacer()
             }
             .refreshable {
+               guard Reachability.isConnectedToNetwork() else {
+                    hudMsg = "No Internet Connection"
+                    showhud = true
+                    return
+                }
                 SVProgressHUD.show()
                 await fetchPrivacyPolicy()
                 let response = viewModal.privacyResponse
@@ -72,6 +79,11 @@ struct PrivacyPolicyScreen: View {
         }
         
         .task {
+           guard Reachability.isConnectedToNetwork() else {
+                hudMsg = "No Internet Connection"
+                showhud = true
+                return
+            }
             SVProgressHUD.show()
             await fetchPrivacyPolicy()
             let response = viewModal.privacyResponse
@@ -103,6 +115,11 @@ struct PrivacyPolicyScreen: View {
     
     @MainActor
     private func fetchPrivacyPolicy() async {
+       guard Reachability.isConnectedToNetwork() else {
+            hudMsg = "No Internet Connection"
+            showhud = true
+            return
+        }
         SVProgressHUD.show()
         await viewModal.getPrivacyDetails()
     }

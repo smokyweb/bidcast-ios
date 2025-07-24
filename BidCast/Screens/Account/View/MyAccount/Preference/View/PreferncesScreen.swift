@@ -17,6 +17,7 @@ struct PreferncesScreen: View {
     @State private var isLoading = false
     @State private var showError = false
     @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+    @EnvironmentObject var networkMonitor: NetworkMonitor
     @State private var showhud = false
     @State private var hudMsg = ""
     
@@ -107,6 +108,11 @@ struct PreferncesScreen: View {
                             haptic_feedback: hapticFeedback ? 1 : 0
                         )
                         Task{
+                           guard Reachability.isConnectedToNetwork() else {
+                                hudMsg = "No Internet Connection"
+                                showhud = true
+                                return
+                            }
                             SVProgressHUD.show()
                             await viewModel.updatePreference(parameters: request)
                             await SVProgressHUD.dismiss()
@@ -130,6 +136,11 @@ struct PreferncesScreen: View {
         }
         .onFirstAppear {
             Task{
+               guard Reachability.isConnectedToNetwork() else {
+                    hudMsg = "No Internet Connection"
+                    showhud = true
+                    return
+                }
                 SVProgressHUD.show()
                 await viewModel.getPreferenceContent()
                 await SVProgressHUD.dismiss()

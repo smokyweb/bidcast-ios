@@ -18,6 +18,7 @@ struct MyOrdersScreen: View {
     @State private var showError = false
     @State private var selectedOrderType: MyOrderValue? = .newOrders
     @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+    @EnvironmentObject var networkMonitor: NetworkMonitor
     @State private var showhud = false
     @State private var hudMsg = ""
     @State var newOrder = ""
@@ -117,6 +118,11 @@ extension MyOrdersScreen{
     //MARK: fetchOrders.
     func fetchOrders(for type: MyOrderValue) {
         Task {
+           guard Reachability.isConnectedToNetwork() else {
+                hudMsg = "No Internet Connection"
+                showhud = true
+                return
+            }
             SVProgressHUD.show()
             let param = ProductOrderListingRequest(type: type.apiValue, page: currentPage)
             await viewModel.getMyOrderList(parameters: param)

@@ -28,11 +28,14 @@ struct ShopBottomSheetView: View {
     @State  var searchText = ""
     @State  var selectedTab: ShopTab = .auction
     @StateObject var viewModel = ProfileViewModel()
+    @EnvironmentObject var networkMonitor: NetworkMonitor
     var filteredProducts: [ProductListingDataModel] {
         viewModel.productDetailsResponseDict?.data.filter {
             searchText.isEmpty || (($0.title?.localizedCaseInsensitiveContains(searchText)) != nil)} ?? [ProductListingDataModel]()
       }
     @Binding var userId : String
+    @State var showhud: Bool = false
+    @State var hudMsg: String = ""
     var body: some View {
         VStack(spacing: 16) {
             
@@ -111,6 +114,11 @@ struct ShopBottomSheetView: View {
         .cornerRadius(20)
         .onAppear {
             Task{
+               guard Reachability.isConnectedToNetwork() else {
+                    hudMsg = "No Internet Connection"
+                    showhud = true
+                    return
+                }
                 SVProgressHUD.show()
                 await self.viewModel.productDetails(parameters: UserProductRequest(user_id: Int(userId) ?? 0, page: 1))
                 await SVProgressHUD.dismiss()

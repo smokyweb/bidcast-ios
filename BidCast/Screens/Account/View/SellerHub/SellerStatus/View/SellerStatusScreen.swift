@@ -22,9 +22,12 @@ struct SellerStatusSection: Identifiable {
 struct SellerStatusScreen: View {
     
     @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var networkMonitor: NetworkMonitor
     @State var navigateToContact = false
     @State var viewModel = SellerStatusViewModel()
     @State var sellerData = SellerDataModel ()
+    @State var showhud: Bool = false
+    @State var hudMsg: String = ""
     var body: some View {
         VStack(spacing: 8){
             VStack {
@@ -82,6 +85,11 @@ struct SellerStatusScreen: View {
         
         .onAppear{
             Task{
+               guard Reachability.isConnectedToNetwork() else {
+                    hudMsg = "No Internet Connection"
+                    showhud = true
+                    return
+                }
                 SVProgressHUD.show()
                 await self.viewModel.getSellerStatus()
                 await SVProgressHUD.dismiss()

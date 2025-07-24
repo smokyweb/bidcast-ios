@@ -18,7 +18,7 @@ struct ReferralStats {
 struct AffiliateProgramScreen: View {
     @Environment(\.presentationMode) var presentationMode
     @StateObject var viewModel = AffiliateProgramViewModel()
-    
+    @EnvironmentObject var networkMonitor: NetworkMonitor
     @State private var isLoading = false
     @State private var showError = false
     @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
@@ -112,6 +112,11 @@ struct AffiliateProgramScreen: View {
         }
         .onFirstAppear {
             Task {
+               guard Reachability.isConnectedToNetwork() else {
+                    hudMsg = "No Internet Connection"
+                    showhud = true
+                    return
+                }
                 SVProgressHUD.show()
                 await viewModel.getReferralCode()
                 await SVProgressHUD.dismiss()

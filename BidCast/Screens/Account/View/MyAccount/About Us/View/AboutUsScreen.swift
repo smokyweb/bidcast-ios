@@ -13,6 +13,9 @@ struct AboutUsScreen: View {
     @Environment(\.presentationMode) var presentationMode
     @State var showError: Bool = false
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+    @State var showhud: Bool = false
+    @State var hudMsg: String = ""
+    @EnvironmentObject var networkMonitor: NetworkMonitor
     @State var viewModel = AboutUsViewModel()
     @State var aboutUsData = AboutUsModel()
     
@@ -181,6 +184,11 @@ struct AboutUsScreen: View {
     }
     
     func loadData() async {
+       guard Reachability.isConnectedToNetwork() else {
+            hudMsg = "No Internet Connection"
+            showhud = true
+            return
+        }
         SVProgressHUD.show()
         await viewModel.getAboutContent()
         await SVProgressHUD.dismiss()

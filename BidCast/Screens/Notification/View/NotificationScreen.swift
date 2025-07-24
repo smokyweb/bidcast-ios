@@ -17,6 +17,7 @@ struct NotificationScreen: View {
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+    @EnvironmentObject var networkMonitor: NetworkMonitor
     @State var navigateToCreate = false
     @State var isDefault = false
     var viewModel = NotificationViewModel()
@@ -55,6 +56,11 @@ struct NotificationScreen: View {
                                         notiListArr.removeAll { $0.id == id }
                                         let param = DeleteNotificationRequest(id: id)
                                         Task {
+                                           guard Reachability.isConnectedToNetwork() else {
+                                                hudMsg = "No Internet Connection"
+                                                showhud = true
+                                                return
+                                            }
                                             await viewModel.DeleteNotification(param: param)
                                             DeleteNotificationSuccess()
                                         }
@@ -83,6 +89,11 @@ struct NotificationScreen: View {
                    
                     let param = DeleteNotificationRequest()
                     Task {
+                       guard Reachability.isConnectedToNetwork() else {
+                            hudMsg = "No Internet Connection"
+                            showhud = true
+                            return
+                        }
                         SVProgressHUD.show()
                         notiListArr.removeAll()
                         await viewModel.DeleteNotification(param: param)
@@ -140,6 +151,11 @@ struct NotificationScreen: View {
     // MARK: - Fetch Inventory List
     func fetchNotification(page: Int) {
         Task{
+           guard Reachability.isConnectedToNetwork() else {
+                hudMsg = "No Internet Connection"
+                showhud = true
+                return
+            }
             SVProgressHUD.show()
             let param = PageRequest(page: page)
             await viewModel.GetNotification(param: param)

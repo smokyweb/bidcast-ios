@@ -11,7 +11,7 @@ import AlertToast
 
 struct AddProductsScreen: View {
     @EnvironmentObject  var appRootManager: AppRootManager
-    
+    @EnvironmentObject var networkMonitor: NetworkMonitor
     @State private var productCount = 1
     @State var currentPage = 1
     @Environment(\.presentationMode) var presentationMode
@@ -198,6 +198,11 @@ struct AddProductsScreen: View {
                     delegate?.didUpdateRequest(request,thumbNail: self.thumbNail)
                 }else{
                     Task{
+                       guard Reachability.isConnectedToNetwork() else {
+                            hudMsg = "No Internet Connection"
+                            showhud = true
+                            return
+                        }
                         SVProgressHUD.show()
                         var thumbImage = [String]()
                         thumbImage.append(thumbNail)
@@ -292,6 +297,11 @@ extension AddProductsScreen{
     // MARK: - Fetch Inventory List
     func fetchProduct(page: Int) {
         Task{
+           guard Reachability.isConnectedToNetwork() else {
+                hudMsg = "No Internet Connection"
+                showhud = true
+                return
+            }
             SVProgressHUD.show()
             await viewModel.getProductList(parameters: UserProductRequest(user_id: UserDefaults.userId, category_id: request.category_id, page: page))
             await SVProgressHUD.dismiss()
@@ -302,6 +312,11 @@ extension AddProductsScreen{
     //MARK: fetchMoreProduct.
     func fetchMoreProduct() {
         Task {
+           guard Reachability.isConnectedToNetwork() else {
+                hudMsg = "No Internet Connection"
+                showhud = true
+                return
+            }
             currentPage += 1
             await viewModel.getProductList(parameters: UserProductRequest(user_id: UserDefaults.userId, category_id: request.category_id, page: currentPage))
             productSuccess()

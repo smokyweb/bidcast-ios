@@ -22,6 +22,7 @@ struct ContactUs: View {
 
     @State var request: ContactUsRequest = ContactUsRequest(name: "", email: "", subject: "", message: "")
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+    @EnvironmentObject var networkMonitor: NetworkMonitor
     var viewModel = ContactUsViewModel()
 
     var body: some View {
@@ -141,6 +142,12 @@ struct ContactUs: View {
                                 return
                             }
                         Task{
+                           guard Reachability.isConnectedToNetwork() else {
+                                hudMsg = "No Internet Connection"
+                                showhud = true
+                                return
+                            }
+                                                
                             SVProgressHUD.show()
                             await self.viewModel.contactUs(parameters: request)
                             await SVProgressHUD.dismiss()
