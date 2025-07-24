@@ -22,7 +22,7 @@ struct CardDetailsView: View {
                     .foregroundColor(.gray)
                     .font(.subheadline.bold())
 
-                Text("XXXX-XXXX-XXXX-\(card.last4 ?? "----")")
+                Text("\(card.last4 ?? "----")")
                     .foregroundColor(.white)
                     .font(.title2)
                     .bold()

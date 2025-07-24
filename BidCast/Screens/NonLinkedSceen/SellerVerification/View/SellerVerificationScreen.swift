@@ -27,6 +27,8 @@ struct SellerVerificationScreen: View {
     
     @State var cardDetails: CardDetails?
     @State var cardNumber : String?
+    @State var expiry : String?
+    @State var cvv : String?
     @State var cardTokenNumber : String?
     
     @State private var idVerificationComplete = false
@@ -55,7 +57,9 @@ struct SellerVerificationScreen: View {
     
     
     let totalSteps = 4.0
-    
+    @State var showError: Bool = false
+    @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+   
     var body: some View {
         VStack(spacing: 0) {
             VStack{
@@ -69,7 +73,7 @@ struct SellerVerificationScreen: View {
                 )
             }
             
-            if UserDefaults.sellerVerafied != "verified" && UserDefaults.sellerVerafied != "" {
+            if UserDefaults.sellerVerafied == "pending"{
                 ReviewScreen(imageName: "verify", title: "Pending Verification", content: "Your verification process is currently pending.")
             }else{
                 ScrollView {
@@ -201,6 +205,23 @@ struct SellerVerificationScreen: View {
                 }
             })
         }
+        .bottomSheet(isPresented: $showError, height: screenHeight / 2.5, topBarCornerRadius: 25, showTopIndicator: false) {
+            CommonBottomSheet(
+                sheetType: $alertType,
+                onPrimaryClick: {
+                    withAnimation { showError = false }
+                    if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
+                        self.presentationMode.wrappedValue.dismiss()
+                        withAnimation { showError = false }
+                    }else{
+                        withAnimation { showError = false }
+                    }
+                },
+                onSecondaryClick: {
+                    withAnimation { showError = false }
+                }
+            )
+        }
         .background(Color.white)
         .navigationBarHidden(true)
         
@@ -214,8 +235,12 @@ struct SellerVerificationScreen: View {
             doNavigate: $navigateToAddCard,
             destination: AddCardScreen(
                 isNavFrom: "SellerVerification",
-                onSuccess: { cardToken in
-                    cardTokenNumber = cardToken
+                onSuccess: { cardNumber,expiry,cvv in
+//                    cardTokenNumber = cardToken
+//                    self.cardDetails = CardDetails()
+                    self.cardNumber = cardNumber
+                    self.expiry = expiry
+                    self.cvv = cvv
                     paymentMethodComplete = true
                     updateManualVerificationIfNeeded()
                 }
@@ -229,9 +254,10 @@ struct SellerVerificationScreen: View {
         guard let idData = idCardImageData,
               let selfieData = selfieImageData,
               let idURL = compressAndSaveImage(data: idData),
-              let selfieURL = compressAndSaveImage(data: selfieData),
-              let cardToken = cardTokenNumber else {
-            
+              let selfieURL = compressAndSaveImage(data: selfieData)
+//              let cardToken = cardTokenNumber
+        else {
+//
             DispatchQueue.main.async {
                 hudMsg = "Missing required data"
                 showhud = true
@@ -250,7 +276,9 @@ struct SellerVerificationScreen: View {
         }
         
         let params: [String: Any] = [
-            "cardToken": cardToken,
+            "card_number": cardNumber ?? "",
+            "expiration_date": expiry ?? "",
+            "cvv": cvv ?? "",
             "phone_verification": phoneVerificationComplete == true ? 0 : 1
         ]
         print("Seller Verification Param : \(params)")
@@ -273,14 +301,25 @@ struct SellerVerificationScreen: View {
 
     //MARK: idUploadSuccess.
     func idUploadSuccess() {
+        let response  = viewModel.sellerVerificationDict
         if viewModel.sellerVerificationDict?.status == "success" {
             hudMsg = "Seller Verification Successfully"
+            UserDefaults.sellerVerafied = "pending"
             navigateToProfile = true
             SVProgressHUD.dismiss()
-            
+           
         } else {
             SVProgressHUD.dismiss()
             hudMsg = "Seller Verification Failed"
+            alertType = .sheetType(
+                icon: .alert,
+                title: response?.error_type?.capitalized ?? "Error",
+                message: response?.message?.capitalized ?? "Something went wrong.",
+                primaryBtnText: "",
+                secondaryBtnText: "OK"
+            )
+            showError = true
+            paymentMethodComplete = true
         }
         showhud = true
     }

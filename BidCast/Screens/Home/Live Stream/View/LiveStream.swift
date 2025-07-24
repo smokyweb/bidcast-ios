@@ -533,7 +533,7 @@ struct LiveStream: View {
                         showPaymentShipping = true
                         titleText = "Add Address"
                     }else if UserDefaults.hasCardAdded == false{
-                        navigateToAddCardScreen = true
+                        showPaymentShipping = true
                         titleText = "Add Card"
                     }
             }
@@ -710,6 +710,14 @@ struct LiveStream: View {
                                     showVerificationSheet = true
                                 }
                                 
+                            }else{
+                                if UserDefaults.sellerAddress == false{
+                                    showPaymentShipping = true
+                                    titleText = "Add Address"
+                                }else if UserDefaults.hasCardAdded == false{
+                                    showPaymentShipping = true
+                                    titleText = "Add Card"
+                                }
                             }
                             
                         }

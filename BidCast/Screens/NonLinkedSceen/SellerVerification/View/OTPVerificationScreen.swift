@@ -134,14 +134,17 @@ struct OTPVerificationScreen: View {
     
     // MARK: - sendOTPSuccess
     private func sendOTPSuccess() {
-        let response = viewModel.storePhoneNumberDict
-        if response.status == "success" {
-            otpSent = true
-            hudMsg = "OTP sent"
-        } else {
-            hudMsg = "Failed to send OTP"
+       
+        DispatchQueue.main.async{
+            let response = viewModel.storePhoneNumberDict
+            if response.status == "success" {
+                otpSent = true
+                hudMsg = "OTP sent"
+            } else {
+                hudMsg = "Failed to send OTP"
+            }
+            showhud = true
         }
-        showhud = true
     }
     
     private func verifyOTP() async {

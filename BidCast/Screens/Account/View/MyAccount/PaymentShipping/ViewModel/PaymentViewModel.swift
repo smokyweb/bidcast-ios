@@ -28,11 +28,11 @@ final class PaymentViewModel: ObservableObject {
     // MARK: - Delete Card
     func deleteCard(parameters: DeleteCardRequest) async {
         do {
-            if let response: ResponseModel<CardModel>  = try await APIManager.shared.request(
+            if let response: ResponseModel<[CardModel]>  = try await APIManager.shared.request(
                 type: APIEndPoint.deleteCard(param: parameters),
                 header: true
             ) {
-                await getCard()
+//                await getCard()
             }
         } catch {
             handle(error: error)

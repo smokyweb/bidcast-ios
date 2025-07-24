@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SVProgressHUD
+import AlertToast
 
 struct AddCardScreen: View {
     @State private var cardHolderName = ""
@@ -15,7 +16,7 @@ struct AddCardScreen: View {
     @State private var expiryDate = ""
     var isNavFrom: String = ""
     @State var viewModel = AddCardViewModel()
-    var onSuccess: ((String) -> Void)?
+    var onSuccess: ((String,String,String) -> Void)?
     @Environment(\.presentationMode) var presentationMode
     @ObservedObject var stpCard = StripeCardViewModel()
     
@@ -24,7 +25,7 @@ struct AddCardScreen: View {
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
-    
+   
     
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
@@ -110,7 +111,7 @@ struct AddCardScreen: View {
                 HStack {
                     AuthTextField(
                         floatingLabel: "CVV",
-                        placeholder: "Enter CVV",
+                        placeholder: "xxx",
                         icon: .icMail,
                         text: $cvv,
                         isIconDisplay : false,
@@ -123,7 +124,7 @@ struct AddCardScreen: View {
                     //                    .textContentType(.name)
                     AuthTextField(
                         floatingLabel: "Expiry Date",
-                        placeholder: "Enter expiry Date",
+                        placeholder: "YYYY-MM",
                         icon: .icMail,
                         text: $expiryDate,
                         isIconDisplay : false,
@@ -144,79 +145,48 @@ struct AddCardScreen: View {
                 title: "Submit",
                 isOutLine: true,
                 onButtonClick: {
-                    //                    withAnimation {
-                    SVProgressHUD.show()
+                    guard !cardNumber.isEmpty else{
+                        hudMsg = "Enter card number"
+                        showhud = true
+                        return
+                    }
+                    guard !expiryDate.isEmpty else{
+                        hudMsg = "Enter card number"
+                        showhud = true
+                        return
+                    }
+                    guard !cvv.isEmpty else{
+                        hudMsg = "Enter card number"
+                        showhud = true
+                        return
+                    }
+                   
                     
                     UIApplication.shared.endEditing()
-                    Task{
-                        self.viewModel.errorMessage = ""
-                        let param = AddCardRequest(card_number: cardNumber, expiration_date: expiryDate, cvv: cvv)
-                        await viewModel.addCard(parameters: param)
-                        await SVProgressHUD.dismiss()
-                        
-                        if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
-                            handleResponse()
-                        }else{
-                            alertType = .sheetType(
-                                icon: .alert,
-                                title: "Failed",
-                                message: self.viewModel.errorMessage ?? "",
-                                primaryBtnText: "",
-                                secondaryBtnText: "OK"
-                            )
-                            showError = true
+                    if isNavFrom == "SellerVerification" {
+                        handleSellerCardResponse(cardNumber: cardNumber, Expiry: expiryDate, Cvv: cvv)
+                    }else{
+                        Task{
+                            SVProgressHUD.show()
+                            self.viewModel.errorMessage = ""
+                            let param = AddCardRequest(card_number: cardNumber, expiration_date: expiryDate, cvv: cvv)
+                            await viewModel.addCard(parameters: param)
+                            await SVProgressHUD.dismiss()
+                            
+                            if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
+                                handleResponse()
+                            }else{
+                                alertType = .sheetType(
+                                    icon: .alert,
+                                    title: "Failed",
+                                    message: self.viewModel.errorMessage ?? "",
+                                    primaryBtnText: "",
+                                    secondaryBtnText: "OK"
+                                )
+                                showError = true
+                            }
                         }
                     }
-                    //                        stpCard.addCard(cardNumber: cardNumber, exp: expiryDate, cvc: cvv) { result in
-                    //                            switch result {
-                    //                            case .success(let token):
-                    //                                print("Stripe token: \(token)")
-                    //                                SVProgressHUD.dismiss()
-                    //                                Task {
-                    //                                    if isNavFrom == "SellerVerification" {
-                    //                                        self.viewModel.errorMessage = ""
-                    //                                        await viewModel.addSellerCard(parameters: StorePaymentMethodRequest(card_token: token))
-                    //                                        await SVProgressHUD.dismiss()
-                    //                                        if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
-                    //                                            handleSellerCardResponse(stripeToken: token)
-                    //                                        }else{
-                    //                                            alertType = .sheetType(
-                    //                                                icon: .alert,
-                    //                                                title: "Failed",
-                    //                                                message: self.viewModel.errorMessage ?? "",
-                    //                                                primaryBtnText: "",
-                    //                                                secondaryBtnText: "OK"
-                    //                                            )
-                    //                                            showError = true
-                    //                                        }
-                    //
-                    //                                    }else {
-                    //                                        self.viewModel.errorMessage = ""
-                    ////                                        await viewModel.addCard(parameters: AddCardRequest(card_token: token))
-                    //                                        await SVProgressHUD.dismiss()
-                    //                                        if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
-                    //                                            handleResponse()
-                    //                                        }else{
-                    //                                            alertType = .sheetType(
-                    //                                                icon: .alert,
-                    //                                                title: "Failed",
-                    //                                                message: self.viewModel.errorMessage ?? "",
-                    //                                                primaryBtnText: "",
-                    //                                                secondaryBtnText: "OK"
-                    //                                            )
-                    //                                            showError = true
-                    //                                        }
-                    //
-                    //
-                    //                                    }
-                    //                                }
-                    //
-                    //                            case .failure(let error):
-                    //                                print("Error: \(error.localizedDescription)")
-                    //                            }
-                    //                        }
-                    
-                    //                    }
                 },
                 width: screenWidth - 40,
                 cornerRadius: 12.0, imageName: "",
@@ -224,6 +194,9 @@ struct AddCardScreen: View {
             )
             .padding(.vertical, 10)
             .background(Color.white)
+        }
+        .toast(isPresenting: $showhud) {
+            AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }
         .bottomSheet(isPresented: $showError, height: screenHeight / 2.5, topBarCornerRadius: 25, showTopIndicator: false) {
             CommonBottomSheet(
@@ -268,26 +241,26 @@ struct AddCardScreen: View {
         }
     }
     
-    private func handleSellerCardResponse(stripeToken: String) {
-        let response = viewModel.sellerStorePaymentDict
-        if response.status == "success" {
+    func handleSellerCardResponse(cardNumber: String, Expiry:String, Cvv:String) {
+//        let response = viewModel.sellerStorePaymentDict
+//        if response.status == "success" {
             DispatchQueue.main.async {
                 hudMsg = "Card added successfully"
                 showhud = true
-                onSuccess?(stripeToken)
+                onSuccess?(cardNumber,Expiry,Cvv)
                 self.presentationMode.wrappedValue.dismiss()
             }
-        } else {
-            DispatchQueue.main.async {
-                alertType = .sheetType(
-                    icon: .alert,
-                    title: response.error_type?.capitalized ?? "Error",
-                    message: response.message?.capitalized ?? "Something went wrong.",
-                    primaryBtnText: "",
-                    secondaryBtnText: "OK"
-                )
-                showError = true
-            }
-        }
+//        } else {
+//            DispatchQueue.main.async {
+//                alertType = .sheetType(
+//                    icon: .alert,
+//                    title: response.error_type?.capitalized ?? "Error",
+//                    message: response.message?.capitalized ?? "Something went wrong.",
+//                    primaryBtnText: "",
+//                    secondaryBtnText: "OK"
+//                )
+//                showError = true
+//            }
+//        }
     }
 }
