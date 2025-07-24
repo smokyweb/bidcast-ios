@@ -144,59 +144,79 @@ struct AddCardScreen: View {
                 title: "Submit",
                 isOutLine: true,
                 onButtonClick: {
-                    withAnimation {
-                        SVProgressHUD.show()
-                        UIApplication.shared.endEditing()
-                        stpCard.addCard(cardNumber: cardNumber, exp: expiryDate, cvc: cvv) { result in
-                            switch result {
-                            case .success(let token):
-                                print("Stripe token: \(token)")
-                                SVProgressHUD.dismiss()
-                                Task {
-                                    if isNavFrom == "SellerVerification" {
-                                        self.viewModel.errorMessage = ""
-                                        await viewModel.addSellerCard(parameters: StorePaymentMethodRequest(card_token: token))
-                                        await SVProgressHUD.dismiss()
-                                        if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
-                                            handleSellerCardResponse(stripeToken: token)
-                                        }else{
-                                            alertType = .sheetType(
-                                                icon: .alert,
-                                                title: "Failed",
-                                                message: self.viewModel.errorMessage ?? "",
-                                                primaryBtnText: "",
-                                                secondaryBtnText: "OK"
-                                            )
-                                            showError = true
-                                        }
-                                       
-                                    }else {
-                                        self.viewModel.errorMessage = ""
-                                        await viewModel.addCard(parameters: AddCardRequest(card_token: token))
-                                        await SVProgressHUD.dismiss()
-                                        if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
-                                            handleResponse()
-                                        }else{
-                                            alertType = .sheetType(
-                                                icon: .alert,
-                                                title: "Failed",
-                                                message: self.viewModel.errorMessage ?? "",
-                                                primaryBtnText: "",
-                                                secondaryBtnText: "OK"
-                                            )
-                                            showError = true
-                                        }
-                                    
-                                       
-                                    }
-                                }
-                                
-                            case .failure(let error):
-                                print("Error: \(error.localizedDescription)")
-                            }
+                    //                    withAnimation {
+                    SVProgressHUD.show()
+                    
+                    UIApplication.shared.endEditing()
+                    Task{
+                        self.viewModel.errorMessage = ""
+                        let param = AddCardRequest(card_number: cardNumber, expiration_date: expiryDate, cvv: cvv)
+                        await viewModel.addCard(parameters: param)
+                        await SVProgressHUD.dismiss()
+                        
+                        if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
+                            handleResponse()
+                        }else{
+                            alertType = .sheetType(
+                                icon: .alert,
+                                title: "Failed",
+                                message: self.viewModel.errorMessage ?? "",
+                                primaryBtnText: "",
+                                secondaryBtnText: "OK"
+                            )
+                            showError = true
                         }
-                       
                     }
+                    //                        stpCard.addCard(cardNumber: cardNumber, exp: expiryDate, cvc: cvv) { result in
+                    //                            switch result {
+                    //                            case .success(let token):
+                    //                                print("Stripe token: \(token)")
+                    //                                SVProgressHUD.dismiss()
+                    //                                Task {
+                    //                                    if isNavFrom == "SellerVerification" {
+                    //                                        self.viewModel.errorMessage = ""
+                    //                                        await viewModel.addSellerCard(parameters: StorePaymentMethodRequest(card_token: token))
+                    //                                        await SVProgressHUD.dismiss()
+                    //                                        if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
+                    //                                            handleSellerCardResponse(stripeToken: token)
+                    //                                        }else{
+                    //                                            alertType = .sheetType(
+                    //                                                icon: .alert,
+                    //                                                title: "Failed",
+                    //                                                message: self.viewModel.errorMessage ?? "",
+                    //                                                primaryBtnText: "",
+                    //                                                secondaryBtnText: "OK"
+                    //                                            )
+                    //                                            showError = true
+                    //                                        }
+                    //
+                    //                                    }else {
+                    //                                        self.viewModel.errorMessage = ""
+                    ////                                        await viewModel.addCard(parameters: AddCardRequest(card_token: token))
+                    //                                        await SVProgressHUD.dismiss()
+                    //                                        if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
+                    //                                            handleResponse()
+                    //                                        }else{
+                    //                                            alertType = .sheetType(
+                    //                                                icon: .alert,
+                    //                                                title: "Failed",
+                    //                                                message: self.viewModel.errorMessage ?? "",
+                    //                                                primaryBtnText: "",
+                    //                                                secondaryBtnText: "OK"
+                    //                                            )
+                    //                                            showError = true
+                    //                                        }
+                    //
+                    //
+                    //                                    }
+                    //                                }
+                    //
+                    //                            case .failure(let error):
+                    //                                print("Error: \(error.localizedDescription)")
+                    //                            }
+                    //                        }
+                    
+                    //                    }
                 },
                 width: screenWidth - 40,
                 cornerRadius: 12.0, imageName: "",

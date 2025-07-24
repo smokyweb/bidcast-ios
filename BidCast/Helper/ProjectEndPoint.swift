@@ -303,11 +303,11 @@ extension APIEndPoint: EndPointType {
         case .orderReciept:
             return "product/order-receipt"
         case .AddCard:
-            return "add-card"
+            return "add-card-net"
         case .deleteCard:
-            return "delete-card"
+            return "delete-card-net"
         case .getCard:
-            return "get-card"
+            return "get-card-net"
         case .getTransactionList(param:let param):
             return "transaction-history/listing?page=\(param.page)"
         case .storeScheduleShow:

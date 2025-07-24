@@ -3,7 +3,7 @@ import Foundation
 @MainActor
 final class PaymentViewModel: ObservableObject {
     
-    @Published var cardDict = ResponseModel<[CardModel]>()
+    @Published var cardDict = ResponseModel<CardModel>()
   
     @Published var getAddressDict = ResponseModel<[AddressModel]>()
     @Published var addressDict = ResponseModel<AddressModel>()
@@ -14,7 +14,7 @@ final class PaymentViewModel: ObservableObject {
     // MARK: - Get Cards
     func getCard() async {
         do {
-            if let response: ResponseModel<[CardModel]> = try await APIManager.shared.request(
+            if let response: ResponseModel<CardModel> = try await APIManager.shared.request(
                 type: APIEndPoint.getCard,
                 header: true
             ) {

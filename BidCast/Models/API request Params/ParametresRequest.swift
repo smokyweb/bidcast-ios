@@ -473,11 +473,13 @@ struct FetchProductRequest : Encodable {
     var product_id : Int
 }
 struct AddCardRequest : Encodable{
-    var card_token :String
+    var card_number :String
+    var expiration_date : String
+    var cvv : String
 }
 
 struct DeleteCardRequest : Encodable{
-    var card_id :String
+    var payment_profile_id :String
 }
 
 

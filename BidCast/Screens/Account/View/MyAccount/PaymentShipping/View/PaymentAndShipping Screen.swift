@@ -22,7 +22,7 @@ struct PaymentAndShipping_Screen: View {
     @State var hudMsg: String = ""
     
     @State var sampleAddresses = [AddressModel]()
-    @State var cardArr = [CardModel]()
+    @State var cardArr = [PaymentProfile]()
     
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     
@@ -57,16 +57,17 @@ struct PaymentAndShipping_Screen: View {
                                 Spacer()
                             }
                         } else {
-                            ForEach(cardArr.indices, id: \.self) { index in
-                                let card = cardArr[index]
+                            ForEach(0 ..< cardArr.count, id: \.self) { index in
+                                let data = cardArr[index]
+                                let card = data.payment?.creditCard
                                 CardCell(
                                     image: "creditcard.fill",
-                                    cardNo: card.last4 ?? "",
-                                    expires: "\(card.exp_month ?? 0)/\(card.exp_year ?? 0)",
+                                    cardNo: card?.cardNumber ?? "",
+                                    expires: "\(card?.expirationDate ?? "")/\(card?.expirationDate ?? "")",
                                     onTapDefault: {
                                         Task {
                                             SVProgressHUD.show()
-                                            await self.viewModel.setDefaultCard(parameters: CardDefaultRequest(card_id: card.card_id ?? ""))
+//                                            await self.viewModel.setDefaultCard(parameters: CardDefaultRequest(card_id: card.card_id ?? ""))
                                             await SVProgressHUD.dismiss()
                                             defaultSuccess()
                                         }
@@ -74,14 +75,15 @@ struct PaymentAndShipping_Screen: View {
                                     onTapDelete: {
                                         Task {
                                             SVProgressHUD.show()
-                                            await self.viewModel.deleteCard(parameters: DeleteCardRequest(card_id: card.card_id ?? ""))
+                                            await self.viewModel.deleteCard(parameters: DeleteCardRequest(payment_profile_id: data.customerPaymentProfileId ?? ""))
+                                            self.cardArr.removeAll()
                                             await self.viewModel.getCard()
                                             await self.viewModel.getAddresses()
                                             await SVProgressHUD.dismiss()
                                             AddressSuccess()
                                             cardSuccess()
                                         }
-                                    }, isDefault: card.is_default ?? false
+                                    }, isDefault: false
                                 )
                             }
                         }
@@ -214,7 +216,7 @@ struct PaymentAndShipping_Screen: View {
         SVProgressHUD.dismiss()
         let response = viewModel.cardDict
         if response.status == "success" {
-            cardArr = viewModel.cardDict.data ?? [CardModel]()
+            cardArr = viewModel.cardDict.data?.paymentProfiles ?? [PaymentProfile]()
             
         } else {
             showError = true

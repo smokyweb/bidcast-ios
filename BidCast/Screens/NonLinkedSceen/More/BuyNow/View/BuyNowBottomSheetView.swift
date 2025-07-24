@@ -13,7 +13,7 @@ struct BuyNowBottomSheetView: View {
     @Environment(\.presentationMode) var presentationMode
     @StateObject var viewModel = BuyNowViewModel()
     @State var cardViewModel = PaymentViewModel()
-    @State var cardArr : [CardModel] = []
+    @State var cardArr : [PaymentProfile] = []
     @State var selectedCardIndex: Int = 0
     @State var orderDetails : BuyNowModel?
     @State private var isLoading = false
@@ -51,7 +51,7 @@ struct BuyNowBottomSheetView: View {
     }
     
     var selectedCardID: String {
-        cardArr.indices.contains(selectedCardIndex) ? (cardArr[selectedCardIndex].card_id ?? "") : ""
+        cardArr.indices.contains(selectedCardIndex) ? (cardArr[selectedCardIndex].customerPaymentProfileId ?? "") : ""
     }
 
     
@@ -115,7 +115,7 @@ struct BuyNowBottomSheetView: View {
                             Image("visa") // Replace with actual asset if needed
                                 .resizable()
                                 .frame(width: 32, height: 20)
-                            Text("•••• \(cardArr[safe: selectedCardIndex]?.last4 ?? "0000")")
+                            Text("•••• \(cardArr[safe: selectedCardIndex]?.payment?.creditCard?.cardNumber ?? "0000")")
                                 .font(.custom(poppinsSemiBold, size: 13.0))
 
                         }
@@ -248,7 +248,7 @@ struct BuyNowBottomSheetView: View {
         SVProgressHUD.dismiss()
         let response = cardViewModel.cardDict
         if response.status == "success" {
-            cardArr = cardViewModel.cardDict.data ?? [CardModel]()
+            cardArr = cardViewModel.cardDict.data?.paymentProfiles ?? [PaymentProfile]()
            
         } else {
             showError = true
@@ -268,7 +268,7 @@ struct BuyNowBottomSheetView: View {
             SVProgressHUD.show()
             
             guard cardArr.indices.contains(selectedCardIndex),
-                  let selectedCardID = cardArr[selectedCardIndex].card_id else {
+                  let selectedCardID = cardArr[selectedCardIndex].customerPaymentProfileId else {
                 hudMsg = "No valid card selected"
                 showhud = true
                 return

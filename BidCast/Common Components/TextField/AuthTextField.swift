@@ -91,21 +91,23 @@ struct AuthTextField: View {
                                     text = filtered
                                 self.enteredText?(text)
                                     } else if isForExpiry {
-                                        filtered = String(filtered.prefix(4))
-                                        if filtered.count >= 3 {
-                                            let month = filtered.prefix(2)
-                                            let year = filtered.suffix(from: filtered.index(filtered.startIndex, offsetBy: 2))
-                                            filtered = "\(month)/\(year)"
+                                        filtered = String(filtered.prefix(6)) // only keep YYYYMM
+
+                                        if filtered.count == 6 {
+                                            let year = filtered.prefix(4)
+                                            let month = filtered.suffix(2)
+                                            filtered = "\(year)-\(month)"
                                         }
+
                                         text = filtered
                                     self.enteredText?(text)
                                     } else if isForCardNumber {
                                         filtered = String(filtered.prefix(16))
                                         var formatted = ""
                                         for (index, char) in filtered.enumerated() {
-                                            if index != 0 && index % 4 == 0 {
-                                                formatted.append("-")
-                                            }
+//                                            if index != 0 && index % 4 == 0 {
+//                                                formatted.append("-")
+//                                            }
                                             formatted.append(char)
                                         }
                                         filtered = formatted
