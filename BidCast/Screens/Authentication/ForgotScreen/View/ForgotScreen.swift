@@ -61,7 +61,7 @@ struct ForgotScreen: View {
                         isOutLine: false,
                         onButtonClick: {
                             UIApplication.shared.endEditing()
-                            guard !networkMonitor.isConnected else {
+                            guard Reachability.isConnectedToNetwork() else {
                                 hudMsg = "No Internet Connection"
                                 showhud = true
                                 return

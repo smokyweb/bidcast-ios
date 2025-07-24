@@ -42,18 +42,21 @@ struct AddressListCell: View {
                 Spacer()
 
                 Menu {
-                    Button("Make Default", action: {
-                        print("Make Default for \(address.name ?? "")")
+                    Button(action: {
+                       
                         onTapDefault()
-                    })
-                    .font(.custom(poppinsSemiBold, size: 13.0))
+                    }){
+                        Text("Set as default")
+                            .font(.custom(poppinsSemiBold, size: 11))
+                    }
                     
-                    Button("Delete", role: .destructive, action: {
-                        print("Delete \(address.name ?? "")")
+                    Button(role: .destructive, action: {
+                     
                         onTapDelete()
-                    })
-                    .font(.custom(poppinsSemiBold, size: 13.0))
-                    
+                    }){
+                        Text("Delete")
+                            .font(.custom(poppinsSemiBold, size: 11))
+                    }
                 } label: {
                     Image(systemName: "ellipsis")
                         .rotationEffect(.degrees(90))

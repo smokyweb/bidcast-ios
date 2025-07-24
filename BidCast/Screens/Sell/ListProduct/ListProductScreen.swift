@@ -34,6 +34,9 @@ struct ListProductScreen: View {
     @State var viewModel = ListProductViewModel()
     @State var imageUrls: [String] = []
     
+    @State var showSellerSheet = false
+    @State var navigateToSeller = false
+    
     var body: some View {
         
         ZStack {
@@ -80,18 +83,18 @@ struct ListProductScreen: View {
                         .zIndex(1201.0)
                         .padding([.leading,.trailing],16)
                         AuthTextField(
-                                      floatingLabel: "Title".localized,
-                                      placeholder: "Enter Product title".localized,
-                                      icon: .menuProfile,
-                                      text: $request.title ,
-                                      isIconDisplay : false,
-                                      custFontName : robotoRegular,
-                                      custFontSize : 13.0,
-                                      custPlaceHolderName : robotoRegular,
-                                      custPlaceHolderFontSize : 16.0 ,
-                                      enteredText:  { title in
-                            request.title = title
-                        })
+                            floatingLabel: "Title".localized,
+                            placeholder: "Enter Product title".localized,
+                            icon: .menuProfile,
+                            text: $request.title ,
+                            isIconDisplay : false,
+                            custFontName : robotoRegular,
+                            custFontSize : 13.0,
+                            custPlaceHolderName : robotoRegular,
+                            custPlaceHolderFontSize : 16.0 ,
+                            enteredText:  { title in
+                                request.title = title
+                            })
                         .keyboardType(.alphabet)
                         .padding([.top,.bottom],4)
                         
@@ -120,8 +123,8 @@ struct ListProductScreen: View {
                             custFontName : robotoRegular,
                             custFontSize : 16.0,
                             onButtonClick: {
-                            print("hell")
-                        }, imageName: "ic_Plus", btnColor: .white)
+                                print("hell")
+                            }, imageName: "ic_Plus", btnColor: .white)
                     }
                     
                     .background(.white)
@@ -143,7 +146,7 @@ struct ListProductScreen: View {
                             request.pricing = price
                         })
                         .keyboardType(.numberPad)
-//                        .padding(.horizontal , 16)
+                        //                        .padding(.horizontal , 16)
                         
                         MenuCell( title: "Flash Sale",fontName: robotoRegular,fontValue: 14.0,menuImg: "",isSelectable: true, isTappedSwitch: $isTappedFlash,onToggle: { value in
                             if value == true{
@@ -439,52 +442,3 @@ struct ListProductScreen: View {
     ListProductScreen()
 }
 
-
-
-
-//
-//struct TwoPrimaryButtonsRow: View {
-//    var btn1Title : String = "Save Draft"
-//    var btn2Title : String = "Publish"
-//    var btn1Color  : Color = .gray
-//    var body: some View {
-//        HStack(spacing: 12) {
-//            
-//            Button(action: {
-//                print("Add Variants tapped")
-//            }) {
-//                Text(btn1Title)
-//                    .fontWeight(.bold)
-//            }
-//            .padding(.vertical, 12)
-//            .frame(maxWidth: .infinity)
-//            .background(
-//                RoundedRectangle(cornerRadius: 8)
-//                    .stroke(btn1Color, lineWidth: 2)
-//            )
-//            
-//            .foregroundColor(btn1Color)
-//            
-//            // Filled “Save”
-//            Button(action: {
-//                print("Save tapped")
-//            }) {
-//                Text(btn2Title)
-//                    .fontWeight(.bold)
-//                    .padding(.vertical, 12)
-//                    .frame(maxWidth: .infinity)
-//                    .background(
-//                        RoundedRectangle(cornerRadius: 8)
-//                            .fill(Color.blue)
-//                    )
-//            }
-//            .foregroundColor(.white)
-//        }
-//        .padding(.horizontal, 16)
-//        .shadow(color: .gray.opacity(0.25), radius: 2, x: 0, y: 0)
-//    }
-//}
-//
-//#Preview {
-//    TwoPrimaryButtonsRow()
-//}

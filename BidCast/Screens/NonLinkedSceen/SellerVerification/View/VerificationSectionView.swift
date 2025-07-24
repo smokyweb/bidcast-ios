@@ -19,7 +19,7 @@ struct VerificationSectionView: View {
     var isActionEnabled: Bool = true
     var onAction: ((String) async -> Void)? = nil
     var onActionTap: (() -> Void)? = nil
-
+    var textColor = Color.gray
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
@@ -41,7 +41,7 @@ struct VerificationSectionView: View {
                 if let statusText = statusText {
                     Text(statusText)
                         .font(.custom(poppinsSemiBold, size: 13.0))
-                        .foregroundColor(.gray)
+                        .foregroundColor(textColor)
                 } else if status == .completed {
                     Image(systemName: "checkmark").foregroundColor(.green)
                 } else if let label = actionLabel {

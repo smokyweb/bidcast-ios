@@ -122,7 +122,7 @@ struct MediaPickerView: View {
             }
             Button("Cancel", role: .cancel) {}
         }
-        .sheet(isPresented: $showCameraPicker) {
+        .fullScreenCover(isPresented: $showCameraPicker) {
             ImagePicker(sourceType: .camera) { image,url  in
                 if let image = image,
                            selectedMedia.count < maxMediaCount,
@@ -135,7 +135,7 @@ struct MediaPickerView: View {
                         }
             }
         }
-        .sheet(isPresented: $showPhotoLibrary) {
+        .fullScreenCover(isPresented: $showPhotoLibrary) {
             PhotoPicker(count: maxMediaCount) { images,urls in
                 let remaining = maxMediaCount - selectedMedia.count
                 let limitedImages = Array(images.prefix(remaining))

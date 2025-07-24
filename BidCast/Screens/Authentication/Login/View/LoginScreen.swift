@@ -104,7 +104,7 @@ struct LoginScreen: View {
                     
                     PrimaryButton(title: AppString.login.localized, isOutLine: false,onButtonClick: {
                         UIApplication.shared.endEditing()
-                        guard !networkMonitor.isConnected else {
+                        guard Reachability.isConnectedToNetwork() else {
                             hudMsg = "No Internet Connection"
                             showhud = true
                             return

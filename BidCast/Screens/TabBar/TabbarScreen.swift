@@ -29,7 +29,9 @@ struct TabbarScreen: View {
     @State private var accountViewID = UUID()
     
     @State var request : StoreScheduleShowRequest = StoreScheduleShowRequest(title: "", date: "", time: "", category_id: "", auction_type_id: "", product_ids: "")
-
+    @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+    @State var showSellerSheet = false
+    @State var navigateToSeller = false
 
     var body: some View {
         ZStack {
@@ -64,10 +66,9 @@ struct TabbarScreen: View {
                      
                       showSellSheet = true
 
-                     
                       selectedTab = previousTab
                   } else {
-                   
+                      
                       resetNavigation(for: newTab)
                       previousTab = newTab
                   }
@@ -84,6 +85,7 @@ struct TabbarScreen: View {
             )
             CusNavLink(doNavigate: $navigateTolist, destination: ListProductScreen())
             CusNavLink(doNavigate: $navigateToAccountScreen, destination: AccountScreen(isNavFrom: true,comeFromSeller: true))
+            CusNavLink(doNavigate: $navigateToSeller, destination: SellerVerificationScreen())
         }
         .bottomSheet(
             isPresented: $showSellSheet,
@@ -99,12 +101,58 @@ struct TabbarScreen: View {
                 SellScreen { tappedTab in
                     if tappedTab == .lesson {
                         if UserDefaults.isFirstShowCreated{
-                            navigateToTitle = true
+                            if UserDefaults.sellerVerafied == "verified"{
+                                navigateToTitle = true
+                            }else{
+                                alertType = .sheetType(
+                                    icon: .info,
+                                    title: "Become a Verified Seller!",
+                                    message: "Before you interact with live shows.you need to become a verified seller.",
+                                    primaryBtnText: "OK",
+                                    secondaryBtnText: "",
+                                    buttonWidth:screenWidth - 24,
+                                    contentSize: 12.0
+                                )
+                                withAnimation(.snappy){
+                                    showSellerSheet = true
+                                }
+                            }
                         }else{
-                            navigateTogetStarted = true
+                            if UserDefaults.sellerVerafied == "verified"{
+                                navigateTogetStarted = true
+                            }else{
+                                alertType = .sheetType(
+                                    icon: .info,
+                                    title: "Become a Verified Seller!",
+                                    message: "Before you interact with live shows.you need to become a verified seller.",
+                                    primaryBtnText: "OK",
+                                    secondaryBtnText: "",
+                                    buttonWidth:screenWidth - 24,
+                                    contentSize: 12.0
+                                )
+                                withAnimation(.snappy){
+                                    showSellerSheet = true
+                                }
+                            }
                         }
                     } else if tappedTab == .listProduct {
-                        navigateTolist = true
+                        if UserDefaults.sellerVerafied == "verified"{
+                            navigateTolist = true
+                        }else{
+                            alertType = .sheetType(
+                                icon: .info,
+                                title: "Become a Verified Seller!",
+                                message: "Before you interact with live shows.you need to become a verified seller.",
+                                primaryBtnText: "OK",
+                                secondaryBtnText: "",
+                                buttonWidth:screenWidth - 24,
+                                contentSize: 12.0
+                            )
+                            withAnimation(.snappy){
+                                showSellerSheet = true
+                            }
+                        }
+                    
                     } else if tappedTab == .sellerHub {
                         navigateToAccountScreen = true
                     }
@@ -114,6 +162,26 @@ struct TabbarScreen: View {
                 .presentationDetents([.fraction(0.35)])
             }
         )
+        .bottomSheet(isPresented: $showSellerSheet, height: screenHeight / 2.5, topBarCornerRadius: 25, showTopIndicator: false,onDismiss: {
+            showSellerSheet = false
+        }) {
+            CommonBottomSheet(
+                sheetType: $alertType,
+                onPrimaryClick: {
+                    withAnimation {
+                        navigateToSeller = true
+                        showSellerSheet = false
+                        
+                    }
+                },
+                onSecondaryClick: {
+                    withAnimation {
+                        showSellerSheet = false
+                        
+                    }
+                }
+            )
+        }
     }
     func resetNavigation(for tab: Int) {
         switch tab {

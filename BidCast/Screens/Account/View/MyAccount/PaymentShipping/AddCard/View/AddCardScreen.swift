@@ -154,6 +154,7 @@ struct AddCardScreen: View {
                                 SVProgressHUD.dismiss()
                                 Task {
                                     if isNavFrom == "SellerVerification" {
+                                        self.viewModel.errorMessage = ""
                                         await viewModel.addSellerCard(parameters: StorePaymentMethodRequest(card_token: token))
                                         await SVProgressHUD.dismiss()
                                         if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
@@ -170,6 +171,7 @@ struct AddCardScreen: View {
                                         }
                                        
                                     }else {
+                                        self.viewModel.errorMessage = ""
                                         await viewModel.addCard(parameters: AddCardRequest(card_token: token))
                                         await SVProgressHUD.dismiss()
                                         if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
@@ -269,9 +271,3 @@ struct AddCardScreen: View {
         }
     }
 }
-
-//struct AddDebitCardView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        AddCardScreen()
-//    }
-//}

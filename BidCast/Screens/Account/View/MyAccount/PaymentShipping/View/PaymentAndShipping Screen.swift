@@ -63,6 +63,14 @@ struct PaymentAndShipping_Screen: View {
                                     image: "creditcard.fill",
                                     cardNo: card.last4 ?? "",
                                     expires: "\(card.exp_month ?? 0)/\(card.exp_year ?? 0)",
+                                    onTapDefault: {
+                                        Task {
+                                            SVProgressHUD.show()
+                                            await self.viewModel.setDefaultCard(parameters: CardDefaultRequest(card_id: card.card_id ?? ""))
+                                            await SVProgressHUD.dismiss()
+                                            defaultSuccess()
+                                        }
+                                    },
                                     onTapDelete: {
                                         Task {
                                             SVProgressHUD.show()
@@ -73,7 +81,7 @@ struct PaymentAndShipping_Screen: View {
                                             AddressSuccess()
                                             cardSuccess()
                                         }
-                                    }
+                                    }, isDefault: card.is_default ?? false
                                 )
                             }
                         }
@@ -242,24 +250,24 @@ struct PaymentAndShipping_Screen: View {
     
     func defaultSuccess(){
         SVProgressHUD.dismiss()
-        let response = viewModel.addressDict
-        if response.status == "success" {
-            Task{
-                SVProgressHUD.show()
-                await self.viewModel.getAddresses()
-                await SVProgressHUD.dismiss()
-                AddressSuccess()
+         let response = viewModel.addressDict
+            if response.status == "success" {
+                Task{
+                    SVProgressHUD.show()
+                    await self.viewModel.getAddresses()
+                    await SVProgressHUD.dismiss()
+                    AddressSuccess()
+                }
+            } else {
+                showError = true
+                alertType = .sheetType(
+                    icon: .alert,
+                    title: response.error_type?.capitalized ?? "",
+                    message: response.message?.capitalized ?? "",
+                    primaryBtnText: "",
+                    secondaryBtnText: AppString.ok.localized
+                )
             }
-        } else {
-            showError = true
-            alertType = .sheetType(
-                icon: .alert,
-                title: response.error_type?.capitalized ?? "",
-                message: response.message?.capitalized ?? "",
-                primaryBtnText: "",
-                secondaryBtnText: AppString.ok.localized
-            )
-        }
         
         
     }

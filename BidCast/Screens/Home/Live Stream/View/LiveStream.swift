@@ -150,21 +150,23 @@ struct LiveStream: View {
                                     .foregroundColor(.black)
                                     .font(.custom(poppinsSemiBold, size: 13.0))
                             }
-                            Button(action: {
-                                Task{
-                                    SVProgressHUD.show()
-                                    await self.viewModel.followUnfollow(parameters: FollowRequest(following_id: userId))
-                                    await SVProgressHUD.dismiss()
-                                   followSuccess()
+                            if isFollow{
+                                Button(action: {
+                                    Task{
+                                        SVProgressHUD.show()
+                                        await self.viewModel.followUnfollow(parameters: FollowRequest(following_id: userId))
+                                        await SVProgressHUD.dismiss()
+                                        followSuccess()
+                                    }
+                                }) {
+                                    Text("Follow")
+                                        .font(.custom(poppinsSemiBold, size: 13.0))
+                                        .foregroundColor(.black)
+                                        .padding(.horizontal, 10)
+                                        .padding(.vertical, 4)
+                                        .background(Color.yellow)
+                                        .cornerRadius(10)
                                 }
-                            }) {
-                                Text(isFollow ? "Unfollow" : "Follow")
-                                    .font(.custom(poppinsSemiBold, size: 13.0))
-                                    .foregroundColor(.black)
-                                    .padding(.horizontal, 10)
-                                    .padding(.vertical, 4)
-                                    .background(Color.yellow)
-                                    .cornerRadius(10)
                             }
                             Button(action: {
                                 logoutRoom()
@@ -688,7 +690,7 @@ struct LiveStream: View {
                             let initialRoomID = liveShowsData[currentStreamIndex].room_id ?? ""
                             loginRoom(roomId: initialRoomID)
                             fetchBiddingDetail(roomId: initialRoomID)
-                            if liveShowsData[currentStreamIndex].seller?.followed == false{
+                            if liveShowsData[currentStreamIndex].user?.is_followed == false{
                                 isFollow = false
                             }else{
                                 isFollow = true

@@ -105,7 +105,7 @@ struct VerifyOtpScreen: View {
                             if let codeInt = Int(pin) {
                                 request.code = codeInt
                                 Task {
-                                    guard !networkMonitor.isConnected else {
+                                    guard Reachability.isConnectedToNetwork() else {
                                         hudMsg = "No Internet Connection"
                                         showhud = true
                                         return

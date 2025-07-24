@@ -78,7 +78,7 @@ struct ResetPasswordScreen: View {
                     PrimaryButton(title: AppString.submit.localized, isOutLine: false,onButtonClick: {
                         UIApplication.shared.endEditing()
                         
-                        guard !networkMonitor.isConnected else {
+                        guard Reachability.isConnectedToNetwork() else {
                             hudMsg = "No Internet Connection"
                             showhud = true
                             return

@@ -43,17 +43,21 @@ struct CardCell: View {
             Spacer()
 
             Menu {
-                Button("Make Default", action: {
+                Button(action: {
                    
                     onTapDefault()
-                })
-                .font(.custom(poppinsSemiBold, size: 13.0))
+                }){
+                    Text("Set as default")
+                        .font(.custom(poppinsSemiBold, size: 11))
+                }
                 
-                Button("Delete", role: .destructive, action: {
+                Button(role: .destructive, action: {
                  
                     onTapDelete()
-                })
-                .font(.custom(poppinsSemiBold, size: 13.0))
+                }){
+                    Text("Delete")
+                        .font(.custom(poppinsSemiBold, size: 11))
+                }
                 
             } label: {
                 Image(systemName: "ellipsis")

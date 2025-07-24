@@ -45,7 +45,7 @@ struct AccountScreen: View {
     @State var navigateToSellerVerification = false
     @State var navigateToProfile : Bool = false
     @State var comeFromSeller = false
-    
+    @State var newTab = Int()
     @State var viewModal = MenuOptionsViewModel()
     let columns = Array(repeating: GridItem(.flexible(), spacing: 12), count: 2)
     var body: some View {

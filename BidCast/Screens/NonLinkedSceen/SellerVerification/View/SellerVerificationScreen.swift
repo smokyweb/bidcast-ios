@@ -68,7 +68,10 @@ struct SellerVerificationScreen: View {
                 )
             }
             
-            ScrollView {
+            if UserDefaults.sellerVerafied != "verified" && UserDefaults.sellerVerafied != "" {
+                ReviewScreen(imageName: "verify", title: "Pending Verification", content: "Your verification process is currently pending.")
+            }else{
+                ScrollView {
                 VStack(spacing: 18) {
                     // Progress Bar
                     VStack(alignment: .leading) {
@@ -76,10 +79,10 @@ struct SellerVerificationScreen: View {
                             .font(.custom(poppinsSemiBold, size: 13.0))
                             .foregroundColor(.gray)
                         
-                        ProgressView(value: Double(currentStep), total: totalSteps)
+                        ProgressView(value: Double(UserDefaults.sellerVerafied == "verified" ? Int(totalSteps) : currentStep), total: totalSteps)
                             .accentColor(.defaultTheme)
                         
-                        Text("\(currentStep) of \(Int(totalSteps))")
+                        Text("\(UserDefaults.sellerVerafied == "verified" ? Int(totalSteps) : currentStep) of \(Int(totalSteps))")
                             .font(.custom(poppinsSemiBold, size: 11.0))
                             .frame(maxWidth: .infinity, alignment: .trailing)
                             .foregroundColor(.black)
@@ -96,6 +99,7 @@ struct SellerVerificationScreen: View {
                             idVerificationComplete = true
                         }
                     )
+                    .disabled(UserDefaults.sellerVerafied == "verified" ? true : false)
                     
                     // Phone Verification
                     VerificationSectionView(
@@ -109,6 +113,7 @@ struct SellerVerificationScreen: View {
                             navigateToOTP = true
                         }
                     )
+                    .disabled(UserDefaults.sellerVerafied == "verified" ? true : false)
                     
                     // Payment Method
                     VerificationSectionView(
@@ -117,52 +122,62 @@ struct SellerVerificationScreen: View {
                         subtitle: "Add your payment details",
                         status: paymentMethodComplete ? .completed : .pending,
                         actionLabel: "Add",
-                        showDashedCard: true,
+                        showDashedCard: UserDefaults.sellerVerafied == "verified" ? false : true,
                         isActionEnabled: phoneVerificationComplete && !paymentMethodComplete,
                         onActionTap: {
                             navigateToAddCard = true
                         }
                     )
+                    .disabled(UserDefaults.sellerVerafied == "verified" ? true : false)
                     
                     // Show Card or Empty View
                     if let card = cardDetails {
                         CardDetailsView(card: card)
                     } else if paymentMethodComplete {
-//                        Text("No Payment Method Found")
-//                            .font(.custom(poppinsSemiBold, size: 13.0))
-//                            .foregroundColor(.gray)
-//                            .padding()
-//                            .frame(maxWidth: .infinity, alignment: .leading)
+                        //                        Text("No Payment Method Found")
+                        //                            .font(.custom(poppinsSemiBold, size: 13.0))
+                        //                            .foregroundColor(.gray)
+                        //                            .padding()
+                        //                            .frame(maxWidth: .infinity, alignment: .leading)
                     }
-
+                    
                     // Manual Verification
                     VerificationSectionView(
                         icon: "person.crop.circle.badge.checkmark",
                         title: "Manual Verification",
                         subtitle: "Final review by our team",
-                        statusText: manualVerificationComplete ? "Pending" : "Pending"
+                        statusText: manualVerificationComplete ? "Pending" : "Verified",
+                        textColor: UserDefaults.sellerVerafied == "verified" ? Color.defaultTheme : Color.gray
                     )
                 }
                 .padding()
             }
-
+            
             // Final Button
             Button(action: {
                 Task{
                     await handleFinalUpload()
                 }
-               
+                
             }) {
                 Text("Complete Verification")
-                     .font(.custom(poppinsSemiBold, size: 16.0))
-                     .foregroundColor(.white)
-                     .frame(maxWidth: .infinity)
-                     .padding()
-                     .background(manualVerificationComplete ? Color.defaultTheme : Color.gray)
-                     .cornerRadius(16)
+                    .font(.custom(poppinsSemiBold, size: 16.0))
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(manualVerificationComplete ? Color.defaultTheme : Color.gray)
+                    .cornerRadius(16)
             }
             .padding()
-//            .disabled(!manualVerificationComplete)
+            .disabled(UserDefaults.sellerVerafied == "verified" ? true : false)
+        }
+        }
+        .onAppear{
+            if UserDefaults.sellerVerafied == "verified"{
+                idVerificationComplete = true
+              phoneVerificationComplete = true
+                paymentMethodComplete = true
+            }
         }
         .background(.white)
         .toast(isPresenting: $showhud) {
@@ -176,7 +191,7 @@ struct SellerVerificationScreen: View {
                 }
             }
         }
-        .sheet(isPresented: $showSelfieCamera) {
+        .fullScreenCover(isPresented: $showSelfieCamera) {
             ImagePicker(sourceType: .camera, onImagePicked: { image, path in
                 if let image = image, let data = image.jpegData(compressionQuality: 0.6) {
                     selfieImage = image
@@ -387,5 +402,37 @@ private struct IDVerificationCard: View {
         }
         .padding()
         .background(RoundedRectangle(cornerRadius: 16).stroke(Color.blue, lineWidth: 1))
+    }
+}
+
+
+struct ReviewScreen: View {
+    var imageName: String = "verify"
+    var title: String = "No Data Found"
+    var content : String = "Under Processed"
+var yPosition = screenHeight/3
+    var body: some View {
+        GeometryReader { geometry in
+                  VStack(spacing: 48) {
+                      Image(imageName)
+                          .resizable()
+                          .scaledToFit()
+                          .frame(width: 200, height: 200)
+                          .foregroundColor(.gray.opacity(0.6))
+                      VStack(alignment: .leading,spacing: 12){
+                          Text(title)
+                              .font(.custom(poppinsBold, size: 16))
+                              .foregroundColor(.black)
+                              .multilineTextAlignment(.center)
+                          
+                          Text(content)
+                              .font(.custom(poppinsRegular, size: 13))
+                              .foregroundColor(.gray)
+                              .multilineTextAlignment(.center)
+                      }
+                  }
+                  .frame(width: geometry.size.width, height: geometry.size.height)
+                  .position(x: geometry.size.width / 2, y:yPosition )
+              }
     }
 }

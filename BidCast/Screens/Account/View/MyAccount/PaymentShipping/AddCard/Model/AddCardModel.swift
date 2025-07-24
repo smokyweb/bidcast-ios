@@ -13,4 +13,5 @@ struct CardModel : Codable{
     var last4 :  String?
     var fingerprint :  String?
     var card_holder_name :  String?
+    var is_default : Bool?
 }

@@ -15,5 +15,5 @@ struct AddressModel  : Codable {
     var phone_number : String?
     var street_address : String?
     var pincode : String?
-    var is_default : Bool? = false
+    var is_default : Bool?
 }
