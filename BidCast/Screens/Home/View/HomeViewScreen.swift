@@ -110,17 +110,18 @@ struct HomeViewScreen: View {
                                                     title2:item.title ?? "",
                                                     categorySize: 9,
                                                     title2Size: 13.0,
+                                                    liveCount: item.viewer_count ?? 0,
                                                     onTapProfile: {
                                     userId = "\(item.user?.id ?? 0)"
                                     navigateToProfile = true
-                                    
+                                },onTapProfileName: {
+                                    userId = "\(item.user?.id ?? 0)"
+                                    navigateToProfile = true
                                 },onTapMainImage: {
-                                    
                                     print(" tapped the card!,inex \(index)")
                                     self.index = index
                                     userId = "\(item.user?.id ?? 0)"
                                     navigateToLiveStream = true
-                                   
                                 })
                                 .background(.bg)
                                 .cornerRadius(10)
@@ -134,7 +135,7 @@ struct HomeViewScreen: View {
             .padding(.top , 10)
             
             CusNavLink(doNavigate: $navigateToLiveStream, destination: LiveStream(currentStreamIndex :self.$index, userId : $userId,comeFromHome: $navigateToLiveStream))
-            CusNavLink(doNavigate: $navigateToProfile, destination: ProfileScreen(id:$userId))
+            CusNavLink(doNavigate: $navigateToProfile, destination: ProfileScreen(id:$userId,isComeFrom : "Home"))
             CusNavLink(doNavigate: $navigateToNoti, destination: NotificationScreen())
         }
         .background(.white)
@@ -200,34 +201,76 @@ struct HomeViewScreen: View {
     }
     
     
+//    func success() {
+//        let response = viewModel.liveShowsResponse
+//        if response.status == "success" {
+//            FirebaseManager.shared.fetchAllLiveSessions { firebaseRoomIds in
+//                let validShows = response.data?.filter { show in
+//                                   guard let roomId = show.room_id else { return false }
+//                                   return firebaseRoomIds.contains(roomId)
+//                               }
+//                
+//                DispatchQueue.main.async {
+//                    if validShows?.isEmpty == true {
+////                        showError = true
+//                        alertType = .sheetType(
+//                            icon: .alert,
+//                            title: response.error_type?.capitalized ?? "",
+//                            message: response.message?.capitalized ?? "",
+//                            primaryBtnText: "",
+//                            secondaryBtnText: AppString.ok.localized
+//                        )
+//                    }else{
+//                        liveShowsData = validShows ?? [HomeModel]()
+////                        liveShowsData = response.data ?? [HomeModel]()
+//                    }
+//                }
+//            }
+//            
+//           
+//            
+//        } else {
+//            showError = true
+//            alertType = .sheetType(
+//                icon: .alert,
+//                title: response.error_type?.capitalized ?? "",
+//                message: response.message?.capitalized ?? "",
+//                primaryBtnText: "",
+//                secondaryBtnText: AppString.ok.localized
+//            )
+//            
+//            
+//        }
+//    }
+    
     func success() {
         let response = viewModel.liveShowsResponse
         if response.status == "success" {
             FirebaseManager.shared.fetchAllLiveSessions { firebaseRoomIds in
                 let validShows = response.data?.filter { show in
-                                   guard let roomId = show.room_id else { return false }
-                                   return firebaseRoomIds.contains(roomId)
-                               }
-                
+                    guard let roomId = show.room_id else { return false }
+                    return firebaseRoomIds.contains(roomId)
+                }
+
                 DispatchQueue.main.async {
-                    if validShows?.isEmpty == true {
-//                        showError = true
-                        alertType = .sheetType(
-                            icon: .alert,
-                            title: response.error_type?.capitalized ?? "",
-                            message: response.message?.capitalized ?? "",
-                            primaryBtnText: "",
-                            secondaryBtnText: AppString.ok.localized
-                        )
-                    }else{
-                        liveShowsData = validShows ?? [HomeModel]()
-//                        liveShowsData = response.data ?? [HomeModel]()
+                    liveShowsData = validShows ?? []
+                    print("✅ Loaded \(liveShowsData.count) live shows")
+
+                    // 🔁 Loop through all valid live shows and observe each viewer count
+                    for (index, show) in liveShowsData.enumerated() {
+                        if let roomId = show.room_id {
+                            FirebaseManager.shared.observeViewerCount(roomId: roomId) { newCount in
+                                DispatchQueue.main.async {
+                                    // Ensure index is still valid
+                                    if index < liveShowsData.count {
+                                        liveShowsData[index].viewer_count = newCount
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
-            
-           
-            
         } else {
             showError = true
             alertType = .sheetType(
@@ -237,8 +280,6 @@ struct HomeViewScreen: View {
                 primaryBtnText: "",
                 secondaryBtnText: AppString.ok.localized
             )
-            
-            
         }
     }
 }
@@ -300,3 +341,5 @@ struct ButtonTitleLabel: View {
         .padding(.horizontal, 6)
     }
 }
+
+

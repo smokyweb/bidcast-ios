@@ -46,6 +46,7 @@ struct ProfileScreen: View {
     @State var showID = ""
     @State var isLive = false
     @State var navigateToReherseal = false
+    @State var  isComeFrom = ""
     @State var reviewList: [ReviewModel] = [
         ReviewModel(username: "Alice", profileImageName: "user1", rating: 4.5),
         ReviewModel(username: "Bob", profileImageName: "user1", rating: 3.0),
@@ -54,7 +55,7 @@ struct ProfileScreen: View {
         ReviewModel(username: "Eve", profileImageName: "user1", rating: 4.0)
     ]
     
-    @State private var selectedTab = "Shop"
+    @State private var selectedTab = ""
     //Review Variab
 
     
@@ -217,21 +218,30 @@ struct ProfileScreen: View {
             
         }
         .onAppear{
-            let param = ProfileParamRequest(id: id)
-            print(param)
-            Task{
-               guard Reachability.isConnectedToNetwork() else {
-                    hudMsg = "No Internet Connection"
-                    showhud = true
-                    return
-                }
-                SVProgressHUD.show()
-                await self.viewModel.getProfile(param:param)
-                await SVProgressHUD.dismiss()
-                profileSuccess()
+        
+                let param = ProfileParamRequest(id: id)
+                print(param)
+                Task{
+                    guard Reachability.isConnectedToNetwork() else {
+                        hudMsg = "No Internet Connection"
+                        showhud = true
+                        return
+                    }
+                    SVProgressHUD.show()
+                    await self.viewModel.getProfile(param:param)
+                    profileSuccess()
+                    if isComeFrom == "Home" {
+                        selectedTab = "Shows"
+                    await self.viewModel.getMyScheduleShow(parameters: GetMyScheduleShowRequest(type: "upcoming", user_id: Int(id), page: currentPage))
+                    await SVProgressHUD.dismiss()
+                    scheduleShowSuccess()
+                    }else{
+                        selectedTab = "Shop"
+                    }
             }
         }
         .background(Color(UIColor.systemGroupedBackground))
+
     }
     
     

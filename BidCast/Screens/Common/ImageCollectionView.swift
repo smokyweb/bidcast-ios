@@ -17,9 +17,12 @@ struct ImageCollectionView: View {
     var title2 = "Stream Time"
     var categorySize = 8.0
     var title2Size = 12.0
+    var liveCount = 0
     
     var onTapProfile: () -> Void = {}
+    var onTapProfileName : () -> Void = {}
     var onTapMainImage: () -> Void = {}
+  
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -64,6 +67,9 @@ struct ImageCollectionView: View {
                         .font(.custom(poppinsBold, fixedSize: textSize))
                         .foregroundStyle(.black)
                         .foregroundColor(.black)
+                        .onTapGesture {
+                            onTapProfileName()
+                        }
                     
                     Spacer()
                 }
@@ -108,6 +114,10 @@ struct ImageCollectionView: View {
                             .frame(width: geometry.size.width, height: 160)
                             .foregroundColor(.gray)
                     }
+                    if liveCount >= 0 {
+                        LiveBadgeView(count: liveCount)
+                              .padding(6)
+                    }
                 }
                 .frame(maxWidth: .infinity, minHeight: 160)
             }
@@ -130,3 +140,25 @@ struct ImageCollectionView: View {
         .padding(8)
     }
 }
+
+
+struct LiveBadgeView: View {
+    var count: Int
+    
+    var body: some View {
+        HStack(spacing: 4) {
+            Text("Live")
+                .bold()
+            Circle()
+                .frame(width: 5, height: 5)
+            Text("\(count)")
+        }
+        .font(.system(size: 12))
+        .padding(.horizontal, 8)
+        .padding(.vertical, 4)
+        .background(Color.red)
+        .foregroundColor(.white)
+        .cornerRadius(6)
+    }
+}
+
