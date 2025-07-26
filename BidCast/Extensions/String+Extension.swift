@@ -207,3 +207,14 @@ extension Bundle {
         return infoDictionary?["CFBundleVersion"] as? String ?? "1"
     }
 }
+
+
+func formatTo12HourTime(_ timeString: String) -> String {
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "HH:mm:ss"  // input format
+    if let date = dateFormatter.date(from: timeString) {
+        dateFormatter.dateFormat = "h:mm a" // output format
+        return dateFormatter.string(from: date)
+    }
+    return timeString // fallback
+}

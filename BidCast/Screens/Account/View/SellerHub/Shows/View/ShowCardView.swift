@@ -46,7 +46,7 @@ struct ShowCardView: View {
                     .foregroundColor(.gray)
 
                 HStack {
-                    Label(show.time ?? "", systemImage: "clock")
+                    Label(formatTo12HourTime(show.time ?? ""), systemImage: "clock")
                         .font(.custom(poppinsSemiBold, size: 13.0))
                     Label("\(show.viewer_count ?? 0) RSVPs", systemImage: "person.3")
                         .font(.custom(poppinsSemiBold, size: 13.0))
@@ -104,7 +104,7 @@ struct ShowMyScheduleCardView: View {
                     .foregroundColor(.gray)
 
                 HStack {
-                    Label(show.time ?? "", systemImage: "clock")
+                    Label(formatTo12HourTime(show.time ?? ""), systemImage: "clock")
                         .font(.custom(poppinsSemiBold, size: 13.0))
                     Label("\(show.viewerCount ?? 0) RSVPs", systemImage: "person.3")
                         .font(.custom(poppinsSemiBold, size: 13.0))
@@ -123,4 +123,7 @@ struct ShowMyScheduleCardView: View {
         }
     }
 }
+
+
+
 
