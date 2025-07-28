@@ -24,7 +24,7 @@ struct ForgotScreen: View {
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
-    
+    @Binding var backToLogin: Bool
     var viewModel = ForgotViewModel()
     
     var body: some View {
@@ -41,6 +41,11 @@ struct ForgotScreen: View {
                 )
             }
             ScrollView(showsIndicators: false) {
+                VStack(alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/) {
+                    Image(.logo1)
+                        .frame(width: screenWidth, height: screenHeight/3.8)
+                        .edgesIgnoringSafeArea(.top)
+                }
                 VStack(alignment: .leading, spacing: 25) {
                     Color.clear.frame(height: 5)
                     TitleWithLine(title: AppString.forgetPassword, lineLength: sepratorLine)
@@ -96,7 +101,7 @@ struct ForgotScreen: View {
             }
             
             
-            CusNavLink(doNavigate: $navigateToOTP, destination: VerifyOtpScreen())
+            CusNavLink(doNavigate: $navigateToOTP, destination: VerifyOtpScreen( backToLogin: $backToLogin))
         }
         .onAppear {
             UIScrollView.appearance().bounces = false

@@ -29,6 +29,7 @@ struct CardModel : Codable {
 struct PaymentProfile: Codable {
     var customerType: String?
     var customerPaymentProfileId: String?
+    var is_default : Bool?
     var payment: PaymentMethod?
 }
 

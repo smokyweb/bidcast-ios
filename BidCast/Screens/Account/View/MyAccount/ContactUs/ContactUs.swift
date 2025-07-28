@@ -41,17 +41,16 @@ struct ContactUs: View {
                     )
                 }
 
-                // Scrollable Form
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 15) {
                         // Intro Text
                         VStack(alignment: .leading, spacing: 8) {
                             Text(AppString.getInTouch.localized)
-                                .font(.custom(nunitoBlack, fixedSize: 18))
+                                .font(.custom(poppinsSemiBold, fixedSize: 16))
                                 .bold()
 
                             Text(AppString.weAreHereToHelp.localized)
-                                .font(.custom(nunitoBlack, fixedSize: 18))
+                                .font(.custom(poppinsSemiBold, fixedSize: 13))
                         }
                         .padding()
                         .background(Color.platinum)
@@ -97,17 +96,9 @@ struct ContactUs: View {
                         }
 //                        .padding(.horizontal, 16)
 
-                        // List Section
                         VStack(spacing: 16) {
-                            ForEach(0..<tabName.count, id: \.self) { ind in
-                                ListCell(
-                                    image: imageName[ind],
-                                    title: tabName[ind],
-                                    subLabel: subLabel[ind],
-                                    isVectorImgHidden: true
-                                )
+                            ListCell(image:"mail",title:"Email",subLabel: UserDefaults.userEmail,isVectorImgHidden: true,imgSize: 24)
                                 .padding(.horizontal)
-                            }
                         }
 
                         Spacer().frame(height: 80) // Space for button

@@ -182,7 +182,7 @@ struct LoginScreen: View {
                     AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
                 }
                 
-                CusNavLink(doNavigate: $navigateToForgot, destination: ForgotScreen())
+                CusNavLink(doNavigate: $navigateToForgot, destination: ForgotScreen(backToLogin: $navigateToForgot))
                 CusNavLink(doNavigate: $navigateToLanguage, destination: LanguagePickerView())
                 CusNavLink(doNavigate: $navigateToSignUp, destination: SignUpScreen())
                 CusNavLink(doNavigate: $navigateToPrivacy, destination: PrivacyPolicyScreen())

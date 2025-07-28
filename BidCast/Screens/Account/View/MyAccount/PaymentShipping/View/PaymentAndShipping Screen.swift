@@ -65,12 +65,12 @@ struct PaymentAndShipping_Screen: View {
                                     cardNo: card?.cardNumber ?? "",
                                     expires: "\(card?.expirationDate ?? "")/\(card?.expirationDate ?? "")",
                                     onTapDefault: {
-//                                        Task {
-//                                            SVProgressHUD.show()
-////                                            await self.viewModel.setDefaultCard(parameters: CardDefaultRequest(card_id: card.card_id ?? ""))
-//                                            await SVProgressHUD.dismiss()
-//                                            defaultSuccess()
-//                                        }
+                                        Task {
+                                            SVProgressHUD.show()
+                                            await self.viewModel.setDefaultCard(parameters: CardDefaultRequest(card_id: data.customerPaymentProfileId ?? ""))
+                                            await SVProgressHUD.dismiss()
+                                            defaultSuccess()
+                                        }
                                     },
                                     onTapDelete: {
                                         Task {
@@ -83,7 +83,7 @@ struct PaymentAndShipping_Screen: View {
                                             AddressSuccess()
                                             cardSuccess()
                                         }
-                                    }, isDefault: false
+                                    }, isDefault: data.is_default ?? false
                                 )
                             }
                         }

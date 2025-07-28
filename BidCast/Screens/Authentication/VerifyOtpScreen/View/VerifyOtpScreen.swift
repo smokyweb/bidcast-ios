@@ -16,7 +16,7 @@ struct VerifyOtpScreen: View {
     // MARK: - Static Properties
     @EnvironmentObject var appRootManager: AppRootManager
     @EnvironmentObject var networkMonitor: NetworkMonitor
-    
+    @Environment( \.presentationMode) var presentationMode
     @State var isRemeber: Bool = false
     @State var isLoading: Bool = false
     
@@ -43,7 +43,7 @@ struct VerifyOtpScreen: View {
     
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
-    
+    @Binding var backToLogin: Bool
     var body: some View {
         VStack {
             VStack{
@@ -52,7 +52,8 @@ struct VerifyOtpScreen: View {
                     leadingImgArr: [.icBack],
                     onClickLeading: { _ in
                         withAnimation {
-                            appRootManager.currentRoot = .authentication
+                            self.presentationMode.wrappedValue.dismiss()
+//                            appRootManager.currentRoot = .authentication
                         }
                     },
                     count: .constant(0)
@@ -127,7 +128,7 @@ struct VerifyOtpScreen: View {
                         }
                     },btnTextColor: .white)
                 }
-                CusNavLink(doNavigate: $navigateToResetPassword, destination: ResetPasswordScreen())
+                CusNavLink(doNavigate: $navigateToResetPassword, destination: ResetPasswordScreen(backToLogin: $backToLogin))
             }
 
         }
@@ -183,9 +184,9 @@ struct VerifyOtpScreen: View {
     
 }
 
-#Preview {
-    VerifyOtpScreen()
-}
+//#Preview {
+//    VerifyOtpScreen()
+//}
 
 
 struct PinInputView: View {

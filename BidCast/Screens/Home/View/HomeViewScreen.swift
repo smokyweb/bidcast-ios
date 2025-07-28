@@ -175,6 +175,7 @@ struct HomeViewScreen: View {
                     UserDefaults.sellerVerafied = response?.seller_identity_status ?? ""
                     UserDefaults.sellerAddress = response?.has_shipping_address ?? false
                     UserDefaults.hasCardAdded = response?.has_card_added ?? false
+                    UserDefaults.userEmail = response?.email ?? ""
                 }else{
                     
                 }

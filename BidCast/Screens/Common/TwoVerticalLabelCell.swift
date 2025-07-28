@@ -47,9 +47,9 @@ struct TwoVerticalLabelCell<T: Hashable & CustomStringConvertible>: View {
     }
 
     var body: some View {
-        LazyVGrid(columns: columns, alignment: .center, spacing: 12) {
+        LazyVGrid(columns: columns, alignment: .center, spacing: 6) {
             ForEach(dataModel, id: \.self) { item in
-                VStack(alignment: .center, spacing: 8) {
+                VStack(alignment: .center, spacing: 6) {
                     Text(topLabel(item))
                         .font(.custom(h1fontname, fixedSize: h1fontSize))
                         .foregroundColor(.black)
@@ -73,6 +73,6 @@ struct TwoVerticalLabelCell<T: Hashable & CustomStringConvertible>: View {
             }
         }
         .padding(.horizontal, 12)
-        .padding(.vertical, 12)
+        .padding(.vertical, 6)
     }
 }

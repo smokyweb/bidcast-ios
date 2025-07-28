@@ -56,90 +56,91 @@ struct CompleteProfileScreen: View {
                     VStack(alignment: .center) {
                         ZStack(alignment: .bottomTrailing) {
                             if let image = profileImage {
-                                      Image(uiImage: image)
-                                          .resizable()
-                                          .scaledToFill()
-                                          .frame(width: 120, height: 120)
-                                          .clipShape(Circle())
-                                          .overlay(Circle().stroke(Color.gray, lineWidth: 1))
-                                      
-                                      Button(action: {
-                                          profileImage = nil
-                                          profileImageUrl = ""
-                                      }) {
-                                          Image(systemName: "xmark.circle.fill")
-                                              .foregroundColor(.white)
-                                              .padding(8)
-                                              .background(Color.defaultTheme)
-                                              .clipShape(Circle())
-                                              .shadow(radius: 1)
-                                      }
-                                      .offset(x: 5, y: 5)
-                                  }else if accountDetail.profile_image != "" {
+                                Image(uiImage: image)
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 120, height: 120)
+                                    .clipShape(Circle())
+                                    .overlay(Circle().stroke(Color.gray, lineWidth: 1))
+                                
+                                Button(action: {
+                                    profileImage = nil
+                                    profileImageUrl = ""
+                                }) {
+                                    Image(systemName: "xmark.circle.fill")
+                                        .foregroundColor(.white)
+                                        .padding(8)
+                                        .background(Color.defaultTheme)
+                                        .clipShape(Circle())
+                                        .shadow(radius: 1)
+                                }
+                                .offset(x: 5, y: 5)
+                            } else if accountDetail.profile_image == nil || accountDetail.profile_image == "<null>" {
+                                
+                                Circle()
+                                    .fill(Color.gray.opacity(0.2))
+                                    .frame(width: 120, height: 120)
+                                    .overlay(
+                                        Image(systemName: "person.fill")
+                                            .resizable()
+                                            .scaledToFit()
+                                            .foregroundColor(.gray)
+                                            .padding(30)
+                                    )
+                                
+                                Button(action: {
+                                    showPickerOptions = true
+                                }) {
+                                    Image(systemName: "camera.fill")
+                                        .foregroundColor(.white)
+                                        .padding(8)
+                                        .background(Color.blue)
+                                        .clipShape(Circle())
+                                        .shadow(radius: 1)
+                                }
+                                .offset(x: 5, y: 5)
+                                
+                                
+                            }else {
                                 AsyncImage(url: URL(string: accountDetail.profile_image?.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")) { phase in
-                                          if let image = phase.image {
-                                              image
-                                                  .resizable()
-                                                  .scaledToFill()
-                                                  .frame(width: 120, height: 120)
-                                                  .clipShape(Circle())
-                                                  .overlay(Circle().stroke(Color.gray, lineWidth: 1))
-                                          } else if phase.error != nil {
-                                              Circle()
-                                                  .fill(Color.gray.opacity(0.2))
-                                                  .frame(width: 120, height: 120)
-                                                  .overlay(
-                                                      Image(systemName: "person.fill")
-                                                          .resizable()
-                                                          .scaledToFit()
-                                                          .foregroundColor(.gray)
-                                                          .padding(30)
-                                                  )
-                                          } else {
-                                              ProgressView()
-                                                  .frame(width: 120, height: 120)
-                                          }
-                                      }
-
-                                      Button(action: {
-                                          showPickerOptions = true
-                                      }) {
-                                          Image(systemName: "camera.fill")
-                                              .foregroundColor(.white)
-                                              .padding(8)
-                                              .background(Color.blue)
-                                              .clipShape(Circle())
-                                              .shadow(radius: 1)
-                                      }
-                                      .offset(x: 5, y: 5)
-                                  }
-                                  else {
-                                      
-                                      Circle()
-                                          .fill(Color.gray.opacity(0.2))
-                                          .frame(width: 120, height: 120)
-                                          .overlay(
-                                              Image(systemName: "person.fill")
-                                                  .resizable()
-                                                  .scaledToFit()
-                                                  .foregroundColor(.gray)
-                                                  .padding(30)
-                                          )
-
-                                      Button(action: {
-                                          showPickerOptions = true
-                                      }) {
-                                          Image(systemName: "camera.fill")
-                                              .foregroundColor(.white)
-                                              .padding(8)
-                                              .background(Color.blue)
-                                              .clipShape(Circle())
-                                              .shadow(radius: 1)
-                                      }
-                                      .offset(x: 5, y: 5)
-                                  }
-                              }
-
+                                    if let image = phase.image {
+                                        image
+                                            .resizable()
+                                            .scaledToFill()
+                                            .frame(width: 120, height: 120)
+                                            .clipShape(Circle())
+                                            .overlay(Circle().stroke(Color.gray, lineWidth: 1))
+                                    } else if phase.error != nil {
+                                        Circle()
+                                            .fill(Color.gray.opacity(0.2))
+                                            .frame(width: 120, height: 120)
+                                            .overlay(
+                                                Image(systemName: "person.fill")
+                                                    .resizable()
+                                                    .scaledToFit()
+                                                    .foregroundColor(.gray)
+                                                    .padding(30)
+                                            )
+                                    } else {
+                                        ProgressView()
+                                            .frame(width: 120, height: 120)
+                                    }
+                                }
+                                
+                                Button(action: {
+                                    showPickerOptions = true
+                                }) {
+                                    Image(systemName: "camera.fill")
+                                        .foregroundColor(.white)
+                                        .padding(8)
+                                        .background(Color.blue)
+                                        .clipShape(Circle())
+                                        .shadow(radius: 1)
+                                }
+                                .offset(x: 5, y: 5)
+                            }
+                            
+                        }
                         
                         Text(AppString.UploadPhoto.localized)
                             .foregroundColor(.blue)

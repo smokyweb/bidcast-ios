@@ -50,7 +50,7 @@ struct AccountScreen: View {
     @State var comeFromSeller = false
     @State var newTab = Int()
     @State var viewModal = MenuOptionsViewModel()
-    let columns = Array(repeating: GridItem(.flexible(), spacing: 12), count: 2)
+    let columns = Array(repeating: GridItem(.flexible(), spacing: 6), count: 2)
     var body: some View {
         VStack{
             VStack{
@@ -67,6 +67,7 @@ struct AccountScreen: View {
                     count: .constant(0)
                 )
             }
+            
             ScrollView(showsIndicators: false){
                 VStack(alignment: .leading,spacing: 4){
                     ListCell(image: UserDefaults.profileURL.isEmpty ? "user_dummy" : UserDefaults.profileURL,
@@ -96,7 +97,7 @@ struct AccountScreen: View {
                         //Seller hub
                         TwoVerticalLabelCell(dataModel: Credit.allCases,topLabel: {$0.labelOlt },bottomLabel: { $0.description.localized})
                         
-                        LazyVGrid(columns: columns, spacing: 12) { // ✅ uniform vertical spacing
+                        LazyVGrid(columns: columns, spacing: 6) { // ✅ uniform vertical spacing
                             ForEach(0 ..< TabSection.allCases.count, id: \.self) { index in
                                 VerticalLabelImageCell(
                                     topLabel: TabSection.allCases[index].img,
@@ -135,7 +136,7 @@ struct AccountScreen: View {
                     }else{
                         TwoVerticalLabelCell(dataModel: AccountCredit.allCases,topLabel: {$0.labelOlt },bottomLabel: { $0.description},columnsPerRow: 2)
                         
-                        LazyVGrid(columns: columns, spacing: 12) {
+                        LazyVGrid(columns: columns, spacing: 6) {
                             ForEach(0 ..< AccountTabSection.allCases.count, id: \.self) { index in
                                 VerticalLabelImageCell(
                                     topLabel: AccountTabSection.allCases[index].img,
@@ -223,7 +224,9 @@ struct AccountScreen: View {
             }
             .padding(.horizontal,8)
             .background(.bg.opacity(0.5))
-            .padding(.bottom,isNavFrom ? -300 : UIDevice.current.hasNotch ? -220 : -110)
+            .edgesIgnoringSafeArea(.bottom)
+//            .frame(maxHeight: .infinity)
+            .padding(.bottom,isNavFrom ? -300 : UIDevice.current.hasNotch ? -230 : -110)
             
             CusNavLink(doNavigate: $navigateToProfile, destination: CompleteProfileScreen())
             //MARK: My Account navigation

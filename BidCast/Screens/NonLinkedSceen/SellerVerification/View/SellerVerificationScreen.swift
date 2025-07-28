@@ -235,7 +235,7 @@ struct SellerVerificationScreen: View {
             doNavigate: $navigateToAddCard,
             destination: AddCardScreen(
                 isNavFrom: "SellerVerification",
-                onSuccess: { cardNumber,expiry,cvv in
+                onSuccess: { cardId in
 //                    cardTokenNumber = cardToken
 //                    self.cardDetails = CardDetails()
                     self.cardNumber = cardNumber

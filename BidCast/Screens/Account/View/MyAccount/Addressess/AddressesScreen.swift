@@ -28,52 +28,57 @@ struct AddressesScreen: View {
     var body: some View {
         VStack(spacing: 0) {
             // Top Header
-            PrimaryHeader(
-                title: "My Addresses",
-                isForLogo: false,
-                leadingImgArr: [.icBack],
-                onClickLeading: { _ in
-                    self.presentationMode.wrappedValue.dismiss()
-                },
-                count: .constant(0)
-            )
-            .frame(height: 50)
-            .background(Color.white)
-            
+            VStack{
+                PrimaryHeader(
+                    title: "My Addresses",
+                    isForLogo: false,
+                    leadingImgArr: [.icBack],
+                    onClickLeading: { _ in
+                        self.presentationMode.wrappedValue.dismiss()
+                    },
+                    count: .constant(0)
+                )
+                
+            }
             // Address list with space for bottom button
-            ScrollView {
+            ScrollView(showsIndicators: false) {
                 VStack(spacing: 16) {
-                    ForEach(sampleAddresses, id: \.id) { address in
-//                        let address = sampleAddresses[index]
-                        AddressListCell(address: address,onTapDefault: {
-//                            print("indexx \(index)")
-                            Task{
-                               guard Reachability.isConnectedToNetwork() else {
-                                    hudMsg = "No Internet Connection"
-                                    showhud = true
-                                    return
+                    if sampleAddresses.count != 0{
+                        ForEach(sampleAddresses, id: \.id) { address in
+                            //                        let address = sampleAddresses[index]
+                            AddressListCell(address: address,onTapDefault: {
+                                //                            print("indexx \(index)")
+                                Task{
+                                    guard Reachability.isConnectedToNetwork() else {
+                                        hudMsg = "No Internet Connection"
+                                        showhud = true
+                                        return
+                                    }
+                                    SVProgressHUD.show()
+                                    await self.viewModel.setDefaultAddress(parameters: AddressDefaultParam(address_id: "\(address.id ?? 0)"))
                                 }
-                                SVProgressHUD.show()
-                                await self.viewModel.setDefaultAddress(parameters: AddressDefaultParam(address_id: "\(address.id ?? 0)"))
-                            }
-                        },onTapDelete: {
-                            Task{
-                               guard Reachability.isConnectedToNetwork() else {
-                                    hudMsg = "No Internet Connection"
-                                    showhud = true
-                                    return
+                            },onTapDelete: {
+                                Task{
+                                    guard Reachability.isConnectedToNetwork() else {
+                                        hudMsg = "No Internet Connection"
+                                        showhud = true
+                                        return
+                                    }
+                                    SVProgressHUD.show()
+                                    await self.viewModel.deleteAddress(parameters: AddressDefaultParam(address_id:"\(address.id ?? 0)"))
                                 }
-                                SVProgressHUD.show()
-                                await self.viewModel.deleteAddress(parameters: AddressDefaultParam(address_id:"\(address.id ?? 0)"))
-                            }
-                        }, isDefault: address.is_default ?? false)
+                            }, isDefault: address.is_default ?? false)
+                        }
+                    }else{
+                        NoDataView(message: "No Address found")
                     }
                 }
-                .padding(.top, 16)
-                .padding(.bottom, 80)
+                .padding(.vertical, 16)
+                .padding(.horizontal,2)
+//                .padding(.bottom, 40)
             }
             .padding(.horizontal,Leading/2)
-            .background(Color(.systemGroupedBackground))
+            .background(.bg.opacity(0.4))
             
             //Bottom fixed button
             PrimaryButton(
@@ -89,7 +94,7 @@ struct AddressesScreen: View {
             )
             //            .padding(.vertical, 10)
             .background(Color.white)
-            .padding(.all)
+            .padding(.all,8)
             .padding(.bottom,-24)
             CusNavLink(doNavigate: $navigateToCreate, destination: CreateAddress())
         }

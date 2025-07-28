@@ -51,7 +51,7 @@ struct ListCell: View {
                         Image(image)
                             .resizable()
                             .aspectRatio(contentMode: .fill)
-                            .frame(width: 42,height: 42)
+                            .frame(width: imgSize,height: imgSize)
                             .clipShape(RoundedRectangle(cornerRadius: 8))
                             .padding(.leading ,10)
                         

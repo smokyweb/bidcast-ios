@@ -120,7 +120,7 @@ struct WalletStatTile: View {
                 Text(title)
                     .font(.custom(poppinsSemiBold, size: 13.0))
                     .foregroundColor(.gray)
-                Text(value)
+                Text("$\(value)")
                     .font(.custom(poppinsSemiBold, size: 11.0))
             }
         }

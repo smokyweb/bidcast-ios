@@ -77,6 +77,7 @@ struct CreateAddress: View {
                             placeholder: "Enter name",
                             icon: .icMail,
                             text: $request.name,
+                            isIconDisplay : false,
                             enteredText: {
                                 request.name = $0
                             }
@@ -86,8 +87,9 @@ struct CreateAddress: View {
                         AuthTextField(
                             floatingLabel: "Phone Number",
                             placeholder: "Enter phone number",
-                            icon: .icMail,
+                            icon: .phone,
                             text: $request.phone_number,
+                            isIconDisplay : false,
                             enteredText: {
                                 request.phone_number = $0
                             }
@@ -100,6 +102,7 @@ struct CreateAddress: View {
                             placeholder: "Enter street address",
                             icon: .icMail,
                             text: $request.street_address,
+                            isIconDisplay : false,
                             enteredText: {
                                 request.street_address = $0
                             }
@@ -110,6 +113,7 @@ struct CreateAddress: View {
                             placeholder: "Enter pin code",
                             icon: .icMail,
                             text: $request.pincode,
+                            isIconDisplay : false,
                             enteredText: {
                                 request.pincode = $0
                             }
@@ -160,13 +164,26 @@ struct CreateAddress: View {
                         }
                         let request = self.request
                         Task {
-                           guard Reachability.isConnectedToNetwork() else {
+                            guard Reachability.isConnectedToNetwork() else {
                                 hudMsg = "No Internet Connection"
                                 showhud = true
                                 return
                             }
                             SVProgressHUD.show()
                             await viewModel.storeAddress(parameters: request)
+                            await SVProgressHUD.dismiss()
+                            if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
+                                success()
+                            }else{
+                                alertType = .sheetType(
+                                    icon: .success,
+                                    title: "Failed",
+                                    message: self.viewModel.errorMessage ?? "",
+                                    primaryBtnText: AppString.ok.localized,
+                                    secondaryBtnText: ""
+                                )
+                                showError = true
+                            }
                         }
                     }
                 },
@@ -177,18 +194,6 @@ struct CreateAddress: View {
             .padding(.vertical, 10)
             .background(Color.white)
 //            .padding(.all)
-            if isLoading{
-                LoadingIndicator()
-            }
-        }
-        .onReceive( viewModel.$addressResponse) { response in
-           guard Reachability.isConnectedToNetwork() else {
-                hudMsg = "No Internet Connection"
-                showhud = true
-                return
-            }
-            SVProgressHUD.dismiss()
-            success()
         }
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
@@ -197,13 +202,30 @@ struct CreateAddress: View {
             isPresented: $showError,
             height: screenHeight / 2.5,
             topBarCornerRadius: 25,
-            showTopIndicator: false
+            showTopIndicator: false,onDismiss:{
+                if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
+                    showError = true
+                }else{
+                    
+                    showError = false
+                }
+            }
         ){
             CommonBottomSheet(
                 sheetType: $alertType,
                 onPrimaryClick: {
-                    withAnimation { showError = false
-                        self.presentationMode.wrappedValue.dismiss()}
+                   if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
+                       withAnimation {
+                           showError = false
+                       }
+                    }else{
+                        
+                        withAnimation {
+                            showError = false
+                            self.presentationMode.wrappedValue.dismiss()
+                        }
+                        
+                    }
                 },
                 onSecondaryClick: {
                     withAnimation { showError = false }

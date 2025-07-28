@@ -16,7 +16,7 @@ struct AddCardScreen: View {
     @State private var expiryDate = ""
     var isNavFrom: String = ""
     @State var viewModel = AddCardViewModel()
-    var onSuccess: ((String,String,String) -> Void)?
+    var onSuccess: ((String) -> Void)?
     @Environment(\.presentationMode) var presentationMode
     @ObservedObject var stpCard = StripeCardViewModel()
     
@@ -163,9 +163,8 @@ struct AddCardScreen: View {
                    
                     
                     UIApplication.shared.endEditing()
-                    if isNavFrom == "SellerVerification" {
-                        handleSellerCardResponse(cardNumber: cardNumber, Expiry: expiryDate, Cvv: cvv)
-                    }else{
+//                    isNavFrom = "SellerVerification"
+                    
                         Task{
                             SVProgressHUD.show()
                             self.viewModel.errorMessage = ""
@@ -186,7 +185,7 @@ struct AddCardScreen: View {
                                 showError = true
                             }
                         }
-                    }
+                    
                 },
                 width: screenWidth - 40,
                 cornerRadius: 12.0, imageName: "",
@@ -229,6 +228,8 @@ struct AddCardScreen: View {
                 secondaryBtnText: ""
             )
             showError = true
+            
+//            handleSellerCardResponse(cardId: self.viewModel.addCardDict.data)
         } else {
             alertType = .sheetType(
                 icon: .alert,
@@ -241,26 +242,12 @@ struct AddCardScreen: View {
         }
     }
     
-    func handleSellerCardResponse(cardNumber: String, Expiry:String, Cvv:String) {
-//        let response = viewModel.sellerStorePaymentDict
-//        if response.status == "success" {
+    func handleSellerCardResponse(cardId:String) {
             DispatchQueue.main.async {
-                hudMsg = "Card added successfully"
-                showhud = true
-                onSuccess?(cardNumber,Expiry,Cvv)
-                self.presentationMode.wrappedValue.dismiss()
+                
+                onSuccess?(cardId)
+               
             }
-//        } else {
-//            DispatchQueue.main.async {
-//                alertType = .sheetType(
-//                    icon: .alert,
-//                    title: response.error_type?.capitalized ?? "Error",
-//                    message: response.message?.capitalized ?? "Something went wrong.",
-//                    primaryBtnText: "",
-//                    secondaryBtnText: "OK"
-//                )
-//                showError = true
-//            }
-//        }
+
     }
 }

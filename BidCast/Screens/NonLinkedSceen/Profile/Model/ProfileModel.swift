@@ -26,10 +26,14 @@ struct ProfileModel : Codable{
     var has_card_added : Bool?
     var role : RoleModel?
     var default_shipping_address : AddressModel?
-    var default_card : CardModel?
+    var default_card : DefaultCardModel?
     
 }
 
+struct DefaultCardModel : Codable {
+    var card_id ,exp_date: String?
+    var last4 : String?
+}
 
 struct RoleModel : Codable {
     var created_at : String?

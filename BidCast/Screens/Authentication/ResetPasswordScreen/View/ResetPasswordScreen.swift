@@ -33,6 +33,7 @@ struct ResetPasswordScreen: View {
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
+    @Binding var backToLogin: Bool
 
     var body: some View {
         VStack {
@@ -164,7 +165,7 @@ struct ResetPasswordScreen: View {
                     withAnimation { showError = false }
                     if alertType.primaryBtnText == AppString.proceedToLogin.localized {
                         withAnimation {
-                            appRootManager.currentRoot = .authentication
+                            backToLogin = false
                         }
                     }
                 },
@@ -208,6 +209,6 @@ struct ResetPasswordScreen: View {
     }
 }
 
-#Preview {
-    ResetPasswordScreen()
-}
+//#Preview {
+//    ResetPasswordScreen()
+//}
