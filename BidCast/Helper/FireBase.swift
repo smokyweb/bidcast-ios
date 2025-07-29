@@ -28,10 +28,13 @@ class FirebaseManager {
                            seller: SellerModel,
                            thumbnail: String,
                            time: String,
+                           date : String,
                            completion: ((Bool) -> Void)? = nil) {
         
         let roomId = "live_room_\(userId)_\(showId)"
-        let currentTime = getCurrentTimestamp()
+        let timestamp = convertDateAndTimeToTimestamp(date: date, time: time)
+        print("📅 Timestamp: \(timestamp ?? 0)")
+       
         let sessionData: [String: Any] = [
             "highestBid": "",
             "live": true,
@@ -41,9 +44,11 @@ class FirebaseManager {
             "showDetail": "",
             "showId": showId,
             "thumbnail": thumbnail,
-            "time": currentTime,
+            "time": timestamp ?? "",
             "viewerCount": ""
         ]
+        
+        print(sessionData)
 
         databaseRef.child("live_sessions").child(roomId).setValue(sessionData) { error, _ in
             if let error = error {
@@ -77,18 +82,26 @@ class FirebaseManager {
         }
     }
     
-    func getCurrentTimeFormatted() -> String {
+//    func getCurrentTimeFormatted() -> String {
+//        let formatter = DateFormatter()
+//        formatter.locale = Locale(identifier: "en_US_POSIX")
+//        formatter.dateFormat = "yyyy-MM-dd_hh:mm:ss_a" 
+//        formatter.amSymbol = "am"
+//        formatter.pmSymbol = "pm"
+//        return formatter.string(from: Date())
+//    }
+    func convertDateAndTimeToTimestamp(date: String, time: String) -> Int? {
+        let dateTimeString = "\(date) \(time)" // "2025-08-26 16:00:00"
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.dateFormat = "yyyy-MM-dd_hh:mm:ss_a" 
-        formatter.amSymbol = "am"
-        formatter.pmSymbol = "pm"
-        return formatter.string(from: Date())
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        formatter.timeZone = .current  // or .utc if needed
+        
+        if let combinedDate = formatter.date(from: dateTimeString) {
+            return Int(combinedDate.timeIntervalSince1970)
+        } else {
+            return nil
+        }
     }
-    func getCurrentTimestamp() -> TimeInterval {
-        return Date().timeIntervalSince1970
-    }
-    
     func getLiveSessionData(roomId: String, completion: @escaping (_ data: [String: Any]?) -> Void) {
         let ref = databaseRef.child("live_sessions").child(roomId)
         ref.observeSingleEvent(of: .value) { snapshot in

@@ -594,7 +594,7 @@ struct RehearsalScreen: View {
             
             
             
-            FirebaseManager.shared.createLiveSession(showId:"\(data.id ?? 0)", userId: "\(data.user_id ?? 0)", product: product, seller: seller, thumbnail: data.thumbnail?.first ?? "", time: data.time ?? "")
+            FirebaseManager.shared.createLiveSession(showId:"\(data.id ?? 0)", userId: "\(data.user_id ?? 0)", product: product, seller: seller, thumbnail: data.thumbnail?.first ?? "", time: data.time ?? "", date: data.date ?? "")
             
             
             let user = ZegoUser(userID: "\(data.user_id ?? 0)", userName: data.user?.name ?? "")
