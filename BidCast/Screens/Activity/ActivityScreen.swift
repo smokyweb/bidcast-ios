@@ -78,7 +78,7 @@ struct ActivityScreen: View {
                                         selectedUserId = message.users.senderId
                                         selectedUserName = message.users.senderName
                                         selectedUserImage = message.users.senderImage
-                                        isNavigatingToChat = true
+                                        isNavigatingToChat = false //TODO:
                                     }
 
                             }
