@@ -73,7 +73,7 @@ struct ActivityScreen: View {
                         } else {
                             ForEach(messageList) { message in
                                 MessageCell(message: message)
-                                    .padding(.all , 12)
+                                    .padding(.all , 6)
                                     .onTapGesture {
                                         selectedUserId = message.users.senderId
                                         selectedUserName = message.users.senderName

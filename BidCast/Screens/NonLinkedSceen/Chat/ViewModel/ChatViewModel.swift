@@ -41,27 +41,26 @@ class ChatViewModel: ObservableObject {
         fetchMessages()
     }
 
-    
+    // 🔄 Realtime message fetch
     func fetchMessages() {
-        ref.child(chatPath).observe(.childAdded, with: { snapshot in
-            if let dict = snapshot.value as? [String: Any] {
-                let message = ChatMessageModel(id: snapshot.key, from: dict)
-                DispatchQueue.main.async {
-                    self.messages.append(message)
-                    self.messages.sort(by: { $0.timestamp < $1.timestamp })
-                }
+        ref.child(chatPath).observe(.childAdded) { snapshot in
+            guard let dict = snapshot.value as? [String: Any] else { return }
+            let message = ChatMessageModel(id: snapshot.key, from: dict)
+            DispatchQueue.main.async {
+                self.messages.append(message)
+                self.messages.sort { $0.timestamp < $1.timestamp }
             }
-        })
+        }
     }
 
-
-
-
+    // 📤 Send a new message
     func sendMessage() {
+        guard !messageText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+
         let messageId = UUID().uuidString
         let timestamp = Int(Date().timeIntervalSince1970)
 
-        // 1. Save actual chat message to chat thread
+        // 1. Save actual chat message to thread
         let messageData: [String: Any] = [
             "message": messageText,
             "senderId": currentUserId,
@@ -70,7 +69,7 @@ class ChatViewModel: ObservableObject {
         ]
         ref.child(chatPath).child(messageId).setValue(messageData)
 
-        // 2. Prepare attachment (empty for now)
+        // 2. Prepare attachment
         let attachment: [String: Any] = [
             "audio": "",
             "image": "",
@@ -78,7 +77,7 @@ class ChatViewModel: ObservableObject {
             "video": ""
         ]
 
-        // 3. Prepare users node for sender
+        // 3. Sender side user object
         let senderUsers: [String: Any] = [
             "receiverId": otherUserId,
             "receiverImage": otherUserImage,
@@ -88,7 +87,6 @@ class ChatViewModel: ObservableObject {
             "senderName": currentUserName
         ]
 
-        // 4. Main chat_list data (matches screenshot)
         let senderChatListData: [String: Any] = [
             "attachment": attachment,
             "id": "\(currentUserId)_chats_\(otherUserId)",
@@ -101,7 +99,7 @@ class ChatViewModel: ObservableObject {
             "users": senderUsers
         ]
 
-        // 5. Receiver users node
+        // 4. Receiver side user object
         let receiverUsers: [String: Any] = [
             "receiverId": currentUserId,
             "receiverImage": currentUserImage,
@@ -123,13 +121,11 @@ class ChatViewModel: ObservableObject {
             "users": receiverUsers
         ]
 
-        // 6. Set data in chat_list for both sender and receiver
+        // 5. Save to chat_list for both users
         ref.child("chat_list").child(currentUserId).child(otherUserId).setValue(senderChatListData)
         ref.child("chat_list").child(otherUserId).child(currentUserId).setValue(receiverChatListData)
 
-        // 7. Clear input
+        // 6. Clear input
         messageText = ""
     }
-
-
 }
