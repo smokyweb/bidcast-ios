@@ -240,3 +240,14 @@ func saveImageToTemporaryDirectory(data: Data) -> URL? {
         return nil
     }
 }
+
+extension TimeInterval {
+    func toDateString() -> String {
+        let date = Date(timeIntervalSince1970: self)
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .short
+        formatter.timeZone = TimeZone(identifier: "Asia/Kolkata")
+        return formatter.string(from: date)
+    }
+}

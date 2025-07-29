@@ -25,6 +25,8 @@ struct LiveStream: View {
     @State var comments: [Comment] = []
     
     @State var id : String = ""
+    @State var userName : String = ""
+    @State var userImage : String = ""
     @State var dragOffset = CGSize.zero
     @State var navigateToProfile = false
     @State private var swipeConfirmed = false
@@ -491,7 +493,7 @@ struct LiveStream: View {
                             }, buttonText: $titleText
                         )
                     }
-                CusNavLink(doNavigate: $navigateToProfile, destination: ProfileScreen(id:$id))
+                CusNavLink(doNavigate: $navigateToProfile, destination: ProfileScreen(id:$id,userName: $userName,userImage: $userImage))
                 CusNavLink(doNavigate: $navigateToBuyer, destination: TrustedBuyerScreen(comeFromHome:$comeFromHome))
             }
         }.gesture(

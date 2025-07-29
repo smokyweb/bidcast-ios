@@ -27,6 +27,8 @@ struct HomeViewScreen: View {
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @State var showError: Bool = false
     @State var userId = ""
+    @State var userImage = ""
+    @State var userName = ""
     @Binding var comeFromExploreScreen : Bool
     @State var navigateToNoti : Bool = false
     
@@ -116,11 +118,15 @@ struct HomeViewScreen: View {
                                     navigateToProfile = true
                                 },onTapProfileName: {
                                     userId = "\(item.user?.id ?? 0)"
+                                    userImage = item.user?.profile_image ?? ""
+                                    userName = item.user?.username ?? ""
                                     navigateToProfile = true
                                 },onTapMainImage: {
                                     print(" tapped the card!,inex \(index)")
                                     self.index = index
                                     userId = "\(item.user?.id ?? 0)"
+                                    userImage = item.user?.profile_image ?? ""
+                                    userName = item.user?.username ?? ""
                                     navigateToLiveStream = true
                                 })
                                 .background(.bg)
@@ -135,7 +141,7 @@ struct HomeViewScreen: View {
             .padding(.top , 10)
             
             CusNavLink(doNavigate: $navigateToLiveStream, destination: LiveStream(currentStreamIndex :self.$index, userId : $userId,comeFromHome: $navigateToLiveStream))
-            CusNavLink(doNavigate: $navigateToProfile, destination: ProfileScreen(id:$userId,isComeFrom : "Home"))
+            CusNavLink(doNavigate: $navigateToProfile, destination: ProfileScreen(id:$userId,userName: $userName,userImage: $userImage,isComeFrom : "Home"))
             CusNavLink(doNavigate: $navigateToNoti, destination: NotificationScreen())
         }
         .background(.white)

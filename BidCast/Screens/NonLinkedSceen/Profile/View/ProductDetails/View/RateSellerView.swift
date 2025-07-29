@@ -29,6 +29,8 @@ struct RateSellerView: View {
     @State var showError: Bool = false
     @State var navigateToProfile = false
     @State var userId = ""
+    @State var userName : String = ""
+    @State var userImage : String = ""
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
     @State var viewModel = ProfileViewModel()
@@ -160,7 +162,7 @@ struct RateSellerView: View {
         }
         .ignoresSafeArea(edges: .bottom) // Optional
         .background(Color(.systemBackground))
-        CusNavLink(doNavigate: $navigateToProfile, destination: ProfileScreen(id: $userId))
+        CusNavLink(doNavigate: $navigateToProfile, destination: ProfileScreen(id:$userId,userName: $userName,userImage: $userImage))
             .toast(isPresenting: $showhud) {
                 AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)}
     }

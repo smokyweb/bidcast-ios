@@ -13,7 +13,6 @@ import BottomSheet
 import SwiftUICore
 
 
-
 class FirebaseManager {
     static let shared = FirebaseManager()
     let databaseRef = Database.database().reference()
@@ -213,5 +212,29 @@ class FirebaseManager {
         newSessionHandle = nil
         print("✅ Removed new session observer")
       }
+    }
+    
+
+    func fetchMessages(forUserId userId: String, completion: @escaping ([ChatMessage]) -> Void) {
+        var allMessages: [ChatMessage] = []
+
+        let dbRef = Database.database().reference().child("chat_list").child(userId)
+        
+        dbRef.observeSingleEvent(of: .value) { snapshot in
+            for child in snapshot.children {
+                guard let userSnap = child as? DataSnapshot,
+                      let data = userSnap.value as? [String: Any] else { continue }
+
+                do {
+                    let jsonData = try JSONSerialization.data(withJSONObject: data)
+                    let message = try JSONDecoder().decode(ChatMessage.self, from: jsonData)
+                    allMessages.append(message)
+                } catch {
+                    print("Decoding failed:", error)
+                }
+            }
+
+            completion(allMessages.sorted { $0.timestamp > $1.timestamp }) // Latest first
+        }
     }
 }

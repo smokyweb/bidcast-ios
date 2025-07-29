@@ -8,6 +8,7 @@
 import SwiftUI
 import SVProgressHUD
 import AlertToast
+import FirebaseAuth
 
 enum ProfileTabType {
     case shop
@@ -19,10 +20,10 @@ enum ProfileTabType {
 
 struct ProfileScreen: View {
     
-    
     @State var viewModel = ProfileViewModel()
     @Binding var id : String
-    
+    @Binding var userName : String
+    @Binding var userImage : String
     @State var isLoading: Bool = false
     @State var currentPage = 1
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
@@ -46,6 +47,7 @@ struct ProfileScreen: View {
     @State var showID = ""
     @State var isLive = false
     @State var navigateToReherseal = false
+    @State var navigateToChat = false
     @State var  isComeFrom = ""
     @State var reviewList: [ReviewModel] = [
         ReviewModel(username: "Alice", profileImageName: "user1", rating: 4.5),
@@ -57,191 +59,206 @@ struct ProfileScreen: View {
     
     @State private var selectedTab = ""
     //Review Variab
-
+    
     
     var body: some View {
-        VStack(spacing: 0) {
-            ScrollView {
-                VStack(spacing: 16) {
-                    ProfileHeaderView(name: profileData.name?.capitalizingFirstLetter() ?? "",
-                                      email: profileData.username ?? "",
-                                      profileImage: profileData.profile_image ?? "",
-                                      followers: "\(profileData.follower_count ?? 0)",
-                                      following: "\(profileData.following_count ?? 0)" ,
-                                      bio: profileData.bio ?? "Professional photographer specializing in portrait and wedding photography. Available for bookings worldwide.",
-                                      onTapNotify: {
-                        showNotify = true
-                    },sellerID : $id)
-                    
-                    ProfileActionsView(isFollowing: $isFollowing ,
-                                       onTapFollow: {
-                        isForFollow = true
-                        Task{
-                            SVProgressHUD.show()
-                           guard Reachability.isConnectedToNetwork() else {
-                                hudMsg = "No Internet Connection"
-                                showhud = true
-                                return
-                            }
-                            await self.viewModel.followUnfollow(parameters: FollowRequest(following_id: id))
-                            await viewModel.getProfile(param: ProfileParamRequest(id: id))
-                            await SVProgressHUD.dismiss()
-                            profileSuccess()
-                        }
-                    },
-                                       onTapMessage: {
-                        //MEssage chat
+        ZStack {
+            VStack(spacing: 0) {
+                ScrollView {
+                    VStack(spacing: 16) {
+                        ProfileHeaderView(name: profileData.name?.capitalizingFirstLetter() ?? "",
+                                          email: profileData.username ?? "",
+                                          profileImage: profileData.profile_image ?? "",
+                                          followers: "\(profileData.follower_count ?? 0)",
+                                          following: "\(profileData.following_count ?? 0)" ,
+                                          bio: profileData.bio ?? "Professional photographer specializing in portrait and wedding photography. Available for bookings worldwide.",
+                                          onTapNotify: {
+                            showNotify = true
+                        },sellerID : $id)
                         
-                    })
-                    
-                    ProfileTabsView(selectedTab: $selectedTab) { tab in
-                        print("Selected Tab: \(tab)")
-                        Task {
-                            switch tab {
-                            case "Shop":
-                                print("")
-                                Task{
-                                   guard Reachability.isConnectedToNetwork() else {
+                        ProfileActionsView(isFollowing: $isFollowing ,
+                                           onTapFollow: {
+                            isForFollow = true
+                            Task{
+                                SVProgressHUD.show()
+                                guard Reachability.isConnectedToNetwork() else {
+                                    hudMsg = "No Internet Connection"
+                                    showhud = true
+                                    return
+                                }
+                                await self.viewModel.followUnfollow(parameters: FollowRequest(following_id: id))
+                                await viewModel.getProfile(param: ProfileParamRequest(id: id))
+                                await SVProgressHUD.dismiss()
+                                profileSuccess()
+                            }
+                        },
+                                           onTapMessage: {
+                            navigateToChat = true
+                            
+                        })
+                        
+                        ProfileTabsView(selectedTab: $selectedTab) { tab in
+                            print("Selected Tab: \(tab)")
+                            Task {
+                                switch tab {
+                                case "Shop":
+                                    print("")
+                                    Task{
+                                        guard Reachability.isConnectedToNetwork() else {
+                                            hudMsg = "No Internet Connection"
+                                            showhud = true
+                                            return
+                                        }
+                                        SVProgressHUD.show()
+                                        await self.viewModel.productDetails(parameters: UserProductRequest(user_id: Int(id) ?? 0,page : currentPage))
+                                        await SVProgressHUD.dismiss()
+                                        success()
+                                    }
+                                    //                                await viewModel.fetchShopItems()
+                                case "Shows":
+                                    guard Reachability.isConnectedToNetwork() else {
                                         hudMsg = "No Internet Connection"
                                         showhud = true
                                         return
                                     }
                                     SVProgressHUD.show()
-                                    await self.viewModel.productDetails(parameters: UserProductRequest(user_id: Int(id) ?? 0,page : currentPage))
+                                    await self.viewModel.getMyScheduleShow(parameters: GetMyScheduleShowRequest(type: "upcoming", user_id: Int(id),page : currentPage))
                                     await SVProgressHUD.dismiss()
-                                    success()
-                                }
-                                //                                await viewModel.fetchShopItems()
-                            case "Shows":
-                               guard Reachability.isConnectedToNetwork() else {
-                                    hudMsg = "No Internet Connection"
-                                    showhud = true
-                                    return
-                                }
-                                SVProgressHUD.show()
-                                await self.viewModel.getMyScheduleShow(parameters: GetMyScheduleShowRequest(type: "upcoming", user_id: Int(id),page : currentPage))
-                                await SVProgressHUD.dismiss()
-                                scheduleShowSuccess()
-                            case "Reviews":
-                               guard Reachability.isConnectedToNetwork() else {
-                                    hudMsg = "No Internet Connection"
-                                    showhud = true
-                                    return
-                                }
-                                SVProgressHUD.show()
-                                await self.viewModel.getTotalRating(parameters: GetTotalRatingRequest(seller_id: 7))
-                                await SVProgressHUD.dismiss()
-                                ratingSuccess()
-                            case "Clips":
-                                print("")
-                                //                                await viewModel.fetchClips()
-                            default:
-                                break
-                            }
-                        }
-                    }
-                    if selectedTab == "Shop" {
-                        SearchAndFiltersView()
-                        ProductListView(
-                            prouduct: $productArr,
-                            onTapProduct: { index in
-                                productData = productArr[index]
-                                productId = productData.id ?? 0
-                                showSellSheet = true
-                            },
-                            onItemAppear: { index in
-                                Task {
-                                    await handlePagination(for: .shop, index: index)
-                                }
-                            }
-                        )
-                    }
-
-                    else if selectedTab == "Shows" {
-                        ForEach(scheduleShowArr.indices, id: \.self) { i in
-                            let show = scheduleShowArr[i]
-                            ShowMyScheduleCardView(show: show, onTap: {
-                                showID = "\(show.id ?? 0)"
-                                isLive = show.isLive ?? false
-                                navigateToReherseal = false
-                            })
-                            .onAppear {
-                                Task {
-                                    await handlePagination(for: .shows, index: i)
+                                    scheduleShowSuccess()
+                                case "Reviews":
+                                    guard Reachability.isConnectedToNetwork() else {
+                                        hudMsg = "No Internet Connection"
+                                        showhud = true
+                                        return
+                                    }
+                                    SVProgressHUD.show()
+                                    await self.viewModel.getTotalRating(parameters: GetTotalRatingRequest(seller_id: 7))
+                                    await SVProgressHUD.dismiss()
+                                    ratingSuccess()
+                                case "Clips":
+                                    print("")
+                                    //                                await viewModel.fetchClips()
+                                default:
+                                    break
                                 }
                             }
                         }
-                    }
-                    else if selectedTab == "Reviews" {
-                        ForEach(totalRatingArr, id: \.id) { review in
-                            ReviewCard(
-                                username: review.user.name ?? "",
-                                profileImage: Image("defaultUser"),
-                                rating: Double(review.overallRating ?? "0.0") ?? 0.0,
-                                comment: review.comment
+                        if selectedTab == "Shop" {
+                            SearchAndFiltersView()
+                            ProductListView(
+                                prouduct: $productArr,
+                                onTapProduct: { index in
+                                    productData = productArr[index]
+                                    productId = productData.id ?? 0
+                                    showSellSheet = true
+                                },
+                                onItemAppear: { index in
+                                    Task {
+                                        await handlePagination(for: .shop, index: index)
+                                    }
+                                }
                             )
-                            .padding(.horizontal,0)
                         }
-                    }else{
                         
+                        else if selectedTab == "Shows" {
+                            ForEach(scheduleShowArr.indices, id: \.self) { i in
+                                let show = scheduleShowArr[i]
+                                ShowMyScheduleCardView(show: show, onTap: {
+                                    showID = "\(show.id ?? 0)"
+                                    isLive = show.isLive ?? false
+                                    navigateToReherseal = false
+                                })
+                                .onAppear {
+                                    Task {
+                                        await handlePagination(for: .shows, index: i)
+                                    }
+                                }
+                            }
+                        }
+                        else if selectedTab == "Reviews" {
+                            ForEach(totalRatingArr, id: \.id) { review in
+                                ReviewCard(
+                                    username: review.user.name ?? "",
+                                    profileImage: Image("defaultUser"),
+                                    rating: Double(review.overallRating ?? "0.0") ?? 0.0,
+                                    comment: review.comment
+                                )
+                                .padding(.horizontal,0)
+                            }
+                        }else{
+                            
+                        }
                     }
+                    //                .padding()
                 }
-                //                .padding()
-            }
-            .edgesIgnoringSafeArea(.top)
-            
-            .bottomSheet(isPresented: $showSellSheet, height: screenHeight * 0.95) {
-                ProductDetailSheet(
-                    onDismiss : {
-                        self.showSellSheet = false
-                        productId = 0
-                    },
-                    productID: $productId
-                    
-                )
-            }
-            .toast(isPresenting: $showToast) {
-                AlertToast(displayMode: .alert, type: .regular, title: toastMessage)
                 
-            }
-            .bottomSheet(isPresented: $showNotify,height: screenHeight * 0.45) {
-                NotifyMeBottomSheet(
-                    userId: $profileId, profileImage: profileData.profile_image ?? "" ,
-                    username: profileData.username ?? "",
-                    showParentToast: $showToast,
-                    parentToastMessage: $toastMessage,
-                    onDismiss: {
-                        self.showNotify = false
-                    }
-                )
+                .edgesIgnoringSafeArea(.top)
+                .bottomSheet(isPresented: $showSellSheet, height: screenHeight * 0.95) {
+                    ProductDetailSheet(
+                        onDismiss : {
+                            self.showSellSheet = false
+                            productId = 0
+                        },
+                        productID: $productId
+                        
+                    )
+                }
+                .toast(isPresenting: $showToast) {
+                    AlertToast(displayMode: .alert, type: .regular, title: toastMessage)
+                    
+                }
+                .bottomSheet(isPresented: $showNotify,height: screenHeight * 0.45) {
+                    NotifyMeBottomSheet(
+                        userId: $profileId, profileImage: profileData.profile_image ?? "" ,
+                        username: profileData.username ?? "",
+                        showParentToast: $showToast,
+                        parentToastMessage: $toastMessage,
+                        onDismiss: {
+                            self.showNotify = false
+                        }
+                    )
+                }
+                
             }
             
         }
         .onAppear{
-        
-                let param = ProfileParamRequest(id: id)
-                print(param)
-                Task{
-                    guard Reachability.isConnectedToNetwork() else {
-                        hudMsg = "No Internet Connection"
-                        showhud = true
-                        return
-                    }
-                    SVProgressHUD.show()
-                    await self.viewModel.getProfile(param:param)
-                    profileSuccess()
-                    if isComeFrom == "Home" {
-                        selectedTab = "Shows"
+            
+            let param = ProfileParamRequest(id: id)
+            print(param)
+            Task{
+                guard Reachability.isConnectedToNetwork() else {
+                    hudMsg = "No Internet Connection"
+                    showhud = true
+                    return
+                }
+                SVProgressHUD.show()
+                await self.viewModel.getProfile(param:param)
+                profileSuccess()
+                if isComeFrom == "Home" {
+                    selectedTab = "Shows"
                     await self.viewModel.getMyScheduleShow(parameters: GetMyScheduleShowRequest(type: "upcoming", user_id: Int(id), page: currentPage))
                     await SVProgressHUD.dismiss()
                     scheduleShowSuccess()
-                    }else{
-                        selectedTab = "Shop"
-                    }
+                }else{
+                    selectedTab = "Shop"
+                }
             }
         }
         .background(Color(UIColor.systemGroupedBackground))
-
+        CusNavLink(
+            doNavigate: $navigateToChat,
+            destination: ChatScreen(
+                viewModel: ChatViewModel(
+                    currentUserId: "\(UserDefaults.userId)",
+                    currentUserName: UserDefaults.userName,
+                    currentUserImage: UserDefaults.profileURL,
+                    otherUserId: id,
+                    otherUserName: userName,
+                    otherUserImage: userImage
+                )
+            )
+        )
     }
     
     
@@ -252,9 +269,11 @@ struct ProfileScreen: View {
             profileData = response.data ?? ProfileModel()
             isFollowing = profileData.is_following ?? false
             profileId = profileData.id ?? 0
+            userName = response.data?.username ?? ""
+            userImage = response.data?.profile_image ?? ""
             if !isForFollow{
                 Task{
-                   guard Reachability.isConnectedToNetwork() else {
+                    guard Reachability.isConnectedToNetwork() else {
                         hudMsg = "No Internet Connection"
                         showhud = true
                         return
@@ -322,7 +341,7 @@ struct ProfileScreen: View {
         case .shop:
             let isLast = index == productArr.count - 1
             let total = viewModel.productDetailsResponseDict?.total ?? 0
-
+            
             if isLast && productArr.count < total {
                 SVProgressHUD.show()
                 await viewModel.productDetails(parameters: UserProductRequest(user_id: Int(id) ?? 0, page: nextPage))
@@ -332,11 +351,11 @@ struct ProfileScreen: View {
                     productArr.append(contentsOf: viewModel.productDetailsResponseDict?.data ?? [])
                 }
             }
-
+            
         case .shows:
             let isLast = index == scheduleShowArr.count - 1
             let total = viewModel.getMyScheduleShowResponseDict?.total ?? 0
-
+            
             if isLast && scheduleShowArr.count < total {
                 SVProgressHUD.show()
                 await viewModel.getMyScheduleShow(parameters: GetMyScheduleShowRequest(type: "upcoming", user_id: Int(id) ?? 0, page: nextPage))
@@ -346,11 +365,11 @@ struct ProfileScreen: View {
                     scheduleShowArr.append(contentsOf: viewModel.getMyScheduleShowResponseDict?.data ?? [])
                 }
             }
-
+            
         case .reviews:
             // Add this once your review API is paginated
             break
-
+            
         case .clips:
             // Add this once your clips API is paginated
             break
@@ -362,7 +381,7 @@ struct ProfileScreen: View {
 struct ProfileHeaderView: View {
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var appRootManager: AppRootManager
-
+    
     var name : String
     var email : String
     var profileImage : String
@@ -375,7 +394,7 @@ struct ProfileHeaderView: View {
     @Binding var sellerID : String
     @State private var navigateToRating = false
     @State private var showMoreMenu = false
-
+    
     var body: some View {
         ZStack(alignment: .topLeading) {
             // Background image
@@ -387,7 +406,7 @@ struct ProfileHeaderView: View {
                     .clipped()
                 Spacer()
             }
-
+            
             // Back Button
             Button(action: {
                 presentationMode.wrappedValue.dismiss()
@@ -403,7 +422,7 @@ struct ProfileHeaderView: View {
             .padding(.top, 30)
             .padding(.leading, 16)
             .zIndex(2)
-
+            
             // Profile Image
             VStack(alignment: .leading, spacing: 4) {
                 HStack {
@@ -432,7 +451,7 @@ struct ProfileHeaderView: View {
                     Spacer()
                 }
             }
-
+            
             // Tap outside to dismiss menu
             if showMoreMenu {
                 Color.black.opacity(0.001)
@@ -444,7 +463,7 @@ struct ProfileHeaderView: View {
                     }
                     .zIndex(1)
             }
-
+            
             // More menu
             if showMoreMenu {
                 VStack(alignment: .leading, spacing: 0) {
@@ -459,9 +478,9 @@ struct ProfileHeaderView: View {
                             .padding(.horizontal, 16)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
-
+                    
                     Divider()
-
+                    
                     Button(action: {
                         showMoreMenu = false
                         // Handle Block Seller
@@ -473,9 +492,9 @@ struct ProfileHeaderView: View {
                             .padding(.horizontal, 16)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
-
+                    
                     Divider()
-
+                    
                     Button(action: {
                         showMoreMenu = false
                         // Handle Report
@@ -500,20 +519,20 @@ struct ProfileHeaderView: View {
             }
         }
         .frame(height: 220)
-
+        
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 VStack(alignment: .leading) {
                     Text(name)
                         .font(.custom(poppinsBold, size: 16.0))
-
+                    
                     Text(email)
                         .font(.custom(poppinsRegular, size: 11.0))
                         .foregroundColor(.gray)
                 }
-
+                
                 Spacer()
-
+                
                 HStack(spacing: 12) {
                     Button(action: {
                         onTapNotify()
@@ -525,7 +544,7 @@ struct ProfileHeaderView: View {
                             .clipShape(Circle())
                             .shadow(radius: 2)
                     }
-
+                    
                     Button(action: {
                         // Share action
                     }) {
@@ -536,7 +555,7 @@ struct ProfileHeaderView: View {
                             .clipShape(Circle())
                             .shadow(radius: 2)
                     }
-
+                    
                     Button(action: {
                         withAnimation {
                             showMoreMenu.toggle()
@@ -551,7 +570,7 @@ struct ProfileHeaderView: View {
                     }
                 }
             }
-
+            
             HStack(spacing: 16) {
                 Text("\(followers) Followers")
                     .font(.custom(poppinsSemiBold, size: 13.0))
@@ -559,7 +578,7 @@ struct ProfileHeaderView: View {
                     .font(.custom(poppinsSemiBold, size: 13.0))
                     .foregroundColor(.gray)
             }
-
+            
             Text(bio)
                 .font(.custom(poppinsRegular, size: 13.0))
                 .foregroundColor(.gray)
@@ -575,6 +594,7 @@ struct ProfileActionsView: View {
     @Binding var isFollowing: Bool
     var onTapFollow :() -> () = { }
     var onTapMessage :() -> () = { }
+    
     
     var body: some View {
         HStack(spacing: 16) {
@@ -676,7 +696,7 @@ struct ProductListView: View {
     @State var onTap = false
     var onTapProduct: (Int) -> () = { _ in }
     var onItemAppear: ((Int) -> Void)? = nil
-
+    
     var body: some View {
         VStack(spacing: 12) {
             ForEach(prouduct.indices, id: \.self) { index in

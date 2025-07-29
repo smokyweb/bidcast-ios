@@ -19,8 +19,12 @@ struct ActivityScreen: View {
     @EnvironmentObject var networkMonitor: NetworkMonitor
     @State var offerList: [OfferListModel] = []
     @State var currentPage = 1
-    @State var messageList = []
-    
+    @State var messageList: [ChatMessage] = []
+    @State private var selectedUserId: String? = nil
+    @State private var selectedUserName: String? = nil
+    @State private var selectedUserImage: String? = nil
+    @State private var isNavigatingToChat = false
+
     @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     
     @State private var selected: Segment = .message
@@ -61,11 +65,25 @@ struct ActivityScreen: View {
                    
                     switch selected {
                     case .message:
-                        if messageList.isEmpty {
+                        if isLoading {
+                            ProgressView()
+                                .padding()
+                        } else if messageList.isEmpty {
                             NoDataView(message: "No message Found")
-                        }else{
-                            ActivityCell(isFor: selected.rawValue, status: "")
+                        } else {
+                            ForEach(messageList) { message in
+                                MessageCell(message: message)
+                                    .padding(.all , 12)
+                                    .onTapGesture {
+                                        selectedUserId = message.users.senderId
+                                        selectedUserName = message.users.senderName
+                                        selectedUserImage = message.users.senderImage
+                                        isNavigatingToChat = true
+                                    }
+
+                            }
                         }
+
                     case .bid:
                         if offerList.isEmpty {
                             NoDataView(message: "No bids Found")
@@ -165,6 +183,15 @@ struct ActivityScreen: View {
             .padding(.top,4)
             .padding(.horizontal, 8)
             
+            CusNavLink(doNavigate: $isNavigatingToChat, destination: ChatScreen(viewModel: ChatViewModel(
+                currentUserId: "\(UserDefaults.userId)",
+                currentUserName: UserDefaults.userName,
+                currentUserImage: UserDefaults.profileURL,
+                otherUserId: selectedUserId ?? "",
+                otherUserName: selectedUserName ?? "",
+                otherUserImage: selectedUserImage ?? ""
+            )))
+            
             CusNavLink(doNavigate: $navigateToNotification, destination: NotificationScreen())
         }
         .background(Color(.systemGroupedBackground))
@@ -192,7 +219,22 @@ struct ActivityScreen: View {
         currentPage = 1
         switch segment {
         case .message:
-            break
+            guard Reachability.isConnectedToNetwork() else {
+                hudMsg = "No Internet Connection"
+                showhud = true
+                return
+            }
+
+            messageList.removeAll()
+            isLoading = true
+
+            FirebaseManager.shared.fetchMessages(forUserId: "\(UserDefaults.userId)") { messages in
+                DispatchQueue.main.async {
+                    self.messageList = messages
+                    self.isLoading = false
+                }
+            }
+            
         case .bid:
            guard Reachability.isConnectedToNetwork() else {
                 hudMsg = "No Internet Connection"
@@ -370,5 +412,52 @@ enum Segment: String, CaseIterable, CustomStringConvertible {
     
     var description: String { rawValue }
 }
+
+struct MessageCell: View {
+    let message: ChatMessage
+
+    var body: some View {
+        HStack(alignment: .center, spacing: 12) {
+            // Profile Image
+            AsyncImage(url: URL(string: message.users.receiverImage)) { image in
+                image.resizable()
+            } placeholder: {
+                Color.gray
+            }
+            .frame(width: 48, height: 48)
+            .clipShape(Circle())
+
+            // Name + Message
+            VStack(alignment: .leading, spacing: 6) {
+                HStack {
+                    Text(message.users.receiverName)
+                        .font(.system(size: 16, weight: .semibold))
+
+                    Spacer()
+
+                    Text(timestampString)
+                        .font(.system(size: 14))
+                        .foregroundColor(.gray)
+                }
+
+                Text(message.message)
+                    .font(.system(size: 15))
+            }
+        }
+        .padding()
+        .background(Color.white)
+        .cornerRadius(12)
+        .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
+    }
+
+    private var timestampString: String {
+        let date = Date(timeIntervalSince1970: message.timestamp)
+        let formatter = DateFormatter()
+        formatter.dateFormat = "hh:mm a"
+        return formatter.string(from: date)
+    }
+}
+
+
 
 
