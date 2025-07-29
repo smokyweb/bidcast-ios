@@ -493,8 +493,27 @@ struct LiveStream: View {
                             }, buttonText: $titleText
                         )
                     }
-                CusNavLink(doNavigate: $navigateToProfile, destination: ProfileScreen(id:$id,userName: $userName,userImage: $userImage))
+                CusNavLink(doNavigate: $navigateToProfile, destination: ProfileScreen(id:$id, isComeFrom: .constant(""),userName: $userName,userImage: $userImage))
+
                 CusNavLink(doNavigate: $navigateToBuyer, destination: TrustedBuyerScreen(comeFromHome:$comeFromHome))
+            }else{
+                VStack{
+                    PrimaryHeader(
+                        title: "Live Stream",
+                        isForLogo:  false,
+                        leadingImgArr: [.icBack],
+                        trailingImgArr: [],
+                        onClickLeading: { index in
+                            
+                                self.presentationMode.wrappedValue.dismiss()
+                            
+                        },
+                        onClickTrailing: { index in
+                            
+                        },
+                        count: .constant(0)
+                    )
+                }
             }
         }.gesture(
             TapGesture().onEnded { _ in

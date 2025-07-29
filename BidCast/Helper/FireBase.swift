@@ -31,8 +31,9 @@ class FirebaseManager {
                            completion: ((Bool) -> Void)? = nil) {
         
         let roomId = "live_room_\(userId)_\(showId)"
-        let timestamp = convertDateAndTimeToTimestamp(date: date, time: time)
-        print("📅 Timestamp: \(timestamp ?? 0)")
+//        let timestamp = convertDateAndTimeToTimestamp(date: date, time: time)
+        let timestamp = getCurrentTimestamp()
+        print("📅 Timestamp: \(timestamp)")
        
         let sessionData: [String: Any] = [
             "highestBid": "",
@@ -43,7 +44,7 @@ class FirebaseManager {
             "showDetail": "",
             "showId": showId,
             "thumbnail": thumbnail,
-            "time": timestamp ?? "",
+            "time": timestamp,
             "viewerCount": ""
         ]
         
@@ -101,6 +102,10 @@ class FirebaseManager {
             return nil
         }
     }
+    func getCurrentTimestamp() -> Int {
+        let now = Date()
+        return Int(now.timeIntervalSince1970)
+    }
     func getLiveSessionData(roomId: String, completion: @escaping (_ data: [String: Any]?) -> Void) {
         let ref = databaseRef.child("live_sessions").child(roomId)
         ref.observeSingleEvent(of: .value) { snapshot in
@@ -139,7 +144,6 @@ class FirebaseManager {
             onRemoved()
         }
         
-        // Also observe if the whole node disappears
         ref.observe(.value) { snapshot in
             if !snapshot.exists() {
                 print("🔥 Live session no longer exists: \(roomId)")
@@ -149,14 +153,43 @@ class FirebaseManager {
     }
     
     func observeNewLiveSessionNodes(onNewSession: @escaping () -> Void) {
-        let ref = databaseRef.child("live_sessions")
-        
-        // Listen for new child nodes (new sessions)
-        ref.observe(.childAdded) { snapshot in
-            print("🆕 New live session added: \(snapshot.key)")
-            onNewSession()
+        let parentRef = databaseRef.child("live_sessions")
+
+        // Listen for any new node added under live_sessions
+        parentRef.observe(.childAdded) { snapshot in
+            let childKey = snapshot.key
+            let childRef = parentRef.child(childKey)
+
+            print("🆕 Detected new node: \(childKey) — Waiting for full data...")
+
+            // Observe data changes under the new node
+            childRef.observe(.value) { snapshot in
+                guard let data = snapshot.value as? [String: Any] else {
+                    print("⚠️ Invalid data inside node: \(childKey)")
+                    onNewSession()
+                    return
+                }
+
+                guard
+                    let roomId = data["roomId"] as? String,
+                    let isLive = data["isLive"] as? Bool,
+                    let showId = data["showId"] as? String,
+                    let thumbnail = data["thumbnail"] as? String,
+                    isLive == true,
+                    !roomId.isEmpty,
+                    !showId.isEmpty,
+                    !thumbnail.isEmpty
+                else {
+                    print("⏳ Data still incomplete or not live in: \(childKey)")
+                    return
+                }
+
+                print("✅ Full valid live session ready in node: \(childKey)")
+                onNewSession()
+            }
         }
     }
+
     
     func updateProductPrice(roomId: String, newPrice: String) {
         databaseRef.child("live_sessions").child(roomId).child("product").child("price").setValue(newPrice)

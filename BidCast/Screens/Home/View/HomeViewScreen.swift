@@ -18,8 +18,7 @@ struct HomeViewScreen: View {
     @State var hudMsg: String = ""
     @State var navigateToLiveStream = false
     @State var index = 0
-    let images = Array(1...10)
-    let columns = Array(repeating: GridItem(.flexible(), spacing: 12), count: 2)
+    let columns = Array(repeating: GridItem(.flexible(), spacing: 6), count: 2)
     @Binding var showCategory : String
     @State var viewModel = HomeViewModel()
     @State var liveShowsData = [HomeModel]()
@@ -31,9 +30,12 @@ struct HomeViewScreen: View {
     @State var userName = ""
     @Binding var comeFromExploreScreen : Bool
     @State var navigateToNoti : Bool = false
-    
+    @State var selectedTab = "live"
     @State var navigateToProfile = false
     @State private var showSearchView: Bool = false
+    @State var category : String = ""
+    
+    @State var navigateToCategoryDetailScreen : Bool = false
     
     var body: some View {
         VStack(spacing:0){
@@ -91,6 +93,7 @@ struct HomeViewScreen: View {
                             }else{
                                 selection = "upcoming"
                             }
+                            self.selectedTab = selection
                             await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: selection,category: showCategory))
                             await SVProgressHUD.dismiss()
                             self.success()
@@ -100,18 +103,18 @@ struct HomeViewScreen: View {
                         NoDataView(message: "No Shows found")
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }else{
-                        LazyVGrid(columns: columns, spacing: 12) {
+                        LazyVGrid(columns: columns, spacing: 6) {
                             ForEach(liveShowsData.indices, id: \.self) { index in
                                 let item = liveShowsData[index]
                                 
                                 ImageCollectionView(profileImg: item.user?.profile_image ?? "",
-                                                    profileName: item.user?.name ?? "".capitalizingFirstLetter(),
-                                                    textSize: 14.0,
+                                                    profileName: item.user?.username ?? item.user?.name ?? "".capitalizingFirstLetter(),
+                                                    textSize: 16.0,
                                                     image: item.thumbnail?.first ?? "",
                                                     category: item.category?.name ?? "",
                                                     title2:item.title ?? "",
-                                                    categorySize: 9,
-                                                    title2Size: 13.0,
+                                                    categorySize: 14,
+                                                    title2Size: 16.0,
                                                     liveCount: item.viewer_count ?? 0,
                                                     onTapProfile: {
                                     userId = "\(item.user?.id ?? 0)"
@@ -128,6 +131,9 @@ struct HomeViewScreen: View {
                                     userImage = item.user?.profile_image ?? ""
                                     userName = item.user?.username ?? ""
                                     navigateToLiveStream = true
+                                },onTapCategory: {
+                                    self.category = item.category?.name ?? ""
+                                    navigateToCategoryDetailScreen = true
                                 })
                                 .background(.bg)
                                 .cornerRadius(10)
@@ -141,8 +147,10 @@ struct HomeViewScreen: View {
             .padding(.top , 10)
             
             CusNavLink(doNavigate: $navigateToLiveStream, destination: LiveStream(currentStreamIndex :self.$index, userId : $userId,comeFromHome: $navigateToLiveStream))
-            CusNavLink(doNavigate: $navigateToProfile, destination: ProfileScreen(id:$userId,userName: $userName,userImage: $userImage,isComeFrom : "Home"))
+            CusNavLink(doNavigate: $navigateToProfile, destination: ProfileScreen(id:$userId,isComeFrom : .constant("Home"),userName: $userName,userImage: $userImage))
+
             CusNavLink(doNavigate: $navigateToNoti, destination: NotificationScreen())
+            CusNavLink(doNavigate: $navigateToCategoryDetailScreen, destination: HomeViewScreen(showCategory:$category,comeFromExploreScreen : $navigateToCategoryDetailScreen))
         }
         .background(.white)
         .onAppear{
@@ -168,7 +176,7 @@ struct HomeViewScreen: View {
                     return
                 }
                 SVProgressHUD.show()
-                await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: "live",category: showCategory))
+                await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: self.selectedTab,category: showCategory))
                 await SVProgressHUD.dismiss()
                 self.success()
                 await self.viewModel.getProfile()
@@ -188,7 +196,7 @@ struct HomeViewScreen: View {
             }
             
             FirebaseManager.shared.observeNewLiveSessionNodes {
-                   print("🔥 New session detected, refreshing the list babumoshai!")
+                   
                 Task{
                    guard Reachability.isConnectedToNetwork() else {
                         hudMsg = "No Internet Connection"
@@ -204,51 +212,12 @@ struct HomeViewScreen: View {
                 }
                }
         }
-     
+        .onDisappear {
+            FirebaseManager.shared.removeNewSessionObserver()
+        }
     }
     
     
-//    func success() {
-//        let response = viewModel.liveShowsResponse
-//        if response.status == "success" {
-//            FirebaseManager.shared.fetchAllLiveSessions { firebaseRoomIds in
-//                let validShows = response.data?.filter { show in
-//                                   guard let roomId = show.room_id else { return false }
-//                                   return firebaseRoomIds.contains(roomId)
-//                               }
-//                
-//                DispatchQueue.main.async {
-//                    if validShows?.isEmpty == true {
-////                        showError = true
-//                        alertType = .sheetType(
-//                            icon: .alert,
-//                            title: response.error_type?.capitalized ?? "",
-//                            message: response.message?.capitalized ?? "",
-//                            primaryBtnText: "",
-//                            secondaryBtnText: AppString.ok.localized
-//                        )
-//                    }else{
-//                        liveShowsData = validShows ?? [HomeModel]()
-////                        liveShowsData = response.data ?? [HomeModel]()
-//                    }
-//                }
-//            }
-//            
-//           
-//            
-//        } else {
-//            showError = true
-//            alertType = .sheetType(
-//                icon: .alert,
-//                title: response.error_type?.capitalized ?? "",
-//                message: response.message?.capitalized ?? "",
-//                primaryBtnText: "",
-//                secondaryBtnText: AppString.ok.localized
-//            )
-//            
-//            
-//        }
-//    }
     
     func success() {
         let response = viewModel.liveShowsResponse

@@ -65,7 +65,7 @@ struct ProductDetailSheet: View {
                     onDismiss()
                 }) {
                     Image(systemName: "xmark.circle.fill")
-                        .font(.custom(poppinsSemiBold, size: 14.0))
+                        .font(.custom(poppinsSemiBold, size: 28.0))
                         .foregroundColor(.red)
                 }
             }
@@ -348,7 +348,7 @@ struct ProductDetailSheet: View {
                 }
             
         } else {
-            alertType = .sheetType(icon: .alert, title: response?.status?.capitalized ?? "", message: response?.message?.capitalized ?? "", primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .defaultTheme)
+            alertType = .sheetType(icon: .alert, title: response?.status?.capitalized ?? "Failed", message: response?.message?.capitalized ?? "Something Went Wrong", primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .defaultTheme)
             withAnimation(.snappy) { showError = true }
         }
     }

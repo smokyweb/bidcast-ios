@@ -22,6 +22,7 @@ struct ProfileScreen: View {
     
     @State var viewModel = ProfileViewModel()
     @Binding var id : String
+    @Binding var  isComeFrom : String
     @Binding var userName : String
     @Binding var userImage : String
     @State var isLoading: Bool = false
@@ -48,7 +49,8 @@ struct ProfileScreen: View {
     @State var isLive = false
     @State var navigateToReherseal = false
     @State var navigateToChat = false
-    @State var  isComeFrom = ""
+
+    
     @State var reviewList: [ReviewModel] = [
         ReviewModel(username: "Alice", profileImageName: "user1", rating: 4.5),
         ReviewModel(username: "Bob", profileImageName: "user1", rating: 3.0),
@@ -56,6 +58,7 @@ struct ProfileScreen: View {
         ReviewModel(username: "Dan", profileImageName: "user1", rating: 2.5),
         ReviewModel(username: "Eve", profileImageName: "user1", rating: 4.0)
     ]
+    let columns = Array(repeating: GridItem(.flexible(), spacing: 6), count: 2)
     
     @State private var selectedTab = ""
     //Review Variab
@@ -113,68 +116,100 @@ struct ProfileScreen: View {
                                         await self.viewModel.productDetails(parameters: UserProductRequest(user_id: Int(id) ?? 0,page : currentPage))
                                         await SVProgressHUD.dismiss()
                                         success()
-                                    }
-                                    //                                await viewModel.fetchShopItems()
-                                case "Shows":
-                                    guard Reachability.isConnectedToNetwork() else {
-                                        hudMsg = "No Internet Connection"
-                                        showhud = true
-                                        return
-                                    }
-                                    SVProgressHUD.show()
-                                    await self.viewModel.getMyScheduleShow(parameters: GetMyScheduleShowRequest(type: "upcoming", user_id: Int(id),page : currentPage))
-                                    await SVProgressHUD.dismiss()
-                                    scheduleShowSuccess()
-                                case "Reviews":
-                                    guard Reachability.isConnectedToNetwork() else {
-                                        hudMsg = "No Internet Connection"
-                                        showhud = true
-                                        return
-                                    }
-                                    SVProgressHUD.show()
-                                    await self.viewModel.getTotalRating(parameters: GetTotalRatingRequest(seller_id: 7))
-                                    await SVProgressHUD.dismiss()
-                                    ratingSuccess()
-                                case "Clips":
-                                    print("")
-                                    //                                await viewModel.fetchClips()
-                                default:
-                                    break
+                            
+                                    success()
                                 }
+                                //                                await viewModel.fetchShopItems()
+                            case "Shows":
+                               guard Reachability.isConnectedToNetwork() else {
+                                    hudMsg = "No Internet Connection"
+                                    showhud = true
+                                    return
+                                }
+                                SVProgressHUD.show()
+                                await self.viewModel.getMyScheduleShow(parameters: GetMyScheduleShowRequest(type: "upcoming", user_id: Int(id),page : currentPage))
+                                await SVProgressHUD.dismiss()
+                                scheduleShowSuccess()
+                            case "Reviews":
+                               guard Reachability.isConnectedToNetwork() else {
+                                    hudMsg = "No Internet Connection"
+                                    showhud = true
+                                    return
+                                }
+                                SVProgressHUD.show()
+                                await self.viewModel.getTotalRating(parameters: GetTotalRatingRequest(seller_id: 7))
+                                await SVProgressHUD.dismiss()
+                                ratingSuccess()
+                            case "Clips":
+                                print("")
+                                //                                await viewModel.fetchClips()
+                            default:
+                                break
                             }
                         }
-                        if selectedTab == "Shop" {
-                            SearchAndFiltersView()
-                            ProductListView(
-                                prouduct: $productArr,
-                                onTapProduct: { index in
-                                    productData = productArr[index]
-                                    productId = productData.id ?? 0
-                                    showSellSheet = true
-                                },
-                                onItemAppear: { index in
-                                    Task {
-                                        await handlePagination(for: .shop, index: index)
-                                    }
+                    }
+                    if selectedTab == "Shop" {
+                        SearchAndFiltersView()
+                        ProductListView(
+                            prouduct: $productArr,
+                            onTapProduct: { index in
+                                productData = productArr[index]
+                                productId = productData.id ?? 0
+                                showSellSheet = true
+                            },
+                            onItemAppear: { index in
+                                Task {
+                                    await handlePagination(for: .shop, index: index)
                                 }
-                            )
-                        }
-                        
-                        else if selectedTab == "Shows" {
+                            }
+                        )
+                    }
+
+                    else if selectedTab == "Shows" {
+                        LazyVGrid(columns: columns, spacing: 6) {
                             ForEach(scheduleShowArr.indices, id: \.self) { i in
                                 let show = scheduleShowArr[i]
-                                ShowMyScheduleCardView(show: show, onTap: {
-                                    showID = "\(show.id ?? 0)"
-                                    isLive = show.isLive ?? false
-                                    navigateToReherseal = false
+                                //                            ShowMyScheduleCardView(show: show, onTap: {
+                                //                                showID = "\(show.id ?? 0)"
+                                //                                isLive = show.isLive ?? false
+                                //                                navigateToReherseal = false
+                                //                            })
+                                ImageCollectionView(profileImg: show.user?.profile_image ?? "",
+                                                    profileName: show.user?.username ?? show.user?.name ?? "".capitalizingFirstLetter(),
+                                                    textSize: 16.0,
+                                                    image: show.imgThumbnail?.first ?? "",
+                                                    category: show.category?.name ?? "",
+                                                    title2:show.title ?? "",
+                                                    categorySize: 14,
+                                                    title2Size: 16.0,
+                                                    liveCount:  0,
+                                                    onTapProfile: {
+                                    //                                userId = "\(show.user?.id ?? 0)"
+                                    //                                navigateToProfile = true
+                                },onTapProfileName: {
+                                    //                                userId = "\(show.user?.id ?? 0)"
+                                    //                                navigateToProfile = true
+                                },onTapMainImage: {
+                                    print(" tapped the card!,inex \(index)")
+                                    //                                self.index = i
+                                    //                                userId = "\(show.user?.id ?? 0)"
+                                    //                                navigateToLiveStream = true
+                                },onTapCategory: {
+                                    //                                self.category = show.category?.name ?? ""
+                                    //                                navigateToCategoryDetailScreen = true
                                 })
+                                .background(.bg)
+                                .cornerRadius(10)
                                 .onAppear {
                                     Task {
                                         await handlePagination(for: .shows, index: i)
                                     }
                                 }
                             }
-                        }
+                        } .padding(.vertical,3)
+                            .padding(.horizontal,8)
+                    }
+
                         else if selectedTab == "Reviews" {
                             ForEach(totalRatingArr, id: \.id) { review in
                                 ReviewCard(
@@ -240,9 +275,21 @@ struct ProfileScreen: View {
                     await self.viewModel.getMyScheduleShow(parameters: GetMyScheduleShowRequest(type: "upcoming", user_id: Int(id), page: currentPage))
                     await SVProgressHUD.dismiss()
                     scheduleShowSuccess()
-                }else{
-                    selectedTab = "Shop"
-                }
+
+                    }else{
+                        selectedTab = "Shop"
+                        Task{
+                           guard Reachability.isConnectedToNetwork() else {
+                                hudMsg = "No Internet Connection"
+                                showhud = true
+                                return
+                            }
+                            SVProgressHUD.show()
+                            await self.viewModel.productDetails(parameters: UserProductRequest(user_id: Int(id) ?? 0,page : currentPage))
+                            await SVProgressHUD.dismiss()
+                            success()
+                        }
+                    }
             }
         }
         .background(Color(UIColor.systemGroupedBackground))
@@ -601,6 +648,7 @@ struct ProfileActionsView: View {
             Button(isFollowing ? "Unfollow" : "Follow") {
                 self.onTapFollow()
             }
+            .font(.custom(poppinsSemiBold, size: 14.0))
             .frame(maxWidth: .infinity)
             .frame(height: 18)
             .padding()
@@ -611,6 +659,7 @@ struct ProfileActionsView: View {
             Button("Message") {
                 self.onTapMessage()
             }
+            .font(.custom(poppinsSemiBold, size: 14.0))
             .frame(maxWidth: .infinity)
             .frame(height: 18)
             .padding()
@@ -622,6 +671,8 @@ struct ProfileActionsView: View {
                 // Handle action
             }) {
                 Image(systemName: "dollarsign.circle")
+                    .resizable()
+                    .frame(width:32,height: 32)
                     .foregroundColor(.defaultTheme)
                     .font(.title2)
             }

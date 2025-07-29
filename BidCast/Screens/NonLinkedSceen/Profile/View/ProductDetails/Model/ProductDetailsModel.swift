@@ -52,8 +52,8 @@ struct SellerUser: Codable {
 
 // MARK: - Offer
 struct Offer: Codable {
-    var id, userID, productID, amount: Int?
-    var status, createdAt: String?
+    var id, userID, productID: Int?
+    var status, createdAt,amount: String?
 
     enum CodingKeys: String, CodingKey {
         case id

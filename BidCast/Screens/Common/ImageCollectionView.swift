@@ -11,27 +11,28 @@ import SwiftUI
 struct ImageCollectionView: View {
     var profileImg = "defaultUser"
     var profileName = "Costa Sandra"
-    var textSize = 12.0
+    var textSize = 16.0
     var image = ""
     var category = "category"
     var title2 = "Stream Time"
-    var categorySize = 8.0
-    var title2Size = 12.0
+    var categorySize = 14.0
+    var title2Size = 16.0
     var liveCount = 0
     
     var onTapProfile: () -> Void = {}
     var onTapProfileName : () -> Void = {}
     var onTapMainImage: () -> Void = {}
+    var onTapCategory: () -> Void = {}
   
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 12) {
             
             // ───────── Profile Row Button ─────────
             Button {
                 onTapProfile()
             } label: {
-                HStack(alignment: .center) {
+                HStack(alignment: .center,spacing: 16) {
                     if let profileURL = URL(string: profileImg),
                        !profileImg.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                         AsyncImage(url: profileURL) { phase in
@@ -74,7 +75,7 @@ struct ImageCollectionView: View {
                     Spacer()
                 }
             }
-            .buttonStyle(.plain)
+//            .buttonStyle(.plain)
             
             Button {
                 onTapMainImage()
@@ -88,18 +89,19 @@ struct ImageCollectionView: View {
                             switch phase {
                             case .empty:
                                 ProgressView()
-                                    .frame(width: geometry.size.width, height: 160)
+                                    .frame(width: geometry.size.width, height: 220)
                             case .success(let image):
                                 image
                                     .resizable()
                                     .aspectRatio(contentMode: .fill)
-                                    .frame(width: geometry.size.width, height: 160)
+                                    .frame(width: geometry.size.width, height: 220)
+                                    .cornerRadius(8)
                                     .clipped()
                             case .failure:
                                 Image(systemName: "photo")
                                     .resizable()
                                     .scaledToFit()
-                                    .frame(width: geometry.size.width, height: 160)
+                                    .frame(width: geometry.size.width, height: 220)
                                     .foregroundColor(.gray)
                             @unknown default:
                                 EmptyView()
@@ -111,29 +113,34 @@ struct ImageCollectionView: View {
                         Image(systemName: "photo")
                             .resizable()
                             .scaledToFit()
-                            .frame(width: geometry.size.width, height: 160)
+                            .frame(width: geometry.size.width, height: 220)
                             .foregroundColor(.gray)
                     }
-                    if liveCount >= 0 {
+                    if liveCount > 0 {
                         LiveBadgeView(count: liveCount)
                               .padding(6)
                     }
                 }
-                .frame(maxWidth: .infinity, minHeight: 160)
+                .frame(maxWidth: .infinity,minHeight: 220)
             }
-            .buttonStyle(.plain)
+//            .buttonStyle(.plain)
             
             // ───────── Title & Category ─────────
-            VStack(alignment: .leading, spacing: 4) {
-                Text(title2)
+            VStack(alignment: .leading, spacing: 8) {
+                Text(title2.capitalizingFirstLetter())
                     .font(.custom(poppinsSemiBold, fixedSize: title2Size))
                     .foregroundStyle(.black)
                     .foregroundColor(.black)
-                
-                Text(category)
-                    .font(.custom(poppinsRegular, fixedSize: categorySize))
-                    .foregroundStyle(.black)
-                    .foregroundColor(.black)
+                    .lineLimit(2)
+                Button(action: {
+                    self.onTapCategory()
+                }) {
+                    Text(category)
+                        .font(.custom(poppinsSemiBold, fixedSize: categorySize))
+                        .foregroundStyle(.defaultTheme)
+                        .foregroundColor(.defaultTheme)
+                        .lineLimit(2)
+                }
             }
             
         }
@@ -147,11 +154,12 @@ struct LiveBadgeView: View {
     
     var body: some View {
         HStack(spacing: 4) {
-            Text("Live")
-                .bold()
+            Text("LIVE")
+                .font(.custom(poppinsSemiBold, size: 16.0))
             Circle()
                 .frame(width: 5, height: 5)
             Text("\(count)")
+                .font(.custom(poppinsSemiBold, size: 16.0))
         }
         .font(.system(size: 12))
         .padding(.horizontal, 8)
