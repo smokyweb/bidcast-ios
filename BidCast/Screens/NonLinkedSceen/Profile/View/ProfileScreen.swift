@@ -176,7 +176,7 @@ struct ProfileScreen: View {
                                 //                            })
                                 ImageCollectionView(profileImg: show.user?.profile_image ?? "",
                                                     profileName: show.user?.username ?? show.user?.name ?? "".capitalizingFirstLetter(),
-                                                    textSize: 16.0,
+                                                    textSize: 14.0,
                                                     image: show.imgThumbnail?.first ?? "",
                                                     category: show.category?.name ?? "",
                                                     title2:show.title ?? "",

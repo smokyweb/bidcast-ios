@@ -109,7 +109,7 @@ struct HomeViewScreen: View {
                                 
                                 ImageCollectionView(profileImg: item.user?.profile_image ?? "",
                                                     profileName: item.user?.username ?? item.user?.name ?? "".capitalizingFirstLetter(),
-                                                    textSize: 16.0,
+                                                    textSize: 14.0,
                                                     image: item.thumbnail?.first ?? "",
                                                     category: item.category?.name ?? "",
                                                     title2:item.title ?? "",

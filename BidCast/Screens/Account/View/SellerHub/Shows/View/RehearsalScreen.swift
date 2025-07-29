@@ -774,7 +774,6 @@ struct ZegoRehearsalScreen: UIViewRepresentable {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             let canvas = ZegoCanvas(view: view)
             ZegoExpressEngine.shared().enableCamera(true)
-            
             ZegoExpressEngine.shared().startPreview(canvas)
             
         }
