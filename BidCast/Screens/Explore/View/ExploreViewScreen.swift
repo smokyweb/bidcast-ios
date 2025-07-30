@@ -87,7 +87,7 @@ struct ExploreViewScreen: View {
                 SVProgressHUD.show()
                 await self.viewModel.getCategoryList()
                 await SVProgressHUD.dismiss()
-                if self.viewModel.errorMessage == ""{
+                if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
                     self.categoryList = viewModel.categoryResponse.data ?? [CategoryDataModel]()
                 }
             }

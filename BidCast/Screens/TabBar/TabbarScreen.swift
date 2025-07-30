@@ -37,12 +37,12 @@ struct TabbarScreen: View {
         ZStack {
             TabView(selection: $selectedTab) {
                 
-                NavigationContainer(navigationPath: $homeNavigationPath) { HomeViewScreen(showCategory: .constant(""), comeFromExploreScreen: .constant(false)) }
+                NavigationContainer(navigationPath: $homeNavigationPath) { HomeViewScreen(showCategory: .constant(""), comeFromExploreScreen: .constant(false)).hideTabBar() }
                     .id(homeViewID)
                     .tabItem { Label("Home", systemImage: "house") }
                     .tag(0)
                 
-                NavigationContainer(navigationPath: $exploreNavigationPath) { ExploreViewScreen() }
+                NavigationContainer(navigationPath: $exploreNavigationPath) { ExploreViewScreen().hideTabBar() }
                     .id(exploreViewID)
                     .tabItem { Label("Explore", systemImage: "safari.fill") }
                     .tag(1)
@@ -51,7 +51,7 @@ struct TabbarScreen: View {
                     .tabItem { Label("Sell", systemImage: "plus.circle.fill") }
                     .tag(2)
                 
-                NavigationContainer(navigationPath: $activityNavigationPath) { ActivityScreen() }
+                NavigationContainer(navigationPath: $activityNavigationPath) { ActivityScreen().hideTabBar() }
                     .id(activityViewID)
                     .tabItem { Label("Activity", systemImage: "suit.heart.fill") }
                     .tag(3)
