@@ -417,6 +417,7 @@ struct StoreProductParam : Encodable{
     var reserve_for_live : String
     var shipping_profile_id : String
     var status : String
+    var sub_category_id : String?
 }
 
 struct TipParam : Encodable {

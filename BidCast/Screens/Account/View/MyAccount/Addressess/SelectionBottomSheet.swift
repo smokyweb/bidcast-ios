@@ -17,7 +17,7 @@ struct SelectionBottomSheet: View {
     var onSelectionDone: (([Int]) -> Void)? = nil
 
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 8) {
             Text(title)
                 .font(.custom(poppinsBold, fixedSize: 24))
                 .multilineTextAlignment(.center)
@@ -28,7 +28,7 @@ struct SelectionBottomSheet: View {
                 .padding(.horizontal, 24)
 
             ScrollView {
-                VStack(spacing: 12) {
+                VStack(spacing: 2) {
                     ForEach(options, id: \.self) { option in
                         Button(action: {
                             toggleSelection(option)
@@ -47,7 +47,6 @@ struct SelectionBottomSheet: View {
                                 }
                             }
                             .frame(maxWidth: .infinity)
-                            .background(Color.gray.opacity(0.1))
                             .cornerRadius(10)
                         }
                     }
@@ -55,7 +54,6 @@ struct SelectionBottomSheet: View {
                 .padding(.horizontal, 20)
             }
             .frame(maxHeight: 250)
-            .padding(.top, 10)
 
             PrimaryButton(
                 title: isMultiSelect ? "Done" : "OK",
@@ -66,14 +64,14 @@ struct SelectionBottomSheet: View {
                     }
                     onSelectionDone?(selectedIndexes)
                 },
-                width: screenWidth / 1.5,
+                width: screenWidth - 24,
                 height: 40,
                 btnTextColor: .white,
                 btnColor: themeColor
             )
             .padding(.top, 10)
         }
-        .padding(.vertical, 20)
+        .padding(.vertical, 8)
         .padding(.bottom, 10)
     }
 

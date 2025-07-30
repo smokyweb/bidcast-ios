@@ -29,7 +29,7 @@ struct ListProductScreen: View {
     @State var shippingAddressName: [String] = []
     @State var shippingId = ""
     @State var ShippingAddress: [AddressModel] = []
-    @State var request : StoreProductParam = StoreProductParam(category_id: "", title: "", description: "", quantity: "", pricing: "", flash_sale: "0", accept_offers: "0", reserve_for_live: "0", shipping_profile_id: "", status: "")
+    @State var request : StoreProductParam = StoreProductParam(category_id: "", title: "", description: "", quantity: "", pricing: "", flash_sale: "0", accept_offers: "0", reserve_for_live: "0", shipping_profile_id: "", status: "",sub_category_id: "")
     
     @State var viewModel = ListProductViewModel()
     @State var imageUrls: [String] = []
@@ -113,8 +113,6 @@ struct ListProductScreen: View {
                             isIconDisplay : false,
                             custFontName : robotoRegular,
                             custFontSize : 13.0,
-                            custPlaceHolderName : robotoRegular,
-                            custPlaceHolderFontSize : 16.0 ,
                             enteredText:  { title in
                                 request.title = title
                             })
@@ -123,17 +121,13 @@ struct ListProductScreen: View {
                         
                         DescriptionFieldView(
                             custFontName : robotoRegular,
-                            custFontSize : 13.0,
-                            custPlaceHolderName : robotoRegular,
-                            custPlaceHolderFontSize : 16.0)
+                            custFontSize : 13.0)
                         { message in
                             request.description = message
                         }
                         AuthTextField(floatingLabel: "Quantity".localized, placeholder: "Enter Quantity".localized, icon: .menuProfile, text: $request.quantity ,isIconDisplay : false,
                                       custFontName : robotoRegular,
                                       custFontSize : 13.0,
-                                      custPlaceHolderName : robotoRegular,
-                                      custPlaceHolderFontSize : 16.0 ,
                                       enteredText:  { quantity in
                             request.quantity = quantity
                         })
@@ -163,8 +157,6 @@ struct ListProductScreen: View {
                         AuthTextField(floatingLabel: "Buy it Now Price".localized, placeholder: "0.00".localized, icon: .menuProfile, text: $request.pricing,isIconDisplay : true, isForPrice:true,
                                       custFontName : robotoRegular,
                                       custFontSize : 13.0,
-                                      custPlaceHolderName : robotoRegular,
-                                      custPlaceHolderFontSize : 16.0 ,
                                       enteredText:  { price in
                             request.pricing = price
                         })
@@ -367,22 +359,36 @@ struct ListProductScreen: View {
 //                .edgesIgnoringSafeArea(.top)
                 .padding(.all,0)
                 .background(.bg.opacity(0.5))
-                .bottomSheet(isPresented: $showSubCategorySheet) {
-                    SelectionBottomSheet(
-                        title: "Select Sub-Category",
-                        message: "Please select Sub-category.",
-                        options: $subCategoryName,
-                        selectedOptions: $selectedOption,
-                        onSelectionDone: { selectedIndexes in
-//                            if let index = selectedIndexes.first {
-//                                let selectedValue = subCategoryList[index]
-//                                print("Selected: \(selectedValue)")
-//                            }
-                            showSubCategorySheet = false
-                        }
-                    )
-                }
-                .bottomSheet(isPresented: $showError, height: screenHeight/2, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: {
+                
+                .bottomSheet(
+                    isPresented: $showSubCategorySheet,
+                    height: screenHeight * 0.4,
+                    topBarCornerRadius: 25,
+                    showTopIndicator: false,
+                    onDismiss: {
+                        showSubCategorySheet = true
+                    },
+                    content: {
+                        SelectionBottomSheet(
+                            title: "Select Sub-Category",
+                            message: "Please select Sub-category.",
+                            options: $subCategoryName,
+                            selectedOptions: $selectedOption,
+                            onSelectionDone: { selectedIndexes in
+                                if let index = selectedIndexes.first {
+                                    let selectedValue = subCategoryList[index]
+                                    selectedSubCategory = selectedValue.name ?? ""
+                                    request.sub_category_id = "\(selectedValue.id ?? 0)"
+                                    selectedCategory = "\(selectedCategory) (\(selectedValue.name ?? ""))"
+                                    print("Selected SubCategory: \(selectedValue.name ?? "")")
+                                }
+                                showSubCategorySheet = false
+                            }
+                        )
+                    }
+                )
+                
+                .bottomSheet(isPresented: $showError, height: screenHeight * 0.7, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: {
                     if self.viewModel.errorMessage != "" || self.viewModel.errorMessage != nil{
                         showError = true
                     }else{
@@ -489,6 +495,7 @@ struct ListProductScreen: View {
             showError = true
         }
     }
+   
 }
 
 #Preview {
