@@ -7,10 +7,16 @@
 
 import SwiftUI
 
+//MARK: ChatScreen
 struct ChatScreen: View {
-    
+    @State private var chatPath: String = ""  // Declare chatPath as @State
     @ObservedObject var viewModel: ChatViewModel
     @Environment(\.presentationMode) var presentationMode
+
+    init(viewModel: ChatViewModel) {
+        _chatPath = State(initialValue: viewModel.chatPath) // Initialize with the computed chat path
+        self.viewModel = viewModel
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -39,29 +45,34 @@ struct ChatScreen: View {
         ScrollViewReader { scrollProxy in
             ScrollView {
                 LazyVStack(spacing: 12) {
-                    if viewModel.messages != nil {
-                        ForEach(viewModel.messages) { message in
-                            ChatBubble(
-                                message: message,
-                                isCurrentUser: message.senderId == viewModel.currentUserId
-                            )
-                            .id(message.id)
-                        }
+                    ForEach(viewModel.messages) { message in
+                        ChatBubble(
+                            message: message,
+                            isCurrentUser: message.senderId == viewModel.currentUserId
+                        )
+                        .id(message.id)
                     }
                 }
                 .padding(.horizontal, 12)
                 .padding(.top, 10)
             }
             .onChange(of: viewModel.messages.count) { _ in
-                if let last = viewModel.messages.last {
-                    withAnimation {
-                        scrollProxy.scrollTo(last.id, anchor: .bottom)
+                DispatchQueue.main.async {
+                    if let last = viewModel.messages.last {
+                        withAnimation {
+                            scrollProxy.scrollTo(last.id, anchor: .bottom)
+                        }
                     }
                 }
             }
+            .onAppear {
+                viewModel.fetchMessages()
+            }
+            .onDisappear {
+                viewModel.removeMessageListener()
+            }
         }
     }
-
 
     private var inputBar: some View {
         HStack(spacing: 10) {
@@ -88,9 +99,8 @@ struct ChatScreen: View {
 
 
 
-//MARK: ChatBubble
-import SwiftUI
 
+//MARK: ChatBubble
 struct ChatBubble: View {
     let message: ChatMessageModel
     let isCurrentUser: Bool
@@ -137,6 +147,7 @@ struct ChatBubble: View {
 }
 
 
+
 //MARK: ChatHeaderView
 struct ChatHeaderView: View {
     var profileImage: String
@@ -147,14 +158,13 @@ struct ChatHeaderView: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            // Back
             Button(action: onBack) {
                 Image(systemName: "chevron.left")
                     .foregroundColor(.black)
                     .font(.system(size: 20, weight: .semibold))
                     .frame(width: 36, height: 36)
             }
-           //Profile Image
+
             if let url = URL(string: profileImage), !profileImage.isEmpty {
                 AsyncImage(url: url) { phase in
                     if let image = phase.image {
@@ -173,7 +183,6 @@ struct ChatHeaderView: View {
                     .clipShape(Circle())
             }
 
-            // Name
             Text(userName)
                 .font(.custom(poppinsSemiBold, size: 14.0))
                 .foregroundColor(.black)
@@ -181,8 +190,7 @@ struct ChatHeaderView: View {
 
             Spacer()
 
-            // More
-            if showMoreButton{
+            if showMoreButton {
                 Button(action: onMore) {
                     Image(systemName: "ellipsis")
                         .rotationEffect(.degrees(90))
@@ -191,7 +199,6 @@ struct ChatHeaderView: View {
                         .frame(width: 36, height: 36)
                 }
             }
-            
         }
         .padding(.horizontal, 16)
         .padding(.top, 12)

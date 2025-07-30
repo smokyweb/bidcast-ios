@@ -11,6 +11,7 @@ import SVProgressHUD
 import AlertToast
 
 struct ActivityScreen: View {
+    
     @State private var showError: Bool = false
     @State private var isLoading: Bool = false
     @State private var showhud: Bool = false
@@ -21,10 +22,13 @@ struct ActivityScreen: View {
     @State var offerList: [OfferListModel] = []
     @State var currentPage = 1
     @State var messageList: [ChatMessage] = []
+    @State private var chatVM: ChatViewModel?
     @State private var selectedUserId: String? = nil
     @State private var selectedUserName: String? = nil
     @State private var selectedUserImage: String? = nil
     @State private var isNavigatingToChat = false
+    @State private var chatPath: String = ""
+
     
     @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     
@@ -73,7 +77,7 @@ struct ActivityScreen: View {
                             NoDataView(message: "No message Found")
                         } else {
                             ForEach(messageList) { message in
-                                MessageCell(message: message)
+                                MessageCell(message: message, currentUserId: String(UserDefaults.userId))
                                     .padding(.all , 6)
                                     .onTapGesture {
                                         prepareChatNavigation(for: message)
@@ -180,25 +184,13 @@ struct ActivityScreen: View {
             .padding(.top,4)
             .padding(.horizontal, 8)
             
-            if let otherUserId = selectedUserId,
-               let otherUserName = selectedUserName,
-               let otherUserImage = selectedUserImage {
-
+            if let chatVM = chatVM {
                 CusNavLink(
                     doNavigate: $isNavigatingToChat,
-                    destination: ChatScreen(
-                        viewModel: ChatViewModel(
-                            currentUserId: "\(UserDefaults.userId)",
-                            currentUserName: UserDefaults.userName,
-                            currentUserImage: UserDefaults.profileURL,
-                            otherUserId: otherUserId,
-                            otherUserName: otherUserName,
-                            otherUserImage: otherUserImage
-                        )
-                    )
+                    destination: ChatScreen(viewModel: chatVM)
                 )
             }
-
+            
             CusNavLink(doNavigate: $navigateToNotification, destination: NotificationScreen())
         }
         .background(Color(.systemGroupedBackground))
@@ -224,33 +216,44 @@ struct ActivityScreen: View {
     func prepareChatNavigation(for chat: ChatMessage) {
         let currentUserId = String(UserDefaults.userId)
         let isCurrentUserSender = chat.users.senderId == currentUserId
-
+        
+        // Assign the correct user ID and names
         selectedUserId = isCurrentUserSender ? chat.users.receiverId : chat.users.senderId
         selectedUserName = isCurrentUserSender ? chat.users.receiverName : chat.users.senderName
         selectedUserImage = isCurrentUserSender ? chat.users.receiverImage : chat.users.senderImage
-
+        
+        // Log to ensure correct IDs are being passed
+        print("currentUserId: \(currentUserId), selectedUserId: \(selectedUserId ?? "")")
+        
+        // Compute the sorted chat ID to ensure correct Firebase path
         selectedRoomId = computeRoomId(senderId: currentUserId, receiverId: selectedUserId ?? "")
+        print("Computed Room ID: \(selectedRoomId ?? "")")
+        chatPath = "chats/\(selectedRoomId)"
+        print("Computed Chat Path: \(chatPath)")
+        
+        // Reinitialize the ChatViewModel with the correct user information
+        chatVM = ChatViewModel(
+            currentUserId: currentUserId,
+            currentUserName: UserDefaults.userName,
+            currentUserImage: UserDefaults.profileURL,
+            otherUserId: selectedUserId ?? "",
+            otherUserName: selectedUserName ?? "",
+            otherUserImage: selectedUserImage ?? "",
+            chatPath: $chatPath
+        )
+        
+        // Now, we can navigate to the chat screen
         isNavigatingToChat = true
-
-        print("🔹 Tapped chat preview")
-        print("📨 Current User ID: \(currentUserId)")
-        print("👤 Sender ID: \(chat.users.senderId)")
-        print("👥 Receiver ID: \(chat.users.receiverId)")
-        print("✅ isCurrentUserSender: \(isCurrentUserSender)")
-        print("➡️ Navigating to chat with:")
-        print("🆔 User ID: \(selectedUserId ?? "nil")")
-        print("👤 User Name: \(selectedUserName ?? "nil")")
-        print("🖼️ User Image: \(selectedUserImage ?? "nil")")
-        print("📦 Computed Room ID: \(selectedRoomId ?? "nil")")
     }
-
+    
+    
     func computeRoomId(senderId: String, receiverId: String) -> String {
         let sortedIds = [senderId, receiverId].sorted()
         return "\(sortedIds[0])_chats_\(sortedIds[1])"
     }
-
-
-
+    
+    
+    
     // Fetch data based on the selected segment
     func fetchData(for segment: Segment) async {
         currentPage = 1
@@ -452,11 +455,23 @@ enum Segment: String, CaseIterable, CustomStringConvertible {
 
 struct MessageCell: View {
     let message: ChatMessage
+    let currentUserId: String
+    
+    var otherUserName: String {
+        message.users.senderId == currentUserId
+        ? message.users.receiverName
+        : message.users.senderName
+    }
+    
+    var otherUserImage: String {
+        message.users.senderId == currentUserId
+        ? message.users.receiverImage
+        : message.users.senderImage
+    }
     
     var body: some View {
         HStack(alignment: .center, spacing: 12) {
-            // Profile Image
-            AsyncImage(url: URL(string: message.users.receiverImage)) { image in
+            AsyncImage(url: URL(string: otherUserImage)) { image in
                 image.resizable()
             } placeholder: {
                 Color.gray
@@ -464,14 +479,11 @@ struct MessageCell: View {
             .frame(width: 48, height: 48)
             .clipShape(Circle())
             
-            // Name + Message
             VStack(alignment: .leading, spacing: 6) {
                 HStack {
-                    Text(message.users.receiverName)
+                    Text(otherUserName)
                         .font(.system(size: 16, weight: .semibold))
-                    
                     Spacer()
-                    
                     Text(timestampString)
                         .font(.system(size: 14))
                         .foregroundColor(.gray)
@@ -494,6 +506,7 @@ struct MessageCell: View {
         return formatter.string(from: date)
     }
 }
+
 
 
 

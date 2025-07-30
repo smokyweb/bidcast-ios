@@ -49,6 +49,7 @@ struct ProfileScreen: View {
     @State var isLive = false
     @State var navigateToReherseal = false
     @State var navigateToChat = false
+    @State private var chatPath: String = ""
 
     
     @State var reviewList: [ReviewModel] = [
@@ -302,7 +303,7 @@ struct ProfileScreen: View {
                     currentUserImage: UserDefaults.profileURL,
                     otherUserId: id,
                     otherUserName: userName,
-                    otherUserImage: userImage
+                    otherUserImage: userImage, chatPath: $chatPath
                 )
             )
         )
