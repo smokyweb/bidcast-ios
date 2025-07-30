@@ -198,7 +198,7 @@ struct ProfileScreen: View {
                                     //                                self.category = show.category?.name ?? ""
                                     //                                navigateToCategoryDetailScreen = true
                                 })
-                                .background(.bg)
+//                                .background(.white)
                                 .cornerRadius(10)
                                 .onAppear {
                                     Task {

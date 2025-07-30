@@ -135,7 +135,7 @@ struct HomeViewScreen: View {
                                     self.category = item.category?.name ?? ""
                                     navigateToCategoryDetailScreen = true
                                 })
-                                .background(.bg)
+                                .background(.clear)
                                 .cornerRadius(10)
                             }
                         }
@@ -152,7 +152,7 @@ struct HomeViewScreen: View {
             CusNavLink(doNavigate: $navigateToNoti, destination: NotificationScreen())
             CusNavLink(doNavigate: $navigateToCategoryDetailScreen, destination: HomeViewScreen(showCategory:$category,comeFromExploreScreen : $navigateToCategoryDetailScreen))
         }
-        .background(.white)
+        .background(.bg.opacity(0.1))
         .onAppear{
             NotificationCenter.default.addObserver(forName: Notification.Name("Notification"), object: nil, queue: .main) { notification in
                 if let userInfo = notification.userInfo {

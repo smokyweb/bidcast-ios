@@ -116,6 +116,7 @@
 		35CCE01D2DD8782600760CEE /* ScheduleModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CCE01C2DD8782600760CEE /* ScheduleModel.swift */; };
 		35CCE01F2DD8A8BC00760CEE /* SellingTips.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CCE01E2DD8A8BC00760CEE /* SellingTips.swift */; };
 		35D6B0012E12A00D00068445 /* KeyboardResponder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35D6B0002E12A00D00068445 /* KeyboardResponder.swift */; };
+		35E7BC862E39FC88003A0BA2 /* RadioButtonGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35E7BC852E39FC88003A0BA2 /* RadioButtonGroup.swift */; };
 		35F63D682DDC5DF100D29878 /* SwiftfulLoadingIndicators in Frameworks */ = {isa = PBXBuildFile; productRef = 35F63D672DDC5DF100D29878 /* SwiftfulLoadingIndicators */; };
 		35F63D6B2DDCBE5B00D29878 /* Stripe in Frameworks */ = {isa = PBXBuildFile; productRef = 35F63D6A2DDCBE5B00D29878 /* Stripe */; };
 		35F63D6D2DDCBE5B00D29878 /* StripeApplePay in Frameworks */ = {isa = PBXBuildFile; productRef = 35F63D6C2DDCBE5B00D29878 /* StripeApplePay */; };
@@ -584,6 +585,7 @@
 		35CCE01C2DD8782600760CEE /* ScheduleModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleModel.swift; sourceTree = "<group>"; };
 		35CCE01E2DD8A8BC00760CEE /* SellingTips.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SellingTips.swift; sourceTree = "<group>"; };
 		35D6B0002E12A00D00068445 /* KeyboardResponder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardResponder.swift; sourceTree = "<group>"; };
+		35E7BC852E39FC88003A0BA2 /* RadioButtonGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioButtonGroup.swift; sourceTree = "<group>"; };
 		35F8B5582DED805100FE0778 /* LiveShowsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveShowsViewModel.swift; sourceTree = "<group>"; };
 		35F8B55A2DED816300FE0778 /* LiveShowsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveShowsModel.swift; sourceTree = "<group>"; };
 		35F8B55C2DED843A00FE0778 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
@@ -2399,6 +2401,7 @@
 				3581D41A2DE0962F00BEAB88 /* ViewModel */,
 				D4A7F9032DDDA8C5001FC705 /* AddressesScreen.swift */,
 				3581D4182DE08F7300BEAB88 /* CreateAddress.swift */,
+				35E7BC852E39FC88003A0BA2 /* RadioButtonGroup.swift */,
 			);
 			path = Addressess;
 			sourceTree = "<group>";
@@ -4349,6 +4352,7 @@
 				D4CAECB32DE7383D00705CD7 /* ShopViewModel.swift in Sources */,
 				99C908342DC8CD6A0054620B /* JobMatchesCard.swift in Sources */,
 				99C908352DC8CD6A0054620B /* DateSelectionSheet.swift in Sources */,
+				35E7BC862E39FC88003A0BA2 /* RadioButtonGroup.swift in Sources */,
 				D4CAECBE2DE73BCC00705CD7 /* EndShowViewModel.swift in Sources */,
 				35C2025B2DEF12A200492F2D /* AddCardModel.swift in Sources */,
 				99C908362DC8CD6A0054620B /* FilterEmployerOptionView.swift in Sources */,
@@ -4593,7 +4597,7 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = /Users/gadgetzone/Documents/Live/bidcast/BidCast/ZegoBridgeHeader.h;
+				SWIFT_OBJC_BRIDGING_HEADER = /Users/jamtech/Documents/GitHub/bidcast/BidCast/ZegoBridgeHeader.h;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				XROS_DEPLOYMENT_TARGET = 2.4;
@@ -4642,7 +4646,7 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = /Users/gadgetzone/Documents/Live/bidcast/BidCast/ZegoBridgeHeader.h;
+				SWIFT_OBJC_BRIDGING_HEADER = /Users/jamtech/Documents/GitHub/bidcast/BidCast/ZegoBridgeHeader.h;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				XROS_DEPLOYMENT_TARGET = 2.4;

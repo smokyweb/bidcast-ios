@@ -267,7 +267,7 @@ struct AccountScreen: View {
         }
         .edgesIgnoringSafeArea(.bottom)
         .background(.bg.opacity(0.5))
-        .toolbar(isNavFrom ? .hidden : .visible, for: .tabBar)
+//        .toolbar(isNavFrom ? .hidden : .visible, for: .tabBar)
         .bottomSheet(isPresented: $userLogOut, height: screenHeight/2, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: {  }, content: {
             LogOutSheet(onLogoutClick: {
                 withAnimation(.snappy) { userLogOut = false }

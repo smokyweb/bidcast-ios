@@ -56,7 +56,7 @@ struct TabbarScreen: View {
                     .tabItem { Label("Activity", systemImage: "suit.heart.fill") }
                     .tag(3)
                 
-                NavigationContainer(navigationPath: $accountNavigationPath) { AccountScreen() }
+                NavigationContainer(navigationPath: $accountNavigationPath) { AccountScreen().hideTabBar() }
                     .id(accountViewID)
                     .tabItem { Label("Account", systemImage: "person.fill") }
                     .tag(4)
@@ -203,7 +203,13 @@ struct TabbarScreen: View {
     }
 }
 
-        
+extension View {
+    func hideTabBar() -> some View {
+        self
+            .onAppear { UITabBar.appearance().isHidden = true }
+            .onDisappear { UITabBar.appearance().isHidden = false }
+    }
+}
         
         
 //        .bottomSheet(

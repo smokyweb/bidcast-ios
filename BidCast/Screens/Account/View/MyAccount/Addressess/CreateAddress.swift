@@ -28,18 +28,6 @@ struct CreateAddress: View {
     var body: some View {
         VStack(spacing: 0) {
             // Top Header
-//            PrimaryHeader(
-//                title: "Create New Addresses",
-//                isForLogo: false,
-//                leadingImgArr: [.icBack],
-//               
-//                onClickLeading: { _ in
-//                    self.presentationMode.wrappedValue.dismiss()
-//                },
-//                count: .constant(0)
-//            )
-//            .frame(height: 50)
-//            .background(Color.white)
             VStack{
                 PrimaryHeader(
                     title: "Create New Address",
@@ -59,22 +47,18 @@ struct CreateAddress: View {
             ScrollView {
                 VStack(spacing: 16) {
                     Group{
-                         DropDownSelection(
-                            options: $addressType, floatingLabel:"Type",
-                            hint: "Select Type",
+                        RadioButtonGroup(
+                            options: addressType,
                             selected: $selectedType,
-                            anchor: .bottom,
-                            onOptionSelected: { value in
+                            onSelect: { value in
                                 request.type = value
-                                self.selectedType = value
                             }
                         )
-                        .zIndex(1201.0)
 //                        .padding([.leading,.trailing],8)
                         
                         AuthTextField(
-                            floatingLabel: "Name",
-                            placeholder: "Enter name",
+                            floatingLabel: "Full Name",
+                            placeholder: "Enter full name",
                             icon: .icMail,
                             text: $request.name,
                             isIconDisplay : false,
@@ -107,7 +91,27 @@ struct CreateAddress: View {
                                 request.street_address = $0
                             }
                         )
-
+                        AuthTextField(
+                            floatingLabel: "City",
+                            placeholder: "Enter city",
+                            icon: .icMail,
+                            text: $request.street_address,
+                            isIconDisplay : false,
+                            enteredText: {
+                                request.street_address = $0
+                            }
+                        )
+                        DropDownSelection(
+                           options: $addressType, floatingLabel:"State",
+                           hint: "Select state",
+                           selected: $selectedType,
+                           anchor: .bottom,
+                           onOptionSelected: { value in
+                               request.type = value
+                               self.selectedType = value
+                           }
+                       )
+                       .zIndex(1201.0)
                         AuthTextField(
                             floatingLabel: "Pin code",
                             placeholder: "Enter pin code",
@@ -119,6 +123,18 @@ struct CreateAddress: View {
                             }
                         )
                         .keyboardType(.numberPad)
+                        
+                        AuthTextField(
+                            floatingLabel: "Country",
+                            placeholder: "Enter country",
+                            icon: .icMail,
+                            text: $request.street_address,
+                            isIconDisplay : false,
+                            enteredText: {
+                                request.street_address = $0
+                            }
+                        )
+                        .disabled(true)
                     }
 //                    .padding(.horizontal, 16)
                 }
@@ -259,6 +275,5 @@ struct CreateAddress: View {
     }
 }
 
-#Preview {
-    AddressesScreen()
-}
+
+

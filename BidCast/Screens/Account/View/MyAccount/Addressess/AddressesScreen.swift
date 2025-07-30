@@ -83,14 +83,14 @@ struct AddressesScreen: View {
             //Bottom fixed button
             PrimaryButton(
                 title: "Add New Address",
-                isOutLine: false,
+                isOutLine: true,
                 onButtonClick: {
                     print("Add New Address tapped")
                     navigateToCreate = true
                 },
                 width: screenWidth - 45,
                 cornerRadius: 12.0, imageName: "plus_btn",
-                btnTextColor : .black, btnColor: .white
+                btnTextColor : .white, btnColor: .defaultTheme
             )
             //            .padding(.vertical, 10)
             .background(Color.white)
@@ -98,6 +98,7 @@ struct AddressesScreen: View {
             .padding(.bottom,-24)
             CusNavLink(doNavigate: $navigateToCreate, destination: CreateAddress())
         }
+        .toolbar(.hidden, for: .tabBar)
         .onAppear{
             Task{
                guard Reachability.isConnectedToNetwork() else {
