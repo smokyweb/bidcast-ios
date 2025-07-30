@@ -97,7 +97,7 @@ struct ProfileScreen: View {
                             }
                         },
                                            onTapMessage: {
-                            navigateToChat = true
+                            navigateToChat = false
                             
                         })
                         
