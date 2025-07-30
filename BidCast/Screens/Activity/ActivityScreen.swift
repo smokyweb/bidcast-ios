@@ -15,6 +15,7 @@ struct ActivityScreen: View {
     @State private var isLoading: Bool = false
     @State private var showhud: Bool = false
     @State private var hudMsg: String = ""
+    @State private var selectedRoomId: String = ""
     @StateObject var viewModel = OffersViewModel()
     @EnvironmentObject var networkMonitor: NetworkMonitor
     @State var offerList: [OfferListModel] = []
@@ -24,7 +25,7 @@ struct ActivityScreen: View {
     @State private var selectedUserName: String? = nil
     @State private var selectedUserImage: String? = nil
     @State private var isNavigatingToChat = false
-
+    
     @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     
     @State private var selected: Segment = .message
@@ -44,7 +45,7 @@ struct ActivityScreen: View {
                         self.presentationMode.wrappedValue.dismiss()
                     },
                     onClickTrailing: {  _ in
-                       
+                        
                         navigateToNotification = true
                     },
                     count: .constant(0)
@@ -62,7 +63,7 @@ struct ActivityScreen: View {
             
             ScrollView {
                 VStack(spacing: 6) {
-                   
+                    
                     switch selected {
                     case .message:
                         if isLoading {
@@ -75,15 +76,11 @@ struct ActivityScreen: View {
                                 MessageCell(message: message)
                                     .padding(.all , 6)
                                     .onTapGesture {
-                                        selectedUserId = message.users.senderId
-                                        selectedUserName = message.users.senderName
-                                        selectedUserImage = message.users.senderImage
-                                        isNavigatingToChat = false //TODO:
+                                        prepareChatNavigation(for: message)
                                     }
-
                             }
                         }
-
+                        
                     case .bid:
                         if offerList.isEmpty {
                             NoDataView(message: "No bids Found")
@@ -138,7 +135,7 @@ struct ActivityScreen: View {
                                 }
                             }
                         }
-
+                        
                     case .purchases:
                         if offerList.isEmpty {
                             NoDataView(message: "No List Found")
@@ -157,7 +154,7 @@ struct ActivityScreen: View {
                                 }
                             }
                         }
-
+                        
                     case .savedItems:
                         if offerList.isEmpty {
                             NoDataView(message: "No List Found")
@@ -176,22 +173,32 @@ struct ActivityScreen: View {
                                 }
                             }
                         }
-
+                        
                     }
                 }
             }
             .padding(.top,4)
             .padding(.horizontal, 8)
             
-            CusNavLink(doNavigate: $isNavigatingToChat, destination: ChatScreen(viewModel: ChatViewModel(
-                currentUserId: "\(UserDefaults.userId)",
-                currentUserName: UserDefaults.userName,
-                currentUserImage: UserDefaults.profileURL,
-                otherUserId: selectedUserId ?? "",
-                otherUserName: selectedUserName ?? "",
-                otherUserImage: selectedUserImage ?? ""
-            )))
-            
+            if let otherUserId = selectedUserId,
+               let otherUserName = selectedUserName,
+               let otherUserImage = selectedUserImage {
+
+                CusNavLink(
+                    doNavigate: $isNavigatingToChat,
+                    destination: ChatScreen(
+                        viewModel: ChatViewModel(
+                            currentUserId: "\(UserDefaults.userId)",
+                            currentUserName: UserDefaults.userName,
+                            currentUserImage: UserDefaults.profileURL,
+                            otherUserId: otherUserId,
+                            otherUserName: otherUserName,
+                            otherUserImage: otherUserImage
+                        )
+                    )
+                )
+            }
+
             CusNavLink(doNavigate: $navigateToNotification, destination: NotificationScreen())
         }
         .background(Color(.systemGroupedBackground))
@@ -214,6 +221,36 @@ struct ActivityScreen: View {
         }
     }
     
+    func prepareChatNavigation(for chat: ChatMessage) {
+        let currentUserId = String(UserDefaults.userId)
+        let isCurrentUserSender = chat.users.senderId == currentUserId
+
+        selectedUserId = isCurrentUserSender ? chat.users.receiverId : chat.users.senderId
+        selectedUserName = isCurrentUserSender ? chat.users.receiverName : chat.users.senderName
+        selectedUserImage = isCurrentUserSender ? chat.users.receiverImage : chat.users.senderImage
+
+        selectedRoomId = computeRoomId(senderId: currentUserId, receiverId: selectedUserId ?? "")
+        isNavigatingToChat = true
+
+        print("🔹 Tapped chat preview")
+        print("📨 Current User ID: \(currentUserId)")
+        print("👤 Sender ID: \(chat.users.senderId)")
+        print("👥 Receiver ID: \(chat.users.receiverId)")
+        print("✅ isCurrentUserSender: \(isCurrentUserSender)")
+        print("➡️ Navigating to chat with:")
+        print("🆔 User ID: \(selectedUserId ?? "nil")")
+        print("👤 User Name: \(selectedUserName ?? "nil")")
+        print("🖼️ User Image: \(selectedUserImage ?? "nil")")
+        print("📦 Computed Room ID: \(selectedRoomId ?? "nil")")
+    }
+
+    func computeRoomId(senderId: String, receiverId: String) -> String {
+        let sortedIds = [senderId, receiverId].sorted()
+        return "\(sortedIds[0])_chats_\(sortedIds[1])"
+    }
+
+
+
     // Fetch data based on the selected segment
     func fetchData(for segment: Segment) async {
         currentPage = 1
@@ -224,11 +261,11 @@ struct ActivityScreen: View {
                 showhud = true
                 return
             }
-
+            
             messageList.removeAll()
             isLoading = true
-
-            FirebaseManager.shared.fetchMessages(forUserId: "\(UserDefaults.userId)") { messages in
+            
+            FirebaseManager.shared.fetchMessageList(forUserId: "\(UserDefaults.userId)") { messages in
                 DispatchQueue.main.async {
                     self.messageList = messages
                     self.isLoading = false
@@ -236,7 +273,7 @@ struct ActivityScreen: View {
             }
             
         case .bid:
-           guard Reachability.isConnectedToNetwork() else {
+            guard Reachability.isConnectedToNetwork() else {
                 hudMsg = "No Internet Connection"
                 showhud = true
                 return
@@ -250,7 +287,7 @@ struct ActivityScreen: View {
                 offerList = viewModel.offerListResponse.data ?? []
             }
         case .offer:
-           guard Reachability.isConnectedToNetwork() else {
+            guard Reachability.isConnectedToNetwork() else {
                 hudMsg = "No Internet Connection"
                 showhud = true
                 return
@@ -264,7 +301,7 @@ struct ActivityScreen: View {
                 offerList = viewModel.offerListResponse.data ?? []
             }
         case .purchases:
-           guard Reachability.isConnectedToNetwork() else {
+            guard Reachability.isConnectedToNetwork() else {
                 hudMsg = "No Internet Connection"
                 showhud = true
                 return
@@ -278,7 +315,7 @@ struct ActivityScreen: View {
                 offerList = viewModel.itemListResponse.data ?? []
             }
         case .savedItems:
-           guard Reachability.isConnectedToNetwork() else {
+            guard Reachability.isConnectedToNetwork() else {
                 hudMsg = "No Internet Connection"
                 showhud = true
                 return
@@ -293,7 +330,7 @@ struct ActivityScreen: View {
             }
         }
     }
-
+    
     
     //MARK: fetchListing.
     func getOfferSuccess() {
@@ -308,7 +345,7 @@ struct ActivityScreen: View {
     func handlePagination(index: Int) async {
         let isLastItem = index == offerList.count - 1
         let totalItems: Int
-
+        
         switch selected {
         case .bid, .offer:
             totalItems = viewModel.offerListResponse.total ?? 0
@@ -317,9 +354,9 @@ struct ActivityScreen: View {
         default:
             totalItems = 0
         }
-
+        
         let canFetchMore = totalItems > offerList.count
-
+        
         if isLastItem && canFetchMore {
             let nextPage = currentPage + 1
             switch selected {
@@ -356,16 +393,16 @@ struct ActivityScreen: View {
             }
         }
     }
-
     
-
+    
+    
     func handleOfferAction(offer: OfferListModel, newStatus: String) {
         let param = OfferUpdateStatusRequest(offer_id: offer.id ?? 0, status: newStatus, page: currentPage)
         SVProgressHUD.show()
         
         Task {
             do {
-               guard Reachability.isConnectedToNetwork() else {
+                guard Reachability.isConnectedToNetwork() else {
                     hudMsg = "No Internet Connection"
                     showhud = true
                     return
@@ -390,15 +427,15 @@ struct ActivityScreen: View {
     }
     
     func offerCount(for offer: OffersValue) -> String {
-            switch offer {
-            case .pending:
-                return "\(viewModel.offerListResponse.pending ?? 0)"
-            case .accepted:
-                return "\(viewModel.offerListResponse.accepted ?? 0)"
-            case .decline:
-                return "\(viewModel.offerListResponse.declined ?? 0)"
-            }
+        switch offer {
+        case .pending:
+            return "\(viewModel.offerListResponse.pending ?? 0)"
+        case .accepted:
+            return "\(viewModel.offerListResponse.accepted ?? 0)"
+        case .decline:
+            return "\(viewModel.offerListResponse.declined ?? 0)"
         }
+    }
 }
 
 
@@ -415,7 +452,7 @@ enum Segment: String, CaseIterable, CustomStringConvertible {
 
 struct MessageCell: View {
     let message: ChatMessage
-
+    
     var body: some View {
         HStack(alignment: .center, spacing: 12) {
             // Profile Image
@@ -426,20 +463,20 @@ struct MessageCell: View {
             }
             .frame(width: 48, height: 48)
             .clipShape(Circle())
-
+            
             // Name + Message
             VStack(alignment: .leading, spacing: 6) {
                 HStack {
                     Text(message.users.receiverName)
                         .font(.system(size: 16, weight: .semibold))
-
+                    
                     Spacer()
-
+                    
                     Text(timestampString)
                         .font(.system(size: 14))
                         .foregroundColor(.gray)
                 }
-
+                
                 Text(message.message)
                     .font(.system(size: 15))
             }
@@ -449,7 +486,7 @@ struct MessageCell: View {
         .cornerRadius(12)
         .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
     }
-
+    
     private var timestampString: String {
         let date = Date(timeIntervalSince1970: message.timestamp)
         let formatter = DateFormatter()
@@ -457,6 +494,7 @@ struct MessageCell: View {
         return formatter.string(from: date)
     }
 }
+
 
 
 

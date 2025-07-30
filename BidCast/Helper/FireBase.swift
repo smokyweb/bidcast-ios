@@ -248,7 +248,7 @@ class FirebaseManager {
     }
     
 
-    func fetchMessages(forUserId userId: String, completion: @escaping ([ChatMessage]) -> Void) {
+    func fetchMessageList(forUserId userId: String, completion: @escaping ([ChatMessage]) -> Void) {
         var allMessages: [ChatMessage] = []
 
         let dbRef = Database.database().reference().child("chat_list").child(userId)
@@ -270,4 +270,23 @@ class FirebaseManager {
             completion(allMessages.sorted { $0.timestamp > $1.timestamp }) // Latest first
         }
     }
+    
+    
+    func fetchMessages(for roomId: String, completion: @escaping ([ChatMessageModel]) -> Void) {
+        let ref = Database.database().reference().child("chats").child(roomId).child("messages")
+        
+        ref.observe(.value) { snapshot in
+            var messages: [ChatMessageModel] = []
+            for child in snapshot.children {
+                if let childSnap = child as? DataSnapshot,
+                   let dict = childSnap.value as? [String: Any] {
+                    let msg = ChatMessageModel(id: childSnap.key, from: dict)
+                    messages.append(msg)
+                }
+            }
+            messages.sort { $0.timestamp < $1.timestamp }
+            completion(messages)
+        }
+    }
+
 }

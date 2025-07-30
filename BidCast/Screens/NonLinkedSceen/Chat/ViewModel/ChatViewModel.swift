@@ -12,6 +12,9 @@ import FirebaseAuth
 class ChatViewModel: ObservableObject {
     @Published var messages: [ChatMessageModel] = []
     @Published var messageText: String = ""
+    
+    private var ref = Database.database().reference()
+    private var messageListenerHandle: DatabaseHandle?
 
     var currentUserId: String
     var currentUserName: String
@@ -21,14 +24,19 @@ class ChatViewModel: ObservableObject {
     var otherUserName: String
     var otherUserImage: String
 
-    private var ref = Database.database().reference()
-
-    var chatPath: String {
+    // MARK: ✅ Shared sorted ID (used for both chat and chat_list)
+    var sortedChatId: String {
         let first = min(currentUserId, otherUserId)
         let second = max(currentUserId, otherUserId)
-        return "chats/\(first)_chats_\(second)"
+        return "\(first)_chats_\(second)"
     }
 
+    // MARK: ✅ Firebase chat path (matches Firebase DB structure)
+    var chatPath: String {
+        return "chats/\(sortedChatId)"
+    }
+
+    // MARK: - Init
     init(currentUserId: String, currentUserName: String, currentUserImage: String,
          otherUserId: String, otherUserName: String, otherUserImage: String) {
         self.currentUserId = currentUserId
@@ -41,43 +49,55 @@ class ChatViewModel: ObservableObject {
         fetchMessages()
     }
 
-    // 🔄 Realtime message fetch
-    func fetchMessages() {
-        ref.child(chatPath).observe(.childAdded) { snapshot in
-            guard let dict = snapshot.value as? [String: Any] else { return }
-            let message = ChatMessageModel(id: snapshot.key, from: dict)
-            DispatchQueue.main.async {
-                self.messages.append(message)
-                self.messages.sort { $0.timestamp < $1.timestamp }
-            }
+    deinit {
+        if let handle = messageListenerHandle {
+            ref.child(chatPath).removeObserver(withHandle: handle)
         }
     }
 
-    // 📤 Send a new message
+    // MARK: - Fetch + Listen
+    func fetchMessages() {
+        if let handle = messageListenerHandle {
+            ref.child(chatPath).removeObserver(withHandle: handle)
+            messageListenerHandle = nil
+        }
+print("chatpath \(chatPath)")
+        messages.removeAll()
+
+        messageListenerHandle = ref.child(chatPath).observe(.childAdded) { snapshot in
+            guard let dict = snapshot.value as? [String: Any] else { return }
+            let message = ChatMessageModel(id: snapshot.key, from: dict)
+            print("messagesCheck\(message)")
+            DispatchQueue.main.async {
+                self.messages.append(message)
+                self.messages.sort { $0.timestamp < $1.timestamp }
+                print("messages\(self.messages)")
+            }
+            
+        }
+    }
+
+    // MARK: - Send Message
     func sendMessage() {
         guard !messageText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
 
         let messageId = UUID().uuidString
         let timestamp = Int(Date().timeIntervalSince1970)
 
-        // 1. Save actual chat message to thread
         let messageData: [String: Any] = [
             "message": messageText,
             "senderId": currentUserId,
             "receiverId": otherUserId,
             "timestamp": timestamp
         ]
+
+        // ✅ Save message to chat path
+        print("send chatpath \(chatPath)")
         ref.child(chatPath).child(messageId).setValue(messageData)
 
-        // 2. Prepare attachment
-        let attachment: [String: Any] = [
-            "audio": "",
-            "image": "",
-            "thumbnail": "",
-            "video": ""
-        ]
+        // ✅ Prepare chat preview data
+        let attachment: [String: Any] = ["audio": "", "image": "", "thumbnail": "", "video": ""]
 
-        // 3. Sender side user object
         let senderUsers: [String: Any] = [
             "receiverId": otherUserId,
             "receiverImage": otherUserImage,
@@ -87,19 +107,6 @@ class ChatViewModel: ObservableObject {
             "senderName": currentUserName
         ]
 
-        let senderChatListData: [String: Any] = [
-            "attachment": attachment,
-            "id": "\(currentUserId)_chats_\(otherUserId)",
-            "isReply": false,
-            "message": messageText,
-            "seen": false,
-            "timestamp": timestamp,
-            "timezone": TimeZone.current.identifier,
-            "type": "text",
-            "users": senderUsers
-        ]
-
-        // 4. Receiver side user object
         let receiverUsers: [String: Any] = [
             "receiverId": currentUserId,
             "receiverImage": currentUserImage,
@@ -109,9 +116,21 @@ class ChatViewModel: ObservableObject {
             "senderName": otherUserName
         ]
 
-        let receiverChatListData: [String: Any] = [
+        let senderData: [String: Any] = [
             "attachment": attachment,
-            "id": "\(otherUserId)_chats_\(currentUserId)",
+            "id": sortedChatId,
+            "isReply": false,
+            "message": messageText,
+            "seen": false,
+            "timestamp": timestamp,
+            "timezone": TimeZone.current.identifier,
+            "type": "text",
+            "users": senderUsers
+        ]
+
+        let receiverData: [String: Any] = [
+            "attachment": attachment,
+            "id": sortedChatId,
             "isReply": false,
             "message": messageText,
             "seen": false,
@@ -121,11 +140,10 @@ class ChatViewModel: ObservableObject {
             "users": receiverUsers
         ]
 
-        // 5. Save to chat_list for both users
-        ref.child("chat_list").child(currentUserId).child(otherUserId).setValue(senderChatListData)
-        ref.child("chat_list").child(otherUserId).child(currentUserId).setValue(receiverChatListData)
+        // ✅ Update chat_list for both users
+        ref.child("chat_list").child(currentUserId).child(otherUserId).setValue(senderData)
+        ref.child("chat_list").child(otherUserId).child(currentUserId).setValue(receiverData)
 
-        // 6. Clear input
         messageText = ""
     }
 }

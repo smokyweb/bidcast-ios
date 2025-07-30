@@ -39,12 +39,14 @@ struct ChatScreen: View {
         ScrollViewReader { scrollProxy in
             ScrollView {
                 LazyVStack(spacing: 12) {
-                    ForEach(viewModel.messages) { message in
-                        ChatBubble(
-                            message: message,
-                            isCurrentUser: message.senderId == viewModel.currentUserId
-                        )
-                        .id(message.id)
+                    if viewModel.messages != nil {
+                        ForEach(viewModel.messages) { message in
+                            ChatBubble(
+                                message: message,
+                                isCurrentUser: message.senderId == viewModel.currentUserId
+                            )
+                            .id(message.id)
+                        }
                     }
                 }
                 .padding(.horizontal, 12)
@@ -59,6 +61,7 @@ struct ChatScreen: View {
             }
         }
     }
+
 
     private var inputBar: some View {
         HStack(spacing: 10) {
