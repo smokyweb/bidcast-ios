@@ -215,3 +215,4 @@ struct SimpleImageOKBottomSheet: View {
     .padding()
   }
 }
+

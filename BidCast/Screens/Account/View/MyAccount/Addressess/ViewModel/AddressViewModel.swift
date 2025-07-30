@@ -13,6 +13,7 @@ final class AddressViewModel: ObservableObject {
     
     // MARK: - Published Properties
     @Published var addressResponse = ResponseModel<AddressModel>()
+    @Published var stateResponse = ResponseModel<[StateModel]>()
     @Published var addressesResponse = ResponseModel<[AddressModel]>()
     @Published var errorMessage: String? = nil
     
@@ -40,6 +41,20 @@ final class AddressViewModel: ObservableObject {
                 header: true
             )
             addressesResponse = response
+        } catch {
+            handle(error: error)
+        }
+       
+    }
+    
+    func getState() async {
+       
+        do {
+            let response: ResponseModel<[StateModel]> = try await APIManager.shared.request(
+                type: APIEndPoint.getState,
+                header: true
+            )
+            stateResponse = response
         } catch {
             handle(error: error)
         }

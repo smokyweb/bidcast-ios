@@ -36,6 +36,11 @@ struct ListProductScreen: View {
     
     @State var showSellerSheet = false
     @State var navigateToSeller = false
+    @State var showSubCategorySheet = false
+    @State var selectedOption: Set<String> = []
+    @State var selectedSubCategory = ""
+    @State var subCategoryList: [CategoryDataModel] = []
+    @State var subCategoryName : [String] = [""]
     
     var body: some View {
         
@@ -77,6 +82,24 @@ struct ListProductScreen: View {
                                     request.category_id = "\(id)"
                                 } else {
                                     request.category_id = ""
+                                }
+                                Task{
+                                    let request = CategoryRequest(category_id: request.category_id)
+                                    SVProgressHUD.show()
+                                    await self.viewModel.getCategoryList(param: request)
+                                    self.subCategoryList.removeAll()
+                                    await SVProgressHUD.dismiss()
+                                    if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil {
+                                        if let response = self.viewModel.categoryResponse{
+                                            self.subCategoryList = response.data
+                                            self.subCategoryName = self.subCategoryList.map { $0.name ?? ""}
+                                        }
+                                        if subCategoryList.count != 0{
+                                            showSubCategorySheet = true
+                                        }
+                                    }else{
+                                        showSubCategorySheet = false
+                                    }
                                 }
                             }
                         )
@@ -344,6 +367,21 @@ struct ListProductScreen: View {
 //                .edgesIgnoringSafeArea(.top)
                 .padding(.all,0)
                 .background(.bg.opacity(0.5))
+                .bottomSheet(isPresented: $showSubCategorySheet) {
+                    SelectionBottomSheet(
+                        title: "Select Sub-Category",
+                        message: "Please select Sub-category.",
+                        options: $subCategoryName,
+                        selectedOptions: $selectedOption,
+                        onSelectionDone: { selectedIndexes in
+//                            if let index = selectedIndexes.first {
+//                                let selectedValue = subCategoryList[index]
+//                                print("Selected: \(selectedValue)")
+//                            }
+                            showSubCategorySheet = false
+                        }
+                    )
+                }
                 .bottomSheet(isPresented: $showError, height: screenHeight/2, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: {
                     if self.viewModel.errorMessage != "" || self.viewModel.errorMessage != nil{
                         showError = true
@@ -373,7 +411,7 @@ struct ListProductScreen: View {
                     return
                 }
                 SVProgressHUD.show()
-                await viewModel.getCategoryList()
+                await viewModel.getCategoryList(param: CategoryRequest(category_id: ""))
                 
                 categorySuccess()
                 

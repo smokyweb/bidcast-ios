@@ -223,7 +223,7 @@ struct AccountScreen: View {
                 }
             }
             .padding(.horizontal,8)
-            .background(.bg.opacity(0.5))
+            .background(.clear)
             .edgesIgnoringSafeArea(.bottom)
 //            .frame(maxHeight: .infinity)
             .padding(.bottom,isNavFrom ? -300 : UIDevice.current.hasNotch ? -230 : -110)

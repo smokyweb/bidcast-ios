@@ -18,11 +18,11 @@ final class ListProductViewModel: ObservableObject {
     @Published var requestType: String = ""
     
     // MARK: - Get Category List
-    func getCategoryList() async {
+    func getCategoryList(param:CategoryRequest) async {
         requestType = "Category"
         do {
             let response: ResponseModal<[CategoryDataModel]> = try await APIManager.shared.request(
-                type: APIEndPoint.category,
+                type: APIEndPoint.category(param:param),
                 header: true
             )
             self.categoryResponse = response

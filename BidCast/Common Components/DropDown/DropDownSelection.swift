@@ -36,7 +36,7 @@ struct DropDownSelection: View {
             if floatingLabel != "" {
                 Text(floatingLabel)
                     .font(.custom(custFontName, fixedSize: custFontSize))
-//                    .bold()
+                //                    .bold()
                     .foregroundStyle(.text)
                     .multilineTextAlignment(.leading)
             }
@@ -93,30 +93,32 @@ struct DropDownSelection: View {
     @ViewBuilder
     func optionView() -> some View {
         VStack(spacing: 2) {
-            ForEach(options, id: \.self) {
-                ind in
-                HStack(spacing: 0, content: {
-                    Text(ind)
-                        .lineLimit(1)
-                        .font(.custom(poppinsMedium, fixedSize: 13))
-                    Spacer()
-//                    Image(systemName: "checkmark")
-//                        .opacity(selected == ind ? 1 : 0)
-                })
-                .frame(height: 32)
-                .foregroundStyle(selected == ind ? Color.primary : Color.gray)
-                .animation(.none, value: selected)
-                .contentShape(.rect)
-                .onTapGesture {
-                    withAnimation(.snappy) {
-                        selected = ind
-                        showOption = false
-                        self.onOptionSelected?(selected)
+            ScrollView(showsIndicators: false) {
+                ForEach(options, id: \.self) {
+                    ind in
+                    HStack(spacing: 0, content: {
+                        Text(ind)
+                            .lineLimit(1)
+                            .font(.custom(poppinsRegular, fixedSize: 11))
+                        Spacer()
+                        Image(systemName: "checkmark")
+                            .opacity(selected == ind ? 1 : 0)
+                    })
+                    .frame(height: 30)
+                    .foregroundStyle(selected == ind ? Color.defaultTheme : Color.gray)
+                    .animation(.none, value: selected)
+                    .contentShape(.rect)
+                    .onTapGesture {
+                        withAnimation(.snappy) {
+                            selected = ind
+                            showOption = false
+                            self.onOptionSelected?(selected)
+                        }
                     }
                 }
             }
         }
-        .frame(maxHeight: 200)          
+        .frame(height: options.count > 3 ? 200 : CGFloat(options.count) * 42)
         .padding(.horizontal)
         .transition(.move(edge: anchor == .top ? .bottom : .top))
         .background(.white)

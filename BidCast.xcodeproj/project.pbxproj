@@ -59,6 +59,7 @@
 		3581D4192DE08F7300BEAB88 /* CreateAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3581D4182DE08F7300BEAB88 /* CreateAddress.swift */; };
 		3581D41D2DE0964C00BEAB88 /* AddressViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3581D41C2DE0964C00BEAB88 /* AddressViewModel.swift */; };
 		3581D41F2DE096F100BEAB88 /* AddressModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3581D41E2DE096F100BEAB88 /* AddressModel.swift */; };
+		3586B4302E3A3AFE002D412D /* SelectionBottomSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3586B42F2E3A3AFE002D412D /* SelectionBottomSheet.swift */; };
 		358B9D152DDEFB9900932250 /* SelectShowScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 358B9D142DDEFB9900932250 /* SelectShowScreen.swift */; };
 		358B9D182DDF049600932250 /* FSCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = 358B9D172DDF049600932250 /* FSCalendar */; };
 		358B9D1A2DDF04FA00932250 /* FSCalendar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 358B9D192DDF04FA00932250 /* FSCalendar.swift */; };
@@ -533,6 +534,7 @@
 		3581D4182DE08F7300BEAB88 /* CreateAddress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateAddress.swift; sourceTree = "<group>"; };
 		3581D41C2DE0964C00BEAB88 /* AddressViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressViewModel.swift; sourceTree = "<group>"; };
 		3581D41E2DE096F100BEAB88 /* AddressModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressModel.swift; sourceTree = "<group>"; };
+		3586B42F2E3A3AFE002D412D /* SelectionBottomSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionBottomSheet.swift; sourceTree = "<group>"; };
 		358B9D142DDEFB9900932250 /* SelectShowScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectShowScreen.swift; sourceTree = "<group>"; };
 		358B9D192DDF04FA00932250 /* FSCalendar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FSCalendar.swift; sourceTree = "<group>"; };
 		358B9D1B2DDF11A400932250 /* ContactUsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactUsViewModel.swift; sourceTree = "<group>"; };
@@ -2401,6 +2403,7 @@
 				3581D41A2DE0962F00BEAB88 /* ViewModel */,
 				D4A7F9032DDDA8C5001FC705 /* AddressesScreen.swift */,
 				3581D4182DE08F7300BEAB88 /* CreateAddress.swift */,
+				3586B42F2E3A3AFE002D412D /* SelectionBottomSheet.swift */,
 				35E7BC852E39FC88003A0BA2 /* RadioButtonGroup.swift */,
 			);
 			path = Addressess;
@@ -4030,6 +4033,7 @@
 				99DF9E792DC4F367008C15B2 /* BidCastApp.swift in Sources */,
 				D4C4D79F2DD3647B00274E51 /* MenuCell.swift in Sources */,
 				D4BAA3D52DED7947001BA4DA /* PreferenceModel.swift in Sources */,
+				3586B4302E3A3AFE002D412D /* SelectionBottomSheet.swift in Sources */,
 				99C9080E2DC8CD6A0054620B /* DocView.swift in Sources */,
 				35C202522DEF0DEB00492F2D /* StripeManager.swift in Sources */,
 				99C9080F2DC8CD6A0054620B /* AlertPopUp.swift in Sources */,
@@ -4596,7 +4600,7 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = /Users/jamtech/Documents/GitHub/bidcast/BidCast/ZegoBridgeHeader.h;
+				SWIFT_OBJC_BRIDGING_HEADER = BidCast/ZegoBridgeHeader.h;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				XROS_DEPLOYMENT_TARGET = 2.4;
@@ -4644,7 +4648,7 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = /Users/jamtech/Documents/GitHub/bidcast/BidCast/ZegoBridgeHeader.h;
+				SWIFT_OBJC_BRIDGING_HEADER = BidCast/ZegoBridgeHeader.h;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				XROS_DEPLOYMENT_TARGET = 2.4;

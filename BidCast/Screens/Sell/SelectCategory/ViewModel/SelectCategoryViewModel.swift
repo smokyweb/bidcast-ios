@@ -19,10 +19,10 @@ final class SelectCategoryViewModel: ObservableObject {
     @Published var request: String = ""
 
     // MARK: - Fetch Categories
-    func getCategoryList() async {
+    func getCategoryList(param:CategoryRequest) async {
         do {
             let response: ResponseModel<[CategoryDataModel]> = try await APIManager.shared.request(
-                type: APIEndPoint.category,
+                type: APIEndPoint.category(param:param),
                 header: true
             )
             self.categoryResponse = response

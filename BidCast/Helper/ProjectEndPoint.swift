@@ -19,7 +19,7 @@ enum APIEndPoint{
     case privacyPolicy
     case termsCondition
     case faq
-    case category
+    case category(param:CategoryRequest)
     case auctionType
     case logout
     case getInventory(param : InventoryRequest)
@@ -91,6 +91,7 @@ enum APIEndPoint{
     case storeBid(param:StoreBidRequest)
     case sellerStatus
     case setDefaultCard(param:CardDefaultRequest)
+    case getState
     
     //MARK: OLD
     
@@ -217,8 +218,8 @@ extension APIEndPoint: EndPointType {
             return "show-tips"
         case .letsPrepare:
             return "get-prepare"
-        case .category :
-            return "get-category"
+        case .category(param:let param) :
+            return "get-category?category_id=\(param.category_id ?? "")"
         case .auctionType:
             return "get-auction-type"
         case .getInventory:
@@ -293,7 +294,6 @@ extension APIEndPoint: EndPointType {
             return "offer/lists?page=\(param.page)"
         case .offerUpdateStatus(param:let param):
             return "offer/update-status=\(param.offer_id)&page=\(param.page)"
-            return ""
         case .searching:
             return "user/searching"
         case .promo:
@@ -334,6 +334,8 @@ extension APIEndPoint: EndPointType {
             return "seller-status"
         case .setDefaultCard:
             return "set-default-card"
+        case .getState:
+            return "get-states"
             
             //MARK: Old
             
@@ -489,6 +491,7 @@ extension APIEndPoint: EndPointType {
             return "seller-rating"
       
         
+       
        
         }
     }
@@ -649,6 +652,8 @@ extension APIEndPoint: EndPointType {
             return .get
         case .setDefaultCard:
             return .post
+        case .getState:
+            return .get
             
             //MARK: Old
             
@@ -807,6 +812,7 @@ extension APIEndPoint: EndPointType {
             return .post
        
        
+        
         }
     }
     
@@ -972,6 +978,8 @@ extension APIEndPoint: EndPointType {
             return nil
         case .setDefaultCard(param: let param):
             return param
+        case .getState:
+            return nil
             
             //MARK: Old
             
@@ -1130,173 +1138,9 @@ extension APIEndPoint: EndPointType {
         
        
        
+        
         }
     }
-    
-    //    var jsonBody: [String : Any]? {
-    //        switch self {
-    //            case .login:
-    //                return nil
-    //            case .singUp:
-    //                return nil
-    //
-    //            case .verifyOTP:
-    //                return nil
-    //            case .resetPassword:
-    //                return nil
-    //            case .forgotPassword:
-    //                return nil
-    //            case .getProfile:
-    //                return nil
-    //           case .getCategories:
-    //            return nil
-    //
-    //            case .uploadFile:
-    //                return nil
-    //            case .aboutUs:
-    //                return nil
-    //            case .contact:
-    //                return nil
-    //        case .Business:
-    //            return nil
-    //            case .privacyPolicy:
-    //                return nil
-    //        case .getBusiness:
-    //            return nil
-    //            case .getEmployerAvailability:
-    //                return nil
-    //            case .logout:
-    //                return nil
-    //            case .createUserProfile:
-    //                return nil
-    //            case .getJob:
-    //                return nil
-    //            case .upsertJob:
-    //                return nil
-    //            case .jobSwipe:
-    //                return nil
-    //            case .get_news:
-    //                return nil
-    //            case .createWorkHistory:
-    //                return nil
-    //            case .getJobProfile:
-    //                return nil
-    //            case .getEmployeeList:
-    //                return nil
-    //        case .getEmployeeListByJobId:
-    //            return nil
-    //            case .welcome:
-    //                return nil
-    //            case .getEmployeeByJobId:
-    //                return nil
-    //            case .getQualification:
-    //                return nil
-    //            case .termsOfService:
-    //                return nil
-    //            case .searchJob:
-    //                return nil
-    //            case .getLanguage:
-    //                return nil
-    //            case .performActionJob:
-    //                return nil
-    //            case .setEmployerAvailability:
-    //                return nil
-    //            case .employerSchedule:
-    //                return nil
-    //            case .getSalaryType:
-    //                return nil
-    //            case .getScheduledInterview:
-    //                return nil
-    //        case .getSubCompanyDetails:
-    //            return nil
-    //        case .getSubCompany:
-    //            return nil
-    //            case .saveJob:
-    //                return nil
-    //            case .getSavedJob:
-    //                return nil
-    //        case .getSubCompanyUser:
-    //            return nil
-    //            case .applyJob:
-    //                return nil
-    //            case .getMatches:
-    //                return nil
-    //            case .scheduleInterviewForMatchedJob:
-    //                return nil
-    //            case .getCompanyDetailsJob:
-    //                return nil
-    //            case .getSpecificJobDetail:
-    //                return nil
-    //            case .saveDeviceDetail:
-    //                return nil
-    //            case .getEmployeeDetail:
-    //                return nil
-    //        case .getMatchesCandidates:
-    //            return nil
-    //            case .getNotification:
-    //                return nil
-    //            case .deleteNotification:
-    //                return nil
-    //            case .updateNotification:
-    //                return nil
-    //            case .getNotificationCount:
-    //                return nil
-    //            case .getEmploymentLocationType:
-    //                return nil
-    //            case .cheduledInterviewlList:
-    //                return nil
-    //            case .deleteAccount:
-    //                return nil
-    //        case .deleteSubCompanyUser:
-    //            return nil
-    //        case .UpdateSubCompanyUser:
-    //            return nil
-    //            case .deleteJob:
-    //                return nil
-    //            case .combineData:
-    //                return nil
-    //            case .checkLinkedIn:
-    //                return nil
-    //            case .rescheduleInterviewStatus:
-    //                return nil
-    //            case .getInterviewDetail:
-    //                return nil
-    //            case .updateInterviewStatus:
-    //                return nil
-    //            case .rejectJob:
-    //                return nil
-    //            case .linkLinkedIn:
-    //                return nil
-    //           case .CreateEvent:
-    //            return nil
-    //            case .linkedInConnect:
-    //                return nil
-    //            case .storeLinkedIn:
-    //                return nil
-    //            case .upsertCompany:
-    //                return nil
-    //            case .subscription(let param):
-    //                return ["subscription": param.subscription, "receipt": param.receipt, "platform": param.platform, "matches_count": param.matches_count]
-    //            case .getCompanyName:
-    //                return nil
-    //        case .getProductEmployer:
-    //            return nil
-    //        case .getProductCandidate:
-    //            return nil
-    //            case .SaveRightSwipe(let param):
-    //            return ["quantity": param.quantity, "price": param.price, "receipt": param.receipt]
-    //            case .filterSearch:
-    //                return nil //["category": param.category, "company_name": param.company_name, "salary": param.salary_upper_bound, "location": param.location, "job_title": param.job_title]
-    //            case .removeSavedJob:
-    //                return nil
-    //        case .filterJobSearch:
-    //            return nil
-    //        case .SubCompany:
-    //            return nil
-    //        case .SubCompanyUpdate:
-    //            return nil
-    //        }
-    //    }
     
     var headers: [String : String]? {
         APIManager.commonHeaders

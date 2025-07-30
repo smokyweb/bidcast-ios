@@ -16,13 +16,17 @@ struct CreateAddress: View {
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var networkMonitor: NetworkMonitor
     @State var addressType : [String] = ["Home","Office","Other"]
+    
+    @State var stateArr : [String] = [""]
     @State var showError: Bool = false
     @State var isLoading: Bool = false
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
     @State var selectedType = ""
+    @State var selectedState = ""
+    @State var country = "Unites States"
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
-    @State var request : AddressRequest = AddressRequest(type: "", name: "", phone_number: "", street_address: "", pincode: "")
+    @State var request : AddressRequest = AddressRequest(type: "", name: "", phone_number: "", street_address: "", pincode: "",city: "",state: "")
     
     @State var viewModel = AddressViewModel()
     var body: some View {
@@ -95,23 +99,45 @@ struct CreateAddress: View {
                             floatingLabel: "City",
                             placeholder: "Enter city",
                             icon: .icMail,
-                            text: $request.street_address,
+                            text: $request.city,
                             isIconDisplay : false,
                             enteredText: {
-                                request.street_address = $0
+                                request.city = $0
                             }
                         )
-                        DropDownSelection(
-                           options: $addressType, floatingLabel:"State",
-                           hint: "Select state",
-                           selected: $selectedType,
-                           anchor: .bottom,
-                           onOptionSelected: { value in
-                               request.type = value
-                               self.selectedType = value
-                           }
-                       )
-                       .zIndex(1201.0)
+//                        DropDownSelection(
+//                            options: $stateArr, floatingLabel:"State",
+//                           hint: "Select state",
+//                            selected: $selectedState,
+//                            anchor: .top,
+//                           onOptionSelected: { value in
+//                               if let iso = value.components(separatedBy: " - ").last {
+//                                          request.state = iso
+//                                      }
+//                               self.selectedState = value
+//                           }
+//                       )
+//                       .zIndex(1201.0)
+                        
+                        // Drop Down for Auction Type
+                        DropDownTextField(
+                            hint: "Select state",
+                            floatingLabel: "State",
+                            text: $selectedState,
+                            options: $stateArr,
+                            leadingIcon: .location,
+                            showLeadingIcon: false,
+                            showTrailingIcon: false,
+                            showDropDownIcon: true,
+                            onOptionSelected: { value in
+                                if let iso = value.components(separatedBy: " - ").last {
+                                           request.state = iso
+                                       }
+                                self.selectedState = value
+                            },
+                            anchor: .top
+                        ).zIndex(1201.0)
+                        
                         AuthTextField(
                             floatingLabel: "Pin code",
                             placeholder: "Enter pin code",
@@ -128,10 +154,10 @@ struct CreateAddress: View {
                             floatingLabel: "Country",
                             placeholder: "Enter country",
                             icon: .icMail,
-                            text: $request.street_address,
+                            text: $country,
                             isIconDisplay : false,
-                            enteredText: {
-                                request.street_address = $0
+                            enteredText: { _ in 
+                               
                             }
                         )
                         .disabled(true)
@@ -142,7 +168,7 @@ struct CreateAddress: View {
                 .padding(.bottom, 80)
             }
 //            .padding(.horizontal,Leading/2)
-            .background(Color(.systemGroupedBackground))
+            .background(Color.bg.opacity(0.4))
 
             //Bottom fixed button
             PrimaryButton(
@@ -233,12 +259,13 @@ struct CreateAddress: View {
                    if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
                        withAnimation {
                            showError = false
+                           self.presentationMode.wrappedValue.dismiss()
                        }
                     }else{
                         
                         withAnimation {
                             showError = false
-                            self.presentationMode.wrappedValue.dismiss()
+//                            self.presentationMode.wrappedValue.dismiss()
                         }
                         
                     }
@@ -247,6 +274,30 @@ struct CreateAddress: View {
                     withAnimation { showError = false }
                 }
             )
+        }
+        .onFirstAppear {
+            Task{
+                SVProgressHUD.show()
+                self.viewModel.errorMessage?.removeAll()
+                await self.viewModel.getState()
+                await SVProgressHUD.dismiss()
+                if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil {
+                    if let response = viewModel.stateResponse.data {
+                        self.stateArr = response.map { "\($0.name ?? "") - \($0.iso2 ?? "")" }
+                    }
+                }else{
+                    alertType = .sheetType(
+                        icon: .success,
+                        title: "Failed",
+                        message: viewModel.errorMessage ?? "",
+                        primaryBtnText: AppString.ok.localized,
+                        secondaryBtnText: ""
+                    )
+                    withAnimation(.snappy){
+                        showError = true
+                    }
+                }
+            }
         }
     }
     

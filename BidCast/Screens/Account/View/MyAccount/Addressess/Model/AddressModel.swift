@@ -17,3 +17,9 @@ struct AddressModel  : Codable {
     var pincode : String?
     var is_default : Bool?
 }
+
+struct StateModel : Codable {
+   var  id : Int?
+    var  name : String?
+    var iso2 : String?
+}

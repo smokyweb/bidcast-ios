@@ -426,7 +426,7 @@ struct TipParam : Encodable {
 struct AddressRequest : Encodable {
     var type : String
     var name : String
-    var phone_number,street_address,pincode : String
+    var phone_number,street_address,pincode,city,state : String
 }
 
 struct AddressDefaultParam : Encodable {
@@ -671,4 +671,8 @@ struct sellerVerification {
 
 struct CardDefaultRequest : Encodable {
     var card_id : String
+}
+
+struct CategoryRequest  : Encodable {
+    var category_id : String?
 }
