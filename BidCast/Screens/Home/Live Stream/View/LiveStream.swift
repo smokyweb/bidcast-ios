@@ -264,7 +264,7 @@ struct LiveStream: View {
                                     if !commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                                         Button(action: {
                                             let roomId = liveShowsData[currentStreamIndex].room_id ?? ""
-                                            ZIMChatManager.shared.sendMessage(message: commentText,roomId: roomId,image: UserDefaults.profileURL,name: UserDefaults.userName)
+                                            ZIMChatManager.shared.sendMessage(message: commentText,roomId: roomId,image: UserDefaults.profileURL,name: UserDefaults.fullName)
                                             commentText = ""
                                         }) {
                                             Image(systemName: "paperplane.fill")
@@ -646,7 +646,7 @@ struct LiveStream: View {
         .onAppear{
             UserDefaults.isLiveEnded = false
             FirebaseManager.shared.removeNewSessionObserver()
-            ZIMChatManager.shared.login(userID: "\(UserDefaults.userId)", userName: UserDefaults.userName)
+            ZIMChatManager.shared.login(userID: "\(UserDefaults.userId)", userName: UserDefaults.fullName)
             Task{
                 SVProgressHUD.show()
                 liveShowsData.removeAll()
@@ -760,7 +760,7 @@ struct LiveStream: View {
     
     
     func loginRoom(roomId: String) {
-        let user = ZegoUser(userID: "\(UserDefaults.userId)", userName: UserDefaults.userName)
+        let user = ZegoUser(userID: "\(UserDefaults.userId)", userName: UserDefaults.fullName)
         let roomConfig = ZegoRoomConfig()
         roomConfig.isUserStatusNotify = true
         
@@ -772,7 +772,7 @@ struct LiveStream: View {
                 ZIMChatManager.shared.joinRoom(roomID: roomId)
                 ZIMChatManager.shared.onJOin = {
                     commentText = "Joined 👋"
-                    ZIMChatManager.shared.sendMessage(message: commentText,roomId: roomId,image: UserDefaults.profileURL,name: UserDefaults.userName)
+                    ZIMChatManager.shared.sendMessage(message: commentText,roomId: roomId,image: UserDefaults.profileURL,name: UserDefaults.fullName)
                     commentText = ""
                 }
                 

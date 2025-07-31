@@ -227,7 +227,8 @@ struct LoginScreen: View {
             loginDetail = dict.data ?? LoginModel()
             UserDefaults.accessToken = dict.data?.token ?? ""
             UserDefaults.userId = dict.data?.id ?? 0
-            UserDefaults.userName = dict.data?.name ?? ""
+//            UserDefaults.userName = dict.data?.userNa ?? ""
+            UserDefaults.fullName =  dict.data?.name ?? ""
             UserDefaults.profileURL = dict.data?.profile_image ?? ""
             SVProgressHUD.show()
             await self.saveDeviceDetail()

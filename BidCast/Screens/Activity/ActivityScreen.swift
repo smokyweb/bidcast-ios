@@ -234,7 +234,7 @@ struct ActivityScreen: View {
         // Reinitialize the ChatViewModel with the correct user information
         chatVM = ChatViewModel(
             currentUserId: currentUserId,
-            currentUserName: UserDefaults.userName,
+            currentUserName: UserDefaults.fullName,
             currentUserImage: UserDefaults.profileURL,
             otherUserId: selectedUserId ?? "",
             otherUserName: selectedUserName ?? "",
@@ -481,7 +481,7 @@ struct MessageCell: View {
             
             VStack(alignment: .leading, spacing: 6) {
                 HStack {
-                    Text(otherUserName)
+                    Text(otherUserName.capitalizingFirstLetter())
                         .font(.system(size: 16, weight: .semibold))
                     Spacer()
                     Text(timestampString)

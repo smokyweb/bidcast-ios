@@ -93,9 +93,7 @@ class ChatViewModel: ObservableObject {
             "receiverId": otherUserId,
             "timestamp": timestamp
         ]
-
-        // Save message to chat path
-        ref.child(chatPath).child(messageId).setValue(messageData)
+        ref.child("chats").child(sortedChatId).child(messageId).setValue(messageData)
 
         // Prepare chat preview data and save to chat list
         let attachment: [String: Any] = ["audio": "", "image": "", "thumbnail": "", "video": ""]

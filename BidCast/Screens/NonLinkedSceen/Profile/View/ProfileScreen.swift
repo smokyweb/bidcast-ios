@@ -96,10 +96,18 @@ struct ProfileScreen: View {
                                 profileSuccess()
                             }
                         },
+                                           // Inside ProfileActionsView
                                            onTapMessage: {
-                            navigateToChat = false
-                            
-                        })
+                                               let currentUserId = String(UserDefaults.userId)
+                                               let selectedUserId = id
+                                               let sortedRoomId = computeRoomId(senderId: currentUserId, receiverId: selectedUserId)
+                                               chatPath = "chats/\(sortedRoomId)"
+                                               
+                                               print("Computed Chat Path: \(chatPath)")
+                                               
+                                               navigateToChat = true
+                                           })
+
                         
                         ProfileTabsView(selectedTab: $selectedTab) { tab in
                             print("Selected Tab: \(tab)")
@@ -299,7 +307,7 @@ struct ProfileScreen: View {
             destination: ChatScreen(
                 viewModel: ChatViewModel(
                     currentUserId: "\(UserDefaults.userId)",
-                    currentUserName: UserDefaults.userName,
+                    currentUserName: UserDefaults.fullName,
                     currentUserImage: UserDefaults.profileURL,
                     otherUserId: id,
                     otherUserName: userName,
@@ -307,6 +315,12 @@ struct ProfileScreen: View {
                 )
             )
         )
+    }
+    
+    
+    func computeRoomId(senderId: String, receiverId: String) -> String {
+        let sortedIds = [senderId, receiverId].sorted()
+        return "\(sortedIds[0])_chats_\(sortedIds[1])"
     }
     
     

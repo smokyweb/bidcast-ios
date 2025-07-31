@@ -35,7 +35,7 @@ struct ChatScreen: View {
     private var headerView: some View {
         ChatHeaderView(
             profileImage: viewModel.otherUserImage,
-            userName: viewModel.otherUserName,
+            userName: viewModel.otherUserName.capitalizingFirstLetter(),
             onBack: { presentationMode.wrappedValue.dismiss() },
             onMore: { print("More tapped") }
         )
@@ -45,12 +45,16 @@ struct ChatScreen: View {
         ScrollViewReader { scrollProxy in
             ScrollView {
                 LazyVStack(spacing: 12) {
-                    ForEach(viewModel.messages) { message in
-                        ChatBubble(
-                            message: message,
-                            isCurrentUser: message.senderId == viewModel.currentUserId
-                        )
-                        .id(message.id)
+                    ForEach(groupedMessages.keys.sorted(), id: \.self) { dateKey in
+                        Section(header: dateHeader(for: dateKey)) {
+                            ForEach(groupedMessages[dateKey] ?? []) { message in
+                                ChatBubble(
+                                    message: message,
+                                    isCurrentUser: message.senderId == viewModel.currentUserId
+                                )
+                                .id(message.id)
+                            }
+                        }
                     }
                 }
                 .padding(.horizontal, 12)
@@ -73,6 +77,35 @@ struct ChatScreen: View {
             }
         }
     }
+
+    
+    private var groupedMessages: [Date: [ChatMessageModel]] {
+        Dictionary(grouping: viewModel.messages) { message in
+            let date = Date(timeIntervalSince1970: TimeInterval(message.timestamp))
+            return Calendar.current.startOfDay(for: date)
+        }
+    }
+
+    private func dateHeader(for date: Date) -> some View {
+        let label: String
+        if Calendar.current.isDateInToday(date) {
+            label = "Today"
+        } else if Calendar.current.isDateInYesterday(date) {
+            label = "Yesterday"
+        } else {
+            let formatter = DateFormatter()
+            formatter.dateStyle = .medium
+            formatter.timeStyle = .none
+            label = formatter.string(from: date)
+        }
+
+        return Text(label)
+            .font(.custom(poppinsMedium, size: 13))
+            .foregroundColor(.black)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 6)
+    }
+
 
     private var inputBar: some View {
         HStack(spacing: 10) {
@@ -107,7 +140,6 @@ struct ChatBubble: View {
 
     var body: some View {
         HStack {
-            if isCurrentUser { Spacer() }
 
             VStack(alignment: isCurrentUser ? .trailing : .leading, spacing: 4) {
                 Text(message.message)
@@ -119,21 +151,30 @@ struct ChatBubble: View {
                     .frame(maxWidth: UIScreen.main.bounds.width * 0.75, alignment: isCurrentUser ? .trailing : .leading)
 
                 HStack(spacing: 4) {
-                    Text(formatTime(TimeInterval(message.timestamp)))
-                        .font(.custom(poppinsRegular, size: 11.0))
-                        .foregroundColor(.gray)
+                    if !isCurrentUser {
+                        Text(formatTime(TimeInterval(message.timestamp)))
+                            .font(.custom(poppinsRegular, size: 11.0))
+                            .foregroundColor(.gray)
+                    }
 
                     if isCurrentUser {
-                        Image(systemName: "checkmark.double")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 14, height: 14)
-                            .foregroundColor(.white.opacity(0.8))
+                        Text(formatTime(TimeInterval(message.timestamp)))
+                            .font(.custom(poppinsRegular, size: 11.0))
+                            .foregroundColor(.gray)
+
+//                        Image(systemName: "checkmark.double")
+//                            .resizable()
+//                            .scaledToFit()
+//                            .frame(width: 14, height: 14)
+//                            .foregroundColor(.white.opacity(0.8))
                     }
                 }
-            }
+                .frame(maxWidth: .infinity, alignment: isCurrentUser ? .trailing : .leading)
+                .padding(.top, 2)
+                .padding(.leading, isCurrentUser ? 0 : 12)
+                .padding(.trailing, isCurrentUser ? 12 : 0)
 
-            if !isCurrentUser { Spacer() }
+            }
         }
         .padding(.horizontal, 4)
     }
@@ -145,6 +186,7 @@ struct ChatBubble: View {
         return formatter.string(from: date)
     }
 }
+
 
 
 

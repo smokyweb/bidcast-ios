@@ -46,7 +46,7 @@ struct AnalyticsScreen: View {
             ScrollView {
                 VStack(spacing: 8) {
                     
-                    ListCell(image: UserDefaults.profileURL, title: UserDefaults.userName,subLabel : "Seller since 2025",isVectorImgHidden: true)
+                    ListCell(image: UserDefaults.profileURL, title: UserDefaults.fullName,subLabel : "Seller since 2025",isVectorImgHidden: true)
                         .padding(.bottom,1)
                         .frame(height: 80)
                     
