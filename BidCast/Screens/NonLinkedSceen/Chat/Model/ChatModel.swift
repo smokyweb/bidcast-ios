@@ -31,7 +31,6 @@ struct ChatMessageModel: Identifiable {
     }
 }
 
-
 struct ChatMessage: Codable, Identifiable {
     var id: String
     var message: String
@@ -50,3 +49,6 @@ struct ChatUsers: Codable {
     var senderName: String
     var senderImage: String
 }
+
+
+

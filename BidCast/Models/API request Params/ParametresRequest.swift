@@ -677,3 +677,8 @@ struct CardDefaultRequest : Encodable {
 struct CategoryRequest  : Encodable {
     var category_id : String?
 }
+
+struct SendChatNotification : Encodable{
+    var receiver_id : Int
+    var message  : String
+}

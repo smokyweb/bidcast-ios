@@ -13,6 +13,11 @@ struct DeleteNotificationModel: Codable {
  
 }
 
+// MARK: - SendChatNotificationModel
+struct SendChatNotificationModel: Codable {
+ 
+}
+
 // MARK: - NotificationListingModel
 struct NotificationListingModel: Codable {
     var id, senderID, receiverID: Int?

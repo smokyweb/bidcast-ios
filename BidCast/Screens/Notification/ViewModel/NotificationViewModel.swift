@@ -12,6 +12,7 @@ final class NotificationViewModel: ObservableObject {
     
     @Published var deleteNotiDict: ResponseModal<DeleteNotificationModel>?
     @Published var notiListingDict : ResponseModalPaginate<[NotificationListingModel]>?
+    @Published var sendChatNotiDict : ResponseModal<SendChatNotificationModel>?
     @Published var errorMessage: String? = nil
     
     var request: String = ""
@@ -25,6 +26,20 @@ final class NotificationViewModel: ObservableObject {
                 header: true
             )
             self.deleteNotiDict = response
+        } catch {
+            handle(error: error)
+        }
+    }
+    
+    // MARK: - SendNotification
+    func SendNotification(param: SendChatNotification) async {
+        self.request = "SendChatNotification"
+        do {
+            let response: ResponseModal<SendChatNotificationModel> = try await APIManager.shared.request(
+                type: APIEndPoint.sendChatNotification(param: param),
+                header: true
+            )
+            self.sendChatNotiDict = response
         } catch {
             handle(error: error)
         }

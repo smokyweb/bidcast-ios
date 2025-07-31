@@ -6,15 +6,22 @@
 //
 
 import SwiftUI
+import AlertToast
 
 //MARK: ChatScreen
 struct ChatScreen: View {
-    @State private var chatPath: String = ""  // Declare chatPath as @State
+    @State var showError: Bool = false
+    @State var isLoading: Bool = false
+    @State var showhud: Bool = false
+    @State var hudMsg: String = ""
+    @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+    @State private var chatPath: String = ""
     @ObservedObject var viewModel: ChatViewModel
     @Environment(\.presentationMode) var presentationMode
+    var notiViewModel = NotificationViewModel()
 
     init(viewModel: ChatViewModel) {
-        _chatPath = State(initialValue: viewModel.chatPath) // Initialize with the computed chat path
+        _chatPath = State(initialValue: viewModel.chatPath)
         self.viewModel = viewModel
     }
 
@@ -116,7 +123,18 @@ struct ChatScreen: View {
                 .clipShape(RoundedRectangle(cornerRadius: 20))
 
             Button(action: {
+                let trimmedText = viewModel.messageText.trimmingCharacters(in: .whitespacesAndNewlines)
+                
+                guard !trimmedText.isEmpty else {
+                    // Show toast
+                    hudMsg = "Please enter a message to send"
+                    showhud = true
+                    return
+                }
+
                 viewModel.sendMessage()
+                sendChatNotificatio(receiverID: viewModel.otherUserId, message: trimmedText)
+                viewModel.messageText = ""
             }) {
                 Image(systemName: "paperplane.fill")
                     .foregroundColor(.white)
@@ -126,10 +144,24 @@ struct ChatScreen: View {
         }
         .padding(.horizontal)
         .padding(.vertical, 8)
+        .toast(isPresenting: $showhud) {
+            AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)}
+    }
+
+    
+    private func sendChatNotificatio(receiverID : String , message : String){
+        let param = SendChatNotification(receiver_id: Int(receiverID) ?? 0, message: message)
+        Task {
+            guard Reachability.isConnectedToNetwork() else {
+                hudMsg = "No Internet Connection"
+                showhud = true
+                return
+            }
+            print("Send Notification Param \(param)")
+            await notiViewModel.SendNotification(param: param)
+        }
     }
 }
-
-
 
 
 

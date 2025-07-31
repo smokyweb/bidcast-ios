@@ -170,6 +170,7 @@ enum APIEndPoint{
     case filterSearch(param: FilterRequestModal)
     case filterJobSearch(param: FilterRequestModal)
     case removeSavedJob(param: RemoveSaveJobRequest)
+    case sendChatNotification(param: SendChatNotification)
 }
 
 extension APIEndPoint: EndPointType {
@@ -489,10 +490,8 @@ extension APIEndPoint: EndPointType {
             return "get-seller-rating?seller_id=\(param.seller_id)"
         case .addRating:
             return "seller-rating"
-      
-        
-       
-       
+        case .sendChatNotification:
+            return "send-chat-notification"
         }
     }
     
@@ -810,9 +809,8 @@ extension APIEndPoint: EndPointType {
             return .get
         case .addRating:
             return .post
-       
-       
-        
+        case .sendChatNotification:
+            return .post
         }
     }
     
@@ -1135,10 +1133,8 @@ extension APIEndPoint: EndPointType {
             return nil
         case .addRating(let param):
             return param
-        
-       
-       
-        
+        case .sendChatNotification(let param):
+            return param
         }
     }
     
