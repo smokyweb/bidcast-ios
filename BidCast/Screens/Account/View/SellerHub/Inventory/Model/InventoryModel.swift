@@ -20,11 +20,14 @@ struct InventoryDataModel: Codable {
     var id, categoryID: Int?
     var title, description: String?
     var quantity : Int?
+    var sub_category_id : Int?
     var pricing: Float?
     var flashSale, acceptOffers, reserveForLive: Bool?
     var shippingProfileID: Int?
     var status: String?
     var images: [String]?
+    var category : CategoryDataModel?
+    var sub_category : CategoryDataModel?
 
     enum CodingKeys: String, CodingKey {
         case id

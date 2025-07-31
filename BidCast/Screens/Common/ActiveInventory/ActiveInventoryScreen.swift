@@ -10,11 +10,10 @@ import SwiftUI
 
 struct ActiveInventoryScreen: View {
     var inventory: InventoryDataModel
-
+    var didTapProduct : () -> () = { }
     var body: some View {
         VStack(spacing: 10) {
             HStack(alignment: .center, spacing: 10) {
-                // ✅ Use AsyncImage properly with a fallback placeholder
                 if let imageUrlString = inventory.images?.first,
                    let imageUrl = URL(string: imageUrlString) {
                     AsyncImage(url: imageUrl) { phase in
@@ -59,6 +58,9 @@ struct ActiveInventoryScreen: View {
         .cornerRadius(12.0)
         .padding(5)
         .shadow(color: Color.gray.opacity(0.2), radius: 2, x: 0, y: 0)
+        .onTapGesture {
+            self.didTapProduct()
+        }
     }
 }
 

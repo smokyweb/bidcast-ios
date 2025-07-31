@@ -41,6 +41,7 @@ struct ListProductScreen: View {
     @State var selectedSubCategory = ""
     @State var subCategoryList: [CategoryDataModel] = []
     @State var subCategoryName : [String] = [""]
+    @Binding var productData : InventoryDataModel
     
     var body: some View {
         
@@ -498,7 +499,7 @@ struct ListProductScreen: View {
    
 }
 
-#Preview {
-    ListProductScreen()
-}
-
+//#Preview {
+//    ListProductScreen()
+//}
+//

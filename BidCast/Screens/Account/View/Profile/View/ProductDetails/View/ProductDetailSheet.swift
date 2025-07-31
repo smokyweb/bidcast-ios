@@ -42,6 +42,9 @@ struct ProductDetailSheet: View {
     @State  var promoCode : String = ""
     @State  var shippingCharges : Int = 0
     @State  var taxAmount : Int = 0
+    
+    var onTapEdit : () -> () = { }
+    var onTapDelete : () -> () = { }
 
     
     var body: some View {
@@ -56,10 +59,28 @@ struct ProductDetailSheet: View {
                         .foregroundColor(.black)
                 }
                 Spacer()
-                Button(action: {}) {
+                Menu {
+                    Button(action: {
+                       
+                        onTapEdit()
+                    }){
+                        Text("Edit product")
+                            .font(.custom(poppinsSemiBold, size: 11))
+                    }
+                    
+                    Button(role: .destructive, action: {
+                     
+                        onTapDelete()
+                    }){
+                        Text("Delete Product")
+                            .font(.custom(poppinsSemiBold, size: 11))
+                    }
+                } label: {
                     Image(systemName: "ellipsis")
-                        .font(.custom(poppinsSemiBold, size: 14.0))
-                        .foregroundColor(.gray)
+                        .font(.custom(poppinsBold, size: 16.0))
+                        .rotationEffect(.degrees(90))
+                        .foregroundColor(.black)
+                        .padding()
                 }
                 Button(action: {
                     onDismiss()
@@ -211,12 +232,13 @@ struct ProductDetailSheet: View {
             }
             .padding()
         }
+        .edgesIgnoringSafeArea(.top)
         .bottomSheet(isPresented: $showMakeOfferSheet, height: screenHeight * 0.95) {
             MakeOfferBottomSheet(
                 isPresented: $showMakeOfferSheet,
-                listedPrice: Double(productPrice) ?? 0.0,
+                listedPrice: Double(productPrice),
                 offerOptions: offerArr,onSendOffer : { text in
-                    var text = "\(text ?? 0.0)"
+                    let text = "\(text ?? 0.0)"
                     Task{
                        guard Reachability.isConnectedToNetwork() else {
                             hudMsg = "No Internet Connection"
@@ -227,7 +249,7 @@ struct ProductDetailSheet: View {
                         let param = MakeOfferRequest(amount: text, product_id: productID)
                         await viewModel.MakeOffer(param: param)
                         await SVProgressHUD.dismiss()
-                        await offerSuccess()
+                        offerSuccess()
                     }
                     
                 }
@@ -281,7 +303,7 @@ struct ProductDetailSheet: View {
                 let param = FetchProductRequest(product_id: newValue)
                 await viewModel.getProductDetails(parameters: param)
                 await SVProgressHUD.dismiss()
-                await handleSuccess()
+                handleSuccess()
             }
         }
         .onDisappear {

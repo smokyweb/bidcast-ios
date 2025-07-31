@@ -1156,6 +1156,7 @@
 		355AE97A2DD1FC1300CD3D17 /* Activity */ = {
 			isa = PBXGroup;
 			children = (
+				D45D7A332E389A79003A3842 /* Chat */,
 				355AE97F2DD1FC5600CD3D17 /* ActivityScreen.swift */,
 			);
 			path = Activity;
@@ -1377,6 +1378,7 @@
 		35BDF0362E13C71E00412446 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				35BA4A3D2DE8638400EEC92A /* Profile */,
 				35BA4A4F2DE883BE00EEC92A /* CompleteProfile */,
 				D4A7F8FB2DDD9A75001FC705 /* MyAccount */,
 				D4A7F8FA2DDD9A6E001FC705 /* SellerHub */,
@@ -2412,6 +2414,7 @@
 		D4A7F8FA2DDD9A6E001FC705 /* SellerHub */ = {
 			isa = PBXGroup;
 			children = (
+				D4B616072DE8612300924A3D /* SellerVerification */,
 				D4BA324E2DDB346100FE4FD2 /* Inventory */,
 				D4BA9C0A2DE4856900DFF6E6 /* Shows */,
 				D4BA9C172DE49D1300DFF6E6 /* Wallet */,
@@ -2672,14 +2675,11 @@
 		D4B6160D2DE8622100924A3D /* NonLinkedSceen */ = {
 			isa = PBXGroup;
 			children = (
-				D45D7A332E389A79003A3842 /* Chat */,
 				35BA4A4C2DE8805800EEC92A /* ReferAndEarn */,
 				35BA4A462DE878E300EEC92A /* SalesFormat */,
 				35BA4A432DE870C500EEC92A /* CreateProduct */,
 				35BA4A402DE86E7100EEC92A /* SendGift */,
-				35BA4A3D2DE8638400EEC92A /* Profile */,
 				D4CAEC7E2DE7120900705CD7 /* More */,
-				D4B616072DE8612300924A3D /* SellerVerification */,
 				D4B616172DE86C9700924A3D /* OrderStatus */,
 				D4B6163B2DE87F1100924A3D /* OBSSetup */,
 				D4B6164A2DE880D600924A3D /* LiveShowTips */,

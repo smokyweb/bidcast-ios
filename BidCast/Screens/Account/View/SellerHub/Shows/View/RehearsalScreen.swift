@@ -103,16 +103,7 @@ struct RehearsalScreen: View {
                             .background(Color.defaultTheme)
                             .cornerRadius(4)
                             .foregroundColor(.white)
-//                        
-//                        Button(action: {
-////                              enterPiPMode()
-//                           }) {
-//                              Image(systemName: "rectangle.inset.filled.and.person.filled") // Choose a good PiP icon
-//                                 .resizable()
-//                                 .renderingMode(.template)
-//                                 .foregroundColor(.defaultTheme)
-//                                 .frame(width: 30, height: 24)
-//                           }
+
                         
                         Button(action: {
                             if !isLive{
@@ -301,11 +292,6 @@ struct RehearsalScreen: View {
                                 ForEach(chatManager.messages) { comment in
                                     HStack {
                                         CustomProfileImage(url: comment.image, isCircular: true,size: 24)
-//                                        Image(comment.image)
-//                                            .resizable()
-//                                            .scaledToFit()
-//                                            .frame(width: 24, height: 24)
-//                                            .clipShape(Circle())
                                         Text(comment.username.capitalizingFirstLetter())
                                             .font(.custom(poppinsSemiBold, size: 14.0))
                                             .foregroundColor(.white)
@@ -379,18 +365,7 @@ struct RehearsalScreen: View {
                     if !isLive{
                         Button(action: {
                             if UserDefaults.sellerVerafied == "verified"{
-                                Task {
-                                   guard Reachability.isConnectedToNetwork() else {
-                                        hudMsg = "No Internet Connection"
-                                        showhud = true
-                                        return
-                                    }
-                                    SVProgressHUD.show()
-                                    let is_Live = "true"
-                                    await viewModel.UpdateLiveShows(param: LiveShowUpdateRequest(schedule_show_id: showUd, is_live: is_Live))
-                                    await SVProgressHUD.dismiss()
-                                    success()
-                                }
+                                self.UpdateStatus(status : false)
                             }else{
                                 showSellerSheet = true
                             }
@@ -619,6 +594,10 @@ struct RehearsalScreen: View {
                         print("👀 Viewer Count Updated: \(newCount)")
                        viewwerCount = newCount
                     }
+                    
+                    FirebaseManager.shared.startObservingSessionTimer(roomId: roomId) {
+                        self.UpdateStatus(status : true)
+                               }
                 } else {
                     print("❌ Failed to login to room: \(errorCode)")
                 }
@@ -631,7 +610,35 @@ struct RehearsalScreen: View {
             
         }
     }
-    
+    func UpdateStatus(status : Bool){
+        if status{
+            Task {
+                guard Reachability.isConnectedToNetwork() else {
+                    hudMsg = "No Internet Connection"
+                    showhud = true
+                    return
+                }
+             
+                let is_Live = "true"
+                await viewModel.UpdateLiveShows(param: LiveShowUpdateRequest(schedule_show_id: showUd, is_live: is_Live))
+              
+                
+            }
+        }else{
+            Task {
+                guard Reachability.isConnectedToNetwork() else {
+                    hudMsg = "No Internet Connection"
+                    showhud = true
+                    return
+                }
+                SVProgressHUD.show()
+                let is_Live = "true"
+                await viewModel.UpdateLiveShows(param: LiveShowUpdateRequest(schedule_show_id: showUd, is_live: is_Live))
+                await SVProgressHUD.dismiss()
+                success()
+            }
+        }
+    }
     func startLiveTimer() {
         Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
             if let start = showStartTime, isLive {
@@ -652,6 +659,7 @@ struct RehearsalScreen: View {
         chatManager.messages.removeAll()
         showSellSheet = false
         self.isLive = false
+        FirebaseManager.shared.stopObserving()
     }
     
     @ViewBuilder

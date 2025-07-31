@@ -66,7 +66,7 @@ struct BuyNowBottomSheetView: View {
                     Spacer()
                     Button(action: { isPresented = false }) {
                         Image(systemName: "xmark")
-                            .foregroundColor(.gray)
+                            .foregroundColor(.defaultTheme)
                             .imageScale(.large)
                     }
                 }

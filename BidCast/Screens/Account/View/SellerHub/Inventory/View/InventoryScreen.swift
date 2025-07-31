@@ -17,7 +17,7 @@ struct InventoryScreen: View {
     @State var request: InventoryRequest = InventoryRequest(status: "active", page: 1)
     @EnvironmentObject var networkMonitor: NetworkMonitor
     var viewModel = InventoryViewModel()
-    
+    @State var productId : Int = 0
     @State var showError: Bool = false
     @State var isLoading: Bool = false
     @State var showhud: Bool = false
@@ -25,6 +25,9 @@ struct InventoryScreen: View {
     @State var status = "active"
     @State var currentPage = 1
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+    @State var showSellSheet = false
+    @State var productData : InventoryDataModel
+    @State var navigateToCreateProduct = false
     
     var body: some View {
         VStack(spacing: 0) {
@@ -68,7 +71,11 @@ struct InventoryScreen: View {
                         ForEach(0 ..< inventoryList.count, id: \.self) { index in
                             let inventory = inventoryList[index]
                             
-                            ActiveInventoryScreen(inventory: inventory)
+                            ActiveInventoryScreen(inventory: inventory,didTapProduct: {
+                                productId = inventory.id ?? 0
+                                productData = inventory
+                                showSellSheet = true
+                            })
                                 .onAppear {
                                     handlePagination(index: index)
                                 }
@@ -78,6 +85,7 @@ struct InventoryScreen: View {
                 .padding(.top, 10)
                 .padding(.horizontal, 12)
             }
+            CusNavLink(doNavigate: $navigateToCreateProduct, destination: ListProductScreen(productData:$productData))
         }
         .background(Color.bg.opacity(0.5))
         .onAppear {
@@ -96,6 +104,21 @@ struct InventoryScreen: View {
                 onSecondaryClick: {
                     withAnimation { showError = false }
                 }
+            )
+        }
+        .bottomSheet(isPresented: $showSellSheet, height: screenHeight * 0.95) {
+            ProductDetailSheet(
+                onDismiss : {
+                    self.showSellSheet = false
+                    productId = 0
+                },
+                productID: $productId,
+                onTapEdit: {
+                    navigateToCreateProduct = true
+                },onTapDelete: {
+                    
+                }
+                
             )
         }
     }

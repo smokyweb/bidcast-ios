@@ -17,8 +17,9 @@ class FirebaseManager {
     static let shared = FirebaseManager()
     let databaseRef = Database.database().reference()
     private var newSessionHandle: DatabaseHandle?
-
-   
+    private let interval: TimeInterval = 280
+    private var timer: Timer?
+    private var valueHandle: DatabaseHandle?
     private init() {}
 
     func createLiveSession(showId: String,
@@ -37,7 +38,7 @@ class FirebaseManager {
        
         let sessionData: [String: Any] = [
             "highestBid": "",
-            "live": true,
+            "isLive": true,
             "product": product.toDictionary(),
             "roomId": roomId,
             "seller": seller.toDictionary(),
@@ -136,20 +137,23 @@ class FirebaseManager {
     
     func observeLiveSessionRemoval(roomId: String, onRemoved: @escaping () -> Void) {
         let ref = databaseRef.child("live_sessions").child(roomId)
-        ref.observe(.childRemoved) { snapshot in
             
-           
-            print("🔥 Live session node removed: \(snapshot)")
-           
-            onRemoved()
-        }
-        
-        ref.observe(.value) { snapshot in
-            if !snapshot.exists() {
-                print("🔥 Live session no longer exists: \(roomId)")
-                onRemoved()
+          
+            ref.observe(.value) { snapshot in
+                if !snapshot.exists() {
+                    print("🔥 Live session no longer exists: \(roomId)")
+                    onRemoved()
+                    return
+                }
+              
+                if let value = snapshot.value as? [String: Any],
+                   let isLive = value["isLive"] as? Bool,
+                   isLive == false {
+                    print("🔥 Live session isLive is false: \(roomId)")
+                    onRemoved()
+                }
             }
-        }
+
     }
     
     func observeNewLiveSessionNodes(onNewSession: @escaping () -> Void) {
@@ -288,5 +292,62 @@ class FirebaseManager {
             completion(messages)
         }
     }
+    
+    
+    //MARK: Observing time
+    
+    func startObservingSessionTimer(roomId: String, onIntervalReached: @escaping () -> Void) {
+        let ref = databaseRef.child("live_sessions").child(roomId).child("time")
+
+        // Remove previous observer if any
+        if let handle = valueHandle {
+            ref.removeObserver(withHandle: handle)
+        }
+
+        self.valueHandle = ref.observe(.value, with: { snapshot in
+            guard let timestamp = snapshot.value as? TimeInterval else {
+                print("⛔️ Invalid or missing timestamp")
+                return
+            }
+
+            self.timer?.invalidate()
+
+            let currentTime = Date().timeIntervalSince1970
+            let elapsed = currentTime - timestamp
+            let remaining = self.interval - elapsed
+
+            print("⏱️ Elapsed: \(elapsed), Remaining: \(remaining)")
+
+            if remaining <= 0 {
+                print("🚀 Time already passed, firing immediately...")
+                self.fireAction(roomId: roomId, onIntervalReached: onIntervalReached)
+            } else {
+                self.timer = Timer.scheduledTimer(withTimeInterval: remaining, repeats: false) { _ in
+                    self.fireAction(roomId: roomId, onIntervalReached: onIntervalReached)
+                }
+            }
+        })
+    }
+
+    
+    func fireAction(roomId: String, onIntervalReached: @escaping () -> Void) {
+        onIntervalReached()
+        
+        let newTimestamp =  getCurrentTimestamp()
+        let timestampRef = databaseRef.child("live_sessions").child(roomId).child("time")
+        print(timestampRef)
+        timestampRef.setValue(newTimestamp)
+        print("✅ Timestamp updated to: \(newTimestamp)")
+    }
+    
+    func stopObserving() {
+        timer?.invalidate()
+        timer = nil
+        if let handle = valueHandle {
+            databaseRef.removeObserver(withHandle: handle)
+                       print("❌ Firebase observer removed")
+                       valueHandle = nil
+                   }
+        }
 
 }

@@ -51,7 +51,7 @@ struct SellScreen: View {
             }
             .padding(.bottom,20)
             .background(.white)
-            CusNavLink(doNavigate: $navigateToLisProduct, destination: ListProductScreen())
+            CusNavLink(doNavigate: $navigateToLisProduct, destination: ListProductScreen(productData: .constant(InventoryDataModel())))
         }
         .frame(maxWidth: .infinity,maxHeight: .infinity)
         .padding(.all,2)

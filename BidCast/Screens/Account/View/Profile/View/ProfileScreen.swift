@@ -178,11 +178,6 @@ struct ProfileScreen: View {
                         LazyVGrid(columns: columns, spacing: 6) {
                             ForEach(scheduleShowArr.indices, id: \.self) { i in
                                 let show = scheduleShowArr[i]
-                                //                            ShowMyScheduleCardView(show: show, onTap: {
-                                //                                showID = "\(show.id ?? 0)"
-                                //                                isLive = show.isLive ?? false
-                                //                                navigateToReherseal = false
-                                //                            })
                                 ImageCollectionView(profileImg: show.user?.profile_image ?? "",
                                                     profileName: show.user?.username ?? show.user?.name ?? "".capitalizingFirstLetter(),
                                                     textSize: 14.0,
