@@ -114,24 +114,29 @@ struct AuthTextField: View {
                                         text = filtered
                                     self.enteredText?(text)
                                     } else if isForPrice {
-                                        // ✅ Keep only digits
-                                        var filteredText = value.filter { $0.isNumber }
-
-                                        // Remove leading zeros unless input is just "0" or "00"
-                                        while filteredText.count > 1 && filteredText.first == "0" {
-                                            filteredText.removeFirst()
-                                        }
-
-                                        if filteredText.isEmpty {
-                                            text = "0.00"
-                                        } else if filteredText.count == 1 {
-                                            text = "0.0" + filteredText
-                                        } else if filteredText.count == 2 {
-                                            text = "0." + filteredText
+                                        if let number = Double(value) {
+                                            
+                                            text = String(format: "%.2f", number)
                                         } else {
-                                            let integerPart = String(filteredText.dropLast(2))
-                                            let decimalPart = String(filteredText.suffix(2))
-                                            text = "\(integerPart).\(decimalPart)"
+                                           
+                                            var filteredText = value.filter { $0.isNumber }
+
+                                           
+                                            while filteredText.count > 1 && filteredText.first == "0" {
+                                                filteredText.removeFirst()
+                                            }
+
+                                            if filteredText.isEmpty {
+                                                text = "0.00"
+                                            } else if filteredText.count == 1 {
+                                                text = "0.0" + filteredText
+                                            } else if filteredText.count == 2 {
+                                                text = "0." + filteredText
+                                            } else {
+                                                let integerPart = String(filteredText.dropLast(2))
+                                                let decimalPart = String(filteredText.suffix(2))
+                                                text = "\(integerPart).\(decimalPart)"
+                                            }
                                         }
                                         
                                         self.enteredText?(text)

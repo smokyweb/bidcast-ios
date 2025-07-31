@@ -121,8 +121,10 @@ struct ListProductScreen: View {
                         .padding([.top,.bottom],4)
                         
                         DescriptionFieldView(
+                            description:$request.description,
                             custFontName : robotoRegular,
-                            custFontSize : 13.0)
+                            custFontSize : 13.0
+                            )
                         { message in
                             request.description = message
                         }
@@ -460,6 +462,27 @@ struct ListProductScreen: View {
         if response?.status == "success" {
             self.ShippingAddress = response?.data ?? [AddressModel]()
             self.shippingAddressName = response?.data.map { $0.name ?? "No Category" } ?? [String]()
+            
+            if self.productData != nil {
+                selectedCategory = productData.category?.name ?? ""
+                request = StoreProductParam(category_id: "\(productData.category?.id ?? 0)",
+                                            title: productData.title ?? "",
+                                            description: productData.description ?? "",
+                                            quantity: "\(productData.quantity ?? 0)",
+                                            pricing: "\(productData.pricing ?? 0.0)",
+                                            flash_sale:productData.flashSale ?? false ? "1" : "0",
+                                            accept_offers: productData.acceptOffers ?? false ? "1" : "0",
+                                            reserve_for_live: productData.reserveForLive ?? false ? "1" : "0",
+                                            shipping_profile_id: "\(productData.shippingProfileID ?? 0)",
+                                            status: productData.status ?? "")
+             
+                isTappedFlash = productData.flashSale ?? false ? true : false
+                isTappedAccept = productData.acceptOffers ?? false ? true : false
+                isTappedReserve = productData.reserveForLive ?? false ? true : false
+               
+                self.imageUrls = productData.images ?? [""]
+                
+            }
                 } else {
                     alertType = .sheetType(
                         icon: .alert,

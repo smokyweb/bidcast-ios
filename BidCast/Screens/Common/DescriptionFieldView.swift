@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct DescriptionFieldView: View {
-    @State private var description: String = ""
+    @Binding var description: String
     var title : String = "Description"
     var placeholder : String = "Enter your Description"
     @State var custFontName: String = poppinsBold
