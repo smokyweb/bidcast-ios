@@ -94,27 +94,9 @@ struct ProductDetailSheet: View {
             
             // Seller Info
             HStack(spacing: 8) {
-                AsyncImage(url: URL(string: sellerImage)) { phase in
-                    switch phase {
-                    case .empty:
-                        ProgressView()
-                            .frame(width: 32, height: 32)
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 32, height: 32)
-                            .clipShape(Circle())
-                    case .failure:
-                        Image(systemName: "person.crop.circle.fill")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 32, height: 32)
-                            .foregroundColor(.gray)
-                    @unknown default:
-                        EmptyView()
-                    }
-                }
+                CustomProfileImage(url: sellerImage,isCircular: true,size: 32)
+               
+                
                 
                 VStack(alignment: .leading) {
                     Text(sellerName)
@@ -133,27 +115,28 @@ struct ProductDetailSheet: View {
             TabView(selection: $selectedImageIndex) {
                 ForEach(productImages.indices, id: \.self) { index in
                     let img = productImages[index]
-                    AsyncImage(url: URL(string: img)) { phase in
-                        switch phase {
-                        case .empty:
-                            ProgressView()
-                                .frame(height: 300)
-                        case .success(let image):
-                            image
-                                .resizable()
-                                .scaledToFill()
-                                .frame(height: 300)
-                                .clipped()
-                        case .failure:
-                            Image(systemName: "photo")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(height: 300)
-                                .foregroundColor(.gray)
-                        @unknown default:
-                            EmptyView()
-                        }
-                    }
+                    CustomProfileImage(url: img,isCircular: false,size: 300)
+//                    AsyncImage(url: URL(string: img)) { phase in
+//                        switch phase {
+//                        case .empty:
+//                            ProgressView()
+//                                .frame(height: 300)
+//                        case .success(let image):
+//                            image
+//                                .resizable()
+//                                .scaledToFill()
+//                                .frame(height: 300)
+//                                .clipped()
+//                        case .failure:
+//                            Image(systemName: "photo")
+//                                .resizable()
+//                                .scaledToFit()
+//                                .frame(height: 300)
+//                                .foregroundColor(.gray)
+//                        @unknown default:
+//                            EmptyView()
+//                        }
+//                    }
                     .tag(index)
                 }
             }
