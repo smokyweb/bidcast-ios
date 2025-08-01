@@ -92,6 +92,10 @@ struct LiveStream: View {
         }
     }
     
+    
+    @State var productData = [ProductData]()
+    @State var currentProductIndex = 0
+    
     var body: some View {
         
         GeometryReader { geometry in
@@ -286,12 +290,12 @@ struct LiveStream: View {
                             
                             VStack(alignment: .leading,spacing: 12){
                                 //MARK: Product Details
-                                if let product = BiddingDetail.product {
+                                if let product = BiddingDetail.product?[currentProductIndex] {
                                     HStack(spacing: 12) {
-                                        CustomProfileImage(url: product.image, isCircular: false,cornerRadius: 8.0,size: 60.0)
+                                        CustomProfileImage(url: product.images.first ?? "", isCircular: false,cornerRadius: 8.0,size: 60.0)
                                         
                                         VStack(alignment: .leading, spacing: 4) {
-                                            Text(BiddingDetail.product?.name.capitalizingFirstLetter() ?? "")
+                                            Text(product.name.capitalizingFirstLetter() ?? "")
                                                 .font(.custom(poppinsBold, size: 13.0))
                                                 .foregroundColor(.black)
                                             HStack(spacing: 6) {
@@ -631,7 +635,7 @@ struct LiveStream: View {
                 case .cart:
                     ShopBottomSheetView(
                         isPresented: $showSheet,
-                        userId : $userId
+                        productData : $productData
                         
                     )
                 case .none:
@@ -809,7 +813,8 @@ struct LiveStream: View {
                     do {
                         let model = try JSONDecoder().decode(BiddingModel.self, from: jsonData)
                         self.BiddingDetail = model
-                        if let priceString = self.BiddingDetail.product?.price,
+                        self.productData = self.BiddingDetail.product ?? [ProductData]()
+                        if let priceString = self.BiddingDetail.product?[currentProductIndex].price,
                            let priceDouble = Double(priceString) {
                             self.currentPrice = Int(priceDouble)
                         }
@@ -841,9 +846,22 @@ struct LiveStream: View {
         
         if let currentRoomId = liveShowsData[safe: currentStreamIndex]?.room_id {
             let data = liveShowsData[safe: currentStreamIndex]
-            FirebaseManager.shared.updateProductPrice(roomId: currentRoomId, newPrice: "\(newPrice)")
+//            FirebaseManager.shared.updateProductPrice(roomId: currentRoomId, newPrice: "\(newPrice)")
+            
+            guard let selectedProduct = BiddingDetail.product?[currentProductIndex] else { return  }
+
+            FirebaseManager.shared.updateHighestBid(
+                roomId: currentRoomId,
+                product: selectedProduct,
+                showId: "\(data?.id ?? 0)",
+                bidAmount: "\(newPrice)",
+                bidderId: "\(UserDefaults.userId)",
+                bidderName: UserDefaults.fullName,
+                bidderProfileImage: UserDefaults.profileURL
+            )
+            
             Task{
-                let apram = StoreBidRequest(schedule_show_id: "\(data?.id ?? 0)", user_id: "\(UserDefaults.userId)", product_id: BiddingDetail.product?.id ?? "", bid_price: "\(newPrice)")
+                let apram = StoreBidRequest(schedule_show_id: "\(data?.id ?? 0)", user_id: "\(UserDefaults.userId)", product_id: BiddingDetail.product?[currentProductIndex].id ?? "", bid_price: "\(newPrice)")
                 await self.viewModel.storeBid(parameters: apram)
             }
         }
@@ -878,7 +896,7 @@ struct LiveStream: View {
             if let jsonData = try? JSONSerialization.data(withJSONObject: data) {
                 do {
                     let model = try JSONDecoder().decode(BiddingModel.self, from: jsonData)
-                    if let priceString = model.product?.price,
+                    if let priceString = model.product?[currentProductIndex].price,
                        let latestFirebasePrice = Int(priceString) {
                         
                         if latestFirebasePrice == self.currentPrice {
@@ -922,8 +940,8 @@ struct LiveStream: View {
             DispatchQueue.main.async {
                 if let model = model {
                     BiddingDetail.product = model
-                    let priceString = model.price
-                    if let priceDouble = Double(priceString) {
+                    let priceString = model.first?.price
+                    if let priceDouble = Double(priceString ?? "") {
                         currentPrice = Int(priceDouble)
                     }
                     countdown = 10

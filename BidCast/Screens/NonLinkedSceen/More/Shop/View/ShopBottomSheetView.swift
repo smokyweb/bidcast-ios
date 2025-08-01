@@ -33,9 +33,13 @@ struct ShopBottomSheetView: View {
         viewModel.productDetailsResponseDict?.data.filter {
             searchText.isEmpty || (($0.title?.localizedCaseInsensitiveContains(searchText)) != nil)} ?? [ProductListingDataModel]()
       }
-    @Binding var userId : String
+//    @Binding var userId : String
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
+    
+    
+    @Binding var productData : [ProductData]
+    
     var body: some View {
         VStack(spacing: 16) {
             
@@ -85,8 +89,8 @@ struct ShopBottomSheetView: View {
             
             ScrollView {
                 LazyVStack(spacing: 12) {
-                    ForEach(filteredProducts.indices, id: \.self) { index in
-                        productRow(filteredProducts[index])
+                    ForEach(productData.indices, id: \.self) { index in
+                        productRow(productData[index])
                     }
                 }
             }
@@ -112,38 +116,38 @@ struct ShopBottomSheetView: View {
         .padding()
         .background(.white)
         .cornerRadius(20)
-        .onAppear {
-            Task{
-               guard Reachability.isConnectedToNetwork() else {
-                    hudMsg = "No Internet Connection"
-                    showhud = true
-                    return
-                }
-                SVProgressHUD.show()
-                await self.viewModel.productDetails(parameters: UserProductRequest(user_id: Int(userId) ?? 0, page: 1))
-                await SVProgressHUD.dismiss()
-//                if self.viewModel.errorMessage == nil {
-//                    filteredProducts = self.viewModel.productDetailsResponseDict?.data ?? [ProductListingDataModel]()
-//                }
-            }
-        }
+//        .onAppear {
+////            Task{
+////               guard Reachability.isConnectedToNetwork() else {
+////                    hudMsg = "No Internet Connection"
+////                    showhud = true
+////                    return
+////                }
+//////                SVProgressHUD.show()
+//////                await self.viewModel.productDetails(parameters: UserProductRequest(user_id: Int(userId) ?? 0, page: 1))
+//////                await SVProgressHUD.dismiss()
+//////                if self.viewModel.errorMessage == nil {
+//////                    filteredProducts = self.viewModel.productDetailsResponseDict?.data ?? [ProductListingDataModel]()
+//////                }
+////            }
+//        }
     }
     
 
     
-    func productRow(_ product: ProductListingDataModel) -> some View {
+    func productRow(_ product: ProductData) -> some View {
             HStack(spacing: 12) {
-                CustomProfileImage(url: product.images?.first,isCircular: false,cornerRadius: 8,size: 60)
+                CustomProfileImage(url: product.images.first,isCircular: false,cornerRadius: 8,size: 60)
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(product.title ?? "")
+                    Text(product.name)
                         .font(.custom(poppinsSemiBold, size: 13.0))
 //                    Text(product.description ?? "")
 //                        .font(.subheadline)
 //                        .foregroundColor(.gray)
-                    Text(product.description ?? "")
+                    Text(product.category)
                         .font(.custom(poppinsRegular, size: 11.0))
-                        .foregroundColor(product.status == "active" ? .darkGreen : .red)
+//                        .foregroundColor(product.status == "active" ? .darkGreen : .red)
                 }
 
                 Spacer()

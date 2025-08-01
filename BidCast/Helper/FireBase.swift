@@ -24,7 +24,7 @@ class FirebaseManager {
 
     func createLiveSession(showId: String,
                            userId: String,
-                           product: ProductData,
+                           product: [ProductData],
                            seller: SellerModel,
                            thumbnail: String,
                            time: String,
@@ -39,7 +39,7 @@ class FirebaseManager {
         let sessionData: [String: Any] = [
             "highestBid": "",
             "isLive": true,
-            "product": product.toDictionary(),
+            "product": product.map { $0.toDictionary() },
             "roomId": roomId,
             "seller": seller.toDictionary(),
             "showDetail": "",
@@ -103,9 +103,9 @@ class FirebaseManager {
             return nil
         }
     }
-    func getCurrentTimestamp() -> Int {
+    func getCurrentTimestamp() -> String {
         let now = Date()
-        return Int(now.timeIntervalSince1970)
+        return "\(now.timeIntervalSince1970)"
     }
     func getLiveSessionData(roomId: String, completion: @escaping (_ data: [String: Any]?) -> Void) {
         let ref = databaseRef.child("live_sessions").child(roomId)
@@ -195,13 +195,38 @@ class FirebaseManager {
     }
 
     
-    func updateProductPrice(roomId: String, newPrice: String) {
-        databaseRef.child("live_sessions").child(roomId).child("product").child("price").setValue(newPrice)
+    func updateHighestBid(
+        roomId: String,
+        product: ProductData,
+        showId: String,
+        bidAmount: String,
+        bidderId: String,
+        bidderName: String,
+        bidderProfileImage: String
+    ) {
+        let bidData: [String: Any] = [
+            "bidAmount": bidAmount,
+            "showId": showId,
+            "product": product.toDictionary(),
+            "bidder": [
+                "id": bidderId,
+                "name": bidderName,
+                "profileImage": bidderProfileImage
+            ]
+        ]
+        
+        databaseRef.child("live_sessions").child(roomId).child("highestBid").setValue(bidData) { error, _ in
+            if let error = error {
+                print("❌ Failed to update highest bid: \(error.localizedDescription)")
+            } else {
+                print("✅ Highest bid updated successfully.")
+            }
+        }
     }
-    
+
     func observeProductChanges(
          roomId: String,
-         onChange: @escaping (ProductData?) -> Void
+         onChange: @escaping ([ProductData]?) -> Void
      ) {
          databaseRef
              .child("live_sessions")
@@ -216,7 +241,7 @@ class FirebaseManager {
 
                  if let jsonData = try? JSONSerialization.data(withJSONObject: data) {
                      do {
-                         let model = try JSONDecoder().decode(ProductData.self, from: jsonData)
+                         let model = try JSONDecoder().decode([ProductData].self, from: jsonData)
                          onChange(model)
                      } catch {
                          print("❌ Decoding Product Error: \(error)")

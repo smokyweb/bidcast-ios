@@ -473,9 +473,15 @@ struct RehearsalScreen: View {
                 case .switchView:
                     EmptyView()
                 case .shop:
+//                    ShopBottomSheetView(
+//                        isPresented: $showSellSheet,
+//                        userId : .constant("\(UserDefaults.userId)")
+//                        
+//                    )
+                    
                     ShopBottomSheetView(
                         isPresented: $showSellSheet,
-                        userId : .constant("\(UserDefaults.userId)")
+                        productData : .constant([ProductData]())
                         
                     )
                 case .endShow:
@@ -561,9 +567,27 @@ struct RehearsalScreen: View {
                 self.showPreLiveControls = true
                 return
             }
+           
+
             
             
-            let product = ProductData(category: "\(data.products?.first?.category_id ?? 0)", id: "\(data.products?.first?.id ?? 0)", image: "\(data.products?.first?.images?.first ?? "")", name: "\(data.products?.first?.title ?? "")", price: "\(data.products?.first?.pricing ?? 0.0)")
+            let product: [ProductData] = (data.products ?? []).compactMap { product in
+                guard let id = product.id,
+                      let categoryId = product.category_id,
+                      let title = product.title,
+                      let price = product.pricing,
+                      let images = product.images, !images.isEmpty else {
+                    return nil
+                }
+
+                return ProductData(
+                    category: "\(categoryId)",
+                    id: "\(id)",
+                    images: images.filter { !$0.isEmpty },  // 🛡️ ensure clean array
+                    name: title,
+                    price: String(format: "%.2f", price)
+                )
+            }
             
             let seller = SellerModel(followed: data.user?.is_followed ?? false, id: "\(data.user?.id ?? 0 )", name: data.user?.name ?? "", rating: data.user?.rating ?? "")
             
