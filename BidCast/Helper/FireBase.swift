@@ -19,6 +19,7 @@ class FirebaseManager {
     private var newSessionHandle: DatabaseHandle?
     private let interval: TimeInterval = 280
     private var timer: Timer?
+    var bidTimers: [String: Timer] = [:]
     private var valueHandle: DatabaseHandle?
     private init() {}
 
@@ -105,7 +106,7 @@ class FirebaseManager {
     }
     func getCurrentTimestamp() -> String {
         let now = Date()
-        return "\(now.timeIntervalSince1970)"
+        return String(Int(now.timeIntervalSince1970))
     }
     func getLiveSessionData(roomId: String, completion: @escaping (_ data: [String: Any]?) -> Void) {
         let ref = databaseRef.child("live_sessions").child(roomId)
@@ -197,61 +198,111 @@ class FirebaseManager {
     
     func updateHighestBid(
         roomId: String,
-        product: ProductData,
-        showId: String,
         bidAmount: String,
         bidderId: String,
         bidderName: String,
-        bidderProfileImage: String
+        bidderProfileImage: String,
+        status: String = "process",
+        onSold: @escaping (_ bidData: [String: Any]?) -> Void
     ) {
         let bidData: [String: Any] = [
             "bidAmount": bidAmount,
-            "showId": showId,
-            "product": product.toDictionary(),
-            "bidder": [
-                "id": bidderId,
-                "name": bidderName,
-                "profileImage": bidderProfileImage
-            ]
+            "userId": bidderId,
+            "userName": bidderName,
+            "userImage": bidderProfileImage,
+            "productStatus": status
         ]
-        
-        databaseRef.child("live_sessions").child(roomId).child("highestBid").setValue(bidData) { error, _ in
+
+        let bidPath = databaseRef
+            .child("live_sessions")
+            .child(roomId)
+            .child("highestBid")
+
+        let timerKey = roomId
+
+        // Cancel any existing timer
+        bidTimers[timerKey]?.invalidate()
+        bidTimers.removeValue(forKey: timerKey)
+
+        bidPath.setValue(bidData) { error, _ in
             if let error = error {
                 print("❌ Failed to update highest bid: \(error.localizedDescription)")
             } else {
-                print("✅ Highest bid updated successfully.")
+                print("✅ Highest bid updated")
+
+                // Start a new 10-second timer
+                self.bidTimers[timerKey] = Timer.scheduledTimer(withTimeInterval: 10.0, repeats: false) { _ in
+                    self.finalizeWinningBid(roomId: roomId, onSold: onSold) 
+                }
             }
         }
     }
+    
+     func finalizeWinningBid(roomId: String, onSold: @escaping (_ bidData: [String: Any]?) -> Void) {
+        let winnerRef = databaseRef.child("live_sessions").child(roomId).child("highestBid")
 
-    func observeProductChanges(
-         roomId: String,
-         onChange: @escaping ([ProductData]?) -> Void
-     ) {
-         databaseRef
-             .child("live_sessions")
-             .child(roomId)
-             .child("product")
-             .observe(.value) { snapshot in
+           winnerRef.observeSingleEvent(of: .value) { snapshot in
+               let bidData = snapshot.value as? [String: Any]
 
-                 guard let data = snapshot.value else {
-                     onChange(nil)
-                     return
-                 }
+               // 1️⃣ Mark productStatus = sold
+               winnerRef.child("productStatus").setValue("sold")
 
-                 if let jsonData = try? JSONSerialization.data(withJSONObject: data) {
-                     do {
-                         let model = try JSONDecoder().decode([ProductData].self, from: jsonData)
-                         onChange(model)
-                     } catch {
-                         print("❌ Decoding Product Error: \(error)")
-                         onChange(nil)
-                     }
-                 } else {
-                     onChange(nil)
-                 }
-             }
-     }
+               // 2️⃣ Clear highestBid after finalization
+               winnerRef.removeValue()
+
+               // 3️⃣ Remove the first product from product array (simulate sold)
+               let productRef = self.databaseRef.child("live_sessions").child(roomId).child("product")
+               productRef.observeSingleEvent(of: .value) { snapshot in
+                   guard var productArray = snapshot.value as? [[String: Any]] else {
+                       onSold(bidData)
+                       return
+                   }
+
+                   if !productArray.isEmpty {
+                       productArray.removeFirst()
+                       productRef.setValue(productArray)
+                   }
+
+                   // ✅ Notify view
+                   onSold(bidData)
+               }
+           }
+    }
+
+
+
+    func observeProductChanges(roomId: String, onChange: @escaping ([ProductData]) -> Void) {
+        databaseRef.child("live_sessions").child(roomId).child("product")
+            .observe(.value) { snapshot in
+                guard let value = snapshot.value as? [[String: Any]] else {
+                    onChange([])
+                    return
+                }
+
+                let products: [ProductData] = value.compactMap { dict in
+                    guard let id = dict["id"] as? String,
+                          let category = dict["category"] as? String,
+                          let name = dict["name"] as? String,
+                          let price = dict["price"] as? String,
+                          let images = dict["images"] as? String,
+                          let status = dict["status"] as? String else {
+                        return nil
+                    }
+
+                    return ProductData(
+                        category: category,
+                        id: id,
+                        images: images,
+                        name: name,
+                        price: price,
+                        status: status
+                    )
+                }
+
+                onChange(products)
+            }
+    }
+
     
     func observeViewerCount(
         roomId: String,

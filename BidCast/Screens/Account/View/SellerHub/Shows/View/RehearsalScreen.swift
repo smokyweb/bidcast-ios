@@ -575,17 +575,18 @@ struct RehearsalScreen: View {
                 guard let id = product.id,
                       let categoryId = product.category_id,
                       let title = product.title,
-                      let price = product.pricing,
-                      let images = product.images, !images.isEmpty else {
+                      let price = product.pricing
+                      else {
                     return nil
                 }
 
                 return ProductData(
                     category: "\(categoryId)",
                     id: "\(id)",
-                    images: images.filter { !$0.isEmpty },  // 🛡️ ensure clean array
+                    images: product.images?.first ?? "",  // 🛡️ ensure clean array
                     name: title,
-                    price: String(format: "%.2f", price)
+                    price: String(format: "%.2f", price),
+                    status:product.status ?? ""
                 )
             }
             

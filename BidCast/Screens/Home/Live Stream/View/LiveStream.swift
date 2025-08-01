@@ -292,10 +292,10 @@ struct LiveStream: View {
                                 //MARK: Product Details
                                 if let product = BiddingDetail.product?[currentProductIndex] {
                                     HStack(spacing: 12) {
-                                        CustomProfileImage(url: product.images.first ?? "", isCircular: false,cornerRadius: 8.0,size: 60.0)
+                                        CustomProfileImage(url: product.images, isCircular: false,cornerRadius: 8.0,size: 60.0)
                                         
                                         VStack(alignment: .leading, spacing: 4) {
-                                            Text(product.name.capitalizingFirstLetter() ?? "")
+                                            Text(product.name.capitalizingFirstLetter())
                                                 .font(.custom(poppinsBold, size: 13.0))
                                                 .foregroundColor(.black)
                                             HStack(spacing: 6) {
@@ -800,6 +800,7 @@ struct LiveStream: View {
                     
                     
                 }
+                observeProduct()
             } else {
                 print("login fail error")
             }
@@ -852,26 +853,44 @@ struct LiveStream: View {
 
             FirebaseManager.shared.updateHighestBid(
                 roomId: currentRoomId,
-                product: selectedProduct,
-                showId: "\(data?.id ?? 0)",
                 bidAmount: "\(newPrice)",
                 bidderId: "\(UserDefaults.userId)",
                 bidderName: UserDefaults.fullName,
-                bidderProfileImage: UserDefaults.profileURL
-            )
+                bidderProfileImage: UserDefaults.profileURL){ finalBidData in
+                    if let data = finalBidData {
+                        
+//                         let name = data["userName"] as? String
+                           
+//                        let image = data["userImage"] as? String
+                                   
+                        let user_Id = data["userId"] as? String
+                                   
+                      
+                        Task{
+                            let apram = StoreBidRequest(schedule_show_id: "\(BiddingDetail.id ?? 0)", user_id:user_Id ?? "", product_id: BiddingDetail.product?[currentProductIndex].id ?? "", bid_price: "\(newPrice)")
+                            await self.viewModel.storeBid(parameters: apram)
+                            soldSuccess()
+                        }
+                    }
+                }
             
-            Task{
-                let apram = StoreBidRequest(schedule_show_id: "\(data?.id ?? 0)", user_id: "\(UserDefaults.userId)", product_id: BiddingDetail.product?[currentProductIndex].id ?? "", bid_price: "\(newPrice)")
-                await self.viewModel.storeBid(parameters: apram)
-            }
+            
+
         }
         
-        // Update local state to match
+      
         currentPrice = newPrice
         
-        // Restart countdown for next round
         countdown = 10
         startCountdown()
+    }
+    func soldSuccess(){
+        let response = self.viewModel.BidResponse
+        if response.status == "success"{
+        
+        }else{
+            
+        }
     }
     
     func startCountdown() {
@@ -936,24 +955,27 @@ struct LiveStream: View {
     func observeProduct() {
         guard let currentRoomId = liveShowsData[safe: currentStreamIndex]?.room_id else { return }
         
-        FirebaseManager.shared.observeProductChanges(roomId: currentRoomId) { model in
-            DispatchQueue.main.async {
-                if let model = model {
-                    BiddingDetail.product = model
-                    let priceString = model.first?.price
-                    if let priceDouble = Double(priceString ?? "") {
-                        currentPrice = Int(priceDouble)
+        FirebaseManager.shared.observeProductChanges(roomId: currentRoomId) { updatedProducts in
+                DispatchQueue.main.async {
+                   
+                    if updatedProducts.isEmpty {
+                        //                        showNoProductsScreen = true
+                    } else {
+                        self.BiddingDetail.product = updatedProducts
+                        self.productData =  self.BiddingDetail.product ?? [ProductData]()
+                        currentProductIndex = 0
+                        let priceString = updatedProducts.first?.price
+                        if let priceDouble = Double(priceString ?? "") {
+                            currentPrice = Int(priceDouble)
+                        }
+                        countdown = 10
+                        startCountdown()
                     }
-                    countdown = 10
-                    startCountdown()
-                } else {
-                    // Product removed or nil
-                    BiddingDetail.product = nil
-                    isBiddingActive = false
+                    
+                    
                 }
             }
         }
-    }
     @ViewBuilder
        func sheetView(for action: MenuAction) -> some View {
            switch action {

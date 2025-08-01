@@ -166,7 +166,8 @@ struct ProductDetailSheet: View {
                     Text(productTitle)
                         .font(.custom(poppinsSemiBold, size: 14.0))
                     Spacer()
-                    Text("$\(productPrice)")
+                    let price = String(format: "$%.2f", productPrice)
+                    Text("\(price)")
                         .font(.custom(poppinsSemiBold, size: 14.0))
                 }
                 VStack(alignment: .leading, spacing: 6) {
