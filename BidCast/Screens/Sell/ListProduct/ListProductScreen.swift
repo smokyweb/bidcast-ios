@@ -391,7 +391,7 @@ struct ListProductScreen: View {
                     }
                 )
                 
-                .bottomSheet(isPresented: $showError, height: screenHeight * 0.7, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: {
+                .bottomSheet(isPresented: $showError, height: screenHeight * 0.3, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: {
                     if self.viewModel.errorMessage != "" || self.viewModel.errorMessage != nil{
                         showError = true
                     }else{

@@ -108,7 +108,7 @@ struct MediaPickerView: View {
                 }
                 .padding(.all, 12)
             }
-            .background(.black)
+            .background(.white)
             .cornerRadius(12)
             .padding(.all, 12)
         }

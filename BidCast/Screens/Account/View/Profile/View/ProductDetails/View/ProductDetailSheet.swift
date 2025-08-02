@@ -46,7 +46,7 @@ struct ProductDetailSheet: View {
     var onTapEdit : () -> () = { }
     var onTapDelete : () -> () = { }
 
-    
+    @State var showoption : Bool = true
     var body: some View {
         VStack(spacing: 0) {
             // Header
@@ -59,28 +59,30 @@ struct ProductDetailSheet: View {
                         .foregroundColor(.black)
                 }
                 Spacer()
-                Menu {
-                    Button(action: {
-                       
-                        onTapEdit()
-                    }){
-                        Text("Edit product")
-                            .font(.custom(poppinsSemiBold, size: 11))
+                if showoption{
+                    Menu {
+                        Button(action: {
+                            
+                            onTapEdit()
+                        }){
+                            Text("Edit product")
+                                .font(.custom(poppinsSemiBold, size: 11))
+                        }
+                        
+                        Button(role: .destructive, action: {
+                            
+                            onTapDelete()
+                        }){
+                            Text("Delete Product")
+                                .font(.custom(poppinsSemiBold, size: 11))
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis")
+                            .font(.custom(poppinsBold, size: 16.0))
+                            .rotationEffect(.degrees(90))
+                            .foregroundColor(.black)
+                            .padding()
                     }
-                    
-                    Button(role: .destructive, action: {
-                     
-                        onTapDelete()
-                    }){
-                        Text("Delete Product")
-                            .font(.custom(poppinsSemiBold, size: 11))
-                    }
-                } label: {
-                    Image(systemName: "ellipsis")
-                        .font(.custom(poppinsBold, size: 16.0))
-                        .rotationEffect(.degrees(90))
-                        .foregroundColor(.black)
-                        .padding()
                 }
                 Button(action: {
                     onDismiss()

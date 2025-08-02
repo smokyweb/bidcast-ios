@@ -238,7 +238,7 @@ struct ProfileScreen: View {
                             self.showSellSheet = false
                             productId = 0
                         },
-                        productID: $productId
+                        productID: $productId,showoption: false
                         
                     )
                 }
