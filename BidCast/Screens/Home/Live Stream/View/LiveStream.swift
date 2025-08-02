@@ -343,7 +343,7 @@ struct LiveStream: View {
                                             // Centered text
                                             Text("Swipe to Bid")
                                                 .font(.custom(poppinsSemiBold, size: 14))
-                                                .foregroundColor(.black)
+                                                .foregroundColor(.white)
                                                 .frame(maxWidth: .infinity, alignment: .center)
 
                                             // Draggable Arrow
@@ -352,7 +352,7 @@ struct LiveStream: View {
                                                 .frame(width: 40, height: 40)
                                                 .overlay(
                                                     Text(swipeConfirmed ? "$" : "$")
-                                                        .foregroundColor(.gray)
+                                                        .foregroundColor(.black)
                                                         .font(.custom(poppinsExtraBold, size: 16))
                                                 )
                                                 .offset(x: min(dragOffset.width + 4, totalSwipeWidth - 90))
@@ -518,25 +518,7 @@ struct LiveStream: View {
 
                 CusNavLink(doNavigate: $navigateToBuyer, destination: TrustedBuyerScreen(comeFromHome:$comeFromHome))
             }
-//            else{
-//                VStack{
-//                    PrimaryHeader(
-//                        title: "Live Stream",
-//                        isForLogo:  false,
-//                        leadingImgArr: [.icBack],
-//                        trailingImgArr: [],
-//                        onClickLeading: { index in
-//                            
-//                                self.presentationMode.wrappedValue.dismiss()
-//                            
-//                        },
-//                        onClickTrailing: { index in
-//                            
-//                        },
-//                        count: .constant(0)
-//                    )
-//                }
-//            }
+
         }.gesture(
             TapGesture().onEnded { _ in
                 hideKeyboard()
@@ -665,6 +647,7 @@ struct LiveStream: View {
      
         .toolbar(.hidden,for: .tabBar)
         .foregroundColor(.black)
+        .background(.black)
         .onAppear{
             UserDefaults.isLiveEnded = false
             FirebaseManager.shared.removeNewSessionObserver()

@@ -278,9 +278,13 @@ struct RehearsalScreen: View {
                             Spacer()
                         }
                     }
-                    .padding(.trailing)
-                    .padding(.bottom, 150)
-                    .frame(maxWidth: .infinity, alignment: .trailing)
+//                    .padding(.trailing)
+//                    .padding(.bottom, 150)
+//                    .frame(maxWidth: .infinity, alignment: .trailing)
+                    .position(
+                        x: geometry.size.width - 40,
+                        y: geometry.size.height / 2
+                    )
                 }
                 
                 // 💬 Bottom Chat & Start Button
@@ -362,7 +366,7 @@ struct RehearsalScreen: View {
                                 }
                             }
                             .padding(.horizontal,8)
-                            .padding(.bottom,8)
+                            .padding(.bottom,20)
                         }
                         if !isLive{
                             Button(action: {
