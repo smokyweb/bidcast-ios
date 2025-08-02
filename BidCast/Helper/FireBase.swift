@@ -381,8 +381,9 @@ class FirebaseManager {
         }
 
         self.valueHandle = ref.observe(.value, with: { snapshot in
-            guard let timestamp = snapshot.value as? TimeInterval else {
-                print("⛔️ Invalid or missing timestamp")
+            guard let timestampString = snapshot.value as? String,
+                  let timestamp = TimeInterval(timestampString) else {
+                print("⛔️ Invalid or missing timestamp string")
                 return
             }
 
@@ -404,6 +405,7 @@ class FirebaseManager {
             }
         })
     }
+
 
     
     func fireAction(roomId: String, onIntervalReached: @escaping () -> Void) {

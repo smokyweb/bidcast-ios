@@ -63,314 +63,333 @@ struct RehearsalScreen: View {
         case .clip: return screenHeight * 0.6
         case .share: return screenHeight * 0.6 // Or screenHeight * 0.5
         case .shop: return screenHeight * 0.8
-        case .endShow: return screenHeight * 0.4
+        case .endShow: return screenHeight * 0.3
         default: return screenHeight * 0.65
         }
     }
     
     var body: some View {
-        ZStack {
-            ZegoRehearsalScreen(isLive: $isLive, streamID: roomId)
-                .id(previewResetTrigger)
-            
-            VStack {
-                HStack {
-                    HStack(spacing: 8) {
-                        CustomProfileImage(url: UserDefaults.profileURL,isCircular: true)
-                        
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(UserDefaults.userName.capitalizingFirstLetter())
-                                .foregroundColor(.white)
-                                .font(.custom(poppinsSemiBold, size: 14.0))
+        GeometryReader { geometry in
+            ZStack {
+                ZegoRehearsalScreen(isLive: $isLive, streamID: roomId)
+                    .frame(width: geometry.size.width, height: geometry.size.height)
+                    .id(previewResetTrigger)
+                
+                VStack {
+                    HStack {
+                        HStack(spacing: 8) {
+                            CustomProfileImage(url: UserDefaults.profileURL,isCircular: true)
                             
-                            Text("Show Time \(liveElapsedTime)")
-                                .foregroundColor(.white)
-                                .font(.custom(poppinsRegular, size: 11.0))
-                        }
-                        
-                        Spacer()
-                        HStack(spacing: 4) {
-                            Image(systemName: "eye.fill")
-                                .foregroundColor(.black)
-                            Text("\(viewwerCount)")
-                                .foregroundColor(.black)
-                                .font(.custom(poppinsSemiBold, size: 13.0))
-                        }
-                        Text(isLive ? "Live" : "Rehearsal")
-                            .font(.custom(poppinsRegular, size: 12.0))
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
-                            .background(Color.defaultTheme)
-                            .cornerRadius(4)
-                            .foregroundColor(.white)
-
-                        
-                        Button(action: {
-                            if !isLive{
-                                self.presentaionMode.wrappedValue.dismiss()
-                            }else{
-                                self.showSellSheet = true
-                                currentBottomSheet = .endShow
-                            }
-//
-                           
-                        }) {
-                            Image(.cancel)
-                                .resizable()
-                                .renderingMode(.template)
-                                .foregroundColor(.danger)
-                                .frame(width: 32,height: 32)
-                        }
-                    }
-                    .padding(.horizontal)
-                }
-                .padding(.top, 40)
-                
-                Spacer()
-            }
-            
-            // 🔳 Ready Modal
-            if showReadyModal {
-                Color.black.opacity(0.4).edgesIgnoringSafeArea(.all)
-                VStack(spacing: 12) {
-                    Text("Show Starts at 4:00 PM")
-                        .foregroundColor(.white)
-                        .font(.caption)
-                    
-                    Text("Ready to Begin?")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                    
-                    Button(action: {
-                        showReadyModal = false
-                        showWelcomeDialog = true
-                    }) {
-                        Text("Share Show")
-                            .foregroundColor(.white)
-                            .padding()
-                            .frame(maxWidth: .infinity)
-                            .background(Color.defaultTheme)
-                            .cornerRadius(8)
-                    }
-                    .padding(.horizontal)
-                }
-                .padding()
-                .background(Color.gray.opacity(0.95))
-                .cornerRadius(12)
-                .frame(width: 300)
-            }
-            
-            // ✅ Welcome Dialog
-            if showWelcomeDialog {
-                Color.black.opacity(0.4).edgesIgnoringSafeArea(.all)
-                VStack(spacing: 16) {
-                    Image(systemName: "checkmark.circle.fill")
-                        .resizable()
-                        .frame(width: 50, height: 50)
-                        .foregroundColor(.white)
-                    
-                    Text("Welcome to your Auction")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                    
-                    Text("You may edit and begin your auction from here")
-                        .font(.subheadline)
-                        .foregroundColor(.white)
-                        .multilineTextAlignment(.center)
-                    
-                    Button(action: {
-                        showWelcomeDialog = false
-                        if UserDefaults.sellerVerafied == "verified"{
-                            showButton = true
-                            showPreLiveControls = true
-                        }else{
-                            alertType = .sheetType(
-                                icon: .info,
-                                title: "Become a Verified Seller!",
-                                message: "Before you interact with live shows.you need to become a verified seller.",
-                                primaryBtnText: "OK",
-                                secondaryBtnText: "",
-                                buttonWidth:screenWidth - 24,
-                                contentSize: 12.0
-                            )
-                            withAnimation(.snappy){
-                                showSellerSheet = true
-                            }
-                        }
-                    }) {
-                        Text("Ok")
-                            .foregroundColor(.white)
-                            .padding()
-                            .frame(maxWidth: .infinity)
-                            .background(Color.defaultTheme)
-                            .cornerRadius(8)
-                    }
-                    .padding(.horizontal)
-                }
-                .padding()
-                .background(Color.gray.opacity(0.95))
-                .cornerRadius(12)
-            }
-            
-            // 🎛️ Dynamic Side Controls
-            VStack {
-                Spacer()
-                VStack(spacing: 20) {
-                    if showLiveControls {
-                        SideButton(label: "More", icon: "ellipsis.circle",action: .more)
-                        SideButton(label: "Promote", icon: "megaphone.fill",action: .promote)
-                        SideButton(label: "Clip", icon: "scissors",action: .clip)
-                        SideButton(label: "Share", icon: "square.and.arrow.up",action: .share)
-                        SideButton(label: "Switch", icon: "arrow.left.arrow.right",action: .switchView)
-                        ShopButton(action: .shop)
-                    }
-                    
-                    if showPreLiveControls {
-                        Spacer()
-                        Button(action: {
-                            isMicOn.toggle()
-                            ZegoExpressEngine.shared().muteMicrophone(!isMicOn)
-                        }) {
-                            VStack {
-                                Image(systemName: isMicOn ? "mic.fill" : "mic.slash.fill")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .fontWeight(.heavy)
-                                    .font(.custom(poppinsExtraBold, size: 22.0))
-                                    .frame(width: 20, height: 20)
-                                    .foregroundColor(.black)
-//                                Text(isMicOn ? "Mic On" : "Mic Off")
-//                                    .font(.custom(poppinsThin, size: 12.0))
-                            }
-                            .padding()
-                            .background(
-                                   Circle()
-                                       .fill(Color.white)
-                               )
-                            
-                        }
-                        
-                        Button(action: {
-                            isUsingFrontCamera.toggle()
-                            ZegoExpressEngine.shared().useFrontCamera(isUsingFrontCamera)
-                        }) {
-                            VStack {
-                                Image(systemName: "arrow.triangle.2.circlepath.camera")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .fontWeight(.heavy)
-                                    .font(.custom(poppinsExtraBold, size: 22.0))
-                                    .frame(width: 20, height: 20)
-                                    .foregroundColor(.black)
-//                                Text("Switch")
-//                                    .font(.custom(poppinsThin, size: 12.0))
-                            }
-                            .padding()
-                            .background(
-                                   Circle()
-                                       .fill(Color.white)
-                               )
-                        }
-                        
-                        ShopButton(action: .shop)
-                        Spacer()
-                    }
-                }
-                .padding(.trailing)
-                .padding(.bottom, 150)
-                .frame(maxWidth: .infinity, alignment: .trailing)
-            }
-            
-            // 💬 Bottom Chat & Start Button
-            
-            VStack(alignment: .leading, spacing: 8) {
-                Spacer()
-                if chatManager.messages.count > 0{
-                    ScrollViewReader { proxy in
-                        ScrollView {
-                            VStack(alignment: .leading, spacing: 8) {
-                                ForEach(chatManager.messages) { comment in
-                                    HStack {
-                                        CustomProfileImage(url: comment.image, isCircular: true,size: 24)
-                                        Text(comment.username.capitalizingFirstLetter())
-                                            .font(.custom(poppinsSemiBold, size: 14.0))
-                                            .foregroundColor(.white)
-                                        
-                                        Text(comment.message)
-                                            .font(.custom(poppinsRegular, size: 12.0))
-                                            .foregroundColor(.white)
-                                    }
-                                    .padding(.trailing,40)
-                                    .padding(.leading,Leading)
-                                    .id(comment.id) // 💡 For scroll targeting
-                                }
-                            }
-                        }
-                        .onChange(of: chatManager.messages) { _ in
-                            // 💬 Auto scroll to last message
-                            if let last = chatManager.messages.last {
-                                withAnimation {
-                                    proxy.scrollTo(last.id, anchor: .bottom)
-                                }
-                            }
-                        }
-                    }
-                    .frame(maxHeight: 150)
-                }
-                
-                
-                if showButton{
-                    if showLiveControls{
-                        HStack {
-                            ZStack(alignment: .trailing) {
-                                TextField("", text: $commentText, prompt: Text("Say something...")
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(UserDefaults.userName.capitalizingFirstLetter())
                                     .foregroundColor(.white)
+                                    .font(.custom(poppinsSemiBold, size: 14.0))
+                                
+                                Text("Show Time \(liveElapsedTime)")
+                                    .foregroundColor(.white)
+                                    .font(.custom(poppinsRegular, size: 11.0))
+                            }
+                            
+                            Spacer()
+                            HStack(spacing: 4) {
+                                Image(systemName: "eye.fill")
+                                    .foregroundColor(.black)
+                                Text("\(viewwerCount)")
+                                    .foregroundColor(.black)
                                     .font(.custom(poppinsSemiBold, size: 13.0))
-                                )
-                                .font(.custom(poppinsSemiBold, size: 13.0))
-                                .foregroundColor(.white)
+                            }
+                            Text(isLive ? "Live" : "Rehearsal")
+                                .font(.custom(poppinsRegular, size: 12.0))
                                 .padding(.horizontal, 8)
-                                .padding(.trailing, commentText.isEmpty ? 14 : 36) // extra space for send button
-                                .frame(height: 50)
+                                .padding(.vertical, 4)
+                                .background(Color.defaultTheme)
+                                .cornerRadius(4)
+                                .foregroundColor(.white)
+                            
+                            
+                            Button(action: {
+                                if !isLive{
+                                    self.presentaionMode.wrappedValue.dismiss()
+                                }else{
+                                    self.showSellSheet = true
+                                    currentBottomSheet = .endShow
+                                }
+                                //
                                 
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .stroke(Color.white, lineWidth: 1)
-                                        
-                                       
+                            }) {
+                                Image(.cancel)
+                                    .resizable()
+                                    .renderingMode(.template)
+                                    .foregroundColor(.danger)
+                                    .frame(width: 32,height: 32)
+                            }
+                        }
+                        .padding(.horizontal)
+                    }
+                    .padding(.top, 40)
+                    
+                    Spacer()
+                }
+                
+                // 🔳 Ready Modal
+                if showReadyModal {
+                    Color.black.opacity(0.4).edgesIgnoringSafeArea(.all)
+                    VStack(spacing: 12) {
+                        Text("Show Starts at 4:00 PM")
+                            .foregroundColor(.white)
+                            .font(.caption)
+                        
+                        Text("Ready to Begin?")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                        
+                        Button(action: {
+                            showReadyModal = false
+                            showWelcomeDialog = true
+                        }) {
+                            Text("Share Show")
+                                .foregroundColor(.white)
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .background(Color.defaultTheme)
+                                .cornerRadius(8)
+                        }
+                        .padding(.horizontal)
+                    }
+                    .padding()
+                    .background(Color.gray.opacity(0.95))
+                    .cornerRadius(12)
+                    .frame(width: 300)
+                }
+                
+                // ✅ Welcome Dialog
+                if showWelcomeDialog {
+                    Color.black.opacity(0.4).edgesIgnoringSafeArea(.all)
+                    VStack(spacing: 16) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .resizable()
+                            .frame(width: 50, height: 50)
+                            .foregroundColor(.white)
+                        
+                        Text("Welcome to your Auction")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                        
+                        Text("You may edit and begin your auction from here")
+                            .font(.subheadline)
+                            .foregroundColor(.white)
+                            .multilineTextAlignment(.center)
+                        
+                        Button(action: {
+                            showWelcomeDialog = false
+                            if UserDefaults.sellerVerafied == "verified"{
+                                showButton = true
+                                showPreLiveControls = true
+                            }else{
+                                alertType = .sheetType(
+                                    icon: .info,
+                                    title: "Become a Verified Seller!",
+                                    message: "Before you interact with live shows.you need to become a verified seller.",
+                                    primaryBtnText: "OK",
+                                    secondaryBtnText: "",
+                                    buttonWidth:screenWidth - 24,
+                                    contentSize: 12.0
                                 )
-                                .background(.black.opacity(0.4))
+                                withAnimation(.snappy){
+                                    showSellerSheet = true
+                                }
+                            }
+                        }) {
+                            Text("Ok")
+                                .foregroundColor(.white)
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .background(Color.defaultTheme)
+                                .cornerRadius(8)
+                        }
+                        .padding(.horizontal)
+                    }
+                    .padding()
+                    .background(Color.gray.opacity(0.95))
+                    .cornerRadius(12)
+                }
+                
+                // 🎛️ Dynamic Side Controls
+                VStack {
+                    Spacer()
+                    VStack(spacing: 20) {
+                        if showLiveControls {
+                            SideButton(label: "More", icon: "ellipsis.circle",action: .more)
+                            SideButton(label: "Promote", icon: "megaphone.fill",action: .promote)
+                            SideButton(label: "Clip", icon: "scissors",action: .clip)
+                            SideButton(label: "Share", icon: "square.and.arrow.up",action: .share)
+                            SideButton(label: "Switch", icon: "arrow.left.arrow.right",action: .switchView)
+                            ShopButton(action: .shop)
+                        }
+                        
+                        if showPreLiveControls {
+                            Spacer()
+                            Button(action: {
+                                isMicOn.toggle()
+                                ZegoExpressEngine.shared().muteMicrophone(!isMicOn)
+                            }) {
+                                VStack {
+                                    Image(systemName: isMicOn ? "mic.fill" : "mic.slash.fill")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .fontWeight(.heavy)
+                                        .font(.custom(poppinsExtraBold, size: 22.0))
+                                        .frame(width: 20, height: 20)
+                                        .foregroundColor(.black)
+                                    //                                Text(isMicOn ? "Mic On" : "Mic Off")
+                                    //                                    .font(.custom(poppinsThin, size: 12.0))
+                                }
+                                .padding()
+                                .background(
+                                    Circle()
+                                        .fill(Color.white)
+                                )
                                 
-                                if !commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                                    Button(action: {
-                                        print("📨 Sending message: \(commentText)")
-                                        let textToSend = commentText.trimmingCharacters(in: .whitespacesAndNewlines)
-                                        ZIMChatManager.shared.sendMessage(message: textToSend,roomId: self.liveRoomId,image: UserDefaults.profileURL,name: UserDefaults.userName)
-                                        commentText = ""
-                                    }) {
-                                        Image(systemName: "paperplane.fill")
-                                            .resizable()
-                                            .frame(width: 24, height: 24)
-                                            .foregroundColor(.defaultTheme)
-                                            .padding(10)
+                            }
+                            
+                            Button(action: {
+                                isUsingFrontCamera.toggle()
+                                ZegoExpressEngine.shared().useFrontCamera(isUsingFrontCamera)
+                            }) {
+                                VStack {
+                                    Image(systemName: "arrow.triangle.2.circlepath.camera")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .fontWeight(.heavy)
+                                        .font(.custom(poppinsExtraBold, size: 22.0))
+                                        .frame(width: 20, height: 20)
+                                        .foregroundColor(.black)
+                                    //                                Text("Switch")
+                                    //                                    .font(.custom(poppinsThin, size: 12.0))
+                                }
+                                .padding()
+                                .background(
+                                    Circle()
+                                        .fill(Color.white)
+                                )
+                            }
+                            
+                            ShopButton(action: .shop)
+                            Spacer()
+                        }
+                    }
+                    .padding(.trailing)
+                    .padding(.bottom, 150)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                }
+                
+                // 💬 Bottom Chat & Start Button
+                
+                VStack(alignment: .leading, spacing: 8) {
+                    Spacer()
+                    if chatManager.messages.count > 0{
+                        ScrollViewReader { proxy in
+                            ScrollView {
+                                VStack(alignment: .leading, spacing: 8) {
+                                    ForEach(chatManager.messages) { comment in
+                                        HStack {
+                                            CustomProfileImage(url: comment.image, isCircular: true,size: 24)
+                                            Text(comment.username.capitalizingFirstLetter())
+                                                .font(.custom(poppinsSemiBold, size: 14.0))
+                                                .foregroundColor(.white)
+                                            
+                                            Text(comment.message)
+                                                .font(.custom(poppinsRegular, size: 12.0))
+                                                .foregroundColor(.white)
+                                        }
+                                        .padding(.trailing,40)
+                                        .padding(.leading,Leading)
+                                        .id(comment.id) // 💡 For scroll targeting
                                     }
-                                    .transition(.opacity)
-                                    .animation(.easeInOut(duration: 0.2), value: commentText)
+                                }
+                            }
+                            .onChange(of: chatManager.messages) { _ in
+                                // 💬 Auto scroll to last message
+                                if let last = chatManager.messages.last {
+                                    withAnimation {
+                                        proxy.scrollTo(last.id, anchor: .bottom)
+                                    }
                                 }
                             }
                         }
-                        .padding(.horizontal,8)
-                        .padding(.bottom,8)
+                        .frame(maxHeight: 150)
                     }
-                    if !isLive{
-                        Button(action: {
-                            if UserDefaults.sellerVerafied == "verified"{
-                                self.UpdateStatus(status : false)
-                            }else{
-                                showSellerSheet = true
+                    
+                    
+                    if showButton{
+                        if showLiveControls{
+                            HStack {
+                                ZStack(alignment: .trailing) {
+                                    TextField("", text: $commentText, prompt: Text("Say something...")
+                                        .foregroundColor(.white)
+                                        .font(.custom(poppinsSemiBold, size: 13.0))
+                                    )
+                                    .font(.custom(poppinsSemiBold, size: 13.0))
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 8)
+                                    .padding(.trailing, commentText.isEmpty ? 14 : 36) // extra space for send button
+                                    .frame(height: 50)
+                                    
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .stroke(Color.white, lineWidth: 1)
+                                        
+                                        
+                                    )
+                                    .background(.black.opacity(0.4))
+                                    
+                                    if !commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                                        Button(action: {
+                                            print("📨 Sending message: \(commentText)")
+                                            let textToSend = commentText.trimmingCharacters(in: .whitespacesAndNewlines)
+                                            ZIMChatManager.shared.sendMessage(message: textToSend,roomId: self.liveRoomId,image: UserDefaults.profileURL,name: UserDefaults.userName)
+                                            commentText = ""
+                                        }) {
+                                            Image(systemName: "paperplane.fill")
+                                                .resizable()
+                                                .frame(width: 24, height: 24)
+                                                .foregroundColor(.defaultTheme)
+                                                .padding(10)
+                                        }
+                                        .transition(.opacity)
+                                        .animation(.easeInOut(duration: 0.2), value: commentText)
+                                    }
+                                }
                             }
+                            .padding(.horizontal,8)
+                            .padding(.bottom,8)
+                        }
+                        if !isLive{
+                            Button(action: {
+                                if UserDefaults.sellerVerafied == "verified"{
+                                    self.UpdateStatus(status : false)
+                                }else{
+                                    showSellerSheet = true
+                                }
+                            }) {
+                                Text("Start Show")
+                                    .font(.custom(poppinsBold, size: 13.0))
+                                    .frame(maxWidth: .infinity)
+                                    .padding()
+                                    .background(Color.defaultTheme)
+                                    .foregroundColor(.white)
+                                    .cornerRadius(12)
+                            }
+                            .padding(.horizontal)
+                            .padding(.bottom, 20)
+                        }
+                    }
+                    if comeFromPrepare && !comeForLive{
+                        Button(action: {
+                            
+                            self.presentaionMode.wrappedValue.dismiss()
                         }) {
-                            Text("Start Show")
+                            Text("Continue")
                                 .font(.custom(poppinsBold, size: 13.0))
                                 .frame(maxWidth: .infinity)
                                 .padding()
@@ -382,27 +401,13 @@ struct RehearsalScreen: View {
                         .padding(.bottom, 20)
                     }
                 }
-                if comeFromPrepare && !comeForLive{
-                    Button(action: {
-                       
-                        self.presentaionMode.wrappedValue.dismiss()
-                    }) {
-                        Text("Continue")
-                            .font(.custom(poppinsBold, size: 13.0))
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.defaultTheme)
-                            .foregroundColor(.white)
-                            .cornerRadius(12)
-                    }
-                    .padding(.horizontal)
-                    .padding(.bottom, 20)
-                }
+                CusNavLink(doNavigate: $navigateToSeller, destination: SellerVerificationScreen())
             }
-            CusNavLink(doNavigate: $navigateToSeller, destination: SellerVerificationScreen())
         }
         .navigationBarHidden(true)
+        .edgesIgnoringSafeArea(.all)
         .toolbar(.hidden,for: .tabBar)
+        .foregroundColor(.black)
         .bottomSheet(
             isPresented: $showSellSheet,
             height: sheetHeight, // Adjust as needed
@@ -802,10 +807,11 @@ struct ZegoRehearsalScreen: UIViewRepresentable {
     
     
     func makeUIView(context: Context) -> UIView {
-        let view = UIView()
+        let view = UIView(frame: UIScreen.main.bounds)
         view.backgroundColor = .black
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             let canvas = ZegoCanvas(view: view)
+            canvas.viewMode = .aspectFill
             ZegoExpressEngine.shared().enableCamera(true)
             ZegoExpressEngine.shared().startPreview(canvas)
             

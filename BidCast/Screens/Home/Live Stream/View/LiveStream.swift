@@ -137,14 +137,14 @@ struct LiveStream: View {
                                     Text(liveShowsData[currentStreamIndex].user?.name ?? "")
                                         .font(.custom(poppinsSemiBold, size: 13.0))
                                         .foregroundColor(.white)
-                                       
-                                    HStack(spacing: 6) {
-                                        Image(systemName: "sparkles")
-                                            .foregroundColor(.yellow)
-                                        Text("99")
-                                            .font(.custom(poppinsSemiBold, size: 13.0))
-                                            .foregroundColor(.yellow)
-                                    }
+//                                       
+//                                    HStack(spacing: 6) {
+//                                        Image(systemName: "sparkles")
+//                                            .foregroundColor(.yellow)
+//                                        Text("99")
+//                                            .font(.custom(poppinsSemiBold, size: 13.0))
+//                                            .foregroundColor(.yellow)
+//                                    }
                                 }
                             }
                             Spacer()
@@ -187,7 +187,7 @@ struct LiveStream: View {
                             
                         }
                         .padding(.horizontal)
-                        .padding(.top, 30)
+                        .padding(.top, 40)
                         
                         Spacer()
                         
@@ -324,23 +324,38 @@ struct LiveStream: View {
                                     .padding(.horizontal)
                                     
                                     //MARK: Swipe fearture
-                                    HStack(spacing: 0) {
-                                        // 3/4 Swipe Area
+                                    HStack(spacing: 8) {
+                                        
+                                        // Max Button
+                                        Text("Max")
+                                            .font(.custom(poppinsBold, size: 13))
+                                            .foregroundColor(.white)
+                                            .frame(width: 40, height: 50)
+                                            .background(Color.defaultTheme)
+                                            .cornerRadius(10)
+                                        
+                                        // Swipe to Bid Section
                                         ZStack(alignment: .leading) {
-                                            RoundedRectangle(cornerRadius: 10)
-                                                .fill(.black.opacity(0.3))
-                                                .frame(height: 60)
-                                            
-                                            
-                                            RoundedRectangle(cornerRadius: 10)
-                                                .fill(.defaultTheme)
-                                                .frame(width: 50, height: 60)
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .fill(Color.defaultTheme)
+                                                .frame(height: 50)
+
+                                            // Centered text
+                                            Text("Swipe to Bid")
+                                                .font(.custom(poppinsSemiBold, size: 14))
+                                                .foregroundColor(.black)
+                                                .frame(maxWidth: .infinity, alignment: .center)
+
+                                            // Draggable Arrow
+                                            RoundedRectangle(cornerRadius: 8)
+                                                .fill(Color.darkGreen)
+                                                .frame(width: 40, height: 40)
                                                 .overlay(
-                                                    Text(swipeConfirmed ? "✓" : "→")
-                                                        .foregroundColor(.white)
-                                                        .font(.custom(poppinsSemiBold, size: 13.0))
+                                                    Text(swipeConfirmed ? "$" : "$")
+                                                        .foregroundColor(.gray)
+                                                        .font(.custom(poppinsExtraBold, size: 16))
                                                 )
-                                                .offset(x: min(dragOffset.width + 110, totalSwipeWidth - 90))
+                                                .offset(x: min(dragOffset.width + 4, totalSwipeWidth - 90))
                                                 .gesture(
                                                     DragGesture()
                                                         .onChanged { value in
@@ -350,15 +365,13 @@ struct LiveStream: View {
                                                         }
                                                         .onEnded { value in
                                                             if value.translation.width > totalSwipeWidth * 0.5 {
-                                                               
                                                                 dragOffset = .zero
                                                                 if UserDefaults.buyerVerafied != "verified" {
                                                                     showVerificationSheet = true
-                                                                }else{
+                                                                } else {
                                                                     swipeConfirmed = true
                                                                     incrementPrice()
                                                                 }
-                                                               
                                                             } else {
                                                                 swipeConfirmed = false
                                                                 dragOffset = .zero
@@ -366,35 +379,39 @@ struct LiveStream: View {
                                                         }
                                                 )
                                                 .animation(.easeOut, value: dragOffset)
-                                            
-                                            Text("Swipe to Bid")
-                                                .font(.custom(poppinsSemiBold, size: 14.0))
-                                                .foregroundColor(.white)
-                                                .padding(.leading)
-                                            
                                         }
-                                        
-                                        VStack {
-                                            Text("$ \(String(format: "%.2f", Double(currentPrice)))")
-                                                .font(.custom(poppinsBold, size: 14))
+                                        .frame(height: 50)
+                                        .frame(maxWidth: .infinity)
+
+                                        // Price and Timer
+                                        VStack(spacing: 2) {
+                                            Text("$\(String(format: "%.2f", Double(currentPrice)))")
+                                                .font(.custom(poppinsBold, size: 13))
                                                 .foregroundColor(.white)
-                                                .padding(.vertical, 4)
-                                            
+
                                             Text(String(format: "00:00:%02d", countdown))
-                                                .font(.custom(poppinsSemiBold, size: 14))
+                                                .font(.custom(poppinsSemiBold, size: 13))
                                                 .foregroundColor(.white)
                                         }
-                                        .frame(width: UIScreen.main.bounds.width * 0.25)
-                                        .background(.defaultTheme)
+                                        .frame(width: 60, height: 50)
+                                        .background(Color.black.opacity(0.3))
                                         .cornerRadius(10)
                                     }
+
                                     .padding(.horizontal)
                                     .onAppear {
                                         if !isBiddingActive {
-                                            startCountdown()
-                                            isBiddingActive = true
+                                            if UserDefaults.buyerVerafied != "verified" {
+                                                showVerificationSheet = true
+                                                
+                                            }else{
+                                                startCountdown()
+                                                isBiddingActive = true
+                                            }
+                                           
                                         }
                                     }
+
                                 }else {
                                     
                                     Text("Waiting for next product...")
@@ -403,7 +420,7 @@ struct LiveStream: View {
                                         .padding(.horizontal)
                                 }
                             }
-                            .padding(.bottom,50)
+//                            .padding(.bottom,50)
                             .padding(.bottom, keyboardResponder.currentHeight == 0 ? (tabBarHeight + 20) : 10)
                         }
                     }
@@ -500,25 +517,26 @@ struct LiveStream: View {
                 CusNavLink(doNavigate: $navigateToProfile, destination: ProfileScreen(id:$id, isComeFrom: .constant(""),userName: $userName,userImage: $userImage))
 
                 CusNavLink(doNavigate: $navigateToBuyer, destination: TrustedBuyerScreen(comeFromHome:$comeFromHome))
-            }else{
-                VStack{
-                    PrimaryHeader(
-                        title: "Live Stream",
-                        isForLogo:  false,
-                        leadingImgArr: [.icBack],
-                        trailingImgArr: [],
-                        onClickLeading: { index in
-                            
-                                self.presentationMode.wrappedValue.dismiss()
-                            
-                        },
-                        onClickTrailing: { index in
-                            
-                        },
-                        count: .constant(0)
-                    )
-                }
             }
+//            else{
+//                VStack{
+//                    PrimaryHeader(
+//                        title: "Live Stream",
+//                        isForLogo:  false,
+//                        leadingImgArr: [.icBack],
+//                        trailingImgArr: [],
+//                        onClickLeading: { index in
+//                            
+//                                self.presentationMode.wrappedValue.dismiss()
+//                            
+//                        },
+//                        onClickTrailing: { index in
+//                            
+//                        },
+//                        count: .constant(0)
+//                    )
+//                }
+//            }
         }.gesture(
             TapGesture().onEnded { _ in
                 hideKeyboard()
@@ -644,7 +662,7 @@ struct LiveStream: View {
             }
         )
         .edgesIgnoringSafeArea(.all)
-        
+     
         .toolbar(.hidden,for: .tabBar)
         .foregroundColor(.black)
         .onAppear{
@@ -665,9 +683,9 @@ struct LiveStream: View {
                 
             }
         }
-        //        .onDisappear{
-        //            logoutRoom()
-        //        }
+                .onDisappear{
+                    logoutRoom()
+                }
         
     }
     //MARK: walletInfosuccess.
@@ -1023,11 +1041,11 @@ struct ZegoPreviewView: UIViewRepresentable {
     func makeUIView(context: Context) -> UIView {
         let view = UIView(frame: UIScreen.main.bounds)
         view.backgroundColor = .black
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             let canvas = ZegoCanvas(view: view)
             canvas.viewMode = .aspectFill
             ZegoExpressEngine.shared().startPlayingStream(streamID, canvas: canvas)
-        }
+//        }
         
         return view
     }
