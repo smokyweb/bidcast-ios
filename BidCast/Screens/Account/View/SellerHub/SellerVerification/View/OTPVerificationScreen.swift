@@ -47,6 +47,11 @@ struct OTPVerificationScreen: View {
                         enteredText: { phoneNumber = $0 }
                     )
                     .keyboardType(.numberPad)
+                    .onChange(of: phoneNumber) { newValue in
+                        // If phone number changes, reset OTP state
+                        otpSent = false
+                        otpDigits = Array(repeating: "", count: 4)  // Clear the OTP fields
+                    }
                     
                     if !otpSent {
                         PrimaryButton(
@@ -175,5 +180,3 @@ struct OTPVerificationScreen: View {
         }
     }
 }
-
-
