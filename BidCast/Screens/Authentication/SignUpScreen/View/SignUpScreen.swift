@@ -136,7 +136,7 @@ struct SignUpScreen: View {
                             viewModel.errorMessage?.removeAll()
                             await self.viewModel.registerUser(parameters: request)
                             await SVProgressHUD.dismiss()
-                            if viewModel.errorMessage == nil{
+                            if viewModel.errorMessage == nil || viewModel.errorMessage == "" {
                                 handleSuccess()
                             }else{
                                 alertType = .sheetType(icon: .alert, title: "Failed", message:viewModel.errorMessage ?? "", primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .secondary)

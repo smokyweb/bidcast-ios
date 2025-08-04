@@ -71,9 +71,9 @@ struct AccountScreen: View {
             ScrollView(showsIndicators: false){
                 VStack(alignment: .leading,spacing: 4){
                     ListCell(image: UserDefaults.profileURL.isEmpty ? "user_dummy" : UserDefaults.profileURL,
-                             title: UserDefaults.userName.capitalizingFirstLetter() ,
+                             title: UserDefaults.fullName.capitalizingFirstLetter() ,
                              vectorImg : .circleEditPencil,angle:0.0,
-                             subLabel : "Seller since 2025",
+                             subLabel : UserDefaults.userName.capitalizingFirstLetter(),
                              titleFontName: poppinsSemiBold,
                              titleFontSize: 16.0,
                              subLabelFontName: poppinsRegular,

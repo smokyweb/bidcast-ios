@@ -41,8 +41,15 @@ struct CategoryDataModel : Codable{
     var thumbnail: String?
     var color: String?
     var subLabel : String?
+    var extra_fields : [ExtraFieldModel]?
 }
 
+struct ExtraFieldModel : Codable{
+//    var id = UUID()
+    var label : String?
+    var type : String?
+    var options : [String]?
+}
 struct AuctionModel : Codable{
     var status : String?
     var message : String?

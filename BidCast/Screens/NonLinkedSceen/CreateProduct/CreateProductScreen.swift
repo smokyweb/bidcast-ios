@@ -15,6 +15,10 @@ struct CreateProductScreen: View {
     @State private var quantity = 1
     @State var imageUrls : [String] = [""]
     @State var navigateToSalesFormat = false
+    @State var navigateToAddProduct = false
+    @Binding var request : StoreScheduleShowRequest
+    @Binding var thumbNail : String
+    @Binding var backToPrepare : Bool
     var body: some View {
         VStack(spacing: 16) {
             // Header
@@ -27,15 +31,15 @@ struct CreateProductScreen: View {
                     },
                     count: .constant(0)
                 )
-            }.frame(height:40)
-                .background(.white)
+            }
+            
             ScrollView{
-                // Info box
+                
                 HStack(alignment: .top, spacing: 8) {
                     Image(systemName: "info.circle.fill")
                         .foregroundColor(.blue)
                     Text("Detailed product listings help buyers make informed decisions and increase your chances of making a sale.")
-                        .font(.footnote)
+                        .font(.custom(poppinsRegular, size: 11.0))
                         .foregroundColor(.blue)
                 }
                 .padding()
@@ -45,15 +49,14 @@ struct CreateProductScreen: View {
                 
                 // Photos
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Photos")
-                        .font(.subheadline).bold()
                     
-                    MediaPickerView(title:"",uploadedImageUrls: $imageUrls)
+                    
+                    MediaPickerView(title:"Photos",uploadedImageUrls: $imageUrls)
                         .frame(height:150)
                         .padding(.horizontal,-12)
                     
                     Text("Add up to 8 photos")
-                        .font(.caption)
+                        .font(.custom(poppinsRegular, size: 11.0))
                         .foregroundColor(.gray)
                 }
                 .padding(.horizontal)
@@ -142,7 +145,7 @@ struct CreateProductScreen: View {
                 // Action Buttons
                 HStack(spacing: 12) {
                     Button(action: {
-                        // Use Product Library
+                        navigateToAddProduct = true
                     }) {
                         Text("Use Product Library")
                             .font(.headline)
@@ -170,6 +173,7 @@ struct CreateProductScreen: View {
                 .padding(.horizontal)
                 .padding(.bottom, 16)
             }
+            CusNavLink(doNavigate: $navigateToAddProduct, destination: AddProductsScreen(request:$request,thumbNail: $thumbNail,fromPrepare: .constant(false),backToPrepare: $backToPrepare))
             CusNavLink(doNavigate: $navigateToSalesFormat, destination: SalesFormatScreen())
         }
         .background(Color(.systemGroupedBackground).ignoresSafeArea())

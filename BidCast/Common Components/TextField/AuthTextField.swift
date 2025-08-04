@@ -32,7 +32,7 @@ struct AuthTextField: View {
      var isForCardNumber: Bool = false
      var custFontName: String = poppinsBold
      var custFontSize: Double = 13.0
-     var custPlaceHolderName : String = poppinsMedium
+    var custPlaceHolderName : String = robotoRegular
      var custPlaceHolderFontSize : Double = placeHolder
     
     
@@ -59,7 +59,7 @@ struct AuthTextField: View {
                     }
                     if showPassword && isPassword {
                         SecureField(placeholder, text: $text)
-                            .font(.custom(poppinsMedium, fixedSize: placeHolder))
+                            .font(.custom(custPlaceHolderName, fixedSize: placeHolder))
                             .autocorrectionDisabled(true)
                             .autocapitalization(.none)
                             .foregroundStyle(.text)
@@ -114,31 +114,31 @@ struct AuthTextField: View {
                                         text = filtered
                                     self.enteredText?(text)
                                     } else if isForPrice {
-                                        if let number = Double(value) {
-                                            
+                                        let trimmed = value.trimmingCharacters(in: .whitespaces)
+
+                                        
+                                        let isDecimalInput = trimmed.range(of: #"^\d+\.\d{0,2}$"#, options: .regularExpression) != nil
+
+                                        if let number = Double(trimmed), isDecimalInput {
+                                           
                                             text = String(format: "%.2f", number)
                                         } else {
                                            
-                                            var filteredText = value.filter { $0.isNumber }
+                                            var digitsOnly = trimmed.filter { $0.isNumber }
 
-                                           
-                                            while filteredText.count > 1 && filteredText.first == "0" {
-                                                filteredText.removeFirst()
+                                            
+                                            while digitsOnly.count > 1 && digitsOnly.first == "0" {
+                                                digitsOnly.removeFirst()
                                             }
 
-                                            if filteredText.isEmpty {
+                                            if digitsOnly.isEmpty {
                                                 text = "0.00"
-                                            } else if filteredText.count == 1 {
-                                                text = "0.0" + filteredText
-                                            } else if filteredText.count == 2 {
-                                                text = "0." + filteredText
                                             } else {
-                                                let integerPart = String(filteredText.dropLast(2))
-                                                let decimalPart = String(filteredText.suffix(2))
-                                                text = "\(integerPart).\(decimalPart)"
+                                                let valueAsCents = Double(digitsOnly)! / 100.0
+                                                text = String(format: "%.2f", valueAsCents)
                                             }
                                         }
-                                        
+
                                         self.enteredText?(text)
                                     }else{
                                         filtered = String(filtered.prefix(maxDigits))

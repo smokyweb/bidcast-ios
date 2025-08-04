@@ -127,8 +127,8 @@ struct SelectShowScreen: View {
                 }
 //                navigateToSelectCategory = true
             },cornerRadius: 12, btnTextColor: .white)
-            
-            CusNavLink(doNavigate: $navigateToAddProduct, destination: AddProductsScreen(request:$request,thumbNail: $thumbNail,fromPrepare: .constant(false),backToPrepare: $backToPrepare))
+            CusNavLink(doNavigate: $navigateToAddProduct, destination: CreateProductScreen(request: $request, thumbNail: $thumbNail,backToPrepare: $backToPrepare))
+//            CusNavLink(doNavigate: $navigateToAddProduct, destination: AddProductsScreen(request:$request,thumbNail: $thumbNail,fromPrepare: .constant(false),backToPrepare: $backToPrepare))
            
         }
     

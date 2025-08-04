@@ -40,7 +40,7 @@ struct TwoButton: View {
                     }
                 }) {
                     Text(titleTwo)
-                        .font(.custom(robotoRegular, fixedSize: 18))
+                        .font(.custom(robotoMedium, fixedSize: 18))
                         .foregroundStyle(Color(secBtnTitleColor))
                         .frame(maxWidth: .infinity)
                         .frame(height: height)
@@ -62,7 +62,7 @@ struct TwoButton: View {
                     }
                 }) {
                     Text(titleOne)
-                        .font(.custom(robotoRegular, fixedSize: 18))
+                        .font(.custom(robotoMedium, fixedSize: 18))
                     .foregroundStyle(Color(firstBtnTitleColor))
                     .frame(maxWidth: .infinity)
                     .frame(height: height)

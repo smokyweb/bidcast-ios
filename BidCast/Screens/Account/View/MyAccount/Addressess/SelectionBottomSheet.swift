@@ -28,7 +28,7 @@ struct SelectionBottomSheet: View {
                 .padding(.horizontal, 24)
 
             ScrollView {
-                VStack(spacing: 2) {
+                VStack(spacing: 0) {
                     ForEach(options, id: \.self) { option in
                         Button(action: {
                             toggleSelection(option)
@@ -53,7 +53,7 @@ struct SelectionBottomSheet: View {
                 }
                 .padding(.horizontal, 20)
             }
-            .frame(maxHeight: 250)
+            .frame(maxHeight: selectedOptions.count < 4 ? 550 : screenHeight/2)
 
             PrimaryButton(
                 title: isMultiSelect ? "Done" : "OK",

@@ -8,6 +8,7 @@
 import SwiftUI
 import SwiftfulLoadingIndicators
 import SVProgressHUD
+import AlertToast
 
 struct ListProductScreen: View {
     @Environment(\.presentationMode) var presentationMode
@@ -42,7 +43,11 @@ struct ListProductScreen: View {
     @State var subCategoryList: [CategoryDataModel] = []
     @State var subCategoryName : [String] = [""]
     @Binding var productData : InventoryDataModel
+    @State var extraFields: [ExtraFieldModel] = []
     
+    @State var extraFieldValues: [String: String] = [:]
+    @State var selectedRadio: [String: String] = [:]
+
     var body: some View {
         
         ZStack {
@@ -64,7 +69,7 @@ struct ListProductScreen: View {
                     
                     VStack(alignment:.leading,spacing: 8){
                         Text("Product Details".localized)
-                            .font(.custom(robotoMedium, size: 14.0))
+                            .font(.custom(robotoMedium, size: 16.0))
                             .padding(.top,8)
                             .padding([.leading,.trailing],16.0)
                         
@@ -73,10 +78,10 @@ struct ListProductScreen: View {
                             hint: "Select Category",
                             selected: $selectedCategory,
                             anchor: .bottom,
-                            custFontName: robotoRegular,
+                            custFontName: robotoMedium,
                             custFontSize:  14.0,
                             custCategory : robotoRegular,
-                            custCategorySize : 16.0,
+                            custCategorySize : 13.0,
                             onOptionSelected: { value in
                                 selectedCategory = value
                                 if let id = categoryList.first(where: { $0.name == value })?.id {
@@ -112,8 +117,8 @@ struct ListProductScreen: View {
                             icon: .menuProfile,
                             text: $request.title ,
                             isIconDisplay : false,
-                            custFontName : robotoRegular,
-                            custFontSize : 13.0,
+                            custFontName : robotoMedium,
+                            custFontSize : 14.0,
                             enteredText:  { title in
                                 request.title = title
                             })
@@ -122,26 +127,76 @@ struct ListProductScreen: View {
                         
                         DescriptionFieldView(
                             description:$request.description,
-                            custFontName : robotoRegular,
-                            custFontSize : 13.0
+                            custFontName : robotoMedium,
+                            custFontSize : 14.0
                             )
                         { message in
                             request.description = message
                         }
                         AuthTextField(floatingLabel: "Quantity".localized, placeholder: "Enter Quantity".localized, icon: .menuProfile, text: $request.quantity ,isIconDisplay : false,
-                                      custFontName : robotoRegular,
-                                      custFontSize : 13.0,
+                                      custFontName : robotoMedium,
+                                      custFontSize : 14.0,
                                       enteredText:  { quantity in
                             request.quantity = quantity
                         })
                         .keyboardType(.numberPad)
                         .padding([.bottom],4)
                         
+                         let extraFields = self.extraFields
+                        if extraFields.count != 0{
+                            ForEach(0 ..< extraFields.count) { index in
+                                let field = extraFields[index]
+                                if let type = field.type {
+                                    if type == "text" {
+                                        AuthTextField(
+                                            floatingLabel: field.label ?? "",
+                                            placeholder: "Enter \(field.label ?? "")",
+                                            icon: .menuProfile,
+                                            text: Binding(
+                                                get: { self.extraFieldValues[field.label ?? ""] ?? "" },
+                                                set: { self.extraFieldValues[field.label ?? ""] = $0 }
+                                            ),
+                                            isIconDisplay: false,
+                                            custFontName: robotoMedium,
+                                            custFontSize: 14.0,
+                                            enteredText: { text in
+                                                self.extraFieldValues[field.label ?? ""] = text
+                                            }
+                                        )
+                                        .padding(.bottom, 4)
+                                        
+                                    } else if type == "radio", let options = field.options {
+                                        
+                                        VStack(alignment: .leading) {
+                                            Text(field.label?.capitalizingFirstLetter() ?? "")
+                                                .padding(.horizontal,1)
+                                                .font(.custom(robotoMedium, size: 14))
+                                            
+                                            ForEach(options, id: \.self) { option in
+                                                HStack {
+                                                    Image(systemName: selectedRadio[field.label ?? ""] == option ? "largecircle.fill.circle" : "circle")
+                                                        .foregroundColor(Color.defaultTheme)
+                                                    Text(option)
+                                                        .font(.custom(robotoMedium, size: 14))
+                                                }
+                                                .onTapGesture {
+                                                    selectedRadio[field.label ?? ""] = option
+                                                }
+                                                .padding(.vertical, 2)
+                                            }
+                                        }
+                                        .padding(.horizontal,16)
+                                        .padding(.bottom, 8)
+                                    }
+                                }
+                                
+                            }
+                        }
                         PrimaryButton(
                             title: "Add Variants",
                             isOutLine: false,
-                            custFontName : robotoRegular,
-                            custFontSize : 16.0,
+                            custFontName : poppinsSemiBold,
+                            custFontSize : 14.0,
                             onButtonClick: {
                                 print("hell")
                             }, imageName: "ic_Plus", btnColor: .white)
@@ -153,20 +208,20 @@ struct ListProductScreen: View {
                     
                     VStack(alignment:.leading,spacing: 8){
                         Text("Pricing".localized)
-                            .font(.custom(robotoMedium, size: 14.0))
+                            .font(.custom(robotoMedium, size: 16.0))
                             .padding(.top,8)
                             .padding([.leading,.trailing],16.0)
                         
                         AuthTextField(floatingLabel: "Buy it Now Price".localized, placeholder: "0.00".localized, icon: .menuProfile, text: $request.pricing,isIconDisplay : true, isForPrice:true,
-                                      custFontName : robotoRegular,
-                                      custFontSize : 13.0,
+                                      custFontName : robotoMedium,
+                                      custFontSize : 14.0,
                                       enteredText:  { price in
                             request.pricing = price
                         })
                         .keyboardType(.numberPad)
                         //                        .padding(.horizontal , 16)
                         
-                        MenuCell( title: "Flash Sale",fontName: robotoRegular,fontValue: 14.0,menuImg: "",isSelectable: true, isTappedSwitch: $isTappedFlash,onToggle: { value in
+                        MenuCell( title: "Flash Sale",fontName: robotoMedium,fontValue: 14.0,menuImg: "",isSelectable: true, isTappedSwitch: $isTappedFlash,onToggle: { value in
                             if value == true{
                                 request.flash_sale = "1"
                             }else{
@@ -175,7 +230,7 @@ struct ListProductScreen: View {
                         })
                         .padding(.vertical,4)
                         .padding([.leading,.trailing],8)
-                        MenuCell( title: "Accept offers",fontName: robotoRegular,fontValue: 14.0,menuImg: "",isSelectable: true, isTappedSwitch: $isTappedAccept,onToggle: { value in
+                        MenuCell( title: "Accept offers",fontName: robotoMedium,fontValue: 14.0,menuImg: "",isSelectable: true, isTappedSwitch: $isTappedAccept,onToggle: { value in
                             print(value)
                             if value == true{
                                 request.accept_offers = "1"
@@ -185,7 +240,7 @@ struct ListProductScreen: View {
                         })
                         .padding(.vertical,4)
                         .padding([.leading,.trailing],8)
-                        MenuCell( title: "Reserve for Live",fontName: robotoRegular,fontValue: 14.0,menuImg: "",isSelectable: true, isTappedSwitch: $isTappedReserve,onToggle: { value in
+                        MenuCell( title: "Reserve for Live",fontName: robotoMedium,fontValue: 14.0,menuImg: "",isSelectable: true, isTappedSwitch: $isTappedReserve,onToggle: { value in
                             print(value)
                             if value == true{
                                 request.reserve_for_live = "1"
@@ -203,7 +258,7 @@ struct ListProductScreen: View {
                     
                     VStack(alignment:.leading,spacing: 8){
                         Text("Shipping".localized)
-                            .font(.custom(robotoMedium, size: 14.0))
+                            .font(.custom(robotoMedium, size: 16.0))
                             .padding(.top,8)
                             .padding([.leading,.trailing],16.0)
                         
@@ -212,10 +267,10 @@ struct ListProductScreen: View {
                             floatingLabel:"Shipping Profile",
                             hint: "Select Profile",
                             selected: $shippingId,
-                            anchor: .top,custFontName: robotoRegular,
+                            anchor: .top,custFontName: robotoMedium,
                             custFontSize:  14.0,
                             custCategory : robotoRegular,
-                            custCategorySize : 16.0,
+                            custCategorySize : 13.0,
                             onOptionSelected: { value in
                                 if let id = ShippingAddress.first(where: { $0.name == value })?.id {
                                     request.shipping_profile_id = "\(id)"
@@ -232,7 +287,7 @@ struct ListProductScreen: View {
                     
                     .background(.white)
                     .cornerRadius(12)
-                    .padding(.all,12)
+                    .padding(.horizontal,12)
                     
                     TwoButton(titleOne: "Save Draft", titleTwo: "Publish", onFirstButtonClick: {
                         print(request)
@@ -298,7 +353,7 @@ struct ListProductScreen: View {
                     }, onSecButtonClick: {
                         print(request)
                         print(imageUrls)
-                        guard !imageUrls.isEmpty else{
+                        guard !imageUrls.isEmpty,imageUrls.count != 0 else{
                             hudMsg = "Please select images"
                             showhud = true
                             return
@@ -361,11 +416,11 @@ struct ListProductScreen: View {
                 }
 //                .edgesIgnoringSafeArea(.top)
                 .padding(.all,0)
-                .background(.bg.opacity(0.5))
+//                .background(.bg.opacity(0.5))
                 
                 .bottomSheet(
                     isPresented: $showSubCategorySheet,
-                    height: screenHeight * 0.4,
+                    height: selectedOption.count < 4 ? screenHeight * 0.5 : screenHeight/1.7,
                     topBarCornerRadius: 25,
                     showTopIndicator: false,
                     onDismiss: {
@@ -384,13 +439,20 @@ struct ListProductScreen: View {
                                     request.sub_category_id = "\(selectedValue.id ?? 0)"
                                     selectedCategory = "\(selectedCategory) (\(selectedValue.name ?? ""))"
                                     print("Selected SubCategory: \(selectedValue.name ?? "")")
+                                    self.extraFields = selectedValue.extra_fields ?? []
+//                                    if let extraFields =  self.viewModel.categoryResponse?.data[index].extra_fields{
+//                                        
+//                                    }
                                 }
                                 showSubCategorySheet = false
                             }
                         )
                     }
                 )
-                
+                .toast(isPresenting: $showhud) {
+                    AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
+                    
+                }
                 .bottomSheet(isPresented: $showError, height: screenHeight * 0.3, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: {
                     if self.viewModel.errorMessage != "" || self.viewModel.errorMessage != nil{
                         showError = true
@@ -411,7 +473,7 @@ struct ListProductScreen: View {
 //            .padding([.leading,.trailing],12)
         }
 //        .edgesIgnoringSafeArea(.top/)
-        .background(.bg.opacity(0.5))
+        .background(.bg.opacity(0.4))
         .onFirstAppear(perform: {
             Task{
                guard Reachability.isConnectedToNetwork() else {
@@ -442,16 +504,16 @@ struct ListProductScreen: View {
         if response?.status == "success" {
             self.categoryList = response?.data ?? [CategoryDataModel]()
             self.categoryNames = response?.data.map { $0.name ?? "No Category" } ?? [String]()
-                } else {
-                    alertType = .sheetType(
-                        icon: .alert,
-                        title: response?.error_type?.capitalized ?? "",
-                        message: response?.message?.capitalized ?? "",
-                        primaryBtnText: "",
-                        secondaryBtnText: AppString.ok.localized
-                    )
-                    showError = true
-                
+        } else {
+            alertType = .sheetType(
+                icon: .alert,
+                title: response?.error_type?.capitalized ?? "",
+                message: response?.message?.capitalized ?? "",
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
+            )
+            showError = true
+            
             
         }
     }

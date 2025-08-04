@@ -32,12 +32,13 @@ struct DescriptionFieldView: View {
                 
                 if description.isEmpty {
                     Text(placeholder)
+                        .font(.custom(robotoRegular, size: 14.0))
                         .foregroundColor(Color.gray)
                         .padding(.all, 8)
                 }
 
                 TextEditor(text: $description)
-                    .font(.custom(custPlaceHolderName, size: custPlaceHolderFontSize))
+                    .font(.custom(robotoRegular, size: 14.0))
                     .padding(.all, 4)
                     .background(Color.clear)
                     .frame(minHeight: 100)
