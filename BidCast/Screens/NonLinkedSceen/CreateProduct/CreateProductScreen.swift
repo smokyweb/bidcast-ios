@@ -52,7 +52,7 @@ struct CreateProductScreen: View {
                     
                     
                     MediaPickerView(title:"Photos",uploadedImageUrls: $imageUrls)
-                        .frame(height:150)
+                        .frame(height:180)
                         .padding(.horizontal,-12)
                     
                     Text("Add up to 8 photos")
@@ -171,11 +171,11 @@ struct CreateProductScreen: View {
                     }
                 }
                 .padding(.horizontal)
-                .padding(.bottom, 16)
+//                .padding(.bottom, 16)
             }
             CusNavLink(doNavigate: $navigateToAddProduct, destination: AddProductsScreen(request:$request,thumbNail: $thumbNail,fromPrepare: .constant(false),backToPrepare: $backToPrepare))
             CusNavLink(doNavigate: $navigateToSalesFormat, destination: SalesFormatScreen())
         }
-        .background(Color(.systemGroupedBackground).ignoresSafeArea())
+        .background(Color.bg.opacity(0.4).ignoresSafeArea())
     }
 }
