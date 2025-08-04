@@ -40,7 +40,7 @@ class FirebaseManager {
         let sessionData: [String: Any] = [
             "highestBid": "",
             "isLive": true,
-            "product": product.map { $0.toDictionary() },
+            "products": product.map { $0.toDictionary() },
             "roomId": roomId,
             "seller": seller.toDictionary(),
             "showDetail": "",

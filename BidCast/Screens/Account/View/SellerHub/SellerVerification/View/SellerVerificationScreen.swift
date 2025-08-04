@@ -36,7 +36,7 @@ struct SellerVerificationScreen: View {
     @State private var paymentMethodComplete = false
     @State private var manualVerificationComplete = false
     @State var navigateToProfile: Bool = false
-    
+    @State var getCard: Bool = false
     @State private var idCardImageData: Data?
     @State private var selfieImageData: Data?
     @State private var selectedIDCardItem: PhotosPickerItem?
@@ -45,6 +45,10 @@ struct SellerVerificationScreen: View {
     
     @State private var showSelfieCamera: Bool = false
     @State private var showIDCardPicker: Bool = false
+    @State var cardId : String = ""
+    @State var cardArr = [PaymentProfile]()
+    
+    @State private var selectedCardIndex: Int? = nil
     
     var currentStep: Int {
         var count = 0
@@ -126,24 +130,45 @@ struct SellerVerificationScreen: View {
                         title: "Payment Method",
                         subtitle: "Add your payment details",
                         status: paymentMethodComplete ? .completed : .pending,
-                        actionLabel: "Add",
-                        showDashedCard: UserDefaults.sellerVerafied == "verified" ? false : true,
+                        actionLabel: UserDefaults.hasCardAdded ?  "Get" : "Add",
+                        showDashedCard: getCard,
                         isActionEnabled: phoneVerificationComplete && !paymentMethodComplete,
                         onActionTap: {
-                            navigateToAddCard = true
+                            if UserDefaults.hasCardAdded{
+                                Task{
+                                    SVProgressHUD.show()
+                                    await self.viewModel.getCard()
+                                    await SVProgressHUD.dismiss()
+                                    cardSuccess()
+                                }
+                            }else{
+                                navigateToAddCard = true
+                            }
+                            
                         }
                     )
                     .disabled(UserDefaults.sellerVerafied == "verified" ? true : false)
                     
                     // Show Card or Empty View
-                    if let card = cardDetails {
-                        CardDetailsView(card: card)
-                    } else if paymentMethodComplete {
-                        //                        Text("No Payment Method Found")
-                        //                            .font(.custom(poppinsSemiBold, size: 13.0))
-                        //                            .foregroundColor(.gray)
-                        //                            .padding()
-                        //                            .frame(maxWidth: .infinity, alignment: .leading)
+                    if cardArr.count != 0 {
+                        ForEach(0 ..< cardArr.count, id: \.self) { index in
+                            let data = cardArr[index]
+                            let card = data.payment?.creditCard
+                            CardCell(
+                                image: "creditcard.fill",
+                                cardNo: card?.cardNumber ?? "",
+                                expires: "\(card?.expirationDate ?? "")/\(card?.expirationDate ?? "")",
+                                onTapCard : {
+                                    selectedCardIndex = index
+                                    self.cardId = self.cardArr[index].customerPaymentProfileId ?? ""
+                                },
+                                forSelect : true,
+                                isSelected:selectedCardIndex == index,
+                                isDefault: false
+                               
+                            )
+                        }
+                    
                     }
                     
                     // Manual Verification
@@ -238,9 +263,10 @@ struct SellerVerificationScreen: View {
                 onSuccess: { cardId in
 //                    cardTokenNumber = cardToken
 //                    self.cardDetails = CardDetails()
-                    self.cardNumber = cardNumber
-                    self.expiry = expiry
-                    self.cvv = cvv
+                    self.cardId = cardId
+//                    self.cardNumber = cardNumber
+//                    self.expiry = expiry
+//                    self.cvv = cvv
                     paymentMethodComplete = true
                     updateManualVerificationIfNeeded()
                 }
@@ -276,9 +302,7 @@ struct SellerVerificationScreen: View {
         }
         
         let params: [String: Any] = [
-            "card_number": cardNumber ?? "",
-            "expiration_date": expiry ?? "",
-            "cvv": cvv ?? "",
+            "customerPaymentProfileId": cardId ,
             "phone_verification": phoneVerificationComplete == true ? 0 : 1
         ]
         print("Seller Verification Param : \(params)")
@@ -298,7 +322,30 @@ struct SellerVerificationScreen: View {
             idUploadSuccess()
         }
     }
-
+    func cardSuccess() {
+//        DispatchQueue.main.async{
+            SVProgressHUD.dismiss()
+            let response = viewModel.cardDict
+            if response.status == "success" {
+                cardArr = viewModel.cardDict.data?.paymentProfiles ?? [PaymentProfile]()
+                if cardArr.count != 0{
+                    getCard = false
+                }else{
+                    getCard = true
+                }
+            } else {
+                showError = true
+                alertType = .sheetType(
+                    icon: .alert,
+                    title: response.error_type?.capitalized ?? "",
+                    message: response.message?.capitalized ?? "",
+                    primaryBtnText: "",
+                    secondaryBtnText: AppString.ok.localized
+                )
+            }
+//        }
+    }
+    
     //MARK: idUploadSuccess.
     func idUploadSuccess() {
         let response  = viewModel.sellerVerificationDict

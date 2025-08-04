@@ -229,7 +229,7 @@ struct AddCardScreen: View {
             )
             showError = true
             
-//            handleSellerCardResponse(cardId: self.viewModel.addCardDict.data)
+            handleSellerCardResponse(cardId: self.viewModel.addCardDict.data?.first?.customerProfileId ?? "")
         } else {
             alertType = .sheetType(
                 icon: .alert,

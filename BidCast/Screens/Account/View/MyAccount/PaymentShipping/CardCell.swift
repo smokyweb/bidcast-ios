@@ -12,7 +12,9 @@ struct CardCell: View {
     var expires = ""
     var onTapDefault : () -> () = { }
     var onTapDelete : () -> () = { }
-    
+    var onTapCard : () -> () = { }
+    @State var forSelect : Bool = false
+    @State var isSelected: Bool = false
     @State var isDefault : Bool = false
     var body: some View {
         HStack {
@@ -41,33 +43,47 @@ struct CardCell: View {
                     .cornerRadius(8)
             }
             Spacer()
-
-            Menu {
-                Button(action: {
-                   
-                    onTapDefault()
-                }){
-                    Text("Set as default")
-                        .font(.custom(poppinsSemiBold, size: 11))
+            if !forSelect{
+                Menu {
+                    Button(action: {
+                        
+                        onTapDefault()
+                    }){
+                        Text("Set as default")
+                            .font(.custom(poppinsSemiBold, size: 11))
+                    }
+                    
+                    Button(role: .destructive, action: {
+                        
+                        onTapDelete()
+                    }){
+                        Text("Delete")
+                            .font(.custom(poppinsSemiBold, size: 11))
+                    }
+                    
+                } label: {
+                    Image(systemName: "ellipsis")
+                        .rotationEffect(.degrees(90))
+                        .foregroundColor(.gray)
+                        .padding(8)
                 }
-                
-                Button(role: .destructive, action: {
-                 
-                    onTapDelete()
-                }){
-                    Text("Delete")
-                        .font(.custom(poppinsSemiBold, size: 11))
+            }else{
+                if isSelected{
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundColor(.green)
+                        .font(.system(size: 22))
+                } else {
+                    Image(systemName: "circle")
+                        .foregroundColor(.gray)
+                        .font(.system(size: 22))
                 }
-                
-            } label: {
-                Image(systemName: "ellipsis")
-                    .rotationEffect(.degrees(90))
-                    .foregroundColor(.gray)
-                    .padding(8)
             }
         }
         .padding()
         .background(Color(.secondarySystemBackground))
         .cornerRadius(12)
+        .onTapGesture {
+            self.onTapCard()
+        }
     }
 }

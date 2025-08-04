@@ -19,7 +19,7 @@ final class SellerVerificationViewModel: ObservableObject {
     @Published var sellerVerificationDict: ResponseModel<SellerVerificationModel>?
     @Published var errorMessage: String?
     @Published var requestType: String = ""
-    
+    @Published var cardDict = ResponseModel<CardModel>()
 //MARK: storeIDCard.
     func storeIDCard(
         parameters: [String: Any],
@@ -44,12 +44,25 @@ final class SellerVerificationViewModel: ObservableObject {
             self.errorMessage = error.localizedDescription
         }
     }
-
+    // MARK: - Get Cards
+    func getCard() async {
+        do {
+            if let response: ResponseModel<CardModel> = try await APIManager.shared.request(
+                type: APIEndPoint.getCard,
+                header: true
+            ) {
+                self.cardDict = response
+            }
+        } catch {
+            handle(error: error)
+        }
+    }
         
     // MARK: - storePhoneNumber
     func storePhoneNumber(parameters: StorePhoneNumberRequest) async {
-        requestType = "storePhoneNumber"
+        
         do {
+            requestType = "storePhoneNumber"
             let response: ResponseModel<SellerPhoneNumberModel> = try await APIManager.shared.request(
                 type: APIEndPoint.storePhoneNumber(param: parameters),
                 header: true
