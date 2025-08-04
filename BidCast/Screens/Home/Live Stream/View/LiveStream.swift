@@ -102,26 +102,26 @@ struct LiveStream: View {
             if liveShowsData.count != 0{
                 ZStack(alignment: .top) {
                     if streamID.count != 0 {
-//                        ZegoPreviewView(streamID: streamID[currentStreamIndex])
-//                            .offset(y: verticalDragOffset.height)
-//                            .frame(width: geometry.size.width, height: geometry.size.height + 50)
-//                            .edgesIgnoringSafeArea(.all)
+                        //                        ZegoPreviewView(streamID: streamID[currentStreamIndex])
+                        //                            .offset(y: verticalDragOffset.height)
+                        //                            .frame(width: geometry.size.width, height: geometry.size.height + 50)
+                        //                            .edgesIgnoringSafeArea(.all)
                         
                         if currentStreamIndex > 0 {
-                                ZegoPreviewView(streamID: streamID[currentStreamIndex - 1])
-                                    .frame(width: geometry.size.width, height: geometry.size.height)
-                                    .offset(y: -geometry.size.height + verticalDragOffset.height)
-                            }
-                            
-                            ZegoPreviewView(streamID: streamID[currentStreamIndex])
+                            ZegoPreviewView(streamID: streamID[currentStreamIndex - 1])
                                 .frame(width: geometry.size.width, height: geometry.size.height)
-                                .offset(y: verticalDragOffset.height)
-                            
-                            if currentStreamIndex < streamID.count - 1 {
-                                ZegoPreviewView(streamID: streamID[currentStreamIndex + 1])
-                                    .frame(width: geometry.size.width, height: geometry.size.height)
-                                    .offset(y: geometry.size.height + verticalDragOffset.height)
-                            }
+                                .offset(y: -geometry.size.height + verticalDragOffset.height)
+                        }
+                        
+                        ZegoPreviewView(streamID: streamID[currentStreamIndex])
+                            .frame(width: geometry.size.width, height: geometry.size.height)
+                            .offset(y: verticalDragOffset.height)
+                        
+                        if currentStreamIndex < streamID.count - 1 {
+                            ZegoPreviewView(streamID: streamID[currentStreamIndex + 1])
+                                .frame(width: geometry.size.width, height: geometry.size.height)
+                                .offset(y: geometry.size.height + verticalDragOffset.height)
+                        }
                         
                     }
                     VStack {
@@ -137,14 +137,14 @@ struct LiveStream: View {
                                     Text(liveShowsData[currentStreamIndex].user?.name ?? "")
                                         .font(.custom(poppinsSemiBold, size: 13.0))
                                         .foregroundColor(.white)
-//                                       
-//                                    HStack(spacing: 6) {
-//                                        Image(systemName: "sparkles")
-//                                            .foregroundColor(.yellow)
-//                                        Text("99")
-//                                            .font(.custom(poppinsSemiBold, size: 13.0))
-//                                            .foregroundColor(.yellow)
-//                                    }
+                                    //
+                                    //                                    HStack(spacing: 6) {
+                                    //                                        Image(systemName: "sparkles")
+                                    //                                            .foregroundColor(.yellow)
+                                    //                                        Text("99")
+                                    //                                            .font(.custom(poppinsSemiBold, size: 13.0))
+                                    //                                            .foregroundColor(.yellow)
+                                    //                                    }
                                 }
                             }
                             Spacer()
@@ -239,7 +239,7 @@ struct LiveStream: View {
                             }
                             //                        Spacer()
                             //MARK: Add Comment section
-                          
+                            
                             HStack {
                                 ZStack(alignment: .trailing) {
                                     TextField("", text: $commentText, prompt: Text("Say something...")
@@ -281,11 +281,11 @@ struct LiveStream: View {
                                         .animation(.easeInOut(duration: 0.2), value: commentText)
                                     }
                                 }
-                               
+                                
                             }
                             .padding(.leading,16)
                             .padding(.trailing, BiddingDetail.product != nil ? 54 : 16)
-                
+                            
                             .animation(.easeOut(duration: 0.25), value: keyboardResponder.currentHeight)
                             
                             VStack(alignment: .leading,spacing: 12){
@@ -314,7 +314,7 @@ struct LiveStream: View {
                                                 .font(.custom(poppinsSemiBold, size: 12.0))
                                                 .foregroundColor(.white)
                                         }
-                                                                        Spacer()
+                                        Spacer()
                                         
                                     }
                                     .padding()
@@ -339,13 +339,13 @@ struct LiveStream: View {
                                             RoundedRectangle(cornerRadius: 12)
                                                 .fill(Color.defaultTheme)
                                                 .frame(height: 50)
-
+                                            
                                             // Centered text
                                             Text("Swipe to Bid")
                                                 .font(.custom(poppinsSemiBold, size: 14))
                                                 .foregroundColor(.white)
                                                 .frame(maxWidth: .infinity, alignment: .center)
-
+                                            
                                             // Draggable Arrow
                                             RoundedRectangle(cornerRadius: 8)
                                                 .fill(Color.darkGreen)
@@ -382,13 +382,13 @@ struct LiveStream: View {
                                         }
                                         .frame(height: 50)
                                         .frame(maxWidth: .infinity)
-
+                                        
                                         // Price and Timer
                                         VStack(spacing: 2) {
                                             Text("$\(String(format: "%.2f", Double(currentPrice)))")
                                                 .font(.custom(poppinsBold, size: 13))
                                                 .foregroundColor(.white)
-
+                                            
                                             Text(String(format: "00:00:%02d", countdown))
                                                 .font(.custom(poppinsSemiBold, size: 13))
                                                 .foregroundColor(.white)
@@ -397,7 +397,7 @@ struct LiveStream: View {
                                         .background(Color.black.opacity(0.3))
                                         .cornerRadius(10)
                                     }
-
+                                    
                                     .padding(.horizontal)
                                     .onAppear {
                                         if !isBiddingActive {
@@ -408,10 +408,10 @@ struct LiveStream: View {
                                                 startCountdown()
                                                 isBiddingActive = true
                                             }
-                                           
+                                            
                                         }
                                     }
-
+                                    
                                 }else {
                                     
                                     Text("Waiting for next product...")
@@ -420,39 +420,39 @@ struct LiveStream: View {
                                         .padding(.horizontal)
                                 }
                             }
-//                            .padding(.bottom,50)
+                            //                            .padding(.bottom,50)
                             .padding(.bottom, keyboardResponder.currentHeight == 0 ? (tabBarHeight + 20) : 10)
                         }
                     }
                     VStack(spacing: 20) {
-                            ForEach(MenuAction.allCases, id: \.self) { action in
-                                Button(action: {
-                                    if action == .cart {
-                                        currentBottomSheet = action
-                                        showSheet = true
-                                    }
-                                }) {
-                                    Image(systemName: action.iconName)
-                                        .resizable()
-                                        .scaledToFit()
-                                        .fontWeight(.heavy)
-                                        .font(.custom(poppinsExtraBold, size: 22.0))
-                                        .frame(width: 20, height: 20)
-                                        .foregroundColor(.black)
+                        ForEach(MenuAction.allCases, id: \.self) { action in
+                            Button(action: {
+                                if action == .cart {
+                                    currentBottomSheet = action
+                                    showSheet = true
                                 }
-                                .padding()
-                                .background(
-                                    Circle()
-                                        .fill(Color.white)
-                                )
+                            }) {
+                                Image(systemName: action.iconName)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .fontWeight(.heavy)
+                                    .font(.custom(poppinsExtraBold, size: 22.0))
+                                    .frame(width: 20, height: 20)
+                                    .foregroundColor(.black)
                             }
+                            .padding()
+                            .background(
+                                Circle()
+                                    .fill(Color.white)
+                            )
                         }
+                    }
                     .position(
                         x: geometry.size.width - 40,
                         y: geometry.size.height / 2
                     )
                 }
-//                .edgesIgnoringSafeArea(.all)
+                //                .edgesIgnoringSafeArea(.all)
                 .gesture(
                     DragGesture()
                         .updating($verticalGestureOffset) { value, state, _ in
@@ -469,56 +469,56 @@ struct LiveStream: View {
                         }
                         .onEnded { value in
                             let verticalAmount = value.translation.height
-                              let swipeThreshold: CGFloat = 100
-
-                              if verticalAmount < -swipeThreshold && currentStreamIndex < streamID.count - 1 {
-                                  // Swipe Up
-                                  withAnimation(.easeInOut) {
-                                      verticalDragOffset = CGSize(width: 0, height: -geometry.size.height)
-                                  }
-                                  DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                                      verticalDragOffset = .zero
-                                      ZegoExpressEngine.shared().stopPlayingStream(streamID[currentStreamIndex])
-                                      currentStreamIndex += 1
-                                      loginRoom(roomId: liveShowsData[currentStreamIndex].room_id ?? "")
-                                      fetchBiddingDetail(roomId: liveShowsData[currentStreamIndex].room_id ?? "")
-                                  }
-                              } else if verticalAmount > swipeThreshold && currentStreamIndex > 0 {
-                                  // Swipe Down
-                                  withAnimation(.easeInOut) {
-                                      verticalDragOffset = CGSize(width: 0, height: geometry.size.height)
-                                  }
-                                  DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                                      verticalDragOffset = .zero
-                                      ZegoExpressEngine.shared().stopPlayingStream(streamID[currentStreamIndex])
-                                      currentStreamIndex -= 1
-                                      loginRoom(roomId: liveShowsData[currentStreamIndex].room_id ?? "")
-                                      fetchBiddingDetail(roomId: liveShowsData[currentStreamIndex].room_id ?? "")
-                                  }
-                              } else {
-                                  withAnimation {
-                                      verticalDragOffset = .zero
-                                  }
-                              }
+                            let swipeThreshold: CGFloat = 100
+                            
+                            if verticalAmount < -swipeThreshold && currentStreamIndex < streamID.count - 1 {
+                                // Swipe Up
+                                withAnimation(.easeInOut) {
+                                    verticalDragOffset = CGSize(width: 0, height: -geometry.size.height)
+                                }
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                    verticalDragOffset = .zero
+                                    ZegoExpressEngine.shared().stopPlayingStream(streamID[currentStreamIndex])
+                                    currentStreamIndex += 1
+                                    loginRoom(roomId: liveShowsData[currentStreamIndex].room_id ?? "")
+                                    fetchBiddingDetail(roomId: liveShowsData[currentStreamIndex].room_id ?? "")
+                                }
+                            } else if verticalAmount > swipeThreshold && currentStreamIndex > 0 {
+                                // Swipe Down
+                                withAnimation(.easeInOut) {
+                                    verticalDragOffset = CGSize(width: 0, height: geometry.size.height)
+                                }
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                    verticalDragOffset = .zero
+                                    ZegoExpressEngine.shared().stopPlayingStream(streamID[currentStreamIndex])
+                                    currentStreamIndex -= 1
+                                    loginRoom(roomId: liveShowsData[currentStreamIndex].room_id ?? "")
+                                    fetchBiddingDetail(roomId: liveShowsData[currentStreamIndex].room_id ?? "")
+                                }
+                            } else {
+                                withAnimation {
+                                    verticalDragOffset = .zero
+                                }
+                            }
                         }
                 )
-                    .bottomSheet(isPresented: $showPaymentShipping, height: screenHeight / 2.8) {
-                        PaymentAndShippingInfoSheet(
-                            isPresented: $showPaymentShipping,
-                            onAddInfo: {
-                                if UserDefaults.sellerAddress != true {
-                                    navigateToShipping = true
-                                } else if UserDefaults.hasCardAdded != true {
-                                    navigateToAddCardScreen = true
-                                }
-                            }, buttonText: $titleText
-                        )
-                    }
+                .bottomSheet(isPresented: $showPaymentShipping, height: screenHeight / 2.8) {
+                    PaymentAndShippingInfoSheet(
+                        isPresented: $showPaymentShipping,
+                        onAddInfo: {
+                            if UserDefaults.sellerAddress != true {
+                                navigateToShipping = true
+                            } else if UserDefaults.hasCardAdded != true {
+                                navigateToAddCardScreen = true
+                            }
+                        }, buttonText: $titleText
+                    )
+                }
                 CusNavLink(doNavigate: $navigateToProfile, destination: ProfileScreen(id:$id, isComeFrom: .constant(""),userName: $userName,userImage: $userImage))
-
+                
                 CusNavLink(doNavigate: $navigateToBuyer, destination: TrustedBuyerScreen(comeFromHome:$comeFromHome))
             }
-
+            
         }.gesture(
             TapGesture().onEnded { _ in
                 hideKeyboard()
@@ -554,13 +554,13 @@ struct LiveStream: View {
         .bottomSheet(isPresented: $showVerificationSheet, height: screenHeight / 2.8, topBarCornerRadius: 25, showTopIndicator: false,onDismiss: {
             showVerificationSheet = false
             if !showVerificationSheet{
-                    if UserDefaults.sellerAddress == false{
-                        showPaymentShipping = true
-                        titleText = "Add Address"
-                    }else if UserDefaults.hasCardAdded == false{
-                        showPaymentShipping = true
-                        titleText = "Add Card"
-                    }
+                if UserDefaults.sellerAddress == false{
+                    showPaymentShipping = true
+                    titleText = "Add Address"
+                }else if UserDefaults.hasCardAdded == false{
+                    showPaymentShipping = true
+                    titleText = "Add Card"
+                }
             }
         }) {
             CommonBottomSheet(
@@ -631,7 +631,7 @@ struct LiveStream: View {
                     )
                 case .wallet:
                     EmptyView()
-                 
+                    
                 case .cart:
                     ShopBottomSheetView(
                         isPresented: $showSheet,
@@ -644,7 +644,7 @@ struct LiveStream: View {
             }
         )
         .edgesIgnoringSafeArea(.all)
-     
+        
         .toolbar(.hidden,for: .tabBar)
         .foregroundColor(.black)
         .background(.black)
@@ -658,7 +658,7 @@ struct LiveStream: View {
                 roomID.removeAll()
                 streamID.removeAll()
                 await self.viewModel.getLiveShows(param:GetLiveShowsRequest(type: "live"))
-                 success()
+                success()
                 await self.homeViewModel.getProfile()
                 await SVProgressHUD.dismiss()
                 getProfileSuccess()
@@ -666,9 +666,9 @@ struct LiveStream: View {
                 
             }
         }
-                .onDisappear{
-                    logoutRoom()
-                }
+        .onDisappear{
+            logoutRoom()
+        }
         
     }
     //MARK: walletInfosuccess.
@@ -680,7 +680,7 @@ struct LiveStream: View {
             UserDefaults.sellerVerafied = response?.seller_identity_status ?? ""
             UserDefaults.sellerAddress = response?.has_shipping_address ?? false
             UserDefaults.hasCardAdded = response?.has_card_added ?? false
-         
+            
         }else{
             showError = true
             alertType = .sheetType(
@@ -721,7 +721,7 @@ struct LiveStream: View {
                             }else{
                                 isFollow = true
                             }
-                           
+                            
                             if UserDefaults.buyerVerafied != "verified" {
                                 alertType = .sheetType(
                                     icon: .info,
@@ -848,10 +848,10 @@ struct LiveStream: View {
         
         if let currentRoomId = liveShowsData[safe: currentStreamIndex]?.room_id {
             let data = liveShowsData[safe: currentStreamIndex]
-//            FirebaseManager.shared.updateProductPrice(roomId: currentRoomId, newPrice: "\(newPrice)")
+            //            FirebaseManager.shared.updateProductPrice(roomId: currentRoomId, newPrice: "\(newPrice)")
             
             guard let selectedProduct = BiddingDetail.product?[currentProductIndex] else { return  }
-
+            
             FirebaseManager.shared.updateHighestBid(
                 roomId: currentRoomId,
                 bidAmount: "\(newPrice)",
@@ -860,13 +860,13 @@ struct LiveStream: View {
                 bidderProfileImage: UserDefaults.profileURL){ finalBidData in
                     if let data = finalBidData {
                         
-//                         let name = data["userName"] as? String
-                           
-//                        let image = data["userImage"] as? String
-                                   
+                        //                         let name = data["userName"] as? String
+                        
+                        //                        let image = data["userImage"] as? String
+                        
                         let user_Id = data["userId"] as? String
-                                   
-                      
+                        
+                        
                         Task{
                             let apram = StoreBidRequest(schedule_show_id: "\(BiddingDetail.id ?? 0)", user_id:user_Id ?? "", product_id: BiddingDetail.product?[currentProductIndex].id ?? "", bid_price: "\(newPrice)")
                             await self.viewModel.storeBid(parameters: apram)
@@ -876,10 +876,10 @@ struct LiveStream: View {
                 }
             
             
-
+            
         }
         
-      
+        
         currentPrice = newPrice
         
         countdown = 10
@@ -888,7 +888,7 @@ struct LiveStream: View {
     func soldSuccess(){
         let response = self.viewModel.BidResponse
         if response.status == "success"{
-        
+            
         }else{
             
         }
@@ -957,41 +957,41 @@ struct LiveStream: View {
         guard let currentRoomId = liveShowsData[safe: currentStreamIndex]?.room_id else { return }
         
         FirebaseManager.shared.observeProductChanges(roomId: currentRoomId) { updatedProducts in
-                DispatchQueue.main.async {
-                   
-                    if updatedProducts.isEmpty {
-                        //                        showNoProductsScreen = true
-                    } else {
-                        self.BiddingDetail.product = updatedProducts
-                        self.productData =  self.BiddingDetail.product ?? [ProductData]()
-                        currentProductIndex = 0
-                        let priceString = updatedProducts.first?.price
-                        if let priceDouble = Double(priceString ?? "") {
-                            currentPrice = Int(priceDouble)
-                        }
-                        countdown = 10
-                        startCountdown()
+            DispatchQueue.main.async {
+                
+                if updatedProducts.isEmpty {
+                    //                        showNoProductsScreen = true
+                } else {
+                    self.BiddingDetail.product = updatedProducts
+                    self.productData =  self.BiddingDetail.product ?? [ProductData]()
+                    currentProductIndex = 0
+                    let priceString = updatedProducts.first?.price
+                    if let priceDouble = Double(priceString ?? "") {
+                        currentPrice = Int(priceDouble)
                     }
-                    
-                    
+                    countdown = 10
+                    startCountdown()
                 }
+                
+                
             }
         }
+    }
     @ViewBuilder
-       func sheetView(for action: MenuAction) -> some View {
-           switch action {
-           case .gift:
-               Text("🎁 Gift Sheet")
-           case .paperclip:
-               Text("📎 Attachment Sheet")
-           case .share:
-               Text("🔗 Share Sheet")
-           case .wallet:
-               Text("💳 Wallet Sheet")
-           case .cart:
-               Text("🛒 Cart Sheet")
-           }
-       }
+    func sheetView(for action: MenuAction) -> some View {
+        switch action {
+        case .gift:
+            Text("🎁 Gift Sheet")
+        case .paperclip:
+            Text("📎 Attachment Sheet")
+        case .share:
+            Text("🔗 Share Sheet")
+        case .wallet:
+            Text("💳 Wallet Sheet")
+        case .cart:
+            Text("🛒 Cart Sheet")
+        }
+    }
     
     func followSuccess(){
         let response = viewModel.followDict
@@ -1024,11 +1024,11 @@ struct ZegoPreviewView: UIViewRepresentable {
     func makeUIView(context: Context) -> UIView {
         let view = UIView(frame: UIScreen.main.bounds)
         view.backgroundColor = .black
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            let canvas = ZegoCanvas(view: view)
-            canvas.viewMode = .aspectFill
-            ZegoExpressEngine.shared().startPlayingStream(streamID, canvas: canvas)
-//        }
+        //        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+        let canvas = ZegoCanvas(view: view)
+        canvas.viewMode = .aspectFill
+        ZegoExpressEngine.shared().startPlayingStream(streamID, canvas: canvas)
+        //        }
         
         return view
     }
@@ -1052,25 +1052,25 @@ struct ZegoPreviewView: UIViewRepresentable {
 
 
 enum MenuAction: CaseIterable {
-       case gift, paperclip, share, wallet, cart
-       
-       var iconName: String {
-           switch self {
-           case .gift: return "gift"
-           case .paperclip: return "paperclip"
-           case .share: return "arrowshape.turn.up.right"
-           case .wallet: return "wallet.pass"
-           case .cart: return "cart"
-           }
-       }
-       
-       var label: String {
-           switch self {
-           case .gift: return "Gift"
-           case .paperclip: return "Attachment"
-           case .share: return "Share"
-           case .wallet: return "Wallet"
-           case .cart: return "Cart"
-           }
-       }
-   }
+    case gift, paperclip, share, wallet, cart
+    
+    var iconName: String {
+        switch self {
+        case .gift: return "gift"
+        case .paperclip: return "paperclip"
+        case .share: return "arrowshape.turn.up.right"
+        case .wallet: return "wallet.pass"
+        case .cart: return "cart"
+        }
+    }
+    
+    var label: String {
+        switch self {
+        case .gift: return "Gift"
+        case .paperclip: return "Attachment"
+        case .share: return "Share"
+        case .wallet: return "Wallet"
+        case .cart: return "Cart"
+        }
+    }
+}
