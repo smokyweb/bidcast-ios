@@ -37,7 +37,7 @@ struct TabbarScreen: View {
         ZStack {
             TabView(selection: $selectedTab) {
                 
-                NavigationContainer(navigationPath: $homeNavigationPath) { HomeViewScreen(showCategory: .constant(""), comeFromExploreScreen: .constant(false)).hideTabBar() }
+                NavigationContainer(navigationPath: $homeNavigationPath) { HomeViewScreen(showCategory: .constant(""), comeFromExploreScreen: .constant(false),isNavFrom : "Login").hideTabBar() }
                     .id(homeViewID)
                     .tabItem { Label("Home", systemImage: "house") }
                     .tag(0)

@@ -135,7 +135,7 @@ struct LoginScreen: View {
                             }
                             SVProgressHUD.show()
                             await self.viewModel.logIn(parameters: self.request)
-                            await SVProgressHUD.dismiss()
+//                            await SVProgressHUD.dismiss()
                             await success()
                         }
                     }, btnTextColor: .white)
@@ -220,7 +220,7 @@ struct LoginScreen: View {
     
     func success() async {
         
-        await SVProgressHUD.dismiss()
+//        await SVProgressHUD.dismiss()
         let dict = viewModel.loginResponse
         if dict.status == "success" {
             UserDefaults.isFirstLogin = 1
@@ -230,7 +230,7 @@ struct LoginScreen: View {
 //            UserDefaults.userName = dict.data?.userNa ?? ""
             UserDefaults.fullName =  dict.data?.name ?? ""
             UserDefaults.profileURL = dict.data?.profile_image ?? ""
-            SVProgressHUD.show()
+//            SVProgressHUD.show()
             await self.saveDeviceDetail()
             await SVProgressHUD.dismiss()
             UserDefaultsManager.shared.setValue(dict.data?.token, forKey: .token)

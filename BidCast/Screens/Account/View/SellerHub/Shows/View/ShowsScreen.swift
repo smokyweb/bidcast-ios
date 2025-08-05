@@ -33,7 +33,7 @@ struct ShowsScreen: View {
     @EnvironmentObject var networkMonitor: NetworkMonitor
     
     @State var navigateToReherseal = false
-    
+    @State private var isActiveOnShowsScreen = false
     @State var viewModel = ShowsViewModel()
     @State var showsData = [HomeModel]()
     
@@ -144,8 +144,6 @@ struct ShowsScreen: View {
                     }
                     await viewModel.getLiveSHows(param: GetLiveShowsRequest(type: "upcoming"))
                 }
-                await SVProgressHUD.dismiss()
-                scheduleSuccess()
             }
         }
     }

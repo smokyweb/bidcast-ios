@@ -34,8 +34,9 @@ struct HomeViewScreen: View {
     @State var navigateToProfile = false
     @State private var showSearchView: Bool = false
     @State var category : String = ""
-    
+    @State private var isActiveOnHomeScreen = false
     @State var navigateToCategoryDetailScreen : Bool = false
+    @State var isNavFrom : String = ""
     
     var body: some View {
         VStack(spacing:0){
@@ -94,7 +95,9 @@ struct HomeViewScreen: View {
                                 selection = "upcoming"
                             }
                             self.selectedTab = selection
-                            await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: selection,category: showCategory))
+                            if isActiveOnHomeScreen{
+                                await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: selection,category: showCategory))
+                            }
                             await SVProgressHUD.dismiss()
                             self.success()
                         }
@@ -154,6 +157,7 @@ struct HomeViewScreen: View {
         }
         .background(.bg.opacity(0.1))
         .onAppear{
+            isActiveOnHomeScreen = true
             NotificationCenter.default.addObserver(forName: Notification.Name("Notification"), object: nil, queue: .main) { notification in
                 if let userInfo = notification.userInfo {
                     print("🔔 Babumoshai, Notification Payload: \(userInfo)")
@@ -175,8 +179,10 @@ struct HomeViewScreen: View {
                     showhud = true
                     return
                 }
-                SVProgressHUD.show()
-                await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: self.selectedTab,category: showCategory))
+                if isActiveOnHomeScreen{
+                    SVProgressHUD.show()
+                    await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: self.selectedTab,category: showCategory))
+                }
                 await SVProgressHUD.dismiss()
                 self.success()
                 await self.viewModel.getProfile()
@@ -197,27 +203,28 @@ struct HomeViewScreen: View {
             }
             
             FirebaseManager.shared.observeNewLiveSessionNodes {
-                   
-                Task{
-                   guard Reachability.isConnectedToNetwork() else {
-                        hudMsg = "No Internet Connection"
-                        showhud = true
-                        return
+                if isActiveOnHomeScreen {
+                    Task{
+                        guard Reachability.isConnectedToNetwork() else {
+                            hudMsg = "No Internet Connection"
+                            showhud = true
+                            return
+                        }
+                        
+                        liveShowsData.removeAll()
+                        SVProgressHUD.show()
+                        await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: "live",category: showCategory))
+                        await SVProgressHUD.dismiss()
+                        self.success()
                     }
-                    
-                    liveShowsData.removeAll()
-                    SVProgressHUD.show()
-                    await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: "live",category: showCategory))
-                    await SVProgressHUD.dismiss()
-                    self.success()
                 }
-               }
+            }
         }
         .onDisappear {
+            isActiveOnHomeScreen = false
             FirebaseManager.shared.removeNewSessionObserver()
         }
     }
-    
     
     
     func success() {
