@@ -14,7 +14,7 @@ struct CardCell: View {
     var onTapDelete : () -> () = { }
     var onTapCard : () -> () = { }
     @State var forSelect : Bool = false
-    @State var isSelected: Bool = false
+    var isSelected: Bool = false
     @State var isDefault : Bool = false
     var body: some View {
         HStack {

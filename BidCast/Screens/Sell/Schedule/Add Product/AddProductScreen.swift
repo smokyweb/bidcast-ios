@@ -10,6 +10,7 @@ import SVProgressHUD
 import AlertToast
 
 struct AddProductsScreen: View {
+    
     @EnvironmentObject  var appRootManager: AppRootManager
     @EnvironmentObject var networkMonitor: NetworkMonitor
     @State private var productCount = 1

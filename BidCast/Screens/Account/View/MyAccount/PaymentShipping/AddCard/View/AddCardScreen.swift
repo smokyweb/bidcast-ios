@@ -16,7 +16,7 @@ struct AddCardScreen: View {
     @State private var expiryDate = ""
     var isNavFrom: String = ""
     @State var viewModel = AddCardViewModel()
-    var onSuccess: ((String) -> Void)?
+    var onSuccess: ((String) async -> Void)?
     @Environment(\.presentationMode) var presentationMode
     @ObservedObject var stpCard = StripeCardViewModel()
     
@@ -25,7 +25,7 @@ struct AddCardScreen: View {
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
-   
+    
     
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
@@ -160,31 +160,31 @@ struct AddCardScreen: View {
                         showhud = true
                         return
                     }
-                   
+                    
                     
                     UIApplication.shared.endEditing()
-//                    isNavFrom = "SellerVerification"
+                    //                    isNavFrom = "SellerVerification"
                     
-                        Task{
-                            SVProgressHUD.show()
-                            self.viewModel.errorMessage = ""
-                            let param = AddCardRequest(card_number: cardNumber, expiration_date: expiryDate, cvv: cvv)
-                            await viewModel.addCard(parameters: param)
-                            await SVProgressHUD.dismiss()
-                            
-                            if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
-                                handleResponse()
-                            }else{
-                                alertType = .sheetType(
-                                    icon: .alert,
-                                    title: "Failed",
-                                    message: self.viewModel.errorMessage ?? "",
-                                    primaryBtnText: "",
-                                    secondaryBtnText: "OK"
-                                )
-                                showError = true
-                            }
+                    Task{
+                        SVProgressHUD.show()
+                        self.viewModel.errorMessage = ""
+                        let param = AddCardRequest(card_number: cardNumber, expiration_date: expiryDate, cvv: cvv)
+                        await viewModel.addCard(parameters: param)
+                        await SVProgressHUD.dismiss()
+                        
+                        if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
+                            handleResponse()
+                        }else{
+                            alertType = .sheetType(
+                                icon: .alert,
+                                title: "Failed",
+                                message: self.viewModel.errorMessage ?? "",
+                                primaryBtnText: "",
+                                secondaryBtnText: "OK"
+                            )
+                            showError = true
                         }
+                    }
                     
                 },
                 width: screenWidth - 40,
@@ -243,11 +243,8 @@ struct AddCardScreen: View {
     }
     
     func handleSellerCardResponse(cardId:String) {
-            DispatchQueue.main.async {
-                
-                onSuccess?(cardId)
-               
-            }
-
+        Task {
+            await onSuccess?(cardId)
+        }
     }
 }

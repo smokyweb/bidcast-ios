@@ -130,6 +130,13 @@ struct OTPVerificationScreen: View {
             showhud = true
             return
         }
+        
+        guard !phoneNumber.isEmpty else {
+            hudMsg = "Please Enter Phone Number"
+            showhud = true
+            return
+        }
+        
         SVProgressHUD.show()
         let req = StorePhoneNumberRequest(phone_number: phoneNumber)
         await viewModel.storePhoneNumber(parameters: req)
@@ -169,7 +176,7 @@ struct OTPVerificationScreen: View {
     private func verifyOTPSuccess() {
         let response = viewModel.storePhoneNumberDict
         if response.status == "success" {
-            hudMsg = "Verification successful"
+            hudMsg = "Verification successfull"
             showhud = true
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                 onSuccess()

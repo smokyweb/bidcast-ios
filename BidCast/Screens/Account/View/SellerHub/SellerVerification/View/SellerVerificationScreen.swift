@@ -63,7 +63,7 @@ struct SellerVerificationScreen: View {
     let totalSteps = 4.0
     @State var showError: Bool = false
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
-   
+    
     var body: some View {
         VStack(spacing: 0) {
             VStack{
@@ -81,131 +81,131 @@ struct SellerVerificationScreen: View {
                 ReviewScreen(imageName: "verify", title: "Pending Verification", content: "Your verification process is currently pending.")
             }else{
                 ScrollView {
-                VStack(spacing: 18) {
-                    // Progress Bar
-                    VStack(alignment: .leading) {
-                        Text("Verification Progress")
-                            .font(.custom(poppinsSemiBold, size: 13.0))
-                            .foregroundColor(.gray)
-                        
-                        ProgressView(value: Double(UserDefaults.sellerVerafied == "verified" ? Int(totalSteps) : currentStep), total: totalSteps)
-                            .accentColor(.defaultTheme)
-                        
-                        Text("\(UserDefaults.sellerVerafied == "verified" ? Int(totalSteps) : currentStep) of \(Int(totalSteps))")
-                            .font(.custom(poppinsSemiBold, size: 11.0))
-                            .frame(maxWidth: .infinity, alignment: .trailing)
-                            .foregroundColor(.black)
-                    }
-                    
-                    // ID Verification Card
-                    IDVerificationCard(
-                        idCardImageData: $idCardImageData,
-                        selfieImageData: $selfieImageData,
-                        showIDCardPicker: $showIDCardPicker,
-                        showSelfieCamera: $showSelfieCamera,
-                        idVerificationComplete: $idVerificationComplete,
-                        handleUpload: {
-                            idVerificationComplete = true
+                    VStack(spacing: 18) {
+                        // Progress Bar
+                        VStack(alignment: .leading) {
+                            Text("Verification Progress")
+                                .font(.custom(poppinsSemiBold, size: 13.0))
+                                .foregroundColor(.gray)
+                            
+                            ProgressView(value: Double(UserDefaults.sellerVerafied == "verified" ? Int(totalSteps) : currentStep), total: totalSteps)
+                                .accentColor(.defaultTheme)
+                            
+                            Text("\(UserDefaults.sellerVerafied == "verified" ? Int(totalSteps) : currentStep) of \(Int(totalSteps))")
+                                .font(.custom(poppinsSemiBold, size: 11.0))
+                                .frame(maxWidth: .infinity, alignment: .trailing)
+                                .foregroundColor(.black)
                         }
-                    )
-                    .disabled(UserDefaults.sellerVerafied == "verified" ? true : false)
-                    
-                    // Phone Verification
-                    VerificationSectionView(
-                        icon: "phone.fill",
-                        title: "Phone Verification",
-                        subtitle: "Verify your phone number",
-                        status: phoneVerificationComplete ? .completed : .pending,
-                        actionLabel: "Verify",
-                        isActionEnabled: idVerificationComplete && !phoneVerificationComplete,
-                        onActionTap: {
-                            navigateToOTP = true
-                        }
-                    )
-                    .disabled(UserDefaults.sellerVerafied == "verified" ? true : false)
-                    
-                    // Payment Method
-                    VerificationSectionView(
-                        icon: "creditcard.fill",
-                        title: "Payment Method",
-                        subtitle: "Add your payment details",
-                        status: paymentMethodComplete ? .completed : .pending,
-                        actionLabel: UserDefaults.hasCardAdded ?  "Get" : "Add",
-                        showDashedCard: getCard,
-                        isActionEnabled: phoneVerificationComplete && !paymentMethodComplete,
-                        onActionTap: {
-                            if UserDefaults.hasCardAdded{
-                                Task{
-                                    SVProgressHUD.show()
-                                    await self.viewModel.getCard()
-                                    await SVProgressHUD.dismiss()
-                                    cardSuccess()
-                                }
-                            }else{
-                                navigateToAddCard = true
+                        
+                        // ID Verification Card
+                        IDVerificationCard(
+                            idCardImageData: $idCardImageData,
+                            selfieImageData: $selfieImageData,
+                            showIDCardPicker: $showIDCardPicker,
+                            showSelfieCamera: $showSelfieCamera,
+                            idVerificationComplete: $idVerificationComplete,
+                            handleUpload: {
+                                idVerificationComplete = true
+                            }
+                        )
+                        .disabled(UserDefaults.sellerVerafied == "verified" ? true : false)
+                        
+                        // Phone Verification
+                        VerificationSectionView(
+                            icon: "phone.fill",
+                            title: "Phone Verification",
+                            subtitle: "Verify your phone number",
+                            status: phoneVerificationComplete ? .completed : .pending,
+                            actionLabel: "Verify",
+                            isActionEnabled: idVerificationComplete && !phoneVerificationComplete,
+                            onActionTap: {
+                                navigateToOTP = true
+                            }
+                        )
+                        .disabled(UserDefaults.sellerVerafied == "verified" ? true : false)
+                        
+                        // Payment Method
+                        VerificationSectionView(
+                            icon: "creditcard.fill",
+                            title: "Payment Method",
+                            subtitle: "Add your payment details",
+                            status: paymentMethodComplete ? .completed : .pending,
+                            actionLabel: UserDefaults.hasCardAdded ?  "Add" : "Add",
+                            showDashedCard: getCard,
+                            isActionEnabled: phoneVerificationComplete && !paymentMethodComplete,
+                            onActionTap: {
+//                                if UserDefaults.hasCardAdded{
+//                                    Task{
+//                                        SVProgressHUD.show()
+//                                        await self.viewModel.getCard()
+//                                        await SVProgressHUD.dismiss()
+//                                        cardSuccess()
+//                                        paymentMethodComplete = true
+//                                        updateManualVerificationIfNeeded()
+//                                    }
+//                                }else{
+                                    navigateToAddCard = true
+//                                }
+                            }
+                        )
+                        .disabled(UserDefaults.sellerVerafied == "verified" ? true : false)
+                        
+                        // Show Card or Empty View
+                        if cardArr.count != 0 {
+                            ForEach(0 ..< cardArr.count, id: \.self) { index in
+                                let data = cardArr[index]
+                                let card = data.payment?.creditCard
+                                CardCell(
+                                    image: "creditcard.fill",
+                                    cardNo: card?.cardNumber ?? "",
+                                    expires: "\(card?.expirationDate ?? "")/\(card?.expirationDate ?? "")",
+                                    onTapCard : {
+                                        selectedCardIndex = index
+                                        self.cardId = self.cardArr[index].customerPaymentProfileId ?? ""
+                                    },
+                                    forSelect : true,
+                                    isSelected:selectedCardIndex == index,
+                                    isDefault: false
+                                )
                             }
                             
                         }
-                    )
-                    .disabled(UserDefaults.sellerVerafied == "verified" ? true : false)
-                    
-                    // Show Card or Empty View
-                    if cardArr.count != 0 {
-                        ForEach(0 ..< cardArr.count, id: \.self) { index in
-                            let data = cardArr[index]
-                            let card = data.payment?.creditCard
-                            CardCell(
-                                image: "creditcard.fill",
-                                cardNo: card?.cardNumber ?? "",
-                                expires: "\(card?.expirationDate ?? "")/\(card?.expirationDate ?? "")",
-                                onTapCard : {
-                                    selectedCardIndex = index
-                                    self.cardId = self.cardArr[index].customerPaymentProfileId ?? ""
-                                },
-                                forSelect : true,
-                                isSelected:selectedCardIndex == index,
-                                isDefault: false
-                               
-                            )
-                        }
-                    
+                        
+                        // Manual Verification
+                        VerificationSectionView(
+                            icon: "person.crop.circle.badge.checkmark",
+                            title: "Manual Verification",
+                            subtitle: "Final review by our team",
+                            statusText: manualVerificationComplete ? "Pending" : "Verified",
+                            textColor: UserDefaults.sellerVerafied == "verified" ? Color.defaultTheme : Color.gray
+                        )
                     }
-                    
-                    // Manual Verification
-                    VerificationSectionView(
-                        icon: "person.crop.circle.badge.checkmark",
-                        title: "Manual Verification",
-                        subtitle: "Final review by our team",
-                        statusText: manualVerificationComplete ? "Pending" : "Verified",
-                        textColor: UserDefaults.sellerVerafied == "verified" ? Color.defaultTheme : Color.gray
-                    )
-                }
-                .padding()
-            }
-            
-            // Final Button
-            Button(action: {
-                Task{
-                    await handleFinalUpload()
+                    .padding()
                 }
                 
-            }) {
-                Text("Complete Verification")
-                    .font(.custom(poppinsSemiBold, size: 16.0))
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(manualVerificationComplete ? Color.defaultTheme : Color.gray)
-                    .cornerRadius(16)
+                // Final Button
+                Button(action: {
+                    Task{
+                        await handleFinalUpload()
+                    }
+                    
+                }) {
+                    Text("Complete Verification")
+                        .font(.custom(poppinsSemiBold, size: 16.0))
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(manualVerificationComplete ? Color.defaultTheme : Color.gray)
+                        .cornerRadius(16)
+                }
+                .padding()
+                .disabled(UserDefaults.sellerVerafied == "verified" ? true : false)
             }
-            .padding()
-            .disabled(UserDefaults.sellerVerafied == "verified" ? true : false)
-        }
         }
         .onAppear{
             if UserDefaults.sellerVerafied == "verified"{
                 idVerificationComplete = true
-              phoneVerificationComplete = true
+                phoneVerificationComplete = true
                 paymentMethodComplete = true
             }
         }
@@ -249,10 +249,17 @@ struct SellerVerificationScreen: View {
         }
         .background(Color.white)
         .navigationBarHidden(true)
-        
         CusNavLink(doNavigate: $navigateToOTP,
                    destination: OTPVerificationScreen(viewModel: viewModel, onSuccess: {
             phoneVerificationComplete = true
+            if UserDefaults.hasCardAdded{
+                Task{
+                    SVProgressHUD.show()
+                    await viewModel.getCard()
+                    await SVProgressHUD.dismiss()
+                    cardSuccess()
+                }
+            }
             navigateToOTP = false
         }))
         
@@ -261,12 +268,16 @@ struct SellerVerificationScreen: View {
             destination: AddCardScreen(
                 isNavFrom: "SellerVerification",
                 onSuccess: { cardId in
-//                    cardTokenNumber = cardToken
-//                    self.cardDetails = CardDetails()
-                    self.cardId = cardId
-//                    self.cardNumber = cardNumber
-//                    self.expiry = expiry
-//                    self.cvv = cvv
+                    SVProgressHUD.show()
+                    await viewModel.getCard()
+                    await SVProgressHUD.dismiss()
+                    cardSuccess()
+                    //                    cardTokenNumber = cardToken
+                    //                    self.cardDetails = CardDetails()
+                    //                    self.cardId = cardId
+                    //                    self.cardNumber = cardNumber
+                    //                    self.expiry = expiry
+                    //                    self.cvv = cvv
                     paymentMethodComplete = true
                     updateManualVerificationIfNeeded()
                 }
@@ -281,16 +292,38 @@ struct SellerVerificationScreen: View {
               let selfieData = selfieImageData,
               let idURL = compressAndSaveImage(data: idData),
               let selfieURL = compressAndSaveImage(data: selfieData)
-//              let cardToken = cardTokenNumber
+                //              let cardToken = cardTokenNumber
         else {
-//
+            //
             DispatchQueue.main.async {
-                hudMsg = "Missing required data"
+                if idCardImageData == nil{
+                    hudMsg = "Please Upload ID Card"
+                }else if selfieImageData == nil{
+                    hudMsg = "Please Upload Selfie"
+                }
                 showhud = true
             }
             return
         }
-       guard Reachability.isConnectedToNetwork() else {
+        
+        guard phoneVerificationComplete == true else {
+            hudMsg = "Please Verify Phone Number"
+            showhud = true
+            return
+        }
+        
+        
+        guard !cardId.isEmpty else {
+            if UserDefaults.hasCardAdded{
+                hudMsg = "Please Choose Payment Method"
+            }else{
+                hudMsg = "Please Add Payment Method"
+            }
+            showhud = true
+            return
+        }
+        
+        guard Reachability.isConnectedToNetwork() else {
             hudMsg = "No Internet Connection"
             showhud = true
             return
@@ -303,7 +336,7 @@ struct SellerVerificationScreen: View {
         
         let params: [String: Any] = [
             "customerPaymentProfileId": cardId ,
-            "phone_verification": phoneVerificationComplete == true ? 0 : 1
+            "phone_verification": phoneVerificationComplete == true ? 1 : 0
         ]
         print("Seller Verification Param : \(params)")
         
@@ -323,27 +356,27 @@ struct SellerVerificationScreen: View {
         }
     }
     func cardSuccess() {
-//        DispatchQueue.main.async{
-            SVProgressHUD.dismiss()
-            let response = viewModel.cardDict
-            if response.status == "success" {
-                cardArr = viewModel.cardDict.data?.paymentProfiles ?? [PaymentProfile]()
-                if cardArr.count != 0{
-                    getCard = false
-                }else{
-                    getCard = true
-                }
-            } else {
-                showError = true
-                alertType = .sheetType(
-                    icon: .alert,
-                    title: response.error_type?.capitalized ?? "",
-                    message: response.message?.capitalized ?? "",
-                    primaryBtnText: "",
-                    secondaryBtnText: AppString.ok.localized
-                )
+        //        DispatchQueue.main.async{
+        SVProgressHUD.dismiss()
+        let response = viewModel.cardDict
+        if response.status == "success" {
+            cardArr = viewModel.cardDict.data?.paymentProfiles ?? [PaymentProfile]()
+            if cardArr.count != 0{
+                getCard = false
+            }else{
+                getCard = true
             }
-//        }
+        } else {
+            showError = true
+            alertType = .sheetType(
+                icon: .alert,
+                title: response.error_type?.capitalized ?? "",
+                message: response.message?.capitalized ?? "",
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
+            )
+        }
+        //        }
     }
     
     //MARK: idUploadSuccess.
@@ -352,9 +385,10 @@ struct SellerVerificationScreen: View {
         if viewModel.sellerVerificationDict?.status == "success" {
             hudMsg = "Seller Verification Successfully"
             UserDefaults.sellerVerafied = "pending"
-            navigateToProfile = true
+//            navigateToProfile = true
             SVProgressHUD.dismiss()
-           
+            self.presentationMode.wrappedValue.dismiss()
+            
         } else {
             SVProgressHUD.dismiss()
             hudMsg = "Seller Verification Failed"
@@ -502,29 +536,29 @@ struct ReviewScreen: View {
     var imageName: String = "verify"
     var title: String = "No Data Found"
     var content : String = "Under Processed"
-var yPosition = screenHeight/3
+    var yPosition = screenHeight/3
     var body: some View {
         GeometryReader { geometry in
-                  VStack(spacing: 48) {
-                      Image(imageName)
-                          .resizable()
-                          .scaledToFit()
-                          .frame(width: 200, height: 200)
-                          .foregroundColor(.gray.opacity(0.6))
-                      VStack(alignment: .leading,spacing: 12){
-                          Text(title)
-                              .font(.custom(poppinsBold, size: 16))
-                              .foregroundColor(.black)
-                              .multilineTextAlignment(.center)
-                          
-                          Text(content)
-                              .font(.custom(poppinsRegular, size: 13))
-                              .foregroundColor(.gray)
-                              .multilineTextAlignment(.center)
-                      }
-                  }
-                  .frame(width: geometry.size.width, height: geometry.size.height)
-                  .position(x: geometry.size.width / 2, y:yPosition )
-              }
+            VStack(spacing: 48) {
+                Image(imageName)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 200, height: 200)
+                    .foregroundColor(.gray.opacity(0.6))
+                VStack(alignment: .leading,spacing: 12){
+                    Text(title)
+                        .font(.custom(poppinsBold, size: 16))
+                        .foregroundColor(.black)
+                        .multilineTextAlignment(.center)
+                    
+                    Text(content)
+                        .font(.custom(poppinsRegular, size: 13))
+                        .foregroundColor(.gray)
+                        .multilineTextAlignment(.center)
+                }
+            }
+            .frame(width: geometry.size.width, height: geometry.size.height)
+            .position(x: geometry.size.width / 2, y:yPosition )
+        }
     }
 }
