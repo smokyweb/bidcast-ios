@@ -10,9 +10,9 @@ import SwiftUI
 // MARK: - AnalyticsScreen
 struct AnalyticsScreen: View {
     let stats: [StatItem] = [
-        StatItem(value: "284", label: "Shows"),
-        StatItem(value: "12.4k", label: "Views"),
-        StatItem(value: "892", label: "Followers")
+        StatItem(value: "284", label: AppString.Shows),
+        StatItem(value: "12.4k", label: AppString.Views),
+        StatItem(value: "892", label: AppString.Followers)
     ]
     
     @State private var navigateToLesson = false
@@ -20,10 +20,10 @@ struct AnalyticsScreen: View {
     @Environment(\.presentationMode) var presentationMode
 
     let tools: [ToolItem] = [
-        ToolItem(iconName: "square.and.arrow.up", title: "Share", subtitle: "Share your show on social media", iconColor: .defaultTheme),
-        ToolItem(iconName: "rectangle.stack.badge.plus", title: "Ads", subtitle: "Create ads for your shows", iconColor: .defaultTheme),
-        ToolItem(iconName: "person.2.fill", title: "Audience", subtitle: "Grow your audience", iconColor: .defaultTheme),
-        ToolItem(iconName: "chart.bar.fill", title: "Analytics", subtitle: "Track performance", iconColor: .defaultTheme)
+        ToolItem(iconName: "square.and.arrow.up", title: AppString.Shows, subtitle: AppString.ShareYourShowOnSocialMedia, iconColor: .defaultTheme),
+        ToolItem(iconName: "rectangle.stack.badge.plus", title: AppString.Ads, subtitle: AppString.CreateAdsForYourShows, iconColor: .defaultTheme),
+        ToolItem(iconName: "person.2.fill", title: AppString.Audience, subtitle: AppString.GrowYourAudience, iconColor: .defaultTheme),
+        ToolItem(iconName: "chart.bar.fill", title: AppString.Analytics, subtitle: AppString.TrackPerformance, iconColor: .defaultTheme)
     ]
 
     var body: some View {
@@ -31,7 +31,7 @@ struct AnalyticsScreen: View {
             // Fixed PrimaryHeader at the top
             VStack{
                 PrimaryHeader(
-                    title: "Analytics",
+                    title: AppString.Analytics,
                     isForBoth: true,
                     leadingImgArr: [.icBack,.appName],
                     trailingImgArr: [.icSetting],
@@ -59,13 +59,13 @@ struct AnalyticsScreen: View {
                             
                             VStack(spacing: 16) {
                                 ToolGridAnalyticsView(
-                                    title: "Sales Performance",
+                                    title: AppString.SalePerformance,
                                     chartData: [0.3, 0.7, 0.5, 0.9, 0.4],
                                     chartType: .bar
                                 )
 
                                 ToolGridAnalyticsView(
-                                    title: "Visitor Analytics",
+                                    title: AppString.VisitorAnalytics,
                                     chartData: [0.2, 0.4, 0.6, 0.3, 0.8],
                                     chartType: .line
                                 )
@@ -99,6 +99,6 @@ enum AnalyticsSegment : String, CaseIterable, CustomStringConvertible{
     case trust = "Trust"
     
     var description: String {
-        return NSLocalizedString(rawValue, comment: "")
+        return NSLocalizedString(rawValue, comment: "").localized
     }
 }

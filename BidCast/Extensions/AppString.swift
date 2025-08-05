@@ -148,11 +148,43 @@ struct AppString{
     static let PremierShop = "Premier Shop".localized
     static let BecomeAPremierShop = "Become a Premier Shop".localized
     static let JoinTheEliteEellers = "Join the elite sellers and unlock exclusive benefits".localized
-    
-    
-    
-    
-    
-    
-    
+    static let YourShop = "Your Shop".localized
+    static let RegularMember = "Regular Member".localized
+    static let Rating = "Rating".localized
+    static let Response = "Response".localized
+    static let Delivery = "Delivery".localized
+    static let PremierBenefits = "Premier Benefits".localized
+    static let Requirements = "Requirements".localized
+    static let ReviewProcess = "Review Process".localized
+    static let MonthlyEvaluation = "Monthly Evaluation".localized
+    static let PerformanceReviewed = "Performance reviewed every 30 days".localized
+    static let CurrentProgress = "Current Progress".localized
+    static let ApplyForPremierStatus = "Apply for Premier Status".localized
+    static let ReducedCommission = "Reduced Commission".localized
+    static let PayOnlyCommission = "Pay only 5% commission on sales".localized
+    static let UniqueProfileID = "Unique Profile ID".localized
+    static let CustomURLForYourShop = "Custom URL for your shop".localized
+    static let MarketingBoost = "Marketing Boost".localized
+    static let PriorityInSearchResults = "Priority in search results".localized
+    static let PrioritySupport = "Priority Support".localized
+    static let DedicatedAssistance = "24/7 dedicated assistance".localized
+    static let MinimumRating = "Minimum 4.5 Rating".localized
+    static let MaintainHighCustomerSatisfaction = "Maintain high customer satisfaction".localized
+    static let ResponseRate = "90% Response Rate".localized
+    static let QuickRepliesToCustomerInquiries = "Quick replies to customer inquiries".localized
+    static let OnTimeDelivery = "95% On-time Delivery".localized
+    static let ConsistentShippingPerformance = "Consistent shipping performance".localized
+    static let MonthsActive = "3 Months Active".localized
+    static let RegularSellingHistory = "Regular selling history".localized
+    static let SellerStatus = "Seller Status".localized
+    static let ContactSupport = "Contact Support".localized
+    static let Shows = "Shows".localized
+    static let Views = "Views".localized
+    static let Followers = "Followers".localized
+    static let Share = "Share".localized
+    static let SalePerformance = "Sales Performance".localized
+    static let VisitorAnalytics = "Visitor Analytics".localized
+    static let SellerVerification = "Seller Verification".localized
+    static let PendingVerification = "Pending Verification".localized
+    static let YourVerificationProcess = "Your verification process is currently pending.".localized
 }

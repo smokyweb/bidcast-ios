@@ -68,7 +68,7 @@ struct SellerVerificationScreen: View {
         VStack(spacing: 0) {
             VStack{
                 PrimaryHeader(
-                    title: "Seller Verification",
+                    title: AppString.SellerVerification,
                     isForLogo: false,
                     leadingImgArr: [.icBack],
                     trailingImgArr: [],
@@ -78,7 +78,7 @@ struct SellerVerificationScreen: View {
             }
             
             if UserDefaults.sellerVerafied == "pending"{
-                ReviewScreen(imageName: "verify", title: "Pending Verification", content: "Your verification process is currently pending.")
+                ReviewScreen(imageName: "verify", title: AppString.PendingVerification, content: "")
             }else{
                 ScrollView {
                     VStack(spacing: 18) {

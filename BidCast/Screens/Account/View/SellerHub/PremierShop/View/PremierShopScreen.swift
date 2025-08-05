@@ -54,23 +54,23 @@ struct PremierShopScreen: View {
     // Dynamic content
     @Environment(\.presentationMode) var presentationMode
     let stats: [StatMetric] = [
-        StatMetric(label: "Rating", value: "4.2"),
-        StatMetric(label: "Response", value: "89%"),
-        StatMetric(label: "Delivery", value: "95%")
+        StatMetric(label: AppString.Rating, value: "4.2"),
+        StatMetric(label: AppString.Response, value: "89%"),
+        StatMetric(label: AppString.Delivery, value: "95%")
     ]
     
     let benefits: [Benefit] = [
-        Benefit(icon: "percent", title: "Reduced Commission", description: "Pay only 5% commission on sales"),
-        Benefit(icon: "person.crop.circle.badge.checkmark", title: "Unique Profile ID", description: "Custom URL for your shop"),
-        Benefit(icon: "megaphone.fill", title: "Marketing Boost", description: "Priority in search results"),
-        Benefit(icon: "headphones", title: "Priority Support", description: "24/7 dedicated assistance")
+        Benefit(icon: "percent", title: AppString.ReducedCommission, description: AppString.PayOnlyCommission),
+        Benefit(icon: "person.crop.circle.badge.checkmark", title: AppString.UniqueProfileID, description: AppString.CustomURLForYourShop),
+        Benefit(icon: "megaphone.fill", title: AppString.MarketingBoost, description: AppString.PriorityInSearchResults),
+        Benefit(icon: "headphones", title: AppString.PrioritySupport, description: AppString.DedicatedAssistance)
     ]
     
     let requirements: [Requirement] = [
-        Requirement(title: "Minimum 4.5 Rating", description: "Maintain high customer satisfaction", isMet: true),
-        Requirement(title: "90% Response Rate", description: "Quick replies to customer inquiries", isMet: true),
-        Requirement(title: "95% On-time Delivery", description: "Consistent shipping performance", isMet: true),
-        Requirement(title: "3 Months Active", description: "Regular selling history", isMet: true)
+        Requirement(title: AppString.MinimumRating, description: AppString.MaintainHighCustomerSatisfaction, isMet: true),
+        Requirement(title: AppString.ResponseRate, description: AppString.QuickRepliesToCustomerInquiries, isMet: true),
+        Requirement(title: AppString.OnTimeDelivery, description: AppString.ConsistentShippingPerformance, isMet: true),
+        Requirement(title: AppString.MonthsActive, description: AppString.RegularSellingHistory, isMet: true)
     ]
     
     // Progress simulation
@@ -121,9 +121,9 @@ struct PremierShopScreen: View {
                                     .font(.largeTitle)
                                     .foregroundColor(.defaultTheme)
                                 VStack(alignment: .leading) {
-                                    Text("Your Shop")
+                                    Text(AppString.YourShop)
                                         .font(.custom(poppinsSemiBold, size: 13.0))
-                                    Text("Regular Member")
+                                    Text(AppString.RegularMember)
                                         .font(.custom(poppinsRegular, size: 12.0))
                                         .foregroundColor(.gray)
                                 }
@@ -148,7 +148,7 @@ struct PremierShopScreen: View {
                     
                     // Benefits Grid
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("Premier Benefits")
+                        Text(AppString.PremierBenefits)
                             .font(.custom(poppinsSemiBold, size: 13.0))
                         LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                             ForEach(benefits) { benefit in
@@ -161,7 +161,7 @@ struct PremierShopScreen: View {
                     
                     // Requirements Section
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("Requirements")
+                        Text(AppString.Requirements)
                             .font(.custom(poppinsSemiBold, size: 13.0))
                         ForEach(requirements) { req in
                             RequirementView(requirement: req)
@@ -171,7 +171,7 @@ struct PremierShopScreen: View {
                     
                     // Review Process
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("Review Process")
+                        Text(AppString.ReviewProcess)
                             .font(.custom(poppinsSemiBold, size: 13.0))
                         
                         VStack(alignment: .leading, spacing: 8) {
@@ -179,17 +179,17 @@ struct PremierShopScreen: View {
                                 Image(systemName: "calendar.badge.clock")
                                     .foregroundColor(.defaultTheme)
                                 VStack(alignment: .leading) {
-                                    Text("Monthly Evaluation")
+                                    Text(AppString.MonthlyEvaluation)
                                         .font(.custom(poppinsSemiBold, size: 13.0))
                                         .fontWeight(.semibold)
-                                    Text("Performance reviewed every 30 days")
+                                    Text(AppString.PerformanceReviewed)
                                         .font(.custom(poppinsRegular, size: 11.0))
                                         .foregroundColor(.gray)
                                 }
                             }
                             
                             HStack {
-                                Text("Current Progress")
+                                Text(AppString.CurrentProgress)
                                     .font(.custom(poppinsRegular, size: 13.0))
                                 Spacer()
                                 Text("\(Int(progress * 100))%")
@@ -211,7 +211,7 @@ struct PremierShopScreen: View {
                     Button(action: {
                         // Action: Apply for Premier Status
                     }) {
-                        Text("Apply for Premier Status")
+                        Text(AppString.ApplyForPremierStatus)
                             .foregroundColor(.white)
                             .font(.custom(poppinsSemiBold, size: 13.0))
                             .frame(maxWidth: .infinity)

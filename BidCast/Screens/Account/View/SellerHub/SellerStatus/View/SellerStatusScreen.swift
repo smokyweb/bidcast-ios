@@ -33,7 +33,7 @@ struct SellerStatusScreen: View {
             VStack {
                 // MARK: - Fixed Header
                 PrimaryHeader(
-                    title: "Seller Status",
+                    title: AppString.SellerStatus,
                     isForBoth: true,
                     leadingImgArr: [.icBack,.appName],
                     trailingImgArr: [.icSetting],
@@ -70,7 +70,7 @@ struct SellerStatusScreen: View {
         VStack(spacing: 0) {
             Divider()
             PrimaryButton(
-                title: "Contact Support",
+                title: AppString.ContactSupport,
                 isOutLine: false,
                 onButtonClick: {
                    navigateToContact = true
