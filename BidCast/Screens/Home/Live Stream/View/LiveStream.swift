@@ -551,6 +551,7 @@ struct LiveStream: View {
                 }
             )
         }
+        
         .bottomSheet(isPresented: $showVerificationSheet, height: screenHeight / 2.8, topBarCornerRadius: 25, showTopIndicator: false,onDismiss: {
             showVerificationSheet = false
             if !showVerificationSheet{

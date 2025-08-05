@@ -32,6 +32,9 @@ struct TabbarScreen: View {
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @State var showSellerSheet = false
     @State var navigateToSeller = false
+    @State var showPaymentShipping = false
+    @State var navigateToShipping = false
+    @State var titleText = ""
 
     var body: some View {
         ZStack {
@@ -86,6 +89,7 @@ struct TabbarScreen: View {
             CusNavLink(doNavigate: $navigateTolist, destination: ListProductScreen( productData: .constant(InventoryDataModel())))
             CusNavLink(doNavigate: $navigateToAccountScreen, destination: AccountScreen(isNavFrom: true,comeFromSeller: true))
             CusNavLink(doNavigate: $navigateToSeller, destination: SellerVerificationScreen())
+            CusNavLink(doNavigate: $navigateToShipping, destination: CreateAddress())
         }
         .bottomSheet(
             isPresented: $showSellSheet,
@@ -119,6 +123,7 @@ struct TabbarScreen: View {
                             }
                         }else{
                             if UserDefaults.sellerVerafied == "verified"{
+                                
                                 navigateTogetStarted = true
                             }else{
                                 alertType = .sheetType(
@@ -127,7 +132,7 @@ struct TabbarScreen: View {
                                     message: "Before you interact with live shows.you need to become a verified seller.",
                                     primaryBtnText: "OK",
                                     secondaryBtnText: "",
-                                    buttonWidth:screenWidth - 24,
+                                    buttonWidth:screenWidth - 32,
                                     contentSize: 12.0
                                 )
                                 withAnimation(.snappy){
@@ -137,7 +142,13 @@ struct TabbarScreen: View {
                         }
                     } else if tappedTab == .listProduct {
                         if UserDefaults.sellerVerafied == "verified"{
-                            navigateTolist = true
+                            
+                            if UserDefaults.sellerAddress{
+                                navigateTolist = true
+                            }else{
+                                titleText = "Add Address"
+                                showPaymentShipping = true
+                            }
                         }else{
                             alertType = .sheetType(
                                 icon: .info,
@@ -162,6 +173,16 @@ struct TabbarScreen: View {
                 .presentationDetents([.fraction(0.35)])
             }
         )
+        .bottomSheet(isPresented: $showPaymentShipping, height: screenHeight / 2.8) {
+            PaymentAndShippingInfoSheet(
+                isPresented: $showPaymentShipping,
+                onAddInfo: {
+                    if UserDefaults.sellerAddress != true {
+                        navigateToShipping = true
+                    } 
+                }, buttonText: $titleText
+            )
+        }
         .bottomSheet(isPresented: $showSellerSheet, height: screenHeight / 2.5, topBarCornerRadius: 25, showTopIndicator: false,onDismiss: {
             showSellerSheet = false
         }) {
@@ -173,6 +194,7 @@ struct TabbarScreen: View {
                         showSellerSheet = false
                         
                     }
+                    
                 },
                 onSecondaryClick: {
                     withAnimation {
