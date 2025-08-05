@@ -39,6 +39,7 @@ final class BuyNowViewModel: ObservableObject {
             self.handle(error: error)
         }
     }
+    
 
     // MARK: - Error Handling
     private func handle(error: Error) {

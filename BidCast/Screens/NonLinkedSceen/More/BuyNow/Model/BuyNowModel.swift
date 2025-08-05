@@ -36,6 +36,11 @@ struct BuyNowModel: Codable {
     }
 }
 
+//MARK: DeleteProductModel
+struct DeleteProductModel: Codable{
+    
+}
+
 // MARK: - UserDetails
 struct UserDetails: Codable {
     var id, roleID: Int?

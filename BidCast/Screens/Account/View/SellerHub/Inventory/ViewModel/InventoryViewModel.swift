@@ -11,6 +11,7 @@ import Foundation
 final class InventoryViewModel: ObservableObject {
     
     @Published var inventoryDict: ResponseModalPaginate<[InventoryDataModel]>?
+    @Published var deleteProductResponse = ResponseModel<DeleteProductModel>()
     @Published var errorMessage: String? = nil
     var request: String = ""
     
@@ -25,6 +26,19 @@ final class InventoryViewModel: ObservableObject {
             self.inventoryDict = response
         } catch {
             handle(error: error)
+        }
+    }
+    
+    // MARK: - DeleteProductRequest.
+    func DeleteProductRequest(parameters: DeleteProduct) async {
+        do {
+            let response: ResponseModel<DeleteProductModel> = try await APIManager.shared.request(
+                type: APIEndPoint.deleteProduct(param: parameters),
+                header: true
+            )
+            self.deleteProductResponse = response
+        } catch {
+            self.handle(error: error)
         }
     }
     

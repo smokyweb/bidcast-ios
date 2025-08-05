@@ -44,7 +44,7 @@ struct ProductDetailSheet: View {
     @State  var taxAmount : Int = 0
     
     var onTapEdit : () -> () = { }
-    var onTapDelete : () -> () = { }
+    var onTapDelete: () async -> () = { }
 
     @State var showoption : Bool = true
     var body: some View {
@@ -70,8 +70,10 @@ struct ProductDetailSheet: View {
                         }
                         
                         Button(role: .destructive, action: {
-                            
-                            onTapDelete()
+                            Task{
+                                await onTapDelete()
+                            }
+                          
                         }){
                             Text("Delete Product")
                                 .font(.custom(poppinsSemiBold, size: 11))

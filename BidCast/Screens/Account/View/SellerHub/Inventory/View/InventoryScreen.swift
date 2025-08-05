@@ -116,9 +116,12 @@ struct InventoryScreen: View {
                 onTapEdit: {
                     navigateToCreateProduct = true
                 },onTapDelete: {
-                    
+                    await SVProgressHUD.show()
+                    let param = DeleteProduct(product_id: productId)
+                    await viewModel.DeleteProductRequest(parameters: param)
+                    await SVProgressHUD.dismiss()
+                    deleteProductSuccess()
                 }
-                
             )
         }
     }
@@ -168,6 +171,27 @@ struct InventoryScreen: View {
         }
     }
     
+    // MARK: - deleteProductSuccess
+    func deleteProductSuccess() {
+        SVProgressHUD.dismiss()
+        let response = viewModel.inventoryDict
+        if response?.status == "success" {
+            self.showSellSheet = false
+            currentPage = 1
+            self.inventoryList.removeAll()
+            fetchInventory(for: segment, page: 1)
+            
+        } else {
+            alertType = .sheetType(
+                icon: .alert,
+                title: response?.error_type?.capitalized ?? "",
+                message: response?.message?.capitalized ?? "",
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
+            )
+            showError = true
+        }
+    }
     func fetchMoreInventory() {
         Task {
             currentPage += 1

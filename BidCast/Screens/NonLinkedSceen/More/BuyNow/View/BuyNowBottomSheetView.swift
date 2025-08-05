@@ -306,7 +306,6 @@ struct BuyNowBottomSheetView: View {
                 param.gift_msg = giftMsg
             }
 
-
             await viewModel.BuyProductRequest(parameters: param)
             await SVProgressHUD.dismiss()
             BuyProductSuccess()
@@ -323,6 +322,8 @@ struct BuyNowBottomSheetView: View {
             
         }
     }
+    
+
     
     //MARK: BuyProductSuccess.
     func BuyProductSuccess() {

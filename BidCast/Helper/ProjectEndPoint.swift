@@ -93,6 +93,7 @@ enum APIEndPoint{
     case setDefaultCard(param:CardDefaultRequest)
     case getState
     case uploadProductImage
+    case deleteProduct(param : DeleteProduct)
     
     //MARK: OLD
     
@@ -341,6 +342,8 @@ extension APIEndPoint: EndPointType {
             return "get-states"
         case .uploadProductImage:
             return "store-product-meta"
+        case .deleteProduct(let param):
+            return "delete-product\(param.product_id)"
             
             //MARK: Old
             
@@ -659,6 +662,8 @@ extension APIEndPoint: EndPointType {
         case .getState:
             return .get
         case .uploadProductImage:
+            return .post
+        case .deleteProduct:
             return .post
             
             //MARK: Old
@@ -987,6 +992,8 @@ extension APIEndPoint: EndPointType {
         case .getState:
             return nil
         case .uploadProductImage:
+            return nil
+        case .deleteProduct:
             return nil
             
             //MARK: Old
@@ -1452,6 +1459,8 @@ extension APIEndPoint: EndPointType {
         case .removeSavedJob(param: let param):
             return nil
         case .sendChatNotification(param: let param):
+            return nil
+        case .deleteProduct(param: let param):
             return nil
         }
     }

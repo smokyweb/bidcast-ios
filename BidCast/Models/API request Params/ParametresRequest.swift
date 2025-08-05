@@ -690,3 +690,8 @@ struct ImageUploadRequest : Encodable {
         case images = "images[]"
     }
 }
+
+
+struct DeleteProduct : Encodable{
+    var product_id : Int
+}
