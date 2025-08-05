@@ -35,10 +35,10 @@ struct PromoteToolsView: View {
     @Environment(\.presentationMode) var presentationMode
     
     let tools: [ToolItem] = [
-        ToolItem(iconName: "square.and.arrow.up", title: "Share", subtitle: "Share your show on social media", iconColor: .defaultTheme),
-        ToolItem(iconName: "rectangle.stack.badge.plus", title: "Ads", subtitle: "Create ads for your shows", iconColor: .defaultTheme),
-        ToolItem(iconName: "person.2.fill", title: "Audience", subtitle: "Grow your audience", iconColor: .defaultTheme),
-        ToolItem(iconName: "chart.bar.fill", title: "Analytics", subtitle: "Track performance", iconColor: .defaultTheme)
+        ToolItem(iconName: "square.and.arrow.up", title: AppString.share, subtitle: AppString.ShareYourShowOnSocialMedia, iconColor: .defaultTheme),
+        ToolItem(iconName: "rectangle.stack.badge.plus", title: AppString.Ads, subtitle: AppString.CreateAdsForYourShows, iconColor: .defaultTheme),
+        ToolItem(iconName: "person.2.fill", title: AppString.Audience, subtitle: AppString.GrowYourAudience, iconColor: .defaultTheme),
+        ToolItem(iconName: "chart.bar.fill", title: AppString.Analytics, subtitle: AppString.TrackPerformance, iconColor: .defaultTheme)
     ]
     
     var body: some View {
@@ -46,7 +46,7 @@ struct PromoteToolsView: View {
             VStack{
                 // Fixed PrimaryHeader at the top
                 PrimaryHeader(
-                    title: "Promote",
+                    title: AppString.Promote,
                     isForBoth: true,
                     leadingImgArr: [.icBack,.appName],
                     trailingImgArr: [.icSetting],
@@ -69,10 +69,10 @@ struct PromoteToolsView: View {
                             
                         
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("Promote Your Shows")
+                            Text(AppString.PromoteYourShows)
                                 .font(.custom(poppinsSemiBold, size: 18.0))
                                 .fontWeight(.semibold)
-                            Text("Reach more buyers and grow your audience")
+                            Text(AppString.ReachMoreBuyersAndGrowYourAudience)
                                 .font(.custom(poppinsRegular, size: 14.0))
                                 .foregroundColor(.gray)
                         }
@@ -98,16 +98,16 @@ struct PromoteToolsView: View {
                     
                     // Learn More Section
                     VStack(spacing: 12) {
-                        Text("Learn How to Promote")
+                        Text(AppString.LearnHowtoPromote)
                             .font(.custom(poppinsSemiBold, size: 16.0))
                             .foregroundColor(.white)
-                        Text("Get tips and strategies to grow your live shows")
+                        Text(AppString.GetTipsAndStrategiesToGrowYourLiveShows)
                             .font(.custom(poppinsSemiBold, size: 14.0))
                             .foregroundColor(.white.opacity(0.9))
                         Button(action: {
                             navigateToLesson = true
                         }) {
-                            Text("Start Learning")
+                            Text(AppString.startLearning)
                                 .font(.custom(poppinsSemiBold, size: 13.0))
                                 .padding()
                                 .frame(maxWidth: .infinity)

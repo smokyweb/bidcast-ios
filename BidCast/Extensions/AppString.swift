@@ -123,12 +123,36 @@ struct AppString{
     static let InviteSellersandEarnRewards = "Invite sellers and earn rewards when they succeed".localized
     static let ShareYourLink = "Share Your Link".localized
     static let InviteSellers = "Invite sellers using your unique code".localized
-    static let ShareInviteLink = "Share Invite Link"
-    static let CodeCopied = "Code copied!"
-    static let CopyCode = "Copy Code"
-    static let  Earn$100Reward = "Earn $100 Reward"
-    static let  WhenYourReferral = "When your referral makes their first sale"
-    static let YourReferralStatus = "Your Referral Stats"
-    static let  TotalReferrals  = "Total Referrals"
-    static let Earnings = "Earnings"
+    static let ShareInviteLink = "Share Invite Link".localized
+    static let CodeCopied = "Code copied!".localized
+    static let CopyCode = "Copy Code".localized
+    static let  Earn$100Reward = "Earn $100 Reward".localized
+    static let  WhenYourReferral = "When your referral makes their first sale".localized
+    static let YourReferralStatus = "Your Referral Stats".localized
+    static let  TotalReferrals  = "Total Referrals".localized
+    static let Earnings = "Earnings".localized
+    static let Promote = "Promote".localized
+    static let PromoteYourShows = "Promote Your Shows".localized
+    static let ReachMoreBuyersAndGrowYourAudience = "Reach more buyers and grow your audience"
+    static let share = "Share".localized
+    static let ShareYourShowOnSocialMedia = "Share your show on social media".localized
+    static let Ads = "Ads".localized
+    static let CreateAdsForYourShows = "Create ads for your shows".localized
+    static let Audience = "Audience".localized
+    static let GrowYourAudience = "Grow your audience".localized
+    static let Analytics = "Analytics".localized
+    static let TrackPerformance = "Track performance".localized
+    static let LearnHowtoPromote = "Learn How to Promote".localized
+    static let GetTipsAndStrategiesToGrowYourLiveShows = "Get tips and strategies to grow your live shows".localized
+    static let startLearning = "Start Learning".localized
+    static let PremierShop = "Premier Shop".localized
+    static let BecomeAPremierShop = "Become a Premier Shop".localized
+    static let JoinTheEliteEellers = "Join the elite sellers and unlock exclusive benefits".localized
+    
+    
+    
+    
+    
+    
+    
 }

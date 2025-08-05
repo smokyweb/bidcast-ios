@@ -76,7 +76,6 @@
 "Submit" = "Submit";
 
 
-
 //MARK: Account Screen.
 "Account" = "Account";
 "Seller Hub" = "Seller Hub";
@@ -217,7 +216,25 @@
 "Total Referrals" = "Total Referrals";
 "Earnings" = "Earnings";
 
-//MARK: We have to work from Seller Training.
+//MARK: Seller Training.
+"Promote" = "Promote";
+"Promote Your Shows" = "Promote Your Shows";
+"Reach more buyers and grow your audience" = "Reach more buyers and grow your audience";
+"Share" = "Share";
+"Share your show on social media" = "Share your show on social media";
+"Ads" = "Ads";
+"Create ads for your shows" = "Create ads for your shows";
+"Audience" = "Audience";
+"Grow your audience" = "Grow your audience";
+"Analytics" = "Analytics";
+"Track performance" = "Track performance";
+"Learn How to Promote" = "Learn How to Promote";
+"Get tips and strategies to grow your live shows" = "Get tips and strategies to grow your live shows";
+"Start Learning" = "Start Learning";
+
+//MARK: We have to work from Premier Shop
+
+
 
 
 

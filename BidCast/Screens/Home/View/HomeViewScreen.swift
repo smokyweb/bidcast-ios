@@ -179,8 +179,8 @@ struct HomeViewScreen: View {
                     showhud = true
                     return
                 }
+                SVProgressHUD.show()
                 if isActiveOnHomeScreen{
-                    SVProgressHUD.show()
                     await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: self.selectedTab,category: showCategory))
                 }
                 await SVProgressHUD.dismiss()

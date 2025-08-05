@@ -80,7 +80,7 @@ struct PremierShopScreen: View {
     var body: some View {
         VStack(spacing: 0) {
             PrimaryHeader(
-                title: "Premier Shop",
+                title: AppString.PremierShop,
                 isForLogo: false,
                 leadingImgArr: [.icBack],
                 trailingImgArr: [],
@@ -101,10 +101,10 @@ struct PremierShopScreen: View {
                                 .scaledToFit()
                                 .foregroundColor(.white)
                                 .frame(height: 40)
-                            Text("Become a Premier Shop")
+                            Text(AppString.BecomeAPremierShop)
                                 .font(.custom(poppinsBold, size: 14.0))
                                 .foregroundColor(.white)
-                            Text("Join the elite sellers and unlock exclusive benefits")
+                            Text(AppString.JoinTheEliteEellers)
                                 .font(.custom(poppinsRegular, size: 12.0))
                                 .foregroundColor(.white.opacity(0.9))
                                 .multilineTextAlignment(.center)
