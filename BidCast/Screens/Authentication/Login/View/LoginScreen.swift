@@ -253,6 +253,7 @@ struct LoginScreen: View {
                 }
             }
         }else{
+            await SVProgressHUD.dismiss()
             alertType = .sheetType(icon: .alert, title: "Failed".capitalized, message: viewModel.errorMessage ?? "", primaryBtnText: AppString.ok.localized, secondaryBtnText: "", sheetThemeColor: .secondary)
             withAnimation(.snappy) { showError = true }
         }
