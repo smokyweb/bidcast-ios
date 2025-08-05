@@ -259,6 +259,8 @@ struct SellerVerificationScreen: View {
                     await viewModel.getCard()
                     await SVProgressHUD.dismiss()
                     cardSuccess()
+                    paymentMethodComplete = true
+                    updateManualVerificationIfNeeded()
                 }
             }
             navigateToOTP = false
