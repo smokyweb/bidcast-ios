@@ -682,3 +682,11 @@ struct SendChatNotification : Encodable{
     var receiver_id : Int
     var message  : String
 }
+
+struct ImageUploadRequest : Encodable {
+    var images : String
+    
+    enum CodingKeys: String, CodingKey {
+        case images = "images[]"
+    }
+}

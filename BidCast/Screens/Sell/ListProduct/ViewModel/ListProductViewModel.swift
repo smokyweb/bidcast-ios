@@ -13,6 +13,7 @@ final class ListProductViewModel: ObservableObject {
     
     @Published var categoryResponse: ResponseModal<[CategoryDataModel]>?
     @Published var storeProductResponse: ResponseModal<StoreProductModel>?
+    @Published var storeImageResponse: ResponseModal<[ImageModel]>?
     @Published var errorMessage: String?
     @Published var addressesResponse : ResponseModal<[AddressModel]>?
     @Published var requestType: String = ""
@@ -33,24 +34,39 @@ final class ListProductViewModel: ObservableObject {
     
     
     
-    func storeProduct(param: StoreProductParam, images: [String], key: String) async {
+    func storeProduct(param: [String:Any]) async {
         self.requestType = "store"
         
         do {
-            let parameters = try param.asDictionary()
             
-            let response: ResponseModal<StoreProductModel> = try await APIManager.shared.uploadImage(
-                type: APIEndPoint.storeProduct(param: param),
+            if let response: ResponseModal<StoreProductModel> = try await APIManager.shared.requestWithJSONBody(type: APIEndPoint.storeProduct(param: param), parameters: param, modalType: ResponseModal<StoreProductModel>?.self, header: true){
+                DispatchQueue.main.async {
+                    self.storeProductResponse = response
+                }
+            }
+        } catch {
+            DispatchQueue.main.async {
+                self.errorMessage = error.localizedDescription
+            }
+        }
+    }
+    
+    func uploadStoreImage(images: [String], key: String) async {
+        self.requestType = "store"
+        
+        do {
+//            let parameters = try param.asDictionary()
+            
+           if let response = try await APIManager.shared.uploadImage(
+                type: APIEndPoint.uploadProductImage,
                 urlArray: images,
                 mimeType: "image/jpeg",
-                keyName: key,
-                parameters: parameters,
-                modalType: ResponseModal<StoreProductModel>.self,
+                keyName: "images[]",
+                parameters: [:],
+                modalType: ResponseModal<[ImageModel]>?.self,
                 header: true
-            )
-            
-            DispatchQueue.main.async {
-                self.storeProductResponse = response
+           ){
+                self.storeImageResponse = response
             }
 
         } catch {

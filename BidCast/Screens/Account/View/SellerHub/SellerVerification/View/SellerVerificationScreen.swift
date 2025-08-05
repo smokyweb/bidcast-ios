@@ -229,6 +229,7 @@ struct SellerVerificationScreen: View {
                     selfiePath = path
                 }
             })
+            .ignoresSafeArea()
         }
         .bottomSheet(isPresented: $showError, height: screenHeight / 2.5, topBarCornerRadius: 25, showTopIndicator: false) {
             CommonBottomSheet(

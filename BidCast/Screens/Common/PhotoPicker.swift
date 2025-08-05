@@ -25,6 +25,7 @@ struct PhotoPicker: UIViewControllerRepresentable {
         config.filter = .images
 
         let picker = PHPickerViewController(configuration: config)
+        picker.modalPresentationStyle = .overFullScreen
         picker.delegate = context.coordinator
         return picker
     }
@@ -101,6 +102,7 @@ struct ImagePicker: UIViewControllerRepresentable {
 
     func makeUIViewController(context: Context) -> UIImagePickerController {
         let picker = UIImagePickerController()
+        picker.modalPresentationStyle = .overFullScreen
         picker.delegate = context.coordinator
         picker.sourceType = sourceType
 

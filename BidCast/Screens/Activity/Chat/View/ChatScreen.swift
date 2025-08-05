@@ -275,7 +275,8 @@ struct ChatHeaderView: View {
             }
         }
         .padding(.horizontal, 16)
-        .padding(.top, 12)
+//        .padding(.top, 12)
+        .frame(height: 50)
         .padding(.bottom, 8)
         .background(Color.white)
         .overlay(Divider(), alignment: .bottom)

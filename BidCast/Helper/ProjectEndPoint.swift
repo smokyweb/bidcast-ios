@@ -30,7 +30,7 @@ enum APIEndPoint{
     case showTips
     case letsPrepare
     case getAllTips(param:TipParam)
-    case storeProduct(param : StoreProductParam )
+    case storeProduct(param : [String:Any] )
     case storeAddress(param:AddressRequest)
     case getAddress
     case setDefaultAddress(param:AddressDefaultParam)
@@ -92,6 +92,7 @@ enum APIEndPoint{
     case sellerStatus
     case setDefaultCard(param:CardDefaultRequest)
     case getState
+    case uploadProductImage
     
     //MARK: OLD
     
@@ -174,6 +175,7 @@ enum APIEndPoint{
 }
 
 extension APIEndPoint: EndPointType {
+    
     
     var baseURL: String {
         return "https://backend.bidcast.betaplanets.com/api/"
@@ -337,6 +339,8 @@ extension APIEndPoint: EndPointType {
             return "set-default-card"
         case .getState:
             return "get-states"
+        case .uploadProductImage:
+            return "store-product-meta"
             
             //MARK: Old
             
@@ -492,6 +496,7 @@ extension APIEndPoint: EndPointType {
             return "seller-rating"
         case .sendChatNotification:
             return "send-chat-notification"
+        
         }
     }
     
@@ -653,6 +658,8 @@ extension APIEndPoint: EndPointType {
             return .post
         case .getState:
             return .get
+        case .uploadProductImage:
+            return .post
             
             //MARK: Old
             
@@ -811,6 +818,7 @@ extension APIEndPoint: EndPointType {
             return .post
         case .sendChatNotification:
             return .post
+       
         }
     }
     
@@ -860,8 +868,8 @@ extension APIEndPoint: EndPointType {
             return nil
         case .auctionType:
             return nil
-        case .storeProduct(param: let param):
-            return param
+        case .storeProduct:
+            return nil
         case .getAllTips(let param):
             return param
             
@@ -977,6 +985,8 @@ extension APIEndPoint: EndPointType {
         case .setDefaultCard(param: let param):
             return param
         case .getState:
+            return nil
+        case .uploadProductImage:
             return nil
             
             //MARK: Old
@@ -1135,8 +1145,317 @@ extension APIEndPoint: EndPointType {
             return param
         case .sendChatNotification(let param):
             return param
+      
         }
     }
+    
+    var jsonBody: [String : Any]? {
+        switch self {
+        case .login(param: let param):
+            return nil
+        case .singUp(param: let param):
+            return nil
+        case .aboutUs:
+            return nil
+        case .contact(param: let param):
+            return nil
+        case .verifyOTP(param: let param):
+            return nil
+        case .resetPassword(param: let param):
+            return nil
+        case .changePassword(param: let param):
+            return nil
+        case .forgotPassword(param: let param):
+            return nil
+        case .privacyPolicy:
+            return nil
+        case .termsCondition:
+            return nil
+        case .faq:
+            return nil
+        case .category(param: let param):
+            return nil
+        case .auctionType:
+            return nil
+        case .logout:
+            return nil
+        case .getInventory(param: let param):
+            return nil
+        case .getLesson:
+            return nil
+        case .getSellingTips:
+            return nil
+        case .howToSell:
+            return nil
+        case .showTips:
+            return nil
+        case .letsPrepare:
+            return nil
+        case .getAllTips(param: let param):
+            return nil
+        case .storeProduct(param: let param):
+            return param
+        case .storeAddress(param: let param):
+            return nil
+        case .getAddress:
+            return nil
+        case .setDefaultAddress(param: let param):
+            return nil
+        case .getPreference:
+            return nil
+        case .updatePreference(param: let param):
+            return nil
+        case .notifyLiveUser(param: let param):
+            return nil
+        case .deleteAddress(param: let param):
+            return nil
+        case .getLiveShows(param: let param):
+            return nil
+        case .getProfileById(param: let param):
+            return nil
+        case .getUserProduct(param: let param):
+            return nil
+        case .followUnfollow(param: let param):
+            return nil
+        case .countUpdate(param: let param):
+            return nil
+        case .fetchProduct(param: let param):
+            return nil
+        case .storeIDCard(param: let param):
+            return nil
+        case .storePhoneNumber(param: let param):
+            return nil
+        case .otpVerify(param: let param):
+            return nil
+        case .storePaymentMethod(param: let param):
+            return nil
+        case .buyerIdentityStore:
+            return nil
+        case .sellerVerification:
+            return nil
+        case .buyerIdentityList:
+            return nil
+        case .sellerIdentityFetch:
+            return nil
+        case .notificationListing:
+            return nil
+        case .deleteNotification(param: let param):
+            return nil
+        case .getLiveShow:
+            return nil
+        case .getMyScheduleShow(param: let param):
+            return nil
+        case .getTotalRating(param: let param):
+            return nil
+        case .addRating(param: let param):
+            return nil
+        case .productOrderListing(param: let param):
+            return nil
+        case .productPurchaseDetail(param: let param):
+            return nil
+        case .productOrder(param: let param):
+            return nil
+        case .productOrderDetails(param: let param):
+            return nil
+        case .makeOffer(param: let param):
+            return nil
+        case .makeOfferList(param: let param):
+            return nil
+        case .offerUpdateStatus(param: let param):
+            return nil
+        case .searching(param: let param):
+            return nil
+        case .promo(param: let param):
+            return nil
+        case .getReferralCode:
+            return nil
+        case .orderReciept(param: let param):
+            return nil
+        case .storeScheduleShow(param: let param):
+            return nil
+        case .AddCard(param: let param):
+            return nil
+        case .deleteCard(param: let param):
+            return nil
+        case .getCard:
+            return nil
+        case .getTransactionList(param: let param):
+            return nil
+        case .getProduct(param: let param):
+            return nil
+        case .getScheduledShow(param: let param):
+            return nil
+        case .UpdateShowStatus(param: let param):
+            return nil
+        case .getBidList(param: let param):
+            return nil
+        case .getItemList(param: let param):
+            return nil
+        case .getNotificationListing(param: let param):
+            return nil
+        case .saveDeviceDetail(param: let param):
+            return nil
+        case .getWalletInfo:
+            return nil
+        case .getPayOutHistory:
+            return nil
+        case .getKycDetails:
+            return nil
+        case .checkKYC:
+            return nil
+        case .fundTransfer(param: let param):
+            return nil
+        case .getprofile:
+            return nil
+        case .updateProfile(param: let param):
+            return nil
+        case .storeBid(param: let param):
+            return nil
+        case .sellerStatus:
+            return nil
+        case .setDefaultCard(param: let param):
+            return nil
+        case .getState:
+            return nil
+        case .uploadProductImage:
+            return nil
+        case .SubCompany(param: let param):
+            return nil
+        case .SubCompanyUpdate(param: let param):
+            return nil
+        case .uploadFile:
+            return nil
+        case .getProfile:
+            return nil
+        case .getCategories:
+            return nil
+        case .get_news:
+            return nil
+        case .getBusiness:
+            return nil
+        case .Business(param: let param):
+            return nil
+        case .createUserProfile(param: let param):
+            return nil
+        case .getJob(param: let param):
+            return nil
+        case .upsertJob(param: let param):
+            return nil
+        case .jobSwipe(param: let param):
+            return nil
+        case .createWorkHistory(param: let param):
+            return nil
+        case .getJobProfile:
+            return nil
+        case .getEmployeeList(param: let param):
+            return nil
+        case .getEmployeeListByJobId(param: let param):
+            return nil
+        case .welcome:
+            return nil
+        case .getEmployeeByJobId(param: let param):
+            return nil
+        case .getQualification:
+            return nil
+        case .termsOfService:
+            return nil
+        case .searchJob(param: let param):
+            return nil
+        case .getLanguage:
+            return nil
+        case .performActionJob(param: let param):
+            return nil
+        case .setEmployerAvailability(param: let param):
+            return nil
+        case .employerSchedule(param: let param):
+            return nil
+        case .getEmployerAvailability:
+            return nil
+        case .getSalaryType:
+            return nil
+        case .getScheduledInterview(param: let param):
+            return nil
+        case .getSubCompanyDetails(param: let param):
+            return nil
+        case .deleteSubCompanyUser(param: let param):
+            return nil
+        case .UpdateSubCompanyUser(param: let param):
+            return nil
+        case .getSubCompany(param: let param):
+            return nil
+        case .saveJob(param: let param):
+            return nil
+        case .getSavedJob:
+            return nil
+        case .getSubCompanyUser:
+            return nil
+        case .applyJob(param: let param):
+            return nil
+        case .getMatches(param: let param):
+            return nil
+        case .getMatchesCandidates(page: let page, job_id: let job_id):
+            return nil
+        case .scheduleInterviewForMatchedJob(param: let param):
+            return nil
+        case .getCompanyDetailsJob(param: let param):
+            return nil
+        case .getSpecificJobDetail(param: let param):
+            return nil
+        case .getEmployeeDetail(id: let id, job: let job):
+            return nil
+        case .getNotification(param: let param):
+            return nil
+        case .updateNotification(param: let param):
+            return nil
+        case .getNotificationCount:
+            return nil
+        case .getEmploymentLocationType:
+            return nil
+        case .cheduledInterviewlList:
+            return nil
+        case .deleteJob(param: let param):
+            return nil
+        case .deleteAccount(param: let param):
+            return nil
+        case .combineData:
+            return nil
+        case .checkLinkedIn(param: let param):
+            return nil
+        case .rescheduleInterviewStatus:
+            return nil
+        case .getInterviewDetail(param: let param):
+            return nil
+        case .updateInterviewStatus(statusId: let statusId, matchId: let matchId):
+            return nil
+        case .rejectJob(param: let param):
+            return nil
+        case .linkLinkedIn(param: let param):
+            return nil
+        case .CreateEvent(param: let param):
+            return nil
+        case .linkedInConnect(param: let param):
+            return nil
+        case .storeLinkedIn(param: let param):
+            return nil
+        case .upsertCompany(param: let param):
+            return nil
+        case .getProductEmployer:
+            return nil
+        case .getProductCandidate:
+            return nil
+        case .getCompanyName:
+            return nil
+        case .filterSearch(param: let param):
+            return nil
+        case .filterJobSearch(param: let param):
+            return nil
+        case .removeSavedJob(param: let param):
+            return nil
+        case .sendChatNotification(param: let param):
+            return nil
+        }
+    }
+    
     
     var headers: [String : String]? {
         APIManager.commonHeaders

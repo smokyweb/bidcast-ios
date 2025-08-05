@@ -189,6 +189,7 @@ struct TrustedBuyerScreen: View {
                     isPhotoSelected = true
                 }
             }
+            .ignoresSafeArea()
         }
         .actionSheet(isPresented: $showImageSourceActionSheet) {
             ActionSheet(

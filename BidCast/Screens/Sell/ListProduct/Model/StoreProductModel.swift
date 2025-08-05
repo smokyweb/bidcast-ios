@@ -54,3 +54,7 @@ struct StoreProductModel: Codable {
     }
 }
 
+struct ImageModel : Codable {
+    var images : String?
+    var thumbnail: String?
+}

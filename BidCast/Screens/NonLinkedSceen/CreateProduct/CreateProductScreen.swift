@@ -165,14 +165,16 @@ struct CreateProductScreen: View {
                             .frame(maxWidth: .infinity)
                             .frame(height: 50)
                             .padding()
-                            .background(Color.defaultTheme)
-                            .foregroundColor(.white)
+                            .background(.gray)
+                            .foregroundColor(.black)
                             .cornerRadius(12)
                     }
+                    .disabled(true)
                 }
                 .padding(.horizontal)
 //                .padding(.bottom, 16)
             }
+            .edgesIgnoringSafeArea(.all)
             CusNavLink(doNavigate: $navigateToAddProduct, destination: AddProductsScreen(request:$request,thumbNail: $thumbNail,fromPrepare: .constant(false),backToPrepare: $backToPrepare))
             CusNavLink(doNavigate: $navigateToSalesFormat, destination: SalesFormatScreen())
         }

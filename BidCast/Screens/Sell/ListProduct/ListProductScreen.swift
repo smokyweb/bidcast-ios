@@ -50,7 +50,7 @@ struct ListProductScreen: View {
 
     var body: some View {
         
-        ZStack {
+//        ZStack {
             VStack{
                 VStack{
                     PrimaryHeader(
@@ -251,7 +251,7 @@ struct ListProductScreen: View {
                         .padding(.vertical,4)
                         .padding([.leading,.trailing],8)
                     }
-                    
+                    .zIndex(1000)
                     .background(.white)
                     .cornerRadius(12)
                     .padding(.horizontal,12)
@@ -267,7 +267,8 @@ struct ListProductScreen: View {
                             floatingLabel:"Shipping Profile",
                             hint: "Select Profile",
                             selected: $shippingId,
-                            anchor: .top,custFontName: robotoMedium,
+                            anchor: .top,
+                            custFontName: robotoMedium,
                             custFontSize:  14.0,
                             custCategory : robotoRegular,
                             custCategorySize : 13.0,
@@ -328,6 +329,29 @@ struct ListProductScreen: View {
                             return
                         }
                         request.status = "draft"
+//                        Task{
+//                           guard Reachability.isConnectedToNetwork() else {
+//                                hudMsg = "No Internet Connection"
+//                                showhud = true
+//                                return
+//                            }
+//                            SVProgressHUD.show()
+//                            await viewModel.storeProduct(param: request, images: imageUrls, key: "images[]")
+//                            await SVProgressHUD.dismiss()
+//                            if self.viewModel.errorMessage != "" || self.viewModel.errorMessage != nil{
+//                                storeSuccess()
+//                            }else{
+//                                alertType = .sheetType(
+//                                    icon: .alert,
+//                                    title: "Failed",
+//                                    message: viewModel.errorMessage ?? "",
+//                                    primaryBtnText: "",
+//                                    secondaryBtnText: AppString.ok.localized
+//                                )
+//                                showError = true
+//                            }
+//                        }
+                        
                         Task{
                            guard Reachability.isConnectedToNetwork() else {
                                 hudMsg = "No Internet Connection"
@@ -335,10 +359,10 @@ struct ListProductScreen: View {
                                 return
                             }
                             SVProgressHUD.show()
-                            await viewModel.storeProduct(param: request, images: imageUrls, key: "images[]")
-                            await SVProgressHUD.dismiss()
-                            if self.viewModel.errorMessage != "" || self.viewModel.errorMessage != nil{
-                                storeSuccess()
+                            viewModel.errorMessage?.removeAll()
+                            await viewModel.uploadStoreImage(images: imageUrls, key: "images[]")
+                            if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
+                                uploadSuccess()
                             }else{
                                 alertType = .sheetType(
                                     icon: .alert,
@@ -396,10 +420,10 @@ struct ListProductScreen: View {
                                 return
                             }
                             SVProgressHUD.show()
-                            await viewModel.storeProduct(param: request, images: imageUrls, key: "images[]")
-                            await SVProgressHUD.dismiss()
-                            if self.viewModel.errorMessage != "" || self.viewModel.errorMessage != nil{
-                                storeSuccess()
+                            viewModel.errorMessage?.removeAll()
+                            await viewModel.uploadStoreImage(images: imageUrls, key: "images[]")
+                            if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
+                                uploadSuccess()
                             }else{
                                 alertType = .sheetType(
                                     icon: .alert,
@@ -469,7 +493,7 @@ struct ListProductScreen: View {
                             withAnimation { showError = false }
                         })
                 })
-            }
+//            }
 //            .padding([.leading,.trailing],12)
         }
 //        .edgesIgnoringSafeArea(.top/)
@@ -558,7 +582,98 @@ struct ListProductScreen: View {
             
         }
     }
-    
+    func uploadSuccess(){
+        guard let response = self.viewModel.storeImageResponse,
+                response.status == "success"
+                else {
+              return
+          }
+//            let response = self.viewModel.storeImageResponse
+        if response.status == "success"{
+            let uploadedUrls: [[String: String]] = response.data.map {
+                return ["image": $0.images ?? "", "thumbnail": $0.thumbnail ?? ""]
+            }
+            var variantArray: [[String: Any]] = []
+
+            for field in extraFields {
+                guard let title = field.label, let type = field.type else { continue }
+
+                if type == "text" {
+                    // Handle text input
+                    let value = extraFieldValues[title] ?? ""
+                    variantArray.append([
+                        "title": title,
+                        "value": value
+                    ])
+                } else if type == "radio", let options = field.options {
+                    // Handle radio input
+                    let selected = selectedRadio[title] ?? ""
+                    
+                    // Find which option key is selected (e.g. option_1 or option_2)
+                    var selectedKey: String = ""
+                    var valueDict: [String: String] = [:]
+
+                    for (index, option) in options.enumerated() {
+                        let key = "option_\(index + 1)"
+                        valueDict[key] = option
+
+                        if option == selected {
+                            selectedKey = option
+                        }
+                    }
+
+                    valueDict["selected"] = selectedKey
+
+                    variantArray.append([
+                        "title": title,
+                        "value": valueDict
+                    ])
+                }
+            }
+
+                SVProgressHUD.dismiss()
+                Task{
+                    self.viewModel.errorMessage?.removeAll()
+                    var request = [
+                        
+                        "category_id": request.category_id,
+                        "sub_category_id": request.sub_category_id ?? "",
+                        "title": request.title,
+                        "description": request.description,
+                        "quantity": request.quantity,
+                        "pricing": request.pricing,
+                        "flash_sale": request.flash_sale,
+                        "accept_offers": request.accept_offers,
+                        "reserve_for_live": request.reserve_for_live,
+                        "shipping_profile_id": request.shipping_profile_id,
+                        "images": uploadedUrls
+                        
+                            
+                        ]
+                            
+                    if !variantArray.isEmpty {
+                        request["variant"] = variantArray
+                    }
+                        
+                    
+                    await viewModel.storeProduct(param: request)
+                    await SVProgressHUD.dismiss()
+                    if self.viewModel.errorMessage != "" || self.viewModel.errorMessage != nil{
+                        storeSuccess()
+                    }else{
+                        alertType = .sheetType(
+                            icon: .alert,
+                            title: "Failed",
+                            message: viewModel.errorMessage ?? "",
+                            primaryBtnText: "",
+                            secondaryBtnText: AppString.ok.localized
+                        )
+                        showError = true
+                    }
+                }
+            }
+        
+    }
     func storeSuccess(){
         let response = viewModel.storeProductResponse
         if response?.status == "success"{

@@ -104,7 +104,73 @@ final class APIManager {
             throw error//DataError.invalidResponse(data)
         }
     }
-    
+    func requestWithJSONBody<T: Decodable>(
+        type: EndPointType,
+        parameters: [String: Any],
+        modalType: T.Type,
+        header: Bool
+    ) async throws -> T {
+        
+        print("Upload JSON API Request - - - - - - - - - - >>>>>")
+        
+        guard let url = type.url else {
+            throw DataError.invalidURL
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = type.method.rawValue
+
+        // Encode parameters to JSON
+        let jsonData = try JSONSerialization.data(withJSONObject: parameters, options: [])
+        request.httpBody = jsonData
+
+        // Headers
+        if header {
+            request.setValue("Bearer \(UserDefaults.accessToken)", forHTTPHeaderField: "Authorization")
+        }
+        
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        
+        print("URL >> \(url)")
+        print("Method >> \(type.method.rawValue)")
+        print("Headers >>> \(request.allHTTPHeaderFields ?? [:])")
+        print("Parameters >>> \(parameters)")
+        
+        let config = URLSessionConfiguration.default
+        config.waitsForConnectivity = true
+        
+        let (data, response) = try await URLSession(configuration: config).data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw DataError.invalidResponse(data)
+        }
+        
+        if !(200...299).contains(httpResponse.statusCode) {
+            do {
+                let dataObj = try JSONDecoder().decode(ApiError.self, from: data)
+                print(dataObj)
+                if let message = dataObj.message {
+                    throw DataError.invalidCode(message)
+                } else {
+                    throw DataError.invalidCode(dataObj.message)
+                }
+            } catch {
+                print("Error decoding error response: \(error)")
+                throw DataError.invalidResponse(data)
+            }
+        }
+        
+        do {
+            print("API Response >>> \n\(data.prettyPrintedJSONString ?? "")")
+            let decodedObject = try JSONDecoder().decode(modalType, from: data)
+            return decodedObject
+        } catch {
+            print("Decoding error: \(error)")
+            throw DataError.network(error)
+        }
+    }
+
    
     
     func topMostViewController() -> UIViewController? {
@@ -519,9 +585,14 @@ final class APIManager {
 
         if !(200...299).contains(httpResponse.statusCode) {
             do {
-                let errorObj = try JSONDecoder().decode(ApiError.self, from: data)
+                let dataObj = try JSONDecoder().decode(ApiError.self, from: data)
+                print(dataObj)
+                if let message = dataObj.message {
+                    throw DataError.invalidCode(message)
                 
-                throw DataError.invalidResponse(data)
+                }else{
+                    throw DataError.invalidCode(dataObj.message)
+                }
             } catch {
                 print("Error decoding error response: \(error)")
                 throw DataError.invalidResponse(data)

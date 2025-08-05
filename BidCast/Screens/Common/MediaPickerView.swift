@@ -134,6 +134,7 @@ struct MediaPickerView: View {
                             uploadedImageUrls.append(url)
                         }
             }
+            .ignoresSafeArea()
         }
         .fullScreenCover(isPresented: $showPhotoLibrary) {
             PhotoPicker(count: maxMediaCount) { images,urls in
@@ -146,6 +147,7 @@ struct MediaPickerView: View {
                 
                 
             }
+            .ignoresSafeArea()
         }
     }
 }
