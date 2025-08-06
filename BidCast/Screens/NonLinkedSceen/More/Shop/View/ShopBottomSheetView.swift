@@ -137,7 +137,7 @@ struct ShopBottomSheetView: View {
     
     func productRow(_ product: ProductData) -> some View {
             HStack(spacing: 12) {
-                CustomProfileImage(url: product.images,isCircular: false,cornerRadius: 8,size: 60)
+                CustomProfileImage(url: product.image,isCircular: false,cornerRadius: 8,size: 60)
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(product.name)

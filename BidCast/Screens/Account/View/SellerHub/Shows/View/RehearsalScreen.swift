@@ -31,7 +31,8 @@ struct RehearsalScreen: View {
     @State private var currentBottomSheet: SideMenu?
     @State private var showSellSheet: Bool = false
     @State private var showButton: Bool = false
-    
+    @State var BiddingDetail = BiddingModel()
+    @State var productData = [ProductData]()
     @State private var commentText = ""
     @State var comments: [Comment] = []
     @State var liveRoomId = ""
@@ -490,7 +491,7 @@ struct RehearsalScreen: View {
                     
                     ShopBottomSheetView(
                         isPresented: $showSellSheet,
-                        productData : .constant([ProductData]())
+                        productData : $productData
                         
                     )
                 case .endShow:
@@ -557,7 +558,24 @@ struct RehearsalScreen: View {
             logoutRoom()
         }
     }
-    
+    func fetchBiddingDetail(roomId: String) {
+        FirebaseManager.shared.getLiveSessionData(roomId: roomId) { data in
+            guard let data = data else { return }
+            DispatchQueue.main.async {
+                if let jsonData = try? JSONSerialization.data(withJSONObject: data) {
+                    do {
+                        let model = try JSONDecoder().decode(BiddingModel.self, from: jsonData)
+                        self.BiddingDetail = model
+                        self.productData = self.BiddingDetail.products ?? [ProductData]()
+                 
+                    } catch {
+                        print("❌ Decoding Error: \(error)")
+                    }
+                }
+                
+            }
+        }
+    }
     func success(){
         let response = viewModel.updateStatusRespone
         if response?.status == "success"{
@@ -593,7 +611,7 @@ struct RehearsalScreen: View {
                 return ProductData(
                     category: "\(categoryId)",
                     id: "\(id)",
-                    images: product.images?.first ?? "",  // 🛡️ ensure clean array
+                    image: product.images?.first ?? "",  // 🛡️ ensure clean array
                     name: title,
                     price: String(format: "%.2f", price),
                     status:product.status ?? "",
@@ -634,6 +652,7 @@ struct RehearsalScreen: View {
                     FirebaseManager.shared.startObservingSessionTimer(roomId: roomId) {
                         self.UpdateStatus(status : true)
                                }
+                    fetchBiddingDetail(roomId: roomId)
                 } else {
                     print("❌ Failed to login to room: \(errorCode)")
                 }

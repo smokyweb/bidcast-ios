@@ -293,7 +293,7 @@ class FirebaseManager {
                     return ProductData(
                         category: category,
                         id: id,
-                        images: images,
+                        image: images,
                         name: name,
                         price: price,
                         status: status,

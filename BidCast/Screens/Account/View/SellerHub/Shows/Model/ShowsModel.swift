@@ -53,7 +53,7 @@ struct UpdateStatusModel : Codable {
 struct ProductData : Codable {
     let category: String
     let id: String
-    let images: String
+    let image: String
     let name: String
     let price: String
     let status : String
@@ -63,7 +63,7 @@ struct ProductData : Codable {
             return [
                 "id": id,
                 "category": category,
-                "images": images, 
+                "image": image, 
                 "name": name,
                 "price": price,
                 "status":status,
