@@ -688,7 +688,7 @@
 		99C909952DC8CD930054620B /* CusNavLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CusNavLink.swift; sourceTree = "<group>"; };
 		99C909972DC8CD930054620B /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		99C909982DC8CD930054620B /* DatePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatePicker.swift; sourceTree = "<group>"; };
-		99C909992DC8CD930054620B /* APIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIManager.swift; sourceTree = "<group>"; };
+		99C909992DC8CD930054620B /* APIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIManager.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		99C9099A2DC8CD930054620B /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		99C9099B2DC8CD930054620B /* ProjectEndPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectEndPoint.swift; sourceTree = "<group>"; };
 		99C9099C2DC8CD930054620B /* EndPointType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndPointType.swift; sourceTree = "<group>"; };

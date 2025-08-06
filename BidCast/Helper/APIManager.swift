@@ -74,30 +74,34 @@ final class APIManager {
         guard let response = response as? HTTPURLResponse,
               200 == response.statusCode || 201 == response.statusCode else {
             
-            if let response = response as? HTTPURLResponse,401 == response.statusCode{
+            if let response = response as? HTTPURLResponse, 401 == response.statusCode {
                 DispatchQueue.main.async {
                     // Find the topmost view controller
                     if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                        let rootVC = windowScene.windows.first(where: { $0.isKeyWindow })?.rootViewController {
-                        
+
                         let alert = UIAlertController(
                             title: "Session Expired",
                             message: "Your account has been logged in from another device",
                             preferredStyle: .alert
                         )
-                        
+
                         let loginAction = UIAlertAction(title: "Login", style: .default) { _ in
-                            NotificationCenter.default.post(name: .userSessionExpired, object: nil)
+                            // Dismiss alert and then post logout notification
+                            rootVC.topMostViewController.dismiss(animated: true) {
+                                NotificationCenter.default.post(name: .userSessionExpired, object: nil)
+                            }
                         }
-                        
+
                         alert.addAction(loginAction)
-                        
+
                         // Present alert on the topmost visible VC
                         rootVC.topMostViewController.present(alert, animated: true, completion: nil)
                     }
                 }
-
+//                throw DataError.invalidCode("Session expired")
             }
+
             let dataObj = try JSONDecoder().decode(ApiError.self, from: data)
             print(dataObj)
             if let message = dataObj.message {
