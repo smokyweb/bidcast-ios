@@ -715,6 +715,7 @@ struct RehearsalScreen: View {
         showSellSheet = false
         self.isLive = false
         FirebaseManager.shared.stopObserving()
+        self.productData.removeAll()
     }
     
     @ViewBuilder
