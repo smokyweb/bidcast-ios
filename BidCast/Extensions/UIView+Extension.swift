@@ -375,3 +375,19 @@ extension UIApplication {
 //        
 //    }
 //}
+
+extension UIViewController {
+    var topMostViewController: UIViewController {
+        if let presentedVC = self.presentedViewController {
+            return presentedVC.topMostViewController
+        }
+        if let nav = self as? UINavigationController {
+            return nav.visibleViewController?.topMostViewController ?? nav
+        }
+        if let tab = self as? UITabBarController {
+            return tab.selectedViewController?.topMostViewController ?? tab
+        }
+        return self
+    }
+}
+

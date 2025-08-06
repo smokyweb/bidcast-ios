@@ -4,6 +4,7 @@
 
 import Foundation
 import SVProgressHUD
+import SwiftUICore
 
 // Singleton Design Pattern
 // final - inheritance nahi hoga theek hai final ho gya
@@ -28,8 +29,9 @@ final class APIManager {
         ]
     }
     
+    
     static let shared = APIManager()
-
+    
     
     func request<T: Decodable>(type: EndPointType, header: Bool) async throws ->  T {
         
@@ -47,7 +49,7 @@ final class APIManager {
         
         request.allHTTPHeaderFields = type.headers
         
-//        let deviceTimeZone = getDeviceTimeZone()
+        //        let deviceTimeZone = getDeviceTimeZone()
         if header{
             request.allHTTPHeaderFields = ["Authorization":"Bearer \(UserDefaults.accessToken)"]
         }
@@ -73,8 +75,28 @@ final class APIManager {
               200 == response.statusCode || 201 == response.statusCode else {
             
             if let response = response as? HTTPURLResponse,401 == response.statusCode{
-                
-                
+                DispatchQueue.main.async {
+                    // Find the topmost view controller
+                    if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                       let rootVC = windowScene.windows.first(where: { $0.isKeyWindow })?.rootViewController {
+                        
+                        let alert = UIAlertController(
+                            title: "Session Expired",
+                            message: "Your account has been logged in from another device",
+                            preferredStyle: .alert
+                        )
+                        
+                        let loginAction = UIAlertAction(title: "Login", style: .default) { _ in
+                            NotificationCenter.default.post(name: .userSessionExpired, object: nil)
+                        }
+                        
+                        alert.addAction(loginAction)
+                        
+                        // Present alert on the topmost visible VC
+                        rootVC.topMostViewController.present(alert, animated: true, completion: nil)
+                    }
+                }
+
             }
             let dataObj = try JSONDecoder().decode(ApiError.self, from: data)
             print(dataObj)
@@ -91,12 +113,12 @@ final class APIManager {
                 throw DataError.invalidCode(dataObj.message)
             }
         }
-      
+        
         do {
             let json =  try JSONSerialization.jsonObject(with: data, options: [])
             print("Response JSon: ",json)
             let object = try JSONDecoder().decode(T.self, from: data)
-//            print(object)
+            //            print(object)
             return object
         }
         catch let error {
@@ -116,14 +138,14 @@ final class APIManager {
         guard let url = type.url else {
             throw DataError.invalidURL
         }
-
+        
         var request = URLRequest(url: url)
         request.httpMethod = type.method.rawValue
-
+        
         // Encode parameters to JSON
         let jsonData = try JSONSerialization.data(withJSONObject: parameters, options: [])
         request.httpBody = jsonData
-
+        
         // Headers
         if header {
             request.setValue("Bearer \(UserDefaults.accessToken)", forHTTPHeaderField: "Authorization")
@@ -170,8 +192,8 @@ final class APIManager {
             throw DataError.network(error)
         }
     }
-
-   
+    
+    
     
     func topMostViewController() -> UIViewController? {
         guard let rootVC = UIApplication.shared.windows.first(where: { $0.isKeyWindow })?.rootViewController else {
@@ -183,7 +205,7 @@ final class APIManager {
         }
         return topVC
     }
-
+    
     
     func uploadMedia<T: Decodable>(
         type: EndPointType,
@@ -363,99 +385,99 @@ final class APIManager {
     
     
     
-//    func uploadImage<T: Decodable>(
-//        type: EndPointType,
-//        urlArray: [String]? = nil,
-//        mimeType: String,
-//        keyName: String,
-//        parameters: [String: Any],
-//        modelType: T.Type,
-//        header: Bool,
-//        completion: @escaping Handler<T>
-//    ) {
-//        print("Upload File API Request - - - - - - - - - - >>>>>")
-//        guard let url = type.url else {
-//            completion(.failure(.invalidURL))
-//            return
-//        }
-//        print("URL >> \(url)")
-//        var request = URLRequest(url: url)
-//        request.httpMethod = type.method.rawValue
-//        print("Method >> \(type.method.rawValue)")
-//        
-//        let boundary = generateBoundary()
-//        
-//        var media =  [MediaData1]()
-//
-//        urlArray?.forEach { url in
-//            if url.contains("media") {
-//                guard let med = MediaData1(withURL:"\(url)", forKey: keyName, mimeType: mimeType) else {
-//                    return }
-//                media.append(med)
-//            } else {
-//                guard let med = MediaData1(withURL: url, forKey: keyName, mimeType: mimeType) else {
-//                    return
-//                }
-//                media.append(med)
-//            }
-//        }
-//        
-//        print(media as Any)
-//   
-//        let params  = parameters
-//        
-//        print(params)
-//        
-//        request.allHTTPHeaderFields = type.headers
-//        if header {
-//            if header{
-//                request.allHTTPHeaderFields = ["Authorization":"Bearer \(UserDefaults.accessToken)"]
-//            }
-//        }
-//        
-//        request.allHTTPHeaderFields = [ "Accept": "application/json",
-//            "Content-Type": "multipart/form-data; boundary=\(boundary)"
-//        ]
-//        
-//        print(media as Any)
-//        
-//        let dataBody = createDataBody1(withParameters: params, media: media, boundary: boundary)
-//        
-//        request.httpBody = dataBody
-//        
-//        print("Headers >>> \(request.allHTTPHeaderFields ?? [:])")
-//        
-//        print(request)
-//        let config = URLSessionConfiguration.default
-//        config.waitsForConnectivity = true
-//        config.timeoutIntervalForResource = 120
-//        
-//        URLSession(configuration: config).dataTask(with: request) { data, response, error in
-//            print(response as Any)
-//            guard let data, error == nil else {
-//                completion(.failure(.invalidData))
-//                return
-//            }
-//            guard let response = response as? HTTPURLResponse,
-//                  200 ... 599 ~= response.statusCode else {
-//                do {
-//                    let products = try JSONDecoder().decode(modelType, from: data)
-//                    completion(.success(products))
-//                }catch {
-//                    completion(.failure(.invalidResponse(data)))
-//                }
-//                return
-//            }
-//            do {
-//                print("API Response >>> \n\(data.prettyPrintedJSONString ?? "")")
-//                let products = try JSONDecoder().decode(modelType, from: data)
-//                completion(.success(products))
-//            }catch {
-//                completion(.failure(.network(error)))
-//            }
-//            
-//        }.resume()
-//    }
+    //    func uploadImage<T: Decodable>(
+    //        type: EndPointType,
+    //        urlArray: [String]? = nil,
+    //        mimeType: String,
+    //        keyName: String,
+    //        parameters: [String: Any],
+    //        modelType: T.Type,
+    //        header: Bool,
+    //        completion: @escaping Handler<T>
+    //    ) {
+    //        print("Upload File API Request - - - - - - - - - - >>>>>")
+    //        guard let url = type.url else {
+    //            completion(.failure(.invalidURL))
+    //            return
+    //        }
+    //        print("URL >> \(url)")
+    //        var request = URLRequest(url: url)
+    //        request.httpMethod = type.method.rawValue
+    //        print("Method >> \(type.method.rawValue)")
+    //
+    //        let boundary = generateBoundary()
+    //
+    //        var media =  [MediaData1]()
+    //
+    //        urlArray?.forEach { url in
+    //            if url.contains("media") {
+    //                guard let med = MediaData1(withURL:"\(url)", forKey: keyName, mimeType: mimeType) else {
+    //                    return }
+    //                media.append(med)
+    //            } else {
+    //                guard let med = MediaData1(withURL: url, forKey: keyName, mimeType: mimeType) else {
+    //                    return
+    //                }
+    //                media.append(med)
+    //            }
+    //        }
+    //
+    //        print(media as Any)
+    //
+    //        let params  = parameters
+    //
+    //        print(params)
+    //
+    //        request.allHTTPHeaderFields = type.headers
+    //        if header {
+    //            if header{
+    //                request.allHTTPHeaderFields = ["Authorization":"Bearer \(UserDefaults.accessToken)"]
+    //            }
+    //        }
+    //
+    //        request.allHTTPHeaderFields = [ "Accept": "application/json",
+    //            "Content-Type": "multipart/form-data; boundary=\(boundary)"
+    //        ]
+    //
+    //        print(media as Any)
+    //
+    //        let dataBody = createDataBody1(withParameters: params, media: media, boundary: boundary)
+    //
+    //        request.httpBody = dataBody
+    //
+    //        print("Headers >>> \(request.allHTTPHeaderFields ?? [:])")
+    //
+    //        print(request)
+    //        let config = URLSessionConfiguration.default
+    //        config.waitsForConnectivity = true
+    //        config.timeoutIntervalForResource = 120
+    //
+    //        URLSession(configuration: config).dataTask(with: request) { data, response, error in
+    //            print(response as Any)
+    //            guard let data, error == nil else {
+    //                completion(.failure(.invalidData))
+    //                return
+    //            }
+    //            guard let response = response as? HTTPURLResponse,
+    //                  200 ... 599 ~= response.statusCode else {
+    //                do {
+    //                    let products = try JSONDecoder().decode(modelType, from: data)
+    //                    completion(.success(products))
+    //                }catch {
+    //                    completion(.failure(.invalidResponse(data)))
+    //                }
+    //                return
+    //            }
+    //            do {
+    //                print("API Response >>> \n\(data.prettyPrintedJSONString ?? "")")
+    //                let products = try JSONDecoder().decode(modelType, from: data)
+    //                completion(.success(products))
+    //            }catch {
+    //                completion(.failure(.network(error)))
+    //            }
+    //
+    //        }.resume()
+    //    }
     func uploadImage1<T: Decodable>(
         type: EndPointType,
         urlArray: [String]? = nil,
@@ -472,7 +494,7 @@ final class APIManager {
         
         var request = URLRequest(url: url)
         request.httpMethod = type.method.rawValue
-
+        
         // Prepare multipart media
         var media = [MediaData1]()
         urlArray?.forEach { path in
@@ -484,7 +506,7 @@ final class APIManager {
         let boundary = generateBoundary()
         let body = createDataBody1(withParameters: parameters, media: media, boundary: boundary)
         request.httpBody = body
-
+        
         // Headers
         var headers = type.headers
         if header {
@@ -493,30 +515,30 @@ final class APIManager {
         headers?["Accept"] = "application/json"
         headers?["Content-Type"] = "multipart/form-data; boundary=\(boundary)"
         request.allHTTPHeaderFields = headers
-
+        
         // Execute request
         let config = URLSessionConfiguration.default
         config.waitsForConnectivity = true
         let (data, response) = try await URLSession(configuration: config).data(for: request)
-
+        
         print("API Response >>> \n\(data.prettyPrintedJSONString ?? "")")
-
+        
         // Status check
         guard let httpResponse = response as? HTTPURLResponse else {
             throw DataError.invalidResponse(data)
         }
-
+        
         if !(200...299).contains(httpResponse.statusCode) {
             do {
                 let decodedError = try JSONDecoder().decode(ApiError.self, from: data)
-               
+                
                 throw DataError.invalidCode("Unknown server error")
             } catch {
                 print(error)
                 throw error
             }
         }
-
+        
         // Decode final response
         do {
             return try JSONDecoder().decode(T.self, from: data)
@@ -525,7 +547,7 @@ final class APIManager {
             throw error
         }
     }
-
+    
     func uploadImage<T: Decodable>(
         type: EndPointType,
         urlArray: [String]? = nil,
@@ -536,18 +558,18 @@ final class APIManager {
         header: Bool
     ) async throws -> T {
         print("Upload File API Request - - - - - - - - - - >>>>>")
-
+        
         guard let url = type.url else {
             throw DataError.invalidURL
         }
-
+        
         print("URL >> \(url)")
         var request = URLRequest(url: url)
         request.httpMethod = type.method.rawValue
         print("Method >> \(type.method.rawValue)")
-
+        
         let boundary = generateBoundary()
-
+        
         var media = [MediaData1]()
         urlArray?.forEach { url in
             guard let med = MediaData1(withURL: url, forKey: keyName, mimeType: mimeType) else {
@@ -556,40 +578,40 @@ final class APIManager {
             print("✅ Loaded image at path: \(url)")
             media.append(med)
         }
-
+        
         print(media)
-
+        
         let params = parameters
         print(params)
-
+        
         if header {
             request.setValue("Bearer \(UserDefaults.accessToken)", forHTTPHeaderField: "Authorization")
         }
-
+        
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-
+        
         let dataBody = createDataBody1(withParameters: params, media: media, boundary: boundary)
         request.httpBody = dataBody
-
+        
         print("Headers >>> \(request.allHTTPHeaderFields ?? [:])")
-
+        
         let config = URLSessionConfiguration.default
         config.waitsForConnectivity = true
-
+        
         let (data, response) = try await URLSession(configuration: config).data(for: request)
-
+        
         guard let httpResponse = response as? HTTPURLResponse else {
             throw DataError.invalidResponse(data)
         }
-
+        
         if !(200...299).contains(httpResponse.statusCode) {
             do {
                 let dataObj = try JSONDecoder().decode(ApiError.self, from: data)
                 print(dataObj)
                 if let message = dataObj.message {
                     throw DataError.invalidCode(message)
-                
+                    
                 }else{
                     throw DataError.invalidCode(dataObj.message)
                 }
@@ -598,7 +620,7 @@ final class APIManager {
                 throw DataError.invalidResponse(data)
             }
         }
-
+        
         do {
             print("API Response >>> \n\(data.prettyPrintedJSONString ?? "")")
             let decodedObject = try JSONDecoder().decode(modalType, from: data)
@@ -608,7 +630,7 @@ final class APIManager {
             throw DataError.network(error)
         }
     }
-
+    
     
     func uploadImageWithMultipleKeys<T: Decodable>(
         type: EndPointType,
@@ -640,7 +662,7 @@ final class APIManager {
         
         let dataBody = createDataBody1(withParameters: parameters, media: media, boundary: boundary)
         request.httpBody = dataBody
-
+        
         var headers = type.headers
         if header {
             headers?["Authorization"] = "Bearer \(UserDefaults.accessToken)"
@@ -654,7 +676,7 @@ final class APIManager {
         config.timeoutIntervalForResource = 300
         
         let (data, response) = try await URLSession(configuration: config).data(for: request)
-
+        
         print("API Response >>> \n\(data.prettyPrintedJSONString ?? "")")
         
         guard let httpResponse = response as? HTTPURLResponse,
@@ -676,10 +698,10 @@ final class APIManager {
                 throw error
             }
         }
-
+        
         return try JSONDecoder().decode(T.self, from: data)
     }
-
+    
     
     
     func uploadImageWithMultipleKeys1<T: Decodable>(
@@ -721,9 +743,9 @@ final class APIManager {
                 }
             }
         }
-
+        
         print(media as Any)
-   
+        
         let params  = parameters
         
         print(params)
@@ -849,25 +871,25 @@ final class APIManager {
         let fileName: String
         let data: Data
         let mimeType: String
-
+        
         init?(withURL url: String?, forKey key: String, mimeType type: String) {
             guard let url = url else {
                 print("❌ URL is nil.")
                 return nil
             }
-
+            
             let fileURL: URL
             if let u = URL(string: url), u.scheme == "file" {
                 fileURL = u
             } else {
                 fileURL = URL(fileURLWithPath: url)
             }
-
+            
             guard FileManager.default.fileExists(atPath: fileURL.path) else {
                 print("❌ File does not exist at path: \(fileURL.path)")
                 return nil
             }
-
+            
             do {
                 self.data = try Data(contentsOf: fileURL, options: .alwaysMapped)
                 self.key = key
@@ -879,9 +901,6 @@ final class APIManager {
             }
         }
     }
-
-    
-    
 }
 
 struct ApiError:Codable {

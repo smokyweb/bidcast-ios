@@ -285,6 +285,7 @@ class FirebaseManager {
                           let name = dict["name"] as? String,
                           let price = dict["price"] as? String,
                           let images = dict["images"] as? String,
+                          let isCurrent = dict["isCurrent"] as? Bool,
                           let status = dict["status"] as? String else {
                         return nil
                     }
@@ -295,7 +296,8 @@ class FirebaseManager {
                         images: images,
                         name: name,
                         price: price,
-                        status: status
+                        status: status,
+                        isCurrent: isCurrent
                     )
                 }
 

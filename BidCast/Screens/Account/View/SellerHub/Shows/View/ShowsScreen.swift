@@ -144,6 +144,8 @@ struct ShowsScreen: View {
                     }
                     await viewModel.getLiveSHows(param: GetLiveShowsRequest(type: "upcoming"))
                 }
+                await SVProgressHUD.dismiss()
+                scheduleSuccess()
             }
         }
     }
@@ -151,6 +153,9 @@ struct ShowsScreen: View {
         let response = viewModel.scheduledShow
         if response?.status == "success"{
             showsData = response?.data ?? [HomeModel]()
+            SVProgressHUD.dismiss()
+        }else{
+            SVProgressHUD.dismiss()
         }
     }
 }

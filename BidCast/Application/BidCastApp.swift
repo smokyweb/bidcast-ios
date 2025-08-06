@@ -58,7 +58,15 @@ struct BidCastApp: App {
                     }
                     .id(appRootManager.currentRoot.hashValue)
                 }
-                
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .userSessionExpired)) { _ in
+                UserDefaults.accessToken = ""
+                UserDefaults.accessToken.removeAll()
+                UserDefaults.sellerVerafied.removeAll()
+                UserDefaults.buyerVerafied.removeAll()
+                withAnimation(.snappy) {
+                    appRootManager.currentRoot = .authentication
+                }
             }
             .environmentObject(appRootManager)
             .environmentObject(LanguageManager.shared)

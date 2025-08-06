@@ -9,6 +9,7 @@ import Foundation
 
 class AppRootManager: ObservableObject {
     
+    static var shared: AppRootManager?
     @Published var currentRoot: eAppRoots
 
         init() {

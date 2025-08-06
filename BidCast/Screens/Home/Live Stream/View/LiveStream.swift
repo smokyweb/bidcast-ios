@@ -80,6 +80,14 @@ struct LiveStream: View {
     @State var navigateToBuyer = false
     @Binding var comeFromHome : Bool
     @State  var currentBottomSheet: MenuAction? = nil
+    var filteredActions: [MenuAction] {
+        if let userId = viewModel.liveShowsResponse.data?.first?.user?.id,
+           UserDefaults.userId != userId {
+            return MenuAction.allCases.filter { $0 != .cart }
+        }else{
+            return MenuAction.allCases
+        }
+    }
     @State  var showSheet: Bool = false
     
     var sheetHeight: CGFloat {
@@ -425,7 +433,8 @@ struct LiveStream: View {
                         }
                     }
                     VStack(spacing: 20) {
-                        ForEach(MenuAction.allCases, id: \.self) { action in
+                        //                            ForEach(MenuAction.allCases, id: \.self) { action in
+                        ForEach(filteredActions, id: \.self) { action in
                             Button(action: {
                                 if action == .cart {
                                     currentBottomSheet = action
@@ -1053,6 +1062,7 @@ struct ZegoPreviewView: UIViewRepresentable {
 
 
 enum MenuAction: CaseIterable {
+    
     case gift, paperclip, share, wallet, cart
     
     var iconName: String {

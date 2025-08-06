@@ -274,12 +274,11 @@ struct ProfileScreen: View {
                 SVProgressHUD.show()
                 await self.viewModel.getProfile(param:param)
                 profileSuccess()
-                if isComeFrom == "Home" {
+                if isComeFrom == "Home"{
                     selectedTab = "Shows"
                     await self.viewModel.getMyScheduleShow(parameters: GetMyScheduleShowRequest(type: "upcoming", user_id: Int(id), page: currentPage))
                     await SVProgressHUD.dismiss()
                     scheduleShowSuccess()
-
                     }else{
                         selectedTab = "Shop"
                         Task{

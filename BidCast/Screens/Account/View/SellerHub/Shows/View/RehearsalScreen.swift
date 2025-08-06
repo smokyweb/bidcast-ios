@@ -585,6 +585,7 @@ struct RehearsalScreen: View {
                       let categoryId = product.category_id,
                       let title = product.title,
                       let price = product.pricing
+//                    let isCurrent = true
                       else {
                     return nil
                 }
@@ -595,11 +596,12 @@ struct RehearsalScreen: View {
                     images: product.images?.first ?? "",  // 🛡️ ensure clean array
                     name: title,
                     price: String(format: "%.2f", price),
-                    status:product.status ?? ""
+                    status:product.status ?? "",
+                    isCurrent: true
                 )
             }
             
-            let seller = SellerModel(followed: data.user?.is_followed ?? false, id: "\(data.user?.id ?? 0 )", name: data.user?.name ?? "", rating: data.user?.rating ?? "")
+            let seller = SellerModel(isFollowed: data.user?.is_followed ?? false, id: "\(data.user?.id ?? 0 )", name: data.user?.name ?? "", rating: data.user?.rating ?? "")
             
             
             

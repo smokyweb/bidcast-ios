@@ -185,7 +185,9 @@ struct HomeViewScreen: View {
                 }
                 await SVProgressHUD.dismiss()
                 self.success()
-                await self.viewModel.getProfile()
+                if isActiveOnHomeScreen{
+                    await self.viewModel.getProfile()
+                }
                 if viewModel.errorMessage == "" || viewModel.errorMessage == nil {
                     let response = self.viewModel.accountInfo.data
                     UserDefaults.isFirstShowCreated = response?.is_FirstShowCreated ?? false

@@ -251,3 +251,7 @@ extension TimeInterval {
         return formatter.string(from: date)
     }
 }
+
+extension Notification.Name {
+    static let userSessionExpired = Notification.Name("userSessionExpired")
+}
