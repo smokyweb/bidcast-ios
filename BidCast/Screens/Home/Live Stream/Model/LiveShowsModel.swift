@@ -53,7 +53,6 @@ struct User: Codable,Identifiable {
     var is_followed: Bool?
 }
 
-
 struct BiddingModel: Codable,Identifiable {
     var id: Int?
     var title: String?
@@ -61,15 +60,13 @@ struct BiddingModel: Codable,Identifiable {
     var time: String?
     var user_id: Int?
     var category_id: Int?
-   
     var room_id : String?
     var auction_type_id: Int?
-   
     var is_live : Bool?
     var category: Category?
     var user: User?
     var viewer_count : Int?
-    var product : [ProductData]?
+    var products : [ProductData]?
     var seller : SellerModel?
 }
 

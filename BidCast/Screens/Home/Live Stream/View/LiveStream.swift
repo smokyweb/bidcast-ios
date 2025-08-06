@@ -292,13 +292,13 @@ struct LiveStream: View {
                                 
                             }
                             .padding(.leading,16)
-                            .padding(.trailing, BiddingDetail.product != nil ? 54 : 16)
+                            .padding(.trailing, BiddingDetail.products != nil ? 54 : 16)
                             
                             .animation(.easeOut(duration: 0.25), value: keyboardResponder.currentHeight)
                             
                             VStack(alignment: .leading,spacing: 12){
                                 //MARK: Product Details
-                                if let product = BiddingDetail.product?[currentProductIndex] {
+                                if let product = BiddingDetail.products?[currentProductIndex] {
                                     HStack(spacing: 12) {
                                         CustomProfileImage(url: product.images, isCircular: false,cornerRadius: 8.0,size: 60.0)
                                         
@@ -825,8 +825,8 @@ struct LiveStream: View {
                     do {
                         let model = try JSONDecoder().decode(BiddingModel.self, from: jsonData)
                         self.BiddingDetail = model
-                        self.productData = self.BiddingDetail.product ?? [ProductData]()
-                        if let priceString = self.BiddingDetail.product?[currentProductIndex].price,
+                        self.productData = self.BiddingDetail.products ?? [ProductData]()
+                        if let priceString = self.BiddingDetail.products?[currentProductIndex].price,
                            let priceDouble = Double(priceString) {
                             self.currentPrice = Int(priceDouble)
                         }
@@ -860,7 +860,7 @@ struct LiveStream: View {
             let data = liveShowsData[safe: currentStreamIndex]
             //            FirebaseManager.shared.updateProductPrice(roomId: currentRoomId, newPrice: "\(newPrice)")
             
-            guard let selectedProduct = BiddingDetail.product?[currentProductIndex] else { return  }
+            guard let selectedProduct = BiddingDetail.products?[currentProductIndex] else { return  }
             
             FirebaseManager.shared.updateHighestBid(
                 roomId: currentRoomId,
@@ -878,7 +878,7 @@ struct LiveStream: View {
                         
                         
                         Task{
-                            let apram = StoreBidRequest(schedule_show_id: "\(BiddingDetail.id ?? 0)", user_id:user_Id ?? "", product_id: BiddingDetail.product?[currentProductIndex].id ?? "", bid_price: "\(newPrice)")
+                            let apram = StoreBidRequest(schedule_show_id: "\(BiddingDetail.id ?? 0)", user_id:user_Id ?? "", product_id: BiddingDetail.products?[currentProductIndex].id ?? "", bid_price: "\(newPrice)")
                             await self.viewModel.storeBid(parameters: apram)
                             soldSuccess()
                         }
@@ -926,7 +926,7 @@ struct LiveStream: View {
             if let jsonData = try? JSONSerialization.data(withJSONObject: data) {
                 do {
                     let model = try JSONDecoder().decode(BiddingModel.self, from: jsonData)
-                    if let priceString = model.product?[currentProductIndex].price,
+                    if let priceString = model.products?[currentProductIndex].price,
                        let latestFirebasePrice = Int(priceString) {
                         
                         if latestFirebasePrice == self.currentPrice {
@@ -972,8 +972,8 @@ struct LiveStream: View {
                 if updatedProducts.isEmpty {
                     //                        showNoProductsScreen = true
                 } else {
-                    self.BiddingDetail.product = updatedProducts
-                    self.productData =  self.BiddingDetail.product ?? [ProductData]()
+                    self.BiddingDetail.products = updatedProducts
+                    self.productData =  self.BiddingDetail.products ?? [ProductData]()
                     currentProductIndex = 0
                     let priceString = updatedProducts.first?.price
                     if let priceDouble = Double(priceString ?? "") {
