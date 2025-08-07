@@ -477,11 +477,12 @@ class FirebaseManager {
         }
     }
     
+    
     enum SetProductError: Error {
         case productNotFound
+        case alreadyCurrent
         case firebaseError(String)
     }
-    
     
     func setProductAsCurrent(roomId: String, selectedID: String, completion: @escaping (Result<Void, SetProductError>) -> Void) {
         let ref = Database.database().reference()
@@ -494,25 +495,39 @@ class FirebaseManager {
             }
             
             var productFound = false
+            var isAlreadyCurrent = false
             
             for (index, var product) in products.enumerated() {
-                if let productId = product["id"] as? String {
-                    // Compare the selectedID safely
-                    product["isCurrent"] = (productId == selectedID)
-                    
-                    if productId == selectedID {
-                        productFound = true
+                guard let productId = product["id"] as? String else { continue }
+                
+                if productId == selectedID {
+                    productFound = true
+                    if product["isCurrent"] as? Bool == true {
+                        isAlreadyCurrent = true
+                        break
                     }
-                    
-                    products[index] = product
                 }
             }
             
-            guard productFound else {
+            if !productFound {
                 completion(.failure(.productNotFound))
                 return
             }
             
+            if isAlreadyCurrent {
+                completion(.failure(.alreadyCurrent))
+                return
+            }
+            
+            // Update isCurrent flags
+            for (index, var product) in products.enumerated() {
+                if let productId = product["id"] as? String {
+                    product["isCurrent"] = (productId == selectedID)
+                    products[index] = product
+                }
+            }
+            
+            // Save updated list
             productsRef.setValue(products) { error, _ in
                 if let error = error {
                     completion(.failure(.firebaseError(error.localizedDescription)))
@@ -522,4 +537,5 @@ class FirebaseManager {
             }
         }
     }
+    
 }

@@ -194,50 +194,6 @@
             endingLineNumber = "99"
             landmarkName = "body"
             landmarkType = "24">
-            <Locations>
-               <Location
-                  uuid = "37DC9E08-9E9F-40C4-9AF4-91F0B08F4631 - 82568ce311519028"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(1) suspend resume partial function for closure #1 () async -&gt; () in closure #1 (Swift.String) -&gt; () in closure #1 () -&gt; SwiftUI.TupleView&lt;(Swift.Optional&lt;&lt;&lt;opaque return type of SwiftUI.View.transition(SwiftUI.AnyTransition) -&gt; some&gt;&gt;.0&gt;, BidCast.SegmentedControlView&lt;BidCast.HomeButton&gt;, BidCast.ButtonTitleLabel, SwiftUI._ConditionalContent&lt;&lt;&lt;opaque return type of SwiftUI.View.frame(minWidth: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, idealWidth: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, maxWidth: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, minHeight: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, idealHeight: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, maxHeight: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, alignment: SwiftUI.Alignment) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0&gt;)&gt; in closure #2 () -&gt; SwiftUI.VStack&lt;SwiftUI.TupleView&lt;(Swift.Optional&lt;&lt;&lt;opaque return type of SwiftUI.View.transition(SwiftUI.AnyTransition) -&gt; some&gt;&gt;.0&gt;, BidCast.SegmentedControlView&lt;BidCast.HomeButton&gt;, BidCast.ButtonTitleLabel, SwiftUI._ConditionalContent&lt;&lt;&lt;opaque return type of SwiftUI.View.frame(minWidth: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, idealWidth: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, maxWidth: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, minHeight: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, idealHeight: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, maxHeight: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, alignment: SwiftUI.Alignment) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0&gt;)&gt;&gt; in closure #1 () -&gt; SwiftUI.TupleView&lt;(SwiftUI.VStack&lt;BidCast.PrimaryHeader&gt;, &lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0, BidCast.CusNavLink&lt;BidCast.LiveStream&gt;, BidCast.CusNavLink&lt;BidCast.ProfileScreen&gt;, BidCast.CusNavLink&lt;BidCast.NotificationScreen&gt;, BidCast.CusNavLink&lt;BidCast.HomeViewScreen&gt;)&gt; in BidCast.HomeViewScreen.body.getter : some"
-                  moduleName = "BidCast.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/gadgetzone/Documents/Live/bidcast/BidCast/Screens/Home/View/HomeViewScreen.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "99"
-                  endingLineNumber = "99">
-               </Location>
-               <Location
-                  uuid = "37DC9E08-9E9F-40C4-9AF4-91F0B08F4631 - 42df85d9e99fdfde"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(2) await resume partial function for closure #1 () async -&gt; () in closure #1 (Swift.String) -&gt; () in closure #1 () -&gt; SwiftUI.TupleView&lt;(Swift.Optional&lt;&lt;&lt;opaque return type of SwiftUI.View.transition(SwiftUI.AnyTransition) -&gt; some&gt;&gt;.0&gt;, BidCast.SegmentedControlView&lt;BidCast.HomeButton&gt;, BidCast.ButtonTitleLabel, SwiftUI._ConditionalContent&lt;&lt;&lt;opaque return type of SwiftUI.View.frame(minWidth: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, idealWidth: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, maxWidth: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, minHeight: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, idealHeight: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, maxHeight: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, alignment: SwiftUI.Alignment) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0&gt;)&gt; in closure #2 () -&gt; SwiftUI.VStack&lt;SwiftUI.TupleView&lt;(Swift.Optional&lt;&lt;&lt;opaque return type of SwiftUI.View.transition(SwiftUI.AnyTransition) -&gt; some&gt;&gt;.0&gt;, BidCast.SegmentedControlView&lt;BidCast.HomeButton&gt;, BidCast.ButtonTitleLabel, SwiftUI._ConditionalContent&lt;&lt;&lt;opaque return type of SwiftUI.View.frame(minWidth: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, idealWidth: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, maxWidth: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, minHeight: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, idealHeight: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, maxHeight: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, alignment: SwiftUI.Alignment) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0&gt;)&gt;&gt; in closure #1 () -&gt; SwiftUI.TupleView&lt;(SwiftUI.VStack&lt;BidCast.PrimaryHeader&gt;, &lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0, BidCast.CusNavLink&lt;BidCast.LiveStream&gt;, BidCast.CusNavLink&lt;BidCast.ProfileScreen&gt;, BidCast.CusNavLink&lt;BidCast.NotificationScreen&gt;, BidCast.CusNavLink&lt;BidCast.HomeViewScreen&gt;)&gt; in BidCast.HomeViewScreen.body.getter : some"
-                  moduleName = "BidCast.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/gadgetzone/Documents/Live/bidcast/BidCast/Screens/Home/View/HomeViewScreen.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "99"
-                  endingLineNumber = "99">
-               </Location>
-               <Location
-                  uuid = "37DC9E08-9E9F-40C4-9AF4-91F0B08F4631 - 13537678770e542a"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(3) suspend resume partial function for closure #1 () async -&gt; () in closure #1 (Swift.String) -&gt; () in closure #1 () -&gt; SwiftUI.TupleView&lt;(Swift.Optional&lt;&lt;&lt;opaque return type of SwiftUI.View.transition(SwiftUI.AnyTransition) -&gt; some&gt;&gt;.0&gt;, BidCast.SegmentedControlView&lt;BidCast.HomeButton&gt;, BidCast.ButtonTitleLabel, SwiftUI._ConditionalContent&lt;&lt;&lt;opaque return type of SwiftUI.View.frame(minWidth: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, idealWidth: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, maxWidth: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, minHeight: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, idealHeight: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, maxHeight: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, alignment: SwiftUI.Alignment) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0&gt;)&gt; in closure #2 () -&gt; SwiftUI.VStack&lt;SwiftUI.TupleView&lt;(Swift.Optional&lt;&lt;&lt;opaque return type of SwiftUI.View.transition(SwiftUI.AnyTransition) -&gt; some&gt;&gt;.0&gt;, BidCast.SegmentedControlView&lt;BidCast.HomeButton&gt;, BidCast.ButtonTitleLabel, SwiftUI._ConditionalContent&lt;&lt;&lt;opaque return type of SwiftUI.View.frame(minWidth: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, idealWidth: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, maxWidth: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, minHeight: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, idealHeight: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, maxHeight: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, alignment: SwiftUI.Alignment) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0&gt;)&gt;&gt; in closure #1 () -&gt; SwiftUI.TupleView&lt;(SwiftUI.VStack&lt;BidCast.PrimaryHeader&gt;, &lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0, BidCast.CusNavLink&lt;BidCast.LiveStream&gt;, BidCast.CusNavLink&lt;BidCast.ProfileScreen&gt;, BidCast.CusNavLink&lt;BidCast.NotificationScreen&gt;, BidCast.CusNavLink&lt;BidCast.HomeViewScreen&gt;)&gt; in BidCast.HomeViewScreen.body.getter : some"
-                  moduleName = "BidCast.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/gadgetzone/Documents/Live/bidcast/BidCast/Screens/Home/View/HomeViewScreen.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "99"
-                  endingLineNumber = "99">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -270,36 +226,6 @@
             endingLineNumber = "833"
             landmarkName = "fetchBiddingDetail(roomId:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "A5007A19-B85D-4B37-B19C-7073E678AC94 - 4c49b78b6e36310a"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 @Swift.MainActor () -&gt; () in closure #1 (Swift.Optional&lt;Swift.Dictionary&lt;Swift.String, Any&gt;&gt;) -&gt; () in BidCast.LiveStream.fetchBiddingDetail(roomId: Swift.String) -&gt; ()"
-                  moduleName = "BidCast.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/gadgetzone/Documents/Live/bidcast/BidCast/Screens/Home/Live%20Stream/View/LiveStream.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "833"
-                  endingLineNumber = "833">
-               </Location>
-               <Location
-                  uuid = "A5007A19-B85D-4B37-B19C-7073E678AC94 - 4c49b78b6e36310a"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 @Swift.MainActor () -&gt; () in closure #1 (Swift.Optional&lt;Swift.Dictionary&lt;Swift.String, Any&gt;&gt;) -&gt; () in BidCast.LiveStream.fetchBiddingDetail(roomId: Swift.String) -&gt; ()"
-                  moduleName = "BidCast.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/gadgetzone/Documents/Live/bidcast/BidCast/Screens/Home/Live%20Stream/View/LiveStream.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "833"
-                  endingLineNumber = "833">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -316,52 +242,6 @@
             endingLineNumber = "313"
             landmarkName = "body"
             landmarkType = "24">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "0603FF89-0AD0-4B33-B99B-CC688D4D4664"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "BidCast/Screens/Account/View/SellerHub/Shows/View/RehearsalScreen.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "527"
-            endingLineNumber = "527"
-            landmarkName = "body"
-            landmarkType = "24">
-            <Locations>
-               <Location
-                  uuid = "0603FF89-0AD0-4B33-B99B-CC688D4D4664 - 84293dc63a0f2ee9"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #16 (Swift.String) -&gt; () in closure #5 () -&gt; SwiftUI._ConditionalContent&lt;SwiftUI._ConditionalContent&lt;SwiftUI._ConditionalContent&lt;BidCast.MoreOptionsScreen, BidCast.PromoteShowSheet&gt;, SwiftUI._ConditionalContent&lt;BidCast.CreateClipBottomSheetView, &lt;&lt;opaque return type of SwiftUI.View.presentationDragIndicator(SwiftUI.Visibility) -&gt; some&gt;&gt;.0&gt;&gt;, SwiftUI._ConditionalContent&lt;SwiftUI._ConditionalContent&lt;SwiftUI.EmptyView, SwiftUI._ConditionalContent&lt;BidCast.ShopBottomSheetView, BidCast.ShopBottomSheetView&gt;&gt;, SwiftUI._ConditionalContent&lt;BidCast.EndShowBottomSheetView, SwiftUI.EmptyView&gt;&gt;&gt; in BidCast.RehearsalScreen.body.getter : some"
-                  moduleName = "BidCast.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/gadgetzone/Documents/Live/bidcast/BidCast/Screens/Account/View/SellerHub/Shows/View/RehearsalScreen.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "527"
-                  endingLineNumber = "527">
-               </Location>
-               <Location
-                  uuid = "0603FF89-0AD0-4B33-B99B-CC688D4D4664 - 72e9fd1fea1758a5"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (Swift.Result&lt;(), BidCast.FirebaseManager.SetProductError&gt;) -&gt; () in closure #16 (Swift.String) -&gt; () in closure #5 () -&gt; SwiftUI._ConditionalContent&lt;SwiftUI._ConditionalContent&lt;SwiftUI._ConditionalContent&lt;BidCast.MoreOptionsScreen, BidCast.PromoteShowSheet&gt;, SwiftUI._ConditionalContent&lt;BidCast.CreateClipBottomSheetView, &lt;&lt;opaque return type of SwiftUI.View.presentationDragIndicator(SwiftUI.Visibility) -&gt; some&gt;&gt;.0&gt;&gt;, SwiftUI._ConditionalContent&lt;SwiftUI._ConditionalContent&lt;SwiftUI.EmptyView, SwiftUI._ConditionalContent&lt;BidCast.ShopBottomSheetView, BidCast.ShopBottomSheetView&gt;&gt;, SwiftUI._ConditionalContent&lt;BidCast.EndShowBottomSheetView, SwiftUI.EmptyView&gt;&gt;&gt; in BidCast.RehearsalScreen.body.getter : some"
-                  moduleName = "BidCast.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/gadgetzone/Documents/Live/bidcast/BidCast/Screens/Account/View/SellerHub/Shows/View/RehearsalScreen.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "527"
-                  endingLineNumber = "527">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

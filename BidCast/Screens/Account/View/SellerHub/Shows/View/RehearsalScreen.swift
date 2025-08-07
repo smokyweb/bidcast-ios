@@ -530,15 +530,23 @@ struct RehearsalScreen: View {
                                         hudMsg = "Product is now ready for bidding."
                                         showhud = true
                                         print("✅ Product is now ready for bidding.")
+                                        
+                                    case .failure(.alreadyCurrent):
+                                        hudMsg = "Your product is already live for bidding."
+                                        showhud = true
+                                        print("⚠️ Already current product.")
+                                        
                                     case .failure(.productNotFound):
                                         hudMsg = "Product not available"
                                         showhud = true
-                                        print("✅ Product not available")
+                                        print("❌ Product not found.")
+                                        
                                     case .failure(.firebaseError(let msg)):
                                         hudMsg = "Firebase error: \(msg)"
+                                        showhud = true
+                                        print("❌ Firebase error: \(msg)")
                                     }
                                 }
-
 
                             }
                         )
