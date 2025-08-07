@@ -30,9 +30,11 @@ struct RehearsalScreen: View {
     @State private var verifiedOnly = false
     @State private var currentBottomSheet: SideMenu?
     @State private var showSellSheet: Bool = false
+    @State private var showProductSheet : Bool = false
     @State private var showButton: Bool = false
     @State var BiddingDetail = BiddingModel()
     @State var productData = [ProductData]()
+    @Binding var productListData: [ProductDataModel]
     @State private var commentText = ""
     @State var comments: [Comment] = []
     @State var liveRoomId = ""
@@ -48,7 +50,7 @@ struct RehearsalScreen: View {
     @State var comeForLive = false
     
     @State var showSellerSheet = false
-   @State var navigateToSeller = false
+    @State var navigateToSeller = false
     
     @State var viewwerCount = 0
     
@@ -279,9 +281,9 @@ struct RehearsalScreen: View {
                             Spacer()
                         }
                     }
-//                    .padding(.trailing)
-//                    .padding(.bottom, 150)
-//                    .frame(maxWidth: .infinity, alignment: .trailing)
+                    //                    .padding(.trailing)
+                    //                    .padding(.bottom, 150)
+                    //                    .frame(maxWidth: .infinity, alignment: .trailing)
                     .position(
                         x: geometry.size.width - 40,
                         y: geometry.size.height / 2
@@ -372,7 +374,10 @@ struct RehearsalScreen: View {
                         if !isLive{
                             Button(action: {
                                 if UserDefaults.sellerVerafied == "verified"{
-                                    self.UpdateStatus(status : false)
+                                    if !isLive{
+                                        showProductSheet = true
+                                    }
+//                                    self.UpdateStatus(status : false)
                                 }else{
                                     showSellerSheet = true
                                 }
@@ -391,7 +396,6 @@ struct RehearsalScreen: View {
                     }
                     if comeFromPrepare && !comeForLive{
                         Button(action: {
-                            
                             self.presentaionMode.wrappedValue.dismiss()
                         }) {
                             Text("Continue")
@@ -413,6 +417,29 @@ struct RehearsalScreen: View {
         .edgesIgnoringSafeArea(.all)
         .toolbar(.hidden,for: .tabBar)
         .foregroundColor(.black)
+        .bottomSheet(
+            isPresented: $showProductSheet,
+            height: screenHeight * 0.6,
+            topBarCornerRadius: 20,
+            contentBackgroundColor: Color(.systemBackground),
+            topBarBackgroundColor: Color(.systemBackground),
+            showTopIndicator: false,
+            onDismiss: {
+                showProductSheet = false
+            },
+            content: {
+                ShopBottomSheetView(
+                    isPresented: $showProductSheet,
+                    productData: $productData,
+                    NavFrom: "Rehearsal",
+                    onLiveStreamStart: { selectedID in
+                        showProductSheet = false
+                        UpdateStatus(status: false, selectedID: selectedID)
+                    }
+                )
+            }
+        )
+        
         .bottomSheet(
             isPresented: $showSellSheet,
             height: sheetHeight, // Adjust as needed
@@ -483,17 +510,46 @@ struct RehearsalScreen: View {
                 case .switchView:
                     EmptyView()
                 case .shop:
-//                    ShopBottomSheetView(
-//                        isPresented: $showSellSheet,
-//                        userId : .constant("\(UserDefaults.userId)")
-//                        
-//                    )
-                    
-                    ShopBottomSheetView(
-                        isPresented: $showSellSheet,
-                        productData : $productData
-                        
-                    )
+                    //                    ShopBottomSheetView(
+                    //                        isPresented: $showSellSheet,
+                    //                        userId : .constant("\(UserDefaults.userId)")
+                    //
+                    //                    )
+                    if isLive{
+                        ShopBottomSheetView(
+                            isPresented: $showSellSheet,
+                            productData: $productData,
+                            NavFrom: "",
+                            onAddProduct: { selectedID in
+                                showSellSheet = false
+                                print("product ID is :\(selectedID)")
+                                print("Live Room ID is :\(liveRoomId)")
+                                FirebaseManager.shared.setProductAsCurrent(roomId: liveRoomId, selectedID: selectedID) { result in
+                                    switch result {
+                                    case .success():
+                                        hudMsg = "Product is now ready for bidding."
+                                        showhud = true
+                                        print("✅ Product is now ready for bidding.")
+                                    case .failure(.productNotFound):
+                                        hudMsg = "Product not available"
+                                        showhud = true
+                                        print("✅ Product not available")
+                                    case .failure(.firebaseError(let msg)):
+                                        hudMsg = "Firebase error: \(msg)"
+                                    }
+                                }
+
+
+                            }
+                        )
+                    }else{
+                        ShopBottomSheetView(
+                            isPresented: $showSellSheet,
+                            productData: $productData,
+                            NavFrom: "Shop"
+                        )
+                    }
+              
                 case .endShow:
                     EndShowBottomSheetView(
                         isPresented: $showSellSheet,
@@ -508,8 +564,8 @@ struct RehearsalScreen: View {
                                 await SVProgressHUD.dismiss()
                                 success()
                             }
-                           
-                           
+                            
+                            
                             self.isLive = false
                         }
                     )
@@ -529,13 +585,13 @@ struct RehearsalScreen: View {
                     withAnimation {
                         navigateToSeller = true
                         showSellerSheet = false
-                       
+                        
                     }
                 },
                 onSecondaryClick: {
                     withAnimation {
                         showSellerSheet = false
-                       
+                        
                     }
                 }
             )
@@ -554,10 +610,27 @@ struct RehearsalScreen: View {
                 }
             }
         }
+        .onFirstAppear {
+            if !comeFromPrepare && !comeForLive {
+                let mappedProducts = productListData.map { productModel in
+                    ProductData(
+                        category: productModel.category?.name ?? "Unknown",
+                        id: String(productModel.id ?? 0),
+                        image: productModel.images?.first ?? "",
+                        name: productModel.title ?? "Unnamed",
+                        price: String(format: "%.2f", productModel.pricing ?? 0),
+                        status: productModel.status ?? "inactive",
+                        isCurrent: false // or true if needed
+                    )
+                }
+                productData.append(contentsOf: mappedProducts)
+            }
+        }
         .onDisappear {
             logoutRoom()
         }
     }
+    
     func fetchBiddingDetail(roomId: String) {
         FirebaseManager.shared.getLiveSessionData(roomId: roomId) { data in
             guard let data = data else { return }
@@ -567,7 +640,7 @@ struct RehearsalScreen: View {
                         let model = try JSONDecoder().decode(BiddingModel.self, from: jsonData)
                         self.BiddingDetail = model
                         self.productData = self.BiddingDetail.products ?? [ProductData]()
-                 
+                        
                     } catch {
                         print("❌ Decoding Error: \(error)")
                     }
@@ -576,7 +649,8 @@ struct RehearsalScreen: View {
             }
         }
     }
-    func success(){
+    
+    func success(selectedID : String? = nil){
         let response = viewModel.updateStatusRespone
         if response?.status == "success"{
             let data = response?.data ?? UpdateStatusModel()
@@ -594,30 +668,48 @@ struct RehearsalScreen: View {
                 self.showPreLiveControls = true
                 return
             }
-           
-
             
+//            let product: [ProductData] = (data.products ?? []).compactMap { product in
+//                guard let id = product.id,
+//                      let categoryId = product.category_id,
+//                      let title = product.title,
+//                      let price = product.pricing
+//                        //                    let isCurrent = true
+//                else {
+//                    return nil
+//                }
+//                
+//                return ProductData(
+//                    category: "\(categoryId)",
+//                    id: "\(id)",
+//                    image: product.images?.first ?? "",  // 🛡️ ensure clean array
+//                    name: title,
+//                    price: String(format: "%.2f", price),
+//                    status:product.status ?? "",
+//                    isCurrent: true
+//                )
+//            }
             
             let product: [ProductData] = (data.products ?? []).compactMap { product in
                 guard let id = product.id,
                       let categoryId = product.category_id,
                       let title = product.title,
                       let price = product.pricing
-//                    let isCurrent = true
-                      else {
+                else {
                     return nil
                 }
 
                 return ProductData(
                     category: "\(categoryId)",
                     id: "\(id)",
-                    image: product.images?.first ?? "",  // 🛡️ ensure clean array
+                    image: product.images?.first ?? "",
                     name: title,
                     price: String(format: "%.2f", price),
-                    status:product.status ?? "",
-                    isCurrent: true
+                    status: product.status ?? "",
+                    isCurrent: selectedID == "\(id)"
                 )
             }
+
             
             let seller = SellerModel(isFollowed: data.user?.is_followed ?? false, id: "\(data.user?.id ?? 0 )", name: data.user?.name ?? "", rating: data.user?.rating ?? "")
             
@@ -646,12 +738,12 @@ struct RehearsalScreen: View {
                     self.isLive = true
                     FirebaseManager.shared.observeViewerCount(roomId: self.liveRoomId) { newCount in
                         print("👀 Viewer Count Updated: \(newCount)")
-                       viewwerCount = newCount
+                        viewwerCount = newCount
                     }
                     
                     FirebaseManager.shared.startObservingSessionTimer(roomId: roomId) {
                         self.UpdateStatus(status : true)
-                               }
+                    }
                     fetchBiddingDetail(roomId: roomId)
                 } else {
                     print("❌ Failed to login to room: \(errorCode)")
@@ -665,7 +757,7 @@ struct RehearsalScreen: View {
             
         }
     }
-    func UpdateStatus(status : Bool){
+    func UpdateStatus(status : Bool,selectedID : String? = nil){
         if status{
             Task {
                 guard Reachability.isConnectedToNetwork() else {
@@ -673,10 +765,10 @@ struct RehearsalScreen: View {
                     showhud = true
                     return
                 }
-             
+                
                 let is_Live = "true"
                 await viewModel.UpdateLiveShows(param: LiveShowUpdateRequest(schedule_show_id: showUd, is_live: is_Live))
-              
+                
                 
             }
         }else{
@@ -690,10 +782,12 @@ struct RehearsalScreen: View {
                 let is_Live = "true"
                 await viewModel.UpdateLiveShows(param: LiveShowUpdateRequest(schedule_show_id: showUd, is_live: is_Live))
                 await SVProgressHUD.dismiss()
-                success()
+                success(selectedID: selectedID ?? "")
             }
         }
     }
+    
+    
     func startLiveTimer() {
         Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
             if let start = showStartTime, isLive {
@@ -737,14 +831,14 @@ struct RehearsalScreen: View {
                     .font(.custom(poppinsExtraBold, size: 22.0))
                     .frame(width: 20, height: 20)
                     .foregroundColor(.black)
-//                Text(label)
-//                    .font(.custom(poppinsThin, size: 12.0))
+                //                Text(label)
+                //                    .font(.custom(poppinsThin, size: 12.0))
             }
             .padding()
             .background(
-                   Circle()
-                       .fill(Color.white)
-               )
+                Circle()
+                    .fill(Color.white)
+            )
         }
     }
     
@@ -768,14 +862,14 @@ struct RehearsalScreen: View {
                         .font(.custom(poppinsExtraBold, size: 22.0))
                         .frame(width: 20, height: 20)
                         .foregroundColor(.black)
-//                    Text("Shop")
-//                        .font(.custom(poppinsThin, size: 12.0))
+                    //                    Text("Shop")
+                    //                        .font(.custom(poppinsThin, size: 12.0))
                 }
                 .padding()
                 .background(
-                       Circle()
-                           .fill(Color.white)
-                   )
+                    Circle()
+                        .fill(Color.white)
+                )
                 
                 Circle()
                     .fill(Color.defaultTheme)

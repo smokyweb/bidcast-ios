@@ -303,29 +303,29 @@ struct LiveStream: View {
                                         CustomProfileImage(url: product.image, isCircular: false,cornerRadius: 8.0,size: 80.0)
                                         
                                         VStack(alignment: .leading, spacing: 0) {
-                                            //                                            Text(product.name.capitalizingFirstLetter())
-                                            //                                                .font(.custom(poppinsBold, size: 13.0))
-                                            //                                                .foregroundColor(.white)
-                                            //                                            VStack(spacing: 6) {
-                                            Text(product.name.capitalizingFirstLetter())
-                                                .font(.custom(poppinsBold, size: 13.0))
-                                                .foregroundColor(.white)
-                                            Text("Sports & Lifestyle")
-                                                .font(.custom(poppinsSemiBold, size: 12.0))
-                                                .padding(4)
-                                                .foregroundColor(.white)
-                                            //                                                    .background(Color.purple.opacity(0.7))
-                                            //                                                    .cornerRadius(4)
-                                            Text("Price : $\(product.price)")
-                                                .font(.custom(poppinsSemiBold, size: 12.0))
-                                                .padding(4)
-                                                .foregroundColor(.white)
-                                            //                                                    .background(Color.pink.opacity(0.7))
-                                            //                                                    .cornerRadius(4)
-                                            //                                            }
-                                            //                                            Text("Lorem ipsum dolor sit amet")
-                                            //                                                .font(.custom(poppinsSemiBold, size: 12.0))
-                                            //                                                .foregroundColor(.white)
+//                                            Text(product.name.capitalizingFirstLetter())
+//                                                .font(.custom(poppinsBold, size: 13.0))
+//                                                .foregroundColor(.white)
+//                                            VStack(spacing: 6) {
+                                                Text(product.name.capitalizingFirstLetter())
+                                                    .font(.custom(poppinsBold, size: 13.0))
+                                                    .foregroundColor(.white)
+                                                Text("Sports & Lifestyle")
+                                                    .font(.custom(poppinsSemiBold, size: 12.0))
+                                                    .padding(4)
+                                                    .foregroundColor(.white)
+//                                                    .background(Color.purple.opacity(0.7))
+//                                                    .cornerRadius(4)
+                                                Text("Price : $\(product.price)")
+                                                    .font(.custom(poppinsSemiBold, size: 12.0))
+                                                    .padding(4)
+                                                    .foregroundColor(.white)
+//                                                    .background(Color.pink.opacity(0.7))
+//                                                    .cornerRadius(4)
+//                                            }
+//                                            Text("Lorem ipsum dolor sit amet")
+//                                                .font(.custom(poppinsSemiBold, size: 12.0))
+//                                                .foregroundColor(.white)
                                         }
                                         Spacer()
                                         
@@ -541,9 +541,6 @@ struct LiveStream: View {
         
         .toast(isPresenting: $showHud,duration: 1.5) {
             AlertToast(displayMode: .alert, type: .regular, title: hudMsg ,style: .style(backgroundColor: .black.opacity(0.4), titleColor: .white))
-            
-            
-            
         }
         .bottomSheet(isPresented: $showError, height: screenHeight / 2.8, topBarCornerRadius: 25, showTopIndicator: false,onDismiss: {
             showError = true
@@ -651,8 +648,8 @@ struct LiveStream: View {
                     ShopBottomSheetView(
                         isPresented: $showSheet,
                         productData : $productData
-                        
                     )
+                    
                 case .none:
                     EmptyView()
                 }
@@ -832,6 +829,7 @@ struct LiveStream: View {
             }
         }
     }
+    
     func fetchBiddingDetail(roomId: String) {
         FirebaseManager.shared.getLiveSessionData(roomId: roomId) { data in
             guard let data = data else { return }
@@ -904,6 +902,8 @@ struct LiveStream: View {
 //        countdown = 10
 //        startCountdown()
     }
+    
+    
     func soldSuccess(){
         let response = self.viewModel.BidResponse
         if response.status == "success"{
@@ -912,64 +912,6 @@ struct LiveStream: View {
             
         }
     }
-    
-//    func startCountdown() {
-//        //        countdownTimer?.invalidate()
-//        //
-//        //        countdownTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
-//        //            if countdown > 0 {
-//        //                countdown -= 1
-//        //            } else {
-//        //                timer.invalidate()
-//        //                checkIfUserWon()
-//        //            }
-//        //        }
-//        
-//    }
-    
-//    func checkIfUserWon() {
-//        guard let currentRoomId = liveShowsData[safe: currentStreamIndex]?.room_id else { return }
-//        
-//        FirebaseManager.shared.getLiveSessionData(roomId: currentRoomId) { data in
-//            guard let data = data else { return }
-//            if let jsonData = try? JSONSerialization.data(withJSONObject: data) {
-//                do {
-//                    let model = try JSONDecoder().decode(BiddingModel.self, from: jsonData)
-//                    if let priceString = model.products?[currentProductIndex].price,
-//                       let latestFirebasePrice = Int(priceString) {
-//                        
-//                        if latestFirebasePrice == self.currentPrice {
-//                            // ✅ YOU WIN!
-//                            DispatchQueue.main.async {
-//                                hudMsg = "You Win! Product Sold!"
-//                                showHud = true
-//                                
-//                                stopCountdown()
-//                                
-//                                
-//                                BiddingDetail = BiddingModel()
-//                                currentPrice = 0
-//                                isBiddingActive = false
-//                            }
-//                        } else {
-//                            // Someone outbid → update local price
-//                            DispatchQueue.main.async {
-//                                currentPrice = latestFirebasePrice
-//                                incrementPrice()
-//                            }
-//                        }
-//                    }
-//                } catch {
-//                    print("❌ Decoding Error: \(error)")
-//                }
-//            }
-//        }
-//    }
-    
-//    func stopCountdown() {
-//        countdownTimer?.invalidate()
-//        countdownTimer = nil
-//    }
     
     
     func observeProduct() {

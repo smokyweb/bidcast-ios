@@ -36,6 +36,7 @@ struct ShowsScreen: View {
     @State private var isActiveOnShowsScreen = false
     @State var viewModel = ShowsViewModel()
     @State var showsData = [HomeModel]()
+    @State private var selectedProductData: [ProductDataModel] = []
     
     @State var showID = ""
 
@@ -96,6 +97,7 @@ struct ShowsScreen: View {
                             ShowCardView(show: data,onTap: {
                                 showID = "\(data.id ?? 0)"
                                 isLive = data.is_live ?? false
+                                selectedProductData = data.products ?? []
                                 navigateToReherseal = true
                             })
                         }
@@ -118,7 +120,7 @@ struct ShowsScreen: View {
 ////                .padding(.vertical, 0)
 ////                .background(Color(UIColor.systemGroupedBackground))
 //            }
-            CusNavLink(doNavigate: $navigateToReherseal, destination: RehearsalScreen(showUd: $showID,isLive: isLive))
+            CusNavLink(doNavigate: $navigateToReherseal, destination: RehearsalScreen(showUd: $showID,isLive: isLive, productListData: $selectedProductData))
         }
         .navigationBarHidden(true)
         .toolbar(.hidden,for: .tabBar)

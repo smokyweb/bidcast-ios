@@ -57,7 +57,7 @@ struct ProductData : Codable {
     let name: String
     let price: String
     let status : String
-    let isCurrent : Bool
+    var isCurrent: Bool = false 
     
     func toDictionary() -> [String: Any] {
             return [

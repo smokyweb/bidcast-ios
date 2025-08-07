@@ -41,6 +41,7 @@ struct ProductDataModel: Codable {
     var title: String?
     var description: String?
     var quantity: Int?
+    var variant : String?
     var purchased_quantity: Int?
     var pricing: Double?
     var flash_sale: Bool?

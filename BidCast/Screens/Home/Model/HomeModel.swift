@@ -22,7 +22,7 @@ struct HomeModel: Codable, Identifiable {
     var is_live: Bool?
     var viewer_count: Int?
     var room_id: String?
-    
+    var products : [ProductDataModel]?
     var category: Category?
     var user: User?
 }
