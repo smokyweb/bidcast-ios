@@ -147,3 +147,38 @@ extension AppDelegate: UNUserNotificationCenterDelegate,MessagingDelegate {
         completionHandler()
     }
 }
+
+//MARK: AppDelegate.
+extension AppDelegate {
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse) async {
+        let userInfo = response.notification.request.content.userInfo
+        print("Did Receive User Info: \(userInfo)")
+
+        guard let type = userInfo["type"] as? String else { return }
+
+        switch type {
+        case "message":
+            let senderID = userInfo["sender_id"] as? String ?? ""
+            let senderName = userInfo["sender_name"] as? String ?? ""
+            let senderImage = userInfo["sender_image"] as? String ?? ""
+            let body = userInfo["body"] as? String ?? ""
+
+            if type == "message" {
+                DispatchQueue.main.async {
+                    NotificationCenter.default.post(name: NSNotification.Name("NavToActivityScreen"), object: nil)
+                }
+            }
+
+        default:
+            break
+        }
+    }
+
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification) async -> UNNotificationPresentationOptions {
+        let userInfo = notification.request.content.userInfo
+        print("Will Present User Info: \(userInfo)")
+        // Return how you want the notification to be presented when the app is in the foreground
+        return [.banner, .sound, .badge] // Or customize as needed
+    }
+}
+

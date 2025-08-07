@@ -303,29 +303,29 @@ struct LiveStream: View {
                                         CustomProfileImage(url: product.image, isCircular: false,cornerRadius: 8.0,size: 80.0)
                                         
                                         VStack(alignment: .leading, spacing: 0) {
-//                                            Text(product.name.capitalizingFirstLetter())
-//                                                .font(.custom(poppinsBold, size: 13.0))
-//                                                .foregroundColor(.white)
-//                                            VStack(spacing: 6) {
-                                                Text(product.name.capitalizingFirstLetter())
-                                                    .font(.custom(poppinsBold, size: 13.0))
-                                                    .foregroundColor(.white)
-                                                Text("Sports & Lifestyle")
-                                                    .font(.custom(poppinsSemiBold, size: 12.0))
-                                                    .padding(4)
-                                                    .foregroundColor(.white)
-//                                                    .background(Color.purple.opacity(0.7))
-//                                                    .cornerRadius(4)
-                                                Text("Price : $\(product.price)")
-                                                    .font(.custom(poppinsSemiBold, size: 12.0))
-                                                    .padding(4)
-                                                    .foregroundColor(.white)
-//                                                    .background(Color.pink.opacity(0.7))
-//                                                    .cornerRadius(4)
-//                                            }
-//                                            Text("Lorem ipsum dolor sit amet")
-//                                                .font(.custom(poppinsSemiBold, size: 12.0))
-//                                                .foregroundColor(.white)
+                                            //                                            Text(product.name.capitalizingFirstLetter())
+                                            //                                                .font(.custom(poppinsBold, size: 13.0))
+                                            //                                                .foregroundColor(.white)
+                                            //                                            VStack(spacing: 6) {
+                                            Text(product.name.capitalizingFirstLetter())
+                                                .font(.custom(poppinsBold, size: 13.0))
+                                                .foregroundColor(.white)
+                                            Text("Sports & Lifestyle")
+                                                .font(.custom(poppinsSemiBold, size: 12.0))
+                                                .padding(4)
+                                                .foregroundColor(.white)
+                                            //                                                    .background(Color.purple.opacity(0.7))
+                                            //                                                    .cornerRadius(4)
+                                            Text("Price : $\(product.price)")
+                                                .font(.custom(poppinsSemiBold, size: 12.0))
+                                                .padding(4)
+                                                .foregroundColor(.white)
+                                            //                                                    .background(Color.pink.opacity(0.7))
+                                            //                                                    .cornerRadius(4)
+                                            //                                            }
+                                            //                                            Text("Lorem ipsum dolor sit amet")
+                                            //                                                .font(.custom(poppinsSemiBold, size: 12.0))
+                                            //                                                .foregroundColor(.white)
                                         }
                                         Spacer()
                                         
@@ -910,16 +910,16 @@ struct LiveStream: View {
     }
     
     func startCountdown() {
-//        countdownTimer?.invalidate()
-//        
-//        countdownTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
-//            if countdown > 0 {
-//                countdown -= 1
-//            } else {
-//                timer.invalidate()
-//                checkIfUserWon()
-//            }
-//        }
+        //        countdownTimer?.invalidate()
+        //
+        //        countdownTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+        //            if countdown > 0 {
+        //                countdown -= 1
+        //            } else {
+        //                timer.invalidate()
+        //                checkIfUserWon()
+        //            }
+        //        }
         
     }
     
