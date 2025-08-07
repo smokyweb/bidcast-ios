@@ -914,30 +914,30 @@ struct LiveStream: View {
     }
     
     
-    func observeProduct() {
-        guard let currentRoomId = liveShowsData[safe: currentStreamIndex]?.room_id else { return }
-        
-        FirebaseManager.shared.observeProductChanges(roomId: currentRoomId) { updatedProducts in
-            DispatchQueue.main.async {
-                
-                if updatedProducts.isEmpty {
-                    //                        showNoProductsScreen = true
-                } else {
-                    self.BiddingDetail.products = updatedProducts
-                    self.productData =  self.BiddingDetail.products ?? [ProductData]()
-                    currentProductIndex = 0
-                    let priceString = updatedProducts.first?.price
-                    if let priceDouble = Double(priceString ?? "") {
-                        currentPrice = Int(priceDouble)
-                    }
-                    countdown = 10
-//                    startCountdown()
-                }
-                
-                
-            }
-        }
-    }
+//    func observeProduct() {
+//        guard let currentRoomId = liveShowsData[safe: currentStreamIndex]?.room_id else { return }
+//        
+//        FirebaseManager.shared.observeProductChanges(roomId: currentRoomId) { updatedProducts in
+//            DispatchQueue.main.async {
+//                
+//                if updatedProducts.isEmpty {
+//                    //                        showNoProductsScreen = true
+//                } else {
+//                    self.BiddingDetail.products = updatedProducts
+//                    self.productData =  self.BiddingDetail.products ?? [ProductData]()
+//                    currentProductIndex = 0
+//                    let priceString = updatedProducts.first?.price
+//                    if let priceDouble = Double(priceString ?? "") {
+//                        currentPrice = Int(priceDouble)
+//                    }
+//                    countdown = 10
+////                    startCountdown()
+//                }
+//                
+//                
+//            }
+//        }
+//    }
     @ViewBuilder
     func sheetView(for action: MenuAction) -> some View {
         switch action {

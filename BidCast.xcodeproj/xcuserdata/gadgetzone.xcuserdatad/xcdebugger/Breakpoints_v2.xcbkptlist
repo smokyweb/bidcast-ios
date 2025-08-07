@@ -334,20 +334,6 @@
             landmarkType = "24">
             <Locations>
                <Location
-                  uuid = "0603FF89-0AD0-4B33-B99B-CC688D4D4664 - 72e9fd1fea1758a5"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (Swift.Result&lt;(), BidCast.FirebaseManager.ProductSetError&gt;) -&gt; () in closure #16 (Swift.String) -&gt; () in closure #5 () -&gt; SwiftUI._ConditionalContent&lt;SwiftUI._ConditionalContent&lt;SwiftUI._ConditionalContent&lt;BidCast.MoreOptionsScreen, BidCast.PromoteShowSheet&gt;, SwiftUI._ConditionalContent&lt;BidCast.CreateClipBottomSheetView, &lt;&lt;opaque return type of SwiftUI.View.presentationDragIndicator(SwiftUI.Visibility) -&gt; some&gt;&gt;.0&gt;&gt;, SwiftUI._ConditionalContent&lt;SwiftUI._ConditionalContent&lt;SwiftUI.EmptyView, SwiftUI._ConditionalContent&lt;BidCast.ShopBottomSheetView, BidCast.ShopBottomSheetView&gt;&gt;, SwiftUI._ConditionalContent&lt;BidCast.EndShowBottomSheetView, SwiftUI.EmptyView&gt;&gt;&gt; in BidCast.RehearsalScreen.body.getter : some"
-                  moduleName = "BidCast.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/gadgetzone/Documents/Live/bidcast/BidCast/Screens/Account/View/SellerHub/Shows/View/RehearsalScreen.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "527"
-                  endingLineNumber = "527">
-               </Location>
-               <Location
                   uuid = "0603FF89-0AD0-4B33-B99B-CC688D4D4664 - 84293dc63a0f2ee9"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
