@@ -418,7 +418,7 @@ struct LiveStream: View {
                                                 showVerificationSheet = true
                                                 
                                             }else{
-                                                startCountdown()
+//                                                startCountdown()
                                                 isBiddingActive = true
                                             }
                                             
@@ -709,6 +709,14 @@ struct LiveStream: View {
         }
     }
     
+    func startListening(roomId: String) {
+        FirebaseManager.shared.observeCountdown(for: roomId) { seconds in
+                DispatchQueue.main.async {
+                    self.countdown = seconds
+                    print("self.countdown \(self.countdown)")
+                }
+            }
+        }
     
     func success() {
         let response = viewModel.liveShowsResponse
@@ -816,7 +824,9 @@ struct LiveStream: View {
                     
                     
                 }
-                observeProduct()
+                FirebaseManager.shared.observeCountdown(for: roomId) {  seconds in
+                    self.countdown = seconds
+                }
             } else {
                 print("login fail error")
             }
@@ -874,13 +884,7 @@ struct LiveStream: View {
                 bidderName: UserDefaults.fullName,
                 bidderProfileImage: UserDefaults.profileURL){ finalBidData in
                     if let data = finalBidData {
-                        
-                        //                         let name = data["userName"] as? String
-                        
-                        //                        let image = data["userImage"] as? String
-                        
                         let user_Id = data["userId"] as? String
-                        
                         
                         Task{
                             let apram = StoreBidRequest(schedule_show_id: "\(BiddingDetail.id ?? 0)", user_id:user_Id ?? "", product_id: BiddingDetail.products?[currentProductIndex].id ?? "", bid_price: "\(newPrice)")
@@ -897,8 +901,8 @@ struct LiveStream: View {
         
         currentPrice = newPrice
         
-        countdown = 10
-        startCountdown()
+//        countdown = 10
+//        startCountdown()
     }
     func soldSuccess(){
         let response = self.viewModel.BidResponse
@@ -909,63 +913,63 @@ struct LiveStream: View {
         }
     }
     
-    func startCountdown() {
-        //        countdownTimer?.invalidate()
-        //
-        //        countdownTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
-        //            if countdown > 0 {
-        //                countdown -= 1
-        //            } else {
-        //                timer.invalidate()
-        //                checkIfUserWon()
-        //            }
-        //        }
-        
-    }
+//    func startCountdown() {
+//        //        countdownTimer?.invalidate()
+//        //
+//        //        countdownTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+//        //            if countdown > 0 {
+//        //                countdown -= 1
+//        //            } else {
+//        //                timer.invalidate()
+//        //                checkIfUserWon()
+//        //            }
+//        //        }
+//        
+//    }
     
-    func checkIfUserWon() {
-        guard let currentRoomId = liveShowsData[safe: currentStreamIndex]?.room_id else { return }
-        
-        FirebaseManager.shared.getLiveSessionData(roomId: currentRoomId) { data in
-            guard let data = data else { return }
-            if let jsonData = try? JSONSerialization.data(withJSONObject: data) {
-                do {
-                    let model = try JSONDecoder().decode(BiddingModel.self, from: jsonData)
-                    if let priceString = model.products?[currentProductIndex].price,
-                       let latestFirebasePrice = Int(priceString) {
-                        
-                        if latestFirebasePrice == self.currentPrice {
-                            // ✅ YOU WIN!
-                            DispatchQueue.main.async {
-                                hudMsg = "You Win! Product Sold!"
-                                showHud = true
-                                
-                                stopCountdown()
-                                
-                                
-                                BiddingDetail = BiddingModel()
-                                currentPrice = 0
-                                isBiddingActive = false
-                            }
-                        } else {
-                            // Someone outbid → update local price
-                            DispatchQueue.main.async {
-                                currentPrice = latestFirebasePrice
-                                incrementPrice()
-                            }
-                        }
-                    }
-                } catch {
-                    print("❌ Decoding Error: \(error)")
-                }
-            }
-        }
-    }
+//    func checkIfUserWon() {
+//        guard let currentRoomId = liveShowsData[safe: currentStreamIndex]?.room_id else { return }
+//        
+//        FirebaseManager.shared.getLiveSessionData(roomId: currentRoomId) { data in
+//            guard let data = data else { return }
+//            if let jsonData = try? JSONSerialization.data(withJSONObject: data) {
+//                do {
+//                    let model = try JSONDecoder().decode(BiddingModel.self, from: jsonData)
+//                    if let priceString = model.products?[currentProductIndex].price,
+//                       let latestFirebasePrice = Int(priceString) {
+//                        
+//                        if latestFirebasePrice == self.currentPrice {
+//                            // ✅ YOU WIN!
+//                            DispatchQueue.main.async {
+//                                hudMsg = "You Win! Product Sold!"
+//                                showHud = true
+//                                
+//                                stopCountdown()
+//                                
+//                                
+//                                BiddingDetail = BiddingModel()
+//                                currentPrice = 0
+//                                isBiddingActive = false
+//                            }
+//                        } else {
+//                            // Someone outbid → update local price
+//                            DispatchQueue.main.async {
+//                                currentPrice = latestFirebasePrice
+//                                incrementPrice()
+//                            }
+//                        }
+//                    }
+//                } catch {
+//                    print("❌ Decoding Error: \(error)")
+//                }
+//            }
+//        }
+//    }
     
-    func stopCountdown() {
-        countdownTimer?.invalidate()
-        countdownTimer = nil
-    }
+//    func stopCountdown() {
+//        countdownTimer?.invalidate()
+//        countdownTimer = nil
+//    }
     
     
     func observeProduct() {
@@ -985,7 +989,7 @@ struct LiveStream: View {
                         currentPrice = Int(priceDouble)
                     }
                     countdown = 10
-                    startCountdown()
+//                    startCountdown()
                 }
                 
                 
