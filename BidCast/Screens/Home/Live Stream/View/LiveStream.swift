@@ -818,8 +818,6 @@ struct LiveStream: View {
                         secondaryBtnText:""
                     )
                     showError = true
-                    
-                    
                 }
                 FirebaseManager.shared.observeCountdown(for: roomId) {  seconds in
                     self.countdown = seconds

@@ -674,6 +674,7 @@ struct RehearsalScreen: View {
                 previewResetTrigger.toggle()
                 self.showLiveControls = false
                 self.showPreLiveControls = true
+                self.presentaionMode.wrappedValue.dismiss()
                 return
             }
             
