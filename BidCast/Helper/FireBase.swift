@@ -241,13 +241,14 @@ class FirebaseManager {
             }
         }
     }
+    
     func startCountdownTimer(for roomId: String, onSold: @escaping (_ bidData: [String: Any]?) -> Void) {
         let timerKey = roomId
         let countdownRef = databaseRef.child("live_sessions").child(roomId).child("bidCountDown")
         
         // Initial countdown
         self.remainingSeconds[timerKey] = 30
-        countdownRef.setValue(30)
+        countdownRef.setValue("30") // Store as string initially
         
         bidTimers[timerKey] = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
             guard let secondsLeft = self.remainingSeconds[timerKey] else { return }
@@ -263,11 +264,12 @@ class FirebaseManager {
             } else {
                 let newSeconds = secondsLeft - 1
                 self.remainingSeconds[timerKey] = newSeconds
-                countdownRef.setValue(newSeconds) // 🔥 Sync with Firebase
+                countdownRef.setValue(String(newSeconds)) // Convert to String here
                 print("⏱️ \(newSeconds)s left for room \(roomId)")
             }
         }
     }
+
     
     func finalizeWinningBid(roomId: String, onSold: @escaping (_ bidData: [String: Any]?) -> Void) {
         let winnerRef = databaseRef.child("live_sessions").child(roomId).child("highestBid")
@@ -306,7 +308,7 @@ class FirebaseManager {
         let countdownRef = databaseRef.child("live_sessions").child(roomId).child("bidCountDown")
         
         countdownRef.observe(.value) { snapshot in
-            if let seconds = snapshot.value as? Int {
+            if let secondsString = snapshot.value as? String, let seconds = Int(secondsString) {
                 print("🟡 Countdown update: \(seconds)s")
                 onUpdate(seconds)
             } else {
@@ -315,6 +317,7 @@ class FirebaseManager {
             }
         }
     }
+
     
     //
     //    func observeProductChanges(roomId: String, onChange: @escaping ([ProductData]) -> Void) {
@@ -537,4 +540,75 @@ class FirebaseManager {
             }
         }
     }
+    func markProductAsSold(roomId: String, productId: String, completion: ((Error?) -> Void)? = nil) {
+        let productsRef = Database.database().reference()
+            .child("live_sessions")
+            .child(roomId)
+            .child("products")
+        
+        // Get product list and update the one with matching ID
+        productsRef.observeSingleEvent(of: .value) { snapshot in
+            guard var products = snapshot.value as? [[String: Any]] else {
+                completion?(NSError(domain: "", code: 404, userInfo: [NSLocalizedDescriptionKey: "Products not found"]))
+                return
+            }
+            
+            for (index, var product) in products.enumerated() {
+                if let pid = product["id"] as? String, pid == productId {
+                    product["status"] = "sold"
+                    products[index] = product
+                    break
+                }
+            }
+            
+            productsRef.setValue(products) { error, _ in
+                completion?(error)
+            }
+        }
+    }
+        func listenToLiveProducts(roomId: String, completion: @escaping ([ProductData]) -> Void) {
+            let ref = Database.database().reference()
+                .child("live_sessions")
+                .child(roomId)
+                .child("products")
+            
+            ref.observe(.value) { snapshot in
+                var products: [ProductData] = []
+                for child in snapshot.children {
+                    if let snap = child as? DataSnapshot,
+                       let dict = snap.value as? [String: Any] {
+                        do {
+                            let data = try JSONSerialization.data(withJSONObject: dict)
+                            let product = try JSONDecoder().decode(ProductData.self, from: data)
+                            products.append(product)
+                        } catch {
+                            print("❌ Error decoding product: \(error.localizedDescription)")
+                        }
+                    }
+                }
+                completion(products)
+            }
+        }
+
+    func observeProductChanges(roomId: String, completion: @escaping ([ProductData]) -> Void) {
+        let productsRef = databaseRef.child("live_sessions").child(roomId).child("products")
+        productsRef.observe(.value) { snapshot in
+            var products = [ProductData]()
+            for child in snapshot.children {
+                if let childSnap = child as? DataSnapshot,
+                   let dict = childSnap.value as? [String: Any] {
+                    do {
+                        let data = try JSONSerialization.data(withJSONObject: dict)
+                        let product = try JSONDecoder().decode(ProductData.self, from: data)
+                        products.append(product)
+                    } catch {
+                        print("Decoding error: \(error)")
+                    }
+                }
+            }
+            completion(products)
+        }
+    }
+    
+
 }

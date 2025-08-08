@@ -10,7 +10,6 @@ import Foundation
 import ZegoExpressEngine
 import SVProgressHUD
 
-
 struct RehearsalScreen: View {
     @Binding var showUd: String
     var roomID: String = ""
@@ -34,6 +33,7 @@ struct RehearsalScreen: View {
     @State private var showButton: Bool = false
     @State var BiddingDetail = BiddingModel()
     @State var productData = [ProductData]()
+    @State private var initialSelectedProductId: String = ""
     @Binding var productListData: [ProductDataModel]
     @State private var commentText = ""
     @State var comments: [Comment] = []
@@ -53,6 +53,7 @@ struct RehearsalScreen: View {
     @State var navigateToSeller = false
     
     @State var viewwerCount = 0
+    @State private var bidCountdownSeconds = 30
     
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "Stream Ended", message: "The live stream has ended.", primaryBtnText: "", secondaryBtnText: "")
     @EnvironmentObject var networkMonitor: NetworkMonitor
@@ -515,6 +516,7 @@ struct RehearsalScreen: View {
                     //                        userId : .constant("\(UserDefaults.userId)")
                     //
                     //                    )
+                    
                     if isLive{
                         ShopBottomSheetView(
                             isPresented: $showSellSheet,
@@ -548,8 +550,15 @@ struct RehearsalScreen: View {
                                     }
                                 }
 
-                            }
+                            },
+                            initialSelectedProductId: initialSelectedProductId
                         )
+                        .onAppear {
+                            FirebaseManager.shared.listenToLiveProducts(roomId: liveRoomId) { products in
+                                self.productData = products
+                                initialSelectedProductId = products.first(where: { $0.isCurrent })?.id ?? ""
+                            }
+                        }
                     }else{
                         ShopBottomSheetView(
                             isPresented: $showSellSheet,
@@ -628,7 +637,7 @@ struct RehearsalScreen: View {
                         name: productModel.title ?? "Unnamed",
                         price: String(format: "%.2f", productModel.pricing ?? 0),
                         status: productModel.status ?? "inactive",
-                        isCurrent: false // or true if needed
+                        isCurrent: false
                     )
                 }
                 productData.append(contentsOf: mappedProducts)
@@ -714,7 +723,7 @@ struct RehearsalScreen: View {
                     image: product.images?.first ?? "",
                     name: title,
                     price: String(format: "%.2f", price),
-                    status: product.status ?? "",
+                    status: /*product.status ??*/ "active",
                     isCurrent: selectedID == "\(id)"
                 )
             }
@@ -754,6 +763,21 @@ struct RehearsalScreen: View {
                         self.UpdateStatus(status : true)
                     }
                     fetchBiddingDetail(roomId: roomId)
+//                    if isLive {
+//                        print("👀 Starting countdown observer for roomId: \(roomId)")
+//                        FirebaseManager.shared.observeCountdown(for: roomId) { seconds in
+//                            DispatchQueue.main.async {
+//                                print("🟡 Countdown update: \(seconds)s")
+//                                self.bidCountdownSeconds = seconds
+//                                if seconds == 0 {
+//                                    print("⏰ Countdown reached zero, showing sheet")
+//                                    currentBottomSheet = .shop
+//                                    self.showSellSheet = true
+//                                    
+//                                }
+//                            }
+//                        }
+//                    }
                 } else {
                     print("❌ Failed to login to room: \(errorCode)")
                 }
@@ -766,6 +790,7 @@ struct RehearsalScreen: View {
             
         }
     }
+    
     func UpdateStatus(status : Bool,selectedID : String? = nil){
         if status{
             Task {

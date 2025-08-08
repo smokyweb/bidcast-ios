@@ -61,6 +61,7 @@ struct LiveStream: View {
     @State var navigateToShipping : Bool = false
     @State var navigateToSellerVerification = false
     @State var hasTrustedBuyerSheetOpen = false
+    @State var sheduleShowID : Int = 0
     
     var tabBarHeight: CGFloat {
         UIApplication.shared.windows.first?.safeAreaInsets.bottom ?? 49
@@ -69,7 +70,7 @@ struct LiveStream: View {
     @State var showHud = false
     @State var hudMsg = ""
     //MARK: - for swipe
-    @State private var currentPrice: Int = 1
+    @State private var currentPrice: Double = 1.0
     @State private var countdown: Int = 10
     @State private var isBiddingActive: Bool = false
     @State private var priceTimer: Timer?
@@ -298,37 +299,36 @@ struct LiveStream: View {
                             
                             VStack(alignment: .leading,spacing: 12){
                                 //MARK: Product Details
-                                if let product = BiddingDetail.products?[currentProductIndex] {
+                                if let product = productData.first {
                                     HStack(spacing: 12) {
                                         CustomProfileImage(url: product.image, isCircular: false,cornerRadius: 8.0,size: 80.0)
                                         
                                         VStack(alignment: .leading, spacing: 0) {
-//                                            Text(product.name.capitalizingFirstLetter())
-//                                                .font(.custom(poppinsBold, size: 13.0))
-//                                                .foregroundColor(.white)
-//                                            VStack(spacing: 6) {
-                                                Text(product.name.capitalizingFirstLetter())
-                                                    .font(.custom(poppinsBold, size: 13.0))
-                                                    .foregroundColor(.white)
-                                                Text("Sports & Lifestyle")
-                                                    .font(.custom(poppinsSemiBold, size: 12.0))
-                                                    .padding(4)
-                                                    .foregroundColor(.white)
-//                                                    .background(Color.purple.opacity(0.7))
-//                                                    .cornerRadius(4)
-                                                Text("Price : $\(product.price)")
-                                                    .font(.custom(poppinsSemiBold, size: 12.0))
-                                                    .padding(4)
-                                                    .foregroundColor(.white)
-//                                                    .background(Color.pink.opacity(0.7))
-//                                                    .cornerRadius(4)
-//                                            }
-//                                            Text("Lorem ipsum dolor sit amet")
-//                                                .font(.custom(poppinsSemiBold, size: 12.0))
-//                                                .foregroundColor(.white)
+                                            //                                            Text(product.name.capitalizingFirstLetter())
+                                            //                                                .font(.custom(poppinsBold, size: 13.0))
+                                            //                                                .foregroundColor(.white)
+                                            //                                            VStack(spacing: 6) {
+                                            Text(product.name.capitalizingFirstLetter())
+                                                .font(.custom(poppinsBold, size: 13.0))
+                                                .foregroundColor(.white)
+                                            Text("Sports & Lifestyle")
+                                                .font(.custom(poppinsSemiBold, size: 12.0))
+                                                .padding(4)
+                                                .foregroundColor(.white)
+                                            //                                                    .background(Color.purple.opacity(0.7))
+                                            //                                                    .cornerRadius(4)
+                                            Text("Price : $\(product.price)")
+                                                .font(.custom(poppinsSemiBold, size: 12.0))
+                                                .padding(4)
+                                                .foregroundColor(.white)
+                                            //                                                    .background(Color.pink.opacity(0.7))
+                                            //                                                    .cornerRadius(4)
+                                            //                                            }
+                                            //                                            Text("Lorem ipsum dolor sit amet")
+                                            //                                                .font(.custom(poppinsSemiBold, size: 12.0))
+                                            //                                                .foregroundColor(.white)
                                         }
                                         Spacer()
-                                        
                                     }
                                     .padding()
                                     .frame(maxWidth: .infinity)
@@ -398,7 +398,7 @@ struct LiveStream: View {
                                         
                                         // Price and Timer
                                         VStack(spacing: 2) {
-                                            Text("$\(String(format: "%.2f", Double(currentPrice)))")
+                                            Text("$\(String(format: "%.2f", currentPrice))")
                                                 .font(.custom(poppinsBold, size: 13))
                                                 .foregroundColor(.white)
                                             
@@ -418,7 +418,7 @@ struct LiveStream: View {
                                                 showVerificationSheet = true
                                                 
                                             }else{
-//                                                startCountdown()
+                                                //                                                startCountdown()
                                                 isBiddingActive = true
                                             }
                                             
@@ -426,7 +426,6 @@ struct LiveStream: View {
                                     }
                                     
                                 }else {
-                                    
                                     Text("Waiting for next product...")
                                         .font(.custom(poppinsSemiBold, size: 14.0))
                                         .foregroundColor(.white)
@@ -708,12 +707,12 @@ struct LiveStream: View {
     
     func startListening(roomId: String) {
         FirebaseManager.shared.observeCountdown(for: roomId) { seconds in
-                DispatchQueue.main.async {
-                    self.countdown = seconds
-                    print("self.countdown \(self.countdown)")
-                }
+            DispatchQueue.main.async {
+                self.countdown = seconds
+                print("self.countdown \(self.countdown)")
             }
         }
+    }
     
     func success() {
         let response = viewModel.liveShowsResponse
@@ -828,6 +827,28 @@ struct LiveStream: View {
         }
     }
     
+    //    func fetchBiddingDetail(roomId: String) {
+    //        FirebaseManager.shared.getLiveSessionData(roomId: roomId) { data in
+    //            guard let data = data else { return }
+    //            DispatchQueue.main.async {
+    //                if let jsonData = try? JSONSerialization.data(withJSONObject: data) {
+    //                    do {
+    //                        let model = try JSONDecoder().decode(BiddingModel.self, from: jsonData)
+    //                        self.BiddingDetail = model
+    //                        self.productData = self.BiddingDetail.products ?? [ProductData]()
+    //                        if let priceString = self.BiddingDetail.products?[currentProductIndex].price,
+    //                           let priceDouble = Double(priceString) {
+    //                            self.currentPrice = Int(priceDouble)
+    //                        }
+    //                    } catch {
+    //                        print("❌ Decoding Error: \(error)")
+    //                    }
+    //                }
+    //
+    //            }
+    //        }
+    //    }
+    
     func fetchBiddingDetail(roomId: String) {
         FirebaseManager.shared.getLiveSessionData(roomId: roomId) { data in
             guard let data = data else { return }
@@ -836,21 +857,33 @@ struct LiveStream: View {
                     do {
                         let model = try JSONDecoder().decode(BiddingModel.self, from: jsonData)
                         self.BiddingDetail = model
-                        self.productData = self.BiddingDetail.products ?? [ProductData]()
-                        if let priceString = self.BiddingDetail.products?[currentProductIndex].price,
-                           let priceDouble = Double(priceString) {
-                            self.currentPrice = Int(priceDouble)
+                        
+                        // Filter products for active & isCurrent only
+                        let activeCurrentProducts = model.products?.filter { product in
+                            product.status.lowercased() == "active" && product.isCurrent
+                        }
+                        
+                        if let currentProduct = activeCurrentProducts?.first {
+                            self.productData = [currentProduct]
+                            self.currentProductIndex = 0
+                            
+                            if let priceDouble = Double(currentProduct.price) {
+                                self.currentPrice = priceDouble
+                            }
+                        } else {
+                            self.productData = []
+                            self.currentProductIndex = 0
+                            self.currentPrice = 0.0
                         }
                     } catch {
                         print("❌ Decoding Error: \(error)")
                     }
                 }
-                
             }
         }
     }
-    
-    
+
+//MARK: logoutRoom
     func logoutRoom() {
         ZegoExpressEngine.shared().logoutRoom()
         chatManager.logout()
@@ -881,61 +914,124 @@ struct LiveStream: View {
                 bidderProfileImage: UserDefaults.profileURL){ finalBidData in
                     if let data = finalBidData {
                         let user_Id = data["userId"] as? String
-                        
-                        Task{
-                            let apram = StoreBidRequest(schedule_show_id: "\(BiddingDetail.id ?? 0)", user_id:user_Id ?? "", product_id: BiddingDetail.products?[currentProductIndex].id ?? "", bid_price: "\(newPrice)")
-                            await self.viewModel.storeBid(parameters: apram)
-                            soldSuccess()
-                        }
+                        updateSoldStatus()
+                        //TODO: Later Used it
+                        //                        Task{
+                        //                            let param = StoreBidRequest(schedule_show_id: "\(BiddingDetail.id ?? 0)", user_id:user_Id ?? "", product_id: BiddingDetail.products?[currentProductIndex].id ?? "", bid_price: "\(newPrice)")
+                        //                            print("StoreBidRequestParam \(param)")
+                        //                            await self.viewModel.storeBid(parameters: param)
+                        //                            soldSuccess()
+                        //                        }
                     }
                 }
-            
-            
-            
         }
         
         
         currentPrice = newPrice
-        
-//        countdown = 10
-//        startCountdown()
+        //        countdown = 10
+        //        startCountdown()
     }
     
     
-    func soldSuccess(){
-        let response = self.viewModel.BidResponse
-        if response.status == "success"{
+    func updateSoldStatus(){
+        if let currentRoomId = liveShowsData[safe: currentStreamIndex]?.room_id,
+           let productId = productData.first?.id {
             
-        }else{
-            
+            FirebaseManager.shared.markProductAsSold(roomId: currentRoomId, productId: productId) { error in
+                if let error = error {
+                    print("❌ Failed to mark as sold: \(error.localizedDescription)")
+                } else {
+                    print("✅ Product marked as sold in Firebase.")
+                    refreshProductStatus(roomId: liveShowsData[currentStreamIndex].room_id ?? "")
+                    
+                }
+            }
         }
     }
     
     
-//    func observeProduct() {
-//        guard let currentRoomId = liveShowsData[safe: currentStreamIndex]?.room_id else { return }
-//        
-//        FirebaseManager.shared.observeProductChanges(roomId: currentRoomId) { updatedProducts in
-//            DispatchQueue.main.async {
-//                
-//                if updatedProducts.isEmpty {
-//                    //                        showNoProductsScreen = true
-//                } else {
-//                    self.BiddingDetail.products = updatedProducts
-//                    self.productData =  self.BiddingDetail.products ?? [ProductData]()
-//                    currentProductIndex = 0
-//                    let priceString = updatedProducts.first?.price
-//                    if let priceDouble = Double(priceString ?? "") {
-//                        currentPrice = Int(priceDouble)
-//                    }
-//                    countdown = 10
-////                    startCountdown()
-//                }
-//                
-//                
-//            }
-//        }
-//    }
+    
+    func soldSuccess() {
+        let response = self.viewModel.BidResponse
+        if response.status == "success" {
+            
+        } else {
+            print("⚠️ Bid failed — not marking as sold.")
+        }
+    }
+    
+    func refreshProductStatus(roomId: String) {
+        FirebaseManager.shared.observeProductChanges(roomId: roomId) { updatedProducts in
+            DispatchQueue.main.async {
+                // Update your local products list
+                self.BiddingDetail.products = updatedProducts
+                
+                // Filter out sold products
+                let availableProducts = updatedProducts.filter { $0.status.lowercased() != "sold" }
+                
+                // Check if any product is current
+                let currentProductExists = availableProducts.contains(where: { $0.isCurrent })
+                
+                if currentProductExists {
+                    // Show product details for current product
+                    if let currentIndex = availableProducts.firstIndex(where: { $0.isCurrent }) {
+                        var reordered = availableProducts
+                        let currentProduct = reordered.remove(at: currentIndex)
+                        reordered.insert(currentProduct, at: 0)
+                        
+                        DispatchQueue.main.async {
+                            self.productData = reordered
+                            self.currentProductIndex = 0
+                        }
+                        // Update price based on current product
+                        if let priceString = self.productData.first?.price,
+                           let priceDouble = Double(priceString) {
+                            self.currentPrice = priceDouble
+                            self.currentPrice = priceDouble
+                        }
+                    } else {
+                        // fallback if no current product found
+                        self.productData = availableProducts
+                        self.currentProductIndex = 0
+                    }
+                } else {
+                    // No current product => clear list, show waiting UI
+                    self.productData = []
+                    self.currentProductIndex = 0
+                }
+            }
+        }
+    }
+    
+    
+    
+    //    func observeProduct() {
+    //        guard let currentRoomId = liveShowsData[safe: currentStreamIndex]?.room_id else { return }
+    //
+    //        FirebaseManager.shared.observeProductChanges(roomId: currentRoomId) { updatedProducts in
+    //            DispatchQueue.main.async {
+    //
+    //                if updatedProducts.isEmpty {
+    //                    //                        showNoProductsScreen = true
+    //                } else {
+    //                    self.BiddingDetail.products = updatedProducts
+    //                    self.productData =  self.BiddingDetail.products ?? [ProductData]()
+    //                    currentProductIndex = 0
+    //                    let priceString = updatedProducts.first?.price
+    //                    if let priceDouble = Double(priceString ?? "") {
+    //                        currentPrice = Int(priceDouble)
+    //                    }
+    //                    countdown = 10
+    ////                    startCountdown()
+    //                }
+    //
+    //
+    //            }
+    //        }
+    //    }
+    
+    
+    
     @ViewBuilder
     func sheetView(for action: MenuAction) -> some View {
         switch action {
@@ -1009,7 +1105,7 @@ struct ZegoPreviewView: UIViewRepresentable {
 }
 
 
-
+//MARK: MenuAction
 enum MenuAction: CaseIterable {
     
     case gift, paperclip, share, wallet, cart

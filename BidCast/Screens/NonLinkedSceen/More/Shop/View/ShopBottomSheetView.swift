@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SVProgressHUD
+import AlertToast
 
 struct Product: Identifiable {
     let id = UUID()
@@ -176,12 +177,19 @@ struct ShopBottomSheetView: View {
     var NavFrom: String = ""
     var onLiveStreamStart: ((String) -> Void)?
     var onAddProduct: ((String) -> Void)?
-
+    
     @State private var searchText = ""
     @State private var selectedTab: ShopTab = .auction
     @StateObject private var viewModel = ProfileViewModel()
     @EnvironmentObject var networkMonitor: NetworkMonitor
-
+    
+    // New: store initial selected product ID
+    var initialSelectedProductId: String = ""
+    // Toast states
+    @State private var showToast = false
+    @State private var toastMessage = ""
+    
+    
     var body: some View {
         VStack(spacing: 16) {
             // MARK: Header
@@ -196,7 +204,7 @@ struct ShopBottomSheetView: View {
                         .foregroundColor(.black)
                 }
             }
-
+            
             // MARK: Search
             HStack {
                 Image(systemName: "magnifyingglass")
@@ -208,7 +216,7 @@ struct ShopBottomSheetView: View {
             .frame(height: 40)
             .background(Color(.systemGray6))
             .cornerRadius(10)
-
+            
             // MARK: Tabs
             HStack(spacing: 10) {
                 ForEach(ShopTab.allCases, id: \.self) { tab in
@@ -225,9 +233,9 @@ struct ShopBottomSheetView: View {
                     }
                 }
             }
-
+            
             Divider()
-
+            
             // MARK: Product List
             ScrollView {
                 LazyVStack(spacing: 12) {
@@ -236,7 +244,7 @@ struct ShopBottomSheetView: View {
                     }
                 }
             }
-
+            
             // MARK: Action Buttons
             if NavFrom != "Shop" {
                 if productData.contains(where: { $0.isCurrent }) {
@@ -258,14 +266,20 @@ struct ShopBottomSheetView: View {
                     } else if NavFrom.isEmpty {
                         if let selectedProduct = productData.first(where: { $0.isCurrent }) {
                             Button(action: {
-                                isPresented = false
-                                onAddProduct?(selectedProduct.id)
+                                // Here is the only addition:
+                                if selectedProduct.id == initialSelectedProductId {
+                                    toastMessage = "Product already in a bid"
+                                    showToast = true
+                                } else {
+                                    isPresented = false
+                                    onAddProduct?(selectedProduct.id)
+                                }
                             }) {
                                 Text("Add Product")
                                     .font(.custom(poppinsSemiBold, size: 14))
                                     .frame(maxWidth: .infinity)
                                     .padding()
-                                    .background(Color.green)
+                                    .background(Color.defaultTheme)
                                     .foregroundColor(.white)
                                     .cornerRadius(12)
                             }
@@ -277,12 +291,15 @@ struct ShopBottomSheetView: View {
         .padding()
         .background(Color.white)
         .cornerRadius(20)
+        .toast(isPresenting: $showToast) {
+            AlertToast(type: .regular, title: toastMessage)
+        }
     }
-
+    
     // MARK: - Product Row
     func productRow(_ product: ProductData, index: Int) -> some View {
         HStack(spacing: 12) {
-            if NavFrom != "Shop" {
+            if NavFrom != "Shop" && product.status != "sold" {
                 Button(action: {
                     for i in productData.indices {
                         productData[i].isCurrent = (i == index)
@@ -292,26 +309,31 @@ struct ShopBottomSheetView: View {
                         .foregroundColor(product.isCurrent ? .blue : .gray)
                 }
             }
-
+            
             CustomProfileImage(url: product.image, isCircular: false, cornerRadius: 8, size: 60)
-
+            
             VStack(alignment: .leading, spacing: 4) {
                 Text(product.name)
                     .font(.custom(poppinsSemiBold, size: 13.0))
-                Text(product.category)
+                Text("Price : $\(product.price)")
                     .font(.custom(poppinsRegular, size: 11.0))
+                if product.status == "sold" {
+                    Text("Status: Sold")
+                        .font(.custom(poppinsRegular, size: 11.0))
+                        .foregroundColor(.red)
+                }
             }
-
+            
             Spacer()
-
-            // Hide edit/delete in Shop mode
-            if NavFrom != "Shop" {
+            
+            // Hide edit/delete in Shop mode or if sold
+            if NavFrom != "Shop" && product.status != "sold" {
                 Button {
                     // Edit action
                 } label: {
                     Image(systemName: "square.and.pencil")
                 }
-
+                
                 Button {
                     // Delete action
                 } label: {
@@ -322,9 +344,6 @@ struct ShopBottomSheetView: View {
         .padding()
         .background(Color(.systemGray6))
         .cornerRadius(12)
+        .opacity(product.status == "sold" ? 0.6 : 1)
     }
 }
-
-
-
-
