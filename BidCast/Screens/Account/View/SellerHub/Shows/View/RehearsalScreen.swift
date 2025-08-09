@@ -54,6 +54,7 @@ struct RehearsalScreen: View {
     
     @State var viewwerCount = 0
     @State private var bidCountdownSeconds = 30
+    @State private var hasCountdownStarted = false
     
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "Stream Ended", message: "The live stream has ended.", primaryBtnText: "", secondaryBtnText: "")
     @EnvironmentObject var networkMonitor: NetworkMonitor
@@ -378,7 +379,7 @@ struct RehearsalScreen: View {
                                     if !isLive{
                                         showProductSheet = true
                                     }
-//                                    self.UpdateStatus(status : false)
+                                    //                                    self.UpdateStatus(status : false)
                                 }else{
                                     showSellerSheet = true
                                 }
@@ -526,38 +527,12 @@ struct RehearsalScreen: View {
                                 showSellSheet = false
                                 print("product ID is :\(selectedID)")
                                 print("Live Room ID is :\(liveRoomId)")
-                                FirebaseManager.shared.setProductAsCurrent(roomId: liveRoomId, selectedID: selectedID) { result in
-                                    switch result {
-                                    case .success():
-                                        hudMsg = "Product is now ready for bidding."
-                                        showhud = true
-                                        print("✅ Product is now ready for bidding.")
-                                        
-                                    case .failure(.alreadyCurrent):
-                                        hudMsg = "Your product is already live for bidding."
-                                        showhud = true
-                                        print("⚠️ Already current product.")
-                                        
-                                    case .failure(.productNotFound):
-                                        hudMsg = "Product not available"
-                                        showhud = true
-                                        print("❌ Product not found.")
-                                        
-                                    case .failure(.firebaseError(let msg)):
-                                        hudMsg = "Firebase error: \(msg)"
-                                        showhud = true
-                                        print("❌ Firebase error: \(msg)")
-                                    }
-                                }
-
+                                setProductAsCurrent(selectedID: selectedID)
                             },
                             initialSelectedProductId: initialSelectedProductId
                         )
                         .onAppear {
-                            FirebaseManager.shared.listenToLiveProducts(roomId: liveRoomId) { products in
-                                self.productData = products
-                                initialSelectedProductId = products.first(where: { $0.isCurrent })?.id ?? ""
-                            }
+                            fetchLatestProductList()
                         }
                     }else{
                         ShopBottomSheetView(
@@ -566,7 +541,7 @@ struct RehearsalScreen: View {
                             NavFrom: "Shop"
                         )
                     }
-              
+                    
                 case .endShow:
                     EndShowBottomSheetView(
                         isPresented: $showSellSheet,
@@ -648,6 +623,39 @@ struct RehearsalScreen: View {
         }
     }
     
+    func fetchLatestProductList(){
+        FirebaseManager.shared.listenToLiveProducts(roomId: liveRoomId) { products in
+            self.productData = products
+            initialSelectedProductId = products.first(where: { $0.isCurrent })?.id ?? ""
+        }
+    }
+
+    func setProductAsCurrent(selectedID : String){
+        FirebaseManager.shared.setProductAsCurrent(roomId: liveRoomId, selectedID: selectedID) { result in
+            switch result {
+            case .success():
+                hudMsg = "Product is now ready for bidding."
+                showhud = true
+                print("✅ Product is now ready for bidding.")
+                
+            case .failure(.alreadyCurrent):
+                hudMsg = "Your product is already live for bidding."
+                showhud = true
+                print("⚠️ Already current product.")
+                
+            case .failure(.productNotFound):
+                hudMsg = "Product not available"
+                showhud = true
+                print("❌ Product not found.")
+                
+            case .failure(.firebaseError(let msg)):
+                hudMsg = "Firebase error: \(msg)"
+                showhud = true
+                print("❌ Firebase error: \(msg)")
+            }
+        }
+    }
+    
     func fetchBiddingDetail(roomId: String) {
         FirebaseManager.shared.getLiveSessionData(roomId: roomId) { data in
             guard let data = data else { return }
@@ -687,26 +695,26 @@ struct RehearsalScreen: View {
                 return
             }
             
-//            let product: [ProductData] = (data.products ?? []).compactMap { product in
-//                guard let id = product.id,
-//                      let categoryId = product.category_id,
-//                      let title = product.title,
-//                      let price = product.pricing
-//                        //                    let isCurrent = true
-//                else {
-//                    return nil
-//                }
-//                
-//                return ProductData(
-//                    category: "\(categoryId)",
-//                    id: "\(id)",
-//                    image: product.images?.first ?? "",  // 🛡️ ensure clean array
-//                    name: title,
-//                    price: String(format: "%.2f", price),
-//                    status:product.status ?? "",
-//                    isCurrent: true
-//                )
-//            }
+            //            let product: [ProductData] = (data.products ?? []).compactMap { product in
+            //                guard let id = product.id,
+            //                      let categoryId = product.category_id,
+            //                      let title = product.title,
+            //                      let price = product.pricing
+            //                        //                    let isCurrent = true
+            //                else {
+            //                    return nil
+            //                }
+            //
+            //                return ProductData(
+            //                    category: "\(categoryId)",
+            //                    id: "\(id)",
+            //                    image: product.images?.first ?? "",  // 🛡️ ensure clean array
+            //                    name: title,
+            //                    price: String(format: "%.2f", price),
+            //                    status:product.status ?? "",
+            //                    isCurrent: true
+            //                )
+            //            }
             
             let product: [ProductData] = (data.products ?? []).compactMap { product in
                 guard let id = product.id,
@@ -716,7 +724,7 @@ struct RehearsalScreen: View {
                 else {
                     return nil
                 }
-
+                
                 return ProductData(
                     category: "\(categoryId)",
                     id: "\(id)",
@@ -727,7 +735,7 @@ struct RehearsalScreen: View {
                     isCurrent: selectedID == "\(id)"
                 )
             }
-
+            
             
             let seller = SellerModel(isFollowed: data.user?.is_followed ?? false, id: "\(data.user?.id ?? 0 )", name: data.user?.name ?? "", rating: data.user?.rating ?? "")
             
@@ -763,21 +771,30 @@ struct RehearsalScreen: View {
                         self.UpdateStatus(status : true)
                     }
                     fetchBiddingDetail(roomId: roomId)
-//                    if isLive {
-//                        print("👀 Starting countdown observer for roomId: \(roomId)")
-//                        FirebaseManager.shared.observeCountdown(for: roomId) { seconds in
-//                            DispatchQueue.main.async {
-//                                print("🟡 Countdown update: \(seconds)s")
-//                                self.bidCountdownSeconds = seconds
-//                                if seconds == 0 {
-//                                    print("⏰ Countdown reached zero, showing sheet")
-//                                    currentBottomSheet = .shop
-//                                    self.showSellSheet = true
-//                                    
-//                                }
-//                            }
-//                        }
-//                    }
+                    if isLive {
+                        print("👀 Starting countdown observer for roomId: \(roomId)")
+                        FirebaseManager.shared.observeCountdown(for: roomId) { seconds in
+                            DispatchQueue.main.async {
+                                print("🟡 Countdown update: \(seconds)s")
+                                self.bidCountdownSeconds = seconds
+                                
+                                if seconds == 30 {
+                                    // Countdown just started
+                                    self.hasCountdownStarted = true
+                                }
+                                
+                                if self.hasCountdownStarted && seconds == 0 {
+                                    print("⏰ Countdown reached zero, showing sheet")
+                                    currentBottomSheet = .shop
+                                    fetchLatestProductList()
+                                    self.showSellSheet = true
+                                    
+                                    // Reset flag so sheet doesn't repeatedly show
+                                    self.hasCountdownStarted = false
+                                }
+                            }
+                        }
+                    }
                 } else {
                     print("❌ Failed to login to room: \(errorCode)")
                 }

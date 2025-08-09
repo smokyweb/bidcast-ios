@@ -21,9 +21,9 @@ struct Comment: Identifiable, Equatable {
 }
 
 struct LiveStream: View {
+    
     @State private var commentText = ""
     @State var comments: [Comment] = []
-    
     @State var id : String = ""
     @State var userName : String = ""
     @State var userImage : String = ""
@@ -81,6 +81,7 @@ struct LiveStream: View {
     @State var navigateToBuyer = false
     @Binding var comeFromHome : Bool
     @State  var currentBottomSheet: MenuAction? = nil
+    
     var filteredActions: [MenuAction] {
         if let userId = viewModel.liveShowsResponse.data?.first?.user?.id,
            UserDefaults.userId != userId {
@@ -89,6 +90,7 @@ struct LiveStream: View {
             return MenuAction.allCases
         }
     }
+    
     @State  var showSheet: Bool = false
     
     var sheetHeight: CGFloat {
