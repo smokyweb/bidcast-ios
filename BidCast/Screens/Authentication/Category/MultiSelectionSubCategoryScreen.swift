@@ -12,6 +12,7 @@ import SVProgressHUD
 struct MultiSelectionSubCategoryScreen: View {
     
     @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject private var appRootManager: AppRootManager
     @State var showError = false
     @State var isLoading = false
     @State var showhud = false
@@ -100,7 +101,15 @@ struct MultiSelectionSubCategoryScreen: View {
         ) {
             CommonBottomSheet(
                 sheetType: $alertType,
-                onPrimaryClick: { withAnimation { showError = false } },
+                onPrimaryClick: { withAnimation { showError = false }
+                    let response = viewModel.storeFavCategoryResponse
+                    if response?.status == "success" {
+                        UserDefaults.isFirstTimeLogin = true
+                        appRootManager.currentRoot = .tabBar
+                    }else{
+                        withAnimation { showError = false }
+                    }
+                },
                 onSecondaryClick: { withAnimation { showError = false } }
             )
         }
@@ -157,9 +166,8 @@ struct MultiSelectionSubCategoryScreen: View {
         
         let response = viewModel.storeFavCategoryResponse
         if response?.status == "success" {
-            // TODO: Navigate to Home screen or next step
-            print("Favorite categories saved successfully!")
-            // e.g. presentationMode.wrappedValue.dismiss()
+            alertType = .sheetType(icon: .success, title: response?.status?.capitalized ?? "", message: response?.message?.capitalized ?? "", primaryBtnText: AppString.Home.localized, secondaryBtnText: "", sheetThemeColor: .secondary)
+            showError = true
         } else {
             alertType = .sheetType(
                 icon: .alert,

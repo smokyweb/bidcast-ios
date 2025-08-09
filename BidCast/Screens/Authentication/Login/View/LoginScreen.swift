@@ -33,6 +33,7 @@ struct LoginScreen: View {
     @State var navigateToEmployer: Bool = false
     @State var navigateToCompanyUser: Bool = false
     @State var navigatetoUser: Bool = false
+    @State var navigateToCategories : Bool = false
     
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     
@@ -187,6 +188,7 @@ struct LoginScreen: View {
                 CusNavLink(doNavigate: $navigateToSignUp, destination: SignUpScreen())
                 CusNavLink(doNavigate: $navigateToPrivacy, destination: PrivacyPolicyScreen())
                 CusNavLink(doNavigate: $navigateToTerms, destination: TermsOfServicesScreen())
+                CusNavLink(doNavigate: $navigateToCategories, destination: MultiSelectionCategoryScreen())
                 
             }
             
@@ -219,7 +221,6 @@ struct LoginScreen: View {
     }
     
     func success() async {
-        
 //        await SVProgressHUD.dismiss()
         let dict = viewModel.loginResponse
         if dict.status == "success" {
@@ -249,7 +250,11 @@ struct LoginScreen: View {
             alertType = .sheetType(icon: .success, title: dict.status?.capitalized ?? "", message: AppString.chooseLanguage.localized, primaryBtnText: AppString.continueBtn.localized , secondaryBtnText: "", sheetThemeColor: .secondary)
             DispatchQueue.main.async {
                 withAnimation {
-                    appRootManager.currentRoot = .tabBar
+                    if !UserDefaults.isFirstTimeLogin{
+                        navigateToCategories = true
+                    }else{
+                        appRootManager.currentRoot = .tabBar
+                    }
                 }
             }
         }else{

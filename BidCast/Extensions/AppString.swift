@@ -187,4 +187,5 @@ struct AppString{
     static let SellerVerification = "Seller Verification".localized
     static let PendingVerification = "Pending Verification".localized
     static let YourVerificationProcess = "Your verification process is currently pending.".localized
+    static let Home  = "Home".localized
 }

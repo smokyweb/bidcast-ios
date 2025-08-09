@@ -353,6 +353,16 @@ extension UserDefaults{
         }
     }
     
+    static var isFirstTimeLogin:Bool{
+        set(input){
+            self.standard.setValue(input, forKey: "isFirstTimeLogin")
+        }
+        get{
+            
+            return self.standard.value(forKey: "companyReadAccess") as? Bool ?? false
+        }
+    }
+    
     static var companyWriteAccess:Bool{
         set(input){
             self.standard.setValue(input, forKey: "companyWriteAccess")
