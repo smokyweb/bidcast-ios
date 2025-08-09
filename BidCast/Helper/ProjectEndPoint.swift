@@ -20,6 +20,8 @@ enum APIEndPoint{
     case termsCondition
     case faq
     case category(param:CategoryRequest)
+    case getSubCategories(param:[String:Any] )
+    case storeFavCategories(param:[String:Any] )
     case auctionType
     case logout
     case getInventory(param : InventoryRequest)
@@ -351,6 +353,10 @@ extension APIEndPoint: EndPointType {
             return "get_user_details"
         case .getCategories:
             return "get-categories-list"
+        case .getSubCategories:
+            return "get-subcategories"
+        case .storeFavCategories:
+            return "user/favorite"
         case .SubCompany:
             return "assign-user-access"
         case .SubCompanyUpdate:
@@ -673,6 +679,10 @@ extension APIEndPoint: EndPointType {
             
         case .getCategories:
             return .get
+        case .getSubCategories:
+            return .post
+        case .storeFavCategories:
+            return .post
             
         case .SubCompany:
             return .post
@@ -1002,7 +1012,10 @@ extension APIEndPoint: EndPointType {
             return nil
         case .getCategories:
             return nil
-            
+        case .getSubCategories(let param):
+            return nil
+        case .storeFavCategories(let param):
+            return nil
         case .SubCompany(let param):
             return param
         case .SubCompanyUpdate(let param):
@@ -1336,6 +1349,10 @@ extension APIEndPoint: EndPointType {
             return nil
         case .getCategories:
             return nil
+        case .getSubCategories(let param):
+            return param
+        case .storeFavCategories(let param):
+            return param
         case .get_news:
             return nil
         case .getBusiness:

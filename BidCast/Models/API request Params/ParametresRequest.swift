@@ -616,6 +616,7 @@ struct StoreScheduleShowRequest: Encodable {
 //        case thumbnail = "thumbnail[]"
     }
 }
+
 struct ProductRequest : Encodable {
     var category_id : String
 }
@@ -677,6 +678,17 @@ struct CardDefaultRequest : Encodable {
 struct CategoryRequest  : Encodable {
     var category_id : String?
 }
+
+
+struct SubCategoryRequest  : Encodable {
+    var category_ids : [Int]?
+}
+
+struct FavCategoryRequest  : Encodable {
+    var category_ids : [Int]?
+    var sub_category_ids : [Int]?
+}
+
 
 struct SendChatNotification : Encodable{
     var receiver_id : Int

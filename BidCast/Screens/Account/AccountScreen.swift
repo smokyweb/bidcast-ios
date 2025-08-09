@@ -246,8 +246,10 @@ struct AccountScreen: View {
             
             
             
+            
             //MARK: Seller hub navigation
-            CusNavLink(doNavigate: $navigateToShows, destination: ShowsScreen())
+//            CusNavLink(doNavigate: $navigateToShows, destination: ShowsScreen())
+            CusNavLink(doNavigate: $navigateToShows, destination: MultiSelectionCategoryScreen())
             CusNavLink(doNavigate: $navigateToInventry, destination: InventoryScreen(productData: InventoryDataModel()))
             CusNavLink(doNavigate: $navigateToOffers, destination: OffersScreen())
             CusNavLink(doNavigate: $navigateToSellerTraining, destination: PromoteToolsView())

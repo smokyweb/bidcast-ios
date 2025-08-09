@@ -44,6 +44,30 @@ struct CategoryDataModel : Codable{
     var extra_fields : [ExtraFieldModel]?
 }
 
+// MARK: - SubCategoryDataModel
+struct SubCategoryDataModel : Codable {
+    var id, categoryID: Int?
+    var name: String?
+    var image: String?
+    var extraFields: [ExtraFieldModel]?
+    var thumbnail: String?
+    var color: String?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case categoryID = "category_id"
+        case name, image
+        case extraFields = "extra_fields"
+        case thumbnail, color
+    }
+}
+
+// MARK: - FavCategoryDataModel
+struct FavCategoryDataModel : Codable {
+  
+}
+
+
 struct ExtraFieldModel : Codable{
 //    var id = UUID()
     var label : String?

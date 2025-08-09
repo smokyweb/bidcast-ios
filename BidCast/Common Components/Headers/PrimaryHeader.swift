@@ -318,3 +318,43 @@ struct PrimaryHeader: View {
         )
     }
 }
+
+
+
+import SwiftUI
+
+struct HeaderWithTitle: View {
+    var title: String = "Header Title"
+    var leadingImgArr: [ImageResource] = [.icBack]
+    var onClickLeading: ((Int) -> Void)?
+    
+    @Binding var count: Int
+    
+    var body: some View {
+        HStack(spacing: 5) {
+            ForEach(leadingImgArr.indices, id: \.self) { ind in
+                Button(action: {
+                    withAnimation { onClickLeading?(ind) }
+                }) {
+                    Image(leadingImgArr[ind])
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 24, height: 24)
+                        .tint(.black)
+                        .clipped()
+                }
+            }
+            .padding([.leading,.trailing], 16)
+            
+            // Title
+            Text(title)
+                .font(.custom(robotoSemiBold, fixedSize: 18))
+                .foregroundColor(.black)
+                .lineLimit(1)
+            
+            Spacer()
+        }
+        .frame(height: 50)
+        .background(Color.white)
+    }
+}

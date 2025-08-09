@@ -270,6 +270,8 @@
 		D41711E02DF7FF1300ED39BC /* TrustedBuyerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D41711DF2DF7FF1300ED39BC /* TrustedBuyerViewModel.swift */; };
 		D4181BC32E0D4B15002962A3 /* KycModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4181BBC2E0D4B15002962A3 /* KycModel.swift */; };
 		D4181BC72E0D4B15002962A3 /* KycViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4181BBE2E0D4B15002962A3 /* KycViewModel.swift */; };
+		D433DB042E471558001FA51D /* MultiSelectionCategoryScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D433DB032E471558001FA51D /* MultiSelectionCategoryScreen.swift */; };
+		D433DB062E47277A001FA51D /* MultiSelectionSubCategoryScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D433DB052E47277A001FA51D /* MultiSelectionSubCategoryScreen.swift */; };
 		D4588AC62E20F68E0089B1A3 /* ReviewCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4588AC52E20F68E0089B1A3 /* ReviewCard.swift */; };
 		D45D7A382E389AAD003A3842 /* ChatScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D45D7A372E389AAD003A3842 /* ChatScreen.swift */; };
 		D45D7A3C2E389AE4003A3842 /* ChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D45D7A3B2E389AE4003A3842 /* ChatViewModel.swift */; };
@@ -734,6 +736,8 @@
 		D41711DF2DF7FF1300ED39BC /* TrustedBuyerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrustedBuyerViewModel.swift; sourceTree = "<group>"; };
 		D4181BBC2E0D4B15002962A3 /* KycModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KycModel.swift; sourceTree = "<group>"; };
 		D4181BBE2E0D4B15002962A3 /* KycViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KycViewModel.swift; sourceTree = "<group>"; };
+		D433DB032E471558001FA51D /* MultiSelectionCategoryScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiSelectionCategoryScreen.swift; sourceTree = "<group>"; };
+		D433DB052E47277A001FA51D /* MultiSelectionSubCategoryScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiSelectionSubCategoryScreen.swift; sourceTree = "<group>"; };
 		D4588AC52E20F68E0089B1A3 /* ReviewCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewCard.swift; sourceTree = "<group>"; };
 		D45D7A372E389AAD003A3842 /* ChatScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatScreen.swift; sourceTree = "<group>"; };
 		D45D7A3B2E389AE4003A3842 /* ChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewModel.swift; sourceTree = "<group>"; wrapsLines = 0; };
@@ -2079,6 +2083,7 @@
 				99C9090A2DC8CD790054620B /* ResetPasswordScreen */,
 				99C9090F2DC8CD790054620B /* VerifyOtpScreen */,
 				99C909142DC8CD790054620B /* ForgotScreen */,
+				D433DB022E471361001FA51D /* Category */,
 			);
 			path = Authentication;
 			sourceTree = "<group>";
@@ -2343,6 +2348,15 @@
 				D4181BBF2E0D4B15002962A3 /* ViewModel */,
 			);
 			path = Kyc;
+			sourceTree = "<group>";
+		};
+		D433DB022E471361001FA51D /* Category */ = {
+			isa = PBXGroup;
+			children = (
+				D433DB032E471558001FA51D /* MultiSelectionCategoryScreen.swift */,
+				D433DB052E47277A001FA51D /* MultiSelectionSubCategoryScreen.swift */,
+			);
+			path = Category;
 			sourceTree = "<group>";
 		};
 		D45D7A332E389A79003A3842 /* Chat */ = {
@@ -4220,6 +4234,7 @@
 				D4BA9C0C2DE4856900DFF6E6 /* ShowsModel.swift in Sources */,
 				99C909AA2DC8CD930054620B /* Logger.swift in Sources */,
 				D4A500E32DFAC474008799B1 /* OTPVerificationScreen.swift in Sources */,
+				D433DB042E471558001FA51D /* MultiSelectionCategoryScreen.swift in Sources */,
 				D4CAECB42DE7383D00705CD7 /* ShopModel.swift in Sources */,
 				D4CAEC8C2DE71FB800705CD7 /* PromoteShowViewModel.swift in Sources */,
 				D4DDF6292E0BC9A3007AD383 /* NotificationViewModel.swift in Sources */,
@@ -4309,6 +4324,7 @@
 				D4CAECA92DE7360F00705CD7 /* ShowSummaryModel.swift in Sources */,
 				D4F72B532DF96FE9008A6859 /* ShippingStepView.swift in Sources */,
 				99C908212DC8CD6A0054620B /* SubscriptionCard.swift in Sources */,
+				D433DB062E47277A001FA51D /* MultiSelectionSubCategoryScreen.swift in Sources */,
 				D4B616082DE8612300924A3D /* SellerVerificationScreen.swift in Sources */,
 				35B083F72E0AD36A00F5D48D /* NoDataView.swift in Sources */,
 				D4B6160A2DE8612300924A3D /* SellerVerificationViewModel.swift in Sources */,
