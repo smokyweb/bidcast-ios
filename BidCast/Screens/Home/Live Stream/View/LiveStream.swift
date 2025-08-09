@@ -62,6 +62,12 @@ struct LiveStream: View {
     @State var navigateToSellerVerification = false
     @State var hasTrustedBuyerSheetOpen = false
     @State var sheduleShowID : Int = 0
+    @State var showToast = false
+    @State var toastMessage = ""
+    @State var winnerProfileImage : String = ""
+    @State var winnerName : String = ""
+    @State var winnerAmount : String = ""
+    @State var winnerProfileID : Int = 0
     
     var tabBarHeight: CGFloat {
         UIApplication.shared.windows.first?.safeAreaInsets.bottom ?? 49
@@ -92,6 +98,7 @@ struct LiveStream: View {
     }
     
     @State  var showSheet: Bool = false
+    @State  var winnerSheet: Bool = false
     
     var sheetHeight: CGFloat {
         switch currentBottomSheet {
@@ -426,7 +433,6 @@ struct LiveStream: View {
                                             
                                         }
                                     }
-                                    
                                 }else {
                                     Text("Waiting for next product...")
                                         .font(.custom(poppinsSemiBold, size: 14.0))
@@ -434,7 +440,7 @@ struct LiveStream: View {
                                         .padding(.horizontal)
                                 }
                             }
-                            //                            .padding(.bottom,50)
+                            //.padding(.bottom,50)
                             .padding(.bottom, keyboardResponder.currentHeight == 0 ? (tabBarHeight + 20) : 10)
                         }
                     }
@@ -656,8 +662,20 @@ struct LiveStream: View {
                 }
             }
         )
-        .edgesIgnoringSafeArea(.all)
+        .bottomSheet(isPresented: $winnerSheet,height: screenHeight * 0.43) {
+            WinnerBottomSheet(
+                winnerAmount: winnerAmount, profileImage: winnerProfileImage ?? "" ,
+                username: winnerName ?? "",
+                winnerProfileID : winnerProfileID,
+                showParentToast: $showToast,
+                parentToastMessage: $toastMessage,
+                onDismiss: {
+                    self.winnerSheet = false
+                }
+            )
+        }
         
+        .edgesIgnoringSafeArea(.all)
         .toolbar(.hidden,for: .tabBar)
         .foregroundColor(.black)
         .background(.black)
@@ -916,6 +934,10 @@ struct LiveStream: View {
                 bidderProfileImage: UserDefaults.profileURL){ finalBidData in
                     if let data = finalBidData {
                         let user_Id = data["userId"] as? String
+                        winnerName = UserDefaults.fullName
+                        winnerProfileImage = UserDefaults.profileURL
+                        winnerAmount = "\(newPrice)"
+                        winnerProfileID = UserDefaults.userId
                         updateSoldStatus()
                         //TODO: Later Used it
                         //                        Task{
@@ -944,6 +966,7 @@ struct LiveStream: View {
                     print("❌ Failed to mark as sold: \(error.localizedDescription)")
                 } else {
                     print("✅ Product marked as sold in Firebase.")
+                    winnerSheet = true
                     refreshProductStatus(roomId: liveShowsData[currentStreamIndex].room_id ?? "")
                     
                 }

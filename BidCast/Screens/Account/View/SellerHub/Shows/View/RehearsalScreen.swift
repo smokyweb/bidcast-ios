@@ -771,6 +771,7 @@ struct RehearsalScreen: View {
                         self.UpdateStatus(status : true)
                     }
                     fetchBiddingDetail(roomId: roomId)
+                    //For Show Automatic Sheet
                     if isLive {
                         print("👀 Starting countdown observer for roomId: \(roomId)")
                         FirebaseManager.shared.observeCountdown(for: roomId) { seconds in
@@ -788,8 +789,6 @@ struct RehearsalScreen: View {
                                     currentBottomSheet = .shop
                                     fetchLatestProductList()
                                     self.showSellSheet = true
-                                    
-                                    // Reset flag so sheet doesn't repeatedly show
                                     self.hasCountdownStarted = false
                                 }
                             }
