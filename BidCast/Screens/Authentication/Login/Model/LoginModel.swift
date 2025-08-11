@@ -17,6 +17,7 @@ struct LoginModel : Codable {
     var token : String?
     var is_first_login : Int?
     var profile_image: String?
+    var is_FirsttimeLogin : Bool?
     var roles: RoleData?
 }
 

@@ -17,6 +17,7 @@ struct MultiSelectionCategoryScreen: View {
     @State var showhud = false
     @State var hudMsg = ""
     @State var navigateToSubCategory = false
+    @State var navFrom : String = ""
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     
     @State private var categoryList: [CategoryDataModel] = []

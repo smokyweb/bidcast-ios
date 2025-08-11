@@ -693,8 +693,6 @@ struct LiveStream: View {
                 await self.homeViewModel.getProfile()
                 await SVProgressHUD.dismiss()
                 getProfileSuccess()
-                
-                
             }
         }
         .onDisappear{
@@ -755,6 +753,7 @@ struct LiveStream: View {
                             let initialRoomID = liveShowsData[currentStreamIndex].room_id ?? ""
                             loginRoom(roomId: initialRoomID)
                             fetchBiddingDetail(roomId: initialRoomID)
+                            refreshProductStatus(roomId: liveShowsData[currentStreamIndex].room_id ?? "")
                             if liveShowsData[currentStreamIndex].user?.is_followed == false{
                                 isFollow = false
                             }else{
@@ -910,6 +909,8 @@ struct LiveStream: View {
         chatManager.messages.removeAll()
         if let currentRoomId = liveShowsData[safe: currentStreamIndex]?.room_id {
             FirebaseManager.shared.databaseRef.child("live_sessions").child(currentRoomId).removeAllObservers()
+            let countdownRef = FirebaseManager.shared.databaseRef.child("live_sessions").child(currentRoomId).child("bidCountDown")
+             countdownRef.removeAllObservers()
         }
     }
     
@@ -949,8 +950,6 @@ struct LiveStream: View {
                     }
                 }
         }
-        
-        
         currentPrice = newPrice
         //        countdown = 10
         //        startCountdown()
@@ -968,13 +967,10 @@ struct LiveStream: View {
                     print("✅ Product marked as sold in Firebase.")
                     winnerSheet = true
                     refreshProductStatus(roomId: liveShowsData[currentStreamIndex].room_id ?? "")
-                    
                 }
             }
         }
     }
-    
-    
     
     func soldSuccess() {
         let response = self.viewModel.BidResponse
@@ -986,48 +982,49 @@ struct LiveStream: View {
     }
     
     func refreshProductStatus(roomId: String) {
+        
         FirebaseManager.shared.observeProductChanges(roomId: roomId) { updatedProducts in
             DispatchQueue.main.async {
-                // Update your local products list
                 self.BiddingDetail.products = updatedProducts
-                
-                // Filter out sold products
                 let availableProducts = updatedProducts.filter { $0.status.lowercased() != "sold" }
                 
-                // Check if any product is current
-                let currentProductExists = availableProducts.contains(where: { $0.isCurrent })
-                
-                if currentProductExists {
-                    // Show product details for current product
-                    if let currentIndex = availableProducts.firstIndex(where: { $0.isCurrent }) {
-                        var reordered = availableProducts
-                        let currentProduct = reordered.remove(at: currentIndex)
-                        reordered.insert(currentProduct, at: 0)
-                        
-                        DispatchQueue.main.async {
-                            self.productData = reordered
-                            self.currentProductIndex = 0
-                        }
-                        // Update price based on current product
-                        if let priceString = self.productData.first?.price,
-                           let priceDouble = Double(priceString) {
-                            self.currentPrice = priceDouble
-                            self.currentPrice = priceDouble
-                        }
-                    } else {
-                        // fallback if no current product found
-                        self.productData = availableProducts
-                        self.currentProductIndex = 0
+                if let currentIndex = availableProducts.firstIndex(where: { $0.isCurrent }) {
+                    var reordered = availableProducts
+                    let currentProduct = reordered.remove(at: currentIndex)
+                    reordered.insert(currentProduct, at: 0)
+                    
+                    self.productData = reordered
+                    self.currentProductIndex = 0
+                    
+                    // Default to product base price
+                    if let priceString = self.productData.first?.price,
+                       let priceDouble = Double(priceString) {
+                        self.currentPrice = priceDouble
                     }
                 } else {
-                    // No current product => clear list, show waiting UI
-                    self.productData = []
+                    self.productData = availableProducts
                     self.currentProductIndex = 0
                 }
             }
         }
+        
+        FirebaseManager.shared.observeHighestBid(roomId: roomId) { highestBid in
+            DispatchQueue.main.async {
+                guard let product = self.productData.first else { return }
+                let basePrice = Double(product.price) ?? 0
+                
+                if let bidAmountString = highestBid["bidAmount"] as? String,
+                   let bidAmountDouble = Double(bidAmountString),
+                   bidAmountDouble > basePrice {
+                    self.currentPrice = bidAmountDouble
+                } else {
+                    self.currentPrice = basePrice
+                }
+            }
+        }
     }
-    
+
+
     
     
     //    func observeProduct() {

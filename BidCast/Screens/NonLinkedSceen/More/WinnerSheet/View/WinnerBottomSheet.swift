@@ -75,7 +75,7 @@ struct WinnerBottomSheet: View {
                             }
                         }
                         
-                        Text("\(username.capitalizingFirstLetter)")
+                        Text("\(username)")
                             .font(.custom(poppinsSemiBold, size: 14.0))
                             .foregroundColor(.black)
                     }

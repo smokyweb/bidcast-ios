@@ -39,6 +39,7 @@ struct AccountScreen: View {
     @State var navigateToMyOrder : Bool = false
     @State var navigateToSellerTraining : Bool = false
     @State var navigateToPreference : Bool = false
+    @State var navigateToCategory : Bool = false
     @State var navigateToPayment : Bool = false
     @State var navigateToTrustedBuyer : Bool = false
     @State var navigateToPremierShop : Bool = false
@@ -148,6 +149,7 @@ struct AccountScreen: View {
                                         case 1: navigateToAddress = true
                                         case 2: navigateToTrustedBuyer = true
                                         case 4: navigateToPreference = true
+//                                      case 5: navigateToCategory = true
                                         default: break
                                         }
                                     }
@@ -240,6 +242,7 @@ struct AccountScreen: View {
             CusNavLink(doNavigate: $navigateToAddress, destination: AddressesScreen())
             CusNavLink(doNavigate: $navigateToShipping, destination: ShippingsScreen())
             CusNavLink(doNavigate: $navigateToPreference, destination: PreferncesScreen())
+            CusNavLink(doNavigate: $navigateToCategory, destination: MultiSelectionCategoryScreen())
             CusNavLink(doNavigate: $navigateToPayment, destination: PaymentAndShipping_Screen())
             CusNavLink(doNavigate: $navigateToTrustedBuyer, destination: TrustedBuyerScreen(comeFromHome: .constant(false)))
             CusNavLink(doNavigate: $navigateToSellerVerification, destination: SellerVerificationScreen())
@@ -433,6 +436,7 @@ enum AccountTabSection : String, CaseIterable, CustomStringConvertible{
     case buyer = "Trusted Buyer"
     case notifications = "Notifications"
     case preference = "Preference"
+//    case favCategory = "Favourite Categories"
     
     
     var description: String {
@@ -453,6 +457,8 @@ enum AccountTabSection : String, CaseIterable, CustomStringConvertible{
             return .wallet
         case .preference:
             return .tag
+//        case .favCategory:
+//            return .categories
             
         }
     }

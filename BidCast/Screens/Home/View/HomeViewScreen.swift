@@ -221,6 +221,12 @@ struct HomeViewScreen: View {
                     }
                 }
             }
+            
+            FirebaseManager.shared.observeLiveSessionRemovals { removedRoomId in
+                DispatchQueue.main.async {
+                    liveShowsData.removeAll { $0.room_id == removedRoomId }
+                }
+            }
         }
         .onDisappear {
             isActiveOnHomeScreen = false

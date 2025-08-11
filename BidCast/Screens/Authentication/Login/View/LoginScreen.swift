@@ -250,7 +250,7 @@ struct LoginScreen: View {
             alertType = .sheetType(icon: .success, title: dict.status?.capitalized ?? "", message: AppString.chooseLanguage.localized, primaryBtnText: AppString.continueBtn.localized , secondaryBtnText: "", sheetThemeColor: .secondary)
             DispatchQueue.main.async {
                 withAnimation {
-                    if !UserDefaults.isFirstTimeLogin{
+                    if dict.data?.is_FirsttimeLogin == true{
                         navigateToCategories = true
                     }else{
                         appRootManager.currentRoot = .tabBar
