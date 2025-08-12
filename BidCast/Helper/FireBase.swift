@@ -45,7 +45,7 @@ class FirebaseManager {
         print("📅 Timestamp: \(timestamp)")
         
         let sessionData: [String: Any] = [
-            "highestBid": "",
+            //            "highestBid": "",
             "isLive": true,
             "products": product.map { $0.toDictionary() },
             "roomId": roomId,
@@ -201,76 +201,76 @@ class FirebaseManager {
     }
     
     
-//    //MARK: - Bidding
-//    func updateHighestBid(
-//        roomId: String,
-//        bidAmount: String,
-//        bidderId: String,
-//        bidderName: String,
-//        bidderProfileImage: String,
-//        status: String = "process",
-//        onSold: @escaping (_ bidData: [String: Any]?) -> Void
-//    ) {
-//        let bidData: [String: Any] = [
-//            "bidAmount": bidAmount,
-//            "userId": bidderId,
-//            "userName": bidderName,
-//            "userImage": bidderProfileImage,
-//            "productStatus": status
-//        ]
-//        
-//        let bidPath = databaseRef
-//            .child("live_sessions")
-//            .child(roomId)
-//            .child("highestBid")
-//        
-//        let timerKey = roomId
-//        
-//        // ✅ Save highest bid to Firebase
-//        bidPath.setValue(bidData) { error, _ in
-//            if let error = error {
-//                print("❌ Failed to update highest bid: \(error.localizedDescription)")
-//            } else {
-//                print("✅ Highest bid updated")
-//                
-//                // ✅ Start timer only if not running
-//                if self.bidTimers[timerKey] == nil {
-//                    self.remainingSeconds[timerKey] = 30
-//                    self.startCountdownTimer(for: roomId, onSold: onSold)
-//                }
-//            }
-//        }
-//    }
-//    
-//    
-//    
-//    func startCountdownTimer(for roomId: String, onSold: @escaping (_ bidData: [String: Any]?) -> Void) {
-//        let timerKey = roomId
-//        let countdownRef = databaseRef.child("live_sessions").child(roomId).child("bidCountDown")
-//        
-//        // Initial countdown
-//        self.remainingSeconds[timerKey] = 30
-//        countdownRef.setValue("30") // Store as string initially
-//        
-//        bidTimers[timerKey] = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
-//            guard let secondsLeft = self.remainingSeconds[timerKey] else { return }
-//            
-//            if secondsLeft <= 1 {
-//                timer.invalidate()
-//                self.bidTimers.removeValue(forKey: timerKey)
-//                self.remainingSeconds.removeValue(forKey: timerKey)
-//                
-//                countdownRef.removeValue() // Remove countdown from Firebase
-//                print("⏰ Countdown finished — finalizing bid")
-//                self.finalizeWinningBid(roomId: roomId, onSold: onSold)
-//            } else {
-//                let newSeconds = secondsLeft - 1
-//                self.remainingSeconds[timerKey] = newSeconds
-//                countdownRef.setValue(String(newSeconds)) // Convert to String here
-//                print("⏱️ \(newSeconds)s left for room \(roomId)")
-//            }
-//        }
-//    }
+    //    //MARK: - Bidding
+    //    func updateHighestBid(
+    //        roomId: String,
+    //        bidAmount: String,
+    //        bidderId: String,
+    //        bidderName: String,
+    //        bidderProfileImage: String,
+    //        status: String = "process",
+    //        onSold: @escaping (_ bidData: [String: Any]?) -> Void
+    //    ) {
+    //        let bidData: [String: Any] = [
+    //            "bidAmount": bidAmount,
+    //            "userId": bidderId,
+    //            "userName": bidderName,
+    //            "userImage": bidderProfileImage,
+    //            "productStatus": status
+    //        ]
+    //
+    //        let bidPath = databaseRef
+    //            .child("live_sessions")
+    //            .child(roomId)
+    //            .child("highestBid")
+    //
+    //        let timerKey = roomId
+    //
+    //        // ✅ Save highest bid to Firebase
+    //        bidPath.setValue(bidData) { error, _ in
+    //            if let error = error {
+    //                print("❌ Failed to update highest bid: \(error.localizedDescription)")
+    //            } else {
+    //                print("✅ Highest bid updated")
+    //
+    //                // ✅ Start timer only if not running
+    //                if self.bidTimers[timerKey] == nil {
+    //                    self.remainingSeconds[timerKey] = 30
+    //                    self.startCountdownTimer(for: roomId, onSold: onSold)
+    //                }
+    //            }
+    //        }
+    //    }
+    //
+    //
+    //
+    //    func startCountdownTimer(for roomId: String, onSold: @escaping (_ bidData: [String: Any]?) -> Void) {
+    //        let timerKey = roomId
+    //        let countdownRef = databaseRef.child("live_sessions").child(roomId).child("bidCountDown")
+    //
+    //        // Initial countdown
+    //        self.remainingSeconds[timerKey] = 30
+    //        countdownRef.setValue("30") // Store as string initially
+    //
+    //        bidTimers[timerKey] = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+    //            guard let secondsLeft = self.remainingSeconds[timerKey] else { return }
+    //
+    //            if secondsLeft <= 1 {
+    //                timer.invalidate()
+    //                self.bidTimers.removeValue(forKey: timerKey)
+    //                self.remainingSeconds.removeValue(forKey: timerKey)
+    //
+    //                countdownRef.removeValue() // Remove countdown from Firebase
+    //                print("⏰ Countdown finished — finalizing bid")
+    //                self.finalizeWinningBid(roomId: roomId, onSold: onSold)
+    //            } else {
+    //                let newSeconds = secondsLeft - 1
+    //                self.remainingSeconds[timerKey] = newSeconds
+    //                countdownRef.setValue(String(newSeconds)) // Convert to String here
+    //                print("⏱️ \(newSeconds)s left for room \(roomId)")
+    //            }
+    //        }
+    //    }
     
     // MARK: - updateHighestBid
     func updateHighestBid(
@@ -290,67 +290,156 @@ class FirebaseManager {
             "productStatus": status
         ]
         
-        let bidPath = databaseRef
-            .child("live_sessions")
-            .child(roomId)
-            .child("highestBid")
+        let bidPath = databaseRef.child("live_sessions").child(roomId).child("highestBid")
+        let countdownRef = databaseRef.child("live_sessions").child(roomId).child("bidCountDown")
         
         bidPath.setValue(bidData) { error, _ in
             if let error = error {
                 print("❌ Failed to update highest bid: \(error.localizedDescription)")
             } else {
                 print("✅ Highest bid updated")
-                DispatchQueue.main.async {
-                    let userID = "\(UserDefaults.userId)"
-                    if userID == bidderId{
-                        self.resetAndStartCountdown(for: roomId, onSold: onSold)
-                    }
-                }
             }
         }
     }
-
+    
+    
     // MARK: - resetAndStartCountdown
     func resetAndStartCountdown(for roomId: String, onSold: @escaping (_ bidData: [String: Any]?) -> Void) {
         let timerKey = roomId
         let countdownRef = databaseRef.child("live_sessions").child(roomId).child("bidCountDown")
+        let highestBidRef = databaseRef.child("live_sessions").child(roomId).child("highestBid")
         
-        // Stop any old timer
-        if let oldTimer = bidTimers[timerKey] {
-            oldTimer.invalidate()
-            bidTimers.removeValue(forKey: timerKey)
-            print("🛑 Old countdown stopped for room \(roomId)")
-        }
-        
-        // Reset seconds
-        remainingSeconds[timerKey] = 30
-        countdownRef.setValue("30") // Sync to Firebase
-        
-        // Start new timer
-        let newTimer = Timer(timeInterval: 1.0, repeats: true) { timer in
-            guard let secondsLeft = self.remainingSeconds[timerKey] else { return }
+        DispatchQueue.main.async {
+            print("[resetAndStartCountdown] Current timers: \(self.bidTimers.keys)")
             
-            if secondsLeft <= 1 {
-                timer.invalidate()
+            // Stop existing timer if present
+            if let existingTimer = self.bidTimers[timerKey] {
+                print("[resetAndStartCountdown] Invalidating timer for \(timerKey)")
+                existingTimer.invalidate()
                 self.bidTimers.removeValue(forKey: timerKey)
-                self.remainingSeconds.removeValue(forKey: timerKey)
-                countdownRef.removeValue()
-                print("⏰ Countdown finished — finalizing bid")
-                self.finalizeWinningBid(roomId: roomId, onSold: onSold)
             } else {
-                let newSeconds = secondsLeft - 1
-                self.remainingSeconds[timerKey] = newSeconds
-                countdownRef.setValue(String(newSeconds)) // Sync each second
-                print("⏱️ \(newSeconds)s left for room \(roomId)")
+                print("[resetAndStartCountdown] No existing timer for \(timerKey)")
+            }
+            
+            // Reset to 30s in Firebase
+            self.remainingSeconds[timerKey] = 30
+            countdownRef.setValue("30")
+            
+            let newTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
+                guard let secondsLeft = self.remainingSeconds[timerKey] else { return }
+                
+                if secondsLeft <= 1 {
+                    timer.invalidate()
+                    self.bidTimers.removeValue(forKey: timerKey)
+                    self.remainingSeconds.removeValue(forKey: timerKey)
+                    countdownRef.removeValue()
+                    print("[Timer] Countdown finished for \(timerKey)")
+                    
+                    // ✅ Only call onSold if there is actually a highestBid
+                    highestBidRef.getData { error, snapshot in
+                        if let bidData = snapshot?.value as? [String: Any] {
+                            print("[Winner] Highest bid at countdown end: \(bidData)")
+                            onSold(bidData) // will call updateSoldStatus() in loginRoom
+                        } else {
+                            print("[Winner] No highest bid found at countdown end — no sale.")
+                        }
+                    }
+                } else {
+                    let newSeconds = secondsLeft - 1
+                    self.remainingSeconds[timerKey] = newSeconds
+                    countdownRef.setValue(String(newSeconds))
+                    print("[Timer] \(newSeconds)s left for room \(timerKey)")
+                }
+            }
+            
+            self.bidTimers[timerKey] = newTimer
+            print("[resetAndStartCountdown] New timer started for \(timerKey), timers now: \(self.bidTimers.keys)")
+        }
+    }
+    
+    
+    func observeHighestBidChanges(roomId: String, onSold: @escaping (_ bidData: [String: Any]?) -> Void) {
+        let highestBidRef = databaseRef.child("live_sessions").child(roomId).child("highestBid")
+        let countdownRef = databaseRef.child("live_sessions").child(roomId).child("bidCountDown")
+        
+        var previousBidData: [String: Any]? = nil
+        
+        highestBidRef.observe(.value) { snapshot in
+            if let newBidData = snapshot.value as? [String: Any] {
+                // Bid changed or added - reset countdown
+                if !NSDictionary(dictionary: newBidData).isEqual(to: previousBidData ?? [:]) {
+                    print("🔔 Bid changed! Resetting countdown timer.")
+                    previousBidData = newBidData
+                    
+                    self.resetAndStartCountdown(for: roomId, onSold: onSold)
+                }
+            } else {
+                // highestBid removed — remove countdown too
+                print("⚠️ highestBid removed, removing countdown too.")
+                previousBidData = nil
+                
+                // Stop local timer
+                if let existingTimer = self.bidTimers[roomId] {
+                    existingTimer.invalidate()
+                    self.bidTimers.removeValue(forKey: roomId)
+                }
+                self.remainingSeconds.removeValue(forKey: roomId)
+                
+                // Remove countdown node in Firebase
+                countdownRef.removeValue()
+                highestBidRef.removeValue()
             }
         }
-        
-        RunLoop.main.add(newTimer, forMode: .common)
-        bidTimers[timerKey] = newTimer
-        print("▶️ New countdown started for room \(roomId) at 30s")
     }
+    
+    
+    func observeCountdown(for roomId: String, onUpdate: @escaping (Int) -> Void) {
+        let countdownRef = databaseRef.child("live_sessions").child(roomId).child("bidCountDown")
+        countdownRef.removeAllObservers()
+        countdownRef.observe(.value) { snapshot in
+            if let secondsString = snapshot.value as? String,
+               let seconds = Int(secondsString) {
+                print("Countdown updated: \(seconds)")
+                onUpdate(seconds)
+                
+                if seconds == 0 {
+                    print("Countdown reached zero, removing highestBid and bidCountDown")
+                    let sessionRef = self.databaseRef.child("live_sessions").child(roomId)
+                    
+                    // Remove bidCountDown first
+                    sessionRef.child("bidCountDown").removeValue { error, _ in
+                        if let error = error {
+                            print("Failed to remove bidCountDown: \(error)")
+                        } else {
+                            print("Removed bidCountDown successfully")
+                            
+                            // Now remove highestBid only after bidCountDown removed successfully
+                            sessionRef.child("highestBid").removeValue { error, _ in
+                                if let error = error {
+                                    print("Failed to remove highestBid: \(error)")
+                                } else {
+                                    print("Removed highestBid successfully")
+                                }
+                            }
+                        }
+                    }
+                }
 
-
+            } else {
+                print("Countdown removed or invalid")
+                onUpdate(0)
+            }
+        }
+    }
+    
+    
+    func stopObservingCountdown(for roomId: String) {
+        let countdownRef = databaseRef.child("live_sessions").child(roomId).child("bidCountDown")
+        countdownRef.removeAllObservers()
+    }
+    
+    
+    
     
     
     func finalizeWinningBid(roomId: String, onSold: @escaping (_ bidData: [String: Any]?) -> Void) {
@@ -386,24 +475,7 @@ class FirebaseManager {
     }
     
     
-    func observeCountdown(for roomId: String, onUpdate: @escaping (Int) -> Void) {
-        let countdownRef = databaseRef.child("live_sessions").child(roomId).child("bidCountDown")
-        
-        // Remove any previous observer to avoid duplicates
-        countdownRef.removeAllObservers()
-        
-        countdownRef.observe(.value) { snapshot in
-            if let secondsString = snapshot.value as? String,
-               let seconds = Int(secondsString) {
-                print("🟡 Countdown update: \(seconds)s")
-                onUpdate(seconds)
-            } else {
-                print("🟥 Countdown removed or finished")
-                onUpdate(0) // timer finished
-            }
-        }
-    }
-
+    
     
     
     //
@@ -544,7 +616,6 @@ class FirebaseManager {
             }
         })
     }
-    
     
     
     func fireAction(roomId: String, onIntervalReached: @escaping () -> Void) {
@@ -716,5 +787,5 @@ class FirebaseManager {
             onRemove(removedRoomId)
         }
     }
-
+    
 }

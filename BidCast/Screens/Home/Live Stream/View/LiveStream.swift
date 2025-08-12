@@ -557,7 +557,7 @@ struct LiveStream: View {
                 onPrimaryClick: {
                     withAnimation {
                         showError = false
-                        logoutRoom()
+//                        logoutRoom()
                         self.presentationMode.wrappedValue.dismiss()
                     }
                 },
@@ -662,10 +662,11 @@ struct LiveStream: View {
                 }
             }
         )
-        .bottomSheet(isPresented: $winnerSheet,height: screenHeight * 0.43) {
+        
+        .bottomSheet(isPresented: $winnerSheet,height: screenHeight * 0.40) {
             WinnerBottomSheet(
-                winnerAmount: winnerAmount, profileImage: winnerProfileImage ?? "" ,
-                username: winnerName ?? "",
+                winnerAmount: winnerAmount, profileImage: winnerProfileImage,
+                username: winnerName,
                 winnerProfileID : winnerProfileID,
                 showParentToast: $showToast,
                 parentToastMessage: $toastMessage,
@@ -807,6 +808,7 @@ struct LiveStream: View {
         let roomConfig = ZegoRoomConfig()
         roomConfig.isUserStatusNotify = true
         
+        
         ZegoExpressEngine.shared().loginRoom(roomId, user: user, config: roomConfig) { errorCode, extendedData in
             if errorCode == 0 {
                 print("✅ Login callback | room: \(roomId) | errorCode: \(errorCode)")
@@ -824,6 +826,7 @@ struct LiveStream: View {
                     viewwerCount = newCount
                 }
                 FirebaseManager.shared.observeLiveSessionRemoval(roomId: roomId) {
+                    logoutRoom()
                     let streamTitle = "Stream Ended"
                     let streamMessage = "The host has ended the live stream."
                     print("🔥 STREAM REMOVED CALLBACK TRIGGERED 🔥")
@@ -840,11 +843,29 @@ struct LiveStream: View {
                 FirebaseManager.shared.observeCountdown(for: roomId) {  seconds in
                     self.countdown = seconds
                 }
+                
+                FirebaseManager.shared.observeHighestBidChanges(roomId: roomId) { bidData in
+                    if let bidData = bidData,
+                       let roomKey = bidData.keys.first,
+                       let roomDict = bidData[roomKey] as? [String: Any],
+                       let highestBid = roomDict["highestBid"] as? [String: Any] {
+                        
+                        winnerName =  UserDefaults.fullName
+                        winnerProfileImage = UserDefaults.profileURL
+                        winnerProfileID = UserDefaults.userId
+                        winnerAmount = highestBid["bidAmount"] as? String ?? ""
+                        print("Winner: \(winnerName), Amount: \(winnerAmount)")
+                    } else {
+                        print("Could not find highestBid in bidData")
+                    }
+                    updateSoldStatus()
+                }
             } else {
                 print("login fail error")
             }
         }
     }
+    
     
     //    func fetchBiddingDetail(roomId: String) {
     //        FirebaseManager.shared.getLiveSessionData(roomId: roomId) { data in
@@ -901,8 +922,8 @@ struct LiveStream: View {
             }
         }
     }
-
-//MARK: logoutRoom
+    
+    //MARK: logoutRoom
     func logoutRoom() {
         ZegoExpressEngine.shared().logoutRoom()
         chatManager.logout()
@@ -910,8 +931,15 @@ struct LiveStream: View {
         if let currentRoomId = liveShowsData[safe: currentStreamIndex]?.room_id {
             FirebaseManager.shared.databaseRef.child("live_sessions").child(currentRoomId).removeAllObservers()
             let countdownRef = FirebaseManager.shared.databaseRef.child("live_sessions").child(currentRoomId).child("bidCountDown")
-             countdownRef.removeAllObservers()
+            countdownRef.removeAllObservers()
+            //            if let timer = bidTimers[currentRoomId] {
+            //                timer.invalidate()
+            //                bidTimers.removeValue(forKey: currentRoomId)
+            //                remainingSeconds.removeValue(forKey: currentRoomId)
+            //                print("🛑 Timer invalidated on logout for room \(currentRoomId)")
+            //            }
         }
+        
     }
     
     func incrementPrice() {
@@ -934,12 +962,12 @@ struct LiveStream: View {
                 bidderName: UserDefaults.fullName,
                 bidderProfileImage: UserDefaults.profileURL){ finalBidData in
                     if let data = finalBidData {
-                        let user_Id = data["userId"] as? String
-                        winnerName = UserDefaults.fullName
-                        winnerProfileImage = UserDefaults.profileURL
-                        winnerAmount = "\(newPrice)"
-                        winnerProfileID = UserDefaults.userId
-                        updateSoldStatus()
+//                        let user_Id = data["userId"] as? String
+//                        winnerName = UserDefaults.fullName
+//                        winnerProfileImage = UserDefaults.profileURL
+//                        winnerAmount = "\(newPrice)"
+//                        winnerProfileID = UserDefaults.userId
+//                        updateSoldStatus()
                         //TODO: Later Used it
                         //                        Task{
                         //                            let param = StoreBidRequest(schedule_show_id: "\(BiddingDetail.id ?? 0)", user_id:user_Id ?? "", product_id: BiddingDetail.products?[currentProductIndex].id ?? "", bid_price: "\(newPrice)")
@@ -955,7 +983,6 @@ struct LiveStream: View {
         //        startCountdown()
     }
     
-    
     func updateSoldStatus(){
         if let currentRoomId = liveShowsData[safe: currentStreamIndex]?.room_id,
            let productId = productData.first?.id {
@@ -965,12 +992,22 @@ struct LiveStream: View {
                     print("❌ Failed to mark as sold: \(error.localizedDescription)")
                 } else {
                     print("✅ Product marked as sold in Firebase.")
+                    // Remove highestBid after marking sold
+                    let highestBidRef = FirebaseManager.shared.databaseRef.child("live_sessions").child(currentRoomId).child("highestBid")
+                    highestBidRef.removeValue { error, _ in
+                        if let error = error {
+                            print("❌ Failed to remove highestBid: \(error.localizedDescription)")
+                        } else {
+                            print("✅ highestBid removed successfully after sale.")
+                        }
+                    }
                     winnerSheet = true
                     refreshProductStatus(roomId: liveShowsData[currentStreamIndex].room_id ?? "")
                 }
             }
         }
     }
+    
     
     func soldSuccess() {
         let response = self.viewModel.BidResponse
@@ -980,6 +1017,7 @@ struct LiveStream: View {
             print("⚠️ Bid failed — not marking as sold.")
         }
     }
+    
     
     func refreshProductStatus(roomId: String) {
         
@@ -1023,8 +1061,8 @@ struct LiveStream: View {
             }
         }
     }
-
-
+    
+    
     
     
     //    func observeProduct() {

@@ -41,7 +41,7 @@ struct WinnerBottomSheet: View {
         if winnerProfileID == UserDefaults.userId {
             return "Congratulations! You won the bid with an amount of $\(winnerAmount)"
         } else {
-            return "\(username.capitalizingFirstLetter) won the bid with an amount of $\(winnerAmount)"
+            return "\(username) won the bid with an amount of $\(winnerAmount)"
         }
     }
     
