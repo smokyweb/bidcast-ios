@@ -411,6 +411,9 @@
 		D4D453CF2E4C6FCD005A2F63 /* MaxBidModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D453CA2E4C6FCD005A2F63 /* MaxBidModel.swift */; };
 		D4D453D02E4C6FCD005A2F63 /* MaxBidBottomSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D453C82E4C6FCD005A2F63 /* MaxBidBottomSheet.swift */; };
 		D4D453D12E4C6FCD005A2F63 /* MaxBidViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D453CC2E4C6FCD005A2F63 /* MaxBidViewModel.swift */; };
+		D4D453D92E4CBC13005A2F63 /* BlockedUserListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D453D22E4CBC13005A2F63 /* BlockedUserListViewModel.swift */; };
+		D4D453DA2E4CBC13005A2F63 /* BlockedUserListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D453D42E4CBC13005A2F63 /* BlockedUserListModel.swift */; };
+		D4D453DB2E4CBC13005A2F63 /* BlockedUserScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D453D62E4CBC13005A2F63 /* BlockedUserScreen.swift */; };
 		D4DAD3182E24E34A00738549 /* RateSellerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4DAD3172E24E34A00738549 /* RateSellerView.swift */; };
 		D4DDE8022DDC5CC100A24973 /* Poppins-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D4DDE8002DDC5CC000A24973 /* Poppins-ThinItalic.ttf */; };
 		D4DDE8032DDC5CC100A24973 /* Poppins-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D4DDE7FA2DDC5CC000A24973 /* Poppins-Medium.ttf */; };
@@ -883,6 +886,9 @@
 		D4D453C82E4C6FCD005A2F63 /* MaxBidBottomSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaxBidBottomSheet.swift; sourceTree = "<group>"; };
 		D4D453CA2E4C6FCD005A2F63 /* MaxBidModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaxBidModel.swift; sourceTree = "<group>"; };
 		D4D453CC2E4C6FCD005A2F63 /* MaxBidViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaxBidViewModel.swift; sourceTree = "<group>"; };
+		D4D453D22E4CBC13005A2F63 /* BlockedUserListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockedUserListViewModel.swift; sourceTree = "<group>"; };
+		D4D453D42E4CBC13005A2F63 /* BlockedUserListModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockedUserListModel.swift; sourceTree = "<group>"; };
+		D4D453D62E4CBC13005A2F63 /* BlockedUserScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockedUserScreen.swift; sourceTree = "<group>"; };
 		D4DAD3172E24E34A00738549 /* RateSellerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateSellerView.swift; sourceTree = "<group>"; };
 		D4DDE7EE2DDC5CC000A24973 /* OFL.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = OFL.txt; sourceTree = "<group>"; };
 		D4DDE7EF2DDC5CC000A24973 /* Poppins-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-Black.ttf"; sourceTree = "<group>"; };
@@ -2095,7 +2101,6 @@
 				99C9090A2DC8CD790054620B /* ResetPasswordScreen */,
 				99C9090F2DC8CD790054620B /* VerifyOtpScreen */,
 				99C909142DC8CD790054620B /* ForgotScreen */,
-				D433DB022E471361001FA51D /* Category */,
 			);
 			path = Authentication;
 			sourceTree = "<group>";
@@ -2494,6 +2499,7 @@
 		D4A7F8FB2DDD9A75001FC705 /* MyAccount */ = {
 			isa = PBXGroup;
 			children = (
+				D433DB022E471361001FA51D /* Category */,
 				35987D312DE5D28D00D6C2C9 /* SalesTax */,
 				35987D292DE5C77A00D6C2C9 /* PaymentShipping */,
 				35987D2D2DE5CE2B00D6C2C9 /* VerifyIdentityScreen */,
@@ -2501,6 +2507,7 @@
 				D4A7F8FC2DDD9AE0001FC705 /* LogOut */,
 				D49A956D2DD71E3E006044A7 /* ContactUs */,
 				35B44F152DD7052400FBCBC4 /* About Us */,
+				D4D453D82E4CBC13005A2F63 /* BlockedUserList */,
 				D49A95662DD704BF006044A7 /* FAQ */,
 				D4A7F8F92DDD9A42001FC705 /* Addressess */,
 			);
@@ -3683,6 +3690,40 @@
 			path = MaxBidAmountSheet;
 			sourceTree = "<group>";
 		};
+		D4D453D32E4CBC13005A2F63 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				D4D453D22E4CBC13005A2F63 /* BlockedUserListViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		D4D453D52E4CBC13005A2F63 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				D4D453D42E4CBC13005A2F63 /* BlockedUserListModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		D4D453D72E4CBC13005A2F63 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				D4D453D62E4CBC13005A2F63 /* BlockedUserScreen.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		D4D453D82E4CBC13005A2F63 /* BlockedUserList */ = {
+			isa = PBXGroup;
+			children = (
+				D4D453D32E4CBC13005A2F63 /* ViewModel */,
+				D4D453D52E4CBC13005A2F63 /* Model */,
+				D4D453D72E4CBC13005A2F63 /* View */,
+			);
+			path = BlockedUserList;
+			sourceTree = "<group>";
+		};
 		D4DDE7ED2DDC5C7A00A24973 /* Font */ = {
 			isa = PBXGroup;
 			children = (
@@ -4180,6 +4221,7 @@
 				35CCE00E2DD8603700760CEE /* DescriptionFieldView.swift in Sources */,
 				35BA4A4B2DE87C2300EEC92A /* AddProductScreen.swift in Sources */,
 				D4E569CE2DD461120005A78E /* ProfileDetailCell.swift in Sources */,
+				D4D453D92E4CBC13005A2F63 /* BlockedUserListViewModel.swift in Sources */,
 				99C909D82DC8CDDC0054620B /* MenuOptionsModal.swift in Sources */,
 				99C909D92DC8CDDC0054620B /* InterviewlistModel.swift in Sources */,
 				35987D302DE5CE5C00D6C2C9 /* CardCell.swift in Sources */,
@@ -4286,6 +4328,7 @@
 				D4B616242DE8796F00924A3D /* ProductWeightViewModel.swift in Sources */,
 				D4BB9A252DE5D66500C1BCBC /* StatView.swift in Sources */,
 				35C202502DEEFFE300492F2D /* AddCardScreen.swift in Sources */,
+				D4D453DB2E4CBC13005A2F63 /* BlockedUserScreen.swift in Sources */,
 				99C909A32DC8CD930054620B /* UIFont+Extension.swift in Sources */,
 				D4CAECA82DE7360F00705CD7 /* ShowSummaryViewModel.swift in Sources */,
 				35B44F172DD7053B00FBCBC4 /* AboutUsScreen.swift in Sources */,
@@ -4327,6 +4370,7 @@
 				99C909AC2DC8CD930054620B /* UIView+Extension.swift in Sources */,
 				35F8B5662DED978800FE0778 /* ProfileViewModel.swift in Sources */,
 				D4BA9C0D2DE4856900DFF6E6 /* ShowsScreen.swift in Sources */,
+				D4D453DA2E4CBC13005A2F63 /* BlockedUserListModel.swift in Sources */,
 				D4A500E12DFAA74D008799B1 /* StepCircle.swift in Sources */,
 				99C909AD2DC8CD930054620B /* Utilities.swift in Sources */,
 				D4B615F42DE8374E00924A3D /* ProductDetailsViewModel.swift in Sources */,

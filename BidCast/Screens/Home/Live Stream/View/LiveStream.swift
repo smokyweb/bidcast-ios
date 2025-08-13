@@ -358,7 +358,11 @@ struct LiveStream: View {
                                             .background(Color.defaultTheme)
                                             .cornerRadius(10)
                                             .onTapGesture {
-                                                self.maxBidAmountSheet = true
+                                                if UserDefaults.buyerVerafied != "verified" {
+                                                    showVerificationSheet = true
+                                                }else{
+                                                    self.maxBidAmountSheet = true
+                                                }
                                             }
                                         
                                         // Swipe to Bid Section
