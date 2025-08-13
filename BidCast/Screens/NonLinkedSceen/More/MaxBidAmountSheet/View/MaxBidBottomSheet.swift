@@ -33,7 +33,6 @@ struct MaxBidBottomSheet: View {
                     .font(.system(size: 18, weight: .bold))
                 Spacer()
                 Button {
-                    presentationMode.wrappedValue.dismiss()
                     onDismiss?()
                 } label: {
                     Image(systemName: "xmark")
