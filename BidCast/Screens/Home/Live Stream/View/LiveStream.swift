@@ -77,6 +77,7 @@ struct LiveStream: View {
     @State var hudMsg = ""
     //MARK: - for swipe
     @State private var currentPrice: Double = 1.0
+    @State private var nextBidPrice: Double = 1.0
     @State private var countdown: Int = 10
     @State private var isBiddingActive: Bool = false
     @State private var priceTimer: Timer?
@@ -99,6 +100,7 @@ struct LiveStream: View {
     
     @State  var showSheet: Bool = false
     @State  var winnerSheet: Bool = false
+    @State var maxBidAmountSheet : Bool = false
     
     var sheetHeight: CGFloat {
         switch currentBottomSheet {
@@ -355,6 +357,9 @@ struct LiveStream: View {
                                             .frame(width: 40, height: 50)
                                             .background(Color.defaultTheme)
                                             .cornerRadius(10)
+                                            .onTapGesture {
+                                                self.maxBidAmountSheet = true
+                                            }
                                         
                                         // Swipe to Bid Section
                                         ZStack(alignment: .leading) {
@@ -362,12 +367,19 @@ struct LiveStream: View {
                                                 .fill(Color.defaultTheme)
                                                 .frame(height: 50)
                                             
-                                            // Centered text
-                                            Text("Swipe to Bid")
+                                            // Compute next bid
+                                            let nextBid = {
+                                                let range = (currentPrice / 10) * 10
+                                                let increment = (range / 10 + 1)
+                                                return currentPrice + increment
+                                            }()
+
+                                            // Then use in Text
+                                            Text("Swipe to Bid $\(String(format: "%.2f", nextBid))")
                                                 .font(.custom(poppinsSemiBold, size: 14))
                                                 .foregroundColor(.white)
                                                 .frame(maxWidth: .infinity, alignment: .center)
-                                            
+
                                             // Draggable Arrow
                                             RoundedRectangle(cornerRadius: 8)
                                                 .fill(Color.darkGreen)
@@ -676,6 +688,38 @@ struct LiveStream: View {
             )
         }
         
+        .bottomSheet(isPresented: $winnerSheet,height: screenHeight * 0.40) {
+            WinnerBottomSheet(
+                winnerAmount: winnerAmount, profileImage: winnerProfileImage,
+                username: winnerName,
+                winnerProfileID : winnerProfileID,
+                showParentToast: $showToast,
+                parentToastMessage: $toastMessage,
+                onDismiss: {
+                    self.winnerSheet = false
+                }
+            )
+        }
+        
+        .bottomSheet(isPresented: $maxBidAmountSheet, height: screenHeight * 0.35) {
+            if let currentProduct = productData.first {
+                MaxBidBottomSheet(
+                    showParentToast: $showToast,
+                    parentToastMessage: $toastMessage,
+                    currentProduct: currentProduct,
+                    onSubmit: { amount in
+                        if let amount = Double(amount) {
+                            placeBid(amount: amount)
+                        }
+//                        self.maxBidAmountSheet = false
+                    },
+                    onDismiss: {
+                        self.maxBidAmountSheet = false
+                    }
+                )
+            }
+        }
+
         .edgesIgnoringSafeArea(.all)
         .toolbar(.hidden,for: .tabBar)
         .foregroundColor(.black)
@@ -943,45 +987,36 @@ struct LiveStream: View {
     }
     
     func incrementPrice() {
-        
         let range = (currentPrice / 10) * 10
         let increment = (range / 10 + 1)
         let newPrice = currentPrice + increment
         
-        
-        if let currentRoomId = liveShowsData[safe: currentStreamIndex]?.room_id {
-            let data = liveShowsData[safe: currentStreamIndex]
-            //            FirebaseManager.shared.updateProductPrice(roomId: currentRoomId, newPrice: "\(newPrice)")
-            
-            guard let selectedProduct = BiddingDetail.products?[currentProductIndex] else { return  }
-            
-            FirebaseManager.shared.updateHighestBid(
-                roomId: currentRoomId,
-                bidAmount: "\(newPrice)",
-                bidderId: "\(UserDefaults.userId)",
-                bidderName: UserDefaults.fullName,
-                bidderProfileImage: UserDefaults.profileURL){ finalBidData in
-                    if let data = finalBidData {
-//                        let user_Id = data["userId"] as? String
-//                        winnerName = UserDefaults.fullName
-//                        winnerProfileImage = UserDefaults.profileURL
-//                        winnerAmount = "\(newPrice)"
-//                        winnerProfileID = UserDefaults.userId
-//                        updateSoldStatus()
-                        //TODO: Later Used it
-                        //                        Task{
-                        //                            let param = StoreBidRequest(schedule_show_id: "\(BiddingDetail.id ?? 0)", user_id:user_Id ?? "", product_id: BiddingDetail.products?[currentProductIndex].id ?? "", bid_price: "\(newPrice)")
-                        //                            print("StoreBidRequestParam \(param)")
-                        //                            await self.viewModel.storeBid(parameters: param)
-                        //                            soldSuccess()
-                        //                        }
-                    }
-                }
-        }
-        currentPrice = newPrice
-        //        countdown = 10
-        //        startCountdown()
+        placeBid(amount: newPrice)
     }
+    
+    func placeBid(amount: Double) {
+        // Ensure we have the current room and product
+        guard let currentRoomId = liveShowsData[safe: currentStreamIndex]?.room_id,
+              let selectedProduct = BiddingDetail.products?[currentProductIndex] else { return }
+        
+        // Update Firebase highest bid
+        FirebaseManager.shared.updateHighestBid(
+            roomId: currentRoomId,
+            bidAmount: "\(amount)",
+            bidderId: "\(UserDefaults.userId)",
+            bidderName: UserDefaults.fullName,
+            bidderProfileImage: UserDefaults.profileURL
+        ) { finalBidData in
+            if let data = finalBidData {
+                // Optional: handle winner info or store bid in API
+                // let user_Id = data["userId"] as? String
+            }
+        }
+        
+        // Update local price
+        currentPrice = amount
+    }
+
     
     func updateSoldStatus(){
         if let currentRoomId = liveShowsData[safe: currentStreamIndex]?.room_id,

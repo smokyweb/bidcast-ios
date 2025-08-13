@@ -79,6 +79,8 @@ struct ResponseModal<T: Codable>: Codable {
     var data: T
 }
 
+
+
 //MARK: - Job Paramters
 struct GetJobParameter: Codable {
     var currentPage: Int
@@ -706,4 +708,57 @@ struct ImageUploadRequest : Encodable {
 
 struct DeleteProduct : Encodable{
     var product_id : Int
+}
+
+
+// First, define the flexible ErrorType enum as before:
+enum ErrorType: Codable {
+    case string(String)
+    case dictionary([String: [String]])
+    case none
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        if container.decodeNil() {
+            self = .none
+            return
+        }
+        if let str = try? container.decode(String.self) {
+            self = .string(str)
+            return
+        }
+        if let dict = try? container.decode([String: [String]].self) {
+            self = .dictionary(dict)
+            return
+        }
+        self = .none
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        switch self {
+        case .string(let str):
+            try container.encode(str)
+        case .dictionary(let dict):
+            try container.encode(dict)
+        case .none:
+            try container.encodeNil()
+        }
+    }
+    
+    var asString: String {
+        switch self {
+        case .string(let str): return str
+        case .dictionary(let dict):
+            return dict.map { "\($0.key): \($0.value.joined(separator: ", "))" }.joined(separator: "; ")
+        case .none: return ""
+        }
+    }
+}
+
+struct FavCategoryResponseModal<T: Codable>: Codable {
+    var status: String?
+    var message: String?
+    var error_type: ErrorType?  
+    var data: T
 }

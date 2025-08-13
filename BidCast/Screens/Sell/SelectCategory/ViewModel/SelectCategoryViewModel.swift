@@ -16,7 +16,7 @@ final class SelectCategoryViewModel: ObservableObject {
     @Published var categoryResponse = ResponseModel<[CategoryDataModel]>()
     @Published var subCategoryResponse: ResponseModal<[SubCategoryDataModel]>?
     @Published var auctionResponse = ResponseModel<[AuctionDataModel]>()
-    @Published var storeFavCategoryResponse: ResponseModal<FavCategoryDataModel>?
+    @Published var storeFavCategoryResponse: ResponseModal<[FavCategoryDataModel]>?
     @Published var errorMessage: String? = nil
     @Published var request: String = ""
 
@@ -56,7 +56,7 @@ final class SelectCategoryViewModel: ObservableObject {
         
         do {
             
-            if let response: ResponseModal<FavCategoryDataModel> = try await APIManager.shared.requestWithJSONBody(type: APIEndPoint.storeFavCategories(param: param), parameters: param, modalType: ResponseModal<FavCategoryDataModel>?.self, header: true){
+            if let response: ResponseModal<[FavCategoryDataModel]> = try await APIManager.shared.requestWithJSONBody(type: APIEndPoint.storeFavCategories(param: param), parameters: param, modalType: ResponseModal<[FavCategoryDataModel]>?.self, header: true){
                 DispatchQueue.main.async {
                     self.storeFavCategoryResponse = response
                 }

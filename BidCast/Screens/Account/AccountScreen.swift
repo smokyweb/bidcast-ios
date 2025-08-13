@@ -149,7 +149,7 @@ struct AccountScreen: View {
                                         case 1: navigateToAddress = true
                                         case 2: navigateToTrustedBuyer = true
                                         case 4: navigateToPreference = true
-//                                      case 5: navigateToCategory = true
+                                         case 5: navigateToCategory = true
                                         default: break
                                         }
                                     }
@@ -242,12 +242,10 @@ struct AccountScreen: View {
             CusNavLink(doNavigate: $navigateToAddress, destination: AddressesScreen())
             CusNavLink(doNavigate: $navigateToShipping, destination: ShippingsScreen())
             CusNavLink(doNavigate: $navigateToPreference, destination: PreferncesScreen())
-            CusNavLink(doNavigate: $navigateToCategory, destination: MultiSelectionCategoryScreen())
+            CusNavLink(doNavigate: $navigateToCategory, destination: MultiSelectionCategoryScreen(isNavFrom : "Account"))
             CusNavLink(doNavigate: $navigateToPayment, destination: PaymentAndShipping_Screen())
             CusNavLink(doNavigate: $navigateToTrustedBuyer, destination: TrustedBuyerScreen(comeFromHome: .constant(false)))
             CusNavLink(doNavigate: $navigateToSellerVerification, destination: SellerVerificationScreen())
-            
-            
             
             
             //MARK: Seller hub navigation
@@ -436,7 +434,7 @@ enum AccountTabSection : String, CaseIterable, CustomStringConvertible{
     case buyer = "Trusted Buyer"
     case notifications = "Notifications"
     case preference = "Preference"
-//    case favCategory = "Favourite Categories"
+    case favCategory = "Favourite Categories"
     
     
     var description: String {
@@ -457,8 +455,8 @@ enum AccountTabSection : String, CaseIterable, CustomStringConvertible{
             return .wallet
         case .preference:
             return .tag
-//        case .favCategory:
-//            return .categories
+        case .favCategory:
+            return .categories
             
         }
     }

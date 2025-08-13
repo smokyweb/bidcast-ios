@@ -41,17 +41,39 @@ struct CategoryDataModel : Codable{
     var thumbnail: String?
     var color: String?
     var subLabel : String?
+    var is_selected : Bool?
     var extra_fields : [ExtraFieldModel]?
 }
 
 // MARK: - SubCategoryDataModel
-struct SubCategoryDataModel : Codable {
+struct SubCategoryDataModel: Codable {
+    var id: Int?
+    var name: String?
+    var image: String?
+    var thumbnail: String?
+    var extraFields: [ExtraField]?
+    var color: String?
+    var subcategories: [SelectedSubCategoryDataModel]?
+    var categoryID: Int?
+    var isSelected: Bool?
+
+    enum CodingKeys: String, CodingKey {
+        case id, name, image, thumbnail
+        case extraFields = "extra_fields"
+        case color, subcategories
+        case categoryID = "category_id"
+        case isSelected = "is_selected"
+    }
+}
+
+struct SelectedSubCategoryDataModel : Codable {
     var id, categoryID: Int?
     var name: String?
     var image: String?
-    var extraFields: [ExtraFieldModel]?
+    var extraFields: [ExtraField]?
     var thumbnail: String?
     var color: String?
+    var isSelected: Bool?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -59,13 +81,23 @@ struct SubCategoryDataModel : Codable {
         case name, image
         case extraFields = "extra_fields"
         case thumbnail, color
+        case isSelected = "is_selected"
     }
 }
 
-// MARK: - FavCategoryDataModel
-struct FavCategoryDataModel : Codable {
-  
+
+// MARK: - ExtraField
+struct ExtraField: Codable {
+    let label, type: String
+    let options: [String]?
 }
+
+
+// MARK: - FavCategoryDataModel
+struct FavCategoryDataModel: Codable {
+    
+}
+
 
 
 struct ExtraFieldModel : Codable{

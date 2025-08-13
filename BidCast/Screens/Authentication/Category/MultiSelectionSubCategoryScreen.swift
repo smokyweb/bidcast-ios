@@ -9,6 +9,7 @@ import SwiftUI
 import AlertToast
 import SVProgressHUD
 
+
 struct MultiSelectionSubCategoryScreen: View {
     
     @Environment(\.presentationMode) var presentationMode
@@ -17,6 +18,7 @@ struct MultiSelectionSubCategoryScreen: View {
     @State var isLoading = false
     @State var showhud = false
     @State var hudMsg = ""
+    @State var isNavFrom : String = ""
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     
     @State private var subCategoryList: [SubCategoryDataModel] = []
@@ -25,12 +27,12 @@ struct MultiSelectionSubCategoryScreen: View {
     @Binding var selectedCategoryIDs: [Int]
     var viewModel = SelectCategoryViewModel()
     var delegate: ShowStepDelegate?
+    @State var navigateToAccount = false
     @EnvironmentObject var networkMonitor: NetworkMonitor
     
     let columns: [GridItem] = [
         GridItem(.flexible(), spacing: 12)
     ]
-
     
     var body: some View {
         VStack(spacing: 0) {
@@ -47,12 +49,46 @@ struct MultiSelectionSubCategoryScreen: View {
             ScrollView {
                 LazyVGrid(columns: columns, spacing: 12) {
                     ForEach(subCategoryList, id: \.id) { subCategory in
+                        // show main subcategory
                         SubCategoryCard(
-                            subCategory: subCategory,
+                            subCategory: SubCategoryDataModel(
+                                id: subCategory.id,
+                                name: subCategory.name,
+                                image: subCategory.image,
+                                thumbnail: subCategory.thumbnail,
+                                extraFields: subCategory.extraFields,
+                                color: subCategory.color,
+                                subcategories: nil,
+                                categoryID: subCategory.categoryID,
+                                isSelected: nil
+                            ),
                             isSelected: selectedSubCategoryIDs.contains(subCategory.id ?? -1)
                         )
                         .onTapGesture {
                             toggleSelection(subCategory.id ?? -1)
+                        }
+                        
+                        // show subcategories if available
+                        if let subSubs = subCategory.subcategories {
+                            ForEach(subSubs, id: \.id) { sub in
+                                SubCategoryCard(
+                                    subCategory: SubCategoryDataModel(
+                                        id: sub.id,
+                                        name: sub.name,
+                                        image: sub.image,
+                                        thumbnail: sub.thumbnail,
+                                        extraFields: sub.extraFields,
+                                        color: sub.color,
+                                        subcategories: nil,
+                                        categoryID: sub.categoryID,
+                                        isSelected: nil
+                                    ),
+                                    isSelected: selectedSubCategoryIDs.contains(sub.id ?? -1)
+                                )
+                                .onTapGesture {
+                                    toggleSelection(sub.id ?? -1)
+                                }
+                            }
                         }
                     }
                 }
@@ -85,9 +121,10 @@ struct MultiSelectionSubCategoryScreen: View {
             }
             .padding(16)
             .background(Color.white.shadow(radius: 3))
+            CusNavLink(doNavigate: $navigateToAccount, destination: AccountScreen())
         }
+       
         .onAppear {
-            print("DEBUG: Passed Category IDs = \(selectedCategoryIDs)")
             loadSubCategories(selectedCategoryIDs: selectedCategoryIDs)
         }
         .toast(isPresenting: $showhud) {
@@ -104,9 +141,14 @@ struct MultiSelectionSubCategoryScreen: View {
                 onPrimaryClick: { withAnimation { showError = false }
                     let response = viewModel.storeFavCategoryResponse
                     if response?.status == "success" {
-                        UserDefaults.isFirstTimeLogin = true
-                        appRootManager.currentRoot = .tabBar
-                    }else{
+                        if isNavFrom == "Account"{
+                            navigateToAccount = true
+                        }else{
+                            UserDefaults.isFirstTimeLogin = true
+                            appRootManager.currentRoot = .tabBar
+                        }
+                       
+                    } else {
                         withAnimation { showError = false }
                     }
                 },
@@ -115,7 +157,6 @@ struct MultiSelectionSubCategoryScreen: View {
         }
     }
     
-    // MARK: API Call - Load Subcategories
     private func loadSubCategories(selectedCategoryIDs: [Int]) {
         Task {
             guard Reachability.isConnectedToNetwork() else {
@@ -128,9 +169,21 @@ struct MultiSelectionSubCategoryScreen: View {
             let parameters: [String: Any] = ["category_ids": request.category_ids]
             await viewModel.getSubCategoryList(param: parameters)
             await SVProgressHUD.dismiss()
+            
             let response = viewModel.subCategoryResponse
             if response?.status == "success" {
                 subCategoryList = response?.data ?? []
+                
+                // MARK: Preselect already selected subcategories
+                for category in subCategoryList {
+                    if let subSubs = category.subcategories {
+                        for sub in subSubs {
+                            if sub.isSelected == true, let id = sub.id {
+                                selectedSubCategoryIDs.insert(id)
+                            }
+                        }
+                    }
+                }
             } else {
                 alertType = .sheetType(
                     icon: .alert,
@@ -144,7 +197,6 @@ struct MultiSelectionSubCategoryScreen: View {
         }
     }
     
-    // MARK: API Call - Add Favorite Categories + Subcategories
     private func addFavCategories(selectedCategoryIDs: [Int], selectedSubCategoryIDs: [Int]) async {
         guard Reachability.isConnectedToNetwork() else {
             hudMsg = "No Internet Connection"
@@ -152,21 +204,17 @@ struct MultiSelectionSubCategoryScreen: View {
             return
         }
         SVProgressHUD.show()
-        print("category_ids param: \(selectedCategoryIDs)")
-        print("subcategory_ids param: \(selectedSubCategoryIDs)")
-        
         let request = FavCategoryRequest(category_ids: selectedCategoryIDs, sub_category_ids: selectedSubCategoryIDs)
         let parameters: [String: Any] = [
             "category_ids": request.category_ids,
             "sub_category_ids": request.sub_category_ids
         ]
-        
         await viewModel.storeFavCategoryList(param: parameters)
         await SVProgressHUD.dismiss()
         
         let response = viewModel.storeFavCategoryResponse
         if response?.status == "success" {
-            alertType = .sheetType(icon: .success, title: response?.status?.capitalized ?? "", message: response?.message?.capitalized ?? "", primaryBtnText: AppString.Home.localized, secondaryBtnText: "", sheetThemeColor: .secondary)
+            alertType = .sheetType(icon: .success, title: response?.status?.capitalized ?? "", message: response?.message?.capitalized ?? "", primaryBtnText: isNavFrom == "Account" ? AppString.ok.localized : AppString.Home.localized, secondaryBtnText: "", sheetThemeColor: .secondary)
             showError = true
         } else {
             alertType = .sheetType(

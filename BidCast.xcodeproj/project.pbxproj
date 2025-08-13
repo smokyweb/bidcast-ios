@@ -408,6 +408,9 @@
 		D4CAECBE2DE73BCC00705CD7 /* EndShowViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4CAECB92DE73BCC00705CD7 /* EndShowViewModel.swift */; };
 		D4CDF2A32DD21A6F00DA8161 /* SegmentedControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4CDF2A22DD21A6F00DA8161 /* SegmentedControlView.swift */; };
 		D4D2B91B2E30E783006F15E6 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D2B91A2E30E783006F15E6 /* NetworkMonitor.swift */; };
+		D4D453CF2E4C6FCD005A2F63 /* MaxBidModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D453CA2E4C6FCD005A2F63 /* MaxBidModel.swift */; };
+		D4D453D02E4C6FCD005A2F63 /* MaxBidBottomSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D453C82E4C6FCD005A2F63 /* MaxBidBottomSheet.swift */; };
+		D4D453D12E4C6FCD005A2F63 /* MaxBidViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D453CC2E4C6FCD005A2F63 /* MaxBidViewModel.swift */; };
 		D4DAD3182E24E34A00738549 /* RateSellerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4DAD3172E24E34A00738549 /* RateSellerView.swift */; };
 		D4DDE8022DDC5CC100A24973 /* Poppins-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D4DDE8002DDC5CC000A24973 /* Poppins-ThinItalic.ttf */; };
 		D4DDE8032DDC5CC100A24973 /* Poppins-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D4DDE7FA2DDC5CC000A24973 /* Poppins-Medium.ttf */; };
@@ -877,6 +880,9 @@
 		D4CAECB92DE73BCC00705CD7 /* EndShowViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndShowViewModel.swift; sourceTree = "<group>"; };
 		D4CDF2A22DD21A6F00DA8161 /* SegmentedControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedControlView.swift; sourceTree = "<group>"; };
 		D4D2B91A2E30E783006F15E6 /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
+		D4D453C82E4C6FCD005A2F63 /* MaxBidBottomSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaxBidBottomSheet.swift; sourceTree = "<group>"; };
+		D4D453CA2E4C6FCD005A2F63 /* MaxBidModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaxBidModel.swift; sourceTree = "<group>"; };
+		D4D453CC2E4C6FCD005A2F63 /* MaxBidViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaxBidViewModel.swift; sourceTree = "<group>"; };
 		D4DAD3172E24E34A00738549 /* RateSellerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateSellerView.swift; sourceTree = "<group>"; };
 		D4DDE7EE2DDC5CC000A24973 /* OFL.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = OFL.txt; sourceTree = "<group>"; };
 		D4DDE7EF2DDC5CC000A24973 /* Poppins-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-Black.ttf"; sourceTree = "<group>"; };
@@ -3458,6 +3464,7 @@
 				D4B615E12DE8312200924A3D /* MakeAnOffer */,
 				D4B615FB2DE83C4800924A3D /* CreateClip */,
 				D433DB0D2E4766F1001FA51D /* WinnerSheet */,
+				D4D453CE2E4C6FCD005A2F63 /* MaxBidAmountSheet */,
 				D4C471C62E2FA90A00424160 /* PaymentAndShippingInfo */,
 			);
 			path = More;
@@ -3640,6 +3647,40 @@
 				D4CDF2A22DD21A6F00DA8161 /* SegmentedControlView.swift */,
 			);
 			path = Segment;
+			sourceTree = "<group>";
+		};
+		D4D453C92E4C6FCD005A2F63 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				D4D453C82E4C6FCD005A2F63 /* MaxBidBottomSheet.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		D4D453CB2E4C6FCD005A2F63 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				D4D453CA2E4C6FCD005A2F63 /* MaxBidModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		D4D453CD2E4C6FCD005A2F63 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				D4D453CC2E4C6FCD005A2F63 /* MaxBidViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		D4D453CE2E4C6FCD005A2F63 /* MaxBidAmountSheet */ = {
+			isa = PBXGroup;
+			children = (
+				D4D453C92E4C6FCD005A2F63 /* View */,
+				D4D453CB2E4C6FCD005A2F63 /* Model */,
+				D4D453CD2E4C6FCD005A2F63 /* ViewModel */,
+			);
+			path = MaxBidAmountSheet;
 			sourceTree = "<group>";
 		};
 		D4DDE7ED2DDC5C7A00A24973 /* Font */ = {
@@ -4218,6 +4259,7 @@
 				35BA4A512DE883E800EEC92A /* CompleteProfileScreen.swift in Sources */,
 				D4CDF2A32DD21A6F00DA8161 /* SegmentedControlView.swift in Sources */,
 				99C909502DC8CD790054620B /* SignupViewModel.swift in Sources */,
+				D4D453D02E4C6FCD005A2F63 /* MaxBidBottomSheet.swift in Sources */,
 				99C909542DC8CD790054620B /* DeleteAccountViweModel.swift in Sources */,
 				99C909562DC8CD790054620B /* UserSearchScreen.swift in Sources */,
 				99C909572DC8CD790054620B /* SignUpScreen.swift in Sources */,
@@ -4307,6 +4349,7 @@
 				D45D7A3C2E389AE4003A3842 /* ChatViewModel.swift in Sources */,
 				D4B615FE2DE83C4800924A3D /* CreateClipViewModel.swift in Sources */,
 				99C909B32DC8CD930054620B /* UserDefaultManager.swift in Sources */,
+				D4D453CF2E4C6FCD005A2F63 /* MaxBidModel.swift in Sources */,
 				35B44F282DD74CCA00FBCBC4 /* PhotoPicker.swift in Sources */,
 				D4BA32582DDB3C0D00FE4FD2 /* InventoryViewModel.swift in Sources */,
 				D4B615CF2DE8280200924A3D /* NotifyMeBottomSheet.swift in Sources */,
@@ -4393,6 +4436,7 @@
 				D4B6161A2DE86C9700924A3D /* OrderStatusViewModel.swift in Sources */,
 				D4BB99FE2DE59E9F00C1BCBC /* SellerStatusViewModel.swift in Sources */,
 				99C9082B2DC8CD6A0054620B /* EmployeeStackView.swift in Sources */,
+				D4D453D12E4C6FCD005A2F63 /* MaxBidViewModel.swift in Sources */,
 				99C9082C2DC8CD6A0054620B /* DropDownTextField.swift in Sources */,
 				35CCE0152DD876CD00760CEE /* HowToSell.swift in Sources */,
 				D4CAEC8E2DE71FB800705CD7 /* PromoteShowModel.swift in Sources */,
