@@ -76,32 +76,35 @@ final class APIManager {
             
             if let response = response as? HTTPURLResponse, 401 == response.statusCode {
                 DispatchQueue.main.async {
-                    // Find the topmost view controller
-                    if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                       let rootVC = windowScene.windows.first(where: { $0.isKeyWindow })?.rootViewController {
-
-                        let alert = UIAlertController(
-                            title: "Session Expired",
-                            message: "Your account has been logged in from another device",
-                            preferredStyle: .alert
-                        )
-
-                        let loginAction = UIAlertAction(title: "Login", style: .default) { _ in
-                            // Dismiss alert and then post logout notification
-                            rootVC.topMostViewController.dismiss(animated: true) {
-                                NotificationCenter.default.post(name: .userSessionExpired, object: nil)
+                    do {
+                        let dataObj = try JSONDecoder().decode(ApiError.self, from: data)
+                        if dataObj.error_type == "UNAUTHORIZED" {
+                            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                               let rootVC = windowScene.windows.first(where: { $0.isKeyWindow })?.rootViewController {
+                                
+                                let alert = UIAlertController(
+                                    title: "Session Expired",
+                                    message: "Your account has been logged in from another device",
+                                    preferredStyle: .alert
+                                )
+                                
+                                let loginAction = UIAlertAction(title: "Login", style: .default) { _ in
+                                    rootVC.topMostViewController.dismiss(animated: true) {
+                                        NotificationCenter.default.post(name: .userSessionExpired, object: nil)
+                                    }
+                                }
+                                
+                                alert.addAction(loginAction)
+                                rootVC.topMostViewController.present(alert, animated: true, completion: nil)
                             }
                         }
-
-                        alert.addAction(loginAction)
-
-                        // Present alert on the topmost visible VC
-                        rootVC.topMostViewController.present(alert, animated: true, completion: nil)
+                    } catch {
+                        print("Failed to decode ApiError: \(error)")
                     }
                 }
-//                throw DataError.invalidCode("Session expired")
             }
-
+            
+            
             let dataObj = try JSONDecoder().decode(ApiError.self, from: data)
             print(dataObj)
             if let message = dataObj.message {
@@ -130,6 +133,7 @@ final class APIManager {
             throw error//DataError.invalidResponse(data)
         }
     }
+    
     func requestWithJSONBody<T: Decodable>(
         type: EndPointType,
         parameters: [String: Any],
