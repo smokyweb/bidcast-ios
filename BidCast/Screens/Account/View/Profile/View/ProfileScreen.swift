@@ -98,15 +98,15 @@ struct ProfileScreen: View {
                         },
                                            // Inside ProfileActionsView
                                            onTapMessage: {
-                                               let currentUserId = String(UserDefaults.userId)
-                                               let selectedUserId = id
-                                               let sortedRoomId = computeRoomId(senderId: currentUserId, receiverId: selectedUserId)
-                                               chatPath = "chats/\(sortedRoomId)"
-                                               
-                                               print("Computed Chat Path: \(chatPath)")
-                                               
-                                               navigateToChat = true
-                                           })
+                            let currentUserId = String(UserDefaults.userId)
+                            let selectedUserId = id
+                            let sortedRoomId = computeRoomId(senderId: currentUserId, receiverId: selectedUserId)
+                            chatPath = "chats/\(sortedRoomId)"
+                            
+                            print("Computed Chat Path: \(chatPath)")
+                            
+                            navigateToChat = true
+                        })
 
                         
                         ProfileTabsView(selectedTab: $selectedTab) { tab in
@@ -437,6 +437,12 @@ struct ProfileScreen: View {
 struct ProfileHeaderView: View {
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var appRootManager: AppRootManager
+    @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+    @State var showError: Bool = false
+    @State var showToast = false
+    @State var toastMessage = ""
+    @State  var showhud = false
+    @State  var hudMsg = ""
     
     var name : String
     var email : String
@@ -444,11 +450,14 @@ struct ProfileHeaderView: View {
     var followers : String
     var following : String
     var bio : String
+    
     var onTapNotify: () -> () = {}
     var onTapMore: () -> () = {}
     
     @Binding var sellerID : String
+    @State var viewModel = ProfileViewModel()
     @State private var navigateToRating = false
+    @State private var navigateToHome = false
     @State private var showMoreMenu = false
     
     var body: some View {
@@ -539,7 +548,18 @@ struct ProfileHeaderView: View {
                     
                     Button(action: {
                         showMoreMenu = false
-                        // Handle Block Seller
+                        Task{
+                            guard Reachability.isConnectedToNetwork() else {
+                                hudMsg = "No Internet Connection"
+                                showhud = true
+                                return
+                            }
+                            SVProgressHUD.show()
+                            let param = BlockUserRequest(blocked_id: Int(sellerID) ?? 0)
+                            await self.viewModel.blockUser(param: param)
+                            await SVProgressHUD.dismiss()
+                            blockSuccess()
+                    }
                     }) {
                         Text("Block Seller")
                             .font(.custom(poppinsRegular, size: 14))
@@ -575,6 +595,9 @@ struct ProfileHeaderView: View {
             }
         }
         .frame(height: 220)
+        .toast(isPresenting: $showhud) {
+            AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
+        }
         
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
@@ -641,6 +664,25 @@ struct ProfileHeaderView: View {
         }
         .padding(.horizontal, 8)
         CusNavLink(doNavigate: $navigateToRating, destination: RateSellerView(sellerID: Int(sellerID) ?? 0, sellerImage: profileImage, sellerName: name))
+        CusNavLink(doNavigate: $navigateToHome, destination: HomeViewScreen(showCategory: .constant(""), comeFromExploreScreen: .constant(false)))
+        
+    }
+    
+    
+    //MARK: blockSuccess.
+    func blockSuccess(){
+        SVProgressHUD.dismiss()
+        let response = viewModel.blockUserResponseDict
+        if response?.status == "success" {
+            hudMsg = response?.message ?? ""
+            showhud = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                navigateToHome = true
+            }
+        } else {
+            alertType = .sheetType(icon: .alert, title: response?.status?.capitalized ?? "", message: response?.message?.capitalized ?? "", primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .defaultTheme)
+            withAnimation(.snappy) { showError = true }
+        }
     }
 }
 

@@ -16,6 +16,7 @@ final class ProfileViewModel: ObservableObject {
     @Published var getMyScheduleShowResponseDict: ResponseModalPaginate<[GetMyScheduleShowModel]>?
     @Published var getTotalRatingResponseDict: ResponseModal<TotalRating>?
     @Published var addRatingResponseDict: ResponseModal<AddRatigModel>?
+    @Published var blockUserResponseDict: ResponseModal<BlockUserModel>?
     @Published var errorMessage: String? = nil
     @Published var requestType = ""
     
@@ -28,6 +29,20 @@ final class ProfileViewModel: ObservableObject {
                 header: true
             ) as ResponseModel<AddressModel>
             // No property update here, you can add if needed
+        } catch {
+            handle(error: error)
+        }
+    }
+    
+    // MARK: - Block User
+    func blockUser(param: BlockUserRequest) async {
+        do {
+            self.requestType = "blockUser"
+            let response: ResponseModal<BlockUserModel> = try await APIManager.shared.request(
+                type: APIEndPoint.blockUser(param: param),
+                header: true
+            )
+            self.blockUserResponseDict = response
         } catch {
             handle(error: error)
         }

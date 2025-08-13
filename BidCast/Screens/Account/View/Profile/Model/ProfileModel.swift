@@ -154,6 +154,10 @@ struct AddRatigModel: Codable {
     }
 }
 
+//MARK: BlockUserModel
+struct BlockUserModel : Codable{
+    var status : Bool?
+}
 
 
 

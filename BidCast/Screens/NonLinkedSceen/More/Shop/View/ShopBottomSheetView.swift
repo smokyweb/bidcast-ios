@@ -266,14 +266,31 @@ struct ShopBottomSheetView: View {
                     } else if NavFrom.isEmpty {
                         if let selectedProduct = productData.first(where: { $0.isCurrent }) {
                             Button(action: {
-                                // Here is the only addition:
+                                // Case 1: Product already in a bid
                                 if selectedProduct.id == initialSelectedProductId {
+                                    // Case 2: Check sold products
+                                    if productData.count == 1 && selectedProduct.status == "sold" {
+                                        // Only one product and it's sold
+                                        toastMessage = "Product Sold"
+                                        showToast = true
+                                        return
+                                    }
                                     toastMessage = "Product already in a bid"
                                     showToast = true
-                                } else {
-                                    isPresented = false
-                                    onAddProduct?(selectedProduct.id)
+                                    return
                                 }
+                               
+                                // Case 2:
+                                   if productData.count > 1 && productData.allSatisfy({ $0.status == "sold" }) {
+                                       // Multiple products and all are sold
+                                       toastMessage = "All Products Sold"
+                                       showToast = true
+                                       return
+                                   }
+
+                                   // Case 3: Valid product to add
+                                   isPresented = false
+                                   onAddProduct?(selectedProduct.id)
                             }) {
                                 Text("Add Product")
                                     .font(.custom(poppinsSemiBold, size: 14))

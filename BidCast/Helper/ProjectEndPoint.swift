@@ -96,6 +96,7 @@ enum APIEndPoint{
     case getState
     case uploadProductImage
     case deleteProduct(param : DeleteProduct)
+    case blockUser(param : BlockUserRequest)
     
     //MARK: OLD
     
@@ -346,7 +347,8 @@ extension APIEndPoint: EndPointType {
             return "store-product-meta"
         case .deleteProduct(let param):
             return "delete-product\(param.product_id)"
-            
+        case .blockUser:
+            return "block-unblock"
             //MARK: Old
             
         case .getProfile:
@@ -670,6 +672,8 @@ extension APIEndPoint: EndPointType {
         case .uploadProductImage:
             return .post
         case .deleteProduct:
+            return .post
+        case .blockUser:
             return .post
             
             //MARK: Old
@@ -1005,6 +1009,8 @@ extension APIEndPoint: EndPointType {
             return nil
         case .deleteProduct:
             return nil
+        case .blockUser(param: let param):
+            return param
             
             //MARK: Old
             
@@ -1478,6 +1484,8 @@ extension APIEndPoint: EndPointType {
         case .sendChatNotification(param: let param):
             return nil
         case .deleteProduct(param: let param):
+            return nil
+        case .blockUser(param: let param):
             return nil
         }
     }

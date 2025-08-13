@@ -290,6 +290,36 @@
             endingLineNumber = "179"
             landmarkName = "requestWithJSONBody(type:parameters:modalType:header:)"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "91530E76-14CE-4AEE-AFFF-7D09AD2659FF - 39806d355633bb34"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for BidCast.APIManager.requestWithJSONBody&lt;&#x3c4;_0_0 where &#x3c4;_0_0: Swift.Decodable&gt;(type: BidCast.EndPointType, parameters: Swift.Dictionary&lt;Swift.String, Any&gt;, modalType: &#x3c4;_0_0.Type, header: Swift.Bool) async throws -&gt; &#x3c4;_0_0"
+                  moduleName = "BidCast.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/gadgetzone/Documents/Live/bidcast/BidCast/Helper/APIManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "179"
+                  endingLineNumber = "179">
+               </Location>
+               <Location
+                  uuid = "91530E76-14CE-4AEE-AFFF-7D09AD2659FF - 39806d355633bb34"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for BidCast.APIManager.requestWithJSONBody&lt;&#x3c4;_0_0 where &#x3c4;_0_0: Swift.Decodable&gt;(type: BidCast.EndPointType, parameters: Swift.Dictionary&lt;Swift.String, Any&gt;, modalType: &#x3c4;_0_0.Type, header: Swift.Bool) async throws -&gt; &#x3c4;_0_0"
+                  moduleName = "BidCast.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/gadgetzone/Documents/Live/bidcast/BidCast/Helper/APIManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "179"
+                  endingLineNumber = "179">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -338,6 +368,54 @@
             endingLineNumber = "172"
             landmarkName = "requestWithJSONBody(type:parameters:modalType:header:)"
             landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "0EE1C918-9546-4E7D-AC75-630E9753DBDB"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BidCast/Screens/NonLinkedSceen/More/Shop/View/ShopBottomSheetView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "269"
+            endingLineNumber = "269"
+            landmarkName = "body"
+            landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "8287AC75-CC84-4ED9-83A1-4694310AA496"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BidCast/Screens/NonLinkedSceen/More/Shop/View/ShopBottomSheetView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "285"
+            endingLineNumber = "285"
+            landmarkName = "body"
+            landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "48C0A510-998F-4F2F-8457-8CCCF9F9D389"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BidCast/Screens/NonLinkedSceen/More/Shop/View/ShopBottomSheetView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "272"
+            endingLineNumber = "272"
+            landmarkName = "body"
+            landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
