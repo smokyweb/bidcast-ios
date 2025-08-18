@@ -475,8 +475,16 @@ struct LiveStream: View {
                                     if UserDefaults.buyerVerafied != "verified" {
                                         showVerificationSheet = true
                                     }else{
-                                        currentBottomSheet = action
-                                        showSheet = true
+                                        if UserDefaults.sellerAddress == false{
+                                            showPaymentShipping = true
+                                            titleText = "Add Address"
+                                        }else if UserDefaults.hasCardAdded == false{
+                                            showPaymentShipping = true
+                                            titleText = "Add Card"
+                                        }else{
+                                            currentBottomSheet = action
+                                            showSheet = true
+                                        }
                                     }
                                 }
                             }) {
@@ -566,6 +574,8 @@ struct LiveStream: View {
                 
                 CusNavLink(doNavigate: $navigateToBuyer, destination: TrustedBuyerScreen(comeFromHome:$comeFromHome))
                 
+                CusNavLink(doNavigate: $navigateToAddCardScreen, destination: PaymentAndShipping_Screen())
+                CusNavLink(doNavigate: $navigateToShipping, destination: PaymentAndShipping_Screen())
                 CusNavLink(doNavigate: $navigateToEditPayment, destination: PaymentAndShipping_Screen())
                 CusNavLink(doNavigate: $navigateToEditAddress, destination: PaymentAndShipping_Screen())
             }
