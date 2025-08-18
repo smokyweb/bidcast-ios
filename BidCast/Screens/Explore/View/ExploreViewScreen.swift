@@ -23,14 +23,17 @@ struct ExploreViewScreen: View {
     var tabName = ["Gaming","Sports","Jewellery ","Fashion","Vinyl Records"]
     var subLabel = ["864 Live","1.2K Live","640 Live","640 Live","640 Live"]
     var viewModel = SelectCategoryViewModel()
+    @State var selectedTab = "Recommended"
     @State var category : String = ""
     @State var navigateToCategoryDetailScreen = false
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
+    @State var isLoading: Bool = false
+    @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+    @State var showError: Bool = false
 
     
     @State var categoryList = [CategoryDataModel]()
-    @State var isLoading = false
     @State var navigateToNoti : Bool = false
     
     var body: some View {
@@ -58,8 +61,36 @@ struct ExploreViewScreen: View {
             ScrollView(showsIndicators: false){
                 VStack(alignment: .leading,spacing: 12){
                     SearchView()
-                    SingleTitleLabel(title: "Recommended | Popular | All" ,textColor: .black,fontValue: 18.0)
+//                    SingleTitleLabel(title: "Recommended | Popular | All" ,textColor: .black,fontValue: 18.0)
+                    ButtonTitleLabel(
+                        titles: ["Recommended", "Popular", "All"],
+                        fontValue: 16,
+                        textColor: .blue
+                    ) { selected in
+                        print("Tapped:", selected)
+                        Task{
+                           guard Reachability.isConnectedToNetwork() else {
+                                hudMsg = "No Internet Connection"
+                                showhud = true
+                                return
+                            }
 
+                            SVProgressHUD.show()
+                            categoryList.removeAll()
+                            var selection = ""
+                            if selected == "Recommended"{
+                                selection = "live"
+                            }else if selected == "Popular"{
+                                selection = "popular"
+                            }else{
+                                selection = "All"
+                            }
+                            self.selectedTab = selection
+                            await self.viewModel.getCategoryList(param: CategoryRequest(category_id: ""))
+                            await SVProgressHUD.dismiss()
+                            self.success()
+                        }
+                    }
                     ForEach(0 ..< categoryList.count, id: \.self) { ind in
                         ListCell(image: categoryList[ind].image ?? "", title: categoryList[ind].name ?? "", vectorImg: .icArrowUp,subLabel : "BidSwipe",tintColot: categoryList[ind].color ?? "",onTapMenuCell: {
                         category = categoryList[ind].name ?? ""
@@ -87,10 +118,27 @@ struct ExploreViewScreen: View {
                 SVProgressHUD.show()
                 await self.viewModel.getCategoryList(param: CategoryRequest(category_id: ""))
                 await SVProgressHUD.dismiss()
-                if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
-                    self.categoryList = viewModel.categoryResponse.data ?? [CategoryDataModel]()
-                }
+                success()
+//                if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
+//                  
+//                }
             }
+        }
+    }
+    
+    func success() {
+        let response = viewModel.categoryResponse
+        if response.status == "success" {
+            self.categoryList = viewModel.categoryResponse.data ?? [CategoryDataModel]()
+        } else {
+            showError = true
+            alertType = .sheetType(
+                icon: .alert,
+                title: response.error_type?.capitalized ?? "",
+                message: response.message?.capitalized ?? "",
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
+            )
         }
     }
 }
