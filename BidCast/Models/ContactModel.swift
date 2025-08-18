@@ -42,6 +42,7 @@ struct CategoryDataModel : Codable{
     var color: String?
     var subLabel : String?
     var is_selected : Bool?
+    var usage_count : String?
     var extra_fields : [ExtraFieldModel]?
 }
 

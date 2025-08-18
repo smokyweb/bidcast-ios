@@ -305,7 +305,7 @@ struct ButtonTitleLabel: View {
     var spacing: CGFloat = 12
     var onTap: ((String) -> Void)? = nil
     
-    @State var selectedTitle: String = "Live Now" 
+    @State var selectedTitle: String = "Live Now"
     
     var body: some View {
         HStack(spacing: spacing) {

@@ -92,7 +92,7 @@ struct ExploreViewScreen: View {
                         }
                     }
                     ForEach(0 ..< categoryList.count, id: \.self) { ind in
-                        ListCell(image: categoryList[ind].image ?? "", title: categoryList[ind].name ?? "", vectorImg: .icArrowUp,subLabel : "BidSwipe",tintColot: categoryList[ind].color ?? "",onTapMenuCell: {
+                        ListCell(image: categoryList[ind].image ?? "", title: categoryList[ind].name ?? "", vectorImg: .icArrowUp,subLabel : "\(categoryList[ind].usage_count ?? "") Live",tintColot: categoryList[ind].color ?? "",onTapMenuCell: {
                         category = categoryList[ind].name ?? ""
                         navigateToCategoryDetailScreen = true
                         

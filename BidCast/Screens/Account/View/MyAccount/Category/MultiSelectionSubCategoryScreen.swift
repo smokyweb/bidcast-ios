@@ -268,7 +268,6 @@ struct MultiSelectionSubCategoryScreen: View {
     }
 }
 
-// MARK: - Subcategory Card View
 struct SubCategoryCard: View {
     let subCategory: SubCategoryDataModel
     let isSelected: Bool
@@ -286,8 +285,10 @@ struct SubCategoryCard: View {
             .cornerRadius(8)
             .overlay(
                 RoundedRectangle(cornerRadius: 8)
-                    .stroke(isSelected ? Color.blue : Color.clear, lineWidth: 3)
+                    .stroke(isSelected ? Color.blue : Color.clear, lineWidth: 2)
             )
+            
+            .shadow(color: isSelected ? Color.clear : Color.gray.opacity(0.4), radius: 4, x: 0, y: 2)
             
             Text(subCategory.name ?? "")
                 .font(.subheadline)
