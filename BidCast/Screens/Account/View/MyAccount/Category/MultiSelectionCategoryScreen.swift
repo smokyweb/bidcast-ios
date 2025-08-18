@@ -32,6 +32,23 @@ struct MultiSelectionCategoryScreen: View {
     
     var body: some View {
         VStack(spacing: 0) {
+            HeaderWithTitle(
+                title: "Select Your Favourite Category".localized,
+                leadingImgArr: [.icBack],
+                onClickLeading: { _ in
+                    self.presentationMode.wrappedValue.dismiss()
+                },
+                count: .constant(0)
+            )
+            
+            Text("Choose the categories you're interested in to watch related shows")
+                .font(.headline)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 24)
+                .padding(.top, 5)
+                .foregroundColor(.darkGray)
+                .font(.custom(poppinsRegular, fixedSize: 14))
+            
             ScrollView {
                 LazyVGrid(columns: gridColumns, spacing: 16) {
                     ForEach(categoryList, id: \.id) { category in
@@ -110,20 +127,25 @@ struct CategoryCard: View {
     let isSelected: Bool
     
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 12) {
             AsyncImage(url: URL(string: category.image ?? "")) { phase in
                 switch phase {
-                case .empty: ProgressView().frame(width: 64, height: 64)
+                case .empty:
+                    ProgressView()
+                        .frame(width: 64, height: 64)
                 case .success(let image):
                     image.resizable()
-                        .scaledToFill()
+                        .scaledToFit()
                         .frame(width: 64, height: 64)
                         .cornerRadius(12)
                 case .failure:
-                    Image(systemName: "photo").resizable()
+                    Image(systemName: "photo")
+                        .resizable()
+                        .scaledToFit()
                         .frame(width: 64, height: 64)
                         .foregroundColor(.gray)
-                @unknown default: EmptyView()
+                @unknown default:
+                    EmptyView()
                 }
             }
             
@@ -131,8 +153,10 @@ struct CategoryCard: View {
                 .font(.subheadline)
                 .fontWeight(.medium)
                 .multilineTextAlignment(.center)
+                .lineLimit(2)
+                .frame(maxWidth: .infinity)
         }
-        .padding(.vertical, 12)
+        .padding(.vertical, 20)
         .frame(maxWidth: .infinity)
         .background(isSelected ? Color.blue.opacity(0.2) : Color.gray.opacity(0.1))
         .cornerRadius(12)
@@ -142,3 +166,4 @@ struct CategoryCard: View {
         )
     }
 }
+

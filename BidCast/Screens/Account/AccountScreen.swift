@@ -434,7 +434,7 @@ enum AccountTabSection : String, CaseIterable, CustomStringConvertible{
     case buyer = "Trusted Buyer"
     case notifications = "Notifications"
     case preference = "Preference"
-    case favCategory = "Favourite Categories"
+    case favCategory = "Favourite"
     
     
     var description: String {

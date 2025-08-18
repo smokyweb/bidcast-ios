@@ -9,7 +9,6 @@ import SwiftUI
 import AlertToast
 import SVProgressHUD
 
-
 struct MultiSelectionSubCategoryScreen: View {
     
     @Environment(\.presentationMode) var presentationMode
@@ -23,6 +22,7 @@ struct MultiSelectionSubCategoryScreen: View {
     
     @State private var subCategoryList: [SubCategoryDataModel] = []
     @State private var selectedSubCategoryIDs: Set<Int> = []
+    @State private var expandedCategoryIDs: Set<Int> = []   // For open/close sections
     
     @Binding var selectedCategoryIDs: [Int]
     var viewModel = SelectCategoryViewModel()
@@ -31,14 +31,14 @@ struct MultiSelectionSubCategoryScreen: View {
     @EnvironmentObject var networkMonitor: NetworkMonitor
     
     let columns: [GridItem] = [
-        GridItem(.flexible(), spacing: 12)
+        GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())
     ]
     
     var body: some View {
         VStack(spacing: 0) {
             
             HeaderWithTitle(
-                title: "Select Your Favourite SubCategory".localized,
+                title: "Select Your Favourite Sub Category".localized,
                 leadingImgArr: [.icBack],
                 onClickLeading: { _ in
                     self.presentationMode.wrappedValue.dismiss()
@@ -46,55 +46,77 @@ struct MultiSelectionSubCategoryScreen: View {
                 count: .constant(0)
             )
             
+            Text("Select sub categories based on the categories you chose on the previous page")
+                .font(.headline)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 24)
+                .foregroundColor(.darkGray)
+                .padding(.top, 5)
+                .font(.custom(poppinsRegular, fixedSize: 14))
+            
             ScrollView {
-                LazyVGrid(columns: columns, spacing: 12) {
-                    ForEach(subCategoryList, id: \.id) { subCategory in
-                        // show main subcategory
-                        SubCategoryCard(
-                            subCategory: SubCategoryDataModel(
-                                id: subCategory.id,
-                                name: subCategory.name,
-                                image: subCategory.image,
-                                thumbnail: subCategory.thumbnail,
-                                extraFields: subCategory.extraFields,
-                                color: subCategory.color,
-                                subcategories: nil,
-                                categoryID: subCategory.categoryID,
-                                isSelected: nil
-                            ),
-                            isSelected: selectedSubCategoryIDs.contains(subCategory.id ?? -1)
-                        )
-                        .onTapGesture {
-                            toggleSelection(subCategory.id ?? -1)
-                        }
-                        
-                        // show subcategories if available
-                        if let subSubs = subCategory.subcategories {
-                            ForEach(subSubs, id: \.id) { sub in
-                                SubCategoryCard(
-                                    subCategory: SubCategoryDataModel(
-                                        id: sub.id,
-                                        name: sub.name,
-                                        image: sub.image,
-                                        thumbnail: sub.thumbnail,
-                                        extraFields: sub.extraFields,
-                                        color: sub.color,
-                                        subcategories: nil,
-                                        categoryID: sub.categoryID,
-                                        isSelected: nil
-                                    ),
-                                    isSelected: selectedSubCategoryIDs.contains(sub.id ?? -1)
-                                )
-                                .onTapGesture {
-                                    toggleSelection(sub.id ?? -1)
+                VStack(spacing: 16) {
+                    ForEach(subCategoryList, id: \.id) { category in
+                        VStack(spacing: 0) {
+                            // Category Header
+                            HStack {
+                                AsyncImage(url: URL(string: category.image ?? "")) { image in
+                                    image.resizable().scaledToFit()
+                                } placeholder: {
+                                    Circle().fill(Color.gray.opacity(0.2))
                                 }
+                                .frame(width: 36, height: 36)
+                                .clipShape(Circle())
+                                
+                                Text(category.name ?? "")
+                                    .font(.headline)
+                                
+                                Spacer()
+                                
+                                Image(systemName: expandedCategoryIDs.contains(category.id ?? -1) ? "chevron.up" : "chevron.down")
+                                    .foregroundColor(.gray)
+                            }
+                            .padding()
+                            .onTapGesture {
+                                toggleExpand(category.id ?? -1)
+                            }
+                            
+                            // Subcategories grid
+                            if expandedCategoryIDs.contains(category.id ?? -1) {
+                                LazyVGrid(columns: columns, spacing: 12) {
+                                    if let subs = category.subcategories {
+                                        ForEach(subs, id: \.id) { sub in
+                                            SubCategoryCard(
+                                                subCategory: SubCategoryDataModel(
+                                                    id: sub.id,
+                                                    name: sub.name,
+                                                    image: sub.image,
+                                                    thumbnail: sub.thumbnail,
+                                                    extraFields: sub.extraFields,
+                                                    color: sub.color,
+                                                    subcategories: nil,
+                                                    categoryID: sub.categoryID,
+                                                    isSelected: sub.isSelected
+                                                ),
+                                                isSelected: selectedSubCategoryIDs.contains(sub.id ?? -1)
+                                            )
+                                            .onTapGesture {
+                                                toggleSelection(sub.id ?? -1)
+                                            }
+                                        }
+                                    }
+                                }
+                                .padding(.horizontal, 8)
+                                .padding(.bottom, 12)
                             }
                         }
+                        .background(Color.white)
+                        .cornerRadius(12)
+                        .shadow(color: .squirrelGrey.opacity(0.5), radius: 2, x: 0, y: 0)
                     }
                 }
                 .padding(16)
             }
-            .padding([.leading,.trailing], 16)
             
             VStack {
                 Button(action: {
@@ -110,7 +132,7 @@ struct MultiSelectionSubCategoryScreen: View {
                         }
                     }
                 }) {
-                    Text("Next")
+                    Text("Confirm")
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding()
@@ -120,7 +142,8 @@ struct MultiSelectionSubCategoryScreen: View {
                 .disabled(selectedSubCategoryIDs.isEmpty)
             }
             .padding(16)
-            .background(Color.white.shadow(radius: 3))
+//            .background(Color.white.shadow(radius: 3))
+            
             CusNavLink(doNavigate: $navigateToAccount, destination: AccountScreen())
         }
        
@@ -147,13 +170,21 @@ struct MultiSelectionSubCategoryScreen: View {
                             UserDefaults.isFirstTimeLogin = true
                             appRootManager.currentRoot = .tabBar
                         }
-                       
                     } else {
                         withAnimation { showError = false }
                     }
                 },
                 onSecondaryClick: { withAnimation { showError = false } }
             )
+        }
+    }
+    
+    // MARK: - Expand/Collapse Logic
+    private func toggleExpand(_ id: Int) {
+        if expandedCategoryIDs.contains(id) {
+            expandedCategoryIDs.remove(id)
+        } else {
+            expandedCategoryIDs.insert(id)
         }
     }
     
@@ -174,7 +205,7 @@ struct MultiSelectionSubCategoryScreen: View {
             if response?.status == "success" {
                 subCategoryList = response?.data ?? []
                 
-                // MARK: Preselect already selected subcategories
+                // Preselect already selected
                 for category in subCategoryList {
                     if let subSubs = category.subcategories {
                         for sub in subSubs {
@@ -243,7 +274,7 @@ struct SubCategoryCard: View {
     let isSelected: Bool
     
     var body: some View {
-        ZStack(alignment: .bottom) {
+        VStack {
             AsyncImage(url: URL(string: subCategory.image ?? "")) { image in
                 image
                     .resizable()
@@ -251,35 +282,17 @@ struct SubCategoryCard: View {
             } placeholder: {
                 Color.gray.opacity(0.2)
             }
-            .frame(height: 150)
-            .clipped()
-            .cornerRadius(12)
+            .frame(width: 100, height: 100)
+            .cornerRadius(8)
             .overlay(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: 8)
                     .stroke(isSelected ? Color.blue : Color.clear, lineWidth: 3)
             )
             
-            LinearGradient(
-                gradient: Gradient(colors: [Color.black.opacity(0.7), Color.clear]),
-                startPoint: .bottom,
-                endPoint: .center
-            )
-            .frame(height: 60)
-            .cornerRadius(12, corners: [.bottomLeft, .bottomRight])
-            .overlay(
-                Text(subCategory.name ?? "")
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .padding([.leading, .bottom], 8),
-                alignment: .bottomLeading
-            )
+            Text(subCategory.name ?? "")
+                .font(.subheadline)
+                .foregroundColor(.black)
+                .lineLimit(1)
         }
-    }
-}
-
-// MARK: - Corner Radius Extension
-extension View {
-    func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
-        clipShape(RoundedCorner(radius: radius, corners: corners))
     }
 }
