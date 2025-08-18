@@ -619,7 +619,7 @@ class FirebaseManager {
     
     
     func fireAction(roomId: String, onIntervalReached: @escaping () -> Void) {
-        onIntervalReached()
+//        onIntervalReached()
         
         let newTimestamp =  getCurrentTimestamp()
         let timestampRef = databaseRef.child("live_sessions").child(roomId).child("time")

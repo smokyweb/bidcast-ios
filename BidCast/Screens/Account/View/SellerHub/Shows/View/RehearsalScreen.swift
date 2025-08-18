@@ -768,7 +768,7 @@ struct RehearsalScreen: View {
                     }
                     
                     FirebaseManager.shared.startObservingSessionTimer(roomId: roomId) {
-                        self.UpdateStatus(status : true)
+//                        self.UpdateStatus(status : true)
                     }
                     fetchBiddingDetail(roomId: roomId)
                     //For Show Automatic Sheet
