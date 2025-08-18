@@ -60,13 +60,14 @@ class FirebaseManager {
         print(sessionData)
         
         databaseRef.child("live_sessions").child(roomId).setValue(sessionData) { error, _ in
-            let ref = self.databaseRef.child("live_sessions").child(roomId)
+            
             if let error = error {
                 print("❌ Failed to write live session: \(error.localizedDescription)")
                 completion?(false)
             } else {
                 print("✅ Live session created successfully in Firebase for room: \(roomId)")
-            ref.onDisconnectRemoveValue()
+                let ref = self.databaseRef.child("live_sessions").child(roomId)
+                ref.onDisconnectRemoveValue()
                 completion?(true)
             }
         }
@@ -203,7 +204,7 @@ class FirebaseManager {
     }
     
     
-  
+    
     // MARK: - updateHighestBid
     func updateHighestBid(
         roomId: String,
@@ -356,7 +357,7 @@ class FirebaseManager {
                         }
                     }
                 }
-
+                
             } else {
                 print("Countdown removed or invalid")
                 onUpdate(0)
@@ -370,10 +371,7 @@ class FirebaseManager {
         countdownRef.removeAllObservers()
     }
     
-    
-    
-    
-    
+  
     func finalizeWinningBid(roomId: String, onSold: @escaping (_ bidData: [String: Any]?) -> Void) {
         let winnerRef = databaseRef.child("live_sessions").child(roomId).child("highestBid")
         
@@ -409,41 +407,6 @@ class FirebaseManager {
     
     
     
-    
-    //
-    //    func observeProductChanges(roomId: String, onChange: @escaping ([ProductData]) -> Void) {
-    //        databaseRef.child("live_sessions").child(roomId).child("product")
-    //            .observe(.value) { snapshot in
-    //                guard let value = snapshot.value as? [[String: Any]] else {
-    //                    onChange([])
-    //                    return
-    //                }
-    //
-    //                let products: [ProductData] = value.compactMap { dict in
-    //                    guard let id = dict["id"] as? String,
-    //                          let category = dict["category"] as? String,
-    //                          let name = dict["name"] as? String,
-    //                          let price = dict["price"] as? String,
-    //                          let images = dict["images"] as? String,
-    //                          let isCurrent = dict["isCurrent"] as? Bool,
-    //                          let status = dict["status"] as? String else {
-    //                        return nil
-    //                    }
-    //
-    //                    return ProductData(
-    //                        category: category,
-    //                        id: id,
-    //                        image: images,
-    //                        name: name,
-    //                        price: price,
-    //                        status: status,
-    //                        isCurrent: isCurrent
-    //                    )
-    //                }
-    //
-    //                onChange(products)
-    //            }
-    //    }
     
     //MARK: -  Viewwer count
     func observeViewerCount(
@@ -551,7 +514,7 @@ class FirebaseManager {
     
     
     func fireAction(roomId: String, onIntervalReached: @escaping () -> Void) {
-//        onIntervalReached()
+        //        onIntervalReached()
         
         let newTimestamp =  getCurrentTimestamp()
         let timestampRef = databaseRef.child("live_sessions").child(roomId).child("time")
