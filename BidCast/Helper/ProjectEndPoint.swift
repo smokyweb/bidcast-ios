@@ -227,7 +227,7 @@ extension APIEndPoint: EndPointType {
         case .letsPrepare:
             return "get-prepare"
         case .category(param:let param) :
-            return "get-category?category_id=\(param.category_id ?? "")"
+            return "get-category?category_id=\(param.category_id ?? "")&type=\(param.type ?? "")"
         case .auctionType:
             return "get-auction-type"
         case .getInventory:

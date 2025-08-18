@@ -293,7 +293,6 @@ enum HomeButton: String, CaseIterable, CustomStringConvertible {
 }
 
 
-
 struct ButtonTitleLabel: View {
     
     var titles: [String] = ["Live Now", "Popular", "Coming Soon"]
@@ -306,7 +305,7 @@ struct ButtonTitleLabel: View {
     var spacing: CGFloat = 12
     var onTap: ((String) -> Void)? = nil
     
-    @State var selectedTitle: String = "Live Now"
+    @State var selectedTitle: String = "Live Now" 
     
     var body: some View {
         HStack(spacing: spacing) {
@@ -314,9 +313,12 @@ struct ButtonTitleLabel: View {
                 HStack(spacing: spacing) {
                     let title = titles[index]
                     
+                    // Condition: bold if selected OR if title is "Live Now" or "Recommended"
+                    let isBold = title == selectedTitle || title == "Live Now" || title == "Recommended"
+                    
                     Text(title)
-                        .font(.custom(title == selectedTitle ? selectedFontName : fontName, fixedSize: fontValue))
-                        .foregroundColor(title == selectedTitle ? selectedColor : separatorColor)
+                        .font(.custom(isBold ? selectedFontName : fontName, fixedSize: fontValue))
+                        .foregroundColor(isBold ? selectedColor : separatorColor)
                         .onTapGesture {
                             selectedTitle = title
                             onTap?(title)
@@ -333,5 +335,3 @@ struct ButtonTitleLabel: View {
         .padding(.horizontal, 6)
     }
 }
-
-

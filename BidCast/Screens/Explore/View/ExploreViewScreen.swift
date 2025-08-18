@@ -23,7 +23,7 @@ struct ExploreViewScreen: View {
     var tabName = ["Gaming","Sports","Jewellery ","Fashion","Vinyl Records"]
     var subLabel = ["864 Live","1.2K Live","640 Live","640 Live","640 Live"]
     var viewModel = SelectCategoryViewModel()
-    @State var selectedTab = "Recommended"
+    @State var selectedTab = "recommended"
     @State var category : String = ""
     @State var navigateToCategoryDetailScreen = false
     @State var showhud: Bool = false
@@ -79,14 +79,14 @@ struct ExploreViewScreen: View {
                             categoryList.removeAll()
                             var selection = ""
                             if selected == "Recommended"{
-                                selection = "live"
+                                selection = "recommended"
                             }else if selected == "Popular"{
                                 selection = "popular"
                             }else{
-                                selection = "All"
+                                selection = "all"
                             }
                             self.selectedTab = selection
-                            await self.viewModel.getCategoryList(param: CategoryRequest(category_id: ""))
+                            await self.viewModel.getCategoryList(param: CategoryRequest(category_id: "",type: selectedTab))
                             await SVProgressHUD.dismiss()
                             self.success()
                         }
@@ -116,7 +116,7 @@ struct ExploreViewScreen: View {
                     return
                 }
                 SVProgressHUD.show()
-                await self.viewModel.getCategoryList(param: CategoryRequest(category_id: ""))
+                await self.viewModel.getCategoryList(param: CategoryRequest(category_id: "",type: selectedTab))
                 await SVProgressHUD.dismiss()
                 success()
 //                if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{

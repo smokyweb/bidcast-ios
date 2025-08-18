@@ -679,6 +679,7 @@ struct CardDefaultRequest : Encodable {
 
 struct CategoryRequest  : Encodable {
     var category_id : String?
+    var type : String?
 }
 
 
