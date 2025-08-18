@@ -60,11 +60,14 @@ class FirebaseManager {
         print(sessionData)
         
         databaseRef.child("live_sessions").child(roomId).setValue(sessionData) { error, _ in
+            
             if let error = error {
                 print("❌ Failed to write live session: \(error.localizedDescription)")
                 completion?(false)
             } else {
                 print("✅ Live session created successfully in Firebase for room: \(roomId)")
+                let ref = self.databaseRef.child("live_sessions").child(roomId)
+                ref.onDisconnectRemoveValue()
                 completion?(true)
             }
         }
@@ -201,76 +204,6 @@ class FirebaseManager {
     }
     
     
-    //    //MARK: - Bidding
-    //    func updateHighestBid(
-    //        roomId: String,
-    //        bidAmount: String,
-    //        bidderId: String,
-    //        bidderName: String,
-    //        bidderProfileImage: String,
-    //        status: String = "process",
-    //        onSold: @escaping (_ bidData: [String: Any]?) -> Void
-    //    ) {
-    //        let bidData: [String: Any] = [
-    //            "bidAmount": bidAmount,
-    //            "userId": bidderId,
-    //            "userName": bidderName,
-    //            "userImage": bidderProfileImage,
-    //            "productStatus": status
-    //        ]
-    //
-    //        let bidPath = databaseRef
-    //            .child("live_sessions")
-    //            .child(roomId)
-    //            .child("highestBid")
-    //
-    //        let timerKey = roomId
-    //
-    //        // ✅ Save highest bid to Firebase
-    //        bidPath.setValue(bidData) { error, _ in
-    //            if let error = error {
-    //                print("❌ Failed to update highest bid: \(error.localizedDescription)")
-    //            } else {
-    //                print("✅ Highest bid updated")
-    //
-    //                // ✅ Start timer only if not running
-    //                if self.bidTimers[timerKey] == nil {
-    //                    self.remainingSeconds[timerKey] = 30
-    //                    self.startCountdownTimer(for: roomId, onSold: onSold)
-    //                }
-    //            }
-    //        }
-    //    }
-    //
-    //
-    //
-    //    func startCountdownTimer(for roomId: String, onSold: @escaping (_ bidData: [String: Any]?) -> Void) {
-    //        let timerKey = roomId
-    //        let countdownRef = databaseRef.child("live_sessions").child(roomId).child("bidCountDown")
-    //
-    //        // Initial countdown
-    //        self.remainingSeconds[timerKey] = 30
-    //        countdownRef.setValue("30") // Store as string initially
-    //
-    //        bidTimers[timerKey] = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
-    //            guard let secondsLeft = self.remainingSeconds[timerKey] else { return }
-    //
-    //            if secondsLeft <= 1 {
-    //                timer.invalidate()
-    //                self.bidTimers.removeValue(forKey: timerKey)
-    //                self.remainingSeconds.removeValue(forKey: timerKey)
-    //
-    //                countdownRef.removeValue() // Remove countdown from Firebase
-    //                print("⏰ Countdown finished — finalizing bid")
-    //                self.finalizeWinningBid(roomId: roomId, onSold: onSold)
-    //            } else {
-    //                let newSeconds = secondsLeft - 1
-    //                self.remainingSeconds[timerKey] = newSeconds
-    //                countdownRef.setValue(String(newSeconds)) // Convert to String here
-    //                print("⏱️ \(newSeconds)s left for room \(roomId)")
-    //            }
-    //        }
-    //    }
     
     // MARK: - updateHighestBid
     func updateHighestBid(
@@ -424,7 +357,7 @@ class FirebaseManager {
                         }
                     }
                 }
-
+                
             } else {
                 print("Countdown removed or invalid")
                 onUpdate(0)
@@ -438,10 +371,7 @@ class FirebaseManager {
         countdownRef.removeAllObservers()
     }
     
-    
-    
-    
-    
+  
     func finalizeWinningBid(roomId: String, onSold: @escaping (_ bidData: [String: Any]?) -> Void) {
         let winnerRef = databaseRef.child("live_sessions").child(roomId).child("highestBid")
         
@@ -477,41 +407,6 @@ class FirebaseManager {
     
     
     
-    
-    //
-    //    func observeProductChanges(roomId: String, onChange: @escaping ([ProductData]) -> Void) {
-    //        databaseRef.child("live_sessions").child(roomId).child("product")
-    //            .observe(.value) { snapshot in
-    //                guard let value = snapshot.value as? [[String: Any]] else {
-    //                    onChange([])
-    //                    return
-    //                }
-    //
-    //                let products: [ProductData] = value.compactMap { dict in
-    //                    guard let id = dict["id"] as? String,
-    //                          let category = dict["category"] as? String,
-    //                          let name = dict["name"] as? String,
-    //                          let price = dict["price"] as? String,
-    //                          let images = dict["images"] as? String,
-    //                          let isCurrent = dict["isCurrent"] as? Bool,
-    //                          let status = dict["status"] as? String else {
-    //                        return nil
-    //                    }
-    //
-    //                    return ProductData(
-    //                        category: category,
-    //                        id: id,
-    //                        image: images,
-    //                        name: name,
-    //                        price: price,
-    //                        status: status,
-    //                        isCurrent: isCurrent
-    //                    )
-    //                }
-    //
-    //                onChange(products)
-    //            }
-    //    }
     
     //MARK: -  Viewwer count
     func observeViewerCount(
@@ -619,7 +514,7 @@ class FirebaseManager {
     
     
     func fireAction(roomId: String, onIntervalReached: @escaping () -> Void) {
-//        onIntervalReached()
+        //        onIntervalReached()
         
         let newTimestamp =  getCurrentTimestamp()
         let timestampRef = databaseRef.child("live_sessions").child(roomId).child("time")
