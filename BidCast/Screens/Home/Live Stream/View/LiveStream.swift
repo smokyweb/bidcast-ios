@@ -68,6 +68,8 @@ struct LiveStream: View {
     @State var winnerName : String = ""
     @State var winnerAmount : String = ""
     @State var winnerProfileID : Int = 0
+    @State private var navigateToEditPayment = false
+    @State private var navigateToEditAddress = false
     
     var tabBarHeight: CGFloat {
         UIApplication.shared.windows.first?.safeAreaInsets.bottom ?? 49
@@ -100,13 +102,14 @@ struct LiveStream: View {
     
     @State  var showSheet: Bool = false
     @State  var winnerSheet: Bool = false
+    @State  var walletPaymentSheet: Bool = false
     @State var maxBidAmountSheet : Bool = false
     
     var sheetHeight: CGFloat {
         switch currentBottomSheet {
         case .paperclip: return screenHeight * 0.5
         case .share: return screenHeight * 0.6
-        case .wallet: return screenHeight * 0.6
+        case .wallet: return screenHeight * 0.39
         case .cart: return screenHeight * 0.7
         default: return screenHeight * 0.65
         }
@@ -468,6 +471,14 @@ struct LiveStream: View {
                                     currentBottomSheet = action
                                     showSheet = true
                                 }
+                                else if action == .wallet{
+                                    if UserDefaults.buyerVerafied != "verified" {
+                                        showVerificationSheet = true
+                                    }else{
+                                        currentBottomSheet = action
+                                        showSheet = true
+                                    }
+                                }
                             }) {
                                 Image(systemName: action.iconName)
                                     .resizable()
@@ -554,6 +565,9 @@ struct LiveStream: View {
                 CusNavLink(doNavigate: $navigateToProfile, destination: ProfileScreen(id:$id, isComeFrom: .constant(""),userName: $userName,userImage: $userImage))
                 
                 CusNavLink(doNavigate: $navigateToBuyer, destination: TrustedBuyerScreen(comeFromHome:$comeFromHome))
+                
+                CusNavLink(doNavigate: $navigateToEditPayment, destination: PaymentAndShipping_Screen())
+                CusNavLink(doNavigate: $navigateToEditAddress, destination: PaymentAndShipping_Screen())
             }
             
         }.gesture(
@@ -665,14 +679,42 @@ struct LiveStream: View {
                         }
                     )
                 case .wallet:
-                    EmptyView()
-                    
+                    let data = homeViewModel.accountInfo.data
+                    PaymentBottomSheet(
+                        isPresented: $showSheet,
+                        paymentMethods: [
+                            PaymentMethod(creditCard: CreditCard(
+                                cardNumber: data?.default_card?.card_id,
+                                expirationDate: data?.default_card?.exp_date,
+                                cardType:  data?.default_card?.cardType
+                            ))
+                        ],
+                        addresses: [
+                            AddressModel(
+                                id: data?.default_shipping_address?.id,
+                                user_id: data?.id,
+                                type: data?.default_shipping_address?.type,
+                                name: data?.default_shipping_address?.name,
+                                phone_number: data?.default_shipping_address?.phone_number,
+                                street_address: data?.default_shipping_address?.street_address,
+                                pincode: data?.default_shipping_address?.pincode,
+                                is_default: true
+                            )
+                        ],
+                        onEditPayment: {
+                            showSheet = false
+                            navigateToEditPayment = true
+                        },
+                        onEditAddress: {
+                            showSheet = false
+                            navigateToEditAddress = true
+                        }
+                    )
                 case .cart:
                     ShopBottomSheetView(
                         isPresented: $showSheet,
                         productData : $productData
                     )
-                    
                 case .none:
                     EmptyView()
                 }
@@ -691,6 +733,7 @@ struct LiveStream: View {
                 }
             )
         }
+
         
         .bottomSheet(isPresented: $winnerSheet,height: screenHeight * 0.40) {
             WinnerBottomSheet(
@@ -747,8 +790,9 @@ struct LiveStream: View {
         .onDisappear{
             logoutRoom()
         }
-        
     }
+    
+    
     //MARK: walletInfosuccess.
     func getProfileSuccess(){
         let response  = homeViewModel.accountInfo

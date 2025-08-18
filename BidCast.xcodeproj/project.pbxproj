@@ -365,6 +365,9 @@
 		D4BB9A212DE5D22A00C1BCBC /* PromoteToolsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BB9A192DE5D22A00C1BCBC /* PromoteToolsModel.swift */; };
 		D4BB9A232DE5D33600C1BCBC /* ToolGridItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BB9A222DE5D33600C1BCBC /* ToolGridItemView.swift */; };
 		D4BB9A252DE5D66500C1BCBC /* StatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BB9A242DE5D66500C1BCBC /* StatView.swift */; };
+		D4C0C7C12E53125500A84165 /* PaymentBottomSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C0C7BA2E53125500A84165 /* PaymentBottomSheet.swift */; };
+		D4C0C7C22E53125500A84165 /* AddPaymentAndMethodModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C0C7BC2E53125500A84165 /* AddPaymentAndMethodModel.swift */; };
+		D4C0C7C32E53125500A84165 /* AddPaymentAndMethodViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C0C7BE2E53125500A84165 /* AddPaymentAndMethodViewModel.swift */; };
 		D4C471CB2E2FA94A00424160 /* PaymentAndShippingInfoSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C471CA2E2FA94A00424160 /* PaymentAndShippingInfoSheet.swift */; };
 		D4C4D7972DD31C2D00274E51 /* ActivityCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C4D7962DD31C2D00274E51 /* ActivityCell.swift */; };
 		D4C4D79A2DD3263A00274E51 /* SingleTitleLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C4D7982DD3263A00274E51 /* SingleTitleLabel.swift */; };
@@ -840,6 +843,9 @@
 		D4BB9A1B2DE5D22A00C1BCBC /* PromoteToolsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromoteToolsViewModel.swift; sourceTree = "<group>"; };
 		D4BB9A222DE5D33600C1BCBC /* ToolGridItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolGridItemView.swift; sourceTree = "<group>"; };
 		D4BB9A242DE5D66500C1BCBC /* StatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatView.swift; sourceTree = "<group>"; };
+		D4C0C7BA2E53125500A84165 /* PaymentBottomSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentBottomSheet.swift; sourceTree = "<group>"; };
+		D4C0C7BC2E53125500A84165 /* AddPaymentAndMethodModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPaymentAndMethodModel.swift; sourceTree = "<group>"; };
+		D4C0C7BE2E53125500A84165 /* AddPaymentAndMethodViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPaymentAndMethodViewModel.swift; sourceTree = "<group>"; };
 		D4C471CA2E2FA94A00424160 /* PaymentAndShippingInfoSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentAndShippingInfoSheet.swift; sourceTree = "<group>"; };
 		D4C4D7962DD31C2D00274E51 /* ActivityCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityCell.swift; sourceTree = "<group>"; };
 		D4C4D7982DD3263A00274E51 /* SingleTitleLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleTitleLabel.swift; sourceTree = "<group>"; };
@@ -2118,6 +2124,7 @@
 				355AE96F2DD1F93600CD3D17 /* TabBar */,
 				99C908402DC8CD790054620B /* FlowStack */,
 				99C9088A2DC8CD790054620B /* Common */,
+				D4CAEC7E2DE7120900705CD7 /* More */,
 				99C909152DC8CD790054620B /* Authentication */,
 				D4DDF6282E0BC9A3007AD383 /* Notification */,
 			);
@@ -2746,7 +2753,6 @@
 				35BA4A462DE878E300EEC92A /* SalesFormat */,
 				35BA4A432DE870C500EEC92A /* CreateProduct */,
 				35BA4A402DE86E7100EEC92A /* SendGift */,
-				D4CAEC7E2DE7120900705CD7 /* More */,
 				D4B616172DE86C9700924A3D /* OrderStatus */,
 				D4B6163B2DE87F1100924A3D /* OBSSetup */,
 				D4B6164A2DE880D600924A3D /* LiveShowTips */,
@@ -3257,6 +3263,40 @@
 			path = PromoteTools;
 			sourceTree = "<group>";
 		};
+		D4C0C7BB2E53125500A84165 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				D4C0C7BA2E53125500A84165 /* PaymentBottomSheet.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		D4C0C7BD2E53125500A84165 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				D4C0C7BC2E53125500A84165 /* AddPaymentAndMethodModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		D4C0C7BF2E53125500A84165 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				D4C0C7BE2E53125500A84165 /* AddPaymentAndMethodViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		D4C0C7C02E53125500A84165 /* AddPaymentAndMethod */ = {
+			isa = PBXGroup;
+			children = (
+				D4C0C7BB2E53125500A84165 /* View */,
+				D4C0C7BD2E53125500A84165 /* Model */,
+				D4C0C7BF2E53125500A84165 /* ViewModel */,
+			);
+			path = AddPaymentAndMethod;
+			sourceTree = "<group>";
+		};
 		D4C471C62E2FA90A00424160 /* PaymentAndShippingInfo */ = {
 			isa = PBXGroup;
 			children = (
@@ -3472,6 +3512,7 @@
 				D4B615FB2DE83C4800924A3D /* CreateClip */,
 				D433DB0D2E4766F1001FA51D /* WinnerSheet */,
 				D4D453CE2E4C6FCD005A2F63 /* MaxBidAmountSheet */,
+				D4C0C7C02E53125500A84165 /* AddPaymentAndMethod */,
 				D4C471C62E2FA90A00424160 /* PaymentAndShippingInfo */,
 			);
 			path = More;
@@ -4295,6 +4336,7 @@
 				358B9D1A2DDF04FA00932250 /* FSCalendar.swift in Sources */,
 				35CCE01D2DD8782600760CEE /* ScheduleModel.swift in Sources */,
 				D4BB99F42DE590D100C1BCBC /* ShippingsViewModel.swift in Sources */,
+				D4C0C7C22E53125500A84165 /* AddPaymentAndMethodModel.swift in Sources */,
 				D4CAEC702DE6FF1400705CD7 /* ToolGridAnalyticsView.swift in Sources */,
 				D4B615F32DE8374E00924A3D /* ProductDetailSheet.swift in Sources */,
 				99C909452DC8CD790054620B /* ForgotViewModel.swift in Sources */,
@@ -4398,6 +4440,7 @@
 				D4BA32582DDB3C0D00FE4FD2 /* InventoryViewModel.swift in Sources */,
 				D4B615CF2DE8280200924A3D /* NotifyMeBottomSheet.swift in Sources */,
 				99C909B42DC8CD930054620B /* ProjectEndPoint.swift in Sources */,
+				D4C0C7C32E53125500A84165 /* AddPaymentAndMethodViewModel.swift in Sources */,
 				99C909B52DC8CD930054620B /* UserDefaults+Extension.swift in Sources */,
 				D4B615D82DE82A5400924A3D /* BuyNowModel.swift in Sources */,
 				35987D1E2DE5863100D6C2C9 /* LiveStream.swift in Sources */,
@@ -4510,6 +4553,7 @@
 				99C908372DC8CD6A0054620B /* AlertType.swift in Sources */,
 				99C908382DC8CD6A0054620B /* JobMatchSheet.swift in Sources */,
 				99C908392DC8CD6A0054620B /* LinkedInBottomSheet.swift in Sources */,
+				D4C0C7C12E53125500A84165 /* PaymentBottomSheet.swift in Sources */,
 				D4BB9A0D2DE5A99700C1BCBC /* MyOrdersViewModel.swift in Sources */,
 				99C9083A2DC8CD6A0054620B /* SubmitVideoResumeSheet.swift in Sources */,
 				99C9083B2DC8CD6A0054620B /* VideoResumeSheet.swift in Sources */,
