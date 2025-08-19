@@ -28,6 +28,7 @@ struct InventoryScreen: View {
     @State var showSellSheet = false
     @State var productData : InventoryDataModel
     @State var navigateToCreateProduct = false
+    @State var searchText: String = ""
     
     var body: some View {
         VStack(spacing: 0) {
@@ -58,7 +59,9 @@ struct InventoryScreen: View {
                 }
             
             // MARK: - Search
-            SearchView()
+            SearchView(searchText: $searchText) {_ in
+                
+            }
                 .padding(.horizontal, 12)
                 .padding(.top, 10)
             

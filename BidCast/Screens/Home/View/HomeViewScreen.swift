@@ -37,6 +37,7 @@ struct HomeViewScreen: View {
     @State private var isActiveOnHomeScreen = false
     @State var navigateToCategoryDetailScreen : Bool = false
     @State var isNavFrom : String = ""
+    @State var searchText: String = "" 
     
     var body: some View {
         VStack(spacing:0){
@@ -67,8 +68,10 @@ struct HomeViewScreen: View {
             ScrollView(showsIndicators:false){
                 VStack(alignment: .leading,spacing: 12){
                     if showSearchView {
-                        SearchView()
-                            .transition(.move(edge: .top).combined(with: .opacity))
+                        SearchView(searchText: $searchText) {_ in
+//                            Task { await performSearch() }
+                        }
+//                        .transition(.move(edge: .top).combined(with: .opacity))
                     }
                     SegmentedControlView(segments: HomeButton.allCases, selectedSegment:$selectedButton, isWithBorder: true)
                     ButtonTitleLabel(
@@ -238,6 +241,8 @@ struct HomeViewScreen: View {
     func success() {
         let response = viewModel.liveShowsResponse
         if response.status == "success" {
+//            liveShowsData = response.data ?? []
+            
             FirebaseManager.shared.fetchAllLiveSessions { firebaseRoomIds in
                 let validShows = response.data?.filter { show in
                     guard let roomId = show.room_id else { return false }

@@ -7,7 +7,7 @@ import SwiftUI
 import SwiftUICore
 
 struct SearchView: View {
-    @State private var searchText: String = ""
+    @Binding var searchText: String
     var onSubmitClick: ((String) -> Void)?
     
     var body: some View {
@@ -18,10 +18,7 @@ struct SearchView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 20, height: 20)
-//                .foregroundStyle(.black.opacity(0.5))
                 .padding(10)
-//                .background(Color.gray.opacity(0.15))
-//                .clipShape(Circle())
                 .accessibilityHidden(true)
             
             // Text Field
@@ -41,25 +38,22 @@ struct SearchView: View {
             
             // Clear Button
             if !searchText.isEmpty {
-                Button(action: {
-                    searchText = ""
-                }) {
+                Button(action: { searchText = "" }) {
                     Image(systemName: "xmark.circle.fill")
                         .foregroundColor(.gray)
                         .frame(width: 20, height: 20)
                 }
-                .padding(.all, 4)
+                .padding(4)
                 .accessibilityLabel("Clear search text")
             }
         }
         .frame(height: 42)
-//        .background(Color(.systemGray6))
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .overlay(
             RoundedRectangle(cornerRadius: 8)
                 .stroke(Color.black.opacity(0.6), lineWidth: 1.0)
         )
         .shadow(color: .gray.opacity(0.3), radius: 1, x: 0, y: 1)
-        .padding(.all, 1)
+        .padding(1)
     }
 }

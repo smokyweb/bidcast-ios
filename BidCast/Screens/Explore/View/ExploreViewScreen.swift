@@ -13,123 +13,144 @@ struct ExploreViewScreen: View {
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var networkMonitor: NetworkMonitor
     
-    let count = Array(0...5)
-    
-    let columns = [
-        GridItem(.flexible()),
-        GridItem(.flexible())
-    ]
-    var imageName : [ImageResource] = [.gaming,.sports,.jewelery,.fashion,.vinyl]
-    var tabName = ["Gaming","Sports","Jewellery ","Fashion","Vinyl Records"]
-    var subLabel = ["864 Live","1.2K Live","640 Live","640 Live","640 Live"]
     var viewModel = SelectCategoryViewModel()
+    
     @State var selectedTab = "recommended"
-    @State var category : String = ""
+    @State var category: String = ""
     @State var navigateToCategoryDetailScreen = false
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
     @State var isLoading: Bool = false
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @State var showError: Bool = false
-
+    @State private var showSearchView: Bool = false
+    @State var searchText: String = ""  
     
     @State var categoryList = [CategoryDataModel]()
-    @State var navigateToNoti : Bool = false
+    @State var navigateToNoti: Bool = false
     
     var body: some View {
-        VStack(alignment:.leading,spacing:0){
-            VStack{
-                PrimaryHeader(
-                    title: "",
-                    isForLogo: true,
-                    leadingImgArr: [.appName], // logo on left
-                    trailingImgArr: [.search,.notification],
-                    onClickLeading: { index in
-                        
-                    },
-                    onClickTrailing: { index in
-                        if index == 0{
-                            print("For Search Navigation")
-                        }else{
-                            navigateToNoti = true
+        VStack(alignment: .leading, spacing: 0) {
+            
+            // Header
+            PrimaryHeader(
+                title: "",
+                isForLogo: true,
+                leadingImgArr: [.appName],
+                trailingImgArr: [.search, .notification],
+                onClickLeading: { _ in },
+                onClickTrailing: { index in
+                    if index == 0 {
+                        withAnimation {
+                            showSearchView.toggle()
                         }
-                    },
-                    count: .constant(0)
-                )
-                
-            }
-            ScrollView(showsIndicators: false){
-                VStack(alignment: .leading,spacing: 12){
-                    SearchView()
-//                    SingleTitleLabel(title: "Recommended | Popular | All" ,textColor: .black,fontValue: 18.0)
+                    } else {
+                        navigateToNoti = true
+                    }
+                },
+                count: .constant(0)
+            )
+            
+            ScrollView(showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 12) {
+                    
+                    // 🔹 Search Bar
+                    if showSearchView {
+                        SearchView(searchText: $searchText) { _ in
+                            Task { await performSearch() }
+                        }
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                        .padding(.bottom, 10)
+                        .onChange(of: searchText) { newValue in
+                            if newValue.isEmpty {
+                                Task { await fetchCategory(for: "Recommended") }
+                            }
+                        }
+                    }
+
+                    
+                    // 🔹 Tabs (Recommended | Popular | All)
                     ButtonTitleLabel(
                         titles: ["Recommended", "Popular", "All"],
                         fontValue: 16,
                         textColor: .blue
                     ) { selected in
-                        print("Tapped:", selected)
-                        Task{
-                           guard Reachability.isConnectedToNetwork() else {
-                                hudMsg = "No Internet Connection"
-                                showhud = true
-                                return
-                            }
-
-                            SVProgressHUD.show()
-                            categoryList.removeAll()
-                            var selection = ""
-                            if selected == "Recommended"{
-                                selection = "recommended"
-                            }else if selected == "Popular"{
-                                selection = "popular"
-                            }else{
-                                selection = "all"
-                            }
-                            self.selectedTab = selection
-                            await self.viewModel.getCategoryList(param: CategoryRequest(category_id: "",type: selectedTab))
-                            await SVProgressHUD.dismiss()
-                            self.success()
+                        Task {
+                            await fetchCategory(for: selected)
                         }
                     }
-                    ForEach(0 ..< categoryList.count, id: \.self) { ind in
-                        ListCell(image: categoryList[ind].image ?? "", title: categoryList[ind].name ?? "", vectorImg: .icArrowUp,subLabel : "\(categoryList[ind].usage_count ?? "") Live",tintColot: categoryList[ind].color ?? "",onTapMenuCell: {
-                        category = categoryList[ind].name ?? ""
-                        navigateToCategoryDetailScreen = true
-                        
-                    })
-                    .padding(.horizontal,0)
+                    
+                    // 🔹 Category List / No Data
+                    if categoryList.isEmpty {
+                        NoDataView(message: searchText.isEmpty ? "No categories found" : "No searched categories found")
+                            .padding(.top, 40)
+                    } else {
+                        ForEach(0 ..< categoryList.count, id: \.self) { ind in
+                            ListCell(
+                                image: categoryList[ind].image ?? "",
+                                title: categoryList[ind].name ?? "",
+                                vectorImg: .icArrowUp,
+                                subLabel: "\(categoryList[ind].usage_count ?? "") Live",
+                                tintColot: categoryList[ind].color ?? ""
+                            ) {
+                                category = categoryList[ind].name ?? ""
+                                navigateToCategoryDetailScreen = true
+                            }
+                            .padding(.horizontal, 0)
+                        }
                     }
+
                 }
             }
-            .padding(.top,20)
-            .padding(.horizontal,13)
-            CusNavLink(doNavigate: $navigateToCategoryDetailScreen, destination: HomeViewScreen(showCategory:$category,comeFromExploreScreen : $navigateToCategoryDetailScreen))
+            .padding(.top, 20)
+            .padding(.horizontal, 13)
+            
+            // Navigation Links
+            CusNavLink(doNavigate: $navigateToCategoryDetailScreen,
+                       destination: HomeViewScreen(showCategory: $category, comeFromExploreScreen: $navigateToCategoryDetailScreen))
             CusNavLink(doNavigate: $navigateToNoti, destination: NotificationScreen())
         }
-        
         .background(.bg.opacity(0.4))
         .onAppear {
-            Task {
-               guard Reachability.isConnectedToNetwork() else {
-                    hudMsg = "No Internet Connection"
-                    showhud = true
-                    return
-                }
-                SVProgressHUD.show()
-                await self.viewModel.getCategoryList(param: CategoryRequest(category_id: "",type: selectedTab))
-                await SVProgressHUD.dismiss()
-                success()
-//                if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
-//                  
-//                }
-            }
+            Task { await fetchCategory(for: "Recommended") }
         }
+    }
+    
+    // MARK: - API Calls
+    
+    func fetchCategory(for tab: String) async {
+        guard Reachability.isConnectedToNetwork() else {
+            hudMsg = "No Internet Connection"
+            showhud = true
+            return
+        }
+        
+        SVProgressHUD.show()
+        categoryList.removeAll()
+        
+        if tab == "Recommended" {
+            selectedTab = "recommended"
+        } else if tab == "Popular" {
+            selectedTab = "popular"
+        } else {
+            selectedTab = "all"
+        }
+        
+        await viewModel.getCategoryList(param: CategoryRequest(category_id: "", type: selectedTab, search: searchText))
+        await SVProgressHUD.dismiss()
+        success()
+    }
+    
+    func performSearch() async {
+        categoryList.removeAll()
+        await viewModel.getCategoryList(param: CategoryRequest(category_id: "", type: "", search: searchText))
+        success()
     }
     
     func success() {
         let response = viewModel.categoryResponse
         if response.status == "success" {
-            self.categoryList = viewModel.categoryResponse.data ?? [CategoryDataModel]()
+            self.categoryList = response.data ?? []
         } else {
             showError = true
             alertType = .sheetType(
@@ -142,4 +163,3 @@ struct ExploreViewScreen: View {
         }
     }
 }
-
