@@ -626,6 +626,7 @@ struct ProductRequest : Encodable {
 struct GetLiveShowsRequest : Encodable{
     var type : String? = ""
     var category : String? = ""
+    var search : String? = ""
 }
 
 struct LiveShowUpdateRequest : Encodable {

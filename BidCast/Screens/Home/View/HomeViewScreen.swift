@@ -10,7 +10,7 @@ import SVProgressHUD
 
 struct HomeViewScreen: View {
     
-    @State private var selectedButton: HomeButton = .For_you
+    @State private var selectedButton: String = "For You"
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var networkMonitor: NetworkMonitor
 
@@ -21,6 +21,8 @@ struct HomeViewScreen: View {
     let columns = Array(repeating: GridItem(.flexible(), spacing: 6), count: 2)
     @Binding var showCategory : String
     @State var viewModel = HomeViewModel()
+    var categoryViewModel = SelectCategoryViewModel()
+    @State var categoryList = [CategoryDataModel]()
     @State var liveShowsData = [HomeModel]()
     @State var isLoading: Bool = false
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
@@ -37,7 +39,8 @@ struct HomeViewScreen: View {
     @State private var isActiveOnHomeScreen = false
     @State var navigateToCategoryDetailScreen : Bool = false
     @State var isNavFrom : String = ""
-    @State var searchText: String = "" 
+    @State var searchText: String = ""
+
     
     var body: some View {
         VStack(spacing:0){
@@ -73,7 +76,21 @@ struct HomeViewScreen: View {
                         }
 //                        .transition(.move(edge: .top).combined(with: .opacity))
                     }
-                    SegmentedControlView(segments: HomeButton.allCases, selectedSegment:$selectedButton, isWithBorder: true)
+                    SegmentedControlView(
+                        segments: categoryList.map { $0.name ?? "" },
+                        selectedSegment: $selectedButton,
+                        isWithBorder: true
+                    ) { selection in
+                        let apiCategory = (selection == "For You") ? "for_you" : selection
+                        Task {
+                            await viewModel.getLiveShows(
+                                param: GetLiveShowsRequest(
+                                    type: self.selectedTab,
+                                    category: apiCategory
+                                )
+                            )
+                        }
+                    }
                     ButtonTitleLabel(
                         titles: ["Live Now", "Popular", "Coming Soon"],
                         fontValue: 16,
@@ -99,7 +116,8 @@ struct HomeViewScreen: View {
                             }
                             self.selectedTab = selection
                             if isActiveOnHomeScreen{
-                                await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: selection,category: showCategory))
+                                let apiCategory = (selectedButton == "For You") ? "for_you" : selectedButton
+                                await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: selection,category: apiCategory))
                             }
                             await SVProgressHUD.dismiss()
                             self.success()
@@ -175,6 +193,7 @@ struct HomeViewScreen: View {
                     }
                 }
             }
+            Task { await fetchCategory(for: "for_you") }
             Task{
                 liveShowsData.removeAll()
                guard Reachability.isConnectedToNetwork() else {
@@ -184,7 +203,8 @@ struct HomeViewScreen: View {
                 }
                 SVProgressHUD.show()
                 if isActiveOnHomeScreen{
-                    await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: self.selectedTab,category: showCategory))
+                    let apiCategory = (selectedButton == "For You") ? "for_you" : selectedButton
+                    await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: self.selectedTab,category: apiCategory))
                 }
                 await SVProgressHUD.dismiss()
                 self.success()
@@ -218,7 +238,8 @@ struct HomeViewScreen: View {
                         
                         liveShowsData.removeAll()
                         SVProgressHUD.show()
-                        await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: "live",category: showCategory))
+                        let apiCategory = (selectedButton == "For You") ? "for_you" : selectedButton
+                        await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: "live",category: apiCategory))
                         await SVProgressHUD.dismiss()
                         self.success()
                     }
@@ -236,6 +257,55 @@ struct HomeViewScreen: View {
             FirebaseManager.shared.removeNewSessionObserver()
         }
     }
+    
+    // MARK: - fetchCategory
+    func fetchCategory(for tab: String) async {
+        guard Reachability.isConnectedToNetwork() else {
+            hudMsg = "No Internet Connection"
+            showhud = true
+            return
+        }
+        
+        SVProgressHUD.show()
+        categoryList.removeAll()
+        await categoryViewModel.getCategoryList(param: CategoryRequest(type: selectedTab))
+        await SVProgressHUD.dismiss()
+        categorySuccess()
+    }
+    
+    // MARK: - categorySuccess
+    func categorySuccess() {
+        let response = categoryViewModel.categoryResponse
+        if response.status == "success" {
+            var categories = response.data ?? []
+            let forYouCategory = CategoryDataModel(
+                id : -1,
+                name: "For You",
+                image: "",
+                thumbnail: "",
+                color: "",
+                subLabel : "",
+                is_selected : false,
+                usage_count : ""
+            )
+            
+            categories.insert(forYouCategory, at: 0)
+            self.categoryList = categories
+            if selectedButton.isEmpty {
+                 selectedButton = forYouCategory.name ?? "For You"
+             }
+        } else {
+            showError = true
+            alertType = .sheetType(
+                icon: .alert,
+                title: response.error_type?.capitalized ?? "",
+                message: response.message?.capitalized ?? "",
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
+            )
+        }
+    }
+
     
     
     func success() {
@@ -285,19 +355,6 @@ struct HomeViewScreen: View {
 //    HomeViewScreen()
 //}
 
-enum HomeButton: String, CaseIterable, CustomStringConvertible {
-    case For_you = "For You"
-    case collectibles = "Collectibles"
-    case trading = "Trading"
-    case purchases = "Purchases"
-    case savedItems = "Saved Items"
-    
-    var description: String {
-        return rawValue
-    }
-}
-
-
 struct ButtonTitleLabel: View {
     
     var titles: [String] = ["Live Now", "Popular", "Coming Soon"]
@@ -307,33 +364,28 @@ struct ButtonTitleLabel: View {
     var textColor: Color = .gray
     var selectedColor: Color = .black
     var separatorColor: Color = .gray
+    @State private var selectedTitle: String = "Live Now"
     var spacing: CGFloat = 12
     var onTap: ((String) -> Void)? = nil
-    
-    @State var selectedTitle: String = "Live Now"
     
     var body: some View {
         HStack(spacing: spacing) {
             ForEach(titles.indices, id: \.self) { index in
-                HStack(spacing: spacing) {
-                    let title = titles[index]
-                    
-                    // Condition: bold if selected OR if title is "Live Now" or "Recommended"
-                    let isBold = title == selectedTitle || title == "Live Now" || title == "Recommended"
-                    
-                    Text(title)
-                        .font(.custom(isBold ? selectedFontName : fontName, fixedSize: fontValue))
-                        .foregroundColor(isBold ? selectedColor : separatorColor)
-                        .onTapGesture {
-                            selectedTitle = title
-                            onTap?(title)
-                        }
-                    
-                    if index < titles.count - 1 {
-                        Text("|")
-                            .foregroundColor(separatorColor)
-                            .font(.custom(fontName, fixedSize: fontValue))
+                let title = titles[index]
+                
+                Text(title)
+                    .font(.custom(title == selectedTitle ? selectedFontName : fontName,
+                                  fixedSize: fontValue))
+                    .foregroundColor(title == selectedTitle ? selectedColor : separatorColor)
+                    .onTapGesture {
+                        selectedTitle = title
+                        onTap?(title)
                     }
+                
+                if index < titles.count - 1 {
+                    Text("|")
+                        .foregroundColor(separatorColor)
+                        .font(.custom(fontName, fixedSize: fontValue))
                 }
             }
         }
