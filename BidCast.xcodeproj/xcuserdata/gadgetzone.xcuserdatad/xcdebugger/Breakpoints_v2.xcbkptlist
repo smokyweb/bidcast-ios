@@ -258,6 +258,36 @@
             endingLineNumber = "183"
             landmarkName = "requestWithJSONBody(type:parameters:modalType:header:)"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "91530E76-14CE-4AEE-AFFF-7D09AD2659FF - 39806d355633bbb0"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for BidCast.APIManager.requestWithJSONBody&lt;&#x3c4;_0_0 where &#x3c4;_0_0: Swift.Decodable&gt;(type: BidCast.EndPointType, parameters: Swift.Dictionary&lt;Swift.String, Any&gt;, modalType: &#x3c4;_0_0.Type, header: Swift.Bool) async throws -&gt; &#x3c4;_0_0"
+                  moduleName = "BidCast.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/gadgetzone/Documents/Live/bidcast/BidCast/Helper/APIManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "183"
+                  endingLineNumber = "183">
+               </Location>
+               <Location
+                  uuid = "91530E76-14CE-4AEE-AFFF-7D09AD2659FF - 39806d355633bbb0"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for BidCast.APIManager.requestWithJSONBody&lt;&#x3c4;_0_0 where &#x3c4;_0_0: Swift.Decodable&gt;(type: BidCast.EndPointType, parameters: Swift.Dictionary&lt;Swift.String, Any&gt;, modalType: &#x3c4;_0_0.Type, header: Swift.Bool) async throws -&gt; &#x3c4;_0_0"
+                  moduleName = "BidCast.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/gadgetzone/Documents/Live/bidcast/BidCast/Helper/APIManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "183"
+                  endingLineNumber = "183">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -368,38 +398,6 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "471"
             endingLineNumber = "471"
-            landmarkName = "body"
-            landmarkType = "24">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "8858AA58-1F0B-49AD-ABA9-088019E6F59E"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "BidCast/Screens/Home/View/HomeViewScreen.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "262"
-            endingLineNumber = "262"
-            landmarkName = "body"
-            landmarkType = "24">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "AB9F9810-F5D4-4C9C-AC23-6696CE21EFF2"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "BidCast/Screens/Home/View/HomeViewScreen.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "404"
-            endingLineNumber = "404"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>

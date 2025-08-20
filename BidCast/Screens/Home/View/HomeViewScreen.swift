@@ -13,7 +13,7 @@ struct HomeViewScreen: View {
     @State private var selectedButton: String = "For You"
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var networkMonitor: NetworkMonitor
-
+    
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
     @State var navigateToLiveStream = false
@@ -38,10 +38,14 @@ struct HomeViewScreen: View {
     @State var category : String = ""
     @State private var isActiveOnHomeScreen = false
     @State var navigateToCategoryDetailScreen : Bool = false
+    @State var upCommingSheet : Bool = false
     @State var isNavFrom : String = ""
     @State var searchText: String = ""
-
     
+    @State var selectedShowUserName : String = ""
+    @State var selectedShowUserImage : String = ""
+    @State var selectedShowStartAt : String = ""
+    @State var selectedShowStartDate : String = ""
     var body: some View {
         VStack(spacing:0){
             VStack{
@@ -70,7 +74,7 @@ struct HomeViewScreen: View {
             
             ScrollView(showsIndicators:false){
                 VStack(alignment: .leading,spacing: 12){
-
+                    
                     if showSearchView {
                         SearchView(searchText: $searchText) { _ in
                             Task { await fetchLiveShow() }
@@ -95,33 +99,33 @@ struct HomeViewScreen: View {
                         fontValue: 16,
                         textColor: .blue,
                         selectedTitle : Binding(
-                               get: {
-                                   switch selectedTab {
-                                   case "live": return "Live Now"
-                                   case "popular": return "Popular"
-                                   case "upcoming": return "Coming Soon"
-                                   default: return "Live Now"
-                                   }
-                               },
-                               set: { newValue in
-                                   if newValue == "Live Now" {
-                                       selectedTab = "live"
-                                   }else if newValue == "Popular"{
-                                       selectedTab = "popular"
-                                   }else if newValue == "Coming Soon"{
-                                       selectedTab = "upcoming"
-                                   }
-                               }
-                           )
+                            get: {
+                                switch selectedTab {
+                                case "live": return "Live Now"
+                                case "popular": return "Popular"
+                                case "upcoming": return "Coming Soon"
+                                default: return "Live Now"
+                                }
+                            },
+                            set: { newValue in
+                                if newValue == "Live Now" {
+                                    selectedTab = "live"
+                                }else if newValue == "Popular"{
+                                    selectedTab = "popular"
+                                }else if newValue == "Coming Soon"{
+                                    selectedTab = "upcoming"
+                                }
+                            }
+                        )
                     ) { selected in
                         print("Tapped:", selected)
                         Task{
-                           guard Reachability.isConnectedToNetwork() else {
+                            guard Reachability.isConnectedToNetwork() else {
                                 hudMsg = "No Internet Connection"
                                 showhud = true
                                 return
                             }
-
+                            
                             SVProgressHUD.show()
                             liveShowsData.removeAll()
                             var selection = ""
@@ -134,12 +138,12 @@ struct HomeViewScreen: View {
                             }
                             self.selectedTab = selection
                             if isActiveOnHomeScreen{
-//                                let apiCategory = (selectedButton == "For You") ? "for_you" : selectedButton
-//                                await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: selection,category: apiCategory))
+                                //                                let apiCategory = (selectedButton == "For You") ? "for_you" : selectedButton
+                                //                                await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: selection,category: apiCategory))
                                 await fetchLiveShow()
                             }
-//                            await SVProgressHUD.dismiss()
-//                            self.success()
+                            //                            await SVProgressHUD.dismiss()
+                            //                            self.success()
                         }
                     }
                     if liveShowsData.isEmpty{
@@ -159,21 +163,47 @@ struct HomeViewScreen: View {
                                                     categorySize: 14,
                                                     title2Size: 16.0,
                                                     liveCount: item.viewer_count ?? 0,
+                                                    isLive : item.is_live ?? false,
                                                     onTapProfile: {
                                     userId = "\(item.user?.id ?? 0)"
-                                    navigateToProfile = true
+                                    if selectedTab != "upcoming" {
+                                        navigateToProfile = true
+                                    }else{
+                                        selectedShowUserName = item.user?.name ?? ""
+                                        selectedShowUserImage = item.user?.profile_image ?? ""
+                                        selectedShowStartAt = item.time ?? ""
+                                        selectedShowStartDate =  item.date ?? ""
+                                        upCommingSheet = true
+                                    }
                                 },onTapProfileName: {
                                     userId = "\(item.user?.id ?? 0)"
                                     userImage = item.user?.profile_image ?? ""
                                     userName = item.user?.username ?? ""
-                                    navigateToProfile = true
+                                    if selectedTab != "upcoming" {
+                                        navigateToProfile = true
+                                    }else{
+                                        selectedShowUserName = item.user?.name ?? ""
+                                        selectedShowUserImage = item.user?.profile_image ?? ""
+                                        selectedShowStartAt = item.time ?? ""
+                                        selectedShowStartDate = item.date ?? ""
+                                        upCommingSheet = true
+                                    }
                                 },onTapMainImage: {
                                     print(" tapped the card!,inex \(index)")
                                     self.index = index
                                     userId = "\(item.user?.id ?? 0)"
                                     userImage = item.user?.profile_image ?? ""
                                     userName = item.user?.username ?? ""
-                                    navigateToLiveStream = true
+                                    if selectedTab != "upcoming" {
+                                        navigateToLiveStream = true
+                                    }else{
+                                        selectedShowUserName = item.user?.name ?? ""
+                                        selectedShowUserImage = item.user?.profile_image ?? ""
+                                        selectedShowStartAt = item.time ?? ""
+                                        selectedShowStartDate = item.date ?? ""
+                                        upCommingSheet = true
+                                    }
+                                    
                                 },onTapCategory: {
                                     self.category = item.category?.name ?? ""
                                     navigateToCategoryDetailScreen = true
@@ -191,7 +221,7 @@ struct HomeViewScreen: View {
             
             CusNavLink(doNavigate: $navigateToLiveStream, destination: LiveStream(currentStreamIndex :self.$index, userId : $userId,comeFromHome: $navigateToLiveStream))
             CusNavLink(doNavigate: $navigateToProfile, destination: ProfileScreen(id:$userId,isComeFrom : .constant("Home"),userName: $userName,userImage: $userImage))
-
+            
             CusNavLink(doNavigate: $navigateToNoti, destination: NotificationScreen())
             CusNavLink(doNavigate: $navigateToCategoryDetailScreen, destination: HomeViewScreen(showCategory:$category,comeFromExploreScreen : $navigateToCategoryDetailScreen))
         }
@@ -202,32 +232,34 @@ struct HomeViewScreen: View {
                 if let userInfo = notification.userInfo {
                     print("🔔 Babumoshai, Notification Payload: \(userInfo)")
                     let type = userInfo["type"] as? String ?? ""
-//                           let senderName = userInfo["sender_name"] as? String ?? ""
-//                           let senderImage = userInfo["sender_image"] as? String ?? ""
-//                           let title = userInfo["title"] as? String ?? ""
-//                           let body = userInfo["body"] as? String ?? ""
-
+                    //                           let senderName = userInfo["sender_name"] as? String ?? ""
+                    //                           let senderImage = userInfo["sender_image"] as? String ?? ""
+                    //                           let title = userInfo["title"] as? String ?? ""
+                    //                           let body = userInfo["body"] as? String ?? ""
+                    
                     if type == "bid_show_start" {
-//                        navigateToLiveStream = true
+                        //                        navigateToLiveStream = true
                     }
                 }
             }
-            Task { await fetchCategory(for: "for_you") }
+            if isActiveOnHomeScreen{
+                Task { await fetchCategory(for: "for_you") }
+            }
             Task{
                 liveShowsData.removeAll()
-               guard Reachability.isConnectedToNetwork() else {
+                guard Reachability.isConnectedToNetwork() else {
                     hudMsg = "No Internet Connection"
                     showhud = true
                     return
                 }
                 SVProgressHUD.show()
                 if isActiveOnHomeScreen{
-//                    let apiCategory = (selectedButton == "For You") ? "for_you" : selectedButton
-//                    await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: self.selectedTab,category: apiCategory))
+                    //                    let apiCategory = (selectedButton == "For You") ? "for_you" : selectedButton
+                    //                    await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: self.selectedTab,category: apiCategory))
                     await fetchLiveShow()
                 }
-//                await SVProgressHUD.dismiss()
-//                self.success()
+                //                await SVProgressHUD.dismiss()
+                //                self.success()
                 if isActiveOnHomeScreen{
                     await self.viewModel.getProfile()
                 }
@@ -258,10 +290,10 @@ struct HomeViewScreen: View {
                         
                         liveShowsData.removeAll()
                         SVProgressHUD.show()
-//                        let apiCategory = (selectedButton == "For You") ? "for_you" : selectedButton
-//                        await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: "live",category: apiCategory))
-//                        await SVProgressHUD.dismiss()
-//                        self.success()
+                        //                        let apiCategory = (selectedButton == "For You") ? "for_you" : selectedButton
+                        //                        await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: "live",category: apiCategory))
+                        //                        await SVProgressHUD.dismiss()
+                        //                        self.success()
                         await fetchLiveShow()
                     }
                 }
@@ -276,6 +308,17 @@ struct HomeViewScreen: View {
         .onDisappear {
             isActiveOnHomeScreen = false
             FirebaseManager.shared.removeNewSessionObserver()
+        }
+        .bottomSheet(isPresented: $upCommingSheet, height: screenHeight * 0.37) {
+            UpcomingBottomSheet(
+                profileImage: selectedShowUserImage,
+                username: selectedShowUserName,
+                showStartAt: selectedShowStartAt,
+                showStartDate : selectedShowStartDate,
+                onDismiss: {
+                    upCommingSheet = false
+                }
+            )
         }
     }
     
@@ -319,51 +362,7 @@ struct HomeViewScreen: View {
             categories.insert(forYouCategory, at: 0)
             self.categoryList = categories
             if selectedButton.isEmpty {
-                 selectedButton = forYouCategory.name ?? "For You"
-             }
-        } else {
-            showError = true
-            alertType = .sheetType(
-                icon: .alert,
-                title: response.error_type?.capitalized ?? "",
-                message: response.message?.capitalized ?? "",
-                primaryBtnText: "",
-                secondaryBtnText: AppString.ok.localized
-            )
-        }
-    }
-
-    
-    
-    func success() {
-        let response = viewModel.liveShowsResponse
-        if response.status == "success" {
-//            liveShowsData = response.data ?? []
-            
-            FirebaseManager.shared.fetchAllLiveSessions { firebaseRoomIds in
-                let validShows = response.data?.filter { show in
-                    guard let roomId = show.room_id else { return false }
-                    return firebaseRoomIds.contains(roomId)
-                }
-
-                DispatchQueue.main.async {
-                    liveShowsData = validShows ?? []
-                    print("✅ Loaded \(liveShowsData.count) live shows")
-
-                    // 🔁 Loop through all valid live shows and observe each viewer count
-                    for (index, show) in liveShowsData.enumerated() {
-                        if let roomId = show.room_id {
-                            FirebaseManager.shared.observeViewerCount(roomId: roomId) { newCount in
-                                DispatchQueue.main.async {
-                                    // Ensure index is still valid
-                                    if index < liveShowsData.count {
-                                        liveShowsData[index].viewer_count = newCount
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                selectedButton = forYouCategory.name ?? "For You"
             }
         } else {
             showError = true
@@ -376,6 +375,53 @@ struct HomeViewScreen: View {
             )
         }
     }
+    
+
+    func success() {
+        let response = viewModel.liveShowsResponse
+        if response.status == "success" {
+        
+            if selectedTab != "upcoming"{
+                FirebaseManager.shared.fetchAllLiveSessions { firebaseRoomIds in
+                    let validShows = response.data?.filter { show in
+                        guard let roomId = show.room_id else { return false }
+                        return firebaseRoomIds.contains(roomId)
+                    }
+                    
+                    DispatchQueue.main.async {
+                        liveShowsData = validShows ?? []
+                        print("✅ Loaded \(liveShowsData.count) live shows")
+                        
+                        // 🔁 Loop through all valid live shows and observe each viewer count
+                        for (index, show) in liveShowsData.enumerated() {
+                            if let roomId = show.room_id {
+                                FirebaseManager.shared.observeViewerCount(roomId: roomId) { newCount in
+                                    DispatchQueue.main.async {
+                                        // Ensure index is still valid
+                                        if index < liveShowsData.count {
+                                            liveShowsData[index].viewer_count = newCount
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }else{
+                liveShowsData = response.data ?? []
+            }
+        } else {
+            showError = true
+            alertType = .sheetType(
+                icon: .alert,
+                title: response.error_type?.capitalized ?? "",
+                message: response.message?.capitalized ?? "",
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
+            )
+        }
+    }
+    
 }
 
 //#Preview {

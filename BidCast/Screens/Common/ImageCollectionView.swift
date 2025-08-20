@@ -18,6 +18,7 @@ struct ImageCollectionView: View {
     var categorySize = 14.0
     var title2Size = 16.0
     var liveCount = 0
+    var isLive : Bool = false
     
     var onTapProfile: () -> Void = {}
     var onTapProfileName : () -> Void = {}
@@ -116,7 +117,7 @@ struct ImageCollectionView: View {
                             .frame(width: geometry.size.width, height: 220)
                             .foregroundColor(.gray)
                     }
-                    if liveCount > 0 {
+                    if isLive{
                         LiveBadgeView(count: liveCount)
                               .padding(6)
                     }
