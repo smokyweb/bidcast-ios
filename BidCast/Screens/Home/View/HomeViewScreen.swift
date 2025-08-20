@@ -70,25 +70,24 @@ struct HomeViewScreen: View {
             
             ScrollView(showsIndicators:false){
                 VStack(alignment: .leading,spacing: 12){
+
                     if showSearchView {
-                        SearchView(searchText: $searchText) {_ in
-//                            Task { await performSearch() }
+                        SearchView(searchText: $searchText) { _ in
+                            Task { await fetchLiveShow() }
                         }
-//                        .transition(.move(edge: .top).combined(with: .opacity))
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                        .padding(.bottom, 10)
+                        .onChange(of: searchText) { newValue in
+                            Task { await fetchLiveShow() }
+                        }
                     }
                     SegmentedControlView(
                         segments: categoryList.map { $0.name ?? "" },
                         selectedSegment: $selectedButton,
                         isWithBorder: true
                     ) { selection in
-                        let apiCategory = (selection == "For You") ? "for_you" : selection
                         Task {
-                            await viewModel.getLiveShows(
-                                param: GetLiveShowsRequest(
-                                    type: self.selectedTab,
-                                    category: apiCategory
-                                )
-                            )
+                            await fetchLiveShow()
                         }
                     }
                     ButtonTitleLabel(
@@ -116,11 +115,12 @@ struct HomeViewScreen: View {
                             }
                             self.selectedTab = selection
                             if isActiveOnHomeScreen{
-                                let apiCategory = (selectedButton == "For You") ? "for_you" : selectedButton
-                                await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: selection,category: apiCategory))
+//                                let apiCategory = (selectedButton == "For You") ? "for_you" : selectedButton
+//                                await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: selection,category: apiCategory))
+                                await fetchLiveShow()
                             }
-                            await SVProgressHUD.dismiss()
-                            self.success()
+//                            await SVProgressHUD.dismiss()
+//                            self.success()
                         }
                     }
                     if liveShowsData.isEmpty{
@@ -203,11 +203,12 @@ struct HomeViewScreen: View {
                 }
                 SVProgressHUD.show()
                 if isActiveOnHomeScreen{
-                    let apiCategory = (selectedButton == "For You") ? "for_you" : selectedButton
-                    await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: self.selectedTab,category: apiCategory))
+//                    let apiCategory = (selectedButton == "For You") ? "for_you" : selectedButton
+//                    await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: self.selectedTab,category: apiCategory))
+                    await fetchLiveShow()
                 }
-                await SVProgressHUD.dismiss()
-                self.success()
+//                await SVProgressHUD.dismiss()
+//                self.success()
                 if isActiveOnHomeScreen{
                     await self.viewModel.getProfile()
                 }
@@ -238,10 +239,11 @@ struct HomeViewScreen: View {
                         
                         liveShowsData.removeAll()
                         SVProgressHUD.show()
-                        let apiCategory = (selectedButton == "For You") ? "for_you" : selectedButton
-                        await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: "live",category: apiCategory))
-                        await SVProgressHUD.dismiss()
-                        self.success()
+//                        let apiCategory = (selectedButton == "For You") ? "for_you" : selectedButton
+//                        await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: "live",category: apiCategory))
+//                        await SVProgressHUD.dismiss()
+//                        self.success()
+                        await fetchLiveShow()
                     }
                 }
             }
@@ -258,6 +260,13 @@ struct HomeViewScreen: View {
         }
     }
     
+    func fetchLiveShow() async {
+        let apiCategory = (selectedButton == "For You") ? "for_you" : selectedButton
+        await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: self.selectedTab,category: apiCategory,search: searchText))
+        await SVProgressHUD.dismiss()
+        success()
+    }
+    
     // MARK: - fetchCategory
     func fetchCategory(for tab: String) async {
         guard Reachability.isConnectedToNetwork() else {
@@ -265,7 +274,6 @@ struct HomeViewScreen: View {
             showhud = true
             return
         }
-        
         SVProgressHUD.show()
         categoryList.removeAll()
         await categoryViewModel.getCategoryList(param: CategoryRequest(type: selectedTab))
