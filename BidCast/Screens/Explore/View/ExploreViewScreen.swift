@@ -57,17 +57,18 @@ struct ExploreViewScreen: View {
                     // 🔹 Search Bar
                     if showSearchView {
                         SearchView(searchText: $searchText) { _ in
-                            Task { await performSearch() }
+                            Task { await fetchCategory(for: selectedTab)
+                            }
                         }
                         .transition(.move(edge: .top).combined(with: .opacity))
                         .padding(.bottom, 10)
                         .onChange(of: searchText) { newValue in
                             if newValue.isEmpty {
-                                Task { await fetchCategory(for: "Recommended") }
+                                Task { await fetchCategory(for: selectedTab)
+                                }
                             }
                         }
                     }
-
                     
                     // 🔹 Tabs (Recommended | Popular | All)
                     ButtonTitleLabel(
@@ -132,18 +133,12 @@ struct ExploreViewScreen: View {
             selectedTab = "recommended"
         } else if tab == "Popular" {
             selectedTab = "popular"
-        } else {
+        } else if tab == "All"{
             selectedTab = "all"
         }
         
         await viewModel.getCategoryList(param: CategoryRequest(category_id: "", type: selectedTab, search: searchText))
         await SVProgressHUD.dismiss()
-        success()
-    }
-    
-    func performSearch() async {
-        categoryList.removeAll()
-        await viewModel.getCategoryList(param: CategoryRequest(category_id: "", type: "", search: searchText))
         success()
     }
     
