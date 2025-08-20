@@ -790,7 +790,7 @@ struct LiveStream: View {
                 liveShowsData.removeAll()
                 roomID.removeAll()
                 streamID.removeAll()
-                await self.viewModel.getLiveShows(param:GetLiveShowsRequest(type: "live"))
+                await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: "live",category: "for_you",search: ""))
                 success()
                 await self.homeViewModel.getProfile()
                 await SVProgressHUD.dismiss()
