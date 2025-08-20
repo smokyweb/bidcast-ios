@@ -93,7 +93,26 @@ struct HomeViewScreen: View {
                     ButtonTitleLabel(
                         titles: ["Live Now", "Popular", "Coming Soon"],
                         fontValue: 16,
-                        textColor: .blue
+                        textColor: .blue,
+                        selectedTitle : Binding(
+                               get: {
+                                   switch selectedTab {
+                                   case "live": return "Live Now"
+                                   case "popular": return "Popular"
+                                   case "upcoming": return "Coming Soon"
+                                   default: return "Live Now"
+                                   }
+                               },
+                               set: { newValue in
+                                   if newValue == "Live Now" {
+                                       selectedTab = "live"
+                                   }else if newValue == "Popular"{
+                                       selectedTab = "popular"
+                                   }else if newValue == "Coming Soon"{
+                                       selectedTab = "upcoming"
+                                   }
+                               }
+                           )
                     ) { selected in
                         print("Tapped:", selected)
                         Task{
@@ -372,7 +391,7 @@ struct ButtonTitleLabel: View {
     var textColor: Color = .gray
     var selectedColor: Color = .black
     var separatorColor: Color = .gray
-    @State private var selectedTitle: String = "Live Now"
+    @Binding var selectedTitle: String
     var spacing: CGFloat = 12
     var onTap: ((String) -> Void)? = nil
     

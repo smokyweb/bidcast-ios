@@ -34,6 +34,7 @@ struct LoginScreen: View {
     @State var navigateToCompanyUser: Bool = false
     @State var navigatetoUser: Bool = false
     @State var navigateToCategories : Bool = false
+    @State private var selectedTab: String = ""
     
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     
@@ -164,7 +165,8 @@ struct LoginScreen: View {
                         ButtonTitleLabel(
                             titles: item,
                             fontValue: 13,
-                            textColor: .mediumGray
+                            textColor: .mediumGray,
+                            selectedTitle : $selectedTab
                         ) { selected in
                             print("Tapped:", selected)
                             if selected == item[0]{

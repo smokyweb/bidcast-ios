@@ -74,7 +74,26 @@ struct ExploreViewScreen: View {
                     ButtonTitleLabel(
                         titles: ["Recommended", "Popular", "All"],
                         fontValue: 16,
-                        textColor: .blue
+                        textColor: .blue,
+                        selectedTitle : Binding(
+                               get: {
+                                   switch selectedTab {
+                                   case "recommended": return "Recommended"
+                                   case "popular": return "Popular"
+                                   case "all": return "All"
+                                   default: return "Recommended"
+                                   }
+                               },
+                               set: { newValue in
+                                   if newValue == "Recommended" {
+                                       selectedTab = "recommended"
+                                   }else if newValue == "Popular"{
+                                       selectedTab = "popular"
+                                   }else if newValue == "All"{
+                                       selectedTab = "all"
+                                   }
+                               }
+                           )
                     ) { selected in
                         Task {
                             await fetchCategory(for: selected)
