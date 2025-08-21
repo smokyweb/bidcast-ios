@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SVProgressHUD
+import AlertToast
 
 struct HomeViewScreen: View {
     
@@ -173,47 +174,54 @@ struct HomeViewScreen: View {
                                                     onTapProfile: {
                                     self.liveShowsData.removeAll()
                                     userId = "\(item.user?.id ?? 0)"
-                                    if selectedTab != "upcoming" {
+//                                    if selectedTab != "upcoming" {
                                         navigateToProfile = true
-                                    }else{
-                                        selectedShowUserName = item.user?.name ?? ""
-                                        selectedShowUserImage = item.user?.profile_image ?? ""
-                                        selectedShowStartAt = item.time ?? ""
-                                        selectedShowStartDate =  item.date ?? ""
-                                        upCommingSheet = true
-                                    }
+//                                    }else{
+//                                        selectedShowUserName = item.user?.name ?? ""
+//                                        selectedShowUserImage = item.user?.profile_image ?? ""
+//                                        selectedShowStartAt = item.time ?? ""
+//                                        selectedShowStartDate =  item.date ?? ""
+//                                        upCommingSheet = true
+//                                    }
                                 },onTapProfileName: {
                                     self.liveShowsData.removeAll()
                                     userId = "\(item.user?.id ?? 0)"
                                     userImage = item.user?.profile_image ?? ""
                                     userName = item.user?.username ?? ""
-                                    if selectedTab != "upcoming" {
+//                                    if selectedTab != "upcoming" {
                                         navigateToProfile = true
-                                    }else{
-                                        selectedShowUserName = item.user?.name ?? ""
-                                        selectedShowUserImage = item.user?.profile_image ?? ""
-                                        selectedShowStartAt = item.time ?? ""
-                                        selectedShowStartDate = item.date ?? ""
-                                        upCommingSheet = true
-                                    }
+//                                    }else{
+//                                        selectedShowUserName = item.user?.name ?? ""
+//                                        selectedShowUserImage = item.user?.profile_image ?? ""
+//                                        selectedShowStartAt = item.time ?? ""
+//                                        selectedShowStartDate = item.date ?? ""
+//                                        upCommingSheet = true
+//                                    }
                                 },onTapMainImage: {
                                     print(" tapped the card!,inex \(index)")
                                     self.index = index
                                     userId = "\(item.user?.id ?? 0)"
                                     userImage = item.user?.profile_image ?? ""
                                     userName = item.user?.username ?? ""
-                                    if selectedTab != "upcoming" {
-                                        navigateToLiveStream = true
-                                    }else{
+                                   if selectedTab == "upcoming"{
                                         selectedShowUserName = item.user?.name ?? ""
                                         selectedShowUserImage = item.user?.profile_image ?? ""
                                         selectedShowStartAt = item.time ?? ""
                                         selectedShowStartDate = item.date ?? ""
                                         upCommingSheet = true
+                                    }else  if selectedTab == "popular"{
+                                        if item.is_live == false{
+                                            hudMsg = "This show is not live yet"
+                                            showhud = true
+                                        }else{
+                                            navigateToLiveStream = true
+                                        }
+                                    }else{
+                                        navigateToLiveStream = true
                                     }
-                                    
+                                   
                                 },onTapCategory: {
-                                    self.liveShowsData.removeAll()
+//                                    self.liveShowsData.removeAll()
                                     self.category = item.category?.name ?? ""
                                     navigateToCategoryDetailScreen = true
                                 })
@@ -310,6 +318,9 @@ struct HomeViewScreen: View {
         .onDisappear {
             isActiveOnHomeScreen = false
             FirebaseManager.shared.removeNewSessionObserver()
+        }
+        .toast(isPresenting: $showhud) {
+            AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }
         .bottomSheet(isPresented: $upCommingSheet, height: screenHeight * 0.37) {
             UpcomingBottomSheet(
