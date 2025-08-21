@@ -78,7 +78,7 @@ struct countModel : Codable {
 struct BidModel : Codable {
     var schedule_show_id : Int?
     var user_id : Int?
-    var bid_price : Int?
+    var bid_price : Double?
     var product_id :Int?
     var created_by : Int?
     var created_at : String?

@@ -74,10 +74,10 @@ struct ShowsScreen: View {
                                 return
                             }
                             showsData.removeAll()
-                            await viewModel.getLiveSHows(param: GetLiveShowsRequest(type: "past"))
+                            await viewModel.getLiveSHows(param: GetLiveShowsRequest(type: "past", page: "1"))
                         }else{
                             showsData.removeAll()
-                            await viewModel.getLiveSHows(param: GetLiveShowsRequest(type: "upcoming"))
+                            await viewModel.getLiveSHows(param: GetLiveShowsRequest(type: "upcoming", page: "1"))
                         }
                        
                         await SVProgressHUD.dismiss()
@@ -137,14 +137,14 @@ struct ShowsScreen: View {
                         showhud = true
                         return
                     }
-                    await viewModel.getLiveSHows(param: GetLiveShowsRequest(type: "past"))
+                    await viewModel.getLiveSHows(param: GetLiveShowsRequest(type: "past", page: "1"))
                 }else{
                    guard Reachability.isConnectedToNetwork() else {
                         hudMsg = "No Internet Connection"
                         showhud = true
                         return
                     }
-                    await viewModel.getLiveSHows(param: GetLiveShowsRequest(type: "upcoming"))
+                    await viewModel.getLiveSHows(param: GetLiveShowsRequest(type: "upcoming", page: "1"))
                 }
                 await SVProgressHUD.dismiss()
                 scheduleSuccess()

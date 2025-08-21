@@ -789,7 +789,7 @@ struct LiveStream: View {
                 liveShowsData.removeAll()
                 roomID.removeAll()
                 streamID.removeAll()
-                await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: "live",category: "for_you",search: ""))
+                await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: "live",category: "for_you",search: "", page: "1"))
                 success()
                 await self.homeViewModel.getProfile()
                 await SVProgressHUD.dismiss()
@@ -956,6 +956,15 @@ struct LiveStream: View {
                         winnerProfileID = UserDefaults.userId
                         winnerAmount = highestBid["bidAmount"] as? String ?? ""
                         print("Winner: \(winnerName), Amount: \(winnerAmount)")
+                        
+                       //MARK: -  For Store bid in database
+                        
+//                        Task{
+//                            let showId = self.liveShowsData[safe:currentStreamIndex]?.id ?? 0
+//                            let param = StoreBidRequest(schedule_show_id: "\(showId)", user_id: "\(winnerProfileID)", product_id: productData.first?.id ?? "", bid_price: "\(winnerAmount)")
+//                            await self.viewModel.storeBid(parameters: param)
+//                        }
+                        
                     } else {
                         print("Could not find highestBid in bidData")
                     }
@@ -1067,11 +1076,20 @@ struct LiveStream: View {
             if let data = finalBidData {
                 // Optional: handle winner info or store bid in API
                 // let user_Id = data["userId"] as? String
+                
+//                Task{
+//                    self.viewModel.storeBid(parameters: StoreBidRequest(schedule_show_id: self.sheduleShowID, user_id: finalBidData?["bidderId"], product_id: selectedProduct.id, bid_price: finalBidData?["bidAmount"]))
+//                }
+                
             }
         }
         
         // Update local price
         currentPrice = amount
+        
+        commentText = "Current highest bid : $\(currentPrice)"
+        ZIMChatManager.shared.sendMessage(message: commentText,roomId: currentRoomID,image: UserDefaults.profileURL,name: UserDefaults.fullName)
+        commentText = ""
     }
     
     

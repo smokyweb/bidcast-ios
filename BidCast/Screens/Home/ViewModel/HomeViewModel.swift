@@ -11,7 +11,7 @@ final class HomeViewModel: ObservableObject {
 
     // MARK: - Published Properties
     @Published var addressResponse = ResponseModel<AddressModel>()
-    @Published var liveShowsResponse = ResponseModel<[HomeModel]>()
+    @Published var liveShowsResponse = ResponseModelPaginate<[HomeModel]>()
     @Published var accountInfo = ResponseModel<ProfileModel>()
     @Published var errorMessage: String?
     @Published var requestType = ""
@@ -21,7 +21,7 @@ final class HomeViewModel: ObservableObject {
     func getLiveShows(param:GetLiveShowsRequest) async {
         self.requestType = "get"
         do {
-            let response: ResponseModel<[HomeModel]> = try await APIManager.shared.request(
+            let response: ResponseModelPaginate<[HomeModel]> = try await APIManager.shared.request(
                 type: APIEndPoint.getLiveShows(param: param),
                 header: true
             )

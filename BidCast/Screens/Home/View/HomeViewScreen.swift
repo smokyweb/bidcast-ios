@@ -46,6 +46,8 @@ struct HomeViewScreen: View {
     @State var selectedShowUserImage : String = ""
     @State var selectedShowStartAt : String = ""
     @State var selectedShowStartDate : String = ""
+    
+    @State var currentPage = 1
     var body: some View {
         VStack(spacing:0){
             VStack{
@@ -56,7 +58,9 @@ struct HomeViewScreen: View {
                     trailingImgArr: [.search,.notification],
                     onClickLeading: { index in
                         if comeFromExploreScreen{
+                            navigateToCategoryDetailScreen = false
                             self.presentationMode.wrappedValue.dismiss()
+                           
                         }
                     },
                     onClickTrailing: { index in
@@ -85,13 +89,15 @@ struct HomeViewScreen: View {
                             Task { await fetchLiveShow() }
                         }
                     }
-                    SegmentedControlView(
-                        segments: categoryList.map { $0.name ?? "" },
-                        selectedSegment: $selectedButton,
-                        isWithBorder: true
-                    ) { selection in
-                        Task {
-                            await fetchLiveShow()
+                    if !comeFromExploreScreen{
+                        SegmentedControlView(
+                            segments: categoryList.map { $0.name ?? "" },
+                            selectedSegment: $selectedButton,
+                            isWithBorder: true
+                        ) { selection in
+                            Task {
+                                await fetchLiveShow()
+                            }
                         }
                     }
                     ButtonTitleLabel(
@@ -165,6 +171,7 @@ struct HomeViewScreen: View {
                                                     liveCount: item.viewer_count ?? 0,
                                                     isLive : item.is_live ?? false,
                                                     onTapProfile: {
+                                    self.liveShowsData.removeAll()
                                     userId = "\(item.user?.id ?? 0)"
                                     if selectedTab != "upcoming" {
                                         navigateToProfile = true
@@ -176,6 +183,7 @@ struct HomeViewScreen: View {
                                         upCommingSheet = true
                                     }
                                 },onTapProfileName: {
+                                    self.liveShowsData.removeAll()
                                     userId = "\(item.user?.id ?? 0)"
                                     userImage = item.user?.profile_image ?? ""
                                     userName = item.user?.username ?? ""
@@ -205,13 +213,18 @@ struct HomeViewScreen: View {
                                     }
                                     
                                 },onTapCategory: {
+                                    self.liveShowsData.removeAll()
                                     self.category = item.category?.name ?? ""
                                     navigateToCategoryDetailScreen = true
                                 })
+                                .onAppear{
+                                    handlePagination(index: index)
+                                }
                                 .background(.clear)
                                 .cornerRadius(10)
                             }
                         }
+                        
                         .padding(.vertical,3)
                     }
                 }
@@ -226,22 +239,14 @@ struct HomeViewScreen: View {
             CusNavLink(doNavigate: $navigateToCategoryDetailScreen, destination: HomeViewScreen(showCategory:$category,comeFromExploreScreen : $navigateToCategoryDetailScreen))
         }
         .background(.bg.opacity(0.1))
+        .edgesIgnoringSafeArea(.bottom)
+        //        .padding(.bottom,4)
         .onAppear{
             isActiveOnHomeScreen = true
-            NotificationCenter.default.addObserver(forName: Notification.Name("Notification"), object: nil, queue: .main) { notification in
-                if let userInfo = notification.userInfo {
-                    print("🔔 Babumoshai, Notification Payload: \(userInfo)")
-                    let type = userInfo["type"] as? String ?? ""
-                    //                           let senderName = userInfo["sender_name"] as? String ?? ""
-                    //                           let senderImage = userInfo["sender_image"] as? String ?? ""
-                    //                           let title = userInfo["title"] as? String ?? ""
-                    //                           let body = userInfo["body"] as? String ?? ""
-                    
-                    if type == "bid_show_start" {
-                        //                        navigateToLiveStream = true
-                    }
-                }
-            }
+        }
+        .onFirstAppear{
+            isActiveOnHomeScreen = true
+            
             if isActiveOnHomeScreen{
                 Task { await fetchCategory(for: "for_you") }
             }
@@ -254,15 +259,14 @@ struct HomeViewScreen: View {
                 }
                 SVProgressHUD.show()
                 if isActiveOnHomeScreen{
-                    //                    let apiCategory = (selectedButton == "For You") ? "for_you" : selectedButton
-                    //                    await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: self.selectedTab,category: apiCategory))
+                    
                     await fetchLiveShow()
                 }
-                //                await SVProgressHUD.dismiss()
-                //                self.success()
+                
                 if isActiveOnHomeScreen{
                     await self.viewModel.getProfile()
                 }
+                
                 if viewModel.errorMessage == "" || viewModel.errorMessage == nil {
                     let response = self.viewModel.accountInfo.data
                     UserDefaults.isFirstShowCreated = response?.is_FirstShowCreated ?? false
@@ -278,9 +282,10 @@ struct HomeViewScreen: View {
                     
                 }
             }
-            
-            FirebaseManager.shared.observeNewLiveSessionNodes {
-                if isActiveOnHomeScreen {
+            if isActiveOnHomeScreen && !comeFromExploreScreen {
+                FirebaseManager.shared.observeNewLiveSessionNodes {
+                    
+                    
                     Task{
                         guard Reachability.isConnectedToNetwork() else {
                             hudMsg = "No Internet Connection"
@@ -290,10 +295,7 @@ struct HomeViewScreen: View {
                         
                         liveShowsData.removeAll()
                         SVProgressHUD.show()
-                        //                        let apiCategory = (selectedButton == "For You") ? "for_you" : selectedButton
-                        //                        await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: "live",category: apiCategory))
-                        //                        await SVProgressHUD.dismiss()
-                        //                        self.success()
+                        
                         await fetchLiveShow()
                     }
                 }
@@ -323,10 +325,29 @@ struct HomeViewScreen: View {
     }
     
     func fetchLiveShow() async {
+        self.liveShowsData.removeAll()
         let apiCategory = (selectedButton == "For You") ? "for_you" : selectedButton
-        await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: self.selectedTab,category: apiCategory,search: searchText))
+        await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: self.selectedTab,category: apiCategory,search: searchText,page: "1"))
         await SVProgressHUD.dismiss()
         success()
+    }
+    
+    func handlePagination(index: Int) {
+        let isLastItem = index == liveShowsData.count - 1
+        let canFetchMore = (viewModel.liveShowsResponse.total ?? 0) > liveShowsData.count
+        
+        if isLastItem && canFetchMore {
+            fetchMoreShows()
+        }
+    }
+    
+    func fetchMoreShows() {
+        Task {
+            let apiCategory = (selectedButton == "For You") ? "for_you" : selectedButton
+            currentPage += 1
+            await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: self.selectedTab,category: apiCategory,search: searchText,page: "\(currentPage)"))
+            success()
+        }
     }
     
     // MARK: - fetchCategory
@@ -376,40 +397,40 @@ struct HomeViewScreen: View {
         }
     }
     
-
+    
     func success() {
         let response = viewModel.liveShowsResponse
         if response.status == "success" {
-        
-            if selectedTab != "upcoming"{
-                FirebaseManager.shared.fetchAllLiveSessions { firebaseRoomIds in
-                    let validShows = response.data?.filter { show in
-                        guard let roomId = show.room_id else { return false }
-                        return firebaseRoomIds.contains(roomId)
-                    }
-                    
-                    DispatchQueue.main.async {
-                        liveShowsData = validShows ?? []
-                        print("✅ Loaded \(liveShowsData.count) live shows")
-                        
-                        // 🔁 Loop through all valid live shows and observe each viewer count
-                        for (index, show) in liveShowsData.enumerated() {
-                            if let roomId = show.room_id {
-                                FirebaseManager.shared.observeViewerCount(roomId: roomId) { newCount in
-                                    DispatchQueue.main.async {
-                                        // Ensure index is still valid
-                                        if index < liveShowsData.count {
-                                            liveShowsData[index].viewer_count = newCount
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }else{
-                liveShowsData = response.data ?? []
-            }
+            
+            //            if selectedTab != "upcoming"{
+            //                FirebaseManager.shared.fetchAllLiveSessions { firebaseRoomIds in
+            //                    let validShows = response.data?.filter { show in
+            //                        guard let roomId = show.room_id else { return false }
+            //                        return firebaseRoomIds.contains(roomId)
+            //                    }
+            //
+            //                    DispatchQueue.main.async {
+            //                        liveShowsData = validShows ?? []
+            //                        print("✅ Loaded \(liveShowsData.count) live shows")
+            //
+            //                        // 🔁 Loop through all valid live shows and observe each viewer count
+            //                        for (index, show) in liveShowsData.enumerated() {
+            //                            if let roomId = show.room_id {
+            //                                FirebaseManager.shared.observeViewerCount(roomId: roomId) { newCount in
+            //                                    DispatchQueue.main.async {
+            //                                        // Ensure index is still valid
+            //                                        if index < liveShowsData.count {
+            //                                            liveShowsData[index].viewer_count = newCount
+            //                                        }
+            //                                    }
+            //                                }
+            //                            }
+            //                        }
+            //                    }
+            //                }
+            //            }else{
+            liveShowsData.append(contentsOf:response.data ?? [])
+            //            }
         } else {
             showError = true
             alertType = .sheetType(

@@ -212,11 +212,18 @@ struct ListProductScreen: View {
                             .padding(.top,8)
                             .padding([.leading,.trailing],16.0)
                         
-                        AuthTextField(floatingLabel: "Buy it Now Price".localized, placeholder: "0.00".localized, icon: .menuProfile, text: $request.pricing,isIconDisplay : true, isForPrice:true,
+                        AuthTextField(floatingLabel: "Buy it Now Price".localized, placeholder: "1.00".localized, icon: .menuProfile, text: $request.pricing,isIconDisplay : true, isForPrice:true,
                                       custFontName : robotoMedium,
                                       custFontSize : 14.0,
                                       enteredText:  { price in
-                            request.pricing = price
+                            if let amt = Double(price) {
+                                if amt < 1.0 {
+                                    hudMsg = "Price should not be less than $1.00"
+                                    showhud = true
+                                } else {
+                                    request.pricing = price
+                                }
+                            }
                         })
                         .keyboardType(.numberPad)
                         //                        .padding(.horizontal , 16)
