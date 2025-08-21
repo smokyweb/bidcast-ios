@@ -380,13 +380,13 @@ struct LiveStream: View {
                                                 let increment = (range / 10 + 1)
                                                 return currentPrice + increment
                                             }()
-
+                                            
                                             // Then use in Text
                                             Text("Swipe to Bid $\(String(format: "%.2f", nextBid))")
                                                 .font(.custom(poppinsSemiBold, size: 14))
                                                 .foregroundColor(.white)
                                                 .frame(maxWidth: .infinity, alignment: .center)
-
+                                            
                                             // Draggable Arrow
                                             RoundedRectangle(cornerRadius: 8)
                                                 .fill(Color.darkGreen)
@@ -597,7 +597,7 @@ struct LiveStream: View {
                 onPrimaryClick: {
                     withAnimation {
                         showError = false
-//                        logoutRoom()
+                        //                        logoutRoom()
                         self.presentationMode.wrappedValue.dismiss()
                     }
                 },
@@ -743,7 +743,6 @@ struct LiveStream: View {
                 }
             )
         }
-
         
         .bottomSheet(isPresented: $winnerSheet,height: screenHeight * 0.40) {
             WinnerBottomSheet(
@@ -768,7 +767,7 @@ struct LiveStream: View {
                         if let amount = Double(amount) {
                             placeBid(amount: amount)
                         }
-//                        self.maxBidAmountSheet = false
+                        //                        self.maxBidAmountSheet = false
                     },
                     onDismiss: {
                         self.maxBidAmountSheet = false
@@ -776,7 +775,7 @@ struct LiveStream: View {
                 )
             }
         }
-
+        
         .edgesIgnoringSafeArea(.all)
         .toolbar(.hidden,for: .tabBar)
         .foregroundColor(.black)
@@ -1074,7 +1073,7 @@ struct LiveStream: View {
         // Update local price
         currentPrice = amount
     }
-
+    
     
     func updateSoldStatus(){
         if let currentRoomId = liveShowsData[safe: currentStreamIndex]?.room_id,
@@ -1214,7 +1213,6 @@ struct LiveStream: View {
         
     }
 }
-
 
 
 struct ZegoPreviewView: UIViewRepresentable {

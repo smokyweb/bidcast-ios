@@ -194,7 +194,7 @@ struct ShopBottomSheetView: View {
         VStack(spacing: 16) {
             // MARK: Header
             HStack {
-                Text("Shop")
+                Text(NavFrom == "" ? "Select Next Product For Auction" : "Shop")
                     .font(.custom(poppinsBold, size: 15))
                 Spacer()
                 Button {
@@ -206,30 +206,32 @@ struct ShopBottomSheetView: View {
             }
             
             // MARK: Search
-            HStack {
-                Image(systemName: "magnifyingglass")
-                    .foregroundColor(.gray)
-                TextField("Search products...", text: $searchText)
-                    .font(.custom(poppinsSemiBold, size: 13))
-            }
-            .padding(.horizontal)
-            .frame(height: 40)
-            .background(Color(.systemGray6))
-            .cornerRadius(10)
-            
-            // MARK: Tabs
-            HStack(spacing: 10) {
-                ForEach(ShopTab.allCases, id: \.self) { tab in
-                    Button {
-                        selectedTab = tab
-                    } label: {
-                        Text(tab.rawValue)
-                            .font(.custom(poppinsSemiBold, size: 13))
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 10)
-                            .background(selectedTab == tab ? Color.defaultTheme : Color(.systemGray5))
-                            .foregroundColor(selectedTab == tab ? .white : .black)
-                            .cornerRadius(20)
+            if NavFrom != ""{
+                HStack {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundColor(.gray)
+                    TextField("Search products...", text: $searchText)
+                        .font(.custom(poppinsSemiBold, size: 13))
+                }
+                .padding(.horizontal)
+                .frame(height: 40)
+                .background(Color(.systemGray6))
+                .cornerRadius(10)
+                
+                // MARK: Tabs
+                HStack(spacing: 10) {
+                    ForEach(ShopTab.allCases, id: \.self) { tab in
+                        Button {
+                            selectedTab = tab
+                        } label: {
+                            Text(tab.rawValue)
+                                .font(.custom(poppinsSemiBold, size: 13))
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 10)
+                                .background(selectedTab == tab ? Color.defaultTheme : Color(.systemGray5))
+                                .foregroundColor(selectedTab == tab ? .white : .black)
+                                .cornerRadius(20)
+                        }
                     }
                 }
             }
@@ -330,21 +332,30 @@ struct ShopBottomSheetView: View {
             CustomProfileImage(url: product.image, isCircular: false, cornerRadius: 8, size: 60)
             
             VStack(alignment: .leading, spacing: 4) {
-                Text(product.name)
-                    .font(.custom(poppinsSemiBold, size: 13.0))
+                HStack{
+                    Text(product.name)
+                        .font(.custom(poppinsSemiBold, size: 13.0))
+                    Spacer()
+                    // ✅ Show Live label if this is the initial selected product
+                    if product.id == initialSelectedProductId && product.status != "sold"{
+                        Text("LIVE")
+                            .font(.custom(poppinsSemiBold, size: 14))
+                            .foregroundColor(.defaultTheme)
+                            .padding(.trailing, -20)
+                    }
+                }
                 Text("Price : $\(product.price)")
                     .font(.custom(poppinsRegular, size: 11.0))
-                if product.status == "sold" {
-                    Text("Status: Sold")
-                        .font(.custom(poppinsRegular, size: 11.0))
-                        .foregroundColor(.red)
-                }
+                Text("Status: \(product.status)")
+                    .font(.custom(poppinsRegular, size: 11.0))
+                    .foregroundColor(product.status == "sold" ? .red : .black)
             }
             
             Spacer()
+        
             
             // Hide edit/delete in Shop mode or if sold
-            if NavFrom != "Shop" && product.status != "sold" {
+            if NavFrom != "Shop" && product.status != "sold" && NavFrom != "" {
                 Button {
                     // Edit action
                 } label: {
@@ -359,8 +370,14 @@ struct ShopBottomSheetView: View {
             }
         }
         .padding()
-        .background(Color(.systemGray6))
-        .cornerRadius(12)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(product.status == "sold" ? Color(.systemGray6) : Color(.white))
+                .shadow(color: product.status == "sold" ? .clear : Color.squirrelGrey.opacity(0.5),
+                        radius: 2, x: 0, y: 0)
+        )
+        .padding(.horizontal, 4)
+        .padding(.vertical, 2)
         .opacity(product.status == "sold" ? 0.6 : 1)
     }
 }
