@@ -38,22 +38,25 @@ struct BlockedUserScreen: View {
             )
             
             // Scrollable list of blocked users
-            ScrollView {
-                LazyVStack(spacing: 12, pinnedViews: []) {
-                    if blockedUsers.isEmpty {
-                        NoDataView(message: "No blocked users found")
-                            .frame(maxWidth: .infinity, minHeight: 300)
-                    } else {
-                        ForEach(blockedUsers, id: \.id) { user in
-                            SwipeToUnblockCard(user: user) {
+            List {
+                ForEach(blockedUsers, id: \.id) { user in
+                    BlockedUserCard(user: user)
+                        .listRowSeparator(.hidden)
+                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                            Button {
                                 Task { await UnBlockedUser(sellerId: user.id ?? 0) }
+                            } label: {
+                                Image(systemName: "person.crop.circle.badge.minus")
+                                    .foregroundColor(.red)
                             }
-                            .padding(.horizontal)
+                            .tint(.red)
                         }
-                    }
+
                 }
-                .padding(.vertical, 12)
+                .listRowBackground(Color.white) // Card stays white
             }
+            .listStyle(.plain)
+            .background(Color.white)
             .refreshable {
                 await loadData()
             }
@@ -68,7 +71,7 @@ struct BlockedUserScreen: View {
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }
-        .background(Color(.systemGray6))
+        .background(Color.white) // ✅ whole screen background white
         .onFirstAppear {
             Task { await loadData() }
         }
@@ -136,29 +139,8 @@ struct BlockedUserScreen: View {
     }
 }
 
-struct SwipeToUnblockCard: View {
-    var user: BlockedByUserList  
-    var onUnblock: () -> Void
-    
-    var body: some View {
-        ZStack {
-            HStack {
-                Spacer()
-                Button(action: onUnblock) {
-                    Label("Unblock", systemImage: "person.crop.circle.badge.minus")
-                        .padding()
-                        .foregroundColor(.white)
-                        .background(Color.red)
-                        .cornerRadius(8)
-                }
-            }
-            BlockedUserCard(user: user)
-        }
-    }
-}
-
 struct BlockedUserCard: View {
-    var user: BlockedByUserList    // 👈 FIX
+    var user: BlockedByUserList
     
     var body: some View {
         HStack(spacing: 12) {
