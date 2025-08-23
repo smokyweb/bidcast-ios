@@ -719,3 +719,9 @@ struct BlockUserRequest : Encodable{
     var blocked_id : Int
 }
 
+struct BlockUserList : Encodable{
+    var blocked_by : Bool?
+}
+
+
+

@@ -4,7 +4,6 @@
 //
 //  Created by JAM-E-329 on 13/08/25.
 //
-
 import SwiftUI
 import SVProgressHUD
 import AlertToast
@@ -20,7 +19,7 @@ struct BlockedUserScreen: View {
     @StateObject private var viewModel = BlockedUserListViewModel()
     @State var profileViewModel = ProfileViewModel()
     
-    @State private var blockedUsers: [BlockedUserList] = []
+    @State private var blockedUsers: [BlockedByUserList] = []
     @State private var navigateToHome = false
     
     var body: some View {
@@ -38,54 +37,44 @@ struct BlockedUserScreen: View {
                 count: .constant(0)
             )
             
-            // Blocked User Cards
-            List {
-                if blockedUsers.isEmpty {
-                    Text("No blocked users found")
-                        .font(.custom(poppinsRegular, size: 14))
-                        .foregroundColor(.gray)
-                        .padding(.top, 40)
-                        .listRowSeparator(.hidden)
-                        .listRowBackground(Color.clear)
-                } else {
-                    ForEach(blockedUsers, id: \.id) { user in
-                        BlockedUserCard(user: user)
-                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                                Button(role: .destructive) {
-                                    Task {
-                                        await UnBlockedUser(sellerId: user.id ?? 0)
-                                    }
-                                } label: {
-                                    Label("Unblock", systemImage: "person.crop.circle.badge.minus")
-                                }
-                                .tint(.red)
+            // Scrollable list of blocked users
+            ScrollView {
+                LazyVStack(spacing: 12, pinnedViews: []) {
+                    if blockedUsers.isEmpty {
+                        NoDataView(message: "No blocked users found")
+                            .frame(maxWidth: .infinity, minHeight: 300)
+                    } else {
+                        ForEach(blockedUsers, id: \.id) { user in
+                            SwipeToUnblockCard(user: user) {
+                                Task { await UnBlockedUser(sellerId: user.id ?? 0) }
                             }
-                            .listRowSeparator(.hidden)
-                            .listRowBackground(Color.clear)
+                            .padding(.horizontal)
+                        }
                     }
                 }
+                .padding(.vertical, 12)
             }
-            .listStyle(.plain)
             .refreshable {
                 await loadData()
             }
-
             
             Spacer()
-            CusNavLink(doNavigate: $navigateToHome, destination: HomeViewScreen(showCategory: .constant(""), comeFromExploreScreen: .constant(false)))
             
+            CusNavLink(
+                doNavigate: $navigateToHome,
+                destination: HomeViewScreen(showCategory: .constant(""), comeFromExploreScreen: .constant(false))
+            )
         }
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }
-        
-        
         .background(Color(.systemGray6))
         .onFirstAppear {
             Task { await loadData() }
         }
     }
     
+    // MARK: - Networking
     func loadData() async {
         guard Reachability.isConnectedToNetwork() else {
             hudMsg = "No Internet Connection"
@@ -93,7 +82,7 @@ struct BlockedUserScreen: View {
             return
         }
         SVProgressHUD.show()
-        await viewModel.getBlockUser()
+        await viewModel.getBlockUser(param: BlockUserList(blocked_by: nil))
         await SVProgressHUD.dismiss()
         
         if viewModel.blockedUserListResponse.status != "success" {
@@ -107,25 +96,24 @@ struct BlockedUserScreen: View {
             )
             withAnimation(.snappy) { showError = true }
         } else {
-            blockedUsers = viewModel.blockedUserListResponse.data ?? []
+            blockedUsers = viewModel.blockedUserListResponse.data?.data ?? []
         }
     }
     
-    func UnBlockedUser(sellerId : Int) async{
+    func UnBlockedUser(sellerId: Int) async {
         guard Reachability.isConnectedToNetwork() else {
             hudMsg = "No Internet Connection"
             showhud = true
             return
         }
         SVProgressHUD.show()
-        let param = BlockUserRequest(blocked_id: sellerId )
+        let param = BlockUserRequest(blocked_id: sellerId)
         await self.profileViewModel.blockUser(param: param)
         await SVProgressHUD.dismiss()
         blockSuccess()
     }
     
-    //MARK: blockSuccess.
-    func blockSuccess(){
+    func blockSuccess() {
         SVProgressHUD.dismiss()
         let response = profileViewModel.blockUserResponseDict
         if response?.status == "success" {
@@ -135,14 +123,42 @@ struct BlockedUserScreen: View {
                 navigateToHome = true
             }
         } else {
-            alertType = .sheetType(icon: .alert, title: response?.status?.capitalized ?? "", message: response?.message?.capitalized ?? "", primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .defaultTheme)
+            alertType = .sheetType(
+                icon: .alert,
+                title: response?.status?.capitalized ?? "",
+                message: response?.message?.capitalized ?? "",
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized,
+                sheetThemeColor: .defaultTheme
+            )
             withAnimation(.snappy) { showError = true }
         }
     }
 }
 
+struct SwipeToUnblockCard: View {
+    var user: BlockedByUserList  
+    var onUnblock: () -> Void
+    
+    var body: some View {
+        ZStack {
+            HStack {
+                Spacer()
+                Button(action: onUnblock) {
+                    Label("Unblock", systemImage: "person.crop.circle.badge.minus")
+                        .padding()
+                        .foregroundColor(.white)
+                        .background(Color.red)
+                        .cornerRadius(8)
+                }
+            }
+            BlockedUserCard(user: user)
+        }
+    }
+}
+
 struct BlockedUserCard: View {
-    var user: BlockedUserList
+    var user: BlockedByUserList    // 👈 FIX
     
     var body: some View {
         HStack(spacing: 12) {

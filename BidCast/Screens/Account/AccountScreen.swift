@@ -26,6 +26,7 @@ struct AccountScreen: View {
     @State var navigateToFAQ : Bool = false
     @State var navigateToContactus : Bool = false
     @State var navigateToSales : Bool = false
+    @State var navigateToBlockedList : Bool = false
     @State var navigateToPrivacy : Bool = false
     @State var navigateToTerms : Bool = false
     @State var navigateToInventry : Bool = false
@@ -211,6 +212,9 @@ struct AccountScreen: View {
                                     }
                                 }
                                 else if index == 6 {
+                                    navigateToBlockedList = true
+                                }
+                                else if index == 7 {
                                     withAnimation {
                                         userLogOut = true
                                     }
@@ -257,6 +261,7 @@ struct AccountScreen: View {
             CusNavLink(doNavigate: $navigateToWallet, destination: WalletScreen())
             CusNavLink(doNavigate: $navigateToSellerStatus, destination:   SellerStatusScreen())
             CusNavLink(doNavigate: $navigateToMyOrder, destination: MyOrdersScreen())
+            CusNavLink(doNavigate: $navigateToBlockedList, destination: BlockedUserScreen())
             CusNavLink(doNavigate: $navigateToAffilateProgram, destination: AffiliateProgramScreen(
                 referralCode: "SELLER2025",
                 stats: ReferralStats(totalReferrals: 0, earnings: 0.0),
@@ -469,6 +474,7 @@ enum AccountMenuSection : String, CaseIterable, CustomStringConvertible{
     case TermsandCond = "Terms & Conditions"
     case privacy = "Privacy & Policy"
     case faq = "F.A.Q"
+    case blockList = "Blocked Users"
     case logout = "Logout"
     
     

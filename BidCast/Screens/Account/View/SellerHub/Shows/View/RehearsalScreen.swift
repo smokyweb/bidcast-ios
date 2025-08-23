@@ -485,7 +485,6 @@ struct RehearsalScreen: View {
                             }
                         }
                     )
-                    
                 case .promote:
                     PromoteShowSheet(boosts: exampleBoosts) {
                         showSellSheet = false

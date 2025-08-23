@@ -28,6 +28,10 @@ struct ActivityScreen: View {
     @State private var selectedUserImage: String? = nil
     @State private var isNavigatingToChat = false
     @State private var chatPath: String = ""
+    @StateObject private var blockedViewModel = BlockedUserListViewModel()
+    @State private var blockedUsers: [BlockedByUserList] = []
+    @State var blockedSheet: Bool = false
+    @State var navigateToBlockedList : Bool = false
 
     
     @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
@@ -76,13 +80,28 @@ struct ActivityScreen: View {
                         } else if messageList.isEmpty {
                             NoDataView(message: "No message Found")
                         } else {
+//                            ForEach(messageList) { message in
+//                                MessageCell(message: message, currentUserId: String(UserDefaults.userId))
+//                                    .padding(.all , 6)
+//                                    .onTapGesture {
+//                                        prepareChatNavigation(for: message)
+//                                    }
+//                            }
                             ForEach(messageList) { message in
-                                MessageCell(message: message, currentUserId: String(UserDefaults.userId))
-                                    .padding(.all , 6)
-                                    .onTapGesture {
+                                MessageRow(
+                                    message: message,
+                                    currentUserId: String(UserDefaults.userId),
+                                    blockedUsers: blockedUsers,
+                                    onBlocked: {
+                                        blockedSheet = true
+                                    },
+                                    onAllowed: {
                                         prepareChatNavigation(for: message)
                                     }
+                                )
                             }
+
+
                         }
                         
                     case .bid:
@@ -192,11 +211,20 @@ struct ActivityScreen: View {
             }
             
             CusNavLink(doNavigate: $navigateToNotification, destination: NotificationScreen())
+            CusNavLink(doNavigate: $navigateToBlockedList, destination: BlockedUserScreen())
         }
         .background(Color(.systemGroupedBackground))
         .toast(isPresenting: $showhud) {
             AlertToast(type: .regular, title: hudMsg)
         }
+         .bottomSheet(isPresented: $blockedSheet, height: screenHeight/2, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: {  }, content: {
+             UnblockedUserSheet(onLogoutClick: {
+                 withAnimation(.snappy) { blockedSheet = false }
+                 navigateToBlockedList = true
+             }, onCancelClick: {
+                 withAnimation(.snappy) { blockedSheet = false }
+             })
+         })
         .onAppear {
             UIScrollView.appearance().bounces = false
             Task {
@@ -266,6 +294,7 @@ struct ActivityScreen: View {
             }
             
             messageList.removeAll()
+            await fetchBlockedList()
             isLoading = true
             
             FirebaseManager.shared.fetchMessageList(forUserId: "\(UserDefaults.userId)") { messages in
@@ -333,6 +362,32 @@ struct ActivityScreen: View {
             }
         }
     }
+    
+    func fetchBlockedList() async {
+        guard Reachability.isConnectedToNetwork() else {
+            hudMsg = "No Internet Connection"
+            showhud = true
+            return
+        }
+        SVProgressHUD.show()
+        await blockedViewModel.getBlockUser(param: BlockUserList(blocked_by: true))
+        await SVProgressHUD.dismiss()
+        
+        if blockedViewModel.blockedUserListResponse.status != "success" {
+            alertType = .sheetType(
+                icon: .alert,
+                title: "Error",
+                message: blockedViewModel.blockedUserListResponse.message ?? "Something went wrong.",
+                primaryBtnText: "",
+                secondaryBtnText: "OK",
+                sheetThemeColor: .pinkBtn
+            )
+            withAnimation(.snappy) { showError = true }
+        } else {
+            blockedUsers = blockedViewModel.blockedUserListResponse.data?.data ?? []
+        }
+    }
+
     
     
     //MARK: fetchListing.
@@ -508,7 +563,80 @@ struct MessageCell: View {
 }
 
 
-
-
-
-
+struct MessageRow: View {
+    let message: ChatMessage
+    let currentUserId: String
+    let blockedUsers: [BlockedByUserList]
+    
+    var onBlocked: () -> Void
+    var onAllowed: () -> Void
+    
+    private var otherUserId: String {
+        let senderId = message.users.senderId ?? ""
+        let receiverId = message.users.receiverId ?? ""
+        return senderId == currentUserId ? receiverId : senderId
+    }
+    
+    private var isBlocked: Bool {
+        blockedUsers.contains { user in
+            String(user.id ?? -1) == otherUserId
+        }
+    }
+    
+    var body: some View {
+        HStack(alignment: .center, spacing: 12) {
+            AsyncImage(url: URL(string: otherUserImage)) { image in
+                image.resizable()
+            } placeholder: {
+                Color.gray
+            }
+            .frame(width: 48, height: 48)
+            .clipShape(Circle())
+            
+            VStack(alignment: .leading, spacing: 6) {
+                HStack {
+                    Text(otherUserName.capitalizingFirstLetter())
+                        .font(.system(size: 16, weight: .semibold))
+                    Spacer()
+                    Text(timestampString)
+                        .font(.system(size: 14))
+                        .foregroundColor(.gray)
+                }
+                
+                Text(message.message)
+                    .font(.system(size: 15))
+            }
+        }
+        .padding()
+        .background(Color.white)
+        .cornerRadius(12)
+        .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
+        .onTapGesture {
+            print("Tapped userId:", otherUserId, "Blocked IDs:", blockedUsers.map { $0.id })
+            if isBlocked {
+                onBlocked()
+            } else {
+                onAllowed()
+            }
+        }
+    }
+    
+    private var otherUserName: String {
+        message.users.senderId == currentUserId
+        ? message.users.receiverName
+        : message.users.senderName
+    }
+    
+    private var otherUserImage: String {
+        message.users.senderId == currentUserId
+        ? message.users.receiverImage
+        : message.users.senderImage
+    }
+    
+    private var timestampString: String {
+        let date = Date(timeIntervalSince1970: message.timestamp)
+        let formatter = DateFormatter()
+        formatter.dateFormat = "hh:mm a"
+        return formatter.string(from: date)
+    }
+}
