@@ -47,6 +47,8 @@ struct HomeViewScreen: View {
     @State var selectedShowUserImage : String = ""
     @State var selectedShowStartAt : String = ""
     @State var selectedShowStartDate : String = ""
+    @State private var loadedRoomIDs = Set<String>()
+
     
     @State var currentPage = 1
     var body: some View {
@@ -290,24 +292,21 @@ struct HomeViewScreen: View {
                     
                 }
             }
+            
             if isActiveOnHomeScreen && !comeFromExploreScreen {
                 FirebaseManager.shared.observeNewLiveSessionNodes {
-                    
-                    
-                    Task{
+                    Task {
+                        // Check internet before fetching/adding new shows
                         guard Reachability.isConnectedToNetwork() else {
                             hudMsg = "No Internet Connection"
                             showhud = true
                             return
                         }
-                        
-                        liveShowsData.removeAll()
-                        SVProgressHUD.show()
-                        
                         await fetchLiveShow()
                     }
                 }
             }
+
             
             FirebaseManager.shared.observeLiveSessionRemovals { removedRoomId in
                 DispatchQueue.main.async {
@@ -336,12 +335,22 @@ struct HomeViewScreen: View {
     }
     
     func fetchLiveShow() async {
-        self.liveShowsData.removeAll()
+        if currentPage == 1 {
+            liveShowsData.removeAll()
+            loadedRoomIDs.removeAll()
+        }
+
         let apiCategory = (selectedButton == "For You") ? "for_you" : selectedButton
-        await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: self.selectedTab,category: apiCategory,search: searchText,page: "1"))
+        await viewModel.getLiveShows(param: GetLiveShowsRequest(
+            type: selectedTab,
+            category: apiCategory,
+            search: searchText,
+            page: "\(currentPage)"
+        ))
         await SVProgressHUD.dismiss()
         success()
     }
+
     
     func handlePagination(index: Int) {
         let isLastItem = index == liveShowsData.count - 1
@@ -411,38 +420,7 @@ struct HomeViewScreen: View {
     
     func success() {
         let response = viewModel.liveShowsResponse
-        if response.status == "success" {
-            
-            //            if selectedTab != "upcoming"{
-            //                FirebaseManager.shared.fetchAllLiveSessions { firebaseRoomIds in
-            //                    let validShows = response.data?.filter { show in
-            //                        guard let roomId = show.room_id else { return false }
-            //                        return firebaseRoomIds.contains(roomId)
-            //                    }
-            //
-            //                    DispatchQueue.main.async {
-            //                        liveShowsData = validShows ?? []
-            //                        print("✅ Loaded \(liveShowsData.count) live shows")
-            //
-            //                        // 🔁 Loop through all valid live shows and observe each viewer count
-            //                        for (index, show) in liveShowsData.enumerated() {
-            //                            if let roomId = show.room_id {
-            //                                FirebaseManager.shared.observeViewerCount(roomId: roomId) { newCount in
-            //                                    DispatchQueue.main.async {
-            //                                        // Ensure index is still valid
-            //                                        if index < liveShowsData.count {
-            //                                            liveShowsData[index].viewer_count = newCount
-            //                                        }
-            //                                    }
-            //                                }
-            //                            }
-            //                        }
-            //                    }
-            //                }
-            //            }else{
-            liveShowsData.append(contentsOf:response.data ?? [])
-            //            }
-        } else {
+        guard response.status == "success", let newShows = response.data else {
             showError = true
             alertType = .sheetType(
                 icon: .alert,
@@ -451,9 +429,16 @@ struct HomeViewScreen: View {
                 primaryBtnText: "",
                 secondaryBtnText: AppString.ok.localized
             )
+            return
+        }
+        
+        for show in newShows {
+            if let roomId = show.room_id, !loadedRoomIDs.contains(roomId) {
+                liveShowsData.append(show)
+                loadedRoomIDs.insert(roomId)
+            }
         }
     }
-    
 }
 
 //#Preview {

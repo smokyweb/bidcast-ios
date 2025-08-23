@@ -313,7 +313,8 @@ struct LiveStream: View {
                             
                             VStack(alignment: .leading,spacing: 12){
                                 //MARK: Product Details
-                                if let product = productData.first {
+                                let currentProducts = productData.filter { $0.isCurrent }
+                                if let product = currentProducts.first {
                                     HStack(spacing: 12) {
                                         CustomProfileImage(url: product.image, isCircular: false,cornerRadius: 8.0,size: 80.0)
                                         
