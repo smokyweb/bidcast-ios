@@ -458,7 +458,7 @@ struct RehearsalScreen: View {
                     MoreOptionsScreen(
                         isPresented: $showSellSheet,
                         isVerifiedBuyersOn: $verifiedOnly,
-                        isMicOn : $isMicOn,
+                        isMicOn: $isMicOn,
                         onEndShow: { print("End Show") },
                         onCloneItems: { print("Clone Items") },
                         onTipSettings: { print("Tip Settings") },
@@ -467,7 +467,6 @@ struct RehearsalScreen: View {
                         onRaid: { print("Raid") },
                         onCreatePoll: { print("Create Poll") },
                         onRotateCamera: {
-                            print("Rotate Camera")
                             isUsingFrontCamera.toggle()
                             ZegoExpressEngine.shared().useFrontCamera(isUsingFrontCamera)
                         },
@@ -475,9 +474,18 @@ struct RehearsalScreen: View {
                         onMicToggle: {
                             isMicOn.toggle()
                             ZegoExpressEngine.shared().muteMicrophone(!isMicOn)
-                            print("Mic Toggled")
+                        },
+                        onVerifiedBuyerToggle: { isOn in
+                            let allowBidForAll = !isOn
+                            if !liveRoomId.isEmpty {
+                                FirebaseManager.shared.databaseRef.child("live_sessions")
+                                    .child(liveRoomId)
+                                    .updateChildValues(["allowBidForAll": allowBidForAll])
+                                print("✅ allowBidForAll updated to \(allowBidForAll) for room: \(liveRoomId)")
+                            }
                         }
                     )
+                    
                 case .promote:
                     PromoteShowSheet(boosts: exampleBoosts) {
                         showSellSheet = false
@@ -629,7 +637,7 @@ struct RehearsalScreen: View {
             initialSelectedProductId = products.first(where: { $0.isCurrent })?.id ?? ""
         }
     }
-
+    
     func setProductAsCurrent(selectedID : String){
         FirebaseManager.shared.setProductAsCurrent(roomId: liveRoomId, selectedID: selectedID) { result in
             switch result {
@@ -741,7 +749,7 @@ struct RehearsalScreen: View {
             
             
             
-            FirebaseManager.shared.createLiveSession(showId:"\(data.id ?? 0)", userId: "\(data.user_id ?? 0)", product: product, seller: seller, thumbnail: data.thumbnail?.first ?? "", time: data.time ?? "", date: data.date ?? "")
+            FirebaseManager.shared.createLiveSession(showId:"\(data.id ?? 0)", userId: "\(data.user_id ?? 0)", product: product, seller: seller, thumbnail: data.thumbnail?.first ?? "", time: data.time ?? "", date: data.date ?? "", allowBidForAll: true)
             
             
             let user = ZegoUser(userID: "\(data.user_id ?? 0)", userName: data.user?.name ?? "")
@@ -768,7 +776,7 @@ struct RehearsalScreen: View {
                     }
                     
                     FirebaseManager.shared.startObservingSessionTimer(roomId: roomId) {
-//                        self.UpdateStatus(status : true)
+                        //                        self.UpdateStatus(status : true)
                     }
                     fetchBiddingDetail(roomId: roomId)
                     //For Show Automatic Sheet

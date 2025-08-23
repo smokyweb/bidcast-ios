@@ -37,6 +37,7 @@ class FirebaseManager {
                            thumbnail: String,
                            time: String,
                            date : String,
+                           allowBidForAll : Bool,
                            completion: ((Bool) -> Void)? = nil) {
         
         let roomId = "live_room_\(userId)_\(showId)"
@@ -54,7 +55,8 @@ class FirebaseManager {
             "showId": showId,
             "thumbnail": thumbnail,
             "time": timestamp,
-            "viewerCount": ""
+            "viewerCount": "",
+            "allowBidForAll" : allowBidForAll
         ]
         
         print(sessionData)
@@ -682,5 +684,20 @@ class FirebaseManager {
             onRemove(removedRoomId)
         }
     }
+    
+    // MARK: - Observe allowBidForAll for a live room
+    func observeAllowBidForAll(for roomId: String) {
+        guard !roomId.isEmpty else { return }
+        
+        let ref = FirebaseManager.shared.databaseRef.child("live_sessions").child(roomId).child("allowBidForAll")
+        
+        ref.observe(.value) { snapshot in
+            if let allowBid = snapshot.value as? Bool {
+                UserDefaults.allowBidForAllUser = allowBid
+                print("🔔 allowBidForAll updated to \(allowBid) for room: \(roomId)")
+            }
+        }
+    }
+
     
 }

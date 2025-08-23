@@ -362,10 +362,14 @@ struct LiveStream: View {
                                             .background(Color.defaultTheme)
                                             .cornerRadius(10)
                                             .onTapGesture {
-                                                if UserDefaults.buyerVerafied != "verified" {
-                                                    showVerificationSheet = true
-                                                }else{
+                                                if UserDefaults.allowBidForAllUser{
                                                     self.maxBidAmountSheet = true
+                                                }else{
+                                                    if UserDefaults.buyerVerafied != "verified" {
+                                                        showVerificationSheet = true
+                                                    }else{
+                                                        self.maxBidAmountSheet = true
+                                                    }
                                                 }
                                             }
                                         
@@ -408,12 +412,18 @@ struct LiveStream: View {
                                                         .onEnded { value in
                                                             if value.translation.width > totalSwipeWidth * 0.5 {
                                                                 dragOffset = .zero
-                                                                if UserDefaults.buyerVerafied != "verified" {
-                                                                    showVerificationSheet = true
-                                                                } else {
+                                                                if UserDefaults.allowBidForAllUser{
                                                                     swipeConfirmed = true
                                                                     incrementPrice()
+                                                                }else{
+                                                                    if UserDefaults.buyerVerafied != "verified" {
+                                                                        showVerificationSheet = true
+                                                                    } else {
+                                                                        swipeConfirmed = true
+                                                                        incrementPrice()
+                                                                    }
                                                                 }
+                                                                
                                                             } else {
                                                                 swipeConfirmed = false
                                                                 dragOffset = .zero
@@ -856,6 +866,7 @@ struct LiveStream: View {
                             let initialRoomID = liveShowsData[currentStreamIndex].room_id ?? ""
                             loginRoom(roomId: initialRoomID)
                             fetchBiddingDetail(roomId: initialRoomID)
+                            FirebaseManager.shared.observeAllowBidForAll(for: initialRoomID)
                             refreshProductStatus(roomId: liveShowsData[currentStreamIndex].room_id ?? "")
                             if liveShowsData[currentStreamIndex].user?.is_followed == false{
                                 isFollow = false
@@ -958,13 +969,13 @@ struct LiveStream: View {
                         winnerAmount = highestBid["bidAmount"] as? String ?? ""
                         print("Winner: \(winnerName), Amount: \(winnerAmount)")
                         
-                       //MARK: -  For Store bid in database
+                        //MARK: -  For Store bid in database
                         
-//                        Task{
-//                            let showId = self.liveShowsData[safe:currentStreamIndex]?.id ?? 0
-//                            let param = StoreBidRequest(schedule_show_id: "\(showId)", user_id: "\(winnerProfileID)", product_id: productData.first?.id ?? "", bid_price: "\(winnerAmount)")
-//                            await self.viewModel.storeBid(parameters: param)
-//                        }
+                        //                        Task{
+                        //                            let showId = self.liveShowsData[safe:currentStreamIndex]?.id ?? 0
+                        //                            let param = StoreBidRequest(schedule_show_id: "\(showId)", user_id: "\(winnerProfileID)", product_id: productData.first?.id ?? "", bid_price: "\(winnerAmount)")
+                        //                            await self.viewModel.storeBid(parameters: param)
+                        //                        }
                         
                     } else {
                         print("Could not find highestBid in bidData")
@@ -1078,9 +1089,9 @@ struct LiveStream: View {
                 // Optional: handle winner info or store bid in API
                 // let user_Id = data["userId"] as? String
                 
-//                Task{
-//                    self.viewModel.storeBid(parameters: StoreBidRequest(schedule_show_id: self.sheduleShowID, user_id: finalBidData?["bidderId"], product_id: selectedProduct.id, bid_price: finalBidData?["bidAmount"]))
-//                }
+                //                Task{
+                //                    self.viewModel.storeBid(parameters: StoreBidRequest(schedule_show_id: self.sheduleShowID, user_id: finalBidData?["bidderId"], product_id: selectedProduct.id, bid_price: finalBidData?["bidAmount"]))
+                //                }
                 
             }
         }

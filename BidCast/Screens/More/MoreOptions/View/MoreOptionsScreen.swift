@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MoreOptionsScreen: View {
     @State private var selectedOption: String? = nil
+  
 
     @Binding var isPresented: Bool
     @Binding var isVerifiedBuyersOn: Bool
@@ -24,6 +25,7 @@ struct MoreOptionsScreen: View {
     var onRotateCamera: () -> Void
     var onZoomIn: () -> Void
     var onMicToggle: () -> Void
+    var onVerifiedBuyerToggle: ((Bool) -> Void)? = nil
 
     let columns = [GridItem(.flexible()), GridItem(.flexible())]
 
@@ -47,22 +49,25 @@ struct MoreOptionsScreen: View {
                 .padding(.horizontal)
                 ScrollView {
                 // Verified Buyers Toggle
-                Toggle(isOn: $isVerifiedBuyersOn) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        HStack {
-                            Text("Verified Buyers")
-                                .font(.custom(poppinsSemiBold, size: 13.0))
-                            Image(systemName: "questionmark.circle")
+                    Toggle(isOn: $isVerifiedBuyersOn) {
+                        VStack(alignment: .leading, spacing: 4) {
+                            HStack {
+                                Text("Verified Buyers")
+                                    .font(.custom(poppinsSemiBold, size: 13.0))
+                                Image(systemName: "questionmark.circle")
+                                    .foregroundColor(.gray)
+                            }
+                            Text("When on, allows bids from verified buyers only")
+                                .font(.custom(poppinsRegular, size: 11.0))
                                 .foregroundColor(.gray)
                         }
-                        Text("When on, allows bids from verified buyers only")
-                            .font(.custom(poppinsRegular, size: 11.0))
-                            .foregroundColor(.gray)
                     }
-                }
-                .padding(.horizontal,4)
-                Divider()
-
+                    .padding(.horizontal, 4)
+                    Divider()
+                        .onChange(of: isVerifiedBuyersOn) { newValue in
+                            onVerifiedBuyerToggle?(newValue)
+                        }
+                    
                 // Option Buttons Grid
                 LazyVGrid(columns: columns, spacing: 12) {
                     OptionGridButtonView(label: "End Show", icon: "stop.fill", isSelected: selectedOption == "End Show", action: {

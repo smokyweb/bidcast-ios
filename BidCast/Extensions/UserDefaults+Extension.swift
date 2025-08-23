@@ -27,6 +27,17 @@ extension UserDefaults{
             return self.standard.value(forKey: "linkedSpotify") as? Bool ?? false
         }
     }
+    
+    static var allowBidForAllUser:Bool{
+        set(input){
+            self.standard.setValue(input, forKey: "allowBidForAllUser")
+        }
+        get{
+            
+            return self.standard.value(forKey: "allowBidForAllUser") as?  Bool ?? false
+        }
+    }
+    
     static var linkedAppleMusic:Bool {
         set(input){
             self.standard.setValue(input, forKey: "linkedAppleMusic")
