@@ -184,7 +184,8 @@ struct ShopBottomSheetView: View {
     @EnvironmentObject var networkMonitor: NetworkMonitor
     
     // New: store initial selected product ID
-    var initialSelectedProductId: String = ""
+    var initialSelectedProductId: String? = nil
+
     // Toast states
     @State private var showToast = false
     @State private var toastMessage = ""

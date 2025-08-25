@@ -15,6 +15,7 @@ struct BlockedUserList : Codable{
 struct BlockedByUserList : Codable{
     var id: Int?
     var name: String?
+   //var
 }
 
 

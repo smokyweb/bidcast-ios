@@ -436,8 +436,11 @@ struct RehearsalScreen: View {
                     NavFrom: "Rehearsal",
                     onLiveStreamStart: { selectedID in
                         showProductSheet = false
+                        print("product ID is :\(selectedID)")
+                        print("Live Room ID is :\(liveRoomId)")
                         UpdateStatus(status: false, selectedID: selectedID)
-                    }
+                    },
+                    initialSelectedProductId: initialSelectedProductId
                 )
             }
         )
@@ -532,9 +535,11 @@ struct RehearsalScreen: View {
                             NavFrom: "",
                             onAddProduct: { selectedID in
                                 showSellSheet = false
-                                print("product ID is :\(selectedID)")
-                                print("Live Room ID is :\(liveRoomId)")
-                                setProductAsCurrent(selectedID: selectedID)
+                                if !selectedID.isEmpty {
+                                    print("product ID is :\(selectedID)")
+                                    print("Live Room ID is :\(liveRoomId)")
+                                    setProductAsCurrent(selectedID: selectedID)
+                                }
                             },
                             initialSelectedProductId: initialSelectedProductId
                         )
@@ -633,6 +638,8 @@ struct RehearsalScreen: View {
     func fetchLatestProductList(){
         FirebaseManager.shared.listenToLiveProducts(roomId: liveRoomId) { products in
             self.productData = products
+            print("DEBUG: fetchLatestProductList with roomId = \(liveRoomId)")
+            print("DEBUG: initialSelectedProductId= \(initialSelectedProductId)")
             initialSelectedProductId = products.first(where: { $0.isCurrent })?.id ?? ""
         }
     }
@@ -839,7 +846,12 @@ struct RehearsalScreen: View {
                 let is_Live = "true"
                 await viewModel.UpdateLiveShows(param: LiveShowUpdateRequest(schedule_show_id: showUd, is_live: is_Live))
                 await SVProgressHUD.dismiss()
-                success(selectedID: selectedID ?? "")
+                // ✅ Only call success if we have a valid product ID
+                if let validID = selectedID, !validID.isEmpty {
+                    success(selectedID: validID)
+                } else {
+                    print("⚠️ Skipping success(): selectedID is nil or empty")
+                }
             }
         }
     }

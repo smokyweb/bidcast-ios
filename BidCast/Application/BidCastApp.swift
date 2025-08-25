@@ -27,7 +27,6 @@ struct BidCastApp: App {
         if #available(iOS 15.0, *) {
             UITabBar.appearance().scrollEdgeAppearance = appearance
         }
-        
         UITabBar.appearance().unselectedItemTintColor = UIColor.mediumDarkGray
         
         
