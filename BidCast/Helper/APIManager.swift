@@ -30,6 +30,7 @@ final class APIManager {
     }
     
     
+    private static var isShowingUnauthorizedAlert = false
     static let shared = APIManager()
     
     
@@ -74,36 +75,42 @@ final class APIManager {
         guard let response = response as? HTTPURLResponse,
               200 == response.statusCode || 201 == response.statusCode else {
             
-            if let response = response as? HTTPURLResponse, 401 == response.statusCode {
+            // ✅ Handle 401 with single alert
+            if let response = response as? HTTPURLResponse, response.statusCode == 401 {
                 DispatchQueue.main.async {
-                    do {
-                        let dataObj = try JSONDecoder().decode(ApiError.self, from: data)
-                        if dataObj.error_type == "UNAUTHORIZED" {
-                            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                               let rootVC = windowScene.windows.first(where: { $0.isKeyWindow })?.rootViewController {
-                                
-                                let alert = UIAlertController(
-                                    title: "Session Expired",
-                                    message: "Your account has been logged in from another device",
-                                    preferredStyle: .alert
-                                )
-                                
-                                let loginAction = UIAlertAction(title: "Login", style: .default) { _ in
-                                    rootVC.topMostViewController.dismiss(animated: true) {
-                                        NotificationCenter.default.post(name: .userSessionExpired, object: nil)
+                    if !APIManager.isShowingUnauthorizedAlert {
+                        APIManager.isShowingUnauthorizedAlert = true
+                        
+                        do {
+                            let dataObj = try JSONDecoder().decode(ApiError.self, from: data)
+                            if dataObj.error_type == "UNAUTHORIZED" {
+                                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                                   let rootVC = windowScene.windows.first(where: { $0.isKeyWindow })?.rootViewController {
+                                    
+                                    let alert = UIAlertController(
+                                        title: "Session Expired",
+                                        message: "Your account has been logged in from another device",
+                                        preferredStyle: .alert
+                                    )
+                                    
+                                    let loginAction = UIAlertAction(title: "Login", style: .default) { _ in
+                                        APIManager.isShowingUnauthorizedAlert = false // reset ✅
+                                        rootVC.topMostViewController.dismiss(animated: true) {
+                                            NotificationCenter.default.post(name: .userSessionExpired, object: nil)
+                                        }
                                     }
+                                    
+                                    alert.addAction(loginAction)
+                                    rootVC.topMostViewController.present(alert, animated: true, completion: nil)
                                 }
-                                
-                                alert.addAction(loginAction)
-                                rootVC.topMostViewController.present(alert, animated: true, completion: nil)
                             }
+                        } catch {
+                            print("Failed to decode ApiError: \(error)")
                         }
-                    } catch {
-                        print("Failed to decode ApiError: \(error)")
                     }
                 }
             }
-            
+
             
             let dataObj = try JSONDecoder().decode(ApiError.self, from: data)
             print(dataObj)
@@ -111,9 +118,7 @@ final class APIManager {
                 throw DataError.invalidCode(message)
             }else if let errors = dataObj.errors{
                 
-                
-                
-                
+            
                 throw DataError.invalidCode(errors.email)
                 throw DataError.invalidCode(errors.password)
             }else{
@@ -133,6 +138,8 @@ final class APIManager {
             throw error//DataError.invalidResponse(data)
         }
     }
+    
+    
     
     func requestWithJSONBody<T: Decodable>(
         type: EndPointType,
