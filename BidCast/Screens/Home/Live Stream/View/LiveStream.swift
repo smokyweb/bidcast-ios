@@ -71,6 +71,8 @@ struct LiveStream: View {
     @State private var navigateToEditPayment = false
     @State private var navigateToEditAddress = false
     
+    
+    
     var tabBarHeight: CGFloat {
         UIApplication.shared.windows.first?.safeAreaInsets.bottom ?? 49
     }
@@ -119,6 +121,9 @@ struct LiveStream: View {
     @State var productData = [ProductData]()
     @State var currentProductIndex = 0
     
+    @Binding var category : String
+    @Binding var search : String
+    @Binding var currentPage : Int
     var body: some View {
         
         GeometryReader { geometry in
@@ -445,7 +450,7 @@ struct LiveStream: View {
                                                 .font(.custom(poppinsSemiBold, size: 13))
                                                 .foregroundColor(.white)
                                         }
-                                        .frame(width: 60, height: 50)
+                                        .frame(width: 70, height: 50)
                                         .background(Color.black.opacity(0.3))
                                         .cornerRadius(10)
                                     }
@@ -800,7 +805,7 @@ struct LiveStream: View {
                 liveShowsData.removeAll()
                 roomID.removeAll()
                 streamID.removeAll()
-                await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: "live",category: "for_you",search: "", page: "1"))
+                await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: "live",category: category,search: search, page: "\(currentPage)"))
                 success()
                 await self.homeViewModel.getProfile()
                 await SVProgressHUD.dismiss()

@@ -20,7 +20,7 @@ class FirebaseManager {
     private let interval: TimeInterval = 280
     
     @Published var countdown: Int = 30
-    
+    private var hasTimerStarted = false
     private var timer: Timer?
     //    var bidTimers: [String: Timer] = [:]
     private var valueHandle: DatabaseHandle?
@@ -226,7 +226,7 @@ class FirebaseManager {
         ]
         
         let bidPath = databaseRef.child("live_sessions").child(roomId).child("highestBid")
-        let countdownRef = databaseRef.child("live_sessions").child(roomId).child("bidCountDown")
+//        let countdownRef = databaseRef.child("live_sessions").child(roomId).child("bidCountDown")
         
         bidPath.setValue(bidData) { error, _ in
             if let error = error {
@@ -306,7 +306,7 @@ class FirebaseManager {
                     print("🔔 Bid changed! Resetting countdown timer.")
                     previousBidData = newBidData
                     
-                    self.resetAndStartCountdown(for: roomId, onSold: onSold)
+//                    self.resetAndStartCountdown(for: roomId, onSold: onSold)
                 }
             } else {
                 // highestBid removed — remove countdown too

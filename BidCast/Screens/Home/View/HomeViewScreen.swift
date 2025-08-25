@@ -205,6 +205,7 @@ struct HomeViewScreen: View {
                                     userId = "\(item.user?.id ?? 0)"
                                     userImage = item.user?.profile_image ?? ""
                                     userName = item.user?.username ?? ""
+                                    self.selectedButton =  selectedButton == "For You" ? "for_you" : selectedButton
                                    if selectedTab == "upcoming"{
                                         selectedShowUserName = item.user?.name ?? ""
                                         selectedShowUserImage = item.user?.profile_image ?? ""
@@ -242,7 +243,8 @@ struct HomeViewScreen: View {
             .padding([.leading,.trailing],12)
             .padding(.top , 10)
             
-            CusNavLink(doNavigate: $navigateToLiveStream, destination: LiveStream(currentStreamIndex :self.$index, userId : $userId,comeFromHome: $navigateToLiveStream))
+            CusNavLink(doNavigate: $navigateToLiveStream, destination: LiveStream(currentStreamIndex :self.$index, userId : $userId,comeFromHome: $navigateToLiveStream,category: $selectedButton,search:self.$searchText,currentPage:self.$currentPage))
+            
             CusNavLink(doNavigate: $navigateToProfile, destination: ProfileScreen(id:$userId,isComeFrom : .constant("Home"),userName: $userName,userImage: $userImage))
             
             CusNavLink(doNavigate: $navigateToNoti, destination: NotificationScreen())
