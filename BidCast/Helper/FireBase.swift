@@ -301,13 +301,17 @@ class FirebaseManager {
         
         highestBidRef.observe(.value) { snapshot in
             if let newBidData = snapshot.value as? [String: Any] {
-                // Bid changed or added - reset countdown
-                if !NSDictionary(dictionary: newBidData).isEqual(to: previousBidData ?? [:]) {
-                    print("🔔 Bid changed! Resetting countdown timer.")
-                    previousBidData = newBidData
-                    
-//                    self.resetAndStartCountdown(for: roomId, onSold: onSold)
-                }
+                       
+                       if previousBidData == nil {
+                           // 🚀 First bid → start countdown
+                           print("🟢 First bid received, starting countdown at 30s.")
+                           self.resetAndStartCountdown(for: roomId, onSold: onSold)
+                       } else if !NSDictionary(dictionary: newBidData).isEqual(to: previousBidData ?? [:]) {
+                           // 🔔 New bid, but countdown already running → don't reset
+                           print("🔔 New bid placed, countdown continues (no reset).")
+                       }
+                       
+                       previousBidData = newBidData
             } else {
                 // highestBid removed — remove countdown too
                 print("⚠️ highestBid removed, removing countdown too.")

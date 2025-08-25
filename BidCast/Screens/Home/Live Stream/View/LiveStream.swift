@@ -250,7 +250,7 @@ struct LiveStream: View {
                                             .padding(.vertical,4)
                                         }
                                         .frame(width:screenWidth - 90,height: 150)
-                                        .background(Color.black.opacity(0.3))
+//                                        .background(Color.black.opacity(0.3))
                                         .cornerRadius(10)
                                         .padding(.horizontal)
                                         .onChange(of: chatManager.messages) { _ in
@@ -1091,12 +1091,7 @@ struct LiveStream: View {
             bidderProfileImage: UserDefaults.profileURL
         ) { finalBidData in
             if let data = finalBidData {
-                // Optional: handle winner info or store bid in API
-                // let user_Id = data["userId"] as? String
                 
-                //                Task{
-                //                    self.viewModel.storeBid(parameters: StoreBidRequest(schedule_show_id: self.sheduleShowID, user_id: finalBidData?["bidderId"], product_id: selectedProduct.id, bid_price: finalBidData?["bidAmount"]))
-                //                }
                 
             }
         }
