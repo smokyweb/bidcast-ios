@@ -51,13 +51,13 @@ struct BlockedUserScreen: View {
                                     Task { await UnBlockedUser(sellerId: user.id ?? 0) }
                                 } label: {
                                     Image("ic_UnBlock")
-                                    //                                    .foregroundColor(.red)
+                                    //.foregroundColor(.red)
                                 }
-                                .tint(.red)
+                                .tint(.clear)
                             }
                         
                     }
-                    .listRowBackground(Color.white) // Card stays white
+                    .listRowBackground(Color.white)
                 }
                 .listStyle(.plain)
                 .background(Color.white)
@@ -76,7 +76,7 @@ struct BlockedUserScreen: View {
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }
-        .background(Color.white) // ✅ whole screen background white
+        .background(Color.white)
         .onFirstAppear {
             Task { await loadData() }
         }
