@@ -97,7 +97,7 @@ enum APIEndPoint{
     case uploadProductImage
     case deleteProduct(param : DeleteProduct)
     case blockUser(param : BlockUserRequest)
-    case blockedUserList(param : BlockUserList)
+    case blockedUserList
     
     //MARK: OLD
     
@@ -350,12 +350,8 @@ extension APIEndPoint: EndPointType {
             return "delete-product\(param.product_id)"
         case .blockUser:
             return "block-unblock"
-        case .blockedUserList(let param):
-            if let blockedBy = param.blocked_by {
-                return "blocked-users?blocked_by=\(blockedBy)"
-            } else {
-                return "blocked-users"
-            }
+        case .blockedUserList:
+           return  "blocked-users"
             
             
             //MARK: Old
@@ -1502,7 +1498,7 @@ extension APIEndPoint: EndPointType {
             return nil
         case .blockUser(param: let param):
             return nil
-        case .blockedUserList(param: let param):
+        case .blockedUserList:
             return nil
         }
     }

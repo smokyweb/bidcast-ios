@@ -13,10 +13,10 @@ final class BlockedUserListViewModel: ObservableObject {
     @Published var blockedUserListResponse = ResponseModel<BlockedUserList>()
     @Published var errorMessage: String? = nil
 
-    func getBlockUser(param: BlockUserList) async {
+    func getBlockUser() async {
         do {
             let response: ResponseModel<BlockedUserList> = try await APIManager.shared.request(
-                type: APIEndPoint.blockedUserList(param: param),
+                type: APIEndPoint.blockedUserList,
                 header: true
             )
             self.blockedUserListResponse = response

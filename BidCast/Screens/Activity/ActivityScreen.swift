@@ -370,7 +370,7 @@ struct ActivityScreen: View {
             return
         }
         SVProgressHUD.show()
-        await blockedViewModel.getBlockUser(param: BlockUserList(blocked_by: true))
+        await blockedViewModel.getBlockUser()
         await SVProgressHUD.dismiss()
         
         if blockedViewModel.blockedUserListResponse.status != "success" {
@@ -384,7 +384,7 @@ struct ActivityScreen: View {
             )
             withAnimation(.snappy) { showError = true }
         } else {
-            blockedUsers = blockedViewModel.blockedUserListResponse.data?.data ?? []
+            blockedUsers = blockedViewModel.blockedUserListResponse.data?.blockedMe ?? []
         }
     }
 

@@ -7,15 +7,22 @@
 
 import Foundation
 
-struct BlockedUserList : Codable{
-    var status: Bool?
-    var data : [BlockedByUserList]?
+
+// MARK: - BlockedUserList
+struct BlockedUserList: Codable {
+    var blockedByMe, blockedMe: [BlockedByUserList]?
+    
+    enum CodingKeys: String, CodingKey {
+        case blockedByMe = "blocked_by_me"
+        case blockedMe = "blocked_me"
+    }
 }
 
-struct BlockedByUserList : Codable{
+// MARK: - BlockedByUserList
+struct BlockedByUserList: Codable {
     var id: Int?
     var name: String?
-   //var
+    var image: String?
 }
 
 
