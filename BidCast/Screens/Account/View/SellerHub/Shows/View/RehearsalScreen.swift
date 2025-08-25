@@ -435,6 +435,11 @@ struct RehearsalScreen: View {
                     productData: $productData,
                     NavFrom: "Rehearsal",
                     onLiveStreamStart: { selectedID in
+                        guard Reachability.isConnectedToNetwork() else {
+                            hudMsg = "No Internet Connection"
+                            showhud = true
+                            return
+                        }
                         showProductSheet = false
                         print("product ID is :\(selectedID)")
                         print("Live Room ID is :\(liveRoomId)")
