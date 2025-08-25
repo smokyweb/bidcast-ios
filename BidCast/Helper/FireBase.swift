@@ -621,7 +621,6 @@ class FirebaseManager {
             }
         }
     }
-    
     func listenToLiveProducts(roomId: String, completion: @escaping ([ProductData]) -> Void) {
         guard !roomId.isEmpty else {
             print("⚠️ listenToLiveProducts called with empty roomId")

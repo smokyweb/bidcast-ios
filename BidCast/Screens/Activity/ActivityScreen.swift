@@ -29,9 +29,15 @@ struct ActivityScreen: View {
     @State private var isNavigatingToChat = false
     @State private var chatPath: String = ""
     @StateObject private var blockedViewModel = BlockedUserListViewModel()
-    @State private var blockedUsers: [BlockedByUserList] = []
+    @State private var blockedMe: [BlockedByUserList] = []
+    @State private var blockedByMe: [BlockedByUserList] = []
     @State var blockedSheet: Bool = false
+    @State var blockedBySheet: Bool = false
     @State var navigateToBlockedList : Bool = false
+    @State var showToast = false
+    @State var toastMessage = ""
+    @State var blockUserName = ""
+    @State var blockUserImage = ""
 
     
     @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
@@ -91,16 +97,21 @@ struct ActivityScreen: View {
                                 MessageRow(
                                     message: message,
                                     currentUserId: String(UserDefaults.userId),
-                                    blockedUsers: blockedUsers,
-                                    onBlocked: {
+                                    blockedMe: blockedMe,
+                                    blockedByMe: blockedByMe,
+                                    onBlockedByMe: {
                                         blockedSheet = true
+                                    },
+                                    onBlockedMe: {
+                                        blockUserName = message.users.senderId == String(UserDefaults.userId) ? message.users.receiverName : message.users.senderName
+                                        blockUserImage = message.users.senderId == String(UserDefaults.userId) ? message.users.receiverImage : message.users.senderImage
+                                        blockedBySheet = true
                                     },
                                     onAllowed: {
                                         prepareChatNavigation(for: message)
                                     }
                                 )
                             }
-
 
                         }
                         
@@ -225,6 +236,18 @@ struct ActivityScreen: View {
                  withAnimation(.snappy) { blockedSheet = false }
              })
          })
+         .bottomSheet(isPresented: $blockedBySheet,height: screenHeight * 0.40) {
+             BlockedUserSheet(profileImage: blockUserImage,
+                              username: blockUserName,
+                              winnerProfileID: 1,
+                              showParentToast: $showToast,
+                              parentToastMessage: $toastMessage,
+                              onDismiss: {
+                 self.blockedBySheet = false
+             }
+             )
+         }
+         
         .onAppear {
             UIScrollView.appearance().bounces = false
             Task {
@@ -384,9 +407,11 @@ struct ActivityScreen: View {
             )
             withAnimation(.snappy) { showError = true }
         } else {
-            blockedUsers = blockedViewModel.blockedUserListResponse.data?.blockedMe ?? []
+            blockedMe = blockedViewModel.blockedUserListResponse.data?.blockedMe ?? []
+            blockedByMe = blockedViewModel.blockedUserListResponse.data?.blockedByMe ?? []
         }
     }
+
 
     
     
@@ -494,6 +519,23 @@ struct ActivityScreen: View {
             return "\(viewModel.offerListResponse.declined ?? 0)"
         }
     }
+    
+    func checkBlockStatus(for targetUserId: Int, blockedData: BlockedUserList) -> BlockStatus {
+        if ((blockedData.blockedByMe?.contains(where: { $0.id == targetUserId })) != nil) {
+            return .blockedByMe
+        } else if ((blockedData.blockedByMe?.contains(where: { $0.id == targetUserId })) != nil) {
+            return .blockedMe
+        } else {
+            return .notBlocked
+        }
+    }
+
+    enum BlockStatus {
+        case blockedByMe
+        case blockedMe
+        case notBlocked
+    }
+
 }
 
 
@@ -566,9 +608,11 @@ struct MessageCell: View {
 struct MessageRow: View {
     let message: ChatMessage
     let currentUserId: String
-    let blockedUsers: [BlockedByUserList]
+    let blockedMe: [BlockedByUserList]
+    let blockedByMe: [BlockedByUserList]
     
-    var onBlocked: () -> Void
+    var onBlockedByMe: () -> Void
+    var onBlockedMe: () -> Void
     var onAllowed: () -> Void
     
     private var otherUserId: String {
@@ -577,10 +621,12 @@ struct MessageRow: View {
         return senderId == currentUserId ? receiverId : senderId
     }
     
-    private var isBlocked: Bool {
-        blockedUsers.contains { user in
-            String(user.id ?? -1) == otherUserId
-        }
+    private var isBlockedByMe: Bool {
+        blockedByMe.contains { String($0.id ?? -1) == otherUserId }
+    }
+    
+    private var isBlockedMe: Bool {
+        blockedMe.contains { String($0.id ?? -1) == otherUserId }
     }
     
     var body: some View {
@@ -602,7 +648,6 @@ struct MessageRow: View {
                         .font(.system(size: 14))
                         .foregroundColor(.gray)
                 }
-                
                 Text(message.message)
                     .font(.system(size: 15))
             }
@@ -612,9 +657,10 @@ struct MessageRow: View {
         .cornerRadius(12)
         .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
         .onTapGesture {
-            print("Tapped userId:", otherUserId, "Blocked IDs:", blockedUsers.map { $0.id })
-            if isBlocked {
-                onBlocked()
+            if isBlockedByMe {
+                onBlockedByMe()
+            } else if isBlockedMe {
+                onBlockedMe()
             } else {
                 onAllowed()
             }
@@ -640,3 +686,4 @@ struct MessageRow: View {
         return formatter.string(from: date)
     }
 }
+
