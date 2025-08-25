@@ -38,27 +38,32 @@ struct BlockedUserScreen: View {
             )
             
             // Scrollable list of blocked users
-            List {
-                ForEach(blockedUsers, id: \.id) { user in
-                    BlockedUserCard(user: user)
-                        .listRowSeparator(.hidden)
-                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                            Button {
-                                Task { await UnBlockedUser(sellerId: user.id ?? 0) }
-                            } label: {
-                                Image(systemName: "person.crop.circle.badge.minus")
-                                    .foregroundColor(.red)
+            if blockedUsers.isEmpty{
+                NoDataView(message: "No blocked user found")
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }else{
+                List {
+                    ForEach(blockedUsers, id: \.id) { user in
+                        BlockedUserCard(user: user)
+                            .listRowSeparator(.hidden)
+                            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                Button {
+                                    Task { await UnBlockedUser(sellerId: user.id ?? 0) }
+                                } label: {
+                                    Image("ic_UnBlock")
+                                    //                                    .foregroundColor(.red)
+                                }
+                                .tint(.red)
                             }
-                            .tint(.red)
-                        }
-
+                        
+                    }
+                    .listRowBackground(Color.white) // Card stays white
                 }
-                .listRowBackground(Color.white) // Card stays white
-            }
-            .listStyle(.plain)
-            .background(Color.white)
-            .refreshable {
-                await loadData()
+                .listStyle(.plain)
+                .background(Color.white)
+                .refreshable {
+                    await loadData()
+                }
             }
             
             Spacer()

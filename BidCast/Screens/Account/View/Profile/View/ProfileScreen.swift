@@ -677,7 +677,8 @@ struct ProfileHeaderView: View {
             hudMsg = response?.message ?? ""
             showhud = true
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                navigateToHome = true
+//                navigateToHome = true
+                self.presentationMode.wrappedValue.dismiss()
             }
         } else {
             alertType = .sheetType(icon: .alert, title: response?.status?.capitalized ?? "", message: response?.message?.capitalized ?? "", primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .defaultTheme)
