@@ -599,6 +599,8 @@ class FirebaseManager {
             }
         }
     }
+    
+    
     func markProductAsSold(roomId: String, productId: String, completion: ((Error?) -> Void)? = nil) {
         let productsRef = Database.database().reference()
             .child("live_sessions")
@@ -612,19 +614,32 @@ class FirebaseManager {
                 return
             }
             
+            var didUpdate = false
+            
             for (index, var product) in products.enumerated() {
                 if let pid = product["id"] as? String, pid == productId {
                     product["status"] = "sold"
+                    product["isCurrent"] = false   // 🔹 also set isCurrent to false
                     products[index] = product
+                    didUpdate = true
                     break
                 }
             }
             
-            productsRef.setValue(products) { error, _ in
-                completion?(error)
+            if didUpdate {
+                productsRef.setValue(products) { error, _ in
+                    completion?(error)
+                }
+            } else {
+                completion?(NSError(domain: "", code: 404, userInfo: [NSLocalizedDescriptionKey: "Product not found"]))
             }
         }
     }
+
+    
+    
+    
+    
     func listenToLiveProducts(roomId: String, completion: @escaping ([ProductData]) -> Void) {
         guard !roomId.isEmpty else {
             print("⚠️ listenToLiveProducts called with empty roomId")

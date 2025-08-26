@@ -1140,13 +1140,22 @@ struct LiveStream: View {
         }
     }
     
-    
     func refreshProductStatus(roomId: String) {
         
         FirebaseManager.shared.observeProductChanges(roomId: roomId) { updatedProducts in
             DispatchQueue.main.async {
-                self.BiddingDetail.products = updatedProducts
-                let availableProducts = updatedProducts.filter { $0.status.lowercased() != "sold" }
+                
+                // 🔹 Reset isCurrent if sold
+                let cleanedProducts = updatedProducts.map { product -> ProductData in
+                    var mutable = product
+                    if product.status.lowercased() == "sold" {
+                        mutable.isCurrent = false
+                    }
+                    return mutable
+                }
+                
+                self.BiddingDetail.products = cleanedProducts
+                let availableProducts = cleanedProducts.filter { $0.status.lowercased() != "sold" }
                 
                 if let currentIndex = availableProducts.firstIndex(where: { $0.isCurrent }) {
                     var reordered = availableProducts
@@ -1183,7 +1192,7 @@ struct LiveStream: View {
             }
         }
     }
-    
+
     
     
     
