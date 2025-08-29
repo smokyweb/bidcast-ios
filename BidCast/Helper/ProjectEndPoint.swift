@@ -98,6 +98,7 @@ enum APIEndPoint{
     case deleteProduct(param : DeleteProduct)
     case blockUser(param : BlockUserRequest)
     case blockedUserList
+    case getMailClass
     
     //MARK: OLD
     
@@ -352,6 +353,20 @@ extension APIEndPoint: EndPointType {
             return "block-unblock"
         case .blockedUserList:
            return  "blocked-users"
+        case .getMailClass:
+            return "usps/mail-classes"
+        case .getPayOutHistory:
+            return "stripe/payout-history"
+        case .getKycDetails:
+            return "stripe/kyc-details"
+        case .checkKYC:
+            return "stripe/check-Kyc"
+        case .fundTransfer:
+            return "stripe/fund-transfer"
+        case .getTotalRating(let param):
+            return "get-seller-rating?seller_id=\(param.seller_id)"
+        case .addRating:
+            return "seller-rating"
             
             
             //MARK: Old
@@ -498,21 +513,12 @@ extension APIEndPoint: EndPointType {
             return "get_jobs?category=\(param.category)&job_title=\(param.job_title)&salary=\(param.salary)"
         case .removeSavedJob:
             return "save-job"
-        case .getPayOutHistory:
-            return "stripe/payout-history"
-        case .getKycDetails:
-            return "stripe/kyc-details"
-        case .checkKYC:
-            return "stripe/check-Kyc"
-        case .fundTransfer:
-            return "stripe/fund-transfer"
-        case .getTotalRating(let param):
-            return "get-seller-rating?seller_id=\(param.seller_id)"
-        case .addRating:
-            return "seller-rating"
+            
+       
         case .sendChatNotification:
             return "send-chat-notification"
         
+       
         }
     }
     
@@ -591,9 +597,6 @@ extension APIEndPoint: EndPointType {
             return .post
         case .followUnfollow:
             return .post
-            
-            
-            //MARK: Faz
         case .fetchProduct:
             return .post
         case .storeIDCard:
@@ -681,6 +684,8 @@ extension APIEndPoint: EndPointType {
         case .blockUser:
             return .post
         case .blockedUserList:
+            return .get
+        case .getMailClass:
             return .get
             
             //MARK: Old
@@ -845,6 +850,7 @@ extension APIEndPoint: EndPointType {
         case .sendChatNotification:
             return .post
        
+        
         }
     }
     
@@ -1020,6 +1026,8 @@ extension APIEndPoint: EndPointType {
             return param
         case .blockedUserList:
             return nil
+        case .getMailClass:
+            return nil
             
             
             
@@ -1183,6 +1191,7 @@ extension APIEndPoint: EndPointType {
         case .sendChatNotification(let param):
             return param
       
+       
         }
     }
     
@@ -1499,6 +1508,8 @@ extension APIEndPoint: EndPointType {
         case .blockUser(param: let param):
             return nil
         case .blockedUserList:
+            return nil
+        case .getMailClass:
             return nil
         }
     }

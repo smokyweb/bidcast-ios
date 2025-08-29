@@ -14,100 +14,96 @@ struct DropDownSelection: View {
     @State var floatingLabel: String = ""
     @State var hint: String = ""
     
-    
     @Binding var selected: String
-    @State var showOption: Bool = false
+    @State private var showOption: Bool = false
+    
     var anchor: Anchor = .bottom
-    var maxWidth: CGFloat = screenWidth - 30
+    var maxWidth: CGFloat = UIScreen.main.bounds.width - 30
     var cornerRadius: CGFloat = 9
+    
     @State var custFontName: String = poppinsBold
     @State var custFontSize: Double = 13.0
-    @State var custCategory : String = poppinsMedium
-    @State var custCategorySize : Double = 13.0
+    @State var custCategory: String = poppinsMedium
+    @State var custCategorySize: Double = 13.0
     
     var onOptionSelected: ((String) -> Void)?
     
     @Environment(\.colorScheme) private var scheme
+    
     @SceneStorage("drop_down_zindex") private var index = 1001.0
-    @State var zIndex = 1000.0
+    @State private var zIndex = 1000.0
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             if floatingLabel != "" {
                 Text(floatingLabel)
                     .font(.custom(custFontName, fixedSize: custFontSize))
-                //                    .bold()
                     .foregroundStyle(.text)
                     .multilineTextAlignment(.leading)
             }
-            GeometryReader {
-                let size = $0.size
-                VStack(spacing: 0, content: {
-                    
-                    if showOption && anchor == .top {
-                        optionView().background(.white)
-                    }
-                    
-                    HStack(spacing: 0, content: {
-                        Text(selected == "" ? hint : selected )
-                            .font(.custom(custCategory, fixedSize: custCategorySize))
-                            .foregroundStyle(selected == "" ? .gray : .text)
-                        Spacer()
-                        Image(.arrowForward)
-                            .renderingMode(.template)
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 16, height: 16)
-                            .foregroundStyle(.text)
-                            .rotationEffect(.init(degrees: showOption ? 0 : -90))
-                        
-                    })
-                    .padding(.horizontal, 16)
-                    .frame(width: size.width, height: size.height)
-                    .background(scheme == .dark ? .black : .white)
-                    .contentShape(.rect)
-                    .onTapGesture {
-                        index += 1
-                        zIndex = index
-                        withAnimation(.snappy) {
-                            showOption.toggle()
-                        }
-                    }
-                    .zIndex(10)
-                    
-                    if showOption && anchor == .bottom {
-                        optionView().background(.white)
-                    }
-                })
-                .clipped()
-                .background((scheme == .dark ? Color.black : Color.white))
+            
+            ZStack(alignment: anchor == .top ? .bottom : .top) {
+                
+                // Main button
+                HStack {
+                    Text(selected == "" ? hint : selected)
+                        .font(.custom(custCategory, fixedSize: custCategorySize))
+                        .foregroundStyle(selected == "" ? .gray : .text)
+                    Spacer()
+                    Image(.arrowForward)
+                        .renderingMode(.template)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 16, height: 16)
+                        .foregroundStyle(.text)
+                        .rotationEffect(.degrees(showOption ? 0 : -90))
+                }
+                .padding(.horizontal, 16)
+                .frame(height: 50)
+                .background(scheme == .dark ? .black : .white)
                 .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
-                .shadow(color: .gray, radius: 1, x: 0, y: 0)
-                .frame(height: size.height, alignment: anchor == .top ? .bottom : .top)
+                .shadow(color: .gray.opacity(0.5), radius: 1, x: 0, y: 0)
+                .onTapGesture {
+                    index += 1
+                    zIndex = index
+                    withAnimation(showOption ? .none : .snappy) {
+                        showOption.toggle()
+                    }
+                    
+                }
+                
+                // Dropdown Options (overlayed, never clipped)
+                if showOption {
+                    optionView()
+                        .background(Color.white)
+                        .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
+                        .shadow(radius: 1)
+                        .padding(.top, anchor == .bottom ? 50 : 0)
+                        .padding(.bottom, anchor == .top ? 50 : 0)
+                        .zIndex(zIndex + 1)
+                        .transition(.move(edge: anchor == .top ? .bottom : .top))
+                }
             }
-            .frame(width: maxWidth, height: 50)
-            .zIndex(zIndex + 1)
+            .frame(width: maxWidth)
+            .zIndex(zIndex)
         }
     }
     
     @ViewBuilder
     func optionView() -> some View {
-        VStack(spacing: 2) {
-            ScrollView(showsIndicators: false) {
-                ForEach(options, id: \.self) {
-                    ind in
-                    HStack(spacing: 0, content: {
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 2) {
+                ForEach(options, id: \.self) { ind in
+                    HStack {
                         Text(ind)
                             .lineLimit(1)
                             .font(.custom(poppinsRegular, fixedSize: 11))
                         Spacer()
                         Image(systemName: "checkmark")
                             .opacity(selected == ind ? 1 : 0)
-                    })
+                    }
                     .frame(height: 30)
-                    .foregroundStyle(selected == ind ? Color.defaultTheme : Color.gray)
-                    .animation(.none, value: selected)
-                    .contentShape(.rect)
+                    .foregroundStyle(selected == ind ? Color.defaultTheme : .gray)
                     .onTapGesture {
                         withAnimation(.snappy) {
                             selected = ind
@@ -117,11 +113,9 @@ struct DropDownSelection: View {
                     }
                 }
             }
+            .padding(.horizontal)
         }
         .frame(height: options.count > 3 ? 200 : CGFloat(options.count) * 42)
-        .padding(.horizontal)
-        .transition(.move(edge: anchor == .top ? .bottom : .top))
-        .background(.white)
     }
     
     enum Anchor {
@@ -129,6 +123,7 @@ struct DropDownSelection: View {
         case bottom
     }
 }
+
 
 //#Preview {
 //    DropDownSelection(options: .constant([]))

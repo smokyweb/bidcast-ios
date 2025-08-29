@@ -13,6 +13,7 @@ final class ListProductViewModel: ObservableObject {
     
     @Published var categoryResponse: ResponseModal<[CategoryDataModel]>?
     @Published var storeProductResponse: ResponseModal<StoreProductModel>?
+    @Published var mailClassResponse: ResponseModal<MailClassesData>?
     @Published var storeImageResponse: ResponseModal<[ImageModel]>?
     @Published var errorMessage: String?
     @Published var addressesResponse : ResponseModal<[AddressModel]>?
@@ -28,7 +29,22 @@ final class ListProductViewModel: ObservableObject {
             )
             self.categoryResponse = response
         } catch {
-            self.errorMessage = error.localizedDescription
+           
+            self.handle(error: error)
+        }
+    }
+    
+    // MARK: - Get Category List
+    func getMailClasses() async {
+        requestType = "mail"
+        do {
+            let response: ResponseModal<MailClassesData> = try await APIManager.shared.request(
+                type: APIEndPoint.getMailClass,
+                header: true
+            )
+            self.mailClassResponse = response
+        } catch {
+            self.handle(error: error)
         }
     }
     
@@ -46,7 +62,7 @@ final class ListProductViewModel: ObservableObject {
             }
         } catch {
             DispatchQueue.main.async {
-                self.errorMessage = error.localizedDescription
+                self.handle(error: error)
             }
         }
     }
@@ -71,7 +87,7 @@ final class ListProductViewModel: ObservableObject {
 
         } catch {
             DispatchQueue.main.async {
-                self.errorMessage = error.localizedDescription
+                self.handle(error: error)
             }
         }
     }
@@ -88,8 +104,30 @@ final class ListProductViewModel: ObservableObject {
                addressesResponse = response
            }
         } catch {
-            self.errorMessage = error.localizedDescription
+            self.handle(error: error)
         }
        
     }
+
+
+// MARK: - Centralized Error Handler
+private func handle(error: Error) {
+    if let dataError = error as? DataError {
+        switch dataError {
+        case .invalidCode(let message):
+            self.errorMessage = message ?? "Invalid code error"
+        case .invalidResponse(let data):
+            if let data = data,
+               let json = try? JSONSerialization.jsonObject(with: data, options: []) {
+                self.errorMessage = "Invalid response: \(json)"
+            } else {
+                self.errorMessage = "Invalid response with no data"
+            }
+        default:
+            self.errorMessage = error.localizedDescription
+        }
+    } else {
+        self.errorMessage = error.localizedDescription
+    }
+}
 }

@@ -30,7 +30,8 @@ struct ListProductScreen: View {
     @State var shippingAddressName: [String] = []
     @State var shippingId = ""
     @State var ShippingAddress: [AddressModel] = []
-    @State var request : StoreProductParam = StoreProductParam(category_id: "", title: "", description: "", quantity: "", pricing: "", flash_sale: "0", accept_offers: "0", reserve_for_live: "0", shipping_profile_id: "", status: "",sub_category_id: "")
+    @State var mailClassList = [String]()
+    @State var request : StoreProductParam = StoreProductParam(category_id: "", title: "", description: "", quantity: "", pricing: "", flash_sale: "0", accept_offers: "0", reserve_for_live: "0", shipping_profile_id: "", status: "",sub_category_id: "",width: "",length: "", weight: "",height:"",mail_class:"",processing_category:"")
     
     @State var viewModel = ListProductViewModel()
     @State var imageUrls: [String] = []
@@ -44,7 +45,7 @@ struct ListProductScreen: View {
     @State var subCategoryName : [String] = [""]
     @Binding var productData : InventoryDataModel
     @State var extraFields: [ExtraFieldModel] = []
-    
+    @State var processingListArr = ["LETTERS","FLATS","MACHINABLE","NONSTANDARD","NON_MACHINABLE"]
     @State var extraFieldValues: [String: String] = [:]
     @State var selectedRadio: [String: String] = [:]
 
@@ -141,6 +142,79 @@ struct ListProductScreen: View {
                         })
                         .keyboardType(.numberPad)
                         .padding([.bottom],4)
+                        AuthTextField(floatingLabel: "Width (cm)".localized, placeholder: "Enter width".localized, icon: .menuProfile, text: $request.width ,isIconDisplay : false,
+                                      custFontName : robotoMedium,
+                                      custFontSize : 14.0,
+                                      enteredText:  { quantity in
+                            request.width = quantity
+                        })
+                        .keyboardType(.decimalPad)
+                        .padding([.bottom],4)
+                        AuthTextField(floatingLabel: "Height (cm)".localized, placeholder: "Enter height".localized, icon: .menuProfile, text: $request.height ,isIconDisplay : false,
+                                      custFontName : robotoMedium,
+                                      custFontSize : 14.0,
+                                      enteredText:  { quantity in
+                            request.height = quantity
+                        })
+                        .keyboardType(.decimalPad)
+                        .padding([.bottom],4)
+                        AuthTextField(floatingLabel: "Length (cm)".localized, placeholder: "Enter length".localized, icon: .menuProfile, text: $request.length ,isIconDisplay : false,
+                                      custFontName : robotoMedium,
+                                      custFontSize : 14.0,
+                                      enteredText:  { quantity in
+                            request.length = quantity
+                        })
+                        .keyboardType(.decimalPad)
+                        .padding([.bottom],4)
+                        AuthTextField(floatingLabel: "Weight (lbs)".localized, placeholder: "Enter Weight".localized, icon: .menuProfile, text: $request.weight ,isIconDisplay : false,
+                                      custFontName : robotoMedium,
+                                      custFontSize : 14.0,
+                                      enteredText:  { quantity in
+                            request.weight = quantity
+                        })
+                        .keyboardType(.decimalPad)
+                        .padding([.bottom],4)
+                        DropDownSelection(
+                            options: $mailClassList, floatingLabel:"Mail Class",
+                            hint: "Select",
+                            selected: $request.mail_class,
+                            anchor: .bottom,
+                            custFontName: robotoMedium,
+                            custFontSize:  14.0,
+                            custCategory : robotoRegular,
+                            custCategorySize : 13.0,
+                            onOptionSelected: { value in
+                                selectedCategory = value
+//                                if let id = categoryList.first(where: { $0.name == value })?.id {
+//                                    request.mail_class = "\(id)"
+//                                } else {
+                                    request.mail_class = value
+//                                }
+                               
+                            }
+                        )
+                        
+                        .padding([.leading,.trailing],16)
+                        DropDownSelection(
+                            options: $processingListArr, floatingLabel:"Processing Category",
+                            hint: "Select",
+                            selected: $request.processing_category,
+                            anchor: .top,
+                            custFontName: robotoMedium,
+                            custFontSize:  14.0,
+                            custCategory : robotoRegular,
+                            custCategorySize : 13.0,
+                            onOptionSelected: { value in
+                                selectedCategory = value
+//                                if let id = categoryList.first(where: { $0.name == value })?.id {
+                                    request.processing_category = value
+//                                } else {
+//                                    request.processing_category = ""
+//                                }
+                            }
+                        )
+                       
+                        .padding([.leading,.trailing],16)
                         
                          let extraFields = self.extraFields
                         if extraFields.count != 0{
@@ -216,14 +290,14 @@ struct ListProductScreen: View {
                                       custFontName : robotoMedium,
                                       custFontSize : 14.0,
                                       enteredText:  { price in
-                            if let amt = Double(price) {
-                                if amt < 1.0 {
-                                    hudMsg = "Price should not be less than $1.00"
-                                    showhud = true
-                                } else {
+//                            if let amt = Double(price) {
+//                                if amt < 1.0 {
+//                                    hudMsg = "Price should not be less than $1.00"
+//                                    showhud = true
+//                                } else {
                                     request.pricing = price
-                                }
-                            }
+//                                }
+//                            }
                         })
                         .keyboardType(.numberPad)
                         //                        .padding(.horizontal , 16)
@@ -274,7 +348,7 @@ struct ListProductScreen: View {
                             floatingLabel:"Shipping Profile",
                             hint: "Select Profile",
                             selected: $shippingId,
-                            anchor: .top,
+                            anchor: .bottom,
                             custFontName: robotoMedium,
                             custFontSize:  14.0,
                             custCategory : robotoRegular,
@@ -300,7 +374,7 @@ struct ListProductScreen: View {
                     TwoButton(titleOne: "Save Draft", titleTwo: "Publish", onFirstButtonClick: {
                         print(request)
                         print(imageUrls)
-                        guard !imageUrls.isEmpty else{
+                        guard !imageUrls.isEmpty,imageUrls.count != 0 else{
                             hudMsg = "Please select images"
                             showhud = true
                             return
@@ -325,39 +399,59 @@ struct ListProductScreen: View {
                             showhud = true
                             return
                         }
+                        guard let quantity = Double(request.quantity), quantity >= 1.0 else{
+                            hudMsg = "Please enter quantity greater than 1"
+                            showhud = true
+                            return
+                        }
+                        guard !request.width.isEmpty else{
+                            hudMsg = "Please enter width"
+                            showhud = true
+                            return
+                        }
+                        guard !request.height.isEmpty else{
+                            hudMsg = "Please enter height"
+                            showhud = true
+                            return
+                        }
+                        guard !request.length.isEmpty else{
+                            hudMsg = "Please enter length"
+                            showhud = true
+                            return
+                        }
+                        guard !request.weight.isEmpty else{
+                            hudMsg = "Please enter weight"
+                            showhud = true
+                            return
+                        }
+                        guard !request.mail_class.isEmpty else{
+                            hudMsg = "Please select mail class"
+                            showhud = true
+                            return
+                        }
+                        guard !request.processing_category.isEmpty else{
+                            hudMsg = "Please select processing category"
+                            showhud = true
+                            return
+                        }
                         guard !request.pricing.isEmpty else{
                             hudMsg = "Please enter pricing"
                             showhud = true
                             return
                         }
+                        guard let amt = Double(request.pricing), amt >= 1.0 else {
+                            hudMsg = "Price should not be less than $1.00"
+                            showhud = true
+                            return
+                        }
+                        
+                        
                         guard !request.shipping_profile_id.isEmpty else{
                             hudMsg = "Please select shipping address"
                             showhud = true
                             return
                         }
                         request.status = "draft"
-//                        Task{
-//                           guard Reachability.isConnectedToNetwork() else {
-//                                hudMsg = "No Internet Connection"
-//                                showhud = true
-//                                return
-//                            }
-//                            SVProgressHUD.show()
-//                            await viewModel.storeProduct(param: request, images: imageUrls, key: "images[]")
-//                            await SVProgressHUD.dismiss()
-//                            if self.viewModel.errorMessage != "" || self.viewModel.errorMessage != nil{
-//                                storeSuccess()
-//                            }else{
-//                                alertType = .sheetType(
-//                                    icon: .alert,
-//                                    title: "Failed",
-//                                    message: viewModel.errorMessage ?? "",
-//                                    primaryBtnText: "",
-//                                    secondaryBtnText: AppString.ok.localized
-//                                )
-//                                showError = true
-//                            }
-//                        }
                         
                         Task{
                            guard Reachability.isConnectedToNetwork() else {
@@ -409,11 +503,52 @@ struct ListProductScreen: View {
                             showhud = true
                             return
                         }
+                        guard let quantity = Double(request.quantity), quantity >= 1.0 else{
+                            hudMsg = "Please enter quantity greater than 1"
+                            showhud = true
+                            return
+                        }
+                        guard !request.width.isEmpty else{
+                            hudMsg = "Please enter width"
+                            showhud = true
+                            return
+                        }
+                        guard !request.height.isEmpty else{
+                            hudMsg = "Please enter height"
+                            showhud = true
+                            return
+                        }
+                        guard !request.length.isEmpty else{
+                            hudMsg = "Please enter length"
+                            showhud = true
+                            return
+                        }
+                        guard !request.weight.isEmpty else{
+                            hudMsg = "Please enter weight"
+                            showhud = true
+                            return
+                        }
+                        guard !request.mail_class.isEmpty else{
+                            hudMsg = "Please select mail class"
+                            showhud = true
+                            return
+                        }
+                        guard !request.processing_category.isEmpty else{
+                            hudMsg = "Please select processing category"
+                            showhud = true
+                            return
+                        }
                         guard !request.pricing.isEmpty else{
                             hudMsg = "Please enter pricing"
                             showhud = true
                             return
                         }
+                        guard let amt = Double(request.pricing), amt >= 1.0 else {
+                            hudMsg = "Price should not be less than $1.00"
+                            showhud = true
+                            return
+                        }
+                        
                         guard !request.shipping_profile_id.isEmpty else{
                             hudMsg = "Please select shipping address"
                             showhud = true
@@ -518,8 +653,11 @@ struct ListProductScreen: View {
                 categorySuccess()
                 
                 await viewModel.getAddresses()
-                await SVProgressHUD.dismiss()
                 shippingAddressSuccess()
+                await viewModel.getMailClasses()
+                await SVProgressHUD.dismiss()
+                mailSuccess()
+                
                 
                 
             }
@@ -528,7 +666,26 @@ struct ListProductScreen: View {
             UIApplication.shared.endEditing()
         }
     }
-
+    
+    func mailSuccess() {
+       
+        let response = viewModel.mailClassResponse
+        if response?.status == "success" {
+            let data = response?.data.mail_classes ?? [MailClass]()
+            self.mailClassList = data.map {$0.label }
+        } else {
+            alertType = .sheetType(
+                icon: .alert,
+                title: response?.error_type?.capitalized ?? "",
+                message: response?.message?.capitalized ?? "",
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
+            )
+            showError = true
+            
+            
+        }
+    }
     func categorySuccess() {
        
         let response = viewModel.categoryResponse
@@ -567,13 +724,31 @@ struct ListProductScreen: View {
                                             accept_offers: productData.acceptOffers ?? false ? "1" : "0",
                                             reserve_for_live: productData.reserveForLive ?? false ? "1" : "0",
                                             shipping_profile_id: "\(productData.shippingProfileID ?? 0)",
-                                            status: productData.status ?? "")
+                                            status: productData.status ?? "",
+                                            width : "",
+                                            length : "",
+                                            weight : "",
+                                            height : "",
+                                            mail_class : "",
+                                            processing_category : "")
              
                 isTappedFlash = productData.flashSale ?? false ? true : false
                 isTappedAccept = productData.acceptOffers ?? false ? true : false
                 isTappedReserve = productData.reserveForLive ?? false ? true : false
                
-                self.imageUrls = productData.images ?? [""]
+                self.imageUrls = productData.images ?? [String]()
+                if request.category_id == "0"{
+                    request.category_id.removeAll()
+                }
+                if request.quantity == "0"{
+                    request.quantity.removeAll()
+                }
+                if request.pricing == "0.00"{
+                    request.pricing.removeAll()
+                }
+                if imageUrls == [""]{
+                    self.imageUrls.removeAll()
+                }
                 
             }
                 } else {
@@ -665,7 +840,7 @@ struct ListProductScreen: View {
                     
                     await viewModel.storeProduct(param: request)
                     await SVProgressHUD.dismiss()
-                    if self.viewModel.errorMessage != "" || self.viewModel.errorMessage != nil{
+                    if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
                         storeSuccess()
                     }else{
                         alertType = .sheetType(

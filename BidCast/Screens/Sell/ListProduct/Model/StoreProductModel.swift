@@ -58,3 +58,17 @@ struct ImageModel : Codable {
     var images : String?
     var thumbnail: String?
 }
+
+struct MailClassesData: Codable {
+    var mail_classes: [MailClass]
+}
+
+struct MailClass: Codable {
+    var label: String
+    var max_weight_lbs: Double?
+    var max_length_in: Double?
+    var max_width_in: Double?
+    var max_height_in: Double?
+    var max_length_plus_girth_in: Double?
+    var notes: String?
+}

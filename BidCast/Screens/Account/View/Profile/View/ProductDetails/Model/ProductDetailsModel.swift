@@ -11,7 +11,8 @@ import Foundation
 struct ProductDetailsModel: Codable {
     var id, userID, categoryID: Int?
     var title, description: String?
-    var quantity, pricing: Int?
+    var quantity : Int?
+    var pricing: Double?
     var flashSale, acceptOffers, reserveForLive: Bool?
     var shippingProfileID: Int?
     var status: String?

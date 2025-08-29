@@ -420,6 +420,12 @@ struct StoreProductParam : Encodable{
     var shipping_profile_id : String
     var status : String
     var sub_category_id : String?
+    var width : String
+    var length : String
+    var weight : String
+    var height : String
+    var mail_class : String
+    var processing_category : String
 }
 
 struct TipParam : Encodable {
