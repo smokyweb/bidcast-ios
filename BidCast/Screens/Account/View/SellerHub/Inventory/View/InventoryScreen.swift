@@ -119,7 +119,7 @@ struct InventoryScreen: View {
                 onTapEdit: {
                     navigateToCreateProduct = true
                 },onTapDelete: {
-                    await SVProgressHUD.show()
+                    SVProgressHUD.show()
                     let param = DeleteProduct(product_id: productId)
                     await viewModel.DeleteProductRequest(parameters: param)
                     await SVProgressHUD.dismiss()
