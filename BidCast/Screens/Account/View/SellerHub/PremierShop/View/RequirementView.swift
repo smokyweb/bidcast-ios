@@ -7,20 +7,18 @@
 
 import SwiftUI
 
+// MARK: - Requirement View
 struct RequirementView: View {
-    let requirement: Requirement
-
+    let requirement: PremierRequirement
     var body: some View {
         HStack(alignment: .top, spacing: 8) {
-            Image(systemName: requirement.isMet ? "checkmark.circle.fill" : "xmark.circle.fill")
-                .foregroundColor(requirement.isMet ? .darkGreen : .gray)
-            
+            Image(systemName: "checkmark.circle.fill")
+                .foregroundColor(.green)
             VStack(alignment: .leading, spacing: 6) {
-                Text(requirement.title)
-                    .font(.custom(poppinsSemiBold, size: 13.0))
-                    
-                Text(requirement.description)
-                    .font(.custom(poppinsRegular, size: 11.0))
+                Text(requirement.platform ?? "")
+                    .font(.custom(poppinsMedium, size: 16))
+                Text(requirement.url ?? "")
+                    .font(.custom(poppinsRegular, size: 14))
                     .foregroundColor(.gray)
             }
         }
@@ -28,4 +26,3 @@ struct RequirementView: View {
         .padding(.leading , 10)
     }
 }
-

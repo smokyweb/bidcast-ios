@@ -6,26 +6,29 @@
 //
 
 import SwiftUI
-
+// MARK: - Benefit View
 struct BenefitView: View {
-    let benefit: Benefit
-
+    let benefit: PremierFeatureModel
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Image(systemName: benefit.icon)
-                .font(.custom(poppinsSemiBold, size: 18.0))
-                .foregroundColor(.defaultTheme)
-            Text(benefit.title)
-                .font(.custom(poppinsSemiBold, size: 13.0))
-            Text(benefit.description)
-                .font(.custom(poppinsRegular, size: 12.0))
+            AsyncImage(url: URL(string: benefit.icon ?? "")) { image in
+                image.resizable().scaledToFit()
+            } placeholder: {
+                Image(systemName: "star.fill")
+                    .foregroundColor(.defaultTheme)
+            }
+            .frame(width: 32, height: 32)
+            
+            Text(benefit.title ?? "")
+                .font(.custom(poppinsMedium, size: 16))
+            Text(benefit.description ?? "")
+                .font(.custom(poppinsRegular, size: 14))
                 .foregroundColor(.gray)
+                .multilineTextAlignment(.center)
         }
         .padding()
         .frame(maxWidth: .infinity,maxHeight: .infinity)
-        .aspectRatio(1, contentMode: .fill)
         .background(Color(.systemGray6))
         .cornerRadius(12)
     }
 }
-

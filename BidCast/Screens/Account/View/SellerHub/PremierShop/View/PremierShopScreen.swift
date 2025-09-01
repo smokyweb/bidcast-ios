@@ -5,80 +5,27 @@
 //  Created by JAM_E_329 on 26/05/25.
 //
 
-import SwiftUI
 
 import SwiftUI
-
-// MARK: - StatMetric
-struct StatMetric: Identifiable {
-    let id = UUID()
-    let label: String
-    let value: String
-}
-
-// MARK: - Benefit
-struct Benefit: Identifiable {
-    let id = UUID()
-    let icon: String
-    let title: String
-    let description: String
-}
-
-// MARK: - Requirement
-struct Requirement: Identifiable {
-    let id = UUID()
-    let title: String
-    let description: String
-    let isMet: Bool
-}
-
-// MARK: - MetricView
-struct MetricView: View {
-    let metric: StatMetric
-    
-    var body: some View {
-        VStack {
-            Text(metric.value)
-                .font(.title3)
-                .fontWeight(.semibold)
-            Text(metric.label)
-                .font(.caption)
-                .foregroundColor(.gray)
-        }
-        .frame(maxWidth: .infinity)
-    }
-}
+import SVProgressHUD
 
 // MARK: - PremierShopScreen
 struct PremierShopScreen: View {
-    // Dynamic content
+    
     @Environment(\.presentationMode) var presentationMode
-    let stats: [StatMetric] = [
-        StatMetric(label: AppString.Rating, value: "4.2"),
-        StatMetric(label: AppString.Response, value: "89%"),
-        StatMetric(label: AppString.Delivery, value: "95%")
-    ]
+    @State private var showError: Bool = false
+    @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+    @State private var showhud: Bool = false
+    @State private var hudMsg: String = ""
     
-    let benefits: [Benefit] = [
-        Benefit(icon: "percent", title: AppString.ReducedCommission, description: AppString.PayOnlyCommission),
-        Benefit(icon: "person.crop.circle.badge.checkmark", title: AppString.UniqueProfileID, description: AppString.CustomURLForYourShop),
-        Benefit(icon: "megaphone.fill", title: AppString.MarketingBoost, description: AppString.PriorityInSearchResults),
-        Benefit(icon: "headphones", title: AppString.PrioritySupport, description: AppString.DedicatedAssistance)
-    ]
-    
-    let requirements: [Requirement] = [
-        Requirement(title: AppString.MinimumRating, description: AppString.MaintainHighCustomerSatisfaction, isMet: true),
-        Requirement(title: AppString.ResponseRate, description: AppString.QuickRepliesToCustomerInquiries, isMet: true),
-        Requirement(title: AppString.OnTimeDelivery, description: AppString.ConsistentShippingPerformance, isMet: true),
-        Requirement(title: AppString.MonthsActive, description: AppString.RegularSellingHistory, isMet: true)
-    ]
-    
-    // Progress simulation
-    let progress: Double = 0.75
-    let daysUntilReview: Int = 7
+    @EnvironmentObject var networkMonitor: NetworkMonitor
+    @StateObject private var viewModel = PremierShopViewModel()
+    @State private var premierShopData = PremierShopModel()
     
     var body: some View {
         VStack(spacing: 0) {
+            
+            // Header
             PrimaryHeader(
                 title: AppString.PremierShop,
                 isForLogo: false,
@@ -90,49 +37,78 @@ struct PremierShopScreen: View {
             .padding(.horizontal)
             .frame(height: 50)
             .background(Color(.systemBackground))
+            
             ScrollView {
                 VStack(spacing: 20) {
-                    // Header Section
+                    
+                    // MARK: Header Section
                     ZStack(alignment: .top) {
                         VStack(spacing: 8) {
-                            Image(.shop)
-                                .resizable()
-                                .renderingMode(.template)
-                                .scaledToFit()
+                            AsyncImage(url: URL(string: premierShopData.pageLogo ?? "")) { phase in
+                                if let image = phase.image {
+                                    image
+                                        .renderingMode(.template)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .foregroundColor(Color.white)
+                                } else if phase.error != nil {
+                                    Image(systemName: "photo")
+                                        .renderingMode(.template)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .foregroundColor(Color.white)
+                                } else {
+                                    ProgressView()
+                                }
+                            }
+                            .frame(height: 40)
+                            
+                            Text(premierShopData.pageTitle ?? "")
+                                .font(.custom(poppinsBold, size: 24))
                                 .foregroundColor(.white)
-                                .frame(height: 40)
-                            Text(AppString.BecomeAPremierShop)
-                                .font(.custom(poppinsBold, size: 14.0))
-                                .foregroundColor(.white)
-                            Text(AppString.JoinTheEliteEellers)
-                                .font(.custom(poppinsRegular, size: 12.0))
+                            
+                            Text(premierShopData.pageDetails ?? "")
+                                .font(.custom(poppinsRegular, size: 14))
                                 .foregroundColor(.white.opacity(0.9))
                                 .multilineTextAlignment(.center)
                         }
                         .padding()
-                        .padding(.bottom,80)
+                        .padding(.bottom, 80)
                         .frame(maxWidth: .infinity, minHeight: 220)
-                        .background(LinearGradient(colors: [Color.defaultTheme.opacity(0.9), Color.defaultTheme], startPoint: .top, endPoint: .bottom))
-                        Spacer()
+                        .background(.darkRed)
+//                        .background(
+//                            LinearGradient(colors: [Color.defaultTheme.opacity(0.9), Color.darkRed],
+//                                           startPoint: .top, endPoint: .bottom)
+//                        )
+                        
                         // Shop Status Card
                         VStack(spacing: 12) {
                             HStack {
-                                Image(systemName: "bag.fill")
-                                    .font(.largeTitle)
-                                    .foregroundColor(.defaultTheme)
+                                AsyncImage(url: URL(string: premierShopData.shopLogo ?? "")) { image in
+                                    image.resizable().scaledToFit()
+                                } placeholder: {
+                                    Image(systemName: "bag.fill")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .foregroundColor(.defaultTheme)
+                                }
+                                .frame(width: 32, height: 32)
+                                
                                 VStack(alignment: .leading) {
-                                    Text(AppString.YourShop)
-                                        .font(.custom(poppinsSemiBold, size: 13.0))
-                                    Text(AppString.RegularMember)
-                                        .font(.custom(poppinsRegular, size: 12.0))
+                                    Text(premierShopData.shopTitle ?? "")
+                                        .font(.custom(poppinsSemiBold, size: 16))
+                                    Text(premierShopData.shopDetails ?? "")
+                                        .font(.custom(poppinsRegular, size: 14))
                                         .foregroundColor(.gray)
                                 }
                                 Spacer()
                             }
                             
                             HStack {
-                                ForEach(stats) { stat in
-                                    MetricView(metric: stat)
+                                if let options = premierShopData.shopOptions {
+                                    MetricView(title: "Rating", value: String(format: "%.1f", options.rating))
+                                    MetricView(title: "Response", value: options.response)
+                                    MetricView(title: "Delivery", value: options.delivery)
                                 }
                             }
                         }
@@ -145,60 +121,71 @@ struct PremierShopScreen: View {
                     }
                     .padding(.bottom, 50)
                     
-                    
-                    // Benefits Grid
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text(AppString.PremierBenefits)
-                            .font(.custom(poppinsSemiBold, size: 13.0))
-                        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                            ForEach(benefits) { benefit in
-                                BenefitView(benefit: benefit)
-                                
+                    // MARK: Benefits Grid
+                    if let features = premierShopData.features {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text(AppString.PremierBenefits)
+                                .font(.custom(poppinsSemiBold, size: 18))
+                            
+                            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                                ForEach(features, id: \.title) { feature in
+                                    BenefitView(benefit: feature)
+                                }
                             }
                         }
+                        .padding(.horizontal)
                     }
-                    .padding(.horizontal)
                     
-                    // Requirements Section
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text(AppString.Requirements)
-                            .font(.custom(poppinsSemiBold, size: 13.0))
-                        ForEach(requirements) { req in
-                            RequirementView(requirement: req)
+                    // MARK: Requirements
+                    if let requirements = premierShopData.requirements {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text(AppString.Requirements)
+                                .font(.custom(poppinsSemiBold, size: 18))
+                            
+                            ForEach(requirements, id: \.platform) { req in
+                                RequirementView(requirement: req)
+                            }
                         }
+                        .padding(.horizontal)
                     }
-                    .padding(.horizontal)
                     
-                    // Review Process
+                    // MARK: Review Process
                     VStack(alignment: .leading, spacing: 12) {
                         Text(AppString.ReviewProcess)
-                            .font(.custom(poppinsSemiBold, size: 13.0))
+                            .font(.custom(poppinsSemiBold, size: 18))
                         
                         VStack(alignment: .leading, spacing: 8) {
                             HStack {
-                                Image(systemName: "calendar.badge.clock")
-                                    .foregroundColor(.defaultTheme)
+                                AsyncImage(url: URL(string: premierShopData.reviewLogo ?? "")) { image in
+                                    image.resizable().scaledToFit()
+                                } placeholder: {
+                                    Image(systemName: "calendar.badge.clock")
+                                        .foregroundColor(.defaultTheme)
+                                }
+                                .frame(width: 24, height: 24)
+                                
                                 VStack(alignment: .leading) {
-                                    Text(AppString.MonthlyEvaluation)
-                                        .font(.custom(poppinsSemiBold, size: 13.0))
+                                    Text(premierShopData.reviewTitle ?? "")
+                                        .font(.custom(poppinsMedium, size: 16))
                                         .fontWeight(.semibold)
-                                    Text(AppString.PerformanceReviewed)
-                                        .font(.custom(poppinsRegular, size: 11.0))
+                                    Text(premierShopData.reviewDetails ?? "")
+                                        .font(.custom(poppinsRegular, size: 14))
                                         .foregroundColor(.gray)
                                 }
                             }
                             
                             HStack {
                                 Text(AppString.CurrentProgress)
-                                    .font(.custom(poppinsRegular, size: 13.0))
+                                    .font(.custom(poppinsRegular, size: 14))
                                 Spacer()
-                                Text("\(Int(progress * 100))%")
+                                Text(premierShopData.currentProgress ?? "0%")
                             }
-                            ProgressView(value: progress)
-                                .progressViewStyle(LinearProgressViewStyle(tint: .defaultTheme))
+                            ProgressView(value: Double(premierShopData.currentProgress?.replacingOccurrences(of: "%", with: "") ?? "0") ?? 0,
+                                         total: 100)
+                            .progressViewStyle(LinearProgressViewStyle(tint: .darkRed))
                             
-                            Text("Next review in \(daysUntilReview) days")
-                                .font(.custom(poppinsRegular, size: 11.0))
+                            Text("Next review in \(premierShopData.nextReview ?? "0") days")
+                                .font(.custom(poppinsRegular, size: 14))
                                 .foregroundColor(.gray)
                         }
                         .padding()
@@ -207,16 +194,16 @@ struct PremierShopScreen: View {
                     }
                     .padding(.horizontal)
                     
-                    // Action Button
+                    // MARK: Apply Button
                     Button(action: {
-                        // Action: Apply for Premier Status
+                        // TODO: Apply for Premier Status action
                     }) {
                         Text(AppString.ApplyForPremierStatus)
                             .foregroundColor(.white)
-                            .font(.custom(poppinsSemiBold, size: 13.0))
+                            .font(.custom(poppinsMedium, size: 16))
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(Color.defaultTheme)
+                            .background(.darkRed)
                             .cornerRadius(12)
                     }
                     .padding()
@@ -224,12 +211,51 @@ struct PremierShopScreen: View {
                 .padding(.top)
             }
         }
+        .onFirstAppear {
+            Task { await loadData() }
+        }
+    }
+    
+    // MARK: Load API
+    func loadData() async {
+        guard Reachability.isConnectedToNetwork() else {
+            hudMsg = "No Internet Connection"
+            showhud = true
+            return
+        }
+        SVProgressHUD.show()
+        await viewModel.getPremierShopContent()
+        await SVProgressHUD.dismiss()
+        
+        if viewModel.premierShopResponse.status != "success" {
+            alertType = .sheetType(
+                icon: .alert,
+                title: "Error",
+                message: viewModel.premierShopResponse.message ?? "Something went wrong.",
+                primaryBtnText: "",
+                secondaryBtnText: "OK",
+                sheetThemeColor: .pinkBtn
+            )
+            withAnimation(.snappy) { showError = true }
+        } else {
+            premierShopData = viewModel.premierShopResponse.data ?? PremierShopModel()
+        }
     }
 }
 
-// MARK: - Preview
-struct PremierShopView_Previews: PreviewProvider {
-    static var previews: some View {
-        PremierShopScreen()
+// MARK: - Metric View
+struct MetricView: View {
+    let title: String
+    let value: String
+    var body: some View {
+        VStack {
+            Text(value)
+                .font(.custom(poppinsSemiBold, size: 18))
+            Text(title)
+                .font(.custom(poppinsRegular, size: 12))
+                .foregroundColor(.gray)
+        }
+        .frame(maxWidth: .infinity)
     }
 }
+
