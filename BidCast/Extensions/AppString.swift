@@ -52,7 +52,9 @@ struct AppString{
     static let firstName = "First Name".localized
     static let enterFirstName = "Enter First Name".localized
     static let lastName = "Last Name".localized
+    static let referalCode = "Referral Code(Optional)".localized
     static let enterLastName = "Enter Last Name".localized
+    static let enterReferalCode = "Enter Referral Code".localized
     static let pleaseEnterFirstName = "Please enter First Name".localized
     static let pleaseEnterLastName = "Please enter Last Name".localized
     static let backToLogin  = "Back to Login".localized

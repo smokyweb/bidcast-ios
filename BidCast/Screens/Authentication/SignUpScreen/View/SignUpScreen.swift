@@ -18,7 +18,7 @@ struct SignUpScreen: View {
     @State var searchText = ""
     @State var selectedCountry : String?
     @State var showingDropdown: Bool = false
-    @State var request : SignUpRequest = SignUpRequest(firstName: "", lastName: "", email: "", password: "", passwordConf: "", roleID: 2)
+    @State var request : SignUpRequest = SignUpRequest(firstName: "", lastName: "", email: "", password: "", passwordConf: "", roleID: 2, referralCode: "")
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @State var showError: Bool = false
     @State var showhud: Bool = false
@@ -76,6 +76,12 @@ struct SignUpScreen: View {
                         request.passwordConf = value
                     }).textContentType(.newPassword)
                         .keyboardType(.alphabet)
+                    
+                    AuthTextField(floatingLabel: AppString.referalCode.localized, placeholder: AppString.enterReferalCode.localized, icon: .referral, text: $request.referralCode, enteredText: {
+                        value in
+                        request.referralCode = value
+                    })
+                    .keyboardType(.alphabet)
                     
                 }
                 VStack {

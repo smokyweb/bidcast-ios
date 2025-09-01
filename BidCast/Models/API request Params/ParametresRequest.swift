@@ -316,12 +316,14 @@ struct SignUpRequest:Encodable {
     var password:String
     var passwordConf:String
     var roleID : Int
+    var referralCode : String
     
     enum CodingKeys: String, CodingKey {
         case firstName = "first_name"
         case lastName = "last_name"
         case passwordConf = "password_confirmation"
         case roleID = "role_id"
+        case referralCode = "referral_code"
         case email, password
     }
 }
