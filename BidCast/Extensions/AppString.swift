@@ -133,7 +133,7 @@ struct AppString{
     static let YourReferralStatus = "Your Referral Stats".localized
     static let  TotalReferrals  = "Total Referrals".localized
     static let Earnings = "Earnings".localized
-    static let Promote = "Promote".localized
+    static let Promote = "Promote Tools".localized
     static let PromoteYourShows = "Promote Your Shows".localized
     static let ReachMoreBuyersAndGrowYourAudience = "Reach more buyers and grow your audience"
     static let share = "Share".localized

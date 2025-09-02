@@ -27,7 +27,7 @@ struct ToolGridItemView: View {
             
             Text(feature.description ?? "")
                 .font(.custom(poppinsRegular, size: 14.0))
-                .foregroundColor(.gray)
+                .foregroundColor(Color(.lightText))
         }
         .padding()
         .frame(maxWidth: .infinity, minHeight: 100)

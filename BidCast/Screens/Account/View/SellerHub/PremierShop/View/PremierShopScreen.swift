@@ -64,7 +64,7 @@ struct PremierShopScreen: View {
                             .frame(height: 40)
                             
                             Text(premierShopData.pageTitle ?? "")
-                                .font(.custom(poppinsBold, size: 24))
+                                .font(.custom(poppinsSemiBold, size: 24))
                                 .foregroundColor(.white)
                             
                             Text(premierShopData.pageDetails ?? "")
@@ -75,7 +75,7 @@ struct PremierShopScreen: View {
                         .padding()
                         .padding(.bottom, 80)
                         .frame(maxWidth: .infinity, minHeight: 220)
-                        .background(.darkRed)
+                        .background(.defaultTheme)
 //                        .background(
 //                            LinearGradient(colors: [Color.defaultTheme.opacity(0.9), Color.darkRed],
 //                                           startPoint: .top, endPoint: .bottom)
@@ -182,7 +182,7 @@ struct PremierShopScreen: View {
                             }
                             ProgressView(value: Double(premierShopData.currentProgress?.replacingOccurrences(of: "%", with: "") ?? "0") ?? 0,
                                          total: 100)
-                            .progressViewStyle(LinearProgressViewStyle(tint: .darkRed))
+                            .progressViewStyle(LinearProgressViewStyle(tint: .defaultTheme))
                             
                             Text("Next review in \(premierShopData.nextReview ?? "0") days")
                                 .font(.custom(poppinsRegular, size: 14))
@@ -203,7 +203,7 @@ struct PremierShopScreen: View {
                             .font(.custom(poppinsMedium, size: 16))
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(.darkRed)
+                            .background(.defaultTheme)
                             .cornerRadius(12)
                     }
                     .padding()

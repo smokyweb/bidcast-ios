@@ -8,138 +8,6 @@
 import SwiftUI
 import SVProgressHUD
 
-// MARK: - PromoteToolsView
-//struct PromoteToolsView: View {
-//    
-//    @Environment(\.presentationMode) var presentationMode
-//    @State private var showError: Bool = false
-//    @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
-//    @State private var showhud: Bool = false
-//    @State private var hudMsg: String = ""
-//    
-//    @EnvironmentObject var networkMonitor: NetworkMonitor
-//    @StateObject private var viewModel = PromoteToolsViewModel()
-//    @State private var promoteToolData = PromoteToolModel()
-//    
-//    var body: some View {
-//        VStack(spacing: 0) {
-//            VStack{
-//                // Fixed PrimaryHeader at the top
-//                PrimaryHeader(
-//                    title: AppString.Promote,
-//                    isForBoth: true,
-//                    leadingImgArr: [.icBack,.appName],
-//                    trailingImgArr: [.icSetting],
-//                    onClickLeading: { _ in
-//                        self.presentationMode.wrappedValue.dismiss()
-//                    },
-//                    count: .constant(0)
-//                )
-//            }
-//            
-//            
-//            // Scrollable content below the header
-//            ScrollView {
-//                VStack(spacing: 24) {
-//                    HStack{
-//                        Image("promote")
-//                            .resizable()
-//                            .aspectRatio(contentMode: .fit)
-//                            .frame(width: 50,height: 50)
-//                            
-//                        
-//                        VStack(alignment: .leading, spacing: 4) {
-//                            Text(AppString.PromoteYourShows)
-//                                .font(.custom(poppinsSemiBold, size: 18.0))
-//                                .fontWeight(.semibold)
-//                            Text(AppString.ReachMoreBuyersAndGrowYourAudience)
-//                                .font(.custom(poppinsRegular, size: 14.0))
-//                                .foregroundColor(.gray)
-//                        }
-//                        .padding(.horizontal)
-//                        Spacer()
-//                    }.padding(.horizontal)
-//                    
-//                    // Stats
-//                    HStack {
-//                        ForEach(stats) { stat in
-//                            StatView(stat: stat)
-//                        }
-//                    }
-//                    .padding(.horizontal)
-//                    
-//                    // Tools Grid
-//                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
-//                        ForEach(tools) { tool in
-//                            ToolGridItemView(tool: tool)
-//                        }
-//                    }
-//                    .padding(.horizontal)
-//                    
-//                    // Learn More Section
-//                    VStack(spacing: 12) {
-//                        Text(AppString.LearnHowtoPromote)
-//                            .font(.custom(poppinsSemiBold, size: 16.0))
-//                            .foregroundColor(.white)
-//                        Text(AppString.GetTipsAndStrategiesToGrowYourLiveShows)
-//                            .font(.custom(poppinsSemiBold, size: 14.0))
-//                            .foregroundColor(.white.opacity(0.9))
-//                        Button(action: {
-//                            navigateToLesson = true
-//                        }) {
-//                            Text(AppString.startLearning)
-//                                .font(.custom(poppinsSemiBold, size: 13.0))
-//                                .padding()
-//                                .frame(maxWidth: .infinity)
-//                                .background(Color.white)
-//                                .foregroundColor(.defaultTheme)
-//                                .cornerRadius(10)
-//                        }
-//                    }
-//                    .padding()
-//                    .background(.defaultTheme)
-//                    .cornerRadius(20)
-//                    .padding(.horizontal)
-//                }
-//               
-//            }
-//        }
-//        .onFirstAppear {
-//            Task { await loadData() }
-//        }
-//        CusNavLink(doNavigate: $navigateToLesson, destination: LessonScreen())
-//    }
-//    // MARK: Load API
-//    func loadData() async {
-//        guard Reachability.isConnectedToNetwork() else {
-//            hudMsg = "No Internet Connection"
-//            showhud = true
-//            return
-//        }
-//        SVProgressHUD.show()
-//        await viewModel.getPromoteToolContent()
-//        await SVProgressHUD.dismiss()
-//        
-//        if viewModel.promoteToolResponse.status != "success" {
-//            alertType = .sheetType(
-//                icon: .alert,
-//                title: "Error",
-//                message: viewModel.promoteToolResponse.message ?? "Something went wrong.",
-//                primaryBtnText: "",
-//                secondaryBtnText: "OK",
-//                sheetThemeColor: .pinkBtn
-//            )
-//            withAnimation(.snappy) { showError = true }
-//        } else {
-//            promoteToolData = viewModel.promoteToolResponse.data ?? PromoteToolModel()
-//        }
-//    }
-//
-//    
-//}
-
-
-
 struct PromoteToolsView: View {
     
     @Environment(\.presentationMode) var presentationMode
@@ -184,11 +52,11 @@ struct PromoteToolsView: View {
                         
                         VStack(alignment: .leading, spacing: 4) {
                             Text(promoteToolData.showTitle ?? "")
-                                .font(.custom(poppinsSemiBold, size: 18.0))
+                                .font(.custom(poppinsSemiBold, size: 20.0))
                                 .fontWeight(.semibold)
                             Text(promoteToolData.showDetails ?? "")
-                                .font(.custom(poppinsRegular, size: 14.0))
-                                .foregroundColor(.gray)
+                                .font(.custom(poppinsRegular, size: 16.0))
+                                .foregroundColor(.darkGray)
                         }
                         .padding(.horizontal)
                         Spacer()
@@ -231,7 +99,7 @@ struct PromoteToolsView: View {
                             .font(.custom(poppinsSemiBold, size: 16.0))
                             .foregroundColor(.white)
                         Text(promoteToolData.promoteDetails ?? "")
-                            .font(.custom(poppinsSemiBold, size: 14.0))
+                            .font(.custom(poppinsSemiBold, size: 16.0))
                             .foregroundColor(.white.opacity(0.9))
                         Button(action: { navigateToLesson = true }) {
                             Text(AppString.startLearning)
@@ -249,6 +117,7 @@ struct PromoteToolsView: View {
                     .padding(.horizontal)
                 }
             }
+            .padding(.top , 15)
         }
         .onFirstAppear {
             Task { await loadData() }

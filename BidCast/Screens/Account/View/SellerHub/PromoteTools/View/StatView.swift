@@ -21,11 +21,11 @@ struct StatView: View {
     var body: some View {
         VStack {
             Text(stat.value)
-                .font(.custom(poppinsSemiBold, size: 20.0))
+                .font(.custom(poppinsSemiBold, size: 24.0))
                 .bold()
             Text(stat.label)
-                .font(.custom(poppinsRegular, size: 11.0))
-                .foregroundColor(.gray)
+                .font(.custom(poppinsRegular, size: 14.0))
+                .foregroundColor(Color(.lightText))
         }
         .frame(maxWidth: .infinity, minHeight: 80)
         .background(Color(.systemGray6))
