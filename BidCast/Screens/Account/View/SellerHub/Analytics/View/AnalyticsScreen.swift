@@ -7,17 +7,24 @@
 
 import SwiftUI
 
-// MARK: - AnalyticsScreen
 struct AnalyticsScreen: View {
     let stats: [StatItem] = [
-        StatItem(value: "284", label: AppString.Shows),
-        StatItem(value: "12.4k", label: AppString.Views),
-        StatItem(value: "892", label: AppString.Followers)
+        StatItem(label: AppString.Shows, value: "284"),
+        StatItem(label: AppString.Views, value: "12.4k"),
+        StatItem(label: AppString.Followers, value: "892")
     ]
     
     @State private var navigateToLesson = false
     @State var segment : AnalyticsSegment = .overall
     @Environment(\.presentationMode) var presentationMode
+    
+    struct ToolItem: Identifiable {
+        let id = UUID()
+        let iconName: String
+        let title: String
+        let subtitle: String
+        let iconColor: Color
+    }
 
     let tools: [ToolItem] = [
         ToolItem(iconName: "square.and.arrow.up", title: AppString.Shows, subtitle: AppString.ShareYourShowOnSocialMedia, iconColor: .defaultTheme),
@@ -78,7 +85,7 @@ struct AnalyticsScreen: View {
                         // Tools Grid
                         LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
                             ForEach(tools) { tool in
-                                ToolGridItemView(tool: tool)
+                                ToolGridItemsView(tool: tool)
                             }
                         }
                         .padding(.horizontal)
@@ -87,7 +94,27 @@ struct AnalyticsScreen: View {
                 }
             }
     }
+    
+    struct ToolGridItemsView: View {
+        let tool: ToolItem
 
+        var body: some View {
+            VStack(alignment: .leading, spacing: 8) {
+                Image(systemName: tool.iconName)
+                    .font(.custom(poppinsSemiBold, size: 16.0))
+                    .foregroundColor(tool.iconColor)
+                Text(tool.title)
+                    .font(.custom(poppinsSemiBold, size: 16.0))
+                Text(tool.subtitle)
+                    .font(.custom(poppinsRegular, size: 14.0))
+                    .foregroundColor(.gray)
+            }
+            .padding()
+            .frame(maxWidth: .infinity, minHeight: 100)
+            .background(Color(.systemGray6))
+            .cornerRadius(12)
+        }
+    }
 }
 
 
@@ -102,3 +129,10 @@ enum AnalyticsSegment : String, CaseIterable, CustomStringConvertible{
         return NSLocalizedString(rawValue, comment: "").localized
     }
 }
+
+
+
+
+
+
+

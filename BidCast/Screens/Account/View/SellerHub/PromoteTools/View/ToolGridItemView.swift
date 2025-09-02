@@ -5,19 +5,27 @@
 //  Created by JAM_E_329 on 27/05/25.
 //
 
-import SwiftUICore
+import SwiftUI
 
 struct ToolGridItemView: View {
-    let tool: ToolItem
+    let feature: Feature
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Image(systemName: tool.iconName)
+            AsyncImage(url: URL(string: feature.icon ?? "")) { image in
+                image
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 24, height: 24)
+            } placeholder: {
+                ProgressView()
+                    .frame(width: 24, height: 24)
+            }
+            
+            Text(feature.title ?? "")
                 .font(.custom(poppinsSemiBold, size: 16.0))
-                .foregroundColor(tool.iconColor)
-            Text(tool.title)
-                .font(.custom(poppinsSemiBold, size: 16.0))
-            Text(tool.subtitle)
+            
+            Text(feature.description ?? "")
                 .font(.custom(poppinsRegular, size: 14.0))
                 .foregroundColor(.gray)
         }

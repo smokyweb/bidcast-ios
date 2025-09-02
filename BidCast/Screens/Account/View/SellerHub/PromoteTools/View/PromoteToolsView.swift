@@ -6,107 +6,234 @@
 //
 
 import SwiftUI
-
-// MARK: - Models
-
-struct StatItem: Identifiable {
-    let id = UUID()
-    let value: String
-    let label: String
-}
-
-struct ToolItem: Identifiable {
-    let id = UUID()
-    let iconName: String
-    let title: String
-    let subtitle: String
-    let iconColor: Color
-}
-
+import SVProgressHUD
 
 // MARK: - PromoteToolsView
+//struct PromoteToolsView: View {
+//    
+//    @Environment(\.presentationMode) var presentationMode
+//    @State private var showError: Bool = false
+//    @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+//    @State private var showhud: Bool = false
+//    @State private var hudMsg: String = ""
+//    
+//    @EnvironmentObject var networkMonitor: NetworkMonitor
+//    @StateObject private var viewModel = PromoteToolsViewModel()
+//    @State private var promoteToolData = PromoteToolModel()
+//    
+//    var body: some View {
+//        VStack(spacing: 0) {
+//            VStack{
+//                // Fixed PrimaryHeader at the top
+//                PrimaryHeader(
+//                    title: AppString.Promote,
+//                    isForBoth: true,
+//                    leadingImgArr: [.icBack,.appName],
+//                    trailingImgArr: [.icSetting],
+//                    onClickLeading: { _ in
+//                        self.presentationMode.wrappedValue.dismiss()
+//                    },
+//                    count: .constant(0)
+//                )
+//            }
+//            
+//            
+//            // Scrollable content below the header
+//            ScrollView {
+//                VStack(spacing: 24) {
+//                    HStack{
+//                        Image("promote")
+//                            .resizable()
+//                            .aspectRatio(contentMode: .fit)
+//                            .frame(width: 50,height: 50)
+//                            
+//                        
+//                        VStack(alignment: .leading, spacing: 4) {
+//                            Text(AppString.PromoteYourShows)
+//                                .font(.custom(poppinsSemiBold, size: 18.0))
+//                                .fontWeight(.semibold)
+//                            Text(AppString.ReachMoreBuyersAndGrowYourAudience)
+//                                .font(.custom(poppinsRegular, size: 14.0))
+//                                .foregroundColor(.gray)
+//                        }
+//                        .padding(.horizontal)
+//                        Spacer()
+//                    }.padding(.horizontal)
+//                    
+//                    // Stats
+//                    HStack {
+//                        ForEach(stats) { stat in
+//                            StatView(stat: stat)
+//                        }
+//                    }
+//                    .padding(.horizontal)
+//                    
+//                    // Tools Grid
+//                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
+//                        ForEach(tools) { tool in
+//                            ToolGridItemView(tool: tool)
+//                        }
+//                    }
+//                    .padding(.horizontal)
+//                    
+//                    // Learn More Section
+//                    VStack(spacing: 12) {
+//                        Text(AppString.LearnHowtoPromote)
+//                            .font(.custom(poppinsSemiBold, size: 16.0))
+//                            .foregroundColor(.white)
+//                        Text(AppString.GetTipsAndStrategiesToGrowYourLiveShows)
+//                            .font(.custom(poppinsSemiBold, size: 14.0))
+//                            .foregroundColor(.white.opacity(0.9))
+//                        Button(action: {
+//                            navigateToLesson = true
+//                        }) {
+//                            Text(AppString.startLearning)
+//                                .font(.custom(poppinsSemiBold, size: 13.0))
+//                                .padding()
+//                                .frame(maxWidth: .infinity)
+//                                .background(Color.white)
+//                                .foregroundColor(.defaultTheme)
+//                                .cornerRadius(10)
+//                        }
+//                    }
+//                    .padding()
+//                    .background(.defaultTheme)
+//                    .cornerRadius(20)
+//                    .padding(.horizontal)
+//                }
+//               
+//            }
+//        }
+//        .onFirstAppear {
+//            Task { await loadData() }
+//        }
+//        CusNavLink(doNavigate: $navigateToLesson, destination: LessonScreen())
+//    }
+//    // MARK: Load API
+//    func loadData() async {
+//        guard Reachability.isConnectedToNetwork() else {
+//            hudMsg = "No Internet Connection"
+//            showhud = true
+//            return
+//        }
+//        SVProgressHUD.show()
+//        await viewModel.getPromoteToolContent()
+//        await SVProgressHUD.dismiss()
+//        
+//        if viewModel.promoteToolResponse.status != "success" {
+//            alertType = .sheetType(
+//                icon: .alert,
+//                title: "Error",
+//                message: viewModel.promoteToolResponse.message ?? "Something went wrong.",
+//                primaryBtnText: "",
+//                secondaryBtnText: "OK",
+//                sheetThemeColor: .pinkBtn
+//            )
+//            withAnimation(.snappy) { showError = true }
+//        } else {
+//            promoteToolData = viewModel.promoteToolResponse.data ?? PromoteToolModel()
+//        }
+//    }
+//
+//    
+//}
+
+
+
 struct PromoteToolsView: View {
-    let stats: [StatItem] = [
-        StatItem(value: "284", label: "Shows"),
-        StatItem(value: "12.4K", label: "Views"),
-        StatItem(value: "892", label: "Followers")
-    ]
-    @State private var navigateToLesson = false
-    @Environment(\.presentationMode) var presentationMode
     
-    let tools: [ToolItem] = [
-        ToolItem(iconName: "square.and.arrow.up", title: AppString.share, subtitle: AppString.ShareYourShowOnSocialMedia, iconColor: .defaultTheme),
-        ToolItem(iconName: "rectangle.stack.badge.plus", title: AppString.Ads, subtitle: AppString.CreateAdsForYourShows, iconColor: .defaultTheme),
-        ToolItem(iconName: "person.2.fill", title: AppString.Audience, subtitle: AppString.GrowYourAudience, iconColor: .defaultTheme),
-        ToolItem(iconName: "chart.bar.fill", title: AppString.Analytics, subtitle: AppString.TrackPerformance, iconColor: .defaultTheme)
-    ]
+    @Environment(\.presentationMode) var presentationMode
+    @State private var showError: Bool = false
+    @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+    @State private var showhud: Bool = false
+    @State private var hudMsg: String = ""
+    @State private var navigateToLesson = false
+    
+    @EnvironmentObject var networkMonitor: NetworkMonitor
+    @StateObject private var viewModel = PromoteToolsViewModel()
+    @State private var promoteToolData = PromoteToolModel()
     
     var body: some View {
         VStack(spacing: 0) {
-            VStack{
-                // Fixed PrimaryHeader at the top
-                PrimaryHeader(
-                    title: AppString.Promote,
-                    isForBoth: true,
-                    leadingImgArr: [.icBack,.appName],
-                    trailingImgArr: [.icSetting],
-                    onClickLeading: { _ in
-                        self.presentationMode.wrappedValue.dismiss()
-                    },
-                    count: .constant(0)
-                )
-            }
+            // Header
+            PrimaryHeader(
+                title: AppString.Promote,
+                isForBoth: true,
+                leadingImgArr: [.icBack,.appName],
+                trailingImgArr: [.icSetting],
+                onClickLeading: { _ in
+                    self.presentationMode.wrappedValue.dismiss()
+                },
+                count: .constant(0)
+            )
             
-            
-            // Scrollable content below the header
+            // Scrollable Content
             ScrollView {
                 VStack(spacing: 24) {
-                    HStack{
-                        Image("promote")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 50,height: 50)
-                            
+                    
+                    // Top Banner
+                    HStack {
+                        AsyncImage(url: URL(string: promoteToolData.showIcon ?? "")) { image in
+                            image.resizable()
+                                .scaledToFit()
+                                .frame(width: 50, height: 50)
+                        } placeholder: {
+                            ProgressView()
+                                .frame(width: 50, height: 50)
+                        }
                         
                         VStack(alignment: .leading, spacing: 4) {
-                            Text(AppString.PromoteYourShows)
+                            Text(promoteToolData.showTitle ?? "")
                                 .font(.custom(poppinsSemiBold, size: 18.0))
                                 .fontWeight(.semibold)
-                            Text(AppString.ReachMoreBuyersAndGrowYourAudience)
+                            Text(promoteToolData.showDetails ?? "")
                                 .font(.custom(poppinsRegular, size: 14.0))
                                 .foregroundColor(.gray)
                         }
                         .padding(.horizontal)
                         Spacer()
-                    }.padding(.horizontal)
+                    }
+                    .padding(.horizontal)
                     
                     // Stats
-                    HStack {
-                        ForEach(stats) { stat in
-                            StatView(stat: stat)
+                    if let options = promoteToolData.showOptions {
+                        HStack {
+                            if let shows = options.shows {
+                                StatView(stat: StatItem(label: "Shows", value: "\(shows)"))
+                            }
+                            if let views = options.views {
+                                StatView(stat: StatItem(label: "Views", value: "\(views)"))
+                            }
+                            if let followers = options.followers {
+                                StatView(stat: StatItem(label: "Followers", value: "\(followers)"))
+                            }
                         }
+                        .padding(.horizontal)
                     }
-                    .padding(.horizontal)
-                    
+
+
                     // Tools Grid
-                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
-                        ForEach(tools) { tool in
-                            ToolGridItemView(tool: tool)
+                    if promoteToolData.features?.count != 0{
+                        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
+                            ForEach(0 ..< (promoteToolData.features?.count ?? 0), id: \.self) { index in
+                                let feature = promoteToolData.features?[index] ?? Feature()
+                                ToolGridItemView(feature: feature)
+                            }
                         }
+                        .padding(.horizontal)
                     }
-                    .padding(.horizontal)
+
+//                    .padding(.horizontal)
                     
-                    // Learn More Section
+                    // Learn Section
                     VStack(spacing: 12) {
-                        Text(AppString.LearnHowtoPromote)
+                        Text(promoteToolData.promoteTitle ?? "")
                             .font(.custom(poppinsSemiBold, size: 16.0))
                             .foregroundColor(.white)
-                        Text(AppString.GetTipsAndStrategiesToGrowYourLiveShows)
+                        Text(promoteToolData.promoteDetails ?? "")
                             .font(.custom(poppinsSemiBold, size: 14.0))
                             .foregroundColor(.white.opacity(0.9))
-                        Button(action: {
-                            navigateToLesson = true
-                        }) {
+                        Button(action: { navigateToLesson = true }) {
                             Text(AppString.startLearning)
                                 .font(.custom(poppinsSemiBold, size: 13.0))
                                 .padding()
@@ -121,19 +248,37 @@ struct PromoteToolsView: View {
                     .cornerRadius(20)
                     .padding(.horizontal)
                 }
-               
             }
         }
+        .onFirstAppear {
+            Task { await loadData() }
+        }
         CusNavLink(doNavigate: $navigateToLesson, destination: LessonScreen())
-//        CusNavLink(doNavigate: $navigateToLesson, destination: CombinedLessonTipsView())
     }
     
-}
-
-// MARK: - Preview
-
-struct PromoteToolsView_Previews: PreviewProvider {
-    static var previews: some View {
-        PromoteToolsView()
+    // MARK: Load API
+    func loadData() async {
+        guard Reachability.isConnectedToNetwork() else {
+            hudMsg = "No Internet Connection"
+            showhud = true
+            return
+        }
+        SVProgressHUD.show()
+        await viewModel.getPromoteToolContent()
+        await SVProgressHUD.dismiss()
+        
+        if viewModel.promoteToolResponse.status != "success" {
+            alertType = .sheetType(
+                icon: .alert,
+                title: "Error",
+                message: viewModel.promoteToolResponse.message ?? "Something went wrong.",
+                primaryBtnText: "",
+                secondaryBtnText: "OK",
+                sheetThemeColor: .pinkBtn
+            )
+            withAnimation(.snappy) { showError = true }
+        } else {
+            promoteToolData = viewModel.promoteToolResponse.data ?? PromoteToolModel()
+        }
     }
 }

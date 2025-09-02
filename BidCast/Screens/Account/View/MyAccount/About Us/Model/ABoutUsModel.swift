@@ -31,6 +31,7 @@ struct Feature: Codable {
     var icon: String?
 }
 
+
 // MARK: - Impact
 struct Impact: Codable {
     var label: String?

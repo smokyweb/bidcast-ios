@@ -5,8 +5,16 @@
 //  Created by JAM_E_329 on 27/05/25.
 //
 
+
 import SwiftUI
 
+// MARK: - StatItem (for UI only)
+struct StatItem {
+    let label: String
+    let value: String
+}
+
+// MARK: - StatView
 struct StatView: View {
     let stat: StatItem
 
@@ -24,4 +32,3 @@ struct StatView: View {
         .cornerRadius(12)
     }
 }
-
