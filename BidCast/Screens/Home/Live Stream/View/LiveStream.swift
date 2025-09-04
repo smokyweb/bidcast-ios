@@ -755,7 +755,7 @@ struct LiveStream: View {
 //            )
 //        }
         
-        .bottomSheet(isPresented: $winnerSheet,height: screenHeight * 0.20) {
+        .bottomSheet(isPresented: $winnerSheet,height: screenHeight * 0.35) {
             WinnerBottomSheet(
                 winnerAmount: winnerAmount, profileImage: winnerProfileImage,
                 username: winnerName,
@@ -905,7 +905,7 @@ struct LiveStream: View {
                                     message: "Before you interact with live shows.you need to become a verified buyer.",
                                     primaryBtnText: "OK",
                                     secondaryBtnText: "",
-                                    buttonWidth:screenWidth - 24,
+                                    buttonWidth:screenWidth - 32,
                                     contentSize: 12.0
                                 )
                                 withAnimation(.snappy){
