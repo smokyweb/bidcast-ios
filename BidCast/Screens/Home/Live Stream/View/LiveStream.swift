@@ -905,7 +905,7 @@ struct LiveStream: View {
                                     message: "Before you interact with live shows.you need to become a verified buyer.",
                                     primaryBtnText: "OK",
                                     secondaryBtnText: "",
-                                    buttonWidth:screenWidth - 32,
+                                    buttonWidth:screenWidth - 40,
                                     contentSize: 12.0
                                 )
                                 withAnimation(.snappy){
