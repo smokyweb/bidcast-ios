@@ -383,13 +383,8 @@ struct LiveStream: View {
                                             RoundedRectangle(cornerRadius: 12)
                                                 .fill(Color.defaultTheme)
                                                 .frame(height: 50)
-                                            
-                                            // Compute next bid
-                                            let nextBid = {
-                                                let range = (currentPrice / 10) * 10
-                                                let increment = (range / 10 + 1)
-                                                return currentPrice + increment
-                                            }()
+
+                                            let nextBid = nextBidAmount(for: currentPrice)
                                             
                                             // Then use in Text
                                             Text("Swipe to Bid $\(String(format: "%.2f", nextBid))")
@@ -747,20 +742,20 @@ struct LiveStream: View {
             }
         )
         
-        .bottomSheet(isPresented: $winnerSheet,height: screenHeight * 0.40) {
-            WinnerBottomSheet(
-                winnerAmount: winnerAmount, profileImage: winnerProfileImage,
-                username: winnerName,
-                winnerProfileID : winnerProfileID,
-                showParentToast: $showToast,
-                parentToastMessage: $toastMessage,
-                onDismiss: {
-                    self.winnerSheet = false
-                }
-            )
-        }
+//        .bottomSheet(isPresented: $winnerSheet,height: screenHeight * 0.40) {
+//            WinnerBottomSheet(
+//                winnerAmount: winnerAmount, profileImage: winnerProfileImage,
+//                username: winnerName,
+//                winnerProfileID : winnerProfileID,
+//                showParentToast: $showToast,
+//                parentToastMessage: $toastMessage,
+//                onDismiss: {
+//                    self.winnerSheet = false
+//                }
+//            )
+//        }
         
-        .bottomSheet(isPresented: $winnerSheet,height: screenHeight * 0.40) {
+        .bottomSheet(isPresented: $winnerSheet,height: screenHeight * 0.20) {
             WinnerBottomSheet(
                 winnerAmount: winnerAmount, profileImage: winnerProfileImage,
                 username: winnerName,
@@ -815,6 +810,30 @@ struct LiveStream: View {
         .onDisappear{
             logoutRoom()
         }
+    }
+    
+    // Compute next bid
+    func nextBidAmount(for currentPrice: Double) -> Double {
+        let increment: Double
+        
+        switch currentPrice {
+        case 1...30:
+            increment = 1
+        case 31...50:
+            increment = 2
+        case 51...100:
+            increment = 3
+        case 101...300:
+            increment = 5
+        case 301...1000:
+            increment = 10
+        case 1001...2000:
+            increment = 20
+        default:
+            increment = 50
+        }
+        
+        return currentPrice + increment
     }
     
     
