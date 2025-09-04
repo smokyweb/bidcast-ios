@@ -1070,12 +1070,29 @@ struct LiveStream: View {
     }
     
     func incrementPrice() {
-        let range = (currentPrice / 10) * 10
-        let increment = (range / 10 + 1)
-        let newPrice = currentPrice + increment
+        let increment: Double
         
+        switch currentPrice {
+        case 1..<30:
+            increment = 1
+        case 30..<50:
+            increment = 2
+        case 50..<100:
+            increment = 3
+        case 100..<300:
+            increment = 5
+        case 300..<1000:
+            increment = 10
+        case 1000..<2000:
+            increment = 20
+        default:
+            increment = 50
+        }
+        
+        let newPrice = currentPrice + increment
         placeBid(amount: newPrice)
     }
+
     
     func placeBid(amount: Double) {
         // Ensure we have the current room and product
