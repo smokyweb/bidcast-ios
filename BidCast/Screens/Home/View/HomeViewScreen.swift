@@ -341,7 +341,7 @@ struct HomeViewScreen: View {
             liveShowsData.removeAll()
             loadedRoomIDs.removeAll()
         }
-
+        SVProgressHUD.show()
         let apiCategory = (selectedButton == "For You") ? "for_you" : selectedButton
         await viewModel.getLiveShows(param: GetLiveShowsRequest(
             type: selectedTab,

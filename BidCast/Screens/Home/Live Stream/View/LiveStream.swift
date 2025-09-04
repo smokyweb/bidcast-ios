@@ -755,7 +755,7 @@ struct LiveStream: View {
 //            )
 //        }
         
-        .bottomSheet(isPresented: $winnerSheet,height: screenHeight * 0.35) {
+        .bottomSheet(isPresented: $winnerSheet,height: screenHeight * 0.32) {
             WinnerBottomSheet(
                 winnerAmount: winnerAmount, profileImage: winnerProfileImage,
                 username: winnerName,
@@ -872,56 +872,70 @@ struct LiveStream: View {
     func success() {
         let response = viewModel.liveShowsResponse
         if response.status == "success" {
-            
-            FirebaseManager.shared.fetchAllLiveSessions { firebaseRoomIds in
-                let validShows = response.data?.filter { show in
-                    guard let roomId = show.room_id else { return false }
-                    return firebaseRoomIds.contains(roomId)
-                }
-                
-                DispatchQueue.main.async {
-                    if validShows?.isEmpty == true {
-                        
-                    }else{
-                        liveShowsData = validShows ?? [LiveShowsModel]()
-                        roomID = liveShowsData.compactMap { $0.room_id }
-                        streamID = roomID
-                        if !liveShowsData.isEmpty {
-                            let initialRoomID = liveShowsData[currentStreamIndex].room_id ?? ""
-                            loginRoom(roomId: initialRoomID)
-                            fetchBiddingDetail(roomId: initialRoomID)
-                            FirebaseManager.shared.observeAllowBidForAll(for: initialRoomID)
-                            refreshProductStatus(roomId: liveShowsData[currentStreamIndex].room_id ?? "")
-                            if liveShowsData[currentStreamIndex].user?.is_followed == false{
-                                isFollow = false
-                            }else{
-                                isFollow = true
-                            }
+            if response.message == "No shows found."{
+                let streamTitle = "Coming Soon"
+                let streamMessage = "The host has not started the stream yet"
+                print("🔥 STREAM REMOVED CALLBACK TRIGGERED 🔥")
+                showVerificationSheet = false
+                alertType = .sheetType(
+                    icon: .alert,
+                    title: streamTitle,
+                    message: streamMessage,
+                    primaryBtnText: AppString.ok.localized,
+                    secondaryBtnText:""
+                )
+                showError = true
+            }else{
+                FirebaseManager.shared.fetchAllLiveSessions { firebaseRoomIds in
+                    let validShows = response.data?.filter { show in
+                        guard let roomId = show.room_id else { return false }
+                        return firebaseRoomIds.contains(roomId)
+                    }
+                    
+                    DispatchQueue.main.async {
+                        if validShows?.isEmpty == true {
                             
-                            if UserDefaults.buyerVerafied != "verified" {
-                                alertType = .sheetType(
-                                    icon: .info,
-                                    title: "Become a Verified Buyer!",
-                                    message: "Before you interact with live shows.you need to become a verified buyer.",
-                                    primaryBtnText: "OK",
-                                    secondaryBtnText: "",
-                                    buttonWidth:screenWidth - 40,
-                                    contentSize: 12.0
-                                )
-                                withAnimation(.snappy){
-                                    showVerificationSheet = true
+                        }else{
+                            liveShowsData = validShows ?? [LiveShowsModel]()
+                            roomID = liveShowsData.compactMap { $0.room_id }
+                            streamID = roomID
+                            if !liveShowsData.isEmpty {
+                                let initialRoomID = liveShowsData[currentStreamIndex].room_id ?? ""
+                                loginRoom(roomId: initialRoomID)
+                                fetchBiddingDetail(roomId: initialRoomID)
+                                FirebaseManager.shared.observeAllowBidForAll(for: initialRoomID)
+                                refreshProductStatus(roomId: liveShowsData[currentStreamIndex].room_id ?? "")
+                                if liveShowsData[currentStreamIndex].user?.is_followed == false{
+                                    isFollow = false
+                                }else{
+                                    isFollow = true
                                 }
                                 
-                            }else{
-                                if UserDefaults.sellerAddress == false{
-                                    showPaymentShipping = true
-                                    titleText = "Add Address"
-                                }else if UserDefaults.hasCardAdded == false{
-                                    showPaymentShipping = true
-                                    titleText = "Add Card"
+                                if UserDefaults.buyerVerafied != "verified" {
+                                    alertType = .sheetType(
+                                        icon: .info,
+                                        title: "Become a Verified Buyer!",
+                                        message: "Before you interact with live shows.you need to become a verified buyer.",
+                                        primaryBtnText: "OK",
+                                        secondaryBtnText: "",
+                                        buttonWidth:screenWidth - 40,
+                                        contentSize: 12.0
+                                    )
+                                    withAnimation(.snappy){
+                                        showVerificationSheet = true
+                                    }
+                                    
+                                }else{
+                                    if UserDefaults.sellerAddress == false{
+                                        showPaymentShipping = true
+                                        titleText = "Add Address"
+                                    }else if UserDefaults.hasCardAdded == false{
+                                        showPaymentShipping = true
+                                        titleText = "Add Card"
+                                    }
                                 }
+                                
                             }
-                            
                         }
                     }
                 }
