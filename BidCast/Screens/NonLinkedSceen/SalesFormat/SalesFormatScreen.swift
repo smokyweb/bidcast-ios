@@ -7,14 +7,18 @@
 
 import SwiftUI
 
-import SwiftUI
-
 struct SalesFormatScreen: View {
     @State private var selectedFormat: SalesFormat = .auction
     @State private var startingBid: String = ""
     @Environment(\.presentationMode) var presentationMode
-    
     @State private var allowOffers: Bool = false
+   @State var navigateToProductWeight = false
+    @State private var weight: String = ""
+    @State private var selectedUnit: String = "lbs"
+    @State private var isHazardous: Bool = false
+    let unitOptions = ["lbs", "kg", "oz"]
+        let quickWeights = ["1 oz", "5 oz", "10 oz", "1 lb", "5 lb", "10 lb"]
+    @Binding var request : StoreProductParam 
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -120,7 +124,7 @@ struct SalesFormatScreen: View {
             }
                 // Continue Button
                 Button(action: {
-                    // Continue action
+                    navigateToProductWeight = true
                 }) {
                     Text("Continue")
                         .font(.headline)
@@ -134,6 +138,23 @@ struct SalesFormatScreen: View {
                 
             
         }
+        CusNavLink(
+             doNavigate: $navigateToProductWeight,
+             destination: ProductWeightScreen(
+                 weight: $weight,
+                 selectedUnit: $selectedUnit,
+                 isHazardous: $isHazardous,
+                 unitOptions: unitOptions,
+                 quickWeights: quickWeights,
+                 request : $request,
+                 onContinue: {
+                     // Save weight back into request
+                     request.weight = weight + " " + selectedUnit
+                     presentationMode.wrappedValue.dismiss() // or navigate forward
+                 }
+                 
+             )
+         )
         
     }
 
@@ -161,6 +182,8 @@ struct SalesFormatScreen: View {
     }
 }
 
-#Preview {
-    SalesFormatScreen()
-}
+
+
+//#Preview {
+//    SalesFormatScreen()
+//}

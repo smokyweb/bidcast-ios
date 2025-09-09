@@ -148,8 +148,12 @@ struct AddProductsScreen: View {
                     }
                     
                     VStack(spacing: 16) {
-                        addProductOption(text: "Add another product")
-                        addProductOption(text: "Select from product Inventory")
+                        addProductOption(text: "Add another product") {
+                            presentationMode.wrappedValue.dismiss()
+                        }
+                        addProductOption(text: "Select from product Inventory"){
+//                            presentationMode.wrappedValue.dismiss()
+                        }
                     }
                 }
                 .padding(.horizontal)
@@ -275,21 +279,24 @@ struct AddProductsScreen: View {
     
     
     // MARK: - Add Product Tile
-    private func addProductOption(text: String) -> some View {
-        VStack {
-            Image(systemName: "plus")
-                .foregroundColor(.gray)
-            Text(text)
-                .foregroundColor(.gray)
-                .font(.subheadline)
+    private func addProductOption(text: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            VStack {
+                Image(systemName: "plus")
+                    .foregroundColor(.gray)
+                Text(text)
+                    .foregroundColor(.gray)
+                    .font(.subheadline)
+            }
+            .frame(maxWidth: .infinity)
+            .frame(height: 120)
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(Color.gray.opacity(0.4), style: StrokeStyle(lineWidth: 1, dash: [4]))
+            )
         }
-        .frame(maxWidth: .infinity)
-        .frame(height: 120)
-        .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(Color.gray.opacity(0.4), style: StrokeStyle(lineWidth: 1, dash: [4]))
-        )
     }
+
 }
 
 //MARK: API LOGIC.
