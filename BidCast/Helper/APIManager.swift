@@ -78,9 +78,13 @@ final class APIManager {
             // ✅ Handle 401 with single alert
             if let response = response as? HTTPURLResponse, response.statusCode == 401 {
                 DispatchQueue.main.async {
+                    // 🚫 Do not show popup if already logged out
+                    if UserDefaults.accessToken.isEmpty || UserDefaults.accessToken == ""{
+                        return
+                    }
+                    
                     if !APIManager.isShowingUnauthorizedAlert {
                         APIManager.isShowingUnauthorizedAlert = true
-                        
                         do {
                             let dataObj = try JSONDecoder().decode(ApiError.self, from: data)
                             if dataObj.error_type == "UNAUTHORIZED" {
@@ -94,7 +98,9 @@ final class APIManager {
                                     )
                                     
                                     let loginAction = UIAlertAction(title: "Login", style: .default) { _ in
-                                        APIManager.isShowingUnauthorizedAlert = false // reset ✅
+                                        APIManager.isShowingUnauthorizedAlert = false
+                                        // clear token on popup
+                                        UserDefaults.accessToken = ""
                                         rootVC.topMostViewController.dismiss(animated: true) {
                                             NotificationCenter.default.post(name: .userSessionExpired, object: nil)
                                         }
@@ -106,11 +112,12 @@ final class APIManager {
                             }
                         } catch {
                             print("Failed to decode ApiError: \(error)")
+                            APIManager.isShowingUnauthorizedAlert = false
                         }
                     }
                 }
             }
-
+            
             
             let dataObj = try JSONDecoder().decode(ApiError.self, from: data)
             print(dataObj)
@@ -118,7 +125,7 @@ final class APIManager {
                 throw DataError.invalidCode(message)
             }else if let errors = dataObj.errors{
                 
-            
+                
                 throw DataError.invalidCode(errors.email)
                 throw DataError.invalidCode(errors.password)
             }else{
