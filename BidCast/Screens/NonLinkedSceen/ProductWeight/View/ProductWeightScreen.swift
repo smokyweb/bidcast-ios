@@ -40,7 +40,6 @@ struct ProductWeightScreen: View {
     var onContinue: () -> Void
     
     var body: some View {
-        ZStack{
             VStack(spacing: 0) {
                 // Header
                 PrimaryHeader(
@@ -155,7 +154,8 @@ struct ProductWeightScreen: View {
                 }
                 .background(Color.white)
             }
-        }
+            .edgesIgnoringSafeArea(.bottom)
+            .padding(.bottom , -200)
         CusNavLink(doNavigate: $navigateToAddProduct, destination: AddProductsScreen(request:$storeScheduleRequest,thumbNail: $thumbNail,fromPrepare: .constant(false),backToPrepare: $backToPrepare))
         CusNavLink(doNavigate: $navigateToProuct, destination: AddProductsScreen(request:$storeScheduleRequest,thumbNail: $thumbNail,fromPrepare: $fromPrepare,backToPrepare: $backToPrepare,delegate: delegate))
         .toast(isPresenting: $showhud) {
@@ -358,3 +358,4 @@ extension Encodable {
         as? [String: Any]
     }
 }
+

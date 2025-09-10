@@ -6,23 +6,27 @@
 //
 
 import SwiftUI
+import AlertToast
 
 struct SalesFormatScreen: View {
     @State private var selectedFormat: SalesFormat = .auction
     @State private var startingBid: String = ""
     @Environment(\.presentationMode) var presentationMode
     @State private var allowOffers: Bool = false
-   @State var navigateToProductWeight = false
+    @State var navigateToProductWeight = false
     @State private var weight: String = ""
     @State private var selectedUnit: String = "lbs"
     @State private var isHazardous: Bool = false
     let unitOptions = ["lbs", "kg", "oz"]
-        let quickWeights = ["1 oz", "5 oz", "10 oz", "1 lb", "5 lb", "10 lb"]
+    let quickWeights = ["1 oz", "5 oz", "10 oz", "1 lb", "5 lb", "10 lb"]
     @Binding var request : StoreProductParam
     @Binding var storeScheduleRequest : StoreScheduleShowRequest
     @Binding var imageUrls: [String]
     @Binding var thumbNail : String
     @Binding var backToPrepare : Bool
+    @State var showhud: Bool = false
+    @State var hudMsg: String = ""
+    @State var showError: Bool = false
     
     @Binding var fromPrepare : Bool
     var delegate: ShowStepDelegate?
@@ -80,19 +84,19 @@ struct SalesFormatScreen: View {
                 // Starting Bid
                 if selectedFormat == .auction {
                     VStack(alignment: .leading, spacing: 12) {
-        
+                        
                         AuthTextField(floatingLabel: "Starting Bid".localized, placeholder: "0.0".localized, icon: .menuProfile, text: $request.pricing,isIconDisplay : false, isForPrice:false,
                                       custFontName : robotoMedium,
                                       custFontSize : 14.0,
                                       enteredText:  { price in
-//                            if let amt = Double(price) {
-//                                if amt < 1.0 {
-//                                    hudMsg = "Price should not be less than $1.00"
-//                                    showhud = true
-//                                } else {
-                                    request.pricing = price
-//                                }
-//                            }
+                            //                            if let amt = Double(price) {
+                            //                                if amt < 1.0 {
+                            //                                    hudMsg = "Price should not be less than $1.00"
+                            //                                    showhud = true
+                            //                                } else {
+                            request.pricing = price
+                            //                                }
+                            //                            }
                         })
                         .keyboardType(.numberPad)
                         
@@ -120,61 +124,65 @@ struct SalesFormatScreen: View {
                     }
                     .padding(.horizontal)
                     VStack(alignment: .leading, spacing: 6) {
-                                       Toggle(isOn: $allowOffers) {
-                                           Text("Allow Offers")
-                                               .fontWeight(.medium)
-                                       }
-
-                                       Text("Enable Allow Offers to let buyers offer a different price for your product. You may counter, accept, or simply decline the offer.")
-                                           .font(.footnote)
-                                           .foregroundColor(.gray)
-                                   }
-                                   .padding(.horizontal)
+                        Toggle(isOn: $allowOffers) {
+                            Text("Allow Offers")
+                                .fontWeight(.medium)
+                        }
+                        
+                        Text("Enable Allow Offers to let buyers offer a different price for your product. You may counter, accept, or simply decline the offer.")
+                            .font(.footnote)
+                            .foregroundColor(.gray)
+                    }
+                    .padding(.horizontal)
                 }
                 
                 Spacer()
             }
-                // Continue Button
-                Button(action: {
-                    navigateToProductWeight = true
-                }) {
-                    Text("Continue")
-                        .font(.headline)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 50)
-                        .background(Color.defaultTheme)
-                        .foregroundColor(.white)
-                        .cornerRadius(12)
+            // Continue Button
+            Button(action: {
+                guard !request.weight.isEmpty else{
+                    hudMsg = "Please enter bid amount"
+                    showhud = true
+                    return
                 }
-                .padding([.horizontal, .bottom])
-                
+                navigateToProductWeight = true
+            }) {
+                Text("Continue")
+                    .font(.headline)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 50)
+                    .background(Color.defaultTheme)
+                    .foregroundColor(.white)
+                    .cornerRadius(12)
+            }
+            .padding([.horizontal, .bottom])
+            .toast(isPresenting: $showhud) {
+                AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
+            }
             
         }
         CusNavLink(
-             doNavigate: $navigateToProductWeight,
-             destination: ProductWeightScreen(
-                 weight: $weight,
-                 selectedUnit: $selectedUnit,
-                 isHazardous: $isHazardous,
-                 unitOptions: unitOptions,
-                 quickWeights: quickWeights,
-                 imageUrls : $imageUrls, request : $request,storeScheduleRequest: $storeScheduleRequest,
-                 thumbNail: $thumbNail,
-                 backToPrepare: $backToPrepare,
-                 fromPrepare:$fromPrepare,
-                 delegate:delegate,
-                 onContinue: {
-                     // Save weight back into request
-                     request.weight = weight + " " + selectedUnit
-                     presentationMode.wrappedValue.dismiss() // or navigate forward
-                 }
-                 
-                 
-             )
-         )
+            doNavigate: $navigateToProductWeight,
+            destination: ProductWeightScreen(
+                weight: $weight,
+                selectedUnit: $selectedUnit,
+                isHazardous: $isHazardous,
+                unitOptions: unitOptions,
+                quickWeights: quickWeights,
+                imageUrls : $imageUrls, request : $request,storeScheduleRequest: $storeScheduleRequest,
+                thumbNail: $thumbNail,
+                backToPrepare: $backToPrepare,
+                fromPrepare:$fromPrepare,
+                delegate:delegate,
+                onContinue: {
+                    request.weight = weight + " " + selectedUnit
+                    presentationMode.wrappedValue.dismiss()
+                }
+            )
+        )
         
     }
-
+    
     // Format Button View
     private func formatButton(title: String, systemImage: String, isSelected: Bool) -> some View {
         VStack {
@@ -193,7 +201,7 @@ struct SalesFormatScreen: View {
         )
         .cornerRadius(12)
     }
-
+    
     enum SalesFormat {
         case auction, buyItNow
     }

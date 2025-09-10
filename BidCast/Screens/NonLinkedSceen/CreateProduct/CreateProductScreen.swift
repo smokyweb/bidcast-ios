@@ -309,7 +309,6 @@ struct CreateProductScreen: View {
                             hudMsg = "Please select processing category"
                             showhud = true
                             return
-                            
                         }
                         navigateToSalesFormat = true
                     }, onSecButtonClick: {
