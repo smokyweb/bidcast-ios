@@ -772,7 +772,7 @@ struct CreateProductScreen: View {
 //            .padding([.leading,.trailing],12)
         }
         CusNavLink(doNavigate: $navigateToAddProduct, destination: AddProductsScreen(request:$requests,thumbNail: $thumbNail,fromPrepare: .constant(false),backToPrepare: $backToPrepare))
-        CusNavLink(doNavigate: $navigateToSalesFormat, destination: SalesFormatScreen(request: $request))
+        CusNavLink(doNavigate: $navigateToSalesFormat, destination: SalesFormatScreen(request: $request,imageUrls : imageUrls))
 //        .edgesIgnoringSafeArea(.top/)
         .background(.bg.opacity(0.4))
         
@@ -903,6 +903,7 @@ struct CreateProductScreen: View {
             
         }
     }
+    
     func uploadSuccess(){
         guard let response = self.viewModel.storeImageResponse,
                 response.status == "success"
@@ -993,8 +994,9 @@ struct CreateProductScreen: View {
                     }
                 }
             }
-        
     }
+    
+    
     func storeSuccess(){
         let response = viewModel.storeProductResponse
         if response?.status == "success"{

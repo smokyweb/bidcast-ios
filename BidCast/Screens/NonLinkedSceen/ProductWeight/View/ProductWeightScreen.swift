@@ -13,7 +13,7 @@ struct ProductWeightScreen: View {
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
     @State var showError: Bool = false
-
+    
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     
     @Binding var weight: String
@@ -22,6 +22,7 @@ struct ProductWeightScreen: View {
     
     var unitOptions: [String]
     var quickWeights: [String]
+    @State var imageUrls: [String] = []
     
     @Binding var request: StoreProductParam
     
@@ -45,7 +46,7 @@ struct ProductWeightScreen: View {
             )
             .background(Color.white)
             .frame(height: 40)
-
+            
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
                     
@@ -65,7 +66,7 @@ struct ProductWeightScreen: View {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Item Weight")
                             .font(.subheadline)
-
+                        
                         HStack(spacing: 10) {
                             TextField("0.00", text: $weight)
                                 .keyboardType(.decimalPad)
@@ -73,7 +74,7 @@ struct ProductWeightScreen: View {
                                 .background(Color.gray.opacity(0.1))
                                 .foregroundColor(.black)
                                 .cornerRadius(8)
-
+                            
                             Menu {
                                 ForEach(unitOptions, id: \.self) { unit in
                                     Button(unit) { selectedUnit = unit }
@@ -118,7 +119,7 @@ struct ProductWeightScreen: View {
                         }
                         Text("Items containing flammable, explosive, or other dangerous materials. ")
                             .font(.caption)
-                            + Text(" Learn more about hazardous materials")
+                        + Text(" Learn more about hazardous materials")
                             .font(.caption)
                             .foregroundColor(.blue)
                     }
@@ -148,37 +149,73 @@ struct ProductWeightScreen: View {
     }
     
     // MARK: - Submit Product Logic
-    private func submitProduct() {
-        // attach weight to request
-        request.weight = weight + " " + selectedUnit
+    func submitProduct(){
         
-        // validation
-        guard !request.category_id.isEmpty else { showValidation("Please select category"); return }
-        guard !request.title.isEmpty else { showValidation("Please enter title"); return }
-        guard !request.description.isEmpty else { showValidation("Please enter description"); return }
-        guard !request.width.isEmpty else { showValidation("Please enter width"); return }
-        guard !request.height.isEmpty else { showValidation("Please enter height"); return }
-        guard !request.length.isEmpty else { showValidation("Please enter length"); return }
-        guard !request.weight.isEmpty else { showValidation("Please enter weight"); return }
-        guard !request.mail_class.isEmpty else { showValidation("Please select mail class"); return }
-        guard !request.processing_category.isEmpty else { showValidation("Please select processing category"); return }
+        print(request)
+        print(imageUrls)
+        guard !imageUrls.isEmpty,imageUrls.count != 0 else{
+            hudMsg = "Please select images"
+            showhud = true
+            return
+        }
+        guard !request.category_id.isEmpty else{
+            hudMsg = "Please select category"
+            showhud = true
+            return
+        }
+        guard !request.title.isEmpty else{
+            hudMsg = "Please enter title"
+            showhud = true
+            return
+        }
+        guard !request.description.isEmpty else{
+            hudMsg = "Please enter description"
+            showhud = true
+            return
+        }
+        guard !request.width.isEmpty else{
+            hudMsg = "Please enter width"
+            showhud = true
+            return
+        }
+        guard !request.height.isEmpty else{
+            hudMsg = "Please enter height"
+            showhud = true
+            return
+        }
+        guard !request.length.isEmpty else{
+            hudMsg = "Please enter length"
+            showhud = true
+            return
+        }
+        guard !request.weight.isEmpty else{
+            hudMsg = "Please enter weight"
+            showhud = true
+            return
+        }
+        guard !request.mail_class.isEmpty else{
+            hudMsg = "Please select mail class"
+            showhud = true
+            return
+        }
+        guard !request.processing_category.isEmpty else{
+            hudMsg = "Please select processing category"
+            showhud = true
+            return
+        }
         
-        // API Call
-        Task {
+        Task{
             guard Reachability.isConnectedToNetwork() else {
-                showValidation("No Internet Connection")
+                hudMsg = "No Internet Connection"
+                showhud = true
                 return
             }
             SVProgressHUD.show()
-            if let paramDict = request.dictionary {
-                await viewModel.storeProduct(param: paramDict)
-            }
-            await SVProgressHUD.dismiss()
-            
-            if viewModel.errorMessage == nil || viewModel.errorMessage == "" {
-                onContinue()
-            } else {
-                showError = true
+            viewModel.errorMessage?.removeAll()
+            await viewModel.uploadStoreImage(images: imageUrls, key: "images[]")
+            if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
+                uploadSuccess()
+            }else{
                 alertType = .sheetType(
                     icon: .alert,
                     title: "Failed",
@@ -186,19 +223,139 @@ struct ProductWeightScreen: View {
                     primaryBtnText: "",
                     secondaryBtnText: AppString.ok.localized
                 )
+                showError = true
             }
         }
     }
+    
+    func uploadSuccess(){
+        guard let response = self.viewModel.storeImageResponse,
+              response.status == "success"
+        else {
+            return
+        }
+        //            let response = self.viewModel.storeImageResponse
+        if response.status == "success"{
+            let uploadedUrls: [[String: String]] = response.data.map {
+                return ["image": $0.images ?? "", "thumbnail": $0.thumbnail ?? ""]
+            }
+            var variantArray: [[String: Any]] = []
+            
+            //            for field in extraFields {
+            //                guard let title = field.label, let type = field.type else { continue }
+            //
+            //                if type == "text" {
+            //                    // Handle text input
+            //                    let value = extraFieldValues[title] ?? ""
+            //                    variantArray.append([
+            //                        "title": title,
+            //                        "value": value
+            //                    ])
+            //                } else if type == "radio", let options = field.options {
+            //                    // Handle radio input
+            //                    let selected = selectedRadio[title] ?? ""
+            //
+            //                    // Find which option key is selected (e.g. option_1 or option_2)
+            //                    var selectedKey: String = ""
+            //                    var valueDict: [String: String] = [:]
+            //
+            //                    for (index, option) in options.enumerated() {
+            //                        let key = "option_\(index + 1)"
+            //                        valueDict[key] = option
+            //
+            //                        if option == selected {
+            //                            selectedKey = option
+            //                        }
+            //                    }
+            //
+            //                    valueDict["selected"] = selectedKey
+            //
+            //                    variantArray.append([
+            //                        "title": title,
+            //                        "value": valueDict
+            //                    ])
+            //                }
+            //            }
+            
+            SVProgressHUD.dismiss()
+            Task{
+                self.viewModel.errorMessage?.removeAll()
+                var request = [
+                    
+                    "category_id": request.category_id,
+                    "sub_category_id": request.sub_category_id ?? "",
+                    "title": request.title,
+                    "description": request.description,
+                    "quantity": request.quantity,
+                    "pricing": request.pricing,
+                    "flash_sale": request.flash_sale,
+                    "accept_offers": request.accept_offers,
+                    "reserve_for_live": request.reserve_for_live,
+                    "shipping_profile_id": request.shipping_profile_id,
+                    "images": uploadedUrls
+                    
+                    
+                ]
+                
+                if !variantArray.isEmpty {
+                    request["variant"] = variantArray
+                }
+                
+                
+                await viewModel.storeProduct(param: request)
+                await SVProgressHUD.dismiss()
+                if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
+                    storeSuccess()
+                }else{
+                    alertType = .sheetType(
+                        icon: .alert,
+                        title: "Failed",
+                        message: viewModel.errorMessage ?? "",
+                        primaryBtnText: "",
+                        secondaryBtnText: AppString.ok.localized
+                    )
+                    showError = true
+                }
+            }
+        }
+    }
+    
+    
+    func storeSuccess(){
+        let response = viewModel.storeProductResponse
+        if response?.status == "success"{
+            alertType = .sheetType(
+                icon: .success,
+                title: response?.status?.capitalized ?? "",
+                message: response?.message?.capitalized ?? "",
+                primaryBtnText: AppString.ok.localized,
+                secondaryBtnText: ""
+            )
+            showError = true
+        }else{
+            alertType = .sheetType(
+                icon: .alert,
+                title: response?.error_type?.capitalized ?? "",
+                message: response?.message?.capitalized ?? "",
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
+            )
+            showError = true
+        }
+    }
+    
     
     private func showValidation(_ msg: String) {
         hudMsg = msg
         showhud = true
     }
 }
+
+
 extension Encodable {
     var dictionary: [String: Any]? {
         guard let data = try? JSONEncoder().encode(self) else { return nil }
         return (try? JSONSerialization.jsonObject(with: data, options: .allowFragments))
-            as? [String: Any]
+        as? [String: Any]
     }
 }
