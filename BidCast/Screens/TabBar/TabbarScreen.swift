@@ -126,17 +126,33 @@ struct TabbarScreen: View {
                                 
                                 navigateTogetStarted = true
                             }else{
-                                alertType = .sheetType(
-                                    icon: .info,
-                                    title: "Become a Verified Seller!",
-                                    message: "Before you interact with live shows.you need to become a verified seller.",
-                                    primaryBtnText: "OK",
-                                    secondaryBtnText: "",
-                                    buttonWidth:screenWidth - 32,
-                                    contentSize: 12.0
-                                )
-                                withAnimation(.snappy){
-                                    showSellerSheet = true
+                                if UserDefaults.buyerVerafied == "pending" {
+                                    alertType = .sheetType(
+                                        icon: .info,
+                                        title: "Become a Verified Buyer!",
+                                        message: "Your verification is currently pending approval by the admin. You will be notified once the process is complete.",
+                                        primaryBtnText: "OK",
+                                        secondaryBtnText: "",
+                                        buttonWidth:screenWidth - 40,
+                                        contentSize: 12.0
+                                    )
+                                    withAnimation(.snappy){
+                                        showSellerSheet = true
+                                    }
+                                    
+                                }else{
+                                    alertType = .sheetType(
+                                        icon: .info,
+                                        title: "Become a Verified Seller!",
+                                        message: "Before you interact with live shows.you need to become a verified seller.",
+                                        primaryBtnText: "OK",
+                                        secondaryBtnText: "",
+                                        buttonWidth:screenWidth - 32,
+                                        contentSize: 12.0
+                                    )
+                                    withAnimation(.snappy){
+                                        showSellerSheet = true
+                                    }
                                 }
                             }
                         }
@@ -150,17 +166,33 @@ struct TabbarScreen: View {
                                 showPaymentShipping = true
                             }
                         }else{
-                            alertType = .sheetType(
-                                icon: .info,
-                                title: "Become a Verified Seller!",
-                                message: "Before you interact with live shows.you need to become a verified seller.",
-                                primaryBtnText: "OK",
-                                secondaryBtnText: "",
-                                buttonWidth:screenWidth - 24,
-                                contentSize: 12.0
-                            )
-                            withAnimation(.snappy){
-                                showSellerSheet = true
+                            if UserDefaults.buyerVerafied == "pending" {
+                                alertType = .sheetType(
+                                    icon: .info,
+                                    title: "Become a Verified Buyer!",
+                                    message: "Your verification is currently pending approval by the admin. You will be notified once the process is complete.",
+                                    primaryBtnText: "OK",
+                                    secondaryBtnText: "",
+                                    buttonWidth:screenWidth - 40,
+                                    contentSize: 12.0
+                                )
+                                withAnimation(.snappy){
+                                    showSellerSheet = true
+                                }
+                                
+                            }else{
+                                alertType = .sheetType(
+                                    icon: .info,
+                                    title: "Become a Verified Seller!",
+                                    message: "Before you interact with live shows.you need to become a verified seller.",
+                                    primaryBtnText: "OK",
+                                    secondaryBtnText: "",
+                                    buttonWidth:screenWidth - 24,
+                                    contentSize: 12.0
+                                )
+                                withAnimation(.snappy){
+                                    showSellerSheet = true
+                                }
                             }
                         }
                     
