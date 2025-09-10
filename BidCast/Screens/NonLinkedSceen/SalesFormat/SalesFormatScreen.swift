@@ -192,9 +192,3 @@ struct SalesFormatScreen: View {
         case auction, buyItNow
     }
 }
-
-
-
-//#Preview {
-//    SalesFormatScreen()
-//}

@@ -30,6 +30,7 @@ struct AccountScreen: View {
     @State var navigateToPrivacy : Bool = false
     @State var navigateToTerms : Bool = false
     @State var navigateToInventry : Bool = false
+    @State var navigateToPromoteTool : Bool = false
     @State var navigateToAddress : Bool = false
     @State var navigateToShows : Bool = false
     @State var navigateToWallet : Bool = false
@@ -119,7 +120,8 @@ struct AccountScreen: View {
                                         case 9: navigateToPremierShop = true
                                         case 10: navigateToSellerStatus = true
                                         case 11: navigateToAnalytics = true
-                                        case 12: navigateToSellerVerification = true
+                                        case 12: navigateToPromoteTool = true
+                                        case 13: navigateToSellerVerification = true
                                         default: break
                                         }
                                     }
@@ -256,7 +258,8 @@ struct AccountScreen: View {
             CusNavLink(doNavigate: $navigateToShows, destination: ShowsScreen())
             CusNavLink(doNavigate: $navigateToInventry, destination: InventoryScreen(productData: InventoryDataModel()))
             CusNavLink(doNavigate: $navigateToOffers, destination: OffersScreen())
-            CusNavLink(doNavigate: $navigateToSellerTraining, destination: PromoteToolsView())
+            CusNavLink(doNavigate: $navigateToSellerTraining, destination: SellingTips(isNavFrom : "Account"))
+            CusNavLink(doNavigate: $navigateToPromoteTool, destination: PromoteToolsView())
             CusNavLink(doNavigate: $navigateTips, destination: TipsScreen())
             CusNavLink(doNavigate: $navigateToWallet, destination: WalletScreen())
             CusNavLink(doNavigate: $navigateToSellerStatus, destination:   SellerStatusScreen())
@@ -371,6 +374,7 @@ enum TabSection : String, CaseIterable, CustomStringConvertible{
     case premier = "Premier Shop"
     case sellerStatus = "Seller Status"
     case sellerAna = "Seller Analytics"
+    case promoteTool = "Promote Tools"
     case sellerVerificatiob = "Seller Verification"
     
     var description: String {
@@ -405,6 +409,8 @@ enum TabSection : String, CaseIterable, CustomStringConvertible{
             return .analysis
         case .sellerAna:
             return .analysis
+        case .promoteTool:
+            return .promoteTool
         case .sellerVerificatiob:
             return .seller
         }

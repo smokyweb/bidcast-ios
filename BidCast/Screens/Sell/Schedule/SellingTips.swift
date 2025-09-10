@@ -28,6 +28,7 @@ struct SellingTips: View {
     
     @State var navigateToPrepare = false
     @State  var showNextButton = false
+    @State var isNavFrom : String = ""
     
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var networkMonitor: NetworkMonitor
@@ -102,7 +103,12 @@ struct SellingTips: View {
                         currentIndex += 1
                     }else{
                         if currentIndex == lessons.count - 1 {
-                            navigateToPrepare = true
+                            if isNavFrom == "Account"{
+                                presentationMode.wrappedValue.dismiss()
+                            }else{
+                                navigateToPrepare = true
+                            }
+                          
                         }
                     }
                 }

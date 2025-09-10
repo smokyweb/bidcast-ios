@@ -15,62 +15,55 @@ struct MenuCell: View {
     var menuImg : String = "defaultUser"
     var vectorImg : ImageResource = .vacation
     var isSelectable : Bool = false
+    
     @Binding var isTappedSwitch : Bool
     var onToggle: ((Bool) -> Void)? = nil
     var onTapMenuCell: (() -> Void)? = nil
     
     var body: some View {
-        HStack(alignment: .center,spacing: 10){
-            HStack{
-                if !menuImg.isEmpty{
-                    Image(menuImg)
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 25,height: 25)
-                        .padding(.leading ,10)
-                }
-                Text(title)
-                    .font(.custom(fontName, fixedSize: fontValue))
-//                    .bold()
-                    .foregroundStyle(.text)
-                    .foregroundColor(textColor)
-                    .padding(.leading, 10)
-                Spacer()
-                if !isSelectable{
-                    Image(vectorImg)
-                        .resizable()
-                        .scaledToFill()
-                        .rotationEffect(Angle(degrees: 90))
-                        .frame(width: 24,height: 24)
-                        .padding(.trailing ,10)
-                }else{
-                    Rectangle()
-                        .fill(isTappedSwitch ? .tabBar : .bg)
-                        .frame(width: 44,height: 28)
-                        .cornerRadius(14)
-                        .padding(8)
-                        .opacity(1)
-                        .onTapGesture {
-                            isTappedSwitch.toggle()
-                            onToggle?(isTappedSwitch)
-                        }
-                    
-                }
+        HStack(alignment: .center, spacing: 10) {
+            if !menuImg.isEmpty {
+                Image(menuImg)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 25, height: 25)
+                    .padding(.leading ,10)
             }
-            .frame(maxWidth: .infinity )
+            
+            Text(title)
+                .font(.custom(fontName, fixedSize: fontValue))
+                .foregroundColor(textColor ?? .text)
+                .padding(.leading, 10)
+            
+            Spacer()
+            
+            if !isSelectable {
+                Image(vectorImg)
+                    .resizable()
+                    .scaledToFill()
+                    .rotationEffect(Angle(degrees: 90))
+                    .frame(width: 24, height: 24)
+                    .padding(.trailing ,10)
+            } else {
+                Toggle("", isOn: $isTappedSwitch)
+                    .toggleStyle(SwitchToggleStyle(tint: .defaultTheme))
+                    .labelsHidden()
+                    .onChange(of: isTappedSwitch) { newValue in
+                        onToggle?(newValue)
+                    }
+                    .padding(.trailing, 12)
+            }
         }
         .frame(height: 55)
         .background(.white)
         .cornerRadius(8.0)
-        .padding([.leading,.trailing],8)
-        .edgesIgnoringSafeArea(.all)
+        .padding([.leading,.trailing], 8)
         .shadow(color: .squirrelGrey.opacity(0.5), radius: 2, x: 0, y: 0)
         .onTapGesture {
-            onTapMenuCell?()
+            if !isSelectable {
+                onTapMenuCell?()
+            }
         }
     }
 }
 
-//#Preview {
-//    MenuCell( isTappedSwitch: isTappedSwitch)
-//}
