@@ -54,6 +54,9 @@ struct CreateProductScreen: View {
     @State var selectedRadio: [String: String] = [:]
     @State var navigateToAddProduct = false
     @State var navigateToSalesFormat = false
+    @State var navigateToProuct = false
+    @Binding var fromPrepare : Bool
+    var delegate: ShowStepDelegate?
     
     var body: some View {
         
@@ -332,7 +335,12 @@ struct CreateProductScreen: View {
 //                            }
 //                        }
                     }, onSecButtonClick: {
-                        navigateToAddProduct = true
+                        if self.fromPrepare{
+                            navigateToProuct = true
+                        }else{
+                            navigateToAddProduct = true
+                        }
+                        
                     }, height: 45, firstBtnTitleColor: .darkGray, secBtnTitleColor: .white, firstBtnBgColor: .white, secBtnBgColor:.darkBlue)
 
                 }
@@ -395,7 +403,11 @@ struct CreateProductScreen: View {
 //            .padding([.leading,.trailing],12)
         }
         CusNavLink(doNavigate: $navigateToAddProduct, destination: AddProductsScreen(request:$requests,thumbNail: $thumbNail,fromPrepare: .constant(false),backToPrepare: $backToPrepare))
-        CusNavLink(doNavigate: $navigateToSalesFormat, destination: SalesFormatScreen(request: $request,storeScheduleRequest: $requests, imageUrls : $imageUrls,thumbNail: $thumbNail,backToPrepare: $backToPrepare))
+        
+        CusNavLink(doNavigate: $navigateToProuct, destination: AddProductsScreen(request:$requests,thumbNail: $thumbNail,fromPrepare: $fromPrepare,backToPrepare: $backToPrepare,delegate: delegate))
+        
+        CusNavLink(doNavigate: $navigateToSalesFormat, destination: SalesFormatScreen(request: $request,storeScheduleRequest: $requests, imageUrls : $imageUrls,thumbNail: $thumbNail,backToPrepare: $backToPrepare,fromPrepare: $fromPrepare,delegate: delegate))
+        
 //        .edgesIgnoringSafeArea(.top/)
         .background(.bg.opacity(0.4))
         

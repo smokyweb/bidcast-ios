@@ -66,7 +66,7 @@ struct StoreScheduleShowModel : Codable ,Equatable{
     var date : String?
     var time : String?
     var auction_type_id : Int?
-    var thumbnail : [String]
-    var img_thumbnail : [String]
+    var thumbnail : [String]?
+    var img_thumbnail : [String]?
     var id : Int?
 }

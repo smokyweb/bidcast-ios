@@ -176,7 +176,7 @@ struct SellerVerificationScreen: View {
                             icon: "person.crop.circle.badge.checkmark",
                             title: "Manual Verification",
                             subtitle: "Final review by our team",
-                            statusText: manualVerificationComplete ? "Pending" : "Verified",
+                            statusText: viewModel.paymentDetailDict.data?.status ?? "",
                             textColor: UserDefaults.sellerVerafied == "verified" ? Color.defaultTheme : Color.gray
                         )
                     }
@@ -202,7 +202,7 @@ struct SellerVerificationScreen: View {
                 .disabled(UserDefaults.sellerVerafied == "verified" ? true : false)
 //            }
         }
-        .onAppear{
+        .onFirstAppear{
             Task{
                 SVProgressHUD.show()
                 self.viewModel.errorMessage?.removeAll()

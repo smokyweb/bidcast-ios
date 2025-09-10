@@ -33,6 +33,9 @@ struct ProductWeightScreen: View {
     @State var navigateToAddProduct = false
     @Binding var thumbNail : String
     @Binding var backToPrepare : Bool
+    @State var navigateToProuct = false
+    @Binding var fromPrepare : Bool
+    var delegate: ShowStepDelegate?
     
     var onContinue: () -> Void
     
@@ -154,6 +157,7 @@ struct ProductWeightScreen: View {
             }
         }
         CusNavLink(doNavigate: $navigateToAddProduct, destination: AddProductsScreen(request:$storeScheduleRequest,thumbNail: $thumbNail,fromPrepare: .constant(false),backToPrepare: $backToPrepare))
+        CusNavLink(doNavigate: $navigateToProuct, destination: AddProductsScreen(request:$storeScheduleRequest,thumbNail: $thumbNail,fromPrepare: $fromPrepare,backToPrepare: $backToPrepare,delegate: delegate))
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }
@@ -167,7 +171,11 @@ struct ProductWeightScreen: View {
             CommonBottomSheet(
                 sheetType: $alertType,
                 onPrimaryClick: {
-                    navigateToAddProduct = true
+                    if self.fromPrepare{
+                        navigateToProuct = true
+                    }else{
+                        navigateToAddProduct = true
+                    }
                     withAnimation { showError = false }
                 }, onSecondaryClick: {
                     withAnimation { showError = false }

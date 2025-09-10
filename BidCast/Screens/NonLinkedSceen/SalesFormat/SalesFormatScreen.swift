@@ -24,6 +24,9 @@ struct SalesFormatScreen: View {
     @Binding var thumbNail : String
     @Binding var backToPrepare : Bool
     
+    @Binding var fromPrepare : Bool
+    var delegate: ShowStepDelegate?
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             
@@ -158,11 +161,14 @@ struct SalesFormatScreen: View {
                  imageUrls : $imageUrls, request : $request,storeScheduleRequest: $storeScheduleRequest,
                  thumbNail: $thumbNail,
                  backToPrepare: $backToPrepare,
+                 fromPrepare:$fromPrepare,
+                 delegate:delegate,
                  onContinue: {
                      // Save weight back into request
                      request.weight = weight + " " + selectedUnit
                      presentationMode.wrappedValue.dismiss() // or navigate forward
                  }
+                 
                  
              )
          )

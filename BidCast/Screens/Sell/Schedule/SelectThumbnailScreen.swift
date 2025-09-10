@@ -137,8 +137,9 @@ struct SelectThumbnailScreen: View {
             
             CusNavLink(doNavigate: $navigateToSelectTime, destination: SelectShowScreen(request:$request,thumbNail: $thumbNail, comeFromPrepareScreen: .constant(false),backToPrepare: $backToPrepare))
             
-            CusNavLink(doNavigate: $navigateToProuct, destination: AddProductsScreen(request:$request,thumbNail: $thumbNail,fromPrepare: $fromPrepare,backToPrepare: $backToPrepare,delegate: delegate))
+//            CusNavLink(doNavigate: $navigateToProuct, destination: AddProductsScreen(request:$request,thumbNail: $thumbNail,fromPrepare: $fromPrepare,backToPrepare: $backToPrepare,delegate: delegate))
             
+            CusNavLink(doNavigate: $navigateToProuct, destination: CreateProductScreen(requests: $request, thumbNail: $thumbNail,backToPrepare: $backToPrepare,fromPrepare: $fromPrepare,delegate: delegate))
         }
         .edgesIgnoringSafeArea(.bottom)
         .background(.bg.opacity(0.5))
