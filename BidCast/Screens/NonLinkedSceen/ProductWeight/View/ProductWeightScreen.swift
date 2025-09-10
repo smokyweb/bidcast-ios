@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SVProgressHUD
+import AlertToast
 
 struct ProductWeightScreen: View {
     @Environment(\.presentationMode) var presentationMode
@@ -22,9 +23,11 @@ struct ProductWeightScreen: View {
     
     var unitOptions: [String]
     var quickWeights: [String]
-    @State var imageUrls: [String] = []
+    
+    @Binding var imageUrls: [String]
     
     @Binding var request: StoreProductParam
+    @EnvironmentObject private var appRootManager: AppRootManager
     
     
     @StateObject private var viewModel =  ListProductViewModel()
@@ -32,120 +35,141 @@ struct ProductWeightScreen: View {
     var onContinue: () -> Void
     
     var body: some View {
-        VStack(spacing: 0) {
-            // Header
-            PrimaryHeader(
-                title: "Product Weight",
-                isForLogo: false,
-                leadingImgArr: [.icBack],
-                trailingImgArr: [],
-                onClickLeading: { _ in
-                    presentationMode.wrappedValue.dismiss()
-                },
-                count: .constant(0)
-            )
-            .background(Color.white)
-            .frame(height: 40)
-            
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    
-                    // Info
-                    HStack(alignment: .top) {
-                        Image(systemName: "info.circle.fill")
-                            .foregroundColor(.blue)
-                        Text("BidCast calculates shipping fees based on the product weight. You can adjust this later if needed.")
-                            .font(.footnote)
-                            .foregroundColor(.blue)
-                    }
-                    .padding()
-                    .background(Color.blue.opacity(0.1))
-                    .cornerRadius(10)
-                    
-                    // Item Weight Input
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Item Weight")
-                            .font(.subheadline)
+        ZStack{
+            VStack(spacing: 0) {
+                // Header
+                PrimaryHeader(
+                    title: "Product Weight",
+                    isForLogo: false,
+                    leadingImgArr: [.icBack],
+                    trailingImgArr: [],
+                    onClickLeading: { _ in
+                        presentationMode.wrappedValue.dismiss()
+                    },
+                    count: .constant(0)
+                )
+                .background(Color.white)
+                .frame(height: 40)
+                
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 20) {
                         
-                        HStack(spacing: 10) {
-                            TextField("0.00", text: $weight)
-                                .keyboardType(.decimalPad)
-                                .padding()
-                                .background(Color.gray.opacity(0.1))
-                                .foregroundColor(.black)
-                                .cornerRadius(8)
-                            
-                            Menu {
-                                ForEach(unitOptions, id: \.self) { unit in
-                                    Button(unit) { selectedUnit = unit }
-                                }
-                            } label: {
-                                HStack {
-                                    Text(selectedUnit)
-                                    Image(systemName: "chevron.down")
-                                }
-                                .padding()
-                                .foregroundColor(.black)
-                                .background(Color.gray.opacity(0.1))
-                                .cornerRadius(8)
-                            }
+                        // Info
+                        HStack(alignment: .top) {
+                            Image(systemName: "info.circle.fill")
+                                .foregroundColor(.blue)
+                            Text("BidCast calculates shipping fees based on the product weight. You can adjust this later if needed.")
+                                .font(.footnote)
+                                .foregroundColor(.blue)
                         }
-                    }
-                    
-                    // Quick Weights
-                    LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 3), spacing: 12) {
-                        ForEach(quickWeights, id: \.self) { qw in
-                            Button(action: {
-                                weight = qw.replacingOccurrences(of: " oz", with: "")
-                            }) {
-                                Text(qw)
-                                    .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.blue.opacity(0.1))
+                        .cornerRadius(10)
+                        
+                        // Item Weight Input
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Item Weight")
+                                .font(.subheadline)
+                            
+                            HStack(spacing: 10) {
+                                TextField("0.00", text: $weight)
+                                    .keyboardType(.decimalPad)
+                                    .padding()
+                                    .background(Color.gray.opacity(0.1))
+                                    .foregroundColor(.black)
+                                    .cornerRadius(8)
+                                
+                                Menu {
+                                    ForEach(unitOptions, id: \.self) { unit in
+                                        Button(unit) { selectedUnit = unit }
+                                    }
+                                } label: {
+                                    HStack {
+                                        Text(selectedUnit)
+                                        Image(systemName: "chevron.down")
+                                    }
                                     .padding()
                                     .foregroundColor(.black)
                                     .background(Color.gray.opacity(0.1))
                                     .cornerRadius(8)
+                                }
                             }
                         }
-                    }
-                    
-                    // Hazardous Toggle
-                    VStack(alignment: .leading, spacing: 8) {
-                        HStack {
-                            Text("Hazardous Material")
-                                .font(.subheadline)
-                            Spacer()
-                            Toggle("", isOn: $isHazardous)
-                                .labelsHidden()
+                        
+                        // Quick Weights
+                        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 3), spacing: 12) {
+                            ForEach(quickWeights, id: \.self) { qw in
+                                Button(action: {
+                                    weight = qw.replacingOccurrences(of: " oz", with: "")
+                                }) {
+                                    Text(qw)
+                                        .frame(maxWidth: .infinity)
+                                        .padding()
+                                        .foregroundColor(.black)
+                                        .background(Color.gray.opacity(0.1))
+                                        .cornerRadius(8)
+                                }
+                            }
                         }
-                        Text("Items containing flammable, explosive, or other dangerous materials. ")
-                            .font(.caption)
-                        + Text(" Learn more about hazardous materials")
-                            .font(.caption)
-                            .foregroundColor(.blue)
+                        
+                        // Hazardous Toggle
+                        VStack(alignment: .leading, spacing: 8) {
+                            HStack {
+                                Text("Hazardous Material")
+                                    .font(.subheadline)
+                                Spacer()
+                                Toggle("", isOn: $isHazardous)
+                                    .labelsHidden()
+                            }
+                            Text("Items containing flammable, explosive, or other dangerous materials. ")
+                                .font(.caption)
+                            + Text(" Learn more about hazardous materials")
+                                .font(.caption)
+                                .foregroundColor(.blue)
+                        }
+                        
+                        Spacer(minLength: 100)
                     }
-                    
-                    Spacer(minLength: 100)
+                    .padding()
                 }
-                .padding()
-            }
-            
-            // Continue Button
-            VStack {
-                Button(action: {
-                    submitProduct()
-                }) {
-                    Text("Continue")
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color(red: 1.0, green: 0.4, blue: 0.4))
-                        .cornerRadius(10)
+                
+                // Continue Button
+                VStack {
+                    Button(action: {
+                        submitProduct()
+                    }) {
+                        Text("Continue")
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(.defaultTheme)
+                            .cornerRadius(10)
+                    }
+                    .padding(.horizontal)
+                    .padding(.bottom)
                 }
-                .padding(.horizontal)
-                .padding(.bottom)
+                .background(Color.white)
             }
-            .background(Color.white)
         }
+        .toast(isPresenting: $showhud) {
+            AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
+        }
+        .bottomSheet(isPresented: $showError, height: screenHeight * 0.35, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: {
+            if self.viewModel.errorMessage != "" || self.viewModel.errorMessage != nil{
+                showError = true
+            }else{
+                showError = false
+            }
+        }, content: {
+            CommonBottomSheet(
+                sheetType: $alertType,
+                onPrimaryClick: {
+                    appRootManager.currentRoot = .tabBar
+                    withAnimation { showError = false }
+                }, onSecondaryClick: {
+                    withAnimation { showError = false }
+                })
+        })
     }
     
     // MARK: - Submit Product Logic
@@ -213,6 +237,7 @@ struct ProductWeightScreen: View {
             SVProgressHUD.show()
             viewModel.errorMessage?.removeAll()
             await viewModel.uploadStoreImage(images: imageUrls, key: "images[]")
+            request.shipping_profile_id = "4" //TODO : need to dynamic
             if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
                 uploadSuccess()
             }else{
@@ -240,43 +265,6 @@ struct ProductWeightScreen: View {
                 return ["image": $0.images ?? "", "thumbnail": $0.thumbnail ?? ""]
             }
             var variantArray: [[String: Any]] = []
-            
-            //            for field in extraFields {
-            //                guard let title = field.label, let type = field.type else { continue }
-            //
-            //                if type == "text" {
-            //                    // Handle text input
-            //                    let value = extraFieldValues[title] ?? ""
-            //                    variantArray.append([
-            //                        "title": title,
-            //                        "value": value
-            //                    ])
-            //                } else if type == "radio", let options = field.options {
-            //                    // Handle radio input
-            //                    let selected = selectedRadio[title] ?? ""
-            //
-            //                    // Find which option key is selected (e.g. option_1 or option_2)
-            //                    var selectedKey: String = ""
-            //                    var valueDict: [String: String] = [:]
-            //
-            //                    for (index, option) in options.enumerated() {
-            //                        let key = "option_\(index + 1)"
-            //                        valueDict[key] = option
-            //
-            //                        if option == selected {
-            //                            selectedKey = option
-            //                        }
-            //                    }
-            //
-            //                    valueDict["selected"] = selectedKey
-            //
-            //                    variantArray.append([
-            //                        "title": title,
-            //                        "value": valueDict
-            //                    ])
-            //                }
-            //            }
-            
             SVProgressHUD.dismiss()
             Task{
                 self.viewModel.errorMessage?.removeAll()

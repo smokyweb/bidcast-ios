@@ -19,14 +19,14 @@ struct SalesFormatScreen: View {
     let unitOptions = ["lbs", "kg", "oz"]
         let quickWeights = ["1 oz", "5 oz", "10 oz", "1 lb", "5 lb", "10 lb"]
     @Binding var request : StoreProductParam
-    @State var imageUrls: [String] = []
+    @Binding var imageUrls: [String]
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             
             VStack{
                 PrimaryHeader(
-                    title: "Choose Sales Format".localized,
+                    title: "Sales Format".localized,
                     isForLogo : false ,leadingImgArr: [.icBack],
                     onClickLeading: { _ in
                         self.presentationMode.wrappedValue.dismiss()
@@ -74,22 +74,27 @@ struct SalesFormatScreen: View {
                 // Starting Bid
                 if selectedFormat == .auction {
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("Starting Bid")
-                            .fontWeight(.semibold)
-                        
-                        HStack {
-                            Text("$")
-                            TextField("0.00", text: $startingBid)
-                                .keyboardType(.decimalPad)
-                        }
-                        .padding()
-                        .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.gray.opacity(0.4)))
+        
+                        AuthTextField(floatingLabel: "Starting Bid".localized, placeholder: "0.0".localized, icon: .menuProfile, text: $request.pricing,isIconDisplay : false, isForPrice:false,
+                                      custFontName : robotoMedium,
+                                      custFontSize : 14.0,
+                                      enteredText:  { price in
+//                            if let amt = Double(price) {
+//                                if amt < 1.0 {
+//                                    hudMsg = "Price should not be less than $1.00"
+//                                    showhud = true
+//                                } else {
+                                    request.pricing = price
+//                                }
+//                            }
+                        })
+                        .keyboardType(.numberPad)
                         
                         Text("Minimum starting bid is $1.00")
                             .font(.caption)
                             .foregroundColor(.gray)
+                            .padding(.horizontal , 16)
                     }
-                    .padding(.horizontal)
                 }else{
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Starting Bid")
@@ -147,7 +152,7 @@ struct SalesFormatScreen: View {
                  isHazardous: $isHazardous,
                  unitOptions: unitOptions,
                  quickWeights: quickWeights,
-                 imageUrls : imageUrls, request : $request,
+                 imageUrls : $imageUrls, request : $request,
                  onContinue: {
                      // Save weight back into request
                      request.weight = weight + " " + selectedUnit
