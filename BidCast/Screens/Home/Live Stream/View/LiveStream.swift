@@ -136,17 +136,17 @@ struct LiveStream: View {
                         //                            .edgesIgnoringSafeArea(.all)
                         
                         if currentStreamIndex > 0 {
-                            ZegoPreviewView(streamID: streamID[currentStreamIndex - 1])
+                            ZegoPreviewView(streamID: streamID[currentStreamIndex - 1], playMode: .lowLatency)
                                 .frame(width: geometry.size.width, height: geometry.size.height)
                                 .offset(y: -geometry.size.height + verticalDragOffset.height)
                         }
                         
-                        ZegoPreviewView(streamID: streamID[currentStreamIndex])
+                        ZegoPreviewView(streamID: streamID[currentStreamIndex], playMode: .lowLatency)
                             .frame(width: geometry.size.width, height: geometry.size.height)
                             .offset(y: verticalDragOffset.height)
                         
                         if currentStreamIndex < streamID.count - 1 {
-                            ZegoPreviewView(streamID: streamID[currentStreamIndex + 1])
+                            ZegoPreviewView(streamID: streamID[currentStreamIndex + 1], playMode: .lowLatency)
                                 .frame(width: geometry.size.width, height: geometry.size.height)
                                 .offset(y: geometry.size.height + verticalDragOffset.height)
                         }
@@ -1026,29 +1026,6 @@ struct LiveStream: View {
         }
     }
     
-    
-    //    func fetchBiddingDetail(roomId: String) {
-    //        FirebaseManager.shared.getLiveSessionData(roomId: roomId) { data in
-    //            guard let data = data else { return }
-    //            DispatchQueue.main.async {
-    //                if let jsonData = try? JSONSerialization.data(withJSONObject: data) {
-    //                    do {
-    //                        let model = try JSONDecoder().decode(BiddingModel.self, from: jsonData)
-    //                        self.BiddingDetail = model
-    //                        self.productData = self.BiddingDetail.products ?? [ProductData]()
-    //                        if let priceString = self.BiddingDetail.products?[currentProductIndex].price,
-    //                           let priceDouble = Double(priceString) {
-    //                            self.currentPrice = Int(priceDouble)
-    //                        }
-    //                    } catch {
-    //                        print("❌ Decoding Error: \(error)")
-    //                    }
-    //                }
-    //
-    //            }
-    //        }
-    //    }
-    
     func fetchBiddingDetail(roomId: String) {
         FirebaseManager.shared.getLiveSessionData(roomId: roomId) { data in
             guard let data = data else { return }
@@ -1092,12 +1069,6 @@ struct LiveStream: View {
             FirebaseManager.shared.databaseRef.child("live_sessions").child(currentRoomId).removeAllObservers()
             let countdownRef = FirebaseManager.shared.databaseRef.child("live_sessions").child(currentRoomId).child("bidCountDown")
             countdownRef.removeAllObservers()
-            //            if let timer = bidTimers[currentRoomId] {
-            //                timer.invalidate()
-            //                bidTimers.removeValue(forKey: currentRoomId)
-            //                remainingSeconds.removeValue(forKey: currentRoomId)
-            //                print("🛑 Timer invalidated on logout for room \(currentRoomId)")
-            //            }
         }
         
     }
@@ -1244,35 +1215,6 @@ struct LiveStream: View {
     }
 
     
-    
-    
-    //    func observeProduct() {
-    //        guard let currentRoomId = liveShowsData[safe: currentStreamIndex]?.room_id else { return }
-    //
-    //        FirebaseManager.shared.observeProductChanges(roomId: currentRoomId) { updatedProducts in
-    //            DispatchQueue.main.async {
-    //
-    //                if updatedProducts.isEmpty {
-    //                    //                        showNoProductsScreen = true
-    //                } else {
-    //                    self.BiddingDetail.products = updatedProducts
-    //                    self.productData =  self.BiddingDetail.products ?? [ProductData]()
-    //                    currentProductIndex = 0
-    //                    let priceString = updatedProducts.first?.price
-    //                    if let priceDouble = Double(priceString ?? "") {
-    //                        currentPrice = Int(priceDouble)
-    //                    }
-    //                    countdown = 10
-    ////                    startCountdown()
-    //                }
-    //
-    //
-    //            }
-    //        }
-    //    }
-    
-    
-    
     @ViewBuilder
     func sheetView(for action: MenuAction) -> some View {
         switch action {
@@ -1306,6 +1248,8 @@ struct LiveStream: View {
 
 struct ZegoPreviewView: UIViewRepresentable {
     let streamID: String
+    var playMode: PlayMode = .lowLatency   // 👈 choose latency/quality mode
+    
     func makeCoordinator() -> Coordinator {
         Coordinator(streamID: streamID)
     }
@@ -1316,31 +1260,51 @@ struct ZegoPreviewView: UIViewRepresentable {
             self.streamID = streamID
         }
     }
+    
     func makeUIView(context: Context) -> UIView {
         let view = UIView(frame: UIScreen.main.bounds)
         view.backgroundColor = .black
-        //        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-        let canvas = ZegoCanvas(view: view)
-        canvas.viewMode = .aspectFill
-        ZegoExpressEngine.shared().startPlayingStream(streamID, canvas: canvas)
-        //        }
         
+        playStream(on: view, streamID: streamID)  // 👈 extract into helper
         return view
     }
+    
     func updateUIView(_ uiView: UIView, context: Context) {
         ZegoExpressEngine.shared().stopPlayingStream(context.coordinator.streamID)
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            let canvas = ZegoCanvas(view: uiView)
-            canvas.viewMode = .aspectFill
-            ZegoExpressEngine.shared().startPlayingStream(streamID, canvas: canvas)
+            playStream(on: uiView, streamID: streamID)
             context.coordinator.streamID = streamID
         }
     }
     
-    static func dismantleUIView(_ uiView: UIView, coordinator: (Coordinator)) {
-        
+    static func dismantleUIView(_ uiView: UIView, coordinator: Coordinator) {
         ZegoExpressEngine.shared().stopPlayingStream(coordinator.streamID)
+    }
+    
+    // MARK: - Private helper
+    private func playStream(on view: UIView, streamID: String) {
+        let canvas = ZegoCanvas(view: view)
+        canvas.viewMode = .aspectFill
+        
+        let config = ZegoPlayerConfig()
+        
+        switch playMode {
+        case .lowLatency:
+            config.resourceMode = .onlyRTC
+        case .highQuality:
+            config.resourceMode = .onlyCDN
+        case .balanced:
+            config.resourceMode = .default
+        }
+        
+        ZegoExpressEngine.shared().startPlayingStream(streamID, canvas: canvas, config: config)
+    }
+    
+    enum PlayMode {
+        case lowLatency   // RTC only, best for auctions/calls
+        case highQuality  // CDN only, smoother, higher delay
+        case balanced     // Auto (default)
     }
 }
 
