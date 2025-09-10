@@ -77,9 +77,9 @@ struct SellerVerificationScreen: View {
                 )
             }
             
-            if UserDefaults.sellerVerafied == "pending"{
-                ReviewScreen(imageName: "verify", title: AppString.PendingVerification, content: "")
-            }else{
+//            if UserDefaults.sellerVerafied == "pending"{
+//                ReviewScreen(imageName: "verify", title: AppString.PendingVerification, content: "")
+//            }else{
                 ScrollView {
                     VStack(spacing: 18) {
                         // Progress Bar
@@ -200,14 +200,30 @@ struct SellerVerificationScreen: View {
                 }
                 .padding()
                 .disabled(UserDefaults.sellerVerafied == "verified" ? true : false)
-            }
+//            }
         }
         .onAppear{
-            if UserDefaults.sellerVerafied == "verified"{
-                idVerificationComplete = true
-                phoneVerificationComplete = true
-                paymentMethodComplete = true
+            Task{
+                SVProgressHUD.show()
+                self.viewModel.errorMessage?.removeAll()
+                await self.viewModel.fetchSellerPaymentDetail()
+                await SVProgressHUD.dismiss()
+                if self.viewModel.errorMessage == "" || viewModel.errorMessage == nil {
+                    success()
+                }else{
+                    
+                    alertType = .sheetType(
+                        icon: .alert,
+                        title: "Failed" ,
+                        message: self.viewModel.errorMessage ?? "",
+                        primaryBtnText: "",
+                        secondaryBtnText: AppString.ok.localized
+                    )
+                    showError = true
+                }
+                
             }
+            
         }
         .background(.white)
         .toast(isPresenting: $showhud) {
@@ -231,7 +247,7 @@ struct SellerVerificationScreen: View {
             })
             .ignoresSafeArea()
         }
-        .bottomSheet(isPresented: $showError, height: screenHeight / 2.5, topBarCornerRadius: 25, showTopIndicator: false) {
+        .bottomSheet(isPresented: $showError, height: screenHeight * 0.4, topBarCornerRadius: 25, showTopIndicator: false) {
             CommonBottomSheet(
                 sheetType: $alertType,
                 onPrimaryClick: {
@@ -380,6 +396,27 @@ struct SellerVerificationScreen: View {
             )
         }
         //        }
+    }
+    
+    func success(){
+        let response = self.viewModel.paymentDetailDict
+        if response.status == "success"{
+            UserDefaults.sellerVerafied = response.data?.status ?? ""
+            if UserDefaults.sellerVerafied == "verified" || UserDefaults.sellerVerafied == "pending"{
+                idVerificationComplete = true
+                phoneVerificationComplete = true
+                paymentMethodComplete = true
+            }
+        }else{
+            showError = true
+            alertType = .sheetType(
+                icon: .alert,
+                title: response.error_type?.capitalized ?? "",
+                message: response.message?.capitalized ?? "",
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
+            )
+        }
     }
     
     //MARK: idUploadSuccess.

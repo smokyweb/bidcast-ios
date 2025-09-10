@@ -222,8 +222,12 @@ struct TabbarScreen: View {
                 sheetType: $alertType,
                 onPrimaryClick: {
                     withAnimation {
-                        navigateToSeller = true
-                        showSellerSheet = false
+                        if UserDefaults.buyerVerafied == "pending" {
+                            showSellerSheet = false
+                        }else{
+                            navigateToSeller = true
+                            showSellerSheet = false
+                        }
                         
                     }
                     
