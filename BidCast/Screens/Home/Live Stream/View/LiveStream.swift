@@ -637,8 +637,13 @@ struct LiveStream: View {
                 sheetType: $alertType,
                 onPrimaryClick: {
                     withAnimation {
-                        navigateToBuyer = true
-                        showVerificationSheet = false
+                        if UserDefaults.buyerVerafied == "pending" {
+                            showVerificationSheet = false
+                        }else{
+                            navigateToBuyer = true
+                            showVerificationSheet = false
+                        }
+                       
                         if !showVerificationSheet{
                             if !navigateToBuyer{
                                 if UserDefaults.sellerAddress == false{
@@ -911,29 +916,47 @@ struct LiveStream: View {
                                     isFollow = true
                                 }
                                 
-                                if UserDefaults.buyerVerafied != "verified" {
+                                if UserDefaults.buyerVerafied == "pending" {
+                                    // 🟡 Pending state
                                     alertType = .sheetType(
                                         icon: .info,
                                         title: "Become a Verified Buyer!",
-                                        message: "Before you interact with live shows.you need to become a verified buyer.",
+                                        message: "Your verification is currently pending approval by the admin. You will be notified once the process is complete.",
                                         primaryBtnText: "OK",
                                         secondaryBtnText: "",
-                                        buttonWidth:screenWidth - 40,
+                                        buttonWidth: screenWidth - 40,
                                         contentSize: 12.0
                                     )
-                                    withAnimation(.snappy){
+                                    withAnimation(.snappy) {
                                         showVerificationSheet = true
                                     }
                                     
-                                }else{
-                                    if UserDefaults.sellerAddress == false{
+                                } else if UserDefaults.buyerVerafied != "verified" {
+                                    // 🔴 Not verified
+                                    alertType = .sheetType(
+                                        icon: .info,
+                                        title: "Become a Verified Buyer!",
+                                        message: "Before you interact with live shows, you need to become a verified buyer.",
+                                        primaryBtnText: "OK",
+                                        secondaryBtnText: "",
+                                        buttonWidth: screenWidth - 40,
+                                        contentSize: 12.0
+                                    )
+                                    withAnimation(.snappy) {
+                                        showVerificationSheet = true
+                                    }
+                                    
+                                } else {
+                                    // ✅ Verified
+                                    if UserDefaults.sellerAddress == false {
                                         showPaymentShipping = true
                                         titleText = "Add Address"
-                                    }else if UserDefaults.hasCardAdded == false{
+                                    } else if UserDefaults.hasCardAdded == false {
                                         showPaymentShipping = true
                                         titleText = "Add Card"
                                     }
                                 }
+
                                 
                             }
                         }
