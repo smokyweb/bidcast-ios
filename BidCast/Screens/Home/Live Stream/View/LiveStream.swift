@@ -757,9 +757,9 @@ struct LiveStream: View {
         
         .bottomSheet(isPresented: $winnerSheet,height: screenHeight * 0.32) {
             WinnerBottomSheet(
-                winnerAmount: winnerAmount, profileImage: winnerProfileImage,
-                username: winnerName,
-                winnerProfileID : winnerProfileID,
+                winnerAmount: $winnerAmount, profileImage: $winnerProfileImage,
+                username: $winnerName,
+                winnerProfileID : $winnerProfileID,
                 showParentToast: $showToast,
                 parentToastMessage: $toastMessage,
                 onDismiss: {
@@ -1000,10 +1000,19 @@ struct LiveStream: View {
                        let roomKey = bidData.keys.first,
                        let roomDict = bidData[roomKey] as? [String: Any],
                        let highestBid = roomDict["highestBid"] as? [String: Any] {
+                        print("bidData \(bidData)")
                         
-                        winnerName =  UserDefaults.fullName
-                        winnerProfileImage = UserDefaults.profileURL
-                        winnerProfileID = UserDefaults.userId
+                        
+                        let winnerNameFromServer = highestBid["userName"] as? String
+                           let winnerIdFromServer = highestBid["userId"] as? String
+                           let winnerProfileImageFromServer = highestBid["userImage"] as? String
+                        print("id - > \(winnerIdFromServer ?? "")")
+                        print("name - > \(winnerNameFromServer ?? "")")
+                        print("image - > \(winnerProfileImageFromServer ?? "")")
+                        
+                        winnerName = winnerNameFromServer ?? UserDefaults.fullName
+                        winnerProfileID = Int(winnerIdFromServer ?? "") ?? 0
+                           winnerProfileImage = winnerProfileImageFromServer ?? UserDefaults.profileURL
                         winnerAmount = highestBid["bidAmount"] as? String ?? ""
                         print("Winner: \(winnerName), Amount: \(winnerAmount)")
                         

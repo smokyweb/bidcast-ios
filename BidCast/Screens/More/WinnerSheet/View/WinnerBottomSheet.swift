@@ -27,10 +27,10 @@ struct WinnerBottomSheet: View {
     @State private var navToProfile = false
     
     // MARK: – Inputs from parent
-    let winnerAmount : String
-    let profileImage: String
-    let username: String
-    let winnerProfileID : Int
+    @Binding var winnerAmount : String
+    @Binding var profileImage: String
+    @Binding var username: String
+    @Binding var winnerProfileID : Int
     
     @Binding var showParentToast: Bool
     @Binding var parentToastMessage: String
@@ -39,8 +39,10 @@ struct WinnerBottomSheet: View {
     // MARK: – Computed property for winning description
     private var winningDescription: String {
         if winnerProfileID == UserDefaults.userId {
+            print(" matced  Winner profile id \(winnerProfileID)  userdefaults is \(UserDefaults.userId)")
             return "Congratulations! You won the bid with an amount of $\(winnerAmount)"
         } else {
+            print(" unmatchedd   Winner profile id \(winnerProfileID)  userdefaults is \(UserDefaults.userId)")
             return "\(username) won the bid with an amount of $\(winnerAmount)"
         }
     }
@@ -53,27 +55,28 @@ struct WinnerBottomSheet: View {
                 // ---------- HEADER ----------
                 HStack {
                     HStack(spacing: 12) {
-                        AsyncImage(url: URL(string: profileImage)) { phase in
-                            switch phase {
-                            case .empty:
-                                ProgressView()
-                                    .frame(width: 80, height: 80)
-                            case .success(let image):
-                                image
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 36, height: 36)
-                                    .clipShape(Circle())
-                            case .failure:
-                                Image(systemName: "person.crop.circle.fill")
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 36, height: 36)
-                                    .clipShape(Circle())
-                            @unknown default:
-                                EmptyView()
-                            }
-                        }
+                        CustomProfileImage(url: profileImage,isCircular: true,size: 80)
+//                        AsyncImage(url: URL(string: profileImage)) { phase in
+//                            switch phase {
+//                            case .empty:
+//                                ProgressView()
+//                                    .frame(width: 80, height: 80)
+//                            case .success(let image):
+//                                image
+//                                    .resizable()
+//                                    .scaledToFill()
+//                                    .frame(width: 36, height: 36)
+//                                    .clipShape(Circle())
+//                            case .failure:
+//                                Image(systemName: "person.crop.circle.fill")
+//                                    .resizable()
+//                                    .scaledToFill()
+//                                    .frame(width: 36, height: 36)
+//                                    .clipShape(Circle())
+//                            @unknown default:
+//                                EmptyView()
+//                            }
+//                        }
                         
                         Text("\(username)")
                             .font(.custom(poppinsSemiBold, size: 14.0))
