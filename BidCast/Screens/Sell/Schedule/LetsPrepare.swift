@@ -36,6 +36,7 @@ struct LetsPrepare: View,ShowStepDelegate {
     @State var navigateToReferScreen = false
     @State var navigateForLive = false
     @State var product = [ProductDataModel]()
+    @State var showId : String = ""
     
     private var currentProgress: Double {
         guard !prepare.isEmpty else { return 0 }
@@ -121,7 +122,7 @@ struct LetsPrepare: View,ShowStepDelegate {
             CusNavLink(doNavigate: $navigateToSelectShow, destination: SelectShowScreen(request: $request, thumbNail: $thumbNAil, comeFromPrepareScreen: .constant(true),backToPrepare: .constant(false), delegate: self))
             
             CusNavLink(doNavigate: $navigateToRehearsal, destination: RehearsalScreen(showUd: .constant(""),productListData: .constant([ProductDataModel]()), comeFromPrepare: true))
-            CusNavLink(doNavigate: $navigateForLive, destination: RehearsalScreen(showUd: .constant("\(viewModel.storeShowResponse?.data.id ?? 0)"),productListData:$product,comeFromPrepare: false,comeForLive: true ))
+            CusNavLink(doNavigate: $navigateForLive, destination: RehearsalScreen(showUd: $showId,productListData:$product,comeFromPrepare: false,comeForLive: true ))
             
             CusNavLink(doNavigate: $navigateToshowTitle, destination: ShowTitleTips(request : $request,fromPrepare:.constant(true),backToPrepare: $navigateToshowTitle, delegate: self))
             CusNavLink(doNavigate: $navigateToReferScreen, destination: ReferEarnScreen())
@@ -324,6 +325,7 @@ struct LetsPrepare: View,ShowStepDelegate {
         let response = viewModel.storeShowResponse
         if response?.status == "success"{
             self.product = response?.data.products ?? [ProductDataModel]()
+            self.showId = "\(response?.data.id ?? 0)"
             alertType = .sheetType(
                 icon: .success,
                 title: response?.error_type?.capitalized ?? "",
