@@ -390,7 +390,10 @@ struct HomeViewScreen: View {
     func categorySuccess() {
         let response = categoryViewModel.categoryResponse
         if response.status == "success" {
-            var categories = response.data ?? []
+            // Filter only selected categories
+            var categories = (response.data ?? []).filter { $0.is_selected == true }
+            
+            // Always add "For You" at first
             let forYouCategory = CategoryDataModel(
                 id : -1,
                 name: "For You",
@@ -403,7 +406,10 @@ struct HomeViewScreen: View {
             )
             
             categories.insert(forYouCategory, at: 0)
+            
             self.categoryList = categories
+            
+            // Default selection
             if selectedButton.isEmpty {
                 selectedButton = forYouCategory.name ?? "For You"
             }
@@ -418,6 +424,7 @@ struct HomeViewScreen: View {
             )
         }
     }
+
     
     
     func success() {
