@@ -620,7 +620,7 @@ struct RehearsalScreen: View {
             }
         }
         .onFirstAppear {
-            if !comeFromPrepare && !comeForLive {
+//            if !comeFromPrepare && !comeForLive {
                 let mappedProducts = productListData.map { productModel in
                     ProductData(
                         category: productModel.category?.name ?? "Unknown",
@@ -633,7 +633,7 @@ struct RehearsalScreen: View {
                     )
                 }
                 productData.append(contentsOf: mappedProducts)
-            }
+//            }
         }
         .onDisappear {
             logoutRoom()
