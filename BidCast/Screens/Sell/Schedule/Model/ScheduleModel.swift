@@ -58,7 +58,7 @@ struct ProductDataModel: Codable {
 
 
 
-struct StoreScheduleShowModel : Codable ,Equatable{
+struct StoreScheduleShowModel : Codable{
    var user_id : Int?
     var title : String?
     var category_id : Int?
@@ -69,4 +69,5 @@ struct StoreScheduleShowModel : Codable ,Equatable{
     var thumbnail : [String]?
     var img_thumbnail : [String]?
     var id : Int?
+    var products : [ProductDataModel]?
 }

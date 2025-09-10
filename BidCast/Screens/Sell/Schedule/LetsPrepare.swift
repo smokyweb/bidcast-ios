@@ -323,7 +323,7 @@ struct LetsPrepare: View,ShowStepDelegate {
         SVProgressHUD.dismiss()
         let response = viewModel.storeShowResponse
         if response?.status == "success"{
-//            self.product = response?.data.
+            self.product = response?.data.products ?? [ProductDataModel]()
             alertType = .sheetType(
                 icon: .success,
                 title: response?.error_type?.capitalized ?? "",
