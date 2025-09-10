@@ -258,82 +258,60 @@ struct CreateProductScreen: View {
                     .padding(.horizontal,12)
 
                     TwoButton(titleOne: "Continue", titleTwo: "Use Product Library", onFirstButtonClick: {
-//                        print(request)
-//                        print(imageUrls)
-//                        guard !imageUrls.isEmpty,imageUrls.count != 0 else{
-//                            hudMsg = "Please select images"
-//                            showhud = true
-//                            return
-//                        }
-//                        guard !request.category_id.isEmpty else{
-//                            hudMsg = "Please select category"
-//                            showhud = true
-//                            return
-//                        }
-//                        guard !request.title.isEmpty else{
-//                            hudMsg = "Please enter title"
-//                            showhud = true
-//                            return
-//                        }
-//                        guard !request.description.isEmpty else{
-//                            hudMsg = "Please enter description"
-//                            showhud = true
-//                            return
-//                        }
-//                        guard !request.width.isEmpty else{
-//                            hudMsg = "Please enter width"
-//                            showhud = true
-//                            return
-//                        }
-//                        guard !request.height.isEmpty else{
-//                            hudMsg = "Please enter height"
-//                            showhud = true
-//                            return
-//                        }
-//                        guard !request.length.isEmpty else{
-//                            hudMsg = "Please enter length"
-//                            showhud = true
-//                            return
-//                        }
-//                        guard !request.weight.isEmpty else{
-//                            hudMsg = "Please enter weight"
-//                            showhud = true
-//                            return
-//                        }
-//                        guard !request.mail_class.isEmpty else{
-//                            hudMsg = "Please select mail class"
-//                            showhud = true
-//                            return
-//                        }
-//                        guard !request.processing_category.isEmpty else{
-//                            hudMsg = "Please select processing category"
-//                            showhud = true
-//                            return
+                        print(request)
+                        print(imageUrls)
+                        guard !imageUrls.isEmpty,imageUrls.count != 0 else{
+                            hudMsg = "Please select images"
+                            showhud = true
+                            return
+                        }
+                        guard !request.category_id.isEmpty else{
+                            hudMsg = "Please select category"
+                            showhud = true
+                            return
+                        }
+                        guard !request.title.isEmpty else{
+                            hudMsg = "Please enter title"
+                            showhud = true
+                            return
+                        }
+                        guard !request.description.isEmpty else{
+                            hudMsg = "Please enter description"
+                            showhud = true
+                            return
+                        }
+                        guard !request.width.isEmpty else{
+                            hudMsg = "Please enter width"
+                            showhud = true
+                            return
+                        }
+                        guard !request.height.isEmpty else{
+                            hudMsg = "Please enter height"
+                            showhud = true
+                            return
+                        }
+                        guard !request.length.isEmpty else{
+                            hudMsg = "Please enter length"
+                            showhud = true
+                            return
+                        }
+                        guard !request.weight.isEmpty else{
+                            hudMsg = "Please enter weight"
+                            showhud = true
+                            return
+                        }
+                        guard !request.mail_class.isEmpty else{
+                            hudMsg = "Please select mail class"
+                            showhud = true
+                            return
+                        }
+                        guard !request.processing_category.isEmpty else{
+                            hudMsg = "Please select processing category"
+                            showhud = true
+                            return
+                            
+                        }
                         navigateToSalesFormat = true
-//                        }
-                        
-//                        Task{
-//                           guard Reachability.isConnectedToNetwork() else {
-//                                hudMsg = "No Internet Connection"
-//                                showhud = true
-//                                return
-//                            }
-//                            SVProgressHUD.show()
-//                            viewModel.errorMessage?.removeAll()
-//                            await viewModel.uploadStoreImage(images: imageUrls, key: "images[]")
-//                            if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
-//                                uploadSuccess()
-//                            }else{
-//                                alertType = .sheetType(
-//                                    icon: .alert,
-//                                    title: "Failed",
-//                                    message: viewModel.errorMessage ?? "",
-//                                    primaryBtnText: "",
-//                                    secondaryBtnText: AppString.ok.localized
-//                                )
-//                                showError = true
-//                            }
-//                        }
                     }, onSecButtonClick: {
                         if self.fromPrepare{
                             navigateToProuct = true
