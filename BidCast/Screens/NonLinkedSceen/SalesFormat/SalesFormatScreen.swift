@@ -19,7 +19,10 @@ struct SalesFormatScreen: View {
     let unitOptions = ["lbs", "kg", "oz"]
         let quickWeights = ["1 oz", "5 oz", "10 oz", "1 lb", "5 lb", "10 lb"]
     @Binding var request : StoreProductParam
+    @Binding var storeScheduleRequest : StoreScheduleShowRequest
     @Binding var imageUrls: [String]
+    @Binding var thumbNail : String
+    @Binding var backToPrepare : Bool
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -152,7 +155,9 @@ struct SalesFormatScreen: View {
                  isHazardous: $isHazardous,
                  unitOptions: unitOptions,
                  quickWeights: quickWeights,
-                 imageUrls : $imageUrls, request : $request,
+                 imageUrls : $imageUrls, request : $request,storeScheduleRequest: $storeScheduleRequest,
+                 thumbNail: $thumbNail,
+                 backToPrepare: $backToPrepare,
                  onContinue: {
                      // Save weight back into request
                      request.weight = weight + " " + selectedUnit

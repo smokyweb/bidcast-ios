@@ -385,6 +385,3 @@ extension AddProductsScreen{
     }
 }
 
-//#Preview {
-//    AddProductsScreen()
-//}

@@ -27,10 +27,12 @@ struct ProductWeightScreen: View {
     @Binding var imageUrls: [String]
     
     @Binding var request: StoreProductParam
+    @Binding var storeScheduleRequest : StoreScheduleShowRequest
     @EnvironmentObject private var appRootManager: AppRootManager
-    
-    
     @StateObject private var viewModel =  ListProductViewModel()
+    @State var navigateToAddProduct = false
+    @Binding var thumbNail : String
+    @Binding var backToPrepare : Bool
     
     var onContinue: () -> Void
     
@@ -151,6 +153,7 @@ struct ProductWeightScreen: View {
                 .background(Color.white)
             }
         }
+        CusNavLink(doNavigate: $navigateToAddProduct, destination: AddProductsScreen(request:$storeScheduleRequest,thumbNail: $thumbNail,fromPrepare: .constant(false),backToPrepare: $backToPrepare))
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }
@@ -164,7 +167,7 @@ struct ProductWeightScreen: View {
             CommonBottomSheet(
                 sheetType: $alertType,
                 onPrimaryClick: {
-                    appRootManager.currentRoot = .tabBar
+                    navigateToAddProduct = true
                     withAnimation { showError = false }
                 }, onSecondaryClick: {
                     withAnimation { showError = false }
