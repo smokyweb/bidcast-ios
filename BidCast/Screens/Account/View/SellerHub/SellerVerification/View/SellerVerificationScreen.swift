@@ -55,12 +55,12 @@ struct SellerVerificationScreen: View {
         if idVerificationComplete { count += 1 }
         if phoneVerificationComplete { count += 1 }
         if paymentMethodComplete { count += 1 }
-        if manualVerificationComplete { count += 1 }
+//        if manualVerificationComplete { count += 1 }
         return count
     }
     
     
-    let totalSteps = 4.0
+    let totalSteps = 3.0
     @State var showError: Bool = false
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     
