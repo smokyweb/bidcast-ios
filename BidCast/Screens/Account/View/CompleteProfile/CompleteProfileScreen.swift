@@ -351,6 +351,7 @@ struct CompleteProfileScreen: View {
                     sheetType: $alertType,
                     onPrimaryClick: {
                         if viewModel.errorMessage == "" || viewModel.errorMessage == nil {
+                            self.presentationMode.wrappedValue.dismiss()
                             withAnimation { showError = false }
                             Task{
                                guard Reachability.isConnectedToNetwork() else {
