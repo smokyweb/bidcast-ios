@@ -140,7 +140,7 @@ struct SalesFormatScreen: View {
             }
             // Continue Button
             Button(action: {
-                guard !request.weight.isEmpty else{
+                guard !request.pricing.isEmpty else{
                     hudMsg = "Please enter bid amount"
                     showhud = true
                     return
@@ -175,6 +175,7 @@ struct SalesFormatScreen: View {
                 fromPrepare:$fromPrepare,
                 delegate:delegate,
                 onContinue: {
+                    request.pricing = startingBid
                     request.weight = weight + " " + selectedUnit
                     presentationMode.wrappedValue.dismiss()
                 }

@@ -10,6 +10,7 @@ import SVProgressHUD
 import AlertToast
 
 struct ProductWeightScreen: View {
+    
     @Environment(\.presentationMode) var presentationMode
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
@@ -40,22 +41,23 @@ struct ProductWeightScreen: View {
     var onContinue: () -> Void
     
     var body: some View {
+        ZStack {
             VStack(spacing: 0) {
-                // Header
-                PrimaryHeader(
-                    title: "Product Weight",
-                    isForLogo: false,
-                    leadingImgArr: [.icBack],
-                    trailingImgArr: [],
-                    onClickLeading: { _ in
-                        presentationMode.wrappedValue.dismiss()
-                    },
-                    count: .constant(0)
-                )
-                .background(Color.white)
-                .frame(height: 40)
-                
-                ScrollView {
+                VStack {
+                    // Header
+                    PrimaryHeader(
+                        title: "Product Weight",
+                        isForLogo: false,
+                        leadingImgArr: [.icBack],
+                        trailingImgArr: [],
+                        onClickLeading: { _ in
+                            presentationMode.wrappedValue.dismiss()
+                        },
+                        count: .constant(0)
+                    )
+                    .background(Color.white)
+                    .frame(height: 40)
+                    
                     VStack(alignment: .leading, spacing: 20) {
                         
                         // Info
@@ -135,59 +137,94 @@ struct ProductWeightScreen: View {
                         Spacer(minLength: 100)
                     }
                     .padding()
+                    
+                    // Continue Button
+                    VStack {
+                        Button(action: {
+                            submitProduct()
+                        }) {
+                            Text("Continue")
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(.defaultTheme)
+                                .cornerRadius(10)
+                        }
+                        .padding(.horizontal)
+                        .padding(.bottom)
+                    }
+                    .background(Color.white)
                 }
                 
-                // Continue Button
-                VStack {
-                    Button(action: {
-                        submitProduct()
-                    }) {
-                        Text("Continue")
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(.defaultTheme)
-                            .cornerRadius(10)
-                    }
-                    .padding(.horizontal)
-                    .padding(.bottom)
-                }
-                .background(Color.white)
+                CusNavLink(
+                    doNavigate: $navigateToAddProduct,
+                    destination: AddProductsScreen(
+                        request:$storeScheduleRequest,
+                        thumbNail: $thumbNail,
+                        fromPrepare: .constant(false),
+                        backToPrepare: $backToPrepare
+                    )
+                )
+                CusNavLink(
+                    doNavigate: $navigateToProuct,
+                    destination: AddProductsScreen(
+                        request:$storeScheduleRequest,
+                        thumbNail: $thumbNail,
+                        fromPrepare: $fromPrepare,
+                        backToPrepare: $backToPrepare,
+                        delegate: delegate
+                    )
+                )
             }
-            .edgesIgnoringSafeArea(.bottom)
-            .padding(.bottom , -200)
-        CusNavLink(doNavigate: $navigateToAddProduct, destination: AddProductsScreen(request:$storeScheduleRequest,thumbNail: $thumbNail,fromPrepare: .constant(false),backToPrepare: $backToPrepare))
-        CusNavLink(doNavigate: $navigateToProuct, destination: AddProductsScreen(request:$storeScheduleRequest,thumbNail: $thumbNail,fromPrepare: $fromPrepare,backToPrepare: $backToPrepare,delegate: delegate))
+        }
+        // Toast is fine here
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }
-        .bottomSheet(isPresented: $showError, height: screenHeight * 0.35, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: {
-            if self.viewModel.errorMessage != "" || self.viewModel.errorMessage != nil{
-                showError = true
-            }else{
-                showError = false
-            }
-        }, content: {
-            CommonBottomSheet(
-                sheetType: $alertType,
-                onPrimaryClick: {
-                    if self.fromPrepare{
-                        navigateToProuct = true
-                    }else{
-                        navigateToAddProduct = true
+        // BottomSheet applied at ZStack level (✅ overlay, not push)
+        .bottomSheet(
+            isPresented: $showError,
+            height: screenHeight * 0.37,
+            topBarCornerRadius: 25,
+            showTopIndicator: false,
+            onDismiss: {
+                if self.viewModel.errorMessage != "" || self.viewModel.errorMessage != nil {
+                    showError = true
+                } else {
+                    showError = false
+                }
+            },
+            content: {
+                CommonBottomSheet(
+                    sheetType: $alertType,
+                    onPrimaryClick: {
+                        if self.fromPrepare {
+                            navigateToProuct = true
+                        } else {
+                            navigateToAddProduct = true
+                        }
+                        withAnimation { showError = false }
+                    },
+                    onSecondaryClick: {
+                        withAnimation { showError = false }
                     }
-                    withAnimation { showError = false }
-                }, onSecondaryClick: {
-                    withAnimation { showError = false }
-                })
-        })
+                )
+            }
+        )
     }
+
     
     // MARK: - Submit Product Logic
     func submitProduct(){
         
         print(request)
         print(imageUrls)
+        request.weight = weight
+        guard !request.weight.isEmpty else{
+            hudMsg = "Please enter weight"
+            showhud = true
+            return
+        }
         guard !imageUrls.isEmpty,imageUrls.count != 0 else{
             hudMsg = "Please select images"
             showhud = true
@@ -270,7 +307,6 @@ struct ProductWeightScreen: View {
         else {
             return
         }
-        //            let response = self.viewModel.storeImageResponse
         if response.status == "success"{
             let uploadedUrls: [[String: String]] = response.data.map {
                 return ["image": $0.images ?? "", "thumbnail": $0.thumbnail ?? ""]
@@ -292,14 +328,11 @@ struct ProductWeightScreen: View {
                     "reserve_for_live": request.reserve_for_live,
                     "shipping_profile_id": request.shipping_profile_id,
                     "images": uploadedUrls
-                    
-                    
                 ]
                 
                 if !variantArray.isEmpty {
                     request["variant"] = variantArray
                 }
-                
                 
                 await viewModel.storeProduct(param: request)
                 await SVProgressHUD.dismiss()
@@ -358,4 +391,3 @@ extension Encodable {
         as? [String: Any]
     }
 }
-

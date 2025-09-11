@@ -50,11 +50,14 @@ final class APIManager {
         
         request.allHTTPHeaderFields = type.headers
         
-        //        let deviceTimeZone = getDeviceTimeZone()
+        let deviceTimeZone = getDeviceTimeZone()
         if header{
-            request.allHTTPHeaderFields = ["Authorization":"Bearer \(UserDefaults.accessToken)"]
+            print("Current TimeZone: \(deviceTimeZone)")
+            request.allHTTPHeaderFields = ["Authorization":"Bearer \(UserDefaults.accessToken)","timezone":"\(deviceTimeZone)"]
         }
-        
+//        if header{
+//            request.allHTTPHeaderFields = ["Authorization":"Bearer \(UserDefaults.accessToken)"]
+//        }
         
         print("URL: ====>\(url)")
         print("METHOD: =====> \(type.method)")
