@@ -32,6 +32,8 @@ struct AddProductsScreen: View {
     
     @Binding var fromPrepare : Bool
     @Binding var backToPrepare : Bool
+    @Binding var NavFromProductLibrary : Bool
+    @State var navigateToAddProduct  = false
     var delegate: ShowStepDelegate?
     
     
@@ -149,7 +151,12 @@ struct AddProductsScreen: View {
                     
                     VStack(spacing: 16) {
                         addProductOption(text: "Add another product") {
-                            presentationMode.wrappedValue.dismiss()
+                            if NavFromProductLibrary{
+                                presentationMode.wrappedValue.dismiss()
+                            }else{
+                                navigateToAddProduct = true
+                            }
+                            
                         }
                         addProductOption(text: "Select from product Inventory"){
 //                            presentationMode.wrappedValue.dismiss()
@@ -275,6 +282,7 @@ struct AddProductsScreen: View {
                 })
         })
         CusNavLink(doNavigate: $navigateToTab, destination: TabbarScreen())
+        CusNavLink(doNavigate: $navigateToAddProduct, destination: CreateProductScreen(requests: $request, thumbNail: $thumbNail,backToPrepare: $backToPrepare,fromPrepare: .constant(false)))
     }
     
     

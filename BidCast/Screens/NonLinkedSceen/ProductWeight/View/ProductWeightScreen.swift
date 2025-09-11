@@ -162,7 +162,7 @@ struct ProductWeightScreen: View {
                         request:$storeScheduleRequest,
                         thumbNail: $thumbNail,
                         fromPrepare: .constant(false),
-                        backToPrepare: $backToPrepare
+                        backToPrepare: $backToPrepare, NavFromProductLibrary: .constant(false)
                     )
                 )
                 CusNavLink(
@@ -172,7 +172,7 @@ struct ProductWeightScreen: View {
                         thumbNail: $thumbNail,
                         fromPrepare: $fromPrepare,
                         backToPrepare: $backToPrepare,
-                        delegate: delegate
+                        NavFromProductLibrary: .constant(false), delegate: delegate
                     )
                 )
             }
