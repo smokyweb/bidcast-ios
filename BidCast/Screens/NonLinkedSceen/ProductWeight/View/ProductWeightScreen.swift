@@ -181,7 +181,6 @@ struct ProductWeightScreen: View {
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }
-        // BottomSheet applied at ZStack level (✅ overlay, not push)
         .bottomSheet(
             isPresented: $showError,
             height: screenHeight * 0.37,

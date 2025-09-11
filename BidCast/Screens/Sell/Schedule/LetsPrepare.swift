@@ -122,7 +122,7 @@ struct LetsPrepare: View,ShowStepDelegate {
             CusNavLink(doNavigate: $navigateToSelectShow, destination: SelectShowScreen(request: $request, thumbNail: $thumbNAil, comeFromPrepareScreen: .constant(true),backToPrepare: .constant(false), delegate: self))
             
             CusNavLink(doNavigate: $navigateToRehearsal, destination: RehearsalScreen(showUd: .constant(""),productListData: .constant([ProductDataModel]()), comeFromPrepare: true))
-            CusNavLink(doNavigate: $navigateForLive, destination: RehearsalScreen(showUd: $showId,productListData:$product,comeFromPrepare: false,comeForLive: true ))
+            CusNavLink(doNavigate: $navigateForLive, destination: RehearsalScreen(showUd: $showId,productListData:$product,comeFromPrepare: true,comeForLive: true ))
             
             CusNavLink(doNavigate: $navigateToshowTitle, destination: ShowTitleTips(request : $request,fromPrepare:.constant(true),backToPrepare: $navigateToshowTitle, delegate: self))
             CusNavLink(doNavigate: $navigateToReferScreen, destination: ReferEarnScreen())
@@ -326,6 +326,7 @@ struct LetsPrepare: View,ShowStepDelegate {
         if response?.status == "success"{
             self.product = response?.data.products ?? [ProductDataModel]()
             self.showId = "\(response?.data.id ?? 0)"
+            print("showID \(self.showId)")
             alertType = .sheetType(
                 icon: .success,
                 title: response?.error_type?.capitalized ?? "",
@@ -364,9 +365,9 @@ struct LetsPrepare: View,ShowStepDelegate {
     }
 }
 
-#Preview {
-    LetsPrepare()
-}
+//#Preview {
+//    LetsPrepare()
+//}
 
 
 

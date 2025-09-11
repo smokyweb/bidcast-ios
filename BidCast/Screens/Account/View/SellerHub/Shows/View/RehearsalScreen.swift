@@ -11,6 +11,7 @@ import ZegoExpressEngine
 import SVProgressHUD
 
 struct RehearsalScreen: View {
+    @EnvironmentObject  var appRootManager: AppRootManager
     @Binding var showUd: String
     var roomID: String = ""
     @State var streamId = ""
@@ -710,7 +711,11 @@ struct RehearsalScreen: View {
                 previewResetTrigger.toggle()
                 self.showLiveControls = false
                 self.showPreLiveControls = true
-                self.presentaionMode.wrappedValue.dismiss()
+                if comeFromPrepare{
+                    appRootManager.currentRoot = .tabBar
+                }else{
+                    self.presentaionMode.wrappedValue.dismiss()
+                }
                 return
             }
             
