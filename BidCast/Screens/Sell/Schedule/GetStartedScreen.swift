@@ -12,6 +12,7 @@ struct GetStartedScreen: View {
     @Environment(\.presentationMode) var presentationMode
     @State private var agreedToGuidelines = false
     @State var navigateToLesson = false
+    @Binding var backToTabBar : Bool
     var body: some View {
         
         VStack {
@@ -91,7 +92,7 @@ struct GetStartedScreen: View {
                 .disabled(!agreedToGuidelines)
             }
             .padding(.horizontal,12)
-            CusNavLink(doNavigate: $navigateToLesson, destination: LessonScreen())
+            CusNavLink(doNavigate: $navigateToLesson, destination: LessonScreen(backToTabBar: $backToTabBar))
 //            CusNavLink(doNavigate: $navigateToLesson, destination: CombinedLessonTipsView())
         }
         

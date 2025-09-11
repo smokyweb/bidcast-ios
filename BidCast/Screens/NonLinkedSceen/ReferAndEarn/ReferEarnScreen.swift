@@ -118,7 +118,7 @@ struct InfoRow: View {
                 .background(iconColor.opacity(0.1))
                 .foregroundColor(iconColor)
                 .clipShape(Circle())
-
+            Spacer()
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
                     .font(.custom(poppinsSemiBold, size: 13.0))
@@ -129,7 +129,7 @@ struct InfoRow: View {
             }
         }
         .padding()
-        .frame(width: 340)
+//        .frame(width: 340)
         .background(Color.gray.opacity(0.05))
         .cornerRadius(12)
     }

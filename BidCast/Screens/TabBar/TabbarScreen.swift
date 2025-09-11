@@ -79,7 +79,7 @@ struct TabbarScreen: View {
           
             // Navigation Links
 //            CusNavLink(doNavigate: $navigateTogetStarted, destination: LetsPrepare())
-            CusNavLink(doNavigate: $navigateTogetStarted, destination: GetStartedScreen())
+            CusNavLink(doNavigate: $navigateTogetStarted, destination: GetStartedScreen(backToTabBar:$navigateTogetStarted))
             CusNavLink(doNavigate: $navigateToTitle,
                        destination: ShowTitleTips(request:$request,
                         fromPrepare:.constant(false),
@@ -107,6 +107,7 @@ struct TabbarScreen: View {
                         if UserDefaults.isFirstShowCreated{
                             if UserDefaults.sellerVerafied == "verified"{
                                 navigateToTitle = true
+//                                navigateTogetStarted = true
                             }else{
                                 alertType = .sheetType(
                                     icon: .info,
@@ -123,7 +124,7 @@ struct TabbarScreen: View {
                             }
                         }else{
                             if UserDefaults.sellerVerafied == "verified"{
-                                
+//                                navigateToTitle = true
                                 navigateTogetStarted = true
                             }else{
                                 if UserDefaults.buyerVerafied == "pending" {

@@ -29,7 +29,8 @@ struct LessonScreen: View {
     @EnvironmentObject var networkMonitor: NetworkMonitor
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
-    
+    @Binding var backToTabBar : Bool
+    @State var comeFromAccount = false
     var body: some View {
         VStack(spacing: 0) {
             PrimaryHeader(
@@ -165,7 +166,7 @@ struct LessonScreen: View {
                         .padding(.horizontal, 20)
                 }
                 
-                CusNavLink(doNavigate: $navigateToSell, destination: SellingTips())
+                CusNavLink(doNavigate: $navigateToSell, destination: SellingTips(backToTabBar:$backToTabBar))
             }
             .toolbar(.hidden,for: .tabBar)
             .onAppear {
@@ -196,8 +197,14 @@ struct LessonScreen: View {
                 currentIndex += 1
                 playCurrentVideo()
             } else {
-                showNextButton = true
-                navigateToSell = true
+                if comeFromAccount{
+                    showNextButton = true
+                    self.presentationMode.wrappedValue.dismiss()
+                }else{
+                    showNextButton = true
+                    navigateToSell = true
+                }
+                
                 print("All lessons finished")
             }
             playbackProgress = 0.0
@@ -279,6 +286,6 @@ struct LessonScreen: View {
 
 }
 
-#Preview {
-    LessonScreen()
-}
+//#Preview {
+//    LessonScreen()
+//}

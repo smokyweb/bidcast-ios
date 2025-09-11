@@ -61,6 +61,7 @@ struct RehearsalScreen: View {
     @EnvironmentObject var networkMonitor: NetworkMonitor
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
+    @Binding var backToTabBar : Bool
     
     var sheetHeight: CGFloat {
         switch currentBottomSheet {
@@ -712,7 +713,7 @@ struct RehearsalScreen: View {
                 self.showLiveControls = false
                 self.showPreLiveControls = true
                 if comeFromPrepare{
-                    appRootManager.currentRoot = .tabBar
+                    backToTabBar = false
                 }else{
                     self.presentaionMode.wrappedValue.dismiss()
                 }

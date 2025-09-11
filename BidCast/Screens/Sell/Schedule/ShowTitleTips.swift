@@ -26,6 +26,7 @@ struct ShowTitleTips: View {
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
     @Binding var backToPrepare : Bool
+    
     var delegate: ShowStepDelegate?
     
     var body: some View {
@@ -164,10 +165,10 @@ struct ShowTitleTips: View {
     //        }
     //    }
 }
-
-#Preview {
-    LetsPrepare()
-}
-
-
-
+//
+//#Preview {
+//    LetsPrepare()
+//}
+//
+//
+//

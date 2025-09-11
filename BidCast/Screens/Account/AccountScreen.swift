@@ -258,7 +258,7 @@ struct AccountScreen: View {
             CusNavLink(doNavigate: $navigateToShows, destination: ShowsScreen())
             CusNavLink(doNavigate: $navigateToInventry, destination: InventoryScreen(productData: InventoryDataModel()))
             CusNavLink(doNavigate: $navigateToOffers, destination: OffersScreen())
-            CusNavLink(doNavigate: $navigateToSellerTraining, destination: SellingTips(isNavFrom : "Account"))
+            CusNavLink(doNavigate: $navigateToSellerTraining, destination: SellingTips(isNavFrom : "Account", backToTabBar: .constant(true)))
             CusNavLink(doNavigate: $navigateToPromoteTool, destination: PromoteToolsView())
             CusNavLink(doNavigate: $navigateTips, destination: TipsScreen())
             CusNavLink(doNavigate: $navigateToWallet, destination: WalletScreen())

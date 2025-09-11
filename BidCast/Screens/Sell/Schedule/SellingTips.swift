@@ -34,6 +34,7 @@ struct SellingTips: View {
     @EnvironmentObject var networkMonitor: NetworkMonitor
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
+    @Binding var backToTabBar : Bool
     
     var body: some View {
         VStack(spacing:18){
@@ -126,7 +127,7 @@ struct SellingTips: View {
             
         }
         
-        CusNavLink(doNavigate: $navigateToPrepare, destination: LetsPrepare())
+        CusNavLink(doNavigate: $navigateToPrepare, destination: LetsPrepare(backToTabBar:$backToTabBar))
             .edgesIgnoringSafeArea(.bottom)
             .toolbar(.hidden,for: .tabBar)
             .background(.bg.opacity(0.4))
@@ -159,9 +160,9 @@ struct SellingTips: View {
     
 }
 
-#Preview {
-    SellingTips()
-}
+//#Preview {
+//    SellingTips()
+//}
 
 
 

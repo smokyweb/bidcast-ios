@@ -122,7 +122,7 @@ struct PromoteToolsView: View {
         .onFirstAppear {
             Task { await loadData() }
         }
-        CusNavLink(doNavigate: $navigateToLesson, destination: LessonScreen())
+        CusNavLink(doNavigate: $navigateToLesson, destination: LessonScreen(backToTabBar:.constant(true),comeFromAccount: true))
     }
     
     // MARK: Load API

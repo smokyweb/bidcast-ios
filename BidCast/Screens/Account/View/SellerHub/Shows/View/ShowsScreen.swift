@@ -120,7 +120,7 @@ struct ShowsScreen: View {
 ////                .padding(.vertical, 0)
 ////                .background(Color(UIColor.systemGroupedBackground))
 //            }
-            CusNavLink(doNavigate: $navigateToReherseal, destination: RehearsalScreen(showUd: $showID,isLive: isLive, productListData: $selectedProductData))
+            CusNavLink(doNavigate: $navigateToReherseal, destination: RehearsalScreen(showUd: $showID,isLive: isLive, productListData: $selectedProductData, backToTabBar: .constant(true)))
         }
         .navigationBarHidden(true)
         .toolbar(.hidden,for: .tabBar)
