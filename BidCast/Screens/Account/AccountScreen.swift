@@ -251,7 +251,7 @@ struct AccountScreen: View {
             CusNavLink(doNavigate: $navigateToCategory, destination: MultiSelectionCategoryScreen(isNavFrom : "Account"))
             CusNavLink(doNavigate: $navigateToPayment, destination: PaymentAndShipping_Screen())
             CusNavLink(doNavigate: $navigateToTrustedBuyer, destination: TrustedBuyerScreen(comeFromHome: .constant(false)))
-            CusNavLink(doNavigate: $navigateToSellerVerification, destination: ReferEarnScreen())
+            CusNavLink(doNavigate: $navigateToSellerVerification, destination: SellerVerificationScreen())
             
             
             //MARK: Seller hub navigation
