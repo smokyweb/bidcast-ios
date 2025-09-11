@@ -84,7 +84,7 @@ struct ReferEarnScreen: View {
                 InfoRow(icon: "person.2.fill", iconColor: .purple, title: "Friends Join", subtitle: "When they sign up using your link")
                 InfoRow(icon: "dollarsign.circle.fill", iconColor: .green, title: "Earn Rewards", subtitle: "Get $10 credit for each friend who joins")
             }
-//            .padding(.horizontal)
+            .padding(.horizontal)
 
             Spacer()
 
@@ -113,27 +113,37 @@ struct InfoRow: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            Image(systemName: icon)
-                .frame(width: 30, height: 30)
-                .background(iconColor.opacity(0.1))
-                .foregroundColor(iconColor)
-                .clipShape(Circle())
-            Spacer()
-            VStack(alignment: .leading, spacing: 2) {
+            // Icon in tinted circle
+            ZStack {
+                Circle()
+                    .fill(iconColor.opacity(0.1))
+                    .frame(width: 36, height: 36)
+                Image(systemName: icon)
+                    .foregroundColor(iconColor)
+                    .font(.system(size: 16, weight: .semibold))
+            }
+
+            // Title + Subtitle
+            VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(.custom(poppinsSemiBold, size: 13.0))
-                   
+                    .foregroundColor(.black)
+
                 Text(subtitle)
                     .font(.custom(poppinsRegular, size: 11.0))
                     .foregroundColor(.gray)
             }
+
+            Spacer()
         }
         .padding()
-//        .frame(width: 340)
-        .background(Color.gray.opacity(0.05))
+        .background(Color.white)  // white card background
         .cornerRadius(12)
+        .shadow(color: Color.black.opacity(0.03), radius: 2, x: 0, y: 1)
     }
 }
+
+
 
 #Preview {
     ReferEarnScreen()

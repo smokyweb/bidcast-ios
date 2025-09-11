@@ -118,16 +118,15 @@ struct CardDetails: Codable {
 
 //MARK: SellerVerificationModel.
 struct SellerVerificationModel: Codable {
-    var id: Int?
-    var user_id: Int?
-    var id_card: String?
-    var image: String?
-    var phone_number: String?
-    var otp: String?
-    var number_otp_verified: Int?
-    var card_id: String?
-    var status: String?
-    var reason: String?
+//    var id: Int?
+//    var user_id: Int?
+//    var id_card: String?
+//    var image: String?
+//    var phone_number: String?
+//    var otp: String?
+//    var number_otp_verified: Int?
+//    var card_id: String?
+//    var status: String?
+//    var reason: String?
 //    var card_detail: CardModel?
 }
-
