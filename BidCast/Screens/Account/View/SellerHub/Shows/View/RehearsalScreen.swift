@@ -954,7 +954,7 @@ struct RehearsalScreen: View {
                 Circle()
                     .fill(Color.defaultTheme)
                     .frame(width: 20, height: 20)
-                    .overlay(Text("7")
+                    .overlay(Text("")
                         .foregroundColor(.black)
                         .font(.custom(poppinsRegular, size: 13.0))
                     )
