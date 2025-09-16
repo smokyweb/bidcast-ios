@@ -35,7 +35,7 @@ struct CreateProductScreen: View {
     @State var ShippingAddress: [AddressModel] = []
     @State var mailClassList = [String]()
     @State var quantity: Int = 1
-    @State var request : StoreProductParam = StoreProductParam(category_id: "", title: "", description: "", quantity: "", pricing: "", flash_sale: "0", accept_offers: "0", reserve_for_live: "0", shipping_profile_id: "2", status: "",sub_category_id: "",width: "",length: "", weight: "",height:"",mail_class:"",processing_category:"")
+    @State var request : StoreProductParam = StoreProductParam(category_id: "", title: "", description: "", quantity: "1", pricing: "", flash_sale: "0", accept_offers: "0", reserve_for_live: "0", shipping_profile_id: "2", status: "",sub_category_id: "",width: "",length: "", weight: "",height:"",mail_class:"",processing_category:"")
     
     @State var viewModel = ListProductViewModel()
     @State var imageUrls: [String] = []
@@ -327,7 +327,7 @@ struct CreateProductScreen: View {
                 
                 .bottomSheet(
                     isPresented: $showSubCategorySheet,
-                    height: selectedOption.count < 4 ? screenHeight * 0.5 : screenHeight/1.7,
+                    height: selectedOption.count < 4 ? screenHeight * 0.35 : screenHeight/1.7,
                     topBarCornerRadius: 25,
                     showTopIndicator: false,
                     onDismiss: {
@@ -379,32 +379,69 @@ struct CreateProductScreen: View {
 //            }
 //            .padding([.leading,.trailing],12)
         }
-        CusNavLink(doNavigate: $navigateToAddProduct, destination: AddProductsScreen(request:$requests,thumbNail: $thumbNail,fromPrepare: .constant(false),backToPrepare: $backToPrepare, NavFromProductLibrary: .constant(false)))
+        CusNavLink(doNavigate: $navigateToAddProduct, destination: AddProductsScreen(request:$requests,thumbNail: $thumbNail,fromPrepare: .constant(false),backToPrepare: $backToPrepare, NavFromProductLibrary: .constant(false), backToCreateProduct:$navigateToAddProduct))
         
-        CusNavLink(doNavigate: $navigateToProuct, destination: AddProductsScreen(request:$requests,thumbNail: $thumbNail,fromPrepare: $fromPrepare,backToPrepare: $backToPrepare, NavFromProductLibrary: .constant(false), delegate: delegate))
+        CusNavLink(doNavigate: $navigateToProuct, destination: AddProductsScreen(request:$requests,thumbNail: $thumbNail,fromPrepare: $fromPrepare,backToPrepare: $backToPrepare, NavFromProductLibrary: .constant(false), backToCreateProduct: .constant(false), delegate: delegate))
         
-        CusNavLink(doNavigate: $navigateToSalesFormat, destination: SalesFormatScreen(request: $request,storeScheduleRequest: $requests, imageUrls : $imageUrls,thumbNail: $thumbNail,backToPrepare: $backToPrepare,fromPrepare: $fromPrepare,delegate: delegate))
+        CusNavLink(doNavigate: $navigateToSalesFormat, destination: SalesFormatScreen(request: $request,storeScheduleRequest: $requests, imageUrls : $imageUrls,thumbNail: $thumbNail,backToPrepare: $backToPrepare,fromPrepare: $fromPrepare,backToCreateProduct:$navigateToSalesFormat,delegate: delegate))
         
 //        .edgesIgnoringSafeArea(.top/)
         .background(.bg.opacity(0.4))
         
         .onFirstAppear(perform: {
             Task{
-               guard Reachability.isConnectedToNetwork() else {
+                guard Reachability.isConnectedToNetwork() else {
                     hudMsg = "No Internet Connection"
                     showhud = true
                     return
                 }
                 SVProgressHUD.show()
                 await viewModel.getCategoryList(param: CategoryRequest(category_id: ""))
-                
-                categorySuccess()
-                
+                if self.viewModel.errorMessage == nil || self.viewModel.errorMessage == "" {
+                    categorySuccess()
+                }else{
+                    alertType = .sheetType(
+                        icon: .alert,
+                        title: "Error",
+                        message: self.viewModel.errorMessage ?? "",
+                        primaryBtnText: "",
+                        secondaryBtnText: AppString.ok.localized
+                    )
+                    await SVProgressHUD.dismiss()
+                    showError = true
+                }
+                self.viewModel.errorMessage?.removeAll()
                 await viewModel.getAddresses()
-                shippingAddressSuccess()
+                
+                if self.viewModel.errorMessage == nil || self.viewModel.errorMessage == "" {
+                    shippingAddressSuccess()
+                }else{
+                    await SVProgressHUD.dismiss()
+                    alertType = .sheetType(
+                        icon: .alert,
+                        title: "Error",
+                        message: self.viewModel.errorMessage ?? "",
+                        primaryBtnText: "",
+                        secondaryBtnText: AppString.ok.localized
+                    )
+                    showError = true
+                }
+                self.viewModel.errorMessage?.removeAll()
                 await viewModel.getMailClasses()
                 await SVProgressHUD.dismiss()
-                mailSuccess()
+                if self.viewModel.errorMessage == nil || self.viewModel.errorMessage == "" {
+                    mailSuccess()
+                }else{
+                    alertType = .sheetType(
+                        icon: .alert,
+                        title: "Error",
+                        message: self.viewModel.errorMessage ?? "",
+                        primaryBtnText: "",
+                        secondaryBtnText: AppString.ok.localized
+                    )
+                    showError = true
+                }
+            
                 
                 
             

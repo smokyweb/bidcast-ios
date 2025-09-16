@@ -72,7 +72,7 @@ final class APIManager {
         
         let (data, response) = try await URLSession(configuration: config).data(for: request)
         
-        print(response)
+//        print(response)
         print("API Response >>> \n\(data.prettyPrintedJSONString ?? "")")
         
         guard let response = response as? HTTPURLResponse,
@@ -112,7 +112,31 @@ final class APIManager {
                                     alert.addAction(loginAction)
                                     rootVC.topMostViewController.present(alert, animated: true, completion: nil)
                                 }
+                            }else if dataObj.error_type == "invalid_token"{
+                                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                                   let rootVC = windowScene.windows.first(where: { $0.isKeyWindow })?.rootViewController {
+                                    
+                                    let alert = UIAlertController(
+                                        title: "Session Expired",
+                                        message: "Your account has been deleted or your session is no longer valid. Please log in again.",
+                                        preferredStyle: .alert
+                                    )
+                                    
+                                    let loginAction = UIAlertAction(title: "Login", style: .default) { _ in
+                                        APIManager.isShowingUnauthorizedAlert = false
+                                        // clear token on popup
+                                        UserDefaults.accessToken = ""
+                                        rootVC.topMostViewController.dismiss(animated: true) {
+                                            NotificationCenter.default.post(name: .userSessionExpired, object: nil)
+                                        }
+                                    }
+                                    
+                                    alert.addAction(loginAction)
+                                    rootVC.topMostViewController.present(alert, animated: true, completion: nil)
+                                }
                             }
+                            return
+                            
                         } catch {
                             print("Failed to decode ApiError: \(error)")
                             APIManager.isShowingUnauthorizedAlert = false
@@ -127,10 +151,11 @@ final class APIManager {
             if let message = dataObj.message {
                 throw DataError.invalidCode(message)
             }else if let errors = dataObj.errors{
-                
+                if let emailError = errors.email { throw DataError.invalidCode(emailError) }
+                if let passwordError = errors.password { throw DataError.invalidCode(passwordError) }
                 
                 throw DataError.invalidCode(errors.email)
-                throw DataError.invalidCode(errors.password)
+               
             }else{
                 throw DataError.invalidCode(dataObj.message)
             }
@@ -188,33 +213,105 @@ final class APIManager {
         config.waitsForConnectivity = true
         
         let (data, response) = try await URLSession(configuration: config).data(for: request)
+//        print(response)
+        print("API Response >>> \n\(data.prettyPrintedJSONString ?? "")")
         
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw DataError.invalidResponse(data)
-        }
-        
-        if !(200...299).contains(httpResponse.statusCode) {
-            do {
-                let dataObj = try JSONDecoder().decode(ApiError.self, from: data)
-                print(dataObj)
-                if let message = dataObj.message {
-                    throw DataError.invalidCode(message)
-                } else {
-                    throw DataError.invalidCode(dataObj.message)
+        guard let response = response as? HTTPURLResponse,
+              200 == response.statusCode || 201 == response.statusCode else {
+            
+            // ✅ Handle 401 with single alert
+            if let response = response as? HTTPURLResponse, response.statusCode == 401 {
+                DispatchQueue.main.async {
+                    // 🚫 Do not show popup if already logged out
+                    if UserDefaults.accessToken.isEmpty || UserDefaults.accessToken == ""{
+                        return
+                    }
+                    
+                    if !APIManager.isShowingUnauthorizedAlert {
+                        APIManager.isShowingUnauthorizedAlert = true
+                        do {
+                            let dataObj = try JSONDecoder().decode(ApiError.self, from: data)
+                            if dataObj.error_type == "UNAUTHORIZED" {
+                                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                                   let rootVC = windowScene.windows.first(where: { $0.isKeyWindow })?.rootViewController {
+                                    
+                                    let alert = UIAlertController(
+                                        title: "Session Expired",
+                                        message: "Your account has been logged in from another device",
+                                        preferredStyle: .alert
+                                    )
+                                    
+                                    let loginAction = UIAlertAction(title: "Login", style: .default) { _ in
+                                        APIManager.isShowingUnauthorizedAlert = false
+                                        // clear token on popup
+                                        UserDefaults.accessToken = ""
+                                        rootVC.topMostViewController.dismiss(animated: true) {
+                                            NotificationCenter.default.post(name: .userSessionExpired, object: nil)
+                                        }
+                                    }
+                                    
+                                    alert.addAction(loginAction)
+                                    rootVC.topMostViewController.present(alert, animated: true, completion: nil)
+                                }
+                            }else if dataObj.error_type == "invalid_token"{
+                                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                                   let rootVC = windowScene.windows.first(where: { $0.isKeyWindow })?.rootViewController {
+                                    
+                                    let alert = UIAlertController(
+                                        title: "Session Expired",
+                                        message: "Your account has been deleted or your session is no longer valid. Please log in again.",
+                                        preferredStyle: .alert
+                                    )
+                                    
+                                    let loginAction = UIAlertAction(title: "Login", style: .default) { _ in
+                                        APIManager.isShowingUnauthorizedAlert = false
+                                        // clear token on popup
+                                        UserDefaults.accessToken = ""
+                                        rootVC.topMostViewController.dismiss(animated: true) {
+                                            NotificationCenter.default.post(name: .userSessionExpired, object: nil)
+                                        }
+                                    }
+                                    
+                                    alert.addAction(loginAction)
+                                    rootVC.topMostViewController.present(alert, animated: true, completion: nil)
+                                }
+                            }
+                            return
+                            
+                        } catch {
+                            print("Failed to decode ApiError: \(error)")
+                            APIManager.isShowingUnauthorizedAlert = false
+                        }
+                    }
                 }
-            } catch {
-                print("Error decoding error response: \(error)")
-                throw DataError.invalidResponse(data)
+            }
+            
+            
+            let dataObj = try JSONDecoder().decode(ApiError.self, from: data)
+            print(dataObj)
+            if let message = dataObj.message {
+                throw DataError.invalidCode(message)
+            }else if let errors = dataObj.errors{
+                if let emailError = errors.email { throw DataError.invalidCode(emailError) }
+                if let passwordError = errors.password { throw DataError.invalidCode(passwordError) }
+                
+                throw DataError.invalidCode(errors.email)
+               
+            }else{
+                throw DataError.invalidCode(dataObj.message)
             }
         }
         
         do {
-            print("API Response >>> \n\(data.prettyPrintedJSONString ?? "")")
-            let decodedObject = try JSONDecoder().decode(modalType, from: data)
-            return decodedObject
-        } catch {
-            print("Decoding error: \(error)")
-            throw DataError.network(error)
+            let json =  try JSONSerialization.jsonObject(with: data, options: [])
+            print("Response JSon: ",json)
+            let object = try JSONDecoder().decode(T.self, from: data)
+            //            print(object)
+            return object
+        }
+        catch let error {
+            print(error)
+            throw error//DataError.invalidResponse(data)
         }
     }
     
@@ -238,81 +335,113 @@ final class APIManager {
         mimeType: String,
         parameters: [String: Any],
         modelType: T.Type,
-        header: Bool,
-        completion: @escaping Handler<T>
-    ) {
-        print("Upload File API Request - - - - - - - - - - >>>>>")
-        guard let url = type.url else {
-            completion(.failure(.invalidURL))
-            return
-        }
-        print("URL >> \(url)")
+        header: Bool
+    ) async throws -> T {
+        
+        // ✅ Build URL
+        guard let url = type.url else { throw DataError.invalidURL }
         var request = URLRequest(url: url)
         request.httpMethod = type.method.rawValue
-        print("Method >> \(type.method.rawValue)")
-        
+
+        // ✅ Prepare boundary and media
         let boundary = generateBoundary()
-        
-        var media: MediaData1?
-        
-        guard let med = MediaData1(withURL: urlArray, forKey: "media", mimeType: mimeType) else {
-            return
+        guard let media = MediaData1(withURL: urlArray, forKey: "media", mimeType: mimeType) else {
+            throw DataError.invalidData
         }
-        media = med
-        
-        let params  = parameters
-        
-        
-        
+
+        // ✅ Headers
         request.allHTTPHeaderFields = type.headers
         if header {
-            if header{
-                request.allHTTPHeaderFields = ["Authorization":"Bearer \(UserDefaults.accessToken)"]
-            }
+            request.allHTTPHeaderFields = [
+                "Authorization": "Bearer \(UserDefaults.accessToken)",
+                "Content-Type": "multipart/form-data; boundary=\(boundary)"
+            ]
+        } else {
+            request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
         }
-        
-        request.allHTTPHeaderFields = [
-            "Accept": "application/json",
-            "Content-Type": "multipart/form-data; boundary=\(boundary)"
-        ]
-        
-        let dataBody = createDataBody1(withParameters: params, media: media, boundary: boundary)
-        
-        request.httpBody = dataBody
-        
-        print("Headers >>> \(request.allHTTPHeaderFields ?? [:])")
-        
+
+        // ✅ Body
+        request.httpBody = createDataBody1(withParameters: parameters, media: media, boundary: boundary)
+
+        print("Upload URL: \(url)")
+        print("METHOD: \(type.method.rawValue)")
+        print("HEADERS: \(request.allHTTPHeaderFields ?? [:])")
+
+        // ✅ Config
         let config = URLSessionConfiguration.default
         config.waitsForConnectivity = true
         config.timeoutIntervalForResource = 120
-        
-        URLSession(configuration: config).dataTask(with: request) { data, response, error in
-            guard let data, error == nil else {
-                completion(.failure(.invalidData))
-                return
-            }
-            guard let response = response as? HTTPURLResponse,
-                  200 ... 599 ~= response.statusCode else {
-                do {
-                    print("API Response >>> \n\(data.prettyPrintedJSONString ?? "")")
-                    let products = try JSONDecoder().decode(modelType, from: data)
-                    completion(.success(products))
-                }catch {
-                    completion(.failure(.invalidResponse(data)))
+
+        // ✅ Perform request
+        let (data, response) = try await URLSession(configuration: config).data(for: request)
+        print("API Response >>> \n\(data.prettyPrintedJSONString ?? "")")
+
+        guard let httpResponse = response as? HTTPURLResponse,
+              200...299 ~= httpResponse.statusCode else {
+
+            // 🔑 Handle 401 Unauthorized
+            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 401 {
+                DispatchQueue.main.async {
+                    if UserDefaults.accessToken.isEmpty { return }
+                    if !APIManager.isShowingUnauthorizedAlert {
+                        APIManager.isShowingUnauthorizedAlert = true
+                        do {
+                            let dataObj = try JSONDecoder().decode(ApiError.self, from: data)
+                            if dataObj.error_type == "UNAUTHORIZED" || dataObj.error_type == "invalid_token" {
+                                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                                   let rootVC = windowScene.windows.first(where: { $0.isKeyWindow })?.rootViewController {
+                                    
+                                    let alert = UIAlertController(
+                                        title: "Session Expired",
+                                        message: dataObj.error_type == "UNAUTHORIZED"
+                                            ? "Your account has been logged in from another device"
+                                            : "Your account has been deleted or your session is no longer valid. Please log in again.",
+                                        preferredStyle: .alert
+                                    )
+                                    let loginAction = UIAlertAction(title: "Login", style: .default) { _ in
+                                        APIManager.isShowingUnauthorizedAlert = false
+                                        UserDefaults.accessToken = ""
+                                        rootVC.topMostViewController.dismiss(animated: true) {
+                                            NotificationCenter.default.post(name: .userSessionExpired, object: nil)
+                                        }
+                                    }
+                                    alert.addAction(loginAction)
+                                    rootVC.topMostViewController.present(alert, animated: true)
+                                }
+                            }
+                            return
+                        } catch {
+                            print("Failed to decode ApiError: \(error)")
+                            APIManager.isShowingUnauthorizedAlert = false
+                        }
+                    }
                 }
-                return
             }
-            do {
-                
-                print("API Response >>> \n\(data.prettyPrintedJSONString ?? "")")
-                let products = try JSONDecoder().decode(modelType, from: data)
-                completion(.success(products))
-            }catch {
-                completion(.failure(.network(error)))
+
+            // 🔑 Parse other API errors
+            let dataObj = try JSONDecoder().decode(ApiError.self, from: data)
+            print(dataObj)
+            if let message = dataObj.message {
+                throw DataError.invalidCode(message)
+            } else if let errors = dataObj.errors {
+                if let emailError = errors.email { throw DataError.invalidCode(emailError) }
+                if let passwordError = errors.password { throw DataError.invalidCode(passwordError) }
+                throw DataError.invalidCode(nil)
+            } else {
+                throw DataError.invalidCode(nil)
             }
-            
-        }.resume()
+        }
+
+        // ✅ Decode success response
+        do {
+            let object = try JSONDecoder().decode(T.self, from: data)
+            return object
+        } catch {
+            print(error)
+            throw error
+        }
     }
+
     
     func uploadFile<T: Decodable>(
         type: EndPointType,
@@ -410,99 +539,6 @@ final class APIManager {
     
     
     
-    //    func uploadImage<T: Decodable>(
-    //        type: EndPointType,
-    //        urlArray: [String]? = nil,
-    //        mimeType: String,
-    //        keyName: String,
-    //        parameters: [String: Any],
-    //        modelType: T.Type,
-    //        header: Bool,
-    //        completion: @escaping Handler<T>
-    //    ) {
-    //        print("Upload File API Request - - - - - - - - - - >>>>>")
-    //        guard let url = type.url else {
-    //            completion(.failure(.invalidURL))
-    //            return
-    //        }
-    //        print("URL >> \(url)")
-    //        var request = URLRequest(url: url)
-    //        request.httpMethod = type.method.rawValue
-    //        print("Method >> \(type.method.rawValue)")
-    //
-    //        let boundary = generateBoundary()
-    //
-    //        var media =  [MediaData1]()
-    //
-    //        urlArray?.forEach { url in
-    //            if url.contains("media") {
-    //                guard let med = MediaData1(withURL:"\(url)", forKey: keyName, mimeType: mimeType) else {
-    //                    return }
-    //                media.append(med)
-    //            } else {
-    //                guard let med = MediaData1(withURL: url, forKey: keyName, mimeType: mimeType) else {
-    //                    return
-    //                }
-    //                media.append(med)
-    //            }
-    //        }
-    //
-    //        print(media as Any)
-    //
-    //        let params  = parameters
-    //
-    //        print(params)
-    //
-    //        request.allHTTPHeaderFields = type.headers
-    //        if header {
-    //            if header{
-    //                request.allHTTPHeaderFields = ["Authorization":"Bearer \(UserDefaults.accessToken)"]
-    //            }
-    //        }
-    //
-    //        request.allHTTPHeaderFields = [ "Accept": "application/json",
-    //            "Content-Type": "multipart/form-data; boundary=\(boundary)"
-    //        ]
-    //
-    //        print(media as Any)
-    //
-    //        let dataBody = createDataBody1(withParameters: params, media: media, boundary: boundary)
-    //
-    //        request.httpBody = dataBody
-    //
-    //        print("Headers >>> \(request.allHTTPHeaderFields ?? [:])")
-    //
-    //        print(request)
-    //        let config = URLSessionConfiguration.default
-    //        config.waitsForConnectivity = true
-    //        config.timeoutIntervalForResource = 120
-    //
-    //        URLSession(configuration: config).dataTask(with: request) { data, response, error in
-    //            print(response as Any)
-    //            guard let data, error == nil else {
-    //                completion(.failure(.invalidData))
-    //                return
-    //            }
-    //            guard let response = response as? HTTPURLResponse,
-    //                  200 ... 599 ~= response.statusCode else {
-    //                do {
-    //                    let products = try JSONDecoder().decode(modelType, from: data)
-    //                    completion(.success(products))
-    //                }catch {
-    //                    completion(.failure(.invalidResponse(data)))
-    //                }
-    //                return
-    //            }
-    //            do {
-    //                print("API Response >>> \n\(data.prettyPrintedJSONString ?? "")")
-    //                let products = try JSONDecoder().decode(modelType, from: data)
-    //                completion(.success(products))
-    //            }catch {
-    //                completion(.failure(.network(error)))
-    //            }
-    //
-    //        }.resume()
-    //    }
     func uploadImage1<T: Decodable>(
         type: EndPointType,
         urlArray: [String]? = nil,

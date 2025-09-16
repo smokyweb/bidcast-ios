@@ -156,7 +156,7 @@ struct SelectThumbnailScreen: View {
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }
-        .sheet(isPresented: $showCameraPicker) {
+        .fullScreenCover(isPresented: $showCameraPicker) {
             ImagePicker(sourceType: .camera) { image,url in
                 if let image = image{
                     selectedMedia = image
@@ -164,8 +164,9 @@ struct SelectThumbnailScreen: View {
                     thumbNail = url ?? ""
                 }
             }
+            .ignoresSafeArea()
         }
-        .sheet(isPresented: $showPhotoLibrary) {
+        .fullScreenCover(isPresented:  $showPhotoLibrary) {
             ImagePicker(sourceType: .photoLibrary){ image,url in
                 if let image = image{
                     selectedMedia = image
@@ -173,6 +174,7 @@ struct SelectThumbnailScreen: View {
                     thumbNail = url ?? ""
                 }
             }
+            .ignoresSafeArea()
         }
         .onAppear {
             

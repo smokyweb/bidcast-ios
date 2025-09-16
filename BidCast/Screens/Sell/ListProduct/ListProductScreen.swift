@@ -586,7 +586,7 @@ struct ListProductScreen: View {
                 
                 .bottomSheet(
                     isPresented: $showSubCategorySheet,
-                    height: selectedOption.count < 4 ? screenHeight * 0.5 : screenHeight/1.7,
+                    height: selectedOption.count < 4 ? screenHeight * 0.4 : screenHeight/1.7,
                     topBarCornerRadius: 25,
                     showTopIndicator: false,
                     onDismiss: {
@@ -649,14 +649,50 @@ struct ListProductScreen: View {
                 }
                 SVProgressHUD.show()
                 await viewModel.getCategoryList(param: CategoryRequest(category_id: ""))
-                
-                categorySuccess()
-                
+                if self.viewModel.errorMessage == nil || self.viewModel.errorMessage == "" {
+                    categorySuccess()
+                }else{
+                    alertType = .sheetType(
+                        icon: .alert,
+                        title: "Error",
+                        message: self.viewModel.errorMessage ?? "",
+                        primaryBtnText: "",
+                        secondaryBtnText: AppString.ok.localized
+                    )
+                    await SVProgressHUD.dismiss()
+                    showError = true
+                }
+                self.viewModel.errorMessage?.removeAll()
                 await viewModel.getAddresses()
-                shippingAddressSuccess()
+                
+                if self.viewModel.errorMessage == nil || self.viewModel.errorMessage == "" {
+                    shippingAddressSuccess()
+                }else{
+                    await SVProgressHUD.dismiss()
+                    alertType = .sheetType(
+                        icon: .alert,
+                        title: "Error",
+                        message: self.viewModel.errorMessage ?? "",
+                        primaryBtnText: "",
+                        secondaryBtnText: AppString.ok.localized
+                    )
+                    showError = true
+                }
+                self.viewModel.errorMessage?.removeAll()
                 await viewModel.getMailClasses()
                 await SVProgressHUD.dismiss()
-                mailSuccess()
+                if self.viewModel.errorMessage == nil || self.viewModel.errorMessage == "" {
+                    mailSuccess()
+                }else{
+                    alertType = .sheetType(
+                        icon: .alert,
+                        title: "Error",
+                        message: self.viewModel.errorMessage ?? "",
+                        primaryBtnText: "",
+                        secondaryBtnText: AppString.ok.localized
+                    )
+                    showError = true
+                }
                 
                 
                 

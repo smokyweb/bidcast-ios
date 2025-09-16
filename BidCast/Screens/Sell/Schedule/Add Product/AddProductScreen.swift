@@ -34,6 +34,7 @@ struct AddProductsScreen: View {
     @Binding var backToPrepare : Bool
     @Binding var NavFromProductLibrary : Bool
     @State var navigateToAddProduct  = false
+    @Binding var backToCreateProduct : Bool
     var delegate: ShowStepDelegate?
     
     
@@ -47,7 +48,12 @@ struct AddProductsScreen: View {
                     isForLogo : false ,
                     leadingImgArr:[.icBack],
                     onClickLeading: { _ in
-                        self.presentationMode.wrappedValue.dismiss()
+                        if backToCreateProduct{
+                            backToCreateProduct = false
+                        }else{
+                            self.presentationMode.wrappedValue.dismiss()
+                        }
+                        
                     },
                     count: .constant(0)
                 )
@@ -154,7 +160,7 @@ struct AddProductsScreen: View {
                             if NavFromProductLibrary{
                                 presentationMode.wrappedValue.dismiss()
                             }else{
-                                navigateToAddProduct = true
+                                backToCreateProduct = false
                             }
                             
                         }

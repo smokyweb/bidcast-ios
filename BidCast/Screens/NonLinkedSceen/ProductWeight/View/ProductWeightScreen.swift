@@ -36,6 +36,7 @@ struct ProductWeightScreen: View {
     @Binding var backToPrepare : Bool
     @State var navigateToProuct = false
     @Binding var fromPrepare : Bool
+    @Binding var backToCreateProduct : Bool
     var delegate: ShowStepDelegate?
     
     var onContinue: () -> Void
@@ -65,7 +66,7 @@ struct ProductWeightScreen: View {
                             Image(systemName: "info.circle.fill")
                                 .foregroundColor(.blue)
                             Text("BidCast calculates shipping fees based on the product weight. You can adjust this later if needed.")
-                                .font(.footnote)
+                                .font(.custom(poppinsSemiBold, size: 13.0))
                                 .foregroundColor(.blue)
                         }
                         .padding()
@@ -75,7 +76,7 @@ struct ProductWeightScreen: View {
                         // Item Weight Input
                         VStack(alignment: .leading, spacing: 8) {
                             Text("Item Weight")
-                                .font(.subheadline)
+                                .font(.custom(poppinsSemiBold, size: 13.0))
                             
                             HStack(spacing: 10) {
                                 TextField("0.00", text: $weight)
@@ -92,6 +93,7 @@ struct ProductWeightScreen: View {
                                 } label: {
                                     HStack {
                                         Text(selectedUnit)
+                                            .font(.custom(poppinsSemiBold, size: 11.0))
                                         Image(systemName: "chevron.down")
                                     }
                                     .padding()
@@ -109,6 +111,7 @@ struct ProductWeightScreen: View {
                                     weight = qw.replacingOccurrences(of: " oz", with: "")
                                 }) {
                                     Text(qw)
+                                        .font(.custom(poppinsSemiBold, size: 12.0))
                                         .frame(maxWidth: .infinity)
                                         .padding()
                                         .foregroundColor(.black)
@@ -122,16 +125,16 @@ struct ProductWeightScreen: View {
                         VStack(alignment: .leading, spacing: 8) {
                             HStack {
                                 Text("Hazardous Material")
-                                    .font(.subheadline)
+                                    .font(.custom(poppinsSemiBold, size: 13.0))
                                 Spacer()
                                 Toggle("", isOn: $isHazardous)
                                     .labelsHidden()
                             }
                             Text("Items containing flammable, explosive, or other dangerous materials. ")
-                                .font(.caption)
+                                .font(.custom(poppinsRegular, size: 11.0))
                             + Text(" Learn more about hazardous materials")
-                                .font(.caption)
-                                .foregroundColor(.blue)
+                                .font(.custom(poppinsRegular, size: 11.0))
+                                .foregroundColor(.defaultTheme)
                         }
                         
                         Spacer(minLength: 100)
@@ -162,7 +165,8 @@ struct ProductWeightScreen: View {
                         request:$storeScheduleRequest,
                         thumbNail: $thumbNail,
                         fromPrepare: .constant(false),
-                        backToPrepare: $backToPrepare, NavFromProductLibrary: .constant(false)
+                        backToPrepare: $backToPrepare, NavFromProductLibrary: .constant(false),
+                        backToCreateProduct: $backToCreateProduct
                     )
                 )
                 CusNavLink(
@@ -172,7 +176,9 @@ struct ProductWeightScreen: View {
                         thumbNail: $thumbNail,
                         fromPrepare: $fromPrepare,
                         backToPrepare: $backToPrepare,
-                        NavFromProductLibrary: .constant(false), delegate: delegate
+                        NavFromProductLibrary: .constant(false),
+                        backToCreateProduct: $backToCreateProduct,
+                        delegate: delegate
                     )
                 )
             }

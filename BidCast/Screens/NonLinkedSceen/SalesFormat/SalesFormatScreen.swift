@@ -29,6 +29,7 @@ struct SalesFormatScreen: View {
     @State var showError: Bool = false
     
     @Binding var fromPrepare : Bool
+    @Binding var backToCreateProduct : Bool
     var delegate: ShowStepDelegate?
     
     var body: some View {
@@ -49,10 +50,10 @@ struct SalesFormatScreen: View {
             ScrollView{
                 HStack(alignment: .top, spacing: 8) {
                     Image(systemName: "info.circle.fill")
-                        .foregroundColor(.blue)
+                        .foregroundColor(.defaultTheme)
                     
                     Text("Set a competitive starting price that will attract potential buyers. A well-priced item increases your chances of a successful sale and can lead to better bidding activity.")
-                        .font(.footnote)
+                        .font(.custom(poppinsRegular, size: 11.0))
                         .foregroundColor(.black)
                 }
                 .padding()
@@ -63,7 +64,7 @@ struct SalesFormatScreen: View {
                 VStack(alignment: .leading){
                     // Select Format Label
                     Text("Select Format")
-                        .fontWeight(.semibold)
+                        .font(.custom(poppinsSemiBold, size: 13.0))
                         .padding(.horizontal)
                     
                     // Format Buttons
@@ -86,8 +87,8 @@ struct SalesFormatScreen: View {
                     VStack(alignment: .leading, spacing: 12) {
                         
                         AuthTextField(floatingLabel: "Starting Bid".localized, placeholder: "0.0".localized, icon: .menuProfile, text: $request.pricing,isIconDisplay : false, isForPrice:false,
-                                      custFontName : robotoMedium,
-                                      custFontSize : 14.0,
+                                      custFontName : poppinsSemiBold,
+                                      custFontSize : 13.0,
                                       enteredText:  { price in
                             //                            if let amt = Double(price) {
                             //                                if amt < 1.0 {
@@ -101,36 +102,38 @@ struct SalesFormatScreen: View {
                         .keyboardType(.numberPad)
                         
                         Text("Minimum starting bid is $1.00")
-                            .font(.caption)
+                            .font(.custom(poppinsRegular, size: 11.0))
                             .foregroundColor(.gray)
                             .padding(.horizontal , 16)
                     }
                 }else{
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Starting Bid")
-                            .fontWeight(.semibold)
+                            .font(.custom(poppinsSemiBold, size: 13.0))
                         
                         HStack {
                             Text("$")
+                                .font(.custom(poppinsSemiBold, size: 13.0))
                             TextField("0.00", text: $startingBid)
+                                .font(.custom(poppinsSemiBold, size: 12.0))
                                 .keyboardType(.decimalPad)
                         }
                         .padding()
                         .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.gray.opacity(0.4)))
                         
                         Text("Minimum starting bid is $1.00")
-                            .font(.caption)
+                            .font(.custom(poppinsRegular, size: 11.0))
                             .foregroundColor(.gray)
                     }
                     .padding(.horizontal)
                     VStack(alignment: .leading, spacing: 6) {
                         Toggle(isOn: $allowOffers) {
                             Text("Allow Offers")
-                                .fontWeight(.medium)
+                                .font(.custom(poppinsSemiBold, size: 13.0))
                         }
                         
                         Text("Enable Allow Offers to let buyers offer a different price for your product. You may counter, accept, or simply decline the offer.")
-                            .font(.footnote)
+                            .font(.custom(poppinsRegular, size: 11.0))
                             .foregroundColor(.gray)
                     }
                     .padding(.horizontal)
@@ -173,6 +176,7 @@ struct SalesFormatScreen: View {
                 thumbNail: $thumbNail,
                 backToPrepare: $backToPrepare,
                 fromPrepare:$fromPrepare,
+                backToCreateProduct: $backToCreateProduct,
                 delegate:delegate,
                 onContinue: {
                     request.pricing = startingBid
@@ -188,10 +192,10 @@ struct SalesFormatScreen: View {
     private func formatButton(title: String, systemImage: String, isSelected: Bool) -> some View {
         VStack {
             Image(systemName: systemImage)
-                .font(.title2)
+                .font(.custom(poppinsSemiBold, size: 13.0))
                 .padding(.bottom, 4)
             Text(title)
-                .fontWeight(.semibold)
+                .font(.custom(poppinsSemiBold, size: 13.0))
         }
         .padding()
         .frame(maxWidth: .infinity)
