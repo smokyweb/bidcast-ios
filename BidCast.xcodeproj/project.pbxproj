@@ -75,7 +75,6 @@
 		35987D332DE5D29700D6C2C9 /* SalesTaxScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35987D322DE5D29700D6C2C9 /* SalesTaxScreen.swift */; };
 		35A0450A2DC8DCFD0067C447 /* Color.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 35A045092DC8DCFD0067C447 /* Color.xcassets */; };
 		35A0450D2DC8DEC30067C447 /* AlertToast in Frameworks */ = {isa = PBXBuildFile; productRef = 35A0450C2DC8DEC30067C447 /* AlertToast */; };
-		35A045132DC8DF4E0067C447 /* BottomSheet in Frameworks */ = {isa = PBXBuildFile; productRef = 35A045122DC8DF4E0067C447 /* BottomSheet */; };
 		35A045162DC8DF5B0067C447 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 35A045152DC8DF5B0067C447 /* Kingfisher */; };
 		35A0451C2DC8E19E0067C447 /* ActivityIndicatorView in Frameworks */ = {isa = PBXBuildFile; productRef = 35A0451B2DC8E19E0067C447 /* ActivityIndicatorView */; };
 		35AC64722DD4827D00B5E13E /* ImageCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35AC64712DD4827D00B5E13E /* ImageCollectionView.swift */; };
@@ -98,6 +97,8 @@
 		35BA4A4B2DE87C2300EEC92A /* AddProductScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35BA4A4A2DE87C2300EEC92A /* AddProductScreen.swift */; };
 		35BA4A4E2DE8806A00EEC92A /* ReferEarnScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35BA4A4D2DE8806A00EEC92A /* ReferEarnScreen.swift */; };
 		35BA4A512DE883E800EEC92A /* CompleteProfileScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35BA4A502DE883E800EEC92A /* CompleteProfileScreen.swift */; };
+		35BC56822E7AA80D0016051D /* MillicastSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 35BC56812E7AA80D0016051D /* MillicastSDK */; };
+		35BC56852E7AA8C50016051D /* SocketIO in Frameworks */ = {isa = PBXBuildFile; productRef = 35BC56842E7AA8C50016051D /* SocketIO */; };
 		35BDF0382E13C88700412446 /* AccountViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35BDF0372E13C88700412446 /* AccountViewModel.swift */; };
 		35C202502DEEFFE300492F2D /* AddCardScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35C2024F2DEEFFDD00492F2D /* AddCardScreen.swift */; };
 		35C202522DEF0DEB00492F2D /* StripeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35C202512DEF0DEB00492F2D /* StripeManager.swift */; };
@@ -1016,6 +1017,7 @@
 				3504BCCF2E000A3D0069182D /* FirebaseFunctions in Frameworks */,
 				35A0451C2DC8E19E0067C447 /* ActivityIndicatorView in Frameworks */,
 				35F63D712DDCBE5B00D29878 /* StripeConnect in Frameworks */,
+				35BC56822E7AA80D0016051D /* MillicastSDK in Frameworks */,
 				3504BCAF2E000A3D0069182D /* FirebaseAI in Frameworks */,
 				3504BCE32E000A3D0069182D /* FirebaseVertexAI in Frameworks */,
 				3504BCE12E000A3D0069182D /* FirebaseStorageCombine-Community in Frameworks */,
@@ -1040,7 +1042,6 @@
 				3504BCBB2E000A3D0069182D /* FirebaseAppCheck in Frameworks */,
 				35A045162DC8DF5B0067C447 /* Kingfisher in Frameworks */,
 				3504BCCB2E000A3D0069182D /* FirebaseFirestore in Frameworks */,
-				35A045132DC8DF4E0067C447 /* BottomSheet in Frameworks */,
 				3504BCD72E000A3D0069182D /* FirebaseMLModelDownloader in Frameworks */,
 				354652692DF2EE5900EB353F /* SVProgressHUD in Frameworks */,
 				3504BCD92E000A3D0069182D /* FirebaseMessaging in Frameworks */,
@@ -1051,6 +1052,7 @@
 				35F63D6B2DDCBE5B00D29878 /* Stripe in Frameworks */,
 				3504BCDD2E000A3D0069182D /* FirebaseRemoteConfig in Frameworks */,
 				35A0450D2DC8DEC30067C447 /* AlertToast in Frameworks */,
+				35BC56852E7AA8C50016051D /* SocketIO in Frameworks */,
 				3504BCB92E000A3D0069182D /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
 				35F63D6F2DDCBE5B00D29878 /* StripeCardScan in Frameworks */,
 				3504BCAA2DFFE3D70069182D /* ZegoExpressEngine in Frameworks */,
@@ -4005,7 +4007,6 @@
 			name = BidCast;
 			packageProductDependencies = (
 				35A0450C2DC8DEC30067C447 /* AlertToast */,
-				35A045122DC8DF4E0067C447 /* BottomSheet */,
 				35A045152DC8DF5B0067C447 /* Kingfisher */,
 				35A0451B2DC8E19E0067C447 /* ActivityIndicatorView */,
 				355AE9672DD1D51A00CD3D17 /* IQKeyboardManagerSwift */,
@@ -4051,6 +4052,8 @@
 				3504BCE02E000A3D0069182D /* FirebaseStorageCombine-Community */,
 				3504BCE22E000A3D0069182D /* FirebaseVertexAI */,
 				35B424A62E043D0E00626E02 /* ZIM */,
+				35BC56812E7AA80D0016051D /* MillicastSDK */,
+				35BC56842E7AA8C50016051D /* SocketIO */,
 			);
 			productName = BidCast;
 			productReference = 99DF9E3F2DC4F35D008C15B2 /* BidCast.app */;
@@ -4136,7 +4139,6 @@
 			packageReferences = (
 				356116FC2DC8D22C00A45199 /* XCRemoteSwiftPackageReference "IQKeyboardManager" */,
 				35A0450B2DC8DEC30067C447 /* XCRemoteSwiftPackageReference "AlertToast" */,
-				35A045112DC8DF4E0067C447 /* XCRemoteSwiftPackageReference "bottom-sheet" */,
 				35A045142DC8DF5B0067C447 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				35A0451A2DC8E19E0067C447 /* XCRemoteSwiftPackageReference "ActivityIndicatorView" */,
 				35B44F1F2DD7152600FBCBC4 /* XCRemoteSwiftPackageReference "RichText" */,
@@ -4147,6 +4149,8 @@
 				3504BCA82DFFE3D70069182D /* XCRemoteSwiftPackageReference "express-video-ios" */,
 				3504BCAD2E000A3D0069182D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				35B424A52E043D0E00626E02 /* XCRemoteSwiftPackageReference "zim-ios" */,
+				35BC56802E7AA80D0016051D /* XCRemoteSwiftPackageReference "millicast-sdk-swift-package" */,
+				35BC56832E7AA8C50016051D /* XCRemoteSwiftPackageReference "socket" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 99DF9E402DC4F35D008C15B2 /* Products */;
@@ -5099,14 +5103,6 @@
 				minimumVersion = 1.3.9;
 			};
 		};
-		35A045112DC8DF4E0067C447 /* XCRemoteSwiftPackageReference "bottom-sheet" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/weitieda/bottom-sheet.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.12;
-			};
-		};
 		35A045142DC8DF5B0067C447 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
@@ -5137,6 +5133,22 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 2.5.0;
+			};
+		};
+		35BC56802E7AA80D0016051D /* XCRemoteSwiftPackageReference "millicast-sdk-swift-package" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/millicast/millicast-sdk-swift-package";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.1;
+			};
+		};
+		35BC56832E7AA8C50016051D /* XCRemoteSwiftPackageReference "socket" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/socketio/socket.io-client-swift";
+			requirement = {
+				branch = master;
+				kind = branch;
 			};
 		};
 		35F63D662DDC5DF100D29878 /* XCRemoteSwiftPackageReference "SwiftfulLoadingIndicators" */ = {
@@ -5318,11 +5330,6 @@
 			package = 35A0450B2DC8DEC30067C447 /* XCRemoteSwiftPackageReference "AlertToast" */;
 			productName = AlertToast;
 		};
-		35A045122DC8DF4E0067C447 /* BottomSheet */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 35A045112DC8DF4E0067C447 /* XCRemoteSwiftPackageReference "bottom-sheet" */;
-			productName = BottomSheet;
-		};
 		35A045152DC8DF5B0067C447 /* Kingfisher */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 35A045142DC8DF5B0067C447 /* XCRemoteSwiftPackageReference "Kingfisher" */;
@@ -5342,6 +5349,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 35B44F1F2DD7152600FBCBC4 /* XCRemoteSwiftPackageReference "RichText" */;
 			productName = RichText;
+		};
+		35BC56812E7AA80D0016051D /* MillicastSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 35BC56802E7AA80D0016051D /* XCRemoteSwiftPackageReference "millicast-sdk-swift-package" */;
+			productName = MillicastSDK;
+		};
+		35BC56842E7AA8C50016051D /* SocketIO */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 35BC56832E7AA8C50016051D /* XCRemoteSwiftPackageReference "socket" */;
+			productName = SocketIO;
 		};
 		35F63D672DDC5DF100D29878 /* SwiftfulLoadingIndicators */ = {
 			isa = XCSwiftPackageProductDependency;
