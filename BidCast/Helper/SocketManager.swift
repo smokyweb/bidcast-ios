@@ -14,6 +14,8 @@ class SocketManagerService: NSObject, ObservableObject {
     @Published var rooms: [RoomModel] = []
     @Published var chats: [ChatMessage] = []
     
+    var onRoomsUpdated: (([String]) -> Void)?
+    
     private var socket: SocketIOClient!
     private var socketManager: SocketManager!
     
@@ -41,8 +43,8 @@ class SocketManagerService: NSObject, ObservableObject {
             print("⚠️ Socket error:", data)
         }
         
-        listenForRoomUpdates()
-        listenForChat()
+//        listenForRoomUpdates()
+//        listenForChat()
         socket.connect()
     }
     
@@ -55,8 +57,10 @@ class SocketManagerService: NSObject, ObservableObject {
     // MARK: - Room
     func createRoom(_ roomData: [String: Any]) {
         guard socket.status == .connected else{
-            print("Socket status \(socket.status)")
-            setupSocket()
+            if socket.status == .connecting || socket.status == .notConnected{
+                print("Socket status \(socket.status)")
+                setupSocket()
+            }
             return
         }
         
@@ -65,19 +69,20 @@ class SocketManagerService: NSObject, ObservableObject {
         socket.emit("room_create", roomData)
     }
     
-    private func listenForRoomUpdates() {
-        socket.on("room_create_get") { data, _ in
-            guard let json = data.first as? [String: Any] else { return }
-            do {
-                let decoded = try JSONSerialization.data(withJSONObject: json)
-                let room = try JSONDecoder().decode(RoomModel.self, from: decoded)
-                self.rooms.append(room)
-                print("received RoomDetail := \(self.rooms)")
-            } catch {
-                print("Decode error (Room):", error)
+    func leaveRoom(_ roomData: [String: Any]) {
+        guard socket.status == .connected else{
+            if socket.status == .connecting || socket.status == .notConnected{
+                print("Socket status \(socket.status)")
+                setupSocket()
             }
+            return
         }
+        
+        print("Socket status \(socket.status)")
+        print("Creating Room \(roomData)")
+        socket.emit("leave_room", roomData)
     }
+    
     
     // MARK: - Chat
     func sendChat(roomId: String, message: String, userId: String) {
@@ -86,18 +91,18 @@ class SocketManagerService: NSObject, ObservableObject {
         socket.emit("chat", payload)
     }
     
-    private func listenForChat() {
-        socket.on("chat_get") { data, _ in
-            guard let json = data.first as? [String: Any] else { return }
-            do {
-                let decoded = try JSONSerialization.data(withJSONObject: json)
-                let chat = try JSONDecoder().decode(ChatMessage.self, from: decoded)
-                self.chats.append(chat)
-            } catch {
-                print("Decode error (Chat):", error)
-            }
-        }
-    }
+//    private func listenForChat() {
+//        socket.on("chat_get") { data, _ in
+//            guard let json = data.first as? [String: Any] else { return }
+//            do {
+//                let decoded = try JSONSerialization.data(withJSONObject: json)
+//                let chat = try JSONDecoder().decode(ChatMessage.self, from: decoded)
+//                self.chats.append(chat)
+//            } catch {
+//                print("Decode error (Chat):", error)
+//            }
+//        }
+//    }
 }
 
 

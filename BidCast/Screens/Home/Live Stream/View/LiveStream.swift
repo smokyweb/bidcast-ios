@@ -11,6 +11,8 @@ import SwiftUI
 import SVProgressHUD
 import ZegoExpressEngine
 import AlertToast
+import MillicastSDK
+import SocketIO
 
 struct Comment: Identifiable, Equatable {
     let id = UUID()
@@ -70,8 +72,11 @@ struct LiveStream: View {
     @State var winnerProfileID : Int = 0
     @State private var navigateToEditPayment = false
     @State private var navigateToEditAddress = false
+    @State var socket: SocketIOClient!
+    @State var socketManager: SocketManager!
+    @State var rooms: [RoomModel] = []
     
-    
+    @State var onRoomsUpdated: (([String]) -> Void)?
     
     var tabBarHeight: CGFloat {
         UIApplication.shared.windows.first?.safeAreaInsets.bottom ?? 49
@@ -106,6 +111,8 @@ struct LiveStream: View {
     @State  var winnerSheet: Bool = false
     @State  var walletPaymentSheet: Bool = false
     @State var maxBidAmountSheet : Bool = false
+    @StateObject private var joinManager = SubscriberViewModel(renderer: MCAcceleratedVideoRenderer())
+    @State private var renderer = MCAcceleratedVideoRenderer()
     
     var sheetHeight: CGFloat {
         switch currentBottomSheet {
@@ -129,29 +136,35 @@ struct LiveStream: View {
         GeometryReader { geometry in
             if liveShowsData.count != 0{
                 ZStack(alignment: .top) {
-                    if streamID.count != 0 {
+//                    if streamID.count != 0 {
                         //                        ZegoPreviewView(streamID: streamID[currentStreamIndex])
                         //                            .offset(y: verticalDragOffset.height)
                         //                            .frame(width: geometry.size.width, height: geometry.size.height + 50)
                         //                            .edgesIgnoringSafeArea(.all)
                         
-                        if currentStreamIndex > 0 {
-                            ZegoPreviewView(streamID: streamID[currentStreamIndex - 1], playMode: .lowLatency)
-                                .frame(width: geometry.size.width, height: geometry.size.height)
-                                .offset(y: -geometry.size.height + verticalDragOffset.height)
-                        }
+//                        if currentStreamIndex > 0 {
+//                            ZegoPreviewView(streamID: streamID[currentStreamIndex - 1], playMode: .lowLatency)
+//                                .frame(width: geometry.size.width, height: geometry.size.height)
+//                                .offset(y: -geometry.size.height + verticalDragOffset.height)
+//                        }
+//                        
+//                        ZegoPreviewView(streamID: streamID[currentStreamIndex], playMode: .lowLatency)
+//                            .frame(width: geometry.size.width, height: geometry.size.height)
+//                            .offset(y: verticalDragOffset.height)
+//                        
+//                        if currentStreamIndex < streamID.count - 1 {
+//                            ZegoPreviewView(streamID: streamID[currentStreamIndex + 1], playMode: .lowLatency)
+//                                .frame(width: geometry.size.width, height: geometry.size.height)
+//                                .offset(y: geometry.size.height + verticalDragOffset.height)
+//                        }
+                        MCVideoSwiftUIView(renderer: .accelerated(joinManager.renderer as! MCAcceleratedVideoRenderer))
+                            .onVideoSizeChange { newSize in
+                                print("Video size changed: \(newSize)")
+                            }
+                            .frame(width: screenWidth, height: screenHeight)
+                            .ignoresSafeArea()
                         
-                        ZegoPreviewView(streamID: streamID[currentStreamIndex], playMode: .lowLatency)
-                            .frame(width: geometry.size.width, height: geometry.size.height)
-                            .offset(y: verticalDragOffset.height)
-                        
-                        if currentStreamIndex < streamID.count - 1 {
-                            ZegoPreviewView(streamID: streamID[currentStreamIndex + 1], playMode: .lowLatency)
-                                .frame(width: geometry.size.width, height: geometry.size.height)
-                                .offset(y: geometry.size.height + verticalDragOffset.height)
-                        }
-                        
-                    }
+//                    }
                     VStack {
                         HStack(spacing: 12) {
                             Button(action:{
@@ -203,7 +216,11 @@ struct LiveStream: View {
                                 }
                             }
                             Button(action: {
-                                logoutRoom()
+//                                logoutRoom()
+                                Task{
+                                    try await joinManager.unsubscribe()
+                                }
+                                
                                 self.presentationMode.wrappedValue.dismiss()
                             }) {
                                 Image(.cancel)
@@ -798,8 +815,9 @@ struct LiveStream: View {
         .background(.black)
         .onAppear{
             UserDefaults.isLiveEnded = false
-            FirebaseManager.shared.removeNewSessionObserver()
-            ZIMChatManager.shared.login(userID: "\(UserDefaults.userId)", userName: UserDefaults.fullName)
+//            FirebaseManager.shared.removeNewSessionObserver()
+//            ZIMChatManager.shared.login(userID: "\(UserDefaults.userId)", userName: UserDefaults.fullName)
+           
             Task{
                 SVProgressHUD.show()
                 liveShowsData.removeAll()
@@ -876,95 +894,7 @@ struct LiveStream: View {
     
     func success() {
         let response = viewModel.liveShowsResponse
-        if response.status == "success" {
-            if response.message == "No shows found."{
-                let streamTitle = "Coming Soon"
-                let streamMessage = "The host has not started the stream yet"
-                print("🔥 STREAM REMOVED CALLBACK TRIGGERED 🔥")
-                showVerificationSheet = false
-                alertType = .sheetType(
-                    icon: .alert,
-                    title: streamTitle,
-                    message: streamMessage,
-                    primaryBtnText: AppString.ok.localized,
-                    secondaryBtnText:""
-                )
-                showError = true
-            }else{
-                FirebaseManager.shared.fetchAllLiveSessions { firebaseRoomIds in
-                    let validShows = response.data?.filter { show in
-                        guard let roomId = show.room_id else { return false }
-                        return firebaseRoomIds.contains(roomId)
-                    }
-                    
-                    DispatchQueue.main.async {
-                        if validShows?.isEmpty == true {
-                            
-                        }else{
-                            liveShowsData = validShows ?? [LiveShowsModel]()
-                            roomID = liveShowsData.compactMap { $0.room_id }
-                            streamID = roomID
-                            if !liveShowsData.isEmpty {
-                                let initialRoomID = liveShowsData[currentStreamIndex].room_id ?? ""
-                                loginRoom(roomId: initialRoomID)
-                                fetchBiddingDetail(roomId: initialRoomID)
-                                FirebaseManager.shared.observeAllowBidForAll(for: initialRoomID)
-                                refreshProductStatus(roomId: liveShowsData[currentStreamIndex].room_id ?? "")
-                                if liveShowsData[currentStreamIndex].user?.is_followed == false{
-                                    isFollow = false
-                                }else{
-                                    isFollow = true
-                                }
-                                
-                                if UserDefaults.buyerVerafied == "pending" {
-                                    // 🟡 Pending state
-                                    alertType = .sheetType(
-                                        icon: .info,
-                                        title: "Become a Verified Buyer!",
-                                        message: "Your verification is currently pending approval by the admin. You will be notified once the process is complete.",
-                                        primaryBtnText: "OK",
-                                        secondaryBtnText: "",
-                                        buttonWidth: screenWidth - 40,
-                                        contentSize: 12.0
-                                    )
-                                    withAnimation(.snappy) {
-                                        showVerificationSheet = true
-                                    }
-                                    
-                                } else if UserDefaults.buyerVerafied != "verified" {
-                                    // 🔴 Not verified
-                                    alertType = .sheetType(
-                                        icon: .info,
-                                        title: "Become a Verified Buyer!",
-                                        message: "Before you interact with live shows, you need to become a verified buyer.",
-                                        primaryBtnText: "OK",
-                                        secondaryBtnText: "",
-                                        buttonWidth: screenWidth - 40,
-                                        contentSize: 12.0
-                                    )
-                                    withAnimation(.snappy) {
-                                        showVerificationSheet = true
-                                    }
-                                    
-                                } else {
-                                    // ✅ Verified
-                                    if UserDefaults.sellerAddress == false {
-                                        showPaymentShipping = true
-                                        titleText = "Add Address"
-                                    } else if UserDefaults.hasCardAdded == false {
-                                        showPaymentShipping = true
-                                        titleText = "Add Card"
-                                    }
-                                }
-
-                                
-                            }
-                        }
-                    }
-                }
-            }
-            
-        } else {
+        guard response.status == "success" else {
             showError = true
             alertType = .sheetType(
                 icon: .alert,
@@ -973,6 +903,102 @@ struct LiveStream: View {
                 primaryBtnText: "",
                 secondaryBtnText: AppString.ok.localized
             )
+            return
+        }
+        
+        if response.message == "No shows found." {
+            let streamTitle = "Coming Soon"
+            let streamMessage = "The host has not started the stream yet"
+            print("🔥 STREAM REMOVED CALLBACK TRIGGERED 🔥")
+            showVerificationSheet = false
+            alertType = .sheetType(
+                icon: .alert,
+                title: streamTitle,
+                message: streamMessage,
+                primaryBtnText: AppString.ok.localized,
+                secondaryBtnText: ""
+            )
+            showError = true
+            return
+        }
+        self.liveShowsData = response.data ?? [LiveShowsModel]()
+        self.streamID = self.liveShowsData.compactMap({ $0.room_id ?? ""
+        })
+        Task{
+            try await joinManager.subscribe(streamName: response.data?[currentStreamIndex].room_id ?? "")
+        }
+//        self.listenForRoomUpdates()
+        onRoomsUpdated = {  socketRoomIds in
+            
+            let validShows = response.data?.filter { show in
+                guard let roomId = show.room_id else { return false }
+                return socketRoomIds.contains(roomId)
+            }
+            //
+            DispatchQueue.main.async {
+                if validShows?.isEmpty == true {
+                    
+                }else{
+                    liveShowsData = validShows ?? [LiveShowsModel]()
+                    roomID = liveShowsData.compactMap { $0.room_id }
+                    streamID = roomID
+                    if !liveShowsData.isEmpty {
+                        let initialRoomID = liveShowsData[currentStreamIndex].room_id ?? ""
+                        Task{
+                            try await joinManager.subscribe(streamName: initialRoomID)
+                        }
+                        //                                loginRoom(roomId: initialRoomID)
+                        //                                fetchBiddingDetail(roomId: initialRoomID)
+                        //                                FirebaseManager.shared.observeAllowBidForAll(for: initialRoomID)
+                        //                                refreshProductStatus(roomId: liveShowsData[currentStreamIndex].room_id ?? "")
+                        if liveShowsData[currentStreamIndex].user?.is_followed == false{
+                            isFollow = false
+                        }else{
+                            isFollow = true
+                        }
+                        
+                        switch UserDefaults.buyerVerafied {
+                        case "pending":
+                            self.alertType = .sheetType(
+                                icon: .info,
+                                title: "Become a Verified Buyer!",
+                                message: "Your verification is currently pending approval by the admin. You will be notified once the process is complete.",
+                                primaryBtnText: "OK",
+                                secondaryBtnText: "",
+                                buttonWidth: screenWidth - 40,
+                                contentSize: 12.0
+                            )
+                            withAnimation(.snappy) { self.showVerificationSheet = true }
+                            
+                        case "verified":
+                            if UserDefaults.sellerAddress == false {
+                                self.showPaymentShipping = true
+                                self.titleText = "Add Address"
+                            } else if UserDefaults.hasCardAdded == false {
+                                self.showPaymentShipping = true
+                                self.titleText = "Add Card"
+                            }
+                            
+                        default: // not verified
+                            self.alertType = .sheetType(
+                                icon: .info,
+                                title: "Become a Verified Buyer!",
+                                message: "Before you interact with live shows, you need to become a verified buyer.",
+                                primaryBtnText: "OK",
+                                secondaryBtnText: "",
+                                buttonWidth: screenWidth - 40,
+                                contentSize: 12.0
+                            )
+                            withAnimation(.snappy) { self.showVerificationSheet = true }
+                        }
+                        
+                        
+                    }
+                }
+            }
+            
+            
+            
         }
     }
     
@@ -1275,70 +1301,109 @@ struct LiveStream: View {
         }
         
     }
+    
+    func listenForRoomUpdates() {
+        socketManager = SocketManager(
+            socketURL: URL(string: "https://node.bidcast.betaplanets.com")!,
+            config: [
+                .log(true),          // enable logs for debugging
+                .compress,
+                .path("/socket.io"),
+                .forceNew(true),
+                .reconnects(true)
+            ]
+        )
+        socket = socketManager.defaultSocket
+
+        // Register BEFORE connect
+        socket.onAny { event in
+            print("📡 Received event: \(event.event), data: \(String(describing: event.items))")
+        }
+
+        socket.on("room_create_get") { data, _ in
+            guard let json = data.first as? [String: Any] else { return }
+            do {
+                let decoded = try JSONSerialization.data(withJSONObject: json)
+                let room = try JSONDecoder().decode(RoomModel.self, from: decoded)
+
+                if !self.rooms.contains(where: { $0.room_id == room.room_id }) {
+                    self.rooms.append(room)
+                }
+                print("✅ Received RoomDetail: \(self.rooms)")
+                let roomIDs = self.rooms.compactMap { $0.room_id }
+                self.onRoomsUpdated?(roomIDs)
+            } catch {
+                print("❌ Decode error (Room):", error)
+            }
+        }
+
+        socket.connect()
+    }
+
 }
 
 
-struct ZegoPreviewView: UIViewRepresentable {
-    let streamID: String
-    var playMode: PlayMode = .lowLatency   // 👈 choose latency/quality mode
-    
-    func makeCoordinator() -> Coordinator {
-        Coordinator(streamID: streamID)
-    }
-    
-    class Coordinator {
-        var streamID: String
-        init(streamID: String) {
-            self.streamID = streamID
-        }
-    }
-    
-    func makeUIView(context: Context) -> UIView {
-        let view = UIView(frame: UIScreen.main.bounds)
-        view.backgroundColor = .black
-        
-        playStream(on: view, streamID: streamID)  // 👈 extract into helper
-        return view
-    }
-    
-    func updateUIView(_ uiView: UIView, context: Context) {
-        ZegoExpressEngine.shared().stopPlayingStream(context.coordinator.streamID)
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            playStream(on: uiView, streamID: streamID)
-            context.coordinator.streamID = streamID
-        }
-    }
-    
-    static func dismantleUIView(_ uiView: UIView, coordinator: Coordinator) {
-        ZegoExpressEngine.shared().stopPlayingStream(coordinator.streamID)
-    }
+//struct ZegoPreviewView: UIViewRepresentable {
+//    let streamID: String
+//    var playMode: PlayMode = .lowLatency   // 👈 choose latency/quality mode
+//    
+//    func makeCoordinator() -> Coordinator {
+//        Coordinator(streamID: streamID)
+//    }
+//    
+//    class Coordinator {
+//        var streamID: String
+//        init(streamID: String) {
+//            self.streamID = streamID
+//        }
+//    }
+//    
+//    func makeUIView(context: Context) -> UIView {
+//        let view = UIView(frame: UIScreen.main.bounds)
+//        view.backgroundColor = .black
+//        
+//        playStream(on: view, streamID: streamID)  // 👈 extract into helper
+//        return view
+//    }
+//    
+//    func updateUIView(_ uiView: UIView, context: Context) {
+//        ZegoExpressEngine.shared().stopPlayingStream(context.coordinator.streamID)
+//        
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+//            playStream(on: uiView, streamID: streamID)
+//            context.coordinator.streamID = streamID
+//        }
+//    }
+//    
+//    static func dismantleUIView(_ uiView: UIView, coordinator: Coordinator) {
+//        ZegoExpressEngine.shared().stopPlayingStream(coordinator.streamID)
+//    }
     
     // MARK: - Private helper
-    private func playStream(on view: UIView, streamID: String) {
-        let canvas = ZegoCanvas(view: view)
-        canvas.viewMode = .aspectFill
-        
-        let config = ZegoPlayerConfig()
-        
-        switch playMode {
-        case .lowLatency:
-            config.resourceMode = .onlyRTC
-        case .highQuality:
-            config.resourceMode = .onlyCDN
-        case .balanced:
-            config.resourceMode = .default
-        }
-        
-        ZegoExpressEngine.shared().startPlayingStream(streamID, canvas: canvas, config: config)
-    }
-    
-    enum PlayMode {
-        case lowLatency   // RTC only, best for auctions/calls
-        case highQuality  // CDN only, smoother, higher delay
-        case balanced     // Auto (default)
-    }
-}
+//    private func playStream(on view: UIView, streamID: String) {
+//        let canvas = ZegoCanvas(view: view)
+//        canvas.viewMode = .aspectFill
+//        
+//        let config = ZegoPlayerConfig()
+//        
+//        switch playMode {
+//        case .lowLatency:
+//            config.resourceMode = .onlyRTC
+//        case .highQuality:
+//            config.resourceMode = .onlyCDN
+//        case .balanced:
+//            config.resourceMode = .default
+//        }
+//        
+//        ZegoExpressEngine.shared().startPlayingStream(streamID, canvas: canvas, config: config)
+//    }
+//    
+//    enum PlayMode {
+//        case lowLatency   // RTC only, best for auctions/calls
+//        case highQuality  // CDN only, smoother, higher delay
+//        case balanced     // Auto (default)
+//    }
+//}
 
 
 //MARK: MenuAction

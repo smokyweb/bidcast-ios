@@ -400,7 +400,7 @@ struct RehearsalScreen: View {
 //                                        showProductSheet = true
                                         Task {
 //                                            if !castManager.isPublishing {
-                                            try await castManager.publish(streamName: "ShowID:20")
+                                           
                                             showProductSheet = true
 //                                            self.isLive = true
 //                                            self.UpdateStatus(status : false)
@@ -774,6 +774,10 @@ struct RehearsalScreen: View {
                 return
             }
             
+            Task{
+                try await castManager.publish(streamName:  self.roomId)
+            }
+            
             
             let product: [ProductData] = (data.products ?? []).compactMap { product in
                 guard let id = product.id,
@@ -922,7 +926,7 @@ struct RehearsalScreen: View {
             "date": date,
             "allow_bid_for_all": allowBidForAll,
             "viewer_count": 0,
-            "is_live": false,
+            "is_live": true,
             "show_detail": "Live auction room created via Rehearsal",
             "show_timer":showTimer
         ]
