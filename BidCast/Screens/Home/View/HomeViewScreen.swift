@@ -255,6 +255,7 @@ struct HomeViewScreen: View {
         //        .padding(.bottom,4)
         .onAppear{
             isActiveOnHomeScreen = true
+            SocketManagerService.shared.setupSocket()
         }
         .onFirstAppear{
             isActiveOnHomeScreen = true

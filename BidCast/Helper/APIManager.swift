@@ -20,7 +20,7 @@ enum DataError: Error {
 }
 
 typealias Handler<T> = (Result<T, DataError>) -> Void
-
+let deviceTimeZone = getDeviceTimeZone()
 final class APIManager {
     
     static var commonHeaders: [String: String] {
@@ -50,10 +50,11 @@ final class APIManager {
         
         request.allHTTPHeaderFields = type.headers
         
-        let deviceTimeZone = getDeviceTimeZone()
+     
         if header{
             print("Current TimeZone: \(deviceTimeZone)")
-            request.allHTTPHeaderFields = ["Authorization":"Bearer \(UserDefaults.accessToken)","timezone":"\(deviceTimeZone)"]
+            request.allHTTPHeaderFields = ["Authorization":"Bearer \(UserDefaults.accessToken)","timezone":"\(deviceTimeZone)","time_zone":"\(deviceTimeZone)"]
+//            request.allHTTPHeaderFields = ["Authorization":"Bearer \(UserDefaults.accessToken)","timezone":"\(deviceTimeZone)"]
         }
 //        if header{
 //            request.allHTTPHeaderFields = ["Authorization":"Bearer \(UserDefaults.accessToken)"]
@@ -198,7 +199,8 @@ final class APIManager {
         
         // Headers
         if header {
-            request.setValue("Bearer \(UserDefaults.accessToken)", forHTTPHeaderField: "Authorization")
+//            request.setValue("Bearer \(UserDefaults.accessToken)", forHTTPHeaderField: "Authorization")
+            request.allHTTPHeaderFields = ["Authorization":"Bearer \(UserDefaults.accessToken)","timezone":"\(deviceTimeZone)","time_zone":"\(deviceTimeZone)"]
         }
         
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -355,6 +357,7 @@ final class APIManager {
             request.allHTTPHeaderFields = [
                 "Authorization": "Bearer \(UserDefaults.accessToken)",
                 "Content-Type": "multipart/form-data; boundary=\(boundary)"
+                ,"timezone":"\(deviceTimeZone)","time_zone":"\(deviceTimeZone)"
             ]
         } else {
             request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
@@ -475,6 +478,10 @@ final class APIManager {
         // Set authorization header if needed
         if header {
             request.setValue("Bearer \(UserDefaults.accessToken)", forHTTPHeaderField: "Authorization")
+            request.allHTTPHeaderFields = [
+                "Authorization": "Bearer \(UserDefaults.accessToken)"
+                ,"timezone":"\(deviceTimeZone)","time_zone":"\(deviceTimeZone)"
+            ]
         }
         
         request.setValue("application/json", forHTTPHeaderField: "Accept")
@@ -572,6 +579,10 @@ final class APIManager {
         var headers = type.headers
         if header {
             headers?["Authorization"] = "Bearer \(UserDefaults.accessToken)"
+            request.allHTTPHeaderFields = [
+                "Authorization": "Bearer \(UserDefaults.accessToken)"
+                ,"timezone":"\(deviceTimeZone)","time_zone":"\(deviceTimeZone)"]
+            
         }
         headers?["Accept"] = "application/json"
         headers?["Content-Type"] = "multipart/form-data; boundary=\(boundary)"

@@ -17,7 +17,7 @@ struct RehearsalScreen: View {
     var roomID: String = ""
     @State var streamId = ""
     var isLocal: Bool = true
-    @Environment(\.presentationMode) var presentaionMode
+    @Environment(\.presentationMode) var presentationMode
     @State var viewModel = ShowsViewModel()
     @State var isLive: Bool = false
     @State var roomId = ""
@@ -92,15 +92,14 @@ struct RehearsalScreen: View {
 //                ZegoRehearsalScreen(isLive: $isLive, streamID: roomId)
 //                    .frame(width: geometry.size.width, height: geometry.size.height)
 //                    .id(previewResetTrigger)
-//                MCVideoSwiftUIView(renderer: renderer)
-//                    .onVideoSizeChange { newSize in
-//                        print("Video size changed: \(newSize)")
-//                    }
                 
                 MCVideoSwiftUIView(renderer: .accelerated(castManager.renderer as! MCAcceleratedVideoRenderer))
                     .onVideoSizeChange { newSize in
                         print("Video size changed: \(newSize)")
                     }
+                    .frame(width: screenWidth, height: screenHeight)
+                    .ignoresSafeArea()
+                    
                 VStack {
                     HStack {
                         HStack(spacing: 8) {
@@ -135,7 +134,7 @@ struct RehearsalScreen: View {
                             
                             Button(action: {
                                 if !isLive{
-                                    self.presentaionMode.wrappedValue.dismiss()
+                                    self.presentationMode.wrappedValue.dismiss()
                                 }else{
                                     self.showSellSheet = true
                                     currentBottomSheet = .endShow
@@ -401,7 +400,10 @@ struct RehearsalScreen: View {
 //                                        showProductSheet = true
                                         Task {
 //                                            if !castManager.isPublishing {
-                                                try await castManager.publish()
+                                            try await castManager.publish(streamName: "ShowID:20")
+                                            showProductSheet = true
+//                                            self.isLive = true
+//                                            self.UpdateStatus(status : false)
 //                                            } else {
 //                                                try await castManager.unpublish()
 //                                            }
@@ -426,7 +428,7 @@ struct RehearsalScreen: View {
                     }
                     if comeFromPrepare && !comeForLive{
                         Button(action: {
-                            self.presentaionMode.wrappedValue.dismiss()
+                            self.presentationMode.wrappedValue.dismiss()
                         }) {
                             Text("Continue")
                                 .font(.custom(poppinsBold, size: 13.0))
@@ -504,12 +506,14 @@ struct RehearsalScreen: View {
                         onCreatePoll: { print("Create Poll") },
                         onRotateCamera: {
                             isUsingFrontCamera.toggle()
-                            ZegoExpressEngine.shared().useFrontCamera(isUsingFrontCamera)
+//                            ZegoExpressEngine.shared().useFrontCamera(isUsingFrontCamera)
+                            castManager.switchCamera()
                         },
                         onZoomIn: { print("Zoom In") },
                         onMicToggle: {
                             isMicOn.toggle()
-                            ZegoExpressEngine.shared().muteMicrophone(!isMicOn)
+//                            ZegoExpressEngine.shared().muteMicrophone(!isMicOn)
+                            castManager.toggleAudioMute()
                         },
                         onVerifiedBuyerToggle: { isOn in
                             let allowBidForAll = !isOn
@@ -598,16 +602,17 @@ struct RehearsalScreen: View {
 //                                            if !castManager.isPublishing {
 //                                    try await castManager.publish()
 //                                            } else {
-                                                try await castManager.unpublish()
+//                                                try await castManager.unpublish()
+//                                self.presentationMode.wrappedValue.dismiss()
 //                                            }
                             }
-//                            Task {
-//                                SVProgressHUD.show()
-//                                let is_Live = "false"
-//                                await viewModel.UpdateLiveShows(param: LiveShowUpdateRequest(schedule_show_id: showUd, is_live: is_Live))
-//                                await SVProgressHUD.dismiss()
-//                                success()
-//                            }
+                            Task {
+                                SVProgressHUD.show()
+                                let is_Live = "false"
+                                await viewModel.UpdateLiveShows(param: LiveShowUpdateRequest(schedule_show_id: showUd, is_live: is_Live))
+                                await SVProgressHUD.dismiss()
+                                success()
+                            }
                             
                             
                             self.isLive = false
@@ -644,7 +649,13 @@ struct RehearsalScreen: View {
         .onAppear {
             logoutRoom()
             showTopBadge = true
-            
+            Task {
+                do {
+                    try await castManager.startPreview()
+                } catch {
+                    print("erro \(error.localizedDescription)")
+                }
+            }
             ZIMChatManager.shared.login(userID: "\(UserDefaults.userId)", userName: UserDefaults.userName)
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                 if comeFromPrepare && !comeForLive{
@@ -664,7 +675,8 @@ struct RehearsalScreen: View {
                         name: productModel.title ?? "Unnamed",
                         price: String(format: "%.2f", productModel.pricing ?? 0),
                         status: productModel.status ?? "inactive",
-                        isCurrent: false
+                        isCurrent: false,
+                        quantity: "\(productModel.quantity ?? 0)"
                     )
                 }
                 productData.append(contentsOf: mappedProducts)
@@ -687,7 +699,7 @@ struct RehearsalScreen: View {
             self.productData = products
             print("DEBUG: fetchLatestProductList with roomId = \(liveRoomId)")
             print("DEBUG: initialSelectedProductId= \(initialSelectedProductId)")
-            initialSelectedProductId = products.first(where: { $0.isCurrent })?.id ?? ""
+            initialSelectedProductId = products.first(where: { $0.isCurrent ?? false })?.id ?? ""
         }
     }
     
@@ -736,7 +748,7 @@ struct RehearsalScreen: View {
         }
     }
     
-    func success(selectedID : String? = nil){
+    func success(selectedID : String? = nil) {
         let response = viewModel.updateStatusRespone
         if response?.status == "success"{
             let data = response?.data ?? UpdateStatusModel()
@@ -746,46 +758,29 @@ struct RehearsalScreen: View {
             let roomId = "live_room_\(data.user_id ?? 0)_\(data.id ?? 0)"
             self.roomId = roomId
             if data.is_live == false {
-                logoutRoom()
-                self.comments.removeAll()
-                FirebaseManager.shared.checkAndDeleteLiveSession(roomId: roomId)
-                previewResetTrigger.toggle()
-                self.showLiveControls = false
-                self.showPreLiveControls = true
-                if comeFromPrepare{
-                    backToTabBar = false
-                }else{
-                    self.presentaionMode.wrappedValue.dismiss()
+                Task{
+                    try await castManager.unpublish()
+                    self.comments.removeAll()
+                    previewResetTrigger.toggle()
+                    self.showLiveControls = false
+                    self.showPreLiveControls = true
+                    if comeFromPrepare{
+                        backToTabBar = false
+                    }else{
+                        self.presentationMode.wrappedValue.dismiss()
+                    }
+                    
                 }
                 return
             }
             
-            //            let product: [ProductData] = (data.products ?? []).compactMap { product in
-            //                guard let id = product.id,
-            //                      let categoryId = product.category_id,
-            //                      let title = product.title,
-            //                      let price = product.pricing
-            //                        //                    let isCurrent = true
-            //                else {
-            //                    return nil
-            //                }
-            //
-            //                return ProductData(
-            //                    category: "\(categoryId)",
-            //                    id: "\(id)",
-            //                    image: product.images?.first ?? "",  // 🛡️ ensure clean array
-            //                    name: title,
-            //                    price: String(format: "%.2f", price),
-            //                    status:product.status ?? "",
-            //                    isCurrent: true
-            //                )
-            //            }
             
             let product: [ProductData] = (data.products ?? []).compactMap { product in
                 guard let id = product.id,
                       let categoryId = product.category_id,
                       let title = product.title,
-                      let price = product.pricing
+                      let price = product.pricing,
+                      let quantity = product.quantity
                 else {
                     return nil
                 }
@@ -797,7 +792,8 @@ struct RehearsalScreen: View {
                     name: title,
                     price: String(format: "%.2f", price),
                     status: /*product.status ??*/ "active",
-                    isCurrent: selectedID == "\(id)"
+                    isCurrent: selectedID == "\(id)",
+                    quantity: "\(quantity)"
                 )
             }
             
@@ -805,64 +801,74 @@ struct RehearsalScreen: View {
             let seller = SellerModel(isFollowed: data.user?.is_followed ?? false, id: "\(data.user?.id ?? 0 )", name: data.user?.name ?? "", rating: data.user?.rating ?? "")
             
             
+            sendCreateRoomEvent(
+                showId: "\(data.id ?? 0)",
+                roomId: self.roomId,
+                products: product,
+                seller: seller,
+                thumbnail: data.thumbnail?.first ?? "",
+                time: data.time ?? "",
+                date: data.date ?? "",
+                allowBidForAll: true,
+                showTimer: ""
+            )
+//            FirebaseManager.shared.createLiveSession(showId:"\(data.id ?? 0)", userId: "\(data.user_id ?? 0)", product: product, seller: seller, thumbnail: data.thumbnail?.first ?? "", time: data.time ?? "", date: data.date ?? "", allowBidForAll: true)
             
-            FirebaseManager.shared.createLiveSession(showId:"\(data.id ?? 0)", userId: "\(data.user_id ?? 0)", product: product, seller: seller, thumbnail: data.thumbnail?.first ?? "", time: data.time ?? "", date: data.date ?? "", allowBidForAll: true)
+            
+//            let user = ZegoUser(userID: "\(data.user_id ?? 0)", userName: data.user?.name ?? "")
+//            let roomConfig = ZegoRoomConfig()
             
             
-            let user = ZegoUser(userID: "\(data.user_id ?? 0)", userName: data.user?.name ?? "")
-            let roomConfig = ZegoRoomConfig()
-            
-            
-            ZegoExpressEngine.shared().loginRoom(
-                roomId,
-                user: user,
-                config: roomConfig
-            ) { errorCode, _ in
-                if errorCode == 0 {
-                    print("✅ Logged into room: \(roomId)")
-                    self.liveRoomId = roomId
-                    
-                    ZegoExpressEngine.shared().startPublishingStream(roomId)
-                    ZIMChatManager.shared.joinRoom(roomID: roomId)
-                    self.showLiveControls = true
-                    self.showPreLiveControls = false
-                    self.isLive = true
-                    FirebaseManager.shared.observeViewerCount(roomId: self.liveRoomId) { newCount in
-                        print("👀 Viewer Count Updated: \(newCount)")
-                        viewwerCount = newCount
-                    }
-                    
-                    FirebaseManager.shared.startObservingSessionTimer(roomId: roomId) {
-                        //                        self.UpdateStatus(status : true)
-                    }
-                    fetchBiddingDetail(roomId: roomId)
-                    //For Show Automatic Sheet
-                    if isLive {
-                        print("👀 Starting countdown observer for roomId: \(roomId)")
-                        FirebaseManager.shared.observeCountdown(for: roomId) { seconds in
-                            DispatchQueue.main.async {
-                                print("🟡 Countdown update: \(seconds)s")
-                                self.bidCountdownSeconds = seconds
-                                
-                                if seconds == 30 {
-                                    // Countdown just started
-                                    self.hasCountdownStarted = true
-                                }
-                                
-                                if self.hasCountdownStarted && seconds == 0 {
-                                    print("⏰ Countdown reached zero, showing sheet")
-                                    currentBottomSheet = .shop
-                                    fetchLatestProductList()
-                                    self.showSellSheet = true
-                                    self.hasCountdownStarted = false
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    print("❌ Failed to login to room: \(errorCode)")
-                }
-            }
+//            ZegoExpressEngine.shared().loginRoom(
+//                roomId,
+//                user: user,
+//                config: roomConfig
+//            ) { errorCode, _ in
+//                if errorCode == 0 {
+//                    print("✅ Logged into room: \(roomId)")
+//                    self.liveRoomId = roomId
+//                    
+//                    ZegoExpressEngine.shared().startPublishingStream(roomId)
+//                    ZIMChatManager.shared.joinRoom(roomID: roomId)
+//                    self.showLiveControls = true
+//                    self.showPreLiveControls = false
+//                    self.isLive = true
+//                    FirebaseManager.shared.observeViewerCount(roomId: self.liveRoomId) { newCount in
+//                        print("👀 Viewer Count Updated: \(newCount)")
+//                        viewwerCount = newCount
+//                    }
+//                    
+//                    FirebaseManager.shared.startObservingSessionTimer(roomId: roomId) {
+//                        //                        self.UpdateStatus(status : true)
+//                    }
+//                    fetchBiddingDetail(roomId: roomId)
+//                    //For Show Automatic Sheet
+//                    if isLive {
+//                        print("👀 Starting countdown observer for roomId: \(roomId)")
+//                        FirebaseManager.shared.observeCountdown(for: roomId) { seconds in
+//                            DispatchQueue.main.async {
+//                                print("🟡 Countdown update: \(seconds)s")
+//                                self.bidCountdownSeconds = seconds
+//                                
+//                                if seconds == 30 {
+//                                    // Countdown just started
+//                                    self.hasCountdownStarted = true
+//                                }
+//                                
+//                                if self.hasCountdownStarted && seconds == 0 {
+//                                    print("⏰ Countdown reached zero, showing sheet")
+//                                    currentBottomSheet = .shop
+//                                    fetchLatestProductList()
+//                                    self.showSellSheet = true
+//                                    self.hasCountdownStarted = false
+//                                }
+//                            }
+//                        }
+//                    }
+//                } else {
+//                    print("❌ Failed to login to room: \(errorCode)")
+//                }
+//            }
             
             if data.is_live == true {
                 self.showStartTime = Date()
@@ -872,6 +878,63 @@ struct RehearsalScreen: View {
         }
     }
     
+    func sendCreateRoomEvent(
+        showId: String,
+        roomId: String,
+        products: [ProductData],
+        seller: SellerModel,
+        thumbnail: String,
+        time: String,
+        date: String,
+        allowBidForAll: Bool,
+        showTimer:String
+    ) {
+        // Convert your models into dictionaries for the payload
+        let productPayload = products.map { product in
+            [
+                "category": product.category,
+                "id": product.id,
+                "image": product.image,
+                "name": product.name,
+                "price": product.price,
+                "status": product.status,
+                "is_current": product.isCurrent,
+                "quantity": product.quantity
+            ] as [String : Any]
+        }
+        
+        let sellerPayload: [String: Any] = [
+            "id": seller.id,
+            "name": seller.name,
+            "rating": seller.rating,
+            "is_followed": seller.isFollowed
+        ]
+        let timestamp = getCurrentTimestamp()
+        print("📅 Timestamp: \(timestamp)")
+        
+        let payload: [String: Any] = [
+            "show_id": showId,
+            "room_id": roomId,
+            "products": productPayload,
+            "seller": sellerPayload,
+            "thumbnail": thumbnail,
+            "time": timestamp,
+            "date": date,
+            "allow_bid_for_all": allowBidForAll,
+            "viewer_count": 0,
+            "is_live": false,
+            "show_detail": "Live auction room created via Rehearsal",
+            "show_timer":showTimer
+        ]
+        
+        SocketManagerService.shared.createRoom(payload)
+    }
+
+    //MARK: Current Timestamp
+    func getCurrentTimestamp() -> String {
+        let now = Date()
+        return String(Int(now.timeIntervalSince1970))
+    }
     func UpdateStatus(status : Bool,selectedID : String? = nil){
         if status{
             Task {

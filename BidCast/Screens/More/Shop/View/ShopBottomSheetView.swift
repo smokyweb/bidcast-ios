@@ -250,9 +250,9 @@ struct ShopBottomSheetView: View {
             
             // MARK: Action Buttons
             if NavFrom != "Shop" {
-                if productData.contains(where: { $0.isCurrent }) {
+                if productData.contains(where: { $0.isCurrent ?? false }) {
                     if NavFrom == "Rehearsal" {
-                        if let selectedProduct = productData.first(where: { $0.isCurrent }) {
+                        if let selectedProduct = productData.first(where: { $0.isCurrent ?? false }) {
                             Button(action: {
                                 isPresented = false
                                 onLiveStreamStart?(selectedProduct.id)
