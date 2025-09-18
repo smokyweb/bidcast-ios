@@ -53,7 +53,7 @@ final class APIManager {
         let deviceTimeZone = getDeviceTimeZone()
         if header{
             print("Current TimeZone: \(deviceTimeZone)")
-            request.allHTTPHeaderFields = ["Authorization":"Bearer \(UserDefaults.accessToken)","timezone":"\(deviceTimeZone)"]
+            request.allHTTPHeaderFields = ["Authorization":"Bearer \(UserDefaults.accessToken)","timezone":"\(deviceTimeZone)","time_zone":"\(deviceTimeZone)"]
         }
 //        if header{
 //            request.allHTTPHeaderFields = ["Authorization":"Bearer \(UserDefaults.accessToken)"]
