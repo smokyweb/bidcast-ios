@@ -38,6 +38,9 @@
 		3504BCE32E000A3D0069182D /* FirebaseVertexAI in Frameworks */ = {isa = PBXBuildFile; productRef = 3504BCE22E000A3D0069182D /* FirebaseVertexAI */; };
 		3504BCE52E000A610069182D /* FireBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3504BCE42E000A610069182D /* FireBase.swift */; };
 		3504BCE72E00418F0069182D /* ZegoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3504BCE62E00418F0069182D /* ZegoManager.swift */; };
+		35246EC42E7ABA10009D7513 /* SocketIO in Frameworks */ = {isa = PBXBuildFile; productRef = 35246EC32E7ABA10009D7513 /* SocketIO */; };
+		35246EC72E7ABA32009D7513 /* MillicastSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 35246EC62E7ABA32009D7513 /* MillicastSDK */; };
+		35246ECA2E7ABBFB009D7513 /* DolbyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35246EC92E7ABBFB009D7513 /* DolbyManager.swift */; };
 		354163882DDB16BC00026B34 /* StepCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 354163872DDB16BC00026B34 /* StepCard.swift */; };
 		3541638A2DDB178300026B34 /* ShowTips.swift in Sources */ = {isa = PBXBuildFile; fileRef = 354163892DDB178300026B34 /* ShowTips.swift */; };
 		3541638E2DDB370C00026B34 /* ListProductViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3541638D2DDB370C00026B34 /* ListProductViewModel.swift */; };
@@ -534,6 +537,7 @@
 		3504BCAB2E00040A0069182D /* RehearsalScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RehearsalScreen.swift; sourceTree = "<group>"; };
 		3504BCE42E000A610069182D /* FireBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireBase.swift; sourceTree = "<group>"; };
 		3504BCE62E00418F0069182D /* ZegoManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZegoManager.swift; sourceTree = "<group>"; };
+		35246EC92E7ABBFB009D7513 /* DolbyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DolbyManager.swift; sourceTree = "<group>"; };
 		354163872DDB16BC00026B34 /* StepCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepCard.swift; sourceTree = "<group>"; };
 		354163892DDB178300026B34 /* ShowTips.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowTips.swift; sourceTree = "<group>"; };
 		3541638D2DDB370C00026B34 /* ListProductViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListProductViewModel.swift; sourceTree = "<group>"; };
@@ -1021,6 +1025,7 @@
 				3504BCE12E000A3D0069182D /* FirebaseStorageCombine-Community in Frameworks */,
 				3504BCC72E000A3D0069182D /* FirebaseDatabase in Frameworks */,
 				35F63D772DDCBE5B00D29878 /* StripePaymentSheet in Frameworks */,
+				35246EC72E7ABA32009D7513 /* MillicastSDK in Frameworks */,
 				3504BCB72E000A3D0069182D /* FirebaseAnalyticsOnDeviceConversion in Frameworks */,
 				3504BCBD2E000A3D0069182D /* FirebaseAppDistribution-Beta in Frameworks */,
 				3504BCD32E000A3D0069182D /* FirebaseInAppMessaging-Beta in Frameworks */,
@@ -1051,6 +1056,7 @@
 				35F63D6B2DDCBE5B00D29878 /* Stripe in Frameworks */,
 				3504BCDD2E000A3D0069182D /* FirebaseRemoteConfig in Frameworks */,
 				35A0450D2DC8DEC30067C447 /* AlertToast in Frameworks */,
+				35246EC42E7ABA10009D7513 /* SocketIO in Frameworks */,
 				3504BCB92E000A3D0069182D /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
 				35F63D6F2DDCBE5B00D29878 /* StripeCardScan in Frameworks */,
 				3504BCAA2DFFE3D70069182D /* ZegoExpressEngine in Frameworks */,
@@ -2219,6 +2225,7 @@
 				3504BCE62E00418F0069182D /* ZegoManager.swift */,
 				35B424A32E04327500626E02 /* ZegoChat.swift */,
 				D4D2B91A2E30E783006F15E6 /* NetworkMonitor.swift */,
+				35246EC92E7ABBFB009D7513 /* DolbyManager.swift */,
 			);
 			path = Helper;
 			sourceTree = "<group>";
@@ -4051,6 +4058,8 @@
 				3504BCE02E000A3D0069182D /* FirebaseStorageCombine-Community */,
 				3504BCE22E000A3D0069182D /* FirebaseVertexAI */,
 				35B424A62E043D0E00626E02 /* ZIM */,
+				35246EC32E7ABA10009D7513 /* SocketIO */,
+				35246EC62E7ABA32009D7513 /* MillicastSDK */,
 			);
 			productName = BidCast;
 			productReference = 99DF9E3F2DC4F35D008C15B2 /* BidCast.app */;
@@ -4147,6 +4156,8 @@
 				3504BCA82DFFE3D70069182D /* XCRemoteSwiftPackageReference "express-video-ios" */,
 				3504BCAD2E000A3D0069182D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				35B424A52E043D0E00626E02 /* XCRemoteSwiftPackageReference "zim-ios" */,
+				35246EC22E7ABA10009D7513 /* XCRemoteSwiftPackageReference "socket" */,
+				35246EC52E7ABA32009D7513 /* XCRemoteSwiftPackageReference "millicast-sdk-swift-package" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 99DF9E402DC4F35D008C15B2 /* Products */;
@@ -4294,6 +4305,7 @@
 				D4BA9C0B2DE4856900DFF6E6 /* ShowsViewModel.swift in Sources */,
 				3576EAD42DDDD96900177C7D /* SelectThumbnailScreen.swift in Sources */,
 				D49A95682DD704CD006044A7 /* FAQScreen.swift in Sources */,
+				35246ECA2E7ABBFB009D7513 /* DolbyManager.swift in Sources */,
 				99C908142DC8CD6A0054620B /* PrimaryButton.swift in Sources */,
 				D4BB9A1E2DE5D22A00C1BCBC /* PromoteToolsView.swift in Sources */,
 				35AC64742DD48C0300B5E13E /* SearchView.swift in Sources */,
@@ -5067,6 +5079,22 @@
 				minimumVersion = 11.14.0;
 			};
 		};
+		35246EC22E7ABA10009D7513 /* XCRemoteSwiftPackageReference "socket" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/socketio/socket.io-client-swift";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+		35246EC52E7ABA32009D7513 /* XCRemoteSwiftPackageReference "millicast-sdk-swift-package" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/millicast/millicast-sdk-swift-package";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.1;
+			};
+		};
 		354652672DF2EE5900EB353F /* XCRemoteSwiftPackageReference "SVProgressHUD" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SVProgressHUD/SVProgressHUD.git";
@@ -5297,6 +5325,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 3504BCAD2E000A3D0069182D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseVertexAI;
+		};
+		35246EC32E7ABA10009D7513 /* SocketIO */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 35246EC22E7ABA10009D7513 /* XCRemoteSwiftPackageReference "socket" */;
+			productName = SocketIO;
+		};
+		35246EC62E7ABA32009D7513 /* MillicastSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 35246EC52E7ABA32009D7513 /* XCRemoteSwiftPackageReference "millicast-sdk-swift-package" */;
+			productName = MillicastSDK;
 		};
 		354652682DF2EE5900EB353F /* SVProgressHUD */ = {
 			isa = XCSwiftPackageProductDependency;

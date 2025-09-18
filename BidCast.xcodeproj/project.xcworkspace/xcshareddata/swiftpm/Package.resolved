@@ -1,5 +1,5 @@
 {
-  "originHash" : "0047be52d9064b5dde4a7c1d668df3dd5bfb77d6e592462a117a29b9524609d7",
+  "originHash" : "2293a1b7e5ef861e7b3f23036b3b5f6f6ce735b400e65c5a1b05ef34577f5af2",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -227,6 +227,15 @@
       }
     },
     {
+      "identity" : "millicast-sdk-swift-package",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/millicast/millicast-sdk-swift-package",
+      "state" : {
+        "revision" : "43a54284c4f39968d3874c4c761da1970a9e6c6c",
+        "version" : "2.5.1"
+      }
+    },
+    {
       "identity" : "nanopb",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/firebase/nanopb.git",
@@ -251,6 +260,24 @@
       "state" : {
         "revision" : "3910393f3837a21fd2e414b758942ffd2d62aaa2",
         "version" : "2.5.0"
+      }
+    },
+    {
+      "identity" : "socket.io-client-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/socketio/socket.io-client-swift",
+      "state" : {
+        "branch" : "master",
+        "revision" : "42da871d9369f290d6ec4930636c40672143905b"
+      }
+    },
+    {
+      "identity" : "starscream",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/daltoniam/Starscream",
+      "state" : {
+        "revision" : "c6bfd1af48efcc9a9ad203665db12375ba6b145a",
+        "version" : "4.0.8"
       }
     },
     {

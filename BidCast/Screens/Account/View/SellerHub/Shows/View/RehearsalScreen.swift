@@ -9,6 +9,7 @@ import SwiftUI
 import Foundation
 import ZegoExpressEngine
 import SVProgressHUD
+import MillicastSDK
 
 struct RehearsalScreen: View {
     @EnvironmentObject  var appRootManager: AppRootManager
@@ -63,6 +64,10 @@ struct RehearsalScreen: View {
     @State var hudMsg: String = ""
     @Binding var backToTabBar : Bool
     
+//    @StateObject var castManager: PublisherViewModel
+//    @State var renderer = MCAcceleratedVideoRenderer()
+    @StateObject private var castManager = PublisherViewModel(renderer: MCAcceleratedVideoRenderer())
+    @State private var renderer = MCAcceleratedVideoRenderer()
     var sheetHeight: CGFloat {
         switch currentBottomSheet {
         case .more: return screenHeight * 0.7
@@ -74,14 +79,28 @@ struct RehearsalScreen: View {
         default: return screenHeight * 0.65
         }
     }
+//    init() {
+//        let renderer = MCAcceleratedVideoRenderer()
+//        _castManager = StateObject(wrappedValue: .init(renderer: renderer))
+//        
+//        self.renderer = renderer
+//    }
     
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                ZegoRehearsalScreen(isLive: $isLive, streamID: roomId)
-                    .frame(width: geometry.size.width, height: geometry.size.height)
-                    .id(previewResetTrigger)
+//                ZegoRehearsalScreen(isLive: $isLive, streamID: roomId)
+//                    .frame(width: geometry.size.width, height: geometry.size.height)
+//                    .id(previewResetTrigger)
+//                MCVideoSwiftUIView(renderer: renderer)
+//                    .onVideoSizeChange { newSize in
+//                        print("Video size changed: \(newSize)")
+//                    }
                 
+                MCVideoSwiftUIView(renderer: .accelerated(castManager.renderer as! MCAcceleratedVideoRenderer))
+                    .onVideoSizeChange { newSize in
+                        print("Video size changed: \(newSize)")
+                    }
                 VStack {
                     HStack {
                         HStack(spacing: 8) {
@@ -379,7 +398,14 @@ struct RehearsalScreen: View {
                             Button(action: {
                                 if UserDefaults.sellerVerafied == "verified"{
                                     if !isLive{
-                                        showProductSheet = true
+//                                        showProductSheet = true
+                                        Task {
+//                                            if !castManager.isPublishing {
+                                                try await castManager.publish()
+//                                            } else {
+//                                                try await castManager.unpublish()
+//                                            }
+                                        }
                                     }
                                     //                                    self.UpdateStatus(status : false)
                                 }else{
@@ -569,12 +595,19 @@ struct RehearsalScreen: View {
                         },
                         onEndShow: {
                             Task {
-                                SVProgressHUD.show()
-                                let is_Live = "false"
-                                await viewModel.UpdateLiveShows(param: LiveShowUpdateRequest(schedule_show_id: showUd, is_live: is_Live))
-                                await SVProgressHUD.dismiss()
-                                success()
+//                                            if !castManager.isPublishing {
+//                                    try await castManager.publish()
+//                                            } else {
+                                                try await castManager.unpublish()
+//                                            }
                             }
+//                            Task {
+//                                SVProgressHUD.show()
+//                                let is_Live = "false"
+//                                await viewModel.UpdateLiveShows(param: LiveShowUpdateRequest(schedule_show_id: showUd, is_live: is_Live))
+//                                await SVProgressHUD.dismiss()
+//                                success()
+//                            }
                             
                             
                             self.isLive = false
@@ -637,8 +670,15 @@ struct RehearsalScreen: View {
                 productData.append(contentsOf: mappedProducts)
 //            }
         }
+//        .onDisappear {
+//            logoutRoom()
+//        }
         .onDisappear {
-            logoutRoom()
+            Task {
+                if castManager.isPublishing {
+                    try await castManager.unpublish()
+                }
+            }
         }
     }
     
@@ -1030,7 +1070,6 @@ struct ZegoRehearsalScreen: UIViewRepresentable {
         ZegoExpressEngine.shared().stopPlayingStream("")
     }
 }
-
 
 enum SideMenu {
     case more, promote, clip, share, switchView, shop,endShow
