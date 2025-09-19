@@ -7,7 +7,7 @@
 
 import Foundation
 import ZegoExpressEngine
-import SwiftUICore
+import SwiftUI
 
 class ZegoManager: NSObject, ZegoEventHandler , ObservableObject {
     static let shared = ZegoManager()

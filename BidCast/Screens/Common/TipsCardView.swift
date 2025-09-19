@@ -5,7 +5,6 @@
 //  Created by Ankit-JAM-E-294 on 21/05/25.
 //
 
-import SwiftUICore
 import SwiftUI
 import RichText
 

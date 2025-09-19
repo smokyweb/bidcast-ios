@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import SwiftUICore
 import SwiftUI
 
 struct TwoVerticalLabelCell<T: Hashable & CustomStringConvertible>: View {

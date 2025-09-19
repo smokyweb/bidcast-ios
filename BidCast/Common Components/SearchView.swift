@@ -4,7 +4,7 @@
 //  Created by Ankit-JAM-E-294 on 14/05/25.
 //
 import SwiftUI
-import SwiftUICore
+import SwiftUI
 
 struct SearchView: View {
     @Binding var searchText: String

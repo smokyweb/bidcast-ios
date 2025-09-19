@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import SwiftUICore
 import SwiftUI
 
 struct CustomSegmentedControl<T: Hashable & CustomStringConvertible>: View {

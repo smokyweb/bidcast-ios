@@ -5,7 +5,7 @@
 //  Created by JAM_E_329 on 27/05/25.
 //
 
-import SwiftUICore
+import SwiftUI
 
 // MARK: - Reusable Card View
 struct SellerStatusCardView: View {

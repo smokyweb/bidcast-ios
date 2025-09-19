@@ -10,7 +10,7 @@ import FirebaseDatabase
 import UIKit
 import AVFoundation
 import BottomSheet
-import SwiftUICore
+import SwiftUI
 
 
 class FirebaseManager {

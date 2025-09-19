@@ -927,7 +927,7 @@ struct LiveStream: View {
         Task{
             try await joinManager.subscribe(streamName: response.data?[currentStreamIndex].room_id ?? "")
         }
-//        self.listenForRoomUpdates()
+        self.listenForRoomUpdates()
         onRoomsUpdated = {  socketRoomIds in
             
             let validShows = response.data?.filter { show in

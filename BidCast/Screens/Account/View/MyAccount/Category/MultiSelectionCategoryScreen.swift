@@ -5,7 +5,6 @@
 //  Created by JAM_E_329 on 09/08/25.
 //
 
-import SwiftUICore
 import SwiftUI
 import AlertToast
 import SVProgressHUD

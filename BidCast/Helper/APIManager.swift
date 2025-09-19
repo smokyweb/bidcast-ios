@@ -4,7 +4,7 @@
 
 import Foundation
 import SVProgressHUD
-import SwiftUICore
+import SwiftUI
 
 // Singleton Design Pattern
 // final - inheritance nahi hoga theek hai final ho gya
