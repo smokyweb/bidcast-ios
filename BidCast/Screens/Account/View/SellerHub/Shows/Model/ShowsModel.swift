@@ -72,10 +72,20 @@ struct ProductData : Codable {
                 "quantity" : quantity
             ]
         }
+    enum CodingKeys: String, CodingKey {
+           case category
+           case id
+           case image
+           case name
+           case price
+           case status
+           case isCurrent = "is_current"
+           case quantity
+       }
 }
 
 struct SellerModel : Codable {
-    let isFollowed: Bool
+    let isFollowed: Bool?
     let id: String
     let name: String
     let rating: String
@@ -88,4 +98,5 @@ struct SellerModel : Codable {
             "rating": rating
         ]
     }
+    
 }

@@ -37,7 +37,7 @@ struct ShowsScreen: View {
     @State var viewModel = ShowsViewModel()
     @State var showsData = [HomeModel]()
     @State private var selectedProductData: [ProductDataModel] = []
-    
+    @State var selectedShowsData = HomeModel()
     @State var showID = ""
 
     // Sample data
@@ -98,6 +98,7 @@ struct ShowsScreen: View {
                                 showID = "\(data.id ?? 0)"
                                 isLive = data.is_live ?? false
                                 selectedProductData = data.products ?? []
+                                selectedShowsData = data
                                 navigateToReherseal = true
                             })
                         }
@@ -120,7 +121,7 @@ struct ShowsScreen: View {
 ////                .padding(.vertical, 0)
 ////                .background(Color(UIColor.systemGroupedBackground))
 //            }
-            CusNavLink(doNavigate: $navigateToReherseal, destination: RehearsalScreen(showUd: $showID,isLive: isLive, productListData: $selectedProductData, backToTabBar: .constant(true)))
+            CusNavLink(doNavigate: $navigateToReherseal, destination: RehearsalScreen(showUd: $showID,isLive: isLive, productListData: $selectedProductData, backToTabBar: .constant(true),showsData: $selectedShowsData))
         }
         .navigationBarHidden(true)
         .toolbar(.hidden,for: .tabBar)
@@ -173,9 +174,9 @@ enum ShowScreenSegment: String, CaseIterable, CustomStringConvertible {
 }
 
 // MARK: - Preview
-#Preview {
-    ShowsScreen()
-}
+//#Preview {
+//    ShowsScreen()
+//}
 
 
 

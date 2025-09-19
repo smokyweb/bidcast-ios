@@ -122,8 +122,8 @@ struct LetsPrepare: View,ShowStepDelegate {
             
             CusNavLink(doNavigate: $navigateToSelectShow, destination: SelectShowScreen(request: $request, thumbNail: $thumbNAil, comeFromPrepareScreen: .constant(true),backToPrepare: .constant(false), delegate: self))
             
-            CusNavLink(doNavigate: $navigateToRehearsal, destination: RehearsalScreen(showUd: .constant(""),productListData: .constant([ProductDataModel]()), comeFromPrepare: true, backToTabBar: .constant(true)))
-            CusNavLink(doNavigate: $navigateForLive, destination: RehearsalScreen(showUd: $showId,productListData:$product,comeFromPrepare: true,comeForLive: true, backToTabBar: $backToTabBar ))
+            CusNavLink(doNavigate: $navigateToRehearsal, destination: RehearsalScreen(showUd: .constant(""),productListData: .constant([ProductDataModel]()), comeFromPrepare: true, backToTabBar: .constant(true), showsData: .constant(HomeModel())))
+            CusNavLink(doNavigate: $navigateForLive, destination: RehearsalScreen(showUd: $showId,productListData:$product,comeFromPrepare: true,comeForLive: true, backToTabBar: $backToTabBar,showsData: .constant(HomeModel()) ))
             
             CusNavLink(doNavigate: $navigateToshowTitle, destination: ShowTitleTips(request : $request,fromPrepare:.constant(true),backToPrepare: $navigateToshowTitle, delegate: self))
             CusNavLink(doNavigate: $navigateToReferScreen, destination: ReferEarnScreen())

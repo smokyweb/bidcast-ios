@@ -1314,11 +1314,11 @@ struct LiveStream: View {
             ]
         )
         socket = socketManager.defaultSocket
-
+        socket.connect()
         // Register BEFORE connect
-        socket.onAny { event in
-            print("📡 Received event: \(event.event), data: \(String(describing: event.items))")
-        }
+//        socket.onAny { event in
+//            print("📡 Received event: \(event.event), data: \(String(describing: event.items))")
+//        }
 
         socket.on("room_create_get") { data, _ in
             guard let json = data.first as? [String: Any] else { return }
@@ -1337,7 +1337,7 @@ struct LiveStream: View {
             }
         }
 
-        socket.connect()
+        
     }
 
 }

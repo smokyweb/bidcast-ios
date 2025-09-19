@@ -79,6 +79,8 @@ struct RehearsalScreen: View {
         default: return screenHeight * 0.65
         }
     }
+    
+    @Binding var showsData : HomeModel
 //    init() {
 //        let renderer = MCAcceleratedVideoRenderer()
 //        _castManager = StateObject(wrappedValue: .init(renderer: renderer))
@@ -598,22 +600,22 @@ struct RehearsalScreen: View {
                             print("Raid Created")
                         },
                         onEndShow: {
-                            Task {
+//                            Task {
 //                                            if !castManager.isPublishing {
 //                                    try await castManager.publish()
 //                                            } else {
 //                                                try await castManager.unpublish()
 //                                self.presentationMode.wrappedValue.dismiss()
 //                                            }
-                            }
-                            Task {
-                                SVProgressHUD.show()
-                                let is_Live = "false"
-                                await viewModel.UpdateLiveShows(param: LiveShowUpdateRequest(schedule_show_id: showUd, is_live: is_Live))
-                                await SVProgressHUD.dismiss()
-                                success()
-                            }
-                            
+//                            }
+//                            Task {
+//                                SVProgressHUD.show()
+//                                let is_Live = "false"
+//                                await viewModel.UpdateLiveShows(param: LiveShowUpdateRequest(schedule_show_id: showUd, is_live: is_Live))
+//                                await SVProgressHUD.dismiss()
+//                                success()
+//                            }
+                            self.endShow()
                             
                             self.isLive = false
                         }
@@ -748,6 +750,86 @@ struct RehearsalScreen: View {
         }
     }
     
+    func ShowData(data:HomeModel ,selectedID : String? = nil) {
+       
+           
+            
+            let roomId = "live_room_\(data.user_id ?? 0)_\(data.id ?? 0)"
+            self.roomId = roomId
+      
+            
+            Task{
+                try await castManager.publish(streamName:  self.roomId)
+            }
+            
+            
+            let product: [ProductData] = (data.products ?? []).compactMap { product in
+                guard let id = product.id,
+                      let categoryId = product.category_id,
+                      let title = product.title,
+                      let price = product.pricing,
+                      let quantity = product.quantity
+                else {
+                    return nil
+                }
+                
+                return ProductData(
+                    category: "\(categoryId)",
+                    id: "\(id)",
+                    image: product.images?.first ?? "",
+                    name: title,
+                    price: String(format: "%.2f", price),
+                    status: /*product.status ??*/ "active",
+                    isCurrent: selectedID == "\(id)",
+                    quantity: "\(quantity)"
+                )
+            }
+            
+            
+            let seller = SellerModel(isFollowed: data.user?.is_followed ?? false, id: "\(data.user?.id ?? 0 )", name: data.user?.name ?? "", rating: data.user?.rating ?? "")
+            
+            
+            sendCreateRoomEvent(
+                showId: "\(data.id ?? 0)",
+                roomId: self.roomId,
+                products: product,
+                seller: seller,
+                thumbnail: data.thumbnail?.first ?? "",
+                time: data.time ?? "",
+                date: data.date ?? "",
+                allowBidForAll: true,
+                showTimer: ""
+            )
+        SocketManagerService.shared.startLiveScheduler(roomId: self.roomId)
+        isLive = true
+        
+            if data.is_live == true {
+                self.showStartTime = Date()
+                startLiveTimer()
+            }
+            
+        
+    }
+    func endShow(){
+        
+        Task{
+            try await castManager.unpublish()
+            SocketManagerService.shared.endStreaming(roomId: self.roomId)
+            SocketManagerService.shared.stopLiveScheduler()
+            self.comments.removeAll()
+            previewResetTrigger.toggle()
+            self.showLiveControls = false
+            self.showPreLiveControls = true
+            if comeFromPrepare{
+                backToTabBar = false
+            }else{
+                self.presentationMode.wrappedValue.dismiss()
+            }
+            
+        }
+        return
+        
+    }
     func success(selectedID : String? = nil) {
         let response = viewModel.updateStatusRespone
         if response?.status == "success"{
@@ -960,16 +1042,17 @@ struct RehearsalScreen: View {
                     showhud = true
                     return
                 }
-                SVProgressHUD.show()
+//                SVProgressHUD.show()
                 let is_Live = "true"
-                await viewModel.UpdateLiveShows(param: LiveShowUpdateRequest(schedule_show_id: showUd, is_live: is_Live))
-                await SVProgressHUD.dismiss()
-                // ✅ Only call success if we have a valid product ID
-                if let validID = selectedID, !validID.isEmpty {
-                    success(selectedID: validID)
-                } else {
-                    print("⚠️ Skipping success(): selectedID is nil or empty")
-                }
+                ShowData(data: showsData,selectedID: selectedID)
+//                await viewModel.UpdateLiveShows(param: LiveShowUpdateRequest(schedule_show_id: showUd, is_live: is_Live))
+//                await SVProgressHUD.dismiss()
+//                // ✅ Only call success if we have a valid product ID
+//                if let validID = selectedID, !validID.isEmpty {
+//                    success(selectedID: validID)
+//                } else {
+//                    print("⚠️ Skipping success(): selectedID is nil or empty")
+//                }
             }
         }
     }

@@ -15,7 +15,7 @@ class SocketManagerService: NSObject, ObservableObject {
     @Published var chats: [ChatMessage] = []
     
     var onRoomsUpdated: (([String]) -> Void)?
-    
+    var liveSchedulerTimer: Timer?
     private var socket: SocketIOClient!
     private var socketManager: SocketManager!
     
@@ -68,6 +68,19 @@ class SocketManagerService: NSObject, ObservableObject {
         print("Creating Room \(roomData)")
         socket.emit("room_create", roomData)
     }
+    func endStreaming(roomId: String) {
+        guard socket.status == .connected else{
+            if socket.status == .connecting || socket.status == .notConnected{
+                print("Socket status \(socket.status)")
+                setupSocket()
+            }
+            return
+        }
+        let payload: [String: Any] = ["room_id": roomId]
+        print("Socket status \(socket.status)")
+        print("Ending streaming Room \(payload)")
+        socket.emit("endRoom", payload)
+    }
     
     func leaveRoom(_ roomData: [String: Any]) {
         guard socket.status == .connected else{
@@ -103,25 +116,60 @@ class SocketManagerService: NSObject, ObservableObject {
 //            }
 //        }
 //    }
+    
+    func startLiveScheduler(roomId: String) {
+        // Invalidate existing timer if running
+        liveSchedulerTimer?.invalidate()
+
+        // Send immediately once
+        sendLiveScheduler(roomId: roomId)
+
+        // Schedule every 270 seconds (4.5 minutes)
+        liveSchedulerTimer = Timer.scheduledTimer(withTimeInterval: 270, repeats: true) { [weak self] _ in
+            self?.sendLiveScheduler(roomId: roomId)
+        }
+        
+        print("✅ LiveScheduler started for room: \(roomId)")
+    }
+
+    func stopLiveScheduler() {
+        liveSchedulerTimer?.invalidate()
+        liveSchedulerTimer = nil
+        print("🛑 LiveScheduler stopped")
+    }
+
+    private func sendLiveScheduler(roomId: String) {
+        guard socket.status == .connected else {
+            if socket.status == .connecting || socket.status == .notConnected {
+                print("Socket status \(socket.status)")
+                setupSocket()
+            }
+            return
+        }
+        
+        let payload: [String: Any] = ["room_id": roomId]
+        print("📡 Sending liveScheduler with payload:", payload)
+        socket.emit("liveScheduler", payload)
+    }
 }
 
 
 struct RoomModel: Codable {
-    let products: [ProductData]
-    let room_id: String
-    let seller: SellerModel
-    let show_detail: String
-    let thumbnail: String
-    let viewer_count: Int
+    let products: [ProductData]?
+    let room_id: String?
+    let seller: SellerModel?
+    let show_detail: String?
+    let thumbnail: String?
+    let viewer_count: Int?
     let highest_bid: HighestBid?
-    let is_live: Bool
-    let time: String
-    let show_id: String
-    let allow_bid_for_all: Bool
-    let bid_count_down: String
-    let show_timer: String
+    let is_live: Bool?
+    let time: String?
+    let show_id: String?
+    let allow_bid_for_all: Bool?
+    let bid_count_down: String?
+    let show_timer: String?
     
-    var id: String { room_id }
+    var id: String { room_id ?? "" }
 }
 
 //struct ChatMessage: Codable, Identifiable {
