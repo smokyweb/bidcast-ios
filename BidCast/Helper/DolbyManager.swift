@@ -90,48 +90,29 @@ class PublisherViewModel: ObservableObject {
     }
     
     // MARK: - Controls
+    @MainActor
     func switchCamera() {
-        guard videoSources.count > 1 else { return }
+        guard let current = currentVideoSource else { return }
 
-        // Stop the current camera
-        currentVideoSource?.stopCapture()
-
-        // Select the next camera source
-        if let current = currentVideoSource,
-           let index = videoSources.firstIndex(of: current) {
-            let nextIndex = (index + 1) % videoSources.count
-            currentVideoSource = videoSources[nextIndex]
-        }
-
-        // Optional: set a specific capability for resolution/fps if available
-        if let capability = currentVideoSource?.getCapabilities()
-            .first(where: { $0.width <= 1920 && $0.height <= 1080 }) {
-            currentVideoSource?.setCapability(capability)
-        }
-
-        // Start the new capture (no arguments)
-        guard let newTrack = currentVideoSource?.startCapture() as? MCVideoTrack else {
-            print("❌ Failed to start new camera capture")
-            return
-        }
-
-        // Update renderer
-        videoTrack?.remove(renderer)
-        newTrack.add(renderer)
-        videoTrack = newTrack
-
-        // Update publisher with new track
-        Task {
-            do {
-                // Remove old track from publisher if still publishing
-                try await publisher.clearTracks()
-                try await publisher.addTrack(with: newTrack)
-                print("✅ Camera switched successfully")
-            } catch {
-                print("❌ Error updating publisher: \(error)")
+        // Optional: temporarily lower resolution to reduce hardware latency
+        if let lowCap = current.getCapabilities().first(where: {
+                $0.width <= 640 && $0.height <= 480 && $0.fps <= 30
+            }) {
+                current.setCapability(lowCap)
             }
+            // Switch camera
+            current.change(true)
+        if let highCap = current.getCapabilities().first(where: {
+            $0.width <= 640 &&
+            $0.height <= 480 &&
+            $0.fps <= 30
+        }) {
+            current.setCapability(highCap)
+            print("Restored high capability: \(highCap.width)x\(highCap.height) @\(highCap.fps)fps")
         }
+     
     }
+
 
 
     

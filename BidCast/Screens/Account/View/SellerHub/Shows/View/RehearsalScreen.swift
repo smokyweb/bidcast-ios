@@ -38,7 +38,7 @@ struct RehearsalScreen: View {
     @State private var initialSelectedProductId: String = ""
     @Binding var productListData: [ProductDataModel]
     @State private var commentText = ""
-    @State var comments: [Comment] = []
+    @State var comments: [CommentModel] = []
     @State var liveRoomId = ""
     
     @State private var previewResetTrigger = false
@@ -46,7 +46,7 @@ struct RehearsalScreen: View {
     @State private var showStartTime: Date? = nil
     @State private var liveElapsedTime: String = "00:00:00"
     
-    @ObservedObject var chatManager = ZIMChatManager.shared
+//    @ObservedObject var chatManager = ZIMChatManager.shared
     
     @State var comeFromPrepare = false
     @State var comeForLive = false
@@ -79,7 +79,7 @@ struct RehearsalScreen: View {
         default: return screenHeight * 0.65
         }
     }
-    
+    @StateObject var socketManager = SocketManagerService.shared
     @Binding var showsData : HomeModel
 //    init() {
 //        let renderer = MCAcceleratedVideoRenderer()
@@ -96,11 +96,9 @@ struct RehearsalScreen: View {
 //                    .id(previewResetTrigger)
                 
                 MCVideoSwiftUIView(renderer: .accelerated(castManager.renderer as! MCAcceleratedVideoRenderer))
-                    .onVideoSizeChange { newSize in
-                        print("Video size changed: \(newSize)")
-                    }
-                    .frame(width: screenWidth, height: screenHeight)
-                    .ignoresSafeArea()
+                    .ignoresSafeArea()  // Makes it truly full screen
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                .background(Color.black)
                     
                 VStack {
                     HStack {
@@ -258,7 +256,8 @@ struct RehearsalScreen: View {
                             Spacer()
                             Button(action: {
                                 isMicOn.toggle()
-                                ZegoExpressEngine.shared().muteMicrophone(!isMicOn)
+                                castManager.toggleAudioMute()
+//                                ZegoExpressEngine.shared().muteMicrophone(!isMicOn)
                             }) {
                                 VStack {
                                     Image(systemName: isMicOn ? "mic.fill" : "mic.slash.fill")
@@ -281,7 +280,8 @@ struct RehearsalScreen: View {
                             
                             Button(action: {
                                 isUsingFrontCamera.toggle()
-                                ZegoExpressEngine.shared().useFrontCamera(isUsingFrontCamera)
+//                                ZegoExpressEngine.shared().useFrontCamera(isUsingFrontCamera)
+                                castManager.switchCamera()
                             }) {
                                 VStack {
                                     Image(systemName: "arrow.triangle.2.circlepath.camera")
@@ -318,11 +318,11 @@ struct RehearsalScreen: View {
                 
                 VStack(alignment: .leading, spacing: 8) {
                     Spacer()
-                    if chatManager.messages.count > 0{
+                    if socketManager.chats.count > 0{
                         ScrollViewReader { proxy in
                             ScrollView {
                                 VStack(alignment: .leading, spacing: 8) {
-                                    ForEach(chatManager.messages) { comment in
+                                    ForEach(socketManager.chats) { comment in
                                         HStack {
                                             CustomProfileImage(url: comment.image, isCircular: true,size: 24)
                                             Text(comment.username.capitalizingFirstLetter())
@@ -333,15 +333,15 @@ struct RehearsalScreen: View {
                                                 .font(.custom(poppinsRegular, size: 12.0))
                                                 .foregroundColor(.white)
                                         }
-                                        .padding(.trailing,40)
+                                        .padding(.trailing,60)
                                         .padding(.leading,Leading)
                                         .id(comment.id) // 💡 For scroll targeting
                                     }
                                 }
                             }
-                            .onChange(of: chatManager.messages) { _ in
+                            .onChange(of: socketManager.chats) { _ in
                                 // 💬 Auto scroll to last message
-                                if let last = chatManager.messages.last {
+                                if let last = socketManager.chats.last {
                                     withAnimation {
                                         proxy.scrollTo(last.id, anchor: .bottom)
                                     }
@@ -378,7 +378,8 @@ struct RehearsalScreen: View {
                                         Button(action: {
                                             print("📨 Sending message: \(commentText)")
                                             let textToSend = commentText.trimmingCharacters(in: .whitespacesAndNewlines)
-                                            ZIMChatManager.shared.sendMessage(message: textToSend,roomId: self.liveRoomId,image: UserDefaults.profileURL,name: UserDefaults.userName)
+//                                            ZIMChatManager.shared.sendMessage(message: textToSend,roomId: self.liveRoomId,image: UserDefaults.profileURL,name: UserDefaults.userName)
+                                            SocketManagerService.shared.sendChat(roomId: self.roomId, message: textToSend)
                                             commentText = ""
                                         }) {
                                             Image(systemName: "paperplane.fill")
@@ -691,6 +692,7 @@ struct RehearsalScreen: View {
             Task {
                 if castManager.isPublishing {
                     try await castManager.unpublish()
+                    self.endShow()
                 }
             }
         }
@@ -802,7 +804,9 @@ struct RehearsalScreen: View {
             )
         SocketManagerService.shared.startLiveScheduler(roomId: self.roomId)
         isLive = true
-        
+        self.showLiveControls = true
+        self.showPreLiveControls = false
+        SocketManagerService.shared.listenForChat()
             if data.is_live == true {
                 self.showStartTime = Date()
                 startLiveTimer()
@@ -817,6 +821,7 @@ struct RehearsalScreen: View {
             SocketManagerService.shared.endStreaming(roomId: self.roomId)
             SocketManagerService.shared.stopLiveScheduler()
             self.comments.removeAll()
+            SocketManagerService.shared.chats.removeAll()
             previewResetTrigger.toggle()
             self.showLiveControls = false
             self.showPreLiveControls = true
@@ -1073,9 +1078,7 @@ struct RehearsalScreen: View {
     }
     
     func logoutRoom() {
-        ZegoExpressEngine.shared().logoutRoom()
-        ZIMChatManager.shared.logout()
-        chatManager.messages.removeAll()
+        SocketManagerService.shared.chats.removeAll()
         showSellSheet = false
         self.isLive = false
         FirebaseManager.shared.stopObserving()
@@ -1190,45 +1193,7 @@ struct RehearsalScreen: View {
 
 
 
-
-struct ZegoRehearsalScreen: UIViewRepresentable {
-    @Binding var isLive : Bool
-    @State var streamID = ""
-    
-    
-    func makeUIView(context: Context) -> UIView {
-        let view = UIView(frame: UIScreen.main.bounds)
-        view.backgroundColor = .black
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            let canvas = ZegoCanvas(view: view)
-            canvas.viewMode = .aspectFill
-            ZegoExpressEngine.shared().enableCamera(true)
-            ZegoExpressEngine.shared().startPreview(canvas)
-            
-        }
-        
-        return view
-    }
-    
-    func updateUIView(_ uiView: UIView, context: Context) {
-        // Optional: handle dynamic stream change if needed
-    }
-    
-    static func dismantleUIView(_ uiView: UIView, coordinator: ()) {
-        
-        ZegoExpressEngine.shared().stopPublishingStream()
-        ZegoExpressEngine.shared().stopPlayingStream("")
-    }
-}
-
 enum SideMenu {
     case more, promote, clip, share, switchView, shop,endShow
 }
 
-
-//Task{
-//    SVProgressHUD.show()
-//    await self.viewModel.productDetails(parameters: UserProductRequest(user_id: Int(id) ?? 0,page : currentPage))
-//    await SVProgressHUD.dismiss()
-//    success()
-//}

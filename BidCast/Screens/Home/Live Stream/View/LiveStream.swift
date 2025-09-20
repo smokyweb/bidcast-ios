@@ -14,18 +14,41 @@ import AlertToast
 import MillicastSDK
 import SocketIO
 
-struct Comment: Identifiable, Equatable {
+struct CommentModel: Codable, Identifiable, Equatable {
     let id = UUID()
-    let image : String
+    let image: String
     let username: String
     let message: String
-    let userId : String
+    let userId: String 
+    let roomId: String
+
+    enum CodingKeys: String, CodingKey {
+        case image = "user_image"
+        case username = "user_name"
+        case message
+        case userId = "user_id"
+        case roomId = "room_id"
+    }
+    init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            image = try container.decode(String.self, forKey: .image)
+            username = try container.decode(String.self, forKey: .username)
+            message = try container.decode(String.self, forKey: .message)
+            roomId = try container.decode(String.self, forKey: .roomId)
+
+            // Handle userId as String or Int
+            if let intId = try? container.decode(Int.self, forKey: .userId) {
+                userId = String(intId)
+            } else {
+                userId = try container.decode(String.self, forKey: .userId)
+            }
+        }
 }
 
 struct LiveStream: View {
     
     @State private var commentText = ""
-    @State var comments: [Comment] = []
+    @State var comments: [CommentModel] = []
     @State var id : String = ""
     @State var userName : String = ""
     @State var userImage : String = ""
@@ -123,7 +146,7 @@ struct LiveStream: View {
         default: return screenHeight * 0.65
         }
     }
-    
+    @StateObject var socketManagerChat = SocketManagerService.shared
     
     @State var productData = [ProductData]()
     @State var currentProductIndex = 0
@@ -241,12 +264,12 @@ struct LiveStream: View {
                         VStack(alignment: .leading, spacing: 12){
                             
                             //MARK: Comment section
-                            if chatManager.messages.count > 0 {
+                            if socketManagerChat.chats.count > 0 {
                                 HStack{
                                     ScrollViewReader { scrollProxy in
                                         ScrollView(.vertical, showsIndicators: false) {
                                             VStack(alignment: .leading, spacing: 8) {
-                                                ForEach(chatManager.messages) { comment in
+                                                ForEach(socketManagerChat.chats) { comment in
                                                     HStack(alignment: .center, spacing: 6) {
                                                         CustomProfileImage(url: comment.image, isCircular: true,size: 24)
                                                         VStack(alignment: .leading) {
@@ -270,9 +293,9 @@ struct LiveStream: View {
 //                                        .background(Color.black.opacity(0.3))
                                         .cornerRadius(10)
                                         .padding(.horizontal)
-                                        .onChange(of: chatManager.messages) { _ in
+                                        .onChange(of: socketManagerChat.chats) { _ in
                                             withAnimation {
-                                                if let lastID = chatManager.messages.last?.id {
+                                                if let lastID = socketManagerChat.chats.last?.id {
                                                     scrollProxy.scrollTo(lastID, anchor: .bottom)
                                                 }
                                             }
@@ -313,7 +336,8 @@ struct LiveStream: View {
                                     if !commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                                         Button(action: {
                                             let roomId = liveShowsData[currentStreamIndex].room_id ?? ""
-                                            ZIMChatManager.shared.sendMessage(message: commentText,roomId: roomId,image: UserDefaults.profileURL,name: UserDefaults.fullName)
+//                                            ZIMChatManager.shared.sendMessage(message: commentText,roomId: roomId,image: UserDefaults.profileURL,name: UserDefaults.fullName)
+                                            SocketManagerService.shared.sendChat(roomId: roomId, message: commentText)
                                             commentText = ""
                                         }) {
                                             Image(systemName: "paperplane.fill")
@@ -928,6 +952,7 @@ struct LiveStream: View {
             try await joinManager.subscribe(streamName: response.data?[currentStreamIndex].room_id ?? "")
         }
         self.listenForRoomUpdates()
+        
         onRoomsUpdated = {  socketRoomIds in
             
             let validShows = response.data?.filter { show in
@@ -1120,14 +1145,15 @@ struct LiveStream: View {
     
     //MARK: logoutRoom
     func logoutRoom() {
-        ZegoExpressEngine.shared().logoutRoom()
-        chatManager.logout()
-        chatManager.messages.removeAll()
-        if let currentRoomId = liveShowsData[safe: currentStreamIndex]?.room_id {
-            FirebaseManager.shared.databaseRef.child("live_sessions").child(currentRoomId).removeAllObservers()
-            let countdownRef = FirebaseManager.shared.databaseRef.child("live_sessions").child(currentRoomId).child("bidCountDown")
-            countdownRef.removeAllObservers()
-        }
+//        ZegoExpressEngine.shared().logoutRoom()
+//        chatManager.logout()
+//        chatManager.messages.removeAll()
+        SocketManagerService.shared.chats.removeAll()
+//        if let currentRoomId = liveShowsData[safe: currentStreamIndex]?.room_id {
+//            FirebaseManager.shared.databaseRef.child("live_sessions").child(currentRoomId).removeAllObservers()
+//            let countdownRef = FirebaseManager.shared.databaseRef.child("live_sessions").child(currentRoomId).child("bidCountDown")
+//            countdownRef.removeAllObservers()
+//        }
         
     }
     

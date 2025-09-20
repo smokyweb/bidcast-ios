@@ -15,7 +15,7 @@ class ZegoManager: NSObject, ZegoEventHandler , ObservableObject {
     @Published var streamInterrupted: Bool = false
     @Published var errorTitle: String = "Stream Ended"
     @Published var errorMessage: String = "The live stream was interrupted or stopped."
-    @Published var incomingComments: [Comment] = []
+    @Published var incomingComments: [CommentModel] = []
     @Published var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @Published var isCommentsAvailable : Bool = false
     @StateObject var zimChat = ZIMChatManager()

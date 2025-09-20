@@ -10,7 +10,7 @@ class ZIMChatManager: NSObject, ObservableObject {
     static let shared = ZIMChatManager()
     
     private var zim: ZIM?
-    @Published var messages: [Comment] = []
+    @Published var messages: [CommentModel] = []
     
     var userID = ""
     var userName = ""
@@ -75,56 +75,56 @@ class ZIMChatManager: NSObject, ObservableObject {
     }
     
     func sendMessage(message: String, roomId: String,image : String,name:String) {
-        let payload: [String: Any] = [
-            "userName": name,
-            "userImage": image,
-            "userId": UserDefaults.userId
-        ]
-        
-        // Serialize extended data to JSON string
-        guard let jsonData = try? JSONSerialization.data(withJSONObject: payload) else {
-            print("❌ Failed to serialize extended JSON")
-            return
-        }
-        let extendedData = String(data: jsonData, encoding: .utf8) ?? ""
-        
-        // ✅ Use only message text here
-        let zimMessage = ZIMTextMessage(message: message)
-        zimMessage.extendedData = extendedData // attach extended data
-        
-        let sendConfig = ZIMMessageSendConfig()
-        sendConfig.priority = .high
-        
-        let notification = ZIMMessageSendNotification()
-        
-        guard let zim = zim else {
-            print("❌ Babumoshai, ZIM not initialized!")
-            return
-        }
-        
-        zim.sendMessage(
-            zimMessage,
-            toConversationID: roomId,
-            conversationType: .room,
-            config: sendConfig,
-            notification: notification
-        ) { _, errorInfo in
-            if errorInfo.code.rawValue == 0 {
-                print("✅ Message sent babumoshai!")
-                let newComment = Comment(
-                    image: image,
-                    username: name,
-                    message: message,
-                    userId: "\(UserDefaults.userId)"
-                )
-                DispatchQueue.main.async {
-                    self.messages.append(newComment)
-                }
-            } else {
-                print("❌ Message failed babumoshai: \(errorInfo.message)")
-            }
-        }
-    
+//        let payload: [String: Any] = [
+//            "userName": name,
+//            "userImage": image,
+//            "userId": UserDefaults.userId
+//        ]
+//        
+//        // Serialize extended data to JSON string
+//        guard let jsonData = try? JSONSerialization.data(withJSONObject: payload) else {
+//            print("❌ Failed to serialize extended JSON")
+//            return
+//        }
+//        let extendedData = String(data: jsonData, encoding: .utf8) ?? ""
+//        
+//        // ✅ Use only message text here
+//        let zimMessage = ZIMTextMessage(message: message)
+//        zimMessage.extendedData = extendedData // attach extended data
+//        
+//        let sendConfig = ZIMMessageSendConfig()
+//        sendConfig.priority = .high
+//        
+//        let notification = ZIMMessageSendNotification()
+//        
+//        guard let zim = zim else {
+//            print("❌ Babumoshai, ZIM not initialized!")
+//            return
+//        }
+//        
+//        zim.sendMessage(
+//            zimMessage,
+//            toConversationID: roomId,
+//            conversationType: .room,
+//            config: sendConfig,
+//            notification: notification
+//        ) { _, errorInfo in
+//            if errorInfo.code.rawValue == 0 {
+//                print("✅ Message sent babumoshai!")
+//                let newComment = CommentModel(
+//                    image: image,
+//                    username: name,
+//                    message: message,
+//                    userId: "\(UserDefaults.userId)"
+//                )
+//                DispatchQueue.main.async {
+//                    self.messages.append(newComment)
+//                }
+//            } else {
+//                print("❌ Message failed babumoshai: \(errorInfo.message)")
+//            }
+//        }
+//    
     }
     
     
@@ -133,15 +133,15 @@ class ZIMChatManager: NSObject, ObservableObject {
     }
     
     func handleIncomingMessage(username: String, message: String, userImage: String,userId:String) {
-        let newComment = Comment(
-            image:userImage,
-            username: username,
-            message:message ,
-            userId:userId
-        )
-        DispatchQueue.main.async {
-            self.messages.append(newComment)
-        }
+//        let newComment = CommentModel(
+//            image:userImage,
+//            username: username,
+//            message:message ,
+//            userId:userId
+//        )
+//        DispatchQueue.main.async {
+//            self.messages.append(newComment)
+//        }
     }
 }
 

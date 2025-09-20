@@ -12,7 +12,7 @@ class SocketManagerService: NSObject, ObservableObject {
     
     @Published var isConnected = false
     @Published var rooms: [RoomModel] = []
-    @Published var chats: [ChatMessage] = []
+    @Published var chats: [CommentModel] = []
     
     var onRoomsUpdated: (([String]) -> Void)?
     var liveSchedulerTimer: Timer?
@@ -98,24 +98,33 @@ class SocketManagerService: NSObject, ObservableObject {
     
     
     // MARK: - Chat
-    func sendChat(roomId: String, message: String, userId: String) {
+    func sendChat(roomId: String, message: String) {
         guard isConnected else { return }
-        let payload: [String: Any] = ["room_id": roomId, "message": message, "user_id": userId]
+    
+        let payload: [String: Any] = ["room_id": roomId,
+                                      "message": message,
+                                      "user_id": UserDefaults.userId,
+                                      "user_name":UserDefaults.userName,
+                                      "user_image":UserDefaults.profileURL]
         socket.emit("chat", payload)
     }
     
-//    private func listenForChat() {
-//        socket.on("chat_get") { data, _ in
-//            guard let json = data.first as? [String: Any] else { return }
-//            do {
-//                let decoded = try JSONSerialization.data(withJSONObject: json)
-//                let chat = try JSONDecoder().decode(ChatMessage.self, from: decoded)
+    func listenForChat() {
+        socket.on("chat_get") { data, _ in
+            guard let json = data.first as? [String: Any] else { return }
+            do {
+                let decoded = try JSONSerialization.data(withJSONObject: json)
+                let chat = try JSONDecoder().decode(CommentModel.self, from: decoded)
 //                self.chats.append(chat)
-//            } catch {
-//                print("Decode error (Chat):", error)
-//            }
-//        }
-//    }
+                DispatchQueue.main.async {
+                            self.chats.append(chat)
+                               }
+                print("chatList \(self.chats)")
+            } catch {
+                print("Decode error (Chat):", error)
+            }
+        }
+    }
     
     func startLiveScheduler(roomId: String) {
         // Invalidate existing timer if running
