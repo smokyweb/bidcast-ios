@@ -159,35 +159,13 @@ struct LiveStream: View {
         GeometryReader { geometry in
             if liveShowsData.count != 0{
                 ZStack(alignment: .top) {
-//                    if streamID.count != 0 {
-                        //                        ZegoPreviewView(streamID: streamID[currentStreamIndex])
-                        //                            .offset(y: verticalDragOffset.height)
-                        //                            .frame(width: geometry.size.width, height: geometry.size.height + 50)
-                        //                            .edgesIgnoringSafeArea(.all)
+                    if streamID.count != 0 {
+                    MCVideoSwiftUIView(renderer: .accelerated(joinManager.renderer as! MCAcceleratedVideoRenderer),scalingMode: .resize,mirror: true)
+                        .frame(width: geometry.size.width, height: geometry.size.height)
+                                   .ignoresSafeArea()
+                                   .background(Color.black)
                         
-//                        if currentStreamIndex > 0 {
-//                            ZegoPreviewView(streamID: streamID[currentStreamIndex - 1], playMode: .lowLatency)
-//                                .frame(width: geometry.size.width, height: geometry.size.height)
-//                                .offset(y: -geometry.size.height + verticalDragOffset.height)
-//                        }
-//                        
-//                        ZegoPreviewView(streamID: streamID[currentStreamIndex], playMode: .lowLatency)
-//                            .frame(width: geometry.size.width, height: geometry.size.height)
-//                            .offset(y: verticalDragOffset.height)
-//                        
-//                        if currentStreamIndex < streamID.count - 1 {
-//                            ZegoPreviewView(streamID: streamID[currentStreamIndex + 1], playMode: .lowLatency)
-//                                .frame(width: geometry.size.width, height: geometry.size.height)
-//                                .offset(y: geometry.size.height + verticalDragOffset.height)
-//                        }
-                        MCVideoSwiftUIView(renderer: .accelerated(joinManager.renderer as! MCAcceleratedVideoRenderer))
-                            .onVideoSizeChange { newSize in
-                                print("Video size changed: \(newSize)")
-                            }
-                            .frame(width: screenWidth, height: screenHeight)
-                            .ignoresSafeArea()
-                        
-//                    }
+                    }
                     VStack {
                         HStack(spacing: 12) {
                             Button(action:{
@@ -201,14 +179,7 @@ struct LiveStream: View {
                                     Text(liveShowsData[currentStreamIndex].user?.name ?? "")
                                         .font(.custom(poppinsSemiBold, size: 13.0))
                                         .foregroundColor(.white)
-                                    //
-                                    //                                    HStack(spacing: 6) {
-                                    //                                        Image(systemName: "sparkles")
-                                    //                                            .foregroundColor(.yellow)
-                                    //                                        Text("99")
-                                    //                                            .font(.custom(poppinsSemiBold, size: 13.0))
-                                    //                                            .foregroundColor(.yellow)
-                                    //                                    }
+                                  
                                 }
                             }
                             Spacer()
@@ -788,19 +759,6 @@ struct LiveStream: View {
             }
         )
         
-//        .bottomSheet(isPresented: $winnerSheet,height: screenHeight * 0.40) {
-//            WinnerBottomSheet(
-//                winnerAmount: winnerAmount, profileImage: winnerProfileImage,
-//                username: winnerName,
-//                winnerProfileID : winnerProfileID,
-//                showParentToast: $showToast,
-//                parentToastMessage: $toastMessage,
-//                onDismiss: {
-//                    self.winnerSheet = false
-//                }
-//            )
-//        }
-        
         .bottomSheet(isPresented: $winnerSheet,height: screenHeight * 0.32) {
             WinnerBottomSheet(
                 winnerAmount: $winnerAmount, profileImage: $winnerProfileImage,
@@ -945,26 +903,30 @@ struct LiveStream: View {
             showError = true
             return
         }
-        self.liveShowsData = response.data ?? [LiveShowsModel]()
-        self.streamID = self.liveShowsData.compactMap({ $0.room_id ?? ""
-        })
+//        self.liveShowsData = response.data ?? [LiveShowsModel]()
+//        self.streamID = self.liveShowsData.compactMap({ $0.room_id ?? ""
+//        })
+        let roomId = response.data?[currentStreamIndex].room_id ?? ""
         Task{
-            try await joinManager.subscribe(streamName: response.data?[currentStreamIndex].room_id ?? "")
+            try await joinManager.subscribe(streamName: roomId)
+            socketManagerChat.sendChat(roomId:  roomId, message: "Joining the host… ")
         }
-        self.listenForRoomUpdates()
         
-        onRoomsUpdated = {  socketRoomIds in
-            
-            let validShows = response.data?.filter { show in
-                guard let roomId = show.room_id else { return false }
-                return socketRoomIds.contains(roomId)
-            }
+        if socketManagerChat.rooms.count != 0{
+            let socketRoomIds = socketManagerChat.rooms.compactMap { $0.room_id }
+                let validShows = response.data?.filter { show in
+                    if let roomId = show.room_id {
+                        return socketRoomIds.contains(roomId)
+                    }
+                    return false
+                } ?? []
+           
             //
             DispatchQueue.main.async {
-                if validShows?.isEmpty == true {
+                if validShows.isEmpty == true {
                     
                 }else{
-                    liveShowsData = validShows ?? [LiveShowsModel]()
+                    liveShowsData = validShows
                     roomID = liveShowsData.compactMap { $0.room_id }
                     streamID = roomID
                     if !liveShowsData.isEmpty {
@@ -1024,6 +986,10 @@ struct LiveStream: View {
             
             
             
+        }else{
+                    self.liveShowsData = response.data ?? [LiveShowsModel]()
+                    self.streamID = self.liveShowsData.compactMap({ $0.room_id ?? ""
+                    })
         }
     }
     
@@ -1341,11 +1307,6 @@ struct LiveStream: View {
         )
         socket = socketManager.defaultSocket
         socket.connect()
-        // Register BEFORE connect
-//        socket.onAny { event in
-//            print("📡 Received event: \(event.event), data: \(String(describing: event.items))")
-//        }
-
         socket.on("room_create_get") { data, _ in
             guard let json = data.first as? [String: Any] else { return }
             do {
@@ -1367,69 +1328,6 @@ struct LiveStream: View {
     }
 
 }
-
-
-//struct ZegoPreviewView: UIViewRepresentable {
-//    let streamID: String
-//    var playMode: PlayMode = .lowLatency   // 👈 choose latency/quality mode
-//    
-//    func makeCoordinator() -> Coordinator {
-//        Coordinator(streamID: streamID)
-//    }
-//    
-//    class Coordinator {
-//        var streamID: String
-//        init(streamID: String) {
-//            self.streamID = streamID
-//        }
-//    }
-//    
-//    func makeUIView(context: Context) -> UIView {
-//        let view = UIView(frame: UIScreen.main.bounds)
-//        view.backgroundColor = .black
-//        
-//        playStream(on: view, streamID: streamID)  // 👈 extract into helper
-//        return view
-//    }
-//    
-//    func updateUIView(_ uiView: UIView, context: Context) {
-//        ZegoExpressEngine.shared().stopPlayingStream(context.coordinator.streamID)
-//        
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-//            playStream(on: uiView, streamID: streamID)
-//            context.coordinator.streamID = streamID
-//        }
-//    }
-//    
-//    static func dismantleUIView(_ uiView: UIView, coordinator: Coordinator) {
-//        ZegoExpressEngine.shared().stopPlayingStream(coordinator.streamID)
-//    }
-    
-    // MARK: - Private helper
-//    private func playStream(on view: UIView, streamID: String) {
-//        let canvas = ZegoCanvas(view: view)
-//        canvas.viewMode = .aspectFill
-//        
-//        let config = ZegoPlayerConfig()
-//        
-//        switch playMode {
-//        case .lowLatency:
-//            config.resourceMode = .onlyRTC
-//        case .highQuality:
-//            config.resourceMode = .onlyCDN
-//        case .balanced:
-//            config.resourceMode = .default
-//        }
-//        
-//        ZegoExpressEngine.shared().startPlayingStream(streamID, canvas: canvas, config: config)
-//    }
-//    
-//    enum PlayMode {
-//        case lowLatency   // RTC only, best for auctions/calls
-//        case highQuality  // CDN only, smoother, higher delay
-//        case balanced     // Auto (default)
-//    }
-//}
 
 
 //MARK: MenuAction

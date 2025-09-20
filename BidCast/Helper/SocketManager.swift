@@ -43,8 +43,8 @@ class SocketManagerService: NSObject, ObservableObject {
             print("⚠️ Socket error:", data)
         }
         
-//        listenForRoomUpdates()
-//        listenForChat()
+        listenForRoomUpdates()
+        //        listenForChat()
         socket.connect()
     }
     
@@ -100,7 +100,7 @@ class SocketManagerService: NSObject, ObservableObject {
     // MARK: - Chat
     func sendChat(roomId: String, message: String) {
         guard isConnected else { return }
-    
+        
         let payload: [String: Any] = ["room_id": roomId,
                                       "message": message,
                                       "user_id": UserDefaults.userId,
@@ -115,10 +115,10 @@ class SocketManagerService: NSObject, ObservableObject {
             do {
                 let decoded = try JSONSerialization.data(withJSONObject: json)
                 let chat = try JSONDecoder().decode(CommentModel.self, from: decoded)
-//                self.chats.append(chat)
+                //                self.chats.append(chat)
                 DispatchQueue.main.async {
-                            self.chats.append(chat)
-                               }
+                    self.chats.append(chat)
+                }
                 print("chatList \(self.chats)")
             } catch {
                 print("Decode error (Chat):", error)
@@ -129,10 +129,10 @@ class SocketManagerService: NSObject, ObservableObject {
     func startLiveScheduler(roomId: String) {
         // Invalidate existing timer if running
         liveSchedulerTimer?.invalidate()
-
+        
         // Send immediately once
         sendLiveScheduler(roomId: roomId)
-
+        
         // Schedule every 270 seconds (4.5 minutes)
         liveSchedulerTimer = Timer.scheduledTimer(withTimeInterval: 270, repeats: true) { [weak self] _ in
             self?.sendLiveScheduler(roomId: roomId)
@@ -140,13 +140,13 @@ class SocketManagerService: NSObject, ObservableObject {
         
         print("✅ LiveScheduler started for room: \(roomId)")
     }
-
+    
     func stopLiveScheduler() {
         liveSchedulerTimer?.invalidate()
         liveSchedulerTimer = nil
         print("🛑 LiveScheduler stopped")
     }
-
+    
     private func sendLiveScheduler(roomId: String) {
         guard socket.status == .connected else {
             if socket.status == .connecting || socket.status == .notConnected {
@@ -160,8 +160,33 @@ class SocketManagerService: NSObject, ObservableObject {
         print("📡 Sending liveScheduler with payload:", payload)
         socket.emit("liveScheduler", payload)
     }
+    
+    
+    func listenForRoomUpdates() {
+        socket.on("room_create_get") { data, _ in
+            guard let json = data.first as? [String: Any] else { return }
+            do {
+                let decoded = try JSONSerialization.data(withJSONObject: json)
+                let room = try JSONDecoder().decode(RoomModel.self, from: decoded)
+                
+                if !self.rooms.contains(where: { $0.room_id == room.room_id }) {
+                    self.rooms.append(room)
+                }
+                print("✅ Received RoomDetail: \(self.rooms)")
+                let roomIDs = self.rooms.compactMap { $0.room_id }
+                self.onRoomsUpdated?(roomIDs)
+            } catch {
+                print("❌ Decode error (Room):", error)
+            }
+            
+            
+            
+            
+            
+        }
+        
+    }
 }
-
 
 struct RoomModel: Codable {
     let products: [ProductData]?
@@ -180,14 +205,6 @@ struct RoomModel: Codable {
     
     var id: String { room_id ?? "" }
 }
-
-//struct ChatMessage: Codable, Identifiable {
-//    let room_id: String
-//    let message: String
-//    let user_id: String
-//    let timestamp: String?
-//    var id: String { UUID().uuidString }
-//}
 
 struct HighestBid: Codable {
        let bid_amount, user_name, user_image, user_id, product_id: String

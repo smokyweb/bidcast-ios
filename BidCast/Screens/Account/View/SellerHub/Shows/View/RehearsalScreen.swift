@@ -95,10 +95,10 @@ struct RehearsalScreen: View {
 //                    .frame(width: geometry.size.width, height: geometry.size.height)
 //                    .id(previewResetTrigger)
                 
-                MCVideoSwiftUIView(renderer: .accelerated(castManager.renderer as! MCAcceleratedVideoRenderer))
-                    .ignoresSafeArea()  // Makes it truly full screen
-                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                .background(Color.black)
+                MCVideoSwiftUIView(renderer: .accelerated(castManager.renderer as! MCAcceleratedVideoRenderer),scalingMode: .resize,mirror: true)
+                    .frame(width: geometry.size.width, height: geometry.size.height)
+                               .ignoresSafeArea()
+                               .background(Color.black)
                     
                 VStack {
                     HStack {
@@ -802,6 +802,7 @@ struct RehearsalScreen: View {
                 allowBidForAll: true,
                 showTimer: ""
             )
+       
         SocketManagerService.shared.startLiveScheduler(roomId: self.roomId)
         isLive = true
         self.showLiveControls = true
