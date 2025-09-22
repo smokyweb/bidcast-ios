@@ -51,14 +51,14 @@ struct UpdateStatusModel : Codable {
 
     
 struct ProductData : Codable {
-    var category: String
-    var id: String
-    var image: String
-    var name: String
-    var price: String
-    var status : String
+    var category: String?
+    var id: String?
+    var image: String?
+    var name: String?
+    var price: String?
+    var status : String?
     var isCurrent: Bool
-    var quantity: String
+    var quantity: String?
     
     func toDictionary() -> [String: Any] {
             return [
@@ -85,17 +85,19 @@ struct ProductData : Codable {
 }
 
 struct SellerModel : Codable {
-    let isFollowed: Bool?
-    let id: String
-    let name: String
-    let rating: String
+    var isFollowed: Bool?
+    var id: String?
+    var name: String?
+    var rating: String?
+    var image : String?
     
     func toDictionary() -> [String: Any] {
         return [
             "isFollowed": isFollowed,
             "id": id,
             "name": name,
-            "rating": rating
+            "rating": rating,
+            "image":image
         ]
     }
     

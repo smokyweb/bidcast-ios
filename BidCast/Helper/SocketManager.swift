@@ -13,7 +13,7 @@ class SocketManagerService: NSObject, ObservableObject {
     @Published var isConnected = false
     @Published var rooms: [RoomModel] = []
     @Published var chats: [CommentModel] = []
-    
+    @Published  var viewerCount: Int = 0
     var onRoomsUpdated: (([String]) -> Void)?
     var liveSchedulerTimer: Timer?
     private var socket: SocketIOClient!
@@ -103,7 +103,7 @@ class SocketManagerService: NSObject, ObservableObject {
         
         let payload: [String: Any] = ["room_id": roomId,
                                       "message": message,
-                                      "user_id": UserDefaults.userId,
+                                      "user_id": "\(UserDefaults.userId)",
                                       "user_name":UserDefaults.userName,
                                       "user_image":UserDefaults.profileURL]
         socket.emit("chat", payload)
@@ -111,7 +111,9 @@ class SocketManagerService: NSObject, ObservableObject {
     
     func listenForChat() {
         socket.on("chat_get") { data, _ in
-            guard let json = data.first as? [String: Any] else { return }
+            guard let json = data.first as? [String: Any] else {
+                print("json Error \(data)")
+                return }
             do {
                 let decoded = try JSONSerialization.data(withJSONObject: json)
                 let chat = try JSONDecoder().decode(CommentModel.self, from: decoded)
@@ -147,7 +149,7 @@ class SocketManagerService: NSObject, ObservableObject {
         print("🛑 LiveScheduler stopped")
     }
     
-    private func sendLiveScheduler(roomId: String) {
+    func sendLiveScheduler(roomId: String) {
         guard socket.status == .connected else {
             if socket.status == .connecting || socket.status == .notConnected {
                 print("Socket status \(socket.status)")
@@ -159,6 +161,34 @@ class SocketManagerService: NSObject, ObservableObject {
         let payload: [String: Any] = ["room_id": roomId]
         print("📡 Sending liveScheduler with payload:", payload)
         socket.emit("liveScheduler", payload)
+    }
+    
+    func joinRoom(roomId: String,userId : Int = UserDefaults.userId) {
+        guard socket.status == .connected else {
+            if socket.status == .connecting || socket.status == .notConnected {
+                print("Socket status \(socket.status)")
+                setupSocket()
+            }
+            return
+        }
+        
+        let payload: [String: Any] = ["room_id": roomId,"user_id" : userId]
+        print("📡 Sending liveScheduler with payload:", payload)
+        socket.emit("join_room", payload)
+    }
+    
+    func leaveRoom(roomId: String,userId : Int = UserDefaults.userId) {
+        guard socket.status == .connected else {
+            if socket.status == .connecting || socket.status == .notConnected {
+                print("Socket status \(socket.status)")
+                setupSocket()
+            }
+            return
+        }
+        
+        let payload: [String: Any] = ["room_id": roomId,"user_id" : userId]
+        print("📡 Sending liveScheduler with payload:", payload)
+        socket.emit("leave_room", payload)
     }
     
     
@@ -178,13 +208,24 @@ class SocketManagerService: NSObject, ObservableObject {
             } catch {
                 print("❌ Decode error (Room):", error)
             }
-            
-            
-            
-            
-            
+              
         }
         
+    }
+    
+    func listenForViewerCount() {
+        socket.on("viewer_count") { data, _ in
+            guard let json = data.first as? [String: Any],
+                  let count = json["count"] as? Int else {
+                print("❌ Invalid viewer count data:", data)
+                return
+            }
+            
+            // Update variable and trigger callback
+            self.viewerCount = count
+            
+            print("👀 Viewer count updated:", count)
+        }
     }
 }
 
@@ -194,7 +235,7 @@ struct RoomModel: Codable {
     let seller: SellerModel?
     let show_detail: String?
     let thumbnail: String?
-    let viewer_count: Int?
+    let viewer_count: String?
     let highest_bid: HighestBid?
     let is_live: Bool?
     let time: String?
@@ -207,5 +248,5 @@ struct RoomModel: Codable {
 }
 
 struct HighestBid: Codable {
-       let bid_amount, user_name, user_image, user_id, product_id: String
+       let bid_amount, user_name, user_image, user_id, product_id: String?
    }

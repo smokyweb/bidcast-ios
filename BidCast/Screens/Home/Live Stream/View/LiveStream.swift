@@ -46,7 +46,7 @@ struct CommentModel: Codable, Identifiable, Equatable {
 }
 
 struct LiveStream: View {
-    
+    @Binding var currentRoomID : String
     @State private var commentText = ""
     @State var comments: [CommentModel] = []
     @State var id : String = ""
@@ -62,7 +62,7 @@ struct LiveStream: View {
     @State var streamID = [String]()
     var viewModel = LiveShowsViewModel()
     @State var homeViewModel = HomeViewModel()
-    @State var liveShowsData = [LiveShowsModel]()
+    @State var liveShowsData = [RoomModel]()
     @State var BiddingDetail = BiddingModel()
     @State var isLoading: Bool = false
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "Stream Ended", message: "The live stream has ended.", primaryBtnText: "", secondaryBtnText: "")
@@ -79,7 +79,7 @@ struct LiveStream: View {
     @State private var showStartTime: Date? = nil
     @State private var liveElapsedTime: String = "00:00:00"
     @State var isFollow = false
-    @State  var currentRoomID = ""
+//    @State  var currentRoomID = ""
     @State var showVerificationSheet = false
     @State var showPaymentShipping = false
     @State var navigateToAddCardScreen = false
@@ -98,7 +98,7 @@ struct LiveStream: View {
     @State var socket: SocketIOClient!
     @State var socketManager: SocketManager!
     @State var rooms: [RoomModel] = []
-    
+    @State var currentIndex : Int = 0
     @State var onRoomsUpdated: (([String]) -> Void)?
     
     var tabBarHeight: CGFloat {
@@ -172,11 +172,13 @@ struct LiveStream: View {
                                 id = userId
                                 navigateToProfile = true
                             }){
-                                CustomProfileImage(url: liveShowsData[currentStreamIndex].user?.profile_image ?? "", isCircular: true,size: 50)
+                                let data = liveShowsData[currentIndex]
+                               
+                                CustomProfileImage(url: data.seller?.image ?? "", isCircular: true,size: 50)
                                 
                                 
                                 VStack(alignment: .leading, spacing: 2) {
-                                    Text(liveShowsData[currentStreamIndex].user?.name ?? "")
+                                    Text(liveShowsData[currentIndex].seller?.name ?? "")
                                         .font(.custom(poppinsSemiBold, size: 13.0))
                                         .foregroundColor(.white)
                                   
@@ -187,7 +189,7 @@ struct LiveStream: View {
                             HStack(spacing: 4) {
                                 Image(systemName: "eye.fill")
                                     .foregroundColor(.black)
-                                Text("\(viewwerCount)")
+                                Text("\(socketManagerChat.viewerCount)")
                                     .foregroundColor(.black)
                                     .font(.custom(poppinsSemiBold, size: 13.0))
                             }
@@ -306,7 +308,7 @@ struct LiveStream: View {
                                     
                                     if !commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                                         Button(action: {
-                                            let roomId = liveShowsData[currentStreamIndex].room_id ?? ""
+                                            let roomId = liveShowsData[currentIndex].room_id ?? ""
 //                                            ZIMChatManager.shared.sendMessage(message: commentText,roomId: roomId,image: UserDefaults.profileURL,name: UserDefaults.fullName)
                                             SocketManagerService.shared.sendChat(roomId: roomId, message: commentText)
                                             commentText = ""
@@ -340,7 +342,7 @@ struct LiveStream: View {
                                             //                                                .font(.custom(poppinsBold, size: 13.0))
                                             //                                                .foregroundColor(.white)
                                             //                                            VStack(spacing: 6) {
-                                            Text(product.name.capitalizingFirstLetter())
+                                            Text(product.name?.capitalizingFirstLetter() ?? "")
                                                 .font(.custom(poppinsBold, size: 13.0))
                                                 .foregroundColor(.white)
                                             Text("Sports & Lifestyle")
@@ -550,30 +552,30 @@ struct LiveStream: View {
                             let verticalAmount = value.translation.height
                             let swipeThreshold: CGFloat = 100
                             
-                            if verticalAmount < -swipeThreshold && currentStreamIndex < streamID.count - 1 {
+                            if verticalAmount < -swipeThreshold && currentIndex < streamID.count - 1 {
                                 // Swipe Up
                                 withAnimation(.easeInOut) {
                                     verticalDragOffset = CGSize(width: 0, height: -geometry.size.height)
                                 }
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                                    verticalDragOffset = .zero
-                                    ZegoExpressEngine.shared().stopPlayingStream(streamID[currentStreamIndex])
-                                    currentStreamIndex += 1
-                                    loginRoom(roomId: liveShowsData[currentStreamIndex].room_id ?? "")
-                                    fetchBiddingDetail(roomId: liveShowsData[currentStreamIndex].room_id ?? "")
-                                }
-                            } else if verticalAmount > swipeThreshold && currentStreamIndex > 0 {
+//                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+//                                    verticalDragOffset = .zero
+//                                    ZegoExpressEngine.shared().stopPlayingStream(streamID[currentIndex])
+//                                    currentStreamIndex += 1
+//                                    loginRoom(roomId: liveShowsData[currentStreamIndex].room_id ?? "")
+//                                    fetchBiddingDetail(roomId: liveShowsData[currentStreamIndex].room_id ?? "")
+//                                }
+                            } else if verticalAmount > swipeThreshold && currentIndex > 0 {
                                 // Swipe Down
                                 withAnimation(.easeInOut) {
                                     verticalDragOffset = CGSize(width: 0, height: geometry.size.height)
                                 }
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                                    verticalDragOffset = .zero
-                                    ZegoExpressEngine.shared().stopPlayingStream(streamID[currentStreamIndex])
-                                    currentStreamIndex -= 1
-                                    loginRoom(roomId: liveShowsData[currentStreamIndex].room_id ?? "")
-                                    fetchBiddingDetail(roomId: liveShowsData[currentStreamIndex].room_id ?? "")
-                                }
+//                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+//                                    verticalDragOffset = .zero
+//                                    ZegoExpressEngine.shared().stopPlayingStream(streamID[currentStreamIndex])
+//                                    currentStreamIndex -= 1
+//                                    loginRoom(roomId: liveShowsData[currentStreamIndex].room_id ?? "")
+//                                    fetchBiddingDetail(roomId: liveShowsData[currentStreamIndex].room_id ?? "")
+//                                }
                             } else {
                                 withAnimation {
                                     verticalDragOffset = .zero
@@ -802,14 +804,21 @@ struct LiveStream: View {
            
             Task{
                 SVProgressHUD.show()
-                liveShowsData.removeAll()
-                roomID.removeAll()
-                streamID.removeAll()
-                await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: "live",category: category,search: search, page: "\(currentPage)"))
-                success()
+//                liveShowsData.removeAll()
+//                roomID.removeAll()
+//                streamID.removeAll()
+//                await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: "live",category: category,search: search, page: "\(currentPage)"))
+//                success()
+               
                 await self.homeViewModel.getProfile()
                 await SVProgressHUD.dismiss()
-                getProfileSuccess()
+                await getProfileSuccess()
+               try await joinManager.subscribe(streamName: currentRoomID)
+                    
+                socketManagerChat.joinRoom(roomId: currentRoomID)
+
+                joinStreamUsingSocket(roomId: currentRoomID)
+                
             }
         }
         .onDisappear{
@@ -843,8 +852,9 @@ struct LiveStream: View {
     
     
     //MARK: walletInfosuccess.
-    func getProfileSuccess(){
+    func getProfileSuccess() async{
         let response  = homeViewModel.accountInfo
+        await SVProgressHUD.dismiss()
         if response.status == "success"{
             let response = self.homeViewModel.accountInfo.data
             UserDefaults.buyerVerafied = response?.buyer_identity_status ?? ""
@@ -873,125 +883,230 @@ struct LiveStream: View {
             }
         }
     }
-    
-    func success() {
-        let response = viewModel.liveShowsResponse
-        guard response.status == "success" else {
+    @MainActor
+    func joinStreamUsingSocket(roomId: String) {
+        let socketRooms = socketManagerChat.rooms
+        guard !socketRooms.isEmpty else {
             showError = true
             alertType = .sheetType(
                 icon: .alert,
-                title: response.error_type?.capitalized ?? "",
-                message: response.message?.capitalized ?? "",
+                title: "No Active Streams",
+                message: "There are no live streams available at the moment.",
                 primaryBtnText: "",
                 secondaryBtnText: AppString.ok.localized
             )
             return
         }
         
-        if response.message == "No shows found." {
-            let streamTitle = "Coming Soon"
-            let streamMessage = "The host has not started the stream yet"
-            print("🔥 STREAM REMOVED CALLBACK TRIGGERED 🔥")
-            showVerificationSheet = false
+        // Check if requested room exists in socket rooms
+        guard let matchingRoomIndex = socketRooms.firstIndex(where: { $0.room_id == roomId }) else {
+            showError = true
             alertType = .sheetType(
                 icon: .alert,
-                title: streamTitle,
-                message: streamMessage,
-                primaryBtnText: AppString.ok.localized,
-                secondaryBtnText: ""
+                title: "Stream Not Found",
+                message: "The requested stream is not available right now.",
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
             )
-            showError = true
             return
         }
-//        self.liveShowsData = response.data ?? [LiveShowsModel]()
-//        self.streamID = self.liveShowsData.compactMap({ $0.room_id ?? ""
-//        })
-        let roomId = response.data?[currentStreamIndex].room_id ?? ""
-        Task{
-            try await joinManager.subscribe(streamName: roomId)
-            socketManagerChat.sendChat(roomId:  roomId, message: "Joining the host… ")
-        }
         
-        if socketManagerChat.rooms.count != 0{
-            let socketRoomIds = socketManagerChat.rooms.compactMap { $0.room_id }
-                let validShows = response.data?.filter { show in
-                    if let roomId = show.room_id {
-                        return socketRoomIds.contains(roomId)
-                    }
-                    return false
-                } ?? []
-           
-            //
-            DispatchQueue.main.async {
-                if validShows.isEmpty == true {
-                    
-                }else{
-                    liveShowsData = validShows
-                    roomID = liveShowsData.compactMap { $0.room_id }
-                    streamID = roomID
-                    if !liveShowsData.isEmpty {
-                        let initialRoomID = liveShowsData[currentStreamIndex].room_id ?? ""
-                        Task{
-                            try await joinManager.subscribe(streamName: initialRoomID)
-                        }
-                        //                                loginRoom(roomId: initialRoomID)
-                        //                                fetchBiddingDetail(roomId: initialRoomID)
-                        //                                FirebaseManager.shared.observeAllowBidForAll(for: initialRoomID)
-                        //                                refreshProductStatus(roomId: liveShowsData[currentStreamIndex].room_id ?? "")
-                        if liveShowsData[currentStreamIndex].user?.is_followed == false{
-                            isFollow = false
-                        }else{
-                            isFollow = true
-                        }
-                        
-                        switch UserDefaults.buyerVerafied {
-                        case "pending":
-                            self.alertType = .sheetType(
-                                icon: .info,
-                                title: "Become a Verified Buyer!",
-                                message: "Your verification is currently pending approval by the admin. You will be notified once the process is complete.",
-                                primaryBtnText: "OK",
-                                secondaryBtnText: "",
-                                buttonWidth: screenWidth - 40,
-                                contentSize: 12.0
-                            )
-                            withAnimation(.snappy) { self.showVerificationSheet = true }
-                            
-                        case "verified":
-                            if UserDefaults.sellerAddress == false {
-                                self.showPaymentShipping = true
-                                self.titleText = "Add Address"
-                            } else if UserDefaults.hasCardAdded == false {
-                                self.showPaymentShipping = true
-                                self.titleText = "Add Card"
-                            }
-                            
-                        default: // not verified
-                            self.alertType = .sheetType(
-                                icon: .info,
-                                title: "Become a Verified Buyer!",
-                                message: "Before you interact with live shows, you need to become a verified buyer.",
-                                primaryBtnText: "OK",
-                                secondaryBtnText: "",
-                                buttonWidth: screenWidth - 40,
-                                contentSize: 12.0
-                            )
-                            withAnimation(.snappy) { self.showVerificationSheet = true }
-                        }
-                        
-                        
-                    }
-                }
+        // Set the current room data
+        DispatchQueue.main.async {
+            self.liveShowsData = socketRooms
+            self.roomID = socketRooms.compactMap { $0.room_id }
+            self.streamID = self.roomID
+            currentIndex = matchingRoomIndex
+            self.currentRoomID = roomId
+            print("currentStreamIndex \(currentStreamIndex) matchingRoomIndex index \(matchingRoomIndex)")
+            // Join the room and send entry message
+            Task {
+                
+                try await joinManager.subscribe(streamName: roomId)
+                
+                socketManagerChat.joinRoom(roomId: roomId)
+                socketManagerChat.sendChat(roomId: roomId, message: "Joining the host… ")
+                socketManagerChat.listenForChat()
+                socketManagerChat.listenForViewerCount()
             }
             
+            // Update follow status
+            let currentShow = socketRooms[matchingRoomIndex]
+            self.isFollow = currentShow.seller?.isFollowed ?? false
             
-            
-        }else{
-                    self.liveShowsData = response.data ?? [LiveShowsModel]()
-                    self.streamID = self.liveShowsData.compactMap({ $0.room_id ?? ""
-                    })
+            // Handle buyer verification
+            switch UserDefaults.buyerVerafied {
+            case "pending":
+                self.alertType = .sheetType(
+                    icon: .info,
+                    title: "Become a Verified Buyer!",
+                    message: "Your verification is currently pending approval by the admin. You will be notified once the process is complete.",
+                    primaryBtnText: "OK",
+                    secondaryBtnText: "",
+                    buttonWidth: screenWidth - 40,
+                    contentSize: 12.0
+                )
+                withAnimation(.snappy) { self.showVerificationSheet = true }
+                
+            case "verified":
+                if UserDefaults.sellerAddress == false {
+                    self.showPaymentShipping = true
+                    self.titleText = "Add Address"
+                } else if UserDefaults.hasCardAdded == false {
+                    self.showPaymentShipping = true
+                    self.titleText = "Add Card"
+                }
+                
+            default:
+                self.alertType = .sheetType(
+                    icon: .info,
+                    title: "Become a Verified Buyer!",
+                    message: "Before you interact with live shows, you need to become a verified buyer.",
+                    primaryBtnText: "OK",
+                    secondaryBtnText: "",
+                    buttonWidth: screenWidth - 40,
+                    contentSize: 12.0
+                )
+                withAnimation(.snappy) { self.showVerificationSheet = true }
+            }
         }
     }
+
+    
+//    func success() {
+//        let response = viewModel.liveShowsResponse
+//        guard response.status == "success" else {
+//            showError = true
+//            alertType = .sheetType(
+//                icon: .alert,
+//                title: response.error_type?.capitalized ?? "",
+//                message: response.message?.capitalized ?? "",
+//                primaryBtnText: "",
+//                secondaryBtnText: AppString.ok.localized
+//            )
+//            return
+//        }
+//        
+//        if response.message == "No shows found." {
+//            let streamTitle = "Coming Soon"
+//            let streamMessage = "The host has not started the stream yet"
+//            print("🔥 STREAM REMOVED CALLBACK TRIGGERED 🔥")
+//            showVerificationSheet = false
+//            alertType = .sheetType(
+//                icon: .alert,
+//                title: streamTitle,
+//                message: streamMessage,
+//                primaryBtnText: AppString.ok.localized,
+//                secondaryBtnText: ""
+//            )
+//            showError = true
+//            return
+//        }
+////        self.liveShowsData = response.data ?? [LiveShowsModel]()
+////        self.streamID = self.liveShowsData.compactMap({ $0.room_id ?? ""
+////        })
+//        let roomId = response.data?[currentStreamIndex].room_id ?? ""
+////        Task{
+////            try await joinManager.subscribe(streamName: roomId)
+////            
+////        }
+//        
+//        if socketManagerChat.rooms.count != 0{
+//            
+//            let socketRoomIds = socketManagerChat.rooms.compactMap { $0.room_id }
+//                let validShows = response.data?.filter { show in
+//                    if let roomId = show.room_id{
+//                        if show.is_live == true {
+//                            return socketRoomIds.contains(roomId)
+//                        }else{
+//                            return false
+//                        }
+//                    }
+//                    return false
+//                } ?? []
+//           
+//            //
+//            DispatchQueue.main.async {
+//                if validShows.isEmpty == true {
+//                    
+//                }else{
+//                    liveShowsData = validShows
+//                    roomID = liveShowsData.compactMap { $0.room_id }
+//                    streamID = roomID
+//                    if !liveShowsData.isEmpty {
+//                        if let currentRoomIndex = liveShowsData.firstIndex(where: { $0.room_id == roomId }) {
+//                            print("Current room index: \(currentRoomIndex)")
+//                            currentStreamIndex = currentRoomIndex
+//                        } else {
+//                            print("Room ID not found in liveShowsData")
+//                        }
+//
+//                        let initialRoomID = liveShowsData.map({$0.room_id == roomId })
+////                        let initialRoomID = liveShowsData[currentStreamIndex].room_id ?? ""
+//                        self.currentRoomID = initialRoomID
+//                        Task{
+//                            try await joinManager.subscribe(streamName: initialRoomID)
+//                            socketManagerChat.joinRoom(roomId: initialRoomID)
+//                            socketManagerChat.sendChat(roomId:  initialRoomID, message: "Joining the host… ")
+//                        }
+//                        //                                loginRoom(roomId: initialRoomID)
+//                        //                                fetchBiddingDetail(roomId: initialRoomID)
+//                        //                                FirebaseManager.shared.observeAllowBidForAll(for: initialRoomID)
+//                        //                                refreshProductStatus(roomId: liveShowsData[currentStreamIndex].room_id ?? "")
+//                        if liveShowsData[currentStreamIndex].user?.is_followed == false{
+//                            isFollow = false
+//                        }else{
+//                            isFollow = true
+//                        }
+//                        
+//                        switch UserDefaults.buyerVerafied {
+//                        case "pending":
+//                            self.alertType = .sheetType(
+//                                icon: .info,
+//                                title: "Become a Verified Buyer!",
+//                                message: "Your verification is currently pending approval by the admin. You will be notified once the process is complete.",
+//                                primaryBtnText: "OK",
+//                                secondaryBtnText: "",
+//                                buttonWidth: screenWidth - 40,
+//                                contentSize: 12.0
+//                            )
+//                            withAnimation(.snappy) { self.showVerificationSheet = true }
+//                            
+//                        case "verified":
+//                            if UserDefaults.sellerAddress == false {
+//                                self.showPaymentShipping = true
+//                                self.titleText = "Add Address"
+//                            } else if UserDefaults.hasCardAdded == false {
+//                                self.showPaymentShipping = true
+//                                self.titleText = "Add Card"
+//                            }
+//                            
+//                        default: // not verified
+//                            self.alertType = .sheetType(
+//                                icon: .info,
+//                                title: "Become a Verified Buyer!",
+//                                message: "Before you interact with live shows, you need to become a verified buyer.",
+//                                primaryBtnText: "OK",
+//                                secondaryBtnText: "",
+//                                buttonWidth: screenWidth - 40,
+//                                contentSize: 12.0
+//                            )
+//                            withAnimation(.snappy) { self.showVerificationSheet = true }
+//                        }
+//                        
+//                        
+//                    }
+//                }
+//            }
+//            
+//            
+//            
+//        }else{
+//                    self.liveShowsData = response.data ?? [LiveShowsModel]()
+//                    self.streamID = self.liveShowsData.compactMap({ $0.room_id ?? ""
+//                    })
+//        }
+//    }
     
     
     func loginRoom(roomId: String) {
@@ -1086,14 +1201,14 @@ struct LiveStream: View {
                         
                         // Filter products for active & isCurrent only
                         let activeCurrentProducts = model.products?.filter { product in
-                            product.status.lowercased() == "active" && product.isCurrent
+                            product.status?.lowercased() == "active" && product.isCurrent
                         }
                         
                         if let currentProduct = activeCurrentProducts?.first {
                             self.productData = [currentProduct]
                             self.currentProductIndex = 0
                             
-                            if let priceDouble = Double(currentProduct.price) {
+                            if let priceDouble = Double(currentProduct.price ?? "") {
                                 self.currentPrice = priceDouble
                             }
                         } else {
@@ -1115,6 +1230,7 @@ struct LiveStream: View {
 //        chatManager.logout()
 //        chatManager.messages.removeAll()
         SocketManagerService.shared.chats.removeAll()
+        SocketManagerService.shared.leaveRoom(roomId: self.currentRoomID)
 //        if let currentRoomId = liveShowsData[safe: currentStreamIndex]?.room_id {
 //            FirebaseManager.shared.databaseRef.child("live_sessions").child(currentRoomId).removeAllObservers()
 //            let countdownRef = FirebaseManager.shared.databaseRef.child("live_sessions").child(currentRoomId).child("bidCountDown")
@@ -1150,7 +1266,7 @@ struct LiveStream: View {
     
     func placeBid(amount: Double) {
         // Ensure we have the current room and product
-        guard let currentRoomId = liveShowsData[safe: currentStreamIndex]?.room_id,
+        guard let currentRoomId = liveShowsData[safe: currentIndex]?.room_id,
               let selectedProduct = BiddingDetail.products?[currentProductIndex] else { return }
         
         // Update Firebase highest bid
@@ -1177,7 +1293,7 @@ struct LiveStream: View {
     
     
     func updateSoldStatus(){
-        if let currentRoomId = liveShowsData[safe: currentStreamIndex]?.room_id,
+        if let currentRoomId = liveShowsData[safe: currentIndex]?.room_id,
            let productId = productData.first?.id {
             
             FirebaseManager.shared.markProductAsSold(roomId: currentRoomId, productId: productId) { error in
@@ -1195,7 +1311,7 @@ struct LiveStream: View {
                         }
                     }
                     winnerSheet = true
-                    refreshProductStatus(roomId: liveShowsData[currentStreamIndex].room_id ?? "")
+                    refreshProductStatus(roomId: liveShowsData[currentIndex].room_id ?? "")
                 }
             }
         }
@@ -1219,14 +1335,14 @@ struct LiveStream: View {
                 // 🔹 Reset isCurrent if sold
                 let cleanedProducts = updatedProducts.map { product -> ProductData in
                     var mutable = product
-                    if product.status.lowercased() == "sold" {
+                    if product.status?.lowercased() == "sold" {
                         mutable.isCurrent = false
                     }
                     return mutable
                 }
                 
                 self.BiddingDetail.products = cleanedProducts
-                let availableProducts = cleanedProducts.filter { $0.status.lowercased() != "sold" }
+                let availableProducts = cleanedProducts.filter { $0.status?.lowercased() != "sold" }
                 
                 if let currentIndex = availableProducts.firstIndex(where: { $0.isCurrent }) {
                     var reordered = availableProducts
@@ -1251,7 +1367,7 @@ struct LiveStream: View {
         FirebaseManager.shared.observeHighestBid(roomId: roomId) { highestBid in
             DispatchQueue.main.async {
                 guard let product = self.productData.first else { return }
-                let basePrice = Double(product.price) ?? 0
+                let basePrice = Double(product.price ?? "") ?? 0
                 
                 if let bidAmountString = highestBid["bidAmount"] as? String,
                    let bidAmountDouble = Double(bidAmountString),

@@ -95,7 +95,7 @@ struct RehearsalScreen: View {
 //                    .frame(width: geometry.size.width, height: geometry.size.height)
 //                    .id(previewResetTrigger)
                 
-                MCVideoSwiftUIView(renderer: .accelerated(castManager.renderer as! MCAcceleratedVideoRenderer),scalingMode: .resize,mirror: true)
+                MCVideoSwiftUIView(renderer: .accelerated(castManager.renderer as! MCAcceleratedVideoRenderer),scalingMode: .resize,mirror: castManager.isFrontCamera)
                     .frame(width: geometry.size.width, height: geometry.size.height)
                                .ignoresSafeArea()
                                .background(Color.black)
@@ -119,7 +119,7 @@ struct RehearsalScreen: View {
                             HStack(spacing: 4) {
                                 Image(systemName: "eye.fill")
                                     .foregroundColor(.black)
-                                Text("\(viewwerCount)")
+                                Text("\(socketManager.viewerCount)")
                                     .foregroundColor(.black)
                                     .font(.custom(poppinsSemiBold, size: 13.0))
                             }
@@ -281,7 +281,9 @@ struct RehearsalScreen: View {
                             Button(action: {
                                 isUsingFrontCamera.toggle()
 //                                ZegoExpressEngine.shared().useFrontCamera(isUsingFrontCamera)
-                                castManager.switchCamera()
+                                Task{
+                                    await castManager.switchCamera()
+                                }
                             }) {
                                 VStack {
                                     Image(systemName: "arrow.triangle.2.circlepath.camera")
@@ -510,7 +512,9 @@ struct RehearsalScreen: View {
                         onRotateCamera: {
                             isUsingFrontCamera.toggle()
 //                            ZegoExpressEngine.shared().useFrontCamera(isUsingFrontCamera)
-                            castManager.switchCamera()
+                            Task{
+                                await castManager.switchCamera()
+                            }
                         },
                         onZoomIn: { print("Zoom In") },
                         onMicToggle: {
@@ -788,7 +792,7 @@ struct RehearsalScreen: View {
             }
             
             
-            let seller = SellerModel(isFollowed: data.user?.is_followed ?? false, id: "\(data.user?.id ?? 0 )", name: data.user?.name ?? "", rating: data.user?.rating ?? "")
+        let seller = SellerModel(isFollowed: data.user?.is_followed ?? false, id: "\(data.user?.id ?? 0 )", name: data.user?.name ?? "", rating: data.user?.rating ?? "",image: data.user?.profile_image ?? "")
             
             
             sendCreateRoomEvent(
@@ -807,7 +811,10 @@ struct RehearsalScreen: View {
         isLive = true
         self.showLiveControls = true
         self.showPreLiveControls = false
-        SocketManagerService.shared.listenForChat()
+//        SocketManagerService.shared.listenForChat()
+        socketManager.listenForChat()
+        socketManager.listenForViewerCount()
+        
             if data.is_live == true {
                 self.showStartTime = Date()
                 startLiveTimer()
@@ -1091,7 +1098,8 @@ struct RehearsalScreen: View {
         Button(action: {
             if action == .switchView {
                 isUsingFrontCamera.toggle()
-                ZegoExpressEngine.shared().useFrontCamera(isUsingFrontCamera)
+//                ZegoExpressEngine.shared().useFrontCamera(isUsingFrontCamera)
+                castManager.switchCamera()
             } else {
                 currentBottomSheet = action
                 showSellSheet = true
@@ -1121,7 +1129,7 @@ struct RehearsalScreen: View {
         Button(action: {
             if action == .switchView {
                 isUsingFrontCamera.toggle()
-                ZegoExpressEngine.shared().useFrontCamera(isUsingFrontCamera)
+                castManager.switchCamera()
             } else {
                 currentBottomSheet = action
                 showSellSheet = true

@@ -19,6 +19,7 @@ struct HomeViewScreen: View {
     @State var hudMsg: String = ""
     @State var navigateToLiveStream = false
     @State var index = 0
+    @State var currentRoomId = ""
     let columns = Array(repeating: GridItem(.flexible(), spacing: 6), count: 2)
     @Binding var showCategory : String
     @State var viewModel = HomeViewModel()
@@ -202,6 +203,7 @@ struct HomeViewScreen: View {
                                 },onTapMainImage: {
                                     print(" tapped the card!,inex \(index)")
                                     self.index = index
+                                    self.currentRoomId = item.room_id ?? ""
                                     userId = "\(item.user?.id ?? 0)"
                                     userImage = item.user?.profile_image ?? ""
                                     userName = item.user?.username ?? ""
@@ -243,7 +245,7 @@ struct HomeViewScreen: View {
             .padding([.leading,.trailing],12)
             .padding(.top , 10)
             
-            CusNavLink(doNavigate: $navigateToLiveStream, destination: LiveStream(currentStreamIndex :self.$index, userId : $userId,comeFromHome: $navigateToLiveStream,category: $selectedButton,search:self.$searchText,currentPage:self.$currentPage))
+            CusNavLink(doNavigate: $navigateToLiveStream, destination: LiveStream(currentRoomID: $currentRoomId,currentStreamIndex :self.$index, userId : $userId, comeFromHome: $navigateToLiveStream,category: $selectedButton,search:self.$searchText,currentPage:self.$currentPage))
             
             CusNavLink(doNavigate: $navigateToProfile, destination: ProfileScreen(id:$userId,isComeFrom : .constant("Home"),userName: $userName,userImage: $userImage))
             

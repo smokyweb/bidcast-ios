@@ -7,47 +7,77 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "296AC99F-6D92-4B6F-A75F-E4BAB83417BB"
+            uuid = "1984435C-E3F0-4125-B831-13BA2C6A4E16"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "BidCast/Screens/Home/Live Stream/View/LiveStream.swift"
+            filePath = "BidCast/Helper/DolbyManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "915"
-            endingLineNumber = "915"
-            landmarkName = "success()"
+            startingLineNumber = "125"
+            endingLineNumber = "125"
+            landmarkName = "toggleAudioMute()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "926E56B9-B707-4170-834E-42BA8FF68AAF"
+            uuid = "55B44D37-2607-489E-ABC9-F06E7A92FD24"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "BidCast/Screens/Home/Live Stream/View/LiveStream.swift"
+            filePath = "BidCast/Helper/SocketManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "926"
-            endingLineNumber = "926"
-            landmarkName = "success()"
+            startingLineNumber = "217"
+            endingLineNumber = "217"
+            landmarkName = "listenForViewerCount()"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "55B44D37-2607-489E-ABC9-F06E7A92FD24 - d7590e617a08c476"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "BidCast.SocketManagerService.listenForViewerCount() -&gt; ()"
+                  moduleName = "BidCast.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jamtech/Documents/GitHub/bidcast/BidCast/Helper/SocketManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "217"
+                  endingLineNumber = "217">
+               </Location>
+               <Location
+                  uuid = "55B44D37-2607-489E-ABC9-F06E7A92FD24 - adee0aab1181b0d9"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Array&lt;Any&gt;, SocketIO.SocketAckEmitter) -&gt; () in BidCast.SocketManagerService.listenForViewerCount() -&gt; ()"
+                  moduleName = "BidCast.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jamtech/Documents/GitHub/bidcast/BidCast/Helper/SocketManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "217"
+                  endingLineNumber = "217">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "2B2F2F92-E71C-4773-97CA-82FF37AC176A"
+            uuid = "61BC2936-DD6A-49B7-935D-182D84B176F9"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BidCast/Screens/Home/Live Stream/View/LiveStream.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "238"
-            endingLineNumber = "238"
+            startingLineNumber = "818"
+            endingLineNumber = "818"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>

@@ -255,7 +255,7 @@ struct ShopBottomSheetView: View {
                         if let selectedProduct = productData.first(where: { $0.isCurrent ?? false }) {
                             Button(action: {
                                 isPresented = false
-                                onLiveStreamStart?(selectedProduct.id)
+                                onLiveStreamStart?(selectedProduct.id ?? "")
                             }) {
                                 Text("Start Live Stream")
                                     .font(.custom(poppinsSemiBold, size: 14))
@@ -293,7 +293,7 @@ struct ShopBottomSheetView: View {
 
                                    // Case 3: Valid product to add
                                    isPresented = false
-                                   onAddProduct?(selectedProduct.id)
+                                   onAddProduct?(selectedProduct.id ?? "")
                             }) {
                                 Text("Add Product")
                                     .font(.custom(poppinsSemiBold, size: 14))
@@ -334,7 +334,7 @@ struct ShopBottomSheetView: View {
             
             VStack(alignment: .leading, spacing: 4) {
                 HStack{
-                    Text(product.name)
+                    Text(product.name ?? "")
                         .font(.custom(poppinsSemiBold, size: 13.0))
                     Spacer()
                     // ✅ Show Live label if this is the initial selected product

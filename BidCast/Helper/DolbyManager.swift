@@ -24,7 +24,7 @@ class PublisherViewModel: ObservableObject {
     
     var videoTrack: MCVideoTrack?
     var audioTrack: MCAudioTrack?
-    
+    @Published  var isFrontCamera = true
     @Published private(set) var isPublishing = false
     @Published private(set) var isAudioMuted = false
     @Published private(set) var isVideoMuted = false
@@ -45,8 +45,14 @@ class PublisherViewModel: ObservableObject {
         }
         currentVideoSource = videoSource
         
-        if let cap = videoSource.getCapabilities().first(where: { $0.width <= 1920 && $0.height <= 1080 }) {
-            videoSource.setCapability(cap)
+//        if let cap = videoSource.getCapabilities().first(where: { $0.width <= 1920 && $0.height <= 1080 }) {
+//            videoSource.setCapability(cap)
+//        }
+        if let sdCap = videoSource.getCapabilities().first(where: {
+            $0.width <= 854 && $0.height <= 480
+        }) {
+            videoSource.setCapability(sdCap)
+            print("Switched to 480p: \(sdCap.width)x\(sdCap.height) @\(sdCap.fps)fps")
         }
         guard let track = videoSource.startCapture() as? MCVideoTrack else {
             throw NSError(domain: "PreviewError", code: 2, userInfo: [NSLocalizedDescriptionKey: "Failed to start video capture"])
@@ -92,38 +98,31 @@ class PublisherViewModel: ObservableObject {
     // MARK: - Controls
     @MainActor
     func switchCamera() {
-        guard let current = currentVideoSource else { return }
+        guard let current = currentVideoSource, videoSources.count > 1 else { return }
 
-        // Optional: temporarily lower resolution to reduce hardware latency
-        if let lowCap = current.getCapabilities().first(where: {
-                $0.width <= 640 && $0.height <= 480 && $0.fps <= 30
-            }) {
-                current.setCapability(lowCap)
-            }
-            // Switch camera
+        // Determine next source
+        guard let currentIndex = videoSources.firstIndex(where: { $0.getUniqueId() == current.getUniqueId() }) else { return }
+        let nextIndex = currentIndex == 0 ? 1 : 0
+        let nextSource = videoSources[nextIndex]
+
+      
             current.change(true)
-        if let highCap = current.getCapabilities().first(where: {
-            $0.width <= 640 &&
-            $0.height <= 480 &&
-            $0.fps <= 30
-        }) {
-            current.setCapability(highCap)
-            print("Restored high capability: \(highCap.width)x\(highCap.height) @\(highCap.fps)fps")
-        }
-     
-    }
+        
 
+        // Update front/back flag
+        let name = nextSource.getName() ?? ""
+        isFrontCamera = name.lowercased().contains("front")
+
+        print("Camera switched to: \(name)")
+        print("Is front camera? \(isFrontCamera)")
+    }
 
 
     
     func toggleAudioMute() {
         guard let audioTrack = audioTrack else { return }
         isAudioMuted.toggle()
-        if !isAudioMuted{
-            audioTrack.setVolume(1)
-        }else{
-            audioTrack.setVolume(0)
-        }
+            audioTrack.enable(!isAudioMuted)
     }
 }
 

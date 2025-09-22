@@ -65,7 +65,7 @@ struct MaxBidBottomSheet: View {
                     return
                 }
                 
-                if let currentPrice = Double(currentProduct.price), enteredAmount <= currentPrice {
+                if let currentPrice = Double(currentProduct.price ?? ""), enteredAmount <= currentPrice {
                     showTemporaryHUD(message: "Please enter an amount greater than current price $\(currentProduct.price)")
                     return
                 }
