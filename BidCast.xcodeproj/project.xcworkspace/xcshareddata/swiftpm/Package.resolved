@@ -1,5 +1,5 @@
 {
-  "originHash" : "2293a1b7e5ef861e7b3f23036b3b5f6f6ce735b400e65c5a1b05ef34577f5af2",
+  "originHash" : "8b46e6ec0a427c464a6a388b51e0172e78c31f6633a494229af2cbce60410658",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -231,8 +231,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/millicast/millicast-sdk-swift-package",
       "state" : {
-        "revision" : "43a54284c4f39968d3874c4c761da1970a9e6c6c",
-        "version" : "2.5.1"
+        "revision" : "ae03398b36cb7eebcfd2477cafe8ad838b07114f",
+        "version" : "2.5.2"
       }
     },
     {

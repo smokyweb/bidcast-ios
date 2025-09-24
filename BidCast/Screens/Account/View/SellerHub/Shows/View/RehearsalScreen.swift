@@ -814,6 +814,7 @@ struct RehearsalScreen: View {
 //        SocketManagerService.shared.listenForChat()
         socketManager.listenForChat()
         socketManager.listenForViewerCount()
+        socketManager.listenForShowTimer(roomId: self.roomId)
         
             if data.is_live == true {
                 self.showStartTime = Date()
@@ -1020,7 +1021,7 @@ struct RehearsalScreen: View {
             "time": timestamp,
             "date": date,
             "allow_bid_for_all": allowBidForAll,
-            "viewer_count": 0,
+            "viewer_count": "",
             "is_live": true,
             "show_detail": "Live auction room created via Rehearsal",
             "show_timer":showTimer
@@ -1099,7 +1100,9 @@ struct RehearsalScreen: View {
             if action == .switchView {
                 isUsingFrontCamera.toggle()
 //                ZegoExpressEngine.shared().useFrontCamera(isUsingFrontCamera)
-                castManager.switchCamera()
+                Task{
+                    await castManager.switchCamera()
+                }
             } else {
                 currentBottomSheet = action
                 showSellSheet = true

@@ -813,9 +813,9 @@ struct LiveStream: View {
                 await self.homeViewModel.getProfile()
                 await SVProgressHUD.dismiss()
                 await getProfileSuccess()
-               try await joinManager.subscribe(streamName: currentRoomID)
+//               try await joinManager.subscribe(streamName: currentRoomID)
                     
-                socketManagerChat.joinRoom(roomId: currentRoomID)
+//                socketManagerChat.joinRoom(roomId: currentRoomID)
 
                 joinStreamUsingSocket(roomId: currentRoomID)
                 

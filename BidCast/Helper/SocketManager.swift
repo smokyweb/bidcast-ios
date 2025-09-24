@@ -14,6 +14,7 @@ class SocketManagerService: NSObject, ObservableObject {
     @Published var rooms: [RoomModel] = []
     @Published var chats: [CommentModel] = []
     @Published  var viewerCount: Int = 0
+    @Published  var showTime: String = "00:00:00"
     var onRoomsUpdated: (([String]) -> Void)?
     var liveSchedulerTimer: Timer?
     private var socket: SocketIOClient!
@@ -214,7 +215,7 @@ class SocketManagerService: NSObject, ObservableObject {
     }
     
     func listenForViewerCount() {
-        socket.on("viewer_count") { data, _ in
+        socket.on("viewerCount") { data, _ in
             guard let json = data.first as? [String: Any],
                   let count = json["count"] as? Int else {
                 print("❌ Invalid viewer count data:", data)
@@ -227,6 +228,36 @@ class SocketManagerService: NSObject, ObservableObject {
             print("👀 Viewer count updated:", count)
         }
     }
+    func listenForShowTimer(roomId:String) {
+        socket.on("show_timer_update") { data, _ in
+            guard let json = data.first as? [String: Any] else {
+                print("❌ Invalid show timer data:", data)
+                return
+            }
+            
+            // Ensure room_id exists if you want to check for specific room
+            guard let roomId = json["room_id"] as? String,
+                  let elapsed = json["elapsed"] as? Int else {
+                print("❌ Missing keys in show timer data:", json)
+                return
+            }
+            
+            // Optionally, check if this is the room you care about
+            if roomId == roomId {
+                let time  = self.formatElapsedTime(seconds: elapsed)
+                self.showTime = time
+                print("⏱ Elapsed time for \(roomId):", elapsed)
+            }
+        }
+    }
+    
+    func formatElapsedTime(seconds: Int) -> String {
+        let hours = seconds / 3600
+        let minutes = (seconds % 3600) / 60
+        let secs = seconds % 60
+        return String(format: "%02d:%02d:%02d", hours, minutes, secs)
+    }
+    
 }
 
 struct RoomModel: Codable {

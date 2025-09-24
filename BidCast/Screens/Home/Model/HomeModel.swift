@@ -20,6 +20,7 @@ struct HomeModel: Codable, Identifiable {
     var thumbnail: [String]?
     var img_thumbnail: [String]?
     var is_live: Bool?
+    var latest_viewer_count : Int?
     var viewer_count: Int?
     var room_id: String?
     var products : [ProductDataModel]?

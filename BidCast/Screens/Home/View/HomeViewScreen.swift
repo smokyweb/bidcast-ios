@@ -172,7 +172,7 @@ struct HomeViewScreen: View {
                                                     title2:item.title ?? "",
                                                     categorySize: 14,
                                                     title2Size: 16.0,
-                                                    liveCount: item.viewer_count ?? 0,
+                                                    liveCount: item.latest_viewer_count ?? 0,
                                                     isLive : item.is_live ?? false,
                                                     onTapProfile: {
                                     self.liveShowsData.removeAll()

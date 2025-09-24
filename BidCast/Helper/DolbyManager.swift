@@ -45,15 +45,15 @@ class PublisherViewModel: ObservableObject {
         }
         currentVideoSource = videoSource
         
-//        if let cap = videoSource.getCapabilities().first(where: { $0.width <= 1920 && $0.height <= 1080 }) {
-//            videoSource.setCapability(cap)
-//        }
-        if let sdCap = videoSource.getCapabilities().first(where: {
-            $0.width <= 854 && $0.height <= 480
-        }) {
-            videoSource.setCapability(sdCap)
-            print("Switched to 480p: \(sdCap.width)x\(sdCap.height) @\(sdCap.fps)fps")
+        if let cap = videoSource.getCapabilities().first(where: { $0.width <= 1920 && $0.height <= 1080 }) {
+            videoSource.setCapability(cap)
         }
+//        if let sdCap = videoSource.getCapabilities().first(where: {
+//            $0.width <= 854 && $0.height <= 480
+//        }) {
+//            videoSource.setCapability(sdCap)
+//            print("Switched to 480p: \(sdCap.width)x\(sdCap.height) @\(sdCap.fps)fps")
+//        }
         guard let track = videoSource.startCapture() as? MCVideoTrack else {
             throw NSError(domain: "PreviewError", code: 2, userInfo: [NSLocalizedDescriptionKey: "Failed to start video capture"])
         }
