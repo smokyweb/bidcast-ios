@@ -1184,37 +1184,7 @@ struct RehearsalScreen: View {
         }
     }
     
-    var exampleBoosts: [ShowBoost] {
-        [
-            ShowBoost(
-                title: "15 Minute Boost",
-                subtitle: "Quick visibility boost",
-                description: "Get featured in the top shows for 15 minutes",
-                price: "$3.99",
-                iconName: "bolt.fill",
-                gradient: LinearGradient(colors: [.pink, .purple], startPoint: .topLeading, endPoint: .bottomTrailing),
-                action: { print("Selected 15 Minute Boost") }
-            ),
-            ShowBoost(
-                title: "Full Show Promote",
-                subtitle: "Extended visibility",
-                description: "Stay featured for your entire show duration",
-                price: "$7.99",
-                iconName: "star.fill",
-                gradient: LinearGradient(colors: [.blue, .teal], startPoint: .topLeading, endPoint: .bottomTrailing),
-                action: { print("Selected Full Show Promote") }
-            ),
-            ShowBoost(
-                title: "Community Boost",
-                subtitle: "Power of the crowd",
-                description: "Rally your community for massive exposure",
-                price: "$12.99",
-                iconName: "person.3.fill",
-                gradient: LinearGradient(colors: [.orange, .red], startPoint: .topLeading, endPoint: .bottomTrailing),
-                action: { print("Selected Community Boost") }
-            )
-        ]
-    }
+  
     
     
 }
