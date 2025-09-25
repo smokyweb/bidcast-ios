@@ -8,30 +8,29 @@
 import SwiftUI
 
 struct BoostCardView: View {
-    let boost: ShowBoost
+    let boost: BoostModel
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(boost.title)
+                    Text(boost.title ?? "")
                         .font(.custom(poppinsSemiBold, size: 14.0))
                         .foregroundColor(.white)
-                    Text(boost.subtitle)
+                    Text(boost.sub_title ?? "")
                         .font(.custom(poppinsSemiBold, size: 12.0))
                         .foregroundColor(.white.opacity(0.8))
-                    Text(boost.description)
+                    Text(boost.description ?? "")
                         .font(.custom(poppinsRegular, size: 11.0))
                         .foregroundColor(.white.opacity(0.7))
                 }
                 Spacer()
-                Image(systemName: boost.iconName)
-                    .font(.title2)
-                    .foregroundColor(.white)
+                CustomProfileImage(url: boost.icon ?? "",isCircular: false, size: 48)
+                
             }
 
-            Button(action: boost.action) {
-                Text("Select • \(boost.price)")
+            Button(action: boost.action ?? {}) {
+                Text("Select • \(boost.price ?? "")")
                     .font(.custom(poppinsSemiBold, size: 14.0))
                     .padding(.vertical, 10)
                     .frame(maxWidth: .infinity)
@@ -41,7 +40,9 @@ struct BoostCardView: View {
             }
         }
         .padding()
-        .background(boost.gradient)
+        .background(
+            Color(UIColor(named: boost.gradient_colors ?? "") ?? .clear)
+        )
         .cornerRadius(20)
     }
 }

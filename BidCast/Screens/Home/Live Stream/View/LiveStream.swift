@@ -136,6 +136,7 @@ struct LiveStream: View {
     @State var maxBidAmountSheet : Bool = false
     @StateObject private var joinManager = SubscriberViewModel(renderer: MCAcceleratedVideoRenderer())
     @State private var renderer = MCAcceleratedVideoRenderer()
+    @State var currentProductID: String? = nil
     
     var sheetHeight: CGFloat {
         switch currentBottomSheet {
@@ -933,6 +934,7 @@ struct LiveStream: View {
             // Update follow status
             let currentShow = socketRooms[matchingRoomIndex]
             self.isFollow = currentShow.seller?.isFollowed ?? false
+            fetchProducts(for: roomId)
             
             // Handle buyer verification
             switch UserDefaults.buyerVerafied {
@@ -971,142 +973,56 @@ struct LiveStream: View {
             }
         }
     }
+    @MainActor
+    func fetchProducts(for roomId: String) {
+        guard let socketRoom = socketManagerChat.rooms.first(where: { $0.room_id == roomId }) else {
+            self.productData = []
+            self.currentProductIndex = 0
+            self.currentPrice = 0.0
+            return
+        }
+        
+        if let products = socketRoom.products {
+            let activeCurrentProducts = products.filter { product in
+                product.status?.lowercased() == "active" && product.isCurrent
+            }
+            
+            if let currentProduct = activeCurrentProducts.first {
+                self.productData = [currentProduct]
+                self.currentProductIndex = 0
+                self.currentProductID = currentProduct.id
+                if let priceDouble = Double(currentProduct.price ?? "") {
+                    self.currentPrice = priceDouble
+                }
+            } else {
+                self.productData = []
+                self.currentProductIndex = 0
+                self.currentPrice = 0.0
+            }
+        } else {
+            self.productData = []
+            self.currentProductIndex = 0
+            self.currentPrice = 0.0
+        }
+    }
 
-    
-//    func success() {
-//        let response = viewModel.liveShowsResponse
-//        guard response.status == "success" else {
-//            showError = true
-//            alertType = .sheetType(
-//                icon: .alert,
-//                title: response.error_type?.capitalized ?? "",
-//                message: response.message?.capitalized ?? "",
-//                primaryBtnText: "",
-//                secondaryBtnText: AppString.ok.localized
-//            )
-//            return
-//        }
-//        
-//        if response.message == "No shows found." {
-//            let streamTitle = "Coming Soon"
-//            let streamMessage = "The host has not started the stream yet"
-//            print("🔥 STREAM REMOVED CALLBACK TRIGGERED 🔥")
-//            showVerificationSheet = false
-//            alertType = .sheetType(
-//                icon: .alert,
-//                title: streamTitle,
-//                message: streamMessage,
-//                primaryBtnText: AppString.ok.localized,
-//                secondaryBtnText: ""
-//            )
-//            showError = true
-//            return
-//        }
-////        self.liveShowsData = response.data ?? [LiveShowsModel]()
-////        self.streamID = self.liveShowsData.compactMap({ $0.room_id ?? ""
-////        })
-//        let roomId = response.data?[currentStreamIndex].room_id ?? ""
-////        Task{
-////            try await joinManager.subscribe(streamName: roomId)
-////            
-////        }
-//        
-//        if socketManagerChat.rooms.count != 0{
-//            
-//            let socketRoomIds = socketManagerChat.rooms.compactMap { $0.room_id }
-//                let validShows = response.data?.filter { show in
-//                    if let roomId = show.room_id{
-//                        if show.is_live == true {
-//                            return socketRoomIds.contains(roomId)
-//                        }else{
-//                            return false
-//                        }
-//                    }
-//                    return false
-//                } ?? []
-//           
-//            //
-//            DispatchQueue.main.async {
-//                if validShows.isEmpty == true {
-//                    
-//                }else{
-//                    liveShowsData = validShows
-//                    roomID = liveShowsData.compactMap { $0.room_id }
-//                    streamID = roomID
-//                    if !liveShowsData.isEmpty {
-//                        if let currentRoomIndex = liveShowsData.firstIndex(where: { $0.room_id == roomId }) {
-//                            print("Current room index: \(currentRoomIndex)")
-//                            currentStreamIndex = currentRoomIndex
-//                        } else {
-//                            print("Room ID not found in liveShowsData")
-//                        }
-//
-//                        let initialRoomID = liveShowsData.map({$0.room_id == roomId })
-////                        let initialRoomID = liveShowsData[currentStreamIndex].room_id ?? ""
-//                        self.currentRoomID = initialRoomID
-//                        Task{
-//                            try await joinManager.subscribe(streamName: initialRoomID)
-//                            socketManagerChat.joinRoom(roomId: initialRoomID)
-//                            socketManagerChat.sendChat(roomId:  initialRoomID, message: "Joining the host… ")
-//                        }
-//                        //                                loginRoom(roomId: initialRoomID)
-//                        //                                fetchBiddingDetail(roomId: initialRoomID)
-//                        //                                FirebaseManager.shared.observeAllowBidForAll(for: initialRoomID)
-//                        //                                refreshProductStatus(roomId: liveShowsData[currentStreamIndex].room_id ?? "")
-//                        if liveShowsData[currentStreamIndex].user?.is_followed == false{
-//                            isFollow = false
-//                        }else{
-//                            isFollow = true
-//                        }
-//                        
-//                        switch UserDefaults.buyerVerafied {
-//                        case "pending":
-//                            self.alertType = .sheetType(
-//                                icon: .info,
-//                                title: "Become a Verified Buyer!",
-//                                message: "Your verification is currently pending approval by the admin. You will be notified once the process is complete.",
-//                                primaryBtnText: "OK",
-//                                secondaryBtnText: "",
-//                                buttonWidth: screenWidth - 40,
-//                                contentSize: 12.0
-//                            )
-//                            withAnimation(.snappy) { self.showVerificationSheet = true }
-//                            
-//                        case "verified":
-//                            if UserDefaults.sellerAddress == false {
-//                                self.showPaymentShipping = true
-//                                self.titleText = "Add Address"
-//                            } else if UserDefaults.hasCardAdded == false {
-//                                self.showPaymentShipping = true
-//                                self.titleText = "Add Card"
-//                            }
-//                            
-//                        default: // not verified
-//                            self.alertType = .sheetType(
-//                                icon: .info,
-//                                title: "Become a Verified Buyer!",
-//                                message: "Before you interact with live shows, you need to become a verified buyer.",
-//                                primaryBtnText: "OK",
-//                                secondaryBtnText: "",
-//                                buttonWidth: screenWidth - 40,
-//                                contentSize: 12.0
-//                            )
-//                            withAnimation(.snappy) { self.showVerificationSheet = true }
-//                        }
-//                        
-//                        
-//                    }
-//                }
-//            }
-//            
-//            
-//            
-//        }else{
-//                    self.liveShowsData = response.data ?? [LiveShowsModel]()
-//                    self.streamID = self.liveShowsData.compactMap({ $0.room_id ?? ""
-//                    })
-//        }
-//    }
+
+    func sendBid(roomId:String,bidAmount:String,productId:String){
+        let data = [
+            "room_id" : roomId,
+            "bid_amount": bidAmount,
+            "user_name" : UserDefaults.userName,
+            "user_image" : UserDefaults.profileURL,
+            "user_id" : UserDefaults.userId.description,
+            "product_id" : productId
+        ]
+        socketManagerChat.sendBid(data)
+        currentPrice = Double(bidAmount) ?? 0.0
+        let price = String(format: "%02d", currentPrice)
+        commentText = "Current highest bid : $\(price)"
+        socketManagerChat.sendChat(roomId: roomId, message: commentText)
+        commentText = ""
+    }
     
     
     func loginRoom(roomId: String) {
@@ -1190,52 +1106,45 @@ struct LiveStream: View {
         }
     }
     
-    func fetchBiddingDetail(roomId: String) {
-        FirebaseManager.shared.getLiveSessionData(roomId: roomId) { data in
-            guard let data = data else { return }
-            DispatchQueue.main.async {
-                if let jsonData = try? JSONSerialization.data(withJSONObject: data) {
-                    do {
-                        let model = try JSONDecoder().decode(BiddingModel.self, from: jsonData)
-                        self.BiddingDetail = model
-                        
-                        // Filter products for active & isCurrent only
-                        let activeCurrentProducts = model.products?.filter { product in
-                            product.status?.lowercased() == "active" && product.isCurrent
-                        }
-                        
-                        if let currentProduct = activeCurrentProducts?.first {
-                            self.productData = [currentProduct]
-                            self.currentProductIndex = 0
-                            
-                            if let priceDouble = Double(currentProduct.price ?? "") {
-                                self.currentPrice = priceDouble
-                            }
-                        } else {
-                            self.productData = []
-                            self.currentProductIndex = 0
-                            self.currentPrice = 0.0
-                        }
-                    } catch {
-                        print("❌ Decoding Error: \(error)")
-                    }
-                }
-            }
-        }
-    }
+//    func fetchBiddingDetail(roomId: String) {
+//        FirebaseManager.shared.getLiveSessionData(roomId: roomId) { data in
+//            guard let data = data else { return }
+//            DispatchQueue.main.async {
+//                if let jsonData = try? JSONSerialization.data(withJSONObject: data) {
+//                    do {
+//                        let model = try JSONDecoder().decode(BiddingModel.self, from: jsonData)
+//                        self.BiddingDetail = model
+//                        
+//                        // Filter products for active & isCurrent only
+//                        let activeCurrentProducts = model.products?.filter { product in
+//                            product.status?.lowercased() == "active" && product.isCurrent
+//                        }
+//                        
+//                        if let currentProduct = activeCurrentProducts?.first {
+//                            self.productData = [currentProduct]
+//                            self.currentProductIndex = 0
+//                            
+//                            if let priceDouble = Double(currentProduct.price ?? "") {
+//                                self.currentPrice = priceDouble
+//                            }
+//                        } else {
+//                            self.productData = []
+//                            self.currentProductIndex = 0
+//                            self.currentPrice = 0.0
+//                        }
+//                    } catch {
+//                        print("❌ Decoding Error: \(error)")
+//                    }
+//                }
+//            }
+//        }
+//    }
     
     //MARK: logoutRoom
     func logoutRoom() {
-//        ZegoExpressEngine.shared().logoutRoom()
-//        chatManager.logout()
-//        chatManager.messages.removeAll()
         SocketManagerService.shared.chats.removeAll()
         SocketManagerService.shared.leaveRoom(roomId: self.currentRoomID)
-//        if let currentRoomId = liveShowsData[safe: currentStreamIndex]?.room_id {
-//            FirebaseManager.shared.databaseRef.child("live_sessions").child(currentRoomId).removeAllObservers()
-//            let countdownRef = FirebaseManager.shared.databaseRef.child("live_sessions").child(currentRoomId).child("bidCountDown")
-//            countdownRef.removeAllObservers()
-//        }
+
         
     }
     
@@ -1260,7 +1169,8 @@ struct LiveStream: View {
         }
         
         let newPrice = currentPrice + increment
-        placeBid(amount: newPrice)
+        self.sendBid(roomId: currentRoomID, bidAmount: newPrice.description, productId: currentProductID ?? "")
+//        placeBid(amount: newPrice)
     }
 
     

@@ -101,6 +101,7 @@ enum APIEndPoint{
     case blockUser(param : BlockUserRequest)
     case blockedUserList
     case getMailClass
+    case getPromoteShow
     
     //MARK: OLD
     
@@ -373,6 +374,8 @@ extension APIEndPoint: EndPointType {
             return "get-seller-rating?seller_id=\(param.seller_id)"
         case .addRating:
             return "seller-rating"
+        case .getPromoteShow:
+            return "get-promote-show"
             
             
             //MARK: Old
@@ -696,6 +699,8 @@ extension APIEndPoint: EndPointType {
         case .blockedUserList:
             return .get
         case .getMailClass:
+            return .get
+        case .getPromoteShow:
             return .get
             
             //MARK: Old
@@ -1041,6 +1046,8 @@ extension APIEndPoint: EndPointType {
         case .blockedUserList:
             return nil
         case .getMailClass:
+            return nil
+        case .getPromoteShow:
             return nil
             
             
@@ -1528,6 +1535,8 @@ extension APIEndPoint: EndPointType {
         case .blockedUserList:
             return nil
         case .getMailClass:
+            return nil
+        case .getPromoteShow:
             return nil
         }
     }

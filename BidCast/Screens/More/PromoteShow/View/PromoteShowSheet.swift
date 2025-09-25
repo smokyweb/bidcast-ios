@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SVProgressHUD
 
 struct ShowBoost: Identifiable {
     let id = UUID()
@@ -19,9 +20,9 @@ struct ShowBoost: Identifiable {
 }
 
 struct PromoteShowSheet: View {
-    let boosts: [ShowBoost]
+    @Binding var  boosts : [BoostModel]
     var onClose: () -> Void
-
+    @State var viewModel = ShowsViewModel()
     var body: some View {
         VStack(spacing: 0) {
             HStack {
@@ -37,7 +38,8 @@ struct PromoteShowSheet: View {
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
-                    ForEach(boosts) { boost in
+                    ForEach(0 ..< boosts.count,id: \.self) { index in
+                        let boost = boosts[index]
                         BoostCardView(boost: boost)
                     }
                 }
@@ -49,4 +51,5 @@ struct PromoteShowSheet: View {
         .cornerRadius(20)
 //        .padding()
     }
+   
 }

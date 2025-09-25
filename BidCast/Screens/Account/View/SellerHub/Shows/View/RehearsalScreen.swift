@@ -40,7 +40,7 @@ struct RehearsalScreen: View {
     @State private var commentText = ""
     @State var comments: [CommentModel] = []
     @State var liveRoomId = ""
-    
+    @State  var  boosts = [BoostModel]()
     @State private var previewResetTrigger = false
     
     @State private var showStartTime: Date? = nil
@@ -533,7 +533,7 @@ struct RehearsalScreen: View {
                         }
                     )
                 case .promote:
-                    PromoteShowSheet(boosts: exampleBoosts) {
+                    PromoteShowSheet(boosts: $boosts) {
                         showSellSheet = false
                     }
                 case .clip:
@@ -820,9 +820,25 @@ struct RehearsalScreen: View {
                 self.showStartTime = Date()
                 startLiveTimer()
             }
-            
+        Task{
+            self.viewModel.errorMessage?.removeAll()
+            await self.viewModel.getPromoteShows()
+            if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil {
+                self.successPromote()
+            }else{
+                
+            }
+        }
         
     }
+    
+    func successPromote(){
+        let response  = self.viewModel.promoteShow
+        if response?.status == "success"{
+            self.boosts = response?.data ?? [BoostModel]()
+        }
+    }
+    
     func endShow(){
         
         Task{

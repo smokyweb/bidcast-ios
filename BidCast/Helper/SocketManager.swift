@@ -69,6 +69,22 @@ class SocketManagerService: NSObject, ObservableObject {
         print("Creating Room \(roomData)")
         socket.emit("room_create", roomData)
     }
+    
+    // MARK: - Room
+    func sendBid(_ roomData: [String: Any]) {
+        guard socket.status == .connected else{
+            if socket.status == .connecting || socket.status == .notConnected{
+                print("Socket status \(socket.status)")
+                setupSocket()
+            }
+            return
+        }
+        
+        print("Socket status \(socket.status)")
+        print("Creating Room \(roomData)")
+        socket.emit("place_bid", roomData)
+    }
+    
     func endStreaming(roomId: String) {
         guard socket.status == .connected else{
             if socket.status == .connecting || socket.status == .notConnected{

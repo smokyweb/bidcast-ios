@@ -102,3 +102,24 @@ struct SellerModel : Codable {
     }
     
 }
+
+struct BoostModel : Codable {
+    var id: Int?
+    var title: String?
+    var sub_title: String?
+    var description: String?
+    var price: String?
+    var gradient_colors: String?
+    var icon: String?
+    var colors: Colors?
+    var action: (() -> Void)?
+    
+    enum CodingKeys: String, CodingKey {
+           case id, title, sub_title, description, price, gradient_colors, icon, colors
+       }
+}
+
+struct Colors: Codable {
+    var start: String?
+    var end: String?
+}

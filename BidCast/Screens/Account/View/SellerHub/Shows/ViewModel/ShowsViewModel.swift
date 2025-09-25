@@ -12,6 +12,7 @@ final class ShowsViewModel: ObservableObject {
     // MARK: - Published Properties
     @Published var scheduledShow: ResponseModelPaginate<[HomeModel]>?
     @Published var updateStatusRespone : ResponseModelPaginate<UpdateStatusModel>?
+    @Published var promoteShow: ResponseModelPaginate<[BoostModel]>?
     @Published var errorMessage: String? = nil
     @Published var countResponse = countModel()
     @Published var requestType: String = ""
@@ -25,6 +26,20 @@ final class ShowsViewModel: ObservableObject {
                 header: true
             )
             scheduledShow = response
+        } catch {
+            handle(error: error)
+        }
+    }
+    
+    // MARK: - Get Lessons
+    func getPromoteShows() async {
+        requestType = "promote"
+        do {
+            let response: ResponseModelPaginate<[BoostModel]> = try await APIManager.shared.request(
+                type: APIEndPoint.getPromoteShow,
+                header: true
+            )
+            promoteShow = response
         } catch {
             handle(error: error)
         }
