@@ -232,18 +232,21 @@ class SocketManagerService: NSObject, ObservableObject {
     
     func listenForViewerCount() {
         socket.on("viewerCount") { data, _ in
-            guard let json = data.first as? [String: Any],
-                  let count = json["count"] as? Int else {
+            if let json = data.first as? [String: Any], let count = json["count"] as? Int {
+                // Case when the socket sends a dictionary
+                self.viewerCount = count
+                print("👀 Viewer count updated:", count)
+            } else if let count = data.first as? Int {
+                // Case when the socket sends [Int]
+                self.viewerCount = count
+                print("👀 Viewer count updated (array):", count)
+            } else {
                 print("❌ Invalid viewer count data:", data)
-                return
             }
-            
-            // Update variable and trigger callback
-            self.viewerCount = count
-            
-            print("👀 Viewer count updated:", count)
         }
     }
+
+    
     func listenForShowTimer(roomId:String) {
         socket.on("show_timer_update") { data, _ in
             guard let json = data.first as? [String: Any] else {

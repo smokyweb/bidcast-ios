@@ -110,7 +110,7 @@ struct RehearsalScreen: View {
                                     .foregroundColor(.white)
                                     .font(.custom(poppinsSemiBold, size: 14.0))
                                 
-                                Text("Show Time \(liveElapsedTime)")
+                                Text("Show Time \(socketManager.showTime)")
                                     .foregroundColor(.white)
                                     .font(.custom(poppinsRegular, size: 11.0))
                             }

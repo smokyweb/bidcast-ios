@@ -65,6 +65,7 @@ struct ContactUs: View {
                                 placeholder: AppString.enterFullName.localized,
                                 icon: .icMail,
                                 text: $request.name,
+                                isIconDisplay : false,
                                 enteredText: { request.name = $0 }
                             )
                             .textContentType(.name)
@@ -74,6 +75,7 @@ struct ContactUs: View {
                                 placeholder: AppString.enterEmail.localized,
                                 icon: .icMail,
                                 text: $request.email,
+                                isIconDisplay : false,
                                 enteredText: { request.email = $0 }
                             )
                             .textContentType(.emailAddress)
@@ -83,6 +85,7 @@ struct ContactUs: View {
                                 placeholder: AppString.enterSubject.localized,
                                 icon: .icMail,
                                 text: $request.subject,
+                                isIconDisplay : false,
                                 enteredText: { request.subject = $0 }
                             )
 
@@ -91,13 +94,14 @@ struct ContactUs: View {
                                 placeholder: AppString.enterYourMessage.localized,
                                 icon: .icMail,
                                 text: $request.message,
+                                isIconDisplay : false,
                                 enteredText: { request.message = $0 }
                             )
                         }
 //                        .padding(.horizontal, 16)
 
                         VStack(spacing: 16) {
-                            ListCell(image:"mail",title:"Email",subLabel: UserDefaults.userEmail,isVectorImgHidden: true,imgSize: 24)
+                            ListCell(image:"mail",title:"Email",subLabel: "support@company.com",isVectorImgHidden: true,imgSize: 24)
                                 .padding(.horizontal)
                         }
 
