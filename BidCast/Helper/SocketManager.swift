@@ -15,8 +15,11 @@ class SocketManagerService: NSObject, ObservableObject {
     @Published var chats: [CommentModel] = []
     @Published  var viewerCount: Int = 0
     @Published  var showTime: String = "00:00:00"
+    
+    
     var onRoomsUpdated: (([String]) -> Void)?
     var liveSchedulerTimer: Timer?
+    
     private var socket: SocketIOClient!
     private var socketManager: SocketManager!
     

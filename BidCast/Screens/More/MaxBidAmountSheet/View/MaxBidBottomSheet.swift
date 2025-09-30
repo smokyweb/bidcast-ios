@@ -26,7 +26,6 @@ struct MaxBidBottomSheet: View {
     
     var body: some View {
         VStack(spacing: 16) {
-            
             // Header
             HStack {
                 Text("Max Bid Amount")

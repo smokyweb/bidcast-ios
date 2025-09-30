@@ -786,7 +786,7 @@ struct LiveStream: View {
                             placeBid(amount: amount)
                         }
                         //                        self.maxBidAmountSheet = false
-                    },
+                    }, 
                     onDismiss: {
                         self.maxBidAmountSheet = false
                     }
@@ -799,6 +799,7 @@ struct LiveStream: View {
         .foregroundColor(.black)
         .background(.black)
         .onAppear{
+            //works as view did load
             UserDefaults.isLiveEnded = false
 //            FirebaseManager.shared.removeNewSessionObserver()
 //            ZIMChatManager.shared.login(userID: "\(UserDefaults.userId)", userName: UserDefaults.fullName)
@@ -1007,7 +1008,9 @@ struct LiveStream: View {
     }
 
 
-    func sendBid(roomId:String,bidAmount:String,productId:String){
+    func sendBid(roomId: String,
+                 bidAmount:String,
+                 productId:String ) {
         let data = [
             "room_id" : roomId,
             "bid_amount": bidAmount,
@@ -1018,7 +1021,7 @@ struct LiveStream: View {
         ]
         socketManagerChat.sendBid(data)
         currentPrice = Double(bidAmount) ?? 0.0
-        let price = String(format: "%02d", currentPrice)
+        let price = String(format: "%.2f", currentPrice)
         commentText = "Current highest bid : $\(price)"
         socketManagerChat.sendChat(roomId: roomId, message: commentText)
         commentText = ""

@@ -46,7 +46,7 @@ struct RehearsalScreen: View {
     @State private var showStartTime: Date? = nil
     @State private var liveElapsedTime: String = "00:00:00"
     
-//    @ObservedObject var chatManager = ZIMChatManager.shared
+    //    @ObservedObject var chatManager = ZIMChatManager.shared
     
     @State var comeFromPrepare = false
     @State var comeForLive = false
@@ -64,8 +64,8 @@ struct RehearsalScreen: View {
     @State var hudMsg: String = ""
     @Binding var backToTabBar : Bool
     
-//    @StateObject var castManager: PublisherViewModel
-//    @State var renderer = MCAcceleratedVideoRenderer()
+    //    @StateObject var castManager: PublisherViewModel
+    //    @State var renderer = MCAcceleratedVideoRenderer()
     @StateObject private var castManager = PublisherViewModel(renderer: MCAcceleratedVideoRenderer())
     @State private var renderer = MCAcceleratedVideoRenderer()
     var sheetHeight: CGFloat {
@@ -81,25 +81,25 @@ struct RehearsalScreen: View {
     }
     @StateObject var socketManager = SocketManagerService.shared
     @Binding var showsData : HomeModel
-//    init() {
-//        let renderer = MCAcceleratedVideoRenderer()
-//        _castManager = StateObject(wrappedValue: .init(renderer: renderer))
-//        
-//        self.renderer = renderer
-//    }
+    //    init() {
+    //        let renderer = MCAcceleratedVideoRenderer()
+    //        _castManager = StateObject(wrappedValue: .init(renderer: renderer))
+    //
+    //        self.renderer = renderer
+    //    }
     
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-//                ZegoRehearsalScreen(isLive: $isLive, streamID: roomId)
-//                    .frame(width: geometry.size.width, height: geometry.size.height)
-//                    .id(previewResetTrigger)
+                //                ZegoRehearsalScreen(isLive: $isLive, streamID: roomId)
+                //                    .frame(width: geometry.size.width, height: geometry.size.height)
+                //                    .id(previewResetTrigger)
                 
                 MCVideoSwiftUIView(renderer: .accelerated(castManager.renderer as! MCAcceleratedVideoRenderer),scalingMode: .resize,mirror: castManager.isFrontCamera)
                     .frame(width: geometry.size.width, height: geometry.size.height)
-                               .ignoresSafeArea()
-                               .background(Color.black)
-                    
+                    .ignoresSafeArea()
+                    .background(Color.black)
+                
                 VStack {
                     HStack {
                         HStack(spacing: 8) {
@@ -257,7 +257,7 @@ struct RehearsalScreen: View {
                             Button(action: {
                                 isMicOn.toggle()
                                 castManager.toggleAudioMute()
-//                                ZegoExpressEngine.shared().muteMicrophone(!isMicOn)
+                                //                                ZegoExpressEngine.shared().muteMicrophone(!isMicOn)
                             }) {
                                 VStack {
                                     Image(systemName: isMicOn ? "mic.fill" : "mic.slash.fill")
@@ -280,7 +280,7 @@ struct RehearsalScreen: View {
                             
                             Button(action: {
                                 isUsingFrontCamera.toggle()
-//                                ZegoExpressEngine.shared().useFrontCamera(isUsingFrontCamera)
+                                //                                ZegoExpressEngine.shared().useFrontCamera(isUsingFrontCamera)
                                 Task{
                                     await castManager.switchCamera()
                                 }
@@ -380,7 +380,7 @@ struct RehearsalScreen: View {
                                         Button(action: {
                                             print("📨 Sending message: \(commentText)")
                                             let textToSend = commentText.trimmingCharacters(in: .whitespacesAndNewlines)
-//                                            ZIMChatManager.shared.sendMessage(message: textToSend,roomId: self.liveRoomId,image: UserDefaults.profileURL,name: UserDefaults.userName)
+                                            //                                            ZIMChatManager.shared.sendMessage(message: textToSend,roomId: self.liveRoomId,image: UserDefaults.profileURL,name: UserDefaults.userName)
                                             SocketManagerService.shared.sendChat(roomId: self.roomId, message: textToSend)
                                             commentText = ""
                                         }) {
@@ -402,16 +402,16 @@ struct RehearsalScreen: View {
                             Button(action: {
                                 if UserDefaults.sellerVerafied == "verified"{
                                     if !isLive{
-//                                        showProductSheet = true
+                                        //                                        showProductSheet = true
                                         Task {
-//                                            if !castManager.isPublishing {
-                                           
+                                            //                                            if !castManager.isPublishing {
+                                            
                                             showProductSheet = true
-//                                            self.isLive = true
-//                                            self.UpdateStatus(status : false)
-//                                            } else {
-//                                                try await castManager.unpublish()
-//                                            }
+                                            //                                            self.isLive = true
+                                            //                                            self.UpdateStatus(status : false)
+                                            //                                            } else {
+                                            //                                                try await castManager.unpublish()
+                                            //                                            }
                                         }
                                     }
                                     //                                    self.UpdateStatus(status : false)
@@ -511,7 +511,7 @@ struct RehearsalScreen: View {
                         onCreatePoll: { print("Create Poll") },
                         onRotateCamera: {
                             isUsingFrontCamera.toggle()
-//                            ZegoExpressEngine.shared().useFrontCamera(isUsingFrontCamera)
+                            //                            ZegoExpressEngine.shared().useFrontCamera(isUsingFrontCamera)
                             Task{
                                 await castManager.switchCamera()
                             }
@@ -519,7 +519,7 @@ struct RehearsalScreen: View {
                         onZoomIn: { print("Zoom In") },
                         onMicToggle: {
                             isMicOn.toggle()
-//                            ZegoExpressEngine.shared().muteMicrophone(!isMicOn)
+                            //                            ZegoExpressEngine.shared().muteMicrophone(!isMicOn)
                             castManager.toggleAudioMute()
                         },
                         onVerifiedBuyerToggle: { isOn in
@@ -605,21 +605,21 @@ struct RehearsalScreen: View {
                             print("Raid Created")
                         },
                         onEndShow: {
-//                            Task {
-//                                            if !castManager.isPublishing {
-//                                    try await castManager.publish()
-//                                            } else {
-//                                                try await castManager.unpublish()
-//                                self.presentationMode.wrappedValue.dismiss()
-//                                            }
-//                            }
-//                            Task {
-//                                SVProgressHUD.show()
-//                                let is_Live = "false"
-//                                await viewModel.UpdateLiveShows(param: LiveShowUpdateRequest(schedule_show_id: showUd, is_live: is_Live))
-//                                await SVProgressHUD.dismiss()
-//                                success()
-//                            }
+                            //                            Task {
+                            //                                            if !castManager.isPublishing {
+                            //                                    try await castManager.publish()
+                            //                                            } else {
+                            //                                                try await castManager.unpublish()
+                            //                                self.presentationMode.wrappedValue.dismiss()
+                            //                                            }
+                            //                            }
+                            //                            Task {
+                            //                                SVProgressHUD.show()
+                            //                                let is_Live = "false"
+                            //                                await viewModel.UpdateLiveShows(param: LiveShowUpdateRequest(schedule_show_id: showUd, is_live: is_Live))
+                            //                                await SVProgressHUD.dismiss()
+                            //                                success()
+                            //                            }
                             self.endShow()
                             
                             self.isLive = false
@@ -673,25 +673,25 @@ struct RehearsalScreen: View {
             }
         }
         .onFirstAppear {
-//            if !comeFromPrepare && !comeForLive {
-                let mappedProducts = productListData.map { productModel in
-                    ProductData(
-                        category: productModel.category?.name ?? "Unknown",
-                        id: String(productModel.id ?? 0),
-                        image: productModel.images?.first ?? "",
-                        name: productModel.title ?? "Unnamed",
-                        price: String(format: "%.2f", productModel.pricing ?? 0),
-                        status: productModel.status ?? "inactive",
-                        isCurrent: false,
-                        quantity: "\(productModel.quantity ?? 0)"
-                    )
-                }
-                productData.append(contentsOf: mappedProducts)
-//            }
+            //            if !comeFromPrepare && !comeForLive {
+            let mappedProducts = productListData.map { productModel in
+                ProductData(
+                    category: productModel.category?.name ?? "Unknown",
+                    id: String(productModel.id ?? 0),
+                    image: productModel.images?.first ?? "",
+                    name: productModel.title ?? "Unnamed",
+                    price: String(format: "%.2f", productModel.pricing ?? 0),
+                    status: productModel.status ?? "inactive",
+                    isCurrent: false,
+                    quantity: "\(productModel.quantity ?? 0)"
+                )
+            }
+            productData.append(contentsOf: mappedProducts)
+            //            }
         }
-//        .onDisappear {
-//            logoutRoom()
-//        }
+        //        .onDisappear {
+        //            logoutRoom()
+        //        }
         .onDisappear {
             Task {
                 if castManager.isPublishing {
@@ -757,69 +757,68 @@ struct RehearsalScreen: View {
     }
     
     func ShowData(data:HomeModel ,selectedID : String? = nil) {
-       
-           
-            
-            let roomId = "live_room_\(data.user_id ?? 0)_\(data.id ?? 0)"
-            self.roomId = roomId
-      
-            
-            Task{
-                try await castManager.publish(streamName:  self.roomId)
+        
+        
+        
+        let roomId = "live_room_\(data.user_id ?? 0)_\(data.id ?? 0)"
+        self.roomId = roomId
+        
+        Task{
+            try await castManager.publish(streamName:  self.roomId)
+        }
+        
+        
+        let product: [ProductData] = (data.products ?? []).compactMap { product in
+            guard let id = product.id,
+                  let categoryId = product.category_id,
+                  let title = product.title,
+                  let price = product.pricing,
+                  let quantity = product.quantity
+            else {
+                return nil
             }
             
-            
-            let product: [ProductData] = (data.products ?? []).compactMap { product in
-                guard let id = product.id,
-                      let categoryId = product.category_id,
-                      let title = product.title,
-                      let price = product.pricing,
-                      let quantity = product.quantity
-                else {
-                    return nil
-                }
-                
-                return ProductData(
-                    category: "\(categoryId)",
-                    id: "\(id)",
-                    image: product.images?.first ?? "",
-                    name: title,
-                    price: String(format: "%.2f", price),
-                    status: /*product.status ??*/ "active",
-                    isCurrent: selectedID == "\(id)",
-                    quantity: "\(quantity)"
-                )
-            }
-            
-            
-        let seller = SellerModel(isFollowed: data.user?.is_followed ?? false, id: "\(data.user?.id ?? 0 )", name: data.user?.name ?? "", rating: data.user?.rating ?? "",image: data.user?.profile_image ?? "")
-            
-            
-            sendCreateRoomEvent(
-                showId: "\(data.id ?? 0)",
-                roomId: self.roomId,
-                products: product,
-                seller: seller,
-                thumbnail: data.thumbnail?.first ?? "",
-                time: data.time ?? "",
-                date: data.date ?? "",
-                allowBidForAll: true,
-                showTimer: ""
+            return ProductData(
+                category: "\(categoryId)",
+                id: "\(id)",
+                image: product.images?.first ?? "",
+                name: title,
+                price: String(format: "%.2f", price),
+                status: /*product.status ??*/ "active",
+                isCurrent: selectedID == "\(id)",
+                quantity: "\(quantity)"
             )
-       
+        }
+        
+        
+        let seller = SellerModel(isFollowed: data.user?.is_followed ?? false, id: "\(data.user?.id ?? 0 )", name: data.user?.name ?? "", rating: data.user?.rating ?? "",image: data.user?.profile_image ?? "")
+        
+        
+        sendCreateRoomEvent(
+            showId: "\(data.id ?? 0)",
+            roomId: self.roomId,
+            products: product,
+            seller: seller,
+            thumbnail: data.thumbnail?.first ?? "",
+            time: data.time ?? "",
+            date: data.date ?? "",
+            allowBidForAll: true,
+            showTimer: ""
+        )
+        
         SocketManagerService.shared.startLiveScheduler(roomId: self.roomId)
         isLive = true
         self.showLiveControls = true
         self.showPreLiveControls = false
-//        SocketManagerService.shared.listenForChat()
+        //        SocketManagerService.shared.listenForChat()
         socketManager.listenForChat()
         socketManager.listenForViewerCount()
         socketManager.listenForShowTimer(roomId: self.roomId)
         
-            if data.is_live == true {
-                self.showStartTime = Date()
-                startLiveTimer()
-            }
+        if data.is_live == true {
+            self.showStartTime = Date()
+            startLiveTimer()
+        }
         Task{
             self.viewModel.errorMessage?.removeAll()
             await self.viewModel.getPromoteShows()
@@ -928,63 +927,63 @@ struct RehearsalScreen: View {
                 allowBidForAll: true,
                 showTimer: ""
             )
-//            FirebaseManager.shared.createLiveSession(showId:"\(data.id ?? 0)", userId: "\(data.user_id ?? 0)", product: product, seller: seller, thumbnail: data.thumbnail?.first ?? "", time: data.time ?? "", date: data.date ?? "", allowBidForAll: true)
+            //            FirebaseManager.shared.createLiveSession(showId:"\(data.id ?? 0)", userId: "\(data.user_id ?? 0)", product: product, seller: seller, thumbnail: data.thumbnail?.first ?? "", time: data.time ?? "", date: data.date ?? "", allowBidForAll: true)
             
             
-//            let user = ZegoUser(userID: "\(data.user_id ?? 0)", userName: data.user?.name ?? "")
-//            let roomConfig = ZegoRoomConfig()
+            //            let user = ZegoUser(userID: "\(data.user_id ?? 0)", userName: data.user?.name ?? "")
+            //            let roomConfig = ZegoRoomConfig()
             
             
-//            ZegoExpressEngine.shared().loginRoom(
-//                roomId,
-//                user: user,
-//                config: roomConfig
-//            ) { errorCode, _ in
-//                if errorCode == 0 {
-//                    print("✅ Logged into room: \(roomId)")
-//                    self.liveRoomId = roomId
-//                    
-//                    ZegoExpressEngine.shared().startPublishingStream(roomId)
-//                    ZIMChatManager.shared.joinRoom(roomID: roomId)
-//                    self.showLiveControls = true
-//                    self.showPreLiveControls = false
-//                    self.isLive = true
-//                    FirebaseManager.shared.observeViewerCount(roomId: self.liveRoomId) { newCount in
-//                        print("👀 Viewer Count Updated: \(newCount)")
-//                        viewwerCount = newCount
-//                    }
-//                    
-//                    FirebaseManager.shared.startObservingSessionTimer(roomId: roomId) {
-//                        //                        self.UpdateStatus(status : true)
-//                    }
-//                    fetchBiddingDetail(roomId: roomId)
-//                    //For Show Automatic Sheet
-//                    if isLive {
-//                        print("👀 Starting countdown observer for roomId: \(roomId)")
-//                        FirebaseManager.shared.observeCountdown(for: roomId) { seconds in
-//                            DispatchQueue.main.async {
-//                                print("🟡 Countdown update: \(seconds)s")
-//                                self.bidCountdownSeconds = seconds
-//                                
-//                                if seconds == 30 {
-//                                    // Countdown just started
-//                                    self.hasCountdownStarted = true
-//                                }
-//                                
-//                                if self.hasCountdownStarted && seconds == 0 {
-//                                    print("⏰ Countdown reached zero, showing sheet")
-//                                    currentBottomSheet = .shop
-//                                    fetchLatestProductList()
-//                                    self.showSellSheet = true
-//                                    self.hasCountdownStarted = false
-//                                }
-//                            }
-//                        }
-//                    }
-//                } else {
-//                    print("❌ Failed to login to room: \(errorCode)")
-//                }
-//            }
+            //            ZegoExpressEngine.shared().loginRoom(
+            //                roomId,
+            //                user: user,
+            //                config: roomConfig
+            //            ) { errorCode, _ in
+            //                if errorCode == 0 {
+            //                    print("✅ Logged into room: \(roomId)")
+            //                    self.liveRoomId = roomId
+            //
+            //                    ZegoExpressEngine.shared().startPublishingStream(roomId)
+            //                    ZIMChatManager.shared.joinRoom(roomID: roomId)
+            //                    self.showLiveControls = true
+            //                    self.showPreLiveControls = false
+            //                    self.isLive = true
+            //                    FirebaseManager.shared.observeViewerCount(roomId: self.liveRoomId) { newCount in
+            //                        print("👀 Viewer Count Updated: \(newCount)")
+            //                        viewwerCount = newCount
+            //                    }
+            //
+            //                    FirebaseManager.shared.startObservingSessionTimer(roomId: roomId) {
+            //                        //                        self.UpdateStatus(status : true)
+            //                    }
+            //                    fetchBiddingDetail(roomId: roomId)
+            //                    //For Show Automatic Sheet
+            //                    if isLive {
+            //                        print("👀 Starting countdown observer for roomId: \(roomId)")
+            //                        FirebaseManager.shared.observeCountdown(for: roomId) { seconds in
+            //                            DispatchQueue.main.async {
+            //                                print("🟡 Countdown update: \(seconds)s")
+            //                                self.bidCountdownSeconds = seconds
+            //
+            //                                if seconds == 30 {
+            //                                    // Countdown just started
+            //                                    self.hasCountdownStarted = true
+            //                                }
+            //
+            //                                if self.hasCountdownStarted && seconds == 0 {
+            //                                    print("⏰ Countdown reached zero, showing sheet")
+            //                                    currentBottomSheet = .shop
+            //                                    fetchLatestProductList()
+            //                                    self.showSellSheet = true
+            //                                    self.hasCountdownStarted = false
+            //                                }
+            //                            }
+            //                        }
+            //                    }
+            //                } else {
+            //                    print("❌ Failed to login to room: \(errorCode)")
+            //                }
+            //            }
             
             if data.is_live == true {
                 self.showStartTime = Date()
@@ -1045,12 +1044,13 @@ struct RehearsalScreen: View {
         
         SocketManagerService.shared.createRoom(payload)
     }
-
+    
     //MARK: Current Timestamp
     func getCurrentTimestamp() -> String {
         let now = Date()
         return String(Int(now.timeIntervalSince1970))
     }
+    
     func UpdateStatus(status : Bool,selectedID : String? = nil){
         if status{
             Task {
@@ -1059,11 +1059,8 @@ struct RehearsalScreen: View {
                     showhud = true
                     return
                 }
-                
                 let is_Live = "true"
                 await viewModel.UpdateLiveShows(param: LiveShowUpdateRequest(schedule_show_id: showUd, is_live: is_Live))
-                
-                
             }
         }else{
             Task {
@@ -1072,17 +1069,17 @@ struct RehearsalScreen: View {
                     showhud = true
                     return
                 }
-//                SVProgressHUD.show()
+                //                SVProgressHUD.show()
                 let is_Live = "true"
                 ShowData(data: showsData,selectedID: selectedID)
-//                await viewModel.UpdateLiveShows(param: LiveShowUpdateRequest(schedule_show_id: showUd, is_live: is_Live))
-//                await SVProgressHUD.dismiss()
-//                // ✅ Only call success if we have a valid product ID
-//                if let validID = selectedID, !validID.isEmpty {
-//                    success(selectedID: validID)
-//                } else {
-//                    print("⚠️ Skipping success(): selectedID is nil or empty")
-//                }
+                //                await viewModel.UpdateLiveShows(param: LiveShowUpdateRequest(schedule_show_id: showUd, is_live: is_Live))
+                //                await SVProgressHUD.dismiss()
+                //                // ✅ Only call success if we have a valid product ID
+                //                if let validID = selectedID, !validID.isEmpty {
+                //                    success(selectedID: validID)
+                //                } else {
+                //                    print("⚠️ Skipping success(): selectedID is nil or empty")
+                //                }
             }
         }
     }
@@ -1115,7 +1112,7 @@ struct RehearsalScreen: View {
         Button(action: {
             if action == .switchView {
                 isUsingFrontCamera.toggle()
-//                ZegoExpressEngine.shared().useFrontCamera(isUsingFrontCamera)
+                //                ZegoExpressEngine.shared().useFrontCamera(isUsingFrontCamera)
                 Task{
                     await castManager.switchCamera()
                 }
@@ -1183,13 +1180,7 @@ struct RehearsalScreen: View {
             }
         }
     }
-    
-  
-    
-    
 }
-
-
 
 enum SideMenu {
     case more, promote, clip, share, switchView, shop,endShow

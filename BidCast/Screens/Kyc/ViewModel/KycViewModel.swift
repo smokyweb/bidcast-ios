@@ -15,8 +15,6 @@ final class KycViewModel: ObservableObject {
     @Published var checkKycDict = ResponseModel<CheckKycModel>()
     @Published var fundTransferDict = ResponseModel<FundTransferModel>()
     @Published var errorMessage: String? = nil
-
-
     
     // MARK: - Get checkKycDetail.
     func getKycDetail() async {
