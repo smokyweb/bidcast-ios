@@ -345,9 +345,9 @@ struct ShopBottomSheetView: View {
                             .padding(.trailing, -20)
                     }
                 }
-                Text("Price : $\(product.price)")
+                Text("Price : $\(product.price ?? "")")
                     .font(.custom(poppinsRegular, size: 11.0))
-                Text("Status: \(product.status)")
+                Text("Status: \(product.status ?? "")")
                     .font(.custom(poppinsRegular, size: 11.0))
                     .foregroundColor(product.status == "sold" ? .red : .black)
             }

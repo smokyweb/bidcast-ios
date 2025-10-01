@@ -352,7 +352,7 @@ struct LiveStream: View {
                                                 .foregroundColor(.white)
                                             //                                                    .background(Color.purple.opacity(0.7))
                                             //                                                    .cornerRadius(4)
-                                            Text("Price : $\(product.price)")
+                                            Text("Price : $\(product.price ?? "0.0")")
                                                 .font(.custom(poppinsSemiBold, size: 12.0))
                                                 .padding(4)
                                                 .foregroundColor(.white)
