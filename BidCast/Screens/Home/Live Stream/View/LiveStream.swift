@@ -130,9 +130,9 @@ struct LiveStream: View {
         }
     }
     
-    @State  var showSheet: Bool = false
-    @State  var winnerSheet: Bool = false
-    @State  var walletPaymentSheet: Bool = false
+    @State var showSheet: Bool = false
+    @State var winnerSheet: Bool = false
+    @State var walletPaymentSheet: Bool = false
     @State var maxBidAmountSheet : Bool = false
     @StateObject private var joinManager = SubscriberViewModel(renderer: MCAcceleratedVideoRenderer())
     @State private var renderer = MCAcceleratedVideoRenderer()
@@ -156,7 +156,6 @@ struct LiveStream: View {
     @Binding var search : String
     @Binding var currentPage : Int
     var body: some View {
-        
         GeometryReader { geometry in
             if liveShowsData.count != 0{
                 ZStack(alignment: .top) {
@@ -331,7 +330,7 @@ struct LiveStream: View {
                             
                             .animation(.easeOut(duration: 0.25), value: keyboardResponder.currentHeight)
                             
-                            VStack(alignment: .leading,spacing: 12){
+                            VStack(alignment: .leading,spacing: 12) {
                                 //MARK: Product Details
                                 let currentProducts = productData.filter { $0.isCurrent }
                                 if let product = currentProducts.first {
@@ -456,7 +455,7 @@ struct LiveStream: View {
                                                 .font(.custom(poppinsBold, size: 13))
                                                 .foregroundColor(.white)
                                             
-                                            Text(String(format: "00:00:%02d", countdown))
+                                            Text(String(format: "00:00:%02d", socketManagerChat.bidTime))
                                                 .font(.custom(poppinsSemiBold, size: 13))
                                                 .foregroundColor(.white)
                                         }
@@ -930,6 +929,7 @@ struct LiveStream: View {
                 socketManagerChat.sendChat(roomId: roomId, message: "Joining the host… ")
                 socketManagerChat.listenForChat()
                 socketManagerChat.listenForViewerCount()
+                socketManagerChat.listenForBidTimer(roomId: roomId)
             }
             
             // Update follow status

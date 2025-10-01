@@ -316,8 +316,7 @@ struct RehearsalScreen: View {
                     )
                 }
                 
-                // 💬 Bottom Chat & Start Button
-                
+                // 💬 bottom Chat & Start Button
                 VStack(alignment: .leading, spacing: 8) {
                     Spacer()
                     if socketManager.chats.count > 0{
@@ -757,16 +756,12 @@ struct RehearsalScreen: View {
     }
     
     func ShowData(data:HomeModel ,selectedID : String? = nil) {
-        
-        
-        
         let roomId = "live_room_\(data.user_id ?? 0)_\(data.id ?? 0)"
         self.roomId = roomId
         
         Task{
             try await castManager.publish(streamName:  self.roomId)
         }
-        
         
         let product: [ProductData] = (data.products ?? []).compactMap { product in
             guard let id = product.id,
@@ -790,9 +785,7 @@ struct RehearsalScreen: View {
             )
         }
         
-        
         let seller = SellerModel(isFollowed: data.user?.is_followed ?? false, id: "\(data.user?.id ?? 0 )", name: data.user?.name ?? "", rating: data.user?.rating ?? "",image: data.user?.profile_image ?? "")
-        
         
         sendCreateRoomEvent(
             showId: "\(data.id ?? 0)",
@@ -814,7 +807,7 @@ struct RehearsalScreen: View {
         socketManager.listenForChat()
         socketManager.listenForViewerCount()
         socketManager.listenForShowTimer(roomId: self.roomId)
-        
+//        socketManager.listenForBidTimer(roomId: self.roomId)
         if data.is_live == true {
             self.showStartTime = Date()
             startLiveTimer()
@@ -828,7 +821,6 @@ struct RehearsalScreen: View {
                 
             }
         }
-        
     }
     
     func successPromote(){

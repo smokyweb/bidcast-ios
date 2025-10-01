@@ -14,7 +14,8 @@ class SocketManagerService: NSObject, ObservableObject {
     @Published var rooms: [RoomModel] = []
     @Published var chats: [CommentModel] = []
     @Published  var viewerCount: Int = 0
-    @Published  var showTime: String = "00:00:00"
+    @Published var showTime: String = "00:00:00"
+    @Published var bidTime: String = "00:00:00"
     
     
     var onRoomsUpdated: (([String]) -> Void)?
@@ -258,16 +259,41 @@ class SocketManagerService: NSObject, ObservableObject {
             }
             
             // Ensure room_id exists if you want to check for specific room
-            guard let roomId = json["room_id"] as? String,
+            guard let roomID = json["room_id"] as? String,
                   let elapsed = json["elapsed"] as? Int else {
                 print("❌ Missing keys in show timer data:", json)
                 return
             }
             
             // Optionally, check if this is the room you care about
-            if roomId == roomId {
+            if roomID == roomId {
                 let time  = self.formatElapsedTime(seconds: elapsed)
                 self.showTime = time
+                print("Show Time: \(time)")
+                print("⏱ Elapsed time for \(roomId):", elapsed)
+            }
+        }
+    }
+    
+    func listenForBidTimer(roomId:String) {
+        socket.on("bid_timer_update") { data, _ in
+            guard let json = data.first as? [String: Any] else {
+                print("❌ Invalid show timer data:", data)
+                return
+            }
+            
+            // Ensure room_id exists if you want to check for specific room
+            guard let roomID = json["room_id"] as? String,
+                  let elapsed = json["elapsed"] as? Int else {
+                print("❌ Missing keys in show timer data:", json)
+                return
+            }
+            
+            // Optionally, check if this is the room you care about
+            if roomID == roomId {
+                let time  = self.formatElapsedTime(seconds: elapsed)
+                self.bidTime = time
+                print("Bid Time: \(time)")
                 print("⏱ Elapsed time for \(roomId):", elapsed)
             }
         }
