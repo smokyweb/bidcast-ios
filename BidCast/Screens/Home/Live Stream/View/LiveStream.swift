@@ -805,20 +805,17 @@ struct LiveStream: View {
            
             Task{
                 SVProgressHUD.show()
-//                liveShowsData.removeAll()
-//                roomID.removeAll()
-//                streamID.removeAll()
-//                await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: "live",category: category,search: search, page: "\(currentPage)"))
-//                success()
                
                 await self.homeViewModel.getProfile()
                 await SVProgressHUD.dismiss()
                 await getProfileSuccess()
 //               try await joinManager.subscribe(streamName: currentRoomID)
+                
+                socketManagerChat.joinRoom(roomId: currentRoomID, completion: {
+//                        guard let self = self else { return }
+                        joinStreamUsingSocket(roomId: currentRoomID)
+                    })
                     
-//                socketManagerChat.joinRoom(roomId: currentRoomID)
-
-                joinStreamUsingSocket(roomId: currentRoomID)
                 
             }
         }
@@ -885,7 +882,7 @@ struct LiveStream: View {
         }
     }
     @MainActor
-    func joinStreamUsingSocket(roomId: String) {
+    func joinStreamUsingSocket(roomId: String)  {
         let socketRooms = socketManagerChat.rooms
         guard !socketRooms.isEmpty else {
             showError = true
@@ -925,7 +922,7 @@ struct LiveStream: View {
                 
                 try await joinManager.subscribe(streamName: roomId)
                 
-                socketManagerChat.joinRoom(roomId: roomId)
+//                socketManagerChat.joinRoom(roomId: roomId)
                 socketManagerChat.sendChat(roomId: roomId, message: "Joining the host… ")
                 socketManagerChat.listenForChat()
                 socketManagerChat.listenForViewerCount()

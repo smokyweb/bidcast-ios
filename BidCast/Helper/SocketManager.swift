@@ -184,7 +184,7 @@ class SocketManagerService: NSObject, ObservableObject {
         socket.emit("liveScheduler", payload)
     }
     
-    func joinRoom(roomId: String,userId : Int = UserDefaults.userId) {
+    func joinRoom(roomId: String,userId : Int = UserDefaults.userId, completion: @escaping (() -> Void) ) {
         guard socket.status == .connected else {
             if socket.status == .connecting || socket.status == .notConnected {
                 print("Socket status \(socket.status)")
@@ -196,6 +196,7 @@ class SocketManagerService: NSObject, ObservableObject {
         let payload: [String: Any] = ["room_id": roomId,"user_id" : userId]
         print("📡 Sending liveScheduler with payload:", payload)
         socket.emit("join_room", payload)
+        completion()
     }
     
     func leaveRoom(roomId: String,userId : Int = UserDefaults.userId) {
