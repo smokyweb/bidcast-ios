@@ -44,7 +44,7 @@ struct WalletScreen: View {
             CustomSegmentedControl(preselectedIndex: $segment,
                                    options: WalletScreenSegment.allCases)
             .padding(.horizontal)
-            ScrollView {
+            ScrollView  {
                 VStack(spacing: 20) {
                     
                     switch segment {
@@ -57,14 +57,18 @@ struct WalletScreen: View {
                             NoDataView(message: AppString.NoTransactionHistoryFound)
                         }else{
                             VStack(spacing: 10) {
-                                SegmentedControlView(segments: WalletSegment.allCases, selectedSegment: $selectedButton, isWithBorder: true)
+                                SegmentedControlView(segments: WalletSegment.allCases, selectedSegment: $selectedButton, isWithBorder: true){ selection in
+                                        print("SegmentedControlView: \(selectedButton)")
+                                        self.fetchTransaction()
+                                    }
+                                
                             }
                             ForEach(dataTransaction.indices, id: \.self) { index in
                                 let data = dataTransaction[index]
                                 TransactionsTabView(
                                     title: data.source_type ?? "",
                                     subLabel: data.card_number ?? "",
-                                    price: "\(data.total ?? 0)"
+                                    price: "\(data.total ?? "0")"
                                 )
                                 .onAppear{
                                     handlePaginationForTransaction(index: index)
@@ -98,7 +102,7 @@ struct WalletScreen: View {
         }
         .onChange(of: segment) { newValue in
             if newValue == .transactions {
-                fetchTransaction(page: currentPage)
+                fetchTransaction()
             }
         }
         .background(Color(UIColor.systemGroupedBackground).ignoresSafeArea())
@@ -137,7 +141,7 @@ struct WalletStatTile: View {
 extension WalletScreen{
     
     // MARK: - Fetch Inventory List
-    func fetchTransaction(page: Int) {
+    func fetchTransaction() {
         Task{
            guard Reachability.isConnectedToNetwork() else {
                 hudMsg = "No Internet Connection"
@@ -145,7 +149,12 @@ extension WalletScreen{
                 return
             }
             SVProgressHUD.show()
-            await viewModel.getTransaction(param: TransactionRequest(page: currentPage))
+            if selectedButton == .all {
+                await viewModel.getTransaction(param: TransactionRequest(page: currentPage))
+            }
+            else  {
+                await viewModel.getTransaction(param: TransactionRequest(page: currentPage, status: selectedButton.rawValue))
+            }
             await SVProgressHUD.dismiss()
             transactionSuccess()
         }
@@ -155,7 +164,12 @@ extension WalletScreen{
     func fetchMoreTransaction() {
         Task {
             currentPage += 1
-            await viewModel.getTransaction(param: TransactionRequest(page: currentPage))
+            if selectedButton == .all {
+                await viewModel.getTransaction(param: TransactionRequest(page: currentPage))
+            }
+            else  {
+                await viewModel.getTransaction(param: TransactionRequest(page: currentPage, status: selectedButton.rawValue))
+            }
             transactionSuccess()
         }
     }

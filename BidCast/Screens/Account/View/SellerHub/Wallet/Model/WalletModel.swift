@@ -16,7 +16,7 @@ struct TransactionModel : Codable {
     var source_type : String?
     var type : String?
     var date : String?
-    var total : Int?
+    var total : String?
     var sub_total : Int?
     var tax_amount : Int?
     var shipping_charges : Int?

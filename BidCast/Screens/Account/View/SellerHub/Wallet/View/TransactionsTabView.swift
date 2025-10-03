@@ -8,30 +8,29 @@
 import SwiftUI
 
 struct TransactionsTabView: View {
-   @State var title = ""
+    
+    @State var title = ""
     @State var subLabel = ""
     @State var price = ""
     
-    
     var body: some View {
-      
-            VStack(spacing: 15) {
-                
-                
-                    ListCell(
-                        isComeFrom: "Wallet",
-                        image: "",
-                        title: title,
-                        vectorImg: .icArrowUp,
-                        subLabel: "xxxx-xxxx-xxxx-\(subLabel)",
-                        tintColot: "",
-                        isVectorImgHidden: true,
-                        isDisplayPrice: true,
-                        price: "$\(price)"
-                    )
-                
-            }
-            .padding(.horizontal, 0) 
+        
+        VStack(spacing: 15) {
+            
+            ListCell(
+                isComeFrom: "Wallet",
+                image: "",
+                title: title,
+                vectorImg: .icArrowUp,
+                subLabel: "xxxx-xxxx-xxxx-\(subLabel)",
+                tintColot: "",
+                isVectorImgHidden: true,
+                isDisplayPrice: true,
+                price: "$\(price)"
+            )
+            
+        }
+        .padding(.horizontal, 0)
         
     }
 }
@@ -42,7 +41,7 @@ enum WalletSegment: String, CaseIterable, CustomStringConvertible {
     case processing = "Processing"
     case complete = "Complete"
     case withdrawal = "Withdrawal"
-
+    
     var description: String {
         return NSLocalizedString(rawValue, comment: "")
     }
