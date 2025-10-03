@@ -645,32 +645,26 @@ final class SocketManagerService: NSObject, ObservableObject {
                var updatedRoom = rooms[safe: roomIndex],
                var products = updatedRoom.products {
                 
-                // Find the product from winner info (or fallback)
-                let productId = winner?.product_id ?? (products.first?.id ?? "")
-                if let pIndex = products.firstIndex(where: { $0.id == productId }) {
-                    products[pIndex].status = "sold"
-                    products[pIndex].isCurrent = false
-                    
-                    updatedRoom = RoomModel(
-                        products: products,
-                        room_id: updatedRoom.room_id,
-                        seller: updatedRoom.seller,
-                        show_detail: updatedRoom.show_detail,
-                        thumbnail: updatedRoom.thumbnail,
-                        viewer_count: updatedRoom.viewer_count,
-                        highest_bid: winner,
-                        is_live: updatedRoom.is_live,
-                        time: updatedRoom.time,
-                        show_id: updatedRoom.show_id,
-                        allow_bid_for_all: updatedRoom.allow_bid_for_all,
-                        bid_count_down: updatedRoom.bid_count_down,
-                        show_timer: updatedRoom.show_timer
-                    )
-                    
-                    DispatchQueue.main.async {
-                        self.rooms[roomIndex] = updatedRoom
-                    }
+                updatedRoom = RoomModel(
+                    products: products,
+                    room_id: updatedRoom.room_id,
+                    seller: updatedRoom.seller,
+                    show_detail: updatedRoom.show_detail,
+                    thumbnail: updatedRoom.thumbnail,
+                    viewer_count: updatedRoom.viewer_count,
+                    highest_bid: winner,
+                    is_live: updatedRoom.is_live,
+                    time: updatedRoom.time,
+                    show_id: updatedRoom.show_id,
+                    allow_bid_for_all: updatedRoom.allow_bid_for_all,
+                    bid_count_down: updatedRoom.bid_count_down,
+                    show_timer: updatedRoom.show_timer
+                )
+                
+                DispatchQueue.main.async {
+                    self.rooms[roomIndex] = updatedRoom
                 }
+                //                }
             }
             
             logger.info("✅ Bid finalized for room \(roomId), product \(winner?.product_id ?? "unknown")")
