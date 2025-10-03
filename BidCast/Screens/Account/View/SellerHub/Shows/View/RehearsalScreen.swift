@@ -480,7 +480,7 @@ struct RehearsalScreen: View {
                         }
                         showProductSheet = false
                         print("product ID is :\(selectedID)")
-                        print("Live Room ID is :\(liveRoomId)")
+                        print("Live Room ID is :\(self.roomId)")
                         UpdateStatus(status: false, selectedID: selectedID)
                     },
                     initialSelectedProductId: initialSelectedProductId
@@ -584,7 +584,7 @@ struct RehearsalScreen: View {
                                 showSellSheet = false
                                 if !selectedID.isEmpty {
                                     print("product ID is :\(selectedID)")
-                                    print("Live Room ID is :\(liveRoomId)")
+                                    print("Live Room ID is :\(self.roomId)")
                                     setProductAsCurrent(selectedID: selectedID)
                                 }
                             },
@@ -706,38 +706,17 @@ struct RehearsalScreen: View {
     }
     
     func fetchLatestProductList(){
-        FirebaseManager.shared.listenToLiveProducts(roomId: liveRoomId) { products in
-            self.productData = products
-            print("DEBUG: fetchLatestProductList with roomId = \(liveRoomId)")
+    
+//        FirebaseManager.shared.listenToLiveProducts(roomId: liveRoomId) { products in
+//            self.productData = products
+        print("DEBUG: fetchLatestProductList with roomId = \(self.roomId)")
             print("DEBUG: initialSelectedProductId= \(initialSelectedProductId)")
-            initialSelectedProductId = products.first(where: { $0.isCurrent ?? false })?.id ?? ""
-        }
+        initialSelectedProductId = self.productData.first(where: { $0.isCurrent })?.id ?? ""
+//        }
     }
     
     func setProductAsCurrent(selectedID : String){
-        FirebaseManager.shared.setProductAsCurrent(roomId: liveRoomId, selectedID: selectedID) { result in
-            switch result {
-            case .success():
-                hudMsg = "Product is now ready for bidding."
-                showhud = true
-                print("✅ Product is now ready for bidding.")
-                
-            case .failure(.alreadyCurrent):
-                hudMsg = "Your product is already live for bidding."
-                showhud = true
-                print("⚠️ Already current product.")
-                
-            case .failure(.productNotFound):
-                hudMsg = "Product not available"
-                showhud = true
-                print("❌ Product not found.")
-                
-            case .failure(.firebaseError(let msg)):
-                hudMsg = "Firebase error: \(msg)"
-                showhud = true
-                print("❌ Firebase error: \(msg)")
-            }
-        }
+        socketManager.setNextProduct(roomId: self.roomId, productId: selectedID)
     }
     
     func fetchBiddingDetail(roomId: String) {
@@ -803,6 +782,10 @@ struct RehearsalScreen: View {
             allowBidForAll: true,
             showTimer: ""
         )
+        SocketManagerService.shared.observeRoomUpdates { newRoom in
+            print("🏠 New room received:", newRoom.room_id ?? "unknown")
+            fetchProducts(for: self.roomId)
+        }
         
         SocketManagerService.shared.startLiveScheduler(roomId: self.roomId)
         isLive = true
@@ -813,6 +796,29 @@ struct RehearsalScreen: View {
         socketManager.listenForViewerCount()
         socketManager.listenForShowTimer(roomId: self.roomId)
 //        socketManager.listenForBidTimer(roomId: self.roomId)
+       
+       
+        SocketManagerService.shared.observeBidCountdown(
+            for: self.roomId,
+            onUpdate: { seconds in
+                print("🟡 Countdown update: \(seconds)s")
+                self.bidCountdownSeconds = seconds
+            },
+            onStart: {
+                print("🚀 Countdown started (30s left)")
+                self.hasCountdownStarted = true
+            },
+            onComplete: {
+                print("⏰ Countdown reached zero, showing sheet")
+                fetchProducts(for: self.roomId)
+                self.currentBottomSheet = .shop
+                self.fetchLatestProductList()
+                self.showSellSheet = true
+                self.hasCountdownStarted = false
+            }
+        )
+        socketManager.listenForBidFinalized()
+        
         if data.is_live == true {
             self.showStartTime = Date()
             startLiveTimer()
@@ -825,6 +831,20 @@ struct RehearsalScreen: View {
             }else{
                 
             }
+        }
+    }
+    @MainActor
+    func fetchProducts(for roomId: String) {
+        print("print PRoduct")
+        guard let socketRoom = socketManager.rooms.first(where: { $0.room_id == roomId }) else {
+            self.productData = []
+//            self.currentProductIndex = 0
+//            self.currentPrice = 0.0
+            return
+        }
+        
+        if let products = socketRoom.products {
+            self.productData = products
         }
     }
     
@@ -924,6 +944,9 @@ struct RehearsalScreen: View {
                 allowBidForAll: true,
                 showTimer: ""
             )
+            
+            
+            
             //            FirebaseManager.shared.createLiveSession(showId:"\(data.id ?? 0)", userId: "\(data.user_id ?? 0)", product: product, seller: seller, thumbnail: data.thumbnail?.first ?? "", time: data.time ?? "", date: data.date ?? "", allowBidForAll: true)
             
             
@@ -1001,7 +1024,7 @@ struct RehearsalScreen: View {
         allowBidForAll: Bool,
         showTimer:String
     ) {
-        // Convert your models into dictionaries for the payload
+        
         let productPayload = products.map { product in
             [
                 "category": product.category,

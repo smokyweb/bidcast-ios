@@ -932,6 +932,20 @@ struct LiveStream: View {
                 socketManagerChat.listenForChat()
                 socketManagerChat.listenForViewerCount()
                 socketManagerChat.listenForBidTimer(roomId: roomId)
+                SocketManagerService.shared.listenForRoomEnded { roomId in
+                    print("🔥 STREAM REMOVED CALLBACK TRIGGERED 🔥")
+
+
+                    // Show "Stream Ended" alert
+                    self.alertType = .sheetType(
+                        icon: .alert,
+                        title: "Stream Ended",
+                        message: "The host has ended the live stream.",
+                        primaryBtnText: AppString.ok.localized,
+                        secondaryBtnText: ""
+                    )
+                    self.showError = true
+                }
             }
             
             // Update follow status

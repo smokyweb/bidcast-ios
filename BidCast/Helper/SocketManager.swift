@@ -389,7 +389,7 @@ final class SocketManagerService: NSObject, ObservableObject {
             self?.logger.error("⚠️ Socket error: \(String(describing: data))")
         }
         
-        observeRoomUpdates()
+//        observeRoomUpdates()
         socket.connect()
     }
     
@@ -467,24 +467,59 @@ final class SocketManagerService: NSObject, ObservableObject {
         }
     }
     
-    // MARK: - Listen Events
-    func observeRoomUpdates() {
-        socket.on("room_create_get") { [weak self] data, _ in
-            guard let self, let json = data.first as? [String: Any] else { return }
-            do {
-                let decoded = try JSONSerialization.data(withJSONObject: json)
-                let room = try JSONDecoder().decode(RoomModel.self, from: decoded)
-                if !rooms.contains(where: { $0.room_id == room.room_id }) {
-                    DispatchQueue.main.async { self.rooms.append(room) }
+//    // MARK: - Listen Events
+//    func observeRoomUpdates() {
+//        socket.on("room_create_get") { data, _ in
+//            guard let json = data.first as? [String: Any] else { return }
+//            do {
+//                let decoded = try JSONSerialization.data(withJSONObject: json)
+//                let room = try JSONDecoder().decode(RoomModel.self, from: decoded)
+//                
+//                if !self.rooms.contains(where: { $0.room_id == room.room_id }) {
+//                    self.rooms.append(room)
+//                }
+////                print("✅ Received RoomDetail: \(self.rooms)")
+//                let roomIDs = self.rooms.compactMap { $0.room_id }
+//                self.onRoomsUpdated?(roomIDs)
+//                self.logger.info("✅ Room updated: \(room.room_id ?? "")")
+//            } catch {
+//                self.logger.error("❌ Room decode error: \(error.localizedDescription)")
+//            }
+//        }
+//    }
+    
+    func observeRoomUpdates(completion: ((_ room: RoomModel) -> Void)? = nil) {
+        performIfConnected {
+            socket.on("room_create_get") { [weak self] data, _ in
+                guard let self else { return }
+                guard let json = data.first as? [String: Any] else { return }
+                
+                do {
+                    let decodedData = try JSONSerialization.data(withJSONObject: json)
+                    let room = try JSONDecoder().decode(RoomModel.self, from: decodedData)
+                    
+                    // ✅ Append only if not already present
+                    if !self.rooms.contains(where: { $0.room_id == room.room_id }) {
+                        self.rooms.append(room)
+                    }
+                    
+                    print("✅ Received RoomDetail: \(room.room_id ?? "Unknown")")
+                    
+                    // ✅ Notify listeners if needed
+                    let roomIDs = self.rooms.compactMap { $0.room_id }
+                    self.onRoomsUpdated?(roomIDs)
+                    
+                    // ✅ Trigger completion callback (optional)
+                    completion?(room)
+                    
+                } catch {
+                    print("❌ Decode error (Room):", error)
                 }
-                let roomIDs = self.rooms.compactMap { $0.room_id }
-                onRoomsUpdated?(roomIDs)
-                logger.info("✅ Room updated: \(room.room_id ?? "")")
-            } catch {
-                logger.error("❌ Room decode error: \(error.localizedDescription)")
             }
         }
     }
+   
+
     
     func listenForChat() {
         socket.on("chat_get") { [weak self] data, _ in
@@ -567,4 +602,127 @@ final class SocketManagerService: NSObject, ObservableObject {
         let secs = seconds % 60
         return String(format: "%02d:%02d:%02d", hours, minutes, secs)
     }
+    
+    func listenForRoomEnded(onEnd: @escaping (_ roomId: String) -> Void) {
+        socket.on("roomEnded") { [weak self] data, _ in
+            guard let self,
+                  let json = data.first as? [String: Any],
+                  let roomId = json["room_id"] as? String else { return }
+            
+            logger.info("🏁 Room ended: \(roomId)")
+            
+            DispatchQueue.main.async {
+                // Remove room from active list
+                self.rooms.removeAll { $0.room_id == roomId }
+                
+                // Trigger callback to the ViewModel or UI
+                onEnd(roomId)
+            }
+        }
+    }
+    func listenForBidFinalized(completion: ((_ roomId: String, _ productId: String, _ winner: HighestBid?) -> Void)? = nil) {
+        socket.on("bid_finalized") { [weak self] data, _ in
+            guard let self,
+                  let json = data.first as? [String: Any],
+                  let roomId = json["room_id"] as? String else {
+                print("❌ Invalid bid_finalized data:", data)
+                return
+            }
+            
+            // Parse winner info
+            var winner: HighestBid? = nil
+//            if let winnerJson = json["winner"] as? [String: Any] {
+//                do {
+//                    let decodedWinner = try JSONSerialization.data(withJSONObject: winnerJson)
+//                    winner = try JSONDecoder().decode(HighestBid.self, from: decodedWinner)
+//                } catch {
+//                    print("❌ Failed to decode winner:", error)
+//                }
+//            }
+//            
+            // Update product status in the room
+            if let roomIndex = rooms.firstIndex(where: { $0.room_id == roomId }),
+               var updatedRoom = rooms[safe: roomIndex],
+               var products = updatedRoom.products {
+                
+                // Find the product from winner info (or fallback)
+                let productId = winner?.product_id ?? (products.first?.id ?? "")
+                if let pIndex = products.firstIndex(where: { $0.id == productId }) {
+                    products[pIndex].status = "sold"
+                    products[pIndex].isCurrent = false
+                    
+                    updatedRoom = RoomModel(
+                        products: products,
+                        room_id: updatedRoom.room_id,
+                        seller: updatedRoom.seller,
+                        show_detail: updatedRoom.show_detail,
+                        thumbnail: updatedRoom.thumbnail,
+                        viewer_count: updatedRoom.viewer_count,
+                        highest_bid: winner,
+                        is_live: updatedRoom.is_live,
+                        time: updatedRoom.time,
+                        show_id: updatedRoom.show_id,
+                        allow_bid_for_all: updatedRoom.allow_bid_for_all,
+                        bid_count_down: updatedRoom.bid_count_down,
+                        show_timer: updatedRoom.show_timer
+                    )
+                    
+                    DispatchQueue.main.async {
+                        self.rooms[roomIndex] = updatedRoom
+                    }
+                }
+            }
+            
+            logger.info("✅ Bid finalized for room \(roomId), product \(winner?.product_id ?? "unknown")")
+            
+            // Trigger optional completion callback
+            completion?(roomId, winner?.product_id ?? "", winner)
+        }
+    }
+
+    func observeBidCountdown(for roomId: String,
+                             onUpdate: @escaping (Int) -> Void,
+                             onStart: @escaping () -> Void,
+                             onComplete: @escaping () -> Void) {
+        socket.on("bid_timer_update") { [weak self] data, _ in
+            guard let self,
+                  let json = data.first as? [String: Any],
+                  let roomID = json["room_id"] as? String,
+                  let remaining = json["remaining"] as? Int,
+                  roomID == roomId else { return }
+
+            DispatchQueue.main.async {
+                onUpdate(remaining)
+                
+               
+                if remaining == 30 {
+                    onStart()
+                }
+                
+                
+                if remaining == 0 {
+                    onComplete()
+                }
+            }
+        }
+    }
+    
+    func setNextProduct(roomId: String, productId: String) {
+        performIfConnected {
+            let payload: [String: Any] = [
+                "room_id": roomId,
+                "product_id": productId
+            ]
+            socket.emit("set_next_product", payload)
+            logger.info("📦 Emitted next product for room \(roomId): product_id=\(productId)")
+        }
+    }
 }
+
+
+
+//set_next_product { "room_id", "product_id"}
+//roomEnded
+//Event =  allow_bid_for_all -> payload = room_id = abc , allow_bid_for_all = true/false
+//get_highest_bid
+//bid_finalized
