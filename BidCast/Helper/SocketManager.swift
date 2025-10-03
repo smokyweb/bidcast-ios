@@ -5,309 +5,308 @@
 //  Created by Ankit-JAM-E-294 on 10/03/25.
 //
 
-import SocketIO
-@MainActor
-class SocketManagerService: NSObject, ObservableObject {
-    static let shared = SocketManagerService()
-    
-    @Published var isConnected = false
-    @Published var rooms: [RoomModel] = []
-    @Published var chats: [CommentModel] = []
-    @Published  var viewerCount: Int = 0
-    @Published var showTime: String = "00:00:00"
-    @Published var bidTime: String = "00:00:00"
-    
-    
-    var onRoomsUpdated: (([String]) -> Void)?
-    var liveSchedulerTimer: Timer?
-    
-    private var socket: SocketIOClient!
-    private var socketManager: SocketManager!
-    
-    override private init() {
-        super.init()
-    }
-    
-    // MARK: - Setup Socket
-    func setupSocket() {
-        socketManager = SocketManager(
-            socketURL: URL(string: "https://node.bidcast.betaplanets.com")!,
-            config: [.log(false), .compress, .reconnects(true), .path("/socket.io")]
-        )
-        socket = socketManager.defaultSocket
-        
-        socket.on(clientEvent: .connect) { _, _ in
-            self.isConnected = true
-            print("✅ Socket connected")
-        }
-        socket.on(clientEvent: .disconnect) { data, _ in
-            self.isConnected = false
-            print("❌ Disconnected:", data)
-        }
-        socket.on(clientEvent: .error) { data, _ in
-            print("⚠️ Socket error:", data)
-        }
-        
-        listenForRoomUpdates()
-        //        listenForChat()
-        socket.connect()
-    }
-    
-    func disconnect() {
-        socket.disconnect()
-        socket.removeAllHandlers()
-        isConnected = false
-    }
-    
-    // MARK: - Room
-    func createRoom(_ roomData: [String: Any]) {
-        guard socket.status == .connected else{
-            if socket.status == .connecting || socket.status == .notConnected{
-                print("Socket status \(socket.status)")
-                setupSocket()
-            }
-            return
-        }
-        
-        print("Socket status \(socket.status)")
-        print("Creating Room \(roomData)")
-        socket.emit("room_create", roomData)
-    }
-    
-    // MARK: - Room
-    func sendBid(_ roomData: [String: Any]) {
-        guard socket.status == .connected else{
-            if socket.status == .connecting || socket.status == .notConnected{
-                print("Socket status \(socket.status)")
-                setupSocket()
-            }
-            return
-        }
-        
-        print("Socket status \(socket.status)")
-        print("Creating Room \(roomData)")
-        socket.emit("place_bid", roomData)
-    }
-    
-    func endStreaming(roomId: String) {
-        guard socket.status == .connected else{
-            if socket.status == .connecting || socket.status == .notConnected{
-                print("Socket status \(socket.status)")
-                setupSocket()
-            }
-            return
-        }
-        let payload: [String: Any] = ["room_id": roomId]
-        print("Socket status \(socket.status)")
-        print("Ending streaming Room \(payload)")
-        socket.emit("endRoom", payload)
-    }
-    
-    func leaveRoom(_ roomData: [String: Any]) {
-        guard socket.status == .connected else{
-            if socket.status == .connecting || socket.status == .notConnected{
-                print("Socket status \(socket.status)")
-                setupSocket()
-            }
-            return
-        }
-        
-        print("Socket status \(socket.status)")
-        print("Creating Room \(roomData)")
-        socket.emit("leave_room", roomData)
-    }
-    
-    
-    // MARK: - Chat
-    func sendChat(roomId: String, message: String) {
-        guard isConnected else { return }
-        
-        let payload: [String: Any] = ["room_id": roomId,
-                                      "message": message,
-                                      "user_id": "\(UserDefaults.userId)",
-                                      "user_name":UserDefaults.userName,
-                                      "user_image":UserDefaults.profileURL]
-        socket.emit("chat", payload)
-    }
-    
-    func listenForChat() {
-        socket.on("chat_get") { data, _ in
-            guard let json = data.first as? [String: Any] else {
-                print("json Error \(data)")
-                return }
-            do {
-                let decoded = try JSONSerialization.data(withJSONObject: json)
-                let chat = try JSONDecoder().decode(CommentModel.self, from: decoded)
-                //                self.chats.append(chat)
-                DispatchQueue.main.async {
-                    self.chats.append(chat)
-                }
-                print("chatList \(self.chats)")
-            } catch {
-                print("Decode error (Chat):", error)
-            }
-        }
-    }
-    
-    func startLiveScheduler(roomId: String) {
-        // Invalidate existing timer if running
-        liveSchedulerTimer?.invalidate()
-        
-        // Send immediately once
-        sendLiveScheduler(roomId: roomId)
-        
-        // Schedule every 270 seconds (4.5 minutes)
-        liveSchedulerTimer = Timer.scheduledTimer(withTimeInterval: 270, repeats: true) { [weak self] _ in
-            self?.sendLiveScheduler(roomId: roomId)
-        }
-        
-        print("✅ LiveScheduler started for room: \(roomId)")
-    }
-    
-    func stopLiveScheduler() {
-        liveSchedulerTimer?.invalidate()
-        liveSchedulerTimer = nil
-        print("🛑 LiveScheduler stopped")
-    }
-    
-    func sendLiveScheduler(roomId: String) {
-        guard socket.status == .connected else {
-            if socket.status == .connecting || socket.status == .notConnected {
-                print("Socket status \(socket.status)")
-                setupSocket()
-            }
-            return
-        }
-        
-        let payload: [String: Any] = ["room_id": roomId]
-        print("📡 Sending liveScheduler with payload:", payload)
-        socket.emit("liveScheduler", payload)
-    }
-    
-    func joinRoom(roomId: String,userId : Int = UserDefaults.userId, completion: @escaping (() -> Void) ) {
-        guard socket.status == .connected else {
-            if socket.status == .connecting || socket.status == .notConnected {
-                print("Socket status \(socket.status)")
-                setupSocket()
-            }
-            return
-        }
-        
-        let payload: [String: Any] = ["room_id": roomId,"user_id" : userId]
-        print("📡 Sending liveScheduler with payload:", payload)
-        socket.emit("join_room", payload)
-        completion()
-    }
-    
-    func leaveRoom(roomId: String,userId : Int = UserDefaults.userId) {
-        guard socket.status == .connected else {
-            if socket.status == .connecting || socket.status == .notConnected {
-                print("Socket status \(socket.status)")
-                setupSocket()
-            }
-            return
-        }
-        
-        let payload: [String: Any] = ["room_id": roomId,"user_id" : userId]
-        print("📡 Sending liveScheduler with payload:", payload)
-        socket.emit("leave_room", payload)
-    }
-    
-    
-    func listenForRoomUpdates() {
-        socket.on("room_create_get") { data, _ in
-            guard let json = data.first as? [String: Any] else { return }
-            do {
-                let decoded = try JSONSerialization.data(withJSONObject: json)
-                let room = try JSONDecoder().decode(RoomModel.self, from: decoded)
-                
-                if !self.rooms.contains(where: { $0.room_id == room.room_id }) {
-                    self.rooms.append(room)
-                }
-                print("✅ Received RoomDetail: \(self.rooms)")
-                let roomIDs = self.rooms.compactMap { $0.room_id }
-                self.onRoomsUpdated?(roomIDs)
-            } catch {
-                print("❌ Decode error (Room):", error)
-            }
-              
-        }
-        
-    }
-    
-    func listenForViewerCount() {
-        socket.on("viewerCount") { data, _ in
-            if let json = data.first as? [String: Any], let count = json["count"] as? Int {
-                // Case when the socket sends a dictionary
-                self.viewerCount = count
-                print("👀 Viewer count updated:", count)
-            } else if let count = data.first as? Int {
-                // Case when the socket sends [Int]
-                self.viewerCount = count
-                print("👀 Viewer count updated (array):", count)
-            } else {
-                print("❌ Invalid viewer count data:", data)
-            }
-        }
-    }
 
-    
-    func listenForShowTimer(roomId:String) {
-        socket.on("show_timer_update") { data, _ in
-            guard let json = data.first as? [String: Any] else {
-                print("❌ Invalid show timer data:", data)
-                return
-            }
-            
-            // Ensure room_id exists if you want to check for specific room
-            guard let roomID = json["room_id"] as? String,
-                  let elapsed = json["elapsed"] as? Int else {
-                print("❌ Missing keys in show timer data:", json)
-                return
-            }
-            
-            // Optionally, check if this is the room you care about
-            if roomID == roomId {
-                let time  = self.formatElapsedTime(seconds: elapsed)
-                self.showTime = time
-                print("Show Time: \(time)")
-                print("⏱ Elapsed time for \(roomId):", elapsed)
-            }
-        }
-    }
-    
-    func listenForBidTimer(roomId:String) {
-        socket.on("bid_timer_update") { data, _ in
-            guard let json = data.first as? [String: Any] else {
-                print("❌ Invalid show timer data:", data)
-                return
-            }
-            
-            // Ensure room_id exists if you want to check for specific room
-            guard let roomID = json["room_id"] as? String,
-                  let elapsed = json["elapsed"] as? Int else {
-                print("❌ Missing keys in show timer data:", json)
-                return
-            }
-            
-            // Optionally, check if this is the room you care about
-            if roomID == roomId {
-                let time  = self.formatElapsedTime(seconds: elapsed)
-                self.bidTime = time
-                print("Bid Time: \(time)")
-                print("⏱ Elapsed time for \(roomId):", elapsed)
-            }
-        }
-    }
-    
-    func formatElapsedTime(seconds: Int) -> String {
-        let hours = seconds / 3600
-        let minutes = (seconds % 3600) / 60
-        let secs = seconds % 60
-        return String(format: "%02d:%02d:%02d", hours, minutes, secs)
-    }
-    
-}
+//@MainActor
+//class SocketManagerService: NSObject, ObservableObject {
+//    static let shared = SocketManagerService()
+//    
+//    @Published var isConnected = false
+//    @Published var rooms: [RoomModel] = []
+//    @Published var chats: [CommentModel] = []
+//    @Published  var viewerCount: Int = 0
+//    @Published var showTime: String = "00:00:00"
+//    @Published var bidTime: String = "00:00:00"
+//    
+//    
+//    var onRoomsUpdated: (([String]) -> Void)?
+//    var liveSchedulerTimer: Timer?
+//    
+//    private var socket: SocketIOClient!
+//    private var socketManager: SocketManager!
+//    
+//    override private init() {
+//        super.init()
+//    }
+//    
+//    // MARK: - Setup Socket
+//    func setupSocket() {
+//        socketManager = SocketManager(
+//            socketURL: URL(string: "https://node.bidcast.betaplanets.com")!,
+//            config: [.log(false), .compress, .reconnects(true), .path("/socket.io")]
+//        )
+//        socket = socketManager.defaultSocket
+//        
+//        socket.on(clientEvent: .connect) { _, _ in
+//            self.isConnected = true
+//            print("✅ Socket connected")
+//        }
+//        socket.on(clientEvent: .disconnect) { data, _ in
+//            self.isConnected = false
+//            print("❌ Disconnected:", data)
+//        }
+//        socket.on(clientEvent: .error) { data, _ in
+//            print("⚠️ Socket error:", data)
+//        }
+//        
+//        listenForRoomUpdates()
+//        //        listenForChat()
+//        socket.connect()
+//    }
+//    
+//    func disconnect() {
+//        socket.disconnect()
+//        socket.removeAllHandlers()
+//        isConnected = false
+//    }
+//    
+//    // MARK: - Room
+//    func createRoom(_ roomData: [String: Any]) {
+//        guard socket.status == .connected else{
+//            if socket.status == .connecting || socket.status == .notConnected{
+//                print("Socket status \(socket.status)")
+//                setupSocket()
+//            }
+//            return
+//        }
+//        
+//        print("Socket status \(socket.status)")
+//        print("Creating Room \(roomData)")
+//        socket.emit("room_create", roomData)
+//    }
+//    
+//    // MARK: - Room
+//    func sendBid(_ roomData: [String: Any]) {
+//        guard socket.status == .connected else{
+//            if socket.status == .connecting || socket.status == .notConnected{
+//                print("Socket status \(socket.status)")
+//                setupSocket()
+//            }
+//            return
+//        }
+//        
+//        print("Socket status \(socket.status)")
+//        print("Creating Room \(roomData)")
+//        socket.emit("place_bid", roomData)
+//    }
+//    
+//    func endStreaming(roomId: String) {
+//        guard socket.status == .connected else{
+//            if socket.status == .connecting || socket.status == .notConnected{
+//                print("Socket status \(socket.status)")
+//                setupSocket()
+//            }
+//            return
+//        }
+//        let payload: [String: Any] = ["room_id": roomId]
+//        print("Socket status \(socket.status)")
+//        print("Ending streaming Room \(payload)")
+//        socket.emit("endRoom", payload)
+//    }
+//    
+//    func leaveRoom(_ roomData: [String: Any]) {
+//        guard socket.status == .connected else{
+//            if socket.status == .connecting || socket.status == .notConnected{
+//                print("Socket status \(socket.status)")
+//                setupSocket()
+//            }
+//            return
+//        }
+//        
+//        print("Socket status \(socket.status)")
+//        print("Creating Room \(roomData)")
+//        socket.emit("leave_room", roomData)
+//    }
+//    
+//    
+//    // MARK: - Chat
+//    func sendChat(roomId: String, message: String) {
+//        guard isConnected else { return }
+//        
+//        let payload: [String: Any] = ["room_id": roomId,
+//                                      "message": message,
+//                                      "user_id": "\(UserDefaults.userId)",
+//                                      "user_name":UserDefaults.userName,
+//                                      "user_image":UserDefaults.profileURL]
+//        socket.emit("chat", payload)
+//    }
+//    
+//    func listenForChat() {
+//        socket.on("chat_get") { data, _ in
+//            guard let json = data.first as? [String: Any] else {
+//                print("json Error \(data)")
+//                return }
+//            do {
+//                let decoded = try JSONSerialization.data(withJSONObject: json)
+//                let chat = try JSONDecoder().decode(CommentModel.self, from: decoded)
+//                //                self.chats.append(chat)
+//                DispatchQueue.main.async {
+//                    self.chats.append(chat)
+//                }
+//                print("chatList \(self.chats)")
+//            } catch {
+//                print("Decode error (Chat):", error)
+//            }
+//        }
+//    }
+//    
+//    func startLiveScheduler(roomId: String) {
+//        // Invalidate existing timer if running
+//        liveSchedulerTimer?.invalidate()
+//        
+//        // Send immediately once
+//        sendLiveScheduler(roomId: roomId)
+//        
+//        // Schedule every 270 seconds (4.5 minutes)
+//        liveSchedulerTimer = Timer.scheduledTimer(withTimeInterval: 270, repeats: true) { [weak self] _ in
+//            self?.sendLiveScheduler(roomId: roomId)
+//        }
+//        
+//        print("✅ LiveScheduler started for room: \(roomId)")
+//    }
+//    
+//    func stopLiveScheduler() {
+//        liveSchedulerTimer?.invalidate()
+//        liveSchedulerTimer = nil
+//        print("🛑 LiveScheduler stopped")
+//    }
+//    
+//    func sendLiveScheduler(roomId: String) {
+//        guard socket.status == .connected else {
+//            if socket.status == .connecting || socket.status == .notConnected {
+//                print("Socket status \(socket.status)")
+//                setupSocket()
+//            }
+//            return
+//        }
+//        
+//        let payload: [String: Any] = ["room_id": roomId]
+//        print("📡 Sending liveScheduler with payload:", payload)
+//        socket.emit("liveScheduler", payload)
+//    }
+//    
+//    func joinRoom(roomId: String,userId : Int = UserDefaults.userId) {
+//        guard socket.status == .connected else {
+//            if socket.status == .connecting || socket.status == .notConnected {
+//                print("Socket status \(socket.status)")
+//                setupSocket()
+//            }
+//            return
+//        }
+//        
+//        let payload: [String: Any] = ["room_id": roomId,"user_id" : userId]
+//        print("📡 Sending liveScheduler with payload:", payload)
+//        socket.emit("join_room", payload)
+//    }
+//    
+//    func leaveRoom(roomId: String,userId : Int = UserDefaults.userId) {
+//        guard socket.status == .connected else {
+//            if socket.status == .connecting || socket.status == .notConnected {
+//                print("Socket status \(socket.status)")
+//                setupSocket()
+//            }
+//            return
+//        }
+//        
+//        let payload: [String: Any] = ["room_id": roomId,"user_id" : userId]
+//        print("📡 Sending liveScheduler with payload:", payload)
+//        socket.emit("leave_room", payload)
+//    }
+//    
+//    
+//    func listenForRoomUpdates() {
+//        socket.on("room_create_get") { data, _ in
+//            guard let json = data.first as? [String: Any] else { return }
+//            do {
+//                let decoded = try JSONSerialization.data(withJSONObject: json)
+//                let room = try JSONDecoder().decode(RoomModel.self, from: decoded)
+//                
+//                if !self.rooms.contains(where: { $0.room_id == room.room_id }) {
+//                    self.rooms.append(room)
+//                }
+//                print("✅ Received RoomDetail: \(self.rooms)")
+//                let roomIDs = self.rooms.compactMap { $0.room_id }
+//                self.onRoomsUpdated?(roomIDs)
+//            } catch {
+//                print("❌ Decode error (Room):", error)
+//            }
+//              
+//        }
+//        
+//    }
+//    
+//    func listenForViewerCount() {
+//        socket.on("viewerCount") { data, _ in
+//            if let json = data.first as? [String: Any], let count = json["count"] as? Int {
+//                // Case when the socket sends a dictionary
+//                self.viewerCount = count
+//                print("👀 Viewer count updated:", count)
+//            } else if let count = data.first as? Int {
+//                // Case when the socket sends [Int]
+//                self.viewerCount = count
+//                print("👀 Viewer count updated (array):", count)
+//            } else {
+//                print("❌ Invalid viewer count data:", data)
+//            }
+//        }
+//    }
+//
+//    
+//    func listenForShowTimer(roomId:String) {
+//        socket.on("show_timer_update") { data, _ in
+//            guard let json = data.first as? [String: Any] else {
+//                print("❌ Invalid show timer data:", data)
+//                return
+//            }
+//            
+//            // Ensure room_id exists if you want to check for specific room
+//            guard let roomID = json["room_id"] as? String,
+//                  let elapsed = json["elapsed"] as? Int else {
+//                print("❌ Missing keys in show timer data:", json)
+//                return
+//            }
+//            
+//            // Optionally, check if this is the room you care about
+//            if roomID == roomId {
+//                let time  = self.formatElapsedTime(seconds: elapsed)
+//                self.showTime = time
+//                print("Show Time: \(time)")
+//                print("⏱ Elapsed time for \(roomId):", elapsed)
+//            }
+//        }
+//    }
+//    
+//    func listenForBidTimer(roomId:String) {
+//        socket.on("bid_timer_update") { data, _ in
+//            guard let json = data.first as? [String: Any] else {
+//                print("❌ Invalid bid timer data:", data)
+//                return
+//            }
+//            
+//            // Ensure room_id exists if you want to check for specific room
+//            guard let roomID = json["room_id"] as? String,
+//                  let elapsed = json["remaining"] as? Int else {
+//                print("❌ Missing keys in bid timer data:", json)
+//                return
+//            }
+//            
+//            // Optionally, check if this is the room you care about
+//            if roomID == roomId {
+//                let time  = self.formatElapsedTime(seconds: elapsed)
+//                self.bidTime = time
+//                print("Bid Time: \(time)")
+//                print("⏱ Elapsed time for \(roomId):", elapsed)
+//            }
+//        }
+//    }
+//    
+//    func formatElapsedTime(seconds: Int) -> String {
+//        let hours = seconds / 3600
+//        let minutes = (seconds % 3600) / 60
+//        let secs = seconds % 60
+//        return String(format: "%02d:%02d:%02d", hours, minutes, secs)
+//    }
+//    
+//}
 
 struct RoomModel: Codable {
     let products: [ProductData]?
@@ -330,3 +329,242 @@ struct RoomModel: Codable {
 struct HighestBid: Codable {
        let bid_amount, user_name, user_image, user_id, product_id: String?
    }
+
+
+import Foundation
+import SocketIO
+import Combine
+import os
+
+@MainActor
+final class SocketManagerService: NSObject, ObservableObject {
+    
+    // MARK: - Shared Instance (Optional Singleton)
+    static let shared = SocketManagerService()
+    
+    // MARK: - Published Properties
+    @Published var isConnected = false
+    @Published var rooms: [RoomModel] = []
+    @Published var chats: [CommentModel] = []
+    @Published var viewerCount: Int = 0
+    @Published var showTime: String = "00:00:00"
+    @Published var bidTime: String = "00:00:00"
+    
+    // MARK: - Callbacks
+    var onRoomsUpdated: (([String]) -> Void)?
+    
+    // MARK: - Private Properties
+    private var liveSchedulerTimer: Timer?
+    private var socket: SocketIOClient!
+    private var socketManager: SocketManager!
+    private let logger = Logger(subsystem: "io.bidcast", category: "Socket")
+    
+    // MARK: - Init
+    override private init() {
+        super.init()
+    }
+    
+    // MARK: - Setup
+    func setupSocket() {
+        socketManager = SocketManager(
+            socketURL: URL(string: "https://node.bidcast.betaplanets.com")!,
+            config: [.log(false), .compress, .reconnects(true), .path("/socket.io")]
+        )
+        
+        socket = socketManager.defaultSocket
+        
+        socket.on(clientEvent: .connect) { [weak self] _, _ in
+            guard let self else { return }
+            self.isConnected = true
+            logger.info("✅ Socket connected")
+        }
+        
+        socket.on(clientEvent: .disconnect) { [weak self] data, _ in
+            guard let self else { return }
+            self.isConnected = false
+            logger.warning("❌ Disconnected: \(String(describing: data))")
+        }
+        
+        socket.on(clientEvent: .error) { [weak self] data, _ in
+            self?.logger.error("⚠️ Socket error: \(String(describing: data))")
+        }
+        
+        observeRoomUpdates()
+        socket.connect()
+    }
+    
+    func disconnect() {
+        socket.disconnect()
+        socket.removeAllHandlers()
+        isConnected = false
+        logger.info("🔌 Socket disconnected manually")
+    }
+    
+    // MARK: - Common Guard
+    private func performIfConnected(_ action: () -> Void) {
+        guard socket.status == .connected else {
+            if socket.status == .connecting || socket.status == .notConnected {
+                logger.warning("⚠️ Socket not ready, reconnecting...")
+                setupSocket()
+            }
+            return
+        }
+        action()
+    }
+    
+    // MARK: - Emit Events
+    func createRoom(payload: [String: Any]) {
+        performIfConnected {
+            socket.emit("room_create", payload)
+            logger.info("📡 Creating room: \(payload)")
+        }
+    }
+    
+    func sendBid(payload: [String: Any]) {
+        performIfConnected {
+            socket.emit("place_bid", payload)
+            logger.info("📡 Sending bid: \(payload)")
+        }
+    }
+    
+    func endStreaming(roomId: String) {
+        performIfConnected {
+            let payload = ["room_id": roomId]
+            socket.emit("endRoom", payload)
+            logger.info("📡 Ending streaming for room \(roomId)")
+        }
+    }
+    
+    func joinRoom(roomId: String, userId: Int = UserDefaults.userId, completion: @escaping (() -> Void) ) {
+        performIfConnected {
+            let payload = ["room_id": roomId, "user_id": userId] as [String : Any]
+            socket.emit("join_room", payload)
+            logger.info("📡 Joined room \(roomId)")
+           
+            completion()
+        }
+    }
+    
+    func leaveRoom(roomId: String, userId: Int) {
+        performIfConnected {
+            let payload = ["room_id": roomId, "user_id": userId] as [String : Any]
+            socket.emit("leave_room", payload)
+            logger.info("📡 Left room \(roomId)")
+        }
+    }
+    
+    func sendChat(roomId: String, message: String, userId: Int, userName: String, userImage: String) {
+        performIfConnected {
+            let payload: [String: Any] = [
+                "room_id": roomId,
+                "message": message,
+                "user_id": "\(userId)",
+                "user_name": userName,
+                "user_image": userImage
+            ]
+            socket.emit("chat", payload)
+            logger.info("💬 Sent chat: \(message)")
+        }
+    }
+    
+    // MARK: - Listen Events
+    func observeRoomUpdates() {
+        socket.on("room_create_get") { [weak self] data, _ in
+            guard let self, let json = data.first as? [String: Any] else { return }
+            do {
+                let decoded = try JSONSerialization.data(withJSONObject: json)
+                let room = try JSONDecoder().decode(RoomModel.self, from: decoded)
+                if !rooms.contains(where: { $0.room_id == room.room_id }) {
+                    DispatchQueue.main.async { self.rooms.append(room) }
+                }
+                let roomIDs = self.rooms.compactMap { $0.room_id }
+                onRoomsUpdated?(roomIDs)
+                logger.info("✅ Room updated: \(room.room_id ?? "")")
+            } catch {
+                logger.error("❌ Room decode error: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    func listenForChat() {
+        socket.on("chat_get") { [weak self] data, _ in
+            guard let self, let json = data.first as? [String: Any] else { return }
+            do {
+                let decoded = try JSONSerialization.data(withJSONObject: json)
+                let chat = try JSONDecoder().decode(CommentModel.self, from: decoded)
+                DispatchQueue.main.async { self.chats.append(chat) }
+                logger.info("💬 New chat received")
+            } catch {
+                logger.error("❌ Chat decode error: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    func listenForViewerCount() {
+        socket.on("viewerCount") { [weak self] data, _ in
+            guard let self else { return }
+            if let json = data.first as? [String: Any], let count = json["count"] as? Int {
+                viewerCount = count
+            } else if let count = data.first as? Int {
+                viewerCount = count
+            } else {
+                logger.warning("❌ Invalid viewer count data: \(String(describing: data))")
+            }
+        }
+    }
+    
+    func listenForShowTimer(roomId: String) {
+        socket.on("show_timer_update") { [weak self] data, _ in
+            guard let self,
+                  let json = data.first as? [String: Any],
+                  let roomID = json["room_id"] as? String,
+                  let elapsed = json["elapsed"] as? Int,
+                  roomID == roomId else { return }
+            
+            showTime = formatElapsedTime(seconds: elapsed)
+        }
+    }
+    
+    func listenForBidTimer(roomId: String) {
+        socket.on("bid_timer_update") { [weak self] data, _ in
+            guard let self,
+                  let json = data.first as? [String: Any],
+                  let roomID = json["room_id"] as? String,
+                  let remaining = json["remaining"] as? Int,
+                  roomID == roomId else { return }
+            
+            bidTime = formatElapsedTime(seconds: remaining)
+        }
+    }
+    
+    // MARK: - Timer Handling
+    func startLiveScheduler(roomId: String) {
+        stopLiveScheduler()
+        sendLiveScheduler(roomId: roomId)
+        
+        liveSchedulerTimer = Timer.scheduledTimer(withTimeInterval: 270, repeats: true) { [weak self] _ in
+            self?.sendLiveScheduler(roomId: roomId)
+        }
+    }
+    
+    func stopLiveScheduler() {
+        liveSchedulerTimer?.invalidate()
+        liveSchedulerTimer = nil
+    }
+    
+    private func sendLiveScheduler(roomId: String) {
+        performIfConnected {
+            let payload = ["room_id": roomId]
+            socket.emit("liveScheduler", payload)
+            logger.info("📡 Sent liveScheduler for \(roomId)")
+        }
+    }
+    
+    // MARK: - Helpers
+    private func formatElapsedTime(seconds: Int) -> String {
+        let hours = seconds / 3600
+        let minutes = (seconds % 3600) / 60
+        let secs = seconds % 60
+        return String(format: "%02d:%02d:%02d", hours, minutes, secs)
+    }
+}

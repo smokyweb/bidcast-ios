@@ -380,7 +380,11 @@ struct RehearsalScreen: View {
                                             print("📨 Sending message: \(commentText)")
                                             let textToSend = commentText.trimmingCharacters(in: .whitespacesAndNewlines)
                                             //                                            ZIMChatManager.shared.sendMessage(message: textToSend,roomId: self.liveRoomId,image: UserDefaults.profileURL,name: UserDefaults.userName)
-                                            SocketManagerService.shared.sendChat(roomId: self.roomId, message: textToSend)
+                                            
+                                            let userId = UserDefaults.userId
+                                            let userName = UserDefaults.userName
+                                            let userImage = UserDefaults.profileURL
+                                            SocketManagerService.shared.sendChat(roomId: self.roomId, message: textToSend, userId: userId, userName: userName, userImage: userImage)
                                             commentText = ""
                                         }) {
                                             Image(systemName: "paperplane.fill")
@@ -523,7 +527,7 @@ struct RehearsalScreen: View {
                         },
                         onVerifiedBuyerToggle: { isOn in
                             let allowBidForAll = !isOn
-                            if !liveRoomId.isEmpty {
+                            if !liveRoomId.isEmpty   {
                                 FirebaseManager.shared.databaseRef.child("live_sessions")
                                     .child(liveRoomId)
                                     .updateChildValues(["allowBidForAll": allowBidForAll])
@@ -760,7 +764,8 @@ struct RehearsalScreen: View {
         self.roomId = roomId
         
         Task{
-            try await castManager.publish(streamName:  self.roomId)
+            //live stream
+            try await castManager.publish(streamName: self.roomId)
         }
         
         let product: [ProductData] = (data.products ?? []).compactMap { product in
@@ -1034,7 +1039,7 @@ struct RehearsalScreen: View {
             "show_timer":showTimer
         ]
         
-        SocketManagerService.shared.createRoom(payload)
+        SocketManagerService.shared.createRoom(payload: payload)
     }
     
     //MARK: Current Timestamp

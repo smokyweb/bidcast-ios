@@ -310,7 +310,10 @@ struct LiveStream: View {
                                         Button(action: {
                                             let roomId = liveShowsData[currentIndex].room_id ?? ""
 //                                            ZIMChatManager.shared.sendMessage(message: commentText,roomId: roomId,image: UserDefaults.profileURL,name: UserDefaults.fullName)
-                                            SocketManagerService.shared.sendChat(roomId: roomId, message: commentText)
+                                            let userId = UserDefaults.userId
+                                            let userName = UserDefaults.userName
+                                            let userImage = UserDefaults.profileURL
+                                            SocketManagerService.shared.sendChat(roomId: roomId, message: commentText, userId: userId, userName: userName, userImage: userImage)
                                             commentText = ""
                                         }) {
                                             Image(systemName: "paperplane.fill")
@@ -449,13 +452,13 @@ struct LiveStream: View {
                                         .frame(height: 50)
                                         .frame(maxWidth: .infinity)
                                         
-                                        // Price and Timer
+                                         //Price and Timer
                                         VStack(spacing: 2) {
                                             Text("$\(String(format: "%.2f", currentPrice))")
                                                 .font(.custom(poppinsBold, size: 13))
                                                 .foregroundColor(.white)
                                             
-                                            Text(String(format: "00:00:%02d", socketManagerChat.bidTime))
+                                            Text(socketManagerChat.bidTime)
                                                 .font(.custom(poppinsSemiBold, size: 13))
                                                 .foregroundColor(.white)
                                         }
@@ -810,7 +813,6 @@ struct LiveStream: View {
                 await SVProgressHUD.dismiss()
                 await getProfileSuccess()
 //               try await joinManager.subscribe(streamName: currentRoomID)
-                
                 socketManagerChat.joinRoom(roomId: currentRoomID, completion: {
 //                        guard let self = self else { return }
                         joinStreamUsingSocket(roomId: currentRoomID)
@@ -922,8 +924,11 @@ struct LiveStream: View {
                 
                 try await joinManager.subscribe(streamName: roomId)
                 
-//                socketManagerChat.joinRoom(roomId: roomId)
-                socketManagerChat.sendChat(roomId: roomId, message: "Joining the host… ")
+//              socketManagerChat.joinRoom(roomId: roomId, userId: UserDefaults.userId)
+                let userId = UserDefaults.userId
+                let userName = UserDefaults.userName
+                let userImage = UserDefaults.profileURL
+                SocketManagerService.shared.sendChat(roomId: roomId, message: "Joining the host… ", userId: userId, userName: userName, userImage: userImage)
                 socketManagerChat.listenForChat()
                 socketManagerChat.listenForViewerCount()
                 socketManagerChat.listenForBidTimer(roomId: roomId)
@@ -1008,19 +1013,22 @@ struct LiveStream: View {
     func sendBid(roomId: String,
                  bidAmount:String,
                  productId:String ) {
-        let data = [
+        let data: [String: Any] = [
             "room_id" : roomId,
             "bid_amount": bidAmount,
             "user_name" : UserDefaults.userName,
             "user_image" : UserDefaults.profileURL,
-            "user_id" : UserDefaults.userId.description,
+            "user_id" : UserDefaults.userId,
             "product_id" : productId
         ]
-        socketManagerChat.sendBid(data)
+        socketManagerChat.sendBid(payload: data)
         currentPrice = Double(bidAmount) ?? 0.0
         let price = String(format: "%.2f", currentPrice)
         commentText = "Current highest bid : $\(price)"
-        socketManagerChat.sendChat(roomId: roomId, message: commentText)
+        let userId = UserDefaults.userId
+        let userName = UserDefaults.userName
+        let userImage = UserDefaults.profileURL
+        SocketManagerService.shared.sendChat(roomId: roomId, message: commentText, userId: userId, userName: userName, userImage: userImage)
         commentText = ""
     }
     
@@ -1143,9 +1151,7 @@ struct LiveStream: View {
     //MARK: logoutRoom
     func logoutRoom() {
         SocketManagerService.shared.chats.removeAll()
-        SocketManagerService.shared.leaveRoom(roomId: self.currentRoomID)
-
-        
+        SocketManagerService.shared.leaveRoom(roomId: self.currentRoomID, userId: UserDefaults.userId)
     }
     
     func incrementPrice() {
@@ -1176,28 +1182,38 @@ struct LiveStream: View {
     
     func placeBid(amount: Double) {
         // Ensure we have the current room and product
-        guard let currentRoomId = liveShowsData[safe: currentIndex]?.room_id,
-              let selectedProduct = BiddingDetail.products?[currentProductIndex] else { return }
+        guard let currentRoomId = liveShowsData[safe: currentIndex]?.room_id else { return }
         
-        // Update Firebase highest bid
-        FirebaseManager.shared.updateHighestBid(
-            roomId: currentRoomId,
-            bidAmount: "\(amount)",
-            bidderId: "\(UserDefaults.userId)",
-            bidderName: UserDefaults.fullName,
-            bidderProfileImage: UserDefaults.profileURL
-        ) { finalBidData in
-            if let data = finalBidData {
-                
-                
-            }
-        }
+//        // Update Firebase highest bid
+//        FirebaseManager.shared.updateHighestBid(
+//            roomId: currentRoomId,
+//            bidAmount: "\(amount)",
+//            bidderId: "\(UserDefaults.userId)",
+//            bidderName: UserDefaults.fullName,
+//            bidderProfileImage: UserDefaults.profileURL
+//        ) { finalBidData in
+//            if let data = finalBidData {
+//                
+//                
+//            }
+//        }
+        
+        self.sendBid(roomId: currentRoomId,
+                     bidAmount: "\(amount)",
+                     productId: currentProductID ?? "")
         
         // Update local price
         currentPrice = amount
         
         commentText = "Current highest bid : $\(currentPrice)"
-        ZIMChatManager.shared.sendMessage(message: commentText,roomId: currentRoomID,image: UserDefaults.profileURL,name: UserDefaults.fullName)
+        let userId = UserDefaults.userId
+        let userName = UserDefaults.userName
+        let userImage = UserDefaults.profileURL
+        SocketManagerService.shared.sendChat(roomId: currentRoomId,
+                                             message: commentText,
+                                             userId: userId,
+                                             userName: userName,
+                                             userImage: userImage)
         commentText = ""
     }
     
