@@ -711,7 +711,7 @@ struct RehearsalScreen: View {
 //            self.productData = products
         print("DEBUG: fetchLatestProductList with roomId = \(self.roomId)")
             print("DEBUG: initialSelectedProductId= \(initialSelectedProductId)")
-        initialSelectedProductId = self.productData.first(where: { $0.isCurrent })?.id ?? ""
+        initialSelectedProductId = productData.first(where: { $0.isCurrent })?.id ?? ""
 //        }
     }
     
@@ -844,7 +844,8 @@ struct RehearsalScreen: View {
         }
         
         if let products = socketRoom.products {
-            self.productData = products
+            productData = products
+            print("after product \(productData)")
         }
     }
     

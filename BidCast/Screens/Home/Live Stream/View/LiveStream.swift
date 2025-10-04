@@ -932,20 +932,38 @@ struct LiveStream: View {
                 socketManagerChat.listenForChat()
                 socketManagerChat.listenForViewerCount()
                 socketManagerChat.listenForBidTimer(roomId: roomId)
-                SocketManagerService.shared.listenForRoomEnded { roomId in
-                    print("🔥 STREAM REMOVED CALLBACK TRIGGERED 🔥")
-
-
-                    // Show "Stream Ended" alert
-                    self.alertType = .sheetType(
-                        icon: .alert,
-                        title: "Stream Ended",
-                        message: "The host has ended the live stream.",
-                        primaryBtnText: AppString.ok.localized,
-                        secondaryBtnText: ""
-                    )
-                    self.showError = true
-                }
+                socketManagerChat.listenForRoomEnded(onEnd: { room_Id in
+                    if roomId == room_Id {
+                        print("🔥 STREAM REMOVED CALLBACK TRIGGERED 🔥")
+                        // Show "Stream Ended" alert
+                        self.alertType = .sheetType(
+                            icon: .alert,
+                            title: "Stream Ended",
+                            message: "The host has ended the live stream.",
+                            primaryBtnText: AppString.ok.localized,
+                            secondaryBtnText: ""
+                        )
+                        self.showError = true
+                    }
+                })
+                SocketManagerService.shared.listenForBidFinalized(completion: { roomId,productId,winner in
+                    
+                    fetchProducts(for: roomId)
+                    let winnerNameFromServer = winner?.user_name ?? ""
+                    let winnerIdFromServer = winner?.user_id ?? ""
+                    let winnerProfileImageFromServer = winner?.user_image ?? ""
+                    print("id - > \(winnerIdFromServer ?? "")")
+                    print("name - > \(winnerNameFromServer ?? "")")
+                    print("image - > \(winnerProfileImageFromServer ?? "")")
+                    
+                    winnerName = winnerNameFromServer ?? UserDefaults.fullName
+                    winnerProfileID = Int(winnerIdFromServer ?? "") ?? 0
+                       winnerProfileImage = winnerProfileImageFromServer ?? UserDefaults.profileURL
+                    winnerAmount = winner?.bid_amount ?? ""
+                    print("Winner: \(winnerName), Amount: \(winnerAmount)")
+                    
+                    winnerSheet = true
+                })
             }
             
             // Update follow status
@@ -1032,7 +1050,7 @@ struct LiveStream: View {
             "bid_amount": bidAmount,
             "user_name" : UserDefaults.userName,
             "user_image" : UserDefaults.profileURL,
-            "user_id" : UserDefaults.userId,
+            "user_id" : "\(UserDefaults.userId)",
             "product_id" : productId
         ]
         socketManagerChat.sendBid(payload: data)
@@ -1347,39 +1365,6 @@ struct LiveStream: View {
                 isFollow = status
             }
         }
-        
-    }
-    
-    func listenForRoomUpdates() {
-        socketManager = SocketManager(
-            socketURL: URL(string: "https://node.bidcast.betaplanets.com")!,
-            config: [
-                .log(true),          // enable logs for debugging
-                .compress,
-                .path("/socket.io"),
-                .forceNew(true),
-                .reconnects(true)
-            ]
-        )
-        socket = socketManager.defaultSocket
-        socket.connect()
-        socket.on("room_create_get") { data, _ in
-            guard let json = data.first as? [String: Any] else { return }
-            do {
-                let decoded = try JSONSerialization.data(withJSONObject: json)
-                let room = try JSONDecoder().decode(RoomModel.self, from: decoded)
-
-                if !self.rooms.contains(where: { $0.room_id == room.room_id }) {
-                    self.rooms.append(room)
-                }
-                print("✅ Received RoomDetail: \(self.rooms)")
-                let roomIDs = self.rooms.compactMap { $0.room_id }
-                self.onRoomsUpdated?(roomIDs)
-            } catch {
-                print("❌ Decode error (Room):", error)
-            }
-        }
-
         
     }
 

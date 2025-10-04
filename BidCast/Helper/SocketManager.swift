@@ -309,13 +309,13 @@
 //}
 
 struct RoomModel: Codable {
-    let products: [ProductData]?
+    var products: [ProductData]?
     let room_id: String?
     let seller: SellerModel?
     let show_detail: String?
     let thumbnail: String?
     let viewer_count: String?
-    let highest_bid: HighestBid?
+    var highest_bid: HighestBid?
     let is_live: Bool?
     let time: String?
     let show_id: String?
@@ -440,8 +440,10 @@ final class SocketManagerService: NSObject, ObservableObject {
             let payload = ["room_id": roomId, "user_id": userId] as [String : Any]
             socket.emit("join_room", payload)
             logger.info("📡 Joined room \(roomId)")
-           
-            completion()
+            observeRoomUpdates(completion: { room in
+                completion()
+            })
+          
         }
     }
     
@@ -607,7 +609,7 @@ final class SocketManagerService: NSObject, ObservableObject {
         socket.on("roomEnded") { [weak self] data, _ in
             guard let self,
                   let json = data.first as? [String: Any],
-                  let roomId = json["room_id"] as? String else { return }
+                  let roomId = json["room_end"] as? String else { return }
             
             logger.info("🏁 Room ended: \(roomId)")
             
@@ -630,47 +632,57 @@ final class SocketManagerService: NSObject, ObservableObject {
             }
             
             // Parse winner info
-            var winner: HighestBid? = nil
-//            if let winnerJson = json["winner"] as? [String: Any] {
-//                do {
-//                    let decodedWinner = try JSONSerialization.data(withJSONObject: winnerJson)
-//                    winner = try JSONDecoder().decode(HighestBid.self, from: decodedWinner)
-//                } catch {
-//                    print("❌ Failed to decode winner:", error)
-//                }
-//            }
-//            
+            var winner: HighestBid?
+                   if let winnerJson = json["winner"] as? [String: Any] {
+                       do {
+                           let decodedWinner = try JSONSerialization.data(withJSONObject: winnerJson)
+                           winner = try JSONDecoder().decode(HighestBid.self, from: decodedWinner)
+                       } catch {
+                           print("❌ Failed to decode winner:", error)
+                       }
+                   }
+
+                   // Parse product updates
+                   var updatedProducts: [ProductData] = []
+                   if let productsJson = json["products"] as? [[String: Any]] {
+                       do {
+                           let decodedData = try JSONSerialization.data(withJSONObject: productsJson)
+                           updatedProducts = try JSONDecoder().decode([ProductData].self, from: decodedData)
+                       } catch {
+                           print("❌ Failed to decode products:", error)
+                       }
+                   }
+//
             // Update product status in the room
             if let roomIndex = rooms.firstIndex(where: { $0.room_id == roomId }),
-               var updatedRoom = rooms[safe: roomIndex],
-               var products = updatedRoom.products {
-                
-                updatedRoom = RoomModel(
-                    products: products,
-                    room_id: updatedRoom.room_id,
-                    seller: updatedRoom.seller,
-                    show_detail: updatedRoom.show_detail,
-                    thumbnail: updatedRoom.thumbnail,
-                    viewer_count: updatedRoom.viewer_count,
-                    highest_bid: winner,
-                    is_live: updatedRoom.is_live,
-                    time: updatedRoom.time,
-                    show_id: updatedRoom.show_id,
-                    allow_bid_for_all: updatedRoom.allow_bid_for_all,
-                    bid_count_down: updatedRoom.bid_count_down,
-                    show_timer: updatedRoom.show_timer
-                )
-                
-                DispatchQueue.main.async {
-                    self.rooms[roomIndex] = updatedRoom
-                }
-                //                }
-            }
-            
-            logger.info("✅ Bid finalized for room \(roomId), product \(winner?.product_id ?? "unknown")")
-            
-            // Trigger optional completion callback
-            completion?(roomId, winner?.product_id ?? "", winner)
+                      var updatedRoom = rooms[safe: roomIndex] {
+
+                       // Merge updated products into existing list
+                       if var existingProducts = updatedRoom.products {
+                           for updatedProduct in updatedProducts {
+                               if let productIndex = existingProducts.firstIndex(where: { $0.id == updatedProduct.id }) {
+                                   existingProducts[productIndex] = updatedProduct
+                               }
+                           }
+                           updatedRoom.products = existingProducts
+                       }
+
+                       // Update winner (highest bid)
+                       updatedRoom.highest_bid = winner
+
+                       // Save changes to main array
+                       DispatchQueue.main.async {
+                           self.rooms[roomIndex] = updatedRoom
+                           print("✅ Updated room \(roomId) with sold product and winner \(winner?.user_name ?? "unknown")")
+                           print("✅ Updated roomdata  \(self.rooms)")
+                           completion?(roomId, winner?.product_id ?? "", winner)
+                       }
+                   }
+
+                   logger.info("✅ Bid finalized for room \(roomId), product \(winner?.product_id ?? "unknown")")
+
+                   // Trigger completion callback
+                   
         }
     }
 
@@ -695,7 +707,10 @@ final class SocketManagerService: NSObject, ObservableObject {
                 
                 
                 if remaining == 0 {
-                    onComplete()
+                    self.listenForBidFinalized(completion: { roomId, productId, winner in 
+                        onComplete()
+                    })
+                    
                 }
             }
         }
