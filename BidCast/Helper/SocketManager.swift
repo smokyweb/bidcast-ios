@@ -523,19 +523,48 @@ final class SocketManagerService: NSObject, ObservableObject {
    
 
     
-    func listenForChat() {
-        socket.on("chat_get") { [weak self] data, _ in
-            guard let self, let json = data.first as? [String: Any] else { return }
+    func listenForChat(roomId: String) {
+        socket.on("chat_get") {  data, _ in
+           
+
+            guard let json = data.first as? [String: Any] else {
+                print("⚠️ Invalid chat data:", data)
+                return
+            }
+
             do {
                 let decoded = try JSONSerialization.data(withJSONObject: json)
                 let chat = try JSONDecoder().decode(CommentModel.self, from: decoded)
-                DispatchQueue.main.async { self.chats.append(chat) }
-                logger.info("💬 New chat received")
+
+//                guard let messageRoomId = chat.roomId else {
+//                    print("⚠️ Chat missing room_id — skipping:", json)
+//                    return
+//                }
+                let messageRoomId = chat.roomId
+
+                guard  messageRoomId == chat.roomId else {
+                    print("⚠️ Chat missing room_id — skipping:", json)
+                    return
+                }
+                // ✅ Use the non-optional `roomId` directly
+                guard messageRoomId == roomId else {
+                    print("🚫 Ignored chat from another room → \(messageRoomId)")
+                    return
+                }
+
+                DispatchQueue.main.async {
+                    if !self.chats.contains(where: { $0.id == chat.id }) {
+                        self.chats.append(chat)
+                        self.logger.info("💬 [\(messageRoomId)] Chat from \(chat.username): \(chat.message)")
+                    }
+                }
+
             } catch {
-                logger.error("❌ Chat decode error: \(error.localizedDescription)")
+                self.logger.error("❌ Chat decode error: \(error.localizedDescription)")
             }
         }
     }
+
     
     func listenForViewerCount() {
         socket.on("viewerCount") { [weak self] data, _ in
@@ -685,6 +714,54 @@ final class SocketManagerService: NSObject, ObservableObject {
                    
         }
     }
+    
+    func listenForNextProduct(completion: ((_ roomId: String, _ nextProductId: String) -> Void)? = nil) {
+        socket.on("next_product_set") { [weak self] data, _ in
+            guard let self,
+                  let json = data.first as? [String: Any],
+                  let roomId = json["room_id"] as? String else {
+                print("❌ Invalid next_product_set data:", data)
+                return
+            }
+            
+            // Parse updated products
+            var updatedProducts: [ProductData] = []
+            if let productsJson = json["products"] as? [[String: Any]] {
+                do {
+                    let decodedData = try JSONSerialization.data(withJSONObject: productsJson)
+                    updatedProducts = try JSONDecoder().decode([ProductData].self, from: decodedData)
+                } catch {
+                    print("❌ Failed to decode next products:", error)
+                }
+            }
+
+            // Update room products
+            if let roomIndex = rooms.firstIndex(where: { $0.room_id == roomId }),
+               var updatedRoom = rooms[safe: roomIndex] {
+
+                // Merge updated products into existing list
+                if var existingProducts = updatedRoom.products {
+                    for updatedProduct in updatedProducts {
+                        if let productIndex = existingProducts.firstIndex(where: { $0.id == updatedProduct.id }) {
+                            existingProducts[productIndex] = updatedProduct
+                        }
+                    }
+                    updatedRoom.products = existingProducts
+                }
+
+                // Save changes to main array
+                DispatchQueue.main.async {
+                    self.rooms[roomIndex] = updatedRoom
+                    print("✅ Updated room \(roomId) with next product set")
+                    print("✅ Updated room data \(updatedRoom) with next product set")
+                    completion?(roomId, updatedProducts.first(where: { $0.isCurrent })?.id ?? "")
+                }
+            }
+
+            logger.info("✅ Next product set for room \(roomId)")
+        }
+    }
+
 
     func observeBidCountdown(for roomId: String,
                              onUpdate: @escaping (Int) -> Void,

@@ -97,7 +97,7 @@ struct WinnerBottomSheet: View {
                 
                 // ---------- MESSAGE ----------
                 Text(winningDescription)
-                    .font(.custom(poppinsBold, size: 16.0))
+                    .font(.custom(poppinsSemiBold, size: 13.0))
                     .multilineTextAlignment(.leading)
                     .foregroundColor(.black)
                     .frame(maxWidth: .infinity, alignment: .leading)

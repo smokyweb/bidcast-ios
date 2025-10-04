@@ -929,7 +929,7 @@ struct LiveStream: View {
                 let userName = UserDefaults.userName
                 let userImage = UserDefaults.profileURL
                 SocketManagerService.shared.sendChat(roomId: roomId, message: "Joining the host… ", userId: userId, userName: userName, userImage: userImage)
-                socketManagerChat.listenForChat()
+                socketManagerChat.listenForChat(roomId: roomId)
                 socketManagerChat.listenForViewerCount()
                 socketManagerChat.listenForBidTimer(roomId: roomId)
                 socketManagerChat.listenForRoomEnded(onEnd: { room_Id in
@@ -952,17 +952,22 @@ struct LiveStream: View {
                     let winnerNameFromServer = winner?.user_name ?? ""
                     let winnerIdFromServer = winner?.user_id ?? ""
                     let winnerProfileImageFromServer = winner?.user_image ?? ""
-                    print("id - > \(winnerIdFromServer ?? "")")
-                    print("name - > \(winnerNameFromServer ?? "")")
-                    print("image - > \(winnerProfileImageFromServer ?? "")")
+                    print("id - > \(winnerIdFromServer)")
+                    print("name - > \(winnerNameFromServer)")
+                    print("image - > \(winnerProfileImageFromServer)")
                     
-                    winnerName = winnerNameFromServer ?? UserDefaults.fullName
-                    winnerProfileID = Int(winnerIdFromServer ?? "") ?? 0
-                       winnerProfileImage = winnerProfileImageFromServer ?? UserDefaults.profileURL
+                    winnerName = winnerNameFromServer
+                    winnerProfileID = Int(winnerIdFromServer) ?? 0
+                    winnerProfileImage = winnerProfileImageFromServer
                     winnerAmount = winner?.bid_amount ?? ""
                     print("Winner: \(winnerName), Amount: \(winnerAmount)")
                     
                     winnerSheet = true
+                })
+                SocketManagerService.shared.listenForNextProduct(completion: { roomId,nextProductId in
+                    
+                    fetchProducts(for: roomId)
+                   
                 })
             }
             
@@ -1019,7 +1024,7 @@ struct LiveStream: View {
         
         if let products = socketRoom.products {
             let activeCurrentProducts = products.filter { product in
-                product.status?.lowercased() == "active" && product.isCurrent
+                product.status?.lowercased() == "live" && product.isCurrent
             }
             
             if let currentProduct = activeCurrentProducts.first {

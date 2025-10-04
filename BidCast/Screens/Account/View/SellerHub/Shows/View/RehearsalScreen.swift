@@ -792,7 +792,7 @@ struct RehearsalScreen: View {
         self.showLiveControls = true
         self.showPreLiveControls = false
         //        SocketManagerService.shared.listenForChat()
-        socketManager.listenForChat()
+        socketManager.listenForChat(roomId: self.roomId)
         socketManager.listenForViewerCount()
         socketManager.listenForShowTimer(roomId: self.roomId)
 //        socketManager.listenForBidTimer(roomId: self.roomId)
