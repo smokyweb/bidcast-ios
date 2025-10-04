@@ -12,6 +12,8 @@ struct WalletTabView: View {
     var summary: WalletInfoModel
     var payouts: [Payout]
     
+    @State private var showPayoutView = false
+    
     // Currency formatting helper
     private func formatAmount(_ amount: Double?) -> String {
         guard let amount = amount else { return "0.0" }
@@ -32,16 +34,8 @@ struct WalletTabView: View {
             HStack(spacing: 0) {
                 VStack(alignment: .leading, spacing: 24) {
                     
-                    VStack(spacing: 4) {
-                        Text(AppString.AvailableBalance)
-                            .font(.custom(poppinsRegular, size: 11.0))
-                            .foregroundColor(.gray)
-                        Text("$\(formatAmount(summary.avaiableBalance))")
-                            .font(.custom(poppinsSemiBold, size: 20.0))
-                    }
-                    .padding(.vertical, 16)
-                    .frame(maxWidth: .infinity)
-                    .background(Color.white)
+                    BalanceSummaryView(balance: summary.avaiableBalance ?? 0.0,
+                                       title: AppString.AvailableBalance)
                     
                     HStack(spacing: 12) {
                         WalletStatTile(
@@ -55,14 +49,28 @@ struct WalletTabView: View {
                             iconName: "lock.rotation"
                         )
                     }
+                    
                     VStack(spacing: 16) {
                         ForEach(0 ..< categoryList.count, id: \.self) { ind in
-                            ListCell( isComeFrom: "Wallet",image: categoryList[ind].image ?? "", title: categoryList[ind].name ?? "", vectorImg: .icArrowUp,subLabel : AppString.YouAreEligibleForEarlyPayout,tintColot: categoryList[ind].color ?? "")
+                            Button(action: {
+                                showPayoutView = true
+                            }) {
+                                ListCell(
+                                    isComeFrom: "Wallet",
+                                    image: categoryList[ind].image ?? "",
+                                    title: categoryList[ind].name ?? "",
+                                    vectorImg: .icArrowUp,
+                                    subLabel: AppString.YouAreEligibleForEarlyPayout,
+                                    tintColot: categoryList[ind].color ?? "",
+                                    onTapMenuCell: {}
+                                )
                                 .padding([.leading ,.trailing] ,0)
                                 .padding(.vertical,1)
-                            
+                            }
+                            .buttonStyle(PlainButtonStyle())
                         }
                     }
+                    
                     Text(AppString.PayoutHistory)
                         .font(.custom(poppinsSemiBold, size: 14.0))
                     if !payouts.isEmpty {
@@ -78,32 +86,13 @@ struct WalletTabView: View {
                         .cornerRadius(12)
                         .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
                     }else{
-                        HStack{
-                            Spacer()
-                            VStack(alignment:.center, spacing: 16) {
-                                Spacer()
-                                
-                                Image("noData")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 150, height: 150)
-                                    .foregroundColor(.gray.opacity(0.6))
-                                
-                                Text(AppString.NoPayoutHistoryFound)
-                                    .font(.custom(poppinsSemiBold, size: 13))
-                                    .foregroundColor(.gray)
-                                    .multilineTextAlignment(.center)
-                                
-                                Spacer()
-                            }
-                            Spacer()
-                        }
+                        NoDataFoundView(image: "noData", title: AppString.NoPayoutHistoryFound)
                     }
                 }
 //                .frame(maxWidth: .infinity)
             }
         }
+        CusNavLink(doNavigate: $showPayoutView, destination: PayoutView())
         .ignoresSafeArea(edges: .horizontal)
     }
 }
-

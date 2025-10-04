@@ -515,6 +515,9 @@
 		D4E569E92DD49A970005A78E /* AppString.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E569E82DD49A970005A78E /* AppString.swift */; };
 		D4F72B532DF96FE9008A6859 /* ShippingStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4F72B522DF96FE9008A6859 /* ShippingStepView.swift */; };
 		D4F72B552DF973F7008A6859 /* SummaryRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4F72B542DF973F7008A6859 /* SummaryRow.swift */; };
+		D6D0DAC82E90FDD200390946 /* NoPayoutHistortyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D0DAC72E90FDD200390946 /* NoPayoutHistortyView.swift */; };
+		D6D0DACA2E9100F600390946 /* BalanceSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D0DAC92E9100F600390946 /* BalanceSummaryView.swift */; };
+		D6D0DACD2E9103DD00390946 /* PayoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D0DACC2E9103DD00390946 /* PayoutView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1009,6 +1012,9 @@
 		D4E569E82DD49A970005A78E /* AppString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppString.swift; sourceTree = "<group>"; };
 		D4F72B522DF96FE9008A6859 /* ShippingStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShippingStepView.swift; sourceTree = "<group>"; };
 		D4F72B542DF973F7008A6859 /* SummaryRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryRow.swift; sourceTree = "<group>"; };
+		D6D0DAC72E90FDD200390946 /* NoPayoutHistortyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoPayoutHistortyView.swift; sourceTree = "<group>"; };
+		D6D0DAC92E9100F600390946 /* BalanceSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BalanceSummaryView.swift; sourceTree = "<group>"; };
+		D6D0DACC2E9103DD00390946 /* PayoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PayoutView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2506,6 +2512,7 @@
 		D4A7F8FA2DDD9A6E001FC705 /* SellerHub */ = {
 			isa = PBXGroup;
 			children = (
+				D6D0DACB2E91025800390946 /* Payout */,
 				D4B616072DE8612300924A3D /* SellerVerification */,
 				D4BA324E2DDB346100FE4FD2 /* Inventory */,
 				D4BA9C0A2DE4856900DFF6E6 /* Shows */,
@@ -3018,6 +3025,8 @@
 				D4BB9A102DE5C92100C1BCBC /* TransactionsTabView.swift */,
 				D4BB9A122DE5C95A00C1BCBC /* PayoutRowView.swift */,
 				D4BB9A142DE5C9ED00C1BCBC /* WalletTabView.swift */,
+				D6D0DAC72E90FDD200390946 /* NoPayoutHistortyView.swift */,
+				D6D0DAC92E9100F600390946 /* BalanceSummaryView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -3997,6 +4006,14 @@
 			path = LanguageManager;
 			sourceTree = "<group>";
 		};
+		D6D0DACB2E91025800390946 /* Payout */ = {
+			isa = PBXGroup;
+			children = (
+				D6D0DACC2E9103DD00390946 /* PayoutView.swift */,
+			);
+			path = Payout;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -4414,6 +4431,7 @@
 				99C909422DC8CD790054620B /* SearchViewModel.swift in Sources */,
 				358B9D1A2DDF04FA00932250 /* FSCalendar.swift in Sources */,
 				35CCE01D2DD8782600760CEE /* ScheduleModel.swift in Sources */,
+				D6D0DAC82E90FDD200390946 /* NoPayoutHistortyView.swift in Sources */,
 				D4BB99F42DE590D100C1BCBC /* ShippingsViewModel.swift in Sources */,
 				D4C0C7C22E53125500A84165 /* AddPaymentAndMethodModel.swift in Sources */,
 				D4CAEC702DE6FF1400705CD7 /* ToolGridAnalyticsView.swift in Sources */,
@@ -4436,6 +4454,7 @@
 				D4C4D79C2DD32F3D00274E51 /* TwoButton.swift in Sources */,
 				D4BA9C292DE4A4E700DFF6E6 /* TipsModel.swift in Sources */,
 				D4CAEC822DE7135B00705CD7 /* OptionGridButtonView.swift in Sources */,
+				D6D0DACA2E9100F600390946 /* BalanceSummaryView.swift in Sources */,
 				35CCE0112DD876C500760CEE /* GetStartedScreen.swift in Sources */,
 				D4B616292DE87A3900924A3D /* ShippingStatusView.swift in Sources */,
 				99C9095E2DC8CD790054620B /* DeleteAccountScreen.swift in Sources */,
@@ -4569,6 +4588,7 @@
 				D4C4D7972DD31C2D00274E51 /* ActivityCell.swift in Sources */,
 				99C9081C2DC8CD6A0054620B /* DropDown.swift in Sources */,
 				D4181BC32E0D4B15002962A3 /* KycModel.swift in Sources */,
+				D6D0DACD2E9103DD00390946 /* PayoutView.swift in Sources */,
 				35D6B0012E12A00D00068445 /* KeyboardResponder.swift in Sources */,
 				D4181BC72E0D4B15002962A3 /* KycViewModel.swift in Sources */,
 				D4A7F9042DDDA8C5001FC705 /* AddressesScreen.swift in Sources */,
