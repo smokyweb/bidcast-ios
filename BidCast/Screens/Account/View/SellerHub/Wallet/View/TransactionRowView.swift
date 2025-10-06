@@ -12,50 +12,58 @@ struct Transaction: Identifiable {
     let amount: Double
     let isOutgoing: Bool
 }
- 
+
 import SwiftUI
- 
+
 struct TransactionRowView: View {
     var isComeFrom : String = ""
-    let transaction: Transaction
- 
+    let transaction: Tip
+    
     var body: some View {
         HStack {
             if isComeFrom != "Wallet"{
-                
-                        Image("user_dummy" )
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: 50, height: 50)
-                            .applyClip(isCircular: true, cornerRadius: 8)
-                    
+                if let urlString = transaction.user?.profileImage, let url = URL(string: urlString) {
+                    AsyncImage(url: url) { image in
+                        image.resizable()
+                    } placeholder: {
+                        Color.gray
+                    }
+                    .frame(width: 50, height: 50)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                } else {
+                    Image("user_dummy" )
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 50, height: 50)
+                        .applyClip(isCircular: true, cornerRadius: 8)
+                }
             }
             
-//                .fill(Color(.systemGray6))
-//                .frame(width: 40, height: 40)
-//                .overlay(
-//                    Image(systemName: transaction.isOutgoing ? "arrow.right.arrow.left" : "arrow.left.arrow.right")
-//                        .foregroundColor(.red)
-//                )
+            //                .fill(Color(.systemGray6))
+            //                .frame(width: 40, height: 40)
+            //                .overlay(
+            //                    Image(systemName: transaction.isOutgoing ? "arrow.right.arrow.left" : "arrow.left.arrow.right")
+            //                        .foregroundColor(.red)
+            //                )
             
             VStack(alignment: .leading, spacing: 4) {
-                Text(transaction.title)
+                Text(transaction.user?.name ?? "")
                     .font(.custom(poppinsSemiBold, size: 14.0))
                     .foregroundColor(.primary)
-                Text(transaction.date, style: .date)
+                Text((transaction.createdAt ?? "").stringISOToDate(), style: .date)
                     .font(.custom(poppinsSemiBold, size: 12.0))
                     .foregroundColor(.gray)
             }
- 
+            
             Spacer()
- 
-            Text(transaction.amount, format: .currency(code: "USD"))
+            
+            Text(transaction.total?.toDouble ?? 0.0, format: .currency(code: "USD"))
                 .font(.custom(poppinsSemiBold, size: 14.0))
                 .foregroundColor(.darkGreen)
         }
         .padding(.vertical, 8)
     }
 }
- 
- 
- 
+
+
+

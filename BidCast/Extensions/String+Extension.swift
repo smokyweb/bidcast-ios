@@ -218,3 +218,34 @@ func formatTo12HourTime(_ timeString: String) -> String {
     }
     return timeString // fallback
 }
+
+extension String {
+    /// Converts ISO 8601 date string to a custom formatted string
+    /// - Parameter outputFormat: Desired output format (e.g. "dd MMMM yyyy")
+    /// - Returns: Formatted date string or original string if parsing fails
+    func formattedDate(fromFormat inputFormat: String = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSZ",
+                       toFormat outputFormat: String = "dd MMMM yyyy") -> String {
+        let inputFormatter = DateFormatter()
+        inputFormatter.dateFormat = inputFormat
+        inputFormatter.locale = Locale(identifier: "en_US_POSIX")
+        inputFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+        
+        guard let date = inputFormatter.date(from: self) else {
+            return self  // fallback: return original string if parsing fails
+        }
+        
+        let outputFormatter = DateFormatter()
+        outputFormatter.dateFormat = outputFormat
+        outputFormatter.locale = Locale(identifier: "en_US")
+        
+        return outputFormatter.string(from: date)
+    }
+}
+
+extension String {
+    /// Converts a string to a `Double` if possible.
+    /// Returns `nil` if the string is not a valid number.
+    var toDouble: Double? {
+        return Double(self)
+    }
+}

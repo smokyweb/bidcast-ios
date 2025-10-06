@@ -182,6 +182,7 @@ enum APIEndPoint{
     case filterJobSearch(param: FilterRequestModal)
     case removeSavedJob(param: RemoveSaveJobRequest)
     case sendChatNotification(param: SendChatNotification)
+    case getTipsData
 }
 
 extension APIEndPoint: EndPointType {
@@ -529,7 +530,8 @@ extension APIEndPoint: EndPointType {
        
         case .sendChatNotification:
             return "send-chat-notification"
-        
+        case .getTipsData:
+            return "get-tip-amount"
        
         }
     }
@@ -869,7 +871,8 @@ extension APIEndPoint: EndPointType {
             return .post
         case .sendChatNotification:
             return .post
-       
+        case .getTipsData:
+            return .get
         
         }
     }
@@ -1217,7 +1220,8 @@ extension APIEndPoint: EndPointType {
             return param
         case .sendChatNotification(let param):
             return param
-      
+        case .getTipsData:
+            return nil
        
         }
     }
@@ -1296,17 +1300,17 @@ extension APIEndPoint: EndPointType {
             return nil
         case .followUnfollow(param: let param):
             return nil
-        case .countUpdate(param: let param):
+        case .countUpdate(param: _):
             return nil
-        case .fetchProduct(param: let param):
+        case .fetchProduct(param: _):
             return nil
-        case .storeIDCard(param: let param):
+        case .storeIDCard(param: _):
             return nil
-        case .storePhoneNumber(param: let param):
+        case .storePhoneNumber(param: _):
             return nil
-        case .otpVerify(param: let param):
+        case .otpVerify(param: _):
             return nil
-        case .storePaymentMethod(param: let param):
+        case .storePaymentMethod(param: _):
             return nil
         case .buyerIdentityStore:
             return nil
@@ -1472,9 +1476,9 @@ extension APIEndPoint: EndPointType {
             return nil
         case .getSubCompanyUser:
             return nil
-        case .applyJob(param: let param):
+        case .applyJob(param: _):
             return nil
-        case .getMatches(param: let param):
+        case .getMatches(param: _):
             return nil
         case .getMatchesCandidates(page: let page, job_id: let job_id):
             return nil
@@ -1520,7 +1524,7 @@ extension APIEndPoint: EndPointType {
             return nil
         case .storeLinkedIn(param: let param):
             return nil
-        case .upsertCompany(param: let param):
+        case .upsertCompany:
             return nil
         case .getProductEmployer:
             return nil
@@ -1528,17 +1532,19 @@ extension APIEndPoint: EndPointType {
             return nil
         case .getCompanyName:
             return nil
-        case .filterSearch(param: let param):
+        case .filterSearch:
             return nil
-        case .filterJobSearch(param: let param):
+        case .filterJobSearch:
             return nil
-        case .removeSavedJob(param: let param):
+        case .removeSavedJob:
             return nil
-        case .sendChatNotification(param: let param):
+        case .sendChatNotification:
             return nil
-        case .deleteProduct(param: let param):
+        case .getTipsData:
             return nil
-        case .blockUser(param: let param):
+        case .deleteProduct:
+            return nil
+        case .blockUser:
             return nil
         case .blockedUserList:
             return nil

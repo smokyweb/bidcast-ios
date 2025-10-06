@@ -7,6 +7,7 @@
 
 import SwiftUI
 import AlertToast
+import SVProgressHUD
 
 // MARK: - TipsScreen View
 struct TipsScreen: View {
@@ -22,8 +23,18 @@ struct TipsScreen: View {
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject private var appRootManager: AppRootManager
 
-
-
+    @StateObject private var tipsViewModel = TipsViewModel()
+    @State private var tipsList: TipsModel?
+    
+    var summaryItems: [TipSummaryItem] {
+        guard let summary = tipsList?.summary else { return [] }
+        
+        return [
+            TipSummaryItem(title: "Total Tips", value: "$ \(summary.totalTips)" ?? "0"),
+            TipSummaryItem(title: "Today Tips", value: "$ \(summary.todayTips)" ?? "0")
+        ]
+    }
+    
     var body: some View {
         VStack(spacing: 0) {
             
@@ -41,19 +52,25 @@ struct TipsScreen: View {
                 )
             }
            
-
-
             // MARK: - Scrollable Show List
             ScrollView {
                 VStack(spacing: 10) {
-                    TwoVerticalLabelCell(dataModel: TipsValue.allCases,topLabel: {$0.labelOlt },bottomLabel: { $0.description.localized})
-                    
-                    ForEach(transactions) { txn in
-                        TransactionRowView(transaction: txn)
-                            .padding(.horizontal,8)
-                            .background(.white)
-                            .cornerRadius(12)
-                            .padding(.horizontal,12)
+                    TwoVerticalLabelCell(
+                        dataModel: summaryItems,
+                        topLabel: { $0.title },
+                        bottomLabel: { $0.value }
+                    )
+                    if let tips = tipsList?.tips, !tips.isEmpty {
+                        ForEach(tips, id: \.id) { txn in
+                            TransactionRowView(transaction: txn)
+                                .padding(.horizontal,8)
+                                .background(.white)
+                                .cornerRadius(12)
+                                .padding(.horizontal,12)
+                        }
+                    }
+                    else  {
+                        NoDataView(message: "No Tips Found")
                     }
                 }
                 .padding(.top)
@@ -70,6 +87,36 @@ struct TipsScreen: View {
         .background(Color(UIColor.systemGroupedBackground))
         .toast(isPresenting: $showhud) {
             AlertToast(type: .regular, title: hudMsg)
+        }
+        .onAppear() {
+            Task {
+                await loadTipsData()
+            }
+        }
+    }
+    
+    func loadTipsData() async {
+        guard Reachability.isConnectedToNetwork() else {
+            hudMsg = "No Internet Connection"
+            showhud = true
+            return
+        }
+        SVProgressHUD.show()
+        await tipsViewModel.getTipsData()
+        await SVProgressHUD.dismiss()
+        
+        if tipsViewModel.getTipsResponse?.status != "success" {
+            alertType = .sheetType(
+                icon: .alert,
+                title: "Error",
+                message: tipsViewModel.getTipsResponse?.message ?? "Something went wrong.",
+                primaryBtnText: "",
+                secondaryBtnText: "OK",
+                sheetThemeColor: .pinkBtn
+            )
+            withAnimation(.snappy) { showError = true }
+        } else {
+            tipsList = tipsViewModel.getTipsResponse?.data
         }
     }
 }
