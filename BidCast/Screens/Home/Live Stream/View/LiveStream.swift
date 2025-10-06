@@ -101,6 +101,8 @@ struct LiveStream: View {
     @State var currentIndex : Int = 0
     @State var onRoomsUpdated: (([String]) -> Void)?
     
+    @State var hasHostEndedRoom: Bool = false
+    
     var tabBarHeight: CGFloat {
         UIApplication.shared.windows.first?.safeAreaInsets.bottom ?? 49
     }
@@ -212,10 +214,8 @@ struct LiveStream: View {
                                 }
                             }
                             Button(action: {
-//                                logoutRoom()
-                                Task{
-                                    try await joinManager.unsubscribe()
-                                }
+                                logoutRoom()
+                               
                                 
                                 self.presentationMode.wrappedValue.dismiss()
                             }) {
@@ -625,8 +625,12 @@ struct LiveStream: View {
                 onPrimaryClick: {
                     withAnimation {
                         showError = false
-                        //                        logoutRoom()
+                        if hasHostEndedRoom {
+                            logoutRoom()
+                            hasHostEndedRoom.toggle()
+                        }
                         self.presentationMode.wrappedValue.dismiss()
+                self.presentationMode.wrappedValue.dismiss()
                     }
                 },
                 onSecondaryClick: {
@@ -944,10 +948,11 @@ struct LiveStream: View {
                             secondaryBtnText: ""
                         )
                         self.showError = true
+                        self.hasHostEndedRoom = true
                     }
                 })
+                
                 SocketManagerService.shared.listenForBidFinalized(completion: { roomId,productId,winner in
-                    
                     fetchProducts(for: roomId)
                     let winnerNameFromServer = winner?.user_name ?? ""
                     let winnerIdFromServer = winner?.user_id ?? ""
@@ -1187,8 +1192,12 @@ struct LiveStream: View {
     
     //MARK: logoutRoom
     func logoutRoom() {
+        Task{
+            try await joinManager.unsubscribe()
+        }
         SocketManagerService.shared.chats.removeAll()
         SocketManagerService.shared.leaveRoom(roomId: self.currentRoomID, userId: UserDefaults.userId)
+       
     }
     
     func incrementPrice() {
