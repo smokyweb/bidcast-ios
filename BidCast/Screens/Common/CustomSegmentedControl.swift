@@ -44,12 +44,12 @@ struct CustomSegmentedControl<T: Hashable & CustomStringConvertible>: View {
                 )
             }
         }
-        .background(.white)
+        .background(.gray.opacity(0.2))
         .frame(height: 50)
         .cornerRadius(8)
 //        .padding([.top,.bottom],8)
 //        .padding([.leading,.trailing],20)
-        .padding([.top, .bottom], 0)
+        .padding([.top, .bottom], 4)
     }
 }
 //

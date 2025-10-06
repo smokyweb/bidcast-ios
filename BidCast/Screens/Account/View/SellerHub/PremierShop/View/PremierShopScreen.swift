@@ -8,6 +8,7 @@
 
 import SwiftUI
 import SVProgressHUD
+import AlertToast
 
 // MARK: - PremierShopScreen
 struct PremierShopScreen: View {
@@ -21,6 +22,7 @@ struct PremierShopScreen: View {
     @EnvironmentObject var networkMonitor: NetworkMonitor
     @StateObject private var viewModel = PremierShopViewModel()
     @State private var premierShopData = PremierShopModel()
+    @State private var applyPremierShopData: ApplyPremierShopModel?
     
     var body: some View {
         VStack(spacing: 0) {
@@ -197,6 +199,9 @@ struct PremierShopScreen: View {
                     // MARK: Apply Button
                     Button(action: {
                         // TODO: Apply for Premier Status action
+                        Task {
+                            await self.applyPremierShopAPI()
+                        }
                     }) {
                         Text(AppString.ApplyForPremierStatus)
                             .foregroundColor(.white)
@@ -207,9 +212,13 @@ struct PremierShopScreen: View {
                             .cornerRadius(12)
                     }
                     .padding()
+                    
                 }
                 .padding(.top)
             }
+        }
+        .toast(isPresenting: $showhud) {
+            AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }
         .onFirstAppear {
             Task { await loadData() }
@@ -240,6 +249,34 @@ struct PremierShopScreen: View {
         } else {
             premierShopData = viewModel.premierShopResponse.data ?? PremierShopModel()
         }
+    }
+    
+    // MARK: Apply Premier Shop
+    func applyPremierShopAPI() async  {
+        guard Reachability.isConnectedToNetwork() else {
+            hudMsg = "No Internet Connection"
+            showhud = true
+            return
+        }
+        SVProgressHUD.show()
+        await viewModel.applyForPremierShop()
+        await SVProgressHUD.dismiss()
+        
+        guard let status = viewModel.applyPremierShopResponse?.status, status != "success" else {
+            alertType = .sheetType(
+                icon: .alert,
+                title: "Error",
+                message: viewModel.premierShopResponse.message ?? "Something went wrong.",
+                primaryBtnText: "",
+                secondaryBtnText: "OK",
+                sheetThemeColor: .pinkBtn
+            )
+            withAnimation(.snappy) { showError = true }
+            return
+        }
+        hudMsg = "Premier shop application submitted successfully."
+        showhud = true
+        applyPremierShopData = viewModel.applyPremierShopResponse?.data
     }
 }
 

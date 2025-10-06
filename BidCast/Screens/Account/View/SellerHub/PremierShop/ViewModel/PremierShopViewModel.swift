@@ -11,6 +11,7 @@ import Foundation
 final class PremierShopViewModel: ObservableObject {
 
     @Published var premierShopResponse = ResponseModel<PremierShopModel>()
+    @Published var applyPremierShopResponse: ResponseModel<ApplyPremierShopModel>?
     @Published var errorMessage: String? = nil
 
     func getPremierShopContent() async {
@@ -20,6 +21,18 @@ final class PremierShopViewModel: ObservableObject {
                 header: true
             )
             self.premierShopResponse = response
+        } catch {
+            self.handle(error: error)
+        }
+    }
+    
+    func applyForPremierShop() async {
+        do {
+            let response: ResponseModel<ApplyPremierShopModel> = try await APIManager.shared.request(
+                type: APIEndPoint.applyPremierShop,
+                header: true
+            )
+            self.applyPremierShopResponse = response
         } catch {
             self.handle(error: error)
         }

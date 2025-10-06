@@ -12,6 +12,7 @@ enum APIEndPoint{
     case singUp(param : SignUpRequest)
     case aboutUs
     case premierShop
+    case applyPremierShop
     case promoteTool
     case contact(param : ContactUsRequest)
     case verifyOTP(param : VerifyOtpRequest)
@@ -220,6 +221,8 @@ extension APIEndPoint: EndPointType {
             return "about-us"
         case .premierShop:
             return "get-premier-shop"
+        case .applyPremierShop:
+            return "apply-premier-shop"
         case .promoteTool:
             return "get-promote-tools"
         case .logout:
@@ -554,6 +557,8 @@ extension APIEndPoint: EndPointType {
             return .get
         case .premierShop:
             return .get
+        case .applyPremierShop:
+            return .post
         case .promoteTool:
             return .get
         case .privacyPolicy:
@@ -897,6 +902,8 @@ extension APIEndPoint: EndPointType {
             return nil
         case .premierShop:
             return nil
+        case .applyPremierShop:
+            return nil
         case .promoteTool:
             return nil
         case .contact(let param):
@@ -1224,6 +1231,8 @@ extension APIEndPoint: EndPointType {
         case .aboutUs:
             return nil
         case .premierShop:
+            return nil
+        case .applyPremierShop:
             return nil
         case .promoteTool:
             return nil

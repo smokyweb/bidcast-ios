@@ -50,7 +50,7 @@ struct InventoryScreen: View {
             // MARK: - Segment
             CustomSegmentedControl(preselectedIndex: $segment, options: InventorySegment.allCases)
                 .padding(.horizontal, 12)
-                .background(Color.bg.opacity(0.5))
+                .background(Color.white)
                 .onChange(of: segment) { newSegment in
                     status = newSegment.rawValue.lowercased()
                     currentPage = 1
