@@ -162,7 +162,7 @@ struct RateSellerView: View {
         }
         .ignoresSafeArea(edges: .bottom) // Optional
         .background(Color(.systemBackground))
-        CusNavLink(doNavigate: $navigateToProfile, destination: ProfileScreen(id:$userId, isComeFrom: .constant(""),userName: $userName,userImage: $userImage))
+        CusNavLink(doNavigate: $navigateToProfile, destination: ProfileScreen(id:$userId, sellerID: "\($sellerID)", isComeFrom: .constant(""),userName: $userName,userImage: $userImage))
             .toast(isPresenting: $showhud) {
                 AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)}
     }

@@ -16,7 +16,7 @@ struct TipsModel: Codable {
 // MARK: - Summary
 struct Summary: Codable {
     var totalTips: String?
-    var todayTips: Int?
+    var todayTips: String?
 
     enum CodingKeys: String, CodingKey {
         case totalTips = "total_tips"
@@ -56,4 +56,28 @@ struct TipSummaryItem: Hashable, CustomStringConvertible {
     let value: String
 
     var description: String { value } // For bottom label binding
+}
+
+// MARK: - DataClass
+struct SendTipAmountModel: Codable {
+    var userID: Int?
+    var sellerID, sourceType, type, status: String?
+    var date: String?
+    var subTotal, taxAmount, shippingCharges, discount: Int?
+    var total, cardNumber, createdAt: String?
+    var id: Int?
+
+    enum CodingKeys: String, CodingKey {
+        case userID = "user_id"
+        case sellerID = "seller_id"
+        case sourceType = "source_type"
+        case type, status, date
+        case subTotal = "sub_total"
+        case taxAmount = "tax_amount"
+        case shippingCharges = "shipping_charges"
+        case discount, total
+        case cardNumber = "card_number"
+        case createdAt = "created_at"
+        case id
+    }
 }

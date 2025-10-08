@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import SVProgressHUD
+import AlertToast
 
 struct PayoutView: View {
     
@@ -13,6 +15,15 @@ struct PayoutView: View {
     
     @State private var enteredAmount: String = "0.00"
     private let walletAmount: Double = 62.0
+    @State var sellerID: String = ""
+    
+    @StateObject private var tipsViewModel = TipsViewModel()
+    @State private var sendTipsData: SendTipAmountModel?
+    
+    @State private var showError: Bool = false
+    @State private var showhud: Bool = false
+    @State private var hudMsg: String = ""
+    @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     
     let minPayout = 10.0
     let maxPayout = 500.0
@@ -27,7 +38,7 @@ struct PayoutView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            VStack{
+            VStack(spacing: 0){
                 // MARK: Top-Header (fixed)
                 PrimaryHeader(
                     title: AppString.Payout,
@@ -81,11 +92,13 @@ struct PayoutView: View {
                 }
             }
             .padding(.horizontal, 32)
-            Spacer()
             
             // MARK: - Payout Button
             Button(action: {
                 print("Payout tapped for $\(enteredAmount)")
+                Task {
+                    await sendTipsAmountData()
+                }
             }) {
                 Text("Payout")
                     .font(.system(size: 18, weight: .semibold))
@@ -96,10 +109,16 @@ struct PayoutView: View {
                     .cornerRadius(10)
             }
             .padding(.horizontal)
-            .padding(.bottom, 32)
+            .padding(.vertical, 32)
+            .toast(isPresenting: $showhud) {
+                AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
+                
+            }
         }
-        .background(Color(UIColor.systemGray6))
+        .background(Color(UIColor.systemGray6).opacity(0.5))
         .ignoresSafeArea(edges: .bottom)
+        Spacer()
+            
     }
     
     // MARK: - Handle Button Tap
@@ -122,6 +141,37 @@ struct PayoutView: View {
               }
           }
       }
+    
+    private func sendTipsAmountData() async {
+        guard Reachability.isConnectedToNetwork() else {
+            hudMsg = "No Internet Connection"
+            showhud = true
+            return
+        }
+        SVProgressHUD.show()
+        let request = TipAmountRequest(seller_id: sellerID,
+                                       amount: enteredAmount,
+                                       card_number: "4242")
+        await tipsViewModel.sendTipsAmountData(request: request)
+        await SVProgressHUD.dismiss()
+        
+        if tipsViewModel.sendTipAmountResponse?.status != "success" {
+            alertType = .sheetType(
+                icon: .alert,
+                title: "Error",
+                message: tipsViewModel.sendTipAmountResponse?.message ?? "Something went wrong.",
+                primaryBtnText: "",
+                secondaryBtnText: "OK",
+                sheetThemeColor: .pinkBtn
+            )
+            withAnimation(.snappy) { showError = true }
+        } else {
+            hudMsg = "Tip Amount Send successfully!!"
+            showhud = true
+            sendTipsData = tipsViewModel.sendTipAmountResponse?.data
+            presentationMode.wrappedValue.dismiss()
+        }
+    }
 }
 
 #Preview {

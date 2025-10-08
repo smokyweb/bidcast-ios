@@ -17,11 +17,11 @@ enum ProfileTabType {
     case clips
 }
 
-
 struct ProfileScreen: View {
     
     @State var viewModel = ProfileViewModel()
     @Binding var id : String
+    @State var sellerID : String = ""
     @Binding var  isComeFrom : String
     @Binding var userName : String
     @Binding var userImage : String
@@ -50,6 +50,7 @@ struct ProfileScreen: View {
     @State var navigateToReherseal = false
     @State var navigateToChat = false
     @State private var chatPath: String = ""
+    @State private var isTipAmountButtoClicked: Bool = false
 
     
     @State var reviewList: [ReviewModel] = [
@@ -81,7 +82,7 @@ struct ProfileScreen: View {
                         },sellerID : $id)
                         
                         ProfileActionsView(isFollowing: $isFollowing ,
-                                           onTapFollow: {
+                        onTapFollow: {
                             isForFollow = true
                             Task{
                                 SVProgressHUD.show()
@@ -96,8 +97,9 @@ struct ProfileScreen: View {
                                 profileSuccess()
                             }
                         },
-                                           // Inside ProfileActionsView
-                                           onTapMessage: {
+                                           
+                        // Inside ProfileActionsView
+                        onTapMessage: {
                             let currentUserId = String(UserDefaults.userId)
                             let selectedUserId = id
                             let sortedRoomId = computeRoomId(senderId: currentUserId, receiverId: selectedUserId)
@@ -106,6 +108,9 @@ struct ProfileScreen: View {
                             print("Computed Chat Path: \(chatPath)")
                             
                             navigateToChat = true
+                        },
+                        onTapTipAmount:  {
+                            self.isTipAmountButtoClicked = true
                         })
 
                         
@@ -308,6 +313,10 @@ struct ProfileScreen: View {
                     otherUserImage: userImage, chatPath: $chatPath
                 )
             )
+        )
+        CusNavLink(
+            doNavigate: $isTipAmountButtoClicked,
+            destination: PayoutView(sellerID: id)
         )
     }
     
@@ -693,6 +702,7 @@ struct ProfileActionsView: View {
     @Binding var isFollowing: Bool
     var onTapFollow :() -> () = { }
     var onTapMessage :() -> () = { }
+    var onTapTipAmount :() -> () = { }
     
     
     var body: some View {
@@ -721,6 +731,7 @@ struct ProfileActionsView: View {
             
             Button(action: {
                 // Handle action
+                self.onTapTipAmount()
             }) {
                 Image(systemName: "dollarsign.circle")
                     .resizable()

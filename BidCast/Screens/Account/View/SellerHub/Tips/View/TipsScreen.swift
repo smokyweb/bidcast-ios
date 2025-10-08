@@ -30,14 +30,13 @@ struct TipsScreen: View {
         guard let summary = tipsList?.summary else { return [] }
         
         return [
-            TipSummaryItem(title: "Total Tips", value: "$ \(summary.totalTips)" ?? "0"),
-            TipSummaryItem(title: "Today Tips", value: "$ \(summary.todayTips)" ?? "0")
+            TipSummaryItem(title: "Total Tips", value: "$ \(summary.totalTips ?? "0")"),
+            TipSummaryItem(title: "Today Tips", value: "$ \(summary.todayTips ?? "0")")
         ]
     }
     
     var body: some View {
         VStack(spacing: 0) {
-            
             // MARK: - Top Header (fixed)
             VStack{
                 PrimaryHeader(

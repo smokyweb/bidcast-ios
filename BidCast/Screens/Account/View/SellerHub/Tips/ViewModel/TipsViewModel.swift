@@ -11,6 +11,7 @@ import Foundation
 final class TipsViewModel: ObservableObject {
 
     @Published var getTipsResponse: ResponseModel<TipsModel>?
+    @Published var sendTipAmountResponse: ResponseModel<SendTipAmountModel>?
     @Published var errorMessage: String? = nil
 
     func getTipsData() async {
@@ -20,6 +21,18 @@ final class TipsViewModel: ObservableObject {
                 header: true
             )
             self.getTipsResponse = response
+        } catch {
+            self.handle(error: error)
+        }
+    }
+    
+    func sendTipsAmountData(request: TipAmountRequest) async {
+        do {
+            let response: ResponseModel<SendTipAmountModel> = try await APIManager.shared.request(
+                type: APIEndPoint.sendTipAmount(param: request),
+                header: true
+            )
+            self.sendTipAmountResponse = response
         } catch {
             self.handle(error: error)
         }

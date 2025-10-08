@@ -732,5 +732,29 @@ struct BlockUserList : Encodable{
     var blocked_by : Bool?
 }
 
+struct TipAmountRequest : Encodable{
+    var seller_id : String
+    var amount: String
+    var card_number: String
+}
+
+struct SellerAnalyticsRequest : Encodable{
+    var filter : String?
+    var start_date: String?
+    var end_date: String?
+}
+
+struct SalesPerformanceRequest : Encodable{
+    var filter : String
+    var year: String
+    var month: String?
+}
+
+struct VisitorsAnalyticsRequest : Encodable{
+    var filter : String
+    var year: String
+    var month: String?
+}
+
 
 

@@ -247,7 +247,11 @@ struct HomeViewScreen: View {
             
             CusNavLink(doNavigate: $navigateToLiveStream, destination: LiveStream(currentRoomID: $currentRoomId,currentStreamIndex :self.$index, userId : $userId, comeFromHome: $navigateToLiveStream,category: $selectedButton,search:self.$searchText,currentPage:self.$currentPage))
             
-            CusNavLink(doNavigate: $navigateToProfile, destination: ProfileScreen(id:$userId,isComeFrom : .constant("Home"),userName: $userName,userImage: $userImage))
+            CusNavLink(doNavigate: $navigateToProfile, destination: ProfileScreen(
+                id:$userId,
+                isComeFrom: .constant("Home"),
+                userName: $userName,
+                userImage: $userImage))
             
             CusNavLink(doNavigate: $navigateToNoti, destination: NotificationScreen())
             CusNavLink(doNavigate: $navigateToCategoryDetailScreen, destination: HomeViewScreen(showCategory:$category,comeFromExploreScreen : $navigateToCategoryDetailScreen))

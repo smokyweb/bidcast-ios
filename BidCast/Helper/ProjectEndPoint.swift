@@ -183,6 +183,10 @@ enum APIEndPoint{
     case removeSavedJob(param: RemoveSaveJobRequest)
     case sendChatNotification(param: SendChatNotification)
     case getTipsData
+    case sendTipAmount(param: TipAmountRequest)
+    case getSellerAnalytic(param: SellerAnalyticsRequest)
+    case getSalesPerformace(param: SalesPerformanceRequest)
+    case getVisitorsAnalytic(param: VisitorsAnalyticsRequest)
 }
 
 extension APIEndPoint: EndPointType {
@@ -363,7 +367,7 @@ extension APIEndPoint: EndPointType {
         case .blockUser:
             return "block-unblock"
         case .blockedUserList:
-           return  "blocked-users"
+            return  "blocked-users"
         case .getMailClass:
             return "usps/mail-classes"
         case .getPayOutHistory:
@@ -527,12 +531,42 @@ extension APIEndPoint: EndPointType {
         case .removeSavedJob:
             return "save-job"
             
-       
+            
         case .sendChatNotification:
             return "send-chat-notification"
         case .getTipsData:
             return "get-tip-amount"
-       
+        case .sendTipAmount:
+            return "send-tip-amount"
+        case .getSellerAnalytic(let param):
+            let filter = param.filter ?? ""
+            let start_date = param.start_date ?? ""
+            let end_date = param.end_date ?? ""
+            return "seller-analytic?filter=\(filter)&start_date=\(start_date)&end_date=\(end_date)"
+        case .getSalesPerformace(let param):
+            let filter = param.filter
+            let year = param.year
+            let month = param.month ?? ""
+            var endPoint = ""
+            if filter == "monthly" {
+                endPoint = "sales-performance?filter=\(filter)&year=\(year)&month=\(month)"
+            }
+            else if filter == "yearly" {
+                endPoint = "sales-performance?filter=\(filter)&year=\(year)"
+            }
+            return endPoint
+        case .getVisitorsAnalytic(let param):
+            let filter = param.filter
+            let year = param.year
+            let month = param.month ?? ""
+            var endPoint = ""
+            if filter == "monthly" {
+                endPoint = "visitor-analytics?filter=\(filter)&year=\(year)&month=\(month)"
+            }
+            else if filter == "yearly" {
+                endPoint = "visitor-analytics?filter=\(filter)&year=\(year)"
+            }
+            return endPoint
         }
     }
     
@@ -872,6 +906,14 @@ extension APIEndPoint: EndPointType {
         case .sendChatNotification:
             return .post
         case .getTipsData:
+            return .get
+        case .sendTipAmount:
+            return .post
+        case .getSellerAnalytic:
+            return .get
+        case .getSalesPerformace:
+            return .get
+        case .getVisitorsAnalytic:
             return .get
         
         }
@@ -1222,7 +1264,14 @@ extension APIEndPoint: EndPointType {
             return param
         case .getTipsData:
             return nil
-       
+        case .sendTipAmount(let param):
+            return param
+        case .getSellerAnalytic:
+            return  nil
+        case .getSalesPerformace:
+            return  nil
+        case .getVisitorsAnalytic:
+            return nil
         }
     }
     
@@ -1551,6 +1600,14 @@ extension APIEndPoint: EndPointType {
         case .getMailClass:
             return nil
         case .getPromoteShow:
+            return nil
+        case .sendTipAmount:
+            return nil
+        case .getSellerAnalytic:
+            return  nil
+        case .getSalesPerformace:
+            return  nil
+        case .getVisitorsAnalytic:
             return nil
         }
     }

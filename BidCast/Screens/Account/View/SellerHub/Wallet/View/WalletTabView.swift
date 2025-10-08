@@ -12,8 +12,6 @@ struct WalletTabView: View {
     var summary: WalletInfoModel
     var payouts: [Payout]
     
-    @State private var showPayoutView = false
-    
     // Currency formatting helper
     private func formatAmount(_ amount: Double?) -> String {
         guard let amount = amount else { return "0.0" }
@@ -52,22 +50,17 @@ struct WalletTabView: View {
                     
                     VStack(spacing: 16) {
                         ForEach(0 ..< categoryList.count, id: \.self) { ind in
-                            Button(action: {
-                                showPayoutView = true
-                            }) {
-                                ListCell(
-                                    isComeFrom: "Wallet",
-                                    image: categoryList[ind].image ?? "",
-                                    title: categoryList[ind].name ?? "",
-                                    vectorImg: .icArrowUp,
-                                    subLabel: AppString.YouAreEligibleForEarlyPayout,
-                                    tintColot: categoryList[ind].color ?? "",
-                                    onTapMenuCell: {}
-                                )
-                                .padding([.leading ,.trailing] ,0)
-                                .padding(.vertical,1)
-                            }
-                            .buttonStyle(PlainButtonStyle())
+                            ListCell(
+                                isComeFrom: "Wallet",
+                                image: categoryList[ind].image ?? "",
+                                title: categoryList[ind].name ?? "",
+                                vectorImg: .icArrowUp,
+                                subLabel: AppString.YouAreEligibleForEarlyPayout,
+                                tintColot: categoryList[ind].color ?? "",
+                                onTapMenuCell: {}
+                            )
+                            .padding([.leading ,.trailing] ,0)
+                            .padding(.vertical,1)
                         }
                     }
                     
@@ -92,7 +85,6 @@ struct WalletTabView: View {
 //                .frame(maxWidth: .infinity)
             }
         }
-        CusNavLink(doNavigate: $showPayoutView, destination: PayoutView())
         .ignoresSafeArea(edges: .horizontal)
     }
 }

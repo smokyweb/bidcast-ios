@@ -1019,6 +1019,14 @@
 		D6D0DACC2E9103DD00390946 /* PayoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PayoutView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		D6A14D6D2E954712002D5CA9 /* notLinkedAPI */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = notLinkedAPI;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		99DF9E3C2DC4F35D008C15B2 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -1994,6 +2002,7 @@
 				99C908782DC8CD790054620B /* NewsScreen */,
 				99C908842DC8CD790054620B /* SplashScreen */,
 				35D6B0002E12A00D00068445 /* KeyboardResponder.swift */,
+				D6A14D6D2E954712002D5CA9 /* notLinkedAPI */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -4031,6 +4040,9 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				D6A14D6D2E954712002D5CA9 /* notLinkedAPI */,
 			);
 			name = BidCast;
 			packageProductDependencies = (
