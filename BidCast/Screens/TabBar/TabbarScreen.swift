@@ -40,12 +40,12 @@ struct TabbarScreen: View {
         ZStack {
             TabView(selection: $selectedTab) {
                 
-                NavigationContainer(navigationPath: $homeNavigationPath) { HomeViewScreen(showCategory: .constant(""), comeFromExploreScreen: .constant(false),isNavFrom : "Login").hideTabBar() }
+                NavigationContainer(navigationPath: $homeNavigationPath) { HomeViewScreen(showCategory: .constant(""), comeFromExploreScreen: .constant(false),isNavFrom : "Login") }
                     .id(homeViewID)
                     .tabItem { Label("Home", systemImage: "house") }
                     .tag(0)
                 
-                NavigationContainer(navigationPath: $exploreNavigationPath) { ExploreViewScreen().hideTabBar() }
+                NavigationContainer(navigationPath: $exploreNavigationPath) { ExploreViewScreen() }
                     .id(exploreViewID)
                     .tabItem { Label("Explore", systemImage: "safari.fill") }
                     .tag(1)
@@ -54,12 +54,12 @@ struct TabbarScreen: View {
                     .tabItem { Label("Sell", systemImage: "plus.circle.fill") }
                     .tag(2)
                 
-                NavigationContainer(navigationPath: $activityNavigationPath) { ActivityScreen().hideTabBar() }
+                NavigationContainer(navigationPath: $activityNavigationPath) { ActivityScreen() }
                     .id(activityViewID)
                     .tabItem { Label("Activity", systemImage: "suit.heart.fill") }
                     .tag(3)
                 
-                NavigationContainer(navigationPath: $accountNavigationPath) { AccountScreen().hideTabBar() }
+                NavigationContainer(navigationPath: $accountNavigationPath) { AccountScreen() }
                     .id(accountViewID)
                     .tabItem { Label("Account", systemImage: "person.fill") }
                     .tag(4)

@@ -65,7 +65,7 @@ struct ContactUs: View {
                                 placeholder: AppString.enterFullName.localized,
                                 icon: .icMail,
                                 text: $request.name,
-                                isIconDisplay : false,
+                                isIconDisplay : true,
                                 enteredText: { request.name = $0 }
                             )
                             .textContentType(.name)
@@ -75,7 +75,7 @@ struct ContactUs: View {
                                 placeholder: AppString.enterEmail.localized,
                                 icon: .icMail,
                                 text: $request.email,
-                                isIconDisplay : false,
+                                isIconDisplay : true,
                                 enteredText: { request.email = $0 }
                             )
                             .textContentType(.emailAddress)
@@ -85,7 +85,7 @@ struct ContactUs: View {
                                 placeholder: AppString.enterSubject.localized,
                                 icon: .icMail,
                                 text: $request.subject,
-                                isIconDisplay : false,
+                                isIconDisplay : true,
                                 enteredText: { request.subject = $0 }
                             )
 
@@ -94,9 +94,19 @@ struct ContactUs: View {
                                 placeholder: AppString.enterYourMessage.localized,
                                 icon: .icMail,
                                 text: $request.message,
-                                isIconDisplay : false,
+                                isIconDisplay : true,
                                 enteredText: { request.message = $0 }
                             )
+//                            DescriptionFieldView(
+//                                title:AppString.message.localized,
+//                                placeHolder:AppString.enterYourMessage.localized,
+//                                description:request.message,
+//                                custFontName : robotoMedium,
+//                                custFontSize : 14.0
+//                                )
+//                            { message in
+//                                request.message = message
+//                            }
                         }
 //                        .padding(.horizontal, 16)
 

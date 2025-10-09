@@ -120,26 +120,26 @@ struct MultiSelectionSubCategoryScreen: View {
             
             VStack {
                 Button(action: {
-                    if selectedSubCategoryIDs.isEmpty {
-                        hudMsg = "Please select at least one subcategory."
-                        showhud = true
-                    } else {
+//                    if selectedSubCategoryIDs.isEmpty {
+//                        hudMsg = "Please select at least one subcategory."
+//                        showhud = true
+//                    } else {
                         Task {
                             await addFavCategories(
                                 selectedCategoryIDs: selectedCategoryIDs,
                                 selectedSubCategoryIDs: Array(selectedSubCategoryIDs)
                             )
                         }
-                    }
+//                    }
                 }) {
                     Text("Confirm")
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(selectedSubCategoryIDs.isEmpty ? Color.gray : Color.blue)
+                        .background(/*selectedSubCategoryIDs.isEmpty ? Color.gray :*/ .defaultTheme)
                         .cornerRadius(12)
                 }
-                .disabled(selectedSubCategoryIDs.isEmpty)
+//                .disabled(selectedSubCategoryIDs.isEmpty)
             }
             .padding(16)
 //            .background(Color.white.shadow(radius: 3))
@@ -157,7 +157,9 @@ struct MultiSelectionSubCategoryScreen: View {
             isPresented: $showError,
             height: screenHeight / 2.5,
             topBarCornerRadius: 25,
-            showTopIndicator: false
+            showTopIndicator: false,onDismiss: {
+                showError = true
+            }
         ) {
             CommonBottomSheet(
                 sheetType: $alertType,
