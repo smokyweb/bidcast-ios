@@ -1,5 +1,5 @@
 {
-  "originHash" : "8b46e6ec0a427c464a6a388b51e0172e78c31f6633a494229af2cbce60410658",
+  "originHash" : "43d380692b33257794edfd574234850e605a86bcc59790739de29122ea07148d",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -213,8 +213,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/onevcat/Kingfisher.git",
       "state" : {
-        "revision" : "7deda23bbdca612076c5c315003d8638a08ed0f1",
-        "version" : "8.3.2"
+        "revision" : "dd3c422ec3088404d6f7e8c905a8318b3de12d6f",
+        "version" : "8.6.0"
       }
     },
     {
@@ -283,10 +283,10 @@
     {
       "identity" : "stripe-ios",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/stripe/stripe-ios",
+      "location" : "https://github.com/stripe/stripe-ios.git",
       "state" : {
-        "revision" : "5b9444d1e765ee7dcc58ea8d1ae0acc4bbfbf435",
-        "version" : "24.14.0"
+        "revision" : "9d6c842c11752ecbb555bafd2b05d53ab6712e95",
+        "version" : "24.24.2"
       }
     },
     {
