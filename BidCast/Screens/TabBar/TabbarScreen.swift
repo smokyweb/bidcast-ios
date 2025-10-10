@@ -64,6 +64,7 @@ struct TabbarScreen: View {
                     .tabItem { Label("Account", systemImage: "person.fill") }
                     .tag(4)
             }
+            .edgesIgnoringSafeArea(.top)
             .onChange(of: selectedTab) { newTab in
                 if newTab == 2 {
                      
@@ -109,17 +110,34 @@ struct TabbarScreen: View {
                                 navigateToTitle = true
 //                                navigateTogetStarted = true
                             }else{
-                                alertType = .sheetType(
-                                    icon: .info,
-                                    title: "Become a Verified Seller!",
-                                    message: "Before you interact with live shows.you need to become a verified seller.",
-                                    primaryBtnText: "OK",
-                                    secondaryBtnText: "",
-                                    buttonWidth:screenWidth - 24,
-                                    contentSize: 12.0
-                                )
-                                withAnimation(.snappy){
-                                    showSellerSheet = true
+
+                                if UserDefaults.sellerVerafied == "pending" {
+                                    alertType = .sheetType(
+                                        icon: .info,
+                                        title: "Become a Verified Buyer!",
+                                        message: "Your verification is currently pending approval by the admin. You will be notified once the process is complete.",
+                                        primaryBtnText: "OK",
+                                        secondaryBtnText: "",
+                                        buttonWidth:screenWidth - 40,
+                                        contentSize: 12.0
+                                    )
+                                    withAnimation(.snappy){
+                                        showSellerSheet = true
+                                    }
+                                    
+                                }else{
+                                    alertType = .sheetType(
+                                        icon: .info,
+                                        title: "Become a Verified Seller!",
+                                        message: "Before you interact with live shows.you need to become a verified seller.",
+                                        primaryBtnText: "OK",
+                                        secondaryBtnText: "",
+                                        buttonWidth:screenWidth - 32,
+                                        contentSize: 12.0
+                                    )
+                                    withAnimation(.snappy){
+                                        showSellerSheet = true
+                                    }
                                 }
                             }
                         }else{
@@ -127,7 +145,7 @@ struct TabbarScreen: View {
 //                                navigateToTitle = true
                                 navigateTogetStarted = true
                             }else{
-                                if UserDefaults.buyerVerafied == "pending" {
+                                if UserDefaults.sellerVerafied == "pending" {
                                     alertType = .sheetType(
                                         icon: .info,
                                         title: "Become a Verified Buyer!",
@@ -167,7 +185,7 @@ struct TabbarScreen: View {
                                 showPaymentShipping = true
                             }
                         }else{
-                            if UserDefaults.buyerVerafied == "pending" {
+                            if UserDefaults.sellerVerafied == "pending" {
                                 alertType = .sheetType(
                                     icon: .info,
                                     title: "Become a Verified Buyer!",

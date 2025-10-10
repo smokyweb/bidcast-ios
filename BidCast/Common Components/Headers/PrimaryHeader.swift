@@ -311,9 +311,9 @@ struct PrimaryHeader: View {
             // Safe area background color (to match header)
             GeometryReader { geometry in
                 Color.white
-                    .frame(height: geometry.safeAreaInsets.top)
+                    .frame(height: 50)
                     .edgesIgnoringSafeArea(.top)
-                    .offset(y: -geometry.safeAreaInsets.top)
+//                    .offset(y: -geometry.safeAreaInsets.top)
             }
         )
     }

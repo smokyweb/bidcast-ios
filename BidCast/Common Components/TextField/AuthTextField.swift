@@ -19,6 +19,7 @@ struct AuthTextField: View {
     @State var isPassword: Bool = false
     @State var showPassword: Bool = true
     var isIconDisplay : Bool = true
+    var isForDescription: Bool = false
     @FocusState var isFocused: Bool
     @State var isForPrice: Bool = false
    
@@ -57,7 +58,27 @@ struct AuthTextField: View {
                             .foregroundStyle(.text.opacity(0.45))
                             .padding(.all, 10)
                     }
-                    if showPassword && isPassword {
+                    if isForDescription {
+                        ZStack(alignment: .topLeading) {
+                            if text.isEmpty {
+                                Text(placeholder)
+                                    .font(.custom(custPlaceHolderName, fixedSize: custPlaceHolderFontSize))
+                                    .foregroundStyle(.mediumLightGray)
+                                    .padding(.top, 8)
+                                    .padding(.leading, 4)
+                            }
+                            TextEditor(text: $text)
+                                .font(.custom(custPlaceHolderName, fixedSize: custPlaceHolderFontSize))
+                                .focused($isFocused)
+                                .frame(minHeight: 100, maxHeight: 200)
+                                .padding(.vertical, 4)
+                                .padding(.horizontal, 2)
+                                .background(Color.clear)
+                                .onChange(of: text) { value in
+                                    self.enteredText?(value)
+                                }
+                        }
+                    } else  if showPassword && isPassword {
                         SecureField(placeholder, text: $text)
                             .font(.custom(custPlaceHolderName, fixedSize: placeHolder))
                             .autocorrectionDisabled(true)
@@ -88,49 +109,49 @@ struct AuthTextField: View {
                                 var filtered = value.filter { $0.isNumber }
                                 if isForCVV {
                                         filtered = String(filtered.prefix(3))
-                                    text = filtered
-                                self.enteredText?(text)
+                                        text = filtered
+                                        self.enteredText?(text)
                                     } else if isForExpiry {
                                         filtered = String(filtered.prefix(6)) // only keep YYYYMM
-
+                                        
                                         if filtered.count == 6 {
                                             let year = filtered.prefix(4)
                                             let month = filtered.suffix(2)
                                             filtered = "\(year)-\(month)"
                                         }
-
+                                        
                                         text = filtered
-                                    self.enteredText?(text)
+                                        self.enteredText?(text)
                                     } else if isForCardNumber {
                                         filtered = String(filtered.prefix(16))
                                         var formatted = ""
                                         for (index, char) in filtered.enumerated() {
-//                                            if index != 0 && index % 4 == 0 {
-//                                                formatted.append("-")
-//                                            }
+                                            //                                            if index != 0 && index % 4 == 0 {
+                                            //                                                formatted.append("-")
+                                            //                                            }
                                             formatted.append(char)
                                         }
                                         filtered = formatted
                                         text = filtered
-                                    self.enteredText?(text)
+                                        self.enteredText?(text)
                                     } else if isForPrice {
                                         let trimmed = value.trimmingCharacters(in: .whitespaces)
-
+                                        
                                         
                                         let isDecimalInput = trimmed.range(of: #"^\d+\.\d{0,2}$"#, options: .regularExpression) != nil
-
+                                        
                                         if let number = Double(trimmed), isDecimalInput {
-                                           
+                                            
                                             text = String(format: "%.2f", number)
                                         } else {
-                                           
+                                            
                                             var digitsOnly = trimmed.filter { $0.isNumber }
-
+                                            
                                             
                                             while digitsOnly.count > 1 && digitsOnly.first == "0" {
                                                 digitsOnly.removeFirst()
                                             }
-
+                                            
                                             if digitsOnly.isEmpty {
                                                 text = "0.00"
                                             } else {
@@ -138,7 +159,7 @@ struct AuthTextField: View {
                                                 text = String(format: "%.2f", valueAsCents)
                                             }
                                         }
-
+                                        
                                         self.enteredText?(text)
                                     }else{
                                         filtered = String(filtered.prefix(maxDigits))

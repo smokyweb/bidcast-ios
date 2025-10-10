@@ -7,7 +7,6 @@
 
 import Foundation
 
-import Foundation
 import Combine
 
 final class SellerVerificationViewModel: ObservableObject {
@@ -47,12 +46,12 @@ final class SellerVerificationViewModel: ObservableObject {
     // MARK: - Get Cards
     func getCard() async {
         do {
-            if let response: ResponseModel<CardModel> = try await APIManager.shared.request(
+        let response: ResponseModel<CardModel> = try await APIManager.shared.request(
                 type: APIEndPoint.getCard,
                 header: true
-            ) {
+            )
                 self.cardDict = response
-            }
+            
         } catch {
             handle(error: error)
         }

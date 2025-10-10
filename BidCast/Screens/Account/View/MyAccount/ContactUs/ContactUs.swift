@@ -63,7 +63,7 @@ struct ContactUs: View {
                             AuthTextField(
                                 floatingLabel: AppString.fullName.localized,
                                 placeholder: AppString.enterFullName.localized,
-                                icon: .icMail,
+                                icon: .icUser,
                                 text: $request.name,
                                 isIconDisplay : true,
                                 enteredText: { request.name = $0 }
@@ -72,12 +72,15 @@ struct ContactUs: View {
 
                             AuthTextField(
                                 floatingLabel: AppString.email.localized,
-                                placeholder: AppString.enterEmail.localized,
+                                placeholder: UserDefaults.userEmail,
                                 icon: .icMail,
-                                text: $request.email,
+                                text: .constant(UserDefaults.userEmail),
                                 isIconDisplay : true,
-                                enteredText: { request.email = $0 }
+                                enteredText: {_ in 
+                                    request.email = UserDefaults.userEmail
+                                }
                             )
+                            .disabled(true)
                             .textContentType(.emailAddress)
 
                             AuthTextField(
@@ -89,30 +92,31 @@ struct ContactUs: View {
                                 enteredText: { request.subject = $0 }
                             )
 
-                            AuthTextField(
-                                floatingLabel: AppString.message.localized,
-                                placeholder: AppString.enterYourMessage.localized,
-                                icon: .icMail,
-                                text: $request.message,
-                                isIconDisplay : true,
-                                enteredText: { request.message = $0 }
-                            )
-//                            DescriptionFieldView(
-//                                title:AppString.message.localized,
-//                                placeHolder:AppString.enterYourMessage.localized,
-//                                description:request.message,
-//                                custFontName : robotoMedium,
-//                                custFontSize : 14.0
-//                                )
-//                            { message in
-//                                request.message = message
-//                            }
+//                            AuthTextField(
+//                                floatingLabel: AppString.message.localized,
+//                                placeholder: AppString.enterYourMessage.localized,
+//                                icon: .icMail,
+//                                text: $request.message,
+//                                isIconDisplay : false,
+//                                isForDescription: true,
+//                                enteredText: { request.message = $0 }
+//                            )
+                            
                         }
-//                        .padding(.horizontal, 16)
 
                         VStack(spacing: 16) {
-                            ListCell(image:"mail",title:"Email",subLabel: "support@company.com",isVectorImgHidden: true,imgSize: 24)
-                                .padding(.horizontal)
+                            DescriptionFieldView(
+                                description:$request.message,
+                                title:AppString.message.localized,
+                                placeholder:AppString.enterYourMessage.localized,
+                                custFontName : robotoMedium,
+                                custFontSize : 14.0
+                                )
+                            { message in
+                                request.message = message
+                            }
+//                            ListCell(image:"mail",title:"Email",subLabel: "support@company.com",isVectorImgHidden: true,imgSize: 24)
+//                                .padding(.horizontal)
                         }
 
                         Spacer().frame(height: 80) // Space for button

@@ -108,7 +108,8 @@ struct SellerVerificationScreen: View {
                                 idVerificationComplete = true
                             }
                         )
-                        .disabled(UserDefaults.sellerVerafied == "verified" ? true : false)
+                        .disabled(!(UserDefaults.sellerVerafied.isEmpty || UserDefaults.sellerVerafied == "rejected"))
+
                         
                         // Phone Verification
                         VerificationSectionView(
@@ -122,7 +123,8 @@ struct SellerVerificationScreen: View {
                                 navigateToOTP = true
                             }
                         )
-                        .disabled(UserDefaults.sellerVerafied == "verified" ? true : false)
+                        .disabled(!(UserDefaults.sellerVerafied.isEmpty || UserDefaults.sellerVerafied == "rejected"))
+
                         
                         // Payment Method
                         VerificationSectionView(
@@ -148,7 +150,8 @@ struct SellerVerificationScreen: View {
 //                                }
                             }
                         )
-                        .disabled(UserDefaults.sellerVerafied == "verified" ? true : false)
+                        .disabled(!(UserDefaults.sellerVerafied.isEmpty || UserDefaults.sellerVerafied == "rejected"))
+
                         
                         // Show Card or Empty View
                         if cardArr.count != 0 {
@@ -176,7 +179,7 @@ struct SellerVerificationScreen: View {
                             icon: "person.crop.circle.badge.checkmark",
                             title: "Manual Verification",
                             subtitle: "Final review by our team",
-                            statusText: viewModel.paymentDetailDict.data?.status ?? "",
+                            statusText: viewModel.paymentDetailDict.data?.status?.capitalizingFirstLetter() ?? "",
                             textColor: UserDefaults.sellerVerafied == "verified" ? Color.defaultTheme : Color.gray
                         )
                     }
@@ -185,6 +188,9 @@ struct SellerVerificationScreen: View {
                 
                 // Final Button
                 Button(action: {
+                    guard UserDefaults.sellerVerafied.isEmpty || UserDefaults.sellerVerafied == "rejected" else {
+                        return
+                    }
                     Task{
                         await handleFinalUpload()
                     }
@@ -203,26 +209,7 @@ struct SellerVerificationScreen: View {
 //            }
         }
         .onFirstAppear{
-            Task{
-                SVProgressHUD.show()
-                self.viewModel.errorMessage?.removeAll()
-                await self.viewModel.fetchSellerPaymentDetail()
-                await SVProgressHUD.dismiss()
-                if self.viewModel.errorMessage == "" || viewModel.errorMessage == nil {
-                    success()
-                }else{
-                    
-                    alertType = .sheetType(
-                        icon: .alert,
-                        title: "Failed" ,
-                        message: self.viewModel.errorMessage ?? "",
-                        primaryBtnText: "",
-                        secondaryBtnText: AppString.ok.localized
-                    )
-                    showError = true
-                }
-                
-            }
+            feetchSellerStatus()
             
         }
         .background(.white)
@@ -304,9 +291,32 @@ struct SellerVerificationScreen: View {
         )
         CusNavLink(doNavigate: $navigateToProfile, destination: AccountScreen())
     }
-    
+    func feetchSellerStatus(){
+        Task{
+            SVProgressHUD.show()
+            self.viewModel.errorMessage?.removeAll()
+            await self.viewModel.fetchSellerPaymentDetail()
+            await SVProgressHUD.dismiss()
+            if self.viewModel.errorMessage == "" || viewModel.errorMessage == nil {
+                success()
+            }else{
+                
+                alertType = .sheetType(
+                    icon: .alert,
+                    title: "Failed" ,
+                    message: self.viewModel.errorMessage ?? "",
+                    primaryBtnText: "",
+                    secondaryBtnText: AppString.ok.localized
+                )
+                showError = true
+            }
+            
+        }
+    }
     //MARK: handleFinalUpload.
     func handleFinalUpload() async {
+       
+        
         guard let idData = idCardImageData,
               let selfieData = selfieImageData,
               let idURL = compressAndSaveImage(data: idData),
@@ -397,7 +407,21 @@ struct SellerVerificationScreen: View {
         }
         //        }
     }
-    
+    func loadImageData(from urlString: String, completion: @escaping (Data?) -> Void) {
+        guard let url = URL(string: urlString) else {
+            completion(nil)
+            return
+        }
+        
+        URLSession.shared.dataTask(with: url) { data, _, error in
+            if let error = error {
+                print("Failed to load image: \(error.localizedDescription)")
+                completion(nil)
+            } else {
+                completion(data)
+            }
+        }.resume()
+    }
     func success(){
         let response = self.viewModel.paymentDetailDict
         if response.status == "success"{
@@ -406,6 +430,13 @@ struct SellerVerificationScreen: View {
                 idVerificationComplete = true
                 phoneVerificationComplete = true
                 paymentMethodComplete = true
+                let idCardURL = response.data?.idCard ?? ""
+                let selfieURL = response.data?.image ?? ""
+                loadImages(url:idCardURL,selfieUrl: selfieURL)
+            }else{
+                idVerificationComplete = false
+                phoneVerificationComplete = false
+                paymentMethodComplete = false
             }
         }else{
             showError = true
@@ -418,6 +449,19 @@ struct SellerVerificationScreen: View {
             )
         }
     }
+    func loadImages(url:String,selfieUrl:String) {
+        loadImageData(from: url) { data in
+            DispatchQueue.main.async {
+                idCardImageData = data
+            }
+        }
+        
+        loadImageData(from: selfieUrl) { data in
+            DispatchQueue.main.async {
+                selfieImageData = data
+            }
+        }
+    }
     
     //MARK: idUploadSuccess.
     func idUploadSuccess() {
@@ -427,8 +471,8 @@ struct SellerVerificationScreen: View {
             UserDefaults.sellerVerafied = "pending"
 //            navigateToProfile = true
             SVProgressHUD.dismiss()
-            self.presentationMode.wrappedValue.dismiss()
-            
+//            self.presentationMode.wrappedValue.dismiss()
+            self.feetchSellerStatus()
         } else {
             SVProgressHUD.dismiss()
             hudMsg = "Seller Verification Failed"

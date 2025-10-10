@@ -125,6 +125,22 @@ extension AppDelegate: UNUserNotificationCenterDelegate,MessagingDelegate {
                                 withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         let userInfo = notification.request.content.userInfo
         print("will Receive \(userInfo)")
+        
+        // Extract values safely
+        let title = userInfo["title"] as? String
+        let type = userInfo["type"] as? String
+        
+        if type == "Seller Identity" {
+               if title == "Identity Verified" {
+                   UserDefaults.sellerVerafied = "verified"
+//                   NotificationCenter.default.post(name: .sellerVerifiedUpdated, object: nil)
+               } else if title == "Identity Rejected" {
+                   UserDefaults.sellerVerafied = "rejected"
+//                   NotificationCenter.default.post(name: .sellerVerifiedUpdated, object: nil)
+               }
+           }
+        
+        // Present the notification normally
         completionHandler([.alert, .sound, .badge])
     }
     
