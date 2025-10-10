@@ -290,8 +290,9 @@ struct HomeViewScreen: View {
                     let response = self.viewModel.accountInfo.data
                     UserDefaults.isFirstShowCreated = response?.is_FirstShowCreated ?? false
                     UserDefaults.profileURL = response?.profile_image ?? ""
-                    UserDefaults.userName = response?.username ?? ""
                     UserDefaults.fullName = response?.name ?? ""
+                    UserDefaults.userName = response?.username ?? UserDefaults.fullName
+                    
                     UserDefaults.buyerVerafied = response?.buyer_identity_status ?? ""
                     UserDefaults.sellerVerafied = response?.seller_identity_status ?? ""
                     UserDefaults.sellerAddress = response?.has_shipping_address ?? false

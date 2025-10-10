@@ -236,35 +236,36 @@ struct ProfileScreen: View {
                     //                .padding()
                 }
                 
-                .edgesIgnoringSafeArea(.top)
-                .bottomSheet(isPresented: $showSellSheet, height: screenHeight * 0.95) {
-                    ProductDetailSheet(
-                        onDismiss : {
-                            self.showSellSheet = false
-                            productId = 0
-                        },
-                        productID: $productId,showoption: false
-                        
-                    )
-                }
-                .toast(isPresenting: $showToast) {
-                    AlertToast(displayMode: .alert, type: .regular, title: toastMessage)
-                    
-                }
-                .bottomSheet(isPresented: $showNotify,height: screenHeight * 0.45) {
-                    NotifyMeBottomSheet(
-                        userId: $profileId, profileImage: profileData.profile_image ?? "" ,
-                        username: profileData.username ?? "",
-                        showParentToast: $showToast,
-                        parentToastMessage: $toastMessage,
-                        onDismiss: {
-                            self.showNotify = false
-                        }
-                    )
-                }
+                .edgesIgnoringSafeArea(.all)
+                
                 
             }
             
+        }
+        .bottomSheet(isPresented: $showSellSheet, height: screenHeight * 0.95) {
+            ProductDetailSheet(
+                onDismiss : {
+                    self.showSellSheet = false
+                    productId = 0
+                },
+                productID: $productId,showoption: false
+                
+            )
+        }
+        .toast(isPresenting: $showToast) {
+            AlertToast(displayMode: .alert, type: .regular, title: toastMessage)
+            
+        }
+        .bottomSheet(isPresented: $showNotify,height: screenHeight * 0.45) {
+            NotifyMeBottomSheet(
+                userId: $profileId, profileImage: profileData.profile_image ?? "" ,
+                username: profileData.username ?? "",
+                showParentToast: $showToast,
+                parentToastMessage: $toastMessage,
+                onDismiss: {
+                    self.showNotify = false
+                }
+            )
         }
         .onAppear{
             
@@ -476,7 +477,7 @@ struct ProfileHeaderView: View {
                 Image("IMG_2678")
                     .resizable()
                     .scaledToFill()
-                    .frame(height: 200)
+                    .frame(height: 220)
                     .clipped()
                 Spacer()
             }
@@ -503,20 +504,20 @@ struct ProfileHeaderView: View {
                     AsyncImage(url: URL(string: profileImage)) { phase in
                         switch phase {
                         case .empty:
-                            ProgressView().frame(width: 80, height: 80)
+                            ProgressView().frame(width: 100, height: 100)
                         case .success(let image):
                             image
                                 .resizable()
                                 .clipShape(Circle())
                                 .overlay(Circle().stroke(Color.white, lineWidth: 2))
-                                .frame(width: 80, height: 80)
+                                .frame(width: 100, height: 100)
                                 .offset(x: 16, y: 160)
                         case .failure:
                             Image(systemName: "person.crop.circle.fill")
                                 .resizable()
                                 .clipShape(Circle())
                                 .overlay(Circle().stroke(Color.white, lineWidth: 2))
-                                .frame(width: 80, height: 80)
+                                .frame(width: 100, height: 100)
                                 .offset(x: 16, y: 160)
                         @unknown default:
                             EmptyView()
@@ -607,7 +608,7 @@ struct ProfileHeaderView: View {
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }
-        
+        Spacer()
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 VStack(alignment: .leading) {
@@ -622,41 +623,56 @@ struct ProfileHeaderView: View {
                 Spacer()
                 
                 HStack(spacing: 12) {
+                    let buttonSize: CGFloat = 44 // Adjust size as needed
+
                     Button(action: {
                         onTapNotify()
                     }) {
                         Image(systemName: "bell")
+                            .resizable()
+                            .scaledToFit()
                             .foregroundColor(.black)
-                            .padding(10)
+                            .padding(12)
+                            .frame(width: buttonSize, height: buttonSize)
                             .background(Color.white)
                             .clipShape(Circle())
                             .shadow(radius: 2)
+                            .fontWeight(.bold)
                     }
-                    
+
                     Button(action: {
                         // Share action
                     }) {
                         Image(systemName: "square.and.arrow.up")
+                            .resizable()
+                            .scaledToFit()
                             .foregroundColor(.black)
-                            .padding(10)
+                            .padding(12)
+                            .frame(width: buttonSize, height: buttonSize)
                             .background(Color.white)
                             .clipShape(Circle())
                             .shadow(radius: 2)
+                            .fontWeight(.bold)
                     }
-                    
+
                     Button(action: {
                         withAnimation {
                             showMoreMenu.toggle()
                         }
                     }) {
                         Image(systemName: "ellipsis")
+                            .resizable()
+                            .scaledToFit()
                             .foregroundColor(.black)
-                            .padding(10)
+                            .padding(12)
+                            .frame(width: buttonSize, height: buttonSize)
                             .background(Color.white)
                             .clipShape(Circle())
                             .shadow(radius: 2)
+                            .fontWeight(.bold)
                     }
                 }
+
             }
             
             HStack(spacing: 16) {
@@ -671,8 +687,9 @@ struct ProfileHeaderView: View {
                 .font(.custom(poppinsRegular, size: 13.0))
                 .foregroundColor(.gray)
         }
+        .padding(.vertical,8)
         .padding(.horizontal, 8)
-        CusNavLink(doNavigate: $navigateToRating, destination: RateSellerView(sellerID: Int(sellerID) ?? 0, sellerImage: profileImage, sellerName: name))
+        CusNavLink(doNavigate: $navigateToRating, destination: RateSellerView(sellerID: Int(sellerID) ?? 0, sellerImage: .constant(profileImage), sellerName: .constant(name)))
         CusNavLink(doNavigate: $navigateToHome, destination: HomeViewScreen(showCategory: .constant(""), comeFromExploreScreen: .constant(false)))
         
     }
@@ -755,9 +772,9 @@ struct ProfileTabsView: View {
                     Text(tab)
                         .font(.custom(poppinsSemiBold, size: 13.0))
                         .fontWeight(selectedTab == tab ? .bold : .regular)
-                        .foregroundColor(selectedTab == tab ? .blue : .gray)
+                        .foregroundColor(selectedTab == tab ? .defaultTheme : .gray)
                     if selectedTab == tab {
-                        Capsule().fill(Color.blue).frame(height: 3)
+                        Capsule().fill(Color.defaultTheme).frame(height: 3)
                     } else {
                         Capsule().fill(Color.clear).frame(height: 3)
                     }

@@ -291,7 +291,8 @@ struct LiveStream: View {
                                     .padding(.trailing, commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? 14 : 40)
                                     
                                     .frame(height: 50)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .frame(width:screenWidth-90)
+//                                    .frame(maxWidth: .infinity, alignment: .leading)
                                     .font(.custom(poppinsSemiBold, size: 13))
                                     .foregroundColor(.white)
                                     .cornerRadius(8)
@@ -1029,7 +1030,8 @@ struct LiveStream: View {
         
         if let products = socketRoom.products {
             let activeCurrentProducts = products.filter { product in
-                product.status?.lowercased() == "live" && product.isCurrent
+                let status = product.status?.lowercased() ?? ""
+                return (status == "live" || status == "active") && product.isCurrent
             }
             
             if let currentProduct = activeCurrentProducts.first {

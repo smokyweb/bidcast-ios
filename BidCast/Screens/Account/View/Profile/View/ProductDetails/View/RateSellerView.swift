@@ -19,8 +19,8 @@ struct RateSellerView: View {
     @State var accuracyRating: Double = -1
     @State var comment: String = ""
     
-    var sellerImage: String
-    var sellerName: String = "dom crush"
+    @Binding var sellerImage: String
+    @Binding var sellerName: String
     
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var networkMonitor: NetworkMonitor
@@ -51,21 +51,21 @@ struct RateSellerView: View {
             
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 20) {
-                    
+                    CustomProfileImage(url: sellerImage,isCircular: true,size: 100)
                     // MARK: - Seller Image
-                    AsyncImage(url: URL(string: sellerImage)) { phase in
-                        if let image = try? phase.image?.resizable() {
-                            image
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: 100, height: 100)
-                                .clipShape(Circle())
-                                .shadow(radius: 5)
-                        } else {
-                            Image(.defaultUser)
-                                .resizable()
-                                .frame(width: 100, height: 100)
-                        }
-                    }
+//                    AsyncImage(url: URL(string: sellerImage)) { phase in
+//                        if let image = try? phase.image?.resizable() {
+//                            image
+//                                .aspectRatio(contentMode: .fill)
+//                                .frame(width: 100, height: 100)
+//                                .clipShape(Circle())
+//                                .shadow(radius: 5)
+//                        } else {
+//                            Image(.defaultUser)
+//                                .resizable()
+//                                .frame(width: 100, height: 100)
+//                        }
+//                    }
                     .padding(.top)
                     
                     // MARK: - Seller Name
@@ -162,7 +162,7 @@ struct RateSellerView: View {
         }
         .ignoresSafeArea(edges: .bottom) // Optional
         .background(Color(.systemBackground))
-        CusNavLink(doNavigate: $navigateToProfile, destination: ProfileScreen(id:$userId, sellerID: "\($sellerID)", isComeFrom: .constant(""),userName: $userName,userImage: $userImage))
+//        CusNavLink(doNavigate: $navigateToProfile, destination: ProfileScreen(id:$userId, sellerID: "\($sellerID)", isComeFrom: .constant(""),userName: $userName,userImage: $userImage))
             .toast(isPresenting: $showhud) {
                 AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)}
     }

@@ -510,6 +510,7 @@ final class SocketManagerService: NSObject, ObservableObject {
                     // ✅ Notify listeners if needed
                     let roomIDs = self.rooms.compactMap { $0.room_id }
                     self.onRoomsUpdated?(roomIDs)
+                    self.listenForViewerCount()
                     
                     // ✅ Trigger completion callback (optional)
                     completion?(room)

@@ -140,8 +140,15 @@ extension AppDelegate: UNUserNotificationCenterDelegate,MessagingDelegate {
                }
            }
         
+        let userId = userInfo["sender_id"] as? String
+        if userId  == UserDefaults.userId.description {
+            completionHandler([])
+        }else{
+            completionHandler([.alert, .sound, .badge]) // Or customize as needed
+        }
+        
         // Present the notification normally
-        completionHandler([.alert, .sound, .badge])
+        
     }
     
     
@@ -194,7 +201,13 @@ extension AppDelegate {
         let userInfo = notification.request.content.userInfo
         print("Will Present User Info: \(userInfo)")
         // Return how you want the notification to be presented when the app is in the foreground
-        return [.banner, .sound, .badge] // Or customize as needed
+        
+        let userId = userInfo["sender_id"] as? Int
+        if userId  == UserDefaults.userId {
+            return []
+        }else{
+            return [.banner, .sound, .badge] // Or customize as needed
+        }
     }
 }
 
