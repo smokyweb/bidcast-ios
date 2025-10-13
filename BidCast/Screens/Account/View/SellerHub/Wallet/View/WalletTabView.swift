@@ -6,11 +6,20 @@
 //
 
 import SwiftUI
+import SVProgressHUD
+import AlertToast
 
 struct WalletTabView: View {
     
     var summary: WalletInfoModel
     var payouts: [Payout]
+    
+    @StateObject var kycViewModel = KycViewModel()
+    
+    @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+    @State var showError: Bool = false
+    @State var showhud: Bool = false
+    @State var hudMsg: String = ""
     
     // Currency formatting helper
     private func formatAmount(_ amount: Double?) -> String {
@@ -57,7 +66,15 @@ struct WalletTabView: View {
                                 vectorImg: .icArrowUp,
                                 subLabel: AppString.YouAreEligibleForEarlyPayout,
                                 tintColot: categoryList[ind].color ?? "",
-                                onTapMenuCell: {}
+                                onTapMenuCell: {
+                                    Task {
+                                        SVProgressHUD.show()
+                                        let fundRequest = FundTransferRequest(amount: 1) //toDO: change it static value for now
+                                        await kycViewModel.fundTransfer(param: fundRequest)
+                                        await SVProgressHUD.dismiss()
+                                        fundTransferSuccess()
+                                    }
+                                }
                             )
                             .padding([.leading ,.trailing] ,0)
                             .padding(.vertical,1)
@@ -84,7 +101,30 @@ struct WalletTabView: View {
                 }
 //                .frame(maxWidth: .infinity)
             }
+            .toast(isPresenting: $showhud) {
+                AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
+            }
         }
         .ignoresSafeArea(edges: .horizontal)
+    }
+}
+
+extension WalletTabView {
+    func fundTransferSuccess() {
+        let response = kycViewModel.fundTransferDict
+        if response?.status == "success" {
+            showhud = true
+            hudMsg = response?.message ?? ""
+        } else {
+            alertType = .sheetType(
+                icon: .alert,
+                title: response?.error_type?.capitalized ?? "",
+                message: response?.message?.capitalized ?? "",
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
+            )
+            showError = true
+            
+        }
     }
 }

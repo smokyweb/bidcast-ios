@@ -13,7 +13,7 @@ final class KycViewModel: ObservableObject {
     
     @Published var kycDetailsDict = ResponseModel<KycDetailsModel>()
     @Published var checkKycDict = ResponseModel<CheckKycModel>()
-    @Published var fundTransferDict = ResponseModel<FundTransferModel>()
+    @Published var fundTransferDict: ResponseModel<FundTransferModel>?
     @Published var errorMessage: String? = nil
     
     // MARK: - Get checkKycDetail.
@@ -47,7 +47,7 @@ final class KycViewModel: ObservableObject {
     // MARK: - fundTransfer.
     func fundTransfer(param : FundTransferRequest) async {
         do {
-            if let response: ResponseModel<FundTransferModel> = try await APIManager.shared.request(
+            if let response: ResponseModel<FundTransferModel>? = try await APIManager.shared.request(
                 type: APIEndPoint.fundTransfer(param: param),
                 header: true
             ) {

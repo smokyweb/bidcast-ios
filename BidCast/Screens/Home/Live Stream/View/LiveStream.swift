@@ -101,6 +101,8 @@ struct LiveStream: View {
     @State var currentIndex : Int = 0
     @State var onRoomsUpdated: (([String]) -> Void)?
     
+    @State var maxBidUserName: String = "Demo UserName"
+    
     @State var hasHostEndedRoom: Bool = false
     
     var tabBarHeight: CGFloat {
@@ -109,6 +111,7 @@ struct LiveStream: View {
     
     @State var showHud = false
     @State var hudMsg = ""
+    
     //MARK: - for swipe
     @State private var currentPrice: Double = 1.0
     @State private var nextBidPrice: Double = 1.0
@@ -338,41 +341,13 @@ struct LiveStream: View {
                                 //MARK: Product Details
                                 let currentProducts = productData.filter { $0.isCurrent }
                                 if let product = currentProducts.first {
-                                    HStack(spacing: 12) {
-                                        CustomProfileImage(url: product.image, isCircular: false,cornerRadius: 8.0,size: 80.0)
-                                        
-                                        VStack(alignment: .leading, spacing: 0) {
-                                            //                                            Text(product.name.capitalizingFirstLetter())
-                                            //                                                .font(.custom(poppinsBold, size: 13.0))
-                                            //                                                .foregroundColor(.white)
-                                            //                                            VStack(spacing: 6) {
-                                            Text(product.name?.capitalizingFirstLetter() ?? "")
-                                                .font(.custom(poppinsBold, size: 13.0))
-                                                .foregroundColor(.white)
-                                            Text("Sports & Lifestyle")
-                                                .font(.custom(poppinsSemiBold, size: 12.0))
-                                                .padding(4)
-                                                .foregroundColor(.white)
-                                            //                                                    .background(Color.purple.opacity(0.7))
-                                            //                                                    .cornerRadius(4)
-                                            Text("Price : $\(product.price ?? "0.0")")
-                                                .font(.custom(poppinsSemiBold, size: 12.0))
-                                                .padding(4)
-                                                .foregroundColor(.white)
-                                            //                                                    .background(Color.pink.opacity(0.7))
-                                            //                                                    .cornerRadius(4)
-                                            //                                            }
-                                            //                                            Text("Lorem ipsum dolor sit amet")
-                                            //                                                .font(.custom(poppinsSemiBold, size: 12.0))
-                                            //                                                .foregroundColor(.white)
-                                        }
-                                        Spacer()
-                                    }
-                                    .padding()
+                                    CurrentProductView(product: product,
+                                                       currentPrice: $currentPrice,
+                                                       bidTime: $socketManagerChat.bidTime,
+                                                       userName: $maxBidUserName)
                                     .frame(maxWidth: .infinity)
                                     .background(Color.black.opacity(0.3))
                                     .cornerRadius(10)
-                                    .padding(.horizontal)
                                     
                                     //MARK: Swipe fearture
                                     HStack(spacing: 8) {

@@ -84,6 +84,19 @@ struct ProductData : Codable {
        }
 }
 
+extension ProductData {
+    static let example = ProductData(
+        category: "Sports & Lifestyle",
+        id: "001",
+        image: "https://via.placeholder.com/80",
+        name: "Football",
+        price: "29.99",
+        status: "Available",
+        isCurrent: true,
+        quantity: "10"
+    )
+}
+
 struct SellerModel : Codable {
     var isFollowed: Bool?
     var id: String?

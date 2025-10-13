@@ -117,48 +117,48 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "A931804B-BDD3-476A-9F90-3841BD427F46"
+            uuid = "0FE4A5F3-36ED-4CD0-A657-47DD7766EA1C"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "BidCast/Screens/Account/View/SellerHub/Payout/PayoutView.swift"
+            filePath = "BidCast/Screens/Account/View/SellerHub/SellerVerification/View/SellerVerificationScreen.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "169"
-            endingLineNumber = "169"
-            landmarkName = "sendTipsAmountData()"
+            startingLineNumber = "367"
+            endingLineNumber = "367"
+            landmarkName = "handleFinalUpload()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "3C6C1F5E-513E-49F5-A36B-D87A6E723940"
+            uuid = "76B15A29-6CF6-4622-B7B8-AB9142F883BA"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "BidCast/Screens/Account/View/SellerHub/Payout/PayoutView.swift"
+            filePath = "BidCast/Screens/Account/View/Profile/View/ProductDetails/View/RateSellerView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "170"
-            endingLineNumber = "170"
-            landmarkName = "sendTipsAmountData()"
-            landmarkType = "7">
+            startingLineNumber = "57"
+            endingLineNumber = "57"
+            landmarkName = "body"
+            landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "F3929FDC-7E6F-48D5-92ED-FD41644D8982"
+            uuid = "EFAF4B71-A11B-4182-AA83-7CF2321EB1B5"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "BidCast/Screens/Account/View/SellerHub/Payout/PayoutView.swift"
+            filePath = "BidCast/Screens/Account/View/SellerHub/Shows/View/RehearsalScreen.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "159"
-            endingLineNumber = "159"
-            landmarkName = "sendTipsAmountData()"
+            startingLineNumber = "815"
+            endingLineNumber = "815"
+            landmarkName = "ShowData(data:selectedID:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
