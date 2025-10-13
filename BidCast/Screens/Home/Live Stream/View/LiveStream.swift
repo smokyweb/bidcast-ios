@@ -47,6 +47,7 @@ struct CommentModel: Codable, Identifiable, Equatable {
 
 struct LiveStream: View {
     @Binding var currentRoomID : String
+    @Binding var categoryName : String
     @State private var commentText = ""
     @State var comments: [CommentModel] = []
     @State var id : String = ""
@@ -344,7 +345,9 @@ struct LiveStream: View {
                                     CurrentProductView(product: product,
                                                        currentPrice: $currentPrice,
                                                        bidTime: $socketManagerChat.bidTime,
-                                                       userName: $maxBidUserName)
+                                                       userName: $maxBidUserName,
+                                                       categoryName: $categoryName
+                                    )
                                     .frame(maxWidth: .infinity)
                                     .background(Color.black.opacity(0.3))
                                     .cornerRadius(10)

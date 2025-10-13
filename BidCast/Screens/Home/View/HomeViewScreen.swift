@@ -48,6 +48,8 @@ struct HomeViewScreen: View {
     @State var selectedShowUserImage : String = ""
     @State var selectedShowStartAt : String = ""
     @State var selectedShowStartDate : String = ""
+    @State var categoryName : String = ""
+    
     @State private var loadedRoomIDs = Set<String>()
 
     
@@ -222,6 +224,7 @@ struct HomeViewScreen: View {
                                             navigateToLiveStream = true
                                         }
                                     }else{
+                                        categoryName = item.category?.name ?? ""
                                         navigateToLiveStream = true
                                     }
                                    
@@ -245,7 +248,7 @@ struct HomeViewScreen: View {
             .padding([.leading,.trailing],12)
             .padding(.top , 10)
             
-            CusNavLink(doNavigate: $navigateToLiveStream, destination: LiveStream(currentRoomID: $currentRoomId,currentStreamIndex :self.$index, userId : $userId, comeFromHome: $navigateToLiveStream,category: $selectedButton,search:self.$searchText,currentPage:self.$currentPage))
+            CusNavLink(doNavigate: $navigateToLiveStream, destination: LiveStream(currentRoomID: $currentRoomId, categoryName: $categoryName,currentStreamIndex :self.$index, userId : $userId, comeFromHome: $navigateToLiveStream,category: $selectedButton,search:self.$searchText,currentPage:self.$currentPage))
             
             CusNavLink(doNavigate: $navigateToProfile, destination: ProfileScreen(
                 id:$userId,
