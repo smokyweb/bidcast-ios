@@ -810,16 +810,23 @@ final class SocketManagerService: NSObject, ObservableObject {
         }
     }
     
-    func listenForHighestBid(completion: ((_ roomId: String, _ highestBid: HighestBid?) -> Void)? = nil) {
+    func listenForHighestBid(forRoom roomId: String,
+                             completion: ((_ highestBid: HighestBid?) -> Void)? = nil) {
         socket.on("get_highest_bid") { [weak self] data, _ in
             guard let self,
                   let json = data.first as? [String: Any],
-                  let roomId = json["room_id"] as? String else {
-                print("❌ Invalid get_highest_bid data:", data)
+                  let incomingRoomId = json["room_id"] as? String else {
+                print("❌ Invalid get_highest_bid payload:", data)
                 return
             }
             
-            // Correct key: "get_highest_bid"
+            // Only handle updates for the specified room
+            guard incomingRoomId == roomId else {
+                // Ignore events from other rooms
+                return
+            }
+            
+            // Parse highest bid info
             var highestBid: HighestBid?
             if let bidJson = json["get_highest_bid"] as? [String: Any] {
                 do {
@@ -830,24 +837,24 @@ final class SocketManagerService: NSObject, ObservableObject {
                 }
             }
             
-            // Update local cache if exists
-            if let roomIndex = rooms.firstIndex(where: { $0.room_id == roomId }),
+            // Optionally update your in-memory room list
+            if let roomIndex = rooms.firstIndex(where: { $0.room_id == incomingRoomId }),
                var updatedRoom = rooms[safe: roomIndex] {
                 
                 updatedRoom.highest_bid = highestBid
-                
                 DispatchQueue.main.async {
                     self.rooms[roomIndex] = updatedRoom
-                    print("✅ Updated highest bid for \(roomId): \(highestBid?.user_name ?? "unknown") - \(highestBid?.bid_amount ?? "0")")
-                    completion?(roomId, highestBid)
+                    print("✅ [\(incomingRoomId)] Highest Bid: \(highestBid?.user_name ?? "unknown") - \(highestBid?.bid_amount ?? "0")")
+                    completion?(highestBid)
                 }
             } else {
                 DispatchQueue.main.async {
-                    completion?(roomId, highestBid)
+                    completion?(highestBid)
                 }
             }
         }
     }
+
 
 }
 
