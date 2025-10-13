@@ -429,18 +429,18 @@ struct LiveStream: View {
                                         .frame(maxWidth: .infinity)
                                         
                                          //Price and Timer
-                                        VStack(spacing: 2) {
-                                            Text("$\(String(format: "%.2f", currentPrice))")
-                                                .font(.custom(poppinsBold, size: 13))
-                                                .foregroundColor(.white)
-                                            
-                                            Text(socketManagerChat.bidTime)
-                                                .font(.custom(poppinsSemiBold, size: 13))
-                                                .foregroundColor(.white)
-                                        }
-                                        .frame(width: 70, height: 50)
-                                        .background(Color.black.opacity(0.3))
-                                        .cornerRadius(10)
+//                                        VStack(spacing: 2) {
+//                                            Text("$\(String(format: "%.2f", currentPrice))")
+//                                                .font(.custom(poppinsBold, size: 13))
+//                                                .foregroundColor(.white)
+//                                            
+//                                            Text(socketManagerChat.bidTime)
+//                                                .font(.custom(poppinsSemiBold, size: 13))
+//                                                .foregroundColor(.white)
+//                                        }
+//                                        .frame(width: 70, height: 50)
+//                                        .background(Color.black.opacity(0.3))
+//                                        .cornerRadius(10)
                                     }
                                     
                                     .padding(.horizontal)
