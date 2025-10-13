@@ -14,7 +14,11 @@ struct CurrentProductView: View {
     @Binding var currentPrice: Double
     @Binding var bidTime: String
     @Binding var userName: String
+    @Binding var userImage: String
     @Binding var categoryName : String
+    @State var hasWon = false
+    
+    @State var showBidAmount = true
     
     
     var body: some View {
@@ -24,13 +28,35 @@ struct CurrentProductView: View {
             if !userName.isEmpty {
                 // Text with different colors for username and "Winning"
                 HStack(spacing: 0) {
-                    Text("\(userName) is ")
+                    CustomProfileImage(url: userImage,isCircular: true,size: 13.0)
+                    Text(hasWon ? "\(userName) has" : "\(userName) is")
                         .foregroundColor(.white)
                         .font(.custom(poppinsRegular, size: 13.0))
                     +
-                    Text("Winning")
+                    Text(hasWon ? "Won" : "Winning")
                         .foregroundColor(.yellow)
                         .font(.custom(poppinsBold, size: 13.0))
+                    Spacer()
+                    if showBidAmount {
+                        (
+                            Text("Bid Amount: ")
+                                .foregroundColor(.white)
+                                .font(.custom(poppinsRegular, size: 13.0))
+                            +
+                            Text("\(currentPrice)")
+                                .foregroundColor(.yellow)
+                                .font(.custom(poppinsBold, size: 13.0))
+                        )
+                        .transition(.opacity) 
+                    }
+                }
+                .onAppear {
+                    // Hide after 21 seconds
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                        withAnimation(.easeOut(duration: 0.5)) {
+                            showBidAmount = false
+                        }
+                    }
                 }
                 
             }

@@ -342,11 +342,13 @@ struct LiveStream: View {
                                 //MARK: Product Details
                                 let currentProducts = productData.filter { $0.isCurrent }
                                 if let product = currentProducts.first {
+                                    
                                     CurrentProductView(product: product,
                                                        currentPrice: $currentPrice,
                                                        bidTime: $socketManagerChat.bidTime,
-                                                       userName: $maxBidUserName,
-                                                       categoryName: $categoryName
+                                                       userName: $winnerName, userImage: $winnerProfileImage,
+                                                       categoryName: $categoryName,
+                                                      
                                     )
                                     .frame(maxWidth: .infinity)
                                     .background(Color.black.opacity(0.3))
@@ -1047,128 +1049,15 @@ struct LiveStream: View {
         currentPrice = Double(bidAmount) ?? 0.0
         let price = String(format: "%.2f", currentPrice)
         commentText = "Current highest bid : $\(price)"
-        let userId = UserDefaults.userId
-        let userName = UserDefaults.userName
-        let userImage = UserDefaults.profileURL
+//        let userId = UserDefaults.userId
+//        let userName = UserDefaults.userName
+//        let userImage = UserDefaults.profileURL
 //        SocketManagerService.shared.sendChat(roomId: roomId, message: commentText, userId: userId, userName: userName, userImage: userImage)
         commentText = ""
     }
     
     
-    func loginRoom(roomId: String) {
-        let user = ZegoUser(userID: "\(UserDefaults.userId)", userName: UserDefaults.fullName)
-        let roomConfig = ZegoRoomConfig()
-        roomConfig.isUserStatusNotify = true
-        
-        
-        ZegoExpressEngine.shared().loginRoom(roomId, user: user, config: roomConfig) { errorCode, extendedData in
-            if errorCode == 0 {
-                print("✅ Login callback | room: \(roomId) | errorCode: \(errorCode)")
-                currentRoomID = roomId
-                
-                ZIMChatManager.shared.joinRoom(roomID: roomId)
-                ZIMChatManager.shared.onJOin = {
-                    commentText = "Joined 👋"
-                    ZIMChatManager.shared.sendMessage(message: commentText,roomId: roomId,image: UserDefaults.profileURL,name: UserDefaults.fullName)
-                    commentText = ""
-                }
-                
-                FirebaseManager.shared.observeViewerCount(roomId: roomId) { newCount in
-                    print("👀 Viewer Count Updated: \(newCount)")
-                    viewwerCount = newCount
-                }
-                FirebaseManager.shared.observeLiveSessionRemoval(roomId: roomId) {
-                    logoutRoom()
-                    let streamTitle = "Stream Ended"
-                    let streamMessage = "The host has ended the live stream."
-                    print("🔥 STREAM REMOVED CALLBACK TRIGGERED 🔥")
-                    showVerificationSheet = false
-                    alertType = .sheetType(
-                        icon: .alert,
-                        title: streamTitle,
-                        message: streamMessage,
-                        primaryBtnText: AppString.ok.localized,
-                        secondaryBtnText:""
-                    )
-                    showError = true
-                }
-                FirebaseManager.shared.observeCountdown(for: roomId) {  seconds in
-                    self.countdown = seconds
-                }
-                
-                FirebaseManager.shared.observeHighestBidChanges(roomId: roomId) { bidData in
-                    if let bidData = bidData,
-                       let roomKey = bidData.keys.first,
-                       let roomDict = bidData[roomKey] as? [String: Any],
-                       let highestBid = roomDict["highestBid"] as? [String: Any] {
-                        print("bidData \(bidData)")
-                        
-                        
-                        let winnerNameFromServer = highestBid["userName"] as? String
-                           let winnerIdFromServer = highestBid["userId"] as? String
-                           let winnerProfileImageFromServer = highestBid["userImage"] as? String
-                        print("id - > \(winnerIdFromServer ?? "")")
-                        print("name - > \(winnerNameFromServer ?? "")")
-                        print("image - > \(winnerProfileImageFromServer ?? "")")
-                        
-                        winnerName = winnerNameFromServer ?? UserDefaults.fullName
-                        winnerProfileID = Int(winnerIdFromServer ?? "") ?? 0
-                           winnerProfileImage = winnerProfileImageFromServer ?? UserDefaults.profileURL
-                        winnerAmount = highestBid["bidAmount"] as? String ?? ""
-                        print("Winner: \(winnerName), Amount: \(winnerAmount)")
-                        
-                        //MARK: -  For Store bid in database
-                        
-                        //                        Task{
-                        //                            let showId = self.liveShowsData[safe:currentStreamIndex]?.id ?? 0
-                        //                            let param = StoreBidRequest(schedule_show_id: "\(showId)", user_id: "\(winnerProfileID)", product_id: productData.first?.id ?? "", bid_price: "\(winnerAmount)")
-                        //                            await self.viewModel.storeBid(parameters: param)
-                        //                        }
-                        
-                    } else {
-                        print("Could not find highestBid in bidData")
-                    }
-                    updateSoldStatus()
-                }
-            } else {
-                print("login fail error")
-            }
-        }
-    }
-    
-//    func fetchBiddingDetail(roomId: String) {
-//        FirebaseManager.shared.getLiveSessionData(roomId: roomId) { data in
-//            guard let data = data else { return }
-//            DispatchQueue.main.async {
-//                if let jsonData = try? JSONSerialization.data(withJSONObject: data) {
-//                    do {
-//                        let model = try JSONDecoder().decode(BiddingModel.self, from: jsonData)
-//                        self.BiddingDetail = model
-//                        
-//                        // Filter products for active & isCurrent only
-//                        let activeCurrentProducts = model.products?.filter { product in
-//                            product.status?.lowercased() == "active" && product.isCurrent
-//                        }
-//                        
-//                        if let currentProduct = activeCurrentProducts?.first {
-//                            self.productData = [currentProduct]
-//                            self.currentProductIndex = 0
-//                            
-//                            if let priceDouble = Double(currentProduct.price ?? "") {
-//                                self.currentPrice = priceDouble
-//                            }
-//                        } else {
-//                            self.productData = []
-//                            self.currentProductIndex = 0
-//                            self.currentPrice = 0.0
-//                        }
-//                    } catch {
-//                        print("❌ Decoding Error: \(error)")
-//                    }
-//                }
-//            }
-//        }
-//    }
+
     
     //MARK: logoutRoom
     func logoutRoom() {
