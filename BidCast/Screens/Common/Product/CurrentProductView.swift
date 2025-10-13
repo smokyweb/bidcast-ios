@@ -17,7 +17,7 @@ struct CurrentProductView: View {
     @Binding var userImage: String
     @Binding var categoryName : String
     @State var hasWon = false
-    
+    @State var lastBid: Double = 0
     @State var showBidAmount = true
     
     
@@ -29,7 +29,7 @@ struct CurrentProductView: View {
                 // Text with different colors for username and "Winning"
                 HStack(spacing: 0) {
                     CustomProfileImage(url: userImage,isCircular: true,size: 13.0)
-                    Text(hasWon ? "\(userName) has" : "\(userName) is")
+                    Text(hasWon ? "\(userName) has " : "\(userName) is ")
                         .foregroundColor(.white)
                         .font(.custom(poppinsRegular, size: 13.0))
                     +
@@ -43,18 +43,26 @@ struct CurrentProductView: View {
                                 .foregroundColor(.white)
                                 .font(.custom(poppinsRegular, size: 13.0))
                             +
-                            Text("\(currentPrice)")
+                            Text("\(String(format: "%.2f", currentPrice))")
                                 .foregroundColor(.yellow)
                                 .font(.custom(poppinsBold, size: 13.0))
                         )
-                        .transition(.opacity) 
+                        .transition(.opacity)
                     }
                 }
-                .onAppear {
-                    // Hide after 21 seconds
+                .onChange(of: currentPrice) { newValue in
+                    // Ensure valid positive value (adjust rule if zero is valid)
+                    guard newValue > 0 else { return }
+                    
+                    showBidAmount = true
+                    lastBid = newValue
+                    
+                    // Hide after 1 second unless a newer bid arrives
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                        withAnimation(.easeOut(duration: 0.5)) {
-                            showBidAmount = false
+                        if lastBid == newValue {
+                            withAnimation(.easeOut(duration: 0.5)) {
+                                showBidAmount = false
+                            }
                         }
                     }
                 }

@@ -295,7 +295,7 @@ struct LiveStream: View {
                                     .padding(.trailing, commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? 14 : 40)
                                     
                                     .frame(height: 50)
-                                    .frame(width:screenWidth-90)
+                                    .frame(width:BiddingDetail.products != nil ?screenWidth-45 : screenWidth-90 )
 //                                    .frame(maxWidth: .infinity, alignment: .leading)
                                     .font(.custom(poppinsSemiBold, size: 13))
                                     .foregroundColor(.white)
@@ -351,8 +351,10 @@ struct LiveStream: View {
                                                       
                                     )
                                     .frame(maxWidth: .infinity)
+                                    
                                     .background(Color.black.opacity(0.3))
                                     .cornerRadius(10)
+                                    .padding(.horizontal,16)
                                     
                                     //MARK: Swipe fearture
                                     HStack(spacing: 8) {
@@ -466,9 +468,11 @@ struct LiveStream: View {
                                         .font(.custom(poppinsSemiBold, size: 14.0))
                                         .foregroundColor(.white)
                                         .padding(.horizontal)
+                                        .padding(.leading,16)
+                                        .padding(.trailing, 16)
                                 }
                             }
-                            //.padding(.bottom,50)
+//                            .padding(.horizontal,16)
                             .padding(.bottom, keyboardResponder.currentHeight == 0 ? (tabBarHeight + 20) : 10)
                         }
                     }
@@ -514,7 +518,7 @@ struct LiveStream: View {
                     }
                     .position(
                         x: geometry.size.width - 40,
-                        y: geometry.size.height / 2
+                        y: geometry.size.height / 2 - 20
                     )
                 }
                 //                .edgesIgnoringSafeArea(.all)
@@ -749,7 +753,7 @@ struct LiveStream: View {
             }
         )
         
-        .bottomSheet(isPresented: $winnerSheet,height: screenHeight * 0.32) {
+        .bottomSheet(isPresented: $winnerSheet,height: screenHeight * 0.38) {
             WinnerBottomSheet(
                 winnerAmount: $winnerAmount, profileImage: $winnerProfileImage,
                 username: $winnerName,
@@ -932,6 +936,17 @@ struct LiveStream: View {
                         self.hasHostEndedRoom = true
                     }
                 })
+                
+                SocketManagerService.shared.listenForHighestBid(forRoom: roomId) { highestBid in
+                    if let bid = highestBid {
+                        print("🏆 Updated bid in this room: \(bid.user_name ?? "") - \(bid.bid_amount ?? "")")
+                        winnerName = bid.user_name ?? ""
+                        winnerProfileID = Int(bid.user_id ?? "") ?? 0
+                        winnerProfileImage = bid.user_image ?? ""
+                        winnerAmount = bid.bid_amount  ?? ""
+//                        print("Winner: \(winnerName), Amount: \(winnerAmount)")
+                    }
+                }
                 
                 SocketManagerService.shared.listenForBidFinalized(completion: { roomId,productId,winner in
                     fetchProducts(for: roomId)
