@@ -327,8 +327,13 @@ struct RoomModel: Codable {
 }
 
 struct HighestBid: Codable {
-       let bid_amount, user_name, user_image, user_id, product_id: String?
-   }
+    var bid_amount: String?
+    var user_name: String?
+    var user_image: String?
+    var user_id: String?
+    var product_id: String?
+    var placed_at: String?
+}
 
 
 import Foundation
@@ -804,6 +809,46 @@ final class SocketManagerService: NSObject, ObservableObject {
             logger.info("📦 Emitted next product for room \(roomId): product_id=\(productId)")
         }
     }
+    
+    func listenForHighestBid(completion: ((_ roomId: String, _ highestBid: HighestBid?) -> Void)? = nil) {
+        socket.on("get_highest_bid") { [weak self] data, _ in
+            guard let self,
+                  let json = data.first as? [String: Any],
+                  let roomId = json["room_id"] as? String else {
+                print("❌ Invalid get_highest_bid data:", data)
+                return
+            }
+            
+            // Correct key: "get_highest_bid"
+            var highestBid: HighestBid?
+            if let bidJson = json["get_highest_bid"] as? [String: Any] {
+                do {
+                    let decodedData = try JSONSerialization.data(withJSONObject: bidJson)
+                    highestBid = try JSONDecoder().decode(HighestBid.self, from: decodedData)
+                } catch {
+                    print("❌ Failed to decode get_highest_bid:", error)
+                }
+            }
+            
+            // Update local cache if exists
+            if let roomIndex = rooms.firstIndex(where: { $0.room_id == roomId }),
+               var updatedRoom = rooms[safe: roomIndex] {
+                
+                updatedRoom.highest_bid = highestBid
+                
+                DispatchQueue.main.async {
+                    self.rooms[roomIndex] = updatedRoom
+                    print("✅ Updated highest bid for \(roomId): \(highestBid?.user_name ?? "unknown") - \(highestBid?.bid_amount ?? "0")")
+                    completion?(roomId, highestBid)
+                }
+            } else {
+                DispatchQueue.main.async {
+                    completion?(roomId, highestBid)
+                }
+            }
+        }
+    }
+
 }
 
 
