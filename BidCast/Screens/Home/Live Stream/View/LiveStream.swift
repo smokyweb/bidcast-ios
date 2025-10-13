@@ -1047,7 +1047,7 @@ struct LiveStream: View {
         let userId = UserDefaults.userId
         let userName = UserDefaults.userName
         let userImage = UserDefaults.profileURL
-        SocketManagerService.shared.sendChat(roomId: roomId, message: commentText, userId: userId, userName: userName, userImage: userImage)
+//        SocketManagerService.shared.sendChat(roomId: roomId, message: commentText, userId: userId, userName: userName, userImage: userImage)
         commentText = ""
     }
     
@@ -1228,15 +1228,15 @@ struct LiveStream: View {
         // Update local price
         currentPrice = amount
         
-        commentText = "Current highest bid : $\(currentPrice)"
-        let userId = UserDefaults.userId
-        let userName = UserDefaults.userName
-        let userImage = UserDefaults.profileURL
-        SocketManagerService.shared.sendChat(roomId: currentRoomId,
-                                             message: commentText,
-                                             userId: userId,
-                                             userName: userName,
-                                             userImage: userImage)
+//        commentText = "Current highest bid : $\(currentPrice)"
+//        let userId = UserDefaults.userId
+//        let userName = UserDefaults.userName
+//        let userImage = UserDefaults.profileURL
+//        SocketManagerService.shared.sendChat(roomId: currentRoomId,
+//                                             message: commentText,
+//                                             userId: userId,
+//                                             userName: userName,
+//                                             userImage: userImage)
         commentText = ""
     }
     
