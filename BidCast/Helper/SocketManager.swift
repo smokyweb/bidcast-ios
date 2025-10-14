@@ -354,6 +354,7 @@ final class SocketManagerService: NSObject, ObservableObject {
     @Published var viewerCount: Int = 0
     @Published var showTime: String = "00:00:00"
     @Published var bidTime: String = "00:00:00"
+    @Published var hasWon = false
     
     // MARK: - Callbacks
     var onRoomsUpdated: (([String]) -> Void)?
@@ -704,6 +705,7 @@ final class SocketManagerService: NSObject, ObservableObject {
 
                        // Update winner (highest bid)
                        updatedRoom.highest_bid = winner
+                       hasWon = true
 
                        // Save changes to main array
                        DispatchQueue.main.async {

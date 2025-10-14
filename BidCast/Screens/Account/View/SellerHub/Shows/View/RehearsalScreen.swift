@@ -56,6 +56,8 @@ struct RehearsalScreen: View {
     @State var showSellerSheet = false
     @State var navigateToSeller = false
     
+    @State var hasWon = false
+    
     @State var viewwerCount = 0
     @State private var bidCountdownSeconds = 30
     @State private var hasCountdownStarted = false
@@ -405,8 +407,8 @@ struct RehearsalScreen: View {
                                         }
                                     }
                                 }
-                                .padding(.leading,8)
-                                .padding(.trailing, BiddingDetail.products != nil ? 54 : 8)
+                                .padding(.leading,12)
+                                .padding(.trailing, productData != nil ? 60 : 12)
                                 .padding(.bottom,20)
                                 VStack(alignment: .leading,spacing: 12) {
                                     //MARK: Product Details
@@ -418,6 +420,7 @@ struct RehearsalScreen: View {
                                                            bidTime: $socketManager.bidTime,
                                                            userName: $winnerName, userImage: $winnerProfileImage,
                                                            categoryName: $categoryName,
+                                                           hasWon: socketManager.hasWon
                                                           
                                         )
                                         .frame(maxWidth: .infinity)
@@ -744,30 +747,14 @@ struct RehearsalScreen: View {
         print("DEBUG: fetchLatestProductList with roomId = \(self.roomId)")
             print("DEBUG: initialSelectedProductId= \(initialSelectedProductId)")
         initialSelectedProductId = productData.first(where: { $0.isCurrent })?.id ?? ""
+        currentPrice = Double(productData.first(where: { $0.isCurrent })?.price ?? "") ?? 0.0
     }
     
     func setProductAsCurrent(selectedID : String){
         socketManager.setNextProduct(roomId: self.roomId, productId: selectedID)
     }
     
-    func fetchBiddingDetail(roomId: String) {
-        FirebaseManager.shared.getLiveSessionData(roomId: roomId) { data in
-            guard let data = data else { return }
-            DispatchQueue.main.async {
-                if let jsonData = try? JSONSerialization.data(withJSONObject: data) {
-                    do {
-                        let model = try JSONDecoder().decode(BiddingModel.self, from: jsonData)
-                        self.BiddingDetail = model
-                        self.productData = self.BiddingDetail.products ?? [ProductData]()
-                        
-                    } catch {
-                        print("❌ Decoding Error: \(error)")
-                    }
-                }
-                
-            }
-        }
-    }
+    
     
     func ShowData(data:HomeModel ,selectedID : String? = nil) {
         let roomId = "live_room_\(data.user_id ?? 0)_\(data.id ?? 0)"
@@ -848,13 +835,14 @@ struct RehearsalScreen: View {
             }
         )
         
-        socketManager.listenForHighestBid(forRoom: roomId) { highestBid in
+        socketManager.listenForHighestBid(forRoom: self.roomId) { highestBid in
             if let bid = highestBid {
                 print("🏆 Updated bid in this room: \(bid.user_name ?? "") - \(bid.bid_amount ?? "")")
                 winnerName = bid.user_name ?? ""
                 winnerProfileID = Int(bid.user_id ?? "") ?? 0
                 winnerProfileImage = bid.user_image ?? ""
                 winnerAmount = bid.bid_amount  ?? ""
+                currentPrice = Double(winnerAmount) ?? 0.0
             }
         }
         
@@ -880,12 +868,14 @@ struct RehearsalScreen: View {
         guard let socketRoom = socketManager.rooms.first(where: { $0.room_id == roomId }) else {
             self.productData = []
 //            self.currentProductIndex = 0
-//            self.currentPrice = 0.0
+            self.currentPrice = 0.0
             return
         }
         
         if let products = socketRoom.products {
             productData = products
+            let currentProducts = productData.filter { $0.isCurrent }
+            self.currentPrice = Double(currentProducts.first?.price ?? "") ?? 0.0
             print("after product \(productData)")
         }
     }
