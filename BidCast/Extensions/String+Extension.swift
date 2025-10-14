@@ -10,8 +10,7 @@ import Foundation
 import UIKit
 
 extension String{
-    
-    
+
     var htmlToAttributedString: NSAttributedString? {
 //        DispatchQueue.global(qos: .userInitiated).async{
             guard let data = data(using: .utf8) else { return NSAttributedString() }
@@ -238,6 +237,40 @@ extension String {
         outputFormatter.dateFormat = outputFormat
         outputFormatter.locale = Locale(identifier: "en_US")
         
+        return outputFormatter.string(from: date)
+    }
+    
+    func formattedDateAndTimeString1() -> String {
+        let inputFormatter = DateFormatter()
+        inputFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSZ"
+        inputFormatter.locale = Locale(identifier: "en_US_POSIX")
+        inputFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+        
+        guard let date = inputFormatter.date(from: self) else {
+            return self  // fallback: return original string if parsing fails
+        }
+        
+        let outputFormatter = DateFormatter()
+        outputFormatter.dateFormat = "MMM dd, yyyy, HH:mm"
+        outputFormatter.locale = Locale(identifier: "en_US")
+        
+        return outputFormatter.string(from: date)
+    }
+    
+    func formattedDateAndTimeString() -> String {
+        let inputFormatter = DateFormatter()
+        inputFormatter.dateFormat = "dd-MM-yyyy HH:mm:ss"
+        inputFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+        inputFormatter.locale = Locale(identifier: "en_US_POSIX")
+
+        guard let date = inputFormatter.date(from: self) else {
+            return "Invalid date"
+        }
+
+        let outputFormatter = DateFormatter()
+        outputFormatter.dateFormat = "MMM dd yyyy, HH:mm"
+        outputFormatter.timeZone = TimeZone.current
+
         return outputFormatter.string(from: date)
     }
 }

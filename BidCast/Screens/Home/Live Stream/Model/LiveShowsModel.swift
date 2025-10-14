@@ -28,12 +28,20 @@ struct LiveShowsModel: Codable,Identifiable {
     var seller : SellerModel?
 }
 
-struct Category: Codable,Identifiable {
+// MARK: - Category
+struct Category: Codable {
     var id: Int?
     var name: String?
     var image: String?
+    var thumbnail: String?
+    var extraFields: [ExtraFieldModel]?
     var color: String?
-    var thumbnail : String?
+
+    enum CodingKeys: String, CodingKey {
+        case id, name, image, thumbnail
+        case extraFields = "extra_fields"
+        case color
+    }
 }
 
 struct User: Codable,Identifiable {

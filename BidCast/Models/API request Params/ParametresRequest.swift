@@ -543,6 +543,7 @@ struct AddRatingRequest : Encodable{
 struct ProductOrderListingRequest : Encodable{
     var type : String
     var page : Int
+    var search: String?
 }
 
 struct ProductPurchaseDetailRequest : Encodable{

@@ -189,6 +189,7 @@ func formatDateTime(_ isoDate: String?) -> String {
         return formatter.string(from: date)
     }
 
+
 //MARK: Collection.
 extension Collection {
     subscript(safe index: Index) -> Element? {

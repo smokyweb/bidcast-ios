@@ -65,6 +65,7 @@ struct TwoVerticalLabelCell<T: Hashable & CustomStringConvertible>: View {
                         .stroke(selection == item ? Color.blue : Color.clear, lineWidth: 1)
                 )
                 .cornerRadius(12)
+                .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
                 .contentShape(Rectangle())
                 .onTapGesture {
                     selection = item
