@@ -110,7 +110,7 @@ struct ExploreViewScreen: View {
                                 image: categoryList[ind].image ?? "",
                                 title: categoryList[ind].name ?? "",
                                 vectorImg: .icArrowUp,
-                                subLabel: "\(categoryList[ind].usage_count ?? "") Live",
+                                subLabel: "\(categoryList[ind].liveCount ?? 0) Live",
                                 tintColot: categoryList[ind].color ?? ""
                             ) {
                                 category = categoryList[ind].name ?? ""

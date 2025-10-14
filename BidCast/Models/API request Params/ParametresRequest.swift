@@ -692,6 +692,7 @@ struct CategoryRequest  : Encodable {
     var category_id : String?
     var type : String?
     var search : String?
+    var get_count: Bool = true
 }
 
 

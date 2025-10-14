@@ -242,8 +242,9 @@ extension APIEndPoint: EndPointType {
             return "show-tips"
         case .letsPrepare:
             return "get-prepare"
+//            https://backend.bidcast.betaplanets.com/api/get-category?get_count=true
         case .category(param:let param) :
-            return "get-category?category_id=\(param.category_id ?? "")&type=\(param.type ?? "")&search=\(param.search ?? "")"
+            return "get-category?category_id=\(param.category_id ?? "")&type=\(param.type ?? "")&search=\(param.search ?? "")&get_count=\(param.get_count)"
         case .auctionType:
             return "get-auction-type"
         case .getInventory:
