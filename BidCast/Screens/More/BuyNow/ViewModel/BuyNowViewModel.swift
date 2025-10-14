@@ -10,14 +10,14 @@ import Foundation
 @MainActor
 final class BuyNowViewModel: ObservableObject {
     
-    @Published var buyNowResponse = ResponseModel<BuyNowModel>()
+    @Published var buyNowResponse = ResponseModel<MyOrderModel>()
     @Published var productOrderResponse = ResponseModel<ProductOrderModel>()
     @Published var errorMessage: String? = nil
 
     // MARK: - getMyOrderList.
     func getMyOrderList(parameters: ProductOrderDetailRequest) async {
         do {
-            let response: ResponseModel<BuyNowModel> = try await APIManager.shared.request(
+            let response: ResponseModel<MyOrderModel> = try await APIManager.shared.request(
                 type: APIEndPoint.productOrderDetails(param: parameters),
                 header: true
             )

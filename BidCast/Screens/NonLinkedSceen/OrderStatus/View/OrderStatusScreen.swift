@@ -12,7 +12,7 @@ import AlertToast
 struct OrderStatusScreen: View {
     @Environment(\.presentationMode) var presentationMode
     @StateObject var viewModel = OrderStatusViewModel()
-    @State private var productDetail : ProductPurchaseModel?
+    @State var productDetail : MyOrderModel?
     @EnvironmentObject var networkMonitor: NetworkMonitor
     @State private var recieptUrl : String?
     @State private var isLoading = false
@@ -20,9 +20,7 @@ struct OrderStatusScreen: View {
     @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @State private var showhud = false
     @State private var hudMsg = ""
-    @State var productID : Int = 2
-    @State var shippingID : Int = 1
-    @State var orderID : Int = 0
+    var comeFrom: String = ""
     
     
     var body: some View {
@@ -49,12 +47,12 @@ struct OrderStatusScreen: View {
                             .resizable()
                             .scaledToFit()
                             .frame(width: 40, height: 40)
-                            .foregroundColor(.red)
+                            .foregroundColor(.defaultTheme)
                         
                         Text("Preparing Your Order")
                             .font(.title3).bold()
                         
-                        Text("The seller is preparing your package for shipping")
+                        Text("Send this purchase as a gift to someone special")
                             .font(.subheadline)
                             .foregroundColor(.gray)
                             .multilineTextAlignment(.center)
@@ -66,27 +64,27 @@ struct OrderStatusScreen: View {
                         OrderProductCardView(order: order)
                         ShippingStatusView(order: order)
                         DeliveryAddressView(order: order)
-                    }
-                    
-                    // 📃 Equal Width Buttons
-                    HStack(spacing: 16) {
-                        GeometryReader { geometry in
-                            HStack(spacing: 16) {
-                                OutlinedButtonView(title: "Receipt", onTap: {
-                                    fetchReciept()
-                                })
-                                .frame(width: (geometry.size.width - 16) / 2)
-
-                                OutlinedButtonView(title: "Shipping Details", onTap: {
-                                    // Optionally handle this as well
-                                })
-                                .frame(width: (geometry.size.width - 16) / 2)
+                        
+                        // 📃 Equal Width Buttons
+                        HStack(spacing: 16) {
+                            GeometryReader { geometry in
+                                HStack(spacing: 16) {
+                                    OutlinedButtonView(title: "Receipt", onTap: {
+                                        fetchReciept()
+                                    })
+                                    .frame(width: (geometry.size.width - 16) / 2)
+                                    
+                                    OutlinedButtonView(title: "Shipping Details", onTap: {
+                                        // Optionally handle this as well
+                                    })
+                                    .frame(width: (geometry.size.width - 16) / 2)
+                                }
                             }
+                            .frame(height: 44)
                         }
-                        .frame(height: 44)
+                        .padding(.vertical, 8)
+                        
                     }
-                    .padding(.vertical, 8)
-
                     
                     // 🛡️ Buyer Protection
                     BuyerProtectionView()
@@ -96,18 +94,20 @@ struct OrderStatusScreen: View {
                 .padding()
             }
             
-            // 🔙 Home Button
-            Button(action: {
-                presentationMode.wrappedValue.dismiss()
-            }) {
-                Text("Home")
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.defaultTheme)
-                    .cornerRadius(16)
-                    .padding(.horizontal)
-                    .padding(.bottom, 8)
+            if comeFrom == "buyNow" {
+                // 🔙 Home Button
+                Button(action: {
+                    presentationMode.wrappedValue.dismiss()
+                }) {
+                    Text("Home")
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.defaultTheme)
+                        .cornerRadius(16)
+                        .padding(.horizontal)
+                        .padding(.bottom, 8)
+                }
             }
         }
         .background(Color(red: 240/255, green: 247/255, blue: 255/255).ignoresSafeArea())
@@ -115,7 +115,7 @@ struct OrderStatusScreen: View {
             UIScrollView.appearance().bounces = true
         }
         .onFirstAppear {
-            fetchPurchaseDetail()
+//            fetchPurchaseDetail()
         }
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
@@ -138,24 +138,29 @@ struct OrderStatusScreen: View {
         }
     }
     
-    func fetchPurchaseDetail(){
-        Task {
-           guard Reachability.isConnectedToNetwork() else {
-                hudMsg = "No Internet Connection"
-                showhud = true
-                return
-            }
-            SVProgressHUD.show()
-            let param = ProductPurchaseDetailRequest(shipping_id: shippingID,product_id: productID)
-            await viewModel.getPurchaseDetail(parameters: param)
-            await SVProgressHUD.dismiss()
-            getPurchaseSuccess()
-        }
-    }
+//    func fetchPurchaseDetail(){
+//        Task {
+//           guard Reachability.isConnectedToNetwork() else {
+//                hudMsg = "No Internet Connection"
+//                showhud = true
+//                return
+//            }
+//            SVProgressHUD.show()
+//            let param = ProductPurchaseDetailRequest(shipping_id: shippingID,product_id: productID)
+//            await viewModel.getPurchaseDetail(parameters: param)
+//            await SVProgressHUD.dismiss()
+//            getPurchaseSuccess()
+//        }
+//    }
     
     func fetchReciept(){
         Task {
-           guard Reachability.isConnectedToNetwork() else {
+            guard let orderID = productDetail?.id else {
+                hudMsg = "Order Id is not present"
+                showhud = true
+                return
+            }
+            guard Reachability.isConnectedToNetwork() else {
                 hudMsg = "No Internet Connection"
                 showhud = true
                 return
@@ -164,24 +169,39 @@ struct OrderStatusScreen: View {
             let param = OrderRecieptRequest(order_id: orderID)
             await viewModel.getReceipt(parameters: param)
             await SVProgressHUD.dismiss()
-            getPurchaseSuccess()
+            getRecieptSuccess()
         }
     }
     
-    func getPurchaseSuccess() {
-       guard Reachability.isConnectedToNetwork() else {
-            hudMsg = "No Internet Connection"
-            showhud = true
-            return
-        }
-        SVProgressHUD.dismiss()
-        let response = viewModel.purchaseDetailResponse
-        if response.status == "success" {
-            productDetail = response.data
-        }else {
-            
-        }
-    }
+//    func getPurchaseSuccess() {
+//       guard Reachability.isConnectedToNetwork() else {
+//            hudMsg = "No Internet Connection"
+//            showhud = true
+//            return
+//        }
+//        SVProgressHUD.dismiss()
+//        let response = viewModel.purchaseDetailResponse
+//        if response.status == "success" {
+//            productDetail = response.data
+//        }else {
+//            
+//        }
+//    }
+    
+//    func getPurchaseSuccess() {
+//       guard Reachability.isConnectedToNetwork() else {
+//            hudMsg = "No Internet Connection"
+//            showhud = true
+//            return
+//        }
+//        SVProgressHUD.dismiss()
+//        let response = viewModel.purchaseDetailResponse
+//        if response.status == "success" {
+//            productDetail = response.data
+//        }else {
+//            
+//        }
+//    }
     
     func getRecieptSuccess() {
        guard Reachability.isConnectedToNetwork() else {
@@ -193,9 +213,18 @@ struct OrderStatusScreen: View {
         let response = viewModel.recieptResponse
         if response.status == "success" {
             recieptUrl = response.data
+            downloadRecieptData(with: recieptUrl)
         } else {
             
         }
+    }
+    
+    func downloadRecieptData(with urlString: String?) {
+        guard let url = urlString, !url.isEmpty else {
+            print("Invalid URL String")
+            return
+        }
+        FileDownloader.shared.startDownload(from: url)
     }
 }
 

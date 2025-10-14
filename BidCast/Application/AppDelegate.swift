@@ -59,8 +59,17 @@ class AppDelegate: NSObject, UIApplicationDelegate {
                 }
             }
         }
+        registerNotificationCategory()
         return true
     }
+    
+    func registerNotificationCategory() {
+        let openAction = UNNotificationAction(identifier: "OPEN_FILE", title: "Open File", options: [.foreground])
+        let category = UNNotificationCategory(identifier: "DOWNLOAD_COMPLETE", actions: [openAction], intentIdentifiers: [], options: [])
+        
+        UNUserNotificationCenter.current().setNotificationCategories([category])
+    }
+
     
     func languageSelection(){
         if LanguageManager.shared.selectedLanguage == "ar" {
@@ -166,6 +175,14 @@ extension AppDelegate: UNUserNotificationCenterDelegate,MessagingDelegate {
                                 withCompletionHandler completionHandler: @escaping () -> Void) {
         
         let userInfo = response.notification.request.content.userInfo
+        if response.actionIdentifier == "OPEN_FILE" {
+            if let filePath = response.notification.request.content.userInfo["filePath"] as? String {
+                let url = URL(fileURLWithPath: filePath)
+                DispatchQueue.main.async {
+                    UIApplication.shared.open(url)
+                }
+            }
+        }
         self.redirectNotification(with: userInfo) // ✅ Pass directly
         completionHandler()
     }

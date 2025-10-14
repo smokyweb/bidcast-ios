@@ -12,8 +12,8 @@ struct OrderCardView: View {
     let order: MyOrderModel?
     var statusColor: Color {
             switch order?.status {
-            case "Processing": return .darkBlue.opacity(0.5)
-            case "NewOrder": return .darkBlue.opacity(0.5)
+            case "Processing": return .defaultTheme.opacity(0.5)
+            case "NewOrder", "Pending": return .darkBlue.opacity(0.5)
             case "Completed", "Delivered": return .green.opacity(0.5)
             default: return .gray.opacity(0.4)
             }
@@ -39,22 +39,6 @@ struct OrderCardView: View {
 
             HStack(spacing: 12) {
                 CustomProfileImage(url: order?.product?.images?.first ?? "",isCircular: true,size: 40)
-//                AsyncImage(url: URL(string: order?.product?.images?.first ?? "")) { image in
-//                    image
-//                        .resizable()
-//                } placeholder: {
-//                    Color.gray
-//                        .opacity(0.3)
-//                        .shimmer() // ✨ Apply shimmer here
-//                }
-//                .scaledToFill()
-//                .frame(width: 40, height: 40)
-//                .clipShape(Circle())
-//                .overlay(
-//                    Circle()
-//                        .stroke(Color.gray.opacity(0.2), lineWidth: 1)
-//                )
-//                .shadow(color: Color.black.opacity(0.1), radius: 3, x: 0, y: 2)
                 
                 VStack(alignment: .leading) {
                     Text(order?.product?.title?.capitalizingFirstLetter() ?? "")
@@ -71,7 +55,7 @@ struct OrderCardView: View {
                     .font(.subheadline)
                     .foregroundColor(.gray)
                 Spacer()
-                Text("$\(Double(order?.product?.pricing ?? 0), specifier: "%.2f")")
+                Text("$\(Double(order?.product?.pricing ?? "0.0") ?? 0.0, specifier: "%.2f")")
                     .font(.custom(poppinsSemiBold, size: 13.0))
             }
         }

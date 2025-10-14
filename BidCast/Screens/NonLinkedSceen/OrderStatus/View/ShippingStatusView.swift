@@ -8,31 +8,31 @@
 import SwiftUI
 
 struct ShippingStatusView: View {
-    var order:  ProductPurchaseModel?
+    var order: MyOrderModel?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack(spacing: 8) {
-                Image(systemName: "truck")
-                    .foregroundColor(.red)
+                Image(systemName: "truck.box.fill")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 30, height: 30)
+                    .foregroundColor(.defaultTheme)
                 Text("Shipping Updates")
                     .font(.system(size: 16, weight: .semibold))
             }
 
-            VStack(spacing: 24) {
-                ShippingStepView(
-                    icon: "checkmark.circle.fill",
-                    title: "Order Confirmed",
-                    subtitle: formatDateTime(order?.product?.createdAt),
-                    iconColor: .red
-                )
-
-                ShippingStepView(
-                    icon: "circle.dashed",
-                    title: "Preparing Package",
-                    subtitle: order?.product?.status ?? "",
-                    iconColor: .red
-                )
+            VStack(alignment: .leading, spacing: 24) {
+                if let shippingTracking = order?.shippingTracking {
+                    ForEach(shippingTracking, id: \.id) { track in
+                        ShippingStepView(
+                            icon: "checkmark.circle.fill",
+                            title: track.title ?? "",
+                            subtitle: track.createdAt?.formattedDate(toFormat: "MMM dd, yyyy") ?? "N/A",
+                            iconColor: .red
+                        )
+                    }
+                }
             }
         }
         .padding()

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct DeliveryAddressView: View {
-    var order : ProductPurchaseModel?
+    var order : MyOrderModel?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -16,15 +16,14 @@ struct DeliveryAddressView: View {
                 .font(.headline)
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(order?.shippingAddress?.streetAddress ?? "")
-                Text(order?.shippingAddress?.pincode ?? "")
+                Text(order?.shippingAddress ?? "")
             }
             .font(.subheadline)
 
             HStack {
                 Spacer()
-                Image(systemName: "viewfinder")
-                    .font(.title2)
+//                Image(systemName: "viewfinder")
+//                    .font(.title2)
             }
         }
         .padding()

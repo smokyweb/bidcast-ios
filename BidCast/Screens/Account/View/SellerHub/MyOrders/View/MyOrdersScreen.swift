@@ -19,12 +19,15 @@ struct MyOrdersScreen: View {
     @State private var selectedOrderType: MyOrderValue? = .newOrders
     @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @EnvironmentObject var networkMonitor: NetworkMonitor
+    @State var navigateToOrderDetails = false
     @State private var showhud = false
     @State private var hudMsg = ""
     @State var newOrder = ""
     @State var completedOrder = ""
     @State var ProcessingOrder = ""
     @State var currentPage = 1
+    
+    @State var selectedOrderDetails: MyOrderModel?
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -59,8 +62,13 @@ struct MyOrdersScreen: View {
                             fetchOrders(for: newType)
                         }
                         ForEach(myOrderListArr , id: \.id) { order in
-                            OrderCardView(order: order)
-                                .padding([.leading , .trailing] , 0)
+                            Button(action: {
+                                selectedOrderDetails = order
+                                navigateToOrderDetails = true
+                            }) {
+                                OrderCardView(order: order)
+                                    .padding([.leading , .trailing] , 0)
+                            }
                         }
                         Spacer(minLength: 80)
                     }
@@ -98,6 +106,12 @@ struct MyOrdersScreen: View {
                     withAnimation { showError = false }
                 }
             )
+        }
+        if let order = selectedOrderDetails {
+            CusNavLink(doNavigate: $navigateToOrderDetails, destination: OrderStatusScreen(
+                productDetail: selectedOrderDetails,
+                comeFrom: "myOrder"
+            ))
         }
     }
 }

@@ -18,16 +18,18 @@ struct CustomProfileImage: View {
             AsyncImage(url: URL(string: url.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")) { phase in
                 switch phase {
                 case .empty:
-                    ProgressView()
+                    Color.gray.opacity(0.3)
                         .frame(width: size, height: size)
-                    
+                        .applyClip(isCircular: isCircular, cornerRadius: cornerRadius)
+                        .shimmer()
+                     
                 case .success(let image):
                     image
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: size, height: size)
                         .applyClip(isCircular: isCircular, cornerRadius: cornerRadius)
-                    
+                        .shadow(color: Color.black.opacity(0.2), radius: 3, x: 0, y: 2)
                 case .failure:
                     if url.contains("http") {
                         Image("defaultUser")
@@ -35,12 +37,14 @@ struct CustomProfileImage: View {
                             .aspectRatio(contentMode: .fill)
                             .frame(width: size, height: size)
                             .applyClip(isCircular: isCircular, cornerRadius: cornerRadius)
+                            .shadow(color: Color.black.opacity(0.2), radius: 3, x: 0, y: 2)
                     } else {
                         Image(url)
                             .resizable()
                             .aspectRatio(contentMode: .fill)
                             .frame(width: size, height: size)
                             .applyClip(isCircular: isCircular, cornerRadius: cornerRadius)
+                            .shadow(color: Color.black.opacity(0.2), radius: 3, x: 0, y: 2)
                     }
                     
                 @unknown default:
@@ -53,6 +57,7 @@ struct CustomProfileImage: View {
                 .aspectRatio(contentMode: .fill)
                 .frame(width: size, height: size)
                 .applyClip(isCircular: isCircular, cornerRadius: cornerRadius)
+                .shadow(color: Color.black.opacity(0.1), radius: 3, x: 0, y: 2)
         }
     }
 }

@@ -51,7 +51,8 @@ struct ProductDetails: Codable {
     var width, length, weight: String?
     var height, mailClass, processingCategory: String?
     var description: String?
-    var quantity, purchasedQuantity, pricing: Int?
+    var quantity, purchasedQuantity: String?
+    var pricing: String?
     var flashSale, acceptOffers, reserveForLive: Bool?
     var shippingProfileID: Int?
     var status, productShow: String?

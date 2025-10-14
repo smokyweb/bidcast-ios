@@ -10,8 +10,8 @@ import Foundation
 
 // MARK: - ProductPurchaseModel
 struct ProductPurchaseModel: Codable {
-    var shippingCharges, taxPercent, taxAmount, subTotal: Int?
-    var total: Int?
+    var shippingCharges, taxPercent, taxAmount, subTotal: String?
+    var total: String?
     var product: ProductPurchaseDetail?
     var shippingAddress: ShippingAddress?
 
@@ -28,7 +28,7 @@ struct ProductPurchaseModel: Codable {
 struct ProductPurchaseDetail: Codable {
     var id, userID, categoryID: Int?
     var title, description: String?
-    var quantity, purchasedQuantity, pricing: Int?
+    var quantity, purchasedQuantity, pricing: String?
     var flashSale, acceptOffers, reserveForLive: Bool?
     var shippingProfileID: Int?
     var status, productShow: String?

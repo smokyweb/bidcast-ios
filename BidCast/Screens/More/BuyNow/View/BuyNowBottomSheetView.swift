@@ -15,7 +15,7 @@ struct BuyNowBottomSheetView: View {
     @State var cardViewModel = PaymentViewModel()
     @State var cardArr : [PaymentProfile] = []
     @State var selectedCardIndex: Int = 0
-    @State var orderDetails : BuyNowModel?
+    @State var orderDetails : MyOrderModel?
     @State private var isLoading = false
     @State private var showError = false
     @EnvironmentObject var networkMonitor: NetworkMonitor
@@ -194,7 +194,12 @@ struct BuyNowBottomSheetView: View {
                     total: Int(subtotal)
                 )
             )
-            CusNavLink(doNavigate: $navigateToOrderStatus, destination: OrderStatusScreen())
+            if let order = orderDetails {
+                CusNavLink(doNavigate: $navigateToOrderStatus, destination: OrderStatusScreen(
+                    productDetail: orderDetails,
+                    comeFrom: "buyNow"
+                ))
+            }
         }
         .background(Color.white)
         .clipShape(RoundedRectangle(cornerRadius: 20))

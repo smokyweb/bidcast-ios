@@ -2,7 +2,7 @@
 //  ShimmerViewModifier.swift
 //  BidCast
 //
-//  Created by JamTech on 14/10/25.
+//  Created by Vivek-JAM_E-328 on 14/10/25.
 //
 
 import SwiftUI
@@ -13,12 +13,16 @@ struct ShimmerViewModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .overlay(
-                LinearGradient(gradient: Gradient(colors: [.clear, Color.white.opacity(0.4), .clear]),
-                               startPoint: .topLeading,
-                               endPoint: .bottomTrailing)
-                    .rotationEffect(.degrees(30))
-                    .offset(x: phase * 200, y: phase * 200)
+                GeometryReader { geometry in
+                    LinearGradient(
+                        gradient: Gradient(colors: [.gray, .lightText.opacity(0.6), .ghostWhite]),
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                    .frame(width: geometry.size.width * 3, height: geometry.size.height)
+                    .offset(x: -geometry.size.width * 2 + phase * geometry.size.width * 3)
                     .blendMode(.plusLighter)
+                }
             )
             .mask(content)
             .onAppear {

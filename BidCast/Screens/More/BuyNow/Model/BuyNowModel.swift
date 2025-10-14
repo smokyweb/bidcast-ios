@@ -4,7 +4,19 @@
 //
 //  Created by JAM_E_329 on 19/05/25.
 //
-
+//
+//var id: Int?
+//var orderID: String?
+//var userID, productID: Int?
+//var shippingAddress: String?
+//var cardID, customerPaymentProfileID, promoCode: String?
+//var sendAsGift: Bool?
+//var giftUserID: Int?
+//var giftMsg: String?
+//var status, createdAt: String?
+//var product: ProductDetails?
+//var shippingTracking: [ShippingTrackingModel]?
+//var user: UserShortModel?
 // MARK: - BuyNowModel
 struct BuyNowModel: Codable {
     var id: Int?

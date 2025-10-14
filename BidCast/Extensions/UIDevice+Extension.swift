@@ -2,7 +2,7 @@
 //  UIDevice+Extension.swift
 //  Dondaga
 //
-//  Created by Jamtech iOS Team on 27/05/22.
+//  Created by Vivek-JAM_E-328 iOS Team on 27/05/22.
 //
 
 import Foundation
