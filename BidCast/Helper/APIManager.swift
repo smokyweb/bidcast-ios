@@ -713,24 +713,28 @@ final class APIManager {
         modelType: T.Type,
         header: Bool
     ) async throws -> T {
-        
+        print("Upload File API Request - - - - - - - - - - >>>>>")
         guard let url = type.url else {
             throw DataError.invalidURL
         }
-        
+        print("URL >> \(url)")
         var request = URLRequest(url: url)
         request.httpMethod = type.method.rawValue
-        
+        print("Method >> \(type.method.rawValue)")
         let boundary = generateBoundary()
         var media = [MediaData1]()
         
         for (index, key) in keyName.enumerated() {
             urlArray?[index].forEach { url in
                 if let med = MediaData1(withURL: url, forKey: key, mimeType: mimeType[index]) {
+                    print("✅ Loaded image at path: \(url)")
                     media.append(med)
+                    
                 }
             }
         }
+        print(parameters)
+        print(media)
         
         let dataBody = createDataBody1(withParameters: parameters, media: media, boundary: boundary)
         request.httpBody = dataBody
@@ -742,6 +746,8 @@ final class APIManager {
         headers?["Accept"] = "application/json"
         headers?["Content-Type"] = "multipart/form-data; boundary=\(boundary)"
         request.allHTTPHeaderFields = headers
+        
+        print("Headers >>> \(request.allHTTPHeaderFields ?? [:])")
         
         let config = URLSessionConfiguration.default
         config.waitsForConnectivity = true

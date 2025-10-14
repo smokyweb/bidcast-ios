@@ -35,9 +35,9 @@ struct UpdateStatusModel : Codable {
         var category_id: Int?
         var title: String?
         var description: String?
-        var quantity: Int?
+        var quantity: String?
         var purchased_quantity: Int?
-        var pricing: Double?
+        var pricing: String?
         var flash_sale: Bool?
         var accept_offers: Bool?
         var reserve_for_live: Bool?

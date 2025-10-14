@@ -40,10 +40,10 @@ struct ProductDataModel: Codable {
     var category_id: Int?
     var title: String?
     var description: String?
-    var quantity: Int?
+    var quantity: String?
     var variant : String?
-    var purchased_quantity: Int?
-    var pricing: Double?
+    var purchased_quantity: String?
+    var pricing: String?
     var flash_sale: Bool?
     var accept_offers: Bool?
     var reserve_for_live: Bool?
@@ -62,7 +62,7 @@ struct StoreScheduleShowModel : Codable{
    var user_id : Int?
     var title : String?
     var category_id : Int?
-    var product_ids : [String]
+    var product_ids : [String]?
     var date : String?
     var time : String?
     var auction_type_id : Int?

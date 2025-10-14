@@ -99,7 +99,7 @@ struct AddProductsScreen: View {
                                     Text(data.category?.name ?? "Unknown Category")
                                         .font(.custom(poppinsSemiBold, size: 13.0))
                                         .foregroundColor(.gray)
-                                    Text("Quantity: \(data.quantity ?? 0)")
+                                    Text("Quantity: \(data.quantity ?? "")")
                                         .font(.custom(poppinsSemiBold, size: 13.0))
                                         .foregroundColor(.gray)
                                 }

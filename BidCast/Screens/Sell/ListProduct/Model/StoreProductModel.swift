@@ -26,11 +26,12 @@ import Foundation
 // MARK: - StoreProductModel
 struct StoreProductModel: Codable {
     var description: String?
-    var quantity, id: Int?
+    var quantity : String?
+        var id: Int?
     var flashSale: Bool?
     var shippingProfileID, categoryID: Int?
     var createdAt: String?
-    var pricing: Double?
+    var pricing: String?
     var userID: Int?
     var acceptOffers: Bool?
     var title: String?

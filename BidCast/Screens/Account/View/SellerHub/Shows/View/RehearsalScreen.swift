@@ -403,12 +403,12 @@ struct RehearsalScreen: View {
                                             .transition(.opacity)
                                             .animation(.easeInOut(duration: 0.2), value: commentText)
                                             .padding(.leading,16)
-                                            .padding(.trailing, BiddingDetail.products != nil ? 54 : 16)
+//                                            .padding(.trailing, BiddingDetail.products != nil ? 54 : 16)
                                         }
                                     }
                                 }
                                 .padding(.leading,12)
-                                .padding(.trailing, productData != nil ? 60 : 12)
+                                .padding(.trailing, productData != nil ? 70 : 12)
                                 .padding(.bottom,20)
                                 VStack(alignment: .leading,spacing: 12) {
                                     //MARK: Product Details
@@ -723,10 +723,10 @@ struct RehearsalScreen: View {
                     id: String(productModel.id ?? 0),
                     image: productModel.images?.first ?? "",
                     name: productModel.title ?? "Unnamed",
-                    price: String(format: "%.2f", productModel.pricing ?? 0),
+                    price: productModel.pricing ?? "",
                     status: productModel.status ?? "inactive",
                     isCurrent: false,
-                    quantity: "\(productModel.quantity ?? 0)"
+                    quantity: productModel.quantity ?? ""
                 )
             }
             productData.append(contentsOf: mappedProducts)
@@ -780,10 +780,10 @@ struct RehearsalScreen: View {
                 id: "\(id)",
                 image: product.images?.first ?? "",
                 name: title,
-                price: String(format: "%.2f", price),
+                price: price,
                 status: /*product.status ??*/ "active",
                 isCurrent: selectedID == "\(id)",
-                quantity: "\(quantity)"
+                quantity: quantity
             )
         }
         
@@ -954,10 +954,10 @@ struct RehearsalScreen: View {
                     id: "\(id)",
                     image: product.images?.first ?? "",
                     name: title,
-                    price: String(format: "%.2f", price),
+                    price: price,
                     status: /*product.status ??*/ "active",
                     isCurrent: selectedID == "\(id)",
-                    quantity: "\(quantity)"
+                    quantity: quantity
                 )
             }
             

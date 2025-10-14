@@ -19,7 +19,7 @@ struct LetsPrepare: View,ShowStepDelegate {
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
     @State var showError: Bool = false
-    
+    @State var showsData = HomeModel()
     var viewModel = ScheduleViewModel()
     @State var request : StoreScheduleShowRequest = StoreScheduleShowRequest(title: "", date: "", time: "", category_id: "", auction_type_id: "", product_ids: "")
     
@@ -123,7 +123,7 @@ struct LetsPrepare: View,ShowStepDelegate {
             CusNavLink(doNavigate: $navigateToSelectShow, destination: SelectShowScreen(request: $request, thumbNail: $thumbNAil, comeFromPrepareScreen: .constant(true),backToPrepare: .constant(false), delegate: self))
             
             CusNavLink(doNavigate: $navigateToRehearsal, destination: RehearsalScreen(showUd: .constant(""),productListData: .constant([ProductDataModel]()), comeFromPrepare: true, backToTabBar: .constant(true), showsData: .constant(HomeModel())))
-            CusNavLink(doNavigate: $navigateForLive, destination: RehearsalScreen(showUd: $showId,productListData:$product,comeFromPrepare: true,comeForLive: true, backToTabBar: $backToTabBar,showsData: .constant(HomeModel()) ))
+            CusNavLink(doNavigate: $navigateForLive, destination: RehearsalScreen(showUd: $showId,productListData:$product,comeFromPrepare: true,comeForLive: true, backToTabBar: $backToTabBar,showsData: $showsData ))
             
             CusNavLink(doNavigate: $navigateToshowTitle, destination: ShowTitleTips(request : $request,fromPrepare:.constant(true),backToPrepare: $navigateToshowTitle, delegate: self))
             CusNavLink(doNavigate: $navigateToReferScreen, destination: ReferEarnScreen())
@@ -325,9 +325,10 @@ struct LetsPrepare: View,ShowStepDelegate {
         SVProgressHUD.dismiss()
         let response = viewModel.storeShowResponse
         if response?.status == "success"{
-            self.product = response?.data.products ?? [ProductDataModel]()
-            self.showId = "\(response?.data.id ?? 0)"
+            product = response?.data.products ?? [ProductDataModel]()
+            showId = "\(response?.data.id ?? 0)"
             print("showID \(self.showId)")
+            showsData = response?.data ?? HomeModel()
             alertType = .sheetType(
                 icon: .success,
                 title: response?.error_type?.capitalized ?? "",

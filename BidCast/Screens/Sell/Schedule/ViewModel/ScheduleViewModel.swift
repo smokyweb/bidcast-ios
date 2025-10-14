@@ -22,7 +22,7 @@ final class ScheduleViewModel: ObservableObject {
     @Published var tipsResponse: ResponseModal<TitleTipsModel>?
     @Published var productResponse: ResponseModalPaginate<[ProductDataModel]>?
     @Published var getProductResponse: ResponseModal<[ProductDataModel]>?
-    @Published var storeShowResponse : ResponseModal<StoreScheduleShowModel>?
+    @Published var storeShowResponse : ResponseModal<HomeModel>?
     @Published var errorMessage: String? = nil
     @Published var requestType: String = ""
     @Published var isStoreAPIDone = false
@@ -141,13 +141,13 @@ final class ScheduleViewModel: ObservableObject {
         do {
             let parameters = try param.asDictionary()
 
-            let response: ResponseModal<StoreScheduleShowModel> = try await APIManager.shared.uploadImage(
+            let response: ResponseModal<HomeModel> = try await APIManager.shared.uploadImage(
                 type: APIEndPoint.storeScheduleShow(param: param),
                 urlArray: images,
                 mimeType: "image/jpeg",
                 keyName: key,
                 parameters: parameters,
-                modalType: ResponseModal<StoreScheduleShowModel>.self,
+                modalType: ResponseModal<HomeModel>.self,
                 header: true
             )
             

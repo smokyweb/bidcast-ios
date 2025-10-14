@@ -187,6 +187,7 @@ struct SellerVerificationScreen: View {
                 }
                 
                 // Final Button
+            if UserDefaults.sellerVerafied.isEmpty || UserDefaults.sellerVerafied == "rejected"{
                 Button(action: {
                     guard UserDefaults.sellerVerafied.isEmpty || UserDefaults.sellerVerafied == "rejected" else {
                         return
@@ -206,7 +207,7 @@ struct SellerVerificationScreen: View {
                 }
                 .padding()
                 .disabled(UserDefaults.sellerVerafied == "verified" ? true : false)
-//            }
+            }
         }
         .onFirstAppear{
             feetchSellerStatus()
