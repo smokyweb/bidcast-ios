@@ -32,7 +32,7 @@ struct CustomProfileImage: View {
                         .shadow(color: Color.black.opacity(0.2), radius: 3, x: 0, y: 2)
                 case .failure:
                     if url.contains("http") {
-                        Image("defaultUser")
+                        Image("placeholder")
                             .resizable()
                             .aspectRatio(contentMode: .fill)
                             .frame(width: size, height: size)
@@ -52,7 +52,7 @@ struct CustomProfileImage: View {
                 }
             }
         } else {
-            Image("defaultUser")
+            Image("placeholder")
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .frame(width: size, height: size)
