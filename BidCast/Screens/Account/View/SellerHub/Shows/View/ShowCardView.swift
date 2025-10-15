@@ -14,32 +14,15 @@ struct ShowCardView: View {
     var onTap : () -> () = { }
     var body: some View {
         HStack {
-            AsyncImage(url: URL(string: show.img_thumbnail?.first ?? "")) { phase in
-                switch phase {
-                case .empty:
-                    ProgressView()
-                        .frame(width: 60, height: 60)
-                case .success(let image):
-                    image
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 60, height: 60)
-                        .cornerRadius(8.0)
-                case .failure:
-                    Image(systemName: "person.crop.circle.fill")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 60, height: 60)
-                        .foregroundColor(.gray)
-                        .cornerRadius(8.0)
-                @unknown default:
-                    EmptyView()
-                }
-            }
+            
+            CustomProfileImage(url: show.img_thumbnail?.first ?? "", isCircular: false, size: 70)
+            
             VStack(alignment: .leading, spacing: 5) {
                 Text(show.title?.capitalizingFirstLetter() ?? "")
                     .font(.custom(poppinsBold, size: 14.0))
-
+                Text(show.category?.name ?? "")
+                    .font(.custom(poppinsSemiBold, size: 13.0))
+                    .foregroundColor(.black)
                 Text(show.date ?? "")
                     .font(.custom(poppinsSemiBold, size: 13.0))
                     .foregroundColor(.gray)
