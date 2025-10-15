@@ -114,6 +114,7 @@ struct AppString{
     static let  YouAreEligibleForEarlyPayout  = "You're eligible for early payout".localized
     static let PayoutHistory = "Payout History".localized
     static let NoPayoutHistoryFound = "No Payout history found".localized
+    static let NoOrderFound = "No Orders Found.".localized
     static let Offers = "Offers".localized
     static let Decline = "Decline".localized
     static let Accept = "Accept".localized
@@ -184,6 +185,10 @@ struct AppString{
     static let Shows = "Shows".localized
     static let Views = "Views".localized
     static let Followers = "Followers".localized
+    static let totalFollowers = "Total Followers".localized
+    static let averageRating = "Average Rating".localized
+    static let liveSession = "Live Session".localized
+    static let TotalSales = "Total Sales".localized
     static let Share = "Share".localized
     static let SalePerformance = "Sales Performance".localized
     static let VisitorAnalytics = "Visitor Analytics".localized

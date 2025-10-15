@@ -24,6 +24,7 @@ struct OrderCardView: View {
             HStack {
                 Text(order?.orderID ?? "")
                     .fontWeight(.semibold)
+                    .foregroundColor(.black)
                 Spacer()
                 Text(order?.status ?? "")
                     .font(.custom(poppinsSemiBold, size: 13.0))
@@ -43,6 +44,7 @@ struct OrderCardView: View {
                 VStack(alignment: .leading) {
                     Text(order?.product?.title?.capitalizingFirstLetter() ?? "")
                         .font(.custom(poppinsSemiBold, size: 14.0))
+                        .foregroundColor(.black)
                     Text(order?.product?.description ?? "")
                         .font(.custom(poppinsRegular, size: 13.0))
                         .foregroundColor(.gray)
@@ -57,6 +59,7 @@ struct OrderCardView: View {
                 Spacer()
                 Text("$\(Double(order?.product?.pricing ?? "0.0") ?? 0.0, specifier: "%.2f")")
                     .font(.custom(poppinsSemiBold, size: 13.0))
+                    .foregroundColor(.black)
             }
         }
         .padding()

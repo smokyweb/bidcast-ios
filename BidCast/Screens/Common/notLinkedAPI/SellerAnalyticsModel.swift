@@ -38,11 +38,11 @@ struct Stats: Codable {
 // MARK: - DataClass
 struct VisitorsAnalyticsModel: Codable {
     var filter: String?
-    var chart: [Chart]?
+    var chart: [ChartModel]?
 }
 
 // MARK: - Chart
-struct Chart: Codable {
+struct ChartModel: Codable {
     var label, totalVisitors: String?
 
     enum CodingKeys: String, CodingKey {

@@ -553,7 +553,7 @@ extension APIEndPoint: EndPointType {
                 endPoint = "sales-performance?filter=\(filter)&year=\(year)&month=\(month)"
             }
             else if filter == "yearly" {
-                endPoint = "sales-performance?filter=\(filter)&year=\(year)"
+                endPoint = "seller/sales-performance?filter=\(filter)&year=\(year)"
             }
             return endPoint
         case .getVisitorsAnalytic(let param):
@@ -562,10 +562,10 @@ extension APIEndPoint: EndPointType {
             let month = param.month ?? ""
             var endPoint = ""
             if filter == "monthly" {
-                endPoint = "visitor-analytics?filter=\(filter)&year=\(year)&month=\(month)"
+                endPoint = "seller/visitor-analytics?filter=\(filter)&year=\(year)&month=\(month)"
             }
             else if filter == "yearly" {
-                endPoint = "visitor-analytics?filter=\(filter)&year=\(year)"
+                endPoint = "seller/visitor-analytics?filter=\(filter)&year=\(year)"
             }
             return endPoint
         }

@@ -5,6 +5,7 @@
 import Foundation
 import SVProgressHUD
 import SwiftUI
+import Combine
 
 // Singleton Design Pattern
 // final - inheritance nahi hoga theek hai final ho gya
@@ -19,6 +20,11 @@ enum DataError: Error {
     case failedToDecode
 }
 
+// MARK: - Protocol for API Abstraction
+protocol APIManaging {
+    func request<T: Decodable>(type: APIEndPoint, header: Bool) -> AnyPublisher<ResponseModel<T>, DataError>
+}
+
 typealias Handler<T> = (Result<T, DataError>) -> Void
 let deviceTimeZone = getDeviceTimeZone()
 final class APIManager {
@@ -28,7 +34,6 @@ final class APIManager {
             "Content-Type": "application/json"
         ]
     }
-    
     
     private static var isShowingUnauthorizedAlert = false
     static let shared = APIManager()
@@ -75,7 +80,7 @@ final class APIManager {
         
 //        print(response)
         print("API Response >>> \n\(data.prettyPrintedJSONString ?? "")")
-        
+        print(response)
         guard let response = response as? HTTPURLResponse,
               200 == response.statusCode || 201 == response.statusCode else {
             
@@ -164,7 +169,7 @@ final class APIManager {
         
         do {
             let json =  try JSONSerialization.jsonObject(with: data, options: [])
-//            print("Response JSon: ",json)
+            print("Response JSon: ",json)
             let object = try JSONDecoder().decode(T.self, from: data)
             //            print(object)
             return object
@@ -980,6 +985,31 @@ final class APIManager {
         }
     }
 }
+
+
+
+// Default implementation (backed by async)
+extension APIManager: APIManaging {
+    func request<T: Decodable>(type: APIEndPoint, header: Bool) -> AnyPublisher<ResponseModel<T>, DataError> {
+        Future { promise in
+            Task {
+                do {
+                    let result: ResponseModel<T>? = try await self.request(type: type, header: header)
+                    if let result = result {
+                        promise(.success(result))
+                    } else {
+                        promise(.failure(DataError.invalidCode("Failed to get data")))
+                    }
+                } catch(let error) {
+                    promise(.failure(DataError.invalidCode(error.localizedDescription)))
+                }
+            }
+        }
+        .receive(on: DispatchQueue.main)
+        .eraseToAnyPublisher()
+    }
+}
+
 
 struct ApiError:Codable {
     var message :String?

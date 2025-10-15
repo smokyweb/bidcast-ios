@@ -9,30 +9,46 @@ import SwiftUI
 
 struct ToolGridAnalyticsView: View {
     let title: String
-      let chartData: [Double]
-      let chartType: ChartType
-
-       var body: some View {
-           VStack(alignment: .leading, spacing: 8) {
-                       Text(title)
-                   .font(.custom(poppinsSemiBold, size: 13.0))
-
-                       RoundedRectangle(cornerRadius: 8)
-                           .fill(Color(.systemGray6))
-                           .frame(height: 120)
-                           .overlay(
-                               Group {
-                                   if chartType == .bar {
-                                       TemporaryBarChartView(data: chartData)
-                                   } else {
-                                       TemporaryLineGraphView(data: chartData)
-                                   }
-                               }
-                               .padding(.horizontal)
-                           )
-                   }
-                   .padding(.horizontal)
-       }
+    let chartData: [ChartData]
+    let chartType: ChartType
+    
+    @State var noDataMessage: String = ""
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(title)
+                .font(.custom(poppinsSemiBold, size: 13.0))
+            if chartData.isEmpty {
+                NoDataView(message: noDataMessage)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+            else  {
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Color(.systemGray6))
+                    .frame(height: 180)
+                    .overlay(
+                        Group {
+                            if chartType == .bar {
+                                BarChartView(data: chartData)
+                                
+                            } else {
+                                AreaChartView(data: chartData)
+                            }
+                        }
+                        .padding(.horizontal)
+                    )
+            }
+        }
+        .onAppear {
+            if chartType == .bar {
+                noDataMessage = "No Sales Found."
+            }
+            else  {
+                noDataMessage = "Visitors Data Not Found"
+            }
+        }
+        .padding(.horizontal)
+    }
 }
 
 
@@ -43,18 +59,46 @@ enum ChartType {
 }
 
 struct TemporaryBarChartView: View {
-    let data: [Double] // Values between 0 and 1
-
+    let data: [Double]
+    @State var barRatio:Int = 100
     var body: some View {
         HStack(alignment: .bottom, spacing: 8) {
             ForEach(data.indices, id: \.self) { index in
                 Capsule()
                     .fill(.defaultTheme)
-                    .frame(width: 12, height: CGFloat(data[index]) * 100)
+                    .frame(width: 12, height: CGFloat(data[index]) * CGFloat(barRatio))
             }
         }
         .frame(height: 100)
+        .onAppear {
+            barRatio = getBarRatio(with: data)
+        }
     }
+    
+    func getBarRatio(with data: [Double]) -> Int {
+        var barRatio = 100
+        let max = findMaxValue(with: data)
+        
+        if max <= 0.0 {
+            barRatio = 100
+        }
+        else if max > 0.0 && max < 100.0 {
+            barRatio = 10
+        }
+        else {
+            barRatio = 1
+        }
+        return barRatio
+    }
+    
+    // Helper function to find the maximum value in the data array
+    func findMaxValue(with data: [Double]) -> Double {
+        if let max = data.max() {
+            return max
+        }
+        return 0.0
+    }
+        
 }
 
 

@@ -8,6 +8,7 @@
 import SwiftUI
 import AlertToast
 import SVProgressHUD
+import Combine
 
 // MARK: - MyOrdersScreen
 struct MyOrdersScreen: View {
@@ -18,6 +19,10 @@ struct MyOrdersScreen: View {
     @State private var showError = false
     @State private var selectedOrderType: MyOrderValue? = .newOrders
     @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+    
+    @State private var debounceCancellable: AnyCancellable?
+    @State var searchText: String = ""
+    
     @EnvironmentObject var networkMonitor: NetworkMonitor
     @State var navigateToOrderDetails = false
     @State private var showhud = false
@@ -27,6 +32,16 @@ struct MyOrdersScreen: View {
     @State var ProcessingOrder = ""
     @State var currentPage = 1
     
+//    var filteredOrder: [MyOrderModel] {
+//        if searchText.isEmpty {
+//            return myOrderListArr
+//        } else {
+//            return myOrderListArr.filter {
+//                $0.product?.title?.localizedCaseInsensitiveContains(searchText) ?? false
+//            }
+//        }
+//    }
+//    
     @State var selectedOrderDetails: MyOrderModel?
     
     var body: some View {
@@ -59,18 +74,34 @@ struct MyOrdersScreen: View {
                             selection: $selectedOrderType
                         )
                         .onChange(of: selectedOrderType ?? .newOrders) { newType in
+                            searchText = ""
                             fetchOrders(for: newType)
                         }
-                        ForEach(myOrderListArr , id: \.id) { order in
-                            Button(action: {
-                                selectedOrderDetails = order
-                                navigateToOrderDetails = true
-                            }) {
-                                OrderCardView(order: order)
-                                    .padding([.leading , .trailing] , 0)
+                        CustomSearchBar(searchText: $searchText)
+                            .frame(height: 45)
+                            .padding([.leading , .trailing] , 0)
+                            .shadow(color: .black.opacity(0.2), radius: 2, x: 0, y: 0)
+                            .onChange(of: searchText) { searchText in
+                                // Reset to first page if needed
+                                currentPage = 1
+                                debounceSearch(with: searchText)
                             }
+                        if !myOrderListArr.isEmpty {
+                            ForEach(myOrderListArr , id: \.id) { order in
+                                Button(action: {
+                                    selectedOrderDetails = order
+                                    navigateToOrderDetails = true
+                                }) {
+                                    OrderCardView(order: order)
+                                        .padding([.leading , .trailing] , 0)
+                                }
+                            }
+                            Spacer(minLength: 80)
                         }
-                        Spacer(minLength: 80)
+                        else  {
+                            NoDataView(message: "No Shows found")
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        }
                     }
                     .padding(.horizontal)
                     .padding(.top, 0)
@@ -138,7 +169,7 @@ extension MyOrdersScreen{
                 return
             }
             SVProgressHUD.show()
-            let param = ProductOrderListingRequest(type: type.apiValue, page: currentPage)
+            let param = ProductOrderListingRequest(type: type.apiValue, page: currentPage, search: searchText)
             await viewModel.getMyOrderList(parameters: param)
             await SVProgressHUD.dismiss()
             getOrderSuccess()
@@ -192,6 +223,21 @@ extension MyOrdersScreen{
         case .completed:
             return "\(viewModel.myOrderResponse.completed_order_count  ?? 0)"
         }
+    }
+    // MARK: - Search Management
+    private func debounceSearch(with text: String) {
+        // Cancel previous debounce if any
+        debounceCancellable?.cancel()
+        
+        // Start a new debounce pipeline
+        debounceCancellable = Just(text)
+            .delay(for: .seconds(0.5), scheduler: RunLoop.main)
+            .sink { value in
+                self.searchText = value
+                print("Search triggered for: \(value)")
+                // Perform your search here
+                fetchOrders(for: selectedOrderType ?? .newOrders)
+            }
     }
 }
 
