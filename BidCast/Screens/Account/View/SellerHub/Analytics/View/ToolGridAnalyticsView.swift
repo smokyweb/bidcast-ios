@@ -18,27 +18,26 @@ struct ToolGridAnalyticsView: View {
         VStack(alignment: .leading, spacing: 8) {
             Text(title)
                 .font(.custom(poppinsSemiBold, size: 13.0))
-            if chartData.isEmpty {
-                NoDataView(message: noDataMessage)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            }
-            else  {
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color(.systemGray6))
-                    .frame(height: 180)
-                    .overlay(
-                        Group {
+            RoundedRectangle(cornerRadius: 8)
+                .fill(Color(.systemGray6))
+                .frame(height: 180)
+                .overlay(
+                    Group {
+//                        if chartData.isEmpty {
+//                            NoDataView(message: noDataMessage)
+//                        } else {
                             if chartType == .bar {
                                 BarChartView(data: chartData)
                                 
                             } else {
                                 AreaChartView(data: chartData)
                             }
-                        }
+//                        }
+                    }
                         .padding(.horizontal)
-                    )
-            }
+                )
         }
+        
         .onAppear {
             if chartType == .bar {
                 noDataMessage = "No Sales Found."
@@ -98,23 +97,23 @@ struct TemporaryBarChartView: View {
         }
         return 0.0
     }
-        
+    
 }
 
 
 struct TemporaryLineGraphView: View {
     let data: [Double] // Values between 0 and 1
-
+    
     var body: some View {
         GeometryReader { geometry in
             let width = geometry.size.width
             let height = geometry.size.height
             let step = width / CGFloat(data.count - 1)
-
+            
             Path { path in
                 guard let firstPoint = data.first else { return }
                 path.move(to: CGPoint(x: 0, y: height * (1 - firstPoint)))
-
+                
                 for index in 1..<data.count {
                     let x = CGFloat(index) * step
                     let y = height * (1 - data[index])
