@@ -64,7 +64,20 @@ struct PreferncesScreen: View {
                         .sheet(isPresented: $showCountryPicker) {
                             CountryPickerView(selectedCountry: $selectedCountry)
                         }
-                    Section(header: Text("Privacy")) {
+                    Section(header:
+                            HStack {
+                                Text("Privacy")
+                                    .font(.headline)
+                                Spacer()
+                                Button(action: {
+                                    showPrivacyHelp()
+                                }) {
+                                    Image(systemName: "questionmark.circle")
+                                        .foregroundColor(.blue)
+                                }
+                            }
+                                .padding(.vertical, 4)
+                    ) {
                         ToggleCell(title: "Direct Messages", isTappedSwitch: $directMessages)
                         ToggleCell(title: "Receive Gifts", isTappedSwitch: $receiveGifts)
                         ToggleCell(title: "Enable Private Entry", isTappedSwitch: $enablePrivateEntry)
@@ -154,7 +167,7 @@ struct PreferncesScreen: View {
         }
         .bottomSheet(
             isPresented: $showError,
-            height: screenHeight / 2.3,
+            height: screenHeight * 0.8,
             topBarCornerRadius: 25,
             showTopIndicator: false
         ) {
@@ -168,6 +181,26 @@ struct PreferncesScreen: View {
                 }
             )
         }
+        
+    }
+    
+    func showPrivacyHelp() {
+        alertType = .sheetType(
+            icon: .queestionMark,
+            title: "Privacy Settings",
+            message: "Configure your privacy preferences to control your account visibility and interactions:\n" +
+            "\n" +
+            "• Direct Messages: Control who can send you direct messages\n" +
+            "\n" +
+            "• Receive Gifts: Allow others to send you gifts during live shows\n" +
+            "\n" +
+            "• Private Entry: Join live shows without appearing in the viewer list\n" +
+            "\n" +
+            "These settings help you maintain your desired level of privacy while using BidSwipe.",
+            primaryBtnText: "",
+            secondaryBtnText: AppString.gotIt
+        )
+        showError = true
     }
     
     

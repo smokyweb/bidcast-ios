@@ -39,6 +39,7 @@ struct AppString{
     static let submit =  "Submit".localized
     static let pleaseEnterValidEmailAddress = "Please enter a valid mail address".localized
     static let ok = "Ok".localized
+    static let gotIt = "Got It".localized
     static let enterCode = "Enter Code".localized
     static let enterOtp = "Enter OTP".localized
     static let resendOtp = "Resend OTP".localized
