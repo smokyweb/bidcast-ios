@@ -220,6 +220,17 @@ struct LoginScreen: View {
             .onTapGesture {
                 UIApplication.shared.endEditing()
             }
+            .onAppear {
+                let remember = UserDefaults.rememberMe
+                isRemeber = remember
+                if remember {
+                    let email = UserDefaults.userEmail
+                    if let password = KeychainManager.shared.getPassword(email: email) {
+                        request.email = email
+                        request.password = password
+                    }
+                }
+            }
     }
     
     func success() async {
@@ -241,8 +252,10 @@ struct LoginScreen: View {
             UserDefaultsManager.shared.setValue(isRemeber, forKey: .rememberMe)
             if isRemeber {
                 saveLoginDetail(mail: request.email, password: request.password)
-            } else {
-                saveLoginDetail(mail: "", password: "")
+            }
+            else  {
+                UserDefaults.userEmail = request.email
+                UserDefaults.rememberMe = false
             }
             UserDefaultsManager.shared.setValue(true, forKey: .isLoggedIn)
             
@@ -269,7 +282,11 @@ struct LoginScreen: View {
     
     func saveLoginDetail(mail: String, password: String) {
         UserDefaults.userEmail = mail
-        UserDefaults.password = password
+        UserDefaults.rememberMe = true
+        let isDataSave = KeychainManager.shared.save(email: mail, password: password)
+        if isDataSave {
+            print("Data save in keychain successfully!!")
+        }
     }
     
     //MARK: saveDeviceDetail.

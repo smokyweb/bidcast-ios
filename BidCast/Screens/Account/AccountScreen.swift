@@ -311,7 +311,13 @@ struct AccountScreen: View {
             UserDefaults.accessToken.removeAll()
             UserDefaults.sellerVerafied.removeAll()
             UserDefaults.buyerVerafied.removeAll()
-
+            let rememberMe = UserDefaults.rememberMe
+            if !rememberMe {
+                let _ = KeychainManager.shared.delete(email: UserDefaults.userEmail)
+                UserDefaults.userEmail = ""
+                UserDefaults.rememberMe = false
+            }
+            UserDefaults.userId = -1
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                 withAnimation {
                     appRootManager.currentRoot = .authentication

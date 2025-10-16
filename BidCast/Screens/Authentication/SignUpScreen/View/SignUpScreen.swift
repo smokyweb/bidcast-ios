@@ -203,6 +203,14 @@ struct SignUpScreen: View {
         })
     }
     
+    func saveLoginDetail(mail: String, password: String) {
+        UserDefaults.userEmail = mail
+        UserDefaults.rememberMe = true
+        let isDataSave = KeychainManager.shared.save(email: mail, password: password)
+        if isDataSave {
+            print("Data save in keychain successfully!!")
+        }
+    }
     
     
     func handleSuccess() {

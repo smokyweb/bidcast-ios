@@ -2,7 +2,7 @@
 //  CustomSearchBar.swift
 //  BidCast
 //
-//  Created by JamTech on 15/10/25.
+//  Created by Vivek-JAM_E-328 on 15/10/25.
 //
 
 import SwiftUI

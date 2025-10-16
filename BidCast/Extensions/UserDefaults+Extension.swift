@@ -566,6 +566,16 @@ extension UserDefaults{
             return self.standard.value(forKey: "userEmail") as? String ?? ""
         }
     }
+    
+    static var rememberMe:Bool{
+        set(input){
+            self.standard.setValue(input, forKey: "rememberMe")
+        }
+        get{
+            return self.standard.value(forKey: "rememberMe") as? Bool ?? false
+        }
+    }
+    
     static var userPhone:String{
         set(input){
             self.standard.setValue(input, forKey: "userPhone")

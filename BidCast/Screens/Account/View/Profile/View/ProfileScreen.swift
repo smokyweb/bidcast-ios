@@ -27,14 +27,15 @@ struct ProfileScreen: View {
     @Binding var userImage : String
     @State var isLoading: Bool = false
     @State var currentPage = 1
+    @State  var showhud = false
+    @State  var hudMsg = ""
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @State var showError: Bool = false
     @State var profileData = ProfileModel()
     @State var showSellSheet = false
     @State var showNotify = false
     @State var profileId = 0
-    @State  var showhud = false
-    @State  var hudMsg = ""
+    
     @State  var productData = ProductListingDataModel()
     @State var isFollowing = false
     @State var productId : Int = 0
@@ -320,7 +321,6 @@ struct ProfileScreen: View {
             destination: PayoutView(sellerID: id)
         )
     }
-    
     
     func computeRoomId(senderId: String, receiverId: String) -> String {
         let sortedIds = [senderId, receiverId].sorted()
