@@ -306,6 +306,7 @@ struct CreateAddress: View {
     func success() {
         let response = viewModel.addressResponse
         if response.status == "success" {
+            UserDefaults.sellerAddress = true
             alertType = .sheetType(
                 icon: .success,
                 title: response.status?.capitalized ?? "",

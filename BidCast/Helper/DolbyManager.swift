@@ -97,7 +97,7 @@ class PublisherViewModel: ObservableObject {
     
     // MARK: - Controls
 //    @MainActor
-    func switchCamera1() {
+    func switchCamera() {
         guard let current = currentVideoSource, videoSources.count > 1 else { return }
 
         // Determine next source
@@ -117,56 +117,7 @@ class PublisherViewModel: ObservableObject {
         print("Is front camera? \(isFrontCamera)")
     }
     
-    @MainActor
-    func switchCamera() {
-        guard videoSources.count > 1, let current = currentVideoSource else {
-            print("No alternate video source available.")
-            return
-        }
-
-        // Get current index and compute next
-        guard let currentIndex = videoSources.firstIndex(where: { $0.getUniqueId() == current.getUniqueId() }) else {
-            print("Current video source not found.")
-            return
-        }
-
-        let nextIndex = (currentIndex + 1) % videoSources.count
-        let nextSource = videoSources[nextIndex]
-
-        Task {
-            // Stop current track
-            videoTrack?.remove(renderer)
-            currentVideoSource?.stopCapture()
-            
-//            videoTrack?.stopCapture()
-
-            // Optionally: wait a short moment to release hardware (sometimes helps)
-            try? await Task.sleep(nanoseconds: 300_000_000) // 0.3 seconds
-
-            // Set capability for the new source
-            if let cap = nextSource.getCapabilities().first(where: { $0.width <= 1920 && $0.height <= 1080 }) {
-                nextSource.setCapability(cap)
-            }
-
-            // Start capture
-            guard let newTrack = nextSource.startCapture() as? MCVideoTrack else {
-                print("Failed to start capture on new source.")
-                return
-            }
-
-            newTrack.add(renderer)
-
-            // Update state
-            currentVideoSource = nextSource
-            videoTrack = newTrack
-            isFrontCamera = nextSource.getName()?.lowercased().contains("front") ?? false
-
-            print("Switched to \(nextSource.getName() ?? "unknown")")
-        }
-    }
-
-
-
+  
     
     func toggleAudioMute() {
         guard let audioTrack = audioTrack else { return }

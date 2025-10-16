@@ -230,7 +230,8 @@ struct TabbarScreen: View {
                 onAddInfo: {
                     if UserDefaults.sellerAddress != true {
                         navigateToShipping = true
-                    } 
+                        showPaymentShipping = false
+                    }
                 }, buttonText: $titleText
             )
         }
