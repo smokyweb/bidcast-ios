@@ -515,7 +515,6 @@
 		D66531752E9E79F400F19B94 /* DownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D66531742E9E79F400F19B94 /* DownloadManager.swift */; };
 		D67DA9642E9D0A4A00ED6556 /* CurrentProductView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67DA9632E9D0A4A00ED6556 /* CurrentProductView.swift */; };
 		D68C53A32EA0B2DA008E175D /* KeyChainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68C53A22EA0B2DA008E175D /* KeyChainManager.swift */; };
-		D68C53AB2EA0D682008E175D /* Inject in Frameworks */ = {isa = PBXBuildFile; productRef = D68C53AA2EA0D682008E175D /* Inject */; };
 		D69528472E93CE990033EA7A /* ApplyPremierShopModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D69528462E93CE990033EA7A /* ApplyPremierShopModel.swift */; };
 		D6A8129C2E9F663400BE22AB /* CustomSearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6A8129B2E9F663400BE22AB /* CustomSearchBar.swift */; };
 		D6A812A02E9F787F00BE22AB /* SellerAnalyticsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6A8129D2E9F787F00BE22AB /* SellerAnalyticsModel.swift */; };
@@ -1072,7 +1071,6 @@
 				3504BCBF2E000A3D0069182D /* FirebaseAuth in Frameworks */,
 				3504BCB12E000A3D0069182D /* FirebaseAnalytics in Frameworks */,
 				3504BCDD2E000A3D0069182D /* FirebaseRemoteConfig in Frameworks */,
-				D68C53AB2EA0D682008E175D /* Inject in Frameworks */,
 				35A0450D2DC8DEC30067C447 /* AlertToast in Frameworks */,
 				35246EC42E7ABA10009D7513 /* SocketIO in Frameworks */,
 				3504BCB92E000A3D0069182D /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
@@ -4110,7 +4108,6 @@
 				D4848BA92E97E8A100DC8B85 /* StripeCardScan */,
 				D4848BAB2E97E8A100DC8B85 /* StripeConnect */,
 				D4848BAD2E97E8A100DC8B85 /* StripeFinancialConnections */,
-				D68C53AA2EA0D682008E175D /* Inject */,
 			);
 			productName = BidCast;
 			productReference = 99DF9E3F2DC4F35D008C15B2 /* BidCast.app */;
@@ -4209,7 +4206,6 @@
 				35246EC52E7ABA32009D7513 /* XCRemoteSwiftPackageReference "millicast-sdk-swift-package" */,
 				D4848BA12E97E6C900DC8B85 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				D4848BA42E97E8A100DC8B85 /* XCRemoteSwiftPackageReference "stripe-ios" */,
-				D68C53A92EA0D682008E175D /* XCRemoteSwiftPackageReference "Inject" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 99DF9E402DC4F35D008C15B2 /* Products */;
@@ -5252,14 +5248,6 @@
 				minimumVersion = 24.24.2;
 			};
 		};
-		D68C53A92EA0D682008E175D /* XCRemoteSwiftPackageReference "Inject" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/krzysztofzablocki/Inject.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.5.2;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -5487,11 +5475,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = D4848BA42E97E8A100DC8B85 /* XCRemoteSwiftPackageReference "stripe-ios" */;
 			productName = StripeFinancialConnections;
-		};
-		D68C53AA2EA0D682008E175D /* Inject */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = D68C53A92EA0D682008E175D /* XCRemoteSwiftPackageReference "Inject" */;
-			productName = Inject;
 		};
 /* End XCSwiftPackageProductDependency section */
 

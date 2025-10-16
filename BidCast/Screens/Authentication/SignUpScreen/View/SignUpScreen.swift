@@ -172,7 +172,7 @@ struct SignUpScreen: View {
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)}
         .bottomSheet(isPresented: $showError, height: screenHeight/2.5, topBarCornerRadius: 25, showTopIndicator: false,onDismiss: {
-            if viewModel.errorMessage == nil{
+            if viewModel.errorMessage == nil || viewModel.errorMessage == ""{
                 let response = viewModel.signUpResponse
                 if response.status == "success" {
                     self.presentationMode.wrappedValue.dismiss()
