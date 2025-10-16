@@ -6,11 +6,19 @@
 //
 
 import SwiftUI
+import SVProgressHUD
 
 
 struct SalesTaxScreen: View {
     @Environment(\.presentationMode) var presentationMode
     
+    @StateObject var viewModel = ProfileViewModel()
+    @State var profileData = ProfileModel()
+    
+    @State  var showhud = false
+    @State  var hudMsg = ""
+    @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+    @State var showError: Bool = false
     
     @State var navigateToCreateAddress = false
       var body: some View {
@@ -27,7 +35,10 @@ struct SalesTaxScreen: View {
               )
           }
               ScrollView(showsIndicators:false){
-                  ListCell(image: "defaultUser", title: "John Smith",subLabel : "ID: #12345678",isVectorImgHidden: true)
+                  ListCell(image: profileData.profile_image ?? "",
+                           title: profileData.name ?? "",
+                           subLabel : profileData.bio ?? "",
+                           isVectorImgHidden: true)
                       .padding(.all,1)
                       .padding([.leading,.trailing],12)
                       .frame(height: 80)
@@ -105,7 +116,41 @@ struct SalesTaxScreen: View {
 //                         .padding()
               CusNavLink(doNavigate: $navigateToCreateAddress, destination: CreateAddress())
           }
+          .onAppear {
+              Task{
+                  let id = UserDefaults.userId
+                  if id != -1 {
+                      SVProgressHUD.show()
+                      guard Reachability.isConnectedToNetwork() else {
+                          hudMsg = "No Internet Connection"
+                          showhud = true
+                          return
+                      }
+                      
+                      await viewModel.getProfile(param: ProfileParamRequest(id: "\(id)"))
+                      await SVProgressHUD.dismiss()
+                      profileSuccess()
+                  }
+              }
+              
+          }
       }
+    
+    func profileSuccess() {
+        let response = viewModel.getProfileDict
+        if response.status == "success" {
+            profileData = response.data ?? ProfileModel()
+        } else {
+            showError = true
+            alertType = .sheetType(
+                icon: .alert,
+                title: response.error_type?.capitalized ?? "",
+                message: response.message?.capitalized ?? "",
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
+            )
+        }
+    }
   }
 
 #Preview {
