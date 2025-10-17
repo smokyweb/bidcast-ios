@@ -24,7 +24,7 @@ struct OfferListModel : Codable {
 struct ProductModel: Codable {
     var id: Int?
     var title: String?
-    var pricing: Float?
+    var pricing: String?
     var images: [String]?
 }
 

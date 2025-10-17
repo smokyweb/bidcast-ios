@@ -187,6 +187,7 @@ enum APIEndPoint{
     case getSellerAnalytic(param: SellerAnalyticsRequest)
     case getSalesPerformace(param: SalesPerformanceRequest)
     case getVisitorsAnalytic(param: VisitorsAnalyticsRequest)
+    case storePromoteShow(param: StorePromoteShowRequest)
 }
 
 extension APIEndPoint: EndPointType {
@@ -568,6 +569,9 @@ extension APIEndPoint: EndPointType {
                 endPoint = "seller/visitor-analytics?filter=\(filter)&year=\(year)"
             }
             return endPoint
+        case .storePromoteShow:
+            return "/schedule-show/store-promote-show"
+            
         }
     }
     
@@ -916,6 +920,8 @@ extension APIEndPoint: EndPointType {
             return .get
         case .getVisitorsAnalytic:
             return .get
+        case .storePromoteShow:
+            return .post
         
         }
     }
@@ -1273,6 +1279,8 @@ extension APIEndPoint: EndPointType {
             return  nil
         case .getVisitorsAnalytic:
             return nil
+        case .storePromoteShow(let param):
+            return param
         }
     }
     
@@ -1610,6 +1618,8 @@ extension APIEndPoint: EndPointType {
             return  nil
         case .getVisitorsAnalytic:
             return nil
+        case .storePromoteShow:
+            return  nil
         }
     }
     

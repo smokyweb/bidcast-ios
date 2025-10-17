@@ -92,3 +92,33 @@ struct BidModel : Codable {
     var created_at : String?
     var id : Int?
 }
+
+// MARK: - StorePromoteShowModel
+struct StorePromoteShowModel: Codable {
+    var id: Int?
+    var title, date, time: String?
+    var userID, categoryID: Int?
+    var productIDS: [String]?
+    var auctionTypeID: Int?
+    var thumbnail, imgThumbnail: [String]?
+    var isLive: Bool?
+    var promoteShowID, viewerCount, latestViewerCount: Int?
+    var promotedAt, startedAt: String?
+
+    enum CodingKeys: String, CodingKey {
+        case id, title, date, time
+        case userID = "user_id"
+        case categoryID = "category_id"
+        case productIDS = "product_ids"
+        case auctionTypeID = "auction_type_id"
+        case thumbnail
+        case imgThumbnail = "img_thumbnail"
+        case isLive = "is_live"
+        case promoteShowID = "promote_show_id"
+        case viewerCount = "viewer_count"
+        case latestViewerCount = "latest_viewer_count"
+        case promotedAt = "promoted_at"
+        case startedAt = "started_at"
+    }
+}
+

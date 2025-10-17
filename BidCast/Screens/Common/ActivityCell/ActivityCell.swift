@@ -52,7 +52,7 @@ struct ActivityCell: View {
                     
                     if isFor != "OffersScreen" {
                         Spacer()
-                        let bidPrice = "\(offerListing?.product?.pricing ?? 0.0)"
+                        let bidPrice = "\(offerListing?.product?.pricing ?? "0.0")"
                         let amt = offerListing?.amount ?? ""
                         Text("$\(isFor == "Bids" ? bidPrice : amt)")
                             .font(.custom(poppinsSemiBold, fixedSize: 12.0))
@@ -89,7 +89,7 @@ struct ActivityCell: View {
                         )
                         
                         TitleWithLine(
-                            title: isFor == "Bids" ? "Asking Price : $\(offerListing?.bid_price ?? 0)".localized : "Price : $\(offerListing?.product?.pricing ?? 0)".localized,
+                            title: isFor == "Bids" ? "Asking Price : $\(offerListing?.bid_price ?? 0)".localized : "Price : $\(offerListing?.product?.pricing ?? "0")".localized,
                             lineLength: 0,
                             textColor: .lightGray,
                             fontName: robotoRegular,

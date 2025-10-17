@@ -169,7 +169,7 @@ final class APIManager {
         
         do {
             let json =  try JSONSerialization.jsonObject(with: data, options: [])
-            print("Response JSon: ",json)
+//            print("Response JSon: ",json)
             let object = try JSONDecoder().decode(T.self, from: data)
             //            print(object)
             return object

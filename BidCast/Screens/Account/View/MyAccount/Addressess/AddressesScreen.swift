@@ -156,30 +156,30 @@ struct AddressesScreen: View {
 
     func AddressSuccess(){
         SVProgressHUD.dismiss()
-    let response = viewModel.addressResponse
-            if response.status == "success" {
-                Task{
-                   guard Reachability.isConnectedToNetwork() else {
-                        hudMsg = "No Internet Connection"
-                        showhud = true
-                        return
-                    }
-                    SVProgressHUD.show()
-                   await self.viewModel.getAddresses()
+        let response = viewModel.addressResponse
+        if response.status == "success" {
+            Task{
+                guard Reachability.isConnectedToNetwork() else {
+                    hudMsg = "No Internet Connection"
+                    showhud = true
+                    return
                 }
-               
-            } else {
-                showError = true
-                alertType = .sheetType(
-                    icon: .alert,
-                    title: response.error_type?.capitalized ?? "",
-                    message: response.message?.capitalized ?? "",
-                    primaryBtnText: "",
-                    secondaryBtnText: AppString.ok.localized
-                )
+                SVProgressHUD.show()
+                await self.viewModel.getAddresses()
             }
-           
+            
+        } else {
+            showError = true
+            alertType = .sheetType(
+                icon: .alert,
+                title: response.error_type?.capitalized ?? "",
+                message: response.message?.capitalized ?? "",
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
+            )
         }
+        
+    }
 }
 
 //#Preview {

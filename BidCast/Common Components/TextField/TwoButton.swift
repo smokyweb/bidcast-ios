@@ -31,7 +31,6 @@ struct TwoButton: View {
     
     var body: some View {
         HStack(alignment: .center, spacing: 20) {
-            
             // Second Button
             if !isHideSecBtn {
                 Button(action: {

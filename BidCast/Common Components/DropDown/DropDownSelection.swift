@@ -66,7 +66,7 @@ struct DropDownSelection: View {
                 .onTapGesture {
                     index += 1
                     zIndex = index
-                    withAnimation(showOption ? .none : .snappy) {
+                    withAnimation(.easeInOut(duration: 0.15)) {
                         showOption.toggle()
                     }
                     
@@ -105,10 +105,10 @@ struct DropDownSelection: View {
                     .frame(height: 30)
                     .foregroundStyle(selected == ind ? Color.defaultTheme : .gray)
                     .onTapGesture {
-                        withAnimation(.snappy) {
-                            selected = ind
+                        selected = ind
+                        self.onOptionSelected?(selected)
+                        withAnimation(.easeOut(duration: 0.2)) {
                             showOption = false
-                            self.onOptionSelected?(selected)
                         }
                     }
                 }

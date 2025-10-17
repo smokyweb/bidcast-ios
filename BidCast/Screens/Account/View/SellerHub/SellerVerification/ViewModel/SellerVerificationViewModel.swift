@@ -9,6 +9,7 @@ import Foundation
 
 import Combine
 
+@MainActor
 final class SellerVerificationViewModel: ObservableObject {
     
     @Published var storeIDCardDict: ResponseModel<StoreIDCardModel>?

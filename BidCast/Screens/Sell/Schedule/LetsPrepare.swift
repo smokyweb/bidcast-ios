@@ -141,10 +141,9 @@ struct LetsPrepare: View,ShowStepDelegate {
         .background(.bg.opacity(0.5))
         .toolbar(.hidden,for: .tabBar)
         .bottomSheet(isPresented: $showError, height: screenHeight/2.8, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: {
-            if viewModel.errorMessage != nil || viewModel.errorMessage != "" {
+            if let error = viewModel.errorMessage, !error.isEmpty {
                 showError = true
-            }else{
-               
+            } else {
                 showError = false
             }
         }, content: {
@@ -216,6 +215,7 @@ struct LetsPrepare: View,ShowStepDelegate {
         }
        
     }
+    
     func didUpdateRequest(_ request: StoreScheduleShowRequest,thumbNail:String) {
         didLoadPrepare = true
             self.request = request

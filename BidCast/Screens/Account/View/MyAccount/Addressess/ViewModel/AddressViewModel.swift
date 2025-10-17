@@ -25,6 +25,7 @@ final class AddressViewModel: ObservableObject {
                 type: APIEndPoint.storeAddress(param: parameters),
                 header: true
             )
+            errorMessage = nil
             addressResponse = response
         } catch {
             handle(error: error)
@@ -40,6 +41,7 @@ final class AddressViewModel: ObservableObject {
                 type: APIEndPoint.getAddress,
                 header: true
             )
+            errorMessage = nil
             addressesResponse = response
         } catch {
             handle(error: error)
@@ -54,6 +56,7 @@ final class AddressViewModel: ObservableObject {
                 type: APIEndPoint.getState,
                 header: true
             )
+            errorMessage = nil
             stateResponse = response
         } catch {
             handle(error: error)
@@ -69,6 +72,7 @@ final class AddressViewModel: ObservableObject {
                 type: APIEndPoint.setDefaultAddress(param: parameters),
                 header: true
             )
+            errorMessage = nil
             addressResponse = response
         } catch {
             handle(error: error)

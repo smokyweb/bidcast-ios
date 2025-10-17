@@ -667,6 +667,17 @@ struct countRequest : Encodable {
     var event : String
 }
 
+struct StorePromoteShowRequest: Codable {
+    var scheduleShowId: String
+    var promoteShowId: String
+    
+    // Coding keys to map the properties to different JSON keys
+    enum CodingKeys: String, CodingKey {
+        case scheduleShowId = "schedule_show_id"
+        case promoteShowId = "promote_show_id"
+    }
+}
+
 struct StoreBidRequest : Encodable{
     var schedule_show_id : String
     var user_id : String

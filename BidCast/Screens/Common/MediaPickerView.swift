@@ -40,21 +40,21 @@ struct MediaPickerView: View {
                     ScrollView(.horizontal, showsIndicators: false) {
                         LazyHStack(spacing: 16) {
                             
-                            // Camera Button
-                            Button {
-                                showCameraPicker = true
-                            } label: {
-                                ZStack {
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .stroke(Color.blue, lineWidth: 2)
-                                        .background(Color(.systemGray6))
-                                        .cornerRadius(12)
-                                    Image(systemName: "camera.fill")
-                                        .font(.system(size: 24))
-                                        .foregroundColor(.black)
-                                }
-                                .frame(width: 80, height: 80)
-                            }
+//                            // Camera Button
+//                            Button {
+//                                showCameraPicker = true
+//                            } label: {
+//                                ZStack {
+//                                    RoundedRectangle(cornerRadius: 12)
+//                                        .stroke(Color.blue, lineWidth: 2)
+//                                        .background(Color(.systemGray6))
+//                                        .cornerRadius(12)
+//                                    Image(systemName: "camera.fill")
+//                                        .font(.system(size: 24))
+//                                        .foregroundColor(.black)
+//                                }
+//                                .frame(width: 80, height: 80)
+//                            }
                             
                             // Photo Library Picker
                             if selectedMedia.count < maxMediaCount {
@@ -66,7 +66,7 @@ struct MediaPickerView: View {
                                             .stroke(style: StrokeStyle(lineWidth: 1, dash: [5]))
                                             .background(Color(.systemGray6))
                                             .cornerRadius(12)
-                                        Image(systemName: "plus")
+                                        Image(systemName: "camera.fill")
                                             .font(.system(size: 24))
                                             .foregroundColor(.black)
                                     }
