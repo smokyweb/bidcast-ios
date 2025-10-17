@@ -10,6 +10,7 @@ import Foundation
 import ZegoExpressEngine
 import SVProgressHUD
 import MillicastSDK
+import AlertToast
 
 struct RehearsalScreen: View {
     @EnvironmentObject  var appRootManager: AppRootManager
@@ -577,9 +578,13 @@ struct RehearsalScreen: View {
                         }
                     )
                 case .promote:
-                    PromoteShowSheet(boosts: $boosts) {
-                        showSellSheet = false
-                    }
+                    PromoteShowSheet(
+                        boosts: $boosts,
+                        onClose: { showSellSheet = false },
+                        onBoostCardClick: { selectedBoost in
+                            handleBoostClick(selectedBoost)
+                        }
+                    )
                 case .clip:
                     CreateClipBottomSheetView(
                         isPresented: $showSellSheet,
@@ -696,7 +701,9 @@ struct RehearsalScreen: View {
                 }
             )
         }
-        
+        .toast(isPresenting: $showhud) {
+            AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
+        }
         .onAppear {
             logoutRoom()
             showTopBadge = true
@@ -754,6 +761,34 @@ struct RehearsalScreen: View {
         socketManager.setNextProduct(roomId: self.roomId, productId: selectedID)
     }
     
+    private func handleBoostClick(_ boost: BoostModel) {
+        print("🔥 User clicked boost: \(boost.title)")
+        showSellSheet = false
+        guard let promoteId = boost.id,
+              let showId = showsData.id else {
+            hudMsg = "Either promoteId or ShowId not found."
+            showhud = true
+            return
+        }
+        Task {
+            SVProgressHUD.show()
+            let request = StorePromoteShowRequest(scheduleShowId: "\(showId)", promoteShowId: "\(promoteId)")
+            await viewModel.storePromoteShow(parameters: request)
+            await SVProgressHUD.dismiss()
+            successPromoteShow()
+        }
+    }
+    
+    private func successPromoteShow() {
+        let response = viewModel.storePromoteShowModel
+        if response?.status == "success" {
+            hudMsg = "show promoted successfully."
+            showhud = true
+        } else {
+            hudMsg = response?.message ?? ""
+            showhud = true
+        }
+    }
     
     
     func ShowData(data:HomeModel ,selectedID : String? = nil) {

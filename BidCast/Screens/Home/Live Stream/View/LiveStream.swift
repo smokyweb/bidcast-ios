@@ -480,7 +480,11 @@ struct LiveStream: View {
                         //                            ForEach(MenuAction.allCases, id: \.self) { action in
                         ForEach(filteredActions, id: \.self) { action in
                             Button(action: {
-                                if action == .cart {
+                                if action == .gift {
+                                    currentBottomSheet = action
+                                    showSheet = true
+                                }
+                                else if action == .cart {
                                     currentBottomSheet = action
                                     showSheet = true
                                 }
@@ -684,7 +688,13 @@ struct LiveStream: View {
             content: {
                 switch currentBottomSheet {
                 case .gift:
-                    EmptyView()
+                    SendTipView(
+                        sellerId: liveShowsData[currentIndex].seller?.id ?? "",
+                        onClose: {},
+                        onSendTip: { _, _ in
+                            print("Sent tip")
+                        }
+                    )
                 case .paperclip:
                     CreateClipBottomSheetView(
                         isPresented: $showSheet,

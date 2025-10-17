@@ -22,7 +22,7 @@ struct ShowBoost: Identifiable {
 struct PromoteShowSheet: View {
     @Binding var  boosts : [BoostModel]
     var onClose: () -> Void
-    @State var viewModel = ShowsViewModel()
+    var onBoostCardClick: (BoostModel) -> Void
     var body: some View {
         VStack(spacing: 0) {
             HStack {
@@ -40,7 +40,13 @@ struct PromoteShowSheet: View {
                 VStack(alignment: .leading, spacing: 16) {
                     ForEach(0 ..< boosts.count,id: \.self) { index in
                         let boost = boosts[index]
-                        BoostCardView(boost: boost)
+                        Button {
+                            onBoostCardClick(boost)
+                        } label: {
+                            BoostCardView(boost: boost)
+                        }
+
+                       
                     }
                 }
                 .padding([.horizontal, .bottom])

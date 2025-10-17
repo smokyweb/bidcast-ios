@@ -34,7 +34,7 @@ struct CustomProfileImage: View {
                     if url.contains("http") {
                         Image("defaultUser")
                             .resizable()
-                            .aspectRatio(contentMode: .fill)
+                            .aspectRatio(contentMode: .fit)
                             .frame(width: size, height: size)
                             .applyClip(isCircular: isCircular, cornerRadius: cornerRadius)
                             .shadow(color: Color.black.opacity(0.2), radius: 3, x: 0, y: 2)
@@ -52,9 +52,9 @@ struct CustomProfileImage: View {
                 }
             }
         } else {
-            Image("placeholder")
+            Image("defaultUser")
                 .resizable()
-                .aspectRatio(contentMode: .fill)
+                .aspectRatio(contentMode: .fit)
                 .frame(width: size, height: size)
                 .applyClip(isCircular: isCircular, cornerRadius: cornerRadius)
                 .shadow(color: Color.black.opacity(0.1), radius: 3, x: 0, y: 2)

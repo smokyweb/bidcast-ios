@@ -92,7 +92,6 @@ final class ShowsViewModel: ObservableObject {
            ){
                self.storePromoteShowModel = response
            }
-           
         } catch {
             self.errorMessage = error.localizedDescription
         }

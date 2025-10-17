@@ -570,7 +570,7 @@ extension APIEndPoint: EndPointType {
             }
             return endPoint
         case .storePromoteShow:
-            return "/schedule-show/store-promote-show"
+            return "schedule-show/store-promote-show"
             
         }
     }
