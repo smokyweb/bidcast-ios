@@ -76,7 +76,8 @@ class PublisherViewModel: ObservableObject {
         let creds = MCPublisherCredentials()
         creds.streamName = streamName
 //        creds.token = "703fbd09a9d532838e515014954f259cf1503d07438a70aef3e922df3aff3bcd"
-        creds.token = "7c963b9175d4006b4f57ccc95749252065ddff636b0b4e0fe4b7caebe710e763"
+//          creds.token = "7c963b9175d4006b4f57ccc95749252065ddff636b0b4e0fe4b7caebe710e763"
+        creds.token = "3355b11d1201319117ffc14cef3f55ffe9c1054651735e8a03b0d09608a4127e"
         creds.apiUrl = "https://director.millicast.com/api/director/publish"
         try await publisher.setCredentials(creds)
         
@@ -94,10 +95,6 @@ class PublisherViewModel: ObservableObject {
         try await publisher.connect()
         // Wait for the onConnected callback
         try await publisher.publish(with: publisherOptions)
-         
-        
-        
-        
          
         isPublishing = true
     }
