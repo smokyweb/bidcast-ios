@@ -110,6 +110,8 @@ struct LiveStream: View {
         UIApplication.shared.windows.first?.safeAreaInsets.bottom ?? 49
     }
     
+    @State private var shareItems: [Any] = []
+    @State private var showSystemShareSheet = false
     @State var showHud = false
     @State var hudMsg = ""
     
@@ -170,7 +172,6 @@ struct LiveStream: View {
                         .frame(width: geometry.size.width, height: geometry.size.height)
                                    .ignoresSafeArea()
                                    .background(Color.black)
-                        
                     }
                     VStack {
                         HStack(spacing: 12) {
@@ -488,6 +489,10 @@ struct LiveStream: View {
                                     currentBottomSheet = action
                                     showSheet = true
                                 }
+                                else if action == .share {
+                                    shareItems = ["Live auction starting in 5 minutes! Don’t miss out on exclusive items.", URL(string: "https://apps.apple.com/us/app/light-speedometer/id6447198696")!]
+                                    showSystemShareSheet = true
+                                }
                                 else if action == .wallet{
                                     if UserDefaults.buyerVerafied != "verified" {
                                         showVerificationSheet = true
@@ -631,7 +636,7 @@ struct LiveStream: View {
             )
         }
         
-        .bottomSheet(isPresented: $showVerificationSheet, height: screenHeight / 2.8, topBarCornerRadius: 25, showTopIndicator: false,onDismiss: {
+        .bottomSheet(isPresented: $showVerificationSheet, height: screenHeight / 2.5, topBarCornerRadius: 25, showTopIndicator: false,onDismiss: {
             showVerificationSheet = false
             if !showVerificationSheet{
                 if UserDefaults.sellerAddress == false{
@@ -675,6 +680,9 @@ struct LiveStream: View {
                 }
             )
         }
+        .sheet(isPresented: $showSystemShareSheet) {
+            ShareSheet(items: shareItems)
+        }
         .bottomSheet(
             isPresented: $showSheet,
             height: sheetHeight,
@@ -704,22 +712,24 @@ struct LiveStream: View {
                         }
                     )
                 case .share:
-                    ShareShowBottomSheetView(
-                        isPresented: $showSheet,
-                        showTitle: "John's Live Show",
-                        username: "johnsmith",
-                        showImage: Image("icWatch"),
-                        message: "Live auction starting in 5 minutes! Don’t miss out on exclusive items.",
-                        onShare: { platform in
-                            print("Shared to \(platform)")
-                        },
-                        onSavePDF: {
-                            print("PDF Saved")
-                        },
-                        onShareEmail: {
-                            print("Email sent")
-                        }
-                    )
+//                    ShareShowBottomSheetView(
+//                        isPresented: $showSheet,
+//                        showTitle: "John's Live Show",
+//                        username: "johnsmith",
+//                        showImage: Image("icWatch"),
+//                        message: "Live auction starting in 5 minutes! Don’t miss out on exclusive items.",
+//                        onShare: { platform in
+//                            print("Shared to \(platform)")
+//                        },
+//                        onSavePDF: {
+//                            print("PDF Saved")
+//                        },
+//                        onShareEmail: {
+//                            print("Email sent")
+//                        }
+//                    )
+                   
+                    ShareSheet(items: shareItems)
                 case .wallet:
                     let data = homeViewModel.accountInfo.data
                     PaymentBottomSheet(
@@ -1303,4 +1313,19 @@ enum MenuAction: CaseIterable {
         case .cart: return "Cart"
         }
     }
+}
+
+struct ShareSheet: UIViewControllerRepresentable {
+    let items: [Any]
+    let excludedActivityTypes: [UIActivity.ActivityType]? = nil
+    let completion: ((UIActivity.ActivityType?, Bool, [Any]?, Error?) -> Void)? = nil
+
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        let controller = UIActivityViewController(activityItems: items, applicationActivities: nil)
+        controller.excludedActivityTypes = excludedActivityTypes
+        controller.completionWithItemsHandler = completion
+        return controller
+    }
+
+    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
 }

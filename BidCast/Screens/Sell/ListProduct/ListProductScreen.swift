@@ -754,7 +754,7 @@ struct ListProductScreen: View {
                 request = StoreProductParam(category_id: "\(productData.category?.id ?? 0)",
                                             title: productData.title ?? "",
                                             description: productData.description ?? "",
-                                            quantity: "\(productData.quantity ?? 0)",
+                                            quantity: "\(productData.quantity ?? "0")",
                                             pricing: "\(productData.pricing ?? 0.0)",
                                             flash_sale:productData.flashSale ?? false ? "1" : "0",
                                             accept_offers: productData.acceptOffers ?? false ? "1" : "0",
