@@ -44,7 +44,7 @@ struct ActiveInventoryScreen: View {
                 VStack(alignment: .leading, spacing: 2) {
                     TitleWithLine(title: inventory.title ?? "No Title", lineLength: 0, textColor: .black, fontName: poppinsSemiBold,fontValue: 16, divderHeight: 0)
                     TitleWithLine(title: inventory.description ?? "No Description", lineLength: 0, textColor: .gray,fontName: poppinsRegular,fontValue: 13, divderHeight: 0)
-                    TitleWithLine(title: "Quantity: \(inventory.quantity ?? 0)", lineLength: 0, textColor: .gray,fontName: poppinsSemiBold ,fontValue: 14, divderHeight: 0)
+                    TitleWithLine(title: "Quantity: \(inventory.quantity ?? "0")", lineLength: 0, textColor: .gray,fontName: poppinsSemiBold ,fontValue: 14, divderHeight: 0)
                 }
 
                 Spacer()
@@ -66,5 +66,5 @@ struct ActiveInventoryScreen: View {
 
 
 #Preview {
-    ActiveInventoryScreen(inventory: InventoryDataModel(id: 1, categoryID: 101, title: "Sample Item", description: "This is a sample description.", quantity: 10, pricing: 200, flashSale: true, acceptOffers: true, reserveForLive: false, shippingProfileID: 3, status: "Active", images: ["dummy1"]))
+    ActiveInventoryScreen(inventory: InventoryDataModel(id: 1, categoryID: 101, title: "Sample Item", description: "This is a sample description.", quantity: "10", pricing: 200, flashSale: true, acceptOffers: true, reserveForLive: false, shippingProfileID: 3, status: "Active", images: ["dummy1"]))
 }
