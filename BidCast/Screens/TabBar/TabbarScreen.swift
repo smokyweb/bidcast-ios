@@ -87,8 +87,8 @@ struct TabbarScreen: View {
                         backToPrepare: $navigateToTitle
                        )
             )
-//            CusNavLink(doNavigate: $navigateTolist, destination: ListProductScreen( productData: .constant(InventoryDataModel())))
-            CusNavLink(doNavigate: $navigateTolist, destination: CreateProductScreen(requests: .constant(StoreScheduleShowRequest(title: "", date: "", time: "", category_id: "", auction_type_id: "", product_ids: "")), thumbNail: .constant(""), backToPrepare: .constant(false), fromPrepare: .constant(false)))
+            CusNavLink(doNavigate: $navigateTolist, destination: ListProductScreen( productData: .constant(InventoryDataModel())))
+//            CusNavLink(doNavigate: $navigateTolist, destination: CreateProductScreen(requests: .constant(StoreScheduleShowRequest(title: "", date: "", time: "", category_id: "", auction_type_id: "", product_ids: "")), thumbNail: .constant(""), backToPrepare: .constant(false), fromPrepare: .constant(false)))
             CusNavLink(doNavigate: $navigateToAccountScreen, destination: AccountScreen(isNavFrom: true,comeFromSeller: true))
             CusNavLink(doNavigate: $navigateToSeller, destination: SellerVerificationScreen())
             CusNavLink(doNavigate: $navigateToShipping, destination: CreateAddress())
