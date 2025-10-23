@@ -569,10 +569,11 @@ struct RehearsalScreen: View {
                         },
                         onVerifiedBuyerToggle: { isOn in
                             let allowBidForAll = !isOn
-                            if !liveRoomId.isEmpty   {
-                                FirebaseManager.shared.databaseRef.child("live_sessions")
-                                    .child(liveRoomId)
-                                    .updateChildValues(["allowBidForAll": allowBidForAll])
+                            if !roomId.isEmpty   {
+//                                FirebaseManager.shared.databaseRef.child("live_sessions")
+//                                    .child(liveRoomId)
+//                                    .updateChildValues(["allowBidForAll": allowBidForAll])
+                                socketManager.AllowBidForAll(roomId: roomId, allow_bid_for_all: allowBidForAll)
                                 print("✅ allowBidForAll updated to \(allowBidForAll) for room: \(liveRoomId)")
                             }
                         }
@@ -794,12 +795,6 @@ struct RehearsalScreen: View {
     func ShowData(data:HomeModel ,selectedID : String? = nil) {
         let roomId = "live_room_\(data.user_id ?? 0)_\(data.id ?? 0)"
         self.roomId = roomId
-        
-        Task{
-            //live stream
-            try await castManager.publish(streamName: self.roomId)
-        }
-        
         let product: [ProductData] = (data.products ?? []).compactMap { product in
             guard let id = product.id,
                   let categoryId = product.category_id,
@@ -809,7 +804,6 @@ struct RehearsalScreen: View {
             else {
                 return nil
             }
-            
             return ProductData(
                 category: "\(categoryId)",
                 id: "\(id)",
@@ -821,80 +815,97 @@ struct RehearsalScreen: View {
                 quantity: quantity
             )
         }
-        
-        let seller = SellerModel(isFollowed: data.user?.is_followed ?? false, id: "\(data.user?.id ?? 0 )", name: data.user?.name ?? "", rating: data.user?.rating ?? "",image: data.user?.profile_image ?? "")
-        
-        sendCreateRoomEvent(
-            showId: "\(data.id ?? 0)",
-            roomId: self.roomId,
-            products: product,
-            seller: seller,
-            thumbnail: data.thumbnail?.first ?? "",
-            time: data.time ?? "",
-            date: data.date ?? "",
-            allowBidForAll: true,
-            showTimer: ""
-        )
-        SocketManagerService.shared.observeRoomUpdates { newRoom in
-            print("🏠 New room received:", newRoom.room_id ?? "unknown")
-            fetchProducts(for: self.roomId)
-        }
-        
-        SocketManagerService.shared.startLiveScheduler(roomId: self.roomId)
-        isLive = true
-        self.showLiveControls = true
-        self.showPreLiveControls = false
-        socketManager.listenForBidTimer(roomId: self.roomId)
-        socketManager.listenForChat(roomId: self.roomId)
-        socketManager.listenForViewerCount()
-        socketManager.listenForShowTimer(roomId: self.roomId)
-       
-       
-        SocketManagerService.shared.observeBidCountdown(
-            for: self.roomId,
-            onUpdate: { seconds in
-                print("🟡 Countdown update: \(seconds)s")
-                self.bidCountdownSeconds = seconds
-            },
-            onStart: {
-                print("🚀 Countdown started (30s left)")
-                self.hasCountdownStarted = true
-            },
-            onComplete: {
-                print("⏰ Countdown reached zero, showing sheet")
+        if product.count != 0{
+            Task{
+                //live stream
+                try await castManager.publish(streamName: self.roomId)
+            }
+            
+            
+            
+            
+            
+            let seller = SellerModel(isFollowed: data.user?.is_followed ?? false, id: "\(data.user?.id ?? 0 )", name: data.user?.name ?? "", rating: data.user?.rating ?? "",image: data.user?.profile_image ?? "")
+            
+            sendCreateRoomEvent(
+                showId: "\(data.id ?? 0)",
+                roomId: self.roomId,
+                products: product,
+                seller: seller,
+                thumbnail: data.thumbnail?.first ?? "",
+                time: data.time ?? "",
+                date: data.date ?? "",
+                allowBidForAll: true,
+                showTimer: ""
+            )
+            
+            
+            SocketManagerService.shared.observeRoomUpdates { newRoom in
+                print("🏠 New room received:", newRoom.room_id ?? "unknown")
                 fetchProducts(for: self.roomId)
-                self.currentBottomSheet = .shop
-                self.fetchLatestProductList()
-                self.showSellSheet = true
-                self.hasCountdownStarted = false
             }
-        )
-        
-        socketManager.listenForHighestBid(forRoom: self.roomId) { highestBid in
-            if let bid = highestBid {
-                print("🏆 Updated bid in this room: \(bid.user_name ?? "") - \(bid.bid_amount ?? "")")
-                winnerName = bid.user_name ?? ""
-                winnerProfileID = Int(bid.user_id ?? "") ?? 0
-                winnerProfileImage = bid.user_image ?? ""
-                winnerAmount = bid.bid_amount  ?? ""
-                currentPrice = Double(winnerAmount) ?? 0.0
+            
+            SocketManagerService.shared.startLiveScheduler(roomId: self.roomId)
+            isLive = true
+            self.showLiveControls = true
+            self.showPreLiveControls = false
+            socketManager.listenForBidTimer(roomId: self.roomId)
+            socketManager.listenForChat(roomId: self.roomId)
+            socketManager.listenForViewerCount()
+            socketManager.listenForShowTimer(roomId: self.roomId)
+            
+            
+            SocketManagerService.shared.observeBidCountdown(
+                for: self.roomId,
+                onUpdate: { seconds in
+                    print("🟡 Countdown update: \(seconds)s")
+                    self.bidCountdownSeconds = seconds
+                },
+                onStart: {
+                    print("🚀 Countdown started (30s left)")
+                    self.hasCountdownStarted = true
+                },
+                onComplete: {
+                    print("⏰ Countdown reached zero, showing sheet")
+                    fetchProducts(for: self.roomId)
+                    self.currentBottomSheet = .shop
+                    self.fetchLatestProductList()
+                    self.showSellSheet = true
+                    self.hasCountdownStarted = false
+                }
+            )
+            
+            socketManager.listenForHighestBid(forRoom: self.roomId) { highestBid in
+                if let bid = highestBid {
+                    print("🏆 Updated bid in this room: \(bid.user_name ?? "") - \(bid.bid_amount ?? "")")
+                    winnerName = bid.user_name ?? ""
+                    winnerProfileID = Int(bid.user_id ?? "") ?? 0
+                    winnerProfileImage = bid.user_image ?? ""
+                    winnerAmount = bid.bid_amount  ?? ""
+                    currentPrice = Double(winnerAmount) ?? 0.0
+                }
             }
-        }
-        
-        socketManager.listenForBidFinalized()
-        
-//        if data.is_live == true {
-//            self.showStartTime = Date()
-//            startLiveTimer()
-//        }
-        Task{
-            self.viewModel.errorMessage?.removeAll()
-            await self.viewModel.getPromoteShows()
-            if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil {
-                self.successPromote()
-            }else{
-                
+            
+            
+            socketManager.listenForBidFinalized()
+            
+            //        if data.is_live == true {
+            //            self.showStartTime = Date()
+            //            startLiveTimer()
+            //        }
+            Task{
+                self.viewModel.errorMessage?.removeAll()
+                await self.viewModel.getPromoteShows()
+                if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil {
+                    self.successPromote()
+                }else{
+                    
+                }
             }
+        }else{
+           
+            hudMsg = "Unable to start streaming as product category is missing"
+            showhud = true
         }
     }
     @MainActor

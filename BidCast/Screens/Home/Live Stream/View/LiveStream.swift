@@ -967,6 +967,11 @@ struct LiveStream: View {
 //                        print("Winner: \(winnerName), Amount: \(winnerAmount)")
                     }
                 }
+                SocketManagerService.shared.getAllowBidForAll(forRoom: roomId){ allowed in
+                    print("alllow BUd \(UserDefaults.allowBidForAllUser)")
+                    UserDefaults.allowBidForAllUser = allowed
+                    
+                }
                 
                 SocketManagerService.shared.listenForBidFinalized(completion: { roomId,productId,winner in
                     fetchProducts(for: roomId)
