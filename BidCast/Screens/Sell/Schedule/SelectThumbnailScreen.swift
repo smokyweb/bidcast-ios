@@ -34,7 +34,7 @@ struct SelectThumbnailScreen: View {
     @Binding var backToPrepare : Bool
     var delegate: ShowStepDelegate?
     var body: some View {
-        VStack(spacing:18){
+        VStack{
             VStack{
                 PrimaryHeader(
                     title: "Select Thumbnail".localized,
@@ -134,6 +134,8 @@ struct SelectThumbnailScreen: View {
                 }
                 
             },cornerRadius: 12, btnTextColor: .white)
+            .padding(.top , 10)
+            
             
             CusNavLink(doNavigate: $navigateToSelectTime, destination: SelectShowScreen(request:$request,thumbNail: $thumbNail, comeFromPrepareScreen: .constant(false),backToPrepare: $backToPrepare))
             

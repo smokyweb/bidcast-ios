@@ -95,19 +95,26 @@ struct AuthTextField: View {
                             }
                             .ignoresSafeArea(.keyboard, edges: .bottom)
                     } else {
-                        TextField(placeholder, text: $text)
-                        
-                            .font(.custom(custPlaceHolderName, fixedSize: custPlaceHolderFontSize))
-                            .autocorrectionDisabled(true)
-                            .autocapitalization(.none)
-                            .foregroundStyle(.text)
-                            .submitLabel(.next)
-                            .accentColor(.text)
-                            .focused($isFocused)
-                            .frame(height: height)
-                            .onChange(of: text, perform: { value in
-                                var filtered = value.filter { $0.isNumber }
-                                if isForCVV {
+                        HStack(spacing: 0) {
+                            if isForPrice {
+                                Text("$")
+                                    .font(.custom(custPlaceHolderName, fixedSize: custPlaceHolderFontSize))
+                                    .foregroundStyle(.text)
+                                    .padding(.leading, 4)
+                            }
+                            TextField(placeholder, text: $text)
+                            
+                                .font(.custom(custPlaceHolderName, fixedSize: custPlaceHolderFontSize))
+                                .autocorrectionDisabled(true)
+                                .autocapitalization(.none)
+                                .foregroundStyle(.text)
+                                .submitLabel(.next)
+                                .accentColor(.text)
+                                .focused($isFocused)
+                                .frame(height: height)
+                                .onChange(of: text, perform: { value in
+                                    var filtered = value.filter { $0.isNumber }
+                                    if isForCVV {
                                         filtered = String(filtered.prefix(3))
                                         text = filtered
                                         self.enteredText?(text)
@@ -136,44 +143,42 @@ struct AuthTextField: View {
                                         self.enteredText?(text)
                                     } else if isForPrice {
                                         let trimmed = value.trimmingCharacters(in: .whitespaces)
-                                        
-                                        
-                                        let isDecimalInput = trimmed.range(of: #"^\d+\.\d{0,2}$"#, options: .regularExpression) != nil
-                                        
-                                        if let number = Double(trimmed), isDecimalInput {
-                                            
-                                            text = String(format: "%.2f", number)
-                                        } else {
-                                            
-                                            var digitsOnly = trimmed.filter { $0.isNumber }
-                                            
-                                            
-                                            while digitsOnly.count > 1 && digitsOnly.first == "0" {
-                                                digitsOnly.removeFirst()
+                                            var filtered = ""
+
+                                            var dotAdded = false
+                                            for char in trimmed {
+                                                if char.isNumber {
+                                                    filtered.append(char)
+                                                } else if char == "." && !dotAdded {
+                                                    filtered.append(char)
+                                                    dotAdded = true
+                                                }
+                                                // ignore extra dots
                                             }
-                                            
-                                            if digitsOnly.isEmpty {
-                                                text = "0.00"
-                                            } else {
-                                                let valueAsCents = Double(digitsOnly)! / 100.0
-                                                text = String(format: "%.2f", valueAsCents)
+
+                                            // Limit to 2 decimals if dot exists
+                                            if let dotIndex = filtered.firstIndex(of: ".") {
+                                                let decimals = filtered.suffix(from: filtered.index(after: dotIndex))
+                                                if decimals.count > 2 {
+                                                    filtered = String(filtered.prefix(filtered.distance(from: filtered.startIndex, to: dotIndex) + 3))
+                                                }
                                             }
-                                        }
-                                        
-                                        self.enteredText?(text)
+
+                                            text = filtered
+                                            self.enteredText?(text)
                                     }else{
                                         filtered = String(filtered.prefix(maxDigits))
                                         self.enteredText?(value)
                                     }
-
-                                  
-                                
-                            })
-                            .onSubmit {
-                                self.enteredText?(text)
-                            }
-                            .ignoresSafeArea(.keyboard, edges: .bottom)
-    
+                                    
+                                    
+                                    
+                                })
+                                .onSubmit {
+                                    self.enteredText?(text)
+                                }
+                                .ignoresSafeArea(.keyboard, edges: .bottom)
+                        }
                     }
                     
                     Spacer()

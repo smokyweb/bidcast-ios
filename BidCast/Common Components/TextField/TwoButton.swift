@@ -30,7 +30,7 @@ struct TwoButton: View {
     var isHideSecBtn = false
     
     var body: some View {
-        HStack(alignment: .center, spacing: 20) {
+        HStack(alignment: .center, spacing: 8) {
             // Second Button
             if !isHideSecBtn {
                 Button(action: {

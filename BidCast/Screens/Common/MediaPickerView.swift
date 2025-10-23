@@ -29,6 +29,7 @@ struct MediaPickerView: View {
                         if title != ""{
                             Text(title.localized)
                                 .font(.custom(robotoMedium, size: 16.0))
+                                .background(.clear)
                         }
                         Spacer()
                         Text("\(selectedMedia.count)/\(maxMediaCount)")

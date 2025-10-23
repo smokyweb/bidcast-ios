@@ -86,7 +86,7 @@ struct SalesFormatScreen: View {
                 if selectedFormat == .auction {
                     VStack(alignment: .leading, spacing: 12) {
                         
-                        AuthTextField(floatingLabel: "Starting Bid".localized, placeholder: "0.0".localized, icon: .menuProfile, text: $request.pricing,isIconDisplay : false, isForPrice:false,
+                        AuthTextField(floatingLabel: "Starting Bid".localized, placeholder: "0.0".localized, icon: .menuProfile, text: $request.pricing,isIconDisplay : false, isForPrice:true,
                                       custFontName : poppinsSemiBold,
                                       custFontSize : 13.0,
                                       enteredText:  { price in
@@ -108,24 +108,38 @@ struct SalesFormatScreen: View {
                     }
                 }else{
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("Starting Bid")
-                            .font(.custom(poppinsSemiBold, size: 13.0))
-                        
-                        HStack {
-                            Text("$")
-                                .font(.custom(poppinsSemiBold, size: 13.0))
-                            TextField("0.00", text: $startingBid)
-                                .font(.custom(poppinsSemiBold, size: 12.0))
-                                .keyboardType(.decimalPad)
-                        }
-                        .padding()
-                        .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.gray.opacity(0.4)))
+//                        Text("Starting Bid")
+//                            .font(.custom(poppinsSemiBold, size: 13.0))
+//                        
+//                        HStack {
+//                            Text("$")
+//                                .font(.custom(poppinsSemiBold, size: 13.0))
+//                            TextField("0.00", text: $startingBid)
+//                                .font(.custom(poppinsSemiBold, size: 12.0))
+//                                .keyboardType(.decimalPad)
+//                        }
+//                        .padding()
+//                        .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.gray.opacity(0.4)))
+                        AuthTextField(floatingLabel: "Starting Bid".localized, placeholder: "0.0".localized, icon: .menuProfile, text: $request.pricing,isIconDisplay : false, isForPrice:true,
+                                      custFontName : poppinsSemiBold,
+                                      custFontSize : 13.0,
+                                      enteredText:  { price in
+                            //                            if let amt = Double(price) {
+                            //                                if amt < 1.0 {
+                            //                                    hudMsg = "Price should not be less than $1.00"
+                            //                                    showhud = true
+                            //                                } else {
+                            request.pricing = price
+                            //                                }
+                            //                            }
+                        })
                         
                         Text("Minimum starting bid is $1.00")
                             .font(.custom(poppinsRegular, size: 11.0))
                             .foregroundColor(.gray)
+                            .padding(.horizontal , 16)
                     }
-                    .padding(.horizontal)
+//                    .padding(.horizontal)
                     VStack(alignment: .leading, spacing: 6) {
                         Toggle(isOn: $allowOffers) {
                             Text("Allow Offers")
@@ -164,6 +178,7 @@ struct SalesFormatScreen: View {
             }
             
         }
+        .edgesIgnoringSafeArea(.bottom)
         CusNavLink(
             doNavigate: $navigateToProductWeight,
             destination: ProductWeightScreen(
