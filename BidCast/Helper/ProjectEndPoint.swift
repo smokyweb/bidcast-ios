@@ -103,6 +103,7 @@ enum APIEndPoint{
     case blockedUserList
     case getMailClass
     case getPromoteShow
+    case getLiveSeller
     
     //MARK: OLD
     
@@ -572,6 +573,8 @@ extension APIEndPoint: EndPointType {
         case .storePromoteShow:
             return "schedule-show/store-promote-show"
             
+        case .getLiveSeller:
+            return "get-live-seller"
         }
     }
     
@@ -923,6 +926,8 @@ extension APIEndPoint: EndPointType {
         case .storePromoteShow:
             return .post
         
+        case .getLiveSeller:
+            return .get
         }
     }
     
@@ -1281,6 +1286,8 @@ extension APIEndPoint: EndPointType {
             return nil
         case .storePromoteShow(let param):
             return param
+        case .getLiveSeller:
+            return nil
         }
     }
     
@@ -1344,19 +1351,19 @@ extension APIEndPoint: EndPointType {
             return nil
         case .getPreference:
             return nil
-        case .updatePreference(param: let param):
+        case .updatePreference:
             return nil
-        case .notifyLiveUser(param: let param):
+        case .notifyLiveUser:
             return nil
-        case .deleteAddress(param: let param):
+        case .deleteAddress:
             return nil
         case .getLiveShows(param: let param):
             return nil
-        case .getProfileById(param: let param):
+        case .getProfileById:
             return nil
-        case .getUserProduct(param: let param):
+        case .getUserProduct:
             return nil
-        case .followUnfollow(param: let param):
+        case .followUnfollow:
             return nil
         case .countUpdate(param: _):
             return nil
@@ -1450,19 +1457,19 @@ extension APIEndPoint: EndPointType {
             return nil
         case .updateProfile(param: let param):
             return nil
-        case .storeBid(param: let param):
+        case .storeBid:
             return nil
         case .sellerStatus:
             return nil
-        case .setDefaultCard(param: let param):
+        case .setDefaultCard:
             return nil
         case .getState:
             return nil
         case .uploadProductImage:
             return nil
-        case .SubCompany(param: let param):
+        case .SubCompany:
             return nil
-        case .SubCompanyUpdate(param: let param):
+        case .SubCompanyUpdate:
             return nil
         case .uploadFile:
             return nil
@@ -1478,57 +1485,57 @@ extension APIEndPoint: EndPointType {
             return nil
         case .getBusiness:
             return nil
-        case .Business(param: let param):
+        case .Business:
             return nil
-        case .createUserProfile(param: let param):
+        case .createUserProfile:
             return nil
-        case .getJob(param: let param):
+        case .getJob:
             return nil
-        case .upsertJob(param: let param):
+        case .upsertJob:
             return nil
-        case .jobSwipe(param: let param):
+        case .jobSwipe:
             return nil
-        case .createWorkHistory(param: let param):
+        case .createWorkHistory:
             return nil
         case .getJobProfile:
             return nil
-        case .getEmployeeList(param: let param):
+        case .getEmployeeList:
             return nil
-        case .getEmployeeListByJobId(param: let param):
+        case .getEmployeeListByJobId:
             return nil
         case .welcome:
             return nil
-        case .getEmployeeByJobId(param: let param):
+        case .getEmployeeByJobId:
             return nil
         case .getQualification:
             return nil
         case .termsOfService:
             return nil
-        case .searchJob(param: let param):
+        case .searchJob:
             return nil
         case .getLanguage:
             return nil
-        case .performActionJob(param: let param):
+        case .performActionJob:
             return nil
-        case .setEmployerAvailability(param: let param):
+        case .setEmployerAvailability:
             return nil
-        case .employerSchedule(param: let param):
+        case .employerSchedule:
             return nil
         case .getEmployerAvailability:
             return nil
         case .getSalaryType:
             return nil
-        case .getScheduledInterview(param: let param):
+        case .getScheduledInterview:
             return nil
-        case .getSubCompanyDetails(param: let param):
+        case .getSubCompanyDetails:
             return nil
-        case .deleteSubCompanyUser(param: let param):
+        case .deleteSubCompanyUser:
             return nil
-        case .UpdateSubCompanyUser(param: let param):
+        case .UpdateSubCompanyUser:
             return nil
-        case .getSubCompany(param: let param):
+        case .getSubCompany:
             return nil
-        case .saveJob(param: let param):
+        case .saveJob:
             return nil
         case .getSavedJob:
             return nil
@@ -1538,19 +1545,19 @@ extension APIEndPoint: EndPointType {
             return nil
         case .getMatches(param: _):
             return nil
-        case .getMatchesCandidates(page: let page, job_id: let job_id):
+        case .getMatchesCandidates:
             return nil
-        case .scheduleInterviewForMatchedJob(param: let param):
+        case .scheduleInterviewForMatchedJob:
             return nil
-        case .getCompanyDetailsJob(param: let param):
+        case .getCompanyDetailsJob:
             return nil
-        case .getSpecificJobDetail(param: let param):
+        case .getSpecificJobDetail:
             return nil
-        case .getEmployeeDetail(id: let id, job: let job):
+        case .getEmployeeDetail:
             return nil
-        case .getNotification(param: let param):
+        case .getNotification:
             return nil
-        case .updateNotification(param: let param):
+        case .updateNotification:
             return nil
         case .getNotificationCount:
             return nil
@@ -1558,29 +1565,29 @@ extension APIEndPoint: EndPointType {
             return nil
         case .cheduledInterviewlList:
             return nil
-        case .deleteJob(param: let param):
+        case .deleteJob:
             return nil
-        case .deleteAccount(param: let param):
+        case .deleteAccount:
             return nil
         case .combineData:
             return nil
-        case .checkLinkedIn(param: let param):
+        case .checkLinkedIn:
             return nil
         case .rescheduleInterviewStatus:
             return nil
-        case .getInterviewDetail(param: let param):
+        case .getInterviewDetail:
             return nil
-        case .updateInterviewStatus(statusId: let statusId, matchId: let matchId):
+        case .updateInterviewStatus:
             return nil
-        case .rejectJob(param: let param):
+        case .rejectJob:
             return nil
-        case .linkLinkedIn(param: let param):
+        case .linkLinkedIn:
             return nil
-        case .CreateEvent(param: let param):
+        case .CreateEvent:
             return nil
-        case .linkedInConnect(param: let param):
+        case .linkedInConnect:
             return nil
-        case .storeLinkedIn(param: let param):
+        case .storeLinkedIn:
             return nil
         case .upsertCompany:
             return nil
@@ -1619,6 +1626,8 @@ extension APIEndPoint: EndPointType {
         case .getVisitorsAnalytic:
             return nil
         case .storePromoteShow:
+            return  nil
+        case .getLiveSeller:
             return  nil
         }
     }

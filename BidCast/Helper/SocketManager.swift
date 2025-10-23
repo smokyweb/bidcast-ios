@@ -887,6 +887,48 @@ final class SocketManagerService: NSObject, ObservableObject {
             }
         }
     }
+    func sendRaidEvent(sourceRoomId: String,
+                          targetRoomId: String,
+                          sourceHostId: String,
+                          targetHostId: String) {
+           let payload: [String: Any] = [
+               "source_room_id": sourceRoomId,
+               "target_room_id": targetRoomId,
+               "source_host_id": sourceHostId,
+               "target_host_id": targetHostId
+           ]
+           
+           socket.emit("createRaid", payload)
+           print("📤 Sent createRaid:", payload)
+       }
+    
+    func listenForRaidEvent(completion: @escaping (_ raidInfo: RaidInfo?) -> Void) {
+        socket.on("receiveRaid") { [weak self] data, _ in
+            guard let self else { return }
+            guard let json = data.first as? [String: Any] else {
+                print("❌ Invalid receiveRaid payload:", data)
+                completion(nil)
+                return
+            }
+
+            do {
+                let jsonData = try JSONSerialization.data(withJSONObject: json)
+                let raidInfo = try JSONDecoder().decode(RaidInfo.self, from: jsonData)
+                print("📥 Received Raid Info:", raidInfo)
+                
+                // ✅ Example: stop listening for roomEnded in this room
+                if let sourceRoom = raidInfo.source_room_id {
+                    socket.off("roomEnded")
+                    logger.info("🛑 Source room \(sourceRoom) stopped listening for roomEnded due to raid")
+                }
+
+                completion(raidInfo)
+            } catch {
+                print("❌ Failed to decode RaidInfo:", error)
+                completion(nil)
+            }
+        }
+    }
 
 }
 
@@ -894,3 +936,9 @@ final class SocketManagerService: NSObject, ObservableObject {
 
 //Event =  allow_bid_for_all -> payload = room_id = abc , allow_bid_for_all = true/false
 //allow_bid_for_all_get
+
+struct RaidInfo: Codable {
+    var message: String?
+    var source_room_id: String?
+    var target_room_id: String?
+}

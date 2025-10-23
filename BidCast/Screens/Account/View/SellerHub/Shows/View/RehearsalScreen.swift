@@ -55,6 +55,11 @@ struct RehearsalScreen: View {
     @State var comeForLive = false
     
     @State var showSellerSheet = false
+    @State var showRaidSheet = false
+    
+    @State private var selectedSellers: Int?
+    @State var sellers = [SellerUserModel]()
+    
     @State var navigateToSeller = false
     
     @State var hasWon = false
@@ -653,6 +658,7 @@ struct RehearsalScreen: View {
                         isPresented: $showSellSheet,
                         onCreateRaid: {
                             print("Raid Created")
+                            showRaidSheet = true
                         },
                         onEndShow: {
                             //                            Task {
@@ -682,6 +688,21 @@ struct RehearsalScreen: View {
             }
         )
         
+        .bottomSheet(isPresented: $showRaidSheet, height: screenHeight / 1.5, topBarCornerRadius: 25, showTopIndicator: false,onDismiss: {
+            showRaidSheet = false
+        }) {
+            SellerScreen(
+                sellers: $sellers,
+                selectedSellerID: $selectedSellers,
+                onRaidCreated: { selectedSellers in
+                    // Handle the selected sellers when raid is created
+                    print("Raid created with sellers: \(selectedSellers)")
+//                    SocketManagerService.shared.sendRaidEvent(sourceRoomId: <#T##String#>, targetRoomId: <#T##String#>, sourceHostId: <#T##String#>, targetHostId: <#T##String#>)
+                },onCancel: {
+                    showRaidSheet = false
+                }
+            )
+        }
         .bottomSheet(isPresented: $showSellerSheet, height: screenHeight / 2.5, topBarCornerRadius: 25, showTopIndicator: false,onDismiss: {
             showSellerSheet = false
         }) {
@@ -821,10 +842,6 @@ struct RehearsalScreen: View {
                 try await castManager.publish(streamName: self.roomId)
             }
             
-            
-            
-            
-            
             let seller = SellerModel(isFollowed: data.user?.is_followed ?? false, id: "\(data.user?.id ?? 0 )", name: data.user?.name ?? "", rating: data.user?.rating ?? "",image: data.user?.profile_image ?? "")
             
             sendCreateRoomEvent(
@@ -930,6 +947,22 @@ struct RehearsalScreen: View {
         let response  = self.viewModel.promoteShow
         if response?.status == "success"{
             self.boosts = response?.data ?? [BoostModel]()
+            Task {
+                self.viewModel.errorMessage?.removeAll()
+                await viewModel.getLiveSeller()
+                if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
+                    successSeller()
+                }else{
+                    
+                }
+                
+            }
+        }
+    }
+    func successSeller(){
+        let response = viewModel.sellerResponse
+        if response?.status == "success"{
+            sellers = response?.data ?? [SellerUserModel]()
         }
     }
     

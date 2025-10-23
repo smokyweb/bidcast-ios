@@ -13,7 +13,7 @@ final class ShowsViewModel: ObservableObject {
     @Published var scheduledShow: ResponseModelPaginate<[HomeModel]>?
     @Published var updateStatusRespone : ResponseModelPaginate<UpdateStatusModel>?
     @Published var storePromoteShowModel : ResponseModel<StorePromoteShowModel>?
-    
+    @Published var sellerResponse : ResponseModelPaginate<[SellerUserModel]>?
     @Published var promoteShow: ResponseModelPaginate<[BoostModel]>?
     @Published var errorMessage: String? = nil
     @Published var countResponse = countModel()
@@ -46,7 +46,19 @@ final class ShowsViewModel: ObservableObject {
             handle(error: error)
         }
     }
-    
+    // MARK: - Get live seller
+    func getLiveSeller() async {
+        requestType = "promote"
+        do {
+            let response: ResponseModelPaginate<[SellerUserModel]> = try await APIManager.shared.request(
+                type: APIEndPoint.getLiveSeller,
+                header: true
+            )
+            sellerResponse = response
+        } catch {
+            handle(error: error)
+        }
+    }
     func UpdateLiveShows(param:LiveShowUpdateRequest) async {
         requestType = "lesson"
         do {
