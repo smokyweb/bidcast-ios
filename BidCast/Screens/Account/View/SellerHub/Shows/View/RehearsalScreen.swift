@@ -696,8 +696,8 @@ struct RehearsalScreen: View {
                 selectedSellerID: $selectedSellers,
                 onRaidCreated: { selectedSellers in
                     // Handle the selected sellers when raid is created
-                    print("Raid created with sellers: \(selectedSellers)")
-//                    SocketManagerService.shared.sendRaidEvent(sourceRoomId: <#T##String#>, targetRoomId: <#T##String#>, sourceHostId: <#T##String#>, targetHostId: <#T##String#>)
+                    print("Raid created with sellers: \(String(describing: selectedSellers))")
+                    SocketManagerService.shared.sendRaidEvent(sourceRoomId: self.roomId, targetRoomId: selectedSellers?.room_id ?? "", sourceHostId: "\(showsData.user?.id ?? 0)" ,targetHostId: "\(selectedSellers?.id ?? 0)")
                 },onCancel: {
                     showRaidSheet = false
                 }

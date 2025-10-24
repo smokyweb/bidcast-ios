@@ -12,7 +12,8 @@ struct SellerScreen: View {
     @Binding var sellers: [SellerUserModel]
 //    @Binding var selectedSellers: Set<Int>
     @Binding var selectedSellerID: Int?
-    var onRaidCreated: (Int?) -> Void // Closure to pass back selected sellers
+    @State var selectedSellerData : SellerUserModel? = nil
+    var onRaidCreated: (SellerUserModel?) -> Void // Closure to pass back selected sellers
     
     @State private var isRaidCreating = false
     var onCancel: () -> Void
@@ -70,9 +71,11 @@ struct SellerScreen: View {
 //                        selectedSellers.insert(seller.id ?? 0)
 //                    }
                     if selectedSellerID == seller.id {
-                        selectedSellerID = nil // deselect
+                        selectedSellerID = nil
+                        selectedSellerData = nil
                     } else {
-                        selectedSellerID = seller.id // select
+                        selectedSellerID = seller.id
+                        selectedSellerData = seller
                     }
                 }
             }
@@ -106,7 +109,7 @@ struct SellerScreen: View {
         // Simulate a delay (replace with real raid creation logic)
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
             // Raid created successfully, trigger closure with selected sellers
-            onRaidCreated(selectedSellerID)
+            onRaidCreated(selectedSellerData)
             isRaidCreating = false
         }
     }
