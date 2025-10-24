@@ -175,7 +175,7 @@ struct SignUpScreen: View {
             if viewModel.errorMessage == nil || viewModel.errorMessage == ""{
                 let response = viewModel.signUpResponse
                 if response.status == "success" {
-                    self.presentationMode.wrappedValue.dismiss()
+                    withAnimation { showError = true }
                 }else{
                     withAnimation { showError = false }
                 }

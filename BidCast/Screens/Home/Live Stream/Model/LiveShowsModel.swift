@@ -122,3 +122,10 @@ struct StorePromoteShowModel: Codable {
     }
 }
 
+struct SellerUserModel : Codable {
+    var id : Int?
+    var name : String?
+    var email : String?
+    var profile_image : String?
+    var room_id : String?
+}

@@ -509,6 +509,7 @@
 		D4E569D92DD46BBE0005A78E /* BundleEx.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E569D82DD46BBE0005A78E /* BundleEx.swift */; };
 		D4E569DB2DD46BE50005A78E /* LanguagePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E569DA2DD46BE50005A78E /* LanguagePickerView.swift */; };
 		D4E569E92DD49A970005A78E /* AppString.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E569E82DD49A970005A78E /* AppString.swift */; };
+		D4F2EA1D2EAA4410001CD4CB /* SellerScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4F2EA1C2EAA4410001CD4CB /* SellerScreen.swift */; };
 		D4F72B532DF96FE9008A6859 /* ShippingStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4F72B522DF96FE9008A6859 /* ShippingStepView.swift */; };
 		D4F72B552DF973F7008A6859 /* SummaryRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4F72B542DF973F7008A6859 /* SummaryRow.swift */; };
 		D665316B2E9E3B5B00F19B94 /* ShimmerViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = D665316A2E9E3B5B00F19B94 /* ShimmerViewModifier.swift */; };
@@ -1016,6 +1017,7 @@
 		D4E569E42DD498900005A78E /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/Localizable.strings; sourceTree = "<group>"; };
 		D4E569E52DD4990B0005A78E /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		D4E569E82DD49A970005A78E /* AppString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppString.swift; sourceTree = "<group>"; };
+		D4F2EA1C2EAA4410001CD4CB /* SellerScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SellerScreen.swift; sourceTree = "<group>"; };
 		D4F72B522DF96FE9008A6859 /* ShippingStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShippingStepView.swift; sourceTree = "<group>"; };
 		D4F72B542DF973F7008A6859 /* SummaryRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryRow.swift; sourceTree = "<group>"; };
 		D665316A2E9E3B5B00F19B94 /* ShimmerViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShimmerViewModifier.swift; sourceTree = "<group>"; };
@@ -2529,6 +2531,7 @@
 		D4A7F8FA2DDD9A6E001FC705 /* SellerHub */ = {
 			isa = PBXGroup;
 			children = (
+				D4F2EA1B2EAA43CE001CD4CB /* Raid */,
 				D6D0DACB2E91025800390946 /* Payout */,
 				D4B616072DE8612300924A3D /* SellerVerification */,
 				D4BA324E2DDB346100FE4FD2 /* Inventory */,
@@ -4027,6 +4030,14 @@
 			path = LanguageManager;
 			sourceTree = "<group>";
 		};
+		D4F2EA1B2EAA43CE001CD4CB /* Raid */ = {
+			isa = PBXGroup;
+			children = (
+				D4F2EA1C2EAA4410001CD4CB /* SellerScreen.swift */,
+			);
+			path = Raid;
+			sourceTree = "<group>";
+		};
 		D67DA9622E9D0A2500ED6556 /* Product */ = {
 			isa = PBXGroup;
 			children = (
@@ -4462,6 +4473,7 @@
 				D4CAEC362DE6D79600705CD7 /* PremierShopScreen.swift in Sources */,
 				D4CAEC592DE6F11F00705CD7 /* AffiliateProgramModel.swift in Sources */,
 				35B44F1C2DD705C200FBCBC4 /* ABoutUsModel.swift in Sources */,
+				D4F2EA1D2EAA4410001CD4CB /* SellerScreen.swift in Sources */,
 				D4BA9C192DE49D1300DFF6E6 /* WalletViewModel.swift in Sources */,
 				D4CAECAA2DE7360F00705CD7 /* ShowSummarySheet.swift in Sources */,
 				D4CAEC7A2DE711F900705CD7 /* MoreOptionsViewModel.swift in Sources */,

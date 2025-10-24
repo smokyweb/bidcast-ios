@@ -49,48 +49,53 @@ struct SelectCategoryScreen: View {
             
           
             TitleWithLine(title: "Select the category that most accurately describes your show, and how you would like to sell.", lineLength: 0)
-//                .padding([.leading,.trailing] ,40)
             
             VStack(spacing: 10) {
-                // Drop Down for Category
-                DropDownTextField(
+
+                DropDownSelection(
+                    options: $categoryNames, floatingLabel:"Category",
                     hint: "Select Category",
-                    text: $selectedCategory,
-                    options: $categoryNames,
-                    leadingIcon: .location,
-                    showLeadingIcon: false,
-                    showTrailingIcon: false,
-                    showDropDownIcon: true,
+                    selected: $selectedCategory,
+                    anchor: .bottom,
+                    custFontName: poppinsSemiBold,
+                    custFontSize:  14.0,
+                    custCategory : poppinsRegular,
+                    custCategorySize : 13.0,
                     onOptionSelected: { value in
+                        
                         if let id = categoryList.first(where: { $0.name == value })?.id {
                             request.category_id = "\(id)"
                             
                         } else {
                             request.category_id = ""
                         }
-                    }, anchor: .top
+                    }
                 )
+                .zIndex(1201.0)
+                .padding([.leading,.trailing],16)
                 
-                
-                // Drop Down for Auction Type
-                DropDownTextField(
-                    hint: "Select Auction Type",
-                    text: $selectedAuctionType,
-                    options: $auctionTypeNames,
-                    leadingIcon: .location,
-                    showLeadingIcon: false,
-                    showTrailingIcon: false,
-                    showDropDownIcon: true,
-                    onOptionSelected: { value in
-                        if let id = auctionTypeList.first(where: { $0.name == value })?.id {
-                            request.auction_type_id = "\(id)"
-                            
-                        } else {
-                            request.auction_type_id = ""
-                        }
-                    },
-                    anchor: .bottom
-                )
+                        DropDownSelection(
+                            options: $auctionTypeNames, floatingLabel:"Auction",
+                            hint: "Select Auction",
+                            selected: $selectedAuctionType,
+                            anchor: .bottom,
+                            custFontName: poppinsSemiBold,
+                            custFontSize:  14.0,
+                            custCategory : poppinsRegular,
+                            custCategorySize : 13.0,
+                            onOptionSelected: { value in
+                                
+                                if let id = auctionTypeList.first(where: { $0.name == value })?.id {
+                                    request.auction_type_id = "\(id)"
+                                    
+                                } else {
+                                    request.auction_type_id = ""
+                                }
+                            }
+                        )
+                        .zIndex(1201.0)
+                        .padding([.leading,.trailing],16)
+
                 
                 Spacer()
                 PrimaryButton(title: AppString.continueBtn.localized, isOutLine: false, onButtonClick: {
@@ -116,11 +121,11 @@ struct SelectCategoryScreen: View {
                 },cornerRadius : 12.0, btnTextColor: .white)
                 .padding(.bottom, 0)
             }
-            .zIndex(1400.0)
+            
             .padding(.top , 10)
-//            .padding(.horizontal)
             CusNavLink(doNavigate: $navigateToThumbnail, destination: SelectThumbnailScreen(request:$request,fromPrepare: $fromPrepare,backToPrepare: $backToPrepare,delegate: delegate))
         }
+        .edgesIgnoringSafeArea(.bottom)
         .background(Color.bg.opacity(0.5))
         .onAppear {
             
@@ -131,9 +136,21 @@ struct SelectCategoryScreen: View {
                     return
                 }
                 SVProgressHUD.show()
+                self.viewModel.errorMessage?.removeAll()
                 await self.viewModel.getCategoryList(param: CategoryRequest(category_id: ""))
                 await SVProgressHUD.dismiss()
-                categorySuccess()
+                if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
+                    categorySuccess()
+                }else{
+                    alertType = .sheetType(
+                        icon: .alert,
+                        title: "Failed",
+                        message: self.viewModel.errorMessage ?? "",
+                        primaryBtnText: "",
+                        secondaryBtnText: AppString.ok.localized
+                    )
+                    showError = true
+                }
                 
             }
         }
@@ -169,9 +186,22 @@ struct SelectCategoryScreen: View {
                     return
                 }
                 SVProgressHUD.show()
+                self.viewModel.errorMessage?.removeAll()
                 await  self.viewModel.getAuctionList()
                 await SVProgressHUD.dismiss()
-                auctionSuccess()
+                if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
+                    auctionSuccess()
+                }else{
+                    alertType = .sheetType(
+                        icon: .alert,
+                        title: "Failed",
+                        message: self.viewModel.errorMessage ?? "",
+                        primaryBtnText: "",
+                        secondaryBtnText: AppString.ok.localized
+                    )
+                    showError = true
+                }
+               
             }
         } else {
             alertType = .sheetType(

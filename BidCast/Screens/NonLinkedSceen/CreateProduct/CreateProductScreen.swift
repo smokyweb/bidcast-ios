@@ -76,6 +76,8 @@ struct CreateProductScreen: View {
                 ScrollView(showsIndicators:false){
                     
                     MediaPickerView(uploadedImageUrls: $imageUrls)
+                        .padding(.horizontal,12)
+                        .background(.clear)
                     
                     VStack(alignment:.leading,spacing: 8){
                         
@@ -212,35 +214,43 @@ struct CreateProductScreen: View {
                         )
                        
                         .padding([.leading,.trailing],16)
-                        
+                        .background(.clear)
                         // Quantity Selector
-                        HStack(spacing: 12) {
+                        HStack(spacing: 16) {
                             Button(action: {
                                 if quantity > 1 {
                                     quantity -= 1
-                                    request.quantity = "\(quantity)"   // keep request in sync
+                                    request.quantity = "\(quantity)" // keep request in sync
                                 }
                             }) {
                                 Image(systemName: "minus")
-                                    .padding()
+                                    .font(.system(size: 16, weight: .bold))
+                                    .foregroundColor(.black)
+                                    .frame(width: 40, height: 40) // fixed size
                                     .background(Color(.systemGray5))
                                     .clipShape(Circle())
                             }
+                            .buttonStyle(.plain)
                             
                             Text("\(quantity)")
-                                .font(.headline)
-                                .frame(width: 40)
+                                .font(.system(size: 18, weight: .semibold))
+                                .frame(width: 50, alignment: .center)
                             
                             Button(action: {
                                 quantity += 1
                                 request.quantity = "\(quantity)"
                             }) {
                                 Image(systemName: "plus")
-                                    .padding()
+                                    .font(.system(size: 16, weight: .bold))
+                                    .foregroundColor(.black)
+                                    .frame(width: 40, height: 40) // fixed size
                                     .background(Color(.systemGray5))
                                     .clipShape(Circle())
                             }
+                            .buttonStyle(.plain)
                         }
+                        .padding(.horizontal,12)
+
 
                 
                         PrimaryButton(
@@ -253,7 +263,7 @@ struct CreateProductScreen: View {
                             }, imageName: "ic_Plus", btnColor: .white)
                     }
                     
-                    .background(.white)
+//                    .background(.white)
                     .cornerRadius(12)
                     .padding(.horizontal,12)
 
@@ -319,11 +329,13 @@ struct CreateProductScreen: View {
                         }
                         
                     }, height: 45, firstBtnTitleColor: .darkGray, secBtnTitleColor: .white, firstBtnBgColor: .white, secBtnBgColor:.darkBlue)
+                    .padding(.horizontal,12)
 
                 }
 //                .edgesIgnoringSafeArea(.top)
-                .padding(.all,0)
-//                .background(.bg.opacity(0.5))
+                .padding(.horizontal,12)
+                .ignoresSafeArea(.container, edges: .bottom)
+                .background(.bg.opacity(0.5))
                 
                 .bottomSheet(
                     isPresented: $showSubCategorySheet,
@@ -379,14 +391,14 @@ struct CreateProductScreen: View {
 //            }
 //            .padding([.leading,.trailing],12)
         }
+            
+        
         CusNavLink(doNavigate: $navigateToAddProduct, destination: AddProductsScreen(request:$requests,thumbNail: $thumbNail,fromPrepare: .constant(false),backToPrepare: $backToPrepare, NavFromProductLibrary: .constant(false), backToCreateProduct:$navigateToAddProduct))
         
         CusNavLink(doNavigate: $navigateToProuct, destination: AddProductsScreen(request:$requests,thumbNail: $thumbNail,fromPrepare: $fromPrepare,backToPrepare: $backToPrepare, NavFromProductLibrary: .constant(false), backToCreateProduct: .constant(false), delegate: delegate))
         
         CusNavLink(doNavigate: $navigateToSalesFormat, destination: SalesFormatScreen(request: $request,storeScheduleRequest: $requests, imageUrls : $imageUrls,thumbNail: $thumbNail,backToPrepare: $backToPrepare,fromPrepare: $fromPrepare,backToCreateProduct:$navigateToSalesFormat,delegate: delegate))
         
-//        .edgesIgnoringSafeArea(.top/)
-        .background(.bg.opacity(0.4))
         
         .onFirstAppear(perform: {
             Task{
@@ -447,6 +459,8 @@ struct CreateProductScreen: View {
             
             }
         })
+        .background(.bg.opacity(0.5))
+        .ignoresSafeArea(.container, edges: .bottom) 
         .onTapGesture {
             UIApplication.shared.endEditing()
         }

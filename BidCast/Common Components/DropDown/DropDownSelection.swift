@@ -97,7 +97,7 @@ struct DropDownSelection: View {
                     HStack {
                         Text(ind)
                             .lineLimit(1)
-                            .font(.custom(poppinsRegular, fixedSize: 11))
+                            .font(.custom(poppinsSemiBold, fixedSize: 13))
                         Spacer()
                         Image(systemName: "checkmark")
                             .opacity(selected == ind ? 1 : 0)

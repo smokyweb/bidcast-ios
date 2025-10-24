@@ -182,6 +182,7 @@ struct ProductWeightScreen: View {
                     )
                 )
             }
+            .edgesIgnoringSafeArea(.bottom)
         }
         // Toast is fine here
         .toast(isPresenting: $showhud) {

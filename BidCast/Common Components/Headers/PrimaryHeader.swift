@@ -306,16 +306,16 @@ struct PrimaryHeader: View {
             .frame(height: 50)
         }
         .frame(height: 50)
-        .background(Color.white)
-        .overlay(
-            // Safe area background color (to match header)
-            GeometryReader { geometry in
-                Color.white
-                    .frame(height: 50)
-                    .edgesIgnoringSafeArea(.top)
-//                    .offset(y: -geometry.safeAreaInsets.top)
-            }
-        )
+//        .background(Color.white)
+//        .overlay(
+//            // Safe area background color (to match header)
+//            GeometryReader { geometry in
+//                Color.white
+//                    .frame(height: 50)
+//                    .edgesIgnoringSafeArea(.top)
+////                    .offset(y: -geometry.safeAreaInsets.top)
+//            }
+//        )
     }
 }
 
