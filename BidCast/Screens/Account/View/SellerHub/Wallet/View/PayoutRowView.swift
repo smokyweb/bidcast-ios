@@ -8,12 +8,18 @@
 import SwiftUI
 
 struct PayoutRowView: View {
-    var payout: Payout?
-    var currencySymbol: String? = ""
+    var payout: PayOutHistoryModel?
+    var currencySymbol: String? = "$"
     
-    var dateString: String? = ""
+    var dateString: String {
+        "\(payout?.createdAt?.formattedDate() ?? "N/A")"
+    }
     var amountString: String {
-        "\(currencySymbol ?? "")" + String(format: "%,.2f", payout?.amount ?? 0.0)
+        if let amount = Double(payout?.total ?? "0.0") {
+            let formatted = String(format: "%.2f", amount)
+            return "\(currencySymbol ?? "")" + formatted
+        }
+        return "\(currencySymbol ?? "")" + "0.0"
     }
     
     var body: some View {
@@ -21,7 +27,7 @@ struct PayoutRowView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(amountString)
                     .font(.custom(poppinsSemiBold, size: 13.0))
-                Text(dateString ?? "")
+                Text(dateString)
                     .font(.custom(poppinsRegular, size: 13.0))
                     .foregroundColor(.gray)
             }

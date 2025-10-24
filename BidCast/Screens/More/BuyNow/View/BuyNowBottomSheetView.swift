@@ -27,7 +27,7 @@ struct BuyNowBottomSheetView: View {
     @State var navigateToOrderStatus : Bool = false
     @State var navigateToGiftScreen : Bool = false
     
-    var orderID : Int = 0
+    var orderID : Int = 10
     @State private var promoCode = ""
     var productImage: String = ""
     var productTitle: String = ""

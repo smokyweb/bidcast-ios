@@ -7,8 +7,16 @@ import SwiftUI
 import SwiftUI
 
 struct SearchView: View {
-    @Binding var searchText: String
-    var onSubmitClick: ((String) -> Void)?
+//    @Binding var searchText: String
+//    var onSubmitClick: ((String) -> Void)?
+    
+    
+    @StateObject private var viewModel: SearchTextViewModel
+    
+    init(onDebouncedSearch: @escaping (String) -> Void) {
+        _viewModel = StateObject(wrappedValue: SearchTextViewModel(onDebouncedSearch: onDebouncedSearch))
+    }
+
     
     var body: some View {
         HStack(spacing: 10) {
@@ -22,23 +30,37 @@ struct SearchView: View {
                 .accessibilityHidden(true)
             
             // Text Field
-            TextField(AppString.whatAreYouLookingFor.localized, text: $searchText)
-                .font(.custom(poppinsMedium, fixedSize: 14))
-                .keyboardType(.default)
-                .autocorrectionDisabled(true)
-                .autocapitalization(.none)
-                .foregroundStyle(.text)
-                .accentColor(.text)
-                .submitLabel(.search)
-                .onSubmit {
-                    onSubmitClick?(searchText)
-                }
-                .accessibilityLabel("Search field")
-                .accessibilityHint("Enter keywords to search")
+//            TextField(AppString.whatAreYouLookingFor.localized, text: $searchText)
+//                .font(.custom(poppinsMedium, fixedSize: 14))
+//                .keyboardType(.default)
+//                .autocorrectionDisabled(true)
+//                .autocapitalization(.none)
+//                .foregroundStyle(.text)
+//                .accentColor(.text)
+//                .submitLabel(.search)
+//                .onSubmit {
+//                    onSubmitClick?(searchText)
+//                }
+//                .onChange {
+//                    print("\(searchText)")
+//                }
+//                .accessibilityLabel("Search field")
+//                .accessibilityHint("Enter keywords to search")
+            
+            TextField(AppString.whatAreYouLookingFor.localized, text: $viewModel.searchText)
+                       .font(.custom(poppinsMedium, fixedSize: 14))
+                       .keyboardType(.default)
+                       .autocorrectionDisabled(true)
+                       .autocapitalization(.none)
+                       .foregroundStyle(.text)
+                       .accentColor(.text)
+                       .submitLabel(.search)
+                       .accessibilityLabel("Search field")
+                       .accessibilityHint("Enter keywords to search")
             
             // Clear Button
-            if !searchText.isEmpty {
-                Button(action: { searchText = "" }) {
+            if !viewModel.searchText.isEmpty {
+                Button(action: { viewModel.searchText = "" }) {
                     Image(systemName: "xmark.circle.fill")
                         .foregroundColor(.gray)
                         .frame(width: 20, height: 20)

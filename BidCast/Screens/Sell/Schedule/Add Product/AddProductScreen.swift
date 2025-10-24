@@ -78,20 +78,21 @@ struct AddProductsScreen: View {
                             let idStr = "\(data.id ?? -1)"
                             let isSelected = selectedProductIDs.contains(idStr)
                             HStack {
-                                if let urlString = data.images?.first, let url = URL(string: urlString) {
-                                    AsyncImage(url: url) { image in
-                                        image.resizable()
-                                    } placeholder: {
-                                        Color.gray
-                                    }
-                                    .frame(width: 50, height: 50)
-                                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                                } else {
-                                    Image("fashion") // Fallback asset
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 50, height: 50)
-                                }
+                                CustomProfileImage(url: data.images?.first, isCircular: false, size: 50, defaultImage: "fashion")
+//                                if let urlString = data.images?.first, let url = URL(string: urlString) {
+//                                    AsyncImage(url: url) { image in
+//                                        image.resizable()
+//                                    } placeholder: {
+//                                        Color.gray
+//                                    }
+//                                    .frame(width: 50, height: 50)
+//                                    .clipShape(RoundedRectangle(cornerRadius: 8))
+//                                } else {
+//                                    Image("fashion") // Fallback asset
+//                                        .resizable()
+//                                        .scaledToFit()
+//                                        .frame(width: 50, height: 50)
+//                                }
                                 
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text(data.title ?? "Untitled")

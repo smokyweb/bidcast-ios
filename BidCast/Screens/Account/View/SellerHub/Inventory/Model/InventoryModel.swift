@@ -22,7 +22,7 @@ struct InventoryDataModel: Codable {
     var subCategoryID: Int?
     var title, description: String?
     var quantity: String?
-    var pricing: Double?
+    var pricing: String?
     var flashSale: Bool?
     var acceptOffers: Bool?
     var reserveForLive: Bool?
@@ -34,7 +34,7 @@ struct InventoryDataModel: Codable {
     var weight, length, width, height: Float?
     var productShow: String?
     var processingCategory: String?
-    var purchasedQuantity: Int?
+    var purchasedQuantity: String?
     var createdAt: String?
     var userID: Int?
     var user: UserDataModel?

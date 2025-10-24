@@ -755,7 +755,7 @@ struct ListProductScreen: View {
                                             title: productData.title ?? "",
                                             description: productData.description ?? "",
                                             quantity: "\(productData.quantity ?? "0")",
-                                            pricing: "\(productData.pricing ?? 0.0)",
+                                            pricing: "\(productData.pricing ?? "0.0")",
                                             flash_sale:productData.flashSale ?? false ? "1" : "0",
                                             accept_offers: productData.acceptOffers ?? false ? "1" : "0",
                                             reserve_for_live: productData.reserveForLive ?? false ? "1" : "0",

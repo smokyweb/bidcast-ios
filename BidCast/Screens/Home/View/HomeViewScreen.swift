@@ -86,7 +86,7 @@ struct HomeViewScreen: View {
                 VStack(alignment: .leading,spacing: 12){
                     
                     if showSearchView {
-                        SearchView(searchText: $searchText) { _ in
+                        SearchView { debouncedText in
                             Task { await fetchLiveShow() }
                         }
                         .transition(.move(edge: .top).combined(with: .opacity))

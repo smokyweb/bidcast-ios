@@ -60,18 +60,18 @@ struct SellingTips: View {
                         .padding(.horizontal)
                         .padding(.top,8)
                     
-                    
-                    if let imageUrl = URL(string: lesson.image ?? "") {
-                        AsyncImage(url: imageUrl) { image in
-                            image
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .cornerRadius(12)
-                        } placeholder: {
-                            ProgressView()
-                        }
-                        .padding(.horizontal)
-                    }
+                    CustomProfileImage(url:  lesson.image, isCircular: false, defaultImage: nil)
+//                    if let imageUrl = URL(string: lesson.image ?? "") {
+//                        AsyncImage(url: imageUrl) { image in
+//                            image
+//                                .resizable()
+//                                .aspectRatio(contentMode: .fit)
+//                                .cornerRadius(12)
+//                        } placeholder: {
+//                            ProgressView()
+//                        }
+//                        .padding(.horizontal)
+//                    }
                     
                     Text(lesson.title ?? "")
                         .font(.custom(poppinsBold, size: 16.0))

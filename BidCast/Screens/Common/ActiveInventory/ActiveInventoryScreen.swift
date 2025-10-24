@@ -66,5 +66,5 @@ struct ActiveInventoryScreen: View {
 
 
 #Preview {
-    ActiveInventoryScreen(inventory: InventoryDataModel(id: 1, categoryID: 101, title: "Sample Item", description: "This is a sample description.", quantity: "10", pricing: 200, flashSale: true, acceptOffers: true, reserveForLive: false, shippingProfileID: 3, status: "Active", images: ["dummy1"]))
+    ActiveInventoryScreen(inventory: InventoryDataModel(id: 1, categoryID: 101, title: "Sample Item", description: "This is a sample description.", quantity: "10", pricing: "200", flashSale: true, acceptOffers: true, reserveForLive: false, shippingProfileID: 3, status: "Active", images: ["dummy1"]))
 }

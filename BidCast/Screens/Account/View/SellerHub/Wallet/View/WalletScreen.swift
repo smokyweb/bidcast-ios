@@ -22,7 +22,7 @@ struct WalletScreen: View {
     @EnvironmentObject var networkMonitor: NetworkMonitor
     @State var data: WalletData?
     @State var dataTransaction = [TransactionModel]()
-    @State var dataPayOutHistory = PayOutHistoryModel()
+    @State var dataPayOutHistory: [PayOutHistoryModel] = []
     @State var dataWallet = WalletInfoModel()
     
     @State var viewModel = WalletViewModel()
@@ -50,7 +50,7 @@ struct WalletScreen: View {
                     switch segment {
                     case .wallet:
                         WalletTabView(summary: dataWallet,
-                                      payouts: data?.payoutHistory ?? [Payout]())
+                                      payouts: dataPayOutHistory)
                         
                     case .transactions:
                         if dataTransaction.count == 0{
@@ -212,7 +212,7 @@ extension WalletScreen{
     func payOutHistroysuccess(){
         let response  = viewModel.payOutHistoryDict
         if response.status == "success"{
-            dataPayOutHistory = response.data ?? PayOutHistoryModel()
+            dataPayOutHistory = response.data ?? []
         }else{
             showError = true
             alertType = .sheetType(

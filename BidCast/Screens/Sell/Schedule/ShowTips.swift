@@ -113,18 +113,19 @@ struct TipCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(alignment: .top, spacing: 12) {
-                if let imageUrl = URL(string: tip.image ?? "") {
-                    AsyncImage(url: imageUrl) { image in
-                        image
-                            .resizable()
-                            .scaledToFit()
-                            .foregroundColor(.white)
-                            .frame(width: 32, height: 32)
-                    } placeholder: {
-                        ProgressView()
-                    }
+//                if let imageUrl = URL(string: tip.image ?? "") {
+                    CustomProfileImage(url: tip.image, isCircular: false, size: 32, defaultImage: nil)
+//                    AsyncImage(url: imageUrl) { image in
+//                        image
+//                            .resizable()
+//                            .scaledToFit()
+//                            .foregroundColor(.white)
+//                            .frame(width: 32, height: 32)
+//                    } placeholder: {
+//                        ProgressView()
+//                    }
                     .padding(.horizontal)
-                }
+                
                 Text(tip.title ?? "")
                     .font(.headline)
                     .foregroundColor(.primary)

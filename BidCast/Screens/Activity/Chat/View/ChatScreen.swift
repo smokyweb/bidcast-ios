@@ -239,23 +239,24 @@ struct ChatHeaderView: View {
                     .frame(width: 36, height: 36)
             }
 
-            if let url = URL(string: profileImage), !profileImage.isEmpty {
-                AsyncImage(url: url) { phase in
-                    if let image = phase.image {
-                        image.resizable()
-                    } else {
-                        Image("defaultUser")
-                            .resizable()
-                    }
-                }
-                .frame(width: 44, height: 44)
-                .clipShape(Circle())
-            } else {
-                Image("defaultUser")
-                    .resizable()
-                    .frame(width: 44, height: 44)
-                    .clipShape(Circle())
-            }
+            CustomProfileImage(url: profileImage, isCircular: true, size: 44)
+//            if let url = URL(string: profileImage), !profileImage.isEmpty {
+//                AsyncImage(url: url) { phase in
+//                    if let image = phase.image {
+//                        image.resizable()
+//                    } else {
+//                        Image("defaultUser")
+//                            .resizable()
+//                    }
+//                }
+//                .frame(width: 44, height: 44)
+//                .clipShape(Circle())
+//            } else {
+//                Image("defaultUser")
+//                    .resizable()
+//                    .frame(width: 44, height: 44)
+//                    .clipShape(Circle())
+//            }
 
             Text(userName)
                 .font(.custom(poppinsSemiBold, size: 14.0))

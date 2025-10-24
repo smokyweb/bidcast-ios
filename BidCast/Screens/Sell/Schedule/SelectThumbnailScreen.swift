@@ -80,18 +80,19 @@ struct SelectThumbnailScreen: View {
                                 LazyHStack(spacing: 16) {
                                     ForEach(example.indices, id: \.self) { index in
                                         let text = example[index]
-                                        AsyncImage(url: URL(string: text)) { phase in
-                                            switch phase {
-                                            case .success(let image):
-                                                image
-                                                    .resizable()
-                                            default:
-                                                Image(systemName: "photo")
-                                                    .resizable()
-                                            }
-                                        }
-                                        .frame(width: 120, height: 120)
-                                        .cornerRadius(10)
+                                        CustomProfileImage(url: text, isCircular: false, size: 120, defaultImage: "photo")
+//                                        AsyncImage(url: URL(string: text)) { phase in
+//                                            switch phase {
+//                                            case .success(let image):
+//                                                image
+//                                                    .resizable()
+//                                            default:
+//                                                Image(systemName: "photo")
+//                                                    .resizable()
+//                                            }
+//                                        }
+//                                        .frame(width: 120, height: 120)
+//                                        .cornerRadius(10)
                                     }
                                 }
                             }

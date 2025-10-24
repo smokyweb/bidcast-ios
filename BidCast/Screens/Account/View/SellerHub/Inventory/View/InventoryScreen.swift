@@ -54,16 +54,22 @@ struct InventoryScreen: View {
                 .onChange(of: segment) { newSegment in
                     status = newSegment.rawValue.lowercased()
                     currentPage = 1
+                    searchText = ""
                     self.inventoryList.removeAll()
                     fetchInventory(for: newSegment, page: 1)
                 }
             
             // MARK: - Search
-            SearchView(searchText: $searchText) {_ in
-                
+            SearchView { debouncedText in
+                print("User stopped typing. Search: \(debouncedText)")
+                // Perform search logic here
+                searchText = debouncedText
+                currentPage = 1
+                self.inventoryList.removeAll()
+                fetchInventory(for: segment, page: 1)
             }
-                .padding(.horizontal, 12)
-                .padding(.top, 10)
+            .padding(.horizontal, 12)
+            .padding(.top, 10)
             
             // MARK: - Inventory List
             ScrollView {
@@ -92,7 +98,7 @@ struct InventoryScreen: View {
         }
         .background(Color.bg.opacity(0.5))
         .onAppear {
-            
+            searchText = ""
             fetchInventory(for: segment, page: currentPage)
         }
         .toast(isPresenting: $showhud) {
@@ -148,6 +154,7 @@ struct InventoryScreen: View {
             SVProgressHUD.show()
             request.status = segment.rawValue.lowercased()
             request.page = page
+            request.search = searchText
             await viewModel.getInventoryList(param: request)
             await SVProgressHUD.dismiss()
             handleDataLoad()

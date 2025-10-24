@@ -56,7 +56,7 @@ struct ExploreViewScreen: View {
                     
                     // 🔹 Search Bar
                     if showSearchView {
-                        SearchView(searchText: $searchText) { _ in
+                        SearchView { debouncedText in
                             Task { await fetchCategory(for: selectedTab)
                             }
                         }

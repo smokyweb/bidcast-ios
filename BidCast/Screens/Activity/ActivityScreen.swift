@@ -567,14 +567,15 @@ struct MessageCell: View {
     
     var body: some View {
         HStack(alignment: .center, spacing: 12) {
-            AsyncImage(url: URL(string: otherUserImage)) { image in
-                image.resizable()
-            } placeholder: {
-                Color.gray
-            }
-            .frame(width: 48, height: 48)
-            .clipShape(Circle())
-            
+            CustomProfileImage(url: otherUserImage, isCircular: true, size: 48)
+//            AsyncImage(url: URL(string: otherUserImage)) { image in
+//                image.resizable()
+//            } placeholder: {
+//                Color.gray
+//            }
+//            .frame(width: 48, height: 48)
+//            .clipShape(Circle())
+//            
             VStack(alignment: .leading, spacing: 6) {
                 HStack {
                     Text(otherUserName.capitalizingFirstLetter())
@@ -630,13 +631,14 @@ struct MessageRow: View {
     
     var body: some View {
         HStack(alignment: .center, spacing: 12) {
-            AsyncImage(url: URL(string: otherUserImage)) { image in
-                image.resizable()
-            } placeholder: {
-                Color.gray
-            }
-            .frame(width: 48, height: 48)
-            .clipShape(Circle())
+            CustomProfileImage(url: otherUserImage, isCircular: true, size: 48)
+//            AsyncImage(url: URL(string: otherUserImage)) { image in
+//                image.resizable()
+//            } placeholder: {
+//                Color.gray
+//            }
+//            .frame(width: 48, height: 48)
+//            .clipShape(Circle())
             
             VStack(alignment: .leading, spacing: 6) {
                 HStack {

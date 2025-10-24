@@ -12,7 +12,7 @@ import AlertToast
 struct WalletTabView: View {
     
     var summary: WalletInfoModel
-    var payouts: [Payout]
+    var payouts: [PayOutHistoryModel] = []
     
     @StateObject var kycViewModel = KycViewModel()
     

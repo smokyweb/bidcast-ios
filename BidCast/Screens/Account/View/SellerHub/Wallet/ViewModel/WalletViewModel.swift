@@ -13,7 +13,7 @@ final class WalletViewModel: ObservableObject {
     
     @Published var transactionDict = ResponseModelPaginate<[TransactionModel]>()
     @Published var walletInfoDict = ResponseModel<WalletInfoModel>()
-    @Published var payOutHistoryDict = ResponseModel<PayOutHistoryModel>()
+    @Published var payOutHistoryDict = ResponseModel<[PayOutHistoryModel]>()
     @Published var errorMessage: String? = nil
 
     
@@ -49,7 +49,7 @@ final class WalletViewModel: ObservableObject {
     // MARK: - Get PayOutHistory
     func getPayOutHistory() async {
         do {
-            if let response: ResponseModel<PayOutHistoryModel> = try await APIManager.shared.request(
+            if let response: ResponseModel<[PayOutHistoryModel]> = try await APIManager.shared.request(
                 type: APIEndPoint.getPayOutHistory,
                 header: true
             ) {

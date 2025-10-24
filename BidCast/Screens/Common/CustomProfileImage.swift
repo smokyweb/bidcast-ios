@@ -12,6 +12,7 @@ struct CustomProfileImage: View {
     var isCircular: Bool = true
     var cornerRadius: CGFloat = 8
     var size: CGFloat = 40
+    var defaultImage: String?
     
     var body: some View {
         if let url = url, !url.isEmpty {
@@ -32,7 +33,7 @@ struct CustomProfileImage: View {
                         .shadow(color: Color.black.opacity(0.2), radius: 3, x: 0, y: 2)
                 case .failure:
                     if url.contains("http") {
-                        Image("defaultUser")
+                        Image(defaultImage ?? "defaultUser")
                             .resizable()
                             .aspectRatio(contentMode: .fill)
                             .frame(width: size, height: size)
@@ -52,7 +53,7 @@ struct CustomProfileImage: View {
                 }
             }
         } else {
-            Image("defaultUser")
+            Image(defaultImage ?? "defaultUser")
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .frame(width: size, height: size)
