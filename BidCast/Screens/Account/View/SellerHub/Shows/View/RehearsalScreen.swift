@@ -254,14 +254,14 @@ struct RehearsalScreen: View {
                 // 🎛️ Dynamic Side Controls
                 VStack {
                     Spacer()
-                    VStack(spacing: 20) {
+                    VStack(spacing: 0) {
                         if showLiveControls {
-                            SideButton(label: "More", icon: "ellipsis.circle",action: .more)
-                            SideButton(label: "Promote", icon: "megaphone.fill",action: .promote)
-                            SideButton(label: "Clip", icon: "scissors",action: .clip)
-                            SideButton(label: "Share", icon: "square.and.arrow.up",action: .share)
-                            SideButton(label: "Switch", icon: "arrow.left.arrow.right",action: .switchView)
-                            ShopButton(action: .shop)
+                            SideButton(label: "More", icon: .sMore,action: .more)
+                            SideButton(label: "Promote", icon: .sPromote,action: .promote)
+                            SideButton(label: "Clip", icon: .sClip,action: .clip)
+                            SideButton(label: "Share", icon: .sShare,action: .share)
+                            SideButton(label: "Switch", icon: .sSwitch,action: .switchView)
+                            ShopButton(action: .shop, count: "\(productData.count)")
                         }
                         
                         if showPreLiveControls {
@@ -298,24 +298,24 @@ struct RehearsalScreen: View {
                                 }
                             }) {
                                 VStack {
-                                    Image(systemName: "arrow.triangle.2.circlepath.camera")
+                                    Image(.sSwitch)
                                         .resizable()
                                         .scaledToFit()
                                         .fontWeight(.heavy)
                                         .font(.custom(poppinsExtraBold, size: 22.0))
-                                        .frame(width: 20, height: 20)
+                                        .frame(width: 50, height: 50)
                                         .foregroundColor(.black)
                                     //                                Text("Switch")
                                     //                                    .font(.custom(poppinsThin, size: 12.0))
                                 }
                                 .padding()
-                                .background(
-                                    Circle()
-                                        .fill(Color.white)
-                                )
+//                                .background(
+//                                    Circle()
+//                                        .fill(Color.white)
+//                                )
                             }
                             
-                            ShopButton(action: .shop)
+                            ShopButton(action: .shop, count: "0")
                             Spacer()
                         }
                     }
@@ -1161,40 +1161,40 @@ struct RehearsalScreen: View {
     }
     
     @ViewBuilder
-    func SideButton(label: String, icon: String, action: SideMenu) -> some View {
+    func SideButton(label: String, icon: ImageResource, action: SideMenu) -> some View {
         Button(action: {
             if action == .switchView {
                 isUsingFrontCamera.toggle()
                 //                ZegoExpressEngine.shared().useFrontCamera(isUsingFrontCamera)
-                Task{
-                    await castManager.switchCamera()
-                }
+//                Task{
+//                    await castManager.switchCamera()
+//                }
             } else {
                 currentBottomSheet = action
                 showSellSheet = true
             }
         }) {
             VStack {
-                Image(systemName: icon)
+                Image(icon)
                     .resizable()
                     .scaledToFit()
                     .fontWeight(.heavy)
                     .font(.custom(poppinsExtraBold, size: 22.0))
-                    .frame(width: 20, height: 20)
+                    .frame(width: 49, height: 50)
                     .foregroundColor(.black)
                 //                Text(label)
                 //                    .font(.custom(poppinsThin, size: 12.0))
             }
-            .padding()
-            .background(
-                Circle()
-                    .fill(Color.white)
-            )
+            .padding(6)
+//            .background(
+//                Circle()
+//                    .fill(Color.white)
+//            )
         }
     }
     
     @ViewBuilder
-    func ShopButton(action : SideMenu) -> some View {
+    func ShopButton(action : SideMenu,count:String) -> some View {
         Button(action: {
             if action == .switchView {
                 isUsingFrontCamera.toggle()
@@ -1206,30 +1206,30 @@ struct RehearsalScreen: View {
         }) {
             ZStack {
                 VStack {
-                    Image(systemName: "bag.fill")
+                    Image(.sShop)
                         .resizable()
                         .scaledToFit()
                         .fontWeight(.heavy)
                         .font(.custom(poppinsExtraBold, size: 22.0))
-                        .frame(width: 20, height: 20)
+                        .frame(width: 49, height: 50)
                         .foregroundColor(.black)
                     //                    Text("Shop")
                     //                        .font(.custom(poppinsThin, size: 12.0))
                 }
-                .padding()
-                .background(
-                    Circle()
-                        .fill(Color.white)
-                )
+                .padding(6)
+//                .background(
+//                    Circle()
+//                        .fill(Color.white)
+//                )
                 
                 Circle()
                     .fill(Color.defaultTheme)
                     .frame(width: 20, height: 20)
-                    .overlay(Text("")
+                    .overlay(Text(count == "0" ? "" : count)
                         .foregroundColor(.black)
                         .font(.custom(poppinsRegular, size: 13.0))
                     )
-                    .offset(x: 12, y: -30)
+                    .offset(x: 18, y: -15)
             }
         }
     }

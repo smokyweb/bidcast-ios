@@ -477,7 +477,7 @@ struct LiveStream: View {
                             .padding(.bottom, keyboardResponder.currentHeight == 0 ? (tabBarHeight + 20) : 10)
                         }
                     }
-                    VStack(spacing: 20) {
+                    VStack(spacing: 4) {
                         //                            ForEach(MenuAction.allCases, id: \.self) { action in
                         ForEach(filteredActions, id: \.self) { action in
                             Button(action: {
@@ -510,19 +510,19 @@ struct LiveStream: View {
                                     }
                                 }
                             }) {
-                                Image(systemName: action.iconName)
+                                Image(action.iconName)
                                     .resizable()
                                     .scaledToFit()
                                     .fontWeight(.heavy)
                                     .font(.custom(poppinsExtraBold, size: 22.0))
-                                    .frame(width: 20, height: 20)
+                                    .frame(width: 39, height: 40)
                                     .foregroundColor(.black)
                             }
-                            .padding()
-                            .background(
-                                Circle()
-                                    .fill(Color.white)
-                            )
+                            .padding(4)
+//                            .background(
+//                                Circle()
+//                                    .fill(Color.white)
+//                            )
                         }
                     }
                     .position(
@@ -1299,13 +1299,13 @@ enum MenuAction: CaseIterable {
     
     case gift, paperclip, share, wallet, cart
     
-    var iconName: String {
+    var iconName: ImageResource {
         switch self {
-        case .gift: return "gift"
-        case .paperclip: return "paperclip"
-        case .share: return "arrowshape.turn.up.right"
-        case .wallet: return "wallet.pass"
-        case .cart: return "cart"
+        case .gift: return .uGift
+        case .paperclip: return .sClip
+        case .share: return .uShare
+        case .wallet: return .uWallet
+        case .cart: return .sShop
         }
     }
     
