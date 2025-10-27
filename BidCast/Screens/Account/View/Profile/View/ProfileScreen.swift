@@ -52,6 +52,8 @@ struct ProfileScreen: View {
     @State var navigateToChat = false
     @State private var chatPath: String = ""
     @State private var isTipAmountButtoClicked: Bool = false
+    
+//    @State var profileImage: String
 
     
     @State var reviewList: [ReviewModel] = [
@@ -74,7 +76,7 @@ struct ProfileScreen: View {
                     VStack(spacing: 16) {
                         ProfileHeaderView(name: profileData.name?.capitalizingFirstLetter() ?? "",
                                           email: profileData.username ?? "",
-                                          profileImage: profileData.profile_image ?? "",
+                                          profileImage: $userImage,
                                           followers: "\(profileData.follower_count ?? 0)",
                                           following: "\(profileData.following_count ?? 0)" ,
                                           bio: profileData.bio ?? "Professional photographer specializing in portrait and wedding photography. Available for bookings worldwide.",
@@ -224,7 +226,7 @@ struct ProfileScreen: View {
                             ForEach(totalRatingArr, id: \.id) { review in
                                 ReviewCard(
                                     username: review.user.name ?? "",
-                                    profileImage: Image("defaultUser"),
+                                    profileImage: $userImage,
                                     rating: Double(review.overallRating ?? "0.0") ?? 0.0,
                                     comment: review.comment
                                 )
@@ -456,7 +458,7 @@ struct ProfileHeaderView: View {
     
     var name : String
     var email : String
-    var profileImage : String
+    @Binding var profileImage : String
     var followers : String
     var following : String
     var bio : String
@@ -689,7 +691,7 @@ struct ProfileHeaderView: View {
         }
         .padding(.vertical,8)
         .padding(.horizontal, 8)
-        CusNavLink(doNavigate: $navigateToRating, destination: RateSellerView(sellerID: Int(sellerID) ?? 0, sellerImage: .constant(profileImage), sellerName: .constant(name)))
+        CusNavLink(doNavigate: $navigateToRating, destination: RateSellerView(sellerID: Int(sellerID) ?? 0, sellerImage: $profileImage, sellerName: .constant(name)))
         CusNavLink(doNavigate: $navigateToHome, destination: HomeViewScreen(showCategory: .constant(""), comeFromExploreScreen: .constant(false)))
         
     }

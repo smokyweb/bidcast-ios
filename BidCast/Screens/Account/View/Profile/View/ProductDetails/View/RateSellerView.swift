@@ -160,6 +160,9 @@ struct RateSellerView: View {
                 .padding(.bottom, 40)
             }
         }
+        .onAppear(perform: {
+            print("Seller Proofile image: \(sellerImage)")
+        })
         .ignoresSafeArea(edges: .bottom) // Optional
         .background(Color(.systemBackground))
 //        CusNavLink(doNavigate: $navigateToProfile, destination: ProfileScreen(id:$userId, sellerID: "\($sellerID)", isComeFrom: .constant(""),userName: $userName,userImage: $userImage))
