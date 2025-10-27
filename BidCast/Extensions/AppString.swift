@@ -90,7 +90,7 @@ struct AppString{
     static let Username = "Username".localized
     static let EnterUserName = "Enter User Name".localized
     static let Bio = "Bio".localized
-    static let TellUsAboutYourself = "Tell us about yourself".localized
+    static let TellUsAboutYourself = "Tell us about yourself"
     static let Update = "Update".localized
     static let PleaseUploadYourProfileImage = "Please upload your profile image".localized
     static let  PleaseEnterYourFirstName = "Please enter your first name".localized

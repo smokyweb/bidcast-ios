@@ -188,7 +188,7 @@ struct CompleteProfileScreen: View {
                     AuthTextField(
                         floatingLabel: AppString.email.localized,
                         placeholder: AppString.enterEmail.localized,
-                        icon: .menuProfile,
+                        icon: .icMail,
                         text: $email,
                         enteredText: { value in
                            
@@ -200,13 +200,17 @@ struct CompleteProfileScreen: View {
                     
                     AuthTextField(
                         floatingLabel: AppString.Bio.localized,
-                        placeholder: AppString.TellUsAboutYourself,
+                        placeholder: AppString.TellUsAboutYourself.localized,
                         icon: .icMail,
                         text: $request.bio,
+                        isIconDisplay: false,
+                        isForDescription: true,
                         enteredText: { value in
                             request.bio = value
                         }
                     )
+                    .frame(minHeight: 120, maxHeight: 200)
+                    .padding(.bottom, 10)
                     .keyboardType(.default)
                     
                     PrimaryButton(title: AppString.Update.localized, isOutLine: false, onButtonClick: {
