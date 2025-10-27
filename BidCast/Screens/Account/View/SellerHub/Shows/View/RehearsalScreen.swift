@@ -1166,9 +1166,9 @@ struct RehearsalScreen: View {
             if action == .switchView {
                 isUsingFrontCamera.toggle()
                 //                ZegoExpressEngine.shared().useFrontCamera(isUsingFrontCamera)
-//                Task{
-//                    await castManager.switchCamera()
-//                }
+                Task{
+                    await castManager.switchCamera()
+                }
             } else {
                 currentBottomSheet = action
                 showSellSheet = true

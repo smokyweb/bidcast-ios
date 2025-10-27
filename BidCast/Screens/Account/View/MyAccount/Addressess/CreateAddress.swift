@@ -248,7 +248,6 @@ struct CreateAddress: View {
                 if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
                     showError = true
                 }else{
-                    
                     showError = false
                 }
             }

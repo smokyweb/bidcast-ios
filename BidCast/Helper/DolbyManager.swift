@@ -108,7 +108,7 @@ class PublisherViewModel: ObservableObject {
     }
     
     // MARK: - Controls
-//    @MainActor
+//    @MainActor // original code -> with lag 18 Secs
     func switchCamera() {
         guard let current = currentVideoSource, videoSources.count > 1 else { return }
 
@@ -129,7 +129,28 @@ class PublisherViewModel: ObservableObject {
         print("Is front camera? \(isFrontCamera)")
     }
     
-  
+    //working without lag
+    func switchCamera1() {
+        Task { @MainActor in
+            // Capture the necessary references safely on main actor
+            guard let current = self.currentVideoSource, self.videoSources.count > 1 else { return }
+            guard let currentIndex = self.videoSources.firstIndex(where: { $0.getUniqueId() == current.getUniqueId() }) else { return }
+            let nextIndex = currentIndex == 0 ? 1 : 0
+            let nextSource = self.videoSources[nextIndex]
+
+            // Perform the heavy camera switch off the main actor
+            await Task.detached(priority: .userInitiated) {
+                current.change(true) // SDK call that takes time
+                
+                // Update front/back flag back on main actor
+                let name = nextSource.getName() ?? ""
+                await MainActor.run {
+                    self.isFrontCamera = name.lowercased().contains("front")
+                    print("Camera switched to: \(name), front? \(self.isFrontCamera)")
+                }
+            }.value
+        }
+    }
     
     func toggleAudioMute() {
         guard let audioTrack = audioTrack else { return }
@@ -137,6 +158,180 @@ class PublisherViewModel: ObservableObject {
             audioTrack.enable(!isAudioMuted)
     }
 }
+
+//class PublisherViewModel: ObservableObject {
+//    var renderer: MCVideoRenderer
+//    var publisher = MCPublisher()
+//    private var currentVideoSource: MCVideoSource?
+//    private var videoSources: [MCVideoSource] = []
+//    
+//    var videoTrack: MCVideoTrack?
+//    var audioTrack: MCAudioTrack?
+//    
+//    @Published var isFrontCamera = true
+//    @Published private(set) var isPublishing = false
+//    @Published private(set) var isAudioMuted = false
+//    @Published private(set) var isVideoMuted = false
+//    
+//    init(renderer: MCVideoRenderer) {
+//        self.renderer = renderer
+//    }
+//    
+//    // MARK: - Preview
+//    func startPreview() {
+//        Task { @MainActor in
+//            do {
+//                // Audio session setup
+//                let audioSession = AVAudioSession.sharedInstance()
+//                try audioSession.setCategory(.playAndRecord, mode: .default)
+//                try audioSession.setActive(true)
+//                
+//                // Get video sources (background)
+//                let sources = await Task.detached { MCMedia.getVideoSources() }.value
+//                guard let videoSource = sources.last else {
+//                    throw NSError(domain: "PreviewError", code: 1, userInfo: [NSLocalizedDescriptionKey: "No video sources available"])
+//                }
+//                
+//                self.videoSources = sources
+//                self.currentVideoSource = videoSource
+//                
+//                // Set capability
+//                if let cap = videoSource.getCapabilities().first(where: { $0.width <= 1920 && $0.height <= 1080 }) {
+//                    videoSource.setCapability(cap)
+//                }
+//                
+//                // Start capture (background)
+//                guard let track = await Task.detached(priority: .userInitiated) { videoSource.startCapture() as? MCVideoTrack }.value else {
+//                    throw NSError(domain: "PreviewError", code: 2, userInfo: [NSLocalizedDescriptionKey: "Failed to start video capture"])
+//                }
+//                
+//                // Add renderer (main actor)
+//                await MainActor.run {
+//                    track.add(self.renderer)
+//                    self.videoTrack = track
+//                }
+//                
+//            } catch {
+//                print("Preview error:", error.localizedDescription)
+//            }
+//        }
+//    }
+//    
+//    // MARK: - Publish
+//    func publish(streamName: String) {
+//        Task { @MainActor in
+//            do {
+//                guard let videoTrack = self.videoTrack else {
+//                    throw NSError(domain: "PublishError", code: 3, userInfo: [NSLocalizedDescriptionKey: "Video track not ready"])
+//                }
+//                
+//                // Get audio track (background)
+//                let audioTrack: MCAudioTrack? = try await Task.detached(priority: .userInitiated) {
+//                    let audioSources = MCMedia.getAudioSources()
+//                    guard let audioSource = audioSources.first else { return nil }
+//                    return audioSource.startCapture() as? MCAudioTrack
+//                }.value
+//                
+//                guard let audioTrack else {
+//                    throw NSError(domain: "PublishError", code: 4, userInfo: [NSLocalizedDescriptionKey: "Audio source not available"])
+//                }
+//                
+//                self.audioTrack = audioTrack
+//                
+//                // Set publisher credentials
+//                let creds = MCPublisherCredentials()
+//                creds.streamName = streamName
+//                creds.token = "3355b11d1201319117ffc14cef3f55ffe9c1054651735e8a03b0d09608a4127e"
+//                creds.apiUrl = "https://director.millicast.com/api/director/publish"
+//                
+//                try await publisher.setCredentials(creds)
+//                
+//                // Add tracks (main actor)
+//                await publisher.addTrack(with: videoTrack)
+//                await publisher.addTrack(with: audioTrack)
+//                
+//                // Publisher options
+//                let publisherOptions = MCClientOptions()
+//                publisherOptions.recordStream = true
+//                
+//                // Connect and publish (background)
+//                try await Task.detached(priority: .userInitiated) {
+//                    try await self.publisher.connect()
+//                    try await self.publisher.publish(with: publisherOptions)
+//                }.value
+//                
+//                await MainActor.run {
+//                    self.isPublishing = true
+//                }
+//            } catch {
+//                print("Publish error:", error.localizedDescription)
+//            }
+//        }
+//    }
+//    
+//    // MARK: - Unpublish
+//    func unpublish() {
+//        Task { @MainActor in
+//            do {
+//                try await Task.detached(priority: .userInitiated) {
+//                    try await self.publisher.unpublish()
+//                    try await self.publisher.disconnect()
+//                }.value
+//                
+//                await MainActor.run {
+//                    self.videoTrack = nil
+//                    self.audioTrack = nil
+//                    self.isPublishing = false
+//                }
+//            } catch {
+//                print("Unpublish error:", error.localizedDescription)
+//            }
+//        }
+//    }
+//    
+//    // MARK: - Controls
+//    func switchCamera() {
+//        Task { @MainActor in
+//            // Capture the necessary references safely on main actor
+//            guard let current = self.currentVideoSource, self.videoSources.count > 1 else { return }
+//            guard let currentIndex = self.videoSources.firstIndex(where: { $0.getUniqueId() == current.getUniqueId() }) else { return }
+//            let nextIndex = currentIndex == 0 ? 1 : 0
+//            let nextSource = self.videoSources[nextIndex]
+//            
+//            // Perform the heavy camera switch off the main actor
+//            await Task.detached(priority: .userInitiated) {
+//                current.change(true) // SDK call that takes time
+//                
+//                // Update front/back flag back on main actor
+//                let name = nextSource.getName() ?? ""
+//                await MainActor.run {
+//                    self.isFrontCamera = name.lowercased().contains("front")
+//                    print("Camera switched to: \(name), front? \(self.isFrontCamera)")
+//                }
+//            }.value
+//        }
+//    }
+//    
+//    func toggleAudioMute() {
+//        Task { @MainActor in
+//            guard let audioTrack = self.audioTrack else { return }
+//            
+//            // Toggle state (main actor)
+//            self.isAudioMuted.toggle()
+//            
+//            // Heavy SDK call (background)
+//            await Task.detached(priority: .userInitiated) {
+//                await audioTrack.enable(!self.isAudioMuted)
+//            }.value
+//        }
+//    }
+//    
+//    func toggleAudioMute1() {
+//        guard let audioTrack = audioTrack else { return }
+//        isAudioMuted.toggle()
+//            audioTrack.enable(!isAudioMuted)
+//    }
+//}
 
 
 @MainActor
