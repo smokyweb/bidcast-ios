@@ -184,7 +184,7 @@ struct ListProductScreen: View {
                             custCategory : robotoRegular,
                             custCategorySize : 13.0,
                             onOptionSelected: { value in
-                                selectedCategory = value
+//                                selectedCategory = value
 //                                if let id = categoryList.first(where: { $0.name == value })?.id {
 //                                    request.mail_class = "\(id)"
 //                                } else {
@@ -205,7 +205,7 @@ struct ListProductScreen: View {
                             custCategory : robotoRegular,
                             custCategorySize : 13.0,
                             onOptionSelected: { value in
-                                selectedCategory = value
+//                                selectedCategory = value
 //                                if let id = categoryList.first(where: { $0.name == value })?.id {
                                     request.processing_category = value
 //                                } else {
@@ -578,7 +578,7 @@ struct ListProductScreen: View {
                             }
                         }
                     }, height: 45, firstBtnTitleColor: .darkGray, secBtnTitleColor: .white, firstBtnBgColor: .white, secBtnBgColor:.darkBlue)
-
+                    .padding(.horizontal,12)
                 }
 //                .edgesIgnoringSafeArea(.top)
                 .padding(.all,0)
@@ -639,6 +639,7 @@ struct ListProductScreen: View {
 //            .padding([.leading,.trailing],12)
         }
 //        .edgesIgnoringSafeArea(.top/)
+        .padding(.horizontal,12)
         .background(.bg.opacity(0.4))
         .onFirstAppear(perform: {
             Task{

@@ -183,7 +183,7 @@ struct CreateProductScreen: View {
                             custCategory : robotoRegular,
                             custCategorySize : 13.0,
                             onOptionSelected: { value in
-                                selectedCategory = value
+//                                selectedCategory = value
 //                                if let id = categoryList.first(where: { $0.name == value })?.id {
 //                                    request.mail_class = "\(id)"
 //                                } else {
@@ -204,7 +204,7 @@ struct CreateProductScreen: View {
                             custCategory : robotoRegular,
                             custCategorySize : 13.0,
                             onOptionSelected: { value in
-                                selectedCategory = value
+//                                selectedCategory = value
 //                                if let id = categoryList.first(where: { $0.name == value })?.id {
                                     request.processing_category = value
 //                                } else {
@@ -216,7 +216,7 @@ struct CreateProductScreen: View {
                         .padding([.leading,.trailing],16)
                         .background(.clear)
                         // Quantity Selector
-                        HStack(spacing: 16) {
+                        HStack(spacing: 6) {
                             Button(action: {
                                 if quantity > 1 {
                                     quantity -= 1
@@ -330,11 +330,11 @@ struct CreateProductScreen: View {
                         
                     }, height: 45, firstBtnTitleColor: .darkGray, secBtnTitleColor: .white, firstBtnBgColor: .white, secBtnBgColor:.darkBlue)
                     .padding(.horizontal,12)
-
+                    .padding(.bottom, 16)
                 }
 //                .edgesIgnoringSafeArea(.top)
                 .padding(.horizontal,12)
-                .ignoresSafeArea(.container, edges: .bottom)
+//                .ignoresSafeArea(.all, edges: .bottom)
                 .background(.bg.opacity(0.5))
                 
                 .bottomSheet(

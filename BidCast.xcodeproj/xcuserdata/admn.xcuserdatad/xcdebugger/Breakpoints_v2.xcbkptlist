@@ -210,6 +210,36 @@
             endingLineNumber = "173"
             landmarkName = "fetchOrders(for:)"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "6C25CCDB-C1BB-487C-B8B0-BEB550DE5686 - 662a158b55811ab8"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for closure #1 () async -&gt; () in BidCast.MyOrdersScreen.fetchOrders(for: BidCast.MyOrderValue) -&gt; ()"
+                  moduleName = "BidCast.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/admn/Documents/JamProject/bidcast/BidCast/Screens/Account/View/SellerHub/MyOrders/View/MyOrdersScreen.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "173"
+                  endingLineNumber = "173">
+               </Location>
+               <Location
+                  uuid = "6C25CCDB-C1BB-487C-B8B0-BEB550DE5686 - 363ebf34fa948973"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(2) await resume partial function for closure #1 () async -&gt; () in BidCast.MyOrdersScreen.fetchOrders(for: BidCast.MyOrderValue) -&gt; ()"
+                  moduleName = "BidCast.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/admn/Documents/JamProject/bidcast/BidCast/Screens/Account/View/SellerHub/MyOrders/View/MyOrdersScreen.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "173"
+                  endingLineNumber = "173">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -418,6 +448,36 @@
             endingLineNumber = "273"
             landmarkName = "body"
             landmarkType = "24">
+            <Locations>
+               <Location
+                  uuid = "DAB508B1-4B94-4F63-AB99-78BE24CFD095 - e8e32e71b1cc0580"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 () -&gt; () in closure #4 () -&gt; BidCast.CommonBottomSheet in BidCast.CreateAddress.body.getter : some"
+                  moduleName = "BidCast.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/admn/Documents/JamProject/bidcast/BidCast/Screens/Account/View/MyAccount/Addressess/CreateAddress.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "273"
+                  endingLineNumber = "273">
+               </Location>
+               <Location
+                  uuid = "DAB508B1-4B94-4F63-AB99-78BE24CFD095 - 162fb9ea40f9e6d8"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; () in closure #2 () -&gt; () in closure #4 () -&gt; BidCast.CommonBottomSheet in BidCast.CreateAddress.body.getter : some"
+                  moduleName = "BidCast.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/admn/Documents/JamProject/bidcast/BidCast/Screens/Account/View/MyAccount/Addressess/CreateAddress.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "273"
+                  endingLineNumber = "273">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -434,6 +494,36 @@
             endingLineNumber = "264"
             landmarkName = "body"
             landmarkType = "24">
+            <Locations>
+               <Location
+                  uuid = "30891CBD-62F1-47E3-A80E-42EE54491E6D - 6b15456a7234909b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; () in closure #4 () -&gt; BidCast.CommonBottomSheet in BidCast.CreateAddress.body.getter : some"
+                  moduleName = "BidCast.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/admn/Documents/JamProject/bidcast/BidCast/Screens/Account/View/MyAccount/Addressess/CreateAddress.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "265"
+                  endingLineNumber = "265">
+               </Location>
+               <Location
+                  uuid = "30891CBD-62F1-47E3-A80E-42EE54491E6D - 8e287265593c2bd1"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 () -&gt; () in closure #1 () -&gt; () in closure #4 () -&gt; BidCast.CommonBottomSheet in BidCast.CreateAddress.body.getter : some"
+                  moduleName = "BidCast.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/admn/Documents/JamProject/bidcast/BidCast/Screens/Account/View/MyAccount/Addressess/CreateAddress.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "265"
+                  endingLineNumber = "265">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -512,6 +602,22 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "563"
             endingLineNumber = "563"
+            landmarkName = "body"
+            landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "E2F1A5B2-7193-4031-B256-6785E5718A82"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BidCast/Screens/NonLinkedSceen/CreateProduct/CreateProductScreen.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "112"
+            endingLineNumber = "112"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>

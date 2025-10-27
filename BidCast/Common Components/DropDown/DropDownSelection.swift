@@ -50,13 +50,13 @@ struct DropDownSelection: View {
                         .font(.custom(custCategory, fixedSize: custCategorySize))
                         .foregroundStyle(selected == "" ? .gray : .text)
                     Spacer()
-                    Image(.arrowForward)
+                    Image(systemName: "arrowtriangle.down.fill")
                         .renderingMode(.template)
                         .resizable()
                         .scaledToFill()
                         .frame(width: 16, height: 16)
                         .foregroundStyle(.text)
-                        .rotationEffect(.degrees(showOption ? 0 : -90))
+                        .rotationEffect(.degrees(showOption ? 0 : -180))
                 }
                 .padding(.horizontal, 16)
                 .frame(height: 50)
@@ -66,7 +66,7 @@ struct DropDownSelection: View {
                 .onTapGesture {
                     index += 1
                     zIndex = index
-                    withAnimation(.easeInOut(duration: 0.15)) {
+                    withAnimation(.easeInOut(duration: 0.3)) {
                         showOption.toggle()
                     }
                     
