@@ -16,18 +16,14 @@ struct ReviewModel: Identifiable {
 
 struct ReviewCard: View {
     var username: String
-    var profileImage: Image
+    @Binding var profileImage: String
     var rating: Double
     var comment: String? = nil
 
     var body: some View {
-        HStack(alignment: .top, spacing: 12) {
+        HStack(alignment: .center, spacing: 12) {
             // 1. Profile image
-            profileImage
-                .resizable()
-                .scaledToFill()
-                .frame(width: 48, height: 48)
-                .clipShape(Circle())
+            CustomProfileImage(url: profileImage, isCircular: true, size: 70)
 
             // 2. Labels + Rating
             VStack(alignment: .leading, spacing: 4) {
