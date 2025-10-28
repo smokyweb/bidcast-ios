@@ -335,7 +335,7 @@ struct CreateProductScreen: View {
 //                .edgesIgnoringSafeArea(.top)
                 .padding(.horizontal,12)
 //                .ignoresSafeArea(.all, edges: .bottom)
-                .background(.bg.opacity(0.5))
+//                .background(.bg.opacity(0.5))
                 
                 .bottomSheet(
                     isPresented: $showSubCategorySheet,

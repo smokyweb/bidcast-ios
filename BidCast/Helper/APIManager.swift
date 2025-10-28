@@ -73,8 +73,10 @@ final class APIManager {
         
         let config = URLSessionConfiguration.default
         config.waitsForConnectivity = true
-        config.timeoutIntervalForResource = 120
-        
+        config.timeoutIntervalForRequest = 20
+        config.timeoutIntervalForResource = 40
+        config.requestCachePolicy = .useProtocolCachePolicy
+        config.httpShouldUsePipelining = true
         
         let (data, response) = try await URLSession(configuration: config).data(for: request)
         
@@ -218,6 +220,10 @@ final class APIManager {
         
         let config = URLSessionConfiguration.default
         config.waitsForConnectivity = true
+        config.timeoutIntervalForRequest = 20
+        config.timeoutIntervalForResource = 40
+        config.requestCachePolicy = .useProtocolCachePolicy
+        config.httpShouldUsePipelining = true
         
         let (data, response) = try await URLSession(configuration: config).data(for: request)
 //        print(response)
@@ -324,7 +330,7 @@ final class APIManager {
     
     
     
-    func topMostViewController() -> UIViewController? {
+    private func topMostViewController() -> UIViewController? {
         guard let rootVC = UIApplication.shared.windows.first(where: { $0.isKeyWindow })?.rootViewController else {
             return nil
         }
@@ -333,220 +339,6 @@ final class APIManager {
             topVC = presentedVC
         }
         return topVC
-    }
-    
-    
-    func uploadMedia<T: Decodable>(
-        type: EndPointType,
-        urlArray: String,
-        mimeType: String,
-        parameters: [String: Any],
-        modelType: T.Type,
-        header: Bool
-    ) async throws -> T {
-        
-        // ✅ Build URL
-        guard let url = type.url else { throw DataError.invalidURL }
-        var request = URLRequest(url: url)
-        request.httpMethod = type.method.rawValue
-
-        // ✅ Prepare boundary and media
-        let boundary = generateBoundary()
-        guard let media = MediaData1(withURL: urlArray, forKey: "media", mimeType: mimeType) else {
-            throw DataError.invalidData
-        }
-
-        // ✅ Headers
-        request.allHTTPHeaderFields = type.headers
-        if header {
-            request.allHTTPHeaderFields = [
-                "Authorization": "Bearer \(UserDefaults.accessToken)",
-                "Content-Type": "multipart/form-data; boundary=\(boundary)"
-                ,"timezone":"\(deviceTimeZone)","time_zone":"\(deviceTimeZone)"
-            ]
-        } else {
-            request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-        }
-
-        // ✅ Body
-        request.httpBody = createDataBody1(withParameters: parameters, media: media, boundary: boundary)
-
-        print("Upload URL: \(url)")
-        print("METHOD: \(type.method.rawValue)")
-        print("HEADERS: \(request.allHTTPHeaderFields ?? [:])")
-
-        // ✅ Config
-        let config = URLSessionConfiguration.default
-        config.waitsForConnectivity = true
-        config.timeoutIntervalForResource = 120
-
-        // ✅ Perform request
-        let (data, response) = try await URLSession(configuration: config).data(for: request)
-        print("API Response >>> \n\(data.prettyPrintedJSONString ?? "")")
-
-        guard let httpResponse = response as? HTTPURLResponse,
-              200...299 ~= httpResponse.statusCode else {
-
-            // 🔑 Handle 401 Unauthorized
-            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 401 {
-                DispatchQueue.main.async {
-                    if UserDefaults.accessToken.isEmpty { return }
-                    if !APIManager.isShowingUnauthorizedAlert {
-                        APIManager.isShowingUnauthorizedAlert = true
-                        do {
-                            let dataObj = try JSONDecoder().decode(ApiError.self, from: data)
-                            if dataObj.error_type == "UNAUTHORIZED" || dataObj.error_type == "invalid_token" {
-                                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                                   let rootVC = windowScene.windows.first(where: { $0.isKeyWindow })?.rootViewController {
-                                    
-                                    let alert = UIAlertController(
-                                        title: "Session Expired",
-                                        message: dataObj.error_type == "UNAUTHORIZED"
-                                            ? "Your account has been logged in from another device"
-                                            : "Your account has been deleted or your session is no longer valid. Please log in again.",
-                                        preferredStyle: .alert
-                                    )
-                                    let loginAction = UIAlertAction(title: "Login", style: .default) { _ in
-                                        APIManager.isShowingUnauthorizedAlert = false
-                                        UserDefaults.accessToken = ""
-                                        rootVC.topMostViewController.dismiss(animated: true) {
-                                            NotificationCenter.default.post(name: .userSessionExpired, object: nil)
-                                        }
-                                    }
-                                    alert.addAction(loginAction)
-                                    rootVC.topMostViewController.present(alert, animated: true)
-                                }
-                            }
-                            return
-                        } catch {
-                            print("Failed to decode ApiError: \(error)")
-                            APIManager.isShowingUnauthorizedAlert = false
-                        }
-                    }
-                }
-            }
-
-            // 🔑 Parse other API errors
-            let dataObj = try JSONDecoder().decode(ApiError.self, from: data)
-            print(dataObj)
-            if let message = dataObj.message {
-                throw DataError.invalidCode(message)
-            } else if let errors = dataObj.errors {
-                if let emailError = errors.email { throw DataError.invalidCode(emailError) }
-                if let passwordError = errors.password { throw DataError.invalidCode(passwordError) }
-                throw DataError.invalidCode(nil)
-            } else {
-                throw DataError.invalidCode(nil)
-            }
-        }
-
-        // ✅ Decode success response
-        do {
-            let object = try JSONDecoder().decode(T.self, from: data)
-            return object
-        } catch {
-            print(error)
-            throw error
-        }
-    }
-
-    
-    func uploadFile<T: Decodable>(
-        type: EndPointType,
-        urlArray: String? = nil,
-        mimeType: String,
-        keyName: String,
-        parameters: [String: Any],
-        modelType: T.Type,
-        header: Bool,
-        completion: @escaping Handler<T>
-    ) {
-        print("Upload File API Request - - - - - - - - - - >>>>>")
-        
-        // Ensure the URL is valid
-        guard let url = type.url else {
-            completion(.failure(.invalidURL))
-            return
-        }
-        
-        print("URL >> \(url)")
-        
-        // Create request
-        var request = URLRequest(url: url)
-        request.httpMethod = type.method.rawValue
-        print("Method >> \(type.method.rawValue)")
-        
-        // Generate boundary for multipart/form-data
-        let boundary = generateBoundary()
-        request.allHTTPHeaderFields = type.headers ?? [:]
-        
-        // Set authorization header if needed
-        if header {
-            request.setValue("Bearer \(UserDefaults.accessToken)", forHTTPHeaderField: "Authorization")
-            request.allHTTPHeaderFields = [
-                "Authorization": "Bearer \(UserDefaults.accessToken)"
-                ,"timezone":"\(deviceTimeZone)","time_zone":"\(deviceTimeZone)"
-            ]
-        }
-        
-        request.setValue("application/json", forHTTPHeaderField: "Accept")
-        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-        
-        // Prepare media data
-        guard let media = MediaData1(withURL: urlArray, forKey: keyName, mimeType: mimeType) else {
-            completion(.failure(.invalidData))
-            return
-        }
-        
-        // Prepare body data
-        let dataBody: Data
-        if let urlArray = urlArray {
-            dataBody = createDataBody1(withParameters: parameters, media: media, boundary: boundary)
-        } else {
-            dataBody = createDataBody1(withParameters: parameters, boundary: boundary)
-        }
-        
-        request.httpBody = dataBody
-        print("Headers >>> \(request.allHTTPHeaderFields ?? [:])")
-        
-        // Configure URLSession
-        let config = URLSessionConfiguration.default
-        config.waitsForConnectivity = true
-        config.timeoutIntervalForResource = 120
-        
-        // Create data task
-        let task = URLSession(configuration: config).dataTask(with: request) { data, response, error in
-            // Handle error
-            if let error = error {
-                completion(.failure(.network(error)))
-                return
-            }
-            
-            // Ensure we have data
-            guard let data = data else {
-                completion(.failure(.invalidData))
-                return
-            }
-            
-            // Check for valid response
-            guard let response = response as? HTTPURLResponse else {
-                completion(.failure(.invalidResponse(data)))
-                return
-            }
-            
-            print("API Response >>> \n\(data.prettyPrintedJSONString ?? "")")
-            
-            // Decode the response
-            do {
-                let products = try JSONDecoder().decode(modelType, from: data)
-                completion(.success(products))
-            } catch {
-                completion(.failure(.invalidResponse(data)))
-            }
-        }
-        
-        // Start the task
-        task.resume()
     }
     
     
@@ -596,6 +388,11 @@ final class APIManager {
         // Execute request
         let config = URLSessionConfiguration.default
         config.waitsForConnectivity = true
+        config.timeoutIntervalForRequest = 20
+        config.timeoutIntervalForResource = 40
+        config.requestCachePolicy = .useProtocolCachePolicy
+        config.httpShouldUsePipelining = true
+        
         let (data, response) = try await URLSession(configuration: config).data(for: request)
         
         print("API Response >>> \n\(data.prettyPrintedJSONString ?? "")")
@@ -675,6 +472,10 @@ final class APIManager {
         
         let config = URLSessionConfiguration.default
         config.waitsForConnectivity = true
+        config.timeoutIntervalForRequest = 20
+        config.timeoutIntervalForResource = 40
+        config.requestCachePolicy = .useProtocolCachePolicy
+        config.httpShouldUsePipelining = true
         
         let (data, response) = try await URLSession(configuration: config).data(for: request)
         
@@ -756,8 +557,10 @@ final class APIManager {
         
         let config = URLSessionConfiguration.default
         config.waitsForConnectivity = true
+        config.timeoutIntervalForRequest = 20
         config.timeoutIntervalForResource = 300
-        
+        config.requestCachePolicy = .useProtocolCachePolicy
+        config.httpShouldUsePipelining = true
         let (data, response) = try await URLSession(configuration: config).data(for: request)
         
         print("API Response >>> \n\(data.prettyPrintedJSONString ?? "")")
@@ -785,106 +588,7 @@ final class APIManager {
         return try JSONDecoder().decode(T.self, from: data)
     }
     
-    
-    
-    func uploadImageWithMultipleKeys1<T: Decodable>(
-        type: EndPointType,
-        urlArray: [[String]]? = nil,
-        mimeType: [String],
-        keyName: [String],
-        parameters: [String: Any],
-        modelType: T.Type,
-        header: Bool,
-        completion: @escaping Handler<T>
-    ) {
-        print("Upload File API Request - - - - - - - - - - >>>>>")
-        guard let url = type.url else {
-            completion(.failure(.invalidURL))
-            return
-        }
-        print("URL >> \(url)")
-        var request = URLRequest(url: url)
-        request.httpMethod = type.method.rawValue
-        print("Method >> \(type.method.rawValue)")
-        
-        let boundary = generateBoundary()
-        
-        var media =  [MediaData1]()
-        
-        for (index,key) in keyName.enumerated()  {
-            urlArray?[index].forEach { url in
-                if url.contains("media") {
-                    guard let med = MediaData1(withURL:"\(url)", forKey: key, mimeType: mimeType[index]) else {
-                        return }
-                    media.append(med)
-                } else {
-                    guard let med = MediaData1(withURL: url, forKey: key, mimeType: mimeType[index]) else {
-                        return
-                    }
-                    
-                    media.append(med)
-                }
-            }
-        }
-        
-        print(media as Any)
-        
-        let params  = parameters
-        
-        print(params)
-        
-        request.allHTTPHeaderFields = type.headers
-        if header {
-            if header{
-                request.allHTTPHeaderFields = ["Authorization":"Bearer \(UserDefaults.accessToken)"]
-            }
-        }
-        
-        request.allHTTPHeaderFields = [
-            "Accept": "application/json",
-            "Content-Type": "multipart/form-data; boundary=\(boundary)"
-        ]
-        
-        print(media as Any)
-        
-        let dataBody = createDataBody1(withParameters: params, media: media, boundary: boundary)
-        
-        request.httpBody = dataBody
-        
-        print("Headers >>> \(request.allHTTPHeaderFields ?? [:])")
-        
-        print(request)
-        let config = URLSessionConfiguration.default
-        config.waitsForConnectivity = true
-        config.timeoutIntervalForResource = 120
-        
-        URLSession(configuration: config).dataTask(with: request) { data, response, error in
-            guard let data, error == nil else {
-                completion(.failure(.invalidData))
-                return
-            }
-            guard let response = response as? HTTPURLResponse,
-                  200 ... 599 ~= response.statusCode else {
-                do {
-                    let products = try JSONDecoder().decode(modelType, from: data)
-                    completion(.success(products))
-                }catch {
-                    completion(.failure(.invalidResponse(data)))
-                }
-                return
-            }
-            do {
-                print("API Response >>> \n\(data.prettyPrintedJSONString ?? "")")
-                let products = try JSONDecoder().decode(modelType, from: data)
-                completion(.success(products))
-            }catch {
-                completion(.failure(.network(error)))
-            }
-            
-        }.resume()
-    }
-    
-    func createDataBody1(withParameters params: [String: Any]?, media: [MediaData1]?, boundary: String) -> Data {
+    private func createDataBody1(withParameters params: [String: Any]?, media: [MediaData1]?, boundary: String) -> Data {
         
         let lineBreak = "\r\n"
         var body = Data()
@@ -913,7 +617,7 @@ final class APIManager {
     }
     
     
-    func createDataBody1(withParameters params: [String: Any]?, media: MediaData1? = nil, boundary: String) -> Data {
+    private func createDataBody1(withParameters params: [String: Any]?, media: MediaData1? = nil, boundary: String) -> Data {
         
         let lineBreak = "\r\n"
         var body = Data()
@@ -945,7 +649,7 @@ final class APIManager {
         return body
     }
     
-    func generateBoundary() -> String {
+    private func generateBoundary() -> String {
         return "Boundary-\(NSUUID().uuidString)"
     }
     
@@ -984,6 +688,329 @@ final class APIManager {
             }
         }
     }
+    
+    
+//    func uploadImageWithMultipleKeys1<T: Decodable>(
+//        type: EndPointType,
+//        urlArray: [[String]]? = nil,
+//        mimeType: [String],
+//        keyName: [String],
+//        parameters: [String: Any],
+//        modelType: T.Type,
+//        header: Bool,
+//        completion: @escaping Handler<T>
+//    ) {
+//        print("Upload File API Request - - - - - - - - - - >>>>>")
+//        guard let url = type.url else {
+//            completion(.failure(.invalidURL))
+//            return
+//        }
+//        print("URL >> \(url)")
+//        var request = URLRequest(url: url)
+//        request.httpMethod = type.method.rawValue
+//        print("Method >> \(type.method.rawValue)")
+//
+//        let boundary = generateBoundary()
+//
+//        var media =  [MediaData1]()
+//
+//        for (index,key) in keyName.enumerated()  {
+//            urlArray?[index].forEach { url in
+//                if url.contains("media") {
+//                    guard let med = MediaData1(withURL:"\(url)", forKey: key, mimeType: mimeType[index]) else {
+//                        return }
+//                    media.append(med)
+//                } else {
+//                    guard let med = MediaData1(withURL: url, forKey: key, mimeType: mimeType[index]) else {
+//                        return
+//                    }
+//
+//                    media.append(med)
+//                }
+//            }
+//        }
+//
+//        print(media as Any)
+//
+//        let params  = parameters
+//
+//        print(params)
+//
+//        request.allHTTPHeaderFields = type.headers
+//        if header {
+//            if header{
+//                request.allHTTPHeaderFields = ["Authorization":"Bearer \(UserDefaults.accessToken)"]
+//            }
+//        }
+//
+//        request.allHTTPHeaderFields = [
+//            "Accept": "application/json",
+//            "Content-Type": "multipart/form-data; boundary=\(boundary)"
+//        ]
+//
+//        print(media as Any)
+//
+//        let dataBody = createDataBody1(withParameters: params, media: media, boundary: boundary)
+//
+//        request.httpBody = dataBody
+//
+//        print("Headers >>> \(request.allHTTPHeaderFields ?? [:])")
+//
+//        print(request)
+////        let config = URLSessionConfiguration.default
+////        config.waitsForConnectivity = true
+////        config.timeoutIntervalForResource = 120
+//        let config = URLSessionConfiguration.default
+//        config.waitsForConnectivity = true
+//        config.timeoutIntervalForRequest = 20
+//        config.timeoutIntervalForResource = 40
+//        config.requestCachePolicy = .useProtocolCachePolicy
+//        config.httpShouldUsePipelining = true
+//
+//        URLSession(configuration: config).dataTask(with: request) { data, response, error in
+//            guard let data, error == nil else {
+//                completion(.failure(.invalidData))
+//                return
+//            }
+//            guard let response = response as? HTTPURLResponse,
+//                  200 ... 599 ~= response.statusCode else {
+//                do {
+//                    let products = try JSONDecoder().decode(modelType, from: data)
+//                    completion(.success(products))
+//                }catch {
+//                    completion(.failure(.invalidResponse(data)))
+//                }
+//                return
+//            }
+//            do {
+//                print("API Response >>> \n\(data.prettyPrintedJSONString ?? "")")
+//                let products = try JSONDecoder().decode(modelType, from: data)
+//                completion(.success(products))
+//            }catch {
+//                completion(.failure(.network(error)))
+//            }
+//
+//        }.resume()
+//    }
+    
+//    func uploadMedia<T: Decodable>(
+//        type: EndPointType,
+//        urlArray: String,
+//        mimeType: String,
+//        parameters: [String: Any],
+//        modelType: T.Type,
+//        header: Bool
+//    ) async throws -> T {
+//
+//        // ✅ Build URL
+//        guard let url = type.url else { throw DataError.invalidURL }
+//        var request = URLRequest(url: url)
+//        request.httpMethod = type.method.rawValue
+//
+//        // ✅ Prepare boundary and media
+//        let boundary = generateBoundary()
+//        guard let media = MediaData1(withURL: urlArray, forKey: "media", mimeType: mimeType) else {
+//            throw DataError.invalidData
+//        }
+//
+//        // ✅ Headers
+//        request.allHTTPHeaderFields = type.headers
+//        if header {
+//            request.allHTTPHeaderFields = [
+//                "Authorization": "Bearer \(UserDefaults.accessToken)",
+//                "Content-Type": "multipart/form-data; boundary=\(boundary)"
+//                ,"timezone":"\(deviceTimeZone)","time_zone":"\(deviceTimeZone)"
+//            ]
+//        } else {
+//            request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+//        }
+//
+//        // ✅ Body
+//        request.httpBody = createDataBody1(withParameters: parameters, media: media, boundary: boundary)
+//
+//        print("Upload URL: \(url)")
+//        print("METHOD: \(type.method.rawValue)")
+//        print("HEADERS: \(request.allHTTPHeaderFields ?? [:])")
+//
+//        // ✅ Config
+//        let config = URLSessionConfiguration.default
+//        config.waitsForConnectivity = true
+//        config.timeoutIntervalForRequest = 20
+//        config.timeoutIntervalForResource = 40
+//        config.requestCachePolicy = .useProtocolCachePolicy
+//        config.httpShouldUsePipelining = true
+//
+//        // ✅ Perform request
+//        let (data, response) = try await URLSession(configuration: config).data(for: request)
+//        print("API Response >>> \n\(data.prettyPrintedJSONString ?? "")")
+//
+//        guard let httpResponse = response as? HTTPURLResponse,
+//              200...299 ~= httpResponse.statusCode else {
+//
+//            // 🔑 Handle 401 Unauthorized
+//            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 401 {
+//                DispatchQueue.main.async {
+//                    if UserDefaults.accessToken.isEmpty { return }
+//                    if !APIManager.isShowingUnauthorizedAlert {
+//                        APIManager.isShowingUnauthorizedAlert = true
+//                        do {
+//                            let dataObj = try JSONDecoder().decode(ApiError.self, from: data)
+//                            if dataObj.error_type == "UNAUTHORIZED" || dataObj.error_type == "invalid_token" {
+//                                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+//                                   let rootVC = windowScene.windows.first(where: { $0.isKeyWindow })?.rootViewController {
+//
+//                                    let alert = UIAlertController(
+//                                        title: "Session Expired",
+//                                        message: dataObj.error_type == "UNAUTHORIZED"
+//                                            ? "Your account has been logged in from another device"
+//                                            : "Your account has been deleted or your session is no longer valid. Please log in again.",
+//                                        preferredStyle: .alert
+//                                    )
+//                                    let loginAction = UIAlertAction(title: "Login", style: .default) { _ in
+//                                        APIManager.isShowingUnauthorizedAlert = false
+//                                        UserDefaults.accessToken = ""
+//                                        rootVC.topMostViewController.dismiss(animated: true) {
+//                                            NotificationCenter.default.post(name: .userSessionExpired, object: nil)
+//                                        }
+//                                    }
+//                                    alert.addAction(loginAction)
+//                                    rootVC.topMostViewController.present(alert, animated: true)
+//                                }
+//                            }
+//                            return
+//                        } catch {
+//                            print("Failed to decode ApiError: \(error)")
+//                            APIManager.isShowingUnauthorizedAlert = false
+//                        }
+//                    }
+//                }
+//            }
+//
+//            // 🔑 Parse other API errors
+//            let dataObj = try JSONDecoder().decode(ApiError.self, from: data)
+//            print(dataObj)
+//            if let message = dataObj.message {
+//                throw DataError.invalidCode(message)
+//            } else if let errors = dataObj.errors {
+//                if let emailError = errors.email { throw DataError.invalidCode(emailError) }
+//                if let passwordError = errors.password { throw DataError.invalidCode(passwordError) }
+//                throw DataError.invalidCode(nil)
+//            } else {
+//                throw DataError.invalidCode(nil)
+//            }
+//        }
+//
+//        // ✅ Decode success response
+//        do {
+//            let object = try JSONDecoder().decode(T.self, from: data)
+//            return object
+//        } catch {
+//            print(error)
+//            throw error
+//        }
+//    }
+
+    
+//    func uploadFile<T: Decodable>(
+//        type: EndPointType,
+//        urlArray: String? = nil,
+//        mimeType: String,
+//        keyName: String,
+//        parameters: [String: Any],
+//        modelType: T.Type,
+//        header: Bool,
+//        completion: @escaping Handler<T>
+//    ) {
+//        print("Upload File API Request - - - - - - - - - - >>>>>")
+//
+//        // Ensure the URL is valid
+//        guard let url = type.url else {
+//            completion(.failure(.invalidURL))
+//            return
+//        }
+//
+//        print("URL >> \(url)")
+//
+//        // Create request
+//        var request = URLRequest(url: url)
+//        request.httpMethod = type.method.rawValue
+//        print("Method >> \(type.method.rawValue)")
+//
+//        // Generate boundary for multipart/form-data
+//        let boundary = generateBoundary()
+//        request.allHTTPHeaderFields = type.headers ?? [:]
+//
+//        // Set authorization header if needed
+//        if header {
+//            request.setValue("Bearer \(UserDefaults.accessToken)", forHTTPHeaderField: "Authorization")
+//            request.allHTTPHeaderFields = [
+//                "Authorization": "Bearer \(UserDefaults.accessToken)"
+//                ,"timezone":"\(deviceTimeZone)","time_zone":"\(deviceTimeZone)"
+//            ]
+//        }
+//
+//        request.setValue("application/json", forHTTPHeaderField: "Accept")
+//        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+//
+//        // Prepare media data
+//        guard let media = MediaData1(withURL: urlArray, forKey: keyName, mimeType: mimeType) else {
+//            completion(.failure(.invalidData))
+//            return
+//        }
+//
+//        // Prepare body data
+//        let dataBody: Data
+//        if let urlArray = urlArray {
+//            dataBody = createDataBody1(withParameters: parameters, media: media, boundary: boundary)
+//        } else {
+//            dataBody = createDataBody1(withParameters: parameters, boundary: boundary)
+//        }
+//
+//        request.httpBody = dataBody
+//        print("Headers >>> \(request.allHTTPHeaderFields ?? [:])")
+//
+//        // Configure URLSession
+//        let config = URLSessionConfiguration.default
+//        config.waitsForConnectivity = true
+//        config.timeoutIntervalForRequest = 20
+//        config.timeoutIntervalForResource = 40
+//        config.requestCachePolicy = .useProtocolCachePolicy
+//        config.httpShouldUsePipelining = true
+//
+//        // Create data task
+//        let task = URLSession(configuration: config).dataTask(with: request) { data, response, error in
+//            // Handle error
+//            if let error = error {
+//                completion(.failure(.network(error)))
+//                return
+//            }
+//
+//            // Ensure we have data
+//            guard let data = data else {
+//                completion(.failure(.invalidData))
+//                return
+//            }
+//
+//            // Check for valid response
+//            guard let response = response as? HTTPURLResponse else {
+//                completion(.failure(.invalidResponse(data)))
+//                return
+//            }
+//
+//            print("API Response >>> \n\(data.prettyPrintedJSONString ?? "")")
+//
+//            // Decode the response
+//            do {
+//                let products = try JSONDecoder().decode(modelType, from: data)
+//                completion(.success(products))
+//            } catch {
+//                completion(.failure(.invalidResponse(data)))
+//            }
+//        }
+//
+//        // Start the task
+//        task.resume()
+//    }
 }
 
 
