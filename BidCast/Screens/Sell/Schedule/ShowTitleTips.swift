@@ -27,6 +27,12 @@ struct ShowTitleTips: View {
     @State var hudMsg: String = ""
     @Binding var backToPrepare : Bool
     
+    @State private var titleCharCount: Int = 0
+    
+    @AppStorage("hasLoadedTitleTips") private var hasLoadedTitleTips = false
+    
+    private let maxTitleCharCount: Int = 100
+    
     var delegate: ShowStepDelegate?
     
     var body: some View {
@@ -48,10 +54,27 @@ struct ShowTitleTips: View {
             ScrollView(showsIndicators: false) {
                 VStack(alignment:.leading,spacing: 16) {
                     AuthTextField(floatingLabel: "Show Title".localized, placeholder: "Enter title".localized, icon: .alert, text:$title  ,isIconDisplay : false, enteredText:  { text in
-                        title = text
+                        // Limit input to 100 characters
+                        if text.count <= maxTitleCharCount {
+                            title = text
+                        } else {
+                            // Trim extra characters
+                            title = String(text.prefix(maxTitleCharCount))
+                        }
+                        titleCharCount = title.count
                     })
                     .keyboardType(.alphabet)
                     .padding([.leading,.trailing],-16)
+                    HStack{
+                        Spacer()
+                        Text("\(titleCharCount)/\(maxTitleCharCount)")
+                            .font(.custom(poppinsBold, fixedSize: 14))
+                            .fontWeight(.regular)
+                            .foregroundStyle(.gray)
+                    }
+                    .padding(.trailing, 16)
+                    .padding(.top, -10)
+                   
                     Text("Tips for a Great Title")
                         .font(.custom(poppinsBold, size: 16.0))
                     VStack(alignment:.leading,spacing: 24){
@@ -132,15 +155,19 @@ struct ShowTitleTips: View {
         .background(.bg.opacity(0.5))
         .toolbar(.hidden,for: .tabBar)
         .onAppear {
-            Task{
-               guard Reachability.isConnectedToNetwork() else {
+            Task {
+                guard !hasLoadedTitleTips else { return } // ✅ Skip if already loaded
+                
+                guard Reachability.isConnectedToNetwork() else {
                     hudMsg = "No Internet Connection"
                     showhud = true
                     return
                 }
+                
                 SVProgressHUD.show()
                 await viewModel.getTitleTips(param: TipParam(type: "title"))
                 await SVProgressHUD.dismiss()
+                hasLoadedTitleTips = true // ✅ Persist across app sessions
                 success()
             }
         }
