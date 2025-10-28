@@ -192,7 +192,7 @@ struct TimePickerView: View {
         VStack(alignment: .leading, spacing: 8) {
 
             LazyVGrid(columns: columns, spacing: 16) {
-                ForEach(filteredSlots(date: selectedDate), id: \.self) { time in
+                ForEach(filteredSlots(for: selectedDate), id: \.self) { time in
                     Button(action: {
                         onTImeSelected(time)
                         selectedTime = time
@@ -227,11 +227,20 @@ struct TimePickerView: View {
         return formatter.string(from: date)
     }
 
-    func filteredSlots(date : Date) -> [Date] {
-        let baseSlots = Self.generateTimeSlots(from: "09:00", to: "21:00", intervalMinutes: intervalMinutes)
+    func filteredSlots(for date : Date) -> [Date] {
+        
         let now = Date()
         let isToday = calendar.isDateInToday(date)
-
+        var baseSlots:[Date] = []
+        if !isToday {
+            baseSlots = Self.generateTimeSlots(from: "00:00", to: "23:00", intervalMinutes: intervalMinutes)
+        }
+        else {
+            let currentHour = currentHourStringWithTimeZone()
+            print(currentHour)
+            baseSlots = Self.generateTimeSlots(from: "\(currentHour)", to: "23:00", intervalMinutes: intervalMinutes)
+        }
+        
         return baseSlots.compactMap { baseSlot in
             let slotDateTime = calendar.date(
                 bySettingHour: calendar.component(.hour, from: baseSlot),
@@ -247,6 +256,16 @@ struct TimePickerView: View {
             }
         }
     }
+    
+    
+    func currentHourStringWithTimeZone() -> String {
+        let date = Date()
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:00"
+        formatter.timeZone = TimeZone.current  // 👈 ensures it uses the user's local timezone
+        return formatter.string(from: date)
+    }
+
 
     static func generateTimeSlots(from start: String, to end: String, intervalMinutes: Int) -> [Date] {
         let formatter = DateFormatter()
