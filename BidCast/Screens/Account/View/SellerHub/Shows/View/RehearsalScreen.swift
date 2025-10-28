@@ -78,6 +78,11 @@ struct RehearsalScreen: View {
     //    @State var renderer = MCAcceleratedVideoRenderer()
     @StateObject private var castManager = PublisherViewModel(renderer: MCAcceleratedVideoRenderer())
     @State private var renderer = MCAcceleratedVideoRenderer()
+    
+    @StateObject private var agoraManager = AgoraManager()
+    @State private var isHost = true
+    
+    
     var sheetHeight: CGFloat {
         switch currentBottomSheet {
         case .more: return screenHeight * 0.7
@@ -107,10 +112,28 @@ struct RehearsalScreen: View {
         GeometryReader { geometry in
             ZStack {
                 
-                MCVideoSwiftUIView(renderer: .accelerated(castManager.renderer as! MCAcceleratedVideoRenderer),scalingMode: .resize,mirror: castManager.isFrontCamera)
-                    .frame(width: geometry.size.width, height: geometry.size.height)
-                    .ignoresSafeArea()
-                    .background(Color.black)
+                if agoraManager.isJoined {
+                    
+                    if let _ = agoraManager.remoteUserId {
+                        VideoContainerView(uiView: agoraManager.remoteVideoView)
+                            .frame(width: geometry.size.width, height: geometry.size.height)
+                            .ignoresSafeArea()
+                            .background(Color.black)
+                    } else {
+                        VideoContainerView(uiView: agoraManager.localVideoView)
+                            .frame(width: geometry.size.width, height: geometry.size.height)
+                            .ignoresSafeArea()
+                            .background(Color.black)
+                    }
+                } else {
+                    Text("Not connected yet")
+                        .foregroundColor(.gray)
+                        .padding()
+                }
+//                MCVideoSwiftUIView(renderer: .accelerated(castManager.renderer as! MCAcceleratedVideoRenderer),scalingMode: .resize,mirror: castManager.isFrontCamera)
+//                    .frame(width: geometry.size.width, height: geometry.size.height)
+//                    .ignoresSafeArea()
+//                    .background(Color.black)
                 
                 VStack {
                     HStack {
@@ -268,7 +291,8 @@ struct RehearsalScreen: View {
                             Spacer()
                             Button(action: {
                                 isMicOn.toggle()
-                                castManager.toggleAudioMute()
+                                agoraManager.toggleAudioMute()
+//                                castManager.toggleAudioMute()
                                 //                                ZegoExpressEngine.shared().muteMicrophone(!isMicOn)
                             }) {
                                 VStack {
@@ -293,9 +317,10 @@ struct RehearsalScreen: View {
                             Button(action: {
                                 isUsingFrontCamera.toggle()
                                 //                                ZegoExpressEngine.shared().useFrontCamera(isUsingFrontCamera)
-                                Task{
-                                    await castManager.switchCamera()
-                                }
+                                agoraManager.switchCamera()
+//                                Task{
+//                                    await castManager.switchCamera()
+//                                }
                             }) {
                                 VStack {
                                     Image(.sSwitch)
@@ -561,16 +586,17 @@ struct RehearsalScreen: View {
                         onCreatePoll: { print("Create Poll") },
                         onRotateCamera: {
                             isUsingFrontCamera.toggle()
-                            
-                            Task{
-                                await castManager.switchCamera()
-                            }
+                            agoraManager.switchCamera()
+//                            Task{
+//                                await castManager.switchCamera()
+                                
+//                            }
                         },
                         onZoomIn: { print("Zoom In") },
                         onMicToggle: {
                             isMicOn.toggle()
-                          
-                            castManager.toggleAudioMute()
+                            agoraManager.toggleAudioMute()
+//                            castManager.toggleAudioMute()
                         },
                         onVerifiedBuyerToggle: { isOn in
                             let allowBidForAll = !isOn
@@ -729,13 +755,14 @@ struct RehearsalScreen: View {
         .onAppear {
             logoutRoom()
             showTopBadge = true
-            Task {
-                do {
-                    try await castManager.startPreview()
-                } catch {
-                    print("erro \(error.localizedDescription)")
-                }
-            }
+            agoraManager.joinChannel(asHost: isHost)
+//            Task {
+//                do {
+//                    try await castManager.startPreview()
+//                } catch {
+//                    print("erro \(error.localizedDescription)")
+//                }
+//            }
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                 if comeFromPrepare && !comeForLive{
                     showReadyModal = false
@@ -764,7 +791,6 @@ struct RehearsalScreen: View {
         .onDisappear {
             Task {
                 if castManager.isPublishing {
-                    try await castManager.unpublish()
                     self.endShow()
                 }
             }
@@ -969,7 +995,10 @@ struct RehearsalScreen: View {
     func endShow(){
         
         Task{
-            try await castManager.unpublish()
+//            try await castManager.unpublish()
+            if agoraManager.isJoined {
+                agoraManager.leaveChannel()
+            }
             SocketManagerService.shared.endStreaming(roomId: self.roomId)
             SocketManagerService.shared.stopLiveScheduler()
             self.comments.removeAll()
@@ -987,6 +1016,8 @@ struct RehearsalScreen: View {
         return
         
     }
+    
+    //this func is not calling
     func success(selectedID : String? = nil) {
         let response = viewModel.updateStatusRespone
         if response?.status == "success"{
@@ -998,7 +1029,8 @@ struct RehearsalScreen: View {
             self.roomId = roomId
             if data.is_live == false {
                 Task{
-                    try await castManager.unpublish()
+//                    try await castManager.unpublish()
+                    
                     self.comments.removeAll()
                     previewResetTrigger.toggle()
                     self.showLiveControls = false
@@ -1166,9 +1198,10 @@ struct RehearsalScreen: View {
             if action == .switchView {
                 isUsingFrontCamera.toggle()
                 //                ZegoExpressEngine.shared().useFrontCamera(isUsingFrontCamera)
-                Task{
-                    await castManager.switchCamera()
-                }
+//                Task{
+//                    await castManager.switchCamera()
+//                }
+                agoraManager.switchCamera()
             } else {
                 currentBottomSheet = action
                 showSellSheet = true
@@ -1198,7 +1231,8 @@ struct RehearsalScreen: View {
         Button(action: {
             if action == .switchView {
                 isUsingFrontCamera.toggle()
-                castManager.switchCamera()
+//                castManager.switchCamera()
+                agoraManager.switchCamera()
             } else {
                 currentBottomSheet = action
                 showSellSheet = true
@@ -1239,3 +1273,13 @@ enum SideMenu {
     case more, promote, clip, share, switchView, shop,endShow
 }
 
+
+struct VideoContainerView: UIViewRepresentable {
+    let uiView: UIView
+    
+    func makeUIView(context: Context) -> UIView {
+        uiView
+    }
+    
+    func updateUIView(_ uiView: UIView, context: Context) {}
+}

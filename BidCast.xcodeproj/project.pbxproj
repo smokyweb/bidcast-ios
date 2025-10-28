@@ -512,12 +512,16 @@
 		D4F2EA1D2EAA4410001CD4CB /* SellerScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4F2EA1C2EAA4410001CD4CB /* SellerScreen.swift */; };
 		D4F72B532DF96FE9008A6859 /* ShippingStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4F72B522DF96FE9008A6859 /* ShippingStepView.swift */; };
 		D4F72B552DF973F7008A6859 /* SummaryRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4F72B542DF973F7008A6859 /* SummaryRow.swift */; };
+		D613DBB02EB0A0D500521D42 /* RtcBasic in Frameworks */ = {isa = PBXBuildFile; productRef = D613DBAF2EB0A0D500521D42 /* RtcBasic */; };
+		D613DBB22EB0A0D500521D42 /* SpatialAudio in Frameworks */ = {isa = PBXBuildFile; productRef = D613DBB12EB0A0D500521D42 /* SpatialAudio */; };
+		D613DBB42EB0A0D500521D42 /* VirtualBackground in Frameworks */ = {isa = PBXBuildFile; productRef = D613DBB32EB0A0D500521D42 /* VirtualBackground */; };
 		D665316B2E9E3B5B00F19B94 /* ShimmerViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = D665316A2E9E3B5B00F19B94 /* ShimmerViewModifier.swift */; };
 		D66531752E9E79F400F19B94 /* DownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D66531742E9E79F400F19B94 /* DownloadManager.swift */; };
 		D67BA9A02EAF464B00C18882 /* BioView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67BA99F2EAF464B00C18882 /* BioView.swift */; };
 		D67DA9642E9D0A4A00ED6556 /* CurrentProductView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67DA9632E9D0A4A00ED6556 /* CurrentProductView.swift */; };
 		D67F64F92EA2316900C3017C /* SendTipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67F64F82EA2316900C3017C /* SendTipView.swift */; };
 		D68C53A32EA0B2DA008E175D /* KeyChainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68C53A22EA0B2DA008E175D /* KeyChainManager.swift */; };
+		D694B1BD2EB08C8200411242 /* AgoraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D694B1BC2EB08C8200411242 /* AgoraManager.swift */; };
 		D69528472E93CE990033EA7A /* ApplyPremierShopModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D69528462E93CE990033EA7A /* ApplyPremierShopModel.swift */; };
 		D6A8129C2E9F663400BE22AB /* CustomSearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6A8129B2E9F663400BE22AB /* CustomSearchBar.swift */; };
 		D6A812A02E9F787F00BE22AB /* SellerAnalyticsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6A8129D2E9F787F00BE22AB /* SellerAnalyticsModel.swift */; };
@@ -1027,6 +1031,7 @@
 		D67DA9632E9D0A4A00ED6556 /* CurrentProductView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentProductView.swift; sourceTree = "<group>"; };
 		D67F64F82EA2316900C3017C /* SendTipView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTipView.swift; sourceTree = "<group>"; };
 		D68C53A22EA0B2DA008E175D /* KeyChainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyChainManager.swift; sourceTree = "<group>"; };
+		D694B1BC2EB08C8200411242 /* AgoraManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgoraManager.swift; sourceTree = "<group>"; };
 		D69528462E93CE990033EA7A /* ApplyPremierShopModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplyPremierShopModel.swift; sourceTree = "<group>"; };
 		D6A8129B2E9F663400BE22AB /* CustomSearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSearchBar.swift; sourceTree = "<group>"; };
 		D6A8129D2E9F787F00BE22AB /* SellerAnalyticsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SellerAnalyticsModel.swift; sourceTree = "<group>"; };
@@ -1050,6 +1055,7 @@
 				D4848BA32E97E6C900DC8B85 /* Kingfisher in Frameworks */,
 				3504BCE32E000A3D0069182D /* FirebaseVertexAI in Frameworks */,
 				3504BCE12E000A3D0069182D /* FirebaseStorageCombine-Community in Frameworks */,
+				D613DBB42EB0A0D500521D42 /* VirtualBackground in Frameworks */,
 				3504BCC72E000A3D0069182D /* FirebaseDatabase in Frameworks */,
 				35246EC72E7ABA32009D7513 /* MillicastSDK in Frameworks */,
 				3504BCB72E000A3D0069182D /* FirebaseAnalyticsOnDeviceConversion in Frameworks */,
@@ -1063,6 +1069,7 @@
 				D4848BAA2E97E8A100DC8B85 /* StripeCardScan in Frameworks */,
 				3504BCC12E000A3D0069182D /* FirebaseAuthCombine-Community in Frameworks */,
 				D4848BA62E97E8A100DC8B85 /* Stripe in Frameworks */,
+				D613DBB02EB0A0D500521D42 /* RtcBasic in Frameworks */,
 				3504BCC52E000A3D0069182D /* FirebaseCrashlytics in Frameworks */,
 				35B44F212DD7152600FBCBC4 /* RichText in Frameworks */,
 				35B424A72E043D0E00626E02 /* ZIM in Frameworks */,
@@ -1075,6 +1082,7 @@
 				3504BCD72E000A3D0069182D /* FirebaseMLModelDownloader in Frameworks */,
 				354652692DF2EE5900EB353F /* SVProgressHUD in Frameworks */,
 				3504BCD92E000A3D0069182D /* FirebaseMessaging in Frameworks */,
+				D613DBB22EB0A0D500521D42 /* SpatialAudio in Frameworks */,
 				3504BCC92E000A3D0069182D /* FirebaseDynamicLinks in Frameworks */,
 				3504BCBF2E000A3D0069182D /* FirebaseAuth in Frameworks */,
 				3504BCB12E000A3D0069182D /* FirebaseAnalytics in Frameworks */,
@@ -2254,6 +2262,7 @@
 				3504BCE62E00418F0069182D /* ZegoManager.swift */,
 				35B424A32E04327500626E02 /* ZegoChat.swift */,
 				D4D2B91A2E30E783006F15E6 /* NetworkMonitor.swift */,
+				D694B1BC2EB08C8200411242 /* AgoraManager.swift */,
 				35246EC92E7ABBFB009D7513 /* DolbyManager.swift */,
 				D66531742E9E79F400F19B94 /* DownloadManager.swift */,
 				D68C53A22EA0B2DA008E175D /* KeyChainManager.swift */,
@@ -4136,6 +4145,9 @@
 				D4848BA92E97E8A100DC8B85 /* StripeCardScan */,
 				D4848BAB2E97E8A100DC8B85 /* StripeConnect */,
 				D4848BAD2E97E8A100DC8B85 /* StripeFinancialConnections */,
+				D613DBAF2EB0A0D500521D42 /* RtcBasic */,
+				D613DBB12EB0A0D500521D42 /* SpatialAudio */,
+				D613DBB32EB0A0D500521D42 /* VirtualBackground */,
 			);
 			productName = BidCast;
 			productReference = 99DF9E3F2DC4F35D008C15B2 /* BidCast.app */;
@@ -4234,6 +4246,7 @@
 				35246EC52E7ABA32009D7513 /* XCRemoteSwiftPackageReference "millicast-sdk-swift-package" */,
 				D4848BA12E97E6C900DC8B85 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				D4848BA42E97E8A100DC8B85 /* XCRemoteSwiftPackageReference "stripe-ios" */,
+				D613DBAE2EB0A0D500521D42 /* XCRemoteSwiftPackageReference "AgoraRtcEngine_iOS" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 99DF9E402DC4F35D008C15B2 /* Products */;
@@ -4710,6 +4723,7 @@
 				99C908302DC8CD6A0054620B /* NotificationCountView.swift in Sources */,
 				99C908312DC8CD6A0054620B /* NotificationListingCard.swift in Sources */,
 				D4CAEC3C2DE6DC6000705CD7 /* BenefitView.swift in Sources */,
+				D694B1BD2EB08C8200411242 /* AgoraManager.swift in Sources */,
 				3581D41D2DE0964C00BEAB88 /* AddressViewModel.swift in Sources */,
 				99C908322DC8CD6A0054620B /* CommonBottomSheet.swift in Sources */,
 				99C908332DC8CD6A0054620B /* DeleteJobSheet.swift in Sources */,
@@ -5280,6 +5294,14 @@
 				minimumVersion = 24.24.2;
 			};
 		};
+		D613DBAE2EB0A0D500521D42 /* XCRemoteSwiftPackageReference "AgoraRtcEngine_iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AgoraIO/AgoraRtcEngine_iOS.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.6.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -5507,6 +5529,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = D4848BA42E97E8A100DC8B85 /* XCRemoteSwiftPackageReference "stripe-ios" */;
 			productName = StripeFinancialConnections;
+		};
+		D613DBAF2EB0A0D500521D42 /* RtcBasic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D613DBAE2EB0A0D500521D42 /* XCRemoteSwiftPackageReference "AgoraRtcEngine_iOS" */;
+			productName = RtcBasic;
+		};
+		D613DBB12EB0A0D500521D42 /* SpatialAudio */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D613DBAE2EB0A0D500521D42 /* XCRemoteSwiftPackageReference "AgoraRtcEngine_iOS" */;
+			productName = SpatialAudio;
+		};
+		D613DBB32EB0A0D500521D42 /* VirtualBackground */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D613DBAE2EB0A0D500521D42 /* XCRemoteSwiftPackageReference "AgoraRtcEngine_iOS" */;
+			productName = VirtualBackground;
 		};
 /* End XCSwiftPackageProductDependency section */
 

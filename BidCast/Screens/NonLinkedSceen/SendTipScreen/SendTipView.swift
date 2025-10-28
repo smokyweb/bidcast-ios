@@ -2,7 +2,7 @@
 //  SendTipView.swift
 //  BidCast
 //
-//  Created by JamTech on 17/10/25.
+//  Created by Vivek_JAM-E_328 on 17/10/25.
 //
 
 import SwiftUI

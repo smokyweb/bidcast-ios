@@ -160,6 +160,9 @@ struct LiveStream: View {
     @State var productData = [ProductData]()
     @State var currentProductIndex = 0
     
+    @StateObject private var agoraManager = AgoraManager()
+    @State private var isHost = false
+    
     @Binding var category : String
     @Binding var search : String
     @Binding var currentPage : Int
@@ -167,12 +170,30 @@ struct LiveStream: View {
         GeometryReader { geometry in
             if liveShowsData.count != 0{
                 ZStack(alignment: .top) {
-                    if streamID.count != 0 {
-                    MCVideoSwiftUIView(renderer: .accelerated(joinManager.renderer as! MCAcceleratedVideoRenderer),scalingMode: .resize,mirror: true)
-                        .frame(width: geometry.size.width, height: geometry.size.height)
-                                   .ignoresSafeArea()
-                                   .background(Color.black)
+                    if agoraManager.isJoined {
+                        
+                        if let _ = agoraManager.remoteUserId {
+                            VideoContainerView(uiView: agoraManager.remoteVideoView)
+                                .frame(width: geometry.size.width, height: geometry.size.height)
+                                .ignoresSafeArea()
+                                .background(Color.black)
+                        } else {
+                            VideoContainerView(uiView: agoraManager.localVideoView)
+                                .frame(width: geometry.size.width, height: geometry.size.height)
+                                .ignoresSafeArea()
+                                .background(Color.black)
+                        }
+                    } else {
+                        Text("Not connected yet")
+                            .foregroundColor(.gray)
+                            .padding()
                     }
+//                    if streamID.count != 0 {
+//                    MCVideoSwiftUIView(renderer: .accelerated(joinManager.renderer as! MCAcceleratedVideoRenderer),scalingMode: .resize,mirror: true)
+//                        .frame(width: geometry.size.width, height: geometry.size.height)
+//                                   .ignoresSafeArea()
+//                                   .background(Color.black)
+//                    }
                     VStack {
                         HStack(spacing: 12) {
                             Button(action:{
@@ -931,7 +952,8 @@ struct LiveStream: View {
             // Join the room and send entry message
             Task {
                 
-                try await joinManager.subscribe(streamName: roomId)
+//                try await joinManager.subscribe(streamName: roomId)
+                agoraManager.joinChannel(asHost: isHost)
                 
 //              socketManagerChat.joinRoom(roomId: roomId, userId: UserDefaults.userId)
                 let userId = UserDefaults.userId

@@ -2,7 +2,7 @@
 //  SearchViewModel.swift
 //  BidCast
 //
-//  Created by JamTech on 18/10/25.
+//  Created by Vivek_JAM-E_328 on 18/10/25.
 //
 
 import Foundation

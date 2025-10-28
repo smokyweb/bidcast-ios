@@ -73,7 +73,7 @@ struct CreateProductScreen: View {
                         count: .constant(0)
                     )
                 }
-                ScrollView(showsIndicators:false){
+                ScrollView(showsIndicators:false) {
                     
                     MediaPickerView(uploadedImageUrls: $imageUrls)
                         .padding(.horizontal,12)
