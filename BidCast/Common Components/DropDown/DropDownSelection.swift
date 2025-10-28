@@ -33,6 +33,9 @@ struct DropDownSelection: View {
     @SceneStorage("drop_down_zindex") private var index = 1001.0
     @State private var zIndex = 1000.0
     
+    // Animate height
+    @State private var dropdownHeight: CGFloat = 0
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             if floatingLabel != "" {
@@ -44,13 +47,13 @@ struct DropDownSelection: View {
             
             ZStack(alignment: anchor == .top ? .bottom : .top) {
                 
-                // Main button
+                // Main Button
                 HStack {
                     Text(selected == "" ? hint : selected)
                         .font(.custom(custCategory, fixedSize: custCategorySize))
                         .foregroundStyle(selected == "" ? .gray : .text)
                     Spacer()
-                    Image(systemName: "arrowtriangle.down.fill")
+                    Image(.arrowForward)
                         .renderingMode(.template)
                         .resizable()
                         .scaledToFill()
@@ -66,22 +69,24 @@ struct DropDownSelection: View {
                 .onTapGesture {
                     index += 1
                     zIndex = index
-                    withAnimation(.easeInOut(duration: 0.3)) {
+                    withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
                         showOption.toggle()
+                        dropdownHeight = showOption ? calculateHeight() : 0
                     }
-                    
                 }
                 
-                // Dropdown Options (overlayed, never clipped)
-                if showOption {
+                // Dropdown Options with expanding height
+                if showOption || dropdownHeight > 0 {
                     optionView()
+                        .frame(height: dropdownHeight)
                         .background(Color.white)
                         .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
                         .shadow(radius: 1)
                         .padding(.top, anchor == .bottom ? 50 : 0)
                         .padding(.bottom, anchor == .top ? 50 : 0)
                         .zIndex(zIndex + 1)
-                        .transition(.move(edge: anchor == .top ? .bottom : .top))
+                        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: dropdownHeight)
+                        .transition(.scale(scale: 0.9, anchor: anchor == .top ? .bottom : .top).combined(with: .opacity))
                 }
             }
             .frame(width: maxWidth)
@@ -89,6 +94,7 @@ struct DropDownSelection: View {
         }
     }
     
+    // Option View
     @ViewBuilder
     func optionView() -> some View {
         ScrollView(showsIndicators: false) {
@@ -104,18 +110,26 @@ struct DropDownSelection: View {
                     }
                     .frame(height: 30)
                     .foregroundStyle(selected == ind ? Color.defaultTheme : .gray)
+                    .frame(maxWidth: .infinity)
+                    .contentShape(Rectangle())
+                    .background(Color.white)
                     .onTapGesture {
                         selected = ind
                         self.onOptionSelected?(selected)
-                        withAnimation(.easeOut(duration: 0.2)) {
+                        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
                             showOption = false
+                            dropdownHeight = 0
                         }
                     }
                 }
             }
             .padding(.horizontal)
         }
-        .frame(height: options.count > 3 ? 200 : CGFloat(options.count) * 42)
+    }
+    
+    // Helper for height calculation
+    func calculateHeight() -> CGFloat {
+        return options.count > 3 ? 200 : CGFloat(options.count) * 42
     }
     
     enum Anchor {
@@ -124,7 +138,3 @@ struct DropDownSelection: View {
     }
 }
 
-
-//#Preview {
-//    DropDownSelection(options: .constant([]))
-//}
