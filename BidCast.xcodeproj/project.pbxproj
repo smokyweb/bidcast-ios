@@ -515,6 +515,7 @@
 		D613DBB02EB0A0D500521D42 /* RtcBasic in Frameworks */ = {isa = PBXBuildFile; productRef = D613DBAF2EB0A0D500521D42 /* RtcBasic */; };
 		D613DBB22EB0A0D500521D42 /* SpatialAudio in Frameworks */ = {isa = PBXBuildFile; productRef = D613DBB12EB0A0D500521D42 /* SpatialAudio */; };
 		D613DBB42EB0A0D500521D42 /* VirtualBackground in Frameworks */ = {isa = PBXBuildFile; productRef = D613DBB32EB0A0D500521D42 /* VirtualBackground */; };
+		D613DBB62EB0F22000521D42 /* ImageCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D613DBB52EB0F22000521D42 /* ImageCacheManager.swift */; };
 		D665316B2E9E3B5B00F19B94 /* ShimmerViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = D665316A2E9E3B5B00F19B94 /* ShimmerViewModifier.swift */; };
 		D66531752E9E79F400F19B94 /* DownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D66531742E9E79F400F19B94 /* DownloadManager.swift */; };
 		D67BA9A02EAF464B00C18882 /* BioView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67BA99F2EAF464B00C18882 /* BioView.swift */; };
@@ -1025,6 +1026,7 @@
 		D4F2EA1C2EAA4410001CD4CB /* SellerScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SellerScreen.swift; sourceTree = "<group>"; };
 		D4F72B522DF96FE9008A6859 /* ShippingStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShippingStepView.swift; sourceTree = "<group>"; };
 		D4F72B542DF973F7008A6859 /* SummaryRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryRow.swift; sourceTree = "<group>"; };
+		D613DBB52EB0F22000521D42 /* ImageCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCacheManager.swift; sourceTree = "<group>"; };
 		D665316A2E9E3B5B00F19B94 /* ShimmerViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShimmerViewModifier.swift; sourceTree = "<group>"; };
 		D66531742E9E79F400F19B94 /* DownloadManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadManager.swift; sourceTree = "<group>"; };
 		D67BA99F2EAF464B00C18882 /* BioView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BioView.swift; sourceTree = "<group>"; };
@@ -2266,6 +2268,7 @@
 				35246EC92E7ABBFB009D7513 /* DolbyManager.swift */,
 				D66531742E9E79F400F19B94 /* DownloadManager.swift */,
 				D68C53A22EA0B2DA008E175D /* KeyChainManager.swift */,
+				D613DBB52EB0F22000521D42 /* ImageCacheManager.swift */,
 			);
 			path = Helper;
 			sourceTree = "<group>";
@@ -4719,6 +4722,7 @@
 				355AE9802DD1FC5600CD3D17 /* ActivityScreen.swift in Sources */,
 				3504BCE52E000A610069182D /* FireBase.swift in Sources */,
 				3546526E2DF2F51E00EB353F /* PaymentViewModel.swift in Sources */,
+				D613DBB62EB0F22000521D42 /* ImageCacheManager.swift in Sources */,
 				D4588AC62E20F68E0089B1A3 /* ReviewCard.swift in Sources */,
 				99C908302DC8CD6A0054620B /* NotificationCountView.swift in Sources */,
 				99C908312DC8CD6A0054620B /* NotificationListingCard.swift in Sources */,

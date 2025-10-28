@@ -29,7 +29,6 @@ struct ShowTitleTips: View {
     
     @State private var titleCharCount: Int = 0
     
-    @AppStorage("hasLoadedTitleTips") private var hasLoadedTitleTips = false
     
     private let maxTitleCharCount: Int = 100
     
@@ -83,7 +82,7 @@ struct ShowTitleTips: View {
                         VStack{
                             ForEach(tipsData.indices, id: \.self) { tip in
                                 let tips = tipsData[tip]
-                                TipsCardView(image:tips.icon ?? "" , title: tips.title ?? "", description: tips.description ?? "")
+                                TipsCardView(image:tips.icon ?? "" ,title: tips.title ?? "", description: tips.description ?? "")
                             }
                             
                         }
@@ -156,8 +155,6 @@ struct ShowTitleTips: View {
         .toolbar(.hidden,for: .tabBar)
         .onAppear {
             Task {
-                guard !hasLoadedTitleTips else { return } // ✅ Skip if already loaded
-                
                 guard Reachability.isConnectedToNetwork() else {
                     hudMsg = "No Internet Connection"
                     showhud = true
@@ -167,7 +164,6 @@ struct ShowTitleTips: View {
                 SVProgressHUD.show()
                 await viewModel.getTitleTips(param: TipParam(type: "title"))
                 await SVProgressHUD.dismiss()
-                hasLoadedTitleTips = true // ✅ Persist across app sessions
                 success()
             }
         }

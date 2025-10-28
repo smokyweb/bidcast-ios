@@ -170,24 +170,18 @@ struct LiveStream: View {
         GeometryReader { geometry in
             if liveShowsData.count != 0{
                 ZStack(alignment: .top) {
-                    if agoraManager.isJoined {
-                        
-                        if let _ = agoraManager.remoteUserId {
-                            VideoContainerView(uiView: agoraManager.remoteVideoView)
-                                .frame(width: geometry.size.width, height: geometry.size.height)
-                                .ignoresSafeArea()
-                                .background(Color.black)
-                        } else {
-                            VideoContainerView(uiView: agoraManager.localVideoView)
-                                .frame(width: geometry.size.width, height: geometry.size.height)
-                                .ignoresSafeArea()
-                                .background(Color.black)
-                        }
+                    if let _ = agoraManager.remoteUserId {
+                        VideoContainerView(uiView: agoraManager.remoteVideoView)
+                            .frame(width: geometry.size.width, height: geometry.size.height)
+                            .ignoresSafeArea()
+                            .background(Color.black)
                     } else {
-                        Text("Not connected yet")
-                            .foregroundColor(.gray)
-                            .padding()
+                        VideoContainerView(uiView: agoraManager.localVideoView)
+                            .frame(width: geometry.size.width, height: geometry.size.height)
+                            .ignoresSafeArea()
+                            .background(Color.black)
                     }
+                    
 //                    if streamID.count != 0 {
 //                    MCVideoSwiftUIView(renderer: .accelerated(joinManager.renderer as! MCAcceleratedVideoRenderer),scalingMode: .resize,mirror: true)
 //                        .frame(width: geometry.size.width, height: geometry.size.height)

@@ -25,6 +25,7 @@ struct TipsCardView: View {
                         .resizable()
                 }
             }
+//            CustomProfileImage(url:  URL(string: image)!)
             .frame(width: 24, height: 24)
             .clipShape(Circle())
             VStack(alignment: .leading, spacing: 6) {

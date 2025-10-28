@@ -13,7 +13,6 @@
 //
 
 import Foundation
-
 @MainActor
 final class ScheduleViewModel: ObservableObject {
     
@@ -27,9 +26,20 @@ final class ScheduleViewModel: ObservableObject {
     @Published var requestType: String = ""
     @Published var isStoreAPIDone = false
 
+    // MARK: - Cache flags (only for current app session)
+    private var hasLoadedLesson = false
+    private var hasLoadedSellingTips = false
+    private var hasLoadedHowToSell = false
+    private var hasLoadedShowTips = false
+    private var hasLoadedLetsPrepare = false
+    private var hasLoadedTitleTips = false
+
     // MARK: - Get Lessons
     func getLesson() async {
+        guard !hasLoadedLesson else { return }
+        hasLoadedLesson = true
         requestType = "lesson"
+        
         do {
             let response: ResponseModal<[LessonModel]> = try await APIManager.shared.request(
                 type: APIEndPoint.getLesson,
@@ -43,7 +53,10 @@ final class ScheduleViewModel: ObservableObject {
 
     // MARK: - Get Selling Tips
     func getSellingTips() async {
+        guard !hasLoadedSellingTips else { return }
+        hasLoadedSellingTips = true
         requestType = "sellingTips"
+        
         do {
             let response: ResponseModal<[LessonModel]> = try await APIManager.shared.request(
                 type: APIEndPoint.getSellingTips,
@@ -57,7 +70,10 @@ final class ScheduleViewModel: ObservableObject {
 
     // MARK: - Get How To Sell
     func getHowToSell() async {
+        guard !hasLoadedHowToSell else { return }
+        hasLoadedHowToSell = true
         requestType = "howToSell"
+        
         do {
             let response: ResponseModal<[LessonModel]> = try await APIManager.shared.request(
                 type: APIEndPoint.howToSell,
@@ -71,7 +87,10 @@ final class ScheduleViewModel: ObservableObject {
 
     // MARK: - Get Show Tips
     func getShowTips() async {
+        guard !hasLoadedShowTips else { return }
+        hasLoadedShowTips = true
         requestType = "showTips"
+        
         do {
             let response: ResponseModal<[LessonModel]> = try await APIManager.shared.request(
                 type: APIEndPoint.showTips,
@@ -85,7 +104,10 @@ final class ScheduleViewModel: ObservableObject {
 
     // MARK: - Get Let's Prepare
     func getLetsPrepare() async {
+        guard !hasLoadedLetsPrepare else { return }
+        hasLoadedLetsPrepare = true
         requestType = "letsPrepare"
+        
         do {
             let response: ResponseModal<[LessonModel]> = try await APIManager.shared.request(
                 type: APIEndPoint.letsPrepare,
@@ -99,7 +121,10 @@ final class ScheduleViewModel: ObservableObject {
 
     // MARK: - Get Title Tips
     func getTitleTips(param: TipParam) async {
+        guard !hasLoadedTitleTips else { return }
+        hasLoadedTitleTips = true
         requestType = "titleTips"
+        
         do {
             let response: ResponseModal<TitleTipsModel> = try await APIManager.shared.request(
                 type: APIEndPoint.getAllTips(param: param),
@@ -111,7 +136,9 @@ final class ScheduleViewModel: ObservableObject {
         }
     }
     
+    // MARK: - Get Product List
     func getProductList(parameters: UserProductRequest) async {
+        
         do {
             let response: ResponseModalPaginate<[ProductDataModel]> = try await APIManager.shared.request(
                 type: APIEndPoint.getUserProduct(param: parameters),
@@ -123,7 +150,9 @@ final class ScheduleViewModel: ObservableObject {
         }
     }
     
+    // MARK: - Get Product
     func getProduct(parameters: ProductRequest) async {
+        
         do {
             let response: ResponseModal<[ProductDataModel]> = try await APIManager.shared.request(
                 type: APIEndPoint.getProduct(param: parameters),
@@ -135,12 +164,12 @@ final class ScheduleViewModel: ObservableObject {
         }
     }
     
+    // MARK: - Store Schedule Show
     func storeScheduleShow(param: StoreScheduleShowRequest, images: [String], key: String) async {
         self.requestType = "store"
         
         do {
             let parameters = try param.asDictionary()
-
             let response: ResponseModal<HomeModel> = try await APIManager.shared.uploadImage(
                 type: APIEndPoint.storeScheduleShow(param: param),
                 urlArray: images,
@@ -150,18 +179,14 @@ final class ScheduleViewModel: ObservableObject {
                 modalType: ResponseModal<HomeModel>.self,
                 header: true
             )
-            
             self.storeShowResponse = response
-            
         } catch {
             handle(error: error)
         }
     }
 
-    
-    
     // MARK: - Centralized Error Handler
-     func handle(error: Error) {
+    func handle(error: Error) {
         if let dataError = error as? DataError {
             switch dataError {
             case .invalidCode(let message):

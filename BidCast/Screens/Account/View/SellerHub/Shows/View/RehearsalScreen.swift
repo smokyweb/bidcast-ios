@@ -112,24 +112,18 @@ struct RehearsalScreen: View {
         GeometryReader { geometry in
             ZStack {
                 
-                if agoraManager.isJoined {
-                    
-                    if let _ = agoraManager.remoteUserId {
-                        VideoContainerView(uiView: agoraManager.remoteVideoView)
-                            .frame(width: geometry.size.width, height: geometry.size.height)
-                            .ignoresSafeArea()
-                            .background(Color.black)
-                    } else {
-                        VideoContainerView(uiView: agoraManager.localVideoView)
-                            .frame(width: geometry.size.width, height: geometry.size.height)
-                            .ignoresSafeArea()
-                            .background(Color.black)
-                    }
+                if let _ = agoraManager.remoteUserId {
+                    VideoContainerView(uiView: agoraManager.remoteVideoView)
+                        .frame(width: geometry.size.width, height: geometry.size.height)
+                        .ignoresSafeArea()
+                        .background(Color.black)
                 } else {
-                    Text("Not connected yet")
-                        .foregroundColor(.gray)
-                        .padding()
+                    VideoContainerView(uiView: agoraManager.localVideoView)
+                        .frame(width: geometry.size.width, height: geometry.size.height)
+                        .ignoresSafeArea()
+                        .background(Color.black)
                 }
+                
 //                MCVideoSwiftUIView(renderer: .accelerated(castManager.renderer as! MCAcceleratedVideoRenderer),scalingMode: .resize,mirror: castManager.isFrontCamera)
 //                    .frame(width: geometry.size.width, height: geometry.size.height)
 //                    .ignoresSafeArea()
