@@ -269,41 +269,41 @@ struct TabbarScreen: View {
             )
         }
     }
-//    func resetNavigation1(for tab: Int) {
-//        switch tab {
-//        case 0:
-//            homeNavigationPath = NavigationPath()
-//            homeViewID = UUID()
-//        case 1:
-//            exploreNavigationPath = NavigationPath()
-//            exploreViewID = UUID()
-//        case 3:
-//            activityNavigationPath = NavigationPath()
-//            activityViewID = UUID()
-//        case 4:
-//            accountNavigationPath = NavigationPath()
-//            accountViewID = UUID()
-//        default:
-//            break
-//        }
-//    }
-    
     func resetNavigation(for tab: Int) {
         switch tab {
         case 0:
-            if homeNavigationPath.isEmpty == false {
+            homeNavigationPath = NavigationPath()
+            homeViewID = UUID()
+        case 1:
+            exploreNavigationPath = NavigationPath()
+            exploreViewID = UUID()
+        case 3:
+            activityNavigationPath = NavigationPath()
+            activityViewID = UUID()
+        case 4:
+            accountNavigationPath = NavigationPath()
+            accountViewID = UUID()
+        default:
+            break
+        }
+    }
+    
+    func resetNavigation1(for tab: Int) {
+        switch tab {
+        case 0:
+            if !homeNavigationPath.isEmpty {
                 homeNavigationPath = NavigationPath()
             }
         case 1:
-            if exploreNavigationPath.isEmpty == false {
+            if !exploreNavigationPath.isEmpty {
                 exploreNavigationPath = NavigationPath()
             }
         case 3:
-            if activityNavigationPath.isEmpty == false {
+            if !activityNavigationPath.isEmpty {
                 activityNavigationPath = NavigationPath()
             }
         case 4:
-            if accountNavigationPath.isEmpty == false {
+            if !accountNavigationPath.isEmpty {
                 accountNavigationPath = NavigationPath()
             }
         default:
