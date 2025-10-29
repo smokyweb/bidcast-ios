@@ -521,6 +521,7 @@
 		D67BA9A02EAF464B00C18882 /* BioView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67BA99F2EAF464B00C18882 /* BioView.swift */; };
 		D67DA9642E9D0A4A00ED6556 /* CurrentProductView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67DA9632E9D0A4A00ED6556 /* CurrentProductView.swift */; };
 		D67F64F92EA2316900C3017C /* SendTipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67F64F82EA2316900C3017C /* SendTipView.swift */; };
+		D68399A02EB1F41C00F3BDA7 /* DeepLinkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D683999F2EB1F41C00F3BDA7 /* DeepLinkManager.swift */; };
 		D68C53A32EA0B2DA008E175D /* KeyChainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68C53A22EA0B2DA008E175D /* KeyChainManager.swift */; };
 		D694B1BD2EB08C8200411242 /* AgoraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D694B1BC2EB08C8200411242 /* AgoraManager.swift */; };
 		D69528472E93CE990033EA7A /* ApplyPremierShopModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D69528462E93CE990033EA7A /* ApplyPremierShopModel.swift */; };
@@ -1032,6 +1033,7 @@
 		D67BA99F2EAF464B00C18882 /* BioView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BioView.swift; sourceTree = "<group>"; };
 		D67DA9632E9D0A4A00ED6556 /* CurrentProductView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentProductView.swift; sourceTree = "<group>"; };
 		D67F64F82EA2316900C3017C /* SendTipView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTipView.swift; sourceTree = "<group>"; };
+		D683999F2EB1F41C00F3BDA7 /* DeepLinkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkManager.swift; sourceTree = "<group>"; };
 		D68C53A22EA0B2DA008E175D /* KeyChainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyChainManager.swift; sourceTree = "<group>"; };
 		D694B1BC2EB08C8200411242 /* AgoraManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgoraManager.swift; sourceTree = "<group>"; };
 		D69528462E93CE990033EA7A /* ApplyPremierShopModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplyPremierShopModel.swift; sourceTree = "<group>"; };
@@ -2269,6 +2271,7 @@
 				D66531742E9E79F400F19B94 /* DownloadManager.swift */,
 				D68C53A22EA0B2DA008E175D /* KeyChainManager.swift */,
 				D613DBB52EB0F22000521D42 /* ImageCacheManager.swift */,
+				D683999F2EB1F41C00F3BDA7 /* DeepLinkManager.swift */,
 			);
 			path = Helper;
 			sourceTree = "<group>";
@@ -4651,6 +4654,7 @@
 				35CCE01F2DD8A8BC00760CEE /* SellingTips.swift in Sources */,
 				99C909782DC8CD790054620B /* AuthenticationStack.swift in Sources */,
 				99C9097A2DC8CD790054620B /* DeleteAccountSheet.swift in Sources */,
+				D68399A02EB1F41C00F3BDA7 /* DeepLinkManager.swift in Sources */,
 				35CCE0132DD876C900760CEE /* LessonScreen.swift in Sources */,
 				99C9097D2DC8CD790054620B /* ResetPasswordViewModel.swift in Sources */,
 				D665316B2E9E3B5B00F19B94 /* ShimmerViewModifier.swift in Sources */,
@@ -4957,6 +4961,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = BidCast/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = BidSwipe;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSCameraUsageDescription = "We need camera access to let you capture photos.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "WeNeed microphone access fo audio streaming";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "We need access to save photos to your photo library.";
@@ -4967,9 +4972,10 @@
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
@@ -5011,6 +5017,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = BidCast/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = BidSwipe;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSCameraUsageDescription = "We need camera access to let you capture photos.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "WeNeed microphone access fo audio streaming";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "We need access to save photos to your photo library.";
@@ -5021,9 +5028,10 @@
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";

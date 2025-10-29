@@ -11,7 +11,7 @@ import AgoraRtcKit
 /*
  App ID : 6a0ab77ee15943df94524201d6c93877
  Channel Name : room1
- Token : 007eJxTYDBf3yluPU/LbtPkOm+/jYqNrd/uPFbOSWZ8HnF4a0PP9YcKDGaJBolJ5uapqYamlibGKWmWJqZGJkYGhilmyZbGFubmX8P+ZzQEMjI0yKuyMjJAIIjPylCUn59ryMAAAG4gH7E=
+ Token : 007eJxTYLhRKeN9+RFTmkHxf4W5ux8JPY0ynfq3K67ugK7d+7QdrwwUGMwSDRKTzM1TUw1NLU2MU9IsTUyNTIwMDFPMki2NLczNp21gzGwIZGQQjDnDyMgAgSA+K0NRfn6uIQMDAJjtH6M=
  */
 
 // MARK: - Agora Manager (for Live Streaming)
@@ -21,7 +21,7 @@ class AgoraManager: NSObject, ObservableObject {
     struct AgoraCred {
         static var appId = "6a0ab77ee15943df94524201d6c93877"
         static var channelName = "room1"
-        static var token  = "007eJxTYDBf3yluPU/LbtPkOm+/jYqNrd/uPFbOSWZ8HnF4a0PP9YcKDGaJBolJ5uapqYamlibGKWmWJqZGJkYGhilmyZbGFubmX8P+ZzQEMjI0yKuyMjJAIIjPylCUn59ryMAAAG4gH7E="
+        static var token  = "007eJxTYLhRKeN9+RFTmkHxf4W5ux8JPY0ynfq3K67ugK7d+7QdrwwUGMwSDRKTzM1TUw1NLU2MU9IsTUyNTIwMDFPMki2NLczNp21gzGwIZGQQjDnDyMgAgSA+K0NRfn6uIQMDAJjtH6M="
     }
     
     // MARK: - Properties

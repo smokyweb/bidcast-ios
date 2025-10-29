@@ -71,6 +71,9 @@ struct BidCastApp: App {
             .environmentObject(appRootManager)
             .environmentObject(LanguageManager.shared)
             .environmentObject(networkMonitor)
+            .onOpenURL { url in
+//                deepLinkManager.handle(url: url)
+            }
         }
     }
 }

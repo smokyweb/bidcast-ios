@@ -1,0 +1,31 @@
+//
+//  DeepLinkManager.swift
+//  BidCast
+//
+//  Created by JamTech on 29/10/25.
+//
+
+import Foundation
+
+final class DeepLinkManager: ObservableObject {
+    
+    @Published var destination: DeepLinkDestination? = nil
+    
+    func handle(url: URL) {
+        print("Received URL: \(url.absoluteString)")
+        
+        guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else { return }
+        let path = components.path
+        
+        if path.starts(with: "/show/") {
+            let id = path.replacingOccurrences(of: "/show/", with: "")
+            destination = .showDetail(id: id)
+        }
+    }
+}
+
+enum DeepLinkDestination {
+    case showDetail(id: String)
+//    case productDetail(id: String)
+//    case profile(username: String)
+}
