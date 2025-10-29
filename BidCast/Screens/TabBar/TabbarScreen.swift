@@ -35,6 +35,10 @@ struct TabbarScreen: View {
     @State var showPaymentShipping = false
     @State var navigateToShipping = false
     @State var titleText = ""
+    
+    @EnvironmentObject var deepLinkManager: DeepLinkManager
+    @State private var navigateToShow = false
+    @State private var selectedShowId: String?
 
     var body: some View {
         ZStack {
@@ -67,16 +71,19 @@ struct TabbarScreen: View {
             .edgesIgnoringSafeArea(.top)
             .onChange(of: selectedTab) { newTab in
                 if newTab == 2 {
-                     
                       showSellSheet = true
-
                       selectedTab = previousTab
                   } else {
-                      
                       resetNavigation(for: newTab)
                       previousTab = newTab
                   }
             }
+//            .onChange(of: deepLinkManager.destination) { destination in
+//                if case .showDetail(let id) = destination {
+//                    selectedShowId = id
+//                    navigateToShow = true
+//                }
+//            }
           
             // Navigation Links
 //            CusNavLink(doNavigate: $navigateTogetStarted, destination: LetsPrepare())
@@ -262,20 +269,43 @@ struct TabbarScreen: View {
             )
         }
     }
+//    func resetNavigation1(for tab: Int) {
+//        switch tab {
+//        case 0:
+//            homeNavigationPath = NavigationPath()
+//            homeViewID = UUID()
+//        case 1:
+//            exploreNavigationPath = NavigationPath()
+//            exploreViewID = UUID()
+//        case 3:
+//            activityNavigationPath = NavigationPath()
+//            activityViewID = UUID()
+//        case 4:
+//            accountNavigationPath = NavigationPath()
+//            accountViewID = UUID()
+//        default:
+//            break
+//        }
+//    }
+    
     func resetNavigation(for tab: Int) {
         switch tab {
         case 0:
-            homeNavigationPath = NavigationPath()
-            homeViewID = UUID()
+            if homeNavigationPath.isEmpty == false {
+                homeNavigationPath = NavigationPath()
+            }
         case 1:
-            exploreNavigationPath = NavigationPath()
-            exploreViewID = UUID()
+            if exploreNavigationPath.isEmpty == false {
+                exploreNavigationPath = NavigationPath()
+            }
         case 3:
-            activityNavigationPath = NavigationPath()
-            activityViewID = UUID()
+            if activityNavigationPath.isEmpty == false {
+                activityNavigationPath = NavigationPath()
+            }
         case 4:
-            accountNavigationPath = NavigationPath()
-            accountViewID = UUID()
+            if accountNavigationPath.isEmpty == false {
+                accountNavigationPath = NavigationPath()
+            }
         default:
             break
         }

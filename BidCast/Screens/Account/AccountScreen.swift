@@ -461,7 +461,6 @@ enum AccountTabSection : String, CaseIterable, CustomStringConvertible{
     var img : ImageResource{
         switch self {
             
-            
         case .paymentShipping:
             return .inventory
         case .address:

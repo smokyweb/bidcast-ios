@@ -20,7 +20,6 @@ struct SellScreen: View {
     
     var body: some View {
         VStack{
-         
             Spacer()
             VStack{
                 LabelWithButton(
