@@ -11,7 +11,7 @@ import AgoraRtcKit
 /*
  App ID : 6a0ab77ee15943df94524201d6c93877
  Channel Name : room1
- Token : 007eJxTYLhRKeN9+RFTmkHxf4W5ux8JPY0ynfq3K67ugK7d+7QdrwwUGMwSDRKTzM1TUw1NLU2MU9IsTUyNTIwMDFPMki2NLczNp21gzGwIZGQQjDnDyMgAgSA+K0NRfn6uIQMDAJjtH6M=
+ Token : 007eJxTYHgSe7qis6f/s9mNyvXfu7QF2S/ZVm7ISrVXu6ljZKJabqvAYJZokJhkbp6aamhqaWKckmZpYmpkYmRgmGKWbGlsYW6+8S1jZkMgI0O7rzUTIwMEgvisDEX5+bmGDAwAMUEd9g==
  */
 
 // MARK: - Agora Manager (for Live Streaming)
@@ -21,7 +21,7 @@ class AgoraManager: NSObject, ObservableObject {
     struct AgoraCred {
         static var appId = "6a0ab77ee15943df94524201d6c93877"
         static var channelName = "room1"
-        static var token  = "007eJxTYLhRKeN9+RFTmkHxf4W5ux8JPY0ynfq3K67ugK7d+7QdrwwUGMwSDRKTzM1TUw1NLU2MU9IsTUyNTIwMDFPMki2NLczNp21gzGwIZGQQjDnDyMgAgSA+K0NRfn6uIQMDAJjtH6M="
+        static var token  = "007eJxTYHgSe7qis6f/s9mNyvXfu7QF2S/ZVm7ISrVXu6ljZKJabqvAYJZokJhkbp6aamhqaWKckmZpYmpkYmRgmGKWbGlsYW6+8S1jZkMgI0O7rzUTIwMEgvisDEX5+bmGDAwAMUEd9g=="
     }
     
     // MARK: - Properties
@@ -40,13 +40,22 @@ class AgoraManager: NSObject, ObservableObject {
     
     var isHost: Bool = false
     
-    // MARK: - Initialize
-    override init() {
+    // MARK: - Designated Initializer
+    init(asHost: Bool) {
+        self.isHost = asHost
         super.init()
         initializeAgoraEngine()
+        if asHost {
+            self.setupLocalVideo()
+        }
     }
     
-    private func initializeAgoraEngine() {
+    // MARK: - Convenience Initializer (optional)
+    convenience override init() {
+        self.init(asHost: false)
+    }
+    
+    func initializeAgoraEngine(asHost: Bool = false) {
         agoraKit = AgoraRtcEngineKit.sharedEngine(withAppId: AgoraCred.appId, delegate: self)
         //step 1 -> Use Agora’s “Real-Time Interactive Mode”
         agoraKit?.setChannelProfile(.liveBroadcasting)
@@ -90,7 +99,7 @@ class AgoraManager: NSObject, ObservableObject {
         }
     }
     
-    func switchCamera() {
+    func swithCamera() {
         isFrontCamera.toggle()
         agoraKit?.switchCamera()
     }
@@ -114,18 +123,32 @@ class AgoraManager: NSObject, ObservableObject {
         AgoraRtcEngineKit.destroy()
     }
     
+//    func setupLocalVideo() {
+//        guard let agoraKit = agoraKit else { return }
+//        // Enable the video module
+//        agoraKit.enableVideo()
+//        // Start the local video preview
+//        agoraKit.startPreview()
+//        let videoCanvas = AgoraRtcVideoCanvas()
+//        videoCanvas.uid = 0
+//        videoCanvas.renderMode = .hidden
+//        videoCanvas.view = localVideoView
+//         // Set the local video view
+//        agoraKit.setupLocalVideo(videoCanvas)
+//    }
+    
     func setupLocalVideo() {
-        guard let agoraKit = agoraKit else { return }
-        // Enable the video module
-        agoraKit.enableVideo()
-        // Start the local video preview
-        agoraKit.startPreview()
         let videoCanvas = AgoraRtcVideoCanvas()
         videoCanvas.uid = 0
         videoCanvas.renderMode = .hidden
         videoCanvas.view = localVideoView
-         // Set the local video view
-        agoraKit.setupLocalVideo(videoCanvas)
+        // Set the local video view
+        agoraKit?.setupLocalVideo(videoCanvas)
+        // Enable the video module
+        agoraKit?.enableVideo()
+//
+        // Start the local video preview
+        agoraKit?.startPreview()
     }
     
     // MARK: - Setup Remote Video
@@ -173,6 +196,10 @@ extension AgoraManager: AgoraRtcEngineDelegate {
             print("Left channel")
             self.isJoined = false
         }
+    }
+    
+    func rtcEngine(_ engine: AgoraRtcEngineKit, didOccurError errorCode: AgoraErrorCode) {
+        print("error: \(errorCode)")
     }
 }
 

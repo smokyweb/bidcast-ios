@@ -79,7 +79,7 @@ struct RehearsalScreen: View {
     @StateObject private var castManager = PublisherViewModel(renderer: MCAcceleratedVideoRenderer())
     @State private var renderer = MCAcceleratedVideoRenderer()
     
-    @StateObject private var agoraManager = AgoraManager()
+    @StateObject private var agoraManager = AgoraManager(asHost: true)
     @State private var isHost = true
     
     
@@ -654,6 +654,7 @@ struct RehearsalScreen: View {
                             NavFrom: "",
                             onAddProduct: { selectedID in
                                 showSellSheet = false
+                                agoraManager.joinChannel(asHost: true)
                                 if !selectedID.isEmpty {
                                     print("product ID is :\(selectedID)")
                                     print("Live Room ID is :\(self.roomId)")
@@ -747,9 +748,10 @@ struct RehearsalScreen: View {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }
         .onAppear {
+        
             logoutRoom()
             showTopBadge = true
-            agoraManager.joinChannel(asHost: isHost)
+//            agoraManager.joinChannel(asHost: true)
 //            Task {
 //                do {
 //                    try await castManager.startPreview()
@@ -766,6 +768,7 @@ struct RehearsalScreen: View {
             }
         }
         .onFirstAppear {
+          
             //            if !comeFromPrepare && !comeForLive {
             let mappedProducts = productListData.map { productModel in
                 ProductData(
@@ -990,9 +993,9 @@ struct RehearsalScreen: View {
         
         Task{
 //            try await castManager.unpublish()
-            if agoraManager.isJoined {
+//            if agoraManager.isJoined {
                 agoraManager.leaveChannel()
-            }
+//            }
             SocketManagerService.shared.endStreaming(roomId: self.roomId)
             SocketManagerService.shared.stopLiveScheduler()
             self.comments.removeAll()

@@ -160,7 +160,7 @@ struct LiveStream: View {
     @State var productData = [ProductData]()
     @State var currentProductIndex = 0
     
-    @StateObject private var agoraManager = AgoraManager()
+    @StateObject private var agoraManager = AgoraManager(asHost: false)
     @State private var isHost = false
     
     @Binding var category : String
@@ -172,11 +172,6 @@ struct LiveStream: View {
                 ZStack(alignment: .top) {
                     if let _ = agoraManager.remoteUserId {
                         VideoContainerView(uiView: agoraManager.remoteVideoView)
-                            .frame(width: geometry.size.width, height: geometry.size.height)
-                            .ignoresSafeArea()
-                            .background(Color.black)
-                    } else {
-                        VideoContainerView(uiView: agoraManager.localVideoView)
                             .frame(width: geometry.size.width, height: geometry.size.height)
                             .ignoresSafeArea()
                             .background(Color.black)
@@ -215,7 +210,7 @@ struct LiveStream: View {
                                     .foregroundColor(.black)
                                     .font(.custom(poppinsSemiBold, size: 13.0))
                             }
-                            if isFollow{
+//                            if isFollow{
                                 Button(action: {
                                     Task{
                                         SVProgressHUD.show()
@@ -232,7 +227,7 @@ struct LiveStream: View {
                                         .background(Color.yellow)
                                         .cornerRadius(10)
                                 }
-                            }
+//                            }
                             Button(action: {
                                 logoutRoom()
                                
@@ -713,7 +708,9 @@ struct LiveStream: View {
                 case .gift:
                     SendTipView(
                         sellerId: liveShowsData[currentIndex].seller?.id ?? "",
-                        onClose: {},
+                        onClose: {
+                            showSheet = false
+                        },
                         onSendTip: { _, _ in
                             print("Sent tip")
                         }
@@ -1112,14 +1109,12 @@ struct LiveStream: View {
         commentText = ""
     }
     
-    
-
-    
     //MARK: logoutRoom
     func logoutRoom() {
-        Task{
-            try await joinManager.unsubscribe()
-        }
+//        Task{
+//            try await joinManager.unsubscribe()
+//        }
+        agoraManager.leaveChannel()
         SocketManagerService.shared.chats.removeAll()
         SocketManagerService.shared.leaveRoom(roomId: self.currentRoomID, userId: UserDefaults.userId)
        

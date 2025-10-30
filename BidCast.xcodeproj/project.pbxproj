@@ -522,6 +522,14 @@
 		D67DA9642E9D0A4A00ED6556 /* CurrentProductView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67DA9632E9D0A4A00ED6556 /* CurrentProductView.swift */; };
 		D67F64F92EA2316900C3017C /* SendTipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67F64F82EA2316900C3017C /* SendTipView.swift */; };
 		D68399A02EB1F41C00F3BDA7 /* DeepLinkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D683999F2EB1F41C00F3BDA7 /* DeepLinkManager.swift */; };
+		D68399A32EB207B600F3BDA7 /* BaseSocketManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68399A22EB207B600F3BDA7 /* BaseSocketManager.swift */; };
+		D68399A52EB2081A00F3BDA7 /* RoomSocketHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68399A42EB2081A00F3BDA7 /* RoomSocketHandler.swift */; };
+		D68399A72EB2084D00F3BDA7 /* ChatSocketHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68399A62EB2084D00F3BDA7 /* ChatSocketHandler.swift */; };
+		D68399A92EB2164F00F3BDA7 /* ViewerSocketHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68399A82EB2164F00F3BDA7 /* ViewerSocketHandler.swift */; };
+		D68399AB2EB2169C00F3BDA7 /* BidSocketHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68399AA2EB2169C00F3BDA7 /* BidSocketHandler.swift */; };
+		D68399AD2EB216A000F3BDA7 /* TimerSocketHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68399AC2EB216A000F3BDA7 /* TimerSocketHandler.swift */; };
+		D68399AF2EB216A800F3BDA7 /* RaidSocketHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68399AE2EB216A800F3BDA7 /* RaidSocketHandler.swift */; };
+		D68399B12EB21CB700F3BDA7 /* FollowUnFollowSocketHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68399B02EB21CB700F3BDA7 /* FollowUnFollowSocketHandler.swift */; };
 		D68C53A32EA0B2DA008E175D /* KeyChainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68C53A22EA0B2DA008E175D /* KeyChainManager.swift */; };
 		D694B1BD2EB08C8200411242 /* AgoraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D694B1BC2EB08C8200411242 /* AgoraManager.swift */; };
 		D69528472E93CE990033EA7A /* ApplyPremierShopModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D69528462E93CE990033EA7A /* ApplyPremierShopModel.swift */; };
@@ -1034,6 +1042,14 @@
 		D67DA9632E9D0A4A00ED6556 /* CurrentProductView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentProductView.swift; sourceTree = "<group>"; };
 		D67F64F82EA2316900C3017C /* SendTipView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTipView.swift; sourceTree = "<group>"; };
 		D683999F2EB1F41C00F3BDA7 /* DeepLinkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkManager.swift; sourceTree = "<group>"; };
+		D68399A22EB207B600F3BDA7 /* BaseSocketManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseSocketManager.swift; sourceTree = "<group>"; };
+		D68399A42EB2081A00F3BDA7 /* RoomSocketHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomSocketHandler.swift; sourceTree = "<group>"; };
+		D68399A62EB2084D00F3BDA7 /* ChatSocketHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatSocketHandler.swift; sourceTree = "<group>"; };
+		D68399A82EB2164F00F3BDA7 /* ViewerSocketHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewerSocketHandler.swift; sourceTree = "<group>"; };
+		D68399AA2EB2169C00F3BDA7 /* BidSocketHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BidSocketHandler.swift; sourceTree = "<group>"; };
+		D68399AC2EB216A000F3BDA7 /* TimerSocketHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerSocketHandler.swift; sourceTree = "<group>"; };
+		D68399AE2EB216A800F3BDA7 /* RaidSocketHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaidSocketHandler.swift; sourceTree = "<group>"; };
+		D68399B02EB21CB700F3BDA7 /* FollowUnFollowSocketHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowUnFollowSocketHandler.swift; sourceTree = "<group>"; };
 		D68C53A22EA0B2DA008E175D /* KeyChainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyChainManager.swift; sourceTree = "<group>"; };
 		D694B1BC2EB08C8200411242 /* AgoraManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgoraManager.swift; sourceTree = "<group>"; };
 		D69528462E93CE990033EA7A /* ApplyPremierShopModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplyPremierShopModel.swift; sourceTree = "<group>"; };
@@ -2245,7 +2261,7 @@
 		99C909A02DC8CD930054620B /* Helper */ = {
 			isa = PBXGroup;
 			children = (
-				354262662E7BEF2A0023CA32 /* SocketManager.swift */,
+				D68399A12EB2079100F3BDA7 /* SocketManager */,
 				D4DDE7ED2DDC5C7A00A24973 /* Font */,
 				99C9098E2DC8CD930054620B /* GooglePlaceManager */,
 				99C909902DC8CD930054620B /* VideoRecorder */,
@@ -4072,6 +4088,22 @@
 			path = SendTipScreen;
 			sourceTree = "<group>";
 		};
+		D68399A12EB2079100F3BDA7 /* SocketManager */ = {
+			isa = PBXGroup;
+			children = (
+				354262662E7BEF2A0023CA32 /* SocketManager.swift */,
+				D68399A42EB2081A00F3BDA7 /* RoomSocketHandler.swift */,
+				D68399A22EB207B600F3BDA7 /* BaseSocketManager.swift */,
+				D68399A62EB2084D00F3BDA7 /* ChatSocketHandler.swift */,
+				D68399A82EB2164F00F3BDA7 /* ViewerSocketHandler.swift */,
+				D68399AA2EB2169C00F3BDA7 /* BidSocketHandler.swift */,
+				D68399AC2EB216A000F3BDA7 /* TimerSocketHandler.swift */,
+				D68399AE2EB216A800F3BDA7 /* RaidSocketHandler.swift */,
+				D68399B02EB21CB700F3BDA7 /* FollowUnFollowSocketHandler.swift */,
+			);
+			path = SocketManager;
+			sourceTree = "<group>";
+		};
 		D6A8129F2E9F787F00BE22AB /* notLinkedAPI */ = {
 			isa = PBXGroup;
 			children = (
@@ -4375,6 +4407,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D68399A32EB207B600F3BDA7 /* BaseSocketManager.swift in Sources */,
 				D4B615E32DE8312200924A3D /* MakeAnOfferModel.swift in Sources */,
 				D6BEBABD2EA3AF3300424223 /* SearchTextViewModel.swift in Sources */,
 				99DF9E782DC4F367008C15B2 /* BidCast.xcdatamodeld in Sources */,
@@ -4392,6 +4425,7 @@
 				35CA09D92DD5BCE4002ABB83 /* LabelWithButton.swift in Sources */,
 				99C908132DC8CD6A0054620B /* HeaderWithSegmentController.swift in Sources */,
 				D4B616252DE8796F00924A3D /* ProductWeightScreen.swift in Sources */,
+				D68399AD2EB216A000F3BDA7 /* TimerSocketHandler.swift in Sources */,
 				D4BA9C0F2DE48D2A00DFF6E6 /* ShowCardView.swift in Sources */,
 				35B44F1E2DD705E100FBCBC4 /* AboutUsViewModel.swift in Sources */,
 				3541638A2DDB178300026B34 /* ShowTips.swift in Sources */,
@@ -4401,6 +4435,7 @@
 				D4BA9C0B2DE4856900DFF6E6 /* ShowsViewModel.swift in Sources */,
 				3576EAD42DDDD96900177C7D /* SelectThumbnailScreen.swift in Sources */,
 				D49A95682DD704CD006044A7 /* FAQScreen.swift in Sources */,
+				D68399AF2EB216A800F3BDA7 /* RaidSocketHandler.swift in Sources */,
 				35246ECA2E7ABBFB009D7513 /* DolbyManager.swift in Sources */,
 				99C908142DC8CD6A0054620B /* PrimaryButton.swift in Sources */,
 				D4BB9A1E2DE5D22A00C1BCBC /* PromoteToolsView.swift in Sources */,
@@ -4412,6 +4447,7 @@
 				D4B615E22DE8312200924A3D /* MakeOfferBottomSheet.swift in Sources */,
 				35987D2B2DE5C7A500D6C2C9 /* PaymentAndShipping Screen.swift in Sources */,
 				35BA4A4E2DE8806A00EEC92A /* ReferEarnScreen.swift in Sources */,
+				D68399A52EB2081A00F3BDA7 /* RoomSocketHandler.swift in Sources */,
 				D45D7A382E389AAD003A3842 /* ChatScreen.swift in Sources */,
 				3504BCE72E00418F0069182D /* ZegoManager.swift in Sources */,
 				35AC64782DD4A8AD00B5E13E /* ListCell.swift in Sources */,
@@ -4527,6 +4563,7 @@
 				99C909562DC8CD790054620B /* UserSearchScreen.swift in Sources */,
 				99C909572DC8CD790054620B /* SignUpScreen.swift in Sources */,
 				D4BA9C2A2DE4A4E700DFF6E6 /* TipsViewModel.swift in Sources */,
+				D68399AB2EB2169C00F3BDA7 /* BidSocketHandler.swift in Sources */,
 				99C9095A2DC8CD790054620B /* TermsOfServicesScreen.swift in Sources */,
 				35987D252DE5C65700D6C2C9 /* CountryPickerView.swift in Sources */,
 				99C9095B2DC8CD790054620B /* ResetPasswordScreen.swift in Sources */,
@@ -4630,6 +4667,7 @@
 				D4B615D82DE82A5400924A3D /* BuyNowModel.swift in Sources */,
 				35987D1E2DE5863100D6C2C9 /* LiveStream.swift in Sources */,
 				99C909B62DC8CD930054620B /* CusNavLink.swift in Sources */,
+				D68399B12EB21CB700F3BDA7 /* FollowUnFollowSocketHandler.swift in Sources */,
 				354163902DDB3A2100026B34 /* StoreProductModel.swift in Sources */,
 				99C909B72DC8CD930054620B /* CachingPlayerItem.swift in Sources */,
 				99C909B82DC8CD930054620B /* ImageSelector.swift in Sources */,
@@ -4695,6 +4733,7 @@
 				99C908222DC8CD6A0054620B /* DatePickerPopUp.swift in Sources */,
 				35BA4A482DE878F900EEC92A /* SalesFormatScreen.swift in Sources */,
 				99C908232DC8CD6A0054620B /* UserListCard.swift in Sources */,
+				D68399A72EB2084D00F3BDA7 /* ChatSocketHandler.swift in Sources */,
 				D4BA32522DDB34CA00FE4FD2 /* InventoryScreen.swift in Sources */,
 				35AC64722DD4827D00B5E13E /* ImageCollectionView.swift in Sources */,
 				358B9D1C2DDF11A400932250 /* ContactUsViewModel.swift in Sources */,
@@ -4717,6 +4756,7 @@
 				D4D453D12E4C6FCD005A2F63 /* MaxBidViewModel.swift in Sources */,
 				99C9082C2DC8CD6A0054620B /* DropDownTextField.swift in Sources */,
 				35CCE0152DD876CD00760CEE /* HowToSell.swift in Sources */,
+				D68399A92EB2164F00F3BDA7 /* ViewerSocketHandler.swift in Sources */,
 				D4CAEC8E2DE71FB800705CD7 /* PromoteShowModel.swift in Sources */,
 				35F8B55B2DED816300FE0778 /* LiveShowsModel.swift in Sources */,
 				99C9082D2DC8CD6A0054620B /* Loader.swift in Sources */,

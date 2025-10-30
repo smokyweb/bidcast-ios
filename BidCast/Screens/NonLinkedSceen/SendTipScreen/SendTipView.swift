@@ -34,115 +34,116 @@ struct SendTipView: View {
     
     var body: some View {
         VStack(alignment:.leading, spacing: 20) {
-            
-            // Header
-            HStack {
-                Text("Send a Tip 💸")
-                    .font(.custom(poppinsBold, size: 22.0))
-                Spacer()
-                Button {
-                    self.presentationMode.wrappedValue.dismiss()
-                    onClose()
-                } label: {
-                    Image(systemName: "xmark")
-                        .foregroundColor(.gray)
-                }
-
-                Button(action: onClose) {
-                    
-                }
-            }
-            .padding(.horizontal)
-            .padding(.top, 16)
-            
-            // Subtitle
-            Text("Support your seller during the live show")
-                .font(.custom(poppinsRegular, size: 14.0))
-                .foregroundColor(.gray)
-                .padding(.horizontal)
-            
-            // Tip options
-            HStack(spacing: 12) {
-                ForEach(tipOptions, id: \.self) { amount in
+            ScrollView {
+                // Header
+                HStack {
+                    Text("Send a Tip 💸")
+                        .font(.custom(poppinsBold, size: 22.0))
+                    Spacer()
                     Button {
-                        selectedAmount = amount
-                        customAmount = ""
+//                        self.presentationMode.wrappedValue.dismiss()
+                        onClose()
                     } label: {
-                        Text("$\(Int(amount))")
-                            .frame(width: 80, height: 45)
-                            .background(selectedAmount == amount ? Color.blue.opacity(0.2) : Color(.systemGray6))
-                            .foregroundColor(selectedAmount == amount ? .blue : .black)
-                            .cornerRadius(10)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 10)
-                                    .stroke(selectedAmount == amount ? Color.blue : Color.clear, lineWidth: 1.5)
-                            )
+                        Image(systemName: "xmark")
+                            .foregroundColor(.gray)
+                    }
+                    
+                    Button(action: onClose) {
+                        
                     }
                 }
-            }
-            .padding(.horizontal)
-            
-            // Custom tip field
-            VStack(alignment: .leading, spacing: 6) {
-                Text("Custom Tip")
-                    .font(.system(size: 14, weight: .semibold))
+                .padding(.horizontal)
+                .padding(.top, 16)
                 
-                TextField("Enter your own amount", text: $customAmount)
-                    .keyboardType(.decimalPad)
-                    .padding()
-                    .background(Color(.systemGray6))
-                    .cornerRadius(10)
-                    .onChange(of: customAmount) { _ in
-                        selectedAmount = nil
-                    }
-            }
-            .padding(.horizontal)
-            
-            // Payment options
-            VStack(spacing: 12) {
-                if let cards = cardResponse?.paymentProfiles, !cards.isEmpty {
-                    ForEach(0 ..< cards.count) { i in
-                        let card = cards[i]
-                        let cardNum = card.payment?.creditCard?.cardNumber ?? ""
-                        let lastFourDigit = String(cardNum.suffix(4))
-                        PaymentOptionRow(cardDetails: card,
-                                         isSelected: selectedPaymentId == lastFourDigit) {
-                            selectedPaymentId = lastFourDigit
+                // Subtitle
+                Text("Support your seller during the live show")
+                    .font(.custom(poppinsRegular, size: 14.0))
+                    .foregroundColor(.gray)
+                    .padding(.horizontal)
+                
+                // Tip options
+                HStack(spacing: 12) {
+                    ForEach(tipOptions, id: \.self) { amount in
+                        Button {
+                            selectedAmount = amount
+                            customAmount = ""
+                        } label: {
+                            Text("$\(Int(amount))")
+                                .frame(width: 80, height: 45)
+                                .background(selectedAmount == amount ? Color.blue.opacity(0.2) : Color(.systemGray6))
+                                .foregroundColor(selectedAmount == amount ? .blue : .black)
+                                .cornerRadius(10)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .stroke(selectedAmount == amount ? Color.blue : Color.clear, lineWidth: 1.5)
+                                )
                         }
                     }
-                } else {
-                    Text("No saved cards found.")
-                        .font(.custom(poppinsRegular, size: 14))
-                        .foregroundColor(.gray)
+                }
+                .padding(.horizontal)
+                
+                // Custom tip field
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Custom Tip")
+                        .font(.system(size: 14, weight: .semibold))
+                    
+                    TextField("Enter your own amount", text: $customAmount)
+                        .keyboardType(.decimalPad)
                         .padding()
+                        .background(Color(.systemGray6))
+                        .cornerRadius(10)
+                        .onChange(of: customAmount) { _ in
+                            selectedAmount = nil
+                        }
                 }
-               
-            }
-            .padding(.horizontal)
-            
-            // Send button
-            Button {
-                let finalAmount = selectedAmount ?? Double(customAmount) ?? 0.0
-              if finalAmount > 0, selectedPaymentId != nil, sellerId != "" {
-                  Task {
-                      await sendTipsAmountData(amount: finalAmount,
-                                         cardId: selectedPaymentId!,
-                                         sellerId: sellerId)
-                  }
-                } else {
-                    // show alert to select payment
+                .padding(.horizontal)
+                
+                // Payment options
+                VStack(spacing: 12) {
+                    if let cards = cardResponse?.paymentProfiles, !cards.isEmpty {
+                        ForEach(0 ..< cards.count) { i in
+                            let card = cards[i]
+                            let cardNum = card.payment?.creditCard?.cardNumber ?? ""
+                            let lastFourDigit = String(cardNum.suffix(4))
+                            PaymentOptionRow(cardDetails: card,
+                                             isSelected: selectedPaymentId == lastFourDigit) {
+                                selectedPaymentId = lastFourDigit
+                            }
+                        }
+                    } else {
+                        Text("No saved cards found.")
+                            .font(.custom(poppinsRegular, size: 14))
+                            .foregroundColor(.gray)
+                            .padding()
+                    }
+                    
                 }
-            } label: {
-                Text("Send Tip")
-                    .font(.custom(poppinsBold, size: 16.0))
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(.defaultTheme)
-                    .foregroundColor(.white)
-                    .cornerRadius(12)
+                .padding(.horizontal)
+                
+                // Send button
+                Button {
+                    let finalAmount = selectedAmount ?? Double(customAmount) ?? 0.0
+                    if finalAmount > 0, selectedPaymentId != nil, sellerId != "" {
+                        Task {
+                            await sendTipsAmountData(amount: finalAmount,
+                                                     cardId: selectedPaymentId!,
+                                                     sellerId: sellerId)
+                        }
+                    } else {
+                        // show alert to select payment
+                    }
+                } label: {
+                    Text("Send Tip")
+                        .font(.custom(poppinsBold, size: 16.0))
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(.defaultTheme)
+                        .foregroundColor(.white)
+                        .cornerRadius(12)
+                }
+                .padding(.horizontal)
+                .padding(.bottom, 20)
             }
-            .padding(.horizontal)
-            .padding(.bottom, 20)
         }
         .padding(.top)
         .background(Color.white)
@@ -214,7 +215,8 @@ struct SendTipView: View {
             hudMsg = "Tip Amount Send successfully!!"
             showhud = true
 //            sendTipsData = tipsViewModel.sendTipAmountResponse?.data
-            presentationMode.wrappedValue.dismiss()
+            onClose()
+//            presentationMode.wrappedValue.dismiss()
         }
     }
 }
