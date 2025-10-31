@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 struct HomeModel: Codable, Identifiable {
     var id: Int?
     var title: String?
@@ -26,6 +25,9 @@ struct HomeModel: Codable, Identifiable {
     var products : [ProductDataModel]?
     var category: Category?
     var user: User?
+    var promoted_at: String?
+    var rtc_token: String?
+    var promote_show_id: Int?
+    var started_at: String?
 }
-
 

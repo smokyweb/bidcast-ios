@@ -10,8 +10,8 @@ import Kingfisher
 
 struct HeaderWithImage: View {
     var title: String = ""
-    var leadingImgArr: [ImageResource] = []
-    var trailingImgArr: [ImageResource] = []
+    var leadingImgArr = [ImageResource]()
+    var trailingImgArr : [ImageResource] = []
     
     var onClickLeading: ((Int) -> Void)?
     var onClickTrailing: ((Int) -> Void)?
@@ -118,6 +118,6 @@ struct HeaderWithImage: View {
     }
 }
 
-#Preview {
-    HeaderWithImage(userImg: .constant(""))
-}
+//#Preview {
+//    HeaderWithImage(userImg: .constant(""))
+//}

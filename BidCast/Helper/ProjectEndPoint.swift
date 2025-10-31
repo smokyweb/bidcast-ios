@@ -59,7 +59,6 @@ enum APIEndPoint{
     case sellerIdentityFetch
     case notificationListing
     case deleteNotification(param : DeleteNotificationRequest)
-    case getLiveShow
     case getMyScheduleShow(param : GetMyScheduleShowRequest)
     case getTotalRating(param : GetTotalRatingRequest)
     case addRating(param : AddRatingRequest)
@@ -105,6 +104,9 @@ enum APIEndPoint{
     case getPromoteShow
     case getLiveSeller
     
+//    case getAgoraToken(param : AgoraTokenRequest)
+
+    case getAgoraToken
     //MARK: OLD
     
     case SubCompany(param : SubCompanyParam)
@@ -303,8 +305,6 @@ extension APIEndPoint: EndPointType {
             return "notification/delete"
         case .getNotificationListing(param:let param):
             return "notification/listing?page=\(param.page)"
-        case .getLiveShow:
-            return "get-live-show"
         case .getMyScheduleShow(param:let param):
             return "get-my-schedule-show?=\(param.type)&user_id=\(param.user_id)&page=\(param.page)"
         case .productOrderListing:
@@ -575,6 +575,9 @@ extension APIEndPoint: EndPointType {
             
         case .getLiveSeller:
             return "get-live-seller"
+            
+        case .getAgoraToken:
+            return "agora-token"
         }
     }
     
@@ -679,8 +682,6 @@ extension APIEndPoint: EndPointType {
             return .get
         case .notificationListing:
             return .get
-        case .getLiveShow:
-            return .post
         case .getMyScheduleShow:
             return .post
         case .productOrderListing:
@@ -928,6 +929,8 @@ extension APIEndPoint: EndPointType {
         
         case .getLiveSeller:
             return .get
+        case .getAgoraToken:
+            return .post
         }
     }
     
@@ -1038,8 +1041,6 @@ extension APIEndPoint: EndPointType {
         case .sellerIdentityFetch:
             return nil
         case .notificationListing:
-            return nil
-        case .getLiveShow:
             return nil
         case .getMyScheduleShow(param: let param):
             return param
@@ -1288,6 +1289,10 @@ extension APIEndPoint: EndPointType {
             return param
         case .getLiveSeller:
             return nil
+//        case .getAgoraToken(let param):
+//            return param
+        case .getAgoraToken:
+            return nil
         }
     }
     
@@ -1388,8 +1393,6 @@ extension APIEndPoint: EndPointType {
         case .notificationListing:
             return nil
         case .deleteNotification(param: let param):
-            return nil
-        case .getLiveShow:
             return nil
         case .getMyScheduleShow(param: let param):
             return nil
@@ -1629,6 +1632,8 @@ extension APIEndPoint: EndPointType {
             return  nil
         case .getLiveSeller:
             return  nil
+        case .getAgoraToken:
+            return nil
         }
     }
     

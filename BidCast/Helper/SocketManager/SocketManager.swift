@@ -688,6 +688,7 @@ final class SocketManagerService: NSObject, ObservableObject {
             
             DispatchQueue.main.async {
                 self.isFollowed = isFollowed
+                self.logger.info("👤 user_follow_status received: is_followed=\(isFollowed)")
             }
             
             logger.info("👤 user_follow_status received: is_followed=\(isFollowed)")

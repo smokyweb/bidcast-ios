@@ -226,7 +226,7 @@ struct ProfileScreen: View {
                             ForEach(totalRatingArr, id: \.id) { review in
                                 ReviewCard(
                                     username: review.user.name ?? "",
-                                    profileImage: $userImage,
+                                    profileImage: review.user.profile_image ?? "",
                                     rating: Double(review.overallRating ?? "0.0") ?? 0.0,
                                     comment: review.comment
                                 )

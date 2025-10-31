@@ -20,8 +20,8 @@ class AgoraManager: NSObject, ObservableObject {
     // MARK: - Agora Credentials
     struct AgoraCred {
         static var appId = "6a0ab77ee15943df94524201d6c93877"
-        static var channelName = "room1"
-        static var token  = "007eJxTYHgSe7qis6f/s9mNyvXfu7QF2S/ZVm7ISrVXu6ljZKJabqvAYJZokJhkbp6aamhqaWKckmZpYmpkYmRgmGKWbGlsYW6+8S1jZkMgI0O7rzUTIwMEgvisDEX5+bmGDAwAMUEd9g=="
+//        static var channelName = "room1"
+//        static var token  = "007eJxTYHgSe7qis6f/s9mNyvXfu7QF2S/ZVm7ISrVXu6ljZKJabqvAYJZokJhkbp6aamhqaWKckmZpYmpkYmRgmGKWbGlsYW6+8S1jZkMgI0O7rzUTIwMEgvisDEX5+bmGDAwAMUEd9g=="
     }
     
     // MARK: - Properties
@@ -45,9 +45,9 @@ class AgoraManager: NSObject, ObservableObject {
         self.isHost = asHost
         super.init()
         initializeAgoraEngine()
-        if asHost {
-            self.setupLocalVideo()
-        }
+//        if asHost {
+//            self.setupLocalVideo()
+//        }
     }
     
     // MARK: - Convenience Initializer (optional)
@@ -71,7 +71,7 @@ class AgoraManager: NSObject, ObservableObject {
     }
     
     // MARK: - Join Channel
-    func joinChannel(asHost: Bool) {
+    func joinChannel(asHost: Bool, channelName: String, token: String) {
         guard let agoraKit = agoraKit else { return }
         isHost = asHost
         let options = AgoraRtcChannelMediaOptions()
@@ -84,8 +84,8 @@ class AgoraManager: NSObject, ObservableObject {
         options.audienceLatencyLevel = .ultraLowLatency
         
         agoraKit.joinChannel(
-            byToken: AgoraCred.token,
-            channelId: AgoraCred.channelName,
+            byToken: token,
+            channelId: channelName,
             uid: 0,
             mediaOptions: options
         ) { [weak self] (channel, uid, elapsed) in
@@ -99,7 +99,7 @@ class AgoraManager: NSObject, ObservableObject {
         }
     }
     
-    func swithCamera() {
+    func switchCamera() {
         isFrontCamera.toggle()
         agoraKit?.switchCamera()
     }
@@ -122,20 +122,6 @@ class AgoraManager: NSObject, ObservableObject {
         // Release all resources used by the Agora SDK
         AgoraRtcEngineKit.destroy()
     }
-    
-//    func setupLocalVideo() {
-//        guard let agoraKit = agoraKit else { return }
-//        // Enable the video module
-//        agoraKit.enableVideo()
-//        // Start the local video preview
-//        agoraKit.startPreview()
-//        let videoCanvas = AgoraRtcVideoCanvas()
-//        videoCanvas.uid = 0
-//        videoCanvas.renderMode = .hidden
-//        videoCanvas.view = localVideoView
-//         // Set the local video view
-//        agoraKit.setupLocalVideo(videoCanvas)
-//    }
     
     func setupLocalVideo() {
         let videoCanvas = AgoraRtcVideoCanvas()

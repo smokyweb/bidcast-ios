@@ -16,7 +16,7 @@ struct ReviewModel: Identifiable {
 
 struct ReviewCard: View {
     var username: String
-    @Binding var profileImage: String
+    var profileImage: String
     var rating: Double
     var comment: String? = nil
 

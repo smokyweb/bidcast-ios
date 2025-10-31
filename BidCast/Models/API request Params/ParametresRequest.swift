@@ -770,5 +770,8 @@ struct VisitorsAnalyticsRequest : Encodable{
     var month: String?
 }
 
-
+struct AgoraTokenRequest : Encodable{
+    var channelName : String
+    var uid: Int
+}
 

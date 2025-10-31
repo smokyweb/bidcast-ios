@@ -76,13 +76,16 @@ struct RehearsalScreen: View {
     
     //    @StateObject var castManager: PublisherViewModel
     //    @State var renderer = MCAcceleratedVideoRenderer()
-    @StateObject private var castManager = PublisherViewModel(renderer: MCAcceleratedVideoRenderer())
+//    @StateObject private var castManager = PublisherViewModel(renderer: MCAcceleratedVideoRenderer())
     @State private var renderer = MCAcceleratedVideoRenderer()
     
     @StateObject private var agoraManager = AgoraManager(asHost: true)
     @State private var isHost = true
     
-    
+    @StateObject var agoraViewModel = AgoraViewModel()
+    @State var agoraToken: String = ""
+    @State var uId: Int = 0
+    @State var channelName: String = ""
     var sheetHeight: CGFloat {
         switch currentBottomSheet {
         case .more: return screenHeight * 0.7
@@ -654,7 +657,9 @@ struct RehearsalScreen: View {
                             NavFrom: "",
                             onAddProduct: { selectedID in
                                 showSellSheet = false
-                                agoraManager.joinChannel(asHost: true)
+                                if agoraToken != "" && channelName != "" {
+                                    agoraManager.joinChannel(asHost: true, channelName: channelName, token: agoraToken)
+                                }
                                 if !selectedID.isEmpty {
                                     print("product ID is :\(selectedID)")
                                     print("Live Room ID is :\(self.roomId)")
@@ -751,7 +756,7 @@ struct RehearsalScreen: View {
         
             logoutRoom()
             showTopBadge = true
-//            agoraManager.joinChannel(asHost: true)
+            agoraManager.setupLocalVideo()
 //            Task {
 //                do {
 //                    try await castManager.startPreview()
@@ -768,7 +773,17 @@ struct RehearsalScreen: View {
             }
         }
         .onFirstAppear {
-          
+            
+            //listen for follow status
+            socketManager.listenForFollowUnfollowStatus()
+            if socketManager.lastActionSuccess {
+                hudMsg = "started following you"
+                showhud = true
+            }
+            else {
+                hudMsg = "unfollow you"
+                showhud = true
+            }
             //            if !comeFromPrepare && !comeForLive {
             let mappedProducts = productListData.map { productModel in
                 ProductData(
@@ -784,13 +799,55 @@ struct RehearsalScreen: View {
             }
             productData.append(contentsOf: mappedProducts)
             categoryName = showsData.category?.name ?? ""
+            
+            //get agora token
+            fetchAgoraToken()
         }
         .onDisappear {
             Task {
-                if castManager.isPublishing {
+                if agoraManager.isJoined {
                     self.endShow()
                 }
             }
+        }
+    }
+    
+    func fetchAgoraToken() {
+        Task {
+            guard Reachability.isConnectedToNetwork() else {
+                hudMsg = "No Internet Connection"
+                showhud = true
+                return
+            }
+            let data = showsData
+            let channelName = "live_room_\(data.user_id ?? 0)_\(data.id ?? 0)"
+            let uid = data.user?.id ?? 0
+            self.channelName = channelName
+            self.uId = uid
+            print("channelName: \(channelName), uid: \(uid), token: \(agoraToken)")
+//            let request = AgoraTokenRequest(channelName: channelName, uid: self.uId)
+            let param: [String: Any] = [
+                "channel": channelName
+//                "uid": uid
+            ]
+            SVProgressHUD.show()
+            await agoraViewModel.getAgoraToken(param: param)
+            await SVProgressHUD.dismiss()
+            successAgoraToken()
+        }
+    }
+    
+    func successAgoraToken() {
+        let response  = self.agoraViewModel.getAgoraDict
+        if response?.status == "success" {
+            self.agoraToken = response?.data?.token ?? ""
+            print("channelName: \(channelName), uid: \(uId), token: \(agoraToken)")
+//            if agoraToken != "" && channelName != "" {
+//                agoraManager.joinChannel(asHost: true, channelName: channelName, token: agoraToken)
+//            }
+        } else {
+            hudMsg = response?.message ?? ""
+            showhud = true
         }
     }
     
@@ -860,10 +917,14 @@ struct RehearsalScreen: View {
             )
         }
         if product.count != 0{
-            Task{
-                //live stream
-                try await castManager.publish(streamName: self.roomId)
+            if agoraToken != "" && channelName != "" {
+                agoraManager.joinChannel(asHost: true, channelName: channelName, token: agoraToken)
             }
+//            Task{
+                //live stream
+                
+//                try await castManager.publish(streamName: self.roomId)
+//            }
             
             let seller = SellerModel(isFollowed: data.user?.is_followed ?? false, id: "\(data.user?.id ?? 0 )", name: data.user?.name ?? "", rating: data.user?.rating ?? "",image: data.user?.profile_image ?? "")
             
@@ -1041,11 +1102,13 @@ struct RehearsalScreen: View {
                 }
                 return
             }
-            
-            Task{
-                try await castManager.publish(streamName:  self.roomId)
+            if agoraToken != "" && channelName != "" {
+                agoraManager.joinChannel(asHost: true, channelName: channelName, token: agoraToken)
             }
-            
+//            Task{
+//                try await castManager.publish(streamName:  self.roomId)
+//            }
+//            
             
             let product: [ProductData] = (data.products ?? []).compactMap { product in
                 guard let id = product.id,

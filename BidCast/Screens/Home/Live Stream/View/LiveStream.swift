@@ -57,6 +57,7 @@ struct LiveStream: View {
     @State var navigateToProfile = false
     @State private var swipeConfirmed = false
     @Binding var currentStreamIndex : Int
+    
     @State private var verticalDragOffset = CGSize.zero
     @GestureState private var verticalGestureOffset = CGSize.zero
     @State var roomID = [String]()
@@ -103,6 +104,8 @@ struct LiveStream: View {
     @State var onRoomsUpdated: (([String]) -> Void)?
     
     @State var maxBidUserName: String = "Demo UserName"
+    @Binding var agoraToken: String
+    
     
     @State var hasHostEndedRoom: Bool = false
     
@@ -210,16 +213,19 @@ struct LiveStream: View {
                                     .foregroundColor(.black)
                                     .font(.custom(poppinsSemiBold, size: 13.0))
                             }
-//                            if isFollow{
+                            if socketManagerChat.isFollowed {
                                 Button(action: {
-                                    Task{
-                                        SVProgressHUD.show()
-                                        await self.viewModel.followUnfollow(parameters: FollowRequest(following_id: userId))
-                                        await SVProgressHUD.dismiss()
-                                        followSuccess()
+                                    if let sellerId = liveShowsData[currentIndex].seller?.id {
+                                        socketManagerChat.sendFollowUnfollow(followerId: "\(UserDefaults.userId)", followingId:  sellerId)
                                     }
+//                                    Task{
+//                                        SVProgressHUD.show()
+//                                        await self.viewModel.followUnfollow(parameters: FollowRequest(following_id: userId))
+//                                        await SVProgressHUD.dismiss()
+//                                        followSuccess()
+//                                    }
                                 }) {
-                                    Text("Follow")
+                                    Text(socketManagerChat.isFollowed ? "Follow" : "")
                                         .font(.custom(poppinsSemiBold, size: 13.0))
                                         .foregroundColor(.black)
                                         .padding(.horizontal, 10)
@@ -227,7 +233,7 @@ struct LiveStream: View {
                                         .background(Color.yellow)
                                         .cornerRadius(10)
                                 }
-//                            }
+                            }
                             Button(action: {
                                 logoutRoom()
                                
@@ -822,6 +828,7 @@ struct LiveStream: View {
         .foregroundColor(.black)
         .background(.black)
         .onAppear{
+            
             //works as view did load
             UserDefaults.isLiveEnded = false
 //            FirebaseManager.shared.removeNewSessionObserver()
@@ -931,6 +938,13 @@ struct LiveStream: View {
             )
             return
         }
+        if self.agoraToken != "" && roomId != "" {
+            print("AAgora Token: \(self.agoraToken)")
+            agoraManager.joinChannel(asHost: isHost, channelName: roomId, token: agoraToken)
+        }
+        
+        //add follow unfollow status
+        socketManagerChat.listenForUserFollowStatus()
         
         // Set the current room data
         DispatchQueue.main.async {
@@ -941,10 +955,10 @@ struct LiveStream: View {
             self.currentRoomID = roomId
             print("currentStreamIndex \(currentStreamIndex) matchingRoomIndex index \(matchingRoomIndex)")
             // Join the room and send entry message
+            
             Task {
                 
 //                try await joinManager.subscribe(streamName: roomId)
-                agoraManager.joinChannel(asHost: isHost)
                 
 //              socketManagerChat.joinRoom(roomId: roomId, userId: UserDefaults.userId)
                 let userId = UserDefaults.userId
@@ -1012,7 +1026,7 @@ struct LiveStream: View {
             
             // Update follow status
             let currentShow = socketRooms[matchingRoomIndex]
-            self.isFollow = currentShow.seller?.isFollowed ?? false
+//            self.isFollow = currentShow.seller?.isFollowed ?? false
             fetchProducts(for: roomId)
             
             // Handle buyer verification
@@ -1293,11 +1307,11 @@ struct LiveStream: View {
         let response = viewModel.followDict
         if response.status == "success"{
             let status = response.data?.status ?? false
-            if status == true{
-                isFollow = status
-            }else{
-                isFollow = status
-            }
+//            if status == true{
+//                isFollow = status
+//            }else{
+//                isFollow = status
+//            }
         }
         
     }

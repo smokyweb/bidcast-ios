@@ -51,7 +51,7 @@ struct HomeViewScreen: View {
     @State var categoryName : String = ""
     
     @State private var loadedRoomIDs = Set<String>()
-
+    @State var agoraToken: String = ""
     
     @State var currentPage = 1
     var body: some View {
@@ -206,6 +206,7 @@ struct HomeViewScreen: View {
                                     print(" tapped the card!,inex \(index)")
                                     self.index = index
                                     self.currentRoomId = item.room_id ?? ""
+                                    self.agoraToken = item.rtc_token ?? ""
                                     userId = "\(item.user?.id ?? 0)"
                                     userImage = item.user?.profile_image ?? ""
                                     userName = item.user?.username ?? ""
@@ -248,7 +249,16 @@ struct HomeViewScreen: View {
             .padding([.leading,.trailing],12)
             .padding(.top , 10)
             
-            CusNavLink(doNavigate: $navigateToLiveStream, destination: LiveStream(currentRoomID: $currentRoomId, categoryName: $categoryName,currentStreamIndex :self.$index, userId : $userId, comeFromHome: $navigateToLiveStream,category: $selectedButton,search:self.$searchText,currentPage:self.$currentPage))
+            CusNavLink(doNavigate: $navigateToLiveStream, destination: LiveStream(currentRoomID: $currentRoomId,
+                                                                                  categoryName: $categoryName,
+                                                                                  currentStreamIndex :self.$index,
+                                                                                  userId : $userId,
+                                                                                  agoraToken: $agoraToken,
+                                                                                  comeFromHome: $navigateToLiveStream,
+                                                                                  category: $selectedButton,
+                                                                                  search:self.$searchText,
+                                                                                  currentPage:self.$currentPage
+                                                                                 ))
             
             CusNavLink(doNavigate: $navigateToProfile, destination: ProfileScreen(
                 id:$userId,

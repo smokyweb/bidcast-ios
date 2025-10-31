@@ -16,10 +16,6 @@ struct ContactUs: View {
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
 
-    var imageName = ["tagBorder", "streamBorder", "sellerBorder"]
-    var tabName = ["List a Product", "Scheduled a show", "Seller Hub"]
-    var subLabel = ["Create a listing for your item", "Go live and sell to your audience", "Manage your store and listings"]
-
     @State var request: ContactUsRequest = ContactUsRequest(name: "", email: "", subject: "", message: "")
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @EnvironmentObject var networkMonitor: NetworkMonitor
@@ -40,6 +36,8 @@ struct ContactUs: View {
                         count: .constant(0)
                     )
                 }
+                .frame(height: 40)
+                .background(Color.white)
 
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 15) {
@@ -57,6 +55,7 @@ struct ContactUs: View {
                         .cornerRadius(12)
 //                        .padding(.horizontal, 16)
                         .padding(.top, 16)
+                        .padding(.horizontal, 16)
 
                         // Form Fields
                         Group{
@@ -65,7 +64,7 @@ struct ContactUs: View {
                                 placeholder: AppString.enterFullName.localized,
                                 icon: .icUser,
                                 text: $request.name,
-                                isIconDisplay : true,
+                                isIconDisplay : false,
                                 enteredText: { request.name = $0 }
                             )
                             .textContentType(.name)
@@ -75,8 +74,8 @@ struct ContactUs: View {
                                 placeholder: UserDefaults.userEmail,
                                 icon: .icMail,
                                 text: .constant(UserDefaults.userEmail),
-                                isIconDisplay : true,
-                                enteredText: {_ in 
+                                isIconDisplay : false,
+                                enteredText: {_ in
                                     request.email = UserDefaults.userEmail
                                 }
                             )
@@ -88,7 +87,7 @@ struct ContactUs: View {
                                 placeholder: AppString.enterSubject.localized,
                                 icon: .icMail,
                                 text: $request.subject,
-                                isIconDisplay : true,
+                                isIconDisplay : false,
                                 enteredText: { request.subject = $0 }
                             )
 
@@ -118,16 +117,21 @@ struct ContactUs: View {
 //                            ListCell(image:"mail",title:"Email",subLabel: "support@company.com",isVectorImgHidden: true,imgSize: 24)
 //                                .padding(.horizontal)
                         }
+                        
+                        EmailSupportView()
+                            .padding(.horizontal, 16)
+                            .shadow(color: .black.opacity(0.4), radius: 3, x: 0, y: 0)
 
                         Spacer().frame(height: 80) // Space for button
                     }
                 }
+                .padding()
                 .background(Color.pearl)
             }
 
             // Bottom Fixed Button
-            VStack(spacing: 0) {
-                PrimaryButton(title: AppString.sendMessage.localized, isOutLine: true) {
+            VStack(alignment: .center, spacing: 0) {
+                PrimaryButton(title: AppString.sendMessage.localized, isOutLine: false, onButtonClick: {
                     withAnimation {
                         UIApplication.shared.endEditing()
                         guard !request.name.isEmpty else {
@@ -163,8 +167,9 @@ struct ContactUs: View {
                             self.success()
                         }
                     }
-                }
+                },cornerRadius : 12.0, btnTextColor: .white)
             }
+            .padding()
             .background(Color.white)
             .shadow(radius: 3)
            
@@ -185,6 +190,9 @@ struct ContactUs: View {
                     withAnimation { showError = false }
                 }
             )
+        }
+        .onAppear() {
+            request.email = UserDefaults.userEmail
         }
     }
 
