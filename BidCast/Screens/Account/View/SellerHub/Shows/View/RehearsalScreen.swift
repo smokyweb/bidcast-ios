@@ -77,6 +77,7 @@ struct RehearsalScreen: View {
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "Stream Ended", message: "The live stream has ended.", primaryBtnText: "", secondaryBtnText: "")
     @EnvironmentObject var networkMonitor: NetworkMonitor
     @State var showhud: Bool = false
+    @State var showhudSuccess: Bool = false
     @State var hudMsg: String = ""
     @Binding var backToTabBar : Bool
     
@@ -671,6 +672,7 @@ struct RehearsalScreen: View {
                                     print("product ID is :\(selectedID)")
                                     print("Live Room ID is :\(self.roomId)")
                                     setProductAsCurrent(selectedID: selectedID)
+//                                    fetchLatestProductList()
                                 }
                             },
                             initialSelectedProductId: initialSelectedProductId
@@ -758,6 +760,9 @@ struct RehearsalScreen: View {
         }
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
+        }
+        .toast(isPresenting: $showhud) {
+            AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlyeSuccess)
         }
         .onAppear {
         
@@ -851,7 +856,7 @@ struct RehearsalScreen: View {
             print("channelName: \(channelName), uid: \(uId), token: \(agoraToken)")
         } else {
             hudMsg = response?.message ?? ""
-            showhud = true
+            showhudSuccess = true
         }
     }
     
@@ -889,7 +894,7 @@ struct RehearsalScreen: View {
         let response = viewModel.storePromoteShowModel
         if response?.status == "success" {
             hudMsg = "show promoted successfully."
-            showhud = true
+            showhudSuccess = true
         } else {
             hudMsg = response?.message ?? ""
             showhud = true
@@ -975,10 +980,10 @@ struct RehearsalScreen: View {
                 },
                 onComplete: {
                     print("⏰ Countdown reached zero, showing sheet")
-                    self.fetchLatestProductList()
                     fetchProducts(for: self.roomId)
                     self.currentBottomSheet = .shop
                     self.showSellSheet = true
+                    self.fetchLatestProductList()
                     self.hasCountdownStarted = false
                 }
             )
@@ -1059,16 +1064,19 @@ struct RehearsalScreen: View {
     }
     
     func endShow(){
-        
         Task{
-//            try await castManager.unpublish()
-//            if agoraManager.isJoined {
-                agoraManager.leaveChannel()
-//            }
+            //            try await castManager.unpublish()
+            //            if agoraManager.isJoined {
+            agoraManager.leaveChannel()
+            //            }
             SocketManagerService.shared.endStreaming(roomId: self.roomId)
             SocketManagerService.shared.stopLiveScheduler()
+            
+            //clear chats and remove listener
+            SocketManagerService.shared.removeChatListener()
             self.comments.removeAll()
             SocketManagerService.shared.chats.removeAll()
+            
             previewResetTrigger.toggle()
             self.showLiveControls = false
             self.showPreLiveControls = true

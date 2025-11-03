@@ -8,14 +8,14 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "61B0DCD5-E443-447F-B97D-8B0934C4C1F4"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BidCast/Screens/Account/View/SellerHub/Shows/View/RehearsalScreen.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "667"
-            endingLineNumber = "667"
+            startingLineNumber = "668"
+            endingLineNumber = "668"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -24,7 +24,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "9F74F526-561D-4FCC-93BB-414A4D6720B2"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BidCast/Helper/APIManager.swift"
@@ -40,7 +40,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "264EC648-D5BA-4174-8DCA-839F0E7F8CBE"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BidCast/Helper/AgoraManager.swift"
@@ -50,43 +50,13 @@
             endingLineNumber = "181"
             landmarkName = "rtcEngine(_:didLeaveChannelWith:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "264EC648-D5BA-4174-8DCA-839F0E7F8CBE - 583b4f0a28dc9153"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "BidCast.AgoraManager.rtcEngine(_: __C.AgoraRtcEngineKit, didLeaveChannelWith: __C.AgoraChannelStats) -&gt; ()"
-                  moduleName = "BidCast.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/admn/Documents/JamProject/bidcast/BidCast/Helper/AgoraManager.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "181"
-                  endingLineNumber = "181">
-               </Location>
-               <Location
-                  uuid = "264EC648-D5BA-4174-8DCA-839F0E7F8CBE - 6243e1a63b86be07"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 @Swift.MainActor () -&gt; () in BidCast.AgoraManager.rtcEngine(_: __C.AgoraRtcEngineKit, didLeaveChannelWith: __C.AgoraChannelStats) -&gt; ()"
-                  moduleName = "BidCast.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/admn/Documents/JamProject/bidcast/BidCast/Helper/AgoraManager.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "181"
-                  endingLineNumber = "181">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "97D1B106-8428-4768-B045-91CF34E7EEFB"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BidCast/Helper/AgoraManager.swift"
@@ -102,14 +72,14 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "8CE97A01-01DC-4566-A042-D30A509F9D7C"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BidCast/Helper/SocketManager/SocketManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "672"
-            endingLineNumber = "672"
+            startingLineNumber = "677"
+            endingLineNumber = "677"
             landmarkName = "listenForFollowUnfollowStatus()"
             landmarkType = "7">
          </BreakpointContent>
@@ -118,14 +88,14 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "E1ED0BC7-85F9-4EE0-9530-C21E7BC7975A"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BidCast/Helper/SocketManager/SocketManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "669"
-            endingLineNumber = "669"
+            startingLineNumber = "674"
+            endingLineNumber = "674"
             landmarkName = "listenForFollowUnfollowStatus()"
             landmarkType = "7">
          </BreakpointContent>
@@ -134,14 +104,14 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "492D5838-10CD-4F6B-AC69-48535881BD62"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BidCast/Helper/SocketManager/SocketManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "648"
-            endingLineNumber = "648"
+            startingLineNumber = "653"
+            endingLineNumber = "653"
             landmarkName = "sendFollowUnfollow(followerId:followingId:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -150,7 +120,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "32B2F8C2-90D8-49CE-8EB3-C4899AB0C980"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BidCast/Screens/Sell/Schedule/Add Product/AddProductScreen.swift"
@@ -166,7 +136,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "643CFF79-AED6-43BF-B090-3923B42B6000"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BidCast/Screens/Sell/Schedule/Add Product/AddProductScreen.swift"
@@ -182,7 +152,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "72A2242A-FBA3-4E68-B100-FE520DA07C53"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BidCast/Screens/Sell/Schedule/Add Product/AddProductScreen.swift"
@@ -320,82 +290,6 @@
             endingLineNumber = "651"
             landmarkName = "uploadSuccess()"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "7CC936D3-39AC-40C1-9C14-7F3D22D0C2A5 - 26e43b25eb350834"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(1) suspend resume partial function for function signature specialization &lt;Arg[4] = Value Promoted from Box&gt; of closure #2 () async -&gt; () in BidCast.CreateProductScreen.uploadSuccess() -&gt; ()"
-                  moduleName = "BidCast.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/admn/Documents/JamProject/bidcast/BidCast/Screens/NonLinkedSceen/CreateProduct/CreateProductScreen.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "651"
-                  endingLineNumber = "651">
-               </Location>
-               <Location
-                  uuid = "7CC936D3-39AC-40C1-9C14-7F3D22D0C2A5 - b00d4acfd1bbd4df"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(2) await resume partial function for function signature specialization &lt;Arg[4] = Value Promoted from Box&gt; of closure #2 () async -&gt; () in BidCast.CreateProductScreen.uploadSuccess() -&gt; ()"
-                  moduleName = "BidCast.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/admn/Documents/JamProject/bidcast/BidCast/Screens/NonLinkedSceen/CreateProduct/CreateProductScreen.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "651"
-                  endingLineNumber = "651">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "6D243487-F624-4DD9-8AC7-24734B0C552E"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "BidCast/Screens/Account/View/SellerHub/Shows/View/RehearsalScreen.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "863"
-            endingLineNumber = "863"
-            landmarkName = "fetchLatestProductList()"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "6D243487-F624-4DD9-8AC7-24734B0C552E - 4cfbabcdd626a4a"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "BidCast.RehearsalScreen.fetchLatestProductList() -&gt; ()"
-                  moduleName = "BidCast.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/admn/Documents/JamProject/bidcast/BidCast/Screens/Account/View/SellerHub/Shows/View/RehearsalScreen.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "863"
-                  endingLineNumber = "863">
-               </Location>
-               <Location
-                  uuid = "6D243487-F624-4DD9-8AC7-24734B0C552E - 71af256f4e0164f5"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #2 (BidCast.ProductData) -&gt; Swift.Bool in BidCast.RehearsalScreen.fetchLatestProductList() -&gt; ()"
-                  moduleName = "BidCast.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/admn/Documents/JamProject/bidcast/BidCast/Screens/Account/View/SellerHub/Shows/View/RehearsalScreen.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "863"
-                  endingLineNumber = "863">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -408,117 +302,9 @@
             filePath = "BidCast/Screens/Account/View/SellerHub/Shows/View/RehearsalScreen.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "981"
-            endingLineNumber = "981"
+            startingLineNumber = "985"
+            endingLineNumber = "985"
             landmarkName = "ShowData(data:selectedID:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "76A25B9A-31B4-4999-ABE9-717AC99A6D98"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "BidCast/Screens/Home/Live Stream/View/LiveStream.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1095"
-            endingLineNumber = "1095"
-            landmarkName = "fetchProducts(for:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "76A25B9A-31B4-4999-ABE9-717AC99A6D98 - ee9c75b89129fbd7"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "BidCast.LiveStream.fetchProducts(for: Swift.String) -&gt; ()"
-                  moduleName = "BidCast.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/admn/Documents/JamProject/bidcast/BidCast/Screens/Home/Live%20Stream/View/LiveStream.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1106"
-                  endingLineNumber = "1106">
-               </Location>
-               <Location
-                  uuid = "76A25B9A-31B4-4999-ABE9-717AC99A6D98 - ee9c75b89129fbd7"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "BidCast.LiveStream.fetchProducts(for: Swift.String) -&gt; ()"
-                  moduleName = "BidCast.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/admn/Documents/JamProject/bidcast/BidCast/Screens/Home/Live%20Stream/View/LiveStream.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1106"
-                  endingLineNumber = "1106">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "9E0E5440-E17E-440B-9B47-E63BC7A10FC9"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "BidCast/Screens/Home/Live Stream/View/LiveStream.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1100"
-            endingLineNumber = "1100"
-            landmarkName = "fetchProducts(for:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "9E0E5440-E17E-440B-9B47-E63BC7A10FC9 - ee9c75b89129fbd7"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "BidCast.LiveStream.fetchProducts(for: Swift.String) -&gt; ()"
-                  moduleName = "BidCast.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/admn/Documents/JamProject/bidcast/BidCast/Screens/Home/Live%20Stream/View/LiveStream.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1106"
-                  endingLineNumber = "1106">
-               </Location>
-               <Location
-                  uuid = "9E0E5440-E17E-440B-9B47-E63BC7A10FC9 - ee9c75b89129fbd7"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "BidCast.LiveStream.fetchProducts(for: Swift.String) -&gt; ()"
-                  moduleName = "BidCast.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/admn/Documents/JamProject/bidcast/BidCast/Screens/Home/Live%20Stream/View/LiveStream.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1106"
-                  endingLineNumber = "1106">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "EC08ECFE-4264-4FBD-B8FC-A554101FEF8D"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "BidCast/Screens/Home/Live Stream/View/LiveStream.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1108"
-            endingLineNumber = "1108"
-            landmarkName = "fetchProducts(for:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -589,54 +375,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "2DC0A837-6DB4-43F5-B74B-DA4B56C44D04"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "BidCast/Screens/Home/Live Stream/View/LiveStream.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "957"
-            endingLineNumber = "957"
-            landmarkName = "joinStreamUsingSocket(roomId:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "B7C95245-28A1-4203-9F21-C913CF0784DD"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "BidCast/Screens/Home/Live Stream/View/LiveStream.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "959"
-            endingLineNumber = "959"
-            landmarkName = "joinStreamUsingSocket(roomId:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "F8BBB3C7-4386-4DA5-95EA-BE9E563AB807"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "BidCast/Screens/Home/Live Stream/View/LiveStream.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "932"
-            endingLineNumber = "932"
-            landmarkName = "joinStreamUsingSocket(roomId:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "EF92B659-157C-4C0F-8ADB-99B04254D92F"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -692,42 +430,10 @@
             filePath = "BidCast/Helper/SocketManager/SocketManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "271"
-            endingLineNumber = "271"
+            startingLineNumber = "270"
+            endingLineNumber = "270"
             landmarkName = "listenForChat(roomId:)"
             landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "9C40C98D-1623-4289-8379-31A4C4A8CA41"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "BidCast/Helper/SocketManager/SocketManager.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "245"
-            endingLineNumber = "245"
-            landmarkName = "listenForChat(roomId:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "8D5303CC-B213-4CBE-A5C7-C26772197283"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "BidCast/Screens/Account/View/SellerHub/Shows/View/RehearsalScreen.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "428"
-            endingLineNumber = "428"
-            landmarkName = "body"
-            landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -765,66 +471,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "C14367BB-0455-4954-9691-E9A4429A8D5A"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "BidCast/Screens/Home/View/HomeViewScreen.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "305"
-            endingLineNumber = "305"
-            landmarkName = "body"
-            landmarkType = "24">
-            <Locations>
-               <Location
-                  uuid = "C14367BB-0455-4954-9691-E9A4429A8D5A - ef3577c4745927f2"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(1) suspend resume partial function for closure #2 () async -&gt; () in closure #3 () -&gt; () in BidCast.HomeViewScreen.body.getter : some"
-                  moduleName = "BidCast.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/admn/Documents/JamProject/bidcast/BidCast/Screens/Home/View/HomeViewScreen.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "305"
-                  endingLineNumber = "305">
-               </Location>
-               <Location
-                  uuid = "C14367BB-0455-4954-9691-E9A4429A8D5A - de9df757d55feb30"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(3) suspend resume partial function for closure #2 () async -&gt; () in closure #3 () -&gt; () in BidCast.HomeViewScreen.body.getter : some"
-                  moduleName = "BidCast.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/admn/Documents/JamProject/bidcast/BidCast/Screens/Home/View/HomeViewScreen.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "305"
-                  endingLineNumber = "305">
-               </Location>
-               <Location
-                  uuid = "C14367BB-0455-4954-9691-E9A4429A8D5A - c0a68d92a5daf6e"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(5) suspend resume partial function for closure #2 () async -&gt; () in closure #3 () -&gt; () in BidCast.HomeViewScreen.body.getter : some"
-                  moduleName = "BidCast.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/admn/Documents/JamProject/bidcast/BidCast/Screens/Home/View/HomeViewScreen.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "305"
-                  endingLineNumber = "305">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "DCAB7051-258B-4377-B81F-9F1EAD366BAA"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
@@ -835,6 +481,150 @@
             startingLineNumber = "246"
             endingLineNumber = "246"
             landmarkName = "success()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "0F36FCF3-2766-440B-B788-811E8AF6BF3E"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BidCast/Screens/Account/View/SellerHub/Shows/View/RehearsalScreen.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "674"
+            endingLineNumber = "674"
+            landmarkName = "body"
+            landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "0E1747BE-0A08-4DA3-903F-4B0874FAC233"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BidCast/Screens/Account/View/SellerHub/Shows/View/RehearsalScreen.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "675"
+            endingLineNumber = "675"
+            landmarkName = "body"
+            landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "CF2464CF-0AFF-468A-A272-5B2C1A170ABD"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BidCast/Screens/Account/View/SellerHub/Shows/View/RehearsalScreen.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "867"
+            endingLineNumber = "867"
+            landmarkName = "fetchLatestProductList()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "9C717189-F364-4DF9-81A7-43C9AB3F951A"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BidCast/Helper/SocketManager/SocketManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "264"
+            endingLineNumber = "264"
+            landmarkName = "listenForChat(roomId:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "2C036D87-C0B1-4EA8-9AB3-FCF3AA2BC523"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BidCast/Helper/SocketManager/SocketManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "174"
+            endingLineNumber = "174"
+            landmarkName = "sendChat(roomId:message:userId:userName:userImage:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "9B63F1E3-7F52-488B-992E-74E88C46A893"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BidCast/Helper/SocketManager/SocketManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "263"
+            endingLineNumber = "263"
+            landmarkName = "listenForChat(roomId:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B33C5E7D-0FA4-4EA8-B2BC-8E48D9FCE238"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BidCast/Helper/SocketManager/SocketManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "237"
+            endingLineNumber = "237"
+            landmarkName = "listenForChat(roomId:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F35E3E10-D86B-4ECB-A1FE-887BA0343097"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BidCast/Screens/Account/View/SellerHub/Shows/View/RehearsalScreen.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "966"
+            endingLineNumber = "966"
+            landmarkName = "ShowData(data:selectedID:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "EAE5217C-52D3-4993-AD72-19A2525B806F"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BidCast/Screens/Home/Live Stream/View/LiveStream.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "984"
+            endingLineNumber = "984"
+            landmarkName = "joinStreamUsingSocket(roomId:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

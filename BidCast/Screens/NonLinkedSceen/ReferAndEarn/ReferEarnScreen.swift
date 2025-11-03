@@ -6,9 +6,14 @@
 //
 
 import SwiftUI
+import AlertToast
 
 struct ReferEarnScreen: View {
     @State private var referralLink = "https://bidcast.com/ref/user123"
+    
+    @State var showhud: Bool = false
+    @State var hudMsg: String = ""
+    
     @Environment(\.presentationMode) var presentationMode
     var body: some View {
         VStack(spacing: 20) {
@@ -60,6 +65,16 @@ struct ReferEarnScreen: View {
                 
                 Button(action: {
                     UIPasteboard.general.string = referralLink
+                    hudMsg = "Text Copied".localized
+                    withAnimation {
+                        showhud = true
+                    }
+                    // Hide after 2 seconds
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                        withAnimation {
+                            showhud = false
+                        }
+                    }
                 }) {
                     HStack {
                         Image(systemName: "doc.on.doc.fill")
@@ -101,6 +116,10 @@ struct ReferEarnScreen: View {
                     .cornerRadius(12)
             }
             .padding([.horizontal, .bottom])
+        }
+        .toast(isPresenting: $showhud) {
+//            AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlyeSuccess)
+            AlertToast(displayMode: .hud, type: .regular, title: hudMsg)
         }
     }
 }

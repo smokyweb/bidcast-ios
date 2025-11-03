@@ -230,11 +230,10 @@ final class SocketManagerService: NSObject, ObservableObject {
     }
    
 
-    
     func listenForChat(roomId: String) {
         socket.on("chat_get") {  data, _ in
            
-
+            print(data)
             guard let json = data.first as? [String: Any] else {
                 print("⚠️ Invalid chat data:", data)
                 return
@@ -271,6 +270,12 @@ final class SocketManagerService: NSObject, ObservableObject {
                 self.logger.error("❌ Chat decode error: \(error.localizedDescription)")
             }
         }
+    }
+    
+    // MARK: - Remove chat listener
+    func removeChatListener() {
+        socket.off("chat_get")
+        print("🧹 Removed chat listener for 'chat_get'")
     }
 
     
