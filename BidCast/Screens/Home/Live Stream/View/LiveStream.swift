@@ -16,11 +16,11 @@ import SocketIO
 
 struct CommentModel: Codable, Identifiable, Equatable {
     let id = UUID()
-    let image: String
-    let username: String
-    let message: String
-    let userId: String 
-    let roomId: String
+    let image: String?
+    let username: String?
+    let message: String?
+    let userId: String?
+    let roomId: String?
 
     enum CodingKeys: String, CodingKey {
         case image = "user_image"
@@ -29,20 +29,39 @@ struct CommentModel: Codable, Identifiable, Equatable {
         case userId = "user_id"
         case roomId = "room_id"
     }
+//    init(from decoder: Decoder) throws {
+//            let container = try decoder.container(keyedBy: CodingKeys.self)
+//            image = try container.decode(String.self, forKey: .image)
+//            username = try container.decode(String.self, forKey: .username)
+//            message = try container.decode(String.self, forKey: .message)
+//            roomId = try container.decode(String.self, forKey: .roomId)
+//
+//            // Handle userId as String or Int
+//            if let intId = try? container.decode(Int.self, forKey: .userId) {
+//                userId = String(intId)
+//            } else {
+//                userId = try container.decode(String.self, forKey: .userId)
+//            }
+//        }
+    
     init(from decoder: Decoder) throws {
-            let container = try decoder.container(keyedBy: CodingKeys.self)
-            image = try container.decode(String.self, forKey: .image)
-            username = try container.decode(String.self, forKey: .username)
-            message = try container.decode(String.self, forKey: .message)
-            roomId = try container.decode(String.self, forKey: .roomId)
-
-            // Handle userId as String or Int
-            if let intId = try? container.decode(Int.self, forKey: .userId) {
-                userId = String(intId)
-            } else {
-                userId = try container.decode(String.self, forKey: .userId)
-            }
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        // Safe decode for image, username, message, roomId
+        image = (try? container.decodeIfPresent(String.self, forKey: .image)) ?? ""
+        username = (try? container.decodeIfPresent(String.self, forKey: .username)) ?? ""
+        message = (try? container.decodeIfPresent(String.self, forKey: .message)) ?? ""
+        roomId = (try? container.decodeIfPresent(String.self, forKey: .roomId)) ?? ""
+        
+        // Handle userId as String or Int or nil
+        if let intId = try? container.decodeIfPresent(Int.self, forKey: .userId) {
+            userId = String(intId)
+        } else if let strId = try? container.decodeIfPresent(String.self, forKey: .userId) {
+            userId = strId
+        } else {
+            userId = ""
         }
+    }
 }
 
 struct LiveStream: View {
@@ -65,6 +84,7 @@ struct LiveStream: View {
     var viewModel = LiveShowsViewModel()
     @State var homeViewModel = HomeViewModel()
     @State var liveShowsData = [RoomModel]()
+    @State var productData = [ProductData]()
     @State var BiddingDetail = BiddingModel()
     @State var isLoading: Bool = false
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "Stream Ended", message: "The live stream has ended.", primaryBtnText: "", secondaryBtnText: "")
@@ -160,7 +180,6 @@ struct LiveStream: View {
     }
     @StateObject var socketManagerChat = SocketManagerService.shared
     
-    @State var productData = [ProductData]()
     @State var currentProductIndex = 0
     
     @StateObject private var agoraManager = AgoraManager(asHost: false)
@@ -213,27 +232,21 @@ struct LiveStream: View {
                                     .foregroundColor(.black)
                                     .font(.custom(poppinsSemiBold, size: 13.0))
                             }
-                            if socketManagerChat.isFollowed {
-                                Button(action: {
-                                    if let sellerId = liveShowsData[currentIndex].seller?.id {
-                                        socketManagerChat.sendFollowUnfollow(followerId: "\(UserDefaults.userId)", followingId:  sellerId)
-                                    }
-//                                    Task{
-//                                        SVProgressHUD.show()
-//                                        await self.viewModel.followUnfollow(parameters: FollowRequest(following_id: userId))
-//                                        await SVProgressHUD.dismiss()
-//                                        followSuccess()
-//                                    }
-                                }) {
-                                    Text(socketManagerChat.isFollowed ? "Follow" : "")
-                                        .font(.custom(poppinsSemiBold, size: 13.0))
-                                        .foregroundColor(.black)
-                                        .padding(.horizontal, 10)
-                                        .padding(.vertical, 4)
-                                        .background(Color.yellow)
-                                        .cornerRadius(10)
+//                            if socketManagerChat.isFollowed {
+                            Button(action: {
+                                if let sellerId = liveShowsData[currentIndex].seller?.id {
+                                    socketManagerChat.sendFollowUnfollow(followerId: "\(UserDefaults.userId)", followingId:  sellerId)
                                 }
+                            }) {
+                                Text(socketManagerChat.isFollowed ? "Follow" : "Following")
+                                    .font(.custom(poppinsSemiBold, size: 13.0))
+                                    .foregroundColor(.black)
+                                    .padding(.horizontal, 10)
+                                    .padding(.vertical, 4)
+                                    .background(Color.yellow)
+                                    .cornerRadius(10)
                             }
+//                            }
                             Button(action: {
                                 logoutRoom()
                                
@@ -265,13 +278,13 @@ struct LiveStream: View {
                                             VStack(alignment: .leading, spacing: 8) {
                                                 ForEach(socketManagerChat.chats) { comment in
                                                     HStack(alignment: .center, spacing: 6) {
-                                                        CustomProfileImage(url: comment.image, isCircular: true,size: 24)
+                                                        CustomProfileImage(url: comment.image ?? "", isCircular: true,size: 24)
                                                         VStack(alignment: .leading) {
-                                                            Text(comment.username.capitalizingFirstLetter())
+                                                            Text(comment.username?.capitalizingFirstLetter() ?? "")
                                                                 .font(.custom(poppinsSemiBold, size: 14.0))
                                                             
                                                                 .foregroundColor(.white)
-                                                            Text(comment.message)
+                                                            Text(comment.message ?? "")
                                                                 .font(.custom(poppinsRegular, size: 12.0))
                                                                 .foregroundColor(.white)
                                                         }
@@ -506,7 +519,8 @@ struct LiveStream: View {
                                     showSheet = true
                                 }
                                 else if action == .share {
-                                    shareItems = ["Live auction starting in 5 minutes! Don’t miss out on exclusive items.", URL(string: "https://apps.apple.com/us/app/light-speedometer/id6447198696")!]
+                                    shareItems = ["Live auction starting in 5 minutes! Don’t miss out on exclusive items.", URL(string: "https://www.backend.bidcast.betaplanets.com/live-show?roomid=\(currentRoomID)")!]
+                                    print(shareItems)
                                     showSystemShareSheet = true
                                 }
                                 else if action == .wallet{
@@ -783,7 +797,9 @@ struct LiveStream: View {
                 case .cart:
                     ShopBottomSheetView(
                         isPresented: $showSheet,
-                        productData : $productData
+                        productData : $productData,
+                        productShowType: .viewOnly,
+                        initialSelectedProductId: currentProductID
                     )
                 case .none:
                     EmptyView()
@@ -1074,30 +1090,50 @@ struct LiveStream: View {
             self.currentPrice = 0.0
             return
         }
-        
         if let products = socketRoom.products {
-            let activeCurrentProducts = products.filter { product in
-                let status = product.status?.lowercased() ?? ""
-                return (status == "live" || status == "active") && product.isCurrent
-            }
-            
-            if let currentProduct = activeCurrentProducts.first {
-                self.productData = [currentProduct]
-                self.currentProductIndex = 0
+            productData = products
+//            let activeCurrentProducts = products.filter { product in
+//                let status = product.status?.lowercased() ?? ""
+//                return (status == "live" || status == "active") && product.isCurrent
+//            }
+//            
+//            if let currentProduct = activeCurrentProducts.first {
+//              
+//                if let priceDouble = Double(currentProduct.price ?? "") {
+//                    self.currentPrice = priceDouble
+//                }
+//            }
+            if let index = productData.firstIndex(where: { $0.isCurrent }) {
+                let currentProduct = productData[index]
+                self.currentPrice = Double(currentProduct.price ?? "") ?? 0.0
+                self.currentProductIndex = index
                 self.currentProductID = currentProduct.id
-                if let priceDouble = Double(currentProduct.price ?? "") {
-                    self.currentPrice = priceDouble
-                }
-            } else {
-                self.productData = []
-                self.currentProductIndex = 0
-                self.currentPrice = 0.0
+                print("Current product: \(currentProduct), index: \(index)")
             }
-        } else {
-            self.productData = []
-            self.currentProductIndex = 0
-            self.currentPrice = 0.0
         }
+//        if let products = socketRoom.products {
+//            let activeCurrentProducts = products.filter { product in
+//                let status = product.status?.lowercased() ?? ""
+//                return (status == "live" || status == "active") && product.isCurrent
+//            }
+//            
+//            if let currentProduct = activeCurrentProducts.first {
+//                self.productData = [currentProduct]
+//                self.currentProductIndex = 0
+//                self.currentProductID = currentProduct.id
+//                if let priceDouble = Double(currentProduct.price ?? "") {
+//                    self.currentPrice = priceDouble
+//                }
+//            } else {
+//                self.productData = []
+//                self.currentProductIndex = 0
+//                self.currentPrice = 0.0
+//            }
+//        } else {
+//            self.productData = []
+//            self.currentProductIndex = 0
+//            self.currentPrice = 0.0
+//        }
     }
 
 

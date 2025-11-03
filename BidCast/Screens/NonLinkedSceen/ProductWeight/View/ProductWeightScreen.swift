@@ -361,6 +361,8 @@ struct ProductWeightScreen: View {
     
     func storeSuccess(){
         let response = viewModel.storeProductResponse
+        request = StoreProductParam(category_id: "", title: "", description: "", quantity: "1", pricing: "", flash_sale: "0", accept_offers: "0", reserve_for_live: "0", shipping_profile_id: "2", status: "",sub_category_id: "",width: "",length: "", weight: "",height:"",mail_class:"",processing_category:"")
+        imageUrls = []
         if response?.status == "success"{
             alertType = .sheetType(
                 icon: .success,

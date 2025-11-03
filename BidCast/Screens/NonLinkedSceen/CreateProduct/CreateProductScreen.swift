@@ -15,6 +15,7 @@ struct CreateProductScreen: View {
     @EnvironmentObject var networkMonitor: NetworkMonitor
     @State var categorySelect : String = ""
     @State var categoyList = [String]()
+    //previuos Data
     @Binding var requests : StoreScheduleShowRequest
     @Binding var thumbNail : String
     @Binding var backToPrepare : Bool
@@ -34,7 +35,7 @@ struct CreateProductScreen: View {
     @State var shippingId = ""
     @State var ShippingAddress: [AddressModel] = []
     @State var mailClassList = [String]()
-    @State var quantity: Int = 1
+    //category request data
     @State var request : StoreProductParam = StoreProductParam(category_id: "", title: "", description: "", quantity: "1", pricing: "", flash_sale: "0", accept_offers: "0", reserve_for_live: "0", shipping_profile_id: "2", status: "",sub_category_id: "",width: "",length: "", weight: "",height:"",mail_class:"",processing_category:"")
     
     @State var viewModel = ListProductViewModel()
@@ -82,7 +83,8 @@ struct CreateProductScreen: View {
                     VStack(alignment:.leading,spacing: 8){
                         
                         DropDownSelection(
-                            options: $categoryNames, floatingLabel:"Category",
+                            options: $categoryNames,
+                            floatingLabel:"Category",
                             hint: "Select Category",
                             selected: $selectedCategory,
                             anchor: .bottom,
@@ -117,6 +119,7 @@ struct CreateProductScreen: View {
                                 }
                             }
                         )
+                        .disabled(!selectedCategory.isEmpty)
                         .zIndex(1201.0)
                         .padding([.leading,.trailing],16)
                         AuthTextField(
@@ -183,7 +186,6 @@ struct CreateProductScreen: View {
                             custCategory : robotoRegular,
                             custCategorySize : 13.0,
                             onOptionSelected: { value in
-//                                selectedCategory = value
 //                                if let id = categoryList.first(where: { $0.name == value })?.id {
 //                                    request.mail_class = "\(id)"
 //                                } else {
@@ -204,7 +206,6 @@ struct CreateProductScreen: View {
                             custCategory : robotoRegular,
                             custCategorySize : 13.0,
                             onOptionSelected: { value in
-//                                selectedCategory = value
 //                                if let id = categoryList.first(where: { $0.name == value })?.id {
                                     request.processing_category = value
 //                                } else {
@@ -218,6 +219,7 @@ struct CreateProductScreen: View {
                         // Quantity Selector
                         HStack(spacing: 6) {
                             Button(action: {
+                                var quantity = Int(request.quantity) ?? 0
                                 if quantity > 1 {
                                     quantity -= 1
                                     request.quantity = "\(quantity)" // keep request in sync
@@ -232,11 +234,12 @@ struct CreateProductScreen: View {
                             }
                             .buttonStyle(.plain)
                             
-                            Text("\(quantity)")
+                            Text("\(request.quantity)")
                                 .font(.system(size: 18, weight: .semibold))
                                 .frame(width: 50, alignment: .center)
                             
                             Button(action: {
+                                var quantity = Int(request.quantity) ?? 0
                                 quantity += 1
                                 request.quantity = "\(quantity)"
                             }) {
@@ -275,7 +278,7 @@ struct CreateProductScreen: View {
                             showhud = true
                             return
                         }
-                        guard !request.category_id.isEmpty else{
+                        guard !requests.category_id.isEmpty else{
                             hudMsg = "Please select category"
                             showhud = true
                             return
@@ -398,9 +401,8 @@ struct CreateProductScreen: View {
         CusNavLink(doNavigate: $navigateToProuct, destination: AddProductsScreen(request:$requests,thumbNail: $thumbNail,fromPrepare: $fromPrepare,backToPrepare: $backToPrepare, NavFromProductLibrary: .constant(false), backToCreateProduct: .constant(false), delegate: delegate))
         
         CusNavLink(doNavigate: $navigateToSalesFormat, destination: SalesFormatScreen(request: $request,storeScheduleRequest: $requests, imageUrls : $imageUrls,thumbNail: $thumbNail,backToPrepare: $backToPrepare,fromPrepare: $fromPrepare,backToCreateProduct:$navigateToSalesFormat,delegate: delegate))
-        
-        
         .onFirstAppear(perform: {
+           
             Task{
                 guard Reachability.isConnectedToNetwork() else {
                     hudMsg = "No Internet Connection"
@@ -459,6 +461,10 @@ struct CreateProductScreen: View {
             
             }
         })
+        .onAppear {
+            //assign categoryId
+            request.category_id = "\(requests.category_id)"
+        }
         .background(.bg.opacity(0.5))
         .ignoresSafeArea(.container, edges: .bottom) 
         .onTapGesture {
@@ -490,6 +496,7 @@ struct CreateProductScreen: View {
         let response = viewModel.categoryResponse
         if response?.status == "success" {
             self.categoryList = response?.data ?? [CategoryDataModel]()
+            self.selectedCategory = self.categoryList.filter({$0.id == Int(requests.category_id)}).first?.name ?? ""
             self.categoryNames = response?.data.map { $0.name ?? "No Category" } ?? [String]()
         } else {
             alertType = .sheetType(

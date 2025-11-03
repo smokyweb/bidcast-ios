@@ -263,7 +263,7 @@ final class SocketManagerService: NSObject, ObservableObject {
                 DispatchQueue.main.async {
                     if !self.chats.contains(where: { $0.id == chat.id }) {
                         self.chats.append(chat)
-                        self.logger.info("💬 [\(messageRoomId)] Chat from \(chat.username): \(chat.message)")
+//                        self.logger.info("💬 [\(messageRoomId)] Chat from \(chat.username ?? ""): \(chat.message ?? "")")
                     }
                 }
 

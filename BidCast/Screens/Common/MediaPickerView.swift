@@ -32,7 +32,7 @@ struct MediaPickerView: View {
                                 .background(.clear)
                         }
                         Spacer()
-                        Text("\(selectedMedia.count)/\(maxMediaCount)")
+                        Text("\(uploadedImageUrls.count)/\(maxMediaCount)")
                             .foregroundColor(.gray)
                             .font(.custom(robotoRegular, size: 14.0))
                     }
@@ -58,7 +58,7 @@ struct MediaPickerView: View {
 //                            }
                             
                             // Photo Library Picker
-                            if selectedMedia.count < maxMediaCount {
+                            if uploadedImageUrls.count < maxMediaCount {
                                 Button {
                                     showPickerOptions = true
                                 } label: {
@@ -76,7 +76,7 @@ struct MediaPickerView: View {
                             }
                             
                             // Media Preview
-                            ForEach(selectedMedia.indices, id: \.self) { index in
+                            ForEach(uploadedImageUrls.indices, id: \.self) { index in
                                 ZStack(alignment: .topTrailing) {
                                     Image(uiImage: selectedMedia[index])
                                         .resizable()
@@ -112,6 +112,11 @@ struct MediaPickerView: View {
             .cornerRadius(12)
             .padding(.all, 12)
         }
+        .onAppear {
+            if uploadedImageUrls.isEmpty {
+                selectedMedia.removeAll()
+            }
+        }
         .background(.clear)
         .confirmationDialog("Select Media Source", isPresented: $showPickerOptions) {
             Button("Camera") {
@@ -124,15 +129,13 @@ struct MediaPickerView: View {
         }
         .fullScreenCover(isPresented: $showCameraPicker) {
             ImagePicker(sourceType: .camera) { image,url  in
-                if let image = image,
-                           selectedMedia.count < maxMediaCount,
-                           !selectedMedia.contains(image) {
-                            selectedMedia.append(image)
-                        }
-
-                        if let url = url {
-                            uploadedImageUrls.append(url)
-                        }
+                if let image = image, let url = url {
+                    if selectedMedia.count < maxMediaCount,
+                       !selectedMedia.contains(image) {
+                        selectedMedia.append(image)
+                    }
+                    self.uploadedImageUrls.append(url)
+                }
             }
             .ignoresSafeArea()
         }

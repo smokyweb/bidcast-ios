@@ -137,7 +137,6 @@ struct SelectThumbnailScreen: View {
             },cornerRadius: 12, btnTextColor: .white)
             .padding(.top , 10)
             
-            
             CusNavLink(doNavigate: $navigateToSelectTime, destination: SelectShowScreen(request:$request,thumbNail: $thumbNail, comeFromPrepareScreen: .constant(false),backToPrepare: $backToPrepare))
             
 //            CusNavLink(doNavigate: $navigateToProuct, destination: AddProductsScreen(request:$request,thumbNail: $thumbNail,fromPrepare: $fromPrepare,backToPrepare: $backToPrepare,delegate: delegate))

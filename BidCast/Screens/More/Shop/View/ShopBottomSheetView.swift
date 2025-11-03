@@ -174,7 +174,8 @@ enum ShopTab: String, CaseIterable {
 struct ShopBottomSheetView: View {
     @Binding var isPresented: Bool
     @Binding var productData: [ProductData]
-    var NavFrom: String = ""
+//    var NavFrom: String = ""
+    var productShowType: ProductShowType
     var onLiveStreamStart: ((String) -> Void)?
     var onAddProduct: ((String) -> Void)?
     
@@ -190,12 +191,26 @@ struct ShopBottomSheetView: View {
     @State private var showToast = false
     @State private var toastMessage = ""
     
+    private var selectedProduct: ProductData?{
+        let selectedProduct = productData.first(where: { $0.isCurrent })
+        return selectedProduct
+    }
+    
+    private var isEveryProductSold: Bool {
+        return productData.allSatisfy({ $0.status == "sold" })
+    }
+    
+    private func isProductSelectable(for product: ProductData?) -> Bool {
+        guard let productData = product else { return false }
+        return productShowType != .viewOnly && productData.status != "sold"
+    }
+    
     
     var body: some View {
         VStack(spacing: 16) {
             // MARK: Header
             HStack {
-                Text(NavFrom == "" ? "Select Next Product For Auction" : "Shop")
+                Text(productShowType == .nextProduct ? "Select Next Product For Auction" : "Shop" )
                     .font(.custom(poppinsBold, size: 15))
                 Spacer()
                 Button {
@@ -207,7 +222,7 @@ struct ShopBottomSheetView: View {
             }
             
             // MARK: Search
-            if NavFrom != ""{
+            if productShowType != .viewOnly{
                 HStack {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(.gray)
@@ -248,65 +263,121 @@ struct ShopBottomSheetView: View {
                 }
             }
             
-            // MARK: Action Buttons
-            if NavFrom != "Shop" {
-                if productData.contains(where: { $0.isCurrent ?? false }) {
-                    if NavFrom == "Rehearsal" {
-                        if let selectedProduct = productData.first(where: { $0.isCurrent ?? false }) {
-                            Button(action: {
-                                isPresented = false
-                                onLiveStreamStart?(selectedProduct.id ?? "")
-                            }) {
-                                Text("Start Live Stream")
-                                    .font(.custom(poppinsSemiBold, size: 14))
-                                    .frame(maxWidth: .infinity)
-                                    .padding()
-                                    .background(Color.defaultTheme)
-                                    .foregroundColor(.white)
-                                    .cornerRadius(12)
-                            }
-                        }
-                    } else if NavFrom.isEmpty {
-                        if let selectedProduct = productData.first(where: { $0.isCurrent }) {
-                            Button(action: {
-                                // Case 1: Product already in a bid
-                                if selectedProduct.id == initialSelectedProductId {
-                                    // Case 2: Check sold products
-                                    if productData.count == 1 && selectedProduct.status == "sold" {
-                                        // Only one product and it's sold
-                                        toastMessage = "Product Sold"
-                                        showToast = true
-                                        return
-                                    }
-                                    toastMessage = "Product already in a bid"
-                                    showToast = true
-                                    return
-                                }
-                               
-                                // Case 2:
-                                   if productData.count > 1 && productData.allSatisfy({ $0.status == "sold" }) {
-                                       // Multiple products and all are sold
-                                       toastMessage = "All Products Sold"
-                                       showToast = true
-                                       return
-                                   }
-
-                                   // Case 3: Valid product to add
-                                   isPresented = false
-                                   onAddProduct?(selectedProduct.id ?? "")
-                            }) {
-                                Text("Add Product")
-                                    .font(.custom(poppinsSemiBold, size: 14))
-                                    .frame(maxWidth: .infinity)
-                                    .padding()
-                                    .background(Color.defaultTheme)
-                                    .foregroundColor(.white)
-                                    .cornerRadius(12)
-                            }
-                        }
+            //lbottom button -> not shown for user
+            if let product = selectedProduct {
+                if productShowType == .shop {
+                    Button(action: {
+                        isPresented = false
+                        onLiveStreamStart?(product.id ?? "")
+                    }) {
+                        Text("Start Live Stream")
+                            .font(.custom(poppinsSemiBold, size: 14))
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.defaultTheme)
+                            .foregroundColor(.white)
+                            .cornerRadius(12)
                     }
                 }
+                else if productShowType == .nextProduct {
+                    Button(action: {
+                        // Case 1: Product already in a bid
+                        if product.id == initialSelectedProductId {
+                            // Case 2: Check sold products
+                            if productData.count == 1 && product.status == "sold" {
+                                // Only one product and it's sold
+                                toastMessage = "Product Sold"
+                                showToast = true
+                                return
+                            }
+                            toastMessage = "Product already in a bid"
+                            showToast = true
+                            return
+                        }
+                        
+                        // Case 2:
+                        if productData.count > 1 && isEveryProductSold {
+                            // Multiple products and all are sold
+                            toastMessage = "All Products Sold"
+                            showToast = true
+                            return
+                        }
+                        
+                        // Case 3: Valid product to add
+                        isPresented = false
+                        onAddProduct?(product.id ?? "")
+                    }) {
+                        Text("Add Product")
+                            .font(.custom(poppinsSemiBold, size: 14))
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.defaultTheme)
+                            .foregroundColor(.white)
+                            .cornerRadius(12)
+                    }
+                    
+                }
             }
+            
+            // MARK: Action Buttons
+//            if NavFrom != "Shop" {
+//                if productData.contains(where: { $0.isCurrent ?? false }) {
+//                    if NavFrom == "Rehearsal" {
+//                        if let selectedProduct = productData.first(where: { $0.isCurrent ?? false }) {
+//                            Button(action: {
+//                                isPresented = false
+//                                onLiveStreamStart?(selectedProduct.id ?? "")
+//                            }) {
+//                                Text("Start Live Stream")
+//                                    .font(.custom(poppinsSemiBold, size: 14))
+//                                    .frame(maxWidth: .infinity)
+//                                    .padding()
+//                                    .background(Color.defaultTheme)
+//                                    .foregroundColor(.white)
+//                                    .cornerRadius(12)
+//                            }
+//                        }
+//                    } else if NavFrom.isEmpty {
+//                        if let selectedProduct = productData.first(where: { $0.isCurrent }) {
+//                            Button(action: {
+//                                // Case 1: Product already in a bid
+//                                if selectedProduct.id == initialSelectedProductId {
+//                                    // Case 2: Check sold products
+//                                    if productData.count == 1 && selectedProduct.status == "sold" {
+//                                        // Only one product and it's sold
+//                                        toastMessage = "Product Sold"
+//                                        showToast = true
+//                                        return
+//                                    }
+//                                    toastMessage = "Product already in a bid"
+//                                    showToast = true
+//                                    return
+//                                }
+//                               
+//                                // Case 2:
+//                                   if productData.count > 1 && productData.allSatisfy({ $0.status == "sold" }) {
+//                                       // Multiple products and all are sold
+//                                       toastMessage = "All Products Sold"
+//                                       showToast = true
+//                                       return
+//                                   }
+//
+//                                   // Case 3: Valid product to add
+//                                   isPresented = false
+//                                   onAddProduct?(selectedProduct.id ?? "")
+//                            }) {
+//                                Text("Add Product")
+//                                    .font(.custom(poppinsSemiBold, size: 14))
+//                                    .frame(maxWidth: .infinity)
+//                                    .padding()
+//                                    .background(Color.defaultTheme)
+//                                    .foregroundColor(.white)
+//                                    .cornerRadius(12)
+//                            }
+//                        }
+//                    }
+//                }
+//            }
         }
         .padding()
         .background(Color.white)
@@ -319,7 +390,7 @@ struct ShopBottomSheetView: View {
     // MARK: - Product Row
     func productRow(_ product: ProductData, index: Int) -> some View {
         HStack(spacing: 12) {
-            if NavFrom != "Shop" && product.status != "sold" {
+            if isProductSelectable(for: product) {
                 Button(action: {
                     for i in productData.indices {
                         productData[i].isCurrent = (i == index)
@@ -334,7 +405,7 @@ struct ShopBottomSheetView: View {
             
             VStack(alignment: .leading, spacing: 4) {
                 HStack{
-                    Text(product.name ?? "")
+                    Text(product.name?.capitalizingFirstLetter() ?? "")
                         .font(.custom(poppinsSemiBold, size: 13.0))
                     Spacer()
                     // ✅ Show Live label if this is the initial selected product
@@ -347,7 +418,7 @@ struct ShopBottomSheetView: View {
                 }
                 Text("Price : $\(product.price ?? "")")
                     .font(.custom(poppinsRegular, size: 11.0))
-                Text("Status: \(product.status ?? "")")
+                Text("Status: \(product.status?.capitalizingFirstLetter() ?? "")")
                     .font(.custom(poppinsRegular, size: 11.0))
                     .foregroundColor(product.status == "sold" ? .red : .black)
             }
@@ -356,19 +427,19 @@ struct ShopBottomSheetView: View {
         
             
             // Hide edit/delete in Shop mode or if sold
-            if NavFrom != "Shop" && product.status != "sold" && NavFrom != "" {
-                Button {
-                    // Edit action
-                } label: {
-                    Image(systemName: "square.and.pencil")
-                }
-                
-                Button {
-                    // Delete action
-                } label: {
-                    Image(systemName: "trash")
-                }
-            }
+//            if NavFrom != "Shop" && product.status != "sold" && NavFrom != "" {
+//                Button {
+//                    // Edit action
+//                } label: {
+//                    Image(systemName: "square.and.pencil")
+//                }
+//                
+//                Button {
+//                    // Delete action
+//                } label: {
+//                    Image(systemName: "trash")
+//                }
+//            }
         }
         .padding()
         .background(

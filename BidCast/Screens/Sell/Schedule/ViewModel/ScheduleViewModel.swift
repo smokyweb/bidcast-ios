@@ -165,17 +165,35 @@ final class ScheduleViewModel: ObservableObject {
     }
     
     // MARK: - Store Schedule Show
-    func storeScheduleShow(param: StoreScheduleShowRequest, images: [String], key: String) async {
+//    func storeScheduleShow(param: StoreScheduleShowRequest, images: [String], key: String) async {
+//        self.requestType = "store"
+//        
+//        do {
+//            let parameters = try param.asDictionary()
+//            let response: ResponseModal<HomeModel> = try await APIManager.shared.uploadImage(
+//                type: APIEndPoint.storeScheduleShow(param: param),
+//                urlArray: images,
+//                mimeType: "image/jpeg",
+//                keyName: key,
+//                parameters: parameters,
+//                modalType: ResponseModal<HomeModel>.self,
+//                header: true
+//            )
+//            self.storeShowResponse = response
+//        } catch {
+//            handle(error: error)
+//        }
+//    }
+    func storeScheduleShow(param: [String: Any], images: [String], key: String) async {
         self.requestType = "store"
         
         do {
-            let parameters = try param.asDictionary()
             let response: ResponseModal<HomeModel> = try await APIManager.shared.uploadImage(
-                type: APIEndPoint.storeScheduleShow(param: param),
+                type: APIEndPoint.storeScheduleShow,
                 urlArray: images,
                 mimeType: "image/jpeg",
                 keyName: key,
-                parameters: parameters,
+                parameters: param,
                 modalType: ResponseModal<HomeModel>.self,
                 header: true
             )

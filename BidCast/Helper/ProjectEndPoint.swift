@@ -73,7 +73,8 @@ enum APIEndPoint{
     case promo(param : PromoCodeRequest)
     case getReferralCode
     case orderReciept(param : OrderRecieptRequest)
-    case storeScheduleShow(param : StoreScheduleShowRequest)
+//    case storeScheduleShow(param : StoreScheduleShowRequest)
+    case storeScheduleShow
     case AddCard(param:AddCardRequest)
     case deleteCard(param:DeleteCardRequest)
     case getCard
@@ -1075,8 +1076,10 @@ extension APIEndPoint: EndPointType {
             return nil
         case .getTransactionList(param: let param):
                 return param
-        case .storeScheduleShow(param: let param):
-            return param
+//        case .storeScheduleShow(param: let param):
+//            return param
+        case .storeScheduleShow:
+            return nil
         case .getProduct(param: let param):
             return param
         case .getScheduledShow(param: let param):
@@ -1422,7 +1425,9 @@ extension APIEndPoint: EndPointType {
             return nil
         case .orderReciept(param: let param):
             return nil
-        case .storeScheduleShow(param: let param):
+//        case .storeScheduleShow(param: let param):
+//            return nil
+        case .storeScheduleShow:
             return nil
         case .AddCard(param: let param):
             return nil

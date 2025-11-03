@@ -17,8 +17,8 @@ final class DeepLinkManager: ObservableObject {
         guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else { return }
         let path = components.path
         
-        if path.starts(with: "/show/") {
-            let id = path.replacingOccurrences(of: "/show/", with: "")
+        if path.starts(with: "/live-show/") {
+            let id = path.replacingOccurrences(of: "/live-show/", with: "")
             destination = .showDetail(id: id)
         }
     }

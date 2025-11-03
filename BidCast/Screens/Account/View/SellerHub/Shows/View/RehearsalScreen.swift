@@ -12,6 +12,12 @@ import SVProgressHUD
 import MillicastSDK
 import AlertToast
 
+enum ProductShowType {
+    case shop
+    case nextProduct
+    case viewOnly
+}
+
 struct RehearsalScreen: View {
     @EnvironmentObject  var appRootManager: AppRootManager
     @Binding var showUd: String
@@ -359,12 +365,12 @@ struct RehearsalScreen: View {
                                 VStack(alignment: .leading, spacing: 8) {
                                     ForEach(socketManager.chats) { comment in
                                         HStack {
-                                            CustomProfileImage(url: comment.image, isCircular: true,size: 24)
-                                            Text(comment.username.capitalizingFirstLetter())
+                                            CustomProfileImage(url: comment.image ?? "", isCircular: true,size: 24)
+                                            Text(comment.username?.capitalizingFirstLetter() ?? "")
                                                 .font(.custom(poppinsSemiBold, size: 14.0))
                                                 .foregroundColor(.white)
                                             
-                                            Text(comment.message)
+                                            Text(comment.message ?? "")
                                                 .font(.custom(poppinsRegular, size: 12.0))
                                                 .foregroundColor(.white)
                                         }
@@ -540,7 +546,7 @@ struct RehearsalScreen: View {
                 ShopBottomSheetView(
                     isPresented: $showProductSheet,
                     productData: $productData,
-                    NavFrom: "Rehearsal",
+                    productShowType: .shop,
                     onLiveStreamStart: { selectedID in
                         guard Reachability.isConnectedToNetwork() else {
                             hudMsg = "No Internet Connection"
@@ -654,12 +660,13 @@ struct RehearsalScreen: View {
                         ShopBottomSheetView(
                             isPresented: $showSellSheet,
                             productData: $productData,
-                            NavFrom: "",
+                            productShowType: .nextProduct,
                             onAddProduct: { selectedID in
                                 showSellSheet = false
-                                if agoraToken != "" && channelName != "" {
-                                    agoraManager.joinChannel(asHost: true, channelName: channelName, token: agoraToken)
-                                }
+                                
+//                                if agoraToken != "" && channelName != "" {
+//                                    agoraManager.joinChannel(asHost: true, channelName: channelName, token: agoraToken)
+//                                }
                                 if !selectedID.isEmpty {
                                     print("product ID is :\(selectedID)")
                                     print("Live Room ID is :\(self.roomId)")
@@ -675,7 +682,7 @@ struct RehearsalScreen: View {
                         ShopBottomSheetView(
                             isPresented: $showSellSheet,
                             productData: $productData,
-                            NavFrom: "Shop"
+                            productShowType: .shop
                         )
                     }
                     
@@ -775,15 +782,15 @@ struct RehearsalScreen: View {
         .onFirstAppear {
             
             //listen for follow status
-            socketManager.listenForFollowUnfollowStatus()
-            if socketManager.lastActionSuccess {
-                hudMsg = "started following you"
-                showhud = true
-            }
-            else {
-                hudMsg = "unfollow you"
-                showhud = true
-            }
+            //            socketManager.listenForFollowUnfollowStatus()
+            //            if socketManager.lastActionSuccess {
+            //                hudMsg = "started following you"
+            //                showhud = true
+            //            }
+            //            else {
+            //                hudMsg = "unfollow you"
+            //                showhud = true
+            //            }
             //            if !comeFromPrepare && !comeForLive {
             let mappedProducts = productListData.map { productModel in
                 ProductData(
@@ -800,7 +807,7 @@ struct RehearsalScreen: View {
             productData.append(contentsOf: mappedProducts)
             categoryName = showsData.category?.name ?? ""
             
-            //get agora token
+            //get agora token -> did not call it on preview screen
             fetchAgoraToken()
         }
         .onDisappear {
@@ -842,9 +849,6 @@ struct RehearsalScreen: View {
         if response?.status == "success" {
             self.agoraToken = response?.data?.token ?? ""
             print("channelName: \(channelName), uid: \(uId), token: \(agoraToken)")
-//            if agoraToken != "" && channelName != "" {
-//                agoraManager.joinChannel(asHost: true, channelName: channelName, token: agoraToken)
-//            }
         } else {
             hudMsg = response?.message ?? ""
             showhud = true
@@ -917,14 +921,16 @@ struct RehearsalScreen: View {
             )
         }
         if product.count != 0{
-            if agoraToken != "" && channelName != "" {
-                agoraManager.joinChannel(asHost: true, channelName: channelName, token: agoraToken)
-            }
+//
 //            Task{
                 //live stream
                 
 //                try await castManager.publish(streamName: self.roomId)
 //            }
+            
+            if agoraToken != "" && channelName != "" {
+                agoraManager.joinChannel(asHost: true, channelName: channelName, token: agoraToken)
+            }
             
             let seller = SellerModel(isFollowed: data.user?.is_followed ?? false, id: "\(data.user?.id ?? 0 )", name: data.user?.name ?? "", rating: data.user?.rating ?? "",image: data.user?.profile_image ?? "")
             
@@ -945,6 +951,7 @@ struct RehearsalScreen: View {
                 print("🏠 New room received:", newRoom.room_id ?? "unknown")
                 fetchProducts(for: self.roomId)
             }
+            
             
             SocketManagerService.shared.startLiveScheduler(roomId: self.roomId)
             isLive = true
@@ -968,9 +975,9 @@ struct RehearsalScreen: View {
                 },
                 onComplete: {
                     print("⏰ Countdown reached zero, showing sheet")
+                    self.fetchLatestProductList()
                     fetchProducts(for: self.roomId)
                     self.currentBottomSheet = .shop
-                    self.fetchLatestProductList()
                     self.showSellSheet = true
                     self.hasCountdownStarted = false
                 }
@@ -1009,6 +1016,7 @@ struct RehearsalScreen: View {
             showhud = true
         }
     }
+    
     @MainActor
     func fetchProducts(for roomId: String) {
         print("print PRoduct")
@@ -1101,9 +1109,6 @@ struct RehearsalScreen: View {
                     
                 }
                 return
-            }
-            if agoraToken != "" && channelName != "" {
-                agoraManager.joinChannel(asHost: true, channelName: channelName, token: agoraToken)
             }
 //            Task{
 //                try await castManager.publish(streamName:  self.roomId)

@@ -14,7 +14,7 @@ struct BidCastApp: App {
     @StateObject private var appRootManager = AppRootManager()
     @StateObject var networkMonitor = NetworkMonitor.shared
     @State private var accountNavigationPath = NavigationPath()
-    
+    @StateObject var deepLink = DeepLinkManager()
     init() {
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
@@ -72,7 +72,7 @@ struct BidCastApp: App {
             .environmentObject(LanguageManager.shared)
             .environmentObject(networkMonitor)
             .onOpenURL { url in
-//                deepLinkManager.handle(url: url)
+                deepLink.handle(url: url)
             }
         }
     }

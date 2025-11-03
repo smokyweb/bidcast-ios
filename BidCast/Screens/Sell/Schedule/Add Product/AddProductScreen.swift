@@ -226,7 +226,18 @@ struct AddProductsScreen: View {
                         var thumbImage = [String]()
                         thumbImage.append(thumbNail)
                         self.viewModel.errorMessage = ""
-                        await viewModel.storeScheduleShow(param: request,images: [thumbNail],key: "thumbnail[]")
+                        var param: [String: Any] = [
+                            "title": request.title,
+                            "date": request.date,
+                            "time": request.time,
+                            "category_id": request.category_id,
+                            "auction_type_id": request.auction_type_id,
+                        ]
+                        let products = request.product_ids.toIntArray()
+                        for (index, product) in products.enumerated() {
+                            param["product_ids[\(index)]"] = product
+                        }
+                        await viewModel.storeScheduleShow(param: param,images: [thumbNail],key: "thumbnail[]")
                         await SVProgressHUD.dismiss()
                         
                         if viewModel.errorMessage == nil || viewModel.errorMessage == "" {

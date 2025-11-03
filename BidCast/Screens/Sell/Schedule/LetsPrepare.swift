@@ -122,8 +122,20 @@ struct LetsPrepare: View,ShowStepDelegate {
             
             CusNavLink(doNavigate: $navigateToSelectShow, destination: SelectShowScreen(request: $request, thumbNail: $thumbNAil, comeFromPrepareScreen: .constant(true),backToPrepare: .constant(false), delegate: self))
             
-            CusNavLink(doNavigate: $navigateToRehearsal, destination: RehearsalScreen(showUd: .constant(""),productListData: .constant([ProductDataModel]()), comeFromPrepare: true, backToTabBar: .constant(true), showsData: .constant(HomeModel())))
-            CusNavLink(doNavigate: $navigateForLive, destination: RehearsalScreen(showUd: $showId,productListData:$product,comeFromPrepare: true,comeForLive: true, backToTabBar: $backToTabBar,showsData: $showsData ))
+            CusNavLink(doNavigate: $navigateToRehearsal,
+                       destination: RehearsalScreen(showUd: .constant(""),
+                                                    productListData: .constant([ProductDataModel]()),
+                                                    comeFromPrepare: true,
+                                                    backToTabBar: .constant(true),
+                                                    showsData: .constant(HomeModel())))
+            
+            CusNavLink(doNavigate: $navigateForLive,
+                       destination: RehearsalScreen(showUd: $showId,
+                                                    productListData:$product,
+                                                    comeFromPrepare: true,
+                                                    comeForLive: true,
+                                                    backToTabBar: $backToTabBar,
+                                                    showsData: $showsData ))
             
             CusNavLink(doNavigate: $navigateToshowTitle, destination: ShowTitleTips(request : $request,fromPrepare:.constant(true),backToPrepare: $navigateToshowTitle, delegate: self))
             CusNavLink(doNavigate: $navigateToReferScreen, destination: ReferEarnScreen())
@@ -281,7 +293,19 @@ struct LetsPrepare: View,ShowStepDelegate {
                 var thumbImage = [String]()
                 thumbImage.append(thumbNAil)
                 self.viewModel.errorMessage = ""
-                await viewModel.storeScheduleShow(param: request,images: [thumbNAil],key: "thumbnail[]")
+                var param: [String: Any] = [
+                    "title": request.title,
+                    "date": request.date,
+                    "time": request.time,
+                    "category_id": request.category_id,
+                    "auction_type_id": request.auction_type_id,
+                ]
+                let products = request.product_ids.toIntArray()
+                for (index, product) in products.enumerated() {
+                    param["product_ids[\(index)]"] = product
+                }
+                
+                await viewModel.storeScheduleShow(param: param,images: [thumbNAil],key: "thumbnail[]")
                 await SVProgressHUD.dismiss()
                 
                 if viewModel.errorMessage == nil || viewModel.errorMessage == "" {
@@ -376,4 +400,13 @@ struct LetsPrepare: View,ShowStepDelegate {
 
 protocol ShowStepDelegate {
     func didUpdateRequest(_ request: StoreScheduleShowRequest,thumbNail: String)
+}
+
+
+extension String {
+    func toIntArray() -> [Int] {
+        return self
+            .split(separator: ",")
+            .compactMap { Int($0.trimmingCharacters(in: .whitespaces)) }
+    }
 }

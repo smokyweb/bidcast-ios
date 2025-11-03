@@ -16,6 +16,7 @@ struct SelectCategoryScreen: View {
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+    
     @State private var categoryNames: [String] = []
     @State private var auctionTypeNames: [String] = []
     @State private var selectedCategory = ""
@@ -127,31 +128,51 @@ struct SelectCategoryScreen: View {
         }
         .edgesIgnoringSafeArea(.bottom)
         .background(Color.bg.opacity(0.5))
-        .onAppear {
-            
-            Task{
-               guard Reachability.isConnectedToNetwork() else {
+//        .onFirstAppear {
+//            Task{
+//               guard Reachability.isConnectedToNetwork() else {
+//                    hudMsg = "No Internet Connection"
+//                    showhud = true
+//                    return
+//                }
+//                SVProgressHUD.show()
+//                self.viewModel.errorMessage?.removeAll()
+//                await self.viewModel.getCategoryList(param: CategoryRequest(category_id: ""))
+//                await SVProgressHUD.dismiss()
+//                if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
+//                    categorySuccess()
+//                }else{
+//                    alertType = .sheetType(
+//                        icon: .alert,
+//                        title: "Failed",
+//                        message: self.viewModel.errorMessage ?? "",
+//                        primaryBtnText: "",
+//                        secondaryBtnText: AppString.ok.localized
+//                    )
+//                    showError = true
+//                }
+//                
+//            }
+//        }
+        .onFirstAppear {
+            Task {
+                guard Reachability.isConnectedToNetwork() else {
                     hudMsg = "No Internet Connection"
                     showhud = true
                     return
                 }
+
                 SVProgressHUD.show()
                 self.viewModel.errorMessage?.removeAll()
-                await self.viewModel.getCategoryList(param: CategoryRequest(category_id: ""))
+
+                async let categoryResponse: () = self.viewModel.getCategoryList(param: CategoryRequest(category_id: ""))
+                async let auctionResponse: () = self.viewModel.getAuctionList()
+
+                let (_, _) = await (categoryResponse, auctionResponse)
                 await SVProgressHUD.dismiss()
-                if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
-                    categorySuccess()
-                }else{
-                    alertType = .sheetType(
-                        icon: .alert,
-                        title: "Failed",
-                        message: self.viewModel.errorMessage ?? "",
-                        primaryBtnText: "",
-                        secondaryBtnText: AppString.ok.localized
-                    )
-                    showError = true
-                }
-                
+
+                categorySuccess()
+                auctionSuccess()
             }
         }
        
@@ -177,44 +198,20 @@ struct SelectCategoryScreen: View {
     func categorySuccess() {
         let response = viewModel.categoryResponse
         if response.status == "success" {
-            self.categoryList = response.data ?? [CategoryDataModel]()
-            self.categoryNames = (response.data ?? []).map { $0.name ?? "No Category" }
-            Task{
-               guard Reachability.isConnectedToNetwork() else {
-                    hudMsg = "No Internet Connection"
-                    showhud = true
-                    return
-                }
-                SVProgressHUD.show()
-                self.viewModel.errorMessage?.removeAll()
-                await  self.viewModel.getAuctionList()
-                await SVProgressHUD.dismiss()
-                if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
-                    auctionSuccess()
-                }else{
-                    alertType = .sheetType(
-                        icon: .alert,
-                        title: "Failed",
-                        message: self.viewModel.errorMessage ?? "",
-                        primaryBtnText: "",
-                        secondaryBtnText: AppString.ok.localized
-                    )
-                    showError = true
-                }
-               
-            }
+            self.categoryList = response.data ?? []
+            self.categoryNames = self.categoryList.map { $0.name ?? "No Category" }
         } else {
             alertType = .sheetType(
                 icon: .alert,
-                title: response.error_type?.capitalized ?? "",
-                message: response.message?.capitalized ?? "",
+                title: response.error_type ?? "",
+                message: response.message ?? "",
                 primaryBtnText: "",
                 secondaryBtnText: AppString.ok.localized
             )
             showError = true
         }
-        
     }
+    
     func auctionSuccess(){
         let response = viewModel.auctionResponse
         if response.status == "success" {

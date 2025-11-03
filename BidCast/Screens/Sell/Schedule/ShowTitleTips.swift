@@ -90,9 +90,10 @@ struct ShowTitleTips: View {
                         .background(.lightBlue)
                         .cornerRadius(10)
                         
+                        Text("Good Example")
+                            .font(.custom(poppinsBold, size: 16.0))
+                        
                         VStack(alignment:.leading){
-                            Text("Good Example")
-                                .font(.custom(poppinsBold, size: 16.0))
                             ForEach(example.indices, id: \.self) { index in
                                 let text = example[index]
                                 RichText(html:text)
@@ -115,13 +116,14 @@ struct ShowTitleTips: View {
                                         list-style-type: disc;
                                     }
                                 """)
+                                    .padding(.all,Leading/2)
+                                    .background(.white)
+                                    .cornerRadius(10)
                             }
                         }
                         
-                        .padding(.all,Leading/2)
-                        
-                        .background(.white)
-                        .cornerRadius(10)
+                        .padding(.top,Leading/2)
+                        .background(.clear)
                     }
                     
                 }
@@ -133,7 +135,7 @@ struct ShowTitleTips: View {
             .padding(.top,10)
             .padding(.horizontal,Leading)
             //            .background(.green)
-            PrimaryButton(title: "Continue to next step",isOutLine: false,onButtonClick: {
+            PrimaryButton(title: "Continue",isOutLine: false,onButtonClick: {
                 request.title = title
                 guard !request.title.isEmpty else {
                     hudMsg = "Please enter title"
