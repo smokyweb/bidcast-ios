@@ -24,49 +24,50 @@ struct CurrentProductView: View {
     var body: some View {
         
         VStack(alignment: .leading) {
-            
-            if !userName.isEmpty {
-                // Text with different colors for username and "Winning"
-                HStack(spacing: 0) {
-                    CustomProfileImage(url: userImage,isCircular: true,size: 13.0)
-                    Text(hasWon ? "\(userName) has " : "\(userName) is ")
-                        .foregroundColor(.white)
-                        .font(.custom(poppinsRegular, size: 13.0))
-                    +
-                    Text(hasWon ? "Won" : "Winning")
-                        .foregroundColor(.yellow)
-                        .font(.custom(poppinsBold, size: 13.0))
-                    Spacer()
-                    if showBidAmount {
-                        (
-                            Text("Bid Amount: ")
-                                .foregroundColor(.white)
-                                .font(.custom(poppinsRegular, size: 13.0))
-                            +
-                            Text("\(String(format: "%.2f", currentPrice))")
-                                .foregroundColor(.yellow)
-                                .font(.custom(poppinsBold, size: 13.0))
-                        )
-                        .transition(.opacity)
+            if let price = product.price, let priceInDouble = Double(price) {
+                if !userName.isEmpty && currentPrice > priceInDouble {
+                    // Text with different colors for username and "Winning"
+                    HStack(spacing: 0) {
+                        CustomProfileImage(url: userImage,isCircular: true,size: 13.0)
+                        Text(hasWon ? "\(userName) has " : "\(userName) is ")
+                            .foregroundColor(.white)
+                            .font(.custom(poppinsRegular, size: 13.0))
+                        +
+                        Text(hasWon ? "Won" : "Winning")
+                            .foregroundColor(.yellow)
+                            .font(.custom(poppinsBold, size: 13.0))
+                        Spacer()
+                        if showBidAmount {
+                            (
+                                Text("Bid Amount: ")
+                                    .foregroundColor(.white)
+                                    .font(.custom(poppinsRegular, size: 13.0))
+                                +
+                                Text("\(String(format: "%.2f", currentPrice))")
+                                    .foregroundColor(.yellow)
+                                    .font(.custom(poppinsBold, size: 13.0))
+                            )
+                            .transition(.opacity)
+                        }
                     }
-                }
-                .onChange(of: currentPrice) { newValue in
-                    // Ensure valid positive value (adjust rule if zero is valid)
-                    guard newValue > 0 else { return }
-                    
-                    showBidAmount = true
-                    lastBid = newValue
-                    
-                    // Hide after 1 second unless a newer bid arrives
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                        if lastBid == newValue {
-                            withAnimation(.easeOut(duration: 0.5)) {
-                                showBidAmount = false
+                    .onChange(of: currentPrice) { newValue in
+                        // Ensure valid positive value (adjust rule if zero is valid)
+                        guard newValue > 0 else { return }
+                        
+                        showBidAmount = true
+                        lastBid = newValue
+                        
+                        // Hide after 1 second unless a newer bid arrives
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                            if lastBid == newValue {
+                                withAnimation(.easeOut(duration: 0.5)) {
+                                    showBidAmount = false
+                                }
                             }
                         }
                     }
+                    
                 }
-                
             }
             
             HStack(spacing: 12) {

@@ -65,7 +65,7 @@ struct ReferEarnScreen: View {
                 
                 Button(action: {
                     UIPasteboard.general.string = referralLink
-                    hudMsg = "Text Copied".localized
+                    hudMsg = "Copied".localized
                     withAnimation {
                         showhud = true
                     }

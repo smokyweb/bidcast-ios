@@ -277,228 +277,244 @@ struct RehearsalScreen: View {
                     .background(Color.gray.opacity(0.95))
                     .cornerRadius(12)
                 }
-                
-                // 🎛️ Dynamic Side Controls
-                VStack {
-                    Spacer()
-                    VStack(spacing: 0) {
-                        if showLiveControls {
-                            SideButton(label: "More", icon: .sMore,action: .more)
-                            SideButton(label: "Promote", icon: .sPromote,action: .promote)
-                            SideButton(label: "Clip", icon: .sClip,action: .clip)
-                            SideButton(label: "Share", icon: .sShare,action: .share)
-                            SideButton(label: "Switch", icon: .sSwitch,action: .switchView)
-                            ShopButton(action: .shop, count: "\(productData.count)")
+                    // 🎛️ Dynamic Side Controls
+                    VStack {
+                        Spacer()
+                        VStack(spacing: 0) {
+                            if showLiveControls {
+                                SideButton(label: "More", icon: .sMore,action: .more)
+                                SideButton(label: "Promote", icon: .sPromote,action: .promote)
+                                SideButton(label: "Clip", icon: .sClip,action: .clip)
+                                SideButton(label: "Share", icon: .sShare,action: .share)
+                                SideButton(label: "Switch", icon: .sSwitch,action: .switchView)
+                                ShopButton(action: .shop, count: "\(productData.count)")
+                            }
+                            
+                            if showPreLiveControls {
+                                Spacer()
+                                Button(action: {
+                                    isMicOn.toggle()
+                                    agoraManager.toggleAudioMute()
+                                    //                                castManager.toggleAudioMute()
+                                    //                                ZegoExpressEngine.shared().muteMicrophone(!isMicOn)
+                                }) {
+                                    VStack {
+                                        Image(systemName: isMicOn ? "mic.fill" : "mic.slash.fill")
+                                            .resizable()
+                                            .scaledToFit()
+                                            .fontWeight(.heavy)
+                                            .font(.custom(poppinsExtraBold, size: 22.0))
+                                            .frame(width: 20, height: 20)
+                                            .foregroundColor(.black)
+                                        //                                Text(isMicOn ? "Mic On" : "Mic Off")
+                                        //                                    .font(.custom(poppinsThin, size: 12.0))
+                                    }
+                                    .padding()
+                                    .background(
+                                        Circle()
+                                            .fill(Color.white)
+                                    )
+                                    
+                                }
+                                
+                                Button(action: {
+                                    isUsingFrontCamera.toggle()
+                                    //                                ZegoExpressEngine.shared().useFrontCamera(isUsingFrontCamera)
+                                    agoraManager.switchCamera()
+                                    //                                Task{
+                                    //                                    await castManager.switchCamera()
+                                    //                                }
+                                }) {
+                                    VStack {
+                                        Image(.sSwitch)
+                                            .resizable()
+                                            .scaledToFit()
+                                            .fontWeight(.heavy)
+                                            .font(.custom(poppinsExtraBold, size: 22.0))
+                                            .frame(width: 50, height: 50)
+                                            .foregroundColor(.black)
+                                        //                                Text("Switch")
+                                        //                                    .font(.custom(poppinsThin, size: 12.0))
+                                    }
+                                    .padding()
+                                    //                                .background(
+                                    //                                    Circle()
+                                    //                                        .fill(Color.white)
+                                    //                                )
+                                }
+                                
+                                ShopButton(action: .shop, count: "0")
+                                Spacer()
+                            }
+                        }
+                        //                    .padding(.trailing)
+                        //                    .padding(.bottom, 150)
+                        //                    .frame(maxWidth: .infinity, alignment: .trailing)
+                        .position(
+                            x: geometry.size.width - 40,
+                            y: geometry.size.height / 2
+                        )
+                    }.zIndex(2)
+                    
+                    // 💬 bottom Chat & Start Button
+                    VStack(alignment: .leading, spacing: 8) {
+                        Spacer()
+                        if socketManager.chats.count > 0{
+                            ScrollViewReader { proxy in
+                                ScrollView {
+                                    VStack(alignment: .leading, spacing: 8) {
+                                        ForEach(socketManager.chats) { comment in
+                                            HStack {
+                                                CustomProfileImage(url: comment.image ?? "", isCircular: true,size: 24)
+                                                Text(comment.username?.capitalizingFirstLetter() ?? "")
+                                                    .font(.custom(poppinsSemiBold, size: 14.0))
+                                                    .foregroundColor(.white)
+                                                
+                                                Text(comment.message ?? "")
+                                                    .font(.custom(poppinsRegular, size: 12.0))
+                                                    .foregroundColor(.white)
+                                            }
+                                            .padding(.trailing,60)
+                                            .padding(.leading,Leading)
+                                            .id(comment.id) // 💡 For scroll targeting
+                                        }
+                                    }
+                                }
+                                .onChange(of: socketManager.chats) { _ in
+                                    // 💬 Auto scroll to last message
+                                    if let last = socketManager.chats.last {
+                                        withAnimation {
+                                            proxy.scrollTo(last.id, anchor: .bottom)
+                                        }
+                                    }
+                                }
+                            }
+                            .frame(maxHeight: 150)
                         }
                         
-                        if showPreLiveControls {
-                            Spacer()
-                            Button(action: {
-                                isMicOn.toggle()
-                                agoraManager.toggleAudioMute()
-//                                castManager.toggleAudioMute()
-                                //                                ZegoExpressEngine.shared().muteMicrophone(!isMicOn)
-                            }) {
-                                VStack {
-                                    Image(systemName: isMicOn ? "mic.fill" : "mic.slash.fill")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .fontWeight(.heavy)
-                                        .font(.custom(poppinsExtraBold, size: 22.0))
-                                        .frame(width: 20, height: 20)
-                                        .foregroundColor(.black)
-                                    //                                Text(isMicOn ? "Mic On" : "Mic Off")
-                                    //                                    .font(.custom(poppinsThin, size: 12.0))
-                                }
-                                .padding()
-                                .background(
-                                    Circle()
-                                        .fill(Color.white)
-                                )
-                                
-                            }
-                            
-                            Button(action: {
-                                isUsingFrontCamera.toggle()
-                                //                                ZegoExpressEngine.shared().useFrontCamera(isUsingFrontCamera)
-                                agoraManager.switchCamera()
-//                                Task{
-//                                    await castManager.switchCamera()
-//                                }
-                            }) {
-                                VStack {
-                                    Image(.sSwitch)
-                                        .resizable()
-                                        .scaledToFit()
-                                        .fontWeight(.heavy)
-                                        .font(.custom(poppinsExtraBold, size: 22.0))
-                                        .frame(width: 50, height: 50)
-                                        .foregroundColor(.black)
-                                    //                                Text("Switch")
-                                    //                                    .font(.custom(poppinsThin, size: 12.0))
-                                }
-                                .padding()
-//                                .background(
-//                                    Circle()
-//                                        .fill(Color.white)
-//                                )
-                            }
-                            
-                            ShopButton(action: .shop, count: "0")
-                            Spacer()
-                        }
-                    }
-                    //                    .padding(.trailing)
-                    //                    .padding(.bottom, 150)
-                    //                    .frame(maxWidth: .infinity, alignment: .trailing)
-                    .position(
-                        x: geometry.size.width - 40,
-                        y: geometry.size.height / 2
-                    )
-                }
-                
-                // 💬 bottom Chat & Start Button
-                VStack(alignment: .leading, spacing: 8) {
-                    Spacer()
-                    if socketManager.chats.count > 0{
-                        ScrollViewReader { proxy in
-                            ScrollView {
-                                VStack(alignment: .leading, spacing: 8) {
-                                    ForEach(socketManager.chats) { comment in
-                                        HStack {
-                                            CustomProfileImage(url: comment.image ?? "", isCircular: true,size: 24)
-                                            Text(comment.username?.capitalizingFirstLetter() ?? "")
+                        
+                        if showButton{
+                            if showLiveControls{
+                                VStack(alignment: .leading, spacing: 12){
+                                    HStack {
+                                        ZStack(alignment: .trailing) {
+                                            TextField("", text: $commentText, prompt: Text("Say something...")
+                                                .foregroundColor(.white)
+                                                .font(.custom(poppinsSemiBold, size: 13.0))
+                                            )
+                                            .font(.custom(poppinsSemiBold, size: 13.0))
+                                            .foregroundColor(.white)
+                                            .padding(.horizontal, 8)
+                                            .padding(.trailing, commentText.isEmpty ? 14 : 36) // extra space for send button
+                                            .frame(height: 50)
+                                            
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 8)
+                                                    .stroke(Color.white, lineWidth: 1)
+                                                
+                                                
+                                            )
+                                            .background(.black.opacity(0.4))
+                                            
+                                            if !commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                                                Button(action: {
+                                                    print("📨 Sending message: \(commentText)")
+                                                    let textToSend = commentText.trimmingCharacters(in: .whitespacesAndNewlines)
+                                                    //                                            ZIMChatManager.shared.sendMessage(message: textToSend,roomId: self.liveRoomId,image: UserDefaults.profileURL,name: UserDefaults.userName)
+                                                    
+                                                    let userId = UserDefaults.userId
+                                                    let userName = UserDefaults.userName
+                                                    let userImage = UserDefaults.profileURL
+                                                    SocketManagerService.shared.sendChat(roomId: self.roomId, message: textToSend, userId: userId, userName: userName, userImage: userImage)
+                                                    commentText = ""
+                                                }) {
+                                                    Image(systemName: "paperplane.fill")
+                                                        .resizable()
+                                                        .frame(width: 24, height: 24)
+                                                        .foregroundColor(.defaultTheme)
+                                                        .padding(10)
+                                                }
+                                                .transition(.opacity)
+                                                .animation(.easeInOut(duration: 0.2), value: commentText)
+                                                .padding(.leading,16)
+                                                //                                            .padding(.trailing, BiddingDetail.products != nil ? 54 : 16)
+                                            }
+                                        }
+                                    }
+                                    .padding(.leading,12)
+                                    .padding(.trailing, productData != nil ? 70 : 12)
+                                    .padding(.bottom,20)
+                                    VStack(alignment: .leading,spacing: 12) {
+                                        //MARK: Product Details
+                                        let currentProducts = productData.filter { $0.isCurrent }
+                                        if let product = currentProducts.first {
+                                            
+                                            CurrentProductView(product: product,
+                                                               currentPrice: $currentPrice,
+                                                               bidTime: $socketManager.bidTime,
+                                                               userName: $winnerName,
+                                                               userImage: $winnerProfileImage,
+                                                               categoryName: $categoryName,
+                                                               hasWon: socketManager.hasWon
+                                                               
+                                            )
+                                            .frame(maxWidth: .infinity)
+                                            
+                                            .background(Color.black.opacity(0.3))
+                                            .cornerRadius(10)
+                                            .padding(.horizontal,16)
+                                            
+                                        }else {
+                                            Text("Waiting for next product...")
                                                 .font(.custom(poppinsSemiBold, size: 14.0))
                                                 .foregroundColor(.white)
-                                            
-                                            Text(comment.message ?? "")
-                                                .font(.custom(poppinsRegular, size: 12.0))
-                                                .foregroundColor(.white)
+                                                .padding(.horizontal)
+                                                .padding(.leading,16)
+                                                .padding(.trailing, 16)
                                         }
-                                        .padding(.trailing,60)
-                                        .padding(.leading,Leading)
-                                        .id(comment.id) // 💡 For scroll targeting
                                     }
+                                    //                            .padding(.horizontal,16)
+                                    .padding(.bottom, keyboardResponder.currentHeight == 0 ? (tabBarHeight + 20) : 10)
                                 }
                             }
-                            .onChange(of: socketManager.chats) { _ in
-                                // 💬 Auto scroll to last message
-                                if let last = socketManager.chats.last {
-                                    withAnimation {
-                                        proxy.scrollTo(last.id, anchor: .bottom)
-                                    }
-                                }
-                            }
-                        }
-                        .frame(maxHeight: 150)
-                    }
-                    
-                    
-                    if showButton{
-                        if showLiveControls{
-                            VStack(alignment: .leading, spacing: 12){
-                                HStack {
-                                    ZStack(alignment: .trailing) {
-                                        TextField("", text: $commentText, prompt: Text("Say something...")
-                                            .foregroundColor(.white)
-                                            .font(.custom(poppinsSemiBold, size: 13.0))
-                                        )
-                                        .font(.custom(poppinsSemiBold, size: 13.0))
-                                        .foregroundColor(.white)
-                                        .padding(.horizontal, 8)
-                                        .padding(.trailing, commentText.isEmpty ? 14 : 36) // extra space for send button
-                                        .frame(height: 50)
-                                        
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 8)
-                                                .stroke(Color.white, lineWidth: 1)
-                                            
-                                            
-                                        )
-                                        .background(.black.opacity(0.4))
-                                        
-                                        if !commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                                            Button(action: {
-                                                print("📨 Sending message: \(commentText)")
-                                                let textToSend = commentText.trimmingCharacters(in: .whitespacesAndNewlines)
-                                                //                                            ZIMChatManager.shared.sendMessage(message: textToSend,roomId: self.liveRoomId,image: UserDefaults.profileURL,name: UserDefaults.userName)
+                            if !isLive{
+                                Button(action: {
+                                    if UserDefaults.sellerVerafied == "verified"{
+                                        if !isLive{
+                                            //                                        showProductSheet = true
+                                            Task {
+                                                //                                            if !castManager.isPublishing {
                                                 
-                                                let userId = UserDefaults.userId
-                                                let userName = UserDefaults.userName
-                                                let userImage = UserDefaults.profileURL
-                                                SocketManagerService.shared.sendChat(roomId: self.roomId, message: textToSend, userId: userId, userName: userName, userImage: userImage)
-                                                commentText = ""
-                                            }) {
-                                                Image(systemName: "paperplane.fill")
-                                                    .resizable()
-                                                    .frame(width: 24, height: 24)
-                                                    .foregroundColor(.defaultTheme)
-                                                    .padding(10)
+                                                showProductSheet = true
+                                                //                                            self.isLive = true
+                                                //                                            self.UpdateStatus(status : false)
+                                                //                                            } else {
+                                                //                                                try await castManager.unpublish()
+                                                //                                            }
                                             }
-                                            .transition(.opacity)
-                                            .animation(.easeInOut(duration: 0.2), value: commentText)
-                                            .padding(.leading,16)
-//                                            .padding(.trailing, BiddingDetail.products != nil ? 54 : 16)
                                         }
+                                        //                                    self.UpdateStatus(status : false)
+                                    }else{
+                                        showSellerSheet = true
                                     }
-                                }
-                                .padding(.leading,12)
-                                .padding(.trailing, productData != nil ? 70 : 12)
-                                .padding(.bottom,20)
-                                VStack(alignment: .leading,spacing: 12) {
-                                    //MARK: Product Details
-                                    let currentProducts = productData.filter { $0.isCurrent }
-                                    if let product = currentProducts.first {
-                                        
-                                        CurrentProductView(product: product,
-                                                           currentPrice: $currentPrice,
-                                                           bidTime: $socketManager.bidTime,
-                                                           userName: $winnerName, userImage: $winnerProfileImage,
-                                                           categoryName: $categoryName,
-                                                           hasWon: socketManager.hasWon
-                                                          
-                                        )
+                                }) {
+                                    Text("Start Show")
+                                        .font(.custom(poppinsBold, size: 13.0))
                                         .frame(maxWidth: .infinity)
-                                        
-                                        .background(Color.black.opacity(0.3))
-                                        .cornerRadius(10)
-                                        .padding(.horizontal,16)
-                                       
-                                    }else {
-                                        Text("Waiting for next product...")
-                                            .font(.custom(poppinsSemiBold, size: 14.0))
-                                            .foregroundColor(.white)
-                                            .padding(.horizontal)
-                                            .padding(.leading,16)
-                                            .padding(.trailing, 16)
-                                    }
+                                        .padding()
+                                        .background(Color.defaultTheme)
+                                        .foregroundColor(.white)
+                                        .cornerRadius(12)
                                 }
-    //                            .padding(.horizontal,16)
-                                .padding(.bottom, keyboardResponder.currentHeight == 0 ? (tabBarHeight + 20) : 10)
+                                .padding(.horizontal)
+                                .padding(.bottom, 20)
                             }
                         }
-                        if !isLive{
+                        if comeFromPrepare && !comeForLive{
                             Button(action: {
-                                if UserDefaults.sellerVerafied == "verified"{
-                                    if !isLive{
-                                        //                                        showProductSheet = true
-                                        Task {
-                                            //                                            if !castManager.isPublishing {
-                                            
-                                            showProductSheet = true
-                                            //                                            self.isLive = true
-                                            //                                            self.UpdateStatus(status : false)
-                                            //                                            } else {
-                                            //                                                try await castManager.unpublish()
-                                            //                                            }
-                                        }
-                                    }
-                                    //                                    self.UpdateStatus(status : false)
-                                }else{
-                                    showSellerSheet = true
-                                }
+                                self.presentationMode.wrappedValue.dismiss()
                             }) {
-                                Text("Start Show")
+                                Text("Continue")
                                     .font(.custom(poppinsBold, size: 13.0))
                                     .frame(maxWidth: .infinity)
                                     .padding()
@@ -509,23 +525,7 @@ struct RehearsalScreen: View {
                             .padding(.horizontal)
                             .padding(.bottom, 20)
                         }
-                    }
-                    if comeFromPrepare && !comeForLive{
-                        Button(action: {
-                            self.presentationMode.wrappedValue.dismiss()
-                        }) {
-                            Text("Continue")
-                                .font(.custom(poppinsBold, size: 13.0))
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .background(Color.defaultTheme)
-                                .foregroundColor(.white)
-                                .cornerRadius(12)
-                        }
-                        .padding(.horizontal)
-                        .padding(.bottom, 20)
-                    }
-                }
+                    }.zIndex(1)
                 CusNavLink(doNavigate: $navigateToSeller, destination: SellerVerificationScreen())
             }
         }
@@ -664,7 +664,6 @@ struct RehearsalScreen: View {
                             productShowType: .nextProduct,
                             onAddProduct: { selectedID in
                                 showSellSheet = false
-                                
 //                                if agoraToken != "" && channelName != "" {
 //                                    agoraManager.joinChannel(asHost: true, channelName: channelName, token: agoraToken)
 //                                }
@@ -672,7 +671,7 @@ struct RehearsalScreen: View {
                                     print("product ID is :\(selectedID)")
                                     print("Live Room ID is :\(self.roomId)")
                                     setProductAsCurrent(selectedID: selectedID)
-//                                    fetchLatestProductList()
+                                    fetchLatestProductList()
                                 }
                             },
                             initialSelectedProductId: initialSelectedProductId
@@ -870,6 +869,11 @@ struct RehearsalScreen: View {
     
     func setProductAsCurrent(selectedID : String){
         socketManager.setNextProduct(roomId: self.roomId, productId: selectedID)
+        
+    }
+    
+    func updateCurrentProduct() {
+        
     }
     
     private func handleBoostClick(_ boost: BoostModel) {
@@ -988,6 +992,10 @@ struct RehearsalScreen: View {
                 }
             )
             
+            SocketManagerService.shared.listenForNextProduct(completion: { roomId,nextProductId in
+                fetchProducts(for: roomId)
+            })
+            
             socketManager.listenForHighestBid(forRoom: self.roomId) { highestBid in
                 if let bid = highestBid {
                     print("🏆 Updated bid in this room: \(bid.user_name ?? "") - \(bid.bid_amount ?? "")")
@@ -1034,6 +1042,7 @@ struct RehearsalScreen: View {
         
         if let products = socketRoom.products {
             productData = products
+            print("print PRoduct: \(products)")
             let currentProducts = productData.filter { $0.isCurrent }
             self.currentPrice = Double(currentProducts.first?.price ?? "") ?? 0.0
             print("after product \(productData)")
@@ -1076,6 +1085,18 @@ struct RehearsalScreen: View {
             SocketManagerService.shared.removeChatListener()
             self.comments.removeAll()
             SocketManagerService.shared.chats.removeAll()
+//
+            initialSelectedProductId = ""
+//            SocketManagerService.shared.reset(with: self.roomId)
+//           
+//            self.comments.removeAll()
+//            SocketManagerService.shared.chats.removeAll()
+//            
+//            initialSelectedProductId = ""
+//            self.productData = []
+//            self.currentPrice = 0.0
+//            isLive = false
+
             
             previewResetTrigger.toggle()
             self.showLiveControls = false

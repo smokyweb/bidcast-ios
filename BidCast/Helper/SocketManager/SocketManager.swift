@@ -32,6 +32,12 @@ struct HighestBid: Codable {
     var placed_at: String?
 }
 
+struct RaidInfo: Codable {
+    var message: String?
+    var source_room_id: String?
+    var target_room_id: String?
+}
+
 
 import Foundation
 import SocketIO
@@ -196,7 +202,7 @@ final class SocketManagerService: NSObject, ObservableObject {
 //            }
 //        }
 //    }
-    
+
     func observeRoomUpdates(completion: ((_ room: RoomModel) -> Void)? = nil) {
         performIfConnected {
             socket.on("room_create_get") { [weak self] data, _ in
@@ -291,7 +297,6 @@ final class SocketManagerService: NSObject, ObservableObject {
             }
         }
     }
-    
     func listenForShowTimer(roomId: String) {
         socket.on("show_timer_update") { [weak self] data, _ in
             guard let self,
@@ -304,6 +309,7 @@ final class SocketManagerService: NSObject, ObservableObject {
         }
     }
     
+  
     func listenForBidTimer(roomId: String) {
         socket.on("bid_timer_update") { [weak self] data, _ in
             guard let self,
@@ -347,6 +353,7 @@ final class SocketManagerService: NSObject, ObservableObject {
         return String(format: "%02d:%02d:%02d", hours, minutes, secs)
     }
     
+  
     func listenForRoomEnded(onEnd: @escaping (_ roomId: String) -> Void) {
         socket.on("roomEnded") { [weak self] data, _ in
             guard let self,
@@ -607,6 +614,7 @@ final class SocketManagerService: NSObject, ObservableObject {
            socket.emit("createRaid", payload)
            print("📤 Sent createRaid:", payload)
        }
+ 
     
     func listenForRaidEvent(completion: @escaping (_ raidInfo: RaidInfo?) -> Void) {
         socket.on("receiveRaid") { [weak self] data, _ in
@@ -700,19 +708,64 @@ final class SocketManagerService: NSObject, ObservableObject {
         }
     }
     
+    func removeFollowListener() {
+        socket.off("user_follow_status")
+        socket.off("follow_unfollow_status")
+    }
+    
 
 }
+
+extension SocketManagerService {
+    func reset(with roomId: String) {
+        // Stop timers
+        stopLiveScheduler()
+        
+        // Remove all socket handlers
+        socket?.removeAllHandlers()
+        
+//        socket.off("receiveRaid")
+//        socket.off("allow_bid_for_all_get")
+//        socket.off("get_highest_bid")
+//        socket.off("next_product_set")
+//        socket.off("bid_timer_update")
+//        socket.off("bid_finalized")
+//        socket.off("roomEnded")
+//        socket.off("show_timer_update")
+//        socket.off("viewerCount")
+//        socket.off("room_create_get")
+        
+        endStreaming(roomId: roomId)
+        
+        removeChatListener()
+        
+        // Disconnect socket
+        socket?.disconnect()
+        
+        // Clear published data
+        DispatchQueue.main.async {
+            self.isConnected = false
+            self.rooms.removeAll()
+            self.chats.removeAll()
+            self.viewerCount = 0
+            self.showTime = "00:00:00"
+            self.bidTime = "00:00:00"
+            self.hasWon = false
+            self.isFollowed = false
+            self.lastActionSuccess = false
+        }
+        
+        logger.info("🧹 SocketManagerService fully reset.")
+    }
+}
+
 
 
 
 //Event =  allow_bid_for_all -> payload = room_id = abc , allow_bid_for_all = true/false
 //allow_bid_for_all_get
 
-struct RaidInfo: Codable {
-    var message: String?
-    var source_room_id: String?
-    var target_room_id: String?
-}
+
 //
 //@MainActor
 //final class SocketManagerService: NSObject, ObservableObject {

@@ -165,7 +165,7 @@ struct LiveStream: View {
     @State var winnerSheet: Bool = false
     @State var walletPaymentSheet: Bool = false
     @State var maxBidAmountSheet : Bool = false
-    @StateObject private var joinManager = SubscriberViewModel(renderer: MCAcceleratedVideoRenderer())
+//    @StateObject private var joinManager = SubscriberViewModel(renderer: MCAcceleratedVideoRenderer())
     @State private var renderer = MCAcceleratedVideoRenderer()
     @State var currentProductID: String? = nil
     
@@ -1167,7 +1167,9 @@ struct LiveStream: View {
         agoraManager.leaveChannel()
         SocketManagerService.shared.chats.removeAll()
         SocketManagerService.shared.leaveRoom(roomId: self.currentRoomID, userId: UserDefaults.userId)
-       
+        currentProductID = nil
+        self.currentPrice = 0.0
+        self.currentProductIndex = -1
     }
     
     func incrementPrice() {
