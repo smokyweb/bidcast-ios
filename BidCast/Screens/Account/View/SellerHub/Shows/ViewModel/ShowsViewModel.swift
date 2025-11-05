@@ -59,6 +59,7 @@ final class ShowsViewModel: ObservableObject {
             handle(error: error)
         }
     }
+    
     func UpdateLiveShows(param:LiveShowUpdateRequest) async {
         requestType = "lesson"
         do {
@@ -71,6 +72,21 @@ final class ShowsViewModel: ObservableObject {
             handle(error: error)
         }
     }
+    
+    func storePromoteShow(parameters: StorePromoteShowRequest) async {
+        requestType = "promoteShow"
+        do {
+           if let response:  ResponseModel<StorePromoteShowModel>? = try await APIManager.shared.request(
+                type: APIEndPoint.storePromoteShow(param: parameters),
+                header: true
+           ){
+               self.storePromoteShowModel = response
+           }
+        } catch {
+            self.errorMessage = error.localizedDescription
+        }
+    }
+    
     
     func CountUppdate(parameters: countRequest) async {
         requestType = "count"
@@ -95,18 +111,6 @@ final class ShowsViewModel: ObservableObject {
     //schedule-show/store-promote-show
 //    schedule_show_id
 //    promote_show_id
-    func storePromoteShow(parameters: StorePromoteShowRequest) async {
-        requestType = "promoteShow"
-        do {
-           if let response:  ResponseModel<StorePromoteShowModel>? = try await APIManager.shared.request(
-                type: APIEndPoint.storePromoteShow(param: parameters),
-                header: true
-           ){
-               self.storePromoteShowModel = response
-           }
-        } catch {
-            self.errorMessage = error.localizedDescription
-        }
-    }
+    
     //sendTip
 }

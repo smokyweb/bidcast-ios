@@ -38,6 +38,8 @@ class AgoraManager: NSObject, ObservableObject {
     
     @Published var isFrontCamera = true
     
+    @Published var zoomFactor: Double = 1.0
+    
     var isHost: Bool = false
     
     // MARK: - Designated Initializer
@@ -66,7 +68,7 @@ class AgoraManager: NSObject, ObservableObject {
         //step 3 -> Set Ultra Low Latency Mode Explicitly
         agoraKit?.setClientRole(.broadcaster)
         agoraKit?.setParameters("{\"che.video.lowBitRateStreamParameter\":{\"width\":320,\"height\":180,\"frameRate\":15,\"bitRate\":140}}")
-        
+        agoraKit?.setCameraZoomFactor(zoomFactor)
         agoraKit?.enableVideo()
     }
     
@@ -102,6 +104,11 @@ class AgoraManager: NSObject, ObservableObject {
     func switchCamera() {
         isFrontCamera.toggle()
         agoraKit?.switchCamera()
+    }
+    
+    func adjustZoom(with factor: Double) {
+        zoomFactor = factor
+        agoraKit?.setCameraZoomFactor(factor)
     }
     
     func toggleAudioMute() {

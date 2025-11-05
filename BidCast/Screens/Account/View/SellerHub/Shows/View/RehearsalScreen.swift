@@ -25,7 +25,17 @@ struct RehearsalScreen: View {
     @State var streamId = ""
     var isLocal: Bool = true
     @Environment(\.presentationMode) var presentationMode
+    
     @State var viewModel = ShowsViewModel()
+    @StateObject var agoraViewModel = AgoraViewModel()
+    
+    @State var BiddingDetail = BiddingModel()
+    @State var productData = [ProductData]()
+    @Binding var productListData: [ProductDataModel]
+    @State var comments: [CommentModel] = []
+    @State  var  boosts = [BoostModel]()
+    @State var sellers = [SellerUserModel]()
+    
     @State var isLive: Bool = false
     @State var roomId = ""
     @State var isMicOn: Bool = true
@@ -40,14 +50,13 @@ struct RehearsalScreen: View {
     @State private var showSellSheet: Bool = false
     @State private var showProductSheet : Bool = false
     @State private var showButton: Bool = false
-    @State var BiddingDetail = BiddingModel()
-    @State var productData = [ProductData]()
+
     @State private var initialSelectedProductId: String = ""
-    @Binding var productListData: [ProductDataModel]
+   
     @State private var commentText = ""
-    @State var comments: [CommentModel] = []
+
     @State var liveRoomId = ""
-    @State  var  boosts = [BoostModel]()
+
     @State private var previewResetTrigger = false
     
     @State private var showStartTime: Date? = nil
@@ -64,7 +73,7 @@ struct RehearsalScreen: View {
     @State var showRaidSheet = false
     
     @State private var selectedSellers: Int?
-    @State var sellers = [SellerUserModel]()
+  
     
     @State var navigateToSeller = false
     
@@ -81,15 +90,13 @@ struct RehearsalScreen: View {
     @State var hudMsg: String = ""
     @Binding var backToTabBar : Bool
     
-    //    @StateObject var castManager: PublisherViewModel
-    //    @State var renderer = MCAcceleratedVideoRenderer()
-//    @StateObject private var castManager = PublisherViewModel(renderer: MCAcceleratedVideoRenderer())
     @State private var renderer = MCAcceleratedVideoRenderer()
     
     @StateObject private var agoraManager = AgoraManager(asHost: true)
     @State private var isHost = true
     
-    @StateObject var agoraViewModel = AgoraViewModel()
+   
+    
     @State var agoraToken: String = ""
     @State var uId: Int = 0
     @State var channelName: String = ""
@@ -581,22 +588,46 @@ struct RehearsalScreen: View {
                         isPresented: $showSellSheet,
                         isVerifiedBuyersOn: $verifiedOnly,
                         isMicOn: $isMicOn,
-                        onEndShow: { print("End Show") },
+                        onEndShow: {
+                            print("End Show")
+                            endShow()
+                        },
                         onCloneItems: { print("Clone Items") },
                         onTipSettings: { print("Tip Settings") },
                         onMulticast: { print("Multicast") },
                         onAddCoupons: { print("Add Coupons") },
-                        onRaid: { print("Raid") },
-                        onCreatePoll: { print("Create Poll") },
-                        onRotateCamera: {
-                            isUsingFrontCamera.toggle()
-                            agoraManager.switchCamera()
-//                            Task{
-//                                await castManager.switchCamera()
-                                
-//                            }
+                        onRaid: {
+                            print("Raid")
+                            SellerScreen(
+                                sellers: $sellers,
+                                selectedSellerID: $selectedSellers,
+                                onRaidCreated: { selectedSellers in
+                                    // Handle the selected sellers when raid is created
+                                    print("Raid created with sellers: \(String(describing: selectedSellers))")
+                                    handleRaid(selectedSeller: selectedSellers)
+                                },onCancel: {
+                                    showRaidSheet = false
+                                    selectedSellers = nil
+                                }
+                            )
                         },
-                        onZoomIn: { print("Zoom In") },
+                        onCreatePoll: { print("Create Poll") },
+                        onZoomOut: {
+                            print("Zoom Out")
+                            var zoomFactor = agoraManager.zoomFactor
+                            if zoomFactor > 1.0 {
+                                zoomFactor -= 0.2
+                            }
+                            agoraManager.adjustZoom(with: zoomFactor)
+                        },
+                        onZoomIn: {
+                            print("Zoom In")
+                            var zoomFactor = agoraManager.zoomFactor
+                            if zoomFactor < 2.0 {
+                                zoomFactor += 0.2
+                            }
+                            agoraManager.adjustZoom(with: zoomFactor)
+                        },
                         onMicToggle: {
                             isMicOn.toggle()
                             agoraManager.toggleAudioMute()
@@ -692,7 +723,7 @@ struct RehearsalScreen: View {
                         isPresented: $showSellSheet,
                         onCreateRaid: {
                             print("Raid Created")
-                            showRaidSheet = true
+                            getLiveSeller()
                         },
                         onEndShow: {
                             //                            Task {
@@ -722,7 +753,7 @@ struct RehearsalScreen: View {
             }
         )
         
-        .bottomSheet(isPresented: $showRaidSheet, height: screenHeight / 1.5, topBarCornerRadius: 25, showTopIndicator: false,onDismiss: {
+        .bottomSheet(isPresented: $showRaidSheet, height: screenHeight / 2.5, topBarCornerRadius: 25, showTopIndicator: false,onDismiss: {
             showRaidSheet = false
         }) {
             SellerScreen(
@@ -731,9 +762,10 @@ struct RehearsalScreen: View {
                 onRaidCreated: { selectedSellers in
                     // Handle the selected sellers when raid is created
                     print("Raid created with sellers: \(String(describing: selectedSellers))")
-                    SocketManagerService.shared.sendRaidEvent(sourceRoomId: self.roomId, targetRoomId: selectedSellers?.room_id ?? "", sourceHostId: "\(showsData.user?.id ?? 0)" ,targetHostId: "\(selectedSellers?.id ?? 0)")
+                    handleRaid(selectedSeller: selectedSellers)
                 },onCancel: {
                     showRaidSheet = false
+                    selectedSellers = nil
                 }
             )
         }
@@ -757,7 +789,7 @@ struct RehearsalScreen: View {
                 }
             )
         }
-        .toast(isPresenting: $showhud) {
+        .toast(isPresenting: $showhudSuccess) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }
         .toast(isPresenting: $showhud) {
@@ -823,42 +855,6 @@ struct RehearsalScreen: View {
         }
     }
     
-    func fetchAgoraToken() {
-        Task {
-            guard Reachability.isConnectedToNetwork() else {
-                hudMsg = "No Internet Connection"
-                showhud = true
-                return
-            }
-            let data = showsData
-            let channelName = "live_room_\(data.user_id ?? 0)_\(data.id ?? 0)"
-            let uid = data.user?.id ?? 0
-            self.channelName = channelName
-            self.uId = uid
-            print("channelName: \(channelName), uid: \(uid), token: \(agoraToken)")
-//            let request = AgoraTokenRequest(channelName: channelName, uid: self.uId)
-            let param: [String: Any] = [
-                "channel": channelName
-//                "uid": uid
-            ]
-            SVProgressHUD.show()
-            await agoraViewModel.getAgoraToken(param: param)
-            await SVProgressHUD.dismiss()
-            successAgoraToken()
-        }
-    }
-    
-    func successAgoraToken() {
-        let response  = self.agoraViewModel.getAgoraDict
-        if response?.status == "success" {
-            self.agoraToken = response?.data?.token ?? ""
-            print("channelName: \(channelName), uid: \(uId), token: \(agoraToken)")
-        } else {
-            hudMsg = response?.message ?? ""
-            showhudSuccess = true
-        }
-    }
-    
     func fetchLatestProductList(){
     
         print("DEBUG: fetchLatestProductList with roomId = \(self.roomId)")
@@ -872,39 +868,11 @@ struct RehearsalScreen: View {
         
     }
     
-    func updateCurrentProduct() {
-        
-    }
-    
     private func handleBoostClick(_ boost: BoostModel) {
         print("🔥 User clicked boost: \(boost.title)")
         showSellSheet = false
-        guard let promoteId = boost.id,
-              let showId = showsData.id else {
-            hudMsg = "Either promoteId or ShowId not found."
-            showhud = true
-            return
-        }
-        Task {
-            SVProgressHUD.show()
-            let request = StorePromoteShowRequest(scheduleShowId: "\(showId)", promoteShowId: "\(promoteId)")
-            await viewModel.storePromoteShow(parameters: request)
-            await SVProgressHUD.dismiss()
-            successPromoteShow()
-        }
+        storePromoteShow(boost: boost)
     }
-    
-    private func successPromoteShow() {
-        let response = viewModel.storePromoteShowModel
-        if response?.status == "success" {
-            hudMsg = "show promoted successfully."
-            showhudSuccess = true
-        } else {
-            hudMsg = response?.message ?? ""
-            showhud = true
-        }
-    }
-    
     
     func ShowData(data:HomeModel ,selectedID : String? = nil) {
         let roomId = "live_room_\(data.user_id ?? 0)_\(data.id ?? 0)"
@@ -1014,15 +982,7 @@ struct RehearsalScreen: View {
             //            self.showStartTime = Date()
             //            startLiveTimer()
             //        }
-            Task{
-                self.viewModel.errorMessage?.removeAll()
-                await self.viewModel.getPromoteShows()
-                if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil {
-                    self.successPromote()
-                }else{
-                    
-                }
-            }
+            getPromoteShows()
         }else{
            
             hudMsg = "Unable to start streaming as product category is missing"
@@ -1049,30 +1009,7 @@ struct RehearsalScreen: View {
         }
     }
     
-    func successPromote(){
-        let response  = self.viewModel.promoteShow
-        if response?.status == "success"{
-            self.boosts = response?.data ?? [BoostModel]()
-            Task {
-                self.viewModel.errorMessage?.removeAll()
-                await viewModel.getLiveSeller()
-                if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
-                    successSeller()
-                }else{
-                    
-                }
-                
-            }
-        }
-    }
-    func successSeller(){
-        let response = viewModel.sellerResponse
-        if response?.status == "success"{
-            sellers = response?.data ?? [SellerUserModel]()
-        }
-    }
-    
-    func endShow(){
+    func endShow1(){
         Task{
             //            try await castManager.unpublish()
             //            if agoraManager.isJoined {
@@ -1111,6 +1048,73 @@ struct RehearsalScreen: View {
         return
         
     }
+    
+    
+    // Updated cleanup helpers inside RehearsalScreen
+    func endShow(){
+        Task{
+            // stop RTC
+            if agoraManager.isJoined {
+                agoraManager.leaveChannel()
+            }
+
+            // notify socket server & stop scheduler
+            SocketManagerService.shared.endStreaming(roomId: self.roomId)
+            SocketManagerService.shared.stopLiveScheduler()
+
+            // remove listeners & chats
+            SocketManagerService.shared.removeChatListener()
+            SocketManagerService.shared.chats.removeAll()
+            self.comments.removeAll()
+
+            // remove the room entry from manager so stale product state is not retained
+            if let idx = SocketManagerService.shared.rooms.firstIndex(where: { $0.room_id == self.roomId }) {
+                SocketManagerService.shared.rooms.remove(at: idx)
+            }
+
+            // call reset helper if available (keeps compatibility with existing commented call)
+            // this method was used previously in this file as a comment; if implemented in the service it will do additional cleanup
+//            SocketManagerService.shared.reset(with: self.roomId)
+
+            // local UI / model cleanup
+            initialSelectedProductId = ""
+            productData.removeAll()
+            currentPrice = 0.0
+
+            previewResetTrigger.toggle()
+            self.showLiveControls = false
+            self.showPreLiveControls = true
+
+
+            // navigate / dismiss
+            if comeFromPrepare {
+                backToTabBar = false
+            } else {
+                self.presentationMode.wrappedValue.dismiss()
+            }
+        }
+    }
+
+    func logoutRoom() {
+        // clear UI & socket state for a clean slate
+        SocketManagerService.shared.chats.removeAll()
+        self.comments.removeAll()
+        showSellSheet = false
+        self.isLive = false
+
+        // remove room-specific data if present
+        if !self.roomId.isEmpty {
+            if let idx = SocketManagerService.shared.rooms.firstIndex(where: { $0.room_id == self.roomId }) {
+                SocketManagerService.shared.rooms.remove(at: idx)
+            }
+            SocketManagerService.shared.reset(with: self.roomId)
+        }
+
+        self.productData.removeAll()
+        self.currentPrice = 0.0
+        initialSelectedProductId = ""
+    }
+    
     
     //this func is not calling
     func success(selectedID : String? = nil) {
@@ -1246,15 +1250,7 @@ struct RehearsalScreen: View {
     
     func UpdateStatus(status : Bool,selectedID : String? = nil){
         if status{
-            Task {
-                guard Reachability.isConnectedToNetwork() else {
-                    hudMsg = "No Internet Connection"
-                    showhud = true
-                    return
-                }
-                let is_Live = "true"
-                await viewModel.UpdateLiveShows(param: LiveShowUpdateRequest(schedule_show_id: showUd, is_live: is_Live))
-            }
+            updateLiveShowData()
         }else{
             Task {
                 guard Reachability.isConnectedToNetwork() else {
@@ -1275,15 +1271,6 @@ struct RehearsalScreen: View {
                 //                }
             }
         }
-    }
-    
- 
-    func logoutRoom() {
-        SocketManagerService.shared.chats.removeAll()
-        showSellSheet = false
-        self.isLive = false
-        FirebaseManager.shared.stopObserving()
-        self.productData.removeAll()
     }
     
     @ViewBuilder
@@ -1376,4 +1363,157 @@ struct VideoContainerView: UIViewRepresentable {
     }
     
     func updateUIView(_ uiView: UIView, context: Context) {}
+}
+
+
+//API Call and their success handlers
+extension RehearsalScreen {
+    func isInternetAvailable()  -> Bool {
+        guard Reachability.isConnectedToNetwork() else {
+            hudMsg = "No Internet Connection"
+            showhud = true
+            return false
+        }
+        return true
+    }
+    
+    func fetchAgoraToken() {
+        Task {
+            if isInternetAvailable() {
+                let data = showsData
+                let channelName = "live_room_\(data.user_id ?? 0)_\(data.id ?? 0)"
+                let uid = data.user?.id ?? 0
+                self.channelName = channelName
+                self.uId = uid
+                print("channelName: \(channelName), uid: \(uid), token: \(agoraToken)")
+                //            let request = AgoraTokenRequest(channelName: channelName, uid: self.uId)
+                let param: [String: Any] = [
+                    "channel": channelName
+                    //                "uid": uid
+                ]
+                SVProgressHUD.show()
+                await agoraViewModel.getAgoraToken(param: param)
+                await SVProgressHUD.dismiss()
+                successAgoraToken()
+            }
+        }
+    }
+    
+    func storePromoteShow(boost: BoostModel) {
+        guard let promoteId = boost.id,
+              let showId = showsData.id else {
+            hudMsg = "Either promoteId or ShowId not found."
+            showhud = true
+            return
+        }
+        Task {
+            if isInternetAvailable() {
+                SVProgressHUD.show()
+                let request = StorePromoteShowRequest(scheduleShowId: "\(showId)", promoteShowId: "\(promoteId)")
+                await viewModel.storePromoteShow(parameters: request)
+                await SVProgressHUD.dismiss()
+                successPromoteShow()
+            }
+        }
+    }
+    
+    func getPromoteShows() {
+        Task{
+            if isInternetAvailable() {
+                self.viewModel.errorMessage?.removeAll()
+//                SVProgressHUD.show()
+                await self.viewModel.getPromoteShows()
+//                await SVProgressHUD.dismiss()
+                if let message = self.viewModel.errorMessage, message != "" {
+                    hudMsg = self.viewModel.promoteShow?.message ?? ""
+                    showhud = true
+                }else{
+                    self.successPromote()
+                }
+            }
+        }
+    }
+    
+    func updateLiveShowData() {
+        Task {
+            if isInternetAvailable() {
+                let is_Live = "true"
+                await viewModel.UpdateLiveShows(param: LiveShowUpdateRequest(schedule_show_id: showUd, is_live: is_Live))
+            }
+        }
+       
+    }
+    
+    func getLiveSeller() {
+        Task {
+            self.viewModel.errorMessage?.removeAll()
+//            SVProgressHUD.show()
+            await viewModel.getLiveSeller()
+//            await SVProgressHUD.dismiss()
+            if let message = self.viewModel.errorMessage, message != "" {
+                hudMsg = self.viewModel.sellerResponse?.message ?? ""
+                showhud = true
+            }else{
+                showRaidSheet = true
+                successSeller()
+            }
+            
+        }
+    }
+    
+    func successAgoraToken() {
+        let response  = self.agoraViewModel.getAgoraDict
+        if response?.status == "success" {
+            self.agoraToken = response?.data?.token ?? ""
+            hudMsg = response?.message ?? ""
+            showhudSuccess = true
+            print("channelName: \(channelName), uid: \(uId), token: \(agoraToken)")
+        } else {
+            hudMsg = response?.message ?? ""
+            showhud = true
+        }
+    }
+    
+    private func successPromoteShow() {
+        let response = viewModel.storePromoteShowModel
+        if response?.status == "success" {
+            hudMsg = "show promoted successfully."
+            showhudSuccess = true
+        } else {
+            hudMsg = response?.message ?? ""
+            showhud = true
+        }
+    }
+    
+   
+    func successPromote(){
+        let response  = self.viewModel.promoteShow
+        if response?.status == "success"{
+            self.boosts = response?.data ?? [BoostModel]()
+        }
+    }
+    
+    func successSeller(){
+        let response = viewModel.sellerResponse
+        if response?.status == "success"{
+            sellers = response?.data ?? [SellerUserModel]()
+        }
+    }
+}
+
+extension RehearsalScreen {
+    func handleRaid(selectedSeller: SellerUserModel?) {
+        guard let seller = selectedSeller else  {
+            return
+        }
+        selectedSellers = nil
+        //send raid
+        SocketManagerService.shared.sendRaidEvent(sourceRoomId: self.roomId,
+                                                  targetRoomId: seller.room_id ?? "",
+                                                  sourceHostId: "\(showsData.user?.id ?? 0)" ,
+                                                  targetHostId: "\(seller.id ?? 0)")
+        
+        //leave room
+        endShow()
+    }
 }

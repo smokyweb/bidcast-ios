@@ -32,55 +32,51 @@ struct SellerScreen: View {
                 }) {
                     
                     Image(systemName: "xmark.circle.fill")
+                        .resizable()
+                        .frame(width: 15, height: 15)
                         .font(.title)
                         .foregroundStyle(.defaultTheme)
-                    
-                    
+                        .padding(.trailing, 25)
+                        
                 }
             }
             
             // Seller List
-            List(sellers, id: \.id) { seller in
-                HStack {
-                    Text(seller.name ?? "")
-                        .font(.custom(poppinsSemiBold, size: 13.0))
-                    
-                    Spacer()
-                    
-                    // Checkbox (toggle selection)
-//                    if selectedSellers.contains(seller.id ?? 0) {
-//                        Image(systemName: "checkmark.circle.fill")
-//                            .foregroundColor(.defaultTheme)
-//                    } else {
-//                        Image(systemName: "circle")
-//                            .foregroundColor(.gray)
-//                    }
-                    
-                    if selectedSellerID == seller.id {
-                        Image(systemName: "checkmark.circle.fill")
-                            .foregroundColor(.defaultTheme)
-                    } else {
-                        Image(systemName: "circle")
-                            .foregroundColor(.gray)
+//            ScrollView {
+                List(sellers, id: \.id) { seller in
+                    HStack {
+                        
+                        CustomProfileImage(url: seller.profile_image, isCircular: true, size: 40)
+                            .padding()
+                        Text(seller.name ?? "")
+                            .font(.custom(poppinsSemiBold, size: 13.0))
+                        Spacer()
+                        
+                        if selectedSellerID == seller.id {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundColor(.defaultTheme)
+                        } else {
+                            Image(systemName: "circle")
+                                .foregroundColor(.gray)
+                        }
+                    }
+                    .onTapGesture {
+                        //                    if selectedSellers.contains(seller.id ?? 0) {
+                        //                        selectedSellers.remove(seller.id ?? 0)
+                        //                    } else {
+                        //                        selectedSellers.insert(seller.id ?? 0)
+                        //                    }
+                        if selectedSellerID == seller.id {
+                            selectedSellerID = nil
+                            selectedSellerData = nil
+                        } else {
+                            selectedSellerID = seller.id
+                            selectedSellerData = seller
+                        }
                     }
                 }
-                .onTapGesture {
-//                    if selectedSellers.contains(seller.id ?? 0) {
-//                        selectedSellers.remove(seller.id ?? 0)
-//                    } else {
-//                        selectedSellers.insert(seller.id ?? 0)
-//                    }
-                    if selectedSellerID == seller.id {
-                        selectedSellerID = nil
-                        selectedSellerData = nil
-                    } else {
-                        selectedSellerID = seller.id
-                        selectedSellerData = seller
-                    }
-                }
-            }
-            .listStyle(PlainListStyle())
-            
+                .listStyle(PlainListStyle())
+//            }
             Spacer()
             
             // Create Raid Button

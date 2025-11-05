@@ -79,9 +79,23 @@ struct TabbarScreen: View {
                   }
             }
 //            .onChange(of: deepLinkManager.destination) { destination in
-//                if case .showDetail(let id) = destination {
+//                switch destination {
+//                case .showDetail(let id):
+//                    // Switch to Home tab and reset Home navigation to ensure fresh UI
+//                    selectedTab = 0
+//                    homeNavigationPath = NavigationPath()   // clear stack
+//                    homeViewID = UUID()                     // force view refresh
 //                    selectedShowId = id
 //                    navigateToShow = true
+//
+////                case .home:
+////                    // Just switch to Home tab
+////                    selectedTab = 0
+////                    homeNavigationPath = NavigationPath()
+////                    homeViewID = UUID()
+//
+//                default:
+//                    break
 //                }
 //            }
           
@@ -95,6 +109,9 @@ struct TabbarScreen: View {
                        )
             )
             CusNavLink(doNavigate: $navigateTolist, destination: ListProductScreen( productData: .constant(InventoryDataModel())))
+            
+            CusNavLink(doNavigate: $navigateToShow, destination: HomeViewScreen(showCategory: .constant(""), comeFromExploreScreen: .constant(false)))
+            
 //            CusNavLink(doNavigate: $navigateTolist, destination: CreateProductScreen(requests: .constant(StoreScheduleShowRequest(title: "", date: "", time: "", category_id: "", auction_type_id: "", product_ids: "")), thumbNail: .constant(""), backToPrepare: .constant(false), fromPrepare: .constant(false)))
             CusNavLink(doNavigate: $navigateToAccountScreen, destination: AccountScreen(isNavFrom: true,comeFromSeller: true))
             CusNavLink(doNavigate: $navigateToSeller, destination: SellerVerificationScreen())

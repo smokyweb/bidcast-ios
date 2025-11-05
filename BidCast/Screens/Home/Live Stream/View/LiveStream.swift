@@ -852,7 +852,6 @@ struct LiveStream: View {
            
             Task{
                 SVProgressHUD.show()
-               
                 await self.homeViewModel.getProfile()
                 await SVProgressHUD.dismiss()
                 await getProfileSuccess()
@@ -861,8 +860,27 @@ struct LiveStream: View {
 //                        guard let self = self else { return }
                         joinStreamUsingSocket(roomId: currentRoomID)
                     })
-                    
-                
+            }
+            
+            socketManagerChat.listenForRaidEvent { raidInfo in
+                print(raidInfo ?? "No Raid Info")
+                logoutRoom()
+                let roomId = raidInfo?.target_room_id ?? ""
+                let rtcToken = raidInfo?.rtcToken ?? ""
+                let message = raidInfo?.message ?? ""
+                if message != "" {
+                    hudMsg = message
+                    showHud = true
+                }
+                currentRoomID = roomId
+                self.agoraToken = rtcToken
+//                    if self.agoraToken != "" && roomId != "" {
+//                        print("AAgora Token: \(self.agoraToken)")
+//                        agoraManager.joinChannel(asHost: isHost, channelName: roomId, token: agoraToken)
+//                    }
+                socketManagerChat.joinRoom(roomId: roomId) {
+                    joinStreamUsingSocket(roomId: roomId)
+                }
             }
         }
         .onDisappear{
@@ -1016,6 +1034,11 @@ struct LiveStream: View {
                     
                 }
                 
+                SocketManagerService.shared.observeRoomUpdates { newRoom in
+                    print("🏠 New room received:", newRoom.room_id ?? "unknown")
+                    fetchProducts(for: newRoom.room_id ?? "")
+                }
+                
                 SocketManagerService.shared.listenForBidFinalized(completion: { roomId,productId,winner in
                     fetchProducts(for: roomId)
                     let winnerNameFromServer = winner?.user_name ?? ""
@@ -1161,15 +1184,55 @@ struct LiveStream: View {
     
     //MARK: logoutRoom
     func logoutRoom() {
-//        Task{
-//            try await joinManager.unsubscribe()
-//        }
         agoraManager.leaveChannel()
         SocketManagerService.shared.chats.removeAll()
+        self.comments.removeAll()
         SocketManagerService.shared.leaveRoom(roomId: self.currentRoomID, userId: UserDefaults.userId)
         currentProductID = nil
         self.currentPrice = 0.0
         self.currentProductIndex = -1
+    }
+    
+    func logoutRoom11() {
+        // leave RTC
+        agoraManager.leaveChannel()
+
+        // leave socket room on server
+        SocketManagerService.shared.leaveRoom(roomId: self.currentRoomID, userId: UserDefaults.userId)
+
+        // clear chats on both manager and local state
+        SocketManagerService.shared.chats.removeAll()
+        socketManagerChat.chats.removeAll()
+        self.comments.removeAll()
+
+        // remove room entry from shared rooms to avoid stale product state
+        if !self.currentRoomID.isEmpty {
+            if let idx = SocketManagerService.shared.rooms.firstIndex(where: { $0.room_id == self.currentRoomID }) {
+                SocketManagerService.shared.rooms.remove(at: idx)
+            }
+        }
+
+        // stop/cleanup timers used for bidding/countdown
+        priceTimer?.invalidate()
+        priceTimer = nil
+        countdownTimer?.invalidate()
+        countdownTimer = nil
+
+        // reset local product / bidding state
+        currentProductID = nil
+        self.currentProductIndex = -1
+        
+        self.productData.removeAll()
+        self.currentPrice = 0.0
+       
+        self.isBiddingActive = false
+
+        // reset UI triggers used for preview / sheets
+        previewResetTrigger.toggle()
+        showSheet = false
+        winnerSheet = false
+        showVerificationSheet = false
+        maxBidAmountSheet = false
     }
     
     func incrementPrice() {

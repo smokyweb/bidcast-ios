@@ -60,23 +60,15 @@ struct MultiSelectionSubCategoryScreen: View {
                         VStack(spacing: 0) {
                             // Category Header
                             HStack {
-                                AsyncImage(url: URL(string: category.image ?? "")) { image in
-                                    image.resizable().scaledToFit()
-                                } placeholder: {
-                                    Circle().fill(Color.gray.opacity(0.2))
-                                }
-                                .frame(width: 36, height: 36)
-                                .clipShape(Circle())
-                                
+                                CustomProfileImage(url: category.image, isCircular: true, size: 36)
                                 Text(category.name ?? "")
                                     .font(.headline)
-                                
                                 Spacer()
-                                
                                 Image(systemName: expandedCategoryIDs.contains(category.id ?? -1) ? "chevron.up" : "chevron.down")
                                     .foregroundColor(.gray)
                             }
                             .padding()
+                            .contentShape(Rectangle())
                             .onTapGesture {
                                 toggleExpand(category.id ?? -1)
                             }

@@ -22,7 +22,7 @@ struct MoreOptionsScreen: View {
     var onAddCoupons: () -> Void
     var onRaid: () -> Void
     var onCreatePoll: () -> Void
-    var onRotateCamera: () -> Void
+    var onZoomOut: () -> Void
     var onZoomIn: () -> Void
     var onMicToggle: () -> Void
     var onVerifiedBuyerToggle: ((Bool) -> Void)? = nil
@@ -111,8 +111,8 @@ struct MoreOptionsScreen: View {
                         .padding(.horizontal, 0)
 
                     HStack(spacing: 16) {
-                        OptionButtonView(label: "Rotate Camera", icon: "arrow.triangle.2.circlepath.camera", action: onRotateCamera)
-                        OptionButtonView(label: "Zoom In", icon: "magnifyingglass", action: onZoomIn)
+                        OptionButtonView(label: "Zoom Out", icon: "minus.magnifyingglass", action: onZoomOut)
+                        OptionButtonView(label: "Zoom In", icon: "plus.magnifyingglass", action: onZoomIn)
                         OptionButtonView(label: "Mic", icon: isMicOn ? "mic.fill" : "mic.slash.fill", action: onMicToggle)
                     }
                 }

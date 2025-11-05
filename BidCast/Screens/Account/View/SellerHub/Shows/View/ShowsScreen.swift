@@ -123,8 +123,8 @@ struct ShowsScreen: View {
 //            }
             CusNavLink(doNavigate: $navigateToReherseal,
                        destination: RehearsalScreen(showUd: $showID,
-                                                    isLive: isLive,
                                                     productListData: $selectedProductData,
+                                                    isLive: isLive, 
                                                     backToTabBar: .constant(true),
                                                     showsData: $selectedShowsData))
         }

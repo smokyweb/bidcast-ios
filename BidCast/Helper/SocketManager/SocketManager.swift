@@ -36,6 +36,7 @@ struct RaidInfo: Codable {
     var message: String?
     var source_room_id: String?
     var target_room_id: String?
+    var rtcToken: String?
 }
 
 
@@ -722,7 +723,7 @@ extension SocketManagerService {
         stopLiveScheduler()
         
         // Remove all socket handlers
-        socket?.removeAllHandlers()
+//        socket?.removeAllHandlers()
         
 //        socket.off("receiveRaid")
 //        socket.off("allow_bid_for_all_get")
