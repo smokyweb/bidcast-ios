@@ -88,7 +88,7 @@ struct AddCardScreen: View {
                     text: $cardHolderName,
                     isIconDisplay : false,
                     enteredText: {
-                        cardHolderName = $0
+                        cardHolderName = $0.uppercased()
                     }
                 )
                 .keyboardType(.alphabet)
@@ -102,7 +102,7 @@ struct AddCardScreen: View {
                     isIconDisplay : false,
                     isForCardNumber: true,
                     enteredText: {
-                        cardNumber = $0
+                        cardNumber = formatCardNumber($0)
                     }
                 )
                 .keyboardType(.numberPad)
@@ -146,17 +146,17 @@ struct AddCardScreen: View {
                 isOutLine: true,
                 onButtonClick: {
                     guard !cardNumber.isEmpty else{
-                        hudMsg = "Enter card number"
+                        hudMsg = "Please Enter card number"
                         showhud = true
                         return
                     }
                     guard !expiryDate.isEmpty else{
-                        hudMsg = "Enter card number"
+                        hudMsg = "Please Enter expiry date"
                         showhud = true
                         return
                     }
                     guard !cvv.isEmpty else{
-                        hudMsg = "Enter card number"
+                        hudMsg = "Please Enter cvv detials"
                         showhud = true
                         return
                     }
@@ -168,7 +168,9 @@ struct AddCardScreen: View {
                     Task{
                         SVProgressHUD.show()
                         self.viewModel.errorMessage = ""
-                        let param = AddCardRequest(card_number: cardNumber, expiration_date: expiryDate, cvv: cvv)
+                        let param = AddCardRequest(card_number: getUnformattedCardNumber(cardNumber),
+                                                   expiration_date: expiryDate,
+                                                   cvv: cvv)
                         await viewModel.addCard(parameters: param)
                         await SVProgressHUD.dismiss()
                         
@@ -249,4 +251,23 @@ struct AddCardScreen: View {
             await onSuccess?(cardId)
         }
     }
+    
+    func formatCardNumber(_ cardNumber: String) -> String {
+        // Remove all non-digit characters
+        let cleaned = cardNumber.filter { $0.isNumber }
+        
+        // Check if the cleaned card number length is correct
+        let formatted = cleaned.chunked(into: 4).joined(separator: " ")
+        
+        return formatted
+    }
+    
+    func getUnformattedCardNumber(_ cardNumber: String) -> String {
+        // Remove any dashes from the card number
+        let unformattedCardNumber = cardNumber.replacingOccurrences(of: "-", with: "")
+        return unformattedCardNumber
+    }
+
 }
+
+

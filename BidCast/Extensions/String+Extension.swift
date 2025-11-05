@@ -282,3 +282,19 @@ extension String {
         return Double(self)
     }
 }
+
+extension String {
+    func chunked(into size: Int) -> [String] {
+        var result = [String]()
+        var startIndex = self.startIndex
+        
+        while startIndex < self.endIndex {
+            let endIndex = self.index(startIndex, offsetBy: size, limitedBy: self.endIndex) ?? self.endIndex
+            let chunk = String(self[startIndex..<endIndex])
+            result.append(chunk)
+            startIndex = endIndex
+        }
+        
+        return result
+    }
+}

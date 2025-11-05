@@ -26,6 +26,7 @@ struct HomeViewScreen: View {
     var categoryViewModel = SelectCategoryViewModel()
     @State var categoryList = [CategoryDataModel]()
     @State var liveShowsData = [HomeModel]()
+    
     @State var isLoading: Bool = false
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @State var showError: Bool = false

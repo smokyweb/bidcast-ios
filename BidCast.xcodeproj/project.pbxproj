@@ -516,6 +516,7 @@
 		D613DBB22EB0A0D500521D42 /* SpatialAudio in Frameworks */ = {isa = PBXBuildFile; productRef = D613DBB12EB0A0D500521D42 /* SpatialAudio */; };
 		D613DBB42EB0A0D500521D42 /* VirtualBackground in Frameworks */ = {isa = PBXBuildFile; productRef = D613DBB32EB0A0D500521D42 /* VirtualBackground */; };
 		D613DBB62EB0F22000521D42 /* ImageCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D613DBB52EB0F22000521D42 /* ImageCacheManager.swift */; };
+		D615BD1F2EBB2A9200EB55C2 /* GetAllStaticAPICall.swift in Sources */ = {isa = PBXBuildFile; fileRef = D615BD1E2EBB2A9200EB55C2 /* GetAllStaticAPICall.swift */; };
 		D665316B2E9E3B5B00F19B94 /* ShimmerViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = D665316A2E9E3B5B00F19B94 /* ShimmerViewModifier.swift */; };
 		D66531752E9E79F400F19B94 /* DownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D66531742E9E79F400F19B94 /* DownloadManager.swift */; };
 		D67BA9A02EAF464B00C18882 /* BioView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67BA99F2EAF464B00C18882 /* BioView.swift */; };
@@ -1039,6 +1040,7 @@
 		D4F72B522DF96FE9008A6859 /* ShippingStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShippingStepView.swift; sourceTree = "<group>"; };
 		D4F72B542DF973F7008A6859 /* SummaryRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryRow.swift; sourceTree = "<group>"; };
 		D613DBB52EB0F22000521D42 /* ImageCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCacheManager.swift; sourceTree = "<group>"; };
+		D615BD1E2EBB2A9200EB55C2 /* GetAllStaticAPICall.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetAllStaticAPICall.swift; sourceTree = "<group>"; };
 		D665316A2E9E3B5B00F19B94 /* ShimmerViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShimmerViewModifier.swift; sourceTree = "<group>"; };
 		D66531742E9E79F400F19B94 /* DownloadManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadManager.swift; sourceTree = "<group>"; };
 		D67BA99F2EAF464B00C18882 /* BioView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BioView.swift; sourceTree = "<group>"; };
@@ -1294,6 +1296,7 @@
 			isa = PBXGroup;
 			children = (
 				355AE9742DD1F98C00CD3D17 /* HomeViewScreen.swift */,
+				D615BD1E2EBB2A9200EB55C2 /* GetAllStaticAPICall.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -4531,6 +4534,7 @@
 				D4BB99EB2DE5890D00C1BCBC /* OffersScreen.swift in Sources */,
 				99C909E82DC8CDDC0054620B /* JobDetailResponse.swift in Sources */,
 				354262672E7BEF2B0023CA32 /* SocketManager.swift in Sources */,
+				D615BD1F2EBB2A9200EB55C2 /* GetAllStaticAPICall.swift in Sources */,
 				D4CAEC922DE7200300705CD7 /* BoostCardView.swift in Sources */,
 				D4BB9A152DE5C9ED00C1BCBC /* WalletTabView.swift in Sources */,
 				99C909E92DC8CDDC0054620B /* EmployerProfileJobsModal.swift in Sources */,

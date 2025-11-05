@@ -13,13 +13,14 @@ import SVProgressHUD
 
 struct LessonScreen: View {
     
-    var viewModel = ScheduleViewModel()
+    @EnvironmentObject var staticAPI: StaticAPIViewModel
     @State var lessons =  [LessonModel]()
     @State var currentIndex: Int = 0
     @State var isPlaying = false
     @State var isLoading: Bool = false
     @State var playbackProgress: Double = 0.0
     @State var timeObserverToken: Any?
+    
     
     @State  var showNextButton = false
     @State  var showPreviousButton = false
@@ -170,18 +171,19 @@ struct LessonScreen: View {
             }
             .toolbar(.hidden,for: .tabBar)
             .onAppear {
-               
                 Task{
-                   guard Reachability.isConnectedToNetwork() else {
-                        hudMsg = "No Internet Connection"
-                        showhud = true
-                        return
+                    if staticAPI.lessons.isEmpty {
+                        await staticAPI.getAllLessons()
+                        lessons = staticAPI.lessons
+                        playCurrentVideo()
                     }
-                    SVProgressHUD.show()
-                    await viewModel.getLesson()
-                    await SVProgressHUD.dismiss()
-                    success()
+                    else  {
+                        lessons = staticAPI.lessons
+                        playCurrentVideo() 
+                    }
+                    
                 }
+                
             }
             .onDisappear {
                 if let token = timeObserverToken, let currentPlayer = player {
@@ -273,16 +275,16 @@ struct LessonScreen: View {
         
 
 
-        func success() {
-            if let dict = viewModel.lessonsResponse {
-                if dict.status == "success" {
-                    lessons = dict.data
-                    playCurrentVideo()
-                } else {
-                    print("API error: \(dict.status ?? "")")
-                }
-            }
-        }
+//        func success() {
+//            if let dict = viewModel.lessonsResponse {
+//                if dict.status == "success" {
+//                    lessons = dict.data
+//                    playCurrentVideo()
+//                } else {
+//                    print("API error: \(dict.status ?? "")")
+//                }
+//            }
+//        }
 
 }
 

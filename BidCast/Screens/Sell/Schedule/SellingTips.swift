@@ -20,7 +20,7 @@ enum LearningContent {
 
 struct SellingTips: View {
     
-    var viewModel = ScheduleViewModel()
+    @EnvironmentObject var staticAPI: StaticAPIViewModel
     @State var lessons =  [LessonModel]()
     
     @State var currentIndex = 0
@@ -60,18 +60,18 @@ struct SellingTips: View {
                         .padding(.horizontal)
                         .padding(.top,8)
                     
-                    CustomProfileImage(url:  lesson.image, isCircular: false, defaultImage: nil)
-//                    if let imageUrl = URL(string: lesson.image ?? "") {
-//                        AsyncImage(url: imageUrl) { image in
-//                            image
-//                                .resizable()
-//                                .aspectRatio(contentMode: .fit)
-//                                .cornerRadius(12)
-//                        } placeholder: {
-//                            ProgressView()
-//                        }
-//                        .padding(.horizontal)
-//                    }
+//                    CustomProfileImage(url:  lesson.image, isCircular: false, defaultImage: nil)
+                    if let imageUrl = URL(string: lesson.image ?? "") {
+                        AsyncImage(url: imageUrl) { image in
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .cornerRadius(12)
+                        } placeholder: {
+                            ProgressView()
+                        }
+                        .padding(.horizontal)
+                    }
                     
                     Text(lesson.title ?? "")
                         .font(.custom(poppinsBold, size: 16.0))
@@ -133,30 +133,18 @@ struct SellingTips: View {
             .background(.bg.opacity(0.4))
             .onAppear {
                 Task{
-                   guard Reachability.isConnectedToNetwork() else {
-                        hudMsg = "No Internet Connection"
-                        showhud = true
-                        return
+                    if staticAPI.sellingLessons.isEmpty {
+                        await staticAPI.fetchHowToSell()
+                        lessons = staticAPI.sellingLessons
                     }
-                    SVProgressHUD.show()
-                    await viewModel.getHowToSell()
-                    await SVProgressHUD.dismiss()
-                    success()
+                    else  {
+                        lessons = staticAPI.sellingLessons
+                    }
+                    
                 }
             }
     }
     
-    
-    
-    func success() {
-        if let dict = viewModel.lessonsResponse {
-            if dict.status == "success" {
-                lessons = dict.data
-            } else {
-                print("API error: \(dict.status ?? "")")
-            }
-        }
-    }
     
 }
 

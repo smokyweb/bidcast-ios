@@ -176,8 +176,6 @@ struct InventoryScreen: View {
                 secondaryBtnText: AppString.ok.localized
             )
             showError = true
-            
-            
         }
     }
     
