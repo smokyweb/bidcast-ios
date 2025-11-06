@@ -282,47 +282,33 @@ struct ProductWeightScreen: View {
             return
         }
         
-        Task{
-            guard Reachability.isConnectedToNetwork() else {
-                hudMsg = "No Internet Connection"
-                showhud = true
-                return
-            }
-            SVProgressHUD.show()
-            viewModel.errorMessage?.removeAll()
-            await viewModel.uploadStoreImage(images: imageUrls, key: "images[]")
-            request.shipping_profile_id = "4" //TODO : need to dynamic
-            if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
-                uploadSuccess()
-            }else{
-                alertType = .sheetType(
-                    icon: .alert,
-                    title: "Failed",
-                    message: viewModel.errorMessage ?? "",
-                    primaryBtnText: "",
-                    secondaryBtnText: AppString.ok.localized
-                )
-                showError = true
-            }
-        }
-    }
-    
-    func uploadSuccess(){
-        guard let response = self.viewModel.storeImageResponse,
-              response.status == "success"
-        else {
-            return
-        }
-        if response.status == "success"{
-            let uploadedUrls: [[String: String]] = response.data.map {
-                return ["image": $0.images ?? "", "thumbnail": $0.thumbnail ?? ""]
-            }
-            var variantArray: [[String: Any]] = []
-            SVProgressHUD.dismiss()
-            Task{
-                self.viewModel.errorMessage?.removeAll()
+        Task {
+            await performAPICalls(
+                isConcurrent: false,
+                onError: { error in
+                    alertType = .sheetType(
+                        icon: .alert,
+                        title: "Error",
+                        message: error.localizedDescription,
+                        primaryBtnText: "",
+                        secondaryBtnText: AppString.ok.localized
+                    )
+                    showError = true
+                }
+            ) {
+                await viewModel.uploadStoreImage(images: imageUrls, key: "images[]")
+                request.shipping_profile_id = "4" //TODO : need to dynamic
+                guard let response = self.viewModel.storeImageResponse, response.status == "success" else {
+                    return
+                }
+                
+                let uploadedUrls: [[String: String]] = response.data.map {
+                    return ["image": $0.images ?? "", "thumbnail": $0.thumbnail ?? ""]
+                }
+                var variantArray: [[String: Any]] = []
+                //TODO: eed to manage varient
+                
                 var request = [
-                    
                     "category_id": request.category_id,
                     "sub_category_id": request.sub_category_id ?? "",
                     "title": request.title,
@@ -341,22 +327,85 @@ struct ProductWeightScreen: View {
                 }
                 
                 await viewModel.storeProduct(param: request)
-                await SVProgressHUD.dismiss()
-                if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
-                    storeSuccess()
-                }else{
-                    alertType = .sheetType(
-                        icon: .alert,
-                        title: "Failed",
-                        message: viewModel.errorMessage ?? "",
-                        primaryBtnText: "",
-                        secondaryBtnText: AppString.ok.localized
-                    )
-                    showError = true
-                }
+                storeSuccess()
             }
         }
+        
+//        Task {
+//            guard Reachability.isConnectedToNetwork() else {
+//                hudMsg = "No Internet Connection"
+//                showhud = true
+//                return
+//            }
+//            SVProgressHUD.show()
+//            viewModel.errorMessage?.removeAll()
+//            await viewModel.uploadStoreImage(images: imageUrls, key: "images[]")
+//            request.shipping_profile_id = "4" //TODO : need to dynamic
+//            if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
+//                uploadSuccess()
+//            }else{
+//                alertType = .sheetType(
+//                    icon: .alert,
+//                    title: "Failed",
+//                    message: viewModel.errorMessage ?? "",
+//                    primaryBtnText: "",
+//                    secondaryBtnText: AppString.ok.localized
+//                )
+//                showError = true
+//            }
+//        }
     }
+    
+//    func uploadSuccess(){
+//        guard let response = self.viewModel.storeImageResponse,
+//              response.status == "success"
+//        else {
+//            return
+//        }
+//        if response.status == "success"{
+//            let uploadedUrls: [[String: String]] = response.data.map {
+//                return ["image": $0.images ?? "", "thumbnail": $0.thumbnail ?? ""]
+//            }
+//            var variantArray: [[String: Any]] = []
+//            SVProgressHUD.dismiss()
+//            Task{
+//                self.viewModel.errorMessage?.removeAll()
+//                var request = [
+//                    
+//                    "category_id": request.category_id,
+//                    "sub_category_id": request.sub_category_id ?? "",
+//                    "title": request.title,
+//                    "description": request.description,
+//                    "quantity": request.quantity,
+//                    "pricing": request.pricing,
+//                    "flash_sale": request.flash_sale,
+//                    "accept_offers": request.accept_offers,
+//                    "reserve_for_live": request.reserve_for_live,
+//                    "shipping_profile_id": request.shipping_profile_id,
+//                    "images": uploadedUrls
+//                ]
+//                
+//                if !variantArray.isEmpty {
+//                    request["variant"] = variantArray
+//                }
+//                
+//                await viewModel.storeProduct(param: request)
+//                await SVProgressHUD.dismiss()
+//                if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
+//                    storeSuccess()
+//                }else{
+//                    alertType = .sheetType(
+//                        icon: .alert,
+//                        title: "Failed",
+//                        message: viewModel.errorMessage ?? "",
+//                        primaryBtnText: "",
+//                        secondaryBtnText: AppString.ok.localized
+//                    )
+//                    showError = true
+//                }
+//            }
+//        }
+//    }
     
     
     func storeSuccess(){

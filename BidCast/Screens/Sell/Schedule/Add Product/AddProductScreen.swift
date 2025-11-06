@@ -167,6 +167,7 @@ struct AddProductsScreen: View {
                         }
                         addProductOption(text: "Select from product Inventory"){
 //                            presentationMode.wrappedValue.dismiss()
+                            
                         }
                     }
                 }
@@ -216,44 +217,93 @@ struct AddProductsScreen: View {
                     backToPrepare = false
                     delegate?.didUpdateRequest(request,thumbNail: self.thumbNail)
                 }else{
-                    Task{
-                       guard Reachability.isConnectedToNetwork() else {
-                            hudMsg = "No Internet Connection"
-                            showhud = true
-                            return
-                        }
-                        SVProgressHUD.show()
-                        var thumbImage = [String]()
-                        thumbImage.append(thumbNail)
-                        self.viewModel.errorMessage = ""
-                        var param: [String: Any] = [
-                            "title": request.title,
-                            "date": request.date,
-                            "time": request.time,
-                            "category_id": request.category_id,
-                            "auction_type_id": request.auction_type_id,
-                        ]
-                        let products = request.product_ids.toIntArray()
-                        for (index, product) in products.enumerated() {
-                            param["product_ids[\(index)]"] = product
-                        }
-                        await viewModel.storeScheduleShow(param: param,images: [thumbNail],key: "thumbnail[]")
-                        await SVProgressHUD.dismiss()
-                        
-                        if viewModel.errorMessage == nil || viewModel.errorMessage == "" {
-                            storeSuccess()
-                        }else{
+//                    Task{
+//                       guard Reachability.isConnectedToNetwork() else {
+//                            hudMsg = "No Internet Connection"
+//                            showhud = true
+//                            return
+//                        }
+//                        SVProgressHUD.show()
+//                        var thumbImage = [String]()
+//                        thumbImage.append(thumbNail)
+//                        self.viewModel.errorMessage = ""
+//                        var param: [String: Any] = [
+//                            "title": request.title,
+//                            "date": request.date,
+//                            "time": request.time,
+//                            "category_id": request.category_id,
+//                            "auction_type_id": request.auction_type_id,
+//                        ]
+//                        let products = request.product_ids.toIntArray()
+//                        for (index, product) in products.enumerated() {
+//                            param["product_ids[\(index)]"] = product
+//                        }
+//                        await viewModel.storeScheduleShow(param: param,images: [thumbNail],key: "thumbnail[]")
+//                        await SVProgressHUD.dismiss()
+//                        
+//                        if viewModel.errorMessage == nil || viewModel.errorMessage == "" {
+//                            storeSuccess()
+//                        }else{
+//                            alertType = .sheetType(
+//                                icon: .alert,
+//                                title: "Error",
+//                                message: viewModel.errorMessage ?? "",
+//                                primaryBtnText: AppString.ok.localized,
+//                                secondaryBtnText:""
+//                            )
+//                            showError = true
+//                        }
+//                        
+//                    }
+                    
+                    Task {
+                        await performAPICalls(
+                            isConcurrent: false,
+                            showLoader: true,
+                            onError: { error in
+                                alertType = .sheetType(
+                                    icon: .alert,
+                                    title: "Error",
+                                    message: error.localizedDescription,
+                                    primaryBtnText: AppString.ok.localized,
+                                    secondaryBtnText: ""
+                                )
+                                showError = true
+                            }
+                        ) {
+                            var thumbImage = [String]()
+                            thumbImage.append(thumbNail)
+                            self.viewModel.errorMessage = ""
+
+                            // Prepare request parameters
+                            var param: [String: Any] = [
+                                "title": request.title,
+                                "date": request.date,
+                                "time": request.time,
+                                "category_id": request.category_id,
+                                "auction_type_id": request.auction_type_id
+                            ]
+
+                            // Convert product IDs into array format
+                            let products = request.product_ids.toIntArray()
+                            for (index, product) in products.enumerated() {
+                                param["product_ids[\(index)]"] = product
+                            }
+
+                            // 🔹 API Call
+                            await viewModel.storeScheduleShow(param: param, images: [thumbNail], key: "thumbnail[]")
+                            let response = viewModel.storeShowResponse
                             alertType = .sheetType(
-                                icon: .alert,
-                                title: "Error",
-                                message: viewModel.errorMessage ?? "",
+                                icon: .success,
+                                title: "Successs",
+                                message: response?.message?.capitalized ?? "",
                                 primaryBtnText: AppString.ok.localized,
                                 secondaryBtnText:""
                             )
                             showError = true
                         }
-                        
                     }
+
                 }
             }) {
                 Text("Finish")
@@ -381,30 +431,6 @@ extension AddProductsScreen{
                 message: response?.message?.capitalized ?? "",
                 primaryBtnText: "",
                 secondaryBtnText: AppString.ok.localized
-            )
-        }
-    }
-    
-    //MARK: storeSuccess.
-    func storeSuccess(){
-        SVProgressHUD.dismiss()
-        let response = viewModel.storeShowResponse
-        if response?.status == "success"{
-            alertType = .sheetType(
-                icon: .success,
-                title: response?.error_type?.capitalized ?? "",
-                message: response?.message?.capitalized ?? "",
-                primaryBtnText: AppString.ok.localized,
-                secondaryBtnText:""
-            )
-            showError = true
-        }else{
-            alertType = .sheetType(
-                icon: .alert,
-                title: response?.error_type?.capitalized ?? "",
-                message: response?.message?.capitalized ?? "",
-                primaryBtnText: "",
-                secondaryBtnText:AppString.ok.localized
             )
             showError = true
         }

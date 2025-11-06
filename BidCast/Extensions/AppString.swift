@@ -82,6 +82,8 @@ struct AppString{
     static let adddescriptionRating = "Please add description rating".localized
     static let addComment = "Please add comment".localized
     static let Account = "Account".localized
+    static let newProduct = "Add New Product".localized
+    static let selectedProduct = "Add Selected Product".localized
     static let Payout = "Payout".localized
     static let SellerHub = "Seller Hub".localized
     static let MyAccount = "My Account".localized

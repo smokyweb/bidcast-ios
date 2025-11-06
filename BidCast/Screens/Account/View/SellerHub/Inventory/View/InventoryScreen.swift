@@ -9,6 +9,20 @@ import SwiftUI
 import AlertToast
 import SVProgressHUD
 
+enum InventoryNavigation {
+    case account
+    case createProduct
+    
+    var btnTitle: String  {
+        switch self {
+        case .account:
+            return AppString.newProduct.localized
+        case .createProduct:
+            return AppString.selectedProduct.localized
+        }
+    }
+}
+
 // MARK: - InventoryScreen
 struct InventoryScreen: View {
     @Environment(\.presentationMode) var presentationMode
@@ -29,6 +43,9 @@ struct InventoryScreen: View {
     @State var productData : InventoryDataModel
     @State var navigateToCreateProduct = false
     @State var searchText: String = ""
+    
+    var navigatedFrom: InventoryNavigation = .account
+    @State private var navigateToAddProduct = false
     
     var body: some View {
         VStack(spacing: 0) {
@@ -94,9 +111,33 @@ struct InventoryScreen: View {
                 .padding(.top, 10)
                 .padding(.horizontal, 12)
             }
+            
+            TwoButton(titleOne: navigatedFrom.btnTitle,
+                      onFirstButtonClick: {
+                switch navigatedFrom {
+                case .account:
+                    print("create new Prooduct")
+                    navigateToAddProduct = true
+                case .createProduct:
+                    print("Select Existing Product")
+                }
+            },
+                      
+                      onSecButtonClick: {  },
+                      firstBtnBgColor: .defaultTheme,
+                      isHidefirstBtn: false,
+                      isHideSecBtn: true
+            )
+            
             CusNavLink(doNavigate: $navigateToCreateProduct, destination: ListProductScreen(productData:$productData))
+//            CusNavLink(doNavigate: $navigateToAddProduct,
+//                       destination: CreateProductScreen(requests: .constant(StoreScheduleShowRequest()),
+//                                                        thumbNail: .constant(""),
+//                                                        backToPrepare: .constant(false),
+//                                                        fromPrepare: .constant(false),
         }
-        .background(Color.bg.opacity(0.5))
+//        .background(Color.bg.opacity(0.5))
+        .background(.red)
         .onAppear {
             searchText = ""
             fetchInventory(for: segment, page: currentPage)

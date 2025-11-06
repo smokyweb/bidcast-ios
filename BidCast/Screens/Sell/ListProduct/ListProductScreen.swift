@@ -93,7 +93,7 @@ struct ListProductScreen: View {
                                 Task{
                                     let request = CategoryRequest(category_id: request.category_id)
                                     SVProgressHUD.show()
-                                    await self.viewModel.getCategoryList(param: request)
+                                    await self.viewModel.getSubCategoryList(param: request)
                                     self.subCategoryList.removeAll()
                                     await SVProgressHUD.dismiss()
                                     if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil {
@@ -371,214 +371,316 @@ struct ListProductScreen: View {
                     .cornerRadius(12)
                     .padding(.horizontal,12)
                     
-                    TwoButton(titleOne: "Save Draft", titleTwo: "Publish", onFirstButtonClick: {
-                        print(request)
-                        print(imageUrls)
-                        guard !imageUrls.isEmpty,imageUrls.count != 0 else{
-                            hudMsg = "Please select images"
-                            showhud = true
-                            return
-                        }
-                        guard !request.category_id.isEmpty else{
-                            hudMsg = "Please select category"
-                            showhud = true
-                            return
-                        }
-                        guard !request.title.isEmpty else{
-                            hudMsg = "Please enter title"
-                            showhud = true
-                            return
-                        }
-                        guard !request.description.isEmpty else{
-                            hudMsg = "Please enter description"
-                            showhud = true
-                            return
-                        }
-                        guard !request.quantity.isEmpty else{
-                            hudMsg = "Please enter quantity"
-                            showhud = true
-                            return
-                        }
-                        guard let quantity = Double(request.quantity), quantity >= 1.0 else{
-                            hudMsg = "Please enter quantity greater than 1"
-                            showhud = true
-                            return
-                        }
-                        guard !request.width.isEmpty else{
-                            hudMsg = "Please enter width"
-                            showhud = true
-                            return
-                        }
-                        guard !request.height.isEmpty else{
-                            hudMsg = "Please enter height"
-                            showhud = true
-                            return
-                        }
-                        guard !request.length.isEmpty else{
-                            hudMsg = "Please enter length"
-                            showhud = true
-                            return
-                        }
-                        guard !request.weight.isEmpty else{
-                            hudMsg = "Please enter weight"
-                            showhud = true
-                            return
-                        }
-                        guard !request.mail_class.isEmpty else{
-                            hudMsg = "Please select mail class"
-                            showhud = true
-                            return
-                        }
-                        guard !request.processing_category.isEmpty else{
-                            hudMsg = "Please select processing category"
-                            showhud = true
-                            return
-                        }
-                        guard !request.pricing.isEmpty else{
-                            hudMsg = "Please enter pricing"
-                            showhud = true
-                            return
-                        }
-                        guard let amt = Double(request.pricing), amt >= 1.0 else {
-                            hudMsg = "Price should not be less than $1.00"
-                            showhud = true
-                            return
-                        }
-                        
-                        
-                        guard !request.shipping_profile_id.isEmpty else{
-                            hudMsg = "Please select shipping address"
-                            showhud = true
-                            return
-                        }
-                        request.status = "draft"
-                        
-                        Task{
-                           guard Reachability.isConnectedToNetwork() else {
-                                hudMsg = "No Internet Connection"
-                                showhud = true
-                                return
-                            }
-                            SVProgressHUD.show()
-                            viewModel.errorMessage?.removeAll()
-                            await viewModel.uploadStoreImage(images: imageUrls, key: "images[]")
-                            if let errorMessage = self.viewModel.errorMessage, errorMessage != ""{
-                                alertType = .sheetType(
-                                    icon: .alert,
-                                    title: "Failed",
-                                    message: viewModel.errorMessage ?? "",
-                                    primaryBtnText: "",
-                                    secondaryBtnText: AppString.ok.localized
-                                )
-                                showError = true
-                            }
-                            else {
-                                uploadSuccess()
-                            }
-                        }
+//                    TwoButton(titleOne: "Save Draft", titleTwo: "Publish", onFirstButtonClick: {
+//                        print(request)
+//                        print(imageUrls)
+//                        guard !imageUrls.isEmpty,imageUrls.count != 0 else{
+//                            hudMsg = "Please select images"
+//                            showhud = true
+//                            return
+//                        }
+//                        guard !request.category_id.isEmpty else{
+//                            hudMsg = "Please select category"
+//                            showhud = true
+//                            return
+//                        }
+//                        guard !request.title.isEmpty else{
+//                            hudMsg = "Please enter title"
+//                            showhud = true
+//                            return
+//                        }
+//                        guard !request.description.isEmpty else{
+//                            hudMsg = "Please enter description"
+//                            showhud = true
+//                            return
+//                        }
+//                        guard !request.quantity.isEmpty else{
+//                            hudMsg = "Please enter quantity"
+//                            showhud = true
+//                            return
+//                        }
+//                        guard let quantity = Double(request.quantity), quantity >= 1.0 else{
+//                            hudMsg = "Please enter quantity greater than 1"
+//                            showhud = true
+//                            return
+//                        }
+//                        guard !request.width.isEmpty else{
+//                            hudMsg = "Please enter width"
+//                            showhud = true
+//                            return
+//                        }
+//                        guard !request.height.isEmpty else{
+//                            hudMsg = "Please enter height"
+//                            showhud = true
+//                            return
+//                        }
+//                        guard !request.length.isEmpty else{
+//                            hudMsg = "Please enter length"
+//                            showhud = true
+//                            return
+//                        }
+//                        guard !request.weight.isEmpty else{
+//                            hudMsg = "Please enter weight"
+//                            showhud = true
+//                            return
+//                        }
+//                        guard !request.mail_class.isEmpty else{
+//                            hudMsg = "Please select mail class"
+//                            showhud = true
+//                            return
+//                        }
+//                        guard !request.processing_category.isEmpty else{
+//                            hudMsg = "Please select processing category"
+//                            showhud = true
+//                            return
+//                        }
+//                        guard !request.pricing.isEmpty else{
+//                            hudMsg = "Please enter pricing"
+//                            showhud = true
+//                            return
+//                        }
+//                        guard let amt = Double(request.pricing), amt >= 1.0 else {
+//                            hudMsg = "Price should not be less than $1.00"
+//                            showhud = true
+//                            return
+//                        }
+//                        
+//                        
+//                        guard !request.shipping_profile_id.isEmpty else{
+//                            hudMsg = "Please select shipping address"
+//                            showhud = true
+//                            return
+//                        }
+//                        request.status = "draft"
+//                        
+//                        Task {
+//                            await performAPICalls(
+//                                isConcurrent: false,
+//                                onError: { error in
+//                                    alertType = .sheetType(
+//                                        icon: .alert,
+//                                        title: "Error",
+//                                        message: error.localizedDescription,
+//                                        primaryBtnText: "",
+//                                        secondaryBtnText: AppString.ok.localized
+//                                    )
+//                                    showError = true
+//                                }
+//                            ) {
+//                                await viewModel.uploadStoreImage(images: imageUrls, key: "images[]")
+//                                uploadSuccess()
+//                                
+//                                guard let response = self.viewModel.storeImageResponse, response.status == "success"
+//                                else {
+//                                    return
+//                                }
+//                                
+//                                let uploadedUrls: [[String: String]] = response.data.map {
+//                                    return ["image": $0.images ?? "", "thumbnail": $0.thumbnail ?? ""]
+//                                }
+//                                var variantArray: [[String: Any]] = []
+//                                
+//                                for field in extraFields {
+//                                    guard let title = field.label, let type = field.type else { continue }
+//                                    
+//                                    if type == "text" {
+//                                        // Handle text input
+//                                        let value = extraFieldValues[title] ?? ""
+//                                        variantArray.append([
+//                                            "title": title,
+//                                            "value": value
+//                                        ])
+//                                    } else if type == "radio", let options = field.options {
+//                                        // Handle radio input
+//                                        let selected = selectedRadio[title] ?? ""
+//                                        
+//                                        // Find which option key is selected (e.g. option_1 or option_2)
+//                                        var selectedKey: String = ""
+//                                        var valueDict: [String: String] = [:]
+//                                        
+//                                        for (index, option) in options.enumerated() {
+//                                            let key = "option_\(index + 1)"
+//                                            valueDict[key] = option
+//                                            
+//                                            if option == selected {
+//                                                selectedKey = option
+//                                            }
+//                                        }
+//                                        
+//                                        valueDict["selected"] = selectedKey
+//                                        
+//                                        variantArray.append([
+//                                            "title": title,
+//                                            "value": valueDict
+//                                        ])
+//                                    }
+//                                }
+//                                
+//                                self.viewModel.errorMessage?.removeAll()
+//                                var request = [
+//                                    "category_id": request.category_id,
+//                                    "sub_category_id": request.sub_category_id ?? "",
+//                                    "title": request.title,
+//                                    "description": request.description,
+//                                    "quantity": request.quantity,
+//                                    "pricing": request.pricing,
+//                                    "flash_sale": request.flash_sale,
+//                                    "accept_offers": request.accept_offers,
+//                                    "reserve_for_live": request.reserve_for_live,
+//                                    "shipping_profile_id": request.shipping_profile_id,
+//                                    "images": uploadedUrls
+//                                    
+//                                ]
+//                                
+//                                if !variantArray.isEmpty {
+//                                    request["variant"] = variantArray
+//                                }
+//                                
+//                                
+//                                await viewModel.storeProduct(param: request)
+//                                
+//                                storeSuccess()
+//                            }
+//                            
+//                            //                        Task{
+//                            //                           guard Reachability.isConnectedToNetwork() else {
+//                            //                                hudMsg = "No Internet Connection"
+//                            //                                showhud = true
+//                            //                                return
+//                            //                            }
+//                            //                            SVProgressHUD.show()
+//                            //                            viewModel.errorMessage?.removeAll()
+//                            //                            await viewModel.uploadStoreImage(images: imageUrls, key: "images[]")
+//                            //                            if let errorMessage = self.viewModel.errorMessage, errorMessage != ""{
+//                            //                                alertType = .sheetType(
+//                            //                                    icon: .alert,
+//                            //                                    title: "Failed",
+//                            //                                    message: viewModel.errorMessage ?? "",
+//                            //                                    primaryBtnText: "",
+//                            //                                    secondaryBtnText: AppString.ok.localized
+//                            //                                )
+//                            //                                showError = true
+//                            //                            }
+//                            //                            else {
+//                            //                                uploadSuccess()
+//                            //                            }
+//                            //                        }
+//                        }
+//                    }, onSecButtonClick: {
+//                        print(request)
+//                        print(imageUrls)
+//                        guard !imageUrls.isEmpty,imageUrls.count != 0 else{
+//                            hudMsg = "Please select images"
+//                            showhud = true
+//                            return
+//                        }
+//                        guard !request.category_id.isEmpty else{
+//                            hudMsg = "Please select category"
+//                            showhud = true
+//                            return
+//                        }
+//                        guard !request.title.isEmpty else{
+//                            hudMsg = "Please enter title"
+//                            showhud = true
+//                            return
+//                        }
+//                        guard !request.description.isEmpty else{
+//                            hudMsg = "Please enter description"
+//                            showhud = true
+//                            return
+//                        }
+//                        guard !request.quantity.isEmpty else{
+//                            hudMsg = "Please enter quantity"
+//                            showhud = true
+//                            return
+//                        }
+//                        guard let quantity = Double(request.quantity), quantity >= 1.0 else{
+//                            hudMsg = "Please enter quantity greater than 1"
+//                            showhud = true
+//                            return
+//                        }
+//                        guard !request.width.isEmpty else{
+//                            hudMsg = "Please enter width"
+//                            showhud = true
+//                            return
+//                        }
+//                        guard !request.height.isEmpty else{
+//                            hudMsg = "Please enter height"
+//                            showhud = true
+//                            return
+//                        }
+//                        guard !request.length.isEmpty else{
+//                            hudMsg = "Please enter length"
+//                            showhud = true
+//                            return
+//                        }
+//                        guard !request.weight.isEmpty else{
+//                            hudMsg = "Please enter weight"
+//                            showhud = true
+//                            return
+//                        }
+//                        guard !request.mail_class.isEmpty else{
+//                            hudMsg = "Please select mail class"
+//                            showhud = true
+//                            return
+//                        }
+//                        guard !request.processing_category.isEmpty else{
+//                            hudMsg = "Please select processing category"
+//                            showhud = true
+//                            return
+//                        }
+//                        guard !request.pricing.isEmpty else{
+//                            hudMsg = "Please enter pricing"
+//                            showhud = true
+//                            return
+//                        }
+//                        guard let amt = Double(request.pricing), amt >= 1.0 else {
+//                            hudMsg = "Price should not be less than $1.00"
+//                            showhud = true
+//                            return
+//                        }
+//                        
+//                        guard !request.shipping_profile_id.isEmpty else{
+//                            hudMsg = "Please select shipping address"
+//                            showhud = true
+//                            return
+//                        }
+//                        request.status = "active"
+//                        Task{
+//                           guard Reachability.isConnectedToNetwork() else {
+//                                hudMsg = "No Internet Connection"
+//                                showhud = true
+//                                return
+//                            }
+//                            SVProgressHUD.show()
+//                            viewModel.errorMessage?.removeAll()
+//                            await viewModel.uploadStoreImage(images: imageUrls, key: "images[]")
+//                            if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
+//                                uploadSuccess()
+//                            }else{
+//                                alertType = .sheetType(
+//                                    icon: .alert,
+//                                    title: "Failed",
+//                                    message: viewModel.errorMessage ?? "",
+//                                    primaryBtnText: "",
+//                                    secondaryBtnText: AppString.ok.localized
+//                                )
+//                                showError = true
+//                            }
+//                        }
+//                    }, height: 45, firstBtnTitleColor: .darkGray, secBtnTitleColor: .white, firstBtnBgColor: .white, secBtnBgColor:.darkBlue)
+                    TwoButton(titleOne: "Save Draft", titleTwo: "Publish",
+                     onFirstButtonClick: {
+                        saveProductDetails(as: "draft")
                     }, onSecButtonClick: {
-                        print(request)
-                        print(imageUrls)
-                        guard !imageUrls.isEmpty,imageUrls.count != 0 else{
-                            hudMsg = "Please select images"
-                            showhud = true
-                            return
-                        }
-                        guard !request.category_id.isEmpty else{
-                            hudMsg = "Please select category"
-                            showhud = true
-                            return
-                        }
-                        guard !request.title.isEmpty else{
-                            hudMsg = "Please enter title"
-                            showhud = true
-                            return
-                        }
-                        guard !request.description.isEmpty else{
-                            hudMsg = "Please enter description"
-                            showhud = true
-                            return
-                        }
-                        guard !request.quantity.isEmpty else{
-                            hudMsg = "Please enter quantity"
-                            showhud = true
-                            return
-                        }
-                        guard let quantity = Double(request.quantity), quantity >= 1.0 else{
-                            hudMsg = "Please enter quantity greater than 1"
-                            showhud = true
-                            return
-                        }
-                        guard !request.width.isEmpty else{
-                            hudMsg = "Please enter width"
-                            showhud = true
-                            return
-                        }
-                        guard !request.height.isEmpty else{
-                            hudMsg = "Please enter height"
-                            showhud = true
-                            return
-                        }
-                        guard !request.length.isEmpty else{
-                            hudMsg = "Please enter length"
-                            showhud = true
-                            return
-                        }
-                        guard !request.weight.isEmpty else{
-                            hudMsg = "Please enter weight"
-                            showhud = true
-                            return
-                        }
-                        guard !request.mail_class.isEmpty else{
-                            hudMsg = "Please select mail class"
-                            showhud = true
-                            return
-                        }
-                        guard !request.processing_category.isEmpty else{
-                            hudMsg = "Please select processing category"
-                            showhud = true
-                            return
-                        }
-                        guard !request.pricing.isEmpty else{
-                            hudMsg = "Please enter pricing"
-                            showhud = true
-                            return
-                        }
-                        guard let amt = Double(request.pricing), amt >= 1.0 else {
-                            hudMsg = "Price should not be less than $1.00"
-                            showhud = true
-                            return
-                        }
-                        
-                        guard !request.shipping_profile_id.isEmpty else{
-                            hudMsg = "Please select shipping address"
-                            showhud = true
-                            return
-                        }
-                        request.status = "active"
-                        Task{
-                           guard Reachability.isConnectedToNetwork() else {
-                                hudMsg = "No Internet Connection"
-                                showhud = true
-                                return
-                            }
-                            SVProgressHUD.show()
-                            viewModel.errorMessage?.removeAll()
-                            await viewModel.uploadStoreImage(images: imageUrls, key: "images[]")
-                            if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
-                                uploadSuccess()
-                            }else{
-                                alertType = .sheetType(
-                                    icon: .alert,
-                                    title: "Failed",
-                                    message: viewModel.errorMessage ?? "",
-                                    primaryBtnText: "",
-                                    secondaryBtnText: AppString.ok.localized
-                                )
-                                showError = true
-                            }
-                        }
-                    }, height: 45, firstBtnTitleColor: .darkGray, secBtnTitleColor: .white, firstBtnBgColor: .white, secBtnBgColor:.darkBlue)
+                        saveProductDetails(as: "active")
+                    },
+                    height: 45,
+                    firstBtnTitleColor: .darkGray,
+                    secBtnTitleColor: .white,
+                    firstBtnBgColor: .white,
+                    secBtnBgColor: .darkBlue)
+
                     .padding(.horizontal,12)
                 }
 //                .edgesIgnoringSafeArea(.top)
@@ -650,7 +752,7 @@ struct ListProductScreen: View {
                     return
                 }
                 SVProgressHUD.show()
-                await viewModel.getCategoryList(param: CategoryRequest(category_id: ""))
+                await viewModel.getSubCategoryList(param: CategoryRequest(category_id: ""))
                 if self.viewModel.errorMessage == nil || self.viewModel.errorMessage == "" {
                     categorySuccess()
                 }else{
@@ -724,6 +826,74 @@ struct ListProductScreen: View {
             
         }
     }
+    
+    func saveProductDetails(as status: String) {
+        // 🔹 Step 1: Validation
+        guard validateRequest(request, imageUrls: imageUrls) else {
+            showhud = true
+            return
+        }
+        
+        // 🔹 Step 2: Update status
+        request.status = status
+        
+        // 🔹 Step 3: Perform Sequential API calls
+        Task {
+            await performAPICalls(
+                isConcurrent: false,
+                onError: { error in
+                    alertType = .sheetType(
+                        icon: .alert,
+                        title: "Error",
+                        message: error.localizedDescription,
+                        primaryBtnText: "",
+                        secondaryBtnText: AppString.ok.localized
+                    )
+                    showError = true
+                }
+            ) {
+                await viewModel.uploadStoreImage(images: imageUrls, key: "images[]")
+                
+                guard let response = self.viewModel.storeImageResponse,
+                      response.status == "success" else { return }
+                
+                // 🔹 Build uploaded image data
+                let uploadedUrls: [[String: String]] = response.data.map {
+                    ["image": $0.images ?? "", "thumbnail": $0.thumbnail ?? ""]
+                }
+                
+                // 🔹 Build extra fields
+                let variantArray = buildVariantArray(extraFields: extraFields,
+                                                     extraFieldValues: extraFieldValues,
+                                                     selectedRadio: selectedRadio)
+                
+                // 🔹 Prepare request body
+                var productRequest: [String: Any] = [
+                    "category_id": request.category_id,
+                    "sub_category_id": request.sub_category_id ?? "",
+                    "title": request.title,
+                    "description": request.description,
+                    "quantity": request.quantity,
+                    "pricing": request.pricing,
+                    "flash_sale": request.flash_sale,
+                    "accept_offers": request.accept_offers,
+                    "reserve_for_live": request.reserve_for_live,
+                    "shipping_profile_id": request.shipping_profile_id,
+                    "images": uploadedUrls
+                ]
+                
+                if !variantArray.isEmpty {
+                    productRequest["variant"] = variantArray
+                }
+                
+                // 🔹 Call product store API
+                await viewModel.storeProduct(param: productRequest)
+                storeSuccess()
+            }
+        }
+    }
+    
+    
     func categorySuccess() {
        
         let response = viewModel.categoryResponse
@@ -802,6 +972,7 @@ struct ListProductScreen: View {
             
         }
     }
+    
     func uploadSuccess(){
         guard let response = self.viewModel.storeImageResponse,
                 response.status == "success"
@@ -894,9 +1065,85 @@ struct ListProductScreen: View {
             }
         
     }
+    
+    // MARK: - Validation
+    private func validateRequest(_ request: StoreProductParam, imageUrls: [String]) -> Bool {
+        if imageUrls.isEmpty {
+            hudMsg = "Please select images"
+            return false
+        }
+        if request.category_id.isEmpty {
+            hudMsg = "Please select category"
+            return false
+        }
+        if request.title.isEmpty {
+            hudMsg = "Please enter title"
+            return false
+        }
+        if request.description.isEmpty {
+            hudMsg = "Please enter description"
+            return false
+        }
+        if request.quantity.isEmpty {
+            hudMsg = "Please enter quantity"
+            return false
+        }
+        guard let quantity = Double(request.quantity), quantity >= 1 else {
+            hudMsg = "Please enter quantity greater than 1"
+            return false
+        }
+        if request.width.isEmpty { hudMsg = "Please enter width"; return false }
+        if request.height.isEmpty { hudMsg = "Please enter height"; return false }
+        if request.length.isEmpty { hudMsg = "Please enter length"; return false }
+        if request.weight.isEmpty { hudMsg = "Please enter weight"; return false }
+        if request.mail_class.isEmpty { hudMsg = "Please select mail class"; return false }
+        if request.processing_category.isEmpty { hudMsg = "Please select processing category"; return false }
+        if request.pricing.isEmpty { hudMsg = "Please enter pricing"; return false }
+        guard let price = Double(request.pricing), price >= 1 else {
+            hudMsg = "Price should not be less than $1.00"
+            return false
+        }
+        if request.shipping_profile_id.isEmpty {
+            hudMsg = "Please select shipping address"
+            return false
+        }
+        return true
+    }
+
+    // MARK: - Variant Builder
+    private func buildVariantArray(
+        extraFields: [ExtraFieldModel],
+        extraFieldValues: [String: String],
+        selectedRadio: [String: String]
+    ) -> [[String: Any]] {
+        var variantArray: [[String: Any]] = []
+        
+        for field in extraFields {
+            guard let title = field.label, let type = field.type else { continue }
+            
+            if type == "text" {
+                let value = extraFieldValues[title] ?? ""
+                variantArray.append(["title": title, "value": value])
+            } else if type == "radio", let options = field.options {
+                let selected = selectedRadio[title] ?? ""
+                var valueDict: [String: String] = [:]
+                
+                for (index, option) in options.enumerated() {
+                    let key = "option_\(index + 1)"
+                    valueDict[key] = option
+                }
+                valueDict["selected"] = selected
+                
+                variantArray.append(["title": title, "value": valueDict])
+            }
+        }
+        return variantArray
+    }
+
+    
     func storeSuccess(){
         let response = viewModel.storeProductResponse
-        if response?.status == "success"{
+        if let status = response?.status, status == "success"{
             alertType = .sheetType(
                 icon: .success,
                 title: response?.status?.capitalized ?? "",

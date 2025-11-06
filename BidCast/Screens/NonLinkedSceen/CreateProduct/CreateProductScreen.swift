@@ -99,13 +99,16 @@ struct CreateProductScreen: View {
                                 } else {
                                     request.category_id = ""
                                 }
-                                Task{
-                                    let request = CategoryRequest(category_id: request.category_id)
-                                    SVProgressHUD.show()
-                                    await self.viewModel.getCategoryList(param: request)
-                                    self.subCategoryList.removeAll()
-                                    await SVProgressHUD.dismiss()
-                                    if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil {
+                                Task {
+                                    await performAPICalls(
+                                        isConcurrent: false,
+                                        onError: { error in
+                                            showSubCategorySheet = false
+                                        }
+                                    ) {
+                                        let request = CategoryRequest(category_id: request.category_id)
+                                        await self.viewModel.getSubCategoryList(param: request)
+                                        self.subCategoryList.removeAll()
                                         if let response = self.viewModel.categoryResponse{
                                             self.subCategoryList = response.data
                                             self.subCategoryName = self.subCategoryList.map { $0.name ?? ""}
@@ -113,8 +116,6 @@ struct CreateProductScreen: View {
                                         if subCategoryList.count != 0{
                                             showSubCategorySheet = true
                                         }
-                                    }else{
-                                        showSubCategorySheet = false
                                     }
                                 }
                             }
@@ -403,63 +404,93 @@ struct CreateProductScreen: View {
         CusNavLink(doNavigate: $navigateToSalesFormat, destination: SalesFormatScreen(request: $request,storeScheduleRequest: $requests, imageUrls : $imageUrls,thumbNail: $thumbNail,backToPrepare: $backToPrepare,fromPrepare: $fromPrepare,backToCreateProduct:$navigateToSalesFormat,delegate: delegate))
         .onFirstAppear(perform: {
            
-            Task{
-                guard Reachability.isConnectedToNetwork() else {
-                    hudMsg = "No Internet Connection"
-                    showhud = true
-                    return
-                }
-                SVProgressHUD.show()
-                await viewModel.getCategoryList(param: CategoryRequest(category_id: ""))
-                if self.viewModel.errorMessage == nil || self.viewModel.errorMessage == "" {
+            Task {
+                await performAPICalls(
+                    isConcurrent: true,
+                    onError: { error in
+                        alertType = .sheetType(
+                            icon: .alert,
+                            title: "Error",
+                            message: error.localizedDescription,
+                            primaryBtnText: "",
+                            secondaryBtnText: AppString.ok.localized
+                        )
+                        showError = true
+                    }
+                ) {
+                    // 👇 These run in parallel
+                    async let categoryTask: () = viewModel.getSubCategoryList(param: CategoryRequest(category_id: ""))
+                    async let addressTask: () = viewModel.getAddresses()
+                    async let mailTask: () = viewModel.getMailClasses()
+                    
+                    // Wait for all
+                    _ = try await (categoryTask, addressTask, mailTask)
+                    
+                    // On success
                     categorySuccess()
-                }else{
-                    alertType = .sheetType(
-                        icon: .alert,
-                        title: "Error",
-                        message: self.viewModel.errorMessage ?? "",
-                        primaryBtnText: "",
-                        secondaryBtnText: AppString.ok.localized
-                    )
-                    await SVProgressHUD.dismiss()
-                    showError = true
-                }
-                self.viewModel.errorMessage?.removeAll()
-                await viewModel.getAddresses()
-                
-                if self.viewModel.errorMessage == nil || self.viewModel.errorMessage == "" {
                     shippingAddressSuccess()
-                }else{
-                    await SVProgressHUD.dismiss()
-                    alertType = .sheetType(
-                        icon: .alert,
-                        title: "Error",
-                        message: self.viewModel.errorMessage ?? "",
-                        primaryBtnText: "",
-                        secondaryBtnText: AppString.ok.localized
-                    )
-                    showError = true
-                }
-                self.viewModel.errorMessage?.removeAll()
-                await viewModel.getMailClasses()
-                await SVProgressHUD.dismiss()
-                if self.viewModel.errorMessage == nil || self.viewModel.errorMessage == "" {
                     mailSuccess()
-                }else{
-                    alertType = .sheetType(
-                        icon: .alert,
-                        title: "Error",
-                        message: self.viewModel.errorMessage ?? "",
-                        primaryBtnText: "",
-                        secondaryBtnText: AppString.ok.localized
-                    )
-                    showError = true
                 }
-            
-                
-                
-            
             }
+//            Task{
+//                guard Reachability.isConnectedToNetwork() else {
+//                    hudMsg = "No Internet Connection"
+//                    showhud = true
+//                    return
+//                }
+//                SVProgressHUD.show()
+//            await viewModel.getCategoryList(param: CategoryRequest(category_id: ""))
+//                if let errorMessage = self.viewModel.errorMessage, errorMessage != "" {
+//                    alertType = .sheetType(
+//                        icon: .alert,
+//                        title: "Error",
+//                        message: self.viewModel.errorMessage ?? "",
+//                        primaryBtnText: "",
+//                        secondaryBtnText: AppString.ok.localized
+//                    )
+//                    await SVProgressHUD.dismiss()
+//                    showError = true
+//                }
+//                else  {
+//                    categorySuccess()
+//                }
+//                self.viewModel.errorMessage?.removeAll()
+//                await viewModel.getAddresses()
+//                
+//                if let errorMessage = self.viewModel.errorMessage, errorMessage != "" {
+//                    await SVProgressHUD.dismiss()
+//                    alertType = .sheetType(
+//                        icon: .alert,
+//                        title: "Error",
+//                        message: self.viewModel.errorMessage ?? "",
+//                        primaryBtnText: "",
+//                        secondaryBtnText: AppString.ok.localized
+//                    )
+//                    showError = true
+//                }
+//                else  {
+//                    shippingAddressSuccess()
+//                }
+//                self.viewModel.errorMessage?.removeAll()
+//                await viewModel.getMailClasses()
+//                await SVProgressHUD.dismiss()
+//                if self.viewModel.errorMessage == nil || self.viewModel.errorMessage == "" {
+//                    mailSuccess()
+//                }else{
+//                    alertType = .sheetType(
+//                        icon: .alert,
+//                        title: "Error",
+//                        message: self.viewModel.errorMessage ?? "",
+//                        primaryBtnText: "",
+//                        secondaryBtnText: AppString.ok.localized
+//                    )
+//                    showError = true
+//                }
+//            
+//                
+//                
+//            
+//            }
         })
         .onAppear {
             //assign categoryId
@@ -574,121 +605,121 @@ struct CreateProductScreen: View {
         }
     }
     
-    func uploadSuccess(){
-        guard let response = self.viewModel.storeImageResponse,
-                response.status == "success"
-                else {
-              return
-          }
-//            let response = self.viewModel.storeImageResponse
-        if response.status == "success"{
-            let uploadedUrls: [[String: String]] = response.data.map {
-                return ["image": $0.images ?? "", "thumbnail": $0.thumbnail ?? ""]
-            }
-            var variantArray: [[String: Any]] = []
-
-            for field in extraFields {
-                guard let title = field.label, let type = field.type else { continue }
-
-                if type == "text" {
-                    // Handle text input
-                    let value = extraFieldValues[title] ?? ""
-                    variantArray.append([
-                        "title": title,
-                        "value": value
-                    ])
-                } else if type == "radio", let options = field.options {
-                    // Handle radio input
-                    let selected = selectedRadio[title] ?? ""
-                    
-                    // Find which option key is selected (e.g. option_1 or option_2)
-                    var selectedKey: String = ""
-                    var valueDict: [String: String] = [:]
-
-                    for (index, option) in options.enumerated() {
-                        let key = "option_\(index + 1)"
-                        valueDict[key] = option
-
-                        if option == selected {
-                            selectedKey = option
-                        }
-                    }
-
-                    valueDict["selected"] = selectedKey
-
-                    variantArray.append([
-                        "title": title,
-                        "value": valueDict
-                    ])
-                }
-            }
-
-                SVProgressHUD.dismiss()
-                Task{
-                    self.viewModel.errorMessage?.removeAll()
-                    var request = [
-                        
-                        "category_id": request.category_id,
-                        "sub_category_id": request.sub_category_id ?? "",
-                        "title": request.title,
-                        "description": request.description,
-                        "quantity": request.quantity,
-                        "pricing": request.pricing,
-                        "flash_sale": request.flash_sale,
-                        "accept_offers": request.accept_offers,
-                        "reserve_for_live": request.reserve_for_live,
-                        "shipping_profile_id": request.shipping_profile_id,
-                        "images": uploadedUrls
-                        
-                            
-                        ]
-                            
-                    if !variantArray.isEmpty {
-                        request["variant"] = variantArray
-                    }
-                        
-                    
-                    await viewModel.storeProduct(param: request)
-                    await SVProgressHUD.dismiss()
-                    if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
-                        storeSuccess()
-                    }else{
-                        alertType = .sheetType(
-                            icon: .alert,
-                            title: "Failed",
-                            message: viewModel.errorMessage ?? "",
-                            primaryBtnText: "",
-                            secondaryBtnText: AppString.ok.localized
-                        )
-                        showError = true
-                    }
-                }
-            }
-    }
+//    func uploadSuccess() {
+//        guard let response = self.viewModel.storeImageResponse,
+//                response.status == "success"
+//                else {
+//              return
+//          }
+////            let response = self.viewModel.storeImageResponse
+//        if response.status == "success"{
+//            let uploadedUrls: [[String: String]] = response.data.map {
+//                return ["image": $0.images ?? "", "thumbnail": $0.thumbnail ?? ""]
+//            }
+//            var variantArray: [[String: Any]] = []
+//
+//            for field in extraFields {
+//                guard let title = field.label, let type = field.type else { continue }
+//
+//                if type == "text" {
+//                    // Handle text input
+//                    let value = extraFieldValues[title] ?? ""
+//                    variantArray.append([
+//                        "title": title,
+//                        "value": value
+//                    ])
+//                } else if type == "radio", let options = field.options {
+//                    // Handle radio input
+//                    let selected = selectedRadio[title] ?? ""
+//                    
+//                    // Find which option key is selected (e.g. option_1 or option_2)
+//                    var selectedKey: String = ""
+//                    var valueDict: [String: String] = [:]
+//
+//                    for (index, option) in options.enumerated() {
+//                        let key = "option_\(index + 1)"
+//                        valueDict[key] = option
+//
+//                        if option == selected {
+//                            selectedKey = option
+//                        }
+//                    }
+//
+//                    valueDict["selected"] = selectedKey
+//
+//                    variantArray.append([
+//                        "title": title,
+//                        "value": valueDict
+//                    ])
+//                }
+//            }
+//
+//                SVProgressHUD.dismiss()
+//                Task{
+//                    self.viewModel.errorMessage?.removeAll()
+//                    var request = [
+//                        
+//                        "category_id": request.category_id,
+//                        "sub_category_id": request.sub_category_id ?? "",
+//                        "title": request.title,
+//                        "description": request.description,
+//                        "quantity": request.quantity,
+//                        "pricing": request.pricing,
+//                        "flash_sale": request.flash_sale,
+//                        "accept_offers": request.accept_offers,
+//                        "reserve_for_live": request.reserve_for_live,
+//                        "shipping_profile_id": request.shipping_profile_id,
+//                        "images": uploadedUrls
+//                        
+//                            
+//                        ]
+//                            
+//                    if !variantArray.isEmpty {
+//                        request["variant"] = variantArray
+//                    }
+//                        
+//                    
+//                    await viewModel.storeProduct(param: request)
+//                    await SVProgressHUD.dismiss()
+//                    if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
+//                        storeSuccess()
+//                    }else{
+//                        alertType = .sheetType(
+//                            icon: .alert,
+//                            title: "Failed",
+//                            message: viewModel.errorMessage ?? "",
+//                            primaryBtnText: "",
+//                            secondaryBtnText: AppString.ok.localized
+//                        )
+//                        showError = true
+//                    }
+//                }
+//            }
+//    }
     
     
-    func storeSuccess(){
-        let response = viewModel.storeProductResponse
-        if response?.status == "success"{
-            alertType = .sheetType(
-                icon: .success,
-                title: response?.status?.capitalized ?? "",
-                message: response?.message?.capitalized ?? "",
-                primaryBtnText: AppString.ok.localized,
-                secondaryBtnText: ""
-            )
-            showError = true
-        }else{
-            alertType = .sheetType(
-                icon: .alert,
-                title: response?.error_type?.capitalized ?? "",
-                message: response?.message?.capitalized ?? "",
-                primaryBtnText: "",
-                secondaryBtnText: AppString.ok.localized
-            )
-            showError = true
-        }
-    }
+//    func storeSuccess(){
+//        let response = viewModel.storeProductResponse
+//        if response?.status == "success"{
+//            alertType = .sheetType(
+//                icon: .success,
+//                title: response?.status?.capitalized ?? "",
+//                message: response?.message?.capitalized ?? "",
+//                primaryBtnText: AppString.ok.localized,
+//                secondaryBtnText: ""
+//            )
+//            showError = true
+//        }else{
+//            alertType = .sheetType(
+//                icon: .alert,
+//                title: response?.error_type?.capitalized ?? "",
+//                message: response?.message?.capitalized ?? "",
+//                primaryBtnText: "",
+//                secondaryBtnText: AppString.ok.localized
+//            )
+//            showError = true
+//        }
+//    }
    
 }
 
