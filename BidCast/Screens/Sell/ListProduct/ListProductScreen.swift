@@ -462,7 +462,7 @@ struct ListProductScreen: View {
                             SVProgressHUD.show()
                             viewModel.errorMessage?.removeAll()
                             await viewModel.uploadStoreImage(images: imageUrls, key: "images[]")
-                            if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
+                            if let errorMessage = self.viewModel.errorMessage, errorMessage != "" {
                                 uploadSuccess()
                             }else{
                                 alertType = .sheetType(
