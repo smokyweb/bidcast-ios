@@ -462,9 +462,7 @@ struct ListProductScreen: View {
                             SVProgressHUD.show()
                             viewModel.errorMessage?.removeAll()
                             await viewModel.uploadStoreImage(images: imageUrls, key: "images[]")
-                            if let errorMessage = self.viewModel.errorMessage, errorMessage != "" {
-                                uploadSuccess()
-                            }else{
+                            if let errorMessage = self.viewModel.errorMessage, errorMessage != ""{
                                 alertType = .sheetType(
                                     icon: .alert,
                                     title: "Failed",
@@ -473,6 +471,9 @@ struct ListProductScreen: View {
                                     secondaryBtnText: AppString.ok.localized
                                 )
                                 showError = true
+                            }
+                            else {
+                                uploadSuccess()
                             }
                         }
                     }, onSecButtonClick: {
