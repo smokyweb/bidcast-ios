@@ -181,14 +181,14 @@ struct NotificationScreen: View {
         if response?.status == "success" {
             notiListArr.append(contentsOf: response?.data ?? [])
         } else {
-            showError = true
             alertType = .sheetType(
-                icon: .alert,
-                title: response?.error_type?.capitalized ?? "",
-                message: response?.message?.capitalized ?? "",
-                primaryBtnText: "",
-                secondaryBtnText: AppString.ok.localized
+                icon: .success,
+                title: "Error",
+                message: viewModel.errorMessage ?? "",
+                primaryBtnText: AppString.ok.localized,
+                secondaryBtnText:""
             )
+            showError = true
         }
     }
 
@@ -206,14 +206,14 @@ struct NotificationScreen: View {
                 NotificationSuccess()
             }
         } else {
-            showError = true
             alertType = .sheetType(
-                icon: .alert,
-                title: response?.error_type?.capitalized ?? "",
-                message: response?.message?.capitalized ?? "",
-                primaryBtnText: "",
-                secondaryBtnText: AppString.ok.localized
+                icon: .success,
+                title: "Error",
+                message: viewModel.errorMessage ?? "",
+                primaryBtnText: AppString.ok.localized,
+                secondaryBtnText:""
             )
+            showError = true
         }
     }
 }

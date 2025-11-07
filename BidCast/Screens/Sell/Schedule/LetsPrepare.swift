@@ -364,8 +364,8 @@ struct LetsPrepare: View,ShowStepDelegate {
         }else{
             alertType = .sheetType(
                 icon: .alert,
-                title: response?.error_type?.capitalized ?? "",
-                message: response?.message?.capitalized ?? "",
+                title: "Error",
+                message: viewModel.errorMessage ?? "",
                 primaryBtnText: "",
                 secondaryBtnText:AppString.ok.localized
             )

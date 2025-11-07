@@ -484,18 +484,72 @@ final class APIManager {
         }
         
         if !(200...299).contains(httpResponse.statusCode) {
-            do {
-                let dataObj = try JSONDecoder().decode(ApiError.self, from: data)
-                print(dataObj)
-                if let message = dataObj.message {
-                    throw DataError.invalidCode(message)
+            
+            // ✅ Handle 401 with single alert
+            if let response = response as? HTTPURLResponse, response.statusCode == 401 {
+                DispatchQueue.main.async {
+                    // 🚫 Do not show popup if already logged out
+                    if UserDefaults.accessToken.isEmpty || UserDefaults.accessToken == ""{
+                        return
+                    }
                     
-                }else{
-                    throw DataError.invalidCode(dataObj.message)
+                    if !APIManager.isShowingUnauthorizedAlert {
+                        APIManager.isShowingUnauthorizedAlert = true
+                        do {
+                            let dataObj = try JSONDecoder().decode(ApiError.self, from: data)
+                            if dataObj.error_type == "UNAUTHORIZED" {
+                                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                                   let rootVC = windowScene.windows.first(where: { $0.isKeyWindow })?.rootViewController {
+                                    
+                                    let alert = UIAlertController(
+                                        title: "Session Expired",
+                                        message: "Your account has been logged in from another device",
+                                        preferredStyle: .alert
+                                    )
+                                    
+                                    let loginAction = UIAlertAction(title: "Login", style: .default) { _ in
+                                        APIManager.isShowingUnauthorizedAlert = false
+                                        // clear token on popup
+                                        UserDefaults.accessToken = ""
+                                        rootVC.topMostViewController.dismiss(animated: true) {
+                                            NotificationCenter.default.post(name: .userSessionExpired, object: nil)
+                                        }
+                                    }
+                                    
+                                    alert.addAction(loginAction)
+                                    rootVC.topMostViewController.present(alert, animated: true, completion: nil)
+                                }
+                            }else if dataObj.error_type == "invalid_token"{
+                                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                                   let rootVC = windowScene.windows.first(where: { $0.isKeyWindow })?.rootViewController {
+                                    
+                                    let alert = UIAlertController(
+                                        title: "Session Expired",
+                                        message: "Your account has been deleted or your session is no longer valid. Please log in again.",
+                                        preferredStyle: .alert
+                                    )
+                                    
+                                    let loginAction = UIAlertAction(title: "Login", style: .default) { _ in
+                                        APIManager.isShowingUnauthorizedAlert = false
+                                        // clear token on popup
+                                        UserDefaults.accessToken = ""
+                                        rootVC.topMostViewController.dismiss(animated: true) {
+                                            NotificationCenter.default.post(name: .userSessionExpired, object: nil)
+                                        }
+                                    }
+                                    
+                                    alert.addAction(loginAction)
+                                    rootVC.topMostViewController.present(alert, animated: true, completion: nil)
+                                }
+                            }
+                            return
+                            
+                        } catch {
+                            print("Failed to decode ApiError: \(error)")
+                            APIManager.isShowingUnauthorizedAlert = false
+                        }
+                    }
                 }
-            } catch {
-                print("Error decoding error response: \(error)")
-                throw DataError.invalidResponse(data)
             }
         }
         

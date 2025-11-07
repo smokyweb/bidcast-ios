@@ -114,7 +114,7 @@ struct AuthTextField: View {
                         }
                         else {
                             HStack(spacing: 0) {
-                                if isForPrice {
+                                if isForPrice && (Int(text) ?? 0) > 0{
                                     Text("$")
                                         .font(.custom(custPlaceHolderName, fixedSize: custPlaceHolderFontSize))
                                         .foregroundStyle(.text)

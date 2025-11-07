@@ -63,3 +63,10 @@ extension View {
 //    }
 //}
 //
+
+extension View {
+    func hideKeyboardPopup() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder),
+                                        to: nil, from: nil, for: nil)
+    }
+}

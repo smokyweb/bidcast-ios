@@ -11,6 +11,8 @@ import SwiftUI
 struct ActiveInventoryScreen: View {
     var inventory: InventoryDataModel
     var didTapProduct : () -> () = { }
+    var navigatedFrom: InventoryNavigation = .account
+    @State var isSelected: Bool = false
     var body: some View {
         VStack(spacing: 10) {
             HStack(alignment: .center, spacing: 10) {
@@ -56,9 +58,17 @@ struct ActiveInventoryScreen: View {
         }
         .background(Color.white)
         .cornerRadius(12.0)
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(
+                    (navigatedFrom == .addProduct && isSelected) ? Color.blue : Color.clear,
+                    lineWidth: 2
+                )
+        )
         .padding(5)
         .shadow(color: Color.gray.opacity(0.2), radius: 2, x: 0, y: 0)
         .onTapGesture {
+            isSelected.toggle()
             self.didTapProduct()
         }
     }

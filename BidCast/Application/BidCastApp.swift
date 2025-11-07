@@ -16,6 +16,8 @@ struct BidCastApp: App {
     @State private var accountNavigationPath = NavigationPath()
     @StateObject var deepLink = DeepLinkManager()
     
+    @StateObject private var scheduleRequestStore = ScheduleRequestStore()
+    
     @StateObject var staticAPI = StaticAPIViewModel()
     
     init() {
@@ -74,7 +76,8 @@ struct BidCastApp: App {
             .environmentObject(appRootManager)
             .environmentObject(LanguageManager.shared)
             .environmentObject(networkMonitor)
-            .environmentObject(staticAPI) 
+            .environmentObject(staticAPI)
+            .environmentObject(scheduleRequestStore) 
             .onOpenURL { url in
                 deepLink.handle(url: url)
             }

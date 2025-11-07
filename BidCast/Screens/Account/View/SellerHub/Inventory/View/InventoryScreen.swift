@@ -11,13 +11,13 @@ import SVProgressHUD
 
 enum InventoryNavigation {
     case account
-    case createProduct
+    case addProduct
     
     var btnTitle: String  {
         switch self {
         case .account:
             return AppString.newProduct.localized
-        case .createProduct:
+        case .addProduct:
             return AppString.selectedProduct.localized
         }
     }
@@ -44,8 +44,12 @@ struct InventoryScreen: View {
     @State var navigateToCreateProduct = false
     @State var searchText: String = ""
     
+    @Binding var selectedProductIDs: [String]
+    @Binding var selectedProductData: [ProductDataModel]
+    var selectedCategoryId: String = ""
+    
     var navigatedFrom: InventoryNavigation = .account
-    @State private var navigateToAddProduct = false
+    @State private var navigateToCreateNewProduct = false
     
     var body: some View {
         VStack(spacing: 0) {
@@ -100,11 +104,19 @@ struct InventoryScreen: View {
                             ActiveInventoryScreen(inventory: inventory,didTapProduct: {
                                 productId = inventory.id ?? 0
                                 productData = inventory
-                                showSellSheet = true
-                            })
-                                .onAppear {
-                                    handlePagination(index: index)
+                                if navigatedFrom == .account {
+                                    showSellSheet = true
                                 }
+                                else  {
+                                    if !selectedProductIDs.contains("\(productId)") {
+                                        selectedProductIDs.append("\(productId)")
+                                        selectedProductData.append(inventory.toProductDataModel())
+                                    }
+                                }
+                            })
+                            .onAppear {
+                                handlePagination(index: index)
+                            }
                         }
                     }
                 }
@@ -117,9 +129,10 @@ struct InventoryScreen: View {
                 switch navigatedFrom {
                 case .account:
                     print("create new Prooduct")
-                    navigateToAddProduct = true
-                case .createProduct:
+                    navigateToCreateNewProduct = true
+                case .addProduct:
                     print("Select Existing Product")
+                    self.presentationMode.wrappedValue.dismiss()
                 }
             },
                       
@@ -128,16 +141,17 @@ struct InventoryScreen: View {
                       isHidefirstBtn: false,
                       isHideSecBtn: true
             )
+            .padding(.top, 20)
             
             CusNavLink(doNavigate: $navigateToCreateProduct, destination: ListProductScreen(productData:$productData))
-//            CusNavLink(doNavigate: $navigateToAddProduct,
-//                       destination: CreateProductScreen(requests: .constant(StoreScheduleShowRequest()),
-//                                                        thumbNail: .constant(""),
-//                                                        backToPrepare: .constant(false),
-//                                                        fromPrepare: .constant(false),
+            CusNavLink(doNavigate: $navigateToCreateNewProduct,
+                       destination: CreateProductScreen(requests: .constant(StoreScheduleShowRequest(title: "", date: "", time: "", category_id: "", auction_type_id: "", product_ids: "")),
+                                                        thumbNail: .constant(""),
+                                                        backToPrepare: .constant(false),
+                                                        fromPrepare: .constant(false),
+                                                        isComeFrom: .inventry))
         }
-//        .background(Color.bg.opacity(0.5))
-        .background(.red)
+        .background(Color.bg.opacity(0.5))
         .onAppear {
             searchText = ""
             fetchInventory(for: segment, page: currentPage)
@@ -209,6 +223,7 @@ struct InventoryScreen: View {
         if response?.status == "success" {
             self.inventoryList.append(contentsOf: response?.data ?? [])
         } else {
+            
             alertType = .sheetType(
                 icon: .alert,
                 title: response?.error_type?.capitalized ?? "",

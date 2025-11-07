@@ -116,12 +116,13 @@ extension WalletTabView {
             showhud = true
             hudMsg = response?.message ?? ""
         } else {
+            
             alertType = .sheetType(
-                icon: .alert,
-                title: response?.error_type?.capitalized ?? "",
-                message: response?.message?.capitalized ?? "",
-                primaryBtnText: "",
-                secondaryBtnText: AppString.ok.localized
+                icon: .success,
+                title: "Error",
+                message: kycViewModel.errorMessage ?? "",
+                primaryBtnText: AppString.ok.localized,
+                secondaryBtnText:""
             )
             showError = true
             

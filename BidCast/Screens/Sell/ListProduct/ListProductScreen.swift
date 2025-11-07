@@ -33,7 +33,7 @@ struct ListProductScreen: View {
     @State var mailClassList = [String]()
     @State var request : StoreProductParam = StoreProductParam(category_id: "", title: "", description: "", quantity: "", pricing: "", flash_sale: "0", accept_offers: "0", reserve_for_live: "0", shipping_profile_id: "", status: "",sub_category_id: "",width: "",length: "", weight: "",height:"",mail_class:"",processing_category:"")
     
-    @State var viewModel = ListProductViewModel()
+    @StateObject var viewModel = ListProductViewModel()
     @State var imageUrls: [String] = []
     
     @State var showSellerSheet = false
@@ -286,7 +286,7 @@ struct ListProductScreen: View {
                             .padding(.top,8)
                             .padding([.leading,.trailing],16.0)
                         
-                        AuthTextField(floatingLabel: "Buy it Now Price".localized, placeholder: "1.00".localized, icon: .menuProfile, text: $request.pricing,isIconDisplay : true, isForPrice:true,
+                        AuthTextField(floatingLabel: "Buy it Now Price".localized, placeholder: "$0", icon: .menuProfile, text: $request.pricing,isIconDisplay : false, isForPrice:true,
                                       custFontName : robotoMedium,
                                       custFontSize : 14.0,
                                       enteredText:  { price in
@@ -671,8 +671,10 @@ struct ListProductScreen: View {
 //                    }, height: 45, firstBtnTitleColor: .darkGray, secBtnTitleColor: .white, firstBtnBgColor: .white, secBtnBgColor:.darkBlue)
                     TwoButton(titleOne: "Save Draft", titleTwo: "Publish",
                      onFirstButtonClick: {
+                        hideKeyboardPopup()
                         saveProductDetails(as: "draft")
                     }, onSecButtonClick: {
+                        hideKeyboardPopup()
                         saveProductDetails(as: "active")
                     },
                     height: 45,
@@ -722,20 +724,24 @@ struct ListProductScreen: View {
                     AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
                     
                 }
-                .bottomSheet(isPresented: $showError, height: screenHeight * 0.3, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: {
-                    if self.viewModel.errorMessage != "" || self.viewModel.errorMessage != nil{
-                        showError = true
-                    }else{
-                        showError = false
-                    }
+                .bottomSheet(isPresented: $showError, height: screenHeight * 0.4, topBarCornerRadius: 25, showTopIndicator: false,
+                    onDismiss: {
+                    showError = false
+                    viewModel.errorMessage = nil
                 }, content: {
                     CommonBottomSheet(
                         sheetType: $alertType,
                         onPrimaryClick: {
                             self.presentationMode.wrappedValue.dismiss()
-                            withAnimation { showError = false }
+                            withAnimation {
+                                showError = false
+                                viewModel.errorMessage = nil
+                            }
                         }, onSecondaryClick: {
-                            withAnimation { showError = false }
+                            withAnimation {
+                                showError = false
+                                viewModel.errorMessage = nil
+                            }
                         })
                 })
 //            }
@@ -808,16 +814,15 @@ struct ListProductScreen: View {
     }
     
     func mailSuccess() {
-       
         let response = viewModel.mailClassResponse
-        if response?.status == "success" {
+        if viewModel.errorMessage == nil {
             let data = response?.data.mail_classes ?? [MailClass]()
             self.mailClassList = data.map {$0.label }
         } else {
             alertType = .sheetType(
                 icon: .alert,
-                title: response?.error_type?.capitalized ?? "",
-                message: response?.message?.capitalized ?? "",
+                title: "Error",
+                message: viewModel.errorMessage ?? "",
                 primaryBtnText: "",
                 secondaryBtnText: AppString.ok.localized
             )
@@ -845,7 +850,7 @@ struct ListProductScreen: View {
                     alertType = .sheetType(
                         icon: .alert,
                         title: "Error",
-                        message: error.localizedDescription,
+                        message: viewModel.errorMessage ?? "",
                         primaryBtnText: "",
                         secondaryBtnText: AppString.ok.localized
                     )
@@ -853,42 +858,55 @@ struct ListProductScreen: View {
                 }
             ) {
                 await viewModel.uploadStoreImage(images: imageUrls, key: "images[]")
-                
-                guard let response = self.viewModel.storeImageResponse,
-                      response.status == "success" else { return }
-                
-                // 🔹 Build uploaded image data
-                let uploadedUrls: [[String: String]] = response.data.map {
-                    ["image": $0.images ?? "", "thumbnail": $0.thumbnail ?? ""]
-                }
-                
-                // 🔹 Build extra fields
-                let variantArray = buildVariantArray(extraFields: extraFields,
-                                                     extraFieldValues: extraFieldValues,
-                                                     selectedRadio: selectedRadio)
-                
-                // 🔹 Prepare request body
-                var productRequest: [String: Any] = [
-                    "category_id": request.category_id,
-                    "sub_category_id": request.sub_category_id ?? "",
-                    "title": request.title,
-                    "description": request.description,
-                    "quantity": request.quantity,
-                    "pricing": request.pricing,
-                    "flash_sale": request.flash_sale,
-                    "accept_offers": request.accept_offers,
-                    "reserve_for_live": request.reserve_for_live,
-                    "shipping_profile_id": request.shipping_profile_id,
-                    "images": uploadedUrls
-                ]
-                
-                if !variantArray.isEmpty {
-                    productRequest["variant"] = variantArray
-                }
-                
-                // 🔹 Call product store API
-                await viewModel.storeProduct(param: productRequest)
-                storeSuccess()
+//                if viewModel.storeImageResponse?.error_type == "UNAUTHORIZED" {
+//                    alertType = .sheetType(
+//                        icon: .alert,
+//                        title: "",
+//                        message: viewModel.errorMessage ?? "",
+//                        primaryBtnText: "",
+//                        secondaryBtnText: AppString.ok.localized
+//                    )
+//                    showError = true
+//                }
+//                else  {
+                    
+                    guard let response = self.viewModel.storeImageResponse,
+                          response.status == "success" else { return }
+                    
+                    // 🔹 Build uploaded image data
+                    let uploadedUrls: [[String: String]] = response.data.map {
+                        ["image": $0.images ?? "", "thumbnail": $0.thumbnail ?? ""]
+                    }
+                    
+                    // 🔹 Build extra fields
+                    let variantArray = buildVariantArray(extraFields: extraFields,
+                                                         extraFieldValues: extraFieldValues,
+                                                         selectedRadio: selectedRadio)
+                    
+                    // 🔹 Prepare request body
+                    var productRequest: [String: Any] = [
+                        "category_id": request.category_id,
+                        "sub_category_id": request.sub_category_id ?? "",
+                        "title": request.title,
+                        "description": request.description,
+                        "quantity": request.quantity,
+                        "pricing": request.pricing,
+                        "flash_sale": request.flash_sale,
+                        "accept_offers": request.accept_offers,
+                        "reserve_for_live": request.reserve_for_live,
+                        "shipping_profile_id": request.shipping_profile_id,
+                        "images": uploadedUrls
+                    ]
+                    
+                    if !variantArray.isEmpty {
+                        productRequest["variant"] = variantArray
+                    }
+                    
+                    // 🔹 Call product store API
+                    self.viewModel.errorMessage?.removeAll()
+                    await viewModel.storeProduct(param: productRequest)
+                    storeSuccess()
+//                }
             }
         }
     }
@@ -927,7 +945,7 @@ struct ListProductScreen: View {
                                             title: productData.title ?? "",
                                             description: productData.description ?? "",
                                             quantity: "\(productData.quantity ?? "0")",
-                                            pricing: "\(productData.pricing ?? "0.0")",
+                                            pricing: "\(productData.pricing ?? "0")",
                                             flash_sale:productData.flashSale ?? false ? "1" : "0",
                                             accept_offers: productData.acceptOffers ?? false ? "1" : "0",
                                             reserve_for_live: productData.reserveForLive ?? false ? "1" : "0",
@@ -939,11 +957,11 @@ struct ListProductScreen: View {
                                             height : "",
                                             mail_class : "",
                                             processing_category : "")
-             
+                
                 isTappedFlash = productData.flashSale ?? false ? true : false
                 isTappedAccept = productData.acceptOffers ?? false ? true : false
                 isTappedReserve = productData.reserveForLive ?? false ? true : false
-               
+                
                 self.imageUrls = productData.images ?? [String]()
                 if request.category_id == "0"{
                     request.category_id.removeAll()
@@ -951,7 +969,7 @@ struct ListProductScreen: View {
                 if request.quantity == "0"{
                     request.quantity.removeAll()
                 }
-                if request.pricing == "0.00"{
+                if request.pricing == "0" {
                     request.pricing.removeAll()
                 }
                 if imageUrls == [""]{
@@ -959,112 +977,112 @@ struct ListProductScreen: View {
                 }
                 
             }
-                } else {
-                    alertType = .sheetType(
-                        icon: .alert,
-                        title: response?.error_type?.capitalized ?? "",
-                        message: response?.message?.capitalized ?? "",
-                        primaryBtnText: "",
-                        secondaryBtnText: AppString.ok.localized
-                    )
-                    showError = true
-                
+        } else {
+            alertType = .sheetType(
+                icon: .alert,
+                title: response?.error_type?.capitalized ?? "",
+                message: response?.message?.capitalized ?? "",
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
+            )
+            showError = true
+            
             
         }
     }
     
-    func uploadSuccess(){
-        guard let response = self.viewModel.storeImageResponse,
-                response.status == "success"
-                else {
-              return
-          }
-//            let response = self.viewModel.storeImageResponse
-        if response.status == "success"{
-            let uploadedUrls: [[String: String]] = response.data.map {
-                return ["image": $0.images ?? "", "thumbnail": $0.thumbnail ?? ""]
-            }
-            var variantArray: [[String: Any]] = []
-
-            for field in extraFields {
-                guard let title = field.label, let type = field.type else { continue }
-
-                if type == "text" {
-                    // Handle text input
-                    let value = extraFieldValues[title] ?? ""
-                    variantArray.append([
-                        "title": title,
-                        "value": value
-                    ])
-                } else if type == "radio", let options = field.options {
-                    // Handle radio input
-                    let selected = selectedRadio[title] ?? ""
-                    
-                    // Find which option key is selected (e.g. option_1 or option_2)
-                    var selectedKey: String = ""
-                    var valueDict: [String: String] = [:]
-
-                    for (index, option) in options.enumerated() {
-                        let key = "option_\(index + 1)"
-                        valueDict[key] = option
-
-                        if option == selected {
-                            selectedKey = option
-                        }
-                    }
-
-                    valueDict["selected"] = selectedKey
-
-                    variantArray.append([
-                        "title": title,
-                        "value": valueDict
-                    ])
-                }
-            }
-
-                SVProgressHUD.dismiss()
-                Task{
-                    self.viewModel.errorMessage?.removeAll()
-                    var request = [
-                        
-                        "category_id": request.category_id,
-                        "sub_category_id": request.sub_category_id ?? "",
-                        "title": request.title,
-                        "description": request.description,
-                        "quantity": request.quantity,
-                        "pricing": request.pricing,
-                        "flash_sale": request.flash_sale,
-                        "accept_offers": request.accept_offers,
-                        "reserve_for_live": request.reserve_for_live,
-                        "shipping_profile_id": request.shipping_profile_id,
-                        "images": uploadedUrls
-                        
-                            
-                        ]
-                            
-                    if !variantArray.isEmpty {
-                        request["variant"] = variantArray
-                    }
-                        
-                    
-                    await viewModel.storeProduct(param: request)
-                    await SVProgressHUD.dismiss()
-                    if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
-                        storeSuccess()
-                    }else{
-                        alertType = .sheetType(
-                            icon: .alert,
-                            title: "Failed",
-                            message: viewModel.errorMessage ?? "",
-                            primaryBtnText: "",
-                            secondaryBtnText: AppString.ok.localized
-                        )
-                        showError = true
-                    }
-                }
-            }
-        
-    }
+//    func uploadSuccess(){
+//        guard let response = self.viewModel.storeImageResponse,
+//                response.status == "success"
+//                else {
+//              return
+//          }
+////            let response = self.viewModel.storeImageResponse
+//        if response.status == "success"{
+//            let uploadedUrls: [[String: String]] = response.data.map {
+//                return ["image": $0.images ?? "", "thumbnail": $0.thumbnail ?? ""]
+//            }
+//            var variantArray: [[String: Any]] = []
+//
+//            for field in extraFields {
+//                guard let title = field.label, let type = field.type else { continue }
+//
+//                if type == "text" {
+//                    // Handle text input
+//                    let value = extraFieldValues[title] ?? ""
+//                    variantArray.append([
+//                        "title": title,
+//                        "value": value
+//                    ])
+//                } else if type == "radio", let options = field.options {
+//                    // Handle radio input
+//                    let selected = selectedRadio[title] ?? ""
+//                    
+//                    // Find which option key is selected (e.g. option_1 or option_2)
+//                    var selectedKey: String = ""
+//                    var valueDict: [String: String] = [:]
+//
+//                    for (index, option) in options.enumerated() {
+//                        let key = "option_\(index + 1)"
+//                        valueDict[key] = option
+//
+//                        if option == selected {
+//                            selectedKey = option
+//                        }
+//                    }
+//
+//                    valueDict["selected"] = selectedKey
+//
+//                    variantArray.append([
+//                        "title": title,
+//                        "value": valueDict
+//                    ])
+//                }
+//            }
+//
+//                SVProgressHUD.dismiss()
+//                Task{
+//                    self.viewModel.errorMessage?.removeAll()
+//                    var request = [
+//                        
+//                        "category_id": request.category_id,
+//                        "sub_category_id": request.sub_category_id ?? "",
+//                        "title": request.title,
+//                        "description": request.description,
+//                        "quantity": request.quantity,
+//                        "pricing": request.pricing,
+//                        "flash_sale": request.flash_sale,
+//                        "accept_offers": request.accept_offers,
+//                        "reserve_for_live": request.reserve_for_live,
+//                        "shipping_profile_id": request.shipping_profile_id,
+//                        "images": uploadedUrls
+//                        
+//                            
+//                        ]
+//                            
+//                    if !variantArray.isEmpty {
+//                        request["variant"] = variantArray
+//                    }
+//                        
+//                    
+//                    await viewModel.storeProduct(param: request)
+//                    await SVProgressHUD.dismiss()
+//                    if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
+//                        storeSuccess()
+//                    }else{
+//                        alertType = .sheetType(
+//                            icon: .alert,
+//                            title: "Failed",
+//                            message: viewModel.errorMessage ?? "",
+//                            primaryBtnText: "",
+//                            secondaryBtnText: AppString.ok.localized
+//                        )
+//                        showError = true
+//                    }
+//                }
+//            }
+//        
+//    }
     
     // MARK: - Validation
     private func validateRequest(_ request: StoreProductParam, imageUrls: [String]) -> Bool {
@@ -1142,23 +1160,23 @@ struct ListProductScreen: View {
 
     
     func storeSuccess(){
-        let response = viewModel.storeProductResponse
-        if let status = response?.status, status == "success"{
+        if let errorMessage = viewModel.errorMessage {
             alertType = .sheetType(
-                icon: .success,
-                title: response?.status?.capitalized ?? "",
-                message: response?.message?.capitalized ?? "",
-                primaryBtnText: AppString.ok.localized,
-                secondaryBtnText: ""
+                icon: .alert,
+                title: "Error",
+                message: errorMessage,
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
             )
             showError = true
         }else{
+            let response = viewModel.storeProductResponse
             alertType = .sheetType(
-                icon: .alert,
-                title: response?.error_type?.capitalized ?? "",
-                message: response?.message?.capitalized ?? "",
-                primaryBtnText: "",
-                secondaryBtnText: AppString.ok.localized
+                icon: .success,
+                title: "Success",
+                message: response?.message ?? "",
+                primaryBtnText: AppString.ok.localized,
+                secondaryBtnText: ""
             )
             showError = true
         }

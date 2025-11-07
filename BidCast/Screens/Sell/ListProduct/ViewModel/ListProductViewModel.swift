@@ -56,14 +56,12 @@ final class ListProductViewModel: ObservableObject {
         do {
             
             if let response: ResponseModal<StoreProductModel> = try await APIManager.shared.requestWithJSONBody(type: APIEndPoint.storeProduct(param: param), parameters: param, modalType: ResponseModal<StoreProductModel>?.self, header: true){
-                DispatchQueue.main.async {
-                    self.storeProductResponse = response
-                }
+                self.storeProductResponse = response
             }
         } catch {
-            DispatchQueue.main.async {
+//            DispatchQueue.main.async {
                 self.handle(error: error)
-            }
+//            }
         }
     }
     
@@ -86,9 +84,9 @@ final class ListProductViewModel: ObservableObject {
             }
 
         } catch {
-            DispatchQueue.main.async {
+//            DispatchQueue.main.async {
                 self.handle(error: error)
-            }
+//            }
         }
     }
 

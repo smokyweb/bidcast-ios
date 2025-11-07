@@ -15,6 +15,7 @@ struct InventoryModel: Codable {
 }
 
 
+
 // MARK: - InventoryDataModel
 struct InventoryDataModel: Codable {
     var id: Int?
@@ -93,5 +94,31 @@ struct ShippingAddressModel: Codable {
         case city, state, pincode, type
         case phoneNumber = "phone_number"
         case isDefault = "is_default"
+    }
+}
+
+extension InventoryDataModel {
+    func toProductDataModel() -> ProductDataModel {
+        return ProductDataModel(
+            id: self.id,
+            user_id: self.userID,
+            category_id: self.categoryID,
+            title: self.title,
+            description: self.description,
+            quantity: self.quantity,
+            variant: nil, // Inventory doesn’t have `variant`
+            purchased_quantity: self.purchasedQuantity,
+            pricing: self.pricing,
+            flash_sale: self.flashSale,
+            accept_offers: self.acceptOffers,
+            reserve_for_live: self.reserveForLive,
+            shipping_profile_id: self.shippingProfileID,
+            status: self.status,
+            product_show: self.productShow,
+            images: self.images,
+            thumbnail: self.thumbnails,
+            created_at: self.createdAt,
+            category: self.category
+        )
     }
 }

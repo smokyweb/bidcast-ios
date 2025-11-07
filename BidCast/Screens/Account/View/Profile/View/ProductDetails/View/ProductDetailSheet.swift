@@ -338,7 +338,7 @@ struct ProductDetailSheet: View {
             productDetail = response?.data
             productImages =  data?.images ?? []
             productTitle = data?.description ?? ""
-            productPrice = Double(data?.pricing ?? 0)
+            productPrice = Double(data?.pricing ?? "0.0") ?? 0.0
             condition =  "New" //currently No Key for this
             location = data?.shippingAdress?.streetAddress ?? ""
             postedTime = data?.createdAt ?? ""
@@ -351,7 +351,7 @@ struct ProductDetailSheet: View {
             if let price = data?.pricing {
                     let percentages: [Double] = [0.05, 0.10, 0.15, 0.20]
                     for percent in percentages {
-                        let offerPrice = Double(price) * percent
+                        let offerPrice = (Double(price) ?? 0.0) * percent
                         
                         offerArr.append(offerPrice)
                     }

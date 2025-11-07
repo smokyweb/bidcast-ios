@@ -10,6 +10,12 @@ import SwiftfulLoadingIndicators
 import SVProgressHUD
 import AlertToast
 
+enum CreateProductNavigation {
+    case inventry
+    case other
+}
+
+
 struct CreateProductScreen: View {
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var networkMonitor: NetworkMonitor
@@ -58,6 +64,8 @@ struct CreateProductScreen: View {
     @State var navigateToProuct = false
     @Binding var fromPrepare : Bool
     var delegate: ShowStepDelegate?
+    
+    var isComeFrom: CreateProductNavigation = .other
     
     var body: some View {
         
@@ -120,7 +128,7 @@ struct CreateProductScreen: View {
                                 }
                             }
                         )
-                        .disabled(!selectedCategory.isEmpty)
+                        .disabled(isComeFrom == .inventry ? false : !selectedCategory.isEmpty)
                         .zIndex(1201.0)
                         .padding([.leading,.trailing],16)
                         AuthTextField(
@@ -411,7 +419,7 @@ struct CreateProductScreen: View {
                         alertType = .sheetType(
                             icon: .alert,
                             title: "Error",
-                            message: error.localizedDescription,
+                            message: viewModel.errorMessage ?? "",
                             primaryBtnText: "",
                             secondaryBtnText: AppString.ok.localized
                         )
@@ -511,15 +519,13 @@ struct CreateProductScreen: View {
             self.mailClassList = data.map {$0.label }
         } else {
             alertType = .sheetType(
-                icon: .alert,
-                title: response?.error_type?.capitalized ?? "",
-                message: response?.message?.capitalized ?? "",
-                primaryBtnText: "",
-                secondaryBtnText: AppString.ok.localized
+                icon: .success,
+                title: "Error",
+                message: viewModel.errorMessage ?? "",
+                primaryBtnText: AppString.ok.localized,
+                secondaryBtnText:""
             )
             showError = true
-            
-            
         }
     }
     func categorySuccess() {
@@ -531,15 +537,13 @@ struct CreateProductScreen: View {
             self.categoryNames = response?.data.map { $0.name ?? "No Category" } ?? [String]()
         } else {
             alertType = .sheetType(
-                icon: .alert,
-                title: response?.error_type?.capitalized ?? "",
-                message: response?.message?.capitalized ?? "",
-                primaryBtnText: "",
-                secondaryBtnText: AppString.ok.localized
+                icon: .success,
+                title: "Error",
+                message: viewModel.errorMessage ?? "",
+                primaryBtnText: AppString.ok.localized,
+                secondaryBtnText:""
             )
             showError = true
-            
-            
         }
     }
     
@@ -591,16 +595,16 @@ struct CreateProductScreen: View {
 //                }
 //                
 //            }
-                } else {
-                    alertType = .sheetType(
-                        icon: .alert,
-                        title: response?.error_type?.capitalized ?? "",
-                        message: response?.message?.capitalized ?? "",
-                        primaryBtnText: "",
-                        secondaryBtnText: AppString.ok.localized
-                    )
-                    showError = true
-                
+        } else {
+            alertType = .sheetType(
+                icon: .success,
+                title: "Error",
+                message: viewModel.errorMessage ?? "",
+                primaryBtnText: AppString.ok.localized,
+                secondaryBtnText:""
+            )
+            showError = true
+            
             
         }
     }

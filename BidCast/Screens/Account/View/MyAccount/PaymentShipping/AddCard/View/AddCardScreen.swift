@@ -264,7 +264,7 @@ struct AddCardScreen: View {
     
     func getUnformattedCardNumber(_ cardNumber: String) -> String {
         // Remove any dashes from the card number
-        let unformattedCardNumber = cardNumber.replacingOccurrences(of: "-", with: "")
+        let unformattedCardNumber = cardNumber.replacingOccurrences(of: " ", with: "")
         return unformattedCardNumber
     }
 

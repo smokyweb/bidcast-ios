@@ -790,10 +790,10 @@ struct RehearsalScreen: View {
             )
         }
         .toast(isPresenting: $showhudSuccess) {
-            AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
+            AlertToast(displayMode: .hud, type: .regular, title: hudMsg)
         }
         .toast(isPresenting: $showhud) {
-            AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlyeSuccess)
+            AlertToast(displayMode: .hud, type: .regular, title: hudMsg)
         }
         .onAppear {
         

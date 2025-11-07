@@ -22,6 +22,7 @@ struct AddProductsScreen: View {
     @State var viewModel = ScheduleViewModel()
     
     @State var selectedProductIDs: [String] = []
+    @State var navigateToInventry: Bool = false
     
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
@@ -36,6 +37,7 @@ struct AddProductsScreen: View {
     @State var navigateToAddProduct  = false
     @Binding var backToCreateProduct : Bool
     var delegate: ShowStepDelegate?
+    
     
     
     var body: some View {
@@ -167,7 +169,7 @@ struct AddProductsScreen: View {
                         }
                         addProductOption(text: "Select from product Inventory"){
 //                            presentationMode.wrappedValue.dismiss()
-                            
+                            navigateToInventry = true
                         }
                     }
                 }
@@ -264,7 +266,7 @@ struct AddProductsScreen: View {
                                 alertType = .sheetType(
                                     icon: .alert,
                                     title: "Error",
-                                    message: error.localizedDescription,
+                                    message: viewModel.errorMessage ?? "",
                                     primaryBtnText: AppString.ok.localized,
                                     secondaryBtnText: ""
                                 )
@@ -319,7 +321,7 @@ struct AddProductsScreen: View {
             
         }
         .navigationBarHidden(true)
-        .onAppear{
+        .onFirstAppear{
             fetchProduct(page: currentPage)
         }
         .toast(isPresenting: $showhud) {
@@ -351,6 +353,12 @@ struct AddProductsScreen: View {
         })
         CusNavLink(doNavigate: $navigateToTab, destination: TabbarScreen())
         CusNavLink(doNavigate: $navigateToAddProduct, destination: CreateProductScreen(requests: $request, thumbNail: $thumbNail,backToPrepare: $backToPrepare,fromPrepare: .constant(false)))
+        CusNavLink(doNavigate: $navigateToInventry,
+                   destination: InventoryScreen(productData: InventoryDataModel(),
+                                                selectedProductIDs: $selectedProductIDs,
+                                                selectedProductData: $productData,
+                                                selectedCategoryId: request.category_id,
+                                                navigatedFrom: .addProduct))
     }
     
     
@@ -424,13 +432,12 @@ extension AddProductsScreen{
         if response?.status == "success"{
             productData = response?.data ?? [ProductDataModel]()
         }else{
-            showError = true
             alertType = .sheetType(
-                icon: .alert,
-                title: response?.error_type?.capitalized ?? "",
-                message: response?.message?.capitalized ?? "",
-                primaryBtnText: "",
-                secondaryBtnText: AppString.ok.localized
+                icon: .success,
+                title: "Error",
+                message: viewModel.errorMessage ?? "",
+                primaryBtnText: AppString.ok.localized,
+                secondaryBtnText:""
             )
             showError = true
         }
