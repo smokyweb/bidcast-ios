@@ -189,6 +189,7 @@ struct InventoryScreen: View {
             )
         }
     }
+    
     func handlePagination(index: Int) {
         let isLastItem = index == inventoryList.count - 1
         let canFetchMore = (viewModel.inventoryDict?.total ?? 0) > inventoryList.count

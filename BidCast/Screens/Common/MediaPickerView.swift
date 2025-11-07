@@ -10,6 +10,7 @@ import SwiftUI
 
 
 import PhotosUI
+import AlertToast
 
 struct MediaPickerView: View {
     let maxMediaCount = 8
@@ -18,6 +19,13 @@ struct MediaPickerView: View {
     @State private var showCameraPicker = false
     @State private var showPhotoLibrary = false
     @State private var showPickerOptions = false
+    
+//    @State var showhud: Bool = false
+//    @State var hudMsg: String = ""
+//    
+//    @Binding var isImageSizeExceeding: Bool
+    
+//    var maxImageSizeLimit: Double = 5.0 // in MB
     
     @Binding var uploadedImageUrls: [String]
     
@@ -130,11 +138,16 @@ struct MediaPickerView: View {
         .fullScreenCover(isPresented: $showCameraPicker) {
             ImagePicker(sourceType: .camera) { image,url  in
                 if let image = image, let url = url {
-                    if selectedMedia.count < maxMediaCount,
-                       !selectedMedia.contains(image) {
-                        selectedMedia.append(image)
-                    }
-                    self.uploadedImageUrls.append(url)
+//                    if image.getImageSize(unit: .mb) > maxImageSizeLimit {
+//                        isImageSizeExceeding = true
+//                    }
+//                    else  {
+                        if selectedMedia.count < maxMediaCount,
+                           !selectedMedia.contains(image) {
+                            selectedMedia.append(image)
+                        }
+                        self.uploadedImageUrls.append(url)
+//                    }
                 }
             }
             .ignoresSafeArea()
@@ -144,9 +157,14 @@ struct MediaPickerView: View {
                 let remaining = maxMediaCount - selectedMedia.count
                 let limitedImages = Array(images.prefix(remaining))
                 let limitedUrls = Array(urls.prefix(remaining))
-                
-                selectedMedia.append(contentsOf: limitedImages)
-                uploadedImageUrls.append(contentsOf: limitedUrls)
+//                let index = findLargeImageIndex(in: limitedImages)
+//                if index != -1 {
+//                    isImageSizeExceeding = true
+//                }
+//                else  {
+                    selectedMedia.append(contentsOf: limitedImages)
+                    uploadedImageUrls.append(contentsOf: limitedUrls)
+//                }
                 
                 
             }
@@ -154,3 +172,4 @@ struct MediaPickerView: View {
         }
     }
 }
+
