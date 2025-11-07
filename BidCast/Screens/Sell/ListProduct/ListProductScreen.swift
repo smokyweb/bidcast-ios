@@ -31,6 +31,7 @@ struct ListProductScreen: View {
     @State var shippingId = ""
     @State var ShippingAddress: [AddressModel] = []
     @State var mailClassList = [String]()
+//    @State var isImageSizeExceeding: Bool = false
     @State var request : StoreProductParam = StoreProductParam(category_id: "", title: "", description: "", quantity: "", pricing: "", flash_sale: "0", accept_offers: "0", reserve_for_live: "0", shipping_profile_id: "", status: "",sub_category_id: "",width: "",length: "", weight: "",height:"",mail_class:"",processing_category:"")
     
     @StateObject var viewModel = ListProductViewModel()
@@ -64,6 +65,9 @@ struct ListProductScreen: View {
                         count: .constant(0)
                     )
                 }
+                .frame(height: 40)
+                .background(Color.white)
+                
                 ScrollView(showsIndicators:false){
                     
                     MediaPickerView(uploadedImageUrls: $imageUrls)
@@ -286,7 +290,12 @@ struct ListProductScreen: View {
                             .padding(.top,8)
                             .padding([.leading,.trailing],16.0)
                         
-                        AuthTextField(floatingLabel: "Buy it Now Price".localized, placeholder: "$0", icon: .menuProfile, text: $request.pricing,isIconDisplay : false, isForPrice:true,
+                        AuthTextField(floatingLabel: "Buy it Now Price".localized,
+                                      placeholder: "$0.0",
+                                      icon: .menuProfile,
+                                      text: $request.pricing,
+                                      isIconDisplay : false,
+                                      isForPrice:true,
                                       custFontName : robotoMedium,
                                       custFontSize : 14.0,
                                       enteredText:  { price in
@@ -299,7 +308,7 @@ struct ListProductScreen: View {
 //                                }
 //                            }
                         })
-                        .keyboardType(.numberPad)
+                        .keyboardType(.decimalPad)
                         //                        .padding(.horizontal , 16)
                         
                         MenuCell( title: "Flash Sale",fontName: robotoMedium,fontValue: 14.0,menuImg: "",isSelectable: true, isTappedSwitch: $isTappedFlash,onToggle: { value in
@@ -337,39 +346,39 @@ struct ListProductScreen: View {
                     .cornerRadius(12)
                     .padding(.horizontal,12)
                     
-                    VStack(alignment:.leading,spacing: 8){
-                        Text("Shipping".localized)
-                            .font(.custom(robotoMedium, size: 16.0))
-                            .padding(.top,8)
-                            .padding([.leading,.trailing],16.0)
+//                    VStack(alignment:.leading,spacing: 8){
+//                        Text("Shipping".localized)
+//                            .font(.custom(robotoMedium, size: 16.0))
+//                            .padding(.top,8)
+//                            .padding([.leading,.trailing],16.0)
+//                        
+//                        DropDownSelection(
+//                            options: $shippingAddressName,
+//                            floatingLabel:"Shipping Profile",
+//                            hint: "Select Profile",
+//                            selected: $shippingId,
+//                            anchor: .bottom,
+//                            custFontName: robotoMedium,
+//                            custFontSize:  14.0,
+//                            custCategory : robotoRegular,
+//                            custCategorySize : 13.0,
+//                            onOptionSelected: { value in
+//                                if let id = ShippingAddress.first(where: { $0.name == value })?.id {
+//                                    request.shipping_profile_id = "\(id)"
+//                                    shippingId = value
+//                                } else {
+//                                    request.shipping_profile_id = ""
+//                                }
+//                            }
+//                        )
+//                        .padding(.bottom,8)
+//                        .padding([.leading,.trailing],16)
                         
-                        DropDownSelection(
-                            options: $shippingAddressName,
-                            floatingLabel:"Shipping Profile",
-                            hint: "Select Profile",
-                            selected: $shippingId,
-                            anchor: .bottom,
-                            custFontName: robotoMedium,
-                            custFontSize:  14.0,
-                            custCategory : robotoRegular,
-                            custCategorySize : 13.0,
-                            onOptionSelected: { value in
-                                if let id = ShippingAddress.first(where: { $0.name == value })?.id {
-                                    request.shipping_profile_id = "\(id)"
-                                    shippingId = value
-                                } else {
-                                    request.shipping_profile_id = ""
-                                }
-                            }
-                        )
-                        .padding(.bottom,8)
-                        .padding([.leading,.trailing],16)
-                        
-                    }
+//                    }
                     
-                    .background(.white)
-                    .cornerRadius(12)
-                    .padding(.horizontal,12)
+//                    .background(.white)
+//                    .cornerRadius(12)
+//                    .padding(.horizontal,12)
                     
 //                    TwoButton(titleOne: "Save Draft", titleTwo: "Publish", onFirstButtonClick: {
 //                        print(request)
@@ -687,6 +696,7 @@ struct ListProductScreen: View {
                 }
 //                .edgesIgnoringSafeArea(.top)
                 .padding(.all,0)
+                .padding(.horizontal,12)
 //                .background(.bg.opacity(0.5))
                 
                 .bottomSheet(
@@ -724,6 +734,9 @@ struct ListProductScreen: View {
                     AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
                     
                 }
+//                .toast(isPresenting: $isImageSizeExceeding) {
+//                    AlertToast(displayMode: .hud, type: .regular, title: "Please select image size less than 5 MB", style: alertStlye)
+//                }
                 .bottomSheet(isPresented: $showError, height: screenHeight * 0.4, topBarCornerRadius: 25, showTopIndicator: false,
                     onDismiss: {
                     showError = false
@@ -748,7 +761,6 @@ struct ListProductScreen: View {
 //            .padding([.leading,.trailing],12)
         }
 //        .edgesIgnoringSafeArea(.top/)
-        .padding(.horizontal,12)
         .background(.bg.opacity(0.4))
         .onFirstAppear(perform: {
             Task{
@@ -759,6 +771,7 @@ struct ListProductScreen: View {
                 }
                 SVProgressHUD.show()
                 await viewModel.getSubCategoryList(param: CategoryRequest(category_id: ""))
+                await SVProgressHUD.dismiss()
                 if self.viewModel.errorMessage == nil || self.viewModel.errorMessage == "" {
                     categorySuccess()
                 }else{
@@ -772,22 +785,22 @@ struct ListProductScreen: View {
                     await SVProgressHUD.dismiss()
                     showError = true
                 }
-                self.viewModel.errorMessage?.removeAll()
-                await viewModel.getAddresses()
+//                self.viewModel.errorMessage?.removeAll()
+//                await viewModel.getAddresses()
                 
-                if self.viewModel.errorMessage == nil || self.viewModel.errorMessage == "" {
-                    shippingAddressSuccess()
-                }else{
-                    await SVProgressHUD.dismiss()
-                    alertType = .sheetType(
-                        icon: .alert,
-                        title: "Error",
-                        message: self.viewModel.errorMessage ?? "",
-                        primaryBtnText: "",
-                        secondaryBtnText: AppString.ok.localized
-                    )
-                    showError = true
-                }
+//                if self.viewModel.errorMessage == nil || self.viewModel.errorMessage == "" {
+//                    shippingAddressSuccess()
+//                }else{
+//                    await SVProgressHUD.dismiss()
+//                    alertType = .sheetType(
+//                        icon: .alert,
+//                        title: "Error",
+//                        message: self.viewModel.errorMessage ?? "",
+//                        primaryBtnText: "",
+//                        secondaryBtnText: AppString.ok.localized
+//                    )
+//                    showError = true
+//                }
                 self.viewModel.errorMessage?.removeAll()
                 await viewModel.getMailClasses()
                 await SVProgressHUD.dismiss()
@@ -803,9 +816,6 @@ struct ListProductScreen: View {
                     )
                     showError = true
                 }
-                
-                
-                
             }
         })
         .onTapGesture {
@@ -857,19 +867,19 @@ struct ListProductScreen: View {
                     showError = true
                 }
             ) {
+                viewModel.errorMessage?.removeAll()
                 await viewModel.uploadStoreImage(images: imageUrls, key: "images[]")
-//                if viewModel.storeImageResponse?.error_type == "UNAUTHORIZED" {
-//                    alertType = .sheetType(
-//                        icon: .alert,
-//                        title: "",
-//                        message: viewModel.errorMessage ?? "",
-//                        primaryBtnText: "",
-//                        secondaryBtnText: AppString.ok.localized
-//                    )
-//                    showError = true
-//                }
-//                else  {
-                    
+                if let errorMessage = self.viewModel.errorMessage, errorMessage != "" {
+                    alertType = .sheetType(
+                        icon: .alert,
+                        title: "Error",
+                        message: viewModel.errorMessage ?? "",
+                        primaryBtnText: "",
+                        secondaryBtnText: AppString.ok.localized
+                    )
+                    showError = true
+                }
+                else  {
                     guard let response = self.viewModel.storeImageResponse,
                           response.status == "success" else { return }
                     
@@ -894,7 +904,7 @@ struct ListProductScreen: View {
                         "flash_sale": request.flash_sale,
                         "accept_offers": request.accept_offers,
                         "reserve_for_live": request.reserve_for_live,
-                        "shipping_profile_id": request.shipping_profile_id,
+                        "shipping_profile_id": "4",
                         "images": uploadedUrls
                     ]
                     
@@ -906,7 +916,7 @@ struct ListProductScreen: View {
                     self.viewModel.errorMessage?.removeAll()
                     await viewModel.storeProduct(param: productRequest)
                     storeSuccess()
-//                }
+                }
             }
         }
     }
@@ -945,7 +955,7 @@ struct ListProductScreen: View {
                                             title: productData.title ?? "",
                                             description: productData.description ?? "",
                                             quantity: "\(productData.quantity ?? "0")",
-                                            pricing: "\(productData.pricing ?? "0")",
+                                            pricing: "\(productData.pricing ?? "0.0")",
                                             flash_sale:productData.flashSale ?? false ? "1" : "0",
                                             accept_offers: productData.acceptOffers ?? false ? "1" : "0",
                                             reserve_for_live: productData.reserveForLive ?? false ? "1" : "0",
@@ -969,7 +979,7 @@ struct ListProductScreen: View {
                 if request.quantity == "0"{
                     request.quantity.removeAll()
                 }
-                if request.pricing == "0" {
+                if request.pricing == "0.0" {
                     request.pricing.removeAll()
                 }
                 if imageUrls == [""]{
@@ -1121,10 +1131,10 @@ struct ListProductScreen: View {
             hudMsg = "Price should not be less than $1.00"
             return false
         }
-        if request.shipping_profile_id.isEmpty {
-            hudMsg = "Please select shipping address"
-            return false
-        }
+//        if request.shipping_profile_id.isEmpty {
+//            hudMsg = "Please select shipping address"
+//            return false
+//        }
         return true
     }
 
