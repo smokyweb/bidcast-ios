@@ -267,16 +267,16 @@ struct PrimaryHeader: View {
                         }
                     }
                 }
-                .frame(width: 100,alignment: .leading)
-                
+                .frame(width: 80, alignment: .leading)
                 Spacer()
-                
-                Text(title)
-                    .font(.custom(robotoSemiBold, fixedSize: 18))
-                    .frame(maxWidth: .infinity)
-                    .foregroundColor(.black)
-                    .lineLimit(1)
-                
+                HStack(alignment: .center) {
+                    Text(title)
+                        .frame(maxWidth: .infinity)
+                        .font(.custom(robotoSemiBold, fixedSize: 18))
+                        .foregroundColor(.black)
+                    //                    .background(.red)
+                        .lineLimit(1)
+                }
                 Spacer()
                 
                 HStack(spacing: 8) {

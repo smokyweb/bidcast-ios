@@ -15,7 +15,7 @@ struct AppString{
     static let enterEmail = "Enter Email Address".localized
     static let enterPassword = "Enter Password".localized
     static let rememberMe = "Remember Me".localized
-    static let forgotPassword = "Forgot Password?".localized
+    static let forgotPassword = "Forgot Password".localized
     static let login = "Login".localized
     static let newUser = "New User?".localized
     static let createAccount = "Create Account".localized

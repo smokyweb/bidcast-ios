@@ -17,11 +17,29 @@ struct AddProductsScreen: View {
     @State var currentPage = 1
     @Environment(\.presentationMode) var presentationMode
     @Binding var request : StoreScheduleShowRequest
+    @State var productDetails: StoreProductParam =  StoreProductParam(category_id: "",
+                                                                      title: "",
+                                                                      description: "",
+                                                                      quantity: "1",
+                                                                      pricing: "",
+                                                                      flash_sale: "0",
+                                                                      accept_offers: "0",
+                                                                      reserve_for_live: "0",
+                                                                      shipping_profile_id: "4",
+                                                                      status: "",
+                                                                      sub_category_id: "",
+                                                                      width: "",
+                                                                      length: "",
+                                                                      weight: "",
+                                                                      height:"",
+                                                                      mail_class:"",
+                                                                      processing_category:"")
     @Binding var thumbNail : String
     @State var productData = [ProductDataModel]()
     @State var viewModel = ScheduleViewModel()
     
-    @State var selectedProductIDs: [String] = []
+    @State var selectedProductIDs: Set<String> = []
+    
     @State var navigateToInventry: Bool = false
     
     @State var showhud: Bool = false
@@ -35,6 +53,7 @@ struct AddProductsScreen: View {
     @Binding var backToPrepare : Bool
     @Binding var NavFromProductLibrary : Bool
     @State var navigateToAddProduct  = false
+    @State var navigateToEditProduct  = false
     @Binding var backToCreateProduct : Bool
     var delegate: ShowStepDelegate?
     
@@ -75,59 +94,61 @@ struct AddProductsScreen: View {
                         Text("No product found")
                             .font(.custom(poppinsSemiBold, size: 13.0))
                     }else{
-                        ForEach(productData.indices, id:\.self ){ index in
+                        ForEach(productData.indices, id: \.self) { index in
                             let data = productData[index]
                             let idStr = "\(data.id ?? -1)"
                             let isSelected = selectedProductIDs.contains(idStr)
+                            
                             HStack {
-                                CustomProfileImage(url: data.images?.first, isCircular: false, size: 50, defaultImage: "fashion")
-//                                if let urlString = data.images?.first, let url = URL(string: urlString) {
-//                                    AsyncImage(url: url) { image in
-//                                        image.resizable()
-//                                    } placeholder: {
-//                                        Color.gray
-//                                    }
-//                                    .frame(width: 50, height: 50)
-//                                    .clipShape(RoundedRectangle(cornerRadius: 8))
-//                                } else {
-//                                    Image("fashion") // Fallback asset
-//                                        .resizable()
-//                                        .scaledToFit()
-//                                        .frame(width: 50, height: 50)
-//                                }
+                                // ✅ Custom image view
+                                CustomProfileImage(
+                                    url: data.images?.first,
+                                    isCircular: false,
+                                    size: 50,
+                                    defaultImage: "fashion"
+                                )
                                 
+                                // ✅ Product info
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text(data.title ?? "Untitled")
-                                        .font(.custom(poppinsBold, size: 14.0))
+                                        .font(.custom(poppinsBold, size: 14))
+                                    
                                     Text(data.category?.name ?? "Unknown Category")
-                                        .font(.custom(poppinsSemiBold, size: 13.0))
+                                        .font(.custom(poppinsSemiBold, size: 13))
                                         .foregroundColor(.gray)
+                                    
                                     Text("Quantity: \(data.quantity ?? "")")
-                                        .font(.custom(poppinsSemiBold, size: 13.0))
+                                        .font(.custom(poppinsSemiBold, size: 13))
                                         .foregroundColor(.gray)
                                 }
                                 
                                 Spacer()
                                 
+                                // ✅ Action buttons
                                 Button(action: {
-                                    // Edit product
+                                    // Edit product action
+//                                    productDetails =
+                                    navigateToEditProduct = true
                                 }) {
                                     Image(systemName: "square.and.pencil")
                                 }
                                 
                                 Button(action: {
-                                    // Delete product
+                                    // Delete product action
                                 }) {
                                     Image(systemName: "trash")
                                         .foregroundColor(.red)
                                 }
                                 
+                                // ✅ Selection button
                                 Button(action: {
                                     if isSelected {
-                                        selectedProductIDs.removeAll { $0 == idStr }
+                                        selectedProductIDs.remove(idStr)
                                     } else {
-                                        selectedProductIDs.append(idStr)
+                                        selectedProductIDs.insert(idStr)
                                     }
+                                    
+                                    
                                     request.product_ids = selectedProductIDs.joined(separator: ",")
                                 }) {
                                     Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
@@ -169,7 +190,7 @@ struct AddProductsScreen: View {
                         }
                         addProductOption(text: "Select from product Inventory"){
 //                            presentationMode.wrappedValue.dismiss()
-//                            navigateToInventry = true
+                            navigateToInventry = true
                         }
                     }
                 }
@@ -353,6 +374,7 @@ struct AddProductsScreen: View {
         })
         CusNavLink(doNavigate: $navigateToTab, destination: TabbarScreen())
         CusNavLink(doNavigate: $navigateToAddProduct, destination: CreateProductScreen(requests: $request, thumbNail: $thumbNail,backToPrepare: $backToPrepare,fromPrepare: .constant(false)))
+        CusNavLink(doNavigate: $navigateToEditProduct, destination: CreateProductScreen(requests: $request, thumbNail: $thumbNail,backToPrepare: $backToPrepare,fromPrepare: .constant(false)))
         CusNavLink(doNavigate: $navigateToInventry,
                    destination: InventoryScreen(productData: InventoryDataModel(),
                                                 selectedProductIDs: $selectedProductIDs,

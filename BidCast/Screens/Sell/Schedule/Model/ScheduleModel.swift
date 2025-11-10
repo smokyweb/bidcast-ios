@@ -41,7 +41,7 @@ struct ProductDataModel: Codable {
     var title: String?
     var description: String?
     var quantity: String?
-    var variant : String?
+    var variant : [VarientModel]?
     var purchased_quantity: String?
     var pricing: String?
     var flash_sale: Bool?
@@ -56,6 +56,10 @@ struct ProductDataModel: Codable {
     var category: CategoryDataModel?
 }
 
+struct VarientModel : Codable {
+    var title: String
+    var value: String
+}
 
 
 struct StoreScheduleShowModel : Codable{
@@ -70,4 +74,28 @@ struct StoreScheduleShowModel : Codable{
     var img_thumbnail : [String]?
     var id : Int?
     var products : [ProductDataModel]?
+}
+
+extension ProductDataModel {
+    func toStoreProductParam() -> StoreProductParam {
+        return StoreProductParam(
+            category_id: "\(category_id ?? 0)",
+            title: title ?? "",
+            description: description ?? "",
+            quantity: quantity ?? "",
+            pricing: pricing ?? "",
+            flash_sale: (flash_sale ?? false) ? "1" : "0",
+            accept_offers: (accept_offers ?? false) ? "1" : "0",
+            reserve_for_live: (reserve_for_live ?? false) ? "1" : "0",
+            shipping_profile_id: "\(shipping_profile_id ?? 0)",
+            status: status ?? "active",        // ✅ Default if nil
+            sub_category_id: nil,              // ✅ optional (customize if needed)
+            width: "0",                        // ✅ Placeholder values
+            length: "0",
+            weight: "0",
+            height: "0",
+            mail_class: "standard",            // ✅ Replace with your defaults
+            processing_category: "regular"     // ✅ Replace with your defaults
+        )
+    }
 }

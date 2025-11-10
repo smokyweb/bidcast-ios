@@ -16,33 +16,10 @@ struct ActiveInventoryScreen: View {
     var body: some View {
         VStack(spacing: 10) {
             HStack(alignment: .center, spacing: 10) {
-                if let imageUrlString = inventory.images?.first,
-                   let imageUrl = URL(string: imageUrlString) {
-                    AsyncImage(url: imageUrl) { phase in
-                        switch phase {
-                        case .empty:
-                            ProgressView()
-                                .frame(width: 64, height: 64)
-                        case .success(let image):
-                            image
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 64, height: 64)
-                                .cornerRadius(12.0)
-                                .padding(.leading, 16)
-                        case .failure:
-                            Image(systemName: "photo")
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 64, height: 64)
-                                .foregroundColor(.gray)
-                                .padding(.leading, 16)
-                        @unknown default:
-                            EmptyView()
-                        }
-                    }
-                }
-
+                let imageUrlString = inventory.thumbnails?.first ?? ""
+                CustomProfileImage(url: imageUrlString, isCircular: false, size: 64, defaultImage: "photo")
+                    .padding(.leading, 12)
+                
                 VStack(alignment: .leading, spacing: 2) {
                     TitleWithLine(title: inventory.title ?? "No Title", lineLength: 0, textColor: .black, fontName: poppinsSemiBold,fontValue: 16, divderHeight: 0)
                     TitleWithLine(title: inventory.description ?? "No Description", lineLength: 0, textColor: .gray,fontName: poppinsRegular,fontValue: 13, divderHeight: 0)

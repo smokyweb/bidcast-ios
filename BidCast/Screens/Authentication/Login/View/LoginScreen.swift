@@ -97,6 +97,7 @@ struct LoginScreen: View {
                         }, label: {
                             Text(AppString.forgotPassword.localized)
                                 .font(.custom(poppinsRegular, fixedSize: placeHolder))
+                                .fontWeight(.semibold)
                                 .foregroundStyle(.defaultTheme)
                         })
                     }.padding([.top, .bottom], 10)
@@ -159,6 +160,7 @@ struct LoginScreen: View {
                         })
                         Spacer()
                     }.padding([.top, .bottom], 12)
+                    Spacer()
                     HStack{
                         Spacer()
                         let item = [AppString.privacyPolicy.localized, AppString.termOfService.localized]
@@ -169,6 +171,7 @@ struct LoginScreen: View {
                             selectedTitle : $selectedTab
                         ) { selected in
                             print("Tapped:", selected)
+                            selectedTab = ""
                             if selected == item[0]{
                                 navigateToPrivacy = true
                             }else{
