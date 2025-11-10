@@ -43,6 +43,8 @@ struct SelectionBottomSheet: View {
 
                                 if selectedOptions.contains(option) {
                                     Image(systemName: isMultiSelect ? "checkmark.square.fill" : "checkmark.circle.fill")
+                                        .resizable()
+                                        .frame(width: 25, height: 25)
                                         .foregroundColor(Color(themeColor))
                                 }
                             }
@@ -72,6 +74,7 @@ struct SelectionBottomSheet: View {
             .padding(.top, 10)
         }
         .padding(.vertical, 8)
+        .padding(.horizontal, 15)
         .padding(.bottom, 10)
     }
 

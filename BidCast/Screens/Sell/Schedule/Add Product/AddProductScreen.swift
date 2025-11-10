@@ -169,7 +169,7 @@ struct AddProductsScreen: View {
                         }
                         addProductOption(text: "Select from product Inventory"){
 //                            presentationMode.wrappedValue.dismiss()
-                            navigateToInventry = true
+//                            navigateToInventry = true
                         }
                     }
                 }

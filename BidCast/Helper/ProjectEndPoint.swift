@@ -367,7 +367,7 @@ extension APIEndPoint: EndPointType {
         case .uploadProductImage:
             return "store-product-meta"
         case .deleteProduct(let param):
-            return "delete-product\(param.product_id)"
+            return "delete-product?product_id=\(param.product_id)"
         case .blockUser:
             return "block-unblock"
         case .blockedUserList:

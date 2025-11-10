@@ -46,7 +46,8 @@ struct ListProductScreen: View {
     @State var subCategoryName : [String] = [""]
     @Binding var productData : InventoryDataModel
     @State var extraFields: [ExtraFieldModel] = []
-    @State var processingListArr = ["LETTERS","FLATS","MACHINABLE","NONSTANDARD","NON_MACHINABLE"]
+//    @State var processingListArr = ["LETTERS","FLATS","MACHINABLE","NONSTANDARD","NON_MACHINABLE"]
+    @State var processingListArr = ["Letters","Flats","Machinaable","Nonstandard","Non Machinable"]
     @State var extraFieldValues: [String: String] = [:]
     @State var selectedRadio: [String: String] = [:]
 
@@ -95,6 +96,15 @@ struct ListProductScreen: View {
                                     request.category_id = ""
                                 }
                                 Task{
+                                    guard Reachability.isConnectedToNetwork() else {
+                                        hudMsg = "No Internet Connection"
+                                        showhud = true
+                                        return
+                                    }
+                                    extraFields = []
+                                    selectedSubCategory = ""
+                                    selectedOption = []
+                                    request.sub_category_id = ""
                                     let request = CategoryRequest(category_id: request.category_id)
                                     SVProgressHUD.show()
                                     await self.viewModel.getSubCategoryList(param: request)
@@ -220,7 +230,7 @@ struct ListProductScreen: View {
                        
                         .padding([.leading,.trailing],16)
                         
-                         let extraFields = self.extraFields
+//                        var extraField = self.extraFields
                         if extraFields.count != 0{
                             ForEach(0 ..< extraFields.count) { index in
                                 let field = extraFields[index]
@@ -709,8 +719,8 @@ struct ListProductScreen: View {
                     },
                     content: {
                         SelectionBottomSheet(
-                            title: "Select Sub-Category",
-                            message: "Please select Sub-category.",
+                            title: "Select sub category",
+                            message: "Please select subcategory.",
                             options: $subCategoryName,
                             selectedOptions: $selectedOption,
                             onSelectionDone: { selectedIndexes in
@@ -739,16 +749,25 @@ struct ListProductScreen: View {
 //                }
                 .bottomSheet(isPresented: $showError, height: screenHeight * 0.4, topBarCornerRadius: 25, showTopIndicator: false,
                     onDismiss: {
-                    showError = false
-                    viewModel.errorMessage = nil
+                    if let errorMessage = viewModel.errorMessage {
+                        showError = false
+                        viewModel.errorMessage = nil
+                    }else{
+                        showError = true
+                    }
                 }, content: {
                     CommonBottomSheet(
                         sheetType: $alertType,
                         onPrimaryClick: {
-                            self.presentationMode.wrappedValue.dismiss()
-                            withAnimation {
+                            if let errorMessage = viewModel.errorMessage {
                                 showError = false
                                 viewModel.errorMessage = nil
+                            }else{
+                                self.presentationMode.wrappedValue.dismiss()
+                                withAnimation {
+                                    showError = false
+                                    viewModel.errorMessage = nil
+                                }
                             }
                         }, onSecondaryClick: {
                             withAnimation {
