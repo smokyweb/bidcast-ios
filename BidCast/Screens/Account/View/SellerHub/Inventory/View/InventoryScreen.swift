@@ -44,9 +44,9 @@ struct InventoryScreen: View {
     @State var navigateToCreateProduct = false
     @State var searchText: String = ""
     
-    @Binding var selectedProductIDs: [String]
+    @Binding var selectedProductIDs: Set<String>
     @Binding var selectedProductData: [ProductDataModel]
-    var selectedCategoryId: String = ""
+    @State var selectedCategoryId: String = ""
     
     var navigatedFrom: InventoryNavigation = .account
     @State private var navigateToCreateNewProduct = false
@@ -83,6 +83,9 @@ struct InventoryScreen: View {
             // MARK: - Search
             SearchView { debouncedText in
                 print("User stopped typing. Search: \(debouncedText)")
+                guard !debouncedText.isEmpty else {
+                    return
+                }
                 // Perform search logic here
                 searchText = debouncedText
                 currentPage = 1
@@ -90,46 +93,50 @@ struct InventoryScreen: View {
                 fetchInventory(for: segment, page: 1)
             }
             .padding(.horizontal, 12)
-            .padding(.top, 10)
+            .padding(.vertical, 10)
             
             // MARK: - Inventory List
             ScrollView {
-                VStack(spacing: 4) {
+                LazyVStack(spacing: 4) {
                     if inventoryList.count == 0{
                         NoDataView( message: AppString.NoInventoryFound.localized)
                     }else{
                         ForEach(0 ..< inventoryList.count, id: \.self) { index in
                             let inventory = inventoryList[index]
                             
-                            ActiveInventoryScreen(inventory: inventory,didTapProduct: {
-                                productId = inventory.id ?? 0
-                                productData = inventory
+                            ActiveInventoryScreen(inventory: inventory,
+                                                  didTapProduct: {
                                 if navigatedFrom == .account {
+                                    productId = inventory.id ?? 0
+                                    productData = inventory
                                     showSellSheet = true
                                 }
                                 else  {
-                                    if !selectedProductIDs.contains("\(productId)") {
-                                        selectedProductIDs.append("\(productId)")
+                                    if !selectedProductIDs.contains("\(inventory.id ?? 0)") {
+                                        selectedProductIDs.insert("\(inventory.id ?? 0)")
                                         selectedProductData.append(inventory.toProductDataModel())
                                     }
                                 }
-                            })
+                            },
+                                                  navigatedFrom: navigatedFrom
+                            )
                             .onAppear {
                                 handlePagination(index: index)
                             }
                         }
                     }
                 }
-                .padding(.top, 10)
                 .padding(.horizontal, 12)
+                .padding(.bottom, -20)
             }
+
             
             TwoButton(titleOne: navigatedFrom.btnTitle,
                       onFirstButtonClick: {
                 switch navigatedFrom {
                 case .account:
                     print("create new Prooduct")
-                    navigateToCreateNewProduct = true
+                    navigateToCreateProduct = true
                 case .addProduct:
                     print("Select Existing Product")
                     self.presentationMode.wrappedValue.dismiss()
@@ -142,8 +149,9 @@ struct InventoryScreen: View {
                       isHideSecBtn: true
             )
             .padding(.top, 20)
+            .padding(.bottom, -15)
             
-            CusNavLink(doNavigate: $navigateToCreateProduct, destination: ListProductScreen(productData:$productData))
+            CusNavLink(doNavigate: $navigateToCreateProduct, destination: ListProductScreen(productData:.constant(productData))) // for edit
             CusNavLink(doNavigate: $navigateToCreateNewProduct,
                        destination: CreateProductScreen(requests: .constant(StoreScheduleShowRequest(title: "", date: "", time: "", category_id: "", auction_type_id: "", product_ids: "")),
                                                         thumbNail: .constant(""),
@@ -154,6 +162,10 @@ struct InventoryScreen: View {
         .background(Color.bg.opacity(0.5))
         .onAppear {
             searchText = ""
+            currentPage = 1
+            segment = .active
+            request.search = searchText
+            selectedCategoryId = navigatedFrom == .account ? "" : selectedCategoryId
             fetchInventory(for: segment, page: currentPage)
         }
         .toast(isPresenting: $showhud) {
@@ -178,7 +190,7 @@ struct InventoryScreen: View {
                 },
                 productID: $productId,
                 onTapEdit: {
-                    navigateToCreateProduct = true
+//                    navigateToCreateProduct = true
                 },onTapDelete: {
                     SVProgressHUD.show()
                     let param = DeleteProduct(product_id: productId)
@@ -211,6 +223,7 @@ struct InventoryScreen: View {
             request.status = segment.rawValue.lowercased()
             request.page = page
             request.search = searchText
+            request.category_id = selectedCategoryId
             await viewModel.getInventoryList(param: request)
             await SVProgressHUD.dismiss()
             handleDataLoad()
@@ -222,9 +235,9 @@ struct InventoryScreen: View {
         SVProgressHUD.dismiss()
         let response = viewModel.inventoryDict
         if response?.status == "success" {
+            // append new data
             self.inventoryList.append(contentsOf: response?.data ?? [])
         } else {
-            
             alertType = .sheetType(
                 icon: .alert,
                 title: response?.error_type?.capitalized ?? "",
@@ -262,6 +275,7 @@ struct InventoryScreen: View {
             currentPage += 1
             request.status = status
             request.page = currentPage
+            request.category_id = selectedCategoryId
             await viewModel.getInventoryList(param: request)
             handleDataLoad()
         }
