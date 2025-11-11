@@ -308,7 +308,8 @@ struct ProductWeightScreen: View {
                 var variantArray: [[String: Any]] = []
                 //TODO: eed to manage varient
                 
-                var request = [
+                // 🔹 Prepare request body
+                var productRequest: [String: Any] = [
                     "category_id": request.category_id,
                     "sub_category_id": request.sub_category_id ?? "",
                     "title": request.title,
@@ -318,15 +319,27 @@ struct ProductWeightScreen: View {
                     "flash_sale": request.flash_sale,
                     "accept_offers": request.accept_offers,
                     "reserve_for_live": request.reserve_for_live,
-                    "shipping_profile_id": request.shipping_profile_id,
-                    "images": uploadedUrls
+                    "shipping_profile_id": "4", //static for now
+                    
+                    // ✅ Newly added fields
+                    "width": request.width,
+                    "length": request.length,
+                    "weight": request.weight,
+                    "height": request.height,
+                    "mail_class": request.mail_class,
+                    "processing_category": request.processing_category,
+                    
+                    // ✅ Images array (already present)
+                    "images": uploadedUrls,
+                    
                 ]
+              
                 
                 if !variantArray.isEmpty {
-                    request["variant"] = variantArray
+                    productRequest["variant"] = variantArray
                 }
                 
-                await viewModel.storeProduct(param: request)
+                await viewModel.storeProduct(param: productRequest)
                 storeSuccess()
             }
         }

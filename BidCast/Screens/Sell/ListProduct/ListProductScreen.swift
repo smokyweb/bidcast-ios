@@ -923,10 +923,21 @@ struct ListProductScreen: View {
                         "flash_sale": request.flash_sale,
                         "accept_offers": request.accept_offers,
                         "reserve_for_live": request.reserve_for_live,
-                        "shipping_profile_id": "4",
-                        "images": uploadedUrls
+                        "shipping_profile_id": "4",//static for now
+                        
+                        // ✅ Newly added fields
+                        "width": request.width,
+                        "length": request.length,
+                        "weight": request.weight,
+                        "height": request.height,
+                        "mail_class": request.mail_class,
+                        "processing_category": request.processing_category,
+                        
+                        // ✅ Images array (already present)
+                        "images": uploadedUrls,
+                        
                     ]
-                    
+
                     if !variantArray.isEmpty {
                         productRequest["variant"] = variantArray
                     }

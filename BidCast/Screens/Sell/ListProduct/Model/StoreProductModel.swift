@@ -23,6 +23,7 @@ import Foundation
 //}
 
 
+//toDo: needed to aad width, height, length, weight in future if required
 // MARK: - StoreProductModel
 struct StoreProductModel: Codable {
     var description: String?

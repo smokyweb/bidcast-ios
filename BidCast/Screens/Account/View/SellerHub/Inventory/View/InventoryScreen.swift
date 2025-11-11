@@ -46,6 +46,7 @@ struct InventoryScreen: View {
     
     @Binding var selectedProductIDs: Set<String>
     @Binding var selectedProductData: [ProductDataModel]
+    @State var productToEdit: ProductDataModel?
     @State var selectedCategoryId: String = ""
     
     var navigatedFrom: InventoryNavigation = .account
@@ -183,14 +184,17 @@ struct InventoryScreen: View {
             )
         }
         .bottomSheet(isPresented: $showSellSheet, height: screenHeight * 0.95) {
+            
             ProductDetailSheet(
                 onDismiss : {
                     self.showSellSheet = false
                     productId = 0
                 },
                 productID: $productId,
-                onTapEdit: {
-//                    navigateToCreateProduct = true
+                onTapEdit: { details  in
+//                    productToEdit = details
+                    
+                    navigateToCreateProduct = true
                 },onTapDelete: {
                     SVProgressHUD.show()
                     let param = DeleteProduct(product_id: productId)

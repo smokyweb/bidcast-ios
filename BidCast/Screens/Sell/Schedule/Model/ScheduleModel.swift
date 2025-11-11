@@ -77,9 +77,34 @@ struct StoreScheduleShowModel : Codable{
 }
 
 extension ProductDataModel {
+    
+    struct ProductDataModel: Codable {
+        var id: Int?
+        var user_id: Int?
+        var category_id: Int?
+        var title: String?
+        var description: String?
+        var quantity: String?
+        var variant : [VarientModel]?
+        var purchased_quantity: String?
+        var pricing: String?
+        var flash_sale: Bool?
+        var accept_offers: Bool?
+        var reserve_for_live: Bool?
+        var shipping_profile_id: Int?
+        var status: String?
+        var product_show: String?
+        var images: [String]?
+        var thumbnail: [String]?
+        var created_at: String?
+        var category: CategoryDataModel?
+    }
+//    StoreProductParam(category_id: "",
+//                      title: "", description: "", quantity: "", pricing: "", flash_sale: "0", accept_offers: "0", reserve_for_live: "0", shipping_profile_id: "", status: "",sub_category_id: "",width: "",length: "", weight: "",height:"",mail_class:"",processing_category:"")
     func toStoreProductParam() -> StoreProductParam {
         return StoreProductParam(
             category_id: "\(category_id ?? 0)",
+            
             title: title ?? "",
             description: description ?? "",
             quantity: quantity ?? "",
@@ -97,5 +122,14 @@ extension ProductDataModel {
             mail_class: "standard",            // ✅ Replace with your defaults
             processing_category: "regular"     // ✅ Replace with your defaults
         )
+        
+//        Missing Field    Description
+//        sub_category_id    Not available in ProductDataModel
+//        width    Not available in ProductDataModel
+//        length    Not available in ProductDataModel
+//        weight    Not available in ProductDataModel
+//        height    Not available in ProductDataModel
+//        mail_class    Not available in ProductDataModel
+//        processing_category
     }
 }

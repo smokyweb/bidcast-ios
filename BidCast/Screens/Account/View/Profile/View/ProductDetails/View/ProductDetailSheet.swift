@@ -43,7 +43,7 @@ struct ProductDetailSheet: View {
     @State  var shippingCharges : Int = 0
     @State  var taxAmount : Int = 0
     
-    var onTapEdit : () -> () = { }
+    var onTapEdit : (ProductDetailsModel) -> () = {_ in }
     var onTapDelete: () async -> () = { }
 
     @State var showoption : Bool = true
@@ -62,8 +62,9 @@ struct ProductDetailSheet: View {
                 if showoption{
                     Menu {
                         Button(action: {
-                            
-                            onTapEdit()
+                            if let details = productDetail {
+                                onTapEdit(details)
+                            }
                         }){
                             Text("Edit product")
                                 .font(.custom(poppinsSemiBold, size: 11))
