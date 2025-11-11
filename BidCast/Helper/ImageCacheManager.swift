@@ -2,7 +2,7 @@
 //  ImageCacheManager.swift
 //  BidCast
 //
-//  Created by JamTech on 28/10/25.
+//  Created by Vivek_JAM_E-328 on 28/10/25.
 //
 
 import Foundation

@@ -12,8 +12,8 @@ struct ProductDetailsModel: Codable {
     var id, userID, categoryID, subCategoryID: Int?
     var title: String?
     var variant: String? //toDo: not clear about its type
-    var width, length, weight: String?
-    var height, mailClass, processingCategory: String?
+    var width, length, weight, height: Double?
+    var mailClass, processingCategory: String?
     var description, quantity, purchasedQuantity, pricing: String?
     var flashSale, acceptOffers, reserveForLive: Bool?
     var shippingProfileID: Int?
@@ -48,6 +48,48 @@ struct ProductDetailsModel: Codable {
         case shippingAdress = "shipping_adress"
     }
 }
+
+extension ProductDetailsModel {
+    func toProductDataModel() -> ProductDataModel {
+        return ProductDataModel(
+            id: self.id,
+            userID: self.userID,
+            category_id: self.categoryID,
+            subCategoryID: self.subCategoryID,
+            title: self.title,
+            
+            variant: nil, // 🚨 You can parse JSON string into [Variant] later if needed
+            
+            // Convert String dimensions → Double safely
+            width: Double(self.width ?? "") ?? 0.0,
+            length: Double(self.length ?? "") ?? 0.0,
+            weight: Double(self.weight ?? "") ?? 0.0,
+            height: Double(self.height ?? "") ?? 0.0,
+            
+            mailClass: self.mailClass,
+            processingCategory: self.processingCategory,
+            
+            description: self.description,
+            quantity: self.quantity,
+            purchasedQuantity: self.purchasedQuantity,
+            pricing: self.pricing,
+            flashSale: self.flashSale,
+            acceptOffers: self.acceptOffers,
+            reserveForLive: self.reserveForLive,
+            shippingProfileID: self.shippingProfileID,
+            status: self.status,
+            productShow: self.productShow,
+            images: self.images,
+            thumbnail: self.thumbnail,
+            createdAt: self.createdAt,
+            
+            // These can be nil — details endpoint may not provide them
+            category: nil,
+            subCategory: nil
+        )
+    }
+}
+
 
 struct SellerUser: Codable {
     var id: Int?

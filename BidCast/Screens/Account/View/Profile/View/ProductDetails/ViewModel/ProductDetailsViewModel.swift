@@ -28,10 +28,6 @@ final class ProductDetailsViewModel: ObservableObject {
         }
     }
     
-   
-    
-    
-    
     func MakeOffer(param:MakeOfferRequest) async {
         do {
             if let response: ResponseModal<Offer> = try await APIManager.shared.request(

@@ -2,7 +2,7 @@
 //  EmailSupport.swift
 //  BidCast
 //
-//  Created by JamTech on 31/10/25.
+//  Created by Vivek_JAM_E-328 on 31/10/25.
 //
 
 import SwiftUI

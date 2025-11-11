@@ -34,33 +34,114 @@ struct TipsData : Codable {
     var description: String?
 }
 
+// MARK: - ProductDataModel
 struct ProductDataModel: Codable {
-    var id: Int?
-    var user_id: Int?
-    var category_id: Int?
+    var id, userID, category_id: Int?
+    var subCategoryID: Int?
     var title: String?
-    var description: String?
-    var quantity: String?
-    var variant : [VarientModel]?
-    var purchased_quantity: String?
-    var pricing: String?
-    var flash_sale: Bool?
-    var accept_offers: Bool?
-    var reserve_for_live: Bool?
-    var shipping_profile_id: Int?
+    var variant: [Variant]?
+    var width, length: Double?
+    var weight, height: Double?
+    var mailClass, processingCategory: String?
+    var description, quantity, purchasedQuantity, pricing: String?
+    var flashSale, acceptOffers, reserveForLive: Bool?
+    var shippingProfileID: Int?
     var status: String?
-    var product_show: String?
+    var productShow: String?
     var images: [String]?
     var thumbnail: [String]?
-    var created_at: String?
-    var category: CategoryDataModel?
+    var createdAt: String?
+    var category: ProductCategoryModel?
+    var subCategory: ProductCategoryModel?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case userID = "user_id"
+        case category_id
+        case subCategoryID = "sub_category_id"
+        case title, variant, width, length, weight, height
+        case mailClass = "mail_class"
+        case processingCategory = "processing_category"
+        case description, quantity
+        case purchasedQuantity = "purchased_quantity"
+        case pricing
+        case flashSale = "flash_sale"
+        case acceptOffers = "accept_offers"
+        case reserveForLive = "reserve_for_live"
+        case shippingProfileID = "shipping_profile_id"
+        case status
+        case productShow = "product_show"
+        case images, thumbnail
+        case createdAt = "created_at"
+        case category
+        case subCategory = "sub_category"
+    }
 }
 
-struct VarientModel : Codable {
-    var title: String
-    var value: String
+// MARK: - Category
+struct ProductCategoryModel: Codable {
+    var id: Int?
+    var name: String?
+    var image: String?
+    var thumbnail: String?
+    var extraFields: [ExtraFieldModel]?
+    var color: String?
+    var deletedAt: String?
+    var categoryID: Int?
+
+    enum CodingKeys: String, CodingKey {
+        case id, name, image, thumbnail
+        case extraFields = "extra_fields"
+        case color
+        case deletedAt = "deleted_at"
+        case categoryID = "category_id"
+    }
 }
 
+// MARK: - Variant
+struct Variant: Codable {
+    var title: String?
+    var value: ValueUnion?
+}
+
+enum ValueUnion: Codable {
+    case string(String)
+    case valueClass(ValueClass)
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        if let x = try? container.decode(String.self) {
+            self = .string(x)
+            return
+        }
+        if let x = try? container.decode(ValueClass.self) {
+            self = .valueClass(x)
+            return
+        }
+        throw DecodingError.typeMismatch(ValueUnion.self, DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "Wrong type for ValueUnion"))
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        switch self {
+        case .string(let x):
+            try container.encode(x)
+        case .valueClass(let x):
+            try container.encode(x)
+        }
+    }
+}
+
+// MARK: - ValueClass
+struct ValueClass: Codable {
+    var option1, option2, selected: String?
+
+    enum CodingKeys: String, CodingKey {
+        case option1 = "option_1"
+        case option2 = "option_2"
+        case selected
+    }
+}
 
 struct StoreScheduleShowModel : Codable{
    var user_id : Int?
@@ -78,51 +159,30 @@ struct StoreScheduleShowModel : Codable{
 
 extension ProductDataModel {
     
-    struct ProductDataModel: Codable {
-        var id: Int?
-        var user_id: Int?
-        var category_id: Int?
-        var title: String?
-        var description: String?
-        var quantity: String?
-        var variant : [VarientModel]?
-        var purchased_quantity: String?
-        var pricing: String?
-        var flash_sale: Bool?
-        var accept_offers: Bool?
-        var reserve_for_live: Bool?
-        var shipping_profile_id: Int?
-        var status: String?
-        var product_show: String?
-        var images: [String]?
-        var thumbnail: [String]?
-        var created_at: String?
-        var category: CategoryDataModel?
-    }
 //    StoreProductParam(category_id: "",
 //                      title: "", description: "", quantity: "", pricing: "", flash_sale: "0", accept_offers: "0", reserve_for_live: "0", shipping_profile_id: "", status: "",sub_category_id: "",width: "",length: "", weight: "",height:"",mail_class:"",processing_category:"")
-    func toStoreProductParam() -> StoreProductParam {
-        return StoreProductParam(
-            category_id: "\(category_id ?? 0)",
-            
-            title: title ?? "",
-            description: description ?? "",
-            quantity: quantity ?? "",
-            pricing: pricing ?? "",
-            flash_sale: (flash_sale ?? false) ? "1" : "0",
-            accept_offers: (accept_offers ?? false) ? "1" : "0",
-            reserve_for_live: (reserve_for_live ?? false) ? "1" : "0",
-            shipping_profile_id: "\(shipping_profile_id ?? 0)",
-            status: status ?? "active",        // ✅ Default if nil
-            sub_category_id: nil,              // ✅ optional (customize if needed)
-            width: "0",                        // ✅ Placeholder values
-            length: "0",
-            weight: "0",
-            height: "0",
-            mail_class: "standard",            // ✅ Replace with your defaults
-            processing_category: "regular"     // ✅ Replace with your defaults
-        )
-        
+//    func toStoreProductParam() -> StoreProductParam {
+//        return StoreProductParam(
+//            category_id: "\(category_id ?? 0)",
+//            
+//            title: title ?? "",
+//            description: description ?? "",
+//            quantity: quantity ?? "",
+//            pricing: pricing ?? "",
+//            flash_sale: (flash_sale ?? false) ? "1" : "0",
+//            accept_offers: (accept_offers ?? false) ? "1" : "0",
+//            reserve_for_live: (reserve_for_live ?? false) ? "1" : "0",
+//            shipping_profile_id: "\(shipping_profile_id ?? 0)",
+//            status: status ?? "active",        // ✅ Default if nil
+//            sub_category_id: nil,              // ✅ optional (customize if needed)
+//            width: "0",                        // ✅ Placeholder values
+//            length: "0",
+//            weight: "0",
+//            height: "0",
+//            mail_class: "standard",            // ✅ Replace with your defaults
+//            processing_category: "regular"     // ✅ Replace with your defaults
+//        )
+//        
 //        Missing Field    Description
 //        sub_category_id    Not available in ProductDataModel
 //        width    Not available in ProductDataModel
@@ -131,5 +191,5 @@ extension ProductDataModel {
 //        height    Not available in ProductDataModel
 //        mail_class    Not available in ProductDataModel
 //        processing_category
-    }
+//    }
 }

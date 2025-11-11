@@ -2,7 +2,7 @@
 //  GetAllStaticAPICall.swift
 //  BidCast
 //
-//  Created by JamTech on 05/11/25.
+//  Created by Vivek_JAM_E-328 on 05/11/25.
 //
 
 import Foundation

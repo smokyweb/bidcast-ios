@@ -42,6 +42,7 @@ struct InventoryScreen: View {
     @State var showSellSheet = false
     @State var productData : InventoryDataModel
     @State var navigateToCreateProduct = false
+    @State var navigateToEditProduct = false
     @State var searchText: String = ""
     
     @Binding var selectedProductIDs: Set<String>
@@ -151,8 +152,8 @@ struct InventoryScreen: View {
             )
             .padding(.top, 20)
             .padding(.bottom, -15)
-            
-            CusNavLink(doNavigate: $navigateToCreateProduct, destination: ListProductScreen(productData:.constant(productData))) // for edit
+            CusNavLink(doNavigate: $navigateToEditProduct, destination: EditProductScreen(productData: productToEdit)) // for edit
+            CusNavLink(doNavigate: $navigateToCreateProduct, destination: ListProductScreen(productData:.constant(productData)))
             CusNavLink(doNavigate: $navigateToCreateNewProduct,
                        destination: CreateProductScreen(requests: .constant(StoreScheduleShowRequest(title: "", date: "", time: "", category_id: "", auction_type_id: "", product_ids: "")),
                                                         thumbNail: .constant(""),
@@ -192,9 +193,8 @@ struct InventoryScreen: View {
                 },
                 productID: $productId,
                 onTapEdit: { details  in
-//                    productToEdit = details
-                    
-                    navigateToCreateProduct = true
+                    productToEdit = details.toProductDataModel()
+                    navigateToEditProduct = true
                 },onTapDelete: {
                     SVProgressHUD.show()
                     let param = DeleteProduct(product_id: productId)

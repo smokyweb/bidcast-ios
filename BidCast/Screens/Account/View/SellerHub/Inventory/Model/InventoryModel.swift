@@ -101,24 +101,47 @@ extension InventoryDataModel {
     func toProductDataModel() -> ProductDataModel {
         return ProductDataModel(
             id: self.id,
-            user_id: self.userID,
+            userID: self.userID,
             category_id: self.categoryID,
+            subCategoryID: self.subCategoryID,
             title: self.title,
+            variant: nil, // Inventory doesn't include variant data
+            width: Double(self.width ?? 0.0),
+            length: Double(self.length ?? 0.0),
+            weight: Double(self.weight ?? 0.0),
+            height: Double(self.height ?? 0.0),
+            mailClass: nil, // Inventory doesn’t provide mail class
+            processingCategory: self.processingCategory,
             description: self.description,
             quantity: self.quantity,
-            variant: nil, // Inventory doesn’t have `variant`
-            purchased_quantity: self.purchasedQuantity,
+            purchasedQuantity: self.purchasedQuantity,
             pricing: self.pricing,
-            flash_sale: self.flashSale,
-            accept_offers: self.acceptOffers,
-            reserve_for_live: self.reserveForLive,
-            shipping_profile_id: self.shippingProfileID,
+            flashSale: self.flashSale,
+            acceptOffers: self.acceptOffers,
+            reserveForLive: self.reserveForLive,
+            shippingProfileID: self.shippingProfileID,
             status: self.status,
-            product_show: self.productShow,
+            productShow: self.productShow,
             images: self.images,
             thumbnail: self.thumbnails,
-            created_at: self.createdAt,
-            category: self.category
+            createdAt: self.createdAt,
+            category: self.category.map { ProductCategoryModel(
+                id: $0.id,
+                name: $0.name,
+                image: $0.image,
+                thumbnail: $0.thumbnail,
+                color: $0.color,
+                deletedAt: nil
+            )},
+            subCategory: self.sub_category.map { ProductCategoryModel(
+                id: $0.id,
+                name: $0.name,
+                image: $0.image,
+                thumbnail: $0.thumbnail,
+                color: $0.color,
+                deletedAt: nil
+            )}
         )
     }
 }
+
