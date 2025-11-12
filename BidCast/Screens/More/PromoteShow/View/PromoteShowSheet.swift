@@ -40,13 +40,9 @@ struct PromoteShowSheet: View {
                 VStack(alignment: .leading, spacing: 16) {
                     ForEach(0 ..< boosts.count,id: \.self) { index in
                         let boost = boosts[index]
-                        Button {
-                            onBoostCardClick(boost)
-                        } label: {
-                            BoostCardView(boost: boost)
+                        BoostCardView(boost: boost) { data in
+                            onBoostCardClick(data)
                         }
-
-                       
                     }
                 }
                 .padding([.horizontal, .bottom])

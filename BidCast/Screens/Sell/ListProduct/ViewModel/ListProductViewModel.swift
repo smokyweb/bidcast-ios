@@ -50,13 +50,13 @@ final class ListProductViewModel: ObservableObject {
     
     
     
-    func storeProduct(param: [String:Any]) async {
+    func storeProduct(productId: Int? = nil, param: [String:Any]) async {
         self.requestType = "store"
         
         do {
             
             if let response: ResponseModal<StoreProductModel> = try await APIManager.shared.requestWithJSONBody(
-                type: APIEndPoint.storeProduct(param: param),
+                type: APIEndPoint.storeProduct(productId: productId, param: param),
                 parameters: param,
                 modalType: ResponseModal<StoreProductModel>?.self,
                 header: true){

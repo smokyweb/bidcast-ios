@@ -47,7 +47,7 @@ struct InventoryScreen: View {
     
     @Binding var selectedProductIDs: Set<String>
     @Binding var selectedProductData: [ProductDataModel]
-    @State var productToEdit: ProductDataModel?
+    @State var productToEdit: ProductDataModel = ProductDataModel()
     @State var selectedCategoryId: String = ""
     
     var navigatedFrom: InventoryNavigation = .account
@@ -152,7 +152,7 @@ struct InventoryScreen: View {
             )
             .padding(.top, 20)
             .padding(.bottom, -15)
-            CusNavLink(doNavigate: $navigateToEditProduct, destination: EditProductScreen(productData: productToEdit)) // for edit
+            CusNavLink(doNavigate: $navigateToEditProduct, destination: EditProductScreen(productData: $productToEdit)) // for edit
             CusNavLink(doNavigate: $navigateToCreateProduct, destination: ListProductScreen(productData:.constant(productData)))
             CusNavLink(doNavigate: $navigateToCreateNewProduct,
                        destination: CreateProductScreen(requests: .constant(StoreScheduleShowRequest(title: "", date: "", time: "", category_id: "", auction_type_id: "", product_ids: "")),
@@ -195,6 +195,7 @@ struct InventoryScreen: View {
                 onTapEdit: { details  in
                     productToEdit = details.toProductDataModel()
                     navigateToEditProduct = true
+                    showSellSheet = false
                 },onTapDelete: {
                     SVProgressHUD.show()
                     let param = DeleteProduct(product_id: productId)
@@ -240,7 +241,12 @@ struct InventoryScreen: View {
         let response = viewModel.inventoryDict
         if response?.status == "success" {
             // append new data
-            self.inventoryList.append(contentsOf: response?.data ?? [])
+            if currentPage == 1  {
+                self.inventoryList = response?.data ?? []
+            }
+            else  {
+                self.inventoryList += response?.data ?? []
+            }
         } else {
             alertType = .sheetType(
                 icon: .alert,

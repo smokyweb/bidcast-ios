@@ -61,10 +61,10 @@ extension ProductDetailsModel {
             variant: nil, // 🚨 You can parse JSON string into [Variant] later if needed
             
             // Convert String dimensions → Double safely
-            width: Double(self.width ?? "") ?? 0.0,
-            length: Double(self.length ?? "") ?? 0.0,
-            weight: Double(self.weight ?? "") ?? 0.0,
-            height: Double(self.height ?? "") ?? 0.0,
+            width: self.width ?? 0.0,
+            length: self.length ?? 0.0,
+            weight: self.weight ?? 0.0,
+            height: self.height ?? 0.0,
             
             mailClass: self.mailClass,
             processingCategory: self.processingCategory,

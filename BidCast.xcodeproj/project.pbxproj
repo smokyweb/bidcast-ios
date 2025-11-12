@@ -519,8 +519,9 @@
 		D615BD1F2EBB2A9200EB55C2 /* GetAllStaticAPICall.swift in Sources */ = {isa = PBXBuildFile; fileRef = D615BD1E2EBB2A9200EB55C2 /* GetAllStaticAPICall.swift */; };
 		D65F96BC2EBC682B00EAAD49 /* View+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = D65F96BB2EBC682B00EAAD49 /* View+Extension.swift */; };
 		D665316B2E9E3B5B00F19B94 /* ShimmerViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = D665316A2E9E3B5B00F19B94 /* ShimmerViewModifier.swift */; };
-		D66531752E9E79F400F19B94 /* DownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D66531742E9E79F400F19B94 /* DownloadManager.swift */; };
+		D66531752E9E79F400F19B94 /* FileDownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D66531742E9E79F400F19B94 /* FileDownloadManager.swift */; };
 		D66B575E2EC319DD00A334AA /* EditProductScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D66B575D2EC319DD00A334AA /* EditProductScreen.swift */; };
+		D66B57602EC3424B00A334AA /* DownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D66B575F2EC3424B00A334AA /* DownloadManager.swift */; };
 		D67BA9A02EAF464B00C18882 /* BioView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67BA99F2EAF464B00C18882 /* BioView.swift */; };
 		D67D3F332EBC9EB300F6E513 /* ScheduleRequestStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67D3F322EBC9EB300F6E513 /* ScheduleRequestStore.swift */; };
 		D67DA9642E9D0A4A00ED6556 /* CurrentProductView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67DA9632E9D0A4A00ED6556 /* CurrentProductView.swift */; };
@@ -1047,8 +1048,9 @@
 		D615BD1E2EBB2A9200EB55C2 /* GetAllStaticAPICall.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetAllStaticAPICall.swift; sourceTree = "<group>"; };
 		D65F96BB2EBC682B00EAAD49 /* View+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Extension.swift"; sourceTree = "<group>"; };
 		D665316A2E9E3B5B00F19B94 /* ShimmerViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShimmerViewModifier.swift; sourceTree = "<group>"; };
-		D66531742E9E79F400F19B94 /* DownloadManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadManager.swift; sourceTree = "<group>"; };
+		D66531742E9E79F400F19B94 /* FileDownloadManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileDownloadManager.swift; sourceTree = "<group>"; };
 		D66B575D2EC319DD00A334AA /* EditProductScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProductScreen.swift; sourceTree = "<group>"; };
+		D66B575F2EC3424B00A334AA /* DownloadManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadManager.swift; sourceTree = "<group>"; };
 		D67BA99F2EAF464B00C18882 /* BioView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BioView.swift; sourceTree = "<group>"; };
 		D67D3F322EBC9EB300F6E513 /* ScheduleRequestStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleRequestStore.swift; sourceTree = "<group>"; };
 		D67DA9632E9D0A4A00ED6556 /* CurrentProductView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentProductView.swift; sourceTree = "<group>"; };
@@ -2304,7 +2306,8 @@
 				D4D2B91A2E30E783006F15E6 /* NetworkMonitor.swift */,
 				D694B1BC2EB08C8200411242 /* AgoraManager.swift */,
 				35246EC92E7ABBFB009D7513 /* DolbyManager.swift */,
-				D66531742E9E79F400F19B94 /* DownloadManager.swift */,
+				D66531742E9E79F400F19B94 /* FileDownloadManager.swift */,
+				D66B575F2EC3424B00A334AA /* DownloadManager.swift */,
 				D68C53A22EA0B2DA008E175D /* KeyChainManager.swift */,
 				D613DBB52EB0F22000521D42 /* ImageCacheManager.swift */,
 				D683999F2EB1F41C00F3BDA7 /* DeepLinkManager.swift */,
@@ -4550,7 +4553,7 @@
 				D4CAEC922DE7200300705CD7 /* BoostCardView.swift in Sources */,
 				D4BB9A152DE5C9ED00C1BCBC /* WalletTabView.swift in Sources */,
 				99C909E92DC8CDDC0054620B /* EmployerProfileJobsModal.swift in Sources */,
-				D66531752E9E79F400F19B94 /* DownloadManager.swift in Sources */,
+				D66531752E9E79F400F19B94 /* FileDownloadManager.swift in Sources */,
 				99C909EA2DC8CDDC0054620B /* QualificationResponse.swift in Sources */,
 				D4B6161B2DE86C9700924A3D /* OrderStatusModel.swift in Sources */,
 				D4CAEC362DE6D79600705CD7 /* PremierShopScreen.swift in Sources */,
@@ -4724,6 +4727,7 @@
 				D67D3F332EBC9EB300F6E513 /* ScheduleRequestStore.swift in Sources */,
 				D68399A02EB1F41C00F3BDA7 /* DeepLinkManager.swift in Sources */,
 				35CCE0132DD876C900760CEE /* LessonScreen.swift in Sources */,
+				D66B57602EC3424B00A334AA /* DownloadManager.swift in Sources */,
 				99C9097D2DC8CD790054620B /* ResetPasswordViewModel.swift in Sources */,
 				D665316B2E9E3B5B00F19B94 /* ShimmerViewModifier.swift in Sources */,
 				35CA09E22DD5D996002ABB83 /* VerticalLabelImageCell.swift in Sources */,

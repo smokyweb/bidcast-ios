@@ -29,6 +29,7 @@ struct MediaPickerView: View {
     
     @Binding var uploadedImageUrls: [String]
     
+    var deletedImageClosure: ((Int) -> Void)? = nil
     var body: some View {
         VStack(alignment: .leading) {
             VStack {
@@ -86,17 +87,28 @@ struct MediaPickerView: View {
                             // Media Preview
                             ForEach(uploadedImageUrls.indices, id: \.self) { index in
                                 ZStack(alignment: .topTrailing) {
-                                    Image(uiImage: selectedMedia[index])
-                                        .resizable()
-                                        .scaledToFill()
-                                        .frame(width: 80, height: 80)
-                                        .clipped()
-                                        .cornerRadius(8)
-                                    
-                                    // Delete Button
+                                    if index < selectedMedia.count {
+                                        // ✅ Image is downloaded
+                                        Image(uiImage: selectedMedia[index])
+                                            .resizable()
+                                            .scaledToFill()
+                                            .frame(width: 80, height: 80)
+                                            .clipped()
+                                            .cornerRadius(8)
+                                    } else {
+                                        // ⏳ Show shimmer while downloading
+                                        ShimmerView()
+                                            .frame(width: 80, height: 80)
+                                            .cornerRadius(8)
+                                    }
+
+                                    // ❌ Delete Button
                                     Button(action: {
-                                        selectedMedia.remove(at: index)
+                                        if index < selectedMedia.count {
+                                            selectedMedia.remove(at: index)
+                                        }
                                         uploadedImageUrls.remove(at: index)
+                                        deletedImageClosure?(index)
                                     }) {
                                         Image(systemName: "xmark.circle.fill")
                                             .resizable()
@@ -109,6 +121,7 @@ struct MediaPickerView: View {
                                     .buttonStyle(PlainButtonStyle())
                                 }
                             }
+
                         }
                         .padding(.vertical, 4)
                     }
@@ -120,9 +133,14 @@ struct MediaPickerView: View {
             .cornerRadius(12)
             .padding(.all, 12)
         }
-        .onAppear {
-            if uploadedImageUrls.isEmpty {
-                selectedMedia.removeAll()
+        .onFirstAppear {
+            selectedMedia.removeAll()
+            for item in uploadedImageUrls {
+                DownloadManager.shared.downloadImage(from: item) { image in
+                    if let img = image {
+                        selectedMedia.append(img)
+                    }
+                }
             }
         }
         .background(.clear)
@@ -173,3 +191,28 @@ struct MediaPickerView: View {
     }
 }
 
+struct ShimmerView: View {
+    @State private var isAnimating: Bool = false
+
+    var body: some View {
+        ZStack {
+            Color.gray.opacity(0.3)
+                .cornerRadius(8)
+                .overlay(
+                    LinearGradient(gradient: Gradient(colors: [.gray.opacity(0.3), .gray.opacity(0.1), .gray.opacity(0.3)]),
+                                   startPoint: .leading,
+                                   endPoint: .trailing)
+                        .rotationEffect(.degrees(0))
+                        .offset(x: isAnimating ? 300 : -300)
+                )
+                .mask(RoundedRectangle(cornerRadius: 8).fill(Color.white))
+                .frame(width: 80, height: 80)
+                .clipped()
+                .onAppear {
+                    withAnimation(Animation.linear(duration: 3.0).repeatForever(autoreverses: false)) {
+                        isAnimating.toggle()
+                    }
+                }
+        }
+    }
+}

@@ -1,81 +1,65 @@
 //
-//  DownloadManager.swift
+//  DoownloadManager.swift
 //  BidCast
 //
-//  Created by Vivek-JAM_E-328 on 14/10/25.
+//  Created by JamTech on 11/11/25.
 //
 
 import Foundation
-import UserNotifications
 import UIKit
 
-class FileDownloader: NSObject, URLSessionDownloadDelegate {
-    static let shared = FileDownloader()
+final class DownloadManager {
     
-    private var session: URLSession!
-    private var downloadTask: URLSessionDownloadTask?
-
-    private override init() {
-        super.init()
-        let config = URLSessionConfiguration.default
-        session = URLSession(configuration: config, delegate: self, delegateQueue: nil)
-    }
+    // MARK: - Singleton Instance
+    static let shared = DownloadManager()
+    private init() {}
     
-    func startDownload(from urlString: String) {
-        guard let url = URL(string: urlString) else { return }
-        downloadTask = session.downloadTask(with: url)
-        downloadTask?.resume()
-    }
+    // MARK: - In-Memory Cache
+    private let cache = NSCache<NSString, UIImage>()
     
-    // MARK: - Delegate
-    
-    func urlSession(_ session: URLSession,
-                    downloadTask: URLSessionDownloadTask,
-                    didWriteData bytesWritten: Int64,
-                    totalBytesWritten: Int64,
-                    totalBytesExpectedToWrite: Int64) {
-        let progress = Double(totalBytesWritten) / Double(totalBytesExpectedToWrite)
-        sendProgressNotification(progress: progress)
-    }
-
-    func urlSession(_ session: URLSession,
-                    downloadTask: URLSessionDownloadTask,
-                    didFinishDownloadingTo location: URL) {
-        
-        let fileManager = FileManager.default
-        let docsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        let destinationURL = docsURL.appendingPathComponent("downloaded-receipt.pdf")
-        
-        try? fileManager.removeItem(at: destinationURL)
-        
-        do {
-            try fileManager.copyItem(at: location, to: destinationURL)
-            sendCompletionNotification(filePath: destinationURL.path)
-        } catch {
-            print("Error saving file:", error)
+    // MARK: - Download Image Function
+    func downloadImage(from urlString: String, completion: @escaping (UIImage?) -> Void) {
+        // 1️⃣ Validate URL
+        guard let url = URL(string: urlString) else {
+            print("❌ Invalid URL: \(urlString)")
+            completion(nil)
+            return
         }
-    }
-    
-    // MARK: - Notifications
-    
-    private func sendProgressNotification(progress: Double) {
-        let content = UNMutableNotificationContent()
-        content.title = "Downloading Receipt..."
-        content.body = "Progress: \(Int(progress * 100))%"
-        content.sound = .default
-        let request = UNNotificationRequest(identifier: "progressNotification", content: content, trigger: nil)
-        UNUserNotificationCenter.current().add(request)
-    }
-
-    private func sendCompletionNotification(filePath: String) {
-        let content = UNMutableNotificationContent()
-        content.title = "Download Complete"
-        content.body = "Tap to open the receipt."
-        content.categoryIdentifier = "DOWNLOAD_COMPLETE"
-        content.userInfo = ["filePath": filePath]
-        content.sound = .default
-
-        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
-        UNUserNotificationCenter.current().add(request)
+        
+        // 2️⃣ Check if image is already cached
+        if let cachedImage = cache.object(forKey: urlString as NSString) {
+            print("✅ Loaded from cache: \(urlString)")
+            completion(cachedImage)
+            return
+        }
+        
+        // 3️⃣ Download from network
+        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+            if let error = error {
+                print("❌ Image download error:", error.localizedDescription)
+                DispatchQueue.main.async { completion(nil) }
+                return
+            }
+            
+            guard
+                let data = data,
+                let image = UIImage(data: data)
+            else {
+                print("❌ Invalid image data for URL:", urlString)
+                DispatchQueue.main.async { completion(nil) }
+                return
+            }
+            
+            // 4️⃣ Cache it
+            self.cache.setObject(image, forKey: urlString as NSString)
+            
+            // 5️⃣ Return image on main thread
+            DispatchQueue.main.async {
+                print("⬇️ Downloaded from network: \(urlString)")
+                completion(image)
+            }
+        }
+        
+        task.resume()
     }
 }

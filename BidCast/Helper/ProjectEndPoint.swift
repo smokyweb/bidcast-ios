@@ -35,7 +35,7 @@ enum APIEndPoint{
     case showTips
     case letsPrepare
     case getAllTips(param:TipParam)
-    case storeProduct(param : [String:Any] )
+    case storeProduct(productId: Int? ,param : [String:Any] )
     case storeAddress(param:AddressRequest)
     case getAddress
     case setDefaultAddress(param:AddressDefaultParam)
@@ -254,8 +254,14 @@ extension APIEndPoint: EndPointType {
             return "get-auction-type"
         case .getInventory:
             return "get-my-inventory"
-        case .storeProduct:
-            return "store-product"
+        case .storeProduct(param:let param):
+            if let id = param.productId {
+                return "store-product?product_id=\(id)"
+            }
+            else  {
+                return "store-product"
+            }
+            
         case .getAllTips:
             return "get-all-tips"
         case .storeAddress:
@@ -1349,7 +1355,7 @@ extension APIEndPoint: EndPointType {
             return nil
         case .getAllTips(param: let param):
             return nil
-        case .storeProduct(param: let param):
+        case .storeProduct(productId: let proId, param: let param):
             return param
         case .storeAddress(param: let param):
             return nil

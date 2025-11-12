@@ -27,6 +27,7 @@ struct EditProductScreen: View {
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @State var categoryNames: [String] = []
     @State var selectedCategory = ""
+    @State var productId: Int = -1
     @State var categoryList: [CategoryDataModel] = []
     @State var shippingAddressName: [String] = []
     @State var shippingId = ""
@@ -37,6 +38,7 @@ struct EditProductScreen: View {
     
     @StateObject var viewModel = ListProductViewModel()
     @State var imageUrls: [String] = []
+    @State var thumbnailUrls: [String] = []
     
     @State var showSellerSheet = false
     @State var navigateToSeller = false
@@ -45,7 +47,7 @@ struct EditProductScreen: View {
     @State var selectedSubCategory = ""
     @State var subCategoryList: [CategoryDataModel] = []
     @State var subCategoryName : [String] = [""]
-    @State var productData : ProductDataModel?
+    @Binding var productData : ProductDataModel
     @State var extraFields: [ExtraFieldModel] = []
     @State var processingListArr = ["Letters","Flats","Machinaable","Nonstandard","Non Machinable"]
     @State var extraFieldValues: [String: String] = [:]
@@ -57,7 +59,7 @@ struct EditProductScreen: View {
             VStack{
                 VStack{
                     PrimaryHeader(
-                        title: "List a Product".localized,
+                        title: "Edit Product".localized,
                         isForLogo : false, leadingImgArr: [.sideArrow],
                         trailingImgArr: [],
                         onClickLeading: { _ in
@@ -71,7 +73,9 @@ struct EditProductScreen: View {
                 
                 ScrollView(showsIndicators:false){
                     
-                    MediaPickerView(uploadedImageUrls: $imageUrls)
+                    MediaPickerView(uploadedImageUrls: $imageUrls) { index in
+                        thumbnailUrls.remove(at: index)
+                    }
                     
                     VStack(alignment:.leading,spacing: 8){
                         Text("Product Details".localized)
@@ -449,8 +453,10 @@ struct EditProductScreen: View {
         }
 //        .edgesIgnoringSafeArea(.top/)
         .background(.bg.opacity(0.4))
-        .onFirstAppear(perform: {
+        .onAppear {
             getProductDetails()
+        }
+        .onFirstAppear(perform: {
             Task{
                guard Reachability.isConnectedToNetwork() else {
                     hudMsg = "No Internet Connection"
@@ -541,7 +547,24 @@ struct EditProductScreen: View {
                 }
             ) {
                 viewModel.errorMessage?.removeAll()
-                await viewModel.uploadStoreImage(images: imageUrls, key: "images[]")
+                let localImages = imageUrls.filter { url in
+                    !(url.hasPrefix("http://") || url.hasPrefix("https://"))
+                }
+                
+                let serverImages = imageUrls.filter { url in
+                    (url.hasPrefix("http://") || url.hasPrefix("https://"))
+                }
+                
+                let serverThumbnails = thumbnailUrls.filter { url in
+                    (url.hasPrefix("http://") || url.hasPrefix("https://"))
+                }
+
+                // 2️⃣ Upload only local images
+                if !localImages.isEmpty {
+                    await viewModel.uploadStoreImage(images: localImages, key: "images[]")
+                } else {
+                    print("✅ No new local images to upload")
+                }
                 if let errorMessage = self.viewModel.errorMessage, errorMessage != "" {
                     alertType = .sheetType(
                         icon: .alert,
@@ -553,13 +576,21 @@ struct EditProductScreen: View {
                     showError = true
                 }
                 else  {
-                    guard let response = self.viewModel.storeImageResponse,
-                          response.status == "success" else { return }
-                    
-                    // 🔹 Build uploaded image data
-                    let uploadedUrls: [[String: String]] = response.data.map {
-                        ["image": $0.images ?? "", "thumbnail": $0.thumbnail ?? ""]
+                    var uploadedUrls: [[String: String]] = []
+                    if !localImages.isEmpty {
+                        guard let response = self.viewModel.storeImageResponse,
+                              response.status == "success" else { return }
+                        
+                        uploadedUrls = response.data.map {
+                            ["image": $0.images ?? "", "thumbnail": $0.thumbnail ?? ""]
+                        }
                     }
+                    // 🔹 Build uploaded image data
+                   
+                    for (index, item) in serverImages.enumerated() {
+                        uploadedUrls.append(["image": item, "thumbnail": serverThumbnails[index]])
+                    }
+                    
                     
                     // 🔹 Build extra fields
                     let variantArray = buildVariantArray(extraFields: extraFields,
@@ -568,6 +599,7 @@ struct EditProductScreen: View {
                     
                     // 🔹 Prepare request body
                     var productRequest: [String: Any] = [
+
                         "category_id": request.category_id,
                         "sub_category_id": request.sub_category_id ?? "",
                         "title": request.title,
@@ -598,7 +630,7 @@ struct EditProductScreen: View {
                     
                     // 🔹 Call product store API
                     self.viewModel.errorMessage?.removeAll()
-                    await viewModel.storeProduct(param: productRequest)
+                    await viewModel.storeProduct(productId: productId, param: productRequest)
                     storeSuccess()
                 }
             }
@@ -611,6 +643,7 @@ struct EditProductScreen: View {
         let response = viewModel.categoryResponse
         if response?.status == "success" {
             self.categoryList = response?.data ?? [CategoryDataModel]()
+            selectedCategory = self.categoryList.filter({$0.id == Int(request.category_id)}).first?.name ?? ""
             self.categoryNames = response?.data.map { $0.name ?? "No Category" } ?? [String]()
         } else {
             alertType = .sheetType(
@@ -627,9 +660,9 @@ struct EditProductScreen: View {
     }
         
     func getProductDetails() {
-        if let productData = self.productData{
             selectedCategory = productData.category?.name ?? ""
-            request = StoreProductParam(category_id: "\(productData.category?.id ?? 0)",
+            productId = productData.id ?? 0
+            request = StoreProductParam(category_id: "\(productData.category_id ?? 0)",
                                         title: productData.title ?? "",
                                         description: productData.description ?? "",
                                         quantity: "\(productData.quantity ?? "0")",
@@ -651,20 +684,23 @@ struct EditProductScreen: View {
             isTappedReserve = productData.reserveForLive ?? false ? true : false
             
             self.imageUrls = productData.images ?? [String]()
+            self.thumbnailUrls = productData.thumbnail ?? [String]()
             if request.category_id == "0"{
                 request.category_id.removeAll()
             }
             if request.quantity == "0"{
                 request.quantity.removeAll()
             }
-            if request.pricing == "0.0" {
-                request.pricing.removeAll()
-            }
-            if imageUrls == [""]{
-                self.imageUrls.removeAll()
-            }
-            
+        if request.pricing == "0.0" {
+            request.pricing.removeAll()
         }
+        if imageUrls == []{
+            self.imageUrls.removeAll()
+        }
+        if thumbnailUrls == []{
+            self.thumbnailUrls.removeAll()
+        }
+        
     }
     
     // MARK: - Validation

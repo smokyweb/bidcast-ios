@@ -31,6 +31,7 @@ struct CustomProfileImage: View {
                 isCircular: isCircular,
                 defaultImage: defaultImage
             )
+            .id(imageURL.absoluteString)
         } else {
             Image(defaultImage ?? "defaultUser")
                 .resizable()
@@ -68,6 +69,10 @@ struct CachedAsyncImage: View {
                         loadImage()
                     }
             }
+        }
+        .onChange(of: url?.absoluteString) { _ in
+            uiImage = nil
+            loadImage()
         }
     }
 
