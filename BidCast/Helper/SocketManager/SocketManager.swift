@@ -203,6 +203,20 @@ final class SocketManagerService: NSObject, ObservableObject {
 //            }
 //        }
 //    }
+    
+    func removeAllListeners() {
+        
+        // Remove Core listeners
+        removeChatListener()
+        removeViewerCountListener()
+        removeBidTimerListener()
+        removeRoomEndedListener()
+        removeHighestBidtListener()
+        removeAllowBidForAllListener()
+        removeRoomCreateListener()
+        removeBidFinalizedListener()
+        removeNextProductSetListener()
+    }
 
     func observeRoomUpdates(completion: ((_ room: RoomModel) -> Void)? = nil) {
         performIfConnected {
@@ -284,6 +298,46 @@ final class SocketManagerService: NSObject, ObservableObject {
         socket.off("chat_get")
         print("🧹 Removed chat listener for 'chat_get'")
     }
+    
+    func removeViewerCountListener() {
+        socket.off("viewerCount")
+        print("🧹 Removed viewer count listener for 'chat_get'")
+    }
+    
+    func removeBidTimerListener() {
+        socket.off("bid_timer_update")
+        print("🧹 Removed bid_timer_update listener")
+    }
+    
+    func removeRoomEndedListener() {
+        socket.off("roomEnded")
+        print("🧹 Removed roomEnded listener")
+    }
+    
+    func removeHighestBidtListener() {
+        socket.off("get_highest_bid")
+        print("🧹 Removed Highest Bid listener")
+    }
+    
+    func removeAllowBidForAllListener() {
+        socket.off("allow_bid_for_all_get")
+        print("🧹 Removed allow_bid_for_all_get listener")
+    }
+    
+    func removeRoomCreateListener() {
+        socket.off("room_create_get")
+        print("🧹 Removed room_create listener")
+    }
+    
+    func removeBidFinalizedListener() {
+        socket.off("bid_finalized")
+        print("🧹 Removed bid_finalized listener")
+    }
+    
+    func removeNextProductSetListener() {
+        socket.off("next_product_set")
+        print("🧹 Removed next_product_set listener")
+    }
 
     
     func listenForViewerCount() {
@@ -322,6 +376,7 @@ final class SocketManagerService: NSObject, ObservableObject {
             bidTime = formatElapsedTime(seconds: remaining)
         }
     }
+    
     
     // MARK: - Timer Handling
     func startLiveScheduler(roomId: String) {

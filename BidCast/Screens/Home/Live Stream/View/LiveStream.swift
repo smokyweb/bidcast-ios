@@ -584,13 +584,25 @@ struct LiveStream: View {
                                 withAnimation(.easeInOut) {
                                     verticalDragOffset = CGSize(width: 0, height: -geometry.size.height)
                                 }
-//                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                    //leave current stream
+                                    logoutRoom()
+                                    hasHostEndedRoom.toggle()
+                                    //shift to next stream
+                                    
+                                        //get next show agora token
+                                       //get currentroom id
+                                        //call beelow func for updated room id
+                                    socketManagerChat.joinRoom(roomId: currentRoomID, completion: {
+                    //                        guard let self = self else { return }
+                                            joinStreamUsingSocket(roomId: currentRoomID)
+                                        })
 //                                    verticalDragOffset = .zero
 //                                    ZegoExpressEngine.shared().stopPlayingStream(streamID[currentIndex])
 //                                    currentStreamIndex += 1
 //                                    loginRoom(roomId: liveShowsData[currentStreamIndex].room_id ?? "")
 //                                    fetchBiddingDetail(roomId: liveShowsData[currentStreamIndex].room_id ?? "")
-//                                }
+                                }
                             } else if verticalAmount > swipeThreshold && currentIndex > 0 {
                                 // Swipe Down
                                 withAnimation(.easeInOut) {
@@ -654,7 +666,7 @@ struct LiveStream: View {
                             hasHostEndedRoom.toggle()
                         }
                         self.presentationMode.wrappedValue.dismiss()
-                self.presentationMode.wrappedValue.dismiss()
+                        self.presentationMode.wrappedValue.dismiss()
                     }
                 },
                 onSecondaryClick: {
@@ -912,7 +924,6 @@ struct LiveStream: View {
         return currentPrice + increment
     }
     
-    
     //MARK: walletInfosuccess.
     func getProfileSuccess() async{
         let response  = homeViewModel.accountInfo
@@ -937,174 +948,357 @@ struct LiveStream: View {
         }
     }
     
-    func startListening(roomId: String) {
-        FirebaseManager.shared.observeCountdown(for: roomId) { seconds in
-            DispatchQueue.main.async {
-                self.countdown = seconds
-                print("self.countdown \(self.countdown)")
-            }
+    private func presentError(title: String, message: String) {
+        showError = true
+        alertType = .sheetType(
+            icon: .alert,
+            title: title,
+            message: message,
+            primaryBtnText: "",
+            secondaryBtnText: AppString.ok.localized
+        )
+    }
+    
+    @MainActor
+    private func setupSocketListeners(for roomId: String) async {
+        let userId = UserDefaults.userId
+        let userName = UserDefaults.userName
+        let userImage = UserDefaults.profileURL
+
+        // Notify entry
+        SocketManagerService.shared.sendChat(
+            roomId: roomId,
+            message: "Joining the host… ",
+            userId: userId,
+            userName: userName,
+            userImage: userImage
+        )
+
+        // Core listeners
+        socketManagerChat.listenForChat(roomId: roomId)
+        socketManagerChat.listenForViewerCount()
+        socketManagerChat.listenForBidTimer(roomId: roomId)
+
+        // Stream end listener
+        socketManagerChat.listenForRoomEnded { endedRoomId in
+            guard roomId == endedRoomId else { return }
+            presentError(title: "Stream Ended", message: "The host has ended the live stream.")
+            hasHostEndedRoom = true
+        }
+
+        // Highest bid listener
+        SocketManagerService.shared.listenForHighestBid(forRoom: roomId) { highestBid in
+            guard let bid = highestBid else { return }
+            print("🏆 Highest Bid: \(bid.user_name ?? "") - \(bid.bid_amount ?? "")")
+            winnerName = bid.user_name ?? ""
+            winnerProfileID = Int(bid.user_id ?? "") ?? 0
+            winnerProfileImage = bid.user_image ?? ""
+            winnerAmount = bid.bid_amount ?? ""
+        }
+
+        // Bid permission listener
+        SocketManagerService.shared.getAllowBidForAll(forRoom: roomId) { allowed in
+            UserDefaults.allowBidForAllUser = allowed
+            print("⚙️ Allow bid for all: \(allowed)")
+        }
+
+        // Room updates listener
+        SocketManagerService.shared.observeRoomUpdates { newRoom in
+            print("🏠 Room updated: \(newRoom.room_id ?? "unknown")")
+            fetchProducts(for: newRoom.room_id ?? "")
+        }
+
+        // Bid finalized listener
+        SocketManagerService.shared.listenForBidFinalized { roomId, productId, winner in
+            handleBidFinalized(for: roomId, winner: winner)
+        }
+
+        // Next product listener
+        SocketManagerService.shared.listenForNextProduct { roomId, _ in
+            fetchProducts(for: roomId)
         }
     }
+    
+    private func handleBidFinalized(for roomId: String, winner: HighestBid?) {
+        fetchProducts(for: roomId)
+
+        let name = winner?.user_name ?? ""
+        let id = Int(winner?.user_id ?? "") ?? 0
+        let image = winner?.user_image ?? ""
+        let amount = winner?.bid_amount ?? ""
+
+        print("🏁 Bid finalized - Winner: \(name), Amount: \(amount)")
+
+        winnerName = name
+        winnerProfileID = id
+        winnerProfileImage = image
+        winnerAmount = amount
+        winnerSheet = true
+    }
+    
+    private func handleBuyerVerification() {
+        switch UserDefaults.buyerVerafied {
+        case "pending":
+            alertType = .sheetType(
+                icon: .info,
+                title: "Become a Verified Buyer!",
+                message: "Your verification is currently pending approval by the admin. You will be notified once the process is complete.",
+                primaryBtnText: "OK",
+                secondaryBtnText: "",
+                buttonWidth: screenWidth - 40,
+                contentSize: 12.0
+            )
+            withAnimation(.snappy) { showVerificationSheet = true }
+
+        case "verified":
+            if !UserDefaults.sellerAddress {
+                titleText = "Add Address"
+                showPaymentShipping = true
+            } else if !UserDefaults.hasCardAdded {
+                titleText = "Add Card"
+                showPaymentShipping = true
+            }
+
+        default:
+            alertType = .sheetType(
+                icon: .info,
+                title: "Become a Verified Buyer!",
+                message: "Before you interact with live shows, you need to become a verified buyer.",
+                primaryBtnText: "OK",
+                secondaryBtnText: "",
+                buttonWidth: screenWidth - 40,
+                contentSize: 12.0
+            )
+            withAnimation(.snappy) { showVerificationSheet = true }
+        }
+    }
+
+
     @MainActor
-    func joinStreamUsingSocket(roomId: String)  {
+    func joinStreamUsingSocket(roomId: String) {
         let socketRooms = socketManagerChat.rooms
+
+        // 🧱 STEP 1: Validate rooms
         guard !socketRooms.isEmpty else {
-            showError = true
-            alertType = .sheetType(
-                icon: .alert,
+            presentError(
                 title: "No Active Streams",
-                message: "There are no live streams available at the moment.",
-                primaryBtnText: "",
-                secondaryBtnText: AppString.ok.localized
+                message: "There are no live streams available at the moment."
             )
             return
         }
-        
-        // Check if requested room exists in socket rooms
+
+        // 🧱 STEP 2: Validate room existence
         guard let matchingRoomIndex = socketRooms.firstIndex(where: { $0.room_id == roomId }) else {
-            showError = true
-            alertType = .sheetType(
-                icon: .alert,
+            presentError(
                 title: "Stream Not Found",
-                message: "The requested stream is not available right now.",
-                primaryBtnText: "",
-                secondaryBtnText: AppString.ok.localized
+                message: "The requested stream is not available right now."
             )
             return
         }
-        if self.agoraToken != "" && roomId != "" {
-            print("AAgora Token: \(self.agoraToken)")
+
+        // 🧱 STEP 3: Join Agora Channel (if applicable)
+        if !agoraToken.isEmpty && !roomId.isEmpty {
+            print("🎥 Joining Agora with token: \(agoraToken)")
             agoraManager.joinChannel(asHost: isHost, channelName: roomId, token: agoraToken)
         }
-        
-        //add follow unfollow status
+
+        // 🧱 STEP 4: Setup follow/unfollow listener
         socketManagerChat.listenForUserFollowStatus()
-        
-        // Set the current room data
+
+        // 🧱 STEP 5: Update local state
         DispatchQueue.main.async {
             self.liveShowsData = socketRooms
             self.roomID = socketRooms.compactMap { $0.room_id }
             self.streamID = self.roomID
-            currentIndex = matchingRoomIndex
             self.currentRoomID = roomId
-            print("currentStreamIndex \(currentStreamIndex) matchingRoomIndex index \(matchingRoomIndex)")
-            // Join the room and send entry message
-            
-            Task {
-                
-//                try await joinManager.subscribe(streamName: roomId)
-                
-//              socketManagerChat.joinRoom(roomId: roomId, userId: UserDefaults.userId)
-                let userId = UserDefaults.userId
-                let userName = UserDefaults.userName
-                let userImage = UserDefaults.profileURL
-                SocketManagerService.shared.sendChat(roomId: roomId, message: "Joining the host… ", userId: userId, userName: userName, userImage: userImage)
-                socketManagerChat.listenForChat(roomId: roomId)
-                socketManagerChat.listenForViewerCount()
-                socketManagerChat.listenForBidTimer(roomId: roomId)
-                socketManagerChat.listenForRoomEnded(onEnd: { room_Id in
-                    if roomId == room_Id {
-                        print("🔥 STREAM REMOVED CALLBACK TRIGGERED 🔥")
-                        // Show "Stream Ended" alert
-                        self.alertType = .sheetType(
-                            icon: .alert,
-                            title: "Stream Ended",
-                            message: "The host has ended the live stream.",
-                            primaryBtnText: AppString.ok.localized,
-                            secondaryBtnText: ""
-                        )
-                        self.showError = true
-                        self.hasHostEndedRoom = true
-                    }
-                })
-                
-                SocketManagerService.shared.listenForHighestBid(forRoom: roomId) { highestBid in
-                    if let bid = highestBid {
-                        print("🏆 Updated bid in this room: \(bid.user_name ?? "") - \(bid.bid_amount ?? "")")
-                        winnerName = bid.user_name ?? ""
-                        winnerProfileID = Int(bid.user_id ?? "") ?? 0
-                        winnerProfileImage = bid.user_image ?? ""
-                        winnerAmount = bid.bid_amount  ?? ""
-//                        print("Winner: \(winnerName), Amount: \(winnerAmount)")
-                    }
-                }
-                SocketManagerService.shared.getAllowBidForAll(forRoom: roomId){ allowed in
-                    print("alllow BUd \(UserDefaults.allowBidForAllUser)")
-                    UserDefaults.allowBidForAllUser = allowed
-                    
-                }
-                
-                SocketManagerService.shared.observeRoomUpdates { newRoom in
-                    print("🏠 New room received:", newRoom.room_id ?? "unknown")
-                    fetchProducts(for: newRoom.room_id ?? "")
-                }
-                
-                SocketManagerService.shared.listenForBidFinalized(completion: { roomId,productId,winner in
-                    fetchProducts(for: roomId)
-                    let winnerNameFromServer = winner?.user_name ?? ""
-                    let winnerIdFromServer = winner?.user_id ?? ""
-                    let winnerProfileImageFromServer = winner?.user_image ?? ""
-                    print("id - > \(winnerIdFromServer)")
-                    print("name - > \(winnerNameFromServer)")
-                    print("image - > \(winnerProfileImageFromServer)")
-                    
-                    winnerName = winnerNameFromServer
-                    winnerProfileID = Int(winnerIdFromServer) ?? 0
-                    winnerProfileImage = winnerProfileImageFromServer
-                    winnerAmount = winner?.bid_amount ?? ""
-                    print("Winner: \(winnerName), Amount: \(winnerAmount)")
-                    
-                    winnerSheet = true
-                })
-                SocketManagerService.shared.listenForNextProduct(completion: { roomId,nextProductId in
-                    
-                    fetchProducts(for: roomId)
-                   
-                })
-            }
-            
-            // Update follow status
+            self.currentIndex = matchingRoomIndex
+
             let currentShow = socketRooms[matchingRoomIndex]
-//            self.isFollow = currentShow.seller?.isFollowed ?? false
-            fetchProducts(for: roomId)
-            
-            // Handle buyer verification
-            switch UserDefaults.buyerVerafied {
-            case "pending":
-                self.alertType = .sheetType(
-                    icon: .info,
-                    title: "Become a Verified Buyer!",
-                    message: "Your verification is currently pending approval by the admin. You will be notified once the process is complete.",
-                    primaryBtnText: "OK",
-                    secondaryBtnText: "",
-                    buttonWidth: screenWidth - 40,
-                    contentSize: 12.0
-                )
-                withAnimation(.snappy) { self.showVerificationSheet = true }
-                
-            case "verified":
-                if UserDefaults.sellerAddress == false {
-                    self.showPaymentShipping = true
-                    self.titleText = "Add Address"
-                } else if UserDefaults.hasCardAdded == false {
-                    self.showPaymentShipping = true
-                    self.titleText = "Add Card"
-                }
-                
-            default:
-                self.alertType = .sheetType(
-                    icon: .info,
-                    title: "Become a Verified Buyer!",
-                    message: "Before you interact with live shows, you need to become a verified buyer.",
-                    primaryBtnText: "OK",
-                    secondaryBtnText: "",
-                    buttonWidth: screenWidth - 40,
-                    contentSize: 12.0
-                )
-                withAnimation(.snappy) { self.showVerificationSheet = true }
+            print("🎬 Joining stream: \(roomId) at index \(matchingRoomIndex)")
+
+            // 🧱 STEP 6: Clean up previous stream listeners before joining a new one
+            SocketManagerService.shared.removeAllListeners()
+
+            // 🧱 STEP 7: Join room and setup listeners
+            Task {
+                await setupSocketListeners(for: roomId)
             }
+
+            // 🧱 STEP 8: Update follow status (if available)
+            // self.isFollow = currentShow.seller?.isFollowed ?? false
+
+            // 🧱 STEP 9: Fetch initial product info
+            fetchProducts(for: roomId)
+
+            // 🧱 STEP 10: Handle buyer verification
+            handleBuyerVerification()
         }
     }
+
+    @MainActor
+//    func joinStreamUsingSocket1(roomId: String)  {
+//        let socketRooms = socketManagerChat.rooms
+//        guard !socketRooms.isEmpty else {
+//            showError = true
+//            alertType = .sheetType(
+//                icon: .alert,
+//                title: "No Active Streams",
+//                message: "There are no live streams available at the moment.",
+//                primaryBtnText: "",
+//                secondaryBtnText: AppString.ok.localized
+//            )
+//            return
+//        }
+//        
+//        // Check if requested room exists in socket rooms
+//        guard let matchingRoomIndex = socketRooms.firstIndex(where: { $0.room_id == roomId }) else {
+//            showError = true
+//            alertType = .sheetType(
+//                icon: .alert,
+//                title: "Stream Not Found",
+//                message: "The requested stream is not available right now.",
+//                primaryBtnText: "",
+//                secondaryBtnText: AppString.ok.localized
+//            )
+//            return
+//        }
+//        if self.agoraToken != "" && roomId != "" {
+//            print("AAgora Token: \(self.agoraToken)")
+//            agoraManager.joinChannel(asHost: isHost, channelName: roomId, token: agoraToken)
+//        }
+//        
+//        //add follow unfollow status
+//        socketManagerChat.listenForUserFollowStatus()
+//        
+//        // Set the current room data
+//        DispatchQueue.main.async {
+//            self.liveShowsData = socketRooms
+//            self.roomID = socketRooms.compactMap { $0.room_id }
+//            self.streamID = self.roomID
+//            
+//            let currentShow = socketRooms[matchingRoomIndex]
+//            
+//            currentIndex = matchingRoomIndex
+//            self.currentRoomID = roomId
+//            
+//            
+//            print("currentStreamIndex \(currentStreamIndex) matchingRoomIndex index \(matchingRoomIndex)")
+//            // Join the room and send entry message
+//            
+//            Task {
+//                
+////                try await joinManager.subscribe(streamName: roomId)
+//                
+////              socketManagerChat.joinRoom(roomId: roomId, userId: UserDefaults.userId)
+//                let userId = UserDefaults.userId
+//                let userName = UserDefaults.userName
+//                let userImage = UserDefaults.profileURL
+//                SocketManagerService.shared.sendChat(roomId: roomId, message: "Joining the host… ", userId: userId, userName: userName, userImage: userImage)
+//                socketManagerChat.listenForChat(roomId: roomId)
+//                socketManagerChat.listenForViewerCount()
+//                socketManagerChat.listenForBidTimer(roomId: roomId)
+//                socketManagerChat.listenForRoomEnded(onEnd: { room_Id in
+//                    if roomId == room_Id {
+//                        print("🔥 STREAM REMOVED CALLBACK TRIGGERED 🔥")
+//                        // Show "Stream Ended" alert
+//                        self.alertType = .sheetType(
+//                            icon: .alert,
+//                            title: "Stream Ended",
+//                            message: "The host has ended the live stream.",
+//                            primaryBtnText: AppString.ok.localized,
+//                            secondaryBtnText: ""
+//                        )
+//                        self.showError = true
+//                        self.hasHostEndedRoom = true
+//                    }
+//                })
+//                
+//                SocketManagerService.shared.listenForHighestBid(forRoom: roomId) { highestBid in
+//                    if let bid = highestBid {
+//                        print("🏆 Updated bid in this room: \(bid.user_name ?? "") - \(bid.bid_amount ?? "")")
+//                        winnerName = bid.user_name ?? ""
+//                        winnerProfileID = Int(bid.user_id ?? "") ?? 0
+//                        winnerProfileImage = bid.user_image ?? ""
+//                        winnerAmount = bid.bid_amount  ?? ""
+////                        print("Winner: \(winnerName), Amount: \(winnerAmount)")
+//                    }
+//                }
+//                SocketManagerService.shared.getAllowBidForAll(forRoom: roomId){ allowed in
+//                    print("alllow BUd \(UserDefaults.allowBidForAllUser)")
+//                    UserDefaults.allowBidForAllUser = allowed
+//                    
+//                }
+//                
+//                SocketManagerService.shared.observeRoomUpdates { newRoom in
+//                    print("🏠 New room received:", newRoom.room_id ?? "unknown")
+//                    fetchProducts(for: newRoom.room_id ?? "")
+//                }
+//                
+//                SocketManagerService.shared.listenForBidFinalized(completion: { roomId,productId,winner in
+//                    fetchProducts(for: roomId)
+//                    let winnerNameFromServer = winner?.user_name ?? ""
+//                    let winnerIdFromServer = winner?.user_id ?? ""
+//                    let winnerProfileImageFromServer = winner?.user_image ?? ""
+//                    print("id - > \(winnerIdFromServer)")
+//                    print("name - > \(winnerNameFromServer)")
+//                    print("image - > \(winnerProfileImageFromServer)")
+//                    
+//                    winnerName = winnerNameFromServer
+//                    winnerProfileID = Int(winnerIdFromServer) ?? 0
+//                    winnerProfileImage = winnerProfileImageFromServer
+//                    winnerAmount = winner?.bid_amount ?? ""
+//                    print("Winner: \(winnerName), Amount: \(winnerAmount)")
+//                    
+//                    winnerSheet = true
+//                })
+//                SocketManagerService.shared.listenForNextProduct(completion: { roomId,nextProductId in
+//                    
+//                    fetchProducts(for: roomId)
+//                   
+//                })
+//            }
+//            
+//            // Update follow status
+////            self.isFollow = currentShow.seller?.isFollowed ?? false
+//            fetchProducts(for: roomId)
+//            
+//            // Handle buyer verification
+//            switch UserDefaults.buyerVerafied {
+//            case "pending":
+//                self.alertType = .sheetType(
+//                    icon: .info,
+//                    title: "Become a Verified Buyer!",
+//                    message: "Your verification is currently pending approval by the admin. You will be notified once the process is complete.",
+//                    primaryBtnText: "OK",
+//                    secondaryBtnText: "",
+//                    buttonWidth: screenWidth - 40,
+//                    contentSize: 12.0
+//                )
+//                withAnimation(.snappy) { self.showVerificationSheet = true }
+//                
+//            case "verified":
+//                if UserDefaults.sellerAddress == false {
+//                    self.showPaymentShipping = true
+//                    self.titleText = "Add Address"
+//                } else if UserDefaults.hasCardAdded == false {
+//                    self.showPaymentShipping = true
+//                    self.titleText = "Add Card"
+//                }
+//                
+//            default:
+//                self.alertType = .sheetType(
+//                    icon: .info,
+//                    title: "Become a Verified Buyer!",
+//                    message: "Before you interact with live shows, you need to become a verified buyer.",
+//                    primaryBtnText: "OK",
+//                    secondaryBtnText: "",
+//                    buttonWidth: screenWidth - 40,
+//                    contentSize: 12.0
+//                )
+//                withAnimation(.snappy) { self.showVerificationSheet = true }
+//            }
+//        }
+//    }
     @MainActor
     func fetchProducts(for roomId: String) {
         guard let socketRoom = socketManagerChat.rooms.first(where: { $0.room_id == roomId }) else {
