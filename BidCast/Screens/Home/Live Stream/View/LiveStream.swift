@@ -596,9 +596,10 @@ struct LiveStream: View {
                                     logoutRoom()
                                     hasHostEndedRoom.toggle()
                                     //shift to next stream
-                                    if currentIndex > 0 {
-                                        currentIndex -= 1
+                                    if currentIndex < liveShowsData.count {
+                                        currentIndex += 1
                                     }
+                                    
                                     let currentRoomId = liveShowsData[currentIndex].room_id ?? ""
                                     switchStream(to: currentRoomId)
                                         //get next show agora token
@@ -612,8 +613,8 @@ struct LiveStream: View {
                                 }
                                 logoutRoom()
                                 hasHostEndedRoom.toggle()
-                                if currentIndex < liveShowsData.count {
-                                    currentIndex += 1
+                                if currentIndex > 0 {
+                                    currentIndex -= 1
                                 }
                                 let currentRoomId = liveShowsData[currentIndex].room_id ?? ""
                                 switchStream(to: currentRoomId)
