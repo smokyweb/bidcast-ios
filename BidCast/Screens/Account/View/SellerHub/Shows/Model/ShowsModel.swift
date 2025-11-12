@@ -50,7 +50,7 @@ struct UpdateStatusModel : Codable {
     }
 
     
-struct ProductData : Codable {
+struct ProductData : Codable, Equatable {
     var category: String?
     var id: String?
     var image: String?
