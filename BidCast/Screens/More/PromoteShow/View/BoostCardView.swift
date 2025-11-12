@@ -9,7 +9,8 @@ import SwiftUI
 
 struct BoostCardView: View {
     let boost: BoostModel
-
+    var onBoostCardClick: (BoostModel) -> Void
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
@@ -28,8 +29,9 @@ struct BoostCardView: View {
                 CustomProfileImage(url: boost.icon ?? "",isCircular: false, size: 48)
                 
             }
-
-            Button(action: boost.action ?? {}) {
+            Button {
+                onBoostCardClick(boost)
+            } label: {
                 Text("Select • \(boost.price ?? "")")
                     .font(.custom(poppinsSemiBold, size: 14.0))
                     .padding(.vertical, 10)
@@ -38,6 +40,8 @@ struct BoostCardView: View {
                     .foregroundColor(.black)
                     .cornerRadius(20)
             }
+
+            
         }
         .padding()
         .background(
