@@ -8,6 +8,7 @@
 struct RoomModel: Codable {
     var products: [ProductData]?
     let room_id: String?
+    let rtc_token: String?
     let seller: SellerModel?
     let show_detail: String?
     let thumbnail: String?

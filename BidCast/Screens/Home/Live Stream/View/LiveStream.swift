@@ -14,6 +14,12 @@ import AlertToast
 import MillicastSDK
 import SocketIO
 
+enum SwitchStreamType{
+    case up
+    case down
+    case none
+}
+
 struct CommentModel: Codable, Identifiable, Equatable {
     let id = UUID()
     let image: String?
@@ -84,6 +90,7 @@ struct LiveStream: View {
     var viewModel = LiveShowsViewModel()
     @State var homeViewModel = HomeViewModel()
     @State var liveShowsData = [RoomModel]()
+    
     @State var productData = [ProductData]()
     @State var BiddingDetail = BiddingModel()
     @State var isLoading: Bool = false
@@ -589,32 +596,27 @@ struct LiveStream: View {
                                     logoutRoom()
                                     hasHostEndedRoom.toggle()
                                     //shift to next stream
-                                    
+                                    if currentIndex > 0 {
+                                        currentIndex -= 1
+                                    }
+                                    let currentRoomId = liveShowsData[currentIndex].room_id ?? ""
+                                    switchStream(to: currentRoomId)
                                         //get next show agora token
                                        //get currentroom id
                                         //call beelow func for updated room id
-                                    socketManagerChat.joinRoom(roomId: currentRoomID, completion: {
-                    //                        guard let self = self else { return }
-                                            joinStreamUsingSocket(roomId: currentRoomID)
-                                        })
-//                                    verticalDragOffset = .zero
-//                                    ZegoExpressEngine.shared().stopPlayingStream(streamID[currentIndex])
-//                                    currentStreamIndex += 1
-//                                    loginRoom(roomId: liveShowsData[currentStreamIndex].room_id ?? "")
-//                                    fetchBiddingDetail(roomId: liveShowsData[currentStreamIndex].room_id ?? "")
                                 }
                             } else if verticalAmount > swipeThreshold && currentIndex > 0 {
                                 // Swipe Down
                                 withAnimation(.easeInOut) {
                                     verticalDragOffset = CGSize(width: 0, height: geometry.size.height)
                                 }
-//                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-//                                    verticalDragOffset = .zero
-//                                    ZegoExpressEngine.shared().stopPlayingStream(streamID[currentStreamIndex])
-//                                    currentStreamIndex -= 1
-//                                    loginRoom(roomId: liveShowsData[currentStreamIndex].room_id ?? "")
-//                                    fetchBiddingDetail(roomId: liveShowsData[currentStreamIndex].room_id ?? "")
-//                                }
+                                logoutRoom()
+                                hasHostEndedRoom.toggle()
+                                if currentIndex < liveShowsData.count {
+                                    currentIndex += 1
+                                }
+                                let currentRoomId = liveShowsData[currentIndex].room_id ?? ""
+                                switchStream(to: currentRoomId)
                             } else {
                                 withAnimation {
                                     verticalDragOffset = .zero
@@ -885,11 +887,7 @@ struct LiveStream: View {
                     showHud = true
                 }
                 currentRoomID = roomId
-                self.agoraToken = rtcToken
-//                    if self.agoraToken != "" && roomId != "" {
-//                        print("AAgora Token: \(self.agoraToken)")
-//                        agoraManager.joinChannel(asHost: isHost, channelName: roomId, token: agoraToken)
-//                    }
+                self.agoraToken = rtcToken          
                 socketManagerChat.joinRoom(roomId: roomId) {
                     joinStreamUsingSocket(roomId: roomId)
                 }
@@ -1075,9 +1073,9 @@ struct LiveStream: View {
 
 
     @MainActor
-    func joinStreamUsingSocket(roomId: String) {
+    func joinStreamUsingSocket(roomId: String, switchStreamType: SwitchStreamType = .none) {
         let socketRooms = socketManagerChat.rooms
-
+        
         // 🧱 STEP 1: Validate rooms
         guard !socketRooms.isEmpty else {
             presentError(
@@ -1086,7 +1084,7 @@ struct LiveStream: View {
             )
             return
         }
-
+        
         // 🧱 STEP 2: Validate room existence
         guard let matchingRoomIndex = socketRooms.firstIndex(where: { $0.room_id == roomId }) else {
             presentError(
@@ -1095,47 +1093,87 @@ struct LiveStream: View {
             )
             return
         }
-
-        // 🧱 STEP 3: Join Agora Channel (if applicable)
+        
+        // 🧱 STEP 3: Join Agora Channel
+        self.agoraToken = socketRooms[matchingRoomIndex].rtc_token ?? ""
         if !agoraToken.isEmpty && !roomId.isEmpty {
             print("🎥 Joining Agora with token: \(agoraToken)")
             agoraManager.joinChannel(asHost: isHost, channelName: roomId, token: agoraToken)
         }
-
-        // 🧱 STEP 4: Setup follow/unfollow listener
-        socketManagerChat.listenForUserFollowStatus()
-
-        // 🧱 STEP 5: Update local state
-        DispatchQueue.main.async {
+        
+        
+        // 🧱 STEP 4: Update local state
+        
+        self.roomID = socketRooms.compactMap { $0.room_id }
+        self.streamID = self.roomID
+       
+        
+        if switchStreamType == .none {
             self.liveShowsData = socketRooms
-            self.roomID = socketRooms.compactMap { $0.room_id }
-            self.streamID = self.roomID
             self.currentRoomID = roomId
-            self.currentIndex = matchingRoomIndex
-
-            let currentShow = socketRooms[matchingRoomIndex]
-            print("🎬 Joining stream: \(roomId) at index \(matchingRoomIndex)")
-
-            // 🧱 STEP 6: Clean up previous stream listeners before joining a new one
-            SocketManagerService.shared.removeAllListeners()
-
-            // 🧱 STEP 7: Join room and setup listeners
-            Task {
-                await setupSocketListeners(for: roomId)
-            }
-
-            // 🧱 STEP 8: Update follow status (if available)
-            // self.isFollow = currentShow.seller?.isFollowed ?? false
-
-            // 🧱 STEP 9: Fetch initial product info
-            fetchProducts(for: roomId)
-
-            // 🧱 STEP 10: Handle buyer verification
-            handleBuyerVerification()
+            sortLiveShowsDataByCurrentRoom()
         }
+        
+        
+        print("🎬 Joining stream: \(roomId)")
+        
+       
+        
+        // 🧱 STEP 5: Setup follow/unfollow listener
+        socketManagerChat.listenForUserFollowStatus()
+        
+        // 🧱 STEP 6: Clean up previous stream listeners before joining a new one
+        SocketManagerService.shared.removeAllListeners()
+        
+        // 🧱 STEP 7: Join room and setup listeners
+        Task {
+            await setupSocketListeners(for: roomId)
+        }
+        
+        // 🧱 STEP 8: Update follow status (if available)
+        // self.isFollow = currentShow.seller?.isFollowed ?? false
+        
+        // 🧱 STEP 9: Fetch initial product info
+        fetchProducts(for: roomId)
+        
+        // 🧱 STEP 10: Handle buyer verification
+        handleBuyerVerification()
+        
+    }
+    
+    /// Reorders the liveShowsData array so that the currentRoomID is at the top (index 0)
+    func sortLiveShowsDataByCurrentRoom() {
+        guard currentRoomID != "" else { return }
+
+        // Ensure we have valid data
+        guard !liveShowsData.isEmpty else { return }
+
+        // Find current room
+        guard let currentRoom = liveShowsData.first(where: { $0.room_id == currentRoomID }) else { return }
+
+        // Move current room to top
+        var reordered = liveShowsData.filter { $0.room_id != currentRoomID }
+        reordered.insert(currentRoom, at: 0)
+        liveShowsData = reordered
+
+        // Update the current index to 0
+        currentIndex = 0
+
+        print("🔁 Sorted live shows — current room '\(currentRoomID)' moved to top.")
     }
 
-    @MainActor
+    /// Updates the current stream when user switches streams (scroll/swipe)
+    func switchStream(to newRoomId: String) {
+        guard newRoomId != "" else { return }
+        let socketRooms = socketManagerChat.rooms
+        socketManagerChat.joinRoom(roomId: currentRoomID, completion: {
+            joinStreamUsingSocket(roomId: newRoomId, switchStreamType: .down) //no need to differentiate up and down -> same work
+        })
+        
+    }
+
+    
+//    @MainActor
 //    func joinStreamUsingSocket1(roomId: String)  {
 //        let socketRooms = socketManagerChat.rooms
 //        guard !socketRooms.isEmpty else {
