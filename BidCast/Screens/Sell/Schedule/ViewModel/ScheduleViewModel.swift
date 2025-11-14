@@ -184,7 +184,7 @@ final class ScheduleViewModel: ObservableObject {
 //            handle(error: error)
 //        }
 //    }
-    func storeScheduleShow(param: [String: Any], images: [String], key: String) async {
+    func storeScheduleShow(param: [String: Any], images: [String], key: String) async throws{
         self.requestType = "store"
         
         do {
@@ -198,8 +198,14 @@ final class ScheduleViewModel: ObservableObject {
                 header: true
             )
             self.storeShowResponse = response
-        } catch {
-            handle(error: error)
+        }catch(let error) {
+            if let dataError = error as? DataError {
+                self.errorMessage = dataError.getErrorMessage()
+            }
+            else {
+                self.errorMessage = error.localizedDescription
+            }
+            throw error
         }
     }
 

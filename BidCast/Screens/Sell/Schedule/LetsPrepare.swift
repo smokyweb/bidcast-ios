@@ -305,7 +305,7 @@ struct LetsPrepare: View,ShowStepDelegate {
                     param["product_ids[\(index)]"] = product
                 }
                 
-                await viewModel.storeScheduleShow(param: param,images: [thumbNAil],key: "thumbnail[]")
+                try await viewModel.storeScheduleShow(param: param,images: [thumbNAil],key: "thumbnail[]")
                 await SVProgressHUD.dismiss()
                 
                 if viewModel.errorMessage == nil || viewModel.errorMessage == "" {

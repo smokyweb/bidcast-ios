@@ -20,6 +20,33 @@ enum DataError: Error {
     case failedToDecode
 }
 
+extension DataError {
+    func getErrorMessage() -> String {
+        switch self {
+        case .invalidResponse(let data):
+            if let data = data{
+                do {
+                    let dataObj = try JSONDecoder().decode(ApiError.self, from: data)
+                    return dataObj.message ?? ""
+                }
+                catch {
+                    return "Invalid Response"
+                }
+            }
+        case .invalidCode(let message):
+            return message ?? ""
+        case .invalidURL:
+            return "Not a Valid URL"
+        case .invalidData:
+            return "Response Data is not valid"
+        default:
+            return "Unknown Error"
+        }
+        return "Error found"
+    }
+}
+
+
 // MARK: - Protocol for API Abstraction
 protocol APIManaging {
     func request<T: Decodable>(type: APIEndPoint, header: Bool) -> AnyPublisher<ResponseModel<T>, DataError>
@@ -176,9 +203,26 @@ final class APIManager {
             //            print(object)
             return object
         }
-        catch let error {
-            print(error)
-            throw error//DataError.invalidResponse(data)
+        catch let error as DecodingError {
+            switch error {
+            case .typeMismatch(_, let context),
+                 .valueNotFound(_, let context),
+                 .keyNotFound(_, let context),
+                 .dataCorrupted(let context):
+                
+                // Extract the coding path (which contains "data" and "created_by")
+                let codingKeys = context.codingPath.map { $0.stringValue }.joined(separator: " -> ")
+                
+              print("Decoding Error: \(context.debugDescription)")
+              print("Coding Path: \(codingKeys)")
+                throw DataError.invalidCode("Decoding Error: \(context.debugDescription), Path: \(codingKeys)")
+            @unknown default:
+              print("Unknown Decoding Error: \(error)")
+                throw DataError.invalidCode("Unknown Decoding Error: \(error)")
+            }
+        } catch {
+          print("Other Error: \(error.localizedDescription)")
+            throw DataError.invalidCode("Other Error: \(error.localizedDescription)")
         }
     }
     
@@ -322,9 +366,26 @@ final class APIManager {
             //            print(object)
             return object
         }
-        catch let error {
-            print(error)
-            throw error//DataError.invalidResponse(data)
+        catch let error as DecodingError {
+            switch error {
+            case .typeMismatch(_, let context),
+                 .valueNotFound(_, let context),
+                 .keyNotFound(_, let context),
+                 .dataCorrupted(let context):
+                
+                // Extract the coding path (which contains "data" and "created_by")
+                let codingKeys = context.codingPath.map { $0.stringValue }.joined(separator: " -> ")
+                
+              print("Decoding Error: \(context.debugDescription)")
+              print("Coding Path: \(codingKeys)")
+                throw DataError.invalidCode("Decoding Error: \(context.debugDescription), Path: \(codingKeys)")
+            @unknown default:
+              print("Unknown Decoding Error: \(error)")
+                throw DataError.invalidCode("Unknown Decoding Error: \(error)")
+            }
+        } catch {
+          print("Other Error: \(error.localizedDescription)")
+            throw DataError.invalidCode("Other Error: \(error.localizedDescription)")
         }
     }
     
@@ -416,9 +477,26 @@ final class APIManager {
         // Decode final response
         do {
             return try JSONDecoder().decode(T.self, from: data)
+        }catch let error as DecodingError {
+            switch error {
+            case .typeMismatch(_, let context),
+                 .valueNotFound(_, let context),
+                 .keyNotFound(_, let context),
+                 .dataCorrupted(let context):
+                
+                // Extract the coding path (which contains "data" and "created_by")
+                let codingKeys = context.codingPath.map { $0.stringValue }.joined(separator: " -> ")
+                
+              print("Decoding Error: \(context.debugDescription)")
+              print("Coding Path: \(codingKeys)")
+                throw DataError.invalidCode("Decoding Error: \(context.debugDescription), Path: \(codingKeys)")
+            @unknown default:
+              print("Unknown Decoding Error: \(error)")
+                throw DataError.invalidCode("Unknown Decoding Error: \(error)")
+            }
         } catch {
-            print("❌ Decoding error: \(error)")
-            throw error
+          print("Other Error: \(error.localizedDescription)")
+            throw DataError.invalidCode("Other Error: \(error.localizedDescription)")
         }
     }
     
@@ -557,9 +635,43 @@ final class APIManager {
             print("API Response >>> \n\(data.prettyPrintedJSONString ?? "")")
             let decodedObject = try JSONDecoder().decode(modalType, from: data)
             return decodedObject
+        }  catch let error as DecodingError {
+            switch error {
+            case .typeMismatch(_, let context),
+                 .valueNotFound(_, let context),
+                 .keyNotFound(_, let context),
+                 .dataCorrupted(let context):
+                
+                // Extract the coding path (which contains "data" and "created_by")
+                let codingKeys = context.codingPath.map { $0.stringValue }.joined(separator: " -> ")
+                
+              print("Decoding Error: \(context.debugDescription)")
+              print("Coding Path: \(codingKeys)")
+                throw DataError.invalidCode("Decoding Error: \(context.debugDescription), Path: \(codingKeys)")
+            @unknown default:
+              print("Unknown Decoding Error: \(error)")
+                throw DataError.invalidCode("Unknown Decoding Error: \(error)")
+            }
+        }catch let error as DecodingError {
+            switch error {
+            case .typeMismatch(_, let context),
+                 .valueNotFound(_, let context),
+                 .keyNotFound(_, let context),
+                 .dataCorrupted(let context):
+                
+                // Extract the coding path (which contains "data" and "created_by")
+                let codingKeys = context.codingPath.map { $0.stringValue }.joined(separator: " -> ")
+                
+              print("Decoding Error: \(context.debugDescription)")
+              print("Coding Path: \(codingKeys)")
+                throw DataError.invalidCode("Decoding Error: \(context.debugDescription), Path: \(codingKeys)")
+            @unknown default:
+              print("Unknown Decoding Error: \(error)")
+                throw DataError.invalidCode("Unknown Decoding Error: \(error)")
+            }
         } catch {
-            print("Decoding error: \(error)")
-            throw DataError.network(error)
+          print("Other Error: \(error.localizedDescription)")
+            throw DataError.invalidCode("Other Error: \(error.localizedDescription)")
         }
     }
     
@@ -638,8 +750,30 @@ final class APIManager {
                 throw error
             }
         }
-        
-        return try JSONDecoder().decode(T.self, from: data)
+        do {
+            return try JSONDecoder().decode(T.self, from: data)
+        }
+        catch let error as DecodingError {
+            switch error {
+            case .typeMismatch(_, let context),
+                 .valueNotFound(_, let context),
+                 .keyNotFound(_, let context),
+                 .dataCorrupted(let context):
+                
+                // Extract the coding path (which contains "data" and "created_by")
+                let codingKeys = context.codingPath.map { $0.stringValue }.joined(separator: " -> ")
+                
+              print("Decoding Error: \(context.debugDescription)")
+              print("Coding Path: \(codingKeys)")
+                throw DataError.invalidCode("Decoding Error: \(context.debugDescription), Path: \(codingKeys)")
+            @unknown default:
+              print("Unknown Decoding Error: \(error)")
+                throw DataError.invalidCode("Unknown Decoding Error: \(error)")
+            }
+        } catch {
+          print("Other Error: \(error.localizedDescription)")
+            throw DataError.invalidCode("Other Error: \(error.localizedDescription)")
+        }
     }
     
     private func createDataBody1(withParameters params: [String: Any]?, media: [MediaData1]?, boundary: String) -> Data {

@@ -50,13 +50,13 @@ struct RehearsalScreen: View {
     @State private var showSellSheet: Bool = false
     @State private var showProductSheet : Bool = false
     @State private var showButton: Bool = false
-
+    
     @State private var initialSelectedProductId: String = ""
-   
+    
     @State private var commentText = ""
-
+    
     @State var liveRoomId = ""
-
+    
     @State private var previewResetTrigger = false
     
     @State private var showStartTime: Date? = nil
@@ -73,7 +73,7 @@ struct RehearsalScreen: View {
     @State var showRaidSheet = false
     
     @State private var selectedSellers: Int?
-  
+    
     
     @State var navigateToSeller = false
     
@@ -95,7 +95,7 @@ struct RehearsalScreen: View {
     @StateObject private var agoraManager = AgoraManager(asHost: true)
     @State private var isHost = true
     
-   
+    
     
     @State var agoraToken: String = ""
     @State var uId: Int = 0
@@ -113,7 +113,7 @@ struct RehearsalScreen: View {
     }
     @StateObject var socketManager = SocketManagerService.shared
     @Binding var showsData : HomeModel
-  
+    
     @State var winnerProfileImage : String = ""
     @State var winnerName : String = ""
     @State var winnerAmount : String = ""
@@ -141,10 +141,10 @@ struct RehearsalScreen: View {
                         .background(Color.black)
                 }
                 
-//                MCVideoSwiftUIView(renderer: .accelerated(castManager.renderer as! MCAcceleratedVideoRenderer),scalingMode: .resize,mirror: castManager.isFrontCamera)
-//                    .frame(width: geometry.size.width, height: geometry.size.height)
-//                    .ignoresSafeArea()
-//                    .background(Color.black)
+                //                MCVideoSwiftUIView(renderer: .accelerated(castManager.renderer as! MCAcceleratedVideoRenderer),scalingMode: .resize,mirror: castManager.isFrontCamera)
+                //                    .frame(width: geometry.size.width, height: geometry.size.height)
+                //                    .ignoresSafeArea()
+                //                    .background(Color.black)
                 
                 VStack {
                     HStack {
@@ -284,244 +284,227 @@ struct RehearsalScreen: View {
                     .background(Color.gray.opacity(0.95))
                     .cornerRadius(12)
                 }
-                    // 🎛️ Dynamic Side Controls
-                    VStack {
-                        Spacer()
-                        VStack(spacing: 0) {
-                            if showLiveControls {
-                                SideButton(label: "More", icon: .sMore,action: .more)
-                                SideButton(label: "Promote", icon: .sPromote,action: .promote)
-                                SideButton(label: "Clip", icon: .sClip,action: .clip)
-                                SideButton(label: "Share", icon: .sShare,action: .share)
-                                SideButton(label: "Switch", icon: .sSwitch,action: .switchView)
-                                ShopButton(action: .shop, count: "\(productData.count)")
+                // 🎛️ Dynamic Side Controls
+                VStack {
+                    Spacer()
+                    VStack(spacing: 0) {
+                        if showLiveControls {
+                            SideButton(label: "More", icon: .sMore,action: .more)
+                            SideButton(label: "Promote", icon: .sPromote,action: .promote)
+                            SideButton(label: "Clip", icon: .sClip,action: .clip)
+                            SideButton(label: "Share", icon: .sShare,action: .share)
+                            SideButton(label: "Switch", icon: .sSwitch,action: .switchView)
+                            ShopButton(action: .shop, count: "\(productData.count)")
+                        }
+                        
+                        if showPreLiveControls {
+                            Spacer()
+                            Button(action: {
+                                isMicOn.toggle()
+                                agoraManager.toggleAudioMute()
+                                //                                castManager.toggleAudioMute()
+                                //                                ZegoExpressEngine.shared().muteMicrophone(!isMicOn)
+                            }) {
+                                VStack {
+                                    Image(systemName: isMicOn ? "mic.fill" : "mic.slash.fill")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .fontWeight(.heavy)
+                                        .font(.custom(poppinsExtraBold, size: 22.0))
+                                        .frame(width: 20, height: 20)
+                                        .foregroundColor(.black)
+                                    //                                Text(isMicOn ? "Mic On" : "Mic Off")
+                                    //                                    .font(.custom(poppinsThin, size: 12.0))
+                                }
+                                .padding()
+                                .background(
+                                    Circle()
+                                        .fill(Color.white)
+                                )
+                                
                             }
                             
-                            if showPreLiveControls {
-                                Spacer()
-                                Button(action: {
-                                    isMicOn.toggle()
-                                    agoraManager.toggleAudioMute()
-                                    //                                castManager.toggleAudioMute()
-                                    //                                ZegoExpressEngine.shared().muteMicrophone(!isMicOn)
-                                }) {
-                                    VStack {
-                                        Image(systemName: isMicOn ? "mic.fill" : "mic.slash.fill")
-                                            .resizable()
-                                            .scaledToFit()
-                                            .fontWeight(.heavy)
-                                            .font(.custom(poppinsExtraBold, size: 22.0))
-                                            .frame(width: 20, height: 20)
-                                            .foregroundColor(.black)
-                                        //                                Text(isMicOn ? "Mic On" : "Mic Off")
-                                        //                                    .font(.custom(poppinsThin, size: 12.0))
-                                    }
-                                    .padding()
-                                    .background(
-                                        Circle()
-                                            .fill(Color.white)
-                                    )
-                                    
+                            Button(action: {
+                                isUsingFrontCamera.toggle()
+                                //                                ZegoExpressEngine.shared().useFrontCamera(isUsingFrontCamera)
+                                agoraManager.switchCamera()
+                                //                                Task{
+                                //                                    await castManager.switchCamera()
+                                //                                }
+                            }) {
+                                VStack {
+                                    Image(.sSwitch)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .fontWeight(.heavy)
+                                        .font(.custom(poppinsExtraBold, size: 22.0))
+                                        .frame(width: 50, height: 50)
+                                        .foregroundColor(.black)
+                                    //                                Text("Switch")
+                                    //                                    .font(.custom(poppinsThin, size: 12.0))
                                 }
-                                
-                                Button(action: {
-                                    isUsingFrontCamera.toggle()
-                                    //                                ZegoExpressEngine.shared().useFrontCamera(isUsingFrontCamera)
-                                    agoraManager.switchCamera()
-                                    //                                Task{
-                                    //                                    await castManager.switchCamera()
-                                    //                                }
-                                }) {
-                                    VStack {
-                                        Image(.sSwitch)
-                                            .resizable()
-                                            .scaledToFit()
-                                            .fontWeight(.heavy)
-                                            .font(.custom(poppinsExtraBold, size: 22.0))
-                                            .frame(width: 50, height: 50)
-                                            .foregroundColor(.black)
-                                        //                                Text("Switch")
-                                        //                                    .font(.custom(poppinsThin, size: 12.0))
-                                    }
-                                    .padding()
-                                    //                                .background(
-                                    //                                    Circle()
-                                    //                                        .fill(Color.white)
-                                    //                                )
-                                }
-                                
-                                ShopButton(action: .shop, count: "0")
-                                Spacer()
+                                .padding()
+                                //                                .background(
+                                //                                    Circle()
+                                //                                        .fill(Color.white)
+                                //                                )
                             }
+                            
+                            ShopButton(action: .shop, count: "0")
+                            Spacer()
                         }
-                        //                    .padding(.trailing)
-                        //                    .padding(.bottom, 150)
-                        //                    .frame(maxWidth: .infinity, alignment: .trailing)
-                        .position(
-                            x: geometry.size.width - 40,
-                            y: geometry.size.height / 2
-                        )
-                    }.zIndex(2)
-                    
-                    // 💬 bottom Chat & Start Button
-                    VStack(alignment: .leading, spacing: 8) {
-                        Spacer()
-                        if socketManager.chats.count > 0{
-                            ScrollViewReader { proxy in
-                                ScrollView {
-                                    VStack(alignment: .leading, spacing: 8) {
-                                        ForEach(socketManager.chats) { comment in
-                                            HStack {
-                                                CustomProfileImage(url: comment.image ?? "", isCircular: true,size: 24)
-                                                Text(comment.username?.capitalizingFirstLetter() ?? "")
-                                                    .font(.custom(poppinsSemiBold, size: 14.0))
-                                                    .foregroundColor(.white)
-                                                
-                                                Text(comment.message ?? "")
-                                                    .font(.custom(poppinsRegular, size: 12.0))
-                                                    .foregroundColor(.white)
-                                            }
-                                            .padding(.trailing,60)
-                                            .padding(.leading,Leading)
-                                            .id(comment.id) // 💡 For scroll targeting
-                                        }
-                                    }
-                                }
-                                .onChange(of: socketManager.chats) { _ in
-                                    // 💬 Auto scroll to last message
-                                    if let last = socketManager.chats.last {
-                                        withAnimation {
-                                            proxy.scrollTo(last.id, anchor: .bottom)
-                                        }
-                                    }
-                                }
-                            }
-                            .frame(maxHeight: 150)
-                        }
-                        
-                        
-                        if showButton{
-                            if showLiveControls{
-                                VStack(alignment: .leading, spacing: 12){
-                                    HStack {
-                                        ZStack(alignment: .trailing) {
-                                            TextField("", text: $commentText, prompt: Text("Say something...")
-                                                .foregroundColor(.white)
-                                                .font(.custom(poppinsSemiBold, size: 13.0))
-                                            )
-                                            .font(.custom(poppinsSemiBold, size: 13.0))
-                                            .foregroundColor(.white)
-                                            .padding(.horizontal, 8)
-                                            .padding(.trailing, commentText.isEmpty ? 14 : 36) // extra space for send button
-                                            .frame(height: 50)
-                                            
-                                            .overlay(
-                                                RoundedRectangle(cornerRadius: 8)
-                                                    .stroke(Color.white, lineWidth: 1)
-                                                
-                                                
-                                            )
-                                            .background(.black.opacity(0.4))
-                                            
-                                            if !commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                                                Button(action: {
-                                                    print("📨 Sending message: \(commentText)")
-                                                    let textToSend = commentText.trimmingCharacters(in: .whitespacesAndNewlines)
-                                                    //                                            ZIMChatManager.shared.sendMessage(message: textToSend,roomId: self.liveRoomId,image: UserDefaults.profileURL,name: UserDefaults.userName)
-                                                    
-                                                    let userId = UserDefaults.userId
-                                                    let userName = UserDefaults.userName
-                                                    let userImage = UserDefaults.profileURL
-                                                    SocketManagerService.shared.sendChat(roomId: self.roomId, message: textToSend, userId: userId, userName: userName, userImage: userImage)
-                                                    commentText = ""
-                                                }) {
-                                                    Image(systemName: "paperplane.fill")
-                                                        .resizable()
-                                                        .frame(width: 24, height: 24)
-                                                        .foregroundColor(.defaultTheme)
-                                                        .padding(10)
-                                                }
-                                                .transition(.opacity)
-                                                .animation(.easeInOut(duration: 0.2), value: commentText)
-                                                .padding(.leading,16)
-                                                //                                            .padding(.trailing, BiddingDetail.products != nil ? 54 : 16)
-                                            }
-                                        }
-                                    }
-                                    .padding(.leading,12)
-                                    .padding(.trailing, productData != nil ? 70 : 12)
-                                    .padding(.bottom,20)
-                                    VStack(alignment: .leading,spacing: 12) {
-                                        //MARK: Product Details
-                                        let currentProducts = productData.filter { $0.isCurrent }
-                                        if let product = currentProducts.first {
-                                            
-                                            CurrentProductView(product: product,
-                                                               currentPrice: $currentPrice,
-                                                               bidTime: $socketManager.bidTime,
-                                                               userName: $winnerName,
-                                                               userImage: $winnerProfileImage,
-                                                               categoryName: $categoryName,
-                                                               hasWon: socketManager.hasWon
-                                                               
-                                            )
-                                            .frame(maxWidth: .infinity)
-                                            
-                                            .background(Color.black.opacity(0.3))
-                                            .cornerRadius(10)
-                                            .padding(.horizontal,16)
-                                            
-                                        }else {
-                                            Text("Waiting for next product...")
+                    }
+                    //                    .padding(.trailing)
+                    //                    .padding(.bottom, 150)
+                    //                    .frame(maxWidth: .infinity, alignment: .trailing)
+                    .position(
+                        x: geometry.size.width - 40,
+                        y: geometry.size.height / 2
+                    )
+                }.zIndex(2)
+                
+                // 💬 bottom Chat & Start Button
+                VStack(alignment: .leading, spacing: 8) {
+                    Spacer()
+                    if socketManager.chats.count > 0{
+                        ScrollViewReader { proxy in
+                            ScrollView {
+                                VStack(alignment: .leading, spacing: 8) {
+                                    ForEach(socketManager.chats) { comment in
+                                        HStack {
+                                            CustomProfileImage(url: comment.image ?? "", isCircular: true,size: 24)
+                                            Text(comment.username?.capitalizingFirstLetter() ?? "")
                                                 .font(.custom(poppinsSemiBold, size: 14.0))
                                                 .foregroundColor(.white)
-                                                .padding(.horizontal)
-                                                .padding(.leading,16)
-                                                .padding(.trailing, 16)
+                                            
+                                            Text(comment.message ?? "")
+                                                .font(.custom(poppinsRegular, size: 12.0))
+                                                .foregroundColor(.white)
                                         }
+                                        .padding(.trailing,60)
+                                        .padding(.leading,Leading)
+                                        .id(comment.id) // 💡 For scroll targeting
                                     }
-                                    //                            .padding(.horizontal,16)
-                                    .padding(.bottom, keyboardResponder.currentHeight == 0 ? (tabBarHeight + 20) : 10)
                                 }
                             }
-                            if !isLive{
-                                Button(action: {
-                                    if UserDefaults.sellerVerafied == "verified"{
-                                        if !isLive{
-                                            //                                        showProductSheet = true
-                                            Task {
-                                                //                                            if !castManager.isPublishing {
-                                                
-                                                showProductSheet = true
-                                                //                                            self.isLive = true
-                                                //                                            self.UpdateStatus(status : false)
-                                                //                                            } else {
-                                                //                                                try await castManager.unpublish()
-                                                //                                            }
-                                            }
-                                        }
-                                        //                                    self.UpdateStatus(status : false)
-                                    }else{
-                                        showSellerSheet = true
+                            .onChange(of: socketManager.chats) { _ in
+                                // 💬 Auto scroll to last message
+                                if let last = socketManager.chats.last {
+                                    withAnimation {
+                                        proxy.scrollTo(last.id, anchor: .bottom)
                                     }
-                                }) {
-                                    Text("Start Show")
-                                        .font(.custom(poppinsBold, size: 13.0))
-                                        .frame(maxWidth: .infinity)
-                                        .padding()
-                                        .background(Color.defaultTheme)
-                                        .foregroundColor(.white)
-                                        .cornerRadius(12)
                                 }
-                                .padding(.horizontal)
-                                .padding(.bottom, 20)
                             }
                         }
-                        if comeFromPrepare && !comeForLive{
+                        .frame(maxHeight: 150)
+                    }
+                    
+                    
+                    if showButton{
+                        if showLiveControls{
+                            VStack(alignment: .leading, spacing: 12){
+                                HStack {
+                                    ZStack(alignment: .trailing) {
+                                        TextField("", text: $commentText, prompt: Text("Say something...")
+                                            .foregroundColor(.white)
+                                            .font(.custom(poppinsSemiBold, size: 13.0))
+                                        )
+                                        .font(.custom(poppinsSemiBold, size: 13.0))
+                                        .foregroundColor(.white)
+                                        .padding(.horizontal, 8)
+                                        .padding(.trailing, commentText.isEmpty ? 14 : 36) // extra space for send button
+                                        .frame(height: 50)
+                                        
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 8)
+                                                .stroke(Color.white, lineWidth: 1)
+                                            
+                                            
+                                        )
+                                        .background(.black.opacity(0.4))
+                                        
+                                        if !commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                                            Button(action: {
+                                                print("📨 Sending message: \(commentText)")
+                                                let textToSend = commentText.trimmingCharacters(in: .whitespacesAndNewlines)
+                                                //                                            ZIMChatManager.shared.sendMessage(message: textToSend,roomId: self.liveRoomId,image: UserDefaults.profileURL,name: UserDefaults.userName)
+                                                
+                                                let userId = UserDefaults.userId
+                                                let userName = UserDefaults.userName
+                                                let userImage = UserDefaults.profileURL
+                                                SocketManagerService.shared.sendChat(roomId: self.roomId, message: textToSend, userId: userId, userName: userName, userImage: userImage)
+                                                commentText = ""
+                                            }) {
+                                                Image(systemName: "paperplane.fill")
+                                                    .resizable()
+                                                    .frame(width: 24, height: 24)
+                                                    .foregroundColor(.defaultTheme)
+                                                    .padding(10)
+                                            }
+                                            .transition(.opacity)
+                                            .animation(.easeInOut(duration: 0.2), value: commentText)
+                                            .padding(.leading,16)
+                                            //                                            .padding(.trailing, BiddingDetail.products != nil ? 54 : 16)
+                                        }
+                                    }
+                                }
+                                .padding(.leading,12)
+                                .padding(.trailing, productData != nil ? 70 : 12)
+                                .padding(.bottom,20)
+                                VStack(alignment: .leading,spacing: 12) {
+                                    //MARK: Product Details
+                                    let currentProducts = productData.filter { $0.isCurrent }
+                                    if let product = currentProducts.first {
+                                        
+                                        CurrentProductView(product: product,
+                                                           currentPrice: $currentPrice,
+                                                           bidTime: $socketManager.bidTime,
+                                                           userName: $winnerName,
+                                                           userImage: $winnerProfileImage,
+                                                           categoryName: $categoryName,
+                                                           hasWon: socketManager.hasWon
+                                        )
+                                        .frame(maxWidth: .infinity)
+                                        
+                                        .background(Color.black.opacity(0.3))
+                                        .cornerRadius(10)
+                                        .padding(.horizontal,16)
+                                        
+                                    }else {
+                                        Text("Waiting for next product...")
+                                            .font(.custom(poppinsSemiBold, size: 14.0))
+                                            .foregroundColor(.white)
+                                            .padding(.horizontal)
+                                            .padding(.leading,16)
+                                            .padding(.trailing, 16)
+                                    }
+                                }
+                                //                            .padding(.horizontal,16)
+                                .padding(.bottom, keyboardResponder.currentHeight == 0 ? (tabBarHeight + 20) : 10)
+                            }
+                        }
+                        if !isLive{
                             Button(action: {
-                                self.presentationMode.wrappedValue.dismiss()
+                                if UserDefaults.sellerVerafied == "verified"{
+                                    if !isLive{
+                                        //                                        showProductSheet = true
+                                        Task {
+                                            //                                            if !castManager.isPublishing {
+                                            
+                                            showProductSheet = true
+                                            //                                            self.isLive = true
+                                            //                                            self.UpdateStatus(status : false)
+                                            //                                            } else {
+                                            //                                                try await castManager.unpublish()
+                                            //                                            }
+                                        }
+                                    }
+                                    //                                    self.UpdateStatus(status : false)
+                                }else{
+                                    showSellerSheet = true
+                                }
                             }) {
-                                Text("Continue")
+                                Text("Start Show")
                                     .font(.custom(poppinsBold, size: 13.0))
                                     .frame(maxWidth: .infinity)
                                     .padding()
@@ -532,7 +515,23 @@ struct RehearsalScreen: View {
                             .padding(.horizontal)
                             .padding(.bottom, 20)
                         }
-                    }.zIndex(1)
+                    }
+                    if comeFromPrepare && !comeForLive{
+                        Button(action: {
+                            self.presentationMode.wrappedValue.dismiss()
+                        }) {
+                            Text("Continue")
+                                .font(.custom(poppinsBold, size: 13.0))
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(Color.defaultTheme)
+                                .foregroundColor(.white)
+                                .cornerRadius(12)
+                        }
+                        .padding(.horizontal)
+                        .padding(.bottom, 20)
+                    }
+                }.zIndex(1)
                 CusNavLink(doNavigate: $navigateToSeller, destination: SellerVerificationScreen())
             }
         }
@@ -631,14 +630,14 @@ struct RehearsalScreen: View {
                         onMicToggle: {
                             isMicOn.toggle()
                             agoraManager.toggleAudioMute()
-//                            castManager.toggleAudioMute()
+                            //                            castManager.toggleAudioMute()
                         },
                         onVerifiedBuyerToggle: { isOn in
                             let allowBidForAll = !isOn
                             if !roomId.isEmpty   {
-//                                FirebaseManager.shared.databaseRef.child("live_sessions")
-//                                    .child(liveRoomId)
-//                                    .updateChildValues(["allowBidForAll": allowBidForAll])
+                                //                                FirebaseManager.shared.databaseRef.child("live_sessions")
+                                //                                    .child(liveRoomId)
+                                //                                    .updateChildValues(["allowBidForAll": allowBidForAll])
                                 socketManager.AllowBidForAll(roomId: roomId, allow_bid_for_all: allowBidForAll)
                                 print("✅ allowBidForAll updated to \(allowBidForAll) for room: \(liveRoomId)")
                             }
@@ -682,12 +681,6 @@ struct RehearsalScreen: View {
                 case .switchView:
                     EmptyView()
                 case .shop:
-                    //                    ShopBottomSheetView(
-                    //                        isPresented: $showSellSheet,
-                    //                        userId : .constant("\(UserDefaults.userId)")
-                    //
-                    //                    )
-                    
                     if isLive{
                         ShopBottomSheetView(
                             isPresented: $showSellSheet,
@@ -695,9 +688,6 @@ struct RehearsalScreen: View {
                             productShowType: .nextProduct,
                             onAddProduct: { selectedID in
                                 showSellSheet = false
-//                                if agoraToken != "" && channelName != "" {
-//                                    agoraManager.joinChannel(asHost: true, channelName: channelName, token: agoraToken)
-//                                }
                                 if !selectedID.isEmpty {
                                     print("product ID is :\(selectedID)")
                                     print("Live Room ID is :\(self.roomId)")
@@ -796,17 +786,17 @@ struct RehearsalScreen: View {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg)
         }
         .onAppear {
-        
+            
             logoutRoom()
             showTopBadge = true
             agoraManager.setupLocalVideo()
-//            Task {
-//                do {
-//                    try await castManager.startPreview()
-//                } catch {
-//                    print("erro \(error.localizedDescription)")
-//                }
-//            }
+            //            Task {
+            //                do {
+            //                    try await castManager.startPreview()
+            //                } catch {
+            //                    print("erro \(error.localizedDescription)")
+            //                }
+            //            }
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                 if comeFromPrepare && !comeForLive{
                     showReadyModal = false
@@ -856,16 +846,15 @@ struct RehearsalScreen: View {
     }
     
     func fetchLatestProductList(){
-    
+        
         print("DEBUG: fetchLatestProductList with roomId = \(self.roomId)")
-            print("DEBUG: initialSelectedProductId= \(initialSelectedProductId)")
+        print("DEBUG: initialSelectedProductId= \(initialSelectedProductId)")
         initialSelectedProductId = productData.first(where: { $0.isCurrent })?.id ?? ""
         currentPrice = Double(productData.first(where: { $0.isCurrent })?.price ?? "") ?? 0.0
     }
     
     func setProductAsCurrent(selectedID : String){
         socketManager.setNextProduct(roomId: self.roomId, productId: selectedID)
-        
     }
     
     private func handleBoostClick(_ boost: BoostModel) {
@@ -874,47 +863,45 @@ struct RehearsalScreen: View {
         storePromoteShow(boost: boost)
     }
     
-    func ShowData(data:HomeModel ,selectedID : String? = nil) {
-        let roomId = "live_room_\(data.user_id ?? 0)_\(data.id ?? 0)"
-        self.roomId = roomId
-        let product: [ProductData] = (data.products ?? []).compactMap { product in
-            guard let id = product.id,
-                  let categoryId = product.category_id,
-                  let title = product.title,
-                  let price = product.pricing,
-                  let quantity = product.quantity
-            else {
-                return nil
-            }
-            return ProductData(
-                category: "\(categoryId)",
-                id: "\(id)",
-                image: product.images?.first ?? "",
-                name: title,
-                price: price,
-                status: /*product.status ??*/ "active",
-                isCurrent: selectedID == "\(id)",
-                quantity: quantity
-            )
+    func showData(from data: HomeModel, selectedID: String? = nil) {
+        // STEP 1: Validate data first (main thread is fine)
+        guard let userId = data.user_id, let showId = data.id else {
+            showhudMessage("Invalid stream data — missing show ID or user ID.")
+            return
         }
-        if product.count != 0{
-//
-//            Task{
-                //live stream
-                
-//                try await castManager.publish(streamName: self.roomId)
-//            }
-            
-            if agoraToken != "" && channelName != "" {
-                agoraManager.joinChannel(asHost: true, channelName: channelName, token: agoraToken)
+        
+        // Prepare room ID (light operation)
+        let roomId = "live_room_\(userId)_\(showId)"
+        self.roomId = roomId
+        print("🎬 Preparing live stream room: \(roomId)")
+        
+        // STEP 2: Build product list in background (to avoid blocking UI)
+        DispatchQueue.global(qos: .userInitiated).async {
+            let products = self.makeProductList(from: data.products, selectedID: selectedID)
+            guard !products.isEmpty else {
+                DispatchQueue.main.async {
+                    self.showhudMessage("Unable to start streaming — product category is missing.")
+                }
+                return
             }
             
-            let seller = SellerModel(isFollowed: data.user?.is_followed ?? false, id: "\(data.user?.id ?? 0 )", name: data.user?.name ?? "", rating: data.user?.rating ?? "",image: data.user?.profile_image ?? "")
+            // STEP 3: Join Agora Channel — runs best on background thread
+            self.joinAgoraChannelIfNeeded()
             
-            sendCreateRoomEvent(
-                showId: "\(data.id ?? 0)",
-                roomId: self.roomId,
-                products: product,
+            // STEP 4: Prepare seller data (light, can stay background)
+            let seller = SellerModel(
+                isFollowed: data.user?.is_followed ?? false,
+                id: "\(data.user?.id ?? 0)",
+                name: data.user?.name ?? "",
+                rating: data.user?.rating ?? "",
+                image: data.user?.profile_image ?? ""
+            )
+            
+            // STEP 5: Send "Create Room" event — network I/O (background)
+            self.sendCreateRoomEvent(
+                showId: "\(showId)",
+                roomId: roomId,
+                products: products,
                 seller: seller,
                 thumbnail: data.thumbnail?.first ?? "",
                 time: data.time ?? "",
@@ -923,79 +910,248 @@ struct RehearsalScreen: View {
                 showTimer: ""
             )
             
+            // STEP 6: Socket setup in background
+            self.setupLiveSocketListeners(for: roomId)
             
-            SocketManagerService.shared.observeRoomUpdates { newRoom in
-                print("🏠 New room received:", newRoom.room_id ?? "unknown")
-                fetchProducts(for: self.roomId)
+            // STEP 7: Update UI & start scheduler on main thread
+            DispatchQueue.main.async {
+                SocketManagerService.shared.startLiveScheduler(roomId: roomId)
+                self.isLive = true
+                self.showLiveControls = true
+                self.showPreLiveControls = false
+                self.getPromoteShows()
             }
-            
-            
-            SocketManagerService.shared.startLiveScheduler(roomId: self.roomId)
-            isLive = true
-            self.showLiveControls = true
-            self.showPreLiveControls = false
-            socketManager.listenForBidTimer(roomId: self.roomId)
-            socketManager.listenForChat(roomId: self.roomId)
-            socketManager.listenForViewerCount()
-            socketManager.listenForShowTimer(roomId: self.roomId)
-            
-            
-            SocketManagerService.shared.observeBidCountdown(
-                for: self.roomId,
-                onUpdate: { seconds in
-                    print("🟡 Countdown update: \(seconds)s")
-                    self.bidCountdownSeconds = seconds
-                },
-                onStart: {
-                    print("🚀 Countdown started (30s left)")
-                    self.hasCountdownStarted = true
-                },
-                onComplete: {
-                    print("⏰ Countdown reached zero, showing sheet")
-                    fetchProducts(for: self.roomId)
-                    self.currentBottomSheet = .shop
-                    self.showSellSheet = true
-                    self.fetchLatestProductList()
-                    self.hasCountdownStarted = false
-                }
-            )
-            
-            SocketManagerService.shared.listenForNextProduct(completion: { roomId,nextProductId in
-                fetchProducts(for: roomId)
-            })
-            
-            socketManager.listenForHighestBid(forRoom: self.roomId) { highestBid in
-                if let bid = highestBid {
-                    print("🏆 Updated bid in this room: \(bid.user_name ?? "") - \(bid.bid_amount ?? "")")
-                    winnerName = bid.user_name ?? ""
-                    winnerProfileID = Int(bid.user_id ?? "") ?? 0
-                    winnerProfileImage = bid.user_image ?? ""
-                    winnerAmount = bid.bid_amount  ?? ""
-                    currentPrice = Double(winnerAmount) ?? 0.0
-                }
-            }
-            
-            
-            socketManager.listenForBidFinalized()
-            
-            //        if data.is_live == true {
-            //            self.showStartTime = Date()
-            //            startLiveTimer()
-            //        }
-            getPromoteShows()
-        }else{
-           
-            hudMsg = "Unable to start streaming as product category is missing"
-            showhud = true
         }
     }
+    
+    
+    private func makeProductList(from products: [ProductDataModel]?, selectedID: String?) -> [ProductData] {
+        guard let products else { return [] }
+        
+        return products.compactMap { product in
+            guard
+                let id = product.id,
+                let categoryId = product.category_id,
+                let title = product.title,
+                let price = product.pricing,
+                let quantity = product.quantity
+            else { return nil }
+            
+            return ProductData(
+                category: "\(categoryId)",
+                id: "\(id)",
+                image: product.images?.first ?? "",
+                name: title,
+                price: price,
+                status: "active",
+                isCurrent: selectedID == "\(id)",
+                quantity: quantity
+            )
+        }
+    }
+    
+    private func joinAgoraChannelIfNeeded() {
+        guard !agoraToken.isEmpty, !channelName.isEmpty else {
+            print("⚠️ Missing Agora credentials — skipping join.")
+            return
+        }
+        DispatchQueue.global(qos: .userInitiated).async {
+            print("🎥 Joining Agora Channel: \(channelName)")
+            agoraManager.joinChannel(asHost: true, channelName: channelName, token: agoraToken)
+        }
+    }
+    
+    private func setupLiveSocketListeners(for roomId: String) {
+        print("🔌 Setting up socket listeners for \(roomId)")
+        
+        SocketManagerService.shared.observeRoomUpdates { newRoom in
+            print("🏠 Room updated: \(newRoom.room_id ?? "unknown")")
+            self.fetchProducts(for: roomId)
+        }
+        
+        SocketManagerService.shared.observeBidCountdown(
+            for: roomId,
+            onUpdate: { seconds in
+                self.bidCountdownSeconds = seconds
+                print("🟡 Countdown: \(seconds)s")
+            },
+            onStart: {
+                self.hasCountdownStarted = true
+                print("🚀 Countdown started (30s left)")
+            },
+            onComplete: {
+                print("⏰ Countdown ended, showing product sheet.")
+                self.handleCountdownCompletion()
+            }
+        )
+        
+        SocketManagerService.shared.listenForNextProduct {roomId, _ in
+            self.fetchProducts(for: roomId)
+        }
+        
+        socketManager.listenForHighestBid(forRoom: roomId) { highestBid in
+            self.updateHighestBid(bid: highestBid)
+        }
+        
+        socketManager.listenForBidTimer(roomId: roomId)
+        socketManager.listenForChat(roomId: roomId)
+        socketManager.listenForViewerCount()
+        socketManager.listenForShowTimer(roomId: roomId)
+        socketManager.listenForBidFinalized()
+    }
+    
+    private func handleCountdownCompletion() {
+        fetchProducts(for: roomId)
+        currentBottomSheet = .shop
+        showSellSheet = true
+        fetchLatestProductList()
+        hasCountdownStarted = false
+    }
+    
+    
+    private func updateHighestBid(bid: HighestBid?) {
+        guard let bid = bid else { return }
+        
+        winnerName = bid.user_name ?? ""
+        winnerProfileID = Int(bid.user_id ?? "") ?? 0
+        winnerProfileImage = bid.user_image ?? ""
+        winnerAmount = bid.bid_amount ?? ""
+        currentPrice = Double(winnerAmount) ?? 0.0
+        
+        print("🏆 Highest Bid — \(winnerName): \(winnerAmount)")
+    }
+    
+    
+    private func showhudMessage(_ message: String) {
+        hudMsg = message
+        showhud = true
+    }
+    
+    
+    
+    
+    //    func ShowData(data:HomeModel ,selectedID : String? = nil) {
+    //        let roomId = "live_room_\(data.user_id ?? 0)_\(data.id ?? 0)"
+    //        self.roomId = roomId
+    //        let product: [ProductData] = (data.products ?? []).compactMap { product in
+    //            guard let id = product.id,
+    //                  let categoryId = product.category_id,
+    //                  let title = product.title,
+    //                  let price = product.pricing,
+    //                  let quantity = product.quantity
+    //            else {
+    //                return nil
+    //            }
+    //            return ProductData(
+    //                category: "\(categoryId)",
+    //                id: "\(id)",
+    //                image: product.images?.first ?? "",
+    //                name: title,
+    //                price: price,
+    //                status: /*product.status ??*/ "active",
+    //                isCurrent: selectedID == "\(id)",
+    //                quantity: quantity
+    //            )
+    //        }
+    //        if product.count != 0{
+    ////
+    ////            Task{
+    //                //live stream
+    //
+    ////                try await castManager.publish(streamName: self.roomId)
+    ////            }
+    //
+    //            if agoraToken != "" && channelName != "" {
+    //                agoraManager.joinChannel(asHost: true, channelName: channelName, token: agoraToken)
+    //            }
+    //
+    //            let seller = SellerModel(isFollowed: data.user?.is_followed ?? false, id: "\(data.user?.id ?? 0 )", name: data.user?.name ?? "", rating: data.user?.rating ?? "",image: data.user?.profile_image ?? "")
+    //
+    //            sendCreateRoomEvent(
+    //                showId: "\(data.id ?? 0)",
+    //                roomId: self.roomId,
+    //                products: product,
+    //                seller: seller,
+    //                thumbnail: data.thumbnail?.first ?? "",
+    //                time: data.time ?? "",
+    //                date: data.date ?? "",
+    //                allowBidForAll: true,
+    //                showTimer: ""
+    //            )
+    //
+    //
+    //            SocketManagerService.shared.observeRoomUpdates { newRoom in
+    //                print("🏠 New room received:", newRoom.room_id ?? "unknown")
+    //                fetchProducts(for: self.roomId)
+    //            }
+    //
+    //
+    //            SocketManagerService.shared.startLiveScheduler(roomId: self.roomId)
+    //            isLive = true
+    //            self.showLiveControls = true
+    //            self.showPreLiveControls = false
+    //            socketManager.listenForBidTimer(roomId: self.roomId)
+    //            socketManager.listenForChat(roomId: self.roomId)
+    //            socketManager.listenForViewerCount()
+    //            socketManager.listenForShowTimer(roomId: self.roomId)
+    //
+    //
+    //            SocketManagerService.shared.observeBidCountdown(
+    //                for: self.roomId,
+    //                onUpdate: { seconds in
+    //                    print("🟡 Countdown update: \(seconds)s")
+    //                    self.bidCountdownSeconds = seconds
+    //                },
+    //                onStart: {
+    //                    print("🚀 Countdown started (30s left)")
+    //                    self.hasCountdownStarted = true
+    //                },
+    //                onComplete: {
+    //                    print("⏰ Countdown reached zero, showing sheet")
+    //                    fetchProducts(for: self.roomId)
+    //                    self.currentBottomSheet = .shop
+    //                    self.showSellSheet = true
+    //                    self.fetchLatestProductList()
+    //                    self.hasCountdownStarted = false
+    //                }
+    //            )
+    //
+    //            SocketManagerService.shared.listenForNextProduct(completion: { roomId,nextProductId in
+    //                fetchProducts(for: roomId)
+    //            })
+    //
+    //            socketManager.listenForHighestBid(forRoom: self.roomId) { highestBid in
+    //                if let bid = highestBid {
+    //                    print("🏆 Updated bid in this room: \(bid.user_name ?? "") - \(bid.bid_amount ?? "")")
+    //                    winnerName = bid.user_name ?? ""
+    //                    winnerProfileID = Int(bid.user_id ?? "") ?? 0
+    //                    winnerProfileImage = bid.user_image ?? ""
+    //                    winnerAmount = bid.bid_amount  ?? ""
+    //                    currentPrice = Double(winnerAmount) ?? 0.0
+    //                }
+    //            }
+    //
+    //
+    //            socketManager.listenForBidFinalized()
+    //
+    //            //        if data.is_live == true {
+    //            //            self.showStartTime = Date()
+    //            //            startLiveTimer()
+    //            //        }
+    //            getPromoteShows()
+    //        }else{
+    //
+    //            hudMsg = "Unable to start streaming as product category is missing"
+    //            showhud = true
+    //        }
+    //    }
     
     @MainActor
     func fetchProducts(for roomId: String) {
         print("print PRoduct")
         guard let socketRoom = socketManager.rooms.first(where: { $0.room_id == roomId }) else {
             self.productData = []
-//            self.currentProductIndex = 0
+            //            self.currentProductIndex = 0
             self.currentPrice = 0.0
             return
         }
@@ -1022,18 +1178,18 @@ struct RehearsalScreen: View {
             SocketManagerService.shared.removeChatListener()
             self.comments.removeAll()
             SocketManagerService.shared.chats.removeAll()
-//
+            //
             initialSelectedProductId = ""
-//            SocketManagerService.shared.reset(with: self.roomId)
-//           
-//            self.comments.removeAll()
-//            SocketManagerService.shared.chats.removeAll()
-//            
-//            initialSelectedProductId = ""
-//            self.productData = []
-//            self.currentPrice = 0.0
-//            isLive = false
-
+            //            SocketManagerService.shared.reset(with: self.roomId)
+            //
+            //            self.comments.removeAll()
+            //            SocketManagerService.shared.chats.removeAll()
+            //
+            //            initialSelectedProductId = ""
+            //            self.productData = []
+            //            self.currentPrice = 0.0
+            //            isLive = false
+            
             
             previewResetTrigger.toggle()
             self.showLiveControls = false
@@ -1057,35 +1213,35 @@ struct RehearsalScreen: View {
             if agoraManager.isJoined {
                 agoraManager.leaveChannel()
             }
-
+            
             // notify socket server & stop scheduler
             SocketManagerService.shared.endStreaming(roomId: self.roomId)
             SocketManagerService.shared.stopLiveScheduler()
-
+            
             // remove listeners & chats
             SocketManagerService.shared.removeChatListener()
             SocketManagerService.shared.chats.removeAll()
             self.comments.removeAll()
-
+            
             // remove the room entry from manager so stale product state is not retained
             if let idx = SocketManagerService.shared.rooms.firstIndex(where: { $0.room_id == self.roomId }) {
                 SocketManagerService.shared.rooms.remove(at: idx)
             }
-
+            
             // call reset helper if available (keeps compatibility with existing commented call)
             // this method was used previously in this file as a comment; if implemented in the service it will do additional cleanup
-//            SocketManagerService.shared.reset(with: self.roomId)
-
+            //            SocketManagerService.shared.reset(with: self.roomId)
+            
             // local UI / model cleanup
             initialSelectedProductId = ""
             productData.removeAll()
             currentPrice = 0.0
-
+            
             previewResetTrigger.toggle()
             self.showLiveControls = false
             self.showPreLiveControls = true
-
-
+            
+            
             // navigate / dismiss
             if comeFromPrepare {
                 backToTabBar = false
@@ -1094,14 +1250,14 @@ struct RehearsalScreen: View {
             }
         }
     }
-
+    
     func logoutRoom() {
         // clear UI & socket state for a clean slate
         SocketManagerService.shared.chats.removeAll()
         self.comments.removeAll()
         showSellSheet = false
         self.isLive = false
-
+        
         // remove room-specific data if present
         if !self.roomId.isEmpty {
             if let idx = SocketManagerService.shared.rooms.firstIndex(where: { $0.room_id == self.roomId }) {
@@ -1109,7 +1265,7 @@ struct RehearsalScreen: View {
             }
             SocketManagerService.shared.reset(with: self.roomId)
         }
-
+        
         self.productData.removeAll()
         self.currentPrice = 0.0
         initialSelectedProductId = ""
@@ -1128,7 +1284,7 @@ struct RehearsalScreen: View {
             self.roomId = roomId
             if data.is_live == false {
                 Task{
-//                    try await castManager.unpublish()
+                    //                    try await castManager.unpublish()
                     
                     self.comments.removeAll()
                     previewResetTrigger.toggle()
@@ -1143,10 +1299,10 @@ struct RehearsalScreen: View {
                 }
                 return
             }
-//            Task{
-//                try await castManager.publish(streamName:  self.roomId)
-//            }
-//            
+            //            Task{
+            //                try await castManager.publish(streamName:  self.roomId)
+            //            }
+            //
             
             let product: [ProductData] = (data.products ?? []).compactMap { product in
                 guard let id = product.id,
@@ -1185,7 +1341,7 @@ struct RehearsalScreen: View {
                 allowBidForAll: true,
                 showTimer: ""
             )
-
+            
             
         }
     }
@@ -1258,17 +1414,8 @@ struct RehearsalScreen: View {
                     showhud = true
                     return
                 }
-                //                SVProgressHUD.show()
                 var is_Live = "true"
-                ShowData(data: showsData,selectedID: selectedID)
-                //                await viewModel.UpdateLiveShows(param: LiveShowUpdateRequest(schedule_show_id: showUd, is_live: is_Live))
-                //                await SVProgressHUD.dismiss()
-                //                // ✅ Only call success if we have a valid product ID
-                //                if let validID = selectedID, !validID.isEmpty {
-                //                    success(selectedID: validID)
-                //                } else {
-                //                    print("⚠️ Skipping success(): selectedID is nil or empty")
-                //                }
+                showData(from: showsData,selectedID: selectedID)
             }
         }
     }
@@ -1279,9 +1426,9 @@ struct RehearsalScreen: View {
             if action == .switchView {
                 isUsingFrontCamera.toggle()
                 //                ZegoExpressEngine.shared().useFrontCamera(isUsingFrontCamera)
-//                Task{
-//                    await castManager.switchCamera()
-//                }
+                //                Task{
+                //                    await castManager.switchCamera()
+                //                }
                 agoraManager.switchCamera()
             } else {
                 currentBottomSheet = action
@@ -1300,10 +1447,10 @@ struct RehearsalScreen: View {
                 //                    .font(.custom(poppinsThin, size: 12.0))
             }
             .padding(6)
-//            .background(
-//                Circle()
-//                    .fill(Color.white)
-//            )
+            //            .background(
+            //                Circle()
+            //                    .fill(Color.white)
+            //            )
         }
     }
     
@@ -1312,7 +1459,7 @@ struct RehearsalScreen: View {
         Button(action: {
             if action == .switchView {
                 isUsingFrontCamera.toggle()
-//                castManager.switchCamera()
+                //                castManager.switchCamera()
                 agoraManager.switchCamera()
             } else {
                 currentBottomSheet = action
@@ -1332,10 +1479,10 @@ struct RehearsalScreen: View {
                     //                        .font(.custom(poppinsThin, size: 12.0))
                 }
                 .padding(6)
-//                .background(
-//                    Circle()
-//                        .fill(Color.white)
-//                )
+                //                .background(
+                //                    Circle()
+                //                        .fill(Color.white)
+                //                )
                 
                 Circle()
                     .fill(Color.defaultTheme)

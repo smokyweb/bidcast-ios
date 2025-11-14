@@ -123,7 +123,7 @@ struct CommonBottomSheet: View {
                 .foregroundStyle(.black)
                 .padding(.horizontal, 45)
                 .multilineTextAlignment(.center)
-            
+            Spacer()
             if sheetType.isBtnVertical {
                 VStack(spacing: 15) {
                     if sheetType.primaryBtnText != "" {
@@ -216,3 +216,88 @@ struct SimpleImageOKBottomSheet: View {
   }
 }
 
+
+struct HeightPreferenceKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
+    }
+}
+
+
+struct CommonBottomSheet1: View {
+
+    @EnvironmentObject private var appRootManager: AppRootManager
+    @Binding var sheetType: BottomSheetType
+
+    var onPrimaryClick: (() -> Void)?
+    var onSecondaryClick: (() -> Void)?
+
+    @Binding var measuredHeight: CGFloat     // <-- NEW
+
+    var body: some View {
+        VStack(spacing: 14) {
+
+            Image(sheetType.icon)
+                .renderingMode(.template)
+                .resizable()
+                .frame(width: 40, height: 40)
+                .padding(6)
+                .background(Color(sheetType.sheetThemeColor))
+                .foregroundStyle(.white)
+                .clipShape(Circle())
+
+            Text(sheetType.title)
+                .font(.custom(poppinsBold, fixedSize: 24))
+                .foregroundStyle(.black)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+
+            Text(sheetType.message)
+                .font(.custom(poppinsMedium, fixedSize: sheetType.contentSize))
+                .foregroundStyle(.black)
+                .padding(.horizontal, 45)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+
+            if sheetType.isBtnVertical {
+                verticalButtons
+            } else {
+                horizontalButtons
+            }
+
+        }
+        .background(
+            GeometryReader { geo in
+                Color.clear
+                    .preference(key: HeightPreferenceKey.self,
+                                value: geo.size.height)
+            }
+        )
+        .onPreferenceChange(HeightPreferenceKey.self) { newHeight in
+            measuredHeight = newHeight + 40   // padding safety
+        }
+    }
+
+    private var verticalButtons: some View {
+        VStack(spacing: 15) {
+            if sheetType.primaryBtnText != "" {
+                PrimaryButton(title: sheetType.primaryBtnText) { onPrimaryClick?() }
+            }
+            if sheetType.secondaryBtnText != "" {
+                PrimaryButton(title: sheetType.secondaryBtnText) { onSecondaryClick?() }
+            }
+        }.padding(.top, 10)
+    }
+
+    private var horizontalButtons: some View {
+        HStack {
+            if sheetType.primaryBtnText != "" {
+                PrimaryButton(title: sheetType.primaryBtnText) { onPrimaryClick?() }
+            }
+            if sheetType.secondaryBtnText != "" {
+                PrimaryButton(title: sheetType.secondaryBtnText) { onSecondaryClick?() }
+            }
+        }.padding(.top, 10)
+    }
+}

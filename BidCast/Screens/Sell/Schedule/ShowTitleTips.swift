@@ -136,7 +136,7 @@ struct ShowTitleTips: View {
             .padding(.horizontal,Leading)
             //            .background(.green)
             PrimaryButton(title: "Continue",isOutLine: false,onButtonClick: {
-                request.title = title
+                request.title = title.trimmingCharacters(in: .whitespacesAndNewlines)
                 guard !request.title.isEmpty else {
                     hudMsg = "Please enter title"
                         showhud = true
@@ -156,20 +156,24 @@ struct ShowTitleTips: View {
         .background(.bg.opacity(0.5))
         .toolbar(.hidden,for: .tabBar)
         .onAppear {
-            Task {
-                guard Reachability.isConnectedToNetwork() else {
-                    hudMsg = "No Internet Connection"
-                    showhud = true
-                    return
-                }
-                
-                SVProgressHUD.show()
-                await viewModel.getTitleTips(param: TipParam(type: "title"))
-                await SVProgressHUD.dismiss()
-                success()
-            }
+            getTilteTips()
         }
         
+    }
+    
+    func getTilteTips() {
+        Task {
+            guard Reachability.isConnectedToNetwork() else {
+                hudMsg = "No Internet Connection"
+                showhud = true
+                return
+            }
+            
+            SVProgressHUD.show()
+            await viewModel.getTitleTips(param: TipParam(type: "title"))
+            await SVProgressHUD.dismiss()
+            success()
+        }
     }
     
     
@@ -177,18 +181,10 @@ struct ShowTitleTips: View {
         let dict = viewModel.tipsResponse
         if dict?.status == "success" {
             tip = dict?.data ?? TitleTipsModel()
-            } else {
-                print("API error: \(dict?.status ?? "")")
-            }
+        } else {
+            print("API error: \(dict?.status ?? "")")
         }
-    
-    //    private func goToNextStep() {
-    //        if currentIndex < prepare.count - 1 {
-    //            currentIndex += 1
-    //        }else{
-    //            navigateToTips = true
-    //        }
-    //    }
+    }
 }
 //
 //#Preview {

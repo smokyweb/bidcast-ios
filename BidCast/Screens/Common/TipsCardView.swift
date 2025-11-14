@@ -16,18 +16,9 @@ struct TipsCardView: View {
     
     var body: some View {
         HStack(spacing: 12){
-            AsyncImage(url: URL(string: image)) { phase in
-                switch phase {
-                case .success(let image):
-                    image.resizable()
-                default:
-                    Image(systemName: "photo")
-                        .resizable()
-                }
-            }
-//            CustomProfileImage(url:  URL(string: image)!)
+            CustomProfileImage(url: image, isCircular: false, cornerRadius: 0, size: 24, height: .infinity, defaultImage: "photo")
             .frame(width: 24, height: 24)
-            .clipShape(Circle())
+//            .clipShape(Circle())
             VStack(alignment: .leading, spacing: 6) {
                 Text(title)
                     .font(.custom(poppinsBold, size: 15.0))

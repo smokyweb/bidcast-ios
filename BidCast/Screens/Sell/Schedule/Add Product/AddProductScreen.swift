@@ -38,6 +38,8 @@ struct AddProductsScreen: View {
     @State var productData = [ProductDataModel]()
     @State var viewModel = ScheduleViewModel()
     
+    @State private var sheetHeight: CGFloat = 200   // default
+
     @State var selectedProductIDs: Set<String> = []
     
     @State var navigateToInventry: Bool = false
@@ -199,136 +201,7 @@ struct AddProductsScreen: View {
             
             
             // Finish Button
-            Button(action: {
-                print(request)
-                guard !request.title.isEmpty else {
-                    hudMsg = "Please enter title"
-                    showhud = true
-                    return
-                }
-                guard !request.category_id.isEmpty else {
-                    hudMsg = "Please enter category type"
-                    showhud = true
-                    return
-                }
-                guard !request.auction_type_id.isEmpty else {
-                    hudMsg = "Please enter auction type"
-                    showhud = true
-                    return
-                }
-                guard !thumbNail.isEmpty else {
-                    hudMsg = "Please select thumbnail image"
-                    showhud = true
-                    return
-                }
-                guard !request.date.isEmpty else {
-                    hudMsg = "Please enter date"
-                    showhud = true
-                    return
-                }
-                guard !request.time.isEmpty else {
-                    hudMsg = "Please select time"
-                    showhud = true
-                    return
-                }
-                guard !request.product_ids.isEmpty else {
-                    hudMsg = "Please select product"
-                    showhud = true
-                    return
-                }
-                if fromPrepare{
-                    backToPrepare = false
-                    delegate?.didUpdateRequest(request,thumbNail: self.thumbNail)
-                }else{
-//                    Task{
-//                       guard Reachability.isConnectedToNetwork() else {
-//                            hudMsg = "No Internet Connection"
-//                            showhud = true
-//                            return
-//                        }
-//                        SVProgressHUD.show()
-//                        var thumbImage = [String]()
-//                        thumbImage.append(thumbNail)
-//                        self.viewModel.errorMessage = ""
-//                        var param: [String: Any] = [
-//                            "title": request.title,
-//                            "date": request.date,
-//                            "time": request.time,
-//                            "category_id": request.category_id,
-//                            "auction_type_id": request.auction_type_id,
-//                        ]
-//                        let products = request.product_ids.toIntArray()
-//                        for (index, product) in products.enumerated() {
-//                            param["product_ids[\(index)]"] = product
-//                        }
-//                        await viewModel.storeScheduleShow(param: param,images: [thumbNail],key: "thumbnail[]")
-//                        await SVProgressHUD.dismiss()
-//                        
-//                        if viewModel.errorMessage == nil || viewModel.errorMessage == "" {
-//                            storeSuccess()
-//                        }else{
-//                            alertType = .sheetType(
-//                                icon: .alert,
-//                                title: "Error",
-//                                message: viewModel.errorMessage ?? "",
-//                                primaryBtnText: AppString.ok.localized,
-//                                secondaryBtnText:""
-//                            )
-//                            showError = true
-//                        }
-//                        
-//                    }
-                    
-                    Task {
-                        await performAPICalls(
-                            isConcurrent: false,
-                            showLoader: true,
-                            onError: { error in
-                                alertType = .sheetType(
-                                    icon: .alert,
-                                    title: "Error",
-                                    message: viewModel.errorMessage ?? "",
-                                    primaryBtnText: AppString.ok.localized,
-                                    secondaryBtnText: ""
-                                )
-                                showError = true
-                            }
-                        ) {
-                            var thumbImage = [String]()
-                            thumbImage.append(thumbNail)
-                            self.viewModel.errorMessage = ""
-
-                            // Prepare request parameters
-                            var param: [String: Any] = [
-                                "title": request.title,
-                                "date": request.date,
-                                "time": request.time,
-                                "category_id": request.category_id,
-                                "auction_type_id": request.auction_type_id
-                            ]
-
-                            // Convert product IDs into array format
-                            let products = request.product_ids.toIntArray()
-                            for (index, product) in products.enumerated() {
-                                param["product_ids[\(index)]"] = product
-                            }
-
-                            // 🔹 API Call
-                            await viewModel.storeScheduleShow(param: param, images: [thumbNail], key: "thumbnail[]")
-                            let response = viewModel.storeShowResponse
-                            alertType = .sheetType(
-                                icon: .success,
-                                title: "Successs",
-                                message: response?.message?.capitalized ?? "",
-                                primaryBtnText: AppString.ok.localized,
-                                secondaryBtnText:""
-                            )
-                            showError = true
-                        }
-                    }
-
-                }
-            }) {
+            Button(action: handleFinishTapped) {
                 Text("Finish")
                     .fontWeight(.semibold)
                     .frame(maxWidth: .infinity)
@@ -339,7 +212,6 @@ struct AddProductsScreen: View {
             }
             .padding([.horizontal, .bottom])
             
-            
         }
         .navigationBarHidden(true)
         .onFirstAppear{
@@ -348,11 +220,10 @@ struct AddProductsScreen: View {
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }
-        .bottomSheet(isPresented: $showError, height: screenHeight/2.8, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: {
+        .bottomSheet(isPresented: $showError, height: screenHeight/3.4, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: {
             if viewModel.errorMessage != nil || viewModel.errorMessage != "" {
                 showError = true
             }else{
-                
                 showError = false
             }
         }, content: {
@@ -372,6 +243,7 @@ struct AddProductsScreen: View {
                     withAnimation { showError = false }
                 })
         })
+        
         CusNavLink(doNavigate: $navigateToTab, destination: TabbarScreen())
         CusNavLink(doNavigate: $navigateToAddProduct, destination: CreateProductScreen(requests: $request, thumbNail: $thumbNail,backToPrepare: $backToPrepare,fromPrepare: .constant(false)))
         CusNavLink(doNavigate: $navigateToEditProduct, destination: CreateProductScreen(requests: $request, thumbNail: $thumbNail,backToPrepare: $backToPrepare,fromPrepare: .constant(false)))
@@ -464,5 +336,91 @@ extension AddProductsScreen{
             showError = true
         }
     }
+    
+    func handleFinishTapped() {
+        print(request)
+
+        if let error = validateRequest() {
+            hudMsg = error
+            showhud = true
+            return
+        }
+        
+        if fromPrepare {
+            backToPrepare = false
+            delegate?.didUpdateRequest(request, thumbNail: thumbNail)
+            return
+        }
+        
+        Task {
+            await performSaveRequest()
+        }
+        
+    }
+
+    func validateRequest() -> String? {
+        if request.title.isEmpty { return "Please enter title" }
+        if request.category_id.isEmpty { return "Please enter category type" }
+        if request.auction_type_id.isEmpty { return "Please enter auction type" }
+        if thumbNail.isEmpty { return "Please select thumbnail image" }
+        if request.date.isEmpty { return "Please enter date" }
+        if request.time.isEmpty { return "Please select time" }
+        if request.product_ids.isEmpty { return "Please select product" }
+
+        return nil
+    }
+    
+    func performSaveRequest() async {
+        await performAPICalls(
+            isConcurrent: false,
+            showLoader: true,
+            onError: { _ in
+                alertType = .sheetType(
+                    icon: .alert,
+                    title: "Error",
+                    message: viewModel.errorMessage ?? "",
+                    primaryBtnText: AppString.ok.localized,
+                    secondaryBtnText: ""
+                )
+                showError = true
+            },
+            onSuccess: {
+                let response = viewModel.storeShowResponse
+
+                alertType = .sheetType(
+                    icon: .success,
+                    title: "Success",
+                    message: response?.message?.capitalized ?? "",
+                    primaryBtnText: AppString.ok.localized,
+                    secondaryBtnText: ""
+                )
+                showError = true
+            }
+        ) {
+            var params: [String: Any] = [
+                "title": request.title,
+                "date": request.date,
+                "time": request.time,
+                "category_id": request.category_id,
+                "auction_type_id": request.auction_type_id
+            ]
+
+            // Convert product IDs
+            for (index, product) in request.product_ids.toIntArray().enumerated() {
+                params["product_ids[\(index)]"] = product
+            }
+
+            viewModel.errorMessage = ""
+
+            try await viewModel.storeScheduleShow(
+                param: params,
+                images: [thumbNail],
+                key: "thumbnail[]"
+            )
+        }
+
+    }
+
+
 }
 

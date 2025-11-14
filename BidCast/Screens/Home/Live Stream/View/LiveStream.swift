@@ -1086,6 +1086,7 @@ struct LiveStream: View {
             return
         }
         
+        
         // 🧱 STEP 2: Validate room existence
         guard let matchingRoomIndex = socketRooms.firstIndex(where: { $0.room_id == roomId }) else {
             presentError(
