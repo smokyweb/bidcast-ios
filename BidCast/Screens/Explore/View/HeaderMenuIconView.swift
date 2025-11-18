@@ -16,7 +16,7 @@ struct HeaderMenuIconView: View {
             didTapMenuButton()
         }) {
             ZStack(alignment: .topTrailing) {
-                Image(systemName: "bell.fill")
+                Image(systemName: "bell")
                     .font(.custom(poppinsBold, size: 18.0))
                     .foregroundColor(.black)
                     .frame(width: 32, height: 32)  // Square frame
