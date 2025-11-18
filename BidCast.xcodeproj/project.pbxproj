@@ -412,6 +412,7 @@
 		D4CAECBD2DE73BCC00705CD7 /* EndShowModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4CAECB72DE73BCC00705CD7 /* EndShowModel.swift */; };
 		D4CAECBE2DE73BCC00705CD7 /* EndShowViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4CAECB92DE73BCC00705CD7 /* EndShowViewModel.swift */; };
 		D4CDF2A32DD21A6F00DA8161 /* SegmentedControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4CDF2A22DD21A6F00DA8161 /* SegmentedControlView.swift */; };
+		D4D048272ECC39E40033B647 /* LiveStreamV1.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D048262ECC39E40033B647 /* LiveStreamV1.swift */; };
 		D4D2B91B2E30E783006F15E6 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D2B91A2E30E783006F15E6 /* NetworkMonitor.swift */; };
 		D4D3044F2E55D031006A15EF /* UpcomingModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D3044A2E55D031006A15EF /* UpcomingModel.swift */; };
 		D4D304502E55D031006A15EF /* UpcomingBottomSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D304482E55D031006A15EF /* UpcomingBottomSheet.swift */; };
@@ -944,6 +945,7 @@
 		D4CAECB72DE73BCC00705CD7 /* EndShowModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndShowModel.swift; sourceTree = "<group>"; };
 		D4CAECB92DE73BCC00705CD7 /* EndShowViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndShowViewModel.swift; sourceTree = "<group>"; };
 		D4CDF2A22DD21A6F00DA8161 /* SegmentedControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedControlView.swift; sourceTree = "<group>"; };
+		D4D048262ECC39E40033B647 /* LiveStreamV1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveStreamV1.swift; sourceTree = "<group>"; };
 		D4D2B91A2E30E783006F15E6 /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
 		D4D304482E55D031006A15EF /* UpcomingBottomSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpcomingBottomSheet.swift; sourceTree = "<group>"; };
 		D4D3044A2E55D031006A15EF /* UpcomingModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpcomingModel.swift; sourceTree = "<group>"; };
@@ -1603,6 +1605,7 @@
 			isa = PBXGroup;
 			children = (
 				35987D1D2DE5863100D6C2C9 /* LiveStream.swift */,
+				D4D048262ECC39E40033B647 /* LiveStreamV1.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -4561,6 +4564,7 @@
 				D4DDF62D2E0BD358007AD383 /* NotificationCardView.swift in Sources */,
 				D4BA9C1A2DE49D1300DFF6E6 /* WalletModel.swift in Sources */,
 				99C909E42DC8CDDC0054620B /* LinkedInUserDetail.swift in Sources */,
+				D4D048272ECC39E40033B647 /* LiveStreamV1.swift in Sources */,
 				D41711E02DF7FF1300ED39BC /* TrustedBuyerViewModel.swift in Sources */,
 				D4CAEC5E2DE6F53300705CD7 /* RewardInfoCardView.swift in Sources */,
 				D4E569DB2DD46BE50005A78E /* LanguagePickerView.swift in Sources */,

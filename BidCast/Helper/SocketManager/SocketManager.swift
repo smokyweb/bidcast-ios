@@ -58,7 +58,7 @@ final class SocketManagerService: NSObject, ObservableObject {
     @Published var chats: [CommentModel] = []
     @Published var viewerCount: Int = 0
     @Published var showTime: String = "00:00:00"
-    @Published var bidTime: String = "00:00:00"
+    @Published var bidTime: String = "00:00"
     @Published var hasWon = false
     
     /// Published follow status for UI binding
@@ -343,7 +343,9 @@ final class SocketManagerService: NSObject, ObservableObject {
     
     func listenForViewerCount() {
         socket.on("viewerCount") { [weak self] data, _ in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
             if let json = data.first as? [String: Any], let count = json["count"] as? Int {
                 viewerCount = count
             } else if let count = data.first as? Int {
@@ -404,10 +406,10 @@ final class SocketManagerService: NSObject, ObservableObject {
     
     // MARK: - Helpers
     private func formatElapsedTime(seconds: Int) -> String {
-        let hours = seconds / 3600
+        
         let minutes = (seconds % 3600) / 60
         let secs = seconds % 60
-        return String(format: "%02d:%02d:%02d", hours, minutes, secs)
+        return String(format: "%02d:%02d", minutes, secs)
     }
     
   
@@ -806,7 +808,7 @@ extension SocketManagerService {
             self.chats.removeAll()
             self.viewerCount = 0
             self.showTime = "00:00:00"
-            self.bidTime = "00:00:00"
+            self.bidTime = "00:00"
             self.hasWon = false
             self.isFollowed = false
             self.lastActionSuccess = false

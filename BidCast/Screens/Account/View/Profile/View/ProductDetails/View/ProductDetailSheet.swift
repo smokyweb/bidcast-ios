@@ -42,11 +42,13 @@ struct ProductDetailSheet: View {
     @State  var promoCode : String = ""
     @State  var shippingCharges : Int = 0
     @State  var taxAmount : Int = 0
+  
     
     var onTapEdit : (ProductDetailsModel) -> () = {_ in }
     var onTapDelete: () async -> () = { }
 
     @State var showoption : Bool = true
+    @State var showButton : Bool = true
     var body: some View {
         VStack(spacing: 0) {
             // Header
@@ -192,34 +194,36 @@ struct ProductDetailSheet: View {
             .cornerRadius(12)
             .padding(.horizontal)
             
-            Spacer()
             
-            // Bottom Buttons
-            HStack(spacing: 16) {
-                Button(action: {
-                    showBuyNowSheet.toggle()
-                }) {
-                    Text("Buy Now")
-                        .font(.custom(poppinsSemiBold, size: 13.0))
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.defaultTheme)
-                        .foregroundColor(.white)
-                        .cornerRadius(30)
+            if showButton{
+                Spacer()
+                // Bottom Buttons
+                HStack(spacing: 16) {
+                    Button(action: {
+                        showBuyNowSheet.toggle()
+                    }) {
+                        Text("Buy Now")
+                            .font(.custom(poppinsSemiBold, size: 13.0))
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.defaultTheme)
+                            .foregroundColor(.white)
+                            .cornerRadius(30)
+                    }
+                    Button(action: {
+                        showMakeOfferSheet.toggle()
+                    }) {
+                        Text("Make Offer")
+                            .font(.custom(poppinsSemiBold, size: 13.0))
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.defaultTheme.opacity(0.8))
+                            .foregroundColor(.white)
+                            .cornerRadius(30)
+                    }
                 }
-                Button(action: {
-                    showMakeOfferSheet.toggle()
-                }) {
-                    Text("Make Offer")
-                        .font(.custom(poppinsSemiBold, size: 13.0))
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.defaultTheme.opacity(0.8))
-                        .foregroundColor(.white)
-                        .cornerRadius(30)
-                }
+                .padding()
             }
-            .padding()
         }
         .edgesIgnoringSafeArea(.top)
         .bottomSheet(isPresented: $showMakeOfferSheet, height: screenHeight * 0.95) {

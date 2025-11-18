@@ -14,48 +14,63 @@ import AlertToast
 import MillicastSDK
 import SocketIO
 
-enum SwitchStreamType{
-    case up
-    case down
-    case none
-}
+//enum SwitchStreamType{
+//    case up
+//    case down
+//    case none
+//}
+//
+//struct CommentModel: Codable, Identifiable, Equatable {
+//    let id = UUID()
+//    let image: String?
+//    let username: String?
+//    let message: String?
+//    let userId: String?
+//    let roomId: String?
+//
+//    enum CodingKeys: String, CodingKey {
+//        case image = "user_image"
+//        case username = "user_name"
+//        case message
+//        case userId = "user_id"
+//        case roomId = "room_id"
+//    }
+////    init(from decoder: Decoder) throws {
+////            let container = try decoder.container(keyedBy: CodingKeys.self)
+////            image = try container.decode(String.self, forKey: .image)
+////            username = try container.decode(String.self, forKey: .username)
+////            message = try container.decode(String.self, forKey: .message)
+////            roomId = try container.decode(String.self, forKey: .roomId)
+////
+////            // Handle userId as String or Int
+////            if let intId = try? container.decode(Int.self, forKey: .userId) {
+////                userId = String(intId)
+////            } else {
+////                userId = try container.decode(String.self, forKey: .userId)
+////            }
+////        }
+//    
+//    init(from decoder: Decoder) throws {
+//        let container = try decoder.container(keyedBy: CodingKeys.self)
+//        
+//        // Safe decode for image, username, message, roomId
+//        image = (try? container.decodeIfPresent(String.self, forKey: .image)) ?? ""
+//        username = (try? container.decodeIfPresent(String.self, forKey: .username)) ?? ""
+//        message = (try? container.decodeIfPresent(String.self, forKey: .message)) ?? ""
+//        roomId = (try? container.decodeIfPresent(String.self, forKey: .roomId)) ?? ""
+//        
+//        // Handle userId as String or Int or nil
+//        if let intId = try? container.decodeIfPresent(Int.self, forKey: .userId) {
+//            userId = String(intId)
+//        } else if let strId = try? container.decodeIfPresent(String.self, forKey: .userId) {
+//            userId = strId
+//        } else {
+//            userId = ""
+//        }
+//    }
+//}
 
-struct CommentModel: Codable, Identifiable, Equatable {
-    let id = UUID()
-    let image: String?
-    let username: String?
-    let message: String?
-    let userId: String?
-    let roomId: String?
-    
-    enum CodingKeys: String, CodingKey {
-        case image = "user_image"
-        case username = "user_name"
-        case message
-        case userId = "user_id"
-        case roomId = "room_id"
-    }
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        
-        // Safe decode for image, username, message, roomId
-        image = (try? container.decodeIfPresent(String.self, forKey: .image)) ?? ""
-        username = (try? container.decodeIfPresent(String.self, forKey: .username)) ?? ""
-        message = (try? container.decodeIfPresent(String.self, forKey: .message)) ?? ""
-        roomId = (try? container.decodeIfPresent(String.self, forKey: .roomId)) ?? ""
-        
-        // Handle userId as String or Int or nil
-        if let intId = try? container.decodeIfPresent(Int.self, forKey: .userId) {
-            userId = String(intId)
-        } else if let strId = try? container.decodeIfPresent(String.self, forKey: .userId) {
-            userId = strId
-        } else {
-            userId = ""
-        }
-    }
-}
-
-struct LiveStream: View {
+struct LiveStreamV1: View {
     @Binding var currentRoomID : String
     @Binding var categoryName : String
     @State private var commentText = ""
@@ -93,7 +108,7 @@ struct LiveStream: View {
     @State private var showStartTime: Date? = nil
     @State private var liveElapsedTime: String = "00:00:00"
     @State var isFollow = false
-    //    @State  var currentRoomID = ""
+//    @State  var currentRoomID = ""
     @State var showVerificationSheet = false
     @State var showPaymentShipping = false
     @State var navigateToAddCardScreen = false
@@ -114,7 +129,7 @@ struct LiveStream: View {
     @State var rooms: [RoomModel] = []
     @State var currentIndex : Int = 0
     @State var onRoomsUpdated: (([String]) -> Void)?
-    @State private var animate = false
+    
     @State var maxBidUserName: String = "Demo UserName"
     @Binding var agoraToken: String
     
@@ -157,9 +172,9 @@ struct LiveStream: View {
     @State var winnerSheet: Bool = false
     @State var walletPaymentSheet: Bool = false
     @State var maxBidAmountSheet : Bool = false
+//    @StateObject private var joinManager = SubscriberViewModel(renderer: MCAcceleratedVideoRenderer())
     @State private var renderer = MCAcceleratedVideoRenderer()
     @State var currentProductID: String? = nil
-    @State var productId: Int = 0
     
     var sheetHeight: CGFloat {
         switch currentBottomSheet {
@@ -180,12 +195,6 @@ struct LiveStream: View {
     @Binding var category : String
     @Binding var search : String
     @Binding var currentPage : Int
-    
-    @State var messageHeight: CGFloat = 40   // single message height
-    let maxVisibleMessages = 3
-    @State var sellerId = ""
-    
-    @State var showItemDetailSheet = false
     var body: some View {
         GeometryReader { geometry in
             if liveShowsData.count != 0{
@@ -196,105 +205,70 @@ struct LiveStream: View {
                             .ignoresSafeArea()
                             .background(Color.black)
                     }
-                    VStack(alignment:.leading) {
+                    
+//                    if streamID.count != 0 {
+//                    MCVideoSwiftUIView(renderer: .accelerated(joinManager.renderer as! MCAcceleratedVideoRenderer),scalingMode: .resize,mirror: true)
+//                        .frame(width: geometry.size.width, height: geometry.size.height)
+//                                   .ignoresSafeArea()
+//                                   .background(Color.black)
+//                    }
+                    VStack {
                         HStack(spacing: 12) {
                             Button(action:{
                                 id = userId
                                 navigateToProfile = true
                             }){
                                 let data = liveShowsData[currentIndex]
-                                
-                                CustomProfileImage(url: data.seller?.image ?? "", isCircular: true,size: 40)
+                               
+                                CustomProfileImage(url: data.seller?.image ?? "", isCircular: true,size: 50)
                                 
                                 
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text(liveShowsData[currentIndex].seller?.name ?? "")
-                                        .font(.custom(poppinsBold, size: 14.0))
+                                        .font(.custom(poppinsSemiBold, size: 13.0))
                                         .foregroundColor(.white)
-                                    HStack(spacing:4){
-                                        HStack(spacing: 4) {
-                                            Image(systemName: "star.fill")
-                                                .font(.system(size: 12))
-                                                .foregroundColor(.white.opacity(0.9))
-                                            
-                                            Text("5.0")
-                                                .font(.custom(poppinsRegular, size: 12.0))
-                                                .foregroundColor(.white.opacity(0.9))
-                                        }
-                                        
-                                        
-                                        Text("•")
-                                            .font(.system(size: 12))
-                                            .foregroundColor(.white.opacity(0.9))
-                                        
-                                        
-                                        HStack(spacing: 3) {
-                                            Image(systemName: "shippingbox")
-                                                .font(.system(size: 12))
-                                                .foregroundColor(.white.opacity(0.9))
-                                            
-                                            Text("1d")
-                                                .font(.custom(poppinsRegular, size: 12.0))
-                                                .foregroundColor(.white.opacity(0.9))
-                                        }
-                                        
-//                                        Spacer(minLength: 4)
-                                        
-                                        Button(action: {
-                                            if let sellerId = liveShowsData[currentIndex].seller?.id {
-                                                socketManagerChat.sendFollowUnfollow(followerId: "\(UserDefaults.userId)", followingId:  sellerId)
-                                            }
-                                        }) {
-                                            Text(socketManagerChat.isFollowed ? "Follow" : "Following")
-                                                .font(.custom(poppinsSemiBold, size: 12.0))
-                                                .foregroundColor(.black)
-                                                .padding(.horizontal, 10)
-                                                .padding(.vertical, 4)
-                                                .background(.defaultTheme)
-                                                .cornerRadius(10)
-                                        }
-                                        
-                                    }
+                                  
                                 }
-                                Spacer()
-                                HStack(spacing: 5) {
-                                    ZStack {
-                                           Circle()
-                                               .fill(Color.red)
-                                               .frame(width: 24, height: 24)
-
-                                           Image(systemName: "waveform")
-                                               .font(.system(size: 16, weight: .bold))
-                                               .foregroundColor(.white)
-                                       }
-                                    
-                                    Text("\(socketManagerChat.viewerCount)")
-                                        .foregroundColor(.white)
-                                        .font(.custom(poppinsSemiBold, size: 16.0))
-                                }
-//                                .padding(.vertical, 4)
-                                .frame(height: 28)
-                                .padding(.horizontal, 6)
-                                .background(Color.black.opacity(0.35))
-                                .clipShape(Capsule())
-                                
-                                Button(action: {
-                                    logoutRoom()
-                                    
-                                    
-                                    self.presentationMode.wrappedValue.dismiss()
-                                }) {
-                                    Image(systemName: "chevron.down")
-                                        .font(.system(size: 18, weight: .bold))
-                                        .foregroundColor(.white.opacity(0.9))
-                                        .frame(width: 28, height: 28)
-                                        .background(Color.black.opacity(0.35))
-                                        .clipShape(Circle())
-                                }
-                                .buttonStyle(.plain)
                             }
+                            Spacer()
+                            
+                            HStack(spacing: 4) {
+                                Image(systemName: "eye.fill")
+                                    .foregroundColor(.black)
+                                Text("\(socketManagerChat.viewerCount)")
+                                    .foregroundColor(.black)
+                                    .font(.custom(poppinsSemiBold, size: 13.0))
+                            }
+//                            if socketManagerChat.isFollowed {
+                            Button(action: {
+                                if let sellerId = liveShowsData[currentIndex].seller?.id {
+                                    socketManagerChat.sendFollowUnfollow(followerId: "\(UserDefaults.userId)", followingId:  sellerId)
+                                }
+                            }) {
+                                Text(socketManagerChat.isFollowed ? "Follow" : "Following")
+                                    .font(.custom(poppinsSemiBold, size: 13.0))
+                                    .foregroundColor(.black)
+                                    .padding(.horizontal, 10)
+                                    .padding(.vertical, 4)
+                                    .background(Color.yellow)
+                                    .cornerRadius(10)
+                            }
+//                            }
+                            Button(action: {
+                                logoutRoom()
+                               
+                                
+                                self.presentationMode.wrappedValue.dismiss()
+                            }) {
+                                Image(.cancel)
+                                    .resizable()
+                                    .renderingMode(.template)
+                                    .foregroundColor(.danger)
+                                    .frame(width: 32,height: 32)
+                            }
+                            
                         }
-                        .padding(.horizontal,12)
+                        .padding(.horizontal)
                         .padding(.top, 50)
                         
                         Spacer()
@@ -306,52 +280,42 @@ struct LiveStream: View {
                             //MARK: Comment section
                             if socketManagerChat.chats.count > 0 {
                                 HStack{
-                                    ScrollViewReader { proxy in
+                                    ScrollViewReader { scrollProxy in
                                         ScrollView(.vertical, showsIndicators: false) {
-
-                                            VStack {
-                                                Spacer(minLength: 0)  // bottom alignment
-
-                                                LazyVStack(alignment: .leading, spacing: 6) {
-
-                                                    ForEach(socketManagerChat.chats) { comment in
-                                                        let data = liveShowsData[currentIndex]
-                                                        let isHost = comment.userId == data.seller?.id ?? ""
-                                                        let isMod = !isHost
-
-                                                        ChatMessageBubble(comment: comment, isHost: isHost, isMod: isMod)
-                                                            .background(
-                                                                GeometryReader { geo in
-                                                                    Color.clear.onAppear {
-                                                                        // Capture height of ONE message (only once)
-                                                                        if messageHeight == 40 {
-                                                                            messageHeight = geo.size.height + 10
-                                                                        }
-                                                                    }
-                                                                }
-                                                            )
-                                                            .id(comment.id)
+                                            VStack(alignment: .leading, spacing: 8) {
+                                                ForEach(socketManagerChat.chats) { comment in
+                                                    HStack(alignment: .center, spacing: 6) {
+                                                        CustomProfileImage(url: comment.image ?? "", isCircular: true,size: 24)
+                                                        VStack(alignment: .leading) {
+                                                            Text(comment.username?.capitalizingFirstLetter() ?? "")
+                                                                .font(.custom(poppinsSemiBold, size: 14.0))
+                                                            
+                                                                .foregroundColor(.white)
+                                                            Text(comment.message ?? "")
+                                                                .font(.custom(poppinsRegular, size: 12.0))
+                                                                .foregroundColor(.white)
+                                                        }
+                                                        Spacer()
                                                     }
+                                                    .id(comment.id)
                                                 }
                                             }
-                                            .padding(.horizontal, 8)
-                                            .padding(.vertical, 4)
+                                            .padding(.horizontal,8)
+                                            .padding(.vertical,4)
                                         }
-                                        .frame(
-                                            height: socketManagerChat.chats.count == 0
-                                                ? 0
-                                                : min(CGFloat(socketManagerChat.chats.count), CGFloat(maxVisibleMessages)) * messageHeight
-                                        )
-                                        .animation(.easeOut(duration: 0.2), value: socketManagerChat.chats.count)
+                                        .frame(width:screenWidth - 90,height: 150)
+//                                        .background(Color.black.opacity(0.3))
+                                        .cornerRadius(10)
+                                        .padding(.horizontal)
                                         .onChange(of: socketManagerChat.chats) { _ in
-                                            if let lastID = socketManagerChat.chats.last?.id {
-                                                withAnimation(.easeOut(duration: 0.25)) {
-                                                    proxy.scrollTo(lastID, anchor: .bottom)
+                                            withAnimation {
+                                                if let lastID = socketManagerChat.chats.last?.id {
+                                                    scrollProxy.scrollTo(lastID, anchor: .bottom)
                                                 }
                                             }
                                         }
                                     }
-
+                                    //
                                 }
                                 
                             }
@@ -360,45 +324,41 @@ struct LiveStream: View {
                             
                             HStack {
                                 ZStack(alignment: .trailing) {
-                                    TextField(
-                                        "",
-                                        text: $commentText,
-                                        prompt: Text("Say something...")
-                                            .foregroundColor(.gray)    // placeholder color
-                                            .font(.custom(poppinsRegular, size: 13))
+                                    TextField("", text: $commentText, prompt: Text("Say something...")
+                                        .foregroundColor(.white)
+                                        .font(.custom(poppinsSemiBold, size: 13.0))
                                     )
-                                    .foregroundColor(.white)            // typed text color
-                                    .font(.custom(poppinsRegular, size: 13))
-                                    
                                     .padding(.horizontal, 8)
                                     .padding(.trailing, commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? 14 : 40)
                                     
-                                    .frame(height: 40)
-                                    .frame(width:BiddingDetail.products != nil ? screenWidth-45 : screenWidth-90 )
+                                    .frame(height: 50)
+                                    .frame(width:BiddingDetail.products != nil ?screenWidth-45 : screenWidth-90 )
+//                                    .frame(maxWidth: .infinity, alignment: .leading)
                                     .font(.custom(poppinsSemiBold, size: 13))
                                     .foregroundColor(.white)
                                     .cornerRadius(8)
                                     .background(
-                                        Capsule()
-                                            .fill(Color.black.opacity(0.35))     // translucent fill
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .fill(Color.black.opacity(0.4))
                                     )
                                     .overlay(
-                                        Capsule()
-                                            .stroke(Color.white, lineWidth: 1)   // border
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .stroke(Color.white, lineWidth: 1)
                                     )
+                                    .clipShape(RoundedRectangle(cornerRadius: 8))
                                     
                                     
                                     if !commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                                         Button(action: {
                                             let roomId = liveShowsData[currentIndex].room_id ?? ""
-                                            //                                            ZIMChatManager.shared.sendMessage(message: commentText,roomId: roomId,image: UserDefaults.profileURL,name: UserDefaults.fullName)
+//                                            ZIMChatManager.shared.sendMessage(message: commentText,roomId: roomId,image: UserDefaults.profileURL,name: UserDefaults.fullName)
                                             let userId = UserDefaults.userId
                                             let userName = UserDefaults.userName
                                             let userImage = UserDefaults.profileURL
                                             SocketManagerService.shared.sendChat(roomId: roomId, message: commentText, userId: userId, userName: userName, userImage: userImage)
                                             commentText = ""
                                         }) {
-                                            Image(systemName: "chevron.right")
+                                            Image(systemName: "paperplane.fill")
                                                 .resizable()
                                                 .frame(width: 16, height: 16)
                                                 .foregroundColor(.white)
@@ -425,10 +385,7 @@ struct LiveStream: View {
                                                        bidTime: $socketManagerChat.bidTime,
                                                        userName: $winnerName, userImage: $winnerProfileImage,
                                                        categoryName: $categoryName,
-                                                       onTap: {
-                                        self.showItemDetailSheet = true
-                                    }
-                                                       
+                                                      
                                     )
                                     .frame(maxWidth: .infinity)
                                     
@@ -440,14 +397,12 @@ struct LiveStream: View {
                                     HStack(spacing: 8) {
                                         
                                         // Max Button
-                                        Text("Custom")
+                                        Text("Max")
                                             .font(.custom(poppinsBold, size: 13))
-                                                .foregroundColor(.white)
-                                                .frame(width: 80, height: 42)
-                                                .background(
-                                                    Capsule()
-                                                        .stroke(Color.white.opacity(0.5), lineWidth: 1)
-                                                )
+                                            .foregroundColor(.white)
+                                            .frame(width: 40, height: 50)
+                                            .background(Color.defaultTheme)
+                                            .cornerRadius(10)
                                             .onTapGesture {
                                                 if UserDefaults.allowBidForAllUser{
                                                     self.maxBidAmountSheet = true
@@ -462,54 +417,28 @@ struct LiveStream: View {
                                         
                                         // Swipe to Bid Section
                                         ZStack(alignment: .leading) {
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .fill(Color.defaultTheme)
+                                                .frame(height: 50)
 
-                                            // Background Capsule (Yellow fill)
-//                                            Capsule()
-//                                                .frame(height: 45)
-
-                                            // Inner Outline
-//                                            Capsule()
-////                                                .fill(Color(hex: "F4D447") ?? Color.darkYellow)
-//                                                .frame(height: 45)
-                                            Capsule()
-                                                .stroke(.defaultTheme , lineWidth: 1)
-                                                .frame(height: 42)
-
-                                            // Center Text + Arrows
                                             let nextBid = nextBidAmount(for: currentPrice)
-
                                             
-
-                                            // Draggable Button (Styled)
-                                            RoundedRectangle(cornerRadius: 22)
-                                                .fill(.defaultTheme)
-                                                .frame(width: screenWidth/2 - 40, height: 36)
+                                            // Then use in Text
+                                            Text("Swipe to Bid $\(String(format: "%.2f", nextBid))")
+                                                .font(.custom(poppinsSemiBold, size: 14))
+                                                .foregroundColor(.white)
+                                                .frame(maxWidth: .infinity, alignment: .center)
+                                            
+                                            // Draggable Arrow
+                                            RoundedRectangle(cornerRadius: 8)
+                                                .fill(Color.darkGreen)
+                                                .frame(width: 40, height: 40)
                                                 .overlay(
-                                                    HStack(spacing: 6) {
-                                                        Text("Bid: $\(Int(nextBid))")
-                                                            .font(.custom(poppinsSemiBold, size: 14))
-                                                            .foregroundColor(.black)
-
-                                                        Image(systemName: "chevron.right")
-                                                            .font(.system(size: 13, weight: .bold))
-                                                            .foregroundColor(.black)
-                                                            .opacity(animate ? 1 : 0.2)
-                                                            .offset(x: animate ? 3 : 0)
-                                                        
-                                                        // Chevron 2
-                                                        Image(systemName: "chevron.right")
-                                                            .font(.system(size: 13, weight: .bold))
-                                                            .foregroundColor(.black)
-                                                            .opacity(animate ? 1 : 0.2)
-                                                            .offset(x: animate ? 6 : 0)
-                                                    }
-                                                        .onAppear {
-                                                                   withAnimation(.easeInOut(duration: 0.8).repeatForever(autoreverses: true)) {
-                                                                       animate = true
-                                                                   }
-                                                               }
+                                                    Text(swipeConfirmed ? "$" : "$")
+                                                        .foregroundColor(.black)
+                                                        .font(.custom(poppinsExtraBold, size: 16))
                                                 )
-                                                .offset(x: max(4, min(dragOffset.width + 4, screenWidth * 0.3)))
+                                                .offset(x: min(dragOffset.width + 4, totalSwipeWidth - 90))
                                                 .gesture(
                                                     DragGesture()
                                                         .onChanged { value in
@@ -518,15 +447,12 @@ struct LiveStream: View {
                                                             }
                                                         }
                                                         .onEnded { value in
-                                                            if value.translation.width > totalSwipeWidth * 0.25 {
-
-                                                                // Trigger Bid
+                                                            if value.translation.width > totalSwipeWidth * 0.5 {
                                                                 dragOffset = .zero
-
-                                                                if UserDefaults.allowBidForAllUser {
+                                                                if UserDefaults.allowBidForAllUser{
                                                                     swipeConfirmed = true
                                                                     incrementPrice()
-                                                                } else {
+                                                                }else{
                                                                     if UserDefaults.buyerVerafied != "verified" {
                                                                         showVerificationSheet = true
                                                                     } else {
@@ -534,6 +460,7 @@ struct LiveStream: View {
                                                                         incrementPrice()
                                                                     }
                                                                 }
+                                                                
                                                             } else {
                                                                 swipeConfirmed = false
                                                                 dragOffset = .zero
@@ -542,9 +469,22 @@ struct LiveStream: View {
                                                 )
                                                 .animation(.easeOut, value: dragOffset)
                                         }
-                                        .frame(height: 45)
+                                        .frame(height: 50)
                                         .frame(maxWidth: .infinity)
-                                  
+                                        
+                                         //Price and Timer
+//                                        VStack(spacing: 2) {
+//                                            Text("$\(String(format: "%.2f", currentPrice))")
+//                                                .font(.custom(poppinsBold, size: 13))
+//                                                .foregroundColor(.white)
+//                                            
+//                                            Text(socketManagerChat.bidTime)
+//                                                .font(.custom(poppinsSemiBold, size: 13))
+//                                                .foregroundColor(.white)
+//                                        }
+//                                        .frame(width: 70, height: 50)
+//                                        .background(Color.black.opacity(0.3))
+//                                        .cornerRadius(10)
                                     }
                                     
                                     .padding(.horizontal)
@@ -569,11 +509,11 @@ struct LiveStream: View {
                                         .padding(.trailing, 16)
                                 }
                             }
-                            //                            .padding(.horizontal,16)
+//                            .padding(.horizontal,16)
                             .padding(.bottom, keyboardResponder.currentHeight == 0 ? (tabBarHeight + 20) : 10)
                         }
                     }
-                    VStack(spacing: 12) {
+                    VStack(spacing: 4) {
                         //                            ForEach(MenuAction.allCases, id: \.self) { action in
                         ForEach(filteredActions, id: \.self) { action in
                             Button(action: {
@@ -607,25 +547,19 @@ struct LiveStream: View {
                                     }
                                 }
                             }) {
-                                VStack(spacing:4){
-                                    Image(action.iconName)
-                                        .renderingMode(.template)
-                                        .resizable()
-                                        .scaledToFit()
-                                        .fontWeight(.heavy)
-                                        .font(.custom(poppinsExtraBold, size: 22.0))
-                                        .frame(width: 25, height: 24)
-                                        .foregroundColor(.white)
-                                    Text(action.label)
-                                        .font(.custom(poppinsRegular, size: 8.0))
-                                        .foregroundColor(.white)
-                                }
+                                Image(action.iconName)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .fontWeight(.heavy)
+                                    .font(.custom(poppinsExtraBold, size: 22.0))
+                                    .frame(width: 39, height: 40)
+                                    .foregroundColor(.black)
                             }
                             .padding(4)
-                            //                            .background(
-                            //                                Circle()
-                            //                                    .fill(Color.white)
-                            //                            )
+//                            .background(
+//                                Circle()
+//                                    .fill(Color.white)
+//                            )
                         }
                     }
                     .position(
@@ -668,9 +602,9 @@ struct LiveStream: View {
                                     
                                     let currentRoomId = liveShowsData[currentIndex].room_id ?? ""
                                     switchStream(to: currentRoomId)
-                                    //get next show agora token
-                                    //get currentroom id
-                                    //call beelow func for updated room id
+                                        //get next show agora token
+                                       //get currentroom id
+                                        //call beelow func for updated room id
                                 }
                             } else if verticalAmount > swipeThreshold && currentIndex > 0 {
                                 // Swipe Down
@@ -769,7 +703,7 @@ struct LiveStream: View {
                             navigateToBuyer = true
                             showVerificationSheet = false
                         }
-                        
+                       
                         if !showVerificationSheet{
                             if !navigateToBuyer{
                                 if UserDefaults.sellerAddress == false{
@@ -825,23 +759,23 @@ struct LiveStream: View {
                         }
                     )
                 case .share:
-                    //                    ShareShowBottomSheetView(
-                    //                        isPresented: $showSheet,
-                    //                        showTitle: "John's Live Show",
-                    //                        username: "johnsmith",
-                    //                        showImage: Image("icWatch"),
-                    //                        message: "Live auction starting in 5 minutes! Don’t miss out on exclusive items.",
-                    //                        onShare: { platform in
-                    //                            print("Shared to \(platform)")
-                    //                        },
-                    //                        onSavePDF: {
-                    //                            print("PDF Saved")
-                    //                        },
-                    //                        onShareEmail: {
-                    //                            print("Email sent")
-                    //                        }
-                    //                    )
-                    
+//                    ShareShowBottomSheetView(
+//                        isPresented: $showSheet,
+//                        showTitle: "John's Live Show",
+//                        username: "johnsmith",
+//                        showImage: Image("icWatch"),
+//                        message: "Live auction starting in 5 minutes! Don’t miss out on exclusive items.",
+//                        onShare: { platform in
+//                            print("Shared to \(platform)")
+//                        },
+//                        onSavePDF: {
+//                            print("PDF Saved")
+//                        },
+//                        onShareEmail: {
+//                            print("Email sent")
+//                        }
+//                    )
+                   
                     ShareSheet(items: shareItems)
                 case .wallet:
                     let data = homeViewModel.accountInfo.data
@@ -901,16 +835,6 @@ struct LiveStream: View {
             )
         }
         
-        .bottomSheet(isPresented: $showItemDetailSheet, height: screenHeight * 0.65) {
-            ProductDetailSheet(
-                onDismiss : {
-                    self.showItemDetailSheet = false
-                    productId = 0
-                },
-                productID: $productId,showoption: false,showButton: false
-                
-            )
-        }
         .bottomSheet(isPresented: $maxBidAmountSheet, height: screenHeight * 0.35) {
             if let currentProduct = productData.first {
                 MaxBidBottomSheet(
@@ -922,7 +846,7 @@ struct LiveStream: View {
                             placeBid(amount: amount)
                         }
                         //                        self.maxBidAmountSheet = false
-                    },
+                    }, 
                     onDismiss: {
                         self.maxBidAmountSheet = false
                     }
@@ -938,19 +862,19 @@ struct LiveStream: View {
             
             //works as view did load
             UserDefaults.isLiveEnded = false
-            //            FirebaseManager.shared.removeNewSessionObserver()
-            //            ZIMChatManager.shared.login(userID: "\(UserDefaults.userId)", userName: UserDefaults.fullName)
-            
+//            FirebaseManager.shared.removeNewSessionObserver()
+//            ZIMChatManager.shared.login(userID: "\(UserDefaults.userId)", userName: UserDefaults.fullName)
+           
             Task{
                 SVProgressHUD.show()
                 await self.homeViewModel.getProfile()
                 await SVProgressHUD.dismiss()
                 await getProfileSuccess()
-                //               try await joinManager.subscribe(streamName: currentRoomID)
+//               try await joinManager.subscribe(streamName: currentRoomID)
                 socketManagerChat.joinRoom(roomId: currentRoomID, completion: {
-                    //                        guard let self = self else { return }
-                    joinStreamUsingSocket(roomId: currentRoomID)
-                })
+//                        guard let self = self else { return }
+                        joinStreamUsingSocket(roomId: currentRoomID)
+                    })
             }
             
             socketManagerChat.listenForRaidEvent { raidInfo in
@@ -964,7 +888,7 @@ struct LiveStream: View {
                     showHud = true
                 }
                 currentRoomID = roomId
-                self.agoraToken = rtcToken
+                self.agoraToken = rtcToken          
                 socketManagerChat.joinRoom(roomId: roomId) {
                     joinStreamUsingSocket(roomId: roomId)
                 }
@@ -1039,28 +963,28 @@ struct LiveStream: View {
         let userId = UserDefaults.userId
         let userName = UserDefaults.userName
         let userImage = UserDefaults.profileURL
-        
+
         // Notify entry
         SocketManagerService.shared.sendChat(
             roomId: roomId,
-            message: "Joined 👋 ",
+            message: "Joining the host… ",
             userId: userId,
             userName: userName,
             userImage: userImage
         )
-        
+
         // Core listeners
         socketManagerChat.listenForChat(roomId: roomId)
         socketManagerChat.listenForViewerCount()
         socketManagerChat.listenForBidTimer(roomId: roomId)
-        
+
         // Stream end listener
         socketManagerChat.listenForRoomEnded { endedRoomId in
             guard roomId == endedRoomId else { return }
             presentError(title: "Stream Ended", message: "The host has ended the live stream.")
             hasHostEndedRoom = true
         }
-        
+
         // Highest bid listener
         SocketManagerService.shared.listenForHighestBid(forRoom: roomId) { highestBid in
             guard let bid = highestBid else { return }
@@ -1070,24 +994,24 @@ struct LiveStream: View {
             winnerProfileImage = bid.user_image ?? ""
             winnerAmount = bid.bid_amount ?? ""
         }
-        
+
         // Bid permission listener
         SocketManagerService.shared.getAllowBidForAll(forRoom: roomId) { allowed in
             UserDefaults.allowBidForAllUser = allowed
             print("⚙️ Allow bid for all: \(allowed)")
         }
-        
+
         // Room updates listener
         SocketManagerService.shared.observeRoomUpdates { newRoom in
             print("🏠 Room updated: \(newRoom.room_id ?? "unknown")")
             fetchProducts(for: newRoom.room_id ?? "")
         }
-        
+
         // Bid finalized listener
         SocketManagerService.shared.listenForBidFinalized { roomId, productId, winner in
             handleBidFinalized(for: roomId, winner: winner)
         }
-        
+
         // Next product listener
         SocketManagerService.shared.listenForNextProduct { roomId, _ in
             fetchProducts(for: roomId)
@@ -1096,14 +1020,14 @@ struct LiveStream: View {
     
     private func handleBidFinalized(for roomId: String, winner: HighestBid?) {
         fetchProducts(for: roomId)
-        
+
         let name = winner?.user_name ?? ""
         let id = Int(winner?.user_id ?? "") ?? 0
         let image = winner?.user_image ?? ""
         let amount = winner?.bid_amount ?? ""
-        
+
         print("🏁 Bid finalized - Winner: \(name), Amount: \(amount)")
-        
+
         winnerName = name
         winnerProfileID = id
         winnerProfileImage = image
@@ -1124,7 +1048,7 @@ struct LiveStream: View {
                 contentSize: 12.0
             )
             withAnimation(.snappy) { showVerificationSheet = true }
-            
+
         case "verified":
             if !UserDefaults.sellerAddress {
                 titleText = "Add Address"
@@ -1133,7 +1057,7 @@ struct LiveStream: View {
                 titleText = "Add Card"
                 showPaymentShipping = true
             }
-            
+
         default:
             alertType = .sheetType(
                 icon: .info,
@@ -1147,8 +1071,8 @@ struct LiveStream: View {
             withAnimation(.snappy) { showVerificationSheet = true }
         }
     }
-    
-    
+
+
     @MainActor
     func joinStreamUsingSocket(roomId: String, switchStreamType: SwitchStreamType = .none) {
         let socketRooms = socketManagerChat.rooms
@@ -1184,7 +1108,7 @@ struct LiveStream: View {
         
         self.roomID = socketRooms.compactMap { $0.room_id }
         self.streamID = self.roomID
-        
+       
         
         if switchStreamType == .none {
             self.liveShowsData = socketRooms
@@ -1195,7 +1119,7 @@ struct LiveStream: View {
         
         print("🎬 Joining stream: \(roomId)")
         
-        
+       
         
         // 🧱 STEP 5: Setup follow/unfollow listener
         socketManagerChat.listenForUserFollowStatus()
@@ -1222,23 +1146,24 @@ struct LiveStream: View {
     /// Reorders the liveShowsData array so that the currentRoomID is at the top (index 0)
     func sortLiveShowsDataByCurrentRoom() {
         guard currentRoomID != "" else { return }
-        
+
         // Ensure we have valid data
         guard !liveShowsData.isEmpty else { return }
-        
+
         // Find current room
         guard let currentRoom = liveShowsData.first(where: { $0.room_id == currentRoomID }) else { return }
-        
+
         // Move current room to top
         var reordered = liveShowsData.filter { $0.room_id != currentRoomID }
         reordered.insert(currentRoom, at: 0)
         liveShowsData = reordered
+
         // Update the current index to 0
         currentIndex = 0
-        
+
         print("🔁 Sorted live shows — current room '\(currentRoomID)' moved to top.")
     }
-    
+
     /// Updates the current stream when user switches streams (scroll/swipe)
     func switchStream(to newRoomId: String) {
         guard newRoomId != "" else { return }
@@ -1248,172 +1173,172 @@ struct LiveStream: View {
         })
         
     }
+
     
-    
-    //    @MainActor
-    //    func joinStreamUsingSocket1(roomId: String)  {
-    //        let socketRooms = socketManagerChat.rooms
-    //        guard !socketRooms.isEmpty else {
-    //            showError = true
-    //            alertType = .sheetType(
-    //                icon: .alert,
-    //                title: "No Active Streams",
-    //                message: "There are no live streams available at the moment.",
-    //                primaryBtnText: "",
-    //                secondaryBtnText: AppString.ok.localized
-    //            )
-    //            return
-    //        }
-    //
-    //        // Check if requested room exists in socket rooms
-    //        guard let matchingRoomIndex = socketRooms.firstIndex(where: { $0.room_id == roomId }) else {
-    //            showError = true
-    //            alertType = .sheetType(
-    //                icon: .alert,
-    //                title: "Stream Not Found",
-    //                message: "The requested stream is not available right now.",
-    //                primaryBtnText: "",
-    //                secondaryBtnText: AppString.ok.localized
-    //            )
-    //            return
-    //        }
-    //        if self.agoraToken != "" && roomId != "" {
-    //            print("AAgora Token: \(self.agoraToken)")
-    //            agoraManager.joinChannel(asHost: isHost, channelName: roomId, token: agoraToken)
-    //        }
-    //
-    //        //add follow unfollow status
-    //        socketManagerChat.listenForUserFollowStatus()
-    //
-    //        // Set the current room data
-    //        DispatchQueue.main.async {
-    //            self.liveShowsData = socketRooms
-    //            self.roomID = socketRooms.compactMap { $0.room_id }
-    //            self.streamID = self.roomID
-    //
-    //            let currentShow = socketRooms[matchingRoomIndex]
-    //
-    //            currentIndex = matchingRoomIndex
-    //            self.currentRoomID = roomId
-    //
-    //
-    //            print("currentStreamIndex \(currentStreamIndex) matchingRoomIndex index \(matchingRoomIndex)")
-    //            // Join the room and send entry message
-    //
-    //            Task {
-    //
-    ////                try await joinManager.subscribe(streamName: roomId)
-    //
-    ////              socketManagerChat.joinRoom(roomId: roomId, userId: UserDefaults.userId)
-    //                let userId = UserDefaults.userId
-    //                let userName = UserDefaults.userName
-    //                let userImage = UserDefaults.profileURL
-    //                SocketManagerService.shared.sendChat(roomId: roomId, message: "Joining the host… ", userId: userId, userName: userName, userImage: userImage)
-    //                socketManagerChat.listenForChat(roomId: roomId)
-    //                socketManagerChat.listenForViewerCount()
-    //                socketManagerChat.listenForBidTimer(roomId: roomId)
-    //                socketManagerChat.listenForRoomEnded(onEnd: { room_Id in
-    //                    if roomId == room_Id {
-    //                        print("🔥 STREAM REMOVED CALLBACK TRIGGERED 🔥")
-    //                        // Show "Stream Ended" alert
-    //                        self.alertType = .sheetType(
-    //                            icon: .alert,
-    //                            title: "Stream Ended",
-    //                            message: "The host has ended the live stream.",
-    //                            primaryBtnText: AppString.ok.localized,
-    //                            secondaryBtnText: ""
-    //                        )
-    //                        self.showError = true
-    //                        self.hasHostEndedRoom = true
-    //                    }
-    //                })
-    //
-    //                SocketManagerService.shared.listenForHighestBid(forRoom: roomId) { highestBid in
-    //                    if let bid = highestBid {
-    //                        print("🏆 Updated bid in this room: \(bid.user_name ?? "") - \(bid.bid_amount ?? "")")
-    //                        winnerName = bid.user_name ?? ""
-    //                        winnerProfileID = Int(bid.user_id ?? "") ?? 0
-    //                        winnerProfileImage = bid.user_image ?? ""
-    //                        winnerAmount = bid.bid_amount  ?? ""
-    ////                        print("Winner: \(winnerName), Amount: \(winnerAmount)")
-    //                    }
-    //                }
-    //                SocketManagerService.shared.getAllowBidForAll(forRoom: roomId){ allowed in
-    //                    print("alllow BUd \(UserDefaults.allowBidForAllUser)")
-    //                    UserDefaults.allowBidForAllUser = allowed
-    //
-    //                }
-    //
-    //                SocketManagerService.shared.observeRoomUpdates { newRoom in
-    //                    print("🏠 New room received:", newRoom.room_id ?? "unknown")
-    //                    fetchProducts(for: newRoom.room_id ?? "")
-    //                }
-    //
-    //                SocketManagerService.shared.listenForBidFinalized(completion: { roomId,productId,winner in
-    //                    fetchProducts(for: roomId)
-    //                    let winnerNameFromServer = winner?.user_name ?? ""
-    //                    let winnerIdFromServer = winner?.user_id ?? ""
-    //                    let winnerProfileImageFromServer = winner?.user_image ?? ""
-    //                    print("id - > \(winnerIdFromServer)")
-    //                    print("name - > \(winnerNameFromServer)")
-    //                    print("image - > \(winnerProfileImageFromServer)")
-    //
-    //                    winnerName = winnerNameFromServer
-    //                    winnerProfileID = Int(winnerIdFromServer) ?? 0
-    //                    winnerProfileImage = winnerProfileImageFromServer
-    //                    winnerAmount = winner?.bid_amount ?? ""
-    //                    print("Winner: \(winnerName), Amount: \(winnerAmount)")
-    //
-    //                    winnerSheet = true
-    //                })
-    //                SocketManagerService.shared.listenForNextProduct(completion: { roomId,nextProductId in
-    //
-    //                    fetchProducts(for: roomId)
-    //
-    //                })
-    //            }
-    //
-    //            // Update follow status
-    ////            self.isFollow = currentShow.seller?.isFollowed ?? false
-    //            fetchProducts(for: roomId)
-    //
-    //            // Handle buyer verification
-    //            switch UserDefaults.buyerVerafied {
-    //            case "pending":
-    //                self.alertType = .sheetType(
-    //                    icon: .info,
-    //                    title: "Become a Verified Buyer!",
-    //                    message: "Your verification is currently pending approval by the admin. You will be notified once the process is complete.",
-    //                    primaryBtnText: "OK",
-    //                    secondaryBtnText: "",
-    //                    buttonWidth: screenWidth - 40,
-    //                    contentSize: 12.0
-    //                )
-    //                withAnimation(.snappy) { self.showVerificationSheet = true }
-    //
-    //            case "verified":
-    //                if UserDefaults.sellerAddress == false {
-    //                    self.showPaymentShipping = true
-    //                    self.titleText = "Add Address"
-    //                } else if UserDefaults.hasCardAdded == false {
-    //                    self.showPaymentShipping = true
-    //                    self.titleText = "Add Card"
-    //                }
-    //
-    //            default:
-    //                self.alertType = .sheetType(
-    //                    icon: .info,
-    //                    title: "Become a Verified Buyer!",
-    //                    message: "Before you interact with live shows, you need to become a verified buyer.",
-    //                    primaryBtnText: "OK",
-    //                    secondaryBtnText: "",
-    //                    buttonWidth: screenWidth - 40,
-    //                    contentSize: 12.0
-    //                )
-    //                withAnimation(.snappy) { self.showVerificationSheet = true }
-    //            }
-    //        }
-    //    }
+//    @MainActor
+//    func joinStreamUsingSocket1(roomId: String)  {
+//        let socketRooms = socketManagerChat.rooms
+//        guard !socketRooms.isEmpty else {
+//            showError = true
+//            alertType = .sheetType(
+//                icon: .alert,
+//                title: "No Active Streams",
+//                message: "There are no live streams available at the moment.",
+//                primaryBtnText: "",
+//                secondaryBtnText: AppString.ok.localized
+//            )
+//            return
+//        }
+//        
+//        // Check if requested room exists in socket rooms
+//        guard let matchingRoomIndex = socketRooms.firstIndex(where: { $0.room_id == roomId }) else {
+//            showError = true
+//            alertType = .sheetType(
+//                icon: .alert,
+//                title: "Stream Not Found",
+//                message: "The requested stream is not available right now.",
+//                primaryBtnText: "",
+//                secondaryBtnText: AppString.ok.localized
+//            )
+//            return
+//        }
+//        if self.agoraToken != "" && roomId != "" {
+//            print("AAgora Token: \(self.agoraToken)")
+//            agoraManager.joinChannel(asHost: isHost, channelName: roomId, token: agoraToken)
+//        }
+//        
+//        //add follow unfollow status
+//        socketManagerChat.listenForUserFollowStatus()
+//        
+//        // Set the current room data
+//        DispatchQueue.main.async {
+//            self.liveShowsData = socketRooms
+//            self.roomID = socketRooms.compactMap { $0.room_id }
+//            self.streamID = self.roomID
+//            
+//            let currentShow = socketRooms[matchingRoomIndex]
+//            
+//            currentIndex = matchingRoomIndex
+//            self.currentRoomID = roomId
+//            
+//            
+//            print("currentStreamIndex \(currentStreamIndex) matchingRoomIndex index \(matchingRoomIndex)")
+//            // Join the room and send entry message
+//            
+//            Task {
+//                
+////                try await joinManager.subscribe(streamName: roomId)
+//                
+////              socketManagerChat.joinRoom(roomId: roomId, userId: UserDefaults.userId)
+//                let userId = UserDefaults.userId
+//                let userName = UserDefaults.userName
+//                let userImage = UserDefaults.profileURL
+//                SocketManagerService.shared.sendChat(roomId: roomId, message: "Joining the host… ", userId: userId, userName: userName, userImage: userImage)
+//                socketManagerChat.listenForChat(roomId: roomId)
+//                socketManagerChat.listenForViewerCount()
+//                socketManagerChat.listenForBidTimer(roomId: roomId)
+//                socketManagerChat.listenForRoomEnded(onEnd: { room_Id in
+//                    if roomId == room_Id {
+//                        print("🔥 STREAM REMOVED CALLBACK TRIGGERED 🔥")
+//                        // Show "Stream Ended" alert
+//                        self.alertType = .sheetType(
+//                            icon: .alert,
+//                            title: "Stream Ended",
+//                            message: "The host has ended the live stream.",
+//                            primaryBtnText: AppString.ok.localized,
+//                            secondaryBtnText: ""
+//                        )
+//                        self.showError = true
+//                        self.hasHostEndedRoom = true
+//                    }
+//                })
+//                
+//                SocketManagerService.shared.listenForHighestBid(forRoom: roomId) { highestBid in
+//                    if let bid = highestBid {
+//                        print("🏆 Updated bid in this room: \(bid.user_name ?? "") - \(bid.bid_amount ?? "")")
+//                        winnerName = bid.user_name ?? ""
+//                        winnerProfileID = Int(bid.user_id ?? "") ?? 0
+//                        winnerProfileImage = bid.user_image ?? ""
+//                        winnerAmount = bid.bid_amount  ?? ""
+////                        print("Winner: \(winnerName), Amount: \(winnerAmount)")
+//                    }
+//                }
+//                SocketManagerService.shared.getAllowBidForAll(forRoom: roomId){ allowed in
+//                    print("alllow BUd \(UserDefaults.allowBidForAllUser)")
+//                    UserDefaults.allowBidForAllUser = allowed
+//                    
+//                }
+//                
+//                SocketManagerService.shared.observeRoomUpdates { newRoom in
+//                    print("🏠 New room received:", newRoom.room_id ?? "unknown")
+//                    fetchProducts(for: newRoom.room_id ?? "")
+//                }
+//                
+//                SocketManagerService.shared.listenForBidFinalized(completion: { roomId,productId,winner in
+//                    fetchProducts(for: roomId)
+//                    let winnerNameFromServer = winner?.user_name ?? ""
+//                    let winnerIdFromServer = winner?.user_id ?? ""
+//                    let winnerProfileImageFromServer = winner?.user_image ?? ""
+//                    print("id - > \(winnerIdFromServer)")
+//                    print("name - > \(winnerNameFromServer)")
+//                    print("image - > \(winnerProfileImageFromServer)")
+//                    
+//                    winnerName = winnerNameFromServer
+//                    winnerProfileID = Int(winnerIdFromServer) ?? 0
+//                    winnerProfileImage = winnerProfileImageFromServer
+//                    winnerAmount = winner?.bid_amount ?? ""
+//                    print("Winner: \(winnerName), Amount: \(winnerAmount)")
+//                    
+//                    winnerSheet = true
+//                })
+//                SocketManagerService.shared.listenForNextProduct(completion: { roomId,nextProductId in
+//                    
+//                    fetchProducts(for: roomId)
+//                   
+//                })
+//            }
+//            
+//            // Update follow status
+////            self.isFollow = currentShow.seller?.isFollowed ?? false
+//            fetchProducts(for: roomId)
+//            
+//            // Handle buyer verification
+//            switch UserDefaults.buyerVerafied {
+//            case "pending":
+//                self.alertType = .sheetType(
+//                    icon: .info,
+//                    title: "Become a Verified Buyer!",
+//                    message: "Your verification is currently pending approval by the admin. You will be notified once the process is complete.",
+//                    primaryBtnText: "OK",
+//                    secondaryBtnText: "",
+//                    buttonWidth: screenWidth - 40,
+//                    contentSize: 12.0
+//                )
+//                withAnimation(.snappy) { self.showVerificationSheet = true }
+//                
+//            case "verified":
+//                if UserDefaults.sellerAddress == false {
+//                    self.showPaymentShipping = true
+//                    self.titleText = "Add Address"
+//                } else if UserDefaults.hasCardAdded == false {
+//                    self.showPaymentShipping = true
+//                    self.titleText = "Add Card"
+//                }
+//                
+//            default:
+//                self.alertType = .sheetType(
+//                    icon: .info,
+//                    title: "Become a Verified Buyer!",
+//                    message: "Before you interact with live shows, you need to become a verified buyer.",
+//                    primaryBtnText: "OK",
+//                    secondaryBtnText: "",
+//                    buttonWidth: screenWidth - 40,
+//                    contentSize: 12.0
+//                )
+//                withAnimation(.snappy) { self.showVerificationSheet = true }
+//            }
+//        }
+//    }
     @MainActor
     func fetchProducts(for roomId: String) {
         guard let socketRoom = socketManagerChat.rooms.first(where: { $0.room_id == roomId }) else {
@@ -1424,52 +1349,51 @@ struct LiveStream: View {
         }
         if let products = socketRoom.products {
             productData = products
-            //            let activeCurrentProducts = products.filter { product in
-            //                let status = product.status?.lowercased() ?? ""
-            //                return (status == "live" || status == "active") && product.isCurrent
-            //            }
-            //
-            //            if let currentProduct = activeCurrentProducts.first {
-            //
-            //                if let priceDouble = Double(currentProduct.price ?? "") {
-            //                    self.currentPrice = priceDouble
-            //                }
-            //            }
+//            let activeCurrentProducts = products.filter { product in
+//                let status = product.status?.lowercased() ?? ""
+//                return (status == "live" || status == "active") && product.isCurrent
+//            }
+//            
+//            if let currentProduct = activeCurrentProducts.first {
+//              
+//                if let priceDouble = Double(currentProduct.price ?? "") {
+//                    self.currentPrice = priceDouble
+//                }
+//            }
             if let index = productData.firstIndex(where: { $0.isCurrent }) {
                 let currentProduct = productData[index]
                 self.currentPrice = Double(currentProduct.price ?? "") ?? 0.0
                 self.currentProductIndex = index
                 self.currentProductID = currentProduct.id
-                self.productId = Int(currentProduct.id ?? "") ?? 0
                 print("Current product: \(currentProduct), index: \(index)")
             }
         }
-        //        if let products = socketRoom.products {
-        //            let activeCurrentProducts = products.filter { product in
-        //                let status = product.status?.lowercased() ?? ""
-        //                return (status == "live" || status == "active") && product.isCurrent
-        //            }
-        //
-        //            if let currentProduct = activeCurrentProducts.first {
-        //                self.productData = [currentProduct]
-        //                self.currentProductIndex = 0
-        //                self.currentProductID = currentProduct.id
-        //                if let priceDouble = Double(currentProduct.price ?? "") {
-        //                    self.currentPrice = priceDouble
-        //                }
-        //            } else {
-        //                self.productData = []
-        //                self.currentProductIndex = 0
-        //                self.currentPrice = 0.0
-        //            }
-        //        } else {
-        //            self.productData = []
-        //            self.currentProductIndex = 0
-        //            self.currentPrice = 0.0
-        //        }
+//        if let products = socketRoom.products {
+//            let activeCurrentProducts = products.filter { product in
+//                let status = product.status?.lowercased() ?? ""
+//                return (status == "live" || status == "active") && product.isCurrent
+//            }
+//            
+//            if let currentProduct = activeCurrentProducts.first {
+//                self.productData = [currentProduct]
+//                self.currentProductIndex = 0
+//                self.currentProductID = currentProduct.id
+//                if let priceDouble = Double(currentProduct.price ?? "") {
+//                    self.currentPrice = priceDouble
+//                }
+//            } else {
+//                self.productData = []
+//                self.currentProductIndex = 0
+//                self.currentPrice = 0.0
+//            }
+//        } else {
+//            self.productData = []
+//            self.currentProductIndex = 0
+//            self.currentPrice = 0.0
+//        }
     }
-    
-    
+
+
     func sendBid(roomId: String,
                  bidAmount:String,
                  productId:String ) {
@@ -1485,6 +1409,10 @@ struct LiveStream: View {
         currentPrice = Double(bidAmount) ?? 0.0
         let price = String(format: "%.2f", currentPrice)
         commentText = "Current highest bid : $\(price)"
+//        let userId = UserDefaults.userId
+//        let userName = UserDefaults.userName
+//        let userImage = UserDefaults.profileURL
+//        SocketManagerService.shared.sendChat(roomId: roomId, message: commentText, userId: userId, userName: userName, userImage: userImage)
         commentText = ""
     }
     
@@ -1495,7 +1423,6 @@ struct LiveStream: View {
         self.comments.removeAll()
         SocketManagerService.shared.leaveRoom(roomId: self.currentRoomID, userId: UserDefaults.userId)
         currentProductID = nil
-        productId = 0
         self.currentPrice = 0.0
         self.currentProductIndex = -1
     }
@@ -1503,38 +1430,37 @@ struct LiveStream: View {
     func logoutRoom11() {
         // leave RTC
         agoraManager.leaveChannel()
-        
+
         // leave socket room on server
         SocketManagerService.shared.leaveRoom(roomId: self.currentRoomID, userId: UserDefaults.userId)
-        
+
         // clear chats on both manager and local state
         SocketManagerService.shared.chats.removeAll()
         socketManagerChat.chats.removeAll()
         self.comments.removeAll()
-        
+
         // remove room entry from shared rooms to avoid stale product state
         if !self.currentRoomID.isEmpty {
             if let idx = SocketManagerService.shared.rooms.firstIndex(where: { $0.room_id == self.currentRoomID }) {
                 SocketManagerService.shared.rooms.remove(at: idx)
             }
         }
-        
+
         // stop/cleanup timers used for bidding/countdown
         priceTimer?.invalidate()
         priceTimer = nil
         countdownTimer?.invalidate()
         countdownTimer = nil
-        
+
         // reset local product / bidding state
         currentProductID = nil
-        productId = 0
         self.currentProductIndex = -1
         
         self.productData.removeAll()
         self.currentPrice = 0.0
-        
+       
         self.isBiddingActive = false
-        
+
         // reset UI triggers used for preview / sheets
         previewResetTrigger.toggle()
         showSheet = false
@@ -1565,13 +1491,27 @@ struct LiveStream: View {
         
         let newPrice = currentPrice + increment
         self.sendBid(roomId: currentRoomID, bidAmount: newPrice.description, productId: currentProductID ?? "")
-        //        placeBid(amount: newPrice)
+//        placeBid(amount: newPrice)
     }
-    
+
     
     func placeBid(amount: Double) {
         // Ensure we have the current room and product
         guard let currentRoomId = liveShowsData[safe: currentIndex]?.room_id else { return }
+        
+//        // Update Firebase highest bid
+//        FirebaseManager.shared.updateHighestBid(
+//            roomId: currentRoomId,
+//            bidAmount: "\(amount)",
+//            bidderId: "\(UserDefaults.userId)",
+//            bidderName: UserDefaults.fullName,
+//            bidderProfileImage: UserDefaults.profileURL
+//        ) { finalBidData in
+//            if let data = finalBidData {
+//                
+//                
+//            }
+//        }
         
         self.sendBid(roomId: currentRoomId,
                      bidAmount: "\(amount)",
@@ -1580,7 +1520,15 @@ struct LiveStream: View {
         // Update local price
         currentPrice = amount
         
-      
+//        commentText = "Current highest bid : $\(currentPrice)"
+//        let userId = UserDefaults.userId
+//        let userName = UserDefaults.userName
+//        let userImage = UserDefaults.profileURL
+//        SocketManagerService.shared.sendChat(roomId: currentRoomId,
+//                                             message: commentText,
+//                                             userId: userId,
+//                                             userName: userName,
+//                                             userImage: userImage)
         commentText = ""
     }
     
@@ -1672,7 +1620,7 @@ struct LiveStream: View {
             }
         }
     }
-    
+
     
     @ViewBuilder
     func sheetView(for action: MenuAction) -> some View {
@@ -1694,109 +1642,55 @@ struct LiveStream: View {
         let response = viewModel.followDict
         if response.status == "success"{
             let status = response.data?.status ?? false
-           
+//            if status == true{
+//                isFollow = status
+//            }else{
+//                isFollow = status
+//            }
         }
         
     }
-    
+
 }
 
 
 //MARK: MenuAction
-enum MenuAction: CaseIterable {
-    
-    case gift, paperclip, share, wallet, cart
-    
-    var iconName: ImageResource {
-        switch self {
-        case .gift: return .gift
-        case .paperclip: return .clip
-        case .share: return .share
-        case .wallet: return .wallet
-        case .cart: return .shop
-        }
-    }
-    
-    var label: String {
-        switch self {
-        case .gift: return "Gift"
-        case .paperclip: return "Attachment"
-        case .share: return "Share"
-        case .wallet: return "Wallet"
-        case .cart: return "Cart"
-        }
-    }
-}
-
-struct ShareSheet: UIViewControllerRepresentable {
-    let items: [Any]
-    let excludedActivityTypes: [UIActivity.ActivityType]? = nil
-    let completion: ((UIActivity.ActivityType?, Bool, [Any]?, Error?) -> Void)? = nil
-    
-    func makeUIViewController(context: Context) -> UIActivityViewController {
-        let controller = UIActivityViewController(activityItems: items, applicationActivities: nil)
-        controller.excludedActivityTypes = excludedActivityTypes
-        controller.completionWithItemsHandler = completion
-        return controller
-    }
-    
-    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
-}
-
-
-struct ChatMessageBubble: View {
-    let comment: CommentModel
-    let isHost: Bool
-    let isMod: Bool
-
-    var body: some View {
-        HStack(alignment: .top, spacing: 6) {
-
-            CustomProfileImage(
-                url: comment.image ?? "",
-                isCircular: true,
-                size: 26
-            )
-
-            VStack(alignment: .leading, spacing: 4) {
-
-                // Username + Badges
-                HStack(spacing: 6) {
-                    Text(comment.username?.capitalizingFirstLetter() ?? "")
-                        .font(.custom(poppinsSemiBold, size: 14))
-                        .foregroundColor(.white)
-
-                    if isHost {
-                        Text("HOST")
-                            .font(.custom(poppinsSemiBold, size: 10))
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 2)
-                            .background(.defaultTheme.opacity(0.8))
-                            .foregroundColor(.white)
-                            .cornerRadius(4)
-                    }
-
-                    if isMod {
-                        Text("MOD")
-                            .font(.custom(poppinsSemiBold, size: 10))
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 2)
-                            .background(Color.white.opacity(0.8))
-                            .foregroundColor(.black)
-                            .cornerRadius(4)
-                    }
-                }
-
-                // Bubble
-                Text(comment.message ?? "")
-                    .font(.custom(poppinsRegular, size: 12))
-                    .foregroundColor(.white)
-                    .padding(8)
-                    .background(Color.white.opacity(0.12))
-                    .cornerRadius(10)
-            }
-//            .frame(width:screenWidth - 45)
-            Spacer()
-        }
-    }
-}
+//enum MenuAction: CaseIterable {
+//    
+//    case gift, paperclip, share, wallet, cart
+//    
+//    var iconName: ImageResource {
+//        switch self {
+//        case .gift: return .uGift
+//        case .paperclip: return .sClip
+//        case .share: return .uShare
+//        case .wallet: return .uWallet
+//        case .cart: return .sShop
+//        }
+//    }
+//    
+//    var label: String {
+//        switch self {
+//        case .gift: return "Gift"
+//        case .paperclip: return "Attachment"
+//        case .share: return "Share"
+//        case .wallet: return "Wallet"
+//        case .cart: return "Cart"
+//        }
+//    }
+//}
+//
+//struct ShareSheet: UIViewControllerRepresentable {
+//    let items: [Any]
+//    let excludedActivityTypes: [UIActivity.ActivityType]? = nil
+//    let completion: ((UIActivity.ActivityType?, Bool, [Any]?, Error?) -> Void)? = nil
+//
+//    func makeUIViewController(context: Context) -> UIActivityViewController {
+//        let controller = UIActivityViewController(activityItems: items, applicationActivities: nil)
+//        controller.excludedActivityTypes = excludedActivityTypes
+//        controller.completionWithItemsHandler = completion
+//        return controller
+//    }
+//
+//    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
+//}

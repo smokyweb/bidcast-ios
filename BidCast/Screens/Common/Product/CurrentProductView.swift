@@ -19,7 +19,7 @@ struct CurrentProductView: View {
     @State var hasWon = false
     @State var lastBid: Double = 0
     @State var showBidAmount = true
-    
+    var onTap: (() -> Void)?
     
     var body: some View {
         
@@ -75,27 +75,28 @@ struct CurrentProductView: View {
                     url: product.image,
                     isCircular: false,
                     cornerRadius: 8.0,
-                    size: 90.0
+                    size: 80.0
                 )
                 
                 VStack(alignment: .leading, spacing: 0) {
                     Text(product.name?.capitalizingFirstLetter() ?? "")
                         .font(.custom(poppinsBold, size: 13.0))
                         .foregroundColor(.white)
-                    
-                    Text(categoryName)
-                        .font(.custom(poppinsSemiBold, size: 12.0))
-                        .padding(4)
-                        .foregroundColor(.white)
+                    if !categoryName.isEmpty{
+                        Text(categoryName)
+                            .font(.custom(poppinsSemiBold, size: 12.0))
+                            .padding(4)
+                            .foregroundColor(.white)
+                    }
                     
                     Text("Price : $\(product.price ?? "0.0")")
                         .font(.custom(poppinsSemiBold, size: 12.0))
                         .padding(4)
                         .foregroundColor(.white)
-                    Text("Quantity : \(product.quantity ?? "")")
-                        .font(.custom(poppinsSemiBold, size: 12.0))
-                        .padding(4)
-                        .foregroundColor(.white)
+//                    Text("Quantity : \(product.quantity ?? "")")
+//                        .font(.custom(poppinsSemiBold, size: 12.0))
+//                        .padding(4)
+//                        .foregroundColor(.white)
                 }
                 
                 Spacer()
@@ -105,16 +106,39 @@ struct CurrentProductView: View {
                     Text("$\(String(format: "%.2f", currentPrice))")
                         .font(.custom(poppinsBold, size: 13))
                         .foregroundColor(.white)
-                    
-                    Text(bidTime)
-                        .font(.custom(poppinsSemiBold, size: 13))
-                        .foregroundColor(.white)
+                    HStack(spacing: 4) {
+                        Text("💀")
+                            .font(.custom(poppinsSemiBold, size: 13))
+                        
+                        Text(bidTime)
+                            .font(.custom(poppinsSemiBold, size: 13))
+                            .foregroundColor(timeToSeconds(bidTime) < 10 ? .red : .white)
+                    }
+//                    Text(bidTime)
+//                        .font(.custom(poppinsSemiBold, size: 13))
+//                        .foregroundColor(.white)
                 }
                 .frame(width: 70, height: 50)
                 .background(Color.black.opacity(0.3))
                 .cornerRadius(10)
             }
         }
+        
         .padding()
+        .contentShape(Rectangle())
+        .onTapGesture {
+            print("Whole product card tapped!")
+            onTap?()                  
+        }
+    }
+    
+    func timeToSeconds(_ time: String) -> Int {
+        let parts = time.split(separator: ":")
+        if parts.count == 2 {
+            let minutes = Int(parts[0]) ?? 0
+            let seconds = Int(parts[1]) ?? 0
+            return minutes * 60 + seconds
+        }
+        return 0
     }
 }
