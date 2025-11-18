@@ -24,7 +24,7 @@ struct PillsSelectorView: View {
                         .padding(.horizontal, 16)
                         .background(
                             isSelected
-                            ? Color.black
+                            ? Color.defaultTheme
                             : Color.gray.opacity(0.1)  // light yellow
                         )
                         .clipShape(Capsule())
@@ -36,7 +36,7 @@ struct PillsSelectorView: View {
                 }
                 else {
                     Text(titles[index])
-                        .font(.custom(poppinsMedium, size: 14.0))
+                        .font(.custom(poppinsBold, size: 14.0))
                         .foregroundColor(isSelected ? .black : .gray)
                         .padding(.vertical, 8)
                         .padding(.horizontal, 1)
