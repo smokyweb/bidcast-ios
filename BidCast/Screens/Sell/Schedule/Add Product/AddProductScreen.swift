@@ -38,8 +38,10 @@ struct AddProductsScreen: View {
     @State var productData = [ProductDataModel]()
     @State var viewModel = ScheduleViewModel()
     
-    @State private var sheetHeight: CGFloat = 200   // default
-
+    @State var deletedIndex: Int?
+    @State var deletedProductId: String?
+    
+    @State private var isTapped = false
     @State var selectedProductIDs: Set<String> = []
     
     @State var navigateToInventry: Bool = false
@@ -47,6 +49,7 @@ struct AddProductsScreen: View {
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
     @State var showError: Bool = false
+    @State var showDeleteProduct: Bool = false
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     
     @State var navigateToTab = false
@@ -83,93 +86,10 @@ struct AddProductsScreen: View {
             }
             ScrollView{
                 // Placeholder for banner/image box
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.gray.opacity(0.1))
-                    .frame(height: 80)
-                    .padding(.horizontal)
-                Spacer()
-                // Added Product Section
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Added Product")
-                        .font(.custom(poppinsSemiBold, size: 13.0))
-                    if productData.isEmpty{
-                        Text("No product found")
-                            .font(.custom(poppinsSemiBold, size: 13.0))
-                    }else{
-                        ForEach(productData.indices, id: \.self) { index in
-                            let data = productData[index]
-                            let idStr = "\(data.id ?? -1)"
-                            let isSelected = selectedProductIDs.contains(idStr)
-                            
-                            HStack {
-                                // ✅ Custom image view
-                                CustomProfileImage(
-                                    url: data.images?.first,
-                                    isCircular: false,
-                                    size: 50,
-                                    defaultImage: "fashion"
-                                )
-                                
-                                // ✅ Product info
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(data.title ?? "Untitled")
-                                        .font(.custom(poppinsBold, size: 14))
-                                    
-                                    Text(data.category?.name ?? "Unknown Category")
-                                        .font(.custom(poppinsSemiBold, size: 13))
-                                        .foregroundColor(.gray)
-                                    
-                                    Text("Quantity: \(data.quantity ?? "")")
-                                        .font(.custom(poppinsSemiBold, size: 13))
-                                        .foregroundColor(.gray)
-                                }
-                                
-                                Spacer()
-                                
-                                // ✅ Action buttons
-                                Button(action: {
-                                    // Edit product action
-//                                    productDetails =
-                                    navigateToEditProduct = true
-                                }) {
-                                    Image(systemName: "square.and.pencil")
-                                }
-                                
-                                Button(action: {
-                                    // Delete product action
-                                }) {
-                                    Image(systemName: "trash")
-                                        .foregroundColor(.red)
-                                }
-                                
-                                // ✅ Selection button
-                                Button(action: {
-                                    if isSelected {
-                                        selectedProductIDs.remove(idStr)
-                                    } else {
-                                        selectedProductIDs.insert(idStr)
-                                    }
-                                    
-                                    
-                                    request.product_ids = selectedProductIDs.joined(separator: ",")
-                                }) {
-                                    Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                                        .foregroundColor(isSelected ? .green : .gray)
-                                }
-                            }
-                        }
-                        .padding()
-                        .background(Color.white)
-                        .cornerRadius(12)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(Color.gray.opacity(0.3))
-                        )
-                    }
-                }
-                .padding(.horizontal)
-                
-                Spacer()
+//                RoundedRectangle(cornerRadius: 12)
+//                    .fill(Color.gray.opacity(0.1))
+//                    .frame(height: 80)
+//                    .padding(.horizontal)
                 // Add More Section
                 VStack(alignment: .leading, spacing: 4) {
                     HStack {
@@ -181,7 +101,7 @@ struct AddProductsScreen: View {
                             .font(.footnote)
                     }
                     
-                    VStack(spacing: 16) {
+                    HStack(spacing: 10) {
                         addProductOption(text: "Add another product") {
                             if NavFromProductLibrary{
                                 presentationMode.wrappedValue.dismiss()
@@ -197,8 +117,106 @@ struct AddProductsScreen: View {
                     }
                 }
                 .padding(.horizontal)
+                .padding(.bottom, 25)
+                Spacer()
+                // Added Product Section
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Added Product")
+                        .font(.custom(poppinsSemiBold, size: 13.0))
+                    if productData.isEmpty{
+                        Text("No product found")
+                            .font(.custom(poppinsSemiBold, size: 13.0))
+                    }else{
+                        ForEach(productData.indices, id: \.self) { index in
+                            let data = productData[index]
+                            let idStr = "\(data.id ?? -1)"
+                            let isSelected = selectedProductIDs.contains(idStr)
+
+                            HStack {
+                                CustomProfileImage(
+                                    url: data.images?.first,
+                                    isCircular: false,
+                                    size: 50,
+                                    defaultImage: "fashion"
+                                )
+
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(data.title ?? "Untitled")
+                                        .font(.custom(poppinsBold, size: 14))
+
+                                    Text(data.category?.name ?? "Unknown Category")
+                                        .font(.custom(poppinsSemiBold, size: 13))
+                                        .foregroundColor(.gray)
+
+                                    Text("Quantity: \(data.quantity ?? "")")
+                                        .font(.custom(poppinsSemiBold, size: 13))
+                                        .foregroundColor(.gray)
+                                }
+
+                                Spacer()
+
+                                Button(action: {
+                                    navigateToEditProduct = true
+                                }) {
+                                    Image(systemName: "square.and.pencil")
+                                }
+
+                                Button(action: {
+                                   
+                                    deletedIndex = index
+                                    deletedProductId = idStr
+                                    // Delete action
+                                    alertType = .sheetType(
+                                        icon: .alert,
+                                        title: "Delete!",
+                                        message: "Are you sure, You want to delete this product.",
+                                        primaryBtnText: "Yes",
+                                        secondaryBtnText: "No"
+                                    )
+                                    showDeleteProduct = true
+                               
+                                }) {
+                                    Image(systemName: "trash")
+                                        .foregroundColor(.red)
+                                }
+                            }
+                            .padding()
+                            .background(Color.white)
+                            .cornerRadius(12)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(isSelected ? Color.blue : Color.gray.opacity(0.3), lineWidth: isSelected ? 2 : 1)
+                            )
+                            .onTapGesture {
+                                // Animation
+                                isTapped = true
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                                        isTapped = false
+                                    }
+                                }
+
+                                // Selection toggle
+                                if isSelected {
+                                    selectedProductIDs = selectedProductIDs.filter({$0 != idStr})
+//                                    productData.remove(at: index)
+                                } else {
+//                                    productData.append(data)
+                                    selectedProductIDs.insert(idStr)
+                                }
+                                request.product_ids = selectedProductIDs.joined(separator: ",")
+                            }
+                        }
+
+                    }
+                }
+                .padding(.horizontal)
+                
+//                Spacer()
+               
             }
             
+            Spacer()
             
             // Finish Button
             Button(action: handleFinishTapped) {
@@ -220,21 +238,22 @@ struct AddProductsScreen: View {
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }
-        .bottomSheet(isPresented: $showError, height: screenHeight/3.4, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: {
-            if viewModel.errorMessage != nil || viewModel.errorMessage != "" {
-                showError = true
-            }else{
+        .bottomSheet(
+            isPresented: $showError,
+            height: screenHeight * 0.37,
+            topBarCornerRadius: 25,
+            showTopIndicator: false,
+            onDismiss: {
                 showError = false
-            }
-        }, content: {
-            CommonBottomSheet(
-                sheetType: $alertType,
-                onPrimaryClick: {
-                    if viewModel.errorMessage == nil || viewModel.errorMessage == "" {
-                        backToPrepare = false
-                        withAnimation { showError = false }
-                        
-                    }else{
+            }, content: {
+                CommonBottomSheet(
+                    sheetType: $alertType,
+                    onPrimaryClick: {
+                        if viewModel.errorMessage == nil || viewModel.errorMessage == "" {
+                            backToPrepare = false
+                            withAnimation { showError = false }
+                            
+                        }else{
                         withAnimation { showError = false }
                         
                     }
@@ -244,6 +263,54 @@ struct AddProductsScreen: View {
                 })
         })
         
+        .bottomSheet(
+            isPresented: $showError,
+            height: screenHeight * 0.37,
+            topBarCornerRadius: 25,
+            showTopIndicator: false,
+            onDismiss: {
+                showError = false
+            },  content: {
+            CommonBottomSheet(
+                sheetType: $alertType,
+                onPrimaryClick: {
+                    withAnimation { showDeleteProduct = false }
+                    isTapped = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                            isTapped = false
+                            if let index = deletedIndex {
+                                productData.remove(at: index)
+                                selectedProductIDs = selectedProductIDs.filter({$0 != deletedProductId ?? ""})
+                            }
+                           
+                        }
+                    }
+                }, onSecondaryClick: {
+                    withAnimation { showDeleteProduct = false }
+                })
+        })
+            
+//        .bottomSheet(isPresented: $showError, height: screenHeight/2.8, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: {
+//            showError = false
+//        }, content: {
+//            CommonBottomSheet(
+//                sheetType: $alertType,
+//                onPrimaryClick: {
+//                    if viewModel.errorMessage == nil || viewModel.errorMessage == "" {
+//                        backToPrepare = false
+//                        withAnimation { showError = false }
+//                        
+//                    }else{
+//                        withAnimation { showError = false }
+//                        
+//                    }
+//                    
+//                }, onSecondaryClick: {
+//                    withAnimation { showError = false }
+//                })
+//        })
+//        
         CusNavLink(doNavigate: $navigateToTab, destination: TabbarScreen())
         CusNavLink(doNavigate: $navigateToAddProduct, destination: CreateProductScreen(requests: $request, thumbNail: $thumbNail,backToPrepare: $backToPrepare,fromPrepare: .constant(false)))
         CusNavLink(doNavigate: $navigateToEditProduct, destination: CreateProductScreen(requests: $request, thumbNail: $thumbNail,backToPrepare: $backToPrepare,fromPrepare: .constant(false)))
@@ -289,7 +356,7 @@ extension AddProductsScreen{
                 return
             }
             SVProgressHUD.show()
-            await viewModel.getProductList(parameters: UserProductRequest(user_id: UserDefaults.userId, category_id: request.category_id, page: page))
+            await viewModel.getProductList(parameters: UserProductRequest(user_id: UserDefaults.userId, category_id: request.category_id, page: page, type: "live"))
             await SVProgressHUD.dismiss()
             productSuccess()
         }
@@ -304,7 +371,7 @@ extension AddProductsScreen{
                 return
             }
             currentPage += 1
-            await viewModel.getProductList(parameters: UserProductRequest(user_id: UserDefaults.userId, category_id: request.category_id, page: currentPage))
+            await viewModel.getProductList(parameters: UserProductRequest(user_id: UserDefaults.userId, category_id: request.category_id, page: currentPage, type: "live"))
             productSuccess()
         }
     }
@@ -325,6 +392,7 @@ extension AddProductsScreen{
         let response = viewModel.productResponse
         if response?.status == "success"{
             productData = response?.data ?? [ProductDataModel]()
+        
         }else{
             alertType = .sheetType(
                 icon: .success,
@@ -365,7 +433,7 @@ extension AddProductsScreen{
         if thumbNail.isEmpty { return "Please select thumbnail image" }
         if request.date.isEmpty { return "Please enter date" }
         if request.time.isEmpty { return "Please select time" }
-        if request.product_ids.isEmpty { return "Please select product" }
+        if selectedProductIDs.isEmpty { return "Please select product" }
 
         return nil
     }
@@ -406,7 +474,8 @@ extension AddProductsScreen{
             ]
 
             // Convert product IDs
-            for (index, product) in request.product_ids.toIntArray().enumerated() {
+            var prodIds = Array(selectedProductIDs)
+            for (index, product) in prodIds.enumerated() {
                 params["product_ids[\(index)]"] = product
             }
 

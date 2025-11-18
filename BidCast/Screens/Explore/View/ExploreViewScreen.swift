@@ -15,7 +15,8 @@ struct ExploreViewScreen: View {
     
     var viewModel = SelectCategoryViewModel()
     
-    @State var selectedTab = "recommended"
+    @State var selectedCategoryIndex = 0
+    var categoryTitles =  ["Recommended", "Popular", "All"]
     @State var category: String = ""
     @State var navigateToCategoryDetailScreen = false
     @State var showhud: Bool = false
@@ -23,106 +24,69 @@ struct ExploreViewScreen: View {
     @State var isLoading: Bool = false
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @State var showError: Bool = false
-    @State private var showSearchView: Bool = false
     @State var searchText: String = ""  
     
     @State var categoryList = [CategoryDataModel]()
     @State var navigateToNoti: Bool = false
+    @State var isLoadingAPI: Bool = true
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            
-            // Header
-            PrimaryHeader(
-                title: "",
-                isForLogo: true,
-                leadingImgArr: [.appName],
-                trailingImgArr: [.search, .notification],
-                onClickLeading: { _ in },
-                onClickTrailing: { index in
-                    if index == 0 {
-                        withAnimation {
-                            showSearchView.toggle()
-                        }
-                    } else {
-                        navigateToNoti = true
-                    }
-                },
-                count: .constant(0)
-            )
+            HStack(spacing: 12) {
+                SearchBarView{ debouncedText in
+                    self.searchText = debouncedText
+                    let selectedCategory = categoryTitles[selectedCategoryIndex]
+                    Task { await fetchCategory(for: selectedCategory) }
+                }
+                HeaderMenuIconView(didTapMenuButton: {
+                    print("Menu Button Tapped")
+                    navigateToNoti = true
+                }, count: .constant(4))
+            }
+            .padding(.horizontal)
             
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 12) {
-                    
-                    // 🔹 Search Bar
-                    if showSearchView {
-                        SearchView { debouncedText in
-                            Task { await fetchCategory(for: selectedTab)
+                    PillsSelectorView(titles: categoryTitles,
+                                      selectedIndex: $selectedCategoryIndex)
+                    .onChange(of: selectedCategoryIndex) { newIndex in
+                        let selectedCategory = categoryTitles[newIndex]
+                        Task {
+                            await fetchCategory(for: selectedCategory)
+                        }
+                    }
+                    if isLoadingAPI {
+                        // 1️⃣ FULL CARD SHIMMER
+                        LazyVGrid(columns: columns, spacing: 16) {
+                            ForEach(0..<12, id: \.self) { _ in
+                                CategoryCardFullShimmerView()
                             }
                         }
-                        .transition(.move(edge: .top).combined(with: .opacity))
-                        .padding(.bottom, 10)
-                        .onChange(of: searchText) { newValue in
-                            if newValue.isEmpty {
-                                Task { await fetchCategory(for: selectedTab)
+
+                    } else if !isLoadingAPI && categoryList.isEmpty {
+                        // 2️⃣ NO DATA VIEW
+                        NoDataView(message: searchText.isEmpty ? "No categories found" : "No searched categories found")
+                            .padding(.top, 40)
+
+                    } else {
+                        // 3️⃣ GRID LIST
+                        LazyVGrid(columns: columns, spacing: 16) {
+                            ForEach(categoryList.indices, id: \.self) { ind in
+                                CategoryCardView(
+                                    title: categoryList[ind].name ?? "",
+                                    imageURL: categoryList[ind].image ?? "",
+                                    liveCount: categoryList[ind].liveCount ?? 0
+                                )
+                                .onTapGesture {
+                                    category = categoryList[ind].name ?? ""
+                                    navigateToCategoryDetailScreen = true
                                 }
                             }
                         }
                     }
-                    
-                    // 🔹 Tabs (Recommended | Popular | All)
-                    ButtonTitleLabel(
-                        titles: ["Recommended", "Popular", "All"],
-                        fontValue: 16,
-                        textColor: .blue,
-                        selectedTitle : Binding(
-                               get: {
-                                   switch selectedTab {
-                                   case "recommended": return "Recommended"
-                                   case "popular": return "Popular"
-                                   case "all": return "All"
-                                   default: return "Recommended"
-                                   }
-                               },
-                               set: { newValue in
-                                   if newValue == "Recommended" {
-                                       selectedTab = "recommended"
-                                   }else if newValue == "Popular"{
-                                       selectedTab = "popular"
-                                   }else if newValue == "All"{
-                                       selectedTab = "all"
-                                   }
-                               }
-                           )
-                    ) { selected in
-                        Task {
-                            await fetchCategory(for: selected)
-                        }
-                    }
-                    
-                    // 🔹 Category List / No Data
-                    if categoryList.isEmpty {
-                        NoDataView(message: searchText.isEmpty ? "No categories found" : "No searched categories found")
-                            .padding(.top, 40)
-                    } else {
-                        ForEach(0 ..< categoryList.count, id: \.self) { ind in
-                            ListCell(
-                                image: categoryList[ind].image ?? "",
-                                title: categoryList[ind].name ?? "",
-                                vectorImg: .icArrowUp,
-                                subLabel: "\(categoryList[ind].liveCount ?? 0) Live",
-                                tintColot: categoryList[ind].color ?? ""
-                            ) {
-                                category = categoryList[ind].name ?? ""
-                                navigateToCategoryDetailScreen = true
-                            }
-                            .padding(.horizontal, 0)
-                        }
-                    }
-
                 }
             }
-            .padding(.top, 20)
+            .padding(.top, 12)
             .padding(.horizontal, 13)
             
             // Navigation Links
@@ -144,27 +108,21 @@ struct ExploreViewScreen: View {
             showhud = true
             return
         }
-        
-        SVProgressHUD.show()
+        isLoadingAPI = true
+//        SVProgressHUD.show()
         categoryList.removeAll()
-        
-        if tab == "Recommended" {
-            selectedTab = "recommended"
-        } else if tab == "Popular" {
-            selectedTab = "popular"
-        } else if tab == "All"{
-            selectedTab = "all"
-        }
-        
-        await viewModel.getCategoryList(param: CategoryRequest(category_id: "", type: selectedTab, search: searchText))
-        await SVProgressHUD.dismiss()
+
+        await viewModel.getCategoryList(param: CategoryRequest(category_id: "", type: tab.lowercased(), search: searchText))
+//        await SVProgressHUD.dismiss()
         success()
     }
     
     func success() {
+
         let response = viewModel.categoryResponse
         if response.status == "success" {
             self.categoryList = response.data ?? []
+            isLoadingAPI = false
         } else {
             showError = true
             alertType = .sheetType(

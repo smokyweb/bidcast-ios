@@ -20,7 +20,7 @@ final class ListProductViewModel: ObservableObject {
     @Published var requestType: String = ""
     
     // MARK: - Get Category List
-    func getSubCategoryList(param:CategoryRequest) async {
+    func getSubCategoryList(param:CategoryRequest) async throws{
         requestType = "Category"
         do {
             let response: ResponseModal<[CategoryDataModel]> = try await APIManager.shared.request(
@@ -28,14 +28,19 @@ final class ListProductViewModel: ObservableObject {
                 header: true
             )
             self.categoryResponse = response
-        } catch {
-           
-            self.handle(error: error)
+        } catch(let error) {
+            if let dataError = error as? DataError {
+                self.errorMessage = dataError.getErrorMessage()
+            }
+            else {
+                self.errorMessage = error.localizedDescription
+            }
+            throw error
         }
     }
     
     // MARK: - Get Category List
-    func getMailClasses() async {
+    func getMailClasses() async throws{
         requestType = "mail"
         do {
             let response: ResponseModal<MailClassesData> = try await APIManager.shared.request(
@@ -43,14 +48,20 @@ final class ListProductViewModel: ObservableObject {
                 header: true
             )
             self.mailClassResponse = response
-        } catch {
-            self.handle(error: error)
+        } catch(let error) {
+            if let dataError = error as? DataError {
+                self.errorMessage = dataError.getErrorMessage()
+            }
+            else {
+                self.errorMessage = error.localizedDescription
+            }
+            throw error
         }
     }
     
     
     
-    func storeProduct(productId: Int? = nil, param: [String:Any]) async {
+    func storeProduct(productId: Int? = nil, param: [String:Any]) async throws{
         self.requestType = "store"
         
         do {
@@ -62,14 +73,18 @@ final class ListProductViewModel: ObservableObject {
                 header: true){
                 self.storeProductResponse = response
             }
-        } catch {
-//            DispatchQueue.main.async {
-                self.handle(error: error)
-//            }
+        }catch(let error) {
+            if let dataError = error as? DataError {
+                self.errorMessage = dataError.getErrorMessage()
+            }
+            else {
+                self.errorMessage = error.localizedDescription
+            }
+            throw error
         }
     }
     
-    func uploadStoreImage(images: [String], key: String) async {
+    func uploadStoreImage(images: [String], key: String) async throws{
         self.requestType = "store"
         
         do {
@@ -87,16 +102,20 @@ final class ListProductViewModel: ObservableObject {
                 self.storeImageResponse = response
             }
 
-        } catch {
-//            DispatchQueue.main.async {
-                self.handle(error: error)
-//            }
+        } catch(let error) {
+            if let dataError = error as? DataError {
+                self.errorMessage = dataError.getErrorMessage()
+            }
+            else {
+                self.errorMessage = error.localizedDescription
+            }
+            throw error
         }
     }
 
     
     // MARK: - Get Addresses
-    func getAddresses() async {
+    func getAddresses() async throws{
        
         do {
            if  let response: ResponseModal<[AddressModel]> = try await APIManager.shared.request(
@@ -105,8 +124,14 @@ final class ListProductViewModel: ObservableObject {
            ){
                addressesResponse = response
            }
-        } catch {
-            self.handle(error: error)
+        } catch(let error) {
+            if let dataError = error as? DataError {
+                self.errorMessage = dataError.getErrorMessage()
+            }
+            else {
+                self.errorMessage = error.localizedDescription
+            }
+            throw error
         }
        
     }

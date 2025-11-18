@@ -49,6 +49,8 @@ struct RehearsalScreen: View {
     @State private var currentBottomSheet: SideMenu?
     @State private var showSellSheet: Bool = false
     @State private var showProductSheet : Bool = false
+
+    @State private var showPollSheet : Bool = false
     @State private var showButton: Bool = false
     
     @State private var initialSelectedProductId: String = ""
@@ -569,6 +571,22 @@ struct RehearsalScreen: View {
                 )
             }
         )
+        .bottomSheet(
+            isPresented: $showPollSheet,
+            height: screenHeight * 0.68,
+            topBarCornerRadius: 20,
+            contentBackgroundColor: Color(.systemBackground),
+            topBarBackgroundColor: Color(.systemBackground),
+            showTopIndicator: false,
+            onDismiss: {
+                showPollSheet = false
+            },
+            content: {
+                CreatePollScreen(
+                    isPresented: $showPollSheet
+                )
+            }
+        )
         
         .bottomSheet(
             isPresented: $showSellSheet,
@@ -610,7 +628,11 @@ struct RehearsalScreen: View {
                                 }
                             )
                         },
-                        onCreatePoll: { print("Create Poll") },
+                        onCreatePoll: {
+                            print("Create Poll")
+                            showPollSheet = true
+                            showSellSheet = false
+                        },
                         onZoomOut: {
                             print("Zoom Out")
                             var zoomFactor = agoraManager.zoomFactor

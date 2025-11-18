@@ -27,6 +27,12 @@ struct HomeViewScreen: View {
     @State var categoryList = [CategoryDataModel]()
     @State var liveShowsData = [HomeModel]()
     
+    @State private var isLoadingCategoryAPI: Bool = true
+    @State private var isLoadingShowAPI: Bool = true
+    
+    let categoryFilterTitles = ["Live Now", "Popular", "Coming Soon"]
+    @State private var selectedCategoryIndex: Int = 0
+    
     @State var isLoading: Bool = false
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @State var showError: Bool = false
@@ -57,194 +63,127 @@ struct HomeViewScreen: View {
     @State var currentPage = 1
     var body: some View {
         VStack(spacing:0){
-            VStack{
-                PrimaryHeader(
-                    title: comeFromExploreScreen ? showCategory.capitalizingFirstLetter() : "",
-                    isForLogo: comeFromExploreScreen ? false : true,
-                    leadingImgArr: [comeFromExploreScreen ? .icBack : .appName],
-                    trailingImgArr: [.search,.notification],
-                    onClickLeading: { index in
-                        if comeFromExploreScreen{
-                            navigateToCategoryDetailScreen = false
-                            self.presentationMode.wrappedValue.dismiss()
-                           
-                        }
+            HStack(spacing: 12) {
+                SearchBarView { debouncedText in
+                    self.searchText = debouncedText
+                }
+                HeaderMenuIconView(
+                    didTapMenuButton: {
+                        navigateToNoti = true
                     },
-                    onClickTrailing: { index in
-                        if index == 0{
-                            withAnimation {
-                                showSearchView.toggle()
-                            }
-                        }else{
-                            navigateToNoti = true
-                        }
-                    },
-                    count: .constant(0)
+                    count: .constant(4)
                 )
             }
+            .padding(.horizontal)
+            .padding(.top, 10)
             
             ScrollView(showsIndicators:false){
                 VStack(alignment: .leading,spacing: 12){
-                    
-                    if showSearchView {
-                        SearchView { debouncedText in
-                            Task { await fetchLiveShow() }
-                        }
-                        .transition(.move(edge: .top).combined(with: .opacity))
-                        .padding(.bottom, 10)
-                        .onChange(of: searchText) { newValue in
-                            Task { await fetchLiveShow() }
-                        }
-                    }
-                    if !comeFromExploreScreen{
-                        SegmentedControlView(
-                            segments: categoryList.map { $0.name ?? "" },
-                            selectedSegment: $selectedButton,
-                            isWithBorder: true
-                        ) { selection in
-                            Task {
-                                await fetchLiveShow()
-                            }
-                        }
-                    }
-                    ButtonTitleLabel(
-                        titles: ["Live Now", "Popular", "Coming Soon"],
-                        fontValue: 16,
-                        textColor: .blue,
-                        selectedTitle : Binding(
-                            get: {
-                                switch selectedTab {
-                                case "live": return "Live Now"
-                                case "popular": return "Popular"
-                                case "upcoming": return "Coming Soon"
-                                default: return "Live Now"
-                                }
-                            },
-                            set: { newValue in
-                                if newValue == "Live Now" {
-                                    selectedTab = "live"
-                                }else if newValue == "Popular"{
-                                    selectedTab = "popular"
-                                }else if newValue == "Coming Soon"{
-                                    selectedTab = "upcoming"
-                                }
-                            }
-                        )
-                    ) { selected in
-                        print("Tapped:", selected)
-                        Task{
-                            guard Reachability.isConnectedToNetwork() else {
-                                hudMsg = "No Internet Connection"
-                                showhud = true
-                                return
-                            }
-                            
-                            SVProgressHUD.show()
-                            liveShowsData.removeAll()
-                            var selection = ""
-                            if selected == "Live Now"{
-                                selection = "live"
-                            }else if selected == "Popular"{
-                                selection = "popular"
-                            }else{
-                                selection = "upcoming"
-                            }
-                            self.selectedTab = selection
-                            if isActiveOnHomeScreen{
-                                //                                let apiCategory = (selectedButton == "For You") ? "for_you" : selectedButton
-                                //                                await self.viewModel.getLiveShows(param: GetLiveShowsRequest(type: selection,category: apiCategory))
-                                await fetchLiveShow()
-                            }
-                            //                            await SVProgressHUD.dismiss()
-                            //                            self.success()
-                        }
-                    }
-                    if liveShowsData.isEmpty{
-                        NoDataView(message: "No Shows found")
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    }else{
-                        LazyVGrid(columns: columns, spacing: 6) {
-                            ForEach(liveShowsData.indices, id: \.self) { index in
-                                let item = liveShowsData[index]
-                                
-                                ImageCollectionView(profileImg: item.user?.profile_image ?? "",
-                                                    profileName: item.user?.username ?? item.user?.name ?? "".capitalizingFirstLetter(),
-                                                    textSize: 14.0,
-                                                    image: item.thumbnail?.first ?? "",
-                                                    category: item.category?.name ?? "",
-                                                    title2:item.title ?? "",
-                                                    categorySize: 14,
-                                                    title2Size: 16.0,
-                                                    liveCount: item.latest_viewer_count ?? 0,
-                                                    isLive : item.is_live ?? false,
-                                                    onTapProfile: {
-                                    self.liveShowsData.removeAll()
-                                    userId = "\(item.user?.id ?? 0)"
-//                                    if selectedTab != "upcoming" {
-                                        navigateToProfile = true
-//                                    }else{
-//                                        selectedShowUserName = item.user?.name ?? ""
-//                                        selectedShowUserImage = item.user?.profile_image ?? ""
-//                                        selectedShowStartAt = item.time ?? ""
-//                                        selectedShowStartDate =  item.date ?? ""
-//                                        upCommingSheet = true
-//                                    }
-                                },onTapProfileName: {
-                                    self.liveShowsData.removeAll()
-                                    userId = "\(item.user?.id ?? 0)"
-                                    userImage = item.user?.profile_image ?? ""
-                                    userName = item.user?.username ?? ""
-//                                    if selectedTab != "upcoming" {
-                                        navigateToProfile = true
-//                                    }else{
-//                                        selectedShowUserName = item.user?.name ?? ""
-//                                        selectedShowUserImage = item.user?.profile_image ?? ""
-//                                        selectedShowStartAt = item.time ?? ""
-//                                        selectedShowStartDate = item.date ?? ""
-//                                        upCommingSheet = true
-//                                    }
-                                },onTapMainImage: {
-                                    print(" tapped the card!,inex \(index)")
-                                    self.index = index
-                                    self.currentRoomId = item.room_id ?? ""
-                                    self.agoraToken = item.rtc_token ?? ""
-                                    userId = "\(item.user?.id ?? 0)"
-                                    userImage = item.user?.profile_image ?? ""
-                                    userName = item.user?.username ?? ""
-                                    self.selectedButton =  selectedButton == "For You" ? "for_you" : selectedButton
-                                   if selectedTab == "upcoming"{
-                                        selectedShowUserName = item.user?.name ?? ""
-                                        selectedShowUserImage = item.user?.profile_image ?? ""
-                                        selectedShowStartAt = item.time ?? ""
-                                        selectedShowStartDate = item.date ?? ""
-                                        upCommingSheet = true
-                                    }else  if selectedTab == "popular"{
-                                        if item.is_live == false{
-                                            hudMsg = "This show is not live yet"
-                                            showhud = true
-                                        }else{
-                                            navigateToLiveStream = true
-                                        }
-                                    }else{
-                                        categoryName = item.category?.name ?? ""
-                                        navigateToLiveStream = true
+                    // MARK: - Category Horizontal Scroll
+                    if !comeFromExploreScreen {
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            if isLoadingCategoryAPI {
+                                LazyHGrid(rows: rows, spacing: 16) {
+                                    ForEach(0..<5, id: \.self) { _ in
+                                        CategoryCardFullShimmerView(
+                                            width: 90,
+                                            height: 120,
+                                            cornerRadius: 9
+                                        )
                                     }
-                                   
-                                },onTapCategory: {
-//                                    self.liveShowsData.removeAll()
-                                    self.category = item.category?.name ?? ""
-                                    navigateToCategoryDetailScreen = true
-                                })
-                                .onAppear{
-                                    handlePagination(index: index)
                                 }
-                                .background(.clear)
-                                .cornerRadius(10)
+                            } else {
+                                LazyHGrid(rows: rows, spacing: 8) {
+                                    ForEach(categoryList.indices, id: \.self) { ind in
+                                        HomeCategoryCardView(
+                                            title: categoryList[ind].name ?? "",
+                                            imageURL: categoryList[ind].thumbnail ?? "",
+                                            backgroundColor: categoryList[ind].color ?? ""
+                                        )
+                                        .onTapGesture {
+                                            selectedButton = categoryList[ind].name ?? ""
+                                            Task {
+                                                await fetchLiveShow()
+                                            }
+                                        }
+                                    }
+                                }
+                                .frame(height: 140)
                             }
                         }
-                        
-                        .padding(.vertical,3)
                     }
+                    
+                    // MARK: - Filter Pills
+                    PillsSelectorView(
+                        titles: categoryFilterTitles,
+                        selectedIndex: $selectedCategoryIndex
+                    )
+                    .onChange(of: selectedCategoryIndex) { newIndex in
+                        let selectedCategory = categoryFilterTitles[newIndex]
+                        selectedTab = getCategoryName(for: selectedCategory)
+                        Task {
+                            await fetchLiveShow()
+                        }
+                    }
+                    
+                    // MARK: - Live Auction View
+                    LiveAuctionView(
+                        liveShowsData: $liveShowsData,
+                        isLoadingAPI: $isLoadingShowAPI,
+                        currentPage: $currentPage,
+                        onTapProfile: { index in
+                            let item = liveShowsData[index]
+                            self.liveShowsData.removeAll()
+                            userId = "\(item.user?.id ?? 0)"
+                            navigateToProfile = true
+                        },
+                        onTapProfileName: { index in
+                            let item = liveShowsData[index]
+                            self.liveShowsData.removeAll()
+                            userId = "\(item.user?.id ?? 0)"
+                            userImage = item.user?.profile_image ?? ""
+                            userName = item.user?.username ?? ""
+                            navigateToProfile = true
+                        },
+                        onTapMainImage: { index in
+                            let item = liveShowsData[index]
+                            print(" tapped the card!,inex \(index)")
+                            self.index = index
+                            self.currentRoomId = item.room_id ?? ""
+                            self.agoraToken = item.rtc_token ?? ""
+                            userId = "\(item.user?.id ?? 0)"
+                            userImage = item.user?.profile_image ?? ""
+                            userName = item.user?.username ?? ""
+                            self.selectedButton =  selectedButton == "For You" ? "for_you" : selectedButton
+                           if selectedTab == "upcoming"{
+                                selectedShowUserName = item.user?.name ?? ""
+                                selectedShowUserImage = item.user?.profile_image ?? ""
+                                selectedShowStartAt = item.time ?? ""
+                                selectedShowStartDate = item.date ?? ""
+                                upCommingSheet = true
+                            }else  if selectedTab == "popular"{
+                                if item.is_live == false{
+                                    hudMsg = "This show is not live yet"
+                                    showhud = true
+                                }else{
+                                    navigateToLiveStream = true
+                                }
+                            }else{
+                                categoryName = item.category?.name ?? ""
+                                navigateToLiveStream = true
+                            }
+                        },
+                        onTapCategory: { index in
+                            let item = liveShowsData[index]
+                            self.liveShowsData.removeAll()
+                            self.category = item.category?.name ?? ""
+                            navigateToCategoryDetailScreen = true
+                        }
+                    )
+                    .onAppear{
+                        handlePagination(index: index)
+                    }
+                    .cornerRadius(10)
                 }
             }
             .padding([.leading,.trailing],12)
@@ -290,7 +229,7 @@ struct HomeViewScreen: View {
                     showhud = true
                     return
                 }
-                SVProgressHUD.show()
+                
                 if isActiveOnHomeScreen{
                     
                     await fetchLiveShow()
@@ -363,7 +302,7 @@ struct HomeViewScreen: View {
             liveShowsData.removeAll()
             loadedRoomIDs.removeAll()
         }
-        SVProgressHUD.show()
+        isLoadingShowAPI = true
         let apiCategory = (selectedButton == "For You") ? "for_you" : selectedButton
         await viewModel.getLiveShows(param: GetLiveShowsRequest(
             type: selectedTab,
@@ -371,7 +310,7 @@ struct HomeViewScreen: View {
             search: searchText,
             page: "\(currentPage)"
         ))
-        await SVProgressHUD.dismiss()
+    
         success()
     }
 
@@ -403,6 +342,7 @@ struct HomeViewScreen: View {
         }
         SVProgressHUD.show()
         categoryList.removeAll()
+        isLoadingCategoryAPI = true
         await categoryViewModel.getCategoryList(param: CategoryRequest(type: selectedTab))
         await SVProgressHUD.dismiss()
         categorySuccess()
@@ -412,6 +352,7 @@ struct HomeViewScreen: View {
     func categorySuccess() {
         let response = categoryViewModel.categoryResponse
         if response.status == "success" {
+            isLoadingCategoryAPI = false
             // Filter only selected categories
             var categories = (response.data ?? []).filter { $0.is_selected == true }
             
@@ -446,8 +387,6 @@ struct HomeViewScreen: View {
             )
         }
     }
-
-    
     
     func success() {
         let response = viewModel.liveShowsResponse
@@ -462,6 +401,7 @@ struct HomeViewScreen: View {
             )
             return
         }
+        isLoadingShowAPI = false
         
         for show in newShows {
             if let roomId = show.room_id, !loadedRoomIDs.contains(roomId) {
@@ -470,6 +410,14 @@ struct HomeViewScreen: View {
             }
         }
     }
+    
+      private func getCategoryName(for categoryType: String) -> String {
+          switch categoryType {
+          case "Live Now": return "live"
+          case "Popular": return "popular"
+          default: return "upcoming"
+          }
+      }
 }
 
 //#Preview {

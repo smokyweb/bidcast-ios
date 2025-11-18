@@ -407,7 +407,7 @@ struct InventoryRequest : Encodable{
     var status : String
     var page : Int
     var search : String?
-    var category_id: String?
+    var category: String?
 }
 
 //MARK: Store Product param
@@ -467,6 +467,7 @@ struct UserProductRequest: Encodable{
     var user_id : Int
     var category_id : String? = ""
     var page : Int
+    var type: String?
 }
 
 struct NotifyLiveUserRequest: Encodable{

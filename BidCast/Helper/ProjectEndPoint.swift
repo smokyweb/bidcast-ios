@@ -282,8 +282,8 @@ extension APIEndPoint: EndPointType {
             return "get-live-show"
         case .getProfileById:
             return "get-profile-by-id"
-        case .getUserProduct(param:let param):
-            return "get-user-product?=\(param.user_id)&page=\(param.page)"
+        case .getUserProduct:
+            return "get-user-product"
         case .followUnfollow:
             return "follow-unfollow"
         case .countUpdate:

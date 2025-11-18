@@ -112,18 +112,20 @@ struct CreateProductScreen: View {
                                         isConcurrent: false,
                                         onError: { error in
                                             showSubCategorySheet = false
+                                        },
+                                        onSuccess: {
+                                            self.subCategoryList.removeAll()
+                                            if let response = self.viewModel.categoryResponse{
+                                                self.subCategoryList = response.data
+                                                self.subCategoryName = self.subCategoryList.map { $0.name ?? ""}
+                                            }
+                                            if subCategoryList.count != 0{
+                                                showSubCategorySheet = true
+                                            }
                                         }
                                     ) {
                                         let request = CategoryRequest(category_id: request.category_id)
-                                        await self.viewModel.getSubCategoryList(param: request)
-                                        self.subCategoryList.removeAll()
-                                        if let response = self.viewModel.categoryResponse{
-                                            self.subCategoryList = response.data
-                                            self.subCategoryName = self.subCategoryList.map { $0.name ?? ""}
-                                        }
-                                        if subCategoryList.count != 0{
-                                            showSubCategorySheet = true
-                                        }
+                                        try await self.viewModel.getSubCategoryList(param: request)
                                     }
                                 }
                             }
@@ -424,7 +426,13 @@ struct CreateProductScreen: View {
                             secondaryBtnText: AppString.ok.localized
                         )
                         showError = true
+                    }, onSuccess: {
+                        // On success
+                        categorySuccess()
+                        shippingAddressSuccess()
+                        mailSuccess()
                     }
+                    
                 ) {
                     // 👇 These run in parallel
                     async let categoryTask: () = viewModel.getSubCategoryList(param: CategoryRequest(category_id: ""))
@@ -433,11 +441,6 @@ struct CreateProductScreen: View {
                     
                     // Wait for all
                     _ = try await (categoryTask, addressTask, mailTask)
-                    
-                    // On success
-                    categorySuccess()
-                    shippingAddressSuccess()
-                    mailSuccess()
                 }
             }
 //            Task{

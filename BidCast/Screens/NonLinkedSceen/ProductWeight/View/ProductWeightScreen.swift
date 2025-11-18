@@ -296,7 +296,7 @@ struct ProductWeightScreen: View {
                     showError = true
                 }
             ) {
-                await viewModel.uploadStoreImage(images: imageUrls, key: "images[]")
+                try await viewModel.uploadStoreImage(images: imageUrls, key: "images[]")
                 request.shipping_profile_id = "4" //TODO : need to dynamic
                 guard let response = self.viewModel.storeImageResponse, response.status == "success" else {
                     return
@@ -331,7 +331,7 @@ struct ProductWeightScreen: View {
                     
                     // ✅ Images array (already present)
                     "images": uploadedUrls,
-                    
+                    "type": "live"
                 ]
               
                 
@@ -339,7 +339,7 @@ struct ProductWeightScreen: View {
                     productRequest["variant"] = variantArray
                 }
                 
-                await viewModel.storeProduct(param: productRequest)
+                try await viewModel.storeProduct(param: productRequest)
                 storeSuccess()
             }
         }

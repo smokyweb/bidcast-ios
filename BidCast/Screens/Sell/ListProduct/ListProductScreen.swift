@@ -96,30 +96,31 @@ struct ListProductScreen: View {
                                     request.category_id = ""
                                 }
                                 Task{
-                                    guard Reachability.isConnectedToNetwork() else {
-                                        hudMsg = "No Internet Connection"
-                                        showhud = true
-                                        return
-                                    }
-                                    extraFields = []
-                                    selectedSubCategory = ""
-                                    selectedOption = []
-                                    request.sub_category_id = ""
-                                    let request = CategoryRequest(category_id: request.category_id)
-                                    SVProgressHUD.show()
-                                    await self.viewModel.getSubCategoryList(param: request)
-                                    self.subCategoryList.removeAll()
-                                    await SVProgressHUD.dismiss()
-                                    if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil {
-                                        if let response = self.viewModel.categoryResponse{
-                                            self.subCategoryList = response.data
-                                            self.subCategoryName = self.subCategoryList.map { $0.name ?? ""}
+                                    
+                                    await performAPICalls(
+                                        isConcurrent: false,
+                                        onError: { error in
+                                            showSubCategorySheet = false
+                                        },
+                                        onSuccess: {
+                                            self.subCategoryList.removeAll()
+                                            if let response = self.viewModel.categoryResponse{
+                                                self.subCategoryList = response.data
+                                                self.subCategoryName = self.subCategoryList.map { $0.name ?? ""}
+                                            }
+                                            if subCategoryList.count != 0{
+                                                showSubCategorySheet = true
+                                            }
                                         }
-                                        if subCategoryList.count != 0{
-                                            showSubCategorySheet = true
-                                        }
-                                    }else{
-                                        showSubCategorySheet = false
+                                    ) {
+                                        extraFields = []
+                                        selectedSubCategory = ""
+                                        selectedOption = []
+                                        request.sub_category_id = ""
+                                        let request = CategoryRequest(category_id: request.category_id)
+                                        SVProgressHUD.show()
+                                        try await self.viewModel.getSubCategoryList(param: request)
+                                        await SVProgressHUD.dismiss()
                                     }
                                 }
                             }
@@ -747,7 +748,7 @@ struct ListProductScreen: View {
 //                .toast(isPresenting: $isImageSizeExceeding) {
 //                    AlertToast(displayMode: .hud, type: .regular, title: "Please select image size less than 5 MB", style: alertStlye)
 //                }
-                .bottomSheet(isPresented: $showError, height: screenHeight * 0.4, topBarCornerRadius: 25, showTopIndicator: false,
+                .bottomSheet(isPresented: $showError, height: screenHeight * 0.28, topBarCornerRadius: 25, showTopIndicator: false,
                     onDismiss: {
                     if let errorMessage = viewModel.errorMessage {
                         showError = false
@@ -783,27 +784,56 @@ struct ListProductScreen: View {
         .background(.bg.opacity(0.4))
         .onFirstAppear(perform: {
             Task{
-               guard Reachability.isConnectedToNetwork() else {
-                    hudMsg = "No Internet Connection"
-                    showhud = true
-                    return
+                
+                await performAPICalls(
+                    isConcurrent: true,
+                    onError: { error in
+                        alertType = .sheetType(
+                            icon: .alert,
+                            title: "Error",
+                            message: viewModel.errorMessage ?? "",
+                            primaryBtnText: "",
+                            secondaryBtnText: AppString.ok.localized
+                        )
+                        showError = true
+                    }, onSuccess: {
+                        // On success
+                        categorySuccess()
+//                        shippingAddressSuccess()
+                        mailSuccess()
+                    }
+                    
+                ) {
+                    // 👇 These run in parallel
+                    async let categoryTask: () = viewModel.getSubCategoryList(param: CategoryRequest(category_id: ""))
+                    async let mailTask: () = viewModel.getMailClasses()
+                    
+                    // Wait for all
+                    _ = try await (categoryTask, mailTask)
                 }
-                SVProgressHUD.show()
-                await viewModel.getSubCategoryList(param: CategoryRequest(category_id: ""))
-                await SVProgressHUD.dismiss()
-                if self.viewModel.errorMessage == nil || self.viewModel.errorMessage == "" {
-                    categorySuccess()
-                }else{
-                    alertType = .sheetType(
-                        icon: .alert,
-                        title: "Error",
-                        message: self.viewModel.errorMessage ?? "",
-                        primaryBtnText: "",
-                        secondaryBtnText: AppString.ok.localized
-                    )
-                    await SVProgressHUD.dismiss()
-                    showError = true
-                }
+                
+                
+//               guard Reachability.isConnectedToNetwork() else {
+//                    hudMsg = "No Internet Connection"
+//                    showhud = true
+//                    return
+//                }
+//                SVProgressHUD.show()
+//                await viewModel.getSubCategoryList(param: CategoryRequest(category_id: ""))
+//                await SVProgressHUD.dismiss()
+//                if self.viewModel.errorMessage == nil || self.viewModel.errorMessage == "" {
+//                    categorySuccess()
+//                }else{
+//                    alertType = .sheetType(
+//                        icon: .alert,
+//                        title: "Error",
+//                        message: self.viewModel.errorMessage ?? "",
+//                        primaryBtnText: "",
+//                        secondaryBtnText: AppString.ok.localized
+//                    )
+//                    await SVProgressHUD.dismiss()
+//                    showError = true
+//                }
 //                self.viewModel.errorMessage?.removeAll()
 //                await viewModel.getAddresses()
                 
@@ -820,21 +850,21 @@ struct ListProductScreen: View {
 //                    )
 //                    showError = true
 //                }
-                self.viewModel.errorMessage?.removeAll()
-                await viewModel.getMailClasses()
-                await SVProgressHUD.dismiss()
-                if self.viewModel.errorMessage == nil || self.viewModel.errorMessage == "" {
-                    mailSuccess()
-                }else{
-                    alertType = .sheetType(
-                        icon: .alert,
-                        title: "Error",
-                        message: self.viewModel.errorMessage ?? "",
-                        primaryBtnText: "",
-                        secondaryBtnText: AppString.ok.localized
-                    )
-                    showError = true
-                }
+//                self.viewModel.errorMessage?.removeAll()
+//                await viewModel.getMailClasses()
+//                await SVProgressHUD.dismiss()
+//                if self.viewModel.errorMessage == nil || self.viewModel.errorMessage == "" {
+//                    mailSuccess()
+//                }else{
+//                    alertType = .sheetType(
+//                        icon: .alert,
+//                        title: "Error",
+//                        message: self.viewModel.errorMessage ?? "",
+//                        primaryBtnText: "",
+//                        secondaryBtnText: AppString.ok.localized
+//                    )
+//                    showError = true
+//                }
             }
         })
         .onTapGesture {
@@ -887,7 +917,7 @@ struct ListProductScreen: View {
                 }
             ) {
                 viewModel.errorMessage?.removeAll()
-                await viewModel.uploadStoreImage(images: imageUrls, key: "images[]")
+                try await viewModel.uploadStoreImage(images: imageUrls, key: "images[]")
                 if let errorMessage = self.viewModel.errorMessage, errorMessage != "" {
                     alertType = .sheetType(
                         icon: .alert,
@@ -935,6 +965,7 @@ struct ListProductScreen: View {
                         
                         // ✅ Images array (already present)
                         "images": uploadedUrls,
+                        "type": "live"
                         
                     ]
 
@@ -944,7 +975,7 @@ struct ListProductScreen: View {
                     
                     // 🔹 Call product store API
                     self.viewModel.errorMessage?.removeAll()
-                    await viewModel.storeProduct(param: productRequest)
+                    try await viewModel.storeProduct(param: productRequest)
                     storeSuccess()
                 }
             }

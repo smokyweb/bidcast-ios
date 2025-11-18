@@ -228,7 +228,7 @@ struct InventoryScreen: View {
             request.status = segment.rawValue.lowercased()
             request.page = page
             request.search = searchText
-            request.category_id = selectedCategoryId
+            request.category = selectedCategoryId
             await viewModel.getInventoryList(param: request)
             await SVProgressHUD.dismiss()
             handleDataLoad()
@@ -285,7 +285,7 @@ struct InventoryScreen: View {
             currentPage += 1
             request.status = status
             request.page = currentPage
-            request.category_id = selectedCategoryId
+            request.category = selectedCategoryId
             await viewModel.getInventoryList(param: request)
             handleDataLoad()
         }
