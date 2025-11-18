@@ -41,7 +41,7 @@ struct ExploreViewScreen: View {
                 HeaderMenuIconView(didTapMenuButton: {
                     print("Menu Button Tapped")
                     navigateToNoti = true
-                }, count: .constant(4))
+                }, count: .constant(0))
             }
             .padding(.horizontal)
             

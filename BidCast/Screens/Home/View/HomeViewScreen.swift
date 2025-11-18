@@ -74,7 +74,7 @@ struct HomeViewScreen: View {
                     didTapMenuButton: {
                         navigateToNoti = true
                     },
-                    count: .constant(4)
+                    count: .constant(0)
                 )
             }
             .padding(.horizontal)
