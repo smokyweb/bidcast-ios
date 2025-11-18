@@ -66,10 +66,11 @@ struct HomeCategoryCardView: View {
                     // Show profile icon for "For You"
                     ZStack {
                         Circle()
-                            .fill(Color.black.opacity(0.4))
+                            .stroke(Color.black,lineWidth: 4.0)
                             .frame(width: 65, height: 65)
                         
                         Image(systemName: "person.fill")
+                            .renderingMode(.template)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 35, height: 35)
