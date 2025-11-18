@@ -41,6 +41,8 @@ struct ActivityScreen: View {
     
     @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     
+    var filterArray: [String] = ["All", "In Progress", "Completed", "Refunds", "Cancelled"]
+    
     @State private var selected: Segment = .message
     
     @State var navigateToNotification = false

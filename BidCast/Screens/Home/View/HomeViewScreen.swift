@@ -67,6 +67,20 @@ struct HomeViewScreen: View {
     var body: some View {
         VStack(spacing:0){
             HStack(spacing: 12) {
+                if comeFromExploreScreen {
+                    //back button
+                    Button {
+                        presentationMode.wrappedValue.dismiss()
+                    } label: {
+                        Image(.icBack)
+                            .resizable()
+                            .frame(width: 22, height: 22)
+                            .foregroundStyle(.black)
+                            .background(.clear)
+                        
+                    }
+                    
+                }
                 SearchBarView { debouncedText in
                     self.searchText = debouncedText
                 }
@@ -129,7 +143,8 @@ struct HomeViewScreen: View {
                     // MARK: - Filter Pills
                     PillsSelectorView(
                         titles: categoryFilterTitles,
-                        selectedIndex: $selectedCategoryIndex
+                        selectedIndex: $selectedCategoryIndex,
+                        isPillRequired: false
                     )
                     .onChange(of: selectedCategoryIndex) { newIndex in
                         let selectedCategory = categoryFilterTitles[newIndex]

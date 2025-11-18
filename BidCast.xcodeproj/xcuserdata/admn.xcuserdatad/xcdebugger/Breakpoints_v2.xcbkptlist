@@ -16,7 +16,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1172"
             endingLineNumber = "1172"
-            landmarkName = "switchStream(to:)"
+            landmarkName = "joinStreamUsingSocket(roomId:switchStreamType:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -50,36 +50,6 @@
             endingLineNumber = "594"
             landmarkName = "body"
             landmarkType = "24">
-            <Locations>
-               <Location
-                  uuid = "2FCBB8C4-5706-48FB-8486-B5EE5995FC67 - 10b5be0c1e3f2acf"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #4 (SwiftUI.DragGesture.Value) -&gt; () in closure #1 (SwiftUI.GeometryProxy) -&gt; Swift.Optional&lt;SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.bottomSheet&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.View&gt;(isPresented: SwiftUI.Binding&lt;Swift.Bool&gt;, height: CoreGraphics.CGFloat, topBarHeight: CoreGraphics.CGFloat, topBarCornerRadius: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, contentBackgroundColor: SwiftUI.Color, topBarBackgroundColor: SwiftUI.Color, showTopIndicator: Swift.Bool, onDismiss: Swift.Optional&lt;() -&gt; ()&gt;, content: () -&gt; &#x3c4;_1_0) -&gt; some&gt;&gt;.0, BidCast.CusNavLink&lt;BidCast.ProfileScreen&gt;, BidCast.CusNavLink&lt;BidCast.TrustedBuyerScreen&gt;, BidCast.CusNavLink&lt;BidCast.PaymentAndShipping_Screen&gt;, BidCast.CusNavLink&lt;BidCast.PaymentAndShipping_Screen&gt;, BidCast.CusNavLink&lt;BidCast.PaymentAndShipping_Screen&gt;, BidCast.CusNavLink&lt;BidCast.PaymentAndShipping_Screen&gt;)&gt;&gt; in BidCast.LiveStream.body.getter : some"
-                  moduleName = "BidCast.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/admn/Documents/JamProject/bidcast/BidCast/Screens/Home/Live%20Stream/View/LiveStream.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "594"
-                  endingLineNumber = "594">
-               </Location>
-               <Location
-                  uuid = "2FCBB8C4-5706-48FB-8486-B5EE5995FC67 - a26b0f3ae5b85489"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #2 @Swift.MainActor () -&gt; () in closure #4 (SwiftUI.DragGesture.Value) -&gt; () in closure #1 (SwiftUI.GeometryProxy) -&gt; Swift.Optional&lt;SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.bottomSheet&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.View&gt;(isPresented: SwiftUI.Binding&lt;Swift.Bool&gt;, height: CoreGraphics.CGFloat, topBarHeight: CoreGraphics.CGFloat, topBarCornerRadius: Swift.Optional&lt;CoreGraphics.CGFloat&gt;, contentBackgroundColor: SwiftUI.Color, topBarBackgroundColor: SwiftUI.Color, showTopIndicator: Swift.Bool, onDismiss: Swift.Optional&lt;() -&gt; ()&gt;, content: () -&gt; &#x3c4;_1_0) -&gt; some&gt;&gt;.0, BidCast.CusNavLink&lt;BidCast.ProfileScreen&gt;, BidCast.CusNavLink&lt;BidCast.TrustedBuyerScreen&gt;, BidCast.CusNavLink&lt;BidCast.PaymentAndShipping_Screen&gt;, BidCast.CusNavLink&lt;BidCast.PaymentAndShipping_Screen&gt;, BidCast.CusNavLink&lt;BidCast.PaymentAndShipping_Screen&gt;, BidCast.CusNavLink&lt;BidCast.PaymentAndShipping_Screen&gt;)&gt;&gt; in BidCast.LiveStream.body.getter : some"
-                  moduleName = "BidCast.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/admn/Documents/JamProject/bidcast/BidCast/Screens/Home/Live%20Stream/View/LiveStream.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "594"
-                  endingLineNumber = "594">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -142,7 +112,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1110"
             endingLineNumber = "1110"
-            landmarkName = "joinStreamUsingSocket(roomId:switchStreamType:)"
+            landmarkName = "handleBidFinalized(for:winner:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

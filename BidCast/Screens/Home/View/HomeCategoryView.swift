@@ -66,7 +66,7 @@ struct HomeCategoryCardView: View {
                     // Show profile icon for "For You"
                     ZStack {
                         Circle()
-                            .fill(Color.pink.opacity(0.4))
+                            .fill(Color.black.opacity(0.4))
                             .frame(width: 65, height: 65)
                         
                         Image(systemName: "person.fill")
@@ -89,15 +89,15 @@ struct HomeCategoryCardView: View {
             }
         }
         .frame(width: 90, height: 120, alignment: .top)
-        .background(
-            LinearGradient(
-                colors: [
-                    isForYou ? Color.gray.opacity(0.1) : Color.gray.opacity(0.1),
-                    isForYou ? Color.pink.opacity(0.3): Color(hex: backgroundColor) ?? .clear
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
+        .background( isForYou ? Color.yellow.opacity(0.9) : Color.gray.opacity(0.3)
+//            LinearGradient(
+//                colors: [
+//                    isForYou ? Color.gray.opacity(0.1) : Color.gray.opacity(0.1),
+//                    isForYou ? Color.pink.opacity(0.3): Color(hex: backgroundColor) ?? .clear
+//                ],
+//                startPoint: .top,
+//                endPoint: .bottom
+//            )
         )
         .cornerRadius(14)
         .overlay(

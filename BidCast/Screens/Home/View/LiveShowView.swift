@@ -15,6 +15,8 @@ struct LiveAuctionView: View {
     @Binding var isLoadingAPI:Bool
     @Binding var currentPage: Int
     
+    @State private var scrollOffset: CGFloat = 0
+    
     var onTapProfile: ((Int) -> Void)?
     var onTapProfileName: ((Int) -> Void)?
     var onTapMainImage: ((Int) -> Void)?
@@ -62,6 +64,9 @@ struct LiveAuctionView: View {
                                 }
                             )
                         }
+                        // Reading the offset
+                        OffsetReader()
+                            .frame(height: 0)
                     }
 //                    .padding(.horizontal, 12)
                     
@@ -75,6 +80,11 @@ struct LiveAuctionView: View {
                         }
                     }
                 }
+            }
+            .coordinateSpace(name: "scroll")
+            .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in
+                scrollOffset = value
+                print("Scrolling Offset →", scrollOffset)
             }
         }
     }
@@ -125,10 +135,16 @@ struct LiveAuctionCardView: View {
                     height: 260,
                     cornerRadius: 0
                 )
+                
                 .contentShape(Rectangle()) // Makes entire area tappable
                 .onTapGesture {
                     onTapMainImage?()
                 }
+                .padding(1)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 14)
+                        .strokeBorder(Color.black.opacity(0.1), lineWidth: 1)
+                )
                 
                 // Live Badge
                 HStack(spacing: 5) {
@@ -162,7 +178,7 @@ struct LiveAuctionCardView: View {
                 HStack(spacing: 4) {
                     Text(auction.category?.name ?? "General")
                         .font(.custom(poppinsSemiBold, size: 10))
-                        .foregroundColor(.blue)
+                        .foregroundColor(.gray)
                         .onTapGesture {
                             onTapCategory?()
                         }
@@ -323,3 +339,18 @@ struct NoDataView1: View {
     }
 }
 
+struct ScrollOffsetPreferenceKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
+    }
+}
+
+struct OffsetReader: View {
+    var body: some View {
+        GeometryReader { geo in
+            Color.clear.preference(key: ScrollOffsetPreferenceKey.self,
+                                   value: geo.frame(in: .named("scroll")).minY)
+        }
+    }
+}
