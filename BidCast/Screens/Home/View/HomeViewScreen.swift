@@ -57,6 +57,9 @@ struct HomeViewScreen: View {
     @State var selectedShowStartDate : String = ""
     @State var categoryName : String = ""
     
+    @State private var isCategoryScrolling: Bool = false
+    @State private var scrollTimer: Timer?
+    
     @State private var loadedRoomIDs = Set<String>()
     @State var agoraToken: String = ""
     
@@ -77,41 +80,51 @@ struct HomeViewScreen: View {
             .padding(.horizontal)
             .padding(.top, 10)
             
-            ScrollView(showsIndicators:false){
-                VStack(alignment: .leading,spacing: 12){
-                    // MARK: - Category Horizontal Scroll
-                    if !comeFromExploreScreen {
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            if isLoadingCategoryAPI {
-                                LazyHGrid(rows: rows, spacing: 16) {
-                                    ForEach(0..<5, id: \.self) { _ in
-                                        CategoryCardFullShimmerView(
-                                            width: 90,
-                                            height: 120,
-                                            cornerRadius: 9
-                                        )
-                                    }
-                                }
-                            } else {
-                                LazyHGrid(rows: rows, spacing: 8) {
-                                    ForEach(categoryList.indices, id: \.self) { ind in
-                                        HomeCategoryCardView(
-                                            title: categoryList[ind].name ?? "",
-                                            imageURL: categoryList[ind].thumbnail ?? "",
-                                            backgroundColor: categoryList[ind].color ?? ""
-                                        )
-                                        .onTapGesture {
-                                            selectedButton = categoryList[ind].name ?? ""
-                                            Task {
-                                                await fetchLiveShow()
-                                            }
+            if !comeFromExploreScreen {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    if isLoadingCategoryAPI {
+                        LazyHGrid(rows: rows, spacing: 16) {
+                            ForEach(0..<5, id: \.self) { _ in
+                                CategoryCardFullShimmerView(
+                                    width: 90,
+                                    height: 120,
+                                    cornerRadius: 9
+                                )
+                            }
+                        }
+                    } else {
+                        LazyHGrid(rows: rows, spacing: 8) {
+                            ForEach(categoryList.indices, id: \.self) { ind in
+                                HomeCategoryCardView(
+                                    title: categoryList[ind].name ?? "",
+                                    imageURL: categoryList[ind].thumbnail ?? "",
+                                    backgroundColor: categoryList[ind].color ?? "#CCCCCC",
+                                    isSelected: selectedButton == categoryList[ind].name
+                                )
+                                .onTapGesture {
+                                    withAnimation(.easeInOut(duration: 0.3)) {
+                                        selectedButton = categoryList[ind].name ?? ""
+                                        Task {
+                                            await fetchLiveShow()
                                         }
                                     }
                                 }
-                                .frame(height: 140)
+                                
                             }
                         }
+                        .frame(height: 140)
+                        .padding(.leading, 12)
                     }
+                }
+//                .padding([.leading,.trailing],18)
+                .padding(.top , 10)
+                
+            }
+          
+            
+            ScrollView(showsIndicators:false){
+                VStack(alignment: .leading,spacing: 12){
+                    // MARK: - Category Horizontal Scroll
                     
                     // MARK: - Filter Pills
                     PillsSelectorView(
@@ -125,7 +138,7 @@ struct HomeViewScreen: View {
                             await fetchLiveShow()
                         }
                     }
-                    
+                   
                     // MARK: - Live Auction View
                     LiveAuctionView(
                         liveShowsData: $liveShowsData,
@@ -186,7 +199,7 @@ struct HomeViewScreen: View {
                     .cornerRadius(10)
                 }
             }
-            .padding([.leading,.trailing],12)
+            .padding([.leading,.trailing],18)
             .padding(.top , 10)
             
             CusNavLink(doNavigate: $navigateToLiveStream, destination: LiveStream(currentRoomID: $currentRoomId,

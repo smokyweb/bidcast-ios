@@ -35,7 +35,7 @@ struct LiveAuctionView: View {
                             LiveAuctionShimmerView()
                         }
                     }
-                    .padding(.horizontal, 12)
+//                    .padding(.horizontal, 12)
                     
                 } else if !isLoadingAPI && liveShowsData.isEmpty {
                     // 2️⃣ NO DATA VIEW
@@ -96,16 +96,16 @@ struct LiveAuctionCardView: View {
             HStack(spacing: 8) {
                 AsyncImageWithPlaceholder(
                     url: auction.user?.profile_image ?? "",
-                    width: 36,
-                    height: 36,
-                    cornerRadius: 18
+                    width: 26,
+                    height: 26,
+                    cornerRadius: 13
                 )
                 .onTapGesture {
                     onTapProfile?()
                 }
                 
                 Text(auction.user?.name ?? auction.user?.username ?? "Unknown")
-                    .font(.custom(poppinsSemiBold, size: 13))
+                    .font(.custom(poppinsSemiBold, size: 12))
                     .foregroundColor(.black)
                     .lineLimit(1)
                     .onTapGesture {
@@ -115,14 +115,14 @@ struct LiveAuctionCardView: View {
                 Spacer()
             }
             .padding(.horizontal, 10)
-            .padding(.vertical, 10)
+            .padding(.vertical, 6)
             
             // MARK: Thumbnail with Live Badge (Tappable)
             ZStack(alignment: .topLeading) {
                 AsyncImageWithPlaceholder(
                     url: auction.thumbnail?.first ?? "",
-                    width: nil,
-                    height: 180,
+                    width: 170,
+                    height: 260,
                     cornerRadius: 0
                 )
                 .contentShape(Rectangle()) // Makes entire area tappable
@@ -146,8 +146,10 @@ struct LiveAuctionCardView: View {
                 .cornerRadius(20)
                 .shadow(color: Color.black.opacity(0.3), radius: 4, x: 0, y: 2)
                 .padding(10)
-                .allowsHitTesting(false) // Badge doesn't intercept taps
+//                .allowsHitTesting(false) // Badge doesn't intercept taps
             }
+            .cornerRadius(14)
+            .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 2)
             
             // MARK: Bottom Info
             VStack(alignment: .leading, spacing: 3) {
@@ -155,7 +157,7 @@ struct LiveAuctionCardView: View {
                     .font(.custom(poppinsSemiBold, size: 12))
                     .foregroundColor(.black)
                     .lineLimit(2)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+//                    .frame(maxWidth: .infinity, alignment: .leading)
                 
                 HStack(spacing: 4) {
                     Text(auction.category?.name ?? "General")
@@ -171,9 +173,7 @@ struct LiveAuctionCardView: View {
             .padding(.horizontal, 10)
             .padding(.vertical, 10)
         }
-        .background(Color.white)
-        .cornerRadius(14)
-        .shadow(color: Color.black.opacity(0.12), radius: 8, x: 0, y: 4)
+        .background(Color.clear)
     }
 }
 
