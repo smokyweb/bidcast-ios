@@ -1,3 +1,4 @@
+
 //
 //  RehearsalScreen.swift
 //  BidCast
@@ -12,13 +13,13 @@ import SVProgressHUD
 import MillicastSDK
 import AlertToast
 
-enum ProductShowType {
-    case shop
-    case nextProduct
-    case viewOnly
-}
+//enum ProductShowType {
+//    case shop
+//    case nextProduct
+//    case viewOnly
+//}
 
-struct RehearsalScreen: View {
+struct RehearsalScreenV1: View {
     @EnvironmentObject  var appRootManager: AppRootManager
     @Binding var showUd: String
     var roomID: String = ""
@@ -127,11 +128,6 @@ struct RehearsalScreen: View {
     
     @StateObject private var keyboardResponder = KeyboardResponder()
     
-    @State var messageHeight: CGFloat = 40   // single message height
-    let maxVisibleMessages = 3
-    @State var sellerId = ""
-    @State var showItemDetailSheet = false
-    @State var productId: Int = 0
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -294,13 +290,13 @@ struct RehearsalScreen: View {
                 // 🎛️ Dynamic Side Controls
                 VStack {
                     Spacer()
-                    VStack(spacing: 12) {
+                    VStack(spacing: 0) {
                         if showLiveControls {
-                            SideButton(label: "More", icon: .more,action: .more)
-                            SideButton(label: "Promote", icon: .rPromote ,action: .promote)
-                            SideButton(label: "Clip", icon: .clip,action: .clip)
-                            SideButton(label: "Share", icon: .sharee,action: .share)
-                            SideButton(label: "Switch", icon: .camera,action: .switchView)
+                            SideButton(label: "More", icon: .sMore,action: .more)
+                            SideButton(label: "Promote", icon: .sPromote,action: .promote)
+                            SideButton(label: "Clip", icon: .sClip,action: .clip)
+                            SideButton(label: "Share", icon: .sShare,action: .share)
+                            SideButton(label: "Switch", icon: .sSwitch,action: .switchView)
                             ShopButton(action: .shop, count: "\(productData.count)")
                         }
                         
@@ -309,50 +305,61 @@ struct RehearsalScreen: View {
                             Button(action: {
                                 isMicOn.toggle()
                                 agoraManager.toggleAudioMute()
+                                //                                castManager.toggleAudioMute()
+                                //                                ZegoExpressEngine.shared().muteMicrophone(!isMicOn)
                             }) {
                                 VStack {
                                     Image(systemName: isMicOn ? "mic.fill" : "mic.slash.fill")
-                                        .renderingMode(.template)
                                         .resizable()
                                         .scaledToFit()
                                         .fontWeight(.heavy)
                                         .font(.custom(poppinsExtraBold, size: 22.0))
-                                        .frame(width: 25, height: 24)
-                                        .foregroundColor(.white)
-                                    Text(isMicOn ? "Mic On" : "Mic Off")
-                                        .font(.custom(poppinsRegular, size: 8.0))
-                                        .foregroundColor(.white)
+                                        .frame(width: 20, height: 20)
+                                        .foregroundColor(.black)
+                                    //                                Text(isMicOn ? "Mic On" : "Mic Off")
+                                    //                                    .font(.custom(poppinsThin, size: 12.0))
                                 }
                                 .padding()
-                                
+                                .background(
+                                    Circle()
+                                        .fill(Color.white)
+                                )
                                 
                             }
                             
                             Button(action: {
                                 isUsingFrontCamera.toggle()
+                                //                                ZegoExpressEngine.shared().useFrontCamera(isUsingFrontCamera)
                                 agoraManager.switchCamera()
+                                //                                Task{
+                                //                                    await castManager.switchCamera()
+                                //                                }
                             }) {
                                 VStack {
-                                    Image(.camera)
-                                        .renderingMode(.template)
+                                    Image(.sSwitch)
                                         .resizable()
                                         .scaledToFit()
                                         .fontWeight(.heavy)
                                         .font(.custom(poppinsExtraBold, size: 22.0))
-                                        .frame(width: 25, height: 24)
-                                        .foregroundColor(.white)
-                                    Text("Switch")
-                                        .font(.custom(poppinsRegular, size: 8.0))
-                                        .foregroundColor(.white)
+                                        .frame(width: 50, height: 50)
+                                        .foregroundColor(.black)
+                                    //                                Text("Switch")
+                                    //                                    .font(.custom(poppinsThin, size: 12.0))
                                 }
                                 .padding()
-                               
+                                //                                .background(
+                                //                                    Circle()
+                                //                                        .fill(Color.white)
+                                //                                )
                             }
+                            
                             ShopButton(action: .shop, count: "0")
                             Spacer()
                         }
                     }
-                  
+                    //                    .padding(.trailing)
+                    //                    .padding(.bottom, 150)
+                    //                    .frame(maxWidth: .infinity, alignment: .trailing)
                     .position(
                         x: geometry.size.width - 40,
                         y: geometry.size.height / 2
@@ -362,118 +369,91 @@ struct RehearsalScreen: View {
                 // 💬 bottom Chat & Start Button
                 VStack(alignment: .leading, spacing: 8) {
                     Spacer()
-                    if socketManager.chats.count > 0 {
-                        HStack{
-                            ScrollViewReader { proxy in
-                                ScrollView(.vertical, showsIndicators: false) {
-
-                                    VStack {
-                                        Spacer(minLength: 0)  // bottom alignment
-
-                                        LazyVStack(alignment: .leading, spacing: 6) {
-
-                                            ForEach(socketManager.chats) { comment in
-//                                                let data = liveShowsData[currentIndex]
-                                                let isHost = comment.userId == "\(UserDefaults.userId)"
-                                                let isMod = !isHost
-
-                                                ChatMessageBubble(comment: comment, isHost: isHost, isMod: isMod)
-                                                    .background(
-                                                        GeometryReader { geo in
-                                                            Color.clear.onAppear {
-                                                                // Capture height of ONE message (only once)
-                                                                if messageHeight == 40 {
-                                                                    messageHeight = geo.size.height + 10
-                                                                }
-                                                            }
-                                                        }
-                                                    )
-                                                    .id(comment.id)
-                                            }
+                    if socketManager.chats.count > 0{
+                        ScrollViewReader { proxy in
+                            ScrollView {
+                                VStack(alignment: .leading, spacing: 8) {
+                                    ForEach(socketManager.chats) { comment in
+                                        HStack {
+                                            CustomProfileImage(url: comment.image ?? "", isCircular: true,size: 24)
+                                            Text(comment.username?.capitalizingFirstLetter() ?? "")
+                                                .font(.custom(poppinsSemiBold, size: 14.0))
+                                                .foregroundColor(.white)
+                                            
+                                            Text(comment.message ?? "")
+                                                .font(.custom(poppinsRegular, size: 12.0))
+                                                .foregroundColor(.white)
                                         }
-                                    }
-                                    .padding(.horizontal, 8)
-                                    .padding(.vertical, 4)
-                                }
-                                .frame(width:screenWidth - 54
-                                    ,height: socketManager.chats.count == 0
-                                        ? 0
-                                        : min(CGFloat(socketManager.chats.count), CGFloat(maxVisibleMessages)) * messageHeight
-                                )
-                                .animation(.easeOut(duration: 0.2), value: socketManager.chats.count)
-                                .onChange(of: socketManager.chats) { _ in
-                                    if let lastID = socketManager.chats.last?.id {
-                                        withAnimation(.easeOut(duration: 0.25)) {
-                                            proxy.scrollTo(lastID, anchor: .bottom)
-                                        }
+                                        .padding(.trailing,60)
+                                        .padding(.leading,Leading)
+                                        .id(comment.id) // 💡 For scroll targeting
                                     }
                                 }
                             }
-
+                            .onChange(of: socketManager.chats) { _ in
+                                // 💬 Auto scroll to last message
+                                if let last = socketManager.chats.last {
+                                    withAnimation {
+                                        proxy.scrollTo(last.id, anchor: .bottom)
+                                    }
+                                }
+                            }
                         }
-                        
+                        .frame(maxHeight: 150)
                     }
-                  
+                    
+                    
                     if showButton{
                         if showLiveControls{
                             VStack(alignment: .leading, spacing: 12){
                                 HStack {
                                     ZStack(alignment: .trailing) {
-                                        TextField(
-                                            "",
-                                            text: $commentText,
-                                            prompt: Text("Say something...")
-                                                .foregroundColor(.gray)    // placeholder color
-                                                .font(.custom(poppinsRegular, size: 13))
+                                        TextField("", text: $commentText, prompt: Text("Say something...")
+                                            .foregroundColor(.white)
+                                            .font(.custom(poppinsSemiBold, size: 13.0))
                                         )
-                                        .foregroundColor(.white)            // typed text color
-                                        .font(.custom(poppinsRegular, size: 13))
-                                        
-                                        .padding(.horizontal, 8)
-                                        .padding(.trailing, commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? 14 : 40)
-                                        
-                                        .frame(height: 40)
-                                        .frame(width:BiddingDetail.products != nil ? screenWidth-45 : screenWidth-90 )
-                                        .font(.custom(poppinsSemiBold, size: 13))
+                                        .font(.custom(poppinsSemiBold, size: 13.0))
                                         .foregroundColor(.white)
-                                        .cornerRadius(8)
-                                        .background(
-                                            Capsule()
-                                                .fill(Color.black.opacity(0.35))     // translucent fill
-                                        )
-                                        .overlay(
-                                            Capsule()
-                                                .stroke(Color.white, lineWidth: 1)   // border
-                                        )
+                                        .padding(.horizontal, 8)
+                                        .padding(.trailing, commentText.isEmpty ? 14 : 36) // extra space for send button
+                                        .frame(height: 50)
                                         
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 8)
+                                                .stroke(Color.white, lineWidth: 1)
+                                            
+                                            
+                                        )
+                                        .background(.black.opacity(0.4))
                                         
                                         if !commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                                             Button(action: {
-                                                let roomId = self.roomId
-                                                //                                            ZIMChatManager.shared.sendMessage(message: commentText,roomId: roomId,image: UserDefaults.profileURL,name: UserDefaults.fullName)
+                                                print("📨 Sending message: \(commentText)")
+                                                let textToSend = commentText.trimmingCharacters(in: .whitespacesAndNewlines)
+                                                //                                            ZIMChatManager.shared.sendMessage(message: textToSend,roomId: self.liveRoomId,image: UserDefaults.profileURL,name: UserDefaults.userName)
+                                                
                                                 let userId = UserDefaults.userId
                                                 let userName = UserDefaults.userName
                                                 let userImage = UserDefaults.profileURL
-                                                SocketManagerService.shared.sendChat(roomId: roomId, message: commentText, userId: userId, userName: userName, userImage: userImage)
+                                                SocketManagerService.shared.sendChat(roomId: self.roomId, message: textToSend, userId: userId, userName: userName, userImage: userImage)
                                                 commentText = ""
                                             }) {
-                                                Image(systemName: "chevron.right")
+                                                Image(systemName: "paperplane.fill")
                                                     .resizable()
-                                                    .frame(width: 16, height: 16)
-                                                    .foregroundColor(.white)
+                                                    .frame(width: 24, height: 24)
+                                                    .foregroundColor(.defaultTheme)
                                                     .padding(10)
                                             }
                                             .transition(.opacity)
                                             .animation(.easeInOut(duration: 0.2), value: commentText)
+                                            .padding(.leading,16)
+                                            //                                            .padding(.trailing, BiddingDetail.products != nil ? 54 : 16)
                                         }
                                     }
-                                    
                                 }
-                                .padding(.leading,16)
-                                .padding(.trailing, productData != nil ? 54 : 16)
-                                
-                                .animation(.easeOut(duration: 0.25), value: keyboardResponder.currentHeight)
-
+                                .padding(.leading,12)
+                                .padding(.trailing, productData != nil ? 70 : 12)
+                                .padding(.bottom,20)
                                 VStack(alignment: .leading,spacing: 12) {
                                     //MARK: Product Details
                                     let currentProducts = productData.filter { $0.isCurrent }
@@ -485,9 +465,8 @@ struct RehearsalScreen: View {
                                                            userName: $winnerName,
                                                            userImage: $winnerProfileImage,
                                                            categoryName: $categoryName,
-                                                           hasWon: socketManager.hasWon,onTap: {
-                                            showItemDetailSheet = true
-                                        })
+                                                           hasWon: socketManager.hasWon
+                                        )
                                         .frame(maxWidth: .infinity)
                                         
                                         .background(Color.black.opacity(0.3))
@@ -821,16 +800,6 @@ struct RehearsalScreen: View {
                         
                     }
                 }
-            )
-        }
-        .bottomSheet(isPresented: $showItemDetailSheet, height: screenHeight * 0.65) {
-            ProductDetailSheet(
-                onDismiss : {
-                    self.showItemDetailSheet = false
-                    productId = 0
-                },
-                productID: $productId,showoption: false,showButton: false
-                
             )
         }
         .toast(isPresenting: $showhudSuccess) {
@@ -1215,7 +1184,6 @@ struct RehearsalScreen: View {
             print("print PRoduct: \(products)")
             let currentProducts = productData.filter { $0.isCurrent }
             self.currentPrice = Double(currentProducts.first?.price ?? "") ?? 0.0
-            self.productId = Int(currentProducts.first?.id ?? "") ?? 0
             print("after product \(productData)")
         }
     }
@@ -1490,18 +1458,16 @@ struct RehearsalScreen: View {
                 showSellSheet = true
             }
         }) {
-            VStack(spacing:4) {
+            VStack {
                 Image(icon)
-                    .renderingMode(.template)
                     .resizable()
                     .scaledToFit()
                     .fontWeight(.heavy)
                     .font(.custom(poppinsExtraBold, size: 22.0))
-                    .frame(width: 25, height: 24)
-                    .foregroundColor(.white)
-                Text(label)
-                    .font(.custom(poppinsRegular, size: 8.0))
-                    .foregroundColor(.white)
+                    .frame(width: 49, height: 50)
+                    .foregroundColor(.black)
+                //                Text(label)
+                //                    .font(.custom(poppinsThin, size: 12.0))
             }
             .padding(6)
             //            .background(
@@ -1524,19 +1490,16 @@ struct RehearsalScreen: View {
             }
         }) {
             ZStack {
-                VStack(spacing:4) {
-                    Image(.shop)
-                        .renderingMode(.template)
+                VStack {
+                    Image(.sShop)
                         .resizable()
                         .scaledToFit()
                         .fontWeight(.heavy)
                         .font(.custom(poppinsExtraBold, size: 22.0))
-                        .frame(width: 25, height: 24)
-                        .foregroundColor(.white)
-                    Text("Shop")
-                        .font(.custom(poppinsRegular, size: 8.0))
-                        .foregroundColor(.white)
-                    
+                        .frame(width: 49, height: 50)
+                        .foregroundColor(.black)
+                    //                    Text("Shop")
+                    //                        .font(.custom(poppinsThin, size: 12.0))
                 }
                 .padding(6)
                 //                .background(
@@ -1544,37 +1507,37 @@ struct RehearsalScreen: View {
                 //                        .fill(Color.white)
                 //                )
                 
-//                Circle()
-//                    .fill(Color.defaultTheme)
-//                    .frame(width: 20, height: 20)
-//                    .overlay(Text(count == "0" ? "" : count)
-//                        .foregroundColor(.black)
-//                        .font(.custom(poppinsRegular, size: 13.0))
-//                    )
-//                    .offset(x: 18, y: -15)
+                Circle()
+                    .fill(Color.defaultTheme)
+                    .frame(width: 20, height: 20)
+                    .overlay(Text(count == "0" ? "" : count)
+                        .foregroundColor(.black)
+                        .font(.custom(poppinsRegular, size: 13.0))
+                    )
+                    .offset(x: 18, y: -15)
             }
         }
     }
 }
 
-enum SideMenu {
-    case more, promote, clip, share, switchView, shop,endShow
-}
-
-
-struct VideoContainerView: UIViewRepresentable {
-    let uiView: UIView
-    
-    func makeUIView(context: Context) -> UIView {
-        uiView
-    }
-    
-    func updateUIView(_ uiView: UIView, context: Context) {}
-}
+//enum SideMenu {
+//    case more, promote, clip, share, switchView, shop,endShow
+//}
+//
+//
+//struct VideoContainerView: UIViewRepresentable {
+//    let uiView: UIView
+//    
+//    func makeUIView(context: Context) -> UIView {
+//        uiView
+//    }
+//    
+//    func updateUIView(_ uiView: UIView, context: Context) {}
+//}
 
 
 //API Call and their success handlers
-extension RehearsalScreen {
+extension RehearsalScreenV1 {
     func isInternetAvailable()  -> Bool {
         guard Reachability.isConnectedToNetwork() else {
             hudMsg = "No Internet Connection"
@@ -1708,7 +1671,7 @@ extension RehearsalScreen {
     }
 }
 
-extension RehearsalScreen {
+extension RehearsalScreenV1 {
     func handleRaid(selectedSeller: SellerUserModel?) {
         guard let seller = selectedSeller else  {
             return

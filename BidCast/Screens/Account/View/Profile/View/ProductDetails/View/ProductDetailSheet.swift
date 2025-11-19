@@ -26,6 +26,8 @@ struct ProductDetailSheet: View {
     
     @State  var productImages: [String] = [] // Image URLs or asset names
     @State  var productTitle: String = ""
+    @State  var description: String = ""
+    
     @State  var productPrice: Double = 0.0
     @State  var condition: String = ""
     @State  var location: String = ""
@@ -50,15 +52,23 @@ struct ProductDetailSheet: View {
     @State var showoption : Bool = true
     @State var showButton : Bool = true
     var body: some View {
-        VStack(spacing: 0) {
+        VStack(spacing: 12) {
             // Header
             HStack {
-                Button(action: {
-                    onDismiss()
-                }) {
-                    Image(systemName: "chevron.left")
-                        .font(.custom(poppinsSemiBold, size: 14.0))
-                        .foregroundColor(.black)
+                HStack(spacing: 8) {
+                    CustomProfileImage(url: sellerImage,isCircular: true,size: 32)
+                   
+                    
+                    
+                    VStack(alignment: .leading) {
+                        Text(sellerName)
+                            .font(.custom(poppinsSemiBold, size: 13.0))
+                            .foregroundColor(.black)
+                        Text(sellerStatus)
+                            .font(.custom(poppinsRegular, size: 11.0))
+                            .foregroundColor(.darkGray)
+                    }
+                   
                 }
                 Spacer()
                 if showoption{
@@ -93,106 +103,105 @@ struct ProductDetailSheet: View {
                     onDismiss()
                 }) {
                     Image(systemName: "xmark.circle.fill")
-                        .font(.custom(poppinsSemiBold, size: 28.0))
+                        .font(.custom(poppinsSemiBold, size: 24.0))
                         .foregroundColor(.red)
                 }
             }
-            .padding()
+            .padding(.horizontal)
+            .padding(.top,-16)
             
             // Seller Info
-            HStack(spacing: 8) {
-                CustomProfileImage(url: sellerImage,isCircular: true,size: 32)
-               
-                
-                
-                VStack(alignment: .leading) {
-                    Text(sellerName)
-                        .font(.custom(poppinsSemiBold, size: 13.0))
-                        .foregroundColor(.gray)
-                    Text(sellerStatus)
-                        .font(.custom(poppinsRegular, size: 11.0))
-                        .foregroundColor(.gray)
-                }
-                Spacer()
-            }
-            .padding(.horizontal)
-            
+//            HStack(spacing: 8) {
+//                CustomProfileImage(url: sellerImage,isCircular: true,size: 32)
+//               
+//                
+//                
+//                VStack(alignment: .leading) {
+//                    Text(sellerName)
+//                        .font(.custom(poppinsSemiBold, size: 13.0))
+//                        .foregroundColor(.black)
+//                    Text(sellerStatus)
+//                        .font(.custom(poppinsRegular, size: 11.0))
+//                        .foregroundColor(.darkGray)
+//                }
+//               
+//            }
+//            .padding(.horizontal)
+//            
             
             // Image Carousel
             TabView(selection: $selectedImageIndex) {
                 ForEach(productImages.indices, id: \.self) { index in
                     let img = productImages[index]
-                    CustomProfileImage(url: img,isCircular: false,size: 300)
-//                    AsyncImage(url: URL(string: img)) { phase in
-//                        switch phase {
-//                        case .empty:
-//                            ProgressView()
-//                                .frame(height: 300)
-//                        case .success(let image):
-//                            image
-//                                .resizable()
-//                                .scaledToFill()
-//                                .frame(height: 300)
-//                                .clipped()
-//                        case .failure:
-//                            Image(systemName: "photo")
-//                                .resizable()
-//                                .scaledToFit()
-//                                .frame(height: 300)
-//                                .foregroundColor(.gray)
-//                        @unknown default:
-//                            EmptyView()
-//                        }
-//                    }
+                    CustomProfileImage(url: img,isCircular: false,size: screenWidth - 32,height: 250)
+
                     .tag(index)
                 }
             }
             .tabViewStyle(PageTabViewStyle())
-            .frame(height: 300)
+            .frame(height: 250)
             
             // Product Info
-            VStack(alignment: .leading, spacing: 12) {
-                HStack {
-                    Text(productTitle)
-                        .font(.custom(poppinsSemiBold, size: 14.0))
-                    Spacer()
-                    let price = String(format: "$%.2f", productPrice)
-                    Text("\(price)")
-                        .font(.custom(poppinsSemiBold, size: 14.0))
+            VStack(alignment: .leading, spacing: 12){
+                VStack {
+                    HStack {
+                        Text(productTitle.capitalizingFirstLetter())
+                            .font(.custom(poppinsSemiBold, size: 16.0))
+                        Spacer()
+                        let price = String(format: "$%.2f", productPrice)
+                        Text("\(price)")
+                            .font(.custom(poppinsSemiBold, size: 16.0))
+                        
+                    }
+                    if !description.isEmpty{
+                        
+                        HStack {
+                            Text(description.capitalizingFirstLetter())
+                                .font(.custom(poppinsSemiBold, size: 13.0))
+                            Spacer()
+                            
+                        }
+                    }
+                    VStack(alignment: .leading, spacing: 6) {
+                        if !condition.isEmpty{
+                            HStack {
+                                Text("Condition")
+                                    .font(.custom(poppinsRegular, size: 13.0))
+                                    .frame(width: 80, alignment: .leading)
+                                Spacer()
+                                Text(condition)
+                                    .font(.custom(poppinsRegular, size: 13.0))
+                            }
+                        }
+                        if !location.isEmpty{
+                            HStack {
+                                Text("Location")
+                                    .font(.custom(poppinsRegular, size: 13.0))
+                                    .frame(width: 80, alignment: .leading)
+                                Spacer()
+                                Text(location)
+                                    .font(.custom(poppinsRegular, size: 13.0))
+                            }
+                        }
+                        if !postedTime.isEmpty{
+                            HStack {
+                                Text("Posted")
+                                    .font(.custom(poppinsRegular, size: 13.0))
+                                    .frame(width: 80, alignment: .leading)
+                                Spacer()
+                                Text(postedTime)
+                                    .font(.custom(poppinsRegular, size: 13.0))
+                            }
+                        }
+                    }
                 }
-                VStack(alignment: .leading, spacing: 6) {
-                    HStack {
-                        Text("Condition")
-                            .font(.custom(poppinsRegular, size: 12.0))
-                            .frame(width: 80, alignment: .leading)
-                        Spacer()
-                        Text(condition)
-                            .font(.custom(poppinsRegular, size: 12.0))
-                    }
-                    
-                    HStack {
-                        Text("Location")
-                            .font(.custom(poppinsRegular, size: 12.0))
-                            .frame(width: 80, alignment: .leading)
-                        Spacer()
-                        Text(location)
-                            .font(.custom(poppinsRegular, size: 12.0))
-                    }
-                    
-                    HStack {
-                        Text("Posted")
-                            .font(.custom(poppinsRegular, size: 12.0))
-                            .frame(width: 80, alignment: .leading)
-                        Spacer()
-                        Text(postedTime)
-                            .font(.custom(poppinsRegular, size: 12.0))
-                    }
-                }
+                .padding(.all,8)
             }
-            .padding()
+            
             .background(Color(.systemGray6))
             .cornerRadius(12)
             .padding(.horizontal)
+//            .padding(.horizontal)
             
             
             if showButton{
@@ -342,7 +351,8 @@ struct ProductDetailSheet: View {
         if response?.status == "success" {
             productDetail = response?.data
             productImages =  data?.images ?? []
-            productTitle = data?.description ?? ""
+            productTitle = data?.title ?? ""
+            description = data?.description ?? ""
             productPrice = Double(data?.pricing ?? "0.0") ?? 0.0
             condition =  "New" //currently No Key for this
             location = data?.shippingAdress?.streetAddress ?? ""

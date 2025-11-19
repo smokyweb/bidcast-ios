@@ -337,8 +337,8 @@ struct LiveStream: View {
                                             .padding(.horizontal, 8)
                                             .padding(.vertical, 4)
                                         }
-                                        .frame(
-                                            height: socketManagerChat.chats.count == 0
+                                        .frame(width:screenWidth - 54
+                                               , height: socketManagerChat.chats.count == 0
                                                 ? 0
                                                 : min(CGFloat(socketManagerChat.chats.count), CGFloat(maxVisibleMessages)) * messageHeight
                                         )
