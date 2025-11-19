@@ -46,7 +46,7 @@ struct LiveAuctionView: View {
                     
                 } else {
                     // 3️⃣ LIVE SHOWS GRID
-                    LazyVGrid(columns: columns, spacing: 6) {
+                    LazyVGrid(columns: columns, spacing: 3) {
                         ForEach(liveShowsData.indices, id: \.self) { index in
                             LiveAuctionCardView(
                                 auction: liveShowsData[index],
@@ -106,9 +106,9 @@ struct LiveAuctionCardView: View {
             HStack(spacing: 8) {
                 AsyncImageWithPlaceholder(
                     url: auction.user?.profile_image ?? "",
-                    width: 26,
-                    height: 26,
-                    cornerRadius: 13
+                    width: 22,
+                    height: 22,
+                    cornerRadius: 11
                 )
                 .onTapGesture {
                     onTapProfile?()
@@ -124,8 +124,8 @@ struct LiveAuctionCardView: View {
                 
                 Spacer()
             }
-            .padding(.horizontal, 10)
-            .padding(.vertical, 6)
+//            .padding(.horizontal, 10)
+            .padding(.vertical, 3)
             
             // MARK: Thumbnail with Live Badge (Tappable)
             ZStack(alignment: .topLeading) {
@@ -148,10 +148,10 @@ struct LiveAuctionCardView: View {
                 
                 // Live Badge
                 HStack(spacing: 5) {
-                    Image(systemName: "dot.radiowaves.left.and.right")
-                        .foregroundColor(.white)
-                        .font(.system(size: 11, weight: .bold))
-                    
+//                    Image(systemName: "dot.radiowaves.left.and.right")
+//                        .foregroundColor(.white)
+//                        .font(.system(size: 11, weight: .bold))
+//                    
                     Text("Live • \(auction.latest_viewer_count ?? 0)")
                         .font(.custom(poppinsSemiBold, size: 12))
                         .foregroundColor(.white)
@@ -168,15 +168,15 @@ struct LiveAuctionCardView: View {
             .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 2)
             
             // MARK: Bottom Info
-            VStack(alignment: .leading, spacing: 3) {
-                Text(auction.title ?? "Live Show")
+            VStack(alignment: .leading, spacing: 0) {
+                Text(auction.title?.capitalizingFirstLetter() ?? "Live Show")
                     .font(.custom(poppinsSemiBold, size: 12))
                     .foregroundColor(.black)
                     .lineLimit(2)
 //                    .frame(maxWidth: .infinity, alignment: .leading)
                 
                 HStack(spacing: 4) {
-                    Text(auction.category?.name ?? "General")
+                    Text(auction.category?.name?.capitalizingFirstLetter() ?? "General")
                         .font(.custom(poppinsSemiBold, size: 10))
                         .foregroundColor(.gray)
                         .onTapGesture {
@@ -186,8 +186,8 @@ struct LiveAuctionCardView: View {
                     Spacer()
                 }
             }
-            .padding(.horizontal, 10)
-            .padding(.vertical, 10)
+//            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
         }
         .background(Color.clear)
     }

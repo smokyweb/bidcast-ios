@@ -87,6 +87,7 @@ struct HomeViewScreen: View {
                 SearchBarView { debouncedText in
                     self.searchText = debouncedText
                 }
+                Spacer()
                 HeaderMenuIconView(
                     didTapMenuButton: {
                         navigateToNoti = true
@@ -94,8 +95,8 @@ struct HomeViewScreen: View {
                     count: .constant(0)
                 )
             }
-            .padding(.horizontal)
-            .padding(.top, 10)
+            .padding(.horizontal,12)
+            .padding(.top, 5)
             
             if !comeFromExploreScreen {
                 ScrollView(.horizontal, showsIndicators: false) {
@@ -144,17 +145,17 @@ struct HomeViewScreen: View {
 
                         }
                         .frame(height: 140)
-                        .padding(.leading, 12)
+                        .padding(.leading)
                     }
                 }
 //                .padding([.leading,.trailing],18)
-                .padding(.top , 10)
+                .padding(.top , 5)
                 
             }
           
             
             ScrollView(showsIndicators:false){
-                VStack(alignment: .leading,spacing: 12){
+                VStack(alignment: .leading,spacing: 8){
                     // MARK: - Category Horizontal Scroll
                     
                     // MARK: - Filter Pills
@@ -225,6 +226,7 @@ struct HomeViewScreen: View {
                             navigateToCategoryDetailScreen = true
                         }
                     )
+                    .padding(.bottom, 20)
                     .onAppear{
                         handlePagination(index: index)
                     }
@@ -256,7 +258,8 @@ struct HomeViewScreen: View {
         }
         .background(.bg.opacity(0.1))
         .edgesIgnoringSafeArea(.bottom)
-        //        .padding(.bottom,4)
+//                .padding(.bottom,4)
+                .padding(.bottom, -15)
         .onAppear{
             isActiveOnHomeScreen = true
             SocketManagerService.shared.setupSocket()

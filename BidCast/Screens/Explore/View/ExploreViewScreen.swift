@@ -95,6 +95,7 @@ struct ExploreViewScreen: View {
             CusNavLink(doNavigate: $navigateToNoti, destination: NotificationScreen())
         }
         .background(.bg.opacity(0.4))
+        .padding(.bottom, -27)
         .onAppear {
             Task { await fetchCategory(for: "Recommended") }
         }

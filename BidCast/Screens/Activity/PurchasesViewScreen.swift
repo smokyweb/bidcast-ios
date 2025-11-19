@@ -9,16 +9,21 @@ import SwiftUI
 
 struct PurchasesViewScreen: View {
     var purchaseList: OfferListModel?
+    @State private var navigateToUserProfile: Bool = false
+    
+    @State private var userId: String = ""
+    @State private var userImage: String = ""
+    @State private var userName: String = ""
     
     var body: some View {
         HStack(alignment: .center, spacing: 12) {
             // MARK: - Product Image
             if let imageURL = purchaseList?.product?.images?.first, !imageURL.isEmpty {
-                URLImageView(url: imageURL, cornerRadius: 14, height: 80,)
+                URLImageView(url: imageURL, cornerRadius: 10, height: 80,)
                     .frame(width: 80, height: 80, alignment: .center)
-                    .cornerRadius(14)
+                    .cornerRadius(10)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 14)
+                        RoundedRectangle(cornerRadius: 10)
                             .strokeBorder(Color.black.opacity(0.1), lineWidth: 1)
                     )
                     .padding(.horizontal, 6)
@@ -26,14 +31,15 @@ struct PurchasesViewScreen: View {
             }
             
             // MARK: - Order Details
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 2) {
                 // Status Badge
                 Text(purchaseList?.status?.capitalizingFirstLetter() ?? "")
                     .font(.custom(poppinsSemiBold, size: 12.0))
                     .foregroundColor(.green)
-                    .padding(.bottom, 2)
-                    .padding(4)
+//                    .padding(.bottom, 2)
+                    .padding(.horizontal, 10)
                     .background(.green.opacity(0.2))
+//                    .padding(.vertical, 2)
                     .clipShape(Capsule())
                 
                 // Product Name
@@ -48,7 +54,7 @@ struct PurchasesViewScreen: View {
                         .font(.custom(poppinsBold, size: 12.0))
                         .foregroundColor(.gray)
                     if let price = purchaseList?.product?.pricing {
-                        Text("$\(Double(price))")
+                        Text(price.formattedPrice())
                             .font(.custom(poppinsBold, size: 12.0))
                             .foregroundColor(.black)
                     }
@@ -70,19 +76,33 @@ struct PurchasesViewScreen: View {
                     Text("From:")
                         .font(.custom(poppinsMedium, size: 12.0))
                         .foregroundColor(.gray)
-                    
-                    Text(purchaseList?.user?.name ?? "")
-                        .font(.custom(poppinsMedium, size: 12.0))
-                        .foregroundColor(.blue)
+                    Button {
+                        userId = "\(purchaseList?.user?.id ?? 0)"
+                        userImage = purchaseList?.user?.profileImage ?? ""
+                        userName = purchaseList?.user?.name ?? ""
+                        navigateToUserProfile = true
+                    } label: {
+                        Text(purchaseList?.user?.name ?? "")
+                            .font(.custom(poppinsMedium, size: 12.0))
+                            .foregroundColor(.blue)
+                    }
+
+                   
                 }
             }
     
             Spacer()
         }
-        .padding(6)
+        
+        .padding(4)
         .background(Color.white)
         .cornerRadius(12)
         .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 2)
+        CusNavLink(doNavigate: $navigateToUserProfile,
+                   destination: ProfileScreen(id:$userId,
+                                              isComeFrom: .constant(""),
+                                              userName: $userName,
+                                              userImage: $userImage))
     }
     
     func formattedDate(_ isoDate: String?) -> String {
@@ -157,5 +177,23 @@ struct PurchasesViewShimmerView: View {
         .background(Color.white)
         .cornerRadius(12)
         .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 2)
+    }
+}
+
+extension String {
+    func formattedPrice() -> String {
+        // Remove unwanted characters
+        let clean = self.replacingOccurrences(of: "[^0-9.]", with: "", options: .regularExpression)
+
+        // Convert to Double
+        guard let value = Double(clean) else { return "$0.00" }
+
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.currencySymbol = "$"
+        formatter.minimumFractionDigits = 2
+        formatter.maximumFractionDigits = 2
+
+        return formatter.string(from: NSNumber(value: value)) ?? "$0.00"
     }
 }

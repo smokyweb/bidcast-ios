@@ -101,7 +101,7 @@ struct ActivityScreen: View {
             .background(.white)
             
             ScrollView(showsIndicators: false){
-                VStack(spacing: 6) {
+                VStack(spacing: 0) {
                     
                     switch selected {
                     case .message:
@@ -212,7 +212,8 @@ struct ActivityScreen: View {
                                 PurchasesViewScreen(
                                     purchaseList: offer
                                 )
-                                .padding(.horizontal,8)  
+                                .padding(.horizontal,8)
+//                                .padding(.vertical, 4)
 //                                .background(Color.gray.opacity(0.1))
                             }
                         }
@@ -282,6 +283,7 @@ struct ActivityScreen: View {
                 await fetchData(for: selected)
             }
         }
+        .padding(.bottom, -27)
         .onDisappear {
             UIScrollView.appearance().bounces = true
         }
