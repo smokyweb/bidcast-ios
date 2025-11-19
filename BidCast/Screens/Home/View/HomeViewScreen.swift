@@ -15,6 +15,8 @@ struct HomeViewScreen: View {
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var networkMonitor: NetworkMonitor
     
+    @EnvironmentObject var tabBarRouter: TabBarRouter
+     
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
     @State var navigateToLiveStream = false
@@ -48,6 +50,7 @@ struct HomeViewScreen: View {
     @State private var isActiveOnHomeScreen = false
     @State var navigateToCategoryDetailScreen : Bool = false
     @State var upCommingSheet : Bool = false
+    @State var navigateToAllCategoryScreen : Bool = false
     @State var isNavFrom : String = ""
     @State var searchText: String = ""
     
@@ -111,7 +114,7 @@ struct HomeViewScreen: View {
                             ForEach(categoryList.indices, id: \.self) { ind in
                                 HomeCategoryCardView(
                                     title: categoryList[ind].name ?? "",
-                                    imageURL: categoryList[ind].thumbnail ?? "",
+                                    imageURL: categoryList[ind].image ?? "",
                                     backgroundColor: categoryList[ind].color ?? "#CCCCCC",
                                     isSelected: selectedButton == categoryList[ind].name
                                 )
@@ -125,6 +128,20 @@ struct HomeViewScreen: View {
                                 }
                                 
                             }
+                            // 🔥 ADD THIS: The final “See All Categories” card
+                            HomeCategoryCardView(
+                                title: "See All Categories",
+                                imageURL: "",                   // icon handled separately
+                                backgroundColor: "#000000",
+                                isSelected: false,
+                                isScrolling: false,
+                                isSeeAll: true                  // NEW PARAM
+                            )
+                            .onTapGesture {
+//                                tabBarManager.selectedTab = 1
+                                goToExplore()
+                            }
+
                         }
                         .frame(height: 140)
                         .padding(.leading, 12)
@@ -323,6 +340,10 @@ struct HomeViewScreen: View {
                 }
             )
         }
+    }
+    
+    func goToExplore() {
+        tabBarRouter.selectedTab = 1 // Explore tab index
     }
     
     func fetchLiveShow() async {

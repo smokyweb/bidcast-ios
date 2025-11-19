@@ -17,16 +17,39 @@ struct HomeCategoryCardView: View {
     let backgroundColor: String
     let isSelected: Bool
     let isScrolling: Bool
+    let isSeeAll: Bool
+
+    private var strokeColor: Color {
+        if isSeeAll { return .white }
+        if isSelected { return .black }
+        return .clear
+    }
+
+    private var strokeWidth: CGFloat {
+        isSelected ? 2 : 0
+    }
     
-    // Updated initializer
-    init(title: String, imageURL: String, backgroundColor: String, isSelected: Bool = false, isScrolling: Bool = false) {
+    private var backgroundView: some View {
+        isSeeAll ?
+            Color.black.opacity(0.8)
+        :
+            (isForYou ? Color.yellow.opacity(0.9) : Color.gray.opacity(0.3))
+    }
+    
+    init(title: String,
+         imageURL: String,
+         backgroundColor: String,
+         isSelected: Bool = false,
+         isScrolling: Bool = false,
+         isSeeAll: Bool = false) {
+
         self.title = title
         self.imageURL = imageURL
         self.backgroundColor = backgroundColor
         self.isSelected = isSelected
         self.isScrolling = isScrolling
+        self.isSeeAll = isSeeAll
     }
-    
     
     // Check if it's "For You" category
     private var isForYou: Bool {
@@ -40,7 +63,7 @@ struct HomeCategoryCardView: View {
                 // MARK: TITLE ONLY (When scrolling)
                 Text(title)
                     .font(.custom(poppinsSemiBold, size: 12))
-                    .foregroundColor(.black)
+                    .foregroundColor(isSeeAll ? .white : .black)
                     .multilineTextAlignment(.center)
                     .lineLimit(2)
                     .fixedSize(horizontal: false, vertical: true)
@@ -48,49 +71,63 @@ struct HomeCategoryCardView: View {
                     .padding(.horizontal, 8)
                 
             } else {
-                // MARK: TITLE (Top)
-                Text(title)
-                    .font(.custom(poppinsSemiBold, size: 12))
-                    .foregroundColor(.black)
-                    .multilineTextAlignment(.center)
-                    .lineLimit(2)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding(.horizontal, 8)
-                    .padding(.top, 8)
-
-                Spacer(minLength: 0)
-
-                // MARK: IMAGE (Bottom - Fixed position)
-                if isForYou {
-                    // Show profile icon for "For You"
-                    ZStack {
-                        Circle()
-                            .stroke(Color.black,lineWidth: 4.0)
-                            .frame(width: 65, height: 65)
+                if isSeeAll {
+                    // 🔥 SPECIAL LAYOUT FOR SEE ALL
+                    VStack(spacing: 0) {
+                        Text(title)
+                            .font(.custom(poppinsSemiBold, size: 12))
+                            .foregroundColor(.white)
+                            .multilineTextAlignment(.center)
+                            .lineLimit(2)
+                            .padding(.top, 10)
                         
-                        Image(systemName: "person.fill")
-                            .renderingMode(.template)
+                        Spacer()
+                        
+                        Image(systemName: "square.grid.2x2.fill")
                             .resizable()
-                            .aspectRatio(contentMode: .fit)
+                            .scaledToFit()
                             .frame(width: 35, height: 35)
-                            .foregroundColor(.black)
+                            .foregroundColor(.white)
+                            .padding(.bottom, 24)
                     }
-                    .shadow(color: Color.black.opacity(0.28), radius: 8, x: 0, y: 4)
-                    .padding(.bottom, 12)
                 } else {
-                    // Show image from URL for other categories
-                    URLImageView(url: imageURL)
-                        .frame(width: 60, height: 60, alignment: .center)
-                        .clipped()
-                        .shadow(color: Color.black.opacity(0.28), radius: 8, x: 0, y: 4)
-                        .padding(.bottom, 12)
-                        .padding(.horizontal, 12)
+                    // 🔥 YOUR EXISTING CATEGORY CELL LAYOUT
+                    Text(title)
+                        .font(.custom(poppinsSemiBold, size: 12))
+                        .foregroundColor(.black)
+                        .multilineTextAlignment(.center)
+                        .lineLimit(2)
+                        .padding(.top, 8)
+                    
+                    Spacer(minLength: 0)
+                    
+                    if isForYou {
+                        Circle()
+                            .stroke(Color.black, lineWidth: 4)
+                            .frame(width: 65, height: 65)
+                            .overlay(
+                                Image(systemName: "person.fill")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .foregroundColor(.black)
+                                    .frame(width: 35, height: 35)
+                            )
+                            .shadow(color: Color.black.opacity(0.28), radius: 8, x: 0, y: 4)
+                            .padding(.bottom, 12)
+                    } else {
+                        URLImageView(url: imageURL)
+                            .frame(width: 60, height: 60)
+                            .shadow(color: Color.black.opacity(0.28), radius: 8, x: 0, y: 2)
+                            .padding(.bottom, 12)
+                            .padding(.horizontal, 12)
+                    }
                 }
             }
+            
         }
         .frame(width: 90, height: 120, alignment: .top)
-        .background( isForYou ? Color.yellow.opacity(0.9) : Color.gray.opacity(0.3)
+        .background(backgroundView)
+//        .background(isSeeAll ? Color.black.opacity(0.8) : (isForYou ? Color.yellow.opacity(0.9) : Color.gray.opacity(0.3) ) )
 //            LinearGradient(
 //                colors: [
 //                    isForYou ? Color.gray.opacity(0.1) : Color.gray.opacity(0.1),
@@ -99,11 +136,11 @@ struct HomeCategoryCardView: View {
 //                startPoint: .top,
 //                endPoint: .bottom
 //            )
-        )
+//        )
         .cornerRadius(14)
         .overlay(
             RoundedRectangle(cornerRadius: 14)
-                .strokeBorder(isSelected ? Color.black : Color.clear, lineWidth: isSelected ? 2 : 0)
+                .strokeBorder(strokeColor, lineWidth: strokeWidth)
         )
         .padding(2) 
         .shadow(color: Color.black.opacity(0.15), radius: 10, x: 0, y: 2)

@@ -36,7 +36,7 @@ struct CategoryCardView: View {
 
             // MARK: IMAGE (Centered)
             URLImageView(url: imageURL)
-                .frame(width: 90, height: 70)
+                .frame(width: 90, height: 90)
                 .clipped()
                 .shadow(color: Color.black.opacity(0.28),
                         radius: 8, x: 0, y: 4)

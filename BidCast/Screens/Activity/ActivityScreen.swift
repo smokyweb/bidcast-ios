@@ -12,7 +12,7 @@ import AlertToast
 struct ActivityScreen: View {
     
     @State private var showError: Bool = false
-    @State private var isLoading: Bool = false
+    @State private var isLoading: Bool = true
     @State private var showhud: Bool = false
     @State private var hudMsg: String = ""
     @State private var selectedRoomId: String = ""
@@ -44,39 +44,63 @@ struct ActivityScreen: View {
     var filterArray: [String] = ["All", "In Progress", "Completed", "Refunds", "Cancelled"]
     
     @State private var selected: Segment = .message
+    @State private var selectedTabIndex: Int = Segment.message.index
+    @State private var selectedFilterIdex: Int = 0
     
     @State var navigateToNotification = false
     @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
         VStack(spacing: 0) {
-            VStack {
-                PrimaryHeader(
-                    title: "Activity",
-                    isForLogo: true,
-                    leadingImgArr: [.appName],
-                    trailingImgArr: [.notification],
-                    onClickLeading: { _ in
-                        self.presentationMode.wrappedValue.dismiss()
-                    },
-                    onClickTrailing: {  _ in
-                        
-                        navigateToNotification = true
-                    },
-                    count: .constant(0)
+            VStack(alignment: .leading, spacing:0) {
+                HStack(spacing: 12) {
+                    Text("Activity")
+//                        .frame(maxWidth: .infinity)
+                        .font(.custom(robotoSemiBold, fixedSize: 20))
+                        .foregroundColor(.black)
+                        .lineLimit(1)
+                    Spacer()
+                    HeaderMenuIconView(
+                        didTapMenuButton: {
+                            navigateToNotification = true
+                        },
+                        count: .constant(0)
+                    )
+                }
+                .padding(.horizontal)
+                .padding(.top, 10)
+                
+                // MARK: - Filter Pills
+                PillsSelectorView(
+                    titles:  Segment.segmentArray,
+                    selectedIndex: $selectedTabIndex,
+                    isPillRequired: false
                 )
+                .onChange(of: selectedTabIndex) { newIndex in
+                    selected = Segment.segment(at: newIndex) ?? .message
+                }
+                .padding(.horizontal, 12)
+                .padding(.top, 10)
+                
+                if selected == .purchases {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        PillsSelectorView(
+                            titles:  filterArray,
+                            selectedIndex: $selectedFilterIdex
+                        )
+                        .onChange(of: selectedFilterIdex) { newIndex in
+                            Task {
+                                await fetchData(for: .purchases)
+                            }
+                        }
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 10)
+                }
             }
-            VStack(alignment: .leading,spacing: 6){
-                SegmentedControlView(
-                    segments: Segment.allCases,
-                    selectedSegment: $selected,
-                    isWithBorder: false,
-                    fontTitle: robotoMedium,
-                    fontSize: 14.0
-                )
-            }
+            .background(.white)
             
-            ScrollView {
+            ScrollView(showsIndicators: false){
                 VStack(spacing: 6) {
                     
                     switch selected {
@@ -172,21 +196,24 @@ struct ActivityScreen: View {
                         }
                         
                     case .purchases:
-                        if offerList.isEmpty {
+                        if isLoading {
+                            ForEach(0..<8) { _ in
+                                PurchasesViewShimmerView()
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 4)
+                            }
+                        }
+                        else if offerList.isEmpty {
                             NoDataView(message: "No List Found")
-                        } else {
+                        }
+                        else {
                             ForEach(offerList.indices, id: \.self) { i in
                                 let offer = offerList[i]
-                                ActivityCell(
-                                    offerListing: offer,
-                                    isFor: "Purchases",
-                                    status: offer.status ?? ""
+                                PurchasesViewScreen(
+                                    purchaseList: offer
                                 )
-                                .onAppear {
-                                    Task {
-                                        await handlePagination(index: i)
-                                    }
-                                }
+                                .padding(.horizontal,8)  
+//                                .background(Color.gray.opacity(0.1))
                             }
                         }
                         
@@ -316,15 +343,16 @@ struct ActivityScreen: View {
                 showhud = true
                 return
             }
-            
+            isLoading = true
             messageList.removeAll()
             await fetchBlockedList()
-            isLoading = true
+            
+            self.isLoading = false
             
             FirebaseManager.shared.fetchMessageList(forUserId: "\(UserDefaults.userId)") { messages in
                 DispatchQueue.main.async {
                     self.messageList = messages
-                    self.isLoading = false
+                    
                 }
             }
             
@@ -362,11 +390,17 @@ struct ActivityScreen: View {
                 showhud = true
                 return
             }
-            SVProgressHUD.show()
+            isLoading = true
+//            SVProgressHUD.show()
             offerList.removeAll()
+            var filter = ""
+            if selectedFilterIdex < filterArray.count {
+                filter = filterArray[selectedFilterIdex]
+            }
             let request = ItemListRequest(type: "purchased", page: currentPage)
             await viewModel.getItemList(parameters: request)
-            await SVProgressHUD.dismiss()
+//            await SVProgressHUD.dismiss()
+            isLoading = false
             if viewModel.itemListResponse.status == "success" {
                 offerList = viewModel.itemListResponse.data ?? []
             }
@@ -549,6 +583,24 @@ enum Segment: String, CaseIterable, CustomStringConvertible {
     case savedItems = "Saved Items"
     
     var description: String { rawValue }
+    
+    static var segmentArray: [String] {
+        return Segment.allCases.map { $0.rawValue }
+    }
+    
+    // Get segment by index
+    static func segment(at index: Int) -> Segment? {
+        let allSegments = Segment.allCases
+        guard allSegments.indices.contains(index) else {
+            return nil
+        }
+        return Array(allSegments)[index]
+    }
+    
+    // Get index of current segment
+    var index: Int {
+        return Array(Segment.allCases).firstIndex(of: self) ?? 0
+    }
 }
 
 struct MessageCell: View {

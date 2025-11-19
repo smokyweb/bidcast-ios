@@ -11,13 +11,14 @@ struct URLImageView: View {
     let url: String
     @State private var loadedImage: Image?
     @State private var isLoading = true
-
+    var cornerRadius: CGFloat = 12
+    var height: CGFloat = 70
     var body: some View {
         ZStack {
             if isLoading {
                 PulseShimmerView()
-                    .frame(height: 70)
-                    .cornerRadius(12)
+                    .frame(height: height)
+                    .cornerRadius(cornerRadius)
             }
 
             if let image = loadedImage {
@@ -25,7 +26,7 @@ struct URLImageView: View {
                     .resizable()
                     .scaledToFill()
                     .transition(.opacity.animation(.easeIn(duration: 0.3)))
-//                    .cornerRadius(12)
+                    .cornerRadius(cornerRadius)
             }
         }
         .onAppear {

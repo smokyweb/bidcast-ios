@@ -16,6 +16,8 @@ struct BidCastApp: App {
     @State private var accountNavigationPath = NavigationPath()
     @StateObject var deepLink = DeepLinkManager()
     
+    @StateObject private var tabBarRouter = TabBarRouter()
+    
     @StateObject private var scheduleRequestStore = ScheduleRequestStore()
     
     @StateObject var staticAPI = StaticAPIViewModel()
@@ -32,7 +34,7 @@ struct BidCastApp: App {
         if #available(iOS 15.0, *) {
             UITabBar.appearance().scrollEdgeAppearance = appearance
         }
-        UITabBar.appearance().unselectedItemTintColor = UIColor.mediumDarkGray
+//        UITabBar.appearance().unselectedItemTintColor = UIColor.black
         
         
         print("🚀 App starting")
@@ -60,6 +62,7 @@ struct BidCastApp: App {
                 case .tabBar:
                     NavigationContainer(navigationPath: $accountNavigationPath){
                         TabbarScreen()
+                            .environmentObject(tabBarRouter)
                     }
                     .id(appRootManager.currentRoot.hashValue)
                 }

@@ -50,7 +50,7 @@ struct ShimmerEffectView: View {
 }
 
 struct PulseShimmerView: View {
-    @State private var opacity: Double = 0.4
+    @State private var opacity: Double = 0.1
 
     var body: some View {
         Rectangle()

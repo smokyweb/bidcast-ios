@@ -7,8 +7,15 @@
 
 import SwiftUI
 
+final class TabBarRouter: ObservableObject {
+    @Published var selectedTab: Int = 0
+    @Published var previousTab: Int = 0
+}
+
 struct TabbarScreen: View {
-    @State private var selectedTab = 0
+    
+    @EnvironmentObject var tabBarRouter: TabBarRouter
+//    @State private var selectedTab = 0
     @State private var previousTab = 0
     @State private var showSellSheet = false
     @State private var selectedSellTab: SellTabOption? = nil
@@ -42,41 +49,73 @@ struct TabbarScreen: View {
 
     var body: some View {
         ZStack {
-            TabView(selection: $selectedTab) {
+            TabView(selection: $tabBarRouter.selectedTab) {
                 
                 NavigationContainer(navigationPath: $homeNavigationPath) { HomeViewScreen(showCategory: .constant(""), comeFromExploreScreen: .constant(false),isNavFrom : "Login") }
                     .id(homeViewID)
-                    .tabItem { Label("Home", systemImage: "house") }
+                    .tabItem {
+                        VStack {
+                            Image(systemName: tabIcon(for: 0))
+//                                .foregroundColor(.black)
+                            Text("Home")
+                        }
+                    }
                     .tag(0)
                 
                 NavigationContainer(navigationPath: $exploreNavigationPath) { ExploreViewScreen() }
                     .id(exploreViewID)
-                    .tabItem { Label("Explore", systemImage: "safari.fill") }
+                    .tabItem {
+                        VStack {
+                            Image(systemName: tabIcon(for: 1))
+//                                .foregroundColor(.black)
+                            Text("Explore")
+                        }
+                    }
                     .tag(1)
                 
                 Color.clear
-                    .tabItem { Label("Sell", systemImage: "plus.circle.fill") }
+                    .tabItem {
+                        VStack {
+                            Image(systemName: tabIcon(for: 2))
+//                                .foregroundColor(.black)
+                            Text("Sell")
+                        }
+                    }
                     .tag(2)
                 
                 NavigationContainer(navigationPath: $activityNavigationPath) { ActivityScreen() }
                     .id(activityViewID)
-                    .tabItem { Label("Activity", systemImage: "suit.heart.fill") }
+                    .tabItem {
+                        VStack {
+                            Image(systemName: tabIcon(for: 3))
+//                                .foregroundColor(.black)
+                            Text("Activity")
+                        }
+                    }
                     .tag(3)
                 
                 NavigationContainer(navigationPath: $accountNavigationPath) { AccountScreen() }
                     .id(accountViewID)
-                    .tabItem { Label("Account", systemImage: "person.fill") }
+                    .tabItem {
+                        VStack {
+                            Image(systemName: tabIcon(for: 4))
+//                                .foregroundColor(.black)
+                            Text("Account")
+                        }
+                    }
                     .tag(4)
             }
+            .accentColor(.black)
             .edgesIgnoringSafeArea(.top)
-            .onChange(of: selectedTab) { newTab in
+            .onChange(of: tabBarRouter.selectedTab) { newTab in
                 if newTab == 2 {
-                      showSellSheet = true
-                      selectedTab = previousTab
-                  } else {
-                      resetNavigation(for: newTab)
-                      previousTab = newTab
-                  }
+                    // handle sell sheet if needed and revert
+                    showSellSheet = true
+                    tabBarRouter.selectedTab = previousTab
+                } else {
+                    resetNavigation(for: newTab)
+                    previousTab = newTab
+                }
             }
 //            .onChange(of: deepLinkManager.destination) { destination in
 //                switch destination {
@@ -302,6 +341,22 @@ struct TabbarScreen: View {
             accountViewID = UUID()
         default:
             break
+        }
+    }
+    
+    func tabIcon(for tab: Int) -> String {
+        switch tab {
+        case 0:
+            return tabBarRouter.selectedTab == 0 ? "house.fill" : "house"
+        case 1: 
+            return tabBarRouter.selectedTab == 1 ? "safari.fill" : "safari"
+        case 2: 
+            return tabBarRouter.selectedTab == 2 ? "plus.circle.fill" : "plus.circle"
+        case 3:
+            return tabBarRouter.selectedTab == 3 ? "suit.heart.fill" : "suit.heart"
+        case 4: 
+            return tabBarRouter.selectedTab == 4 ? "person.fill" : "person"
+        default: return "circle"
         }
     }
     

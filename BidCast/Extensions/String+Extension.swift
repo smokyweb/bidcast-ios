@@ -298,3 +298,21 @@ extension String {
         return result
     }
 }
+
+extension String {
+    func toDateString(
+        from fromFormat: String = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'",
+        to   toFormat:   String = "MM/dd/yyyy"
+    ) -> String {
+
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        formatter.dateFormat = fromFormat
+
+        guard let date = formatter.date(from: self) else { return "N/A" }
+
+        formatter.dateFormat = toFormat
+        return formatter.string(from: date)
+    }
+}
