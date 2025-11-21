@@ -521,6 +521,10 @@
 		D615BD1F2EBB2A9200EB55C2 /* GetAllStaticAPICall.swift in Sources */ = {isa = PBXBuildFile; fileRef = D615BD1E2EBB2A9200EB55C2 /* GetAllStaticAPICall.swift */; };
 		D6447E982ECC9C4700C77BFC /* PurchasesViewScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6447E972ECC9C4700C77BFC /* PurchasesViewScreen.swift */; };
 		D65F96BC2EBC682B00EAAD49 /* View+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = D65F96BB2EBC682B00EAAD49 /* View+Extension.swift */; };
+		D66070A72ED02CAE00B81251 /* PipFrameProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D66070A62ED02CAE00B81251 /* PipFrameProcessor.swift */; };
+		D66070A92ED02D9C00B81251 /* PipContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D66070A82ED02D9C00B81251 /* PipContainerView.swift */; };
+		D66070AB2ED02DCC00B81251 /* AgoraPiPManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D66070AA2ED02DCC00B81251 /* AgoraPiPManager.swift */; };
+		D66070AD2ED02DE600B81251 /* PipVideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D66070AC2ED02DE600B81251 /* PipVideoView.swift */; };
 		D665316B2E9E3B5B00F19B94 /* ShimmerViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = D665316A2E9E3B5B00F19B94 /* ShimmerViewModifier.swift */; };
 		D66531752E9E79F400F19B94 /* FileDownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D66531742E9E79F400F19B94 /* FileDownloadManager.swift */; };
 		D66B575E2EC319DD00A334AA /* EditProductScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D66B575D2EC319DD00A334AA /* EditProductScreen.swift */; };
@@ -1062,6 +1066,10 @@
 		D615BD1E2EBB2A9200EB55C2 /* GetAllStaticAPICall.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetAllStaticAPICall.swift; sourceTree = "<group>"; };
 		D6447E972ECC9C4700C77BFC /* PurchasesViewScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchasesViewScreen.swift; sourceTree = "<group>"; };
 		D65F96BB2EBC682B00EAAD49 /* View+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Extension.swift"; sourceTree = "<group>"; };
+		D66070A62ED02CAE00B81251 /* PipFrameProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PipFrameProcessor.swift; sourceTree = "<group>"; };
+		D66070A82ED02D9C00B81251 /* PipContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PipContainerView.swift; sourceTree = "<group>"; };
+		D66070AA2ED02DCC00B81251 /* AgoraPiPManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgoraPiPManager.swift; sourceTree = "<group>"; };
+		D66070AC2ED02DE600B81251 /* PipVideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PipVideoView.swift; sourceTree = "<group>"; };
 		D665316A2E9E3B5B00F19B94 /* ShimmerViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShimmerViewModifier.swift; sourceTree = "<group>"; };
 		D66531742E9E79F400F19B94 /* FileDownloadManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileDownloadManager.swift; sourceTree = "<group>"; };
 		D66B575D2EC319DD00A334AA /* EditProductScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProductScreen.swift; sourceTree = "<group>"; };
@@ -2317,6 +2325,7 @@
 		99C909A02DC8CD930054620B /* Helper */ = {
 			isa = PBXGroup;
 			children = (
+				D66070A52ED02C8F00B81251 /* PipManager */,
 				D68399A12EB2079100F3BDA7 /* SocketManager */,
 				D4DDE7ED2DDC5C7A00A24973 /* Font */,
 				99C9098E2DC8CD930054620B /* GooglePlaceManager */,
@@ -2338,7 +2347,6 @@
 				3504BCE62E00418F0069182D /* ZegoManager.swift */,
 				35B424A32E04327500626E02 /* ZegoChat.swift */,
 				D4D2B91A2E30E783006F15E6 /* NetworkMonitor.swift */,
-				D694B1BC2EB08C8200411242 /* AgoraManager.swift */,
 				35246EC92E7ABBFB009D7513 /* DolbyManager.swift */,
 				D66531742E9E79F400F19B94 /* FileDownloadManager.swift */,
 				D66B575F2EC3424B00A334AA /* DownloadManager.swift */,
@@ -4135,6 +4143,18 @@
 			path = Raid;
 			sourceTree = "<group>";
 		};
+		D66070A52ED02C8F00B81251 /* PipManager */ = {
+			isa = PBXGroup;
+			children = (
+				D694B1BC2EB08C8200411242 /* AgoraManager.swift */,
+				D66070A62ED02CAE00B81251 /* PipFrameProcessor.swift */,
+				D66070A82ED02D9C00B81251 /* PipContainerView.swift */,
+				D66070AC2ED02DE600B81251 /* PipVideoView.swift */,
+				D66070AA2ED02DCC00B81251 /* AgoraPiPManager.swift */,
+			);
+			path = PipManager;
+			sourceTree = "<group>";
+		};
 		D67DA9622E9D0A2500ED6556 /* Product */ = {
 			isa = PBXGroup;
 			children = (
@@ -4607,6 +4627,7 @@
 				D4CAECAA2DE7360F00705CD7 /* ShowSummarySheet.swift in Sources */,
 				D4CAEC7A2DE711F900705CD7 /* MoreOptionsViewModel.swift in Sources */,
 				D4CAEC7B2DE711F900705CD7 /* MoreOptionsScreen.swift in Sources */,
+				D66070AD2ED02DE600B81251 /* PipVideoView.swift in Sources */,
 				D4CAEC7C2DE711F900705CD7 /* MoreOptionsModel.swift in Sources */,
 				99C9092A2DC8CD790054620B /* SplashScreen.swift in Sources */,
 				D4CAECB22DE7383D00705CD7 /* ShopBottomSheetView.swift in Sources */,
@@ -4636,6 +4657,7 @@
 				D4BA9C2A2DE4A4E700DFF6E6 /* TipsViewModel.swift in Sources */,
 				D68399AB2EB2169C00F3BDA7 /* BidSocketHandler.swift in Sources */,
 				99C9095A2DC8CD790054620B /* TermsOfServicesScreen.swift in Sources */,
+				D66070AB2ED02DCC00B81251 /* AgoraPiPManager.swift in Sources */,
 				35987D252DE5C65700D6C2C9 /* CountryPickerView.swift in Sources */,
 				99C9095B2DC8CD790054620B /* ResetPasswordScreen.swift in Sources */,
 				99C9095D2DC8CD790054620B /* ForgotScreen.swift in Sources */,
@@ -4698,6 +4720,7 @@
 				D4BA9C0C2DE4856900DFF6E6 /* ShowsModel.swift in Sources */,
 				99C909AA2DC8CD930054620B /* Logger.swift in Sources */,
 				D4A500E32DFAC474008799B1 /* OTPVerificationScreen.swift in Sources */,
+				D66070A92ED02D9C00B81251 /* PipContainerView.swift in Sources */,
 				D433DB042E471558001FA51D /* MultiSelectionCategoryScreen.swift in Sources */,
 				D4CAECB42DE7383D00705CD7 /* ShopModel.swift in Sources */,
 				D4CAEC8C2DE71FB800705CD7 /* PromoteShowViewModel.swift in Sources */,
@@ -4860,6 +4883,7 @@
 				99C908332DC8CD6A0054620B /* DeleteJobSheet.swift in Sources */,
 				D4CAECB32DE7383D00705CD7 /* ShopViewModel.swift in Sources */,
 				99C908342DC8CD6A0054620B /* JobMatchesCard.swift in Sources */,
+				D66070A72ED02CAE00B81251 /* PipFrameProcessor.swift in Sources */,
 				99C908352DC8CD6A0054620B /* DateSelectionSheet.swift in Sources */,
 				35E7BC862E39FC88003A0BA2 /* RadioButtonGroup.swift in Sources */,
 				D4CAECBE2DE73BCC00705CD7 /* EndShowViewModel.swift in Sources */,

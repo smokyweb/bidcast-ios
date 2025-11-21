@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>UIDesignRequiresCompatibility</key>
-	<true/>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
 		<string>io.bidcast.refresh</string>
@@ -78,8 +76,11 @@
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>
-		<string>bluetooth-peripheral</string>
+		<string>audio</string>
+		<string>voip</string>
 	</array>
+	<key>UIDesignRequiresCompatibility</key>
+	<true/>
 	<key>UIInterfaceOrientation</key>
 	<string>UIInterfaceOrientationPortrait</string>
 	<key>UILaunchScreen</key>
@@ -87,5 +88,9 @@
 		<key>UIImageName</key>
 		<string>logo1</string>
 	</dict>
+    <key>NSCameraUsageDescription</key>
+    <string>Camera permission description</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Microphone permission description</string>
 </dict>
 </plist>

@@ -8,12 +8,6 @@
 import Foundation
 import AgoraRtcKit
 
-/*
- App ID : 6a0ab77ee15943df94524201d6c93877
- Channel Name : room1
- Token : 007eJxTYHgSe7qis6f/s9mNyvXfu7QF2S/ZVm7ISrVXu6ljZKJabqvAYJZokJhkbp6aamhqaWKckmZpYmpkYmRgmGKWbGlsYW6+8S1jZkMgI0O7rzUTIwMEgvisDEX5+bmGDAwAMUEd9g==
- */
-
 // MARK: - Agora Manager (for Live Streaming)
 class AgoraManager: NSObject, ObservableObject {
     
@@ -52,6 +46,10 @@ class AgoraManager: NSObject, ObservableObject {
 //        }
     }
     
+    func setupVideoFrameDelegate() {
+        agoraKit?.setVideoFrameDelegate(self)
+    }
+    
     // MARK: - Convenience Initializer (optional)
     convenience override init() {
         self.init(asHost: false)
@@ -70,6 +68,19 @@ class AgoraManager: NSObject, ObservableObject {
         agoraKit?.setParameters("{\"che.video.lowBitRateStreamParameter\":{\"width\":320,\"height\":180,\"frameRate\":15,\"bitRate\":140}}")
         agoraKit?.setCameraZoomFactor(zoomFactor)
         agoraKit?.enableVideo()
+        
+        // Set video encoder configuration
+        let videoConfig = AgoraVideoEncoderConfiguration(
+            size: CGSize(width: 1080, height: 1920),
+            frameRate: .fps30,
+            bitrate: AgoraVideoBitrateStandard,
+            orientationMode: .adaptative,
+            mirrorMode: .auto
+        )
+        agoraKit?.setVideoEncoderConfiguration(videoConfig)
+        
+        // Enable video frame delegate for PiP
+        setupVideoFrameDelegate()
     }
     
     // MARK: - Join Channel
@@ -99,6 +110,7 @@ class AgoraManager: NSObject, ObservableObject {
                 }
             }
         }
+        setupVideoFrameDelegate()
     }
     
     func switchCamera() {
@@ -197,4 +209,24 @@ extension AgoraManager: AgoraRtcEngineDelegate {
 }
 
 
-
+extension AgoraManager: AgoraVideoFrameDelegate {
+    func onCapture(_ videoFrame: AgoraOutputVideoFrame, sourceType: AgoraVideoSourceType) -> Bool {
+        // Send frames to PiP if active
+        if AgoraPiPManager.shared.isPiPActive {
+            AgoraPiPManager.shared.processVideoFrame(videoFrame)
+        }
+        return true
+    }
+    
+    func onRenderVideoFrame(_ videoFrame: AgoraOutputVideoFrame, uid: UInt, channelId: String) -> Bool {
+        // Send remote user frames to PiP
+        if AgoraPiPManager.shared.isPiPActive {
+            AgoraPiPManager.shared.processVideoFrame(videoFrame)
+        }
+        return true
+    }
+    
+    func getVideoFormatPreference() -> AgoraVideoFormat {
+        return .I420
+    }
+}

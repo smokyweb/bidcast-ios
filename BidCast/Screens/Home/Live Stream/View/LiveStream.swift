@@ -175,6 +175,7 @@ struct LiveStream: View {
     @State var currentProductIndex = 0
     
     @StateObject private var agoraManager = AgoraManager(asHost: false)
+    @StateObject private var pipManager = AgoraPiPManager.shared
     @State private var isHost = false
     
     @Binding var category : String
@@ -279,9 +280,12 @@ struct LiveStream: View {
                                 .clipShape(Capsule())
                                 
                                 Button(action: {
+//                                    if pipManager.isPiPActive {
+//                                        pipManager.stopPiP()
+//                                    } else {
+//                                        pipManager.startPiP()
+//                                    }
                                     logoutRoom()
-                                    
-                                    
                                     self.presentationMode.wrappedValue.dismiss()
                                 }) {
                                     Image(systemName: "chevron.down")
