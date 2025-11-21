@@ -18,7 +18,7 @@ struct DropDownSelection: View {
     @State private var showOption: Bool = false
     
     var anchor: Anchor = .bottom
-    var maxWidth: CGFloat = UIScreen.main.bounds.width - 30
+    var maxWidth: CGFloat = .infinity//UIScreen.main.bounds.width - 30
     var cornerRadius: CGFloat = 9
     
     @State var custFontName: String = poppinsBold

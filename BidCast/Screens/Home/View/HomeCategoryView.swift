@@ -126,22 +126,22 @@ struct HomeCategoryCardView: View {
             
         }
         .frame(width: 90, height: 120, alignment: .top)
-        .background(backgroundView)
-//        .background(isSeeAll ? Color.black.opacity(0.8) : (isForYou ? Color.yellow.opacity(0.9) : Color.gray.opacity(0.3) ) )
-//            LinearGradient(
-//                colors: [
-//                    isForYou ? Color.gray.opacity(0.1) : Color.gray.opacity(0.1),
-//                    isForYou ? Color.pink.opacity(0.3): Color(hex: backgroundColor) ?? .clear
-//                ],
-//                startPoint: .top,
-//                endPoint: .bottom
-//            )
-//        )
-        .cornerRadius(14)
-        .overlay(
-            RoundedRectangle(cornerRadius: 14)
-                .strokeBorder(strokeColor, lineWidth: strokeWidth)
+//        .background(backgroundView)
+        .background(
+            LinearGradient(
+                colors: [
+                    isSelected ? Color.yellow.opacity(0.4) : Color.gray.opacity(0.2),
+                    isSelected ? Color.darkYellow.opacity(1.0): Color.gray.opacity(0.7)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
         )
+        .cornerRadius(14)
+//        .overlay(
+//            RoundedRectangle(cornerRadius: 14)
+//                .strokeBorder(strokeColor, lineWidth: strokeWidth)
+//        )
         .padding(2) 
         .shadow(color: Color.black.opacity(0.15), radius: 10, x: 0, y: 2)
         .scaleEffect(isSelected ? 1.05 : 1.0) // Add scale animation

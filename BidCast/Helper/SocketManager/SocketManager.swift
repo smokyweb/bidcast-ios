@@ -40,7 +40,6 @@ struct RaidInfo: Codable {
     var rtcToken: String?
 }
 
-
 import Foundation
 import SocketIO
 import Combine
@@ -822,6 +821,207 @@ extension SocketManagerService {
         }
         
         logger.info("🧹 SocketManagerService fully reset.")
+    }
+}
+
+extension SocketManagerService {
+    
+    // MARK: - 1. Create Poll (Emit)
+    
+    /// Triggers the creation of a new poll
+    /// - Parameter poll: The poll model to create
+    func createPoll(poll: PollModel) {
+        performIfConnected {
+            var payload: [String: Any] = [
+//                "poll_id": poll.pollId,
+                "room_id": poll.roomId,
+                "question": poll.question,
+                "total_votes": poll.totalVotes,
+                "remaining_time": poll.remainingTime,
+                "is_active": poll.isActive
+            ]
+            var optionPayload: [[String: Any]] =  []
+            for opt in poll.options {
+                optionPayload.append(
+                    [
+                        "text": opt.text,
+                        "vote_count": opt.voteCount,
+                        "percentage": opt.percentage
+                    ]
+                )
+            }
+            payload["options"] = optionPayload
+            
+            socket.emit("create_poll", payload)
+            print("📊 Sent create_poll:", payload)
+        }
+    }
+    
+    // MARK: - 2. Poll Created (Listen)
+    
+    /// Observes when a new poll is created
+    /// - Parameter callback: Returns the full poll data
+    func observePollCreated(callback: @escaping (PollModel) -> Void) {
+        socket.on("poll_created") { data, _ in
+            guard let json = data.first as? [String: Any] else {
+                print("❌ poll_created: Invalid data format")
+                return
+            }
+            print("📥 Received poll_created raw data:", json)
+            do {
+                let decoded = try JSONSerialization.data(withJSONObject: json)
+                let poll = try JSONDecoder().decode(PollModel.self, from: decoded)
+                print("🔄 Received poll_created:\(poll.pollId)")
+                callback(poll)
+            } catch {
+                print("❌ poll_created decode error:", error)
+            }
+        }
+    }
+    
+    // MARK: - 3. Poll Ended (Listen)
+    
+    /// Observes when a poll ends
+    /// - Parameter callback: Returns the poll ID and room ID
+    func observePollEnded(callback: @escaping (_ pollId: String) -> Void) {
+        socket.on("poll_ended") { data, _ in
+            guard let json = data.first as? [String: Any] else {
+                print("❌ poll_ended: Invalid data format")
+                return
+            }
+            
+            let pollId = json["poll_id"] as? String ?? ""
+            
+            print("🛑 Received poll_ended → pollId: \(pollId)")
+            
+            callback(pollId)
+        }
+    }
+    
+    // MARK: - 4. Vote Poll (Emit)
+    
+    /// Emits a vote for a specific poll option
+    /// - Parameters:
+    ///   - pollId: The ID of the poll
+    ///   - roomId: The ID of the room
+    ///   - optionId: The ID of the selected option
+    ///   - userId: The ID of the user voting
+    func votePoll(poll: PollModel) {
+        performIfConnected {
+            var payload: [String: Any] = [
+                "poll_id": poll.pollId,
+                "room_id": poll.roomId,
+                "question": poll.question,
+                "total_votes": poll.totalVotes,
+                "remaining_time": poll.remainingTime,
+                "is_active": poll.isActive
+            ]
+            var optionPayload: [[String: Any]] = [[:]]
+            for opt in poll.options {
+                optionPayload.append(
+                    [
+                        "text": opt.text,
+                        "vote_count": opt.voteCount,
+                        "percentage": opt.percentage
+                    ]
+                )
+            }
+            payload["options"] = optionPayload
+            socket.emit("vote_poll", payload)
+            print("🗳️ Sent vote_poll:", payload)
+        }
+    }
+    
+    // MARK: - 5. Poll Vote Update (Listen)
+    
+    /// Observes real-time vote updates for a poll
+    /// - Parameter callback: Returns the updated poll model
+    func observePollVoteUpdate(callback: @escaping (PollModel) -> Void) {
+        socket.on("poll_vote_update") { data, _ in
+            guard let json = data.first as? [String: Any] else {
+                print("❌ poll_vote_update: Invalid data format")
+                return
+            }
+            
+            print("🔄 Received poll_vote_update raw data:", json)
+            do {
+                let decoded = try JSONSerialization.data(withJSONObject: json)
+                let poll = try JSONDecoder().decode(PollModel.self, from: decoded)
+                print("🔄 Received poll_vote_update:\(poll.pollId)")
+                callback(poll)
+            } catch {
+                print("❌ poll_vote_update decode error:", error)
+            }
+        }
+    }
+    
+    // MARK: - 6. Poll Countdown (Listen)
+    
+    /// Observes real-time countdown updates for a poll
+    /// - Parameter callback: Returns poll ID, room ID, and remaining time in seconds
+    func observePollCountdown(callback: @escaping (_ pollId: String, _ roomId: String, _ remainingTime: TimeInterval) -> Void) {
+        socket.on("poll_countdown") { data, _ in
+            guard let json = data.first as? [String: Any] else {
+                print("❌ poll_countdown: Invalid data format")
+                return
+            }
+            
+            let pollId = json["poll_id"] as? String ?? ""
+            let roomId = json["room_id"] as? String ?? ""
+            let remainingTime = json["remaining_time"] as? TimeInterval ?? 0
+            
+            print("⏱️ Received poll_countdown → pollId: \(pollId), roomId: \(roomId), remaining: \(remainingTime)s")
+            
+            callback(pollId, roomId, remainingTime)
+        }
+    }
+    
+    // MARK: - Additional Helper Functions
+    
+    /// Ends a poll manually (host action)
+    /// - Parameters:
+    ///   - pollId: The ID of the poll to end
+    ///   - roomId: The ID of the room
+    func endPoll(pollId: String, roomId: String) {
+        performIfConnected {
+            let payload: [String: Any] = [
+                "poll_id": pollId,
+                "room_id": roomId
+            ]
+            
+            socket.emit("end_poll", payload)
+            print("🛑 Sent end_poll:", payload)
+        }
+    }
+    
+    /// Observes vote errors
+    /// - Parameter callback: Returns poll ID, room ID, and error message
+    func observeVoteError(callback: @escaping (_ pollId: String, _ roomId: String, _ message: String) -> Void) {
+        socket.on("vote_error") { data, _ in
+            guard let json = data.first as? [String: Any] else {
+                print("❌ vote_error: Invalid data format")
+                return
+            }
+            
+            let pollId = json["poll_id"] as? String ?? ""
+            let roomId = json["room_id"] as? String ?? ""
+            let message = json["message"] as? String ?? "Vote error occurred"
+            
+            print("⚠️ Received vote_error → \(message)")
+            
+            callback(pollId, roomId, message)
+        }
+    }
+    
+    /// Removes all poll-related listeners
+    func removePollListeners() {
+        socket.off("poll_created")
+        socket.off("poll_ended")
+        socket.off("poll_vote_update")
+        socket.off("poll_countdown")
+        socket.off("vote_error")
+        
+        print("🗑️ Removed all poll listeners")
     }
 }
 

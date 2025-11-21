@@ -55,6 +55,16 @@ class AgoraManager: NSObject, ObservableObject {
         self.init(asHost: false)
     }
     
+    var sampleBufferDisplayLayer: AVSampleBufferDisplayLayer?
+    
+    // Add this method to get the sample buffer layer from Agora
+    func setupPiPLayer() -> AVSampleBufferDisplayLayer? {
+        let layer = AVSampleBufferDisplayLayer()
+        layer.videoGravity = .resizeAspectFill
+        sampleBufferDisplayLayer = layer
+        return layer
+    }
+    
     func initializeAgoraEngine(asHost: Bool = false) {
         agoraKit = AgoraRtcEngineKit.sharedEngine(withAppId: AgoraCred.appId, delegate: self)
         //step 1 -> Use Agora’s “Real-Time Interactive Mode”

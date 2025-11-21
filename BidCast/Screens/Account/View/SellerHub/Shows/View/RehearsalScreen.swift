@@ -36,6 +36,8 @@ struct RehearsalScreen: View {
     @State  var  boosts = [BoostModel]()
     @State var sellers = [SellerUserModel]()
     
+    @State private var bottomSheetHeight: CGFloat = screenHeight * 0.85
+    
     @State var isLive: Bool = false
     @State var roomId = ""
     @State var isMicOn: Bool = true
@@ -61,6 +63,10 @@ struct RehearsalScreen: View {
     
     @State private var previewResetTrigger = false
     
+    @State private var showPollCard = false
+    @State private var currentPollModel: PollModel?
+    @State private var remainingTimer: Int?
+    
     @State private var showStartTime: Date? = nil
     @State private var liveElapsedTime: String = "00:00:00"
     
@@ -78,6 +84,8 @@ struct RehearsalScreen: View {
     
     
     @State var navigateToSeller = false
+    
+    @State private var showLivePollScreen: Bool = false
     
     @State var hasWon = false
     
@@ -475,6 +483,22 @@ struct RehearsalScreen: View {
                                 .animation(.easeOut(duration: 0.25), value: keyboardResponder.currentHeight)
 
                                 VStack(alignment: .leading,spacing: 12) {
+                                    
+                                    if showPollCard {
+                                        if let poll = currentPollModel {
+                                            PollPreviewCardView(
+                                                poll: poll,
+                                                remainingTime: remainingTimer ?? 0,
+                                                onPollCardTapped: {
+                                                    print("PollCard clicked")
+                                                    showLivePollScreen = true
+                                                }
+                                            )
+                                            .preferredColorScheme(.dark)
+                                            .padding()
+                                        }
+                                    }
+                                    
                                     //MARK: Product Details
                                     let currentProducts = productData.filter { $0.isCurrent }
                                     if let product = currentProducts.first {
@@ -593,9 +617,10 @@ struct RehearsalScreen: View {
                 )
             }
         )
+        
         .bottomSheet(
             isPresented: $showPollSheet,
-            height: screenHeight * 0.68,
+            height: bottomSheetHeight,
             topBarCornerRadius: 20,
             contentBackgroundColor: Color(.systemBackground),
             topBarBackgroundColor: Color(.systemBackground),
@@ -605,10 +630,37 @@ struct RehearsalScreen: View {
             },
             content: {
                 CreatePollScreen(
-                    isPresented: $showPollSheet
+                    isPresented: $showPollSheet,
+                    onCreatePoll: { pollModel in
+                        print(pollModel)
+                        SocketManagerService.shared.createPoll(poll: pollModel)
+                    },
+                    roomId: self.roomId
                 )
             }
         )
+        
+        .bottomSheet(
+            isPresented: $showLivePollScreen,
+            height: screenHeight * 0.8,
+            topBarCornerRadius: 20,
+            contentBackgroundColor: Color(.systemBackground),
+            topBarBackgroundColor: Color(.systemBackground),
+            showTopIndicator: false,
+            onDismiss: {
+                showLivePollScreen = false
+            },
+            content: {
+                if let poll = currentPollModel {
+                    LivePollHostView(poll: poll) { pollId, rooomId in
+                        print("End Poll")
+                        showPollCard = false
+                        showLivePollScreen = false
+                    }
+                }
+            }
+        )
+        
         
         .bottomSheet(
             isPresented: $showSellSheet,
@@ -1052,6 +1104,12 @@ struct RehearsalScreen: View {
         socketManager.listenForViewerCount()
         socketManager.listenForShowTimer(roomId: roomId)
         socketManager.listenForBidFinalized()
+        socketManager.observePollVoteUpdate { pollModel in
+            print(pollModel)
+            self.remainingTimer = timerStringToSeconds(pollModel.remainingTime)
+            self.currentPollModel = pollModel
+            showPollCard = true
+        }
     }
     
     private func handleCountdownCompletion() {
@@ -1566,10 +1624,25 @@ struct VideoContainerView: UIViewRepresentable {
     let uiView: UIView
     
     func makeUIView(context: Context) -> UIView {
-        uiView
+        let containerView = UIView()
+        containerView.backgroundColor = .black
+        
+        // Add the Agora video view
+        containerView.addSubview(uiView)
+        uiView.frame = containerView.bounds
+        uiView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        
+        return containerView
     }
     
-    func updateUIView(_ uiView: UIView, context: Context) {}
+    func updateUIView(_ uiView: UIView, context: Context) {
+        // Update if needed
+    }
+    
+    // Add this to get the container view reference
+    static func extractView(from uiView: UIView) -> UIView? {
+        return uiView.subviews.first
+    }
 }
 
 

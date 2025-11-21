@@ -35,6 +35,8 @@ struct HomeViewScreen: View {
     let categoryFilterTitles = ["Live Now", "Popular", "Coming Soon"]
     @State private var selectedCategoryIndex: Int = 0
     
+    @State private var hasVoted: Bool = false
+    
     @State var isLoading: Bool = false
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @State var showError: Bool = false
@@ -256,6 +258,60 @@ struct HomeViewScreen: View {
             CusNavLink(doNavigate: $navigateToNoti, destination: NotificationScreen())
             CusNavLink(doNavigate: $navigateToCategoryDetailScreen, destination: HomeViewScreen(showCategory:$category,comeFromExploreScreen : $navigateToCategoryDetailScreen))
         }
+//        .bottomSheet(
+//            isPresented: $navigateToNoti,
+//            height: screenHeight * 0.8,
+//            topBarCornerRadius: 20,
+//            contentBackgroundColor: Color(.systemBackground),
+//            topBarBackgroundColor: Color(.systemBackground),
+//            showTopIndicator: false,
+//            onDismiss: {
+//                navigateToNoti = false
+//            },
+//            content: {
+//                let poll = PollModel(
+//                            pollId: "12345",
+//                            roomId: "room_01",
+//                            question: "Do you like the product?",
+//                            options: [
+//                                PollOption(text: "yes", voteCount: 6, percentage: 60),
+//                                PollOption(text: "yes", voteCount: 6, percentage: 60),
+//                                PollOption(text: "yes", voteCount: 6, percentage: 60),
+//                                PollOption(text: "no", voteCount: 3, percentage: 30),
+//                                PollOption(text: "yes", voteCount: 6, percentage: 60),
+//                                PollOption(text: "not very much", voteCount: 1, percentage: 10)
+//                            ],
+//                            totalVotes: 10,
+//                            remainingTime: 128,
+//                            isActive: true
+//                        )
+//                LivePollHostView(poll: poll) { _, _ in
+//                    print("End Poll")
+//                }
+//            }
+//            content: {
+//                var poll = PollModel(
+//                    pollId: "12345",
+//                    roomId: "room_01",
+//                    question: "What's your favorite feature of this app?",
+//                    options: [
+//                        PollOption(text: "Live Streaming", voteCount: 45, percentage: 45),
+//                        PollOption(text: "Bidding System", voteCount: 35, percentage: 35),
+//                        PollOption(text: "Chat Feature", voteCount: 20, percentage: 20)
+//                    ],
+//                    totalVotes: 100,
+//                    remainingTime: 180,
+//                    isActive: true
+//                )
+//            
+//                
+//                LivePollViewerView(poll: poll, onVote: { pollId, roomId, opt in
+//                    print("Vote emitted:", opt)
+//                }, onRequestRefresh: {
+//                    print("request refresh")
+//                })                
+//            }
+//        )
         .background(.bg.opacity(0.1))
         .edgesIgnoringSafeArea(.bottom)
 //                .padding(.bottom,4)

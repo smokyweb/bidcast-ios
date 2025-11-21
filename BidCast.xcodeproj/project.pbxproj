@@ -525,6 +525,10 @@
 		D66070A92ED02D9C00B81251 /* PipContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D66070A82ED02D9C00B81251 /* PipContainerView.swift */; };
 		D66070AB2ED02DCC00B81251 /* AgoraPiPManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D66070AA2ED02DCC00B81251 /* AgoraPiPManager.swift */; };
 		D66070AD2ED02DE600B81251 /* PipVideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D66070AC2ED02DE600B81251 /* PipVideoView.swift */; };
+		D66070AF2ED06EE500B81251 /* StackedImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D66070AE2ED06EE500B81251 /* StackedImageView.swift */; };
+		D6631E692ECF196D00704ED1 /* LivePollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6631E682ECF196D00704ED1 /* LivePollView.swift */; };
+		D6631E6B2ECF3DCC00704ED1 /* LivePollViewerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6631E6A2ECF3DCC00704ED1 /* LivePollViewerView.swift */; };
+		D6631E6D2ECF429B00704ED1 /* PollPreviewCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6631E6C2ECF429B00704ED1 /* PollPreviewCardView.swift */; };
 		D665316B2E9E3B5B00F19B94 /* ShimmerViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = D665316A2E9E3B5B00F19B94 /* ShimmerViewModifier.swift */; };
 		D66531752E9E79F400F19B94 /* FileDownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D66531742E9E79F400F19B94 /* FileDownloadManager.swift */; };
 		D66B575E2EC319DD00A334AA /* EditProductScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D66B575D2EC319DD00A334AA /* EditProductScreen.swift */; };
@@ -1070,6 +1074,10 @@
 		D66070A82ED02D9C00B81251 /* PipContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PipContainerView.swift; sourceTree = "<group>"; };
 		D66070AA2ED02DCC00B81251 /* AgoraPiPManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgoraPiPManager.swift; sourceTree = "<group>"; };
 		D66070AC2ED02DE600B81251 /* PipVideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PipVideoView.swift; sourceTree = "<group>"; };
+		D66070AE2ED06EE500B81251 /* StackedImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackedImageView.swift; sourceTree = "<group>"; };
+		D6631E682ECF196D00704ED1 /* LivePollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LivePollView.swift; sourceTree = "<group>"; };
+		D6631E6A2ECF3DCC00704ED1 /* LivePollViewerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LivePollViewerView.swift; sourceTree = "<group>"; };
+		D6631E6C2ECF429B00704ED1 /* PollPreviewCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollPreviewCardView.swift; sourceTree = "<group>"; };
 		D665316A2E9E3B5B00F19B94 /* ShimmerViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShimmerViewModifier.swift; sourceTree = "<group>"; };
 		D66531742E9E79F400F19B94 /* FileDownloadManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileDownloadManager.swift; sourceTree = "<group>"; };
 		D66B575D2EC319DD00A334AA /* EditProductScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProductScreen.swift; sourceTree = "<group>"; };
@@ -1618,6 +1626,7 @@
 			isa = PBXGroup;
 			children = (
 				35987D1D2DE5863100D6C2C9 /* LiveStream.swift */,
+				D66070AE2ED06EE500B81251 /* StackedImageView.swift */,
 				D4D048262ECC39E40033B647 /* LiveStreamV1.swift */,
 			);
 			path = View;
@@ -3109,6 +3118,9 @@
 			isa = PBXGroup;
 			children = (
 				3504BCAB2E00040A0069182D /* RehearsalScreen.swift */,
+				D6631E6C2ECF429B00704ED1 /* PollPreviewCardView.swift */,
+				D6631E682ECF196D00704ED1 /* LivePollView.swift */,
+				D6631E6A2ECF3DCC00704ED1 /* LivePollViewerView.swift */,
 				D408478E2ECD85BE001CC925 /* RehearsalScreenV1.swift */,
 				D4BA9C042DE4856900DFF6E6 /* ShowsScreen.swift */,
 				D4BA9C0E2DE48D2A00DFF6E6 /* ShowCardView.swift */,
@@ -4642,6 +4654,7 @@
 				358B9D1A2DDF04FA00932250 /* FSCalendar.swift in Sources */,
 				35CCE01D2DD8782600760CEE /* ScheduleModel.swift in Sources */,
 				D6D0DAC82E90FDD200390946 /* NoPayoutHistortyView.swift in Sources */,
+				D6631E6B2ECF3DCC00704ED1 /* LivePollViewerView.swift in Sources */,
 				D4BB99F42DE590D100C1BCBC /* ShippingsViewModel.swift in Sources */,
 				D4C0C7C22E53125500A84165 /* AddPaymentAndMethodModel.swift in Sources */,
 				D4CAEC702DE6FF1400705CD7 /* ToolGridAnalyticsView.swift in Sources */,
@@ -4699,6 +4712,7 @@
 				35B44F262DD7446000FBCBC4 /* MediaPickerView.swift in Sources */,
 				99C909A52DC8CD930054620B /* NavigationPath.swift in Sources */,
 				D4CAECBC2DE73BCC00705CD7 /* EndShowBottomSheetView.swift in Sources */,
+				D66070AF2ED06EE500B81251 /* StackedImageView.swift in Sources */,
 				D4BB99F32DE590D100C1BCBC /* ShippingsScreen.swift in Sources */,
 				3541638E2DDB370C00026B34 /* ListProductViewModel.swift in Sources */,
 				D4B616272DE87A1000924A3D /* OrderProductCardView.swift in Sources */,
@@ -4734,6 +4748,7 @@
 				D4D453DA2E4CBC13005A2F63 /* BlockedUserListModel.swift in Sources */,
 				D66B575E2EC319DD00A334AA /* EditProductScreen.swift in Sources */,
 				D4A500E12DFAA74D008799B1 /* StepCircle.swift in Sources */,
+				D6631E6D2ECF429B00704ED1 /* PollPreviewCardView.swift in Sources */,
 				99C909AD2DC8CD930054620B /* Utilities.swift in Sources */,
 				D4B615F42DE8374E00924A3D /* ProductDetailsViewModel.swift in Sources */,
 				354163882DDB16BC00026B34 /* StepCard.swift in Sources */,
@@ -4780,6 +4795,7 @@
 				99C909622DC8CD790054620B /* PrivacyPolicyScreen.swift in Sources */,
 				D4BB9A212DE5D22A00C1BCBC /* PromoteToolsModel.swift in Sources */,
 				D4D2B91B2E30E783006F15E6 /* NetworkMonitor.swift in Sources */,
+				D6631E692ECF196D00704ED1 /* LivePollView.swift in Sources */,
 				D4D3044F2E55D031006A15EF /* UpcomingModel.swift in Sources */,
 				D4BB99E92DE5890D00C1BCBC /* OffersViewModel.swift in Sources */,
 				D4BA325B2DDB3C6F00FE4FD2 /* InventoryModel.swift in Sources */,

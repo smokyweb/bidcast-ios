@@ -118,6 +118,11 @@ struct LiveStream: View {
     @State var maxBidUserName: String = "Demo UserName"
     @Binding var agoraToken: String
     
+    @State private var showPollView: Bool = false
+    @State private var currentPollModel:PollModel?
+    @State private var remainingTimer: Int = 0
+    
+    @State private var showLivePollScreen: Bool = false
     
     @State var hasHostEndedRoom: Bool = false
     
@@ -420,6 +425,15 @@ struct LiveStream: View {
                             .animation(.easeOut(duration: 0.25), value: keyboardResponder.currentHeight)
                             
                             VStack(alignment: .leading,spacing: 12) {
+                                if showPollView {
+                                    if let poll = currentPollModel {
+                                        PollPreviewCardView(poll: poll, remainingTime: remainingTimer, onPollCardTapped: {
+                                            print("PollCard clicked")
+                                            showLivePollScreen = true
+                                        })
+                                    }
+                                }
+                                
                                 //MARK: Product Details
                                 let currentProducts = productData.filter { $0.isCurrent }
                                 if let product = currentProducts.first {
@@ -751,6 +765,28 @@ struct LiveStream: View {
             )
         }
         
+//        .bottomSheet(
+//            isPresented: $showLivePollScreen,
+//            height: screenHeight * 0.8,
+//            topBarCornerRadius: 20,
+//            contentBackgroundColor: Color(.systemBackground),
+//            topBarBackgroundColor: Color(.systemBackground),
+//            showTopIndicator: false,
+//            onDismiss: {
+//                showLivePollScreen = false
+//            },
+//            content: {
+//                LivePollViewerView(poll: poll, onVote: { poll in
+//                    print("Vote emitted:", poll)
+//                    currentPollModel = poll
+//                }, onRequestRefresh: {
+//                    print("request refresh")
+//                    showPollView = false
+//                    showLivePollScreen = false
+//                })
+//            }
+//        )
+        
         .bottomSheet(isPresented: $showVerificationSheet, height: screenHeight / 2.5, topBarCornerRadius: 25, showTopIndicator: false,onDismiss: {
             showVerificationSheet = false
             if !showVerificationSheet{
@@ -1003,6 +1039,17 @@ struct LiveStream: View {
         return currentPrice + increment
     }
     
+    func timerStringToSeconds(_ time: String) -> Int {
+        let parts = time.split(separator: ":")
+        guard parts.count == 2,
+              let minutes = Int(parts[0]),
+              let seconds = Int(parts[1]) else {
+            return 0
+        }
+        return (minutes * 60) + seconds
+    }
+
+    
     //MARK: walletInfosuccess.
     func getProfileSuccess() async{
         let response  = homeViewModel.accountInfo
@@ -1057,6 +1104,12 @@ struct LiveStream: View {
         socketManagerChat.listenForChat(roomId: roomId)
         socketManagerChat.listenForViewerCount()
         socketManagerChat.listenForBidTimer(roomId: roomId)
+//        socketManagerChat.observePollUpdates { pollModel in
+//            print(pollModel)
+//            self.remainingTimer = timerStringToSeconds(pollModel.remainingTime)
+//            self.currentPollModel = pollModel
+//            showPollView = true
+//        }
         
         // Stream end listener
         socketManagerChat.listenForRoomEnded { endedRoomId in
