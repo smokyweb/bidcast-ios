@@ -118,6 +118,11 @@ struct LiveStream: View {
     @State var maxBidUserName: String = "Demo UserName"
     @Binding var agoraToken: String
     
+    
+    var currentProduct: ProductData? {
+        productData.first { $0.isCurrent }
+    }
+    
     @State private var showPollView: Bool = false
     @State private var currentPollModel:PollModel?
     @State private var remainingTimer: Int = 0
@@ -154,11 +159,13 @@ struct LiveStream: View {
            UserDefaults.userId != userId {
             return MenuAction.allCases.filter { $0 != .cart }
         }else{
-            return MenuAction.allCases
+            return MenuAction.allCases.filter { $0 != .cart }
         }
     }
     
     @State var showSheet: Bool = false
+    @State var showSellerProfileSheet: Bool = false
+    @State var showFollowSheet: Bool = false
     @State var winnerSheet: Bool = false
     @State var walletPaymentSheet: Bool = false
     @State var maxBidAmountSheet : Bool = false
@@ -210,13 +217,20 @@ struct LiveStream: View {
                             }){
                                 let data = liveShowsData[currentIndex]
                                 
-                                CustomProfileImage(url: data.seller?.image ?? "", isCircular: true,size: 40)
+                                CustomProfileImage(url: data.seller?.image ?? "", isCircular: true,size: 40) {
+                                    showSellerProfileSheet = true
+                                }
                                 
                                 
                                 VStack(alignment: .leading, spacing: 2) {
-                                    Text(liveShowsData[currentIndex].seller?.name ?? "")
-                                        .font(.custom(poppinsBold, size: 14.0))
-                                        .foregroundColor(.white)
+                                    Button {
+                                        showSellerProfileSheet = true
+                                    } label: {
+                                        Text(liveShowsData[currentIndex].seller?.name ?? "")
+                                            .font(.custom(poppinsBold, size: 14.0))
+                                            .foregroundColor(.white)
+                                    }
+
                                     HStack(spacing:4){
                                         HStack(spacing: 4) {
                                             Image(systemName: "star.fill")
@@ -250,6 +264,7 @@ struct LiveStream: View {
                                             if let sellerId = liveShowsData[currentIndex].seller?.id {
                                                 socketManagerChat.sendFollowUnfollow(followerId: "\(UserDefaults.userId)", followingId:  sellerId)
                                             }
+                                            showFollowSheet = true
                                         }) {
                                             Text(socketManagerChat.isFollowed ? "Follow" : "Following")
                                                 .font(.custom(poppinsSemiBold, size: 12.0))
@@ -599,10 +614,10 @@ struct LiveStream: View {
                                     currentBottomSheet = action
                                     showSheet = true
                                 }
-                                else if action == .cart {
-                                    currentBottomSheet = action
-                                    showSheet = true
-                                }
+//                                else if action == .cart {
+//                                    currentBottomSheet = action
+//                                    showSheet = true
+//                                }
                                 else if action == .share {
                                     shareItems = ["Live auction starting in 5 minutes! Don’t miss out on exclusive items.", URL(string: "https://www.backend.bidcast.betaplanets.com/live-show?roomid=\(currentRoomID)")!]
                                     print(shareItems)
@@ -625,7 +640,7 @@ struct LiveStream: View {
                                     }
                                 }
                             }) {
-                                VStack(spacing:4){
+                                VStack(spacing:0){
                                     Image(action.iconName)
                                         .renderingMode(.template)
                                         .resizable()
@@ -640,11 +655,18 @@ struct LiveStream: View {
                                 }
                             }
                             .padding(4)
-                            //                            .background(
-                            //                                Circle()
-                            //                                    .fill(Color.white)
-                            //                            )
                         }
+                        
+                        VStack {
+                            if let product = currentProduct,
+                               let img = product.image {
+                                StackedImageView(imageURL: img, totalCount: productData.count) {
+                                    print("productStackTapped")
+                                    showSheet = true
+                                }
+                            }
+                        }
+                        
                     }
                     .position(
                         x: geometry.size.width - 40,
@@ -764,6 +786,48 @@ struct LiveStream: View {
                 }
             )
         }
+        .bottomSheet(isPresented: $showSellerProfileSheet, height: screenHeight * 0.70, topBarCornerRadius: 25, showTopIndicator: false,onDismiss: {
+            showSellerProfileSheet = false
+        }) {
+            SellerProfileBottomSheet(
+                isPresented: $showSellerProfileSheet,
+                sellerName: "badbunnygolfshop",
+                sellerImage: "https://via.placeholder.com/150",
+                rating: 5.0,
+                reviewCount: "1.8K",
+                soldCount: "5.5K",
+                avgShipTime: "2d",
+                isFollowing: false,
+                onTipOrBoost: { print("Tip or Boost") },
+                onViewProfile: { print("View Profile") },
+                onMessage: { print("Message") },
+                onMentionInChat: { print("Mention in Chat") },
+                onBlock: { print("Block") },
+                onReport: { print("Report") },
+                onFollow: { print("Follow") }
+            )
+        }
+        
+        .bottomSheet(
+            isPresented: $showFollowSheet,
+            height: screenHeight / 2.5,
+            topBarCornerRadius: 20
+        ) {
+            FollowSellerSheet(
+                sellerName: "pokecollectcards",
+                sellerImageURL: "https://example.com/profile.jpg",
+                onFollow: {
+                    print("Follow tapped")
+                },
+                onNotNow: {
+                    print("Not now tapped")
+                },
+                onClose: {
+                    showFollowSheet = false
+                }
+            )
+        }
+
         
 //        .bottomSheet(
 //            isPresented: $showLivePollScreen,
@@ -927,6 +991,26 @@ struct LiveStream: View {
                 }
             }
         )
+        
+        .bottomSheet(
+            isPresented: $showSheet,
+            height: sheetHeight,
+            topBarCornerRadius: 20,
+            contentBackgroundColor: Color(.systemBackground),
+            topBarBackgroundColor: Color(.systemBackground),
+            showTopIndicator: false,
+            onDismiss: {
+                showSheet = false
+            },
+            content: {
+                ShopBottomSheetView(
+                    isPresented: $showSheet,
+                    productData : $productData,
+                    productShowType: .viewOnly,
+                    initialSelectedProductId: currentProductID
+                )
+            }
+            )
         
         .bottomSheet(isPresented: $winnerSheet,height: screenHeight * 0.38) {
             WinnerBottomSheet(

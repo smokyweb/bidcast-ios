@@ -526,6 +526,8 @@
 		D66070AB2ED02DCC00B81251 /* AgoraPiPManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D66070AA2ED02DCC00B81251 /* AgoraPiPManager.swift */; };
 		D66070AD2ED02DE600B81251 /* PipVideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D66070AC2ED02DE600B81251 /* PipVideoView.swift */; };
 		D66070AF2ED06EE500B81251 /* StackedImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D66070AE2ED06EE500B81251 /* StackedImageView.swift */; };
+		D66070B12ED08E1100B81251 /* SellerProfileBottomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D66070B02ED08E1100B81251 /* SellerProfileBottomView.swift */; };
+		D66070B32ED09A9E00B81251 /* FollowSellerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D66070B22ED09A9E00B81251 /* FollowSellerSheet.swift */; };
 		D6631E692ECF196D00704ED1 /* LivePollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6631E682ECF196D00704ED1 /* LivePollView.swift */; };
 		D6631E6B2ECF3DCC00704ED1 /* LivePollViewerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6631E6A2ECF3DCC00704ED1 /* LivePollViewerView.swift */; };
 		D6631E6D2ECF429B00704ED1 /* PollPreviewCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6631E6C2ECF429B00704ED1 /* PollPreviewCardView.swift */; };
@@ -1075,6 +1077,8 @@
 		D66070AA2ED02DCC00B81251 /* AgoraPiPManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgoraPiPManager.swift; sourceTree = "<group>"; };
 		D66070AC2ED02DE600B81251 /* PipVideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PipVideoView.swift; sourceTree = "<group>"; };
 		D66070AE2ED06EE500B81251 /* StackedImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackedImageView.swift; sourceTree = "<group>"; };
+		D66070B02ED08E1100B81251 /* SellerProfileBottomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SellerProfileBottomView.swift; sourceTree = "<group>"; };
+		D66070B22ED09A9E00B81251 /* FollowSellerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowSellerSheet.swift; sourceTree = "<group>"; };
 		D6631E682ECF196D00704ED1 /* LivePollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LivePollView.swift; sourceTree = "<group>"; };
 		D6631E6A2ECF3DCC00704ED1 /* LivePollViewerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LivePollViewerView.swift; sourceTree = "<group>"; };
 		D6631E6C2ECF429B00704ED1 /* PollPreviewCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollPreviewCardView.swift; sourceTree = "<group>"; };
@@ -1626,6 +1630,8 @@
 			isa = PBXGroup;
 			children = (
 				35987D1D2DE5863100D6C2C9 /* LiveStream.swift */,
+				D66070B22ED09A9E00B81251 /* FollowSellerSheet.swift */,
+				D66070B02ED08E1100B81251 /* SellerProfileBottomView.swift */,
 				D66070AE2ED06EE500B81251 /* StackedImageView.swift */,
 				D4D048262ECC39E40033B647 /* LiveStreamV1.swift */,
 			);
@@ -4550,6 +4556,7 @@
 				35AC64782DD4A8AD00B5E13E /* ListCell.swift in Sources */,
 				35BA4A3F2DE8641200EEC92A /* ProfileScreen.swift in Sources */,
 				D4B615FD2DE83C4800924A3D /* CreateClipBottomSheet.swift in Sources */,
+				D66070B12ED08E1100B81251 /* SellerProfileBottomView.swift in Sources */,
 				99C909292DC8CD790054620B /* NewsScreen.swift in Sources */,
 				355AE96B2DD1D70500CD3D17 /* SignUpModel.swift in Sources */,
 				D41711DE2DF7FEF700ED39BC /* TrustedBuyerModel.swift in Sources */,
@@ -4753,6 +4760,7 @@
 				D4B615F42DE8374E00924A3D /* ProductDetailsViewModel.swift in Sources */,
 				354163882DDB16BC00026B34 /* StepCard.swift in Sources */,
 				D45D7A3E2E389B34003A3842 /* ChatModel.swift in Sources */,
+				D66070B32ED09A9E00B81251 /* FollowSellerSheet.swift in Sources */,
 				99C909AE2DC8CD930054620B /* UILabel+Extension.swift in Sources */,
 				D4CAEC602DE6F55800705CD7 /* ReferralStatsView.swift in Sources */,
 				99C909AF2DC8CD930054620B /* EndPointType.swift in Sources */,

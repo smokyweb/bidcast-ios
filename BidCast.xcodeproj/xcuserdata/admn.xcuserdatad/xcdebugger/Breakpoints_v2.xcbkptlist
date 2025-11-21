@@ -7,22 +7,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "42A8606C-4E91-4097-934D-0690361FEA3C"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "BidCast/Screens/Home/Live Stream/View/LiveStream.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1190"
-            endingLineNumber = "1190"
-            landmarkName = "handleBuyerVerification()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "F1FA7686-87EC-4496-B32D-22C697A2E484"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
@@ -30,8 +14,8 @@
             filePath = "BidCast/Screens/Home/Live Stream/View/LiveStream.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "910"
-            endingLineNumber = "910"
+            startingLineNumber = "974"
+            endingLineNumber = "974"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -46,8 +30,8 @@
             filePath = "BidCast/Screens/Home/Live Stream/View/LiveStream.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "610"
-            endingLineNumber = "610"
+            startingLineNumber = "625"
+            endingLineNumber = "625"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -62,8 +46,8 @@
             filePath = "BidCast/Screens/Home/Live Stream/View/LiveStream.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1128"
-            endingLineNumber = "1128"
+            startingLineNumber = "1212"
+            endingLineNumber = "1212"
             landmarkName = "setupSocketListeners(for:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -280,8 +264,8 @@
             filePath = "BidCast/Screens/Home/Live Stream/View/LiveStream.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "784"
-            endingLineNumber = "784"
+            startingLineNumber = "848"
+            endingLineNumber = "848"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -296,8 +280,8 @@
             filePath = "BidCast/Screens/Account/View/SellerHub/Shows/View/RehearsalScreen.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1109"
-            endingLineNumber = "1109"
+            startingLineNumber = "1136"
+            endingLineNumber = "1136"
             landmarkName = "setupLiveSocketListeners(for:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -312,8 +296,8 @@
             filePath = "BidCast/Screens/Account/View/SellerHub/Shows/View/RehearsalScreen.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1111"
-            endingLineNumber = "1111"
+            startingLineNumber = "1138"
+            endingLineNumber = "1138"
             landmarkName = "setupLiveSocketListeners(for:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -328,13 +312,13 @@
             filePath = "BidCast/Screens/Account/View/SellerHub/Shows/View/RehearsalScreen.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "488"
-            endingLineNumber = "488"
+            startingLineNumber = "501"
+            endingLineNumber = "501"
             landmarkName = "body"
             landmarkType = "24">
             <Locations>
                <Location
-                  uuid = "7E283ADB-7AB5-48E3-B271-C2443F1DB357 - c87d29080d1b55df"
+                  uuid = "7E283ADB-7AB5-48E3-B271-C2443F1DB357 - c87d29080d1b5b0c"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -344,11 +328,11 @@
                   urlString = "file:///Users/admn/Documents/JamProject/bidcast/BidCast/Screens/Account/View/SellerHub/Shows/View/RehearsalScreen.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "488"
-                  endingLineNumber = "488">
+                  startingLineNumber = "501"
+                  endingLineNumber = "501">
                </Location>
                <Location
-                  uuid = "7E283ADB-7AB5-48E3-B271-C2443F1DB357 - c87d29080d1b55df"
+                  uuid = "7E283ADB-7AB5-48E3-B271-C2443F1DB357 - c87d29080d1b5b0c"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -358,8 +342,8 @@
                   urlString = "file:///Users/admn/Documents/JamProject/bidcast/BidCast/Screens/Account/View/SellerHub/Shows/View/RehearsalScreen.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "488"
-                  endingLineNumber = "488">
+                  startingLineNumber = "501"
+                  endingLineNumber = "501">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -374,8 +358,8 @@
             filePath = "BidCast/Screens/Account/View/SellerHub/Shows/View/RehearsalScreen.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "494"
-            endingLineNumber = "494"
+            startingLineNumber = "507"
+            endingLineNumber = "507"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>

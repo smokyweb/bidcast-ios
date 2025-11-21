@@ -15,6 +15,8 @@ struct CustomProfileImage: View {
     var height: CGFloat = 0
     var defaultImage: String?
     
+    var profileIconTapped: (() -> Void) = { }
+    
     var body: some View {
         if let url = url, !url.isEmpty, let imageURL = URL(string: url.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "") {
             CachedAsyncImage(
@@ -32,6 +34,9 @@ struct CustomProfileImage: View {
                 defaultImage: defaultImage
             )
             .id(imageURL.absoluteString)
+            .onTapGesture {
+                profileIconTapped()
+            }
         } else {
             Image(defaultImage ?? "defaultUser")
                 .resizable()
@@ -39,6 +44,9 @@ struct CustomProfileImage: View {
                 .frame(width: size, height: height == 0 ? size : height)
                 .applyClip(isCircular: isCircular, cornerRadius: cornerRadius)
                 .shadow(color: Color.black.opacity(0.1), radius: 3, x: 0, y: 2)
+                .onTapGesture() {
+                    profileIconTapped()
+                }
         }
     }
 }

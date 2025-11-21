@@ -67,6 +67,11 @@ struct RehearsalScreen: View {
     @State private var currentPollModel: PollModel?
     @State private var remainingTimer: Int?
     
+    var currentProduct: ProductData? {
+        productData.first { $0.isCurrent }
+    }
+    
+    
     @State private var showStartTime: Date? = nil
     @State private var liveElapsedTime: String = "00:00:00"
     
@@ -302,14 +307,22 @@ struct RehearsalScreen: View {
                 // 🎛️ Dynamic Side Controls
                 VStack {
                     Spacer()
-                    VStack(spacing: 12) {
+                    VStack(spacing: 4) {
                         if showLiveControls {
                             SideButton(label: "More", icon: .more,action: .more)
                             SideButton(label: "Promote", icon: .rPromote ,action: .promote)
                             SideButton(label: "Clip", icon: .clip,action: .clip)
                             SideButton(label: "Share", icon: .sharee,action: .share)
                             SideButton(label: "Switch", icon: .camera,action: .switchView)
-                            ShopButton(action: .shop, count: "\(productData.count)")
+                            VStack {
+                                if let product = currentProduct,
+                                   let img = product.image {
+                                    StackedImageView(imageURL: img, totalCount: productData.count) {
+                                        print("productStackTapped")
+                                        showSellSheet = true
+                                    }
+                                }
+                            }
                         }
                         
                         if showPreLiveControls {
@@ -673,6 +686,46 @@ struct RehearsalScreen: View {
                 showSellSheet = false
             },
             content: {
+                if isLive{
+                    ShopBottomSheetView(
+                        isPresented: $showSellSheet,
+                        productData: $productData,
+                        productShowType: .nextProduct,
+                        onAddProduct: { selectedID in
+                            showSellSheet = false
+                            if !selectedID.isEmpty {
+                                print("product ID is :\(selectedID)")
+                                print("Live Room ID is :\(self.roomId)")
+                                setProductAsCurrent(selectedID: selectedID)
+                                fetchLatestProductList()
+                            }
+                        },
+                        initialSelectedProductId: initialSelectedProductId
+                    )
+                    .onAppear {
+                        fetchLatestProductList()
+                    }
+                }else{
+                    ShopBottomSheetView(
+                        isPresented: $showSellSheet,
+                        productData: $productData,
+                        productShowType: .shop
+                    )
+                }
+            })
+        
+        
+        .bottomSheet(
+            isPresented: $showSellSheet,
+            height: sheetHeight, // Adjust as needed
+            topBarCornerRadius: 20,
+            contentBackgroundColor: Color(.systemBackground),
+            topBarBackgroundColor: Color(.systemBackground),
+            showTopIndicator: false,
+            onDismiss: {
+                showSellSheet = false
+            },
+            content: {
                 switch currentBottomSheet {
                 case .more:
                     MoreOptionsScreen(
@@ -777,33 +830,7 @@ struct RehearsalScreen: View {
                 case .switchView:
                     EmptyView()
                 case .shop:
-                    if isLive{
-                        ShopBottomSheetView(
-                            isPresented: $showSellSheet,
-                            productData: $productData,
-                            productShowType: .nextProduct,
-                            onAddProduct: { selectedID in
-                                showSellSheet = false
-                                if !selectedID.isEmpty {
-                                    print("product ID is :\(selectedID)")
-                                    print("Live Room ID is :\(self.roomId)")
-                                    setProductAsCurrent(selectedID: selectedID)
-                                    fetchLatestProductList()
-                                }
-                            },
-                            initialSelectedProductId: initialSelectedProductId
-                        )
-                        .onAppear {
-                            fetchLatestProductList()
-                        }
-                    }else{
-                        ShopBottomSheetView(
-                            isPresented: $showSellSheet,
-                            productData: $productData,
-                            productShowType: .shop
-                        )
-                    }
-                    
+                    EmptyView()
                 case .endShow:
                     EndShowBottomSheetView(
                         isPresented: $showSellSheet,
