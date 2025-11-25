@@ -520,6 +520,7 @@
 		D613DBB62EB0F22000521D42 /* ImageCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D613DBB52EB0F22000521D42 /* ImageCacheManager.swift */; };
 		D615BD1F2EBB2A9200EB55C2 /* GetAllStaticAPICall.swift in Sources */ = {isa = PBXBuildFile; fileRef = D615BD1E2EBB2A9200EB55C2 /* GetAllStaticAPICall.swift */; };
 		D6447E982ECC9C4700C77BFC /* PurchasesViewScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6447E972ECC9C4700C77BFC /* PurchasesViewScreen.swift */; };
+		D65B7EE12ED579CB000B52EC /* ProductDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D65B7EE02ED579CB000B52EC /* ProductDetailView.swift */; };
 		D65F96BC2EBC682B00EAAD49 /* View+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = D65F96BB2EBC682B00EAAD49 /* View+Extension.swift */; };
 		D66070A72ED02CAE00B81251 /* PipFrameProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D66070A62ED02CAE00B81251 /* PipFrameProcessor.swift */; };
 		D66070A92ED02D9C00B81251 /* PipContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D66070A82ED02D9C00B81251 /* PipContainerView.swift */; };
@@ -568,6 +569,7 @@
 		D6B8E3CC2EB33B0B00A91DA0 /* AgoraViewwModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6B8E3CB2EB33B0B00A91DA0 /* AgoraViewwModel.swift */; };
 		D6B8E3CE2EB33DB600A91DA0 /* AgoraModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6B8E3CD2EB33DB600A91DA0 /* AgoraModel.swift */; };
 		D6BEBABD2EA3AF3300424223 /* SearchTextViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6BEBABC2EA3AF3300424223 /* SearchTextViewModel.swift */; };
+		D6C27BDE2ED466A600A2B724 /* ProductShopListScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C27BDD2ED466A600A2B724 /* ProductShopListScreen.swift */; };
 		D6D0DAC82E90FDD200390946 /* NoPayoutHistortyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D0DAC72E90FDD200390946 /* NoPayoutHistortyView.swift */; };
 		D6D0DACA2E9100F600390946 /* BalanceSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D0DAC92E9100F600390946 /* BalanceSummaryView.swift */; };
 		D6D0DACD2E9103DD00390946 /* PayoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D0DACC2E9103DD00390946 /* PayoutView.swift */; };
@@ -1071,6 +1073,7 @@
 		D613DBB52EB0F22000521D42 /* ImageCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCacheManager.swift; sourceTree = "<group>"; };
 		D615BD1E2EBB2A9200EB55C2 /* GetAllStaticAPICall.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetAllStaticAPICall.swift; sourceTree = "<group>"; };
 		D6447E972ECC9C4700C77BFC /* PurchasesViewScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchasesViewScreen.swift; sourceTree = "<group>"; };
+		D65B7EE02ED579CB000B52EC /* ProductDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductDetailView.swift; sourceTree = "<group>"; };
 		D65F96BB2EBC682B00EAAD49 /* View+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Extension.swift"; sourceTree = "<group>"; };
 		D66070A62ED02CAE00B81251 /* PipFrameProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PipFrameProcessor.swift; sourceTree = "<group>"; };
 		D66070A82ED02D9C00B81251 /* PipContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PipContainerView.swift; sourceTree = "<group>"; };
@@ -1119,6 +1122,7 @@
 		D6B8E3CB2EB33B0B00A91DA0 /* AgoraViewwModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgoraViewwModel.swift; sourceTree = "<group>"; };
 		D6B8E3CD2EB33DB600A91DA0 /* AgoraModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgoraModel.swift; sourceTree = "<group>"; };
 		D6BEBABC2EA3AF3300424223 /* SearchTextViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchTextViewModel.swift; sourceTree = "<group>"; };
+		D6C27BDD2ED466A600A2B724 /* ProductShopListScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductShopListScreen.swift; sourceTree = "<group>"; };
 		D6D0DAC72E90FDD200390946 /* NoPayoutHistortyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoPayoutHistortyView.swift; sourceTree = "<group>"; };
 		D6D0DAC92E9100F600390946 /* BalanceSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BalanceSummaryView.swift; sourceTree = "<group>"; };
 		D6D0DACC2E9103DD00390946 /* PayoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PayoutView.swift; sourceTree = "<group>"; };
@@ -1630,6 +1634,8 @@
 			isa = PBXGroup;
 			children = (
 				35987D1D2DE5863100D6C2C9 /* LiveStream.swift */,
+				D6C27BDD2ED466A600A2B724 /* ProductShopListScreen.swift */,
+				D65B7EE02ED579CB000B52EC /* ProductDetailView.swift */,
 				D66070B22ED09A9E00B81251 /* FollowSellerSheet.swift */,
 				D66070B02ED08E1100B81251 /* SellerProfileBottomView.swift */,
 				D66070AE2ED06EE500B81251 /* StackedImageView.swift */,
@@ -4594,6 +4600,7 @@
 				35C202572DEF128300492F2D /* AddCardViewModel.swift in Sources */,
 				D4B6163D2DE87F1100924A3D /* OBSSetupModel.swift in Sources */,
 				99C909DD2DC8CDDC0054620B /* ContactModel.swift in Sources */,
+				D65B7EE12ED579CB000B52EC /* ProductDetailView.swift in Sources */,
 				D4B615D92DE82A5400924A3D /* BuyNowBottomSheetView.swift in Sources */,
 				99C909DE2DC8CDDC0054620B /* NewsResponseModel.swift in Sources */,
 				D678E3542EC88342005283BF /* HomeCategoryView.swift in Sources */,
@@ -4619,6 +4626,7 @@
 				35CA09E02DD5D2B1002ABB83 /* TwoVerticalLabelCell.swift in Sources */,
 				D67F64F92EA2316900C3017C /* SendTipView.swift in Sources */,
 				99C909E52DC8CDDC0054620B /* UserJobModal.swift in Sources */,
+				D6C27BDE2ED466A600A2B724 /* ProductShopListScreen.swift in Sources */,
 				D4DAD3182E24E34A00738549 /* RateSellerView.swift in Sources */,
 				99C909E62DC8CDDC0054620B /* CreateCompanyRequest.swift in Sources */,
 				D4CAEC6E2DE6F74A00705CD7 /* AnalyticsModel.swift in Sources */,

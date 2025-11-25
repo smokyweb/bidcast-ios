@@ -74,11 +74,13 @@ struct ActivityScreen: View {
                 PillsSelectorView(
                     titles:  Segment.segmentArray,
                     selectedIndex: $selectedTabIndex,
-                    isPillRequired: false
+                    backgroundStyle: .none,
+                    underlineEnabled: false,
+                    onSelectionChanged: { index, data in
+                        selected = Segment.segment(at: index) ?? .message
+                    }
                 )
-                .onChange(of: selectedTabIndex) { newIndex in
-                    selected = Segment.segment(at: newIndex) ?? .message
-                }
+
                 .padding(.horizontal, 12)
                 .padding(.top, 10)
                 
@@ -86,13 +88,15 @@ struct ActivityScreen: View {
                     ScrollView(.horizontal, showsIndicators: false) {
                         PillsSelectorView(
                             titles:  filterArray,
-                            selectedIndex: $selectedFilterIdex
-                        )
-                        .onChange(of: selectedFilterIdex) { newIndex in
-                            Task {
-                                await fetchData(for: .purchases)
+                            selectedIndex: $selectedFilterIdex,
+                            backgroundStyle: .pill,
+                            underlineEnabled: false,
+                            onSelectionChanged: { index, data in
+                                Task {
+                                    await fetchData(for: .purchases)
+                                }
                             }
-                        }
+                        )
                     }
                     .padding(.horizontal, 12)
                     .padding(.vertical, 10)

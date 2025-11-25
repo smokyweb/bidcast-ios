@@ -29,6 +29,7 @@ struct CurrentProductView: View {
                     // Text with different colors for username and "Winning"
                     HStack(spacing: 0) {
                         CustomProfileImage(url: userImage,isCircular: true,size: 13.0)
+                        
                         Text(hasWon ? "\(userName) has " : "\(userName) is ")
                             .foregroundColor(.white)
                             .font(.custom(poppinsRegular, size: 13.0))

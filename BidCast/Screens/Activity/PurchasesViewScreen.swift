@@ -179,7 +179,7 @@ struct PurchasesViewShimmerView: View {
         .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 2)
     }
 }
-
+//
 extension String {
     func formattedPrice() -> String {
         // Remove unwanted characters

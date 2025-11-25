@@ -86,7 +86,7 @@ struct HomeViewScreen: View {
                     }
                     
                 }
-                SearchBarView { debouncedText in
+                SearchBarView(placeholder: "Search") { debouncedText in
                     self.searchText = debouncedText
                 }
                 Spacer()
@@ -164,15 +164,15 @@ struct HomeViewScreen: View {
                     PillsSelectorView(
                         titles: categoryFilterTitles,
                         selectedIndex: $selectedCategoryIndex,
-                        isPillRequired: false
-                    )
-                    .onChange(of: selectedCategoryIndex) { newIndex in
-                        let selectedCategory = categoryFilterTitles[newIndex]
-                        selectedTab = getCategoryName(for: selectedCategory)
-                        Task {
-                            await fetchLiveShow()
-                        }
-                    }
+                                      backgroundStyle: .none,
+                                      underlineEnabled: false,
+                        onSelectionChanged: { index, data in
+                            let selectedCategory = categoryFilterTitles[index]
+                            selectedTab = getCategoryName(for: selectedCategory)
+                            Task {
+                                await fetchLiveShow()
+                            }
+                        })
                    
                     // MARK: - Live Auction View
                     LiveAuctionView(

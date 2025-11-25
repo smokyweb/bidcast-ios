@@ -9,8 +9,8 @@ import SwiftUI
 
 struct FollowSellerSheet: View {
     
-    var sellerName: String
-    var sellerImageURL: String?
+    // 🔵 CHANGED — replacing name + image string with full dynamic model
+    var seller: SellerInfoResponse?
     
     var onFollow: () -> Void
     var onNotNow: () -> Void
@@ -24,50 +24,71 @@ struct FollowSellerSheet: View {
                 Spacer()
                 Button(action: onClose) {
                     Image(systemName: "xmark")
-                        .font(.system(size: 18, weight: .bold))
+                        .font(.custom(poppinsBold, size: 18))
                         .foregroundColor(.gray)
                         .padding(10)
                 }
             }
             .padding(.horizontal)
             
-            // MARK: - Seller Icon
+            // MARK: - Seller Image (dynamic)
             ZStack {
-                if let url = sellerImageURL, let imageURL = URL(string: url) {
-                    AsyncImage(url: imageURL) { phase in
+                if let thumb = seller?.seller_details?.thumbnail,
+                   let url = URL(string: thumb) {
+
+                    AsyncImage(url: url) { phase in
                         if let img = phase.image {
                             img.resizable()
                         } else {
                             Color.gray.opacity(0.2)
                         }
                     }
+                    .scaledToFill()
                     .frame(width: 70, height: 70)
                     .clipShape(Circle())
+                    .overlay(
+                        Circle()
+                            .stroke(Color.black.opacity(0.2), lineWidth: 1)   // ⭐ Blue border
+                    )
+                    .shadow(color: .black.opacity(0.25), radius: 6, x: 0, y: 3)  // ⭐ Soft shadow
+
                 } else {
                     Circle()
                         .fill(Color.gray.opacity(0.2))
                         .frame(width: 70, height: 70)
                         .overlay(
                             Image(systemName: "person.fill")
-                                .font(.system(size: 28))
+                                .font(.custom(poppinsBold, size: 28))
                                 .foregroundColor(.gray)
                         )
+                        .overlay(
+                            Circle().stroke(Color.blue, lineWidth: 3)  // ⭐ Border for default image
+                        )
+                        .shadow(color: .black.opacity(0.25), radius: 6, x: 0, y: 3)
                 }
             }
             .padding(.top, -40)
-            
             // MARK: - Title
             Text("Follow This Seller!")
-                .font(.system(size: 20, weight: .semibold))
+                .font(.custom(poppinsSemiBold, size: 20))
                 .foregroundColor(.black)
             
-            // MARK: - Description
-            Text("Like what you see? Follow \(sellerName) to get notifications when they go live!")
-                .font(.system(size: 15))
-                .foregroundColor(.gray)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 30)
-                .padding(.bottom, 20)
+            (
+                Text("Like what you see? Follow ")
+                +
+                Text(seller?.seller_details?.name ?? "this seller")
+                    .foregroundColor(.blue)
+                    .fontWeight(.semibold)
+                +
+                Text(" to get notifications when they go live!")
+            )
+            .font(.custom(poppinsRegular, size: 15))
+            .multilineTextAlignment(.center)
+            .foregroundColor(.gray)
+            .padding(.horizontal, 30)
+            .padding(.bottom, 20)
+            .shadow(color: .black.opacity(0.12), radius: 2, x: 0, y: 1)   // ⭐ Light text shadow
+
             
             // MARK: - Buttons
             HStack(spacing: 16) {
@@ -75,7 +96,7 @@ struct FollowSellerSheet: View {
                 // Not Now
                 Button(action: onNotNow) {
                     Text("Not Now")
-                        .font(.system(size: 16, weight: .medium))
+                        .font(.custom(poppinsMedium, size: 16))
                         .foregroundColor(.black)
                         .frame(maxWidth: .infinity)
                         .padding()
@@ -87,11 +108,11 @@ struct FollowSellerSheet: View {
                 // Follow Seller
                 Button(action: onFollow) {
                     Text("Follow Seller")
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(.black)
+                        .font(.custom(poppinsMedium, size: 16))
+                        .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color.yellow)
+                        .background(.defaultTheme)
                         .cornerRadius(12)
                 }
             }
@@ -106,3 +127,4 @@ struct FollowSellerSheet: View {
         )
     }
 }
+

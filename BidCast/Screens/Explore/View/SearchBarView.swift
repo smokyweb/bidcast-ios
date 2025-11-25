@@ -16,10 +16,14 @@ struct SearchBarView: View {
     
     @StateObject private var viewModel: SearchTextViewModel
     
-    init(onDebouncedSearch: @escaping (String) -> Void) {
+    init(
+        placeholder: String = "Search",
+        onDebouncedSearch: @escaping (String) -> Void
+    ) {
+        self.placeholder = placeholder
         _viewModel = StateObject(wrappedValue: SearchTextViewModel(onDebouncedSearch: onDebouncedSearch))
     }
-
+    
     var body: some View {
         HStack(spacing: 8) {
             Image(systemName: "magnifyingglass")

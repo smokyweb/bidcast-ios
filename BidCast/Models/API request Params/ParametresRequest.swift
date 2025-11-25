@@ -483,6 +483,10 @@ struct FollowRequest : Encodable {
     var following_id : String
 }
 
+struct SellerInfoRequest: Encodable {
+    let seller_id: String
+}
+
 struct FetchProductRequest : Encodable {
     var product_id : Int
 }

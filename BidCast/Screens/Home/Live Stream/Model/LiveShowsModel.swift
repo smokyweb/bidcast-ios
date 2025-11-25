@@ -129,3 +129,35 @@ struct SellerUserModel : Codable {
     var profile_image : String?
     var room_id : String?
 }
+
+
+struct SellerInfoResponse: Codable {
+    var seller_details: SellerDetails?
+    var rating_avg: Double?
+    var sold_count: Int?
+    var review: String?
+    var avg_ship: String?
+    var is_following: Bool?
+}
+
+struct SellerDetails: Codable {
+    var id: Int
+    var role_id: Int?
+    var first_name: String?
+    var last_name: String?
+    var name: String?
+    var username: String?
+    var email: String?
+    var marketplace_vendor_status: String?
+    var live_sell_vendor_status: String?
+    var authorize_net_cid: String?
+    var profile_image: String?
+    var thumbnail: String?
+    var bio: String?
+    var jwt_token: String?
+    var is_active: Bool?
+    var profile_visits: Int?
+    var is_FirsttimeLogin: Bool?
+    var default_card_id: String?
+    var referral_code: String?
+}

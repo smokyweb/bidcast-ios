@@ -1,15 +1,125 @@
 //
-//  ProductDetailSheet.swift
+//  ProductDetailView.swift
 //  BidCast
 //
-//  Created by JAM_E_329 on 28/05/25.
+//  Created by JamTech on 25/11/25.
 //
+
+import SwiftUI
+
+struct ProductDetailView: View {
+    
+    @StateObject var viewModel = ProductDetailsViewModel()
+    
+    @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var networkMonitor: NetworkMonitor
+    
+    @State private var isLoading = false
+    @State private var showError = false
+    @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+    @State private var showhud = false
+    @State private var hudMsg = ""
+    
+    var onDismiss: () -> Void = {}
+    
+    @State private var selectedImageIndex = 0
+    @State private var productDetail : ProductDetailsModel?
+    
+    @State  var productImages: [String] = [] // Image URLs or asset names
+    @State  var productTitle: String = ""
+    @State  var description: String = ""
+    
+    @State  var productPrice: Double = 0.0
+    @State  var condition: String = ""
+    @State  var location: String = ""
+    @State var postedTime: String = ""
+    @State var sellerName: String = ""
+    @State var sellerStatus: String = ""
+    @Binding var productID : Int
+    @State var sellerImage : String = ""
+    @State var offerArr = [Double]()
+    @State  var productDescription: String = ""
+    @State  var shippingAddress: String = ""
+    @State  var shippingID: Int = 0
+    @State  var cardID: String = ""
+    @State  var promoCode : String = ""
+    @State  var shippingCharges : Int = 0
+    @State  var taxAmount : Int = 0
+    
+    var body: some View {
+        VStack(spacing: 12) {
+            // Image Carousel
+            TabView(selection: $selectedImageIndex) {
+                ForEach(productImages.indices, id: \.self) { index in
+                    let img = productImages[index]
+                    CustomProfileImage(url: img,isCircular: false,size: screenWidth, height: 300)
+                    
+                        .tag(index)
+                }
+            }
+            .tabViewStyle(PageTabViewStyle())
+            .frame(height: 300)
+        }
+        .onAppear{
+            Task{
+                guard Reachability.isConnectedToNetwork() else {
+                    hudMsg = "No Internet Connection"
+                    showhud = true
+                    return
+                }
+                SVProgressHUD.show()
+                let param = FetchProductRequest(product_id: productID)
+                await viewModel.getProductDetails(parameters: param)
+                await SVProgressHUD.dismiss()
+                handleSuccess()
+            }
+        }
+    }
+    
+    func handleSuccess() {
+        let response = viewModel.productDetailsResponseDict
+        let data = viewModel.productDetailsResponseDict?.data
+        if response?.status == "success" {
+            productDetail = response?.data
+            productImages =  data?.images ?? []
+            productTitle = data?.title ?? ""
+            description = data?.description ?? ""
+            productPrice = Double(data?.pricing ?? "0.0") ?? 0.0
+            condition =  "New" //currently No Key for this
+            location = data?.shippingAdress?.streetAddress ?? ""
+            postedTime = data?.createdAt ?? ""
+            sellerName =  data?.user?.name ?? ""
+            sellerImage = data?.user?.profileImage ?? ""
+            sellerStatus = data?.user?.sellerVerification == false ? "Non Verified Seller" : "Verified Seller"
+            shippingAddress = data?.shippingAdress?.streetAddress ?? ""
+            shippingID = data?.shippingAdress?.id ?? 0
+            offerArr.removeAll()
+            if let price = data?.pricing {
+                    let percentages: [Double] = [0.05, 0.10, 0.15, 0.20]
+                    for percent in percentages {
+                        let offerPrice = (Double(price) ?? 0.0) * percent
+                        
+                        offerArr.append(offerPrice)
+                    }
+                }
+            
+        } else {
+            alertType = .sheetType(icon: .alert, title: response?.status?.capitalized ?? "Failed", message: response?.message?.capitalized ?? "Something Went Wrong", primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .defaultTheme)
+            withAnimation(.snappy) { showError = true }
+        }
+    }
+}
+
+//#Preview {
+//    ProductDetailView()
+//}
+
 
 import SwiftUI
 import AlertToast
 import SVProgressHUD
 
-struct ProductDetailSheet: View {
+struct ProductDetailSheet1: View {
     @Environment(\.presentationMode) var presentationMode
     @StateObject var viewModel = ProductDetailsViewModel()
     @EnvironmentObject var networkMonitor: NetworkMonitor
@@ -75,7 +185,7 @@ struct ProductDetailSheet: View {
 //                        let price = String(format: "$%.2f", productPrice)
 //                        Text("\(price)")
 //                            .font(.custom(poppinsSemiBold, size: 16.0))
-//                        
+//
                     }
                     if !description.isEmpty{
                         
@@ -302,4 +412,5 @@ struct ProductDetailSheet: View {
         }
     }
 }
+
 

@@ -33,7 +33,7 @@ struct ExploreViewScreen: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: 12) {
-                SearchBarView{ debouncedText in
+                SearchBarView(placeholder: "Search") { debouncedText in
                     self.searchText = debouncedText
                     let selectedCategory = categoryTitles[selectedCategoryIndex]
                     Task { await fetchCategory(for: selectedCategory) }
@@ -47,14 +47,18 @@ struct ExploreViewScreen: View {
             
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 12) {
+                  
                     PillsSelectorView(titles: categoryTitles,
-                                      selectedIndex: $selectedCategoryIndex)
-                    .onChange(of: selectedCategoryIndex) { newIndex in
-                        let selectedCategory = categoryTitles[newIndex]
+                                      selectedIndex: $selectedCategoryIndex,
+                                      backgroundStyle: .pill,
+                                      underlineEnabled: false,
+                                      onSelectionChanged: { index, data in
+                        let selectedCategory = categoryTitles[index]
                         Task {
                             await fetchCategory(for: selectedCategory)
                         }
-                    }
+                    })
+                    
                     if isLoadingAPI {
                         // 1️⃣ FULL CARD SHIMMER
                         LazyVGrid(columns: columns, spacing: 16) {

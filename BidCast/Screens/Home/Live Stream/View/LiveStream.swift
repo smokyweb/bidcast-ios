@@ -73,6 +73,7 @@ struct LiveStream: View {
     @State var roomID = [String]()
     @State var streamID = [String]()
     var viewModel = LiveShowsViewModel()
+//    var updatedViewModel = LiveShowsViewModel1()
     @State var homeViewModel = HomeViewModel()
     @State var liveShowsData = [RoomModel]()
     
@@ -109,6 +110,7 @@ struct LiveStream: View {
     @State var winnerProfileID : Int = 0
     @State private var navigateToEditPayment = false
     @State private var navigateToEditAddress = false
+    @State private var navigateToProductList = false
     @State var socket: SocketIOClient!
     @State var socketManager: SocketManager!
     @State var rooms: [RoomModel] = []
@@ -117,6 +119,8 @@ struct LiveStream: View {
     @State private var animate = false
     @State var maxBidUserName: String = "Demo UserName"
     @Binding var agoraToken: String
+    
+    @State private var sellerInfo: SellerInfoResponse? = nil
     
     
     var currentProduct: ProductData? {
@@ -216,65 +220,102 @@ struct LiveStream: View {
                                 navigateToProfile = true
                             }){
                                 let data = liveShowsData[currentIndex]
-                                
-                                CustomProfileImage(url: data.seller?.image ?? "", isCircular: true,size: 40) {
-                                    showSellerProfileSheet = true
-                                }
-                                
-                                
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Button {
+                                if let sellerInfo = viewModel.sellerInfo.data {
+                                    CustomProfileImage(url: sellerInfo.seller_details?.profile_image ?? "", isCircular: true,size: 40) {
                                         showSellerProfileSheet = true
-                                    } label: {
-                                        Text(liveShowsData[currentIndex].seller?.name ?? "")
-                                            .font(.custom(poppinsBold, size: 14.0))
-                                            .foregroundColor(.white)
                                     }
-
-                                    HStack(spacing:4){
-                                        HStack(spacing: 4) {
-                                            Image(systemName: "star.fill")
-                                                .font(.system(size: 12))
-                                                .foregroundColor(.white.opacity(0.9))
-                                            
-                                            Text("5.0")
-                                                .font(.custom(poppinsRegular, size: 12.0))
-                                                .foregroundColor(.white.opacity(0.9))
+                                    
+                                    
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Button {
+                                            showSellerProfileSheet = true
+                                        } label: {
+                                            Text( sellerInfo.seller_details?.name ?? "")
+                                                .font(.custom(poppinsBold, size: 14.0))
+                                                .foregroundColor(.white)
                                         }
                                         
-                                        
-                                        Text("•")
-                                            .font(.system(size: 12))
-                                            .foregroundColor(.white.opacity(0.9))
-                                        
-                                        
-                                        HStack(spacing: 3) {
-                                            Image(systemName: "shippingbox")
-                                                .font(.system(size: 12))
-                                                .foregroundColor(.white.opacity(0.9))
-                                            
-                                            Text("1d")
-                                                .font(.custom(poppinsRegular, size: 12.0))
-                                                .foregroundColor(.white.opacity(0.9))
-                                        }
-                                        
-//                                        Spacer(minLength: 4)
-                                        
-                                        Button(action: {
-                                            if let sellerId = liveShowsData[currentIndex].seller?.id {
-                                                socketManagerChat.sendFollowUnfollow(followerId: "\(UserDefaults.userId)", followingId:  sellerId)
+                                        HStack(spacing:4){
+                                            HStack(spacing: 4) {
+                                                Image(systemName: "star.fill")
+                                                    .font(.system(size: 12))
+                                                    .foregroundColor(.white.opacity(0.9))
+                                                
+                                                Text("\(sellerInfo.review ?? "N/A")")
+                                                    .font(.custom(poppinsRegular, size: 12.0))
+                                                    .foregroundColor(.white.opacity(0.9))
                                             }
-                                            showFollowSheet = true
-                                        }) {
-                                            Text(socketManagerChat.isFollowed ? "Follow" : "Following")
-                                                .font(.custom(poppinsSemiBold, size: 12.0))
-                                                .foregroundColor(.black)
-                                                .padding(.horizontal, 10)
-                                                .padding(.vertical, 4)
-                                                .background(.defaultTheme)
-                                                .cornerRadius(10)
+                                            
+                                            
+                                            Text("•")
+                                                .font(.system(size: 12))
+                                                .foregroundColor(.white.opacity(0.9))
+                                            
+                                            
+                                            HStack(spacing: 3) {
+                                                Image(systemName: "shippingbox")
+                                                    .font(.system(size: 12))
+                                                    .foregroundColor(.white.opacity(0.9))
+                                                
+                                                Text("\(sellerInfo.avg_ship ?? "N/A")")
+                                                    .font(.custom(poppinsRegular, size: 12.0))
+                                                    .foregroundColor(.white.opacity(0.9))
+                                            }
+                                            
+                                            //                                        Spacer(minLength: 4)
+                                            
+                                            Button(action: {
+                                                if let sellerId = liveShowsData[currentIndex].seller?.id {
+                                                    socketManagerChat.sendFollowUnfollow(followerId: "\(UserDefaults.userId)", followingId:  sellerId)
+                                                }
+                                                showFollowSheet = true
+                                            }) {
+                                                Text(sellerInfo.is_following ?? false ? "Following" : "Follow")
+                                                    .font(.custom(poppinsSemiBold, size: 12.0))
+                                                    .foregroundColor(.black)
+                                                    .padding(.horizontal, 10)
+                                                    .padding(.vertical, 4)
+                                                    .background(.defaultTheme)
+                                                    .cornerRadius(10)
+                                            }
+                                            
                                         }
+                                    }
+                                }
+                                else  {
+                                    HStack(spacing: 12) {
+                                        // Profile Image Shimmer
+                                        Circle()
+                                            .fill(Color.gray.opacity(0.3))
+                                            .frame(width: 40, height: 40)
+                                            .shimmer()
                                         
+                                        // Info Shimmer
+                                        VStack(alignment: .leading, spacing: 6) {
+                                            // Name Shimmer
+                                            RoundedRectangle(cornerRadius: 4)
+                                                .fill(Color.gray.opacity(0.3))
+                                                .frame(width: 120, height: 14)
+                                                .shimmer()
+                                            
+                                            // Stats Shimmer
+                                            HStack(spacing: 8) {
+                                                RoundedRectangle(cornerRadius: 4)
+                                                    .fill(Color.gray.opacity(0.3))
+                                                    .frame(width: 60, height: 12)
+                                                    .shimmer()
+                                                
+                                                RoundedRectangle(cornerRadius: 4)
+                                                    .fill(Color.gray.opacity(0.3))
+                                                    .frame(width: 50, height: 12)
+                                                    .shimmer()
+                                                
+                                                RoundedRectangle(cornerRadius: 10)
+                                                    .fill(Color.gray.opacity(0.3))
+                                                    .frame(width: 60, height: 24)
+                                                    .shimmer()
+                                            }
+                                        }
                                     }
                                 }
                                 Spacer()
@@ -300,11 +341,6 @@ struct LiveStream: View {
                                 .clipShape(Capsule())
                                 
                                 Button(action: {
-//                                    if pipManager.isPiPActive {
-//                                        pipManager.stopPiP()
-//                                    } else {
-//                                        pipManager.startPiP()
-//                                    }
                                     logoutRoom()
                                     self.presentationMode.wrappedValue.dismiss()
                                 }) {
@@ -662,7 +698,12 @@ struct LiveStream: View {
                                let img = product.image {
                                 StackedImageView(imageURL: img, totalCount: productData.count) {
                                     print("productStackTapped")
-                                    showSheet = true
+                                    if pipManager.isPiPActive {
+                                        pipManager.stopPiP()
+                                    } else {
+                                        pipManager.startPiP()
+                                    }
+                                    navigateToProductList = true
                                 }
                             }
                         }
@@ -748,9 +789,21 @@ struct LiveStream: View {
                 CusNavLink(doNavigate: $navigateToBuyer, destination: TrustedBuyerScreen(comeFromHome:$comeFromHome))
                 
                 CusNavLink(doNavigate: $navigateToAddCardScreen, destination: PaymentAndShipping_Screen())
+                CusNavLink(doNavigate: $navigateToProductList, destination: ProductShopListScreen(productData: $productData))
+                
                 CusNavLink(doNavigate: $navigateToShipping, destination: PaymentAndShipping_Screen())
                 CusNavLink(doNavigate: $navigateToEditPayment, destination: PaymentAndShipping_Screen())
                 CusNavLink(doNavigate: $navigateToEditAddress, destination: PaymentAndShipping_Screen())
+                CusNavLink(doNavigate: $showItemDetailSheet,
+                           destination: ProductDetailSheet(
+                            onDismiss : {
+                                self.showItemDetailSheet = false
+                                productId = 0
+                            },
+                            productID: $productId,
+                            showoption: false,
+                            showButton: false
+                           ))
             }
             
         }.gesture(
@@ -790,14 +843,8 @@ struct LiveStream: View {
             showSellerProfileSheet = false
         }) {
             SellerProfileBottomSheet(
-                isPresented: $showSellerProfileSheet,
-                sellerName: "badbunnygolfshop",
-                sellerImage: "https://via.placeholder.com/150",
-                rating: 5.0,
-                reviewCount: "1.8K",
-                soldCount: "5.5K",
-                avgShipTime: "2d",
-                isFollowing: false,
+                isPresented: $showSheet,
+                sellerInfo: sellerInfo,
                 onTipOrBoost: { print("Tip or Boost") },
                 onViewProfile: { print("View Profile") },
                 onMessage: { print("Message") },
@@ -806,6 +853,7 @@ struct LiveStream: View {
                 onReport: { print("Report") },
                 onFollow: { print("Follow") }
             )
+
         }
         
         .bottomSheet(
@@ -814,8 +862,7 @@ struct LiveStream: View {
             topBarCornerRadius: 20
         ) {
             FollowSellerSheet(
-                sellerName: "pokecollectcards",
-                sellerImageURL: "https://example.com/profile.jpg",
+                seller: sellerInfo,
                 onFollow: {
                     print("Follow tapped")
                 },
@@ -1024,17 +1071,6 @@ struct LiveStream: View {
                 }
             )
         }
-        
-        .bottomSheet(isPresented: $showItemDetailSheet, height: screenHeight * 0.65) {
-            ProductDetailSheet(
-                onDismiss : {
-                    self.showItemDetailSheet = false
-                    productId = 0
-                },
-                productID: $productId,showoption: false,showButton: false
-                
-            )
-        }
         .bottomSheet(isPresented: $maxBidAmountSheet, height: screenHeight * 0.35) {
             if let currentProduct = productData.first {
                 MaxBidBottomSheet(
@@ -1058,46 +1094,166 @@ struct LiveStream: View {
         .toolbar(.hidden,for: .tabBar)
         .foregroundColor(.black)
         .background(.black)
-        .onAppear{
-            
-            //works as view did load
-            UserDefaults.isLiveEnded = false
-            //            FirebaseManager.shared.removeNewSessionObserver()
-            //            ZIMChatManager.shared.login(userID: "\(UserDefaults.userId)", userName: UserDefaults.fullName)
-            
-            Task{
-                SVProgressHUD.show()
-                await self.homeViewModel.getProfile()
-                await SVProgressHUD.dismiss()
-                await getProfileSuccess()
-                //               try await joinManager.subscribe(streamName: currentRoomID)
-                socketManagerChat.joinRoom(roomId: currentRoomID, completion: {
-                    //                        guard let self = self else { return }
-                    joinStreamUsingSocket(roomId: currentRoomID)
-                })
-            }
-            
-            socketManagerChat.listenForRaidEvent { raidInfo in
-                print(raidInfo ?? "No Raid Info")
-                logoutRoom()
-                let roomId = raidInfo?.target_room_id ?? ""
-                let rtcToken = raidInfo?.rtcToken ?? ""
-                let message = raidInfo?.message ?? ""
-                if message != "" {
-                    hudMsg = message
-                    showHud = true
-                }
-                currentRoomID = roomId
-                self.agoraToken = rtcToken
-                socketManagerChat.joinRoom(roomId: roomId) {
-                    joinStreamUsingSocket(roomId: roomId)
-                }
-            }
+//        .onAppear{
+//            
+//            //works as view did load
+//            UserDefaults.isLiveEnded = false
+//            //            FirebaseManager.shared.removeNewSessionObserver()
+//            //            ZIMChatManager.shared.login(userID: "\(UserDefaults.userId)", userName: UserDefaults.fullName)
+//            
+//            Task{
+//                SVProgressHUD.show()
+//                await self.homeViewModel.getProfile()
+//                await SVProgressHUD.dismiss()
+//                await getProfileSuccess()
+//                //               try await joinManager.subscribe(streamName: currentRoomID)
+//                socketManagerChat.joinRoom(roomId: currentRoomID, completion: {
+//                    //                        guard let self = self else { return }
+//                    joinStreamUsingSocket(roomId: currentRoomID)
+//                })
+//            }
+//            
+//            socketManagerChat.listenForRaidEvent { raidInfo in
+//                print(raidInfo ?? "No Raid Info")
+//                logoutRoom()
+//                let roomId = raidInfo?.target_room_id ?? ""
+//                let rtcToken = raidInfo?.rtcToken ?? ""
+//                let message = raidInfo?.message ?? ""
+//                if message != "" {
+//                    hudMsg = message
+//                    showHud = true
+//                }
+//                currentRoomID = roomId
+//                self.agoraToken = rtcToken
+//                socketManagerChat.joinRoom(roomId: roomId) {
+//                    joinStreamUsingSocket(roomId: roomId)
+//                }
+//            }
+//        }
+        .onAppear {
+            setupInitialState()
+            loadInitialData()
+            listenForRaidEvents()
         }
+
         .onDisappear{
             logoutRoom()
         }
     }
+    
+    private func setupInitialState() {
+        UserDefaults.isLiveEnded = false
+    }
+
+    private func loadInitialData() {
+        Task { @MainActor in
+            SVProgressHUD.show()
+
+            do {
+                // Run in parallel — but handle throws
+                async let profileTask: Void = homeViewModel.getProfile()
+
+                // Await both tasks safely
+                try await profileTask
+
+                await SVProgressHUD.dismiss()
+
+                await getProfileSuccess()
+                joinChatRoom(roomId: currentRoomID)
+
+            } catch {
+                await SVProgressHUD.dismiss()
+
+                print("❌ loadInitialData Error:", error.localizedDescription)
+
+                alertType = .sheetType(
+                    icon: .alert,
+                    title: "Error",
+                    message: error.localizedDescription,
+                    primaryBtnText: "",
+                    secondaryBtnText: AppString.ok.localized
+                )
+                showError = true
+            }
+        }
+    }
+
+
+
+    private func joinChatRoom(roomId: String) {
+        socketManagerChat.joinRoom(roomId: roomId) {
+            joinStreamUsingSocket(roomId: roomId)
+        }
+    }
+
+    private func listenForRaidEvents() {
+        socketManagerChat.listenForRaidEvent { raidInfo in
+            
+            guard let info = raidInfo else {
+                print("No Raid Info")
+                return
+            }
+            
+            logoutRoom()
+            
+            if ((info.message?.isEmpty) == nil) {
+                hudMsg = info.message ?? ""
+                showHud = true
+            }
+            
+            // update room + token
+            currentRoomID = info.target_room_id ?? ""
+            agoraToken = info.rtcToken ?? ""
+            
+            joinChatRoom(roomId: currentRoomID)
+        }
+    }
+    
+    @MainActor
+    private func fetchSellerIfAvailable() async {
+        guard let sellerId = liveShowsData[currentIndex].seller?.id, !sellerId.isEmpty else {
+            print("⚠️ Seller ID not available")
+            return
+        }
+
+        do {
+            // API Call
+            try await viewModel.getSellerInfo(sellerID: sellerId)
+
+            print("✅ Seller info updated")
+
+            await SVProgressHUD.dismiss()
+
+            let response = viewModel.sellerInfo
+            print("Seller info: \(response)")
+            // Ensure we got success
+            if response.status == "success" {
+                self.sellerInfo = response.data
+            } else {
+                throw NSError(domain: "APIError", code: -1, userInfo: [
+                    NSLocalizedDescriptionKey: response.message ?? "Something went wrong"
+                ])
+            }
+
+        } catch {
+            print("❌ Failed to fetch seller info:", error.localizedDescription)
+
+            await SVProgressHUD.dismiss()
+
+            alertType = .sheetType(
+                icon: .alert,
+                title: "Error",
+                message: viewModel.errorMessage ?? error.localizedDescription,
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
+            )
+
+            showError = true
+        }
+    }
+
+
+
     
     // Compute next bid
     func nextBidAmount(for currentPrice: Double) -> Double {
@@ -1137,7 +1293,6 @@ struct LiveStream: View {
     //MARK: walletInfosuccess.
     func getProfileSuccess() async{
         let response  = homeViewModel.accountInfo
-        await SVProgressHUD.dismiss()
         if response.status == "success"{
             let response = self.homeViewModel.accountInfo.data
             UserDefaults.buyerVerafied = response?.buyer_identity_status ?? ""
@@ -1146,7 +1301,6 @@ struct LiveStream: View {
             UserDefaults.hasCardAdded = response?.has_card_added ?? false
             
         }else{
-            showError = true
             alertType = .sheetType(
                 icon: .alert,
                 title: response.error_type?.capitalized ?? "",
@@ -1154,7 +1308,7 @@ struct LiveStream: View {
                 primaryBtnText: "",
                 secondaryBtnText: AppString.ok.localized
             )
-            
+            showError = true
         }
     }
     
@@ -1331,6 +1485,24 @@ struct LiveStream: View {
             self.liveShowsData = socketRooms
             self.currentRoomID = roomId
             sortLiveShowsDataByCurrentRoom()
+            Task { @MainActor in
+                do {
+                    async let sellerTask: Void = fetchSellerIfAvailable()
+                    try await sellerTask
+                    
+                } catch {
+                    print("❌ loadInitialData Error:", error.localizedDescription)
+                    
+                    alertType = .sheetType(
+                        icon: .alert,
+                        title: "Error",
+                        message: error.localizedDescription,
+                        primaryBtnText: "",
+                        secondaryBtnText: AppString.ok.localized
+                    )
+                    showError = true
+                }
+            }
         }
         
         
@@ -1374,6 +1546,7 @@ struct LiveStream: View {
         var reordered = liveShowsData.filter { $0.room_id != currentRoomID }
         reordered.insert(currentRoom, at: 0)
         liveShowsData = reordered
+        
         // Update the current index to 0
         currentIndex = 0
         

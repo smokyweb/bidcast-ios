@@ -47,6 +47,7 @@ enum APIEndPoint{
     case getProfileById(param:ProfileParamRequest)
     case getUserProduct(param : UserProductRequest)
     case followUnfollow(param:FollowRequest)
+    case getSellerInfo(param: SellerInfoRequest)
     case countUpdate(param:countRequest)
     case fetchProduct(param : FetchProductRequest)
     case storeIDCard(param : [String:Any])
@@ -585,6 +586,10 @@ extension APIEndPoint: EndPointType {
             
         case .getAgoraToken:
             return "agora-token"
+            
+        case .getSellerInfo(param: let param):
+            return "get-seller-info?seller_id=\(param.seller_id)"
+
         }
     }
     
@@ -938,6 +943,8 @@ extension APIEndPoint: EndPointType {
             return .get
         case .getAgoraToken:
             return .post
+        case .getSellerInfo:
+                  return .get
         }
     }
     
@@ -1302,6 +1309,8 @@ extension APIEndPoint: EndPointType {
 //            return param
         case .getAgoraToken:
             return nil
+        case .getSellerInfo:
+            return nil
         }
     }
     
@@ -1645,6 +1654,8 @@ extension APIEndPoint: EndPointType {
             return  nil
         case .getAgoraToken:
             return nil
+        case .getSellerInfo:
+            return nil
         }
     }
     
@@ -1653,4 +1664,3 @@ extension APIEndPoint: EndPointType {
         APIManager.commonHeaders
     }
 }
-
