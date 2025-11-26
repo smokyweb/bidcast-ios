@@ -48,6 +48,8 @@ enum APIEndPoint{
     case getUserProduct(param : UserProductRequest)
     case followUnfollow(param:FollowRequest)
     case getSellerInfo(param: SellerInfoRequest)
+    case getReportSellerCategory
+    case reportSeller(param: SellerReportRequest)
     case countUpdate(param:countRequest)
     case fetchProduct(param : FetchProductRequest)
     case storeIDCard(param : [String:Any])
@@ -589,7 +591,10 @@ extension APIEndPoint: EndPointType {
             
         case .getSellerInfo(param: let param):
             return "get-seller-info?seller_id=\(param.seller_id)"
-
+        case .getReportSellerCategory:
+            return "report-categories"
+        case .reportSeller:
+            return "report-seller"
         }
     }
     
@@ -943,8 +948,12 @@ extension APIEndPoint: EndPointType {
             return .get
         case .getAgoraToken:
             return .post
+        case .getReportSellerCategory:
+            return .get
+        case .reportSeller:
+            return .post
         case .getSellerInfo:
-                  return .get
+            return .get
         }
     }
     
@@ -1311,6 +1320,10 @@ extension APIEndPoint: EndPointType {
             return nil
         case .getSellerInfo:
             return nil
+        case .getReportSellerCategory:
+            return nil
+        case .reportSeller(param: let param):
+            return param
         }
     }
     
@@ -1655,6 +1668,10 @@ extension APIEndPoint: EndPointType {
         case .getAgoraToken:
             return nil
         case .getSellerInfo:
+            return nil
+        case .getReportSellerCategory:
+            return nil
+        case .reportSeller:
             return nil
         }
     }

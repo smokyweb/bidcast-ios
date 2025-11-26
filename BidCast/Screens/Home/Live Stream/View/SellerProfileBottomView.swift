@@ -9,17 +9,14 @@ import SwiftUI
 
 struct SellerProfileBottomSheet: View {
     @Binding var isPresented: Bool
-    
     var sellerInfo: SellerInfoResponse?        // ✅ Entire API response
     var onTipOrBoost: () -> Void
     var onViewProfile: () -> Void
     var onMessage: () -> Void
     var onMentionInChat: () -> Void
     var onBlock: () -> Void
-    var onReport: () -> Void
+    var onReport: (Int?) -> Void
     var onFollow: () -> Void
-    
-    @State private var showReportSheet: Bool = false
     
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -108,7 +105,7 @@ struct SellerProfileBottomSheet: View {
                                  titleColor: .red,
                                  action: {
                         print("Report")
-                        showReportSheet = true
+                        onReport(sellerInfo?.seller_details?.id)
                     }
                                     , showDivider: false)
                 }
@@ -116,18 +113,7 @@ struct SellerProfileBottomSheet: View {
                 .padding(.bottom, 30)
             }
         }
-        .bottomSheet(isPresented: $showReportSheet,
-                     height: screenHeight * 0.55,
-                     topBarCornerRadius: 0,
-                     contentBackgroundColor: Color(.white),
-                     topBarBackgroundColor: Color(.white),
-                     showTopIndicator: false,
-                     onDismiss: {
-            showReportSheet = false
-        }) {
-            ReportSellerView()
-                .keyboardAwarePadding()
-        }
+        
     }
 }
 

@@ -490,6 +490,12 @@ struct SellerInfoRequest: Encodable {
     let seller_id: String
 }
 
+struct SellerReportRequest: Encodable {
+    let seller_id: Int
+    let category_id: Int
+    let notes: String
+}
+
 struct FetchProductRequest : Encodable {
     var product_id : Int
 }

@@ -77,11 +77,16 @@ struct LiveStream: View {
     @State var homeViewModel = HomeViewModel()
     @State var liveShowsData = [RoomModel]()
     
+    @State var showhudSuccess: Bool = false
+    @State var showBlockSeller: Bool = false
+    
+    
     @State var productData = [ProductData]()
     @State var BiddingDetail = BiddingModel()
     @State var isLoading: Bool = false
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "Stream Ended", message: "The live stream has ended.", primaryBtnText: "", secondaryBtnText: "")
     @State var showError: Bool = false
+    @State var showErrorPopup: Bool = false
     @State var viewwerCount = 0
     @Binding var userId : String
     @Environment(\.presentationMode) var presentationMode
@@ -111,6 +116,7 @@ struct LiveStream: View {
     @State private var navigateToEditPayment = false
     @State private var navigateToEditAddress = false
     @State private var navigateToProductList = false
+    @State private var showReportSheet = false
     @State var socket: SocketIOClient!
     @State var socketManager: SocketManager!
     @State var rooms: [RoomModel] = []
@@ -187,6 +193,8 @@ struct LiveStream: View {
         }
     }
     @StateObject var socketManagerChat = SocketManagerService.shared
+    
+    @StateObject var profileViewModel = ProfileViewModel()
     
     @State var currentProductIndex = 0
     
@@ -815,6 +823,9 @@ struct LiveStream: View {
         .toast(isPresenting: $showHud,duration: 1.5) {
             AlertToast(displayMode: .alert, type: .regular, title: hudMsg ,style: .style(backgroundColor: .black.opacity(0.4), titleColor: .white))
         }
+        .toast(isPresenting: $showhudSuccess,duration: 1.5) {
+            AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlyeSuccess)
+        }
         .bottomSheet(isPresented: $showError, height: screenHeight / 2.8, topBarCornerRadius: 25, showTopIndicator: false,onDismiss: {
             showError = true
         }) {
@@ -839,23 +850,23 @@ struct LiveStream: View {
                 }
             )
         }
-        .bottomSheet(isPresented: $showSellerProfileSheet, height: screenHeight * 0.70, topBarCornerRadius: 25, showTopIndicator: false,onDismiss: {
-            showSellerProfileSheet = false
+        .bottomSheet(isPresented: $showErrorPopup, height: screenHeight / 2.8, topBarCornerRadius: 25, showTopIndicator: false,onDismiss: {
+            showErrorPopup = true
         }) {
-            SellerProfileBottomSheet(
-                isPresented: $showSheet,
-                sellerInfo: sellerInfo,
-                onTipOrBoost: { print("Tip or Boost") },
-                onViewProfile: { print("View Profile") },
-                onMessage: { print("Message") },
-                onMentionInChat: { print("Mention in Chat") },
-                onBlock: { print("Block") },
-                onReport: { print("Report") },
-                onFollow: { print("Follow") }
+            CommonBottomSheet(
+                sheetType: $alertType,
+                onPrimaryClick: {
+                    withAnimation {
+                        showErrorPopup = false
+                    }
+                },
+                onSecondaryClick: {
+                    withAnimation {
+                        showErrorPopup = false
+                    }
+                }
             )
-
         }
-        
         .bottomSheet(
             isPresented: $showFollowSheet,
             height: screenHeight / 2.5,
@@ -874,6 +885,84 @@ struct LiveStream: View {
                 }
             )
         }
+        
+        .bottomSheet(isPresented: $showSellerProfileSheet, height: screenHeight * 0.70, topBarCornerRadius: 25, showTopIndicator: false,onDismiss: {
+            showSellerProfileSheet = false
+        }) {
+            SellerProfileBottomSheet(
+                isPresented: $showSellerProfileSheet,
+                sellerInfo: sellerInfo,
+                onTipOrBoost: { print("Tip or Boost")
+                    showSellerProfileSheet = false
+                },
+                onViewProfile: { print("View Profile")
+                    showSellerProfileSheet = false
+                },
+                onMessage: { print("Message")
+                    showSellerProfileSheet = false
+                },
+                onMentionInChat: { print("Mention in Chat")
+                    showSellerProfileSheet = false},
+                onBlock: { print("Block")
+                    showSellerProfileSheet = false
+                    alertType = .sheetType(
+                        icon: .alert,
+                        title: "Block Seller!",
+                        message: "Are you sure, You want to block this seller.",
+                        primaryBtnText: "Block",
+                        secondaryBtnText: "Cancel"
+    
+                    )
+                    showBlockSeller = true
+                },
+                onReport: { sellerId in
+                    print("Report")
+                    showSellerProfileSheet = false
+                    showReportSheet = true
+                },
+                onFollow: { print("Follow")
+                    showSellerProfileSheet = false
+                }
+            )
+
+        }
+        
+        .bottomSheet(isPresented: $showReportSheet,
+                     height: screenHeight * 0.65,
+                     topBarCornerRadius: 0,
+                     contentBackgroundColor: Color(.white),
+                     topBarBackgroundColor: Color(.white),
+                     showTopIndicator: false,
+                     onDismiss: {
+            showReportSheet = false
+        }) {
+            ReportSellerView(onReportSellerClicked: { categoryId, message in
+                Task {
+                    await reportSeller(categoryId: categoryId, message: message)
+                }
+            })
+                .keyboardAwarePadding()
+        }
+        
+        .bottomSheet(
+            isPresented: $showBlockSeller,
+            height: screenHeight * 0.45,
+            topBarCornerRadius: 25,
+            showTopIndicator: false,
+            onDismiss: {
+                showBlockSeller = false
+            },  content: {
+                CommonBottomSheet(
+                    sheetType: $alertType,
+                    onPrimaryClick: {
+                        withAnimation { showBlockSeller = false }
+                        //yes tapped -> block seller
+                        let sellerId = liveShowsData[currentIndex].seller?.id ?? ""
+                        blockSeller(with: sellerId)
+                    }, onSecondaryClick: {
+                        withAnimation { showBlockSeller = false }
+                    })
+            })
 
         
 //        .bottomSheet(
@@ -2111,6 +2200,83 @@ struct ChatMessageBubble: View {
             }
 //            .frame(width:screenWidth - 45)
             Spacer()
+        }
+    }
+}
+
+extension LiveStream {
+    @MainActor
+    func reportSeller(categoryId: Int?, message: String?) async {
+        guard Reachability.isConnectedToNetwork() else {
+            hudMsg = "No Internet Connection"
+            showHud = true
+            return
+        }
+        guard let cId = categoryId, let msg = message else  {
+            return
+        }
+        do {
+            SVProgressHUD.show()
+            
+            let request = SellerReportRequest(seller_id: Int(liveShowsData[currentIndex].seller?.id ?? "0") ?? 0,
+                                              category_id: cId,
+                                              notes: msg)
+            try await viewModel.reportSeller(request: request)
+            await SVProgressHUD.dismiss()
+            let response = viewModel.reportSellerResponse
+
+            if response.status == "success" {
+                hudMsg = response.message ?? ""
+                showhudSuccess = true
+                showReportSheet = false
+            } else {
+                throw NSError(
+                    domain: "APIError",
+                    code: -1,
+                    userInfo: [NSLocalizedDescriptionKey : response.message ?? "Something went wrong"]
+                )
+            }
+        }
+        catch {
+            print("❌ Failed to load categories:", error.localizedDescription)
+
+            alertType = .sheetType(
+                icon: .alert,
+                title: "Error",
+                message: viewModel.errorMessage ?? error.localizedDescription,
+                primaryBtnText: "",
+                secondaryBtnText: "OK"
+            )
+
+            showError = true
+        }
+    }
+    
+    private func blockSeller(with sellerId: String) {
+        Task{
+            guard Reachability.isConnectedToNetwork() else {
+                hudMsg = "No Internet Connection"
+                showHud = true
+                return
+            }
+            SVProgressHUD.show()
+            let param = BlockUserRequest(blocked_id: Int(sellerId) ?? 0)
+            await self.profileViewModel.blockUser(param: param)
+            await SVProgressHUD.dismiss()
+            blockSuccess()
+        }
+    }
+    
+    //MARK: blockSuccess.
+    func blockSuccess(){
+        SVProgressHUD.dismiss()
+        let response = profileViewModel.blockUserResponseDict
+        if response?.status == "success" {
+            hudMsg = response?.message ?? ""
+            showhudSuccess = true
+        } else {
+            alertType = .sheetType(icon: .alert, title: response?.status?.capitalized ?? "", message: response?.message?.capitalized ?? "", primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .defaultTheme)
+            withAnimation(.snappy) { showErrorPopup = true }
         }
     }
 }

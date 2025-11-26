@@ -161,3 +161,15 @@ struct SellerDetails: Codable {
     var default_card_id: String?
     var referral_code: String?
 }
+
+// MARK: - Datum
+struct SellerCategoryDetailsModel: Codable {
+    var id: Int?
+    var name, description, createdAt, updatedAt: String?
+
+    enum CodingKeys: String, CodingKey {
+        case id, name, description
+        case createdAt = "created_at"
+        case updatedAt = "updated_at"
+    }
+}

@@ -129,7 +129,7 @@ struct DropDownSelection: View {
     
     // Helper for height calculation
     func calculateHeight() -> CGFloat {
-        return options.count > 3 ? 200 : CGFloat(options.count) * 42
+        return options.count > 5 ? 200 : CGFloat(options.count) * 35
     }
     
     enum Anchor {

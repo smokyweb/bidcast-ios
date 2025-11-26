@@ -18,6 +18,8 @@ final class LiveShowsViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var BidResponse = ResponseModel<BidModel>()
     @Published var followDict = ResponseModel<FolloweModel>()
+    @Published var categoriesResponse = ResponseModel<[SellerCategoryDetailsModel]>()
+    @Published var reportSellerResponse = ResponseModel<[String?]>()
     @Published var requestType: String = ""
     @Published var titleStream : String = "Stream Ended"
     @Published var messageStream : String = "The live stream has ended."
@@ -117,6 +119,50 @@ final class LiveShowsViewModel: ObservableObject {
         }
     }
 
+    
+    /// Fetch all report categories (GET request)
+    func getReportCategories() async throws {
+        do {
+            self.requestType = "reportCategories"
+
+            let response: ResponseModel<[SellerCategoryDetailsModel]> = try await APIManager.shared.request(
+                type: APIEndPoint.getReportSellerCategory,
+                header: true
+            )
+
+            self.categoriesResponse = response
+        }
+        catch(let error) {
+            if let dataError = error as? DataError {
+                self.errorMessage = dataError.getErrorMessage()
+            } else {
+                self.errorMessage = error.localizedDescription
+            }
+            throw error
+        }
+    }
+    
+    /// report seller API
+    func reportSeller(request: SellerReportRequest) async throws {
+        do {
+            self.requestType = "reportSeller"
+
+            let response: ResponseModel<[String?]> = try await APIManager.shared.request(
+                type: APIEndPoint.reportSeller(param: request),
+                header: true
+            )
+            self.reportSellerResponse = response
+        }
+        catch(let error) {
+            if let dataError = error as? DataError {
+                self.errorMessage = dataError.getErrorMessage()
+            } else {
+                self.errorMessage = error.localizedDescription
+            }
+            throw error
+        }
+    }
+    
     func handle(error: Error) {
         if let dataError = error as? DataError {
             switch dataError {

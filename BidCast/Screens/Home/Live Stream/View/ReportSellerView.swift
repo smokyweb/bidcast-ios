@@ -6,20 +6,29 @@
 //
 
 import SwiftUI
+import AlertToast
+import SVProgressHUD
 
 struct ReportSellerView: View {
     
     @State private var selectedReason: String = ""
     @State private var showReasonDropdown = false
-    @State private var message: String = "Write Something"
+    @State private var message: String = ""
     
-    @State private var reasons: [String] = [
-        "Fake Product",
-        "Fraud / Scam",
-        "Inappropriate Behaviour",
-        "Violating Terms",
-        "Other"
-    ]
+    @State var showhud: Bool = false
+    @State var hudMsg: String = ""
+    
+    var onReportSellerClicked: ((Int?, String?) -> Void) = {_, _ in}
+    
+    @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+    @State var showError: Bool = false
+    
+    @StateObject private var viewModel = LiveShowsViewModel()
+    
+    @State private var categoryList:[SellerCategoryDetailsModel] = []
+    
+    @State private var reasons: [String] = []
+    @State private var selectedCategoryId: Int? = nil
     
     var body: some View {
         ScrollView(showsIndicators:false) {
@@ -49,6 +58,7 @@ struct ReportSellerView: View {
                     custCategorySize : 13.0,
                     onOptionSelected: { value in
                         selectedReason = value
+                        selectedCategoryId = categoryList.filter({$0.name == value}).first?.id
                     }
                 )
                 .background(.clear)
@@ -65,6 +75,7 @@ struct ReportSellerView: View {
                 DescriptionFieldView(
                     description:$message,
                     title: "Tell us more",
+                    placeholder: "Write Something",
                     custFontName : robotoMedium,
                     custFontSize : 14.0
                 )
@@ -75,7 +86,12 @@ struct ReportSellerView: View {
                 
                 // MARK: - Submit Button
                 Button {
-                    print("Submit Report tapped")
+                    // VALIDATION
+                    if !validateFields() {
+                        return
+                    }
+                    
+                    onReportSellerClicked(selectedCategoryId, message)
                 } label: {
                     Text("Submit Report")
                         .font(.custom("Poppins-SemiBold", size: 17))
@@ -86,13 +102,95 @@ struct ReportSellerView: View {
                         .cornerRadius(30)
                 }
                 .padding(.top, 10)
-                
+                .padding(.horizontal, 16)
                 Spacer(minLength: 20)
             }
         }
         .padding(.top, 10)
         .frame(maxHeight: .infinity, alignment: .top)
+        .onAppear {
+            Task {
+                await fetchReportCategories()
+            }
+        }
+        
+        .bottomSheet(isPresented: $showError, height: screenHeight/2.8, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: {
+            showError = true
+        }, content: {
+            CommonBottomSheet(
+                sheetType: $alertType,
+                onPrimaryClick: {
+                    if let message = viewModel.errorMessage {
+                        withAnimation { showError = false }
+                    }else{
+                        withAnimation { showError = false }
+                    }
+                   
+                }, onSecondaryClick: {
+                    withAnimation { showError = false }
+                })
+        })
+        .toast(isPresenting: $showhud) {
+            AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
+        }
     }
+    
+    @MainActor
+    func fetchReportCategories() async {
+        guard Reachability.isConnectedToNetwork() else {
+            hudMsg = "No Internet Connection"
+            showhud = true
+            return
+        }
+        do {
+            SVProgressHUD.show()
+            try await viewModel.getReportCategories()
+            await SVProgressHUD.dismiss()
+            let response = viewModel.categoriesResponse
+
+            if response.status == "success" {
+                self.categoryList = response.data ?? []
+                self.reasons = categoryList.compactMap({$0.name})
+            } else {
+                throw NSError(
+                    domain: "APIError",
+                    code: -1,
+                    userInfo: [NSLocalizedDescriptionKey : response.message ?? "Something went wrong"]
+                )
+            }
+        }
+        catch {
+            print("❌ Failed to load categories:", error.localizedDescription)
+
+            alertType = .sheetType(
+                icon: .alert,
+                title: "Error",
+                message: viewModel.errorMessage ?? error.localizedDescription,
+                primaryBtnText: "",
+                secondaryBtnText: "OK"
+            )
+
+            showError = true
+        }
+    }
+    
+    func validateFields() -> Bool {
+        if selectedCategoryId == nil {
+            hudMsg = "Please select a reason"
+            showhud = true
+            return false
+        }
+        
+        if message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            hudMsg = "Please enter a message"
+            showhud = true
+            return false
+        }
+        
+        return true
+    }
+   
+    
 }
 
 extension View {
