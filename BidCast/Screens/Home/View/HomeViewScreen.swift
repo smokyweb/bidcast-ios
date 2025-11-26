@@ -87,6 +87,7 @@ struct HomeViewScreen: View {
                     
                 }
                 SearchBarView(placeholder: "Search") { debouncedText in
+                    if debouncedText == "" { return }
                     self.searchText = debouncedText
                 }
                 Spacer()

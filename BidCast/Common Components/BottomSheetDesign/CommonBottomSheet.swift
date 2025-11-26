@@ -92,50 +92,183 @@ enum BottomSheetType {
     }
 }
 
+//struct CommonBottomSheet: View {
+//    
+//    @EnvironmentObject private var appRootManager: AppRootManager
+//    
+//    @Binding var sheetType: BottomSheetType
+//
+//    // MARK: - CallBack Functions
+//    var onPrimaryClick: (() -> Void)?
+//    var onSecondaryClick: (() -> Void)?
+//    
+//    var body: some View {
+//        VStack(spacing: 16) {
+//            
+//            // MARK: - Icon
+//            Image(sheetType.icon)
+//                .renderingMode(.template)
+//                .resizable()
+//                .frame(width: 42, height: 42)
+//                .padding(10)
+//                .background(Color(sheetType.sheetThemeColor))
+//                .foregroundColor(.white)
+//                .clipShape(Circle())
+//                .padding(.top, 10)
+//            
+//            // MARK: - Title
+//            Text(sheetType.title)
+//                .font(.custom(poppinsBold, size: 22))
+//                .foregroundColor(.black)
+//                .multilineTextAlignment(.center)
+//                .padding(.horizontal, 25)
+//            
+//            // MARK: - Message (multi-line friendly)
+//            Text(sheetType.message)
+//                .font(.custom(poppinsMedium, size: sheetType.contentSize))
+//                .foregroundColor(.black)
+//                .multilineTextAlignment(.center)
+//                .padding(.horizontal, 30)
+//                .fixedSize(horizontal: false, vertical: true)
+//            
+//            Spacer(minLength: 20)
+//            
+//            // MARK: - Buttons Layout
+//            if sheetType.isBtnVertical {
+//                VStack(spacing: 10) {   // Reduced spacing for compact look
+//                    
+//                    if sheetType.primaryBtnText != "" {
+//                        PrimaryButton(
+//                            title: sheetType.primaryBtnText,
+//                            isOutLine: false,
+//                            onButtonClick: handlePrimaryAction,
+//                            width: sheetType.btnWidth,
+//                            height: sheetType.btnHeight,
+//                            btnTextColor: .white,
+//                            btnColor: sheetType.sheetThemeColor
+//                        )
+//                    }
+//                    
+//                    if sheetType.secondaryBtnText != "" {
+//                        PrimaryButton(
+//                            title: sheetType.secondaryBtnText,
+//                            isOutLine: false,
+//                            onButtonClick: handleSecondaryAction,
+//                            width: sheetType.btnWidth,
+//                            height: sheetType.btnHeight,
+//                            btnTextColor: .white,
+//                            btnColor: sheetType.sheetThemeColor
+//                        )
+//                    }
+//                }
+//                .padding(.bottom, 20)
+//                
+//            } else {
+//                HStack(spacing: 12) {  // Good spacing between horizontal buttons
+//                    
+//                    if sheetType.primaryBtnText != "" {
+//                        PrimaryButton(
+//                            title: sheetType.primaryBtnText,
+//                            isOutLine: false,
+//                            onButtonClick: handlePrimaryAction,
+//                            width: sheetType.btnWidth,
+//                            height: sheetType.btnHeight,
+//                            btnTextColor: .white,
+//                            btnColor: sheetType.sheetThemeColor
+//                        )
+//                    }
+//                    
+//                    if sheetType.secondaryBtnText != "" {
+//                        PrimaryButton(
+//                            title: sheetType.secondaryBtnText,
+//                            isOutLine: false,
+//                            onButtonClick: handleSecondaryAction,
+//                            width: sheetType.btnWidth,
+//                            height: sheetType.btnHeight,
+//                            btnTextColor: .white,
+//                            btnColor: sheetType.sheetThemeColor
+//                        )
+//                    }
+//                }
+//                .padding(.bottom, 22)
+//            }
+//        }
+//        .padding(.horizontal, 20)
+//        .frame(maxWidth: .infinity, alignment: .center)
+//    }
+//    
+//    // MARK: - Actions
+//    private func handlePrimaryAction() {
+//        if sheetType.message.contains("token") {
+//            appRootManager.currentRoot = .authentication
+//        } else {
+//            onPrimaryClick?()
+//        }
+//    }
+//    
+//    private func handleSecondaryAction() {
+//        if sheetType.message.contains("token") {
+//            appRootManager.currentRoot = .authentication
+//        } else {
+//            onSecondaryClick?()
+//        }
+//    }
+//}
+
 struct CommonBottomSheet: View {
     
     @EnvironmentObject private var appRootManager: AppRootManager
-    
     @Binding var sheetType: BottomSheetType
-
-    // MARK: - CallBack Functions
+    
     var onPrimaryClick: (() -> Void)?
     var onSecondaryClick: (() -> Void)?
     
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 8) {
             
-            // MARK: - Icon
-            Image(sheetType.icon)
-                .renderingMode(.template)
-                .resizable()
-                .frame(width: 42, height: 42)
-                .padding(10)
-                .background(Color(sheetType.sheetThemeColor))
-                .foregroundColor(.white)
-                .clipShape(Circle())
-                .padding(.top, 10)
+            // MARK: - Icon (Improved but same size)
+            ZStack {
+                Circle()
+                    .fill(Color(sheetType.sheetThemeColor).opacity(0.12))
+                    .frame(width: 70, height: 70)
+                    .blur(radius: 4)
+                
+                Circle()
+                    .fill(Color(sheetType.sheetThemeColor))
+                    .frame(width: 58, height: 58)
+                    .shadow(color: .black.opacity(0.15), radius: 6, x: 0, y: 3)
+                
+                Image(sheetType.icon)
+                    .renderingMode(.template)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 30, height: 30)
+                    .foregroundColor(.white)
+                    .transition(.opacity)
+            }
+            .padding(.top, 8)
             
             // MARK: - Title
             Text(sheetType.title)
                 .font(.custom(poppinsBold, size: 22))
                 .foregroundColor(.black)
                 .multilineTextAlignment(.center)
-                .padding(.horizontal, 25)
+                .padding(.horizontal, 22)
             
-            // MARK: - Message (multi-line friendly)
+            // MARK: - Message
             Text(sheetType.message)
                 .font(.custom(poppinsMedium, size: sheetType.contentSize))
-                .foregroundColor(.black)
+                .foregroundColor(.black.opacity(0.85))
                 .multilineTextAlignment(.center)
-                .padding(.horizontal, 30)
+                .padding(.horizontal, 28)
                 .fixedSize(horizontal: false, vertical: true)
             
-            Spacer(minLength: 20)
+            Spacer(minLength: 16)
             
-            // MARK: - Buttons Layout
+            // MARK: - Buttons (same structure, just improved aesthetics)
             if sheetType.isBtnVertical {
-                VStack(spacing: 10) {   // Reduced spacing for compact look
+                
+                VStack(spacing: 5) {
                     
                     if sheetType.primaryBtnText != "" {
                         PrimaryButton(
@@ -147,6 +280,8 @@ struct CommonBottomSheet: View {
                             btnTextColor: .white,
                             btnColor: sheetType.sheetThemeColor
                         )
+                        .shadow(color: .black.opacity(0.12), radius: 4, x: 0, y: 2)
+                        .animation(.easeInOut(duration: 0.15), value: sheetType.primaryBtnText)
                     }
                     
                     if sheetType.secondaryBtnText != "" {
@@ -156,48 +291,61 @@ struct CommonBottomSheet: View {
                             onButtonClick: handleSecondaryAction,
                             width: sheetType.btnWidth,
                             height: sheetType.btnHeight,
+//                            btnTextColor: sheetType.sheetThemeColor,
+//                            btnColor: Color.gray.opacity(0.12)
                             btnTextColor: .white,
                             btnColor: sheetType.sheetThemeColor
+                        )
+                    }
+                }
+                .padding(.bottom, 18)
+                
+            } else {
+                HStack(spacing: 12) {
+                    
+                    if sheetType.primaryBtnText != "" {
+                        PrimaryButton(
+                            title: sheetType.primaryBtnText,
+                            isOutLine: false,
+                            onButtonClick: handlePrimaryAction,
+                            width: sheetType.btnWidth,
+                            height: sheetType.btnHeight,
+                            btnTextColor: .white,
+                            btnColor: sheetType.sheetThemeColor
+                        )
+                        .shadow(color: .black.opacity(0.12), radius: 4, x: 0, y: 2)
+                    }
+                    
+                    if sheetType.secondaryBtnText != "" {
+                        PrimaryButton(
+                            title: sheetType.secondaryBtnText,
+                            isOutLine: false,
+                            onButtonClick: handleSecondaryAction,
+                            width: sheetType.btnWidth,
+                            height: sheetType.btnHeight,
+//                            btnTextColor: sheetType.sheetThemeColor,
+//                            btnColor: Color.gray.opacity(0.12)
+                            btnTextColor: .white,
+                            btnColor: sheetType.sheetThemeColor
+                            
                         )
                     }
                 }
                 .padding(.bottom, 20)
-                
-            } else {
-                HStack(spacing: 12) {  // Good spacing between horizontal buttons
-                    
-                    if sheetType.primaryBtnText != "" {
-                        PrimaryButton(
-                            title: sheetType.primaryBtnText,
-                            isOutLine: false,
-                            onButtonClick: handlePrimaryAction,
-                            width: sheetType.btnWidth,
-                            height: sheetType.btnHeight,
-                            btnTextColor: .white,
-                            btnColor: sheetType.sheetThemeColor
-                        )
-                    }
-                    
-                    if sheetType.secondaryBtnText != "" {
-                        PrimaryButton(
-                            title: sheetType.secondaryBtnText,
-                            isOutLine: false,
-                            onButtonClick: handleSecondaryAction,
-                            width: sheetType.btnWidth,
-                            height: sheetType.btnHeight,
-                            btnTextColor: .white,
-                            btnColor: sheetType.sheetThemeColor
-                        )
-                    }
-                }
-                .padding(.bottom, 22)
             }
         }
         .padding(.horizontal, 20)
-        .frame(maxWidth: .infinity, alignment: .center)
+        .padding(.top, 10)
+        .frame(maxWidth: .infinity)
+//        .background(
+//            Color.white
+//                .cornerRadius(25)
+//                .shadow(color: .black.opacity(0.12), radius: 10, x: 0, y: -4)
+//                .transition(.move(edge: .bottom).combined(with: .opacity))
+//        )
     }
     
-    // MARK: - Actions
+    // MARK: - BUTTON ACTION HANDLERS
     private func handlePrimaryAction() {
         if sheetType.message.contains("token") {
             appRootManager.currentRoot = .authentication
@@ -205,7 +353,7 @@ struct CommonBottomSheet: View {
             onPrimaryClick?()
         }
     }
-    
+
     private func handleSecondaryAction() {
         if sheetType.message.contains("token") {
             appRootManager.currentRoot = .authentication
@@ -214,6 +362,152 @@ struct CommonBottomSheet: View {
         }
     }
 }
+
+//struct CommonBottomSheet: View {
+//    @EnvironmentObject private var appRootManager: AppRootManager
+//    @Binding var sheetType: BottomSheetType
+//    var onPrimaryClick: (() -> Void)?
+//    var onSecondaryClick: (() -> Void)?
+//    @State private var appear = false
+//
+//    private var isDestructive: Bool {
+//        sheetType.title.lowercased().contains("block") ||
+//        sheetType.primaryBtnText.lowercased().contains("block")
+//    }
+//
+//    var body: some View {
+//        VStack(spacing: 0) {
+//            Capsule()
+//                .fill(Color(.systemGray5))
+//                .frame(width: 36, height: 5)
+//                .padding(.top, 8)
+//                .padding(.bottom, 6)
+//
+//            VStack(spacing: 14) {
+//                ZStack {
+//                    Circle()
+//                        .fill(isDestructive ? ColorResource.danger : ColorResource.defaultTheme)
+//                        .frame(width: 72, height: 72)
+//                    Circle()
+//                        .fill(isDestructive ?  ColorResource.danger : sheetType.sheetThemeColor)
+//                        .frame(width: 56, height: 56)
+//                        .shadow(color: Color.black.opacity(0.14), radius: 8, x: 0, y: 4)
+//                    Image(sheetType.icon)
+//                        .renderingMode(.template)
+//                        .resizable()
+//                        .scaledToFit()
+//                        .frame(width: 28, height: 28)
+//                        .foregroundStyle(.white)
+//                }
+//                .padding(.top, 6)
+//
+//                Text(sheetType.title)
+//                    .font(.custom(poppinsBold, size: 20))
+//                    .foregroundColor(.primary)
+//                    .multilineTextAlignment(.center)
+//                    .padding(.horizontal, 22)
+//
+//                Text(sheetType.message)
+//                    .font(.custom(poppinsMedium, size: sheetType.contentSize))
+//                    .foregroundColor(.secondary)
+//                    .multilineTextAlignment(.center)
+//                    .padding(.horizontal, 26)
+//                    .fixedSize(horizontal: false, vertical: true)
+//
+//                if sheetType.isBtnVertical {
+//                    VStack(spacing: 12) {
+//                        if sheetType.primaryBtnText != "" {
+//                            PrimaryButton(
+//                                title: sheetType.primaryBtnText,
+//                                isOutLine: false,
+//                                onButtonClick: { handlePrimaryAction() },
+//                                width: sheetType.btnWidth,
+//                                height: sheetType.btnHeight,
+//                                btnTextColor: .white,
+//                                btnColor: isDestructive ? ColorResource.danger : sheetType.sheetThemeColor
+//                            )
+//                            .shadow(color: (isDestructive ? Color.red.opacity(0.16) : Color.black.opacity(0.12)), radius: 8, x: 0, y: 4)
+//                        }
+//
+//                        if sheetType.secondaryBtnText != "" {
+//                            PrimaryButton(
+//                                title: sheetType.secondaryBtnText,
+//                                isOutLine: true,
+//                                onButtonClick: { handleSecondaryAction() },
+//                                width: sheetType.btnWidth,
+//                                height: sheetType.btnHeight,
+//                                btnTextColor: .primary,
+//                                btnColor: ColorResource.mediumLightGray
+//                            )
+//                        }
+//                    }
+//                    .padding(.horizontal, 10)
+//                    .padding(.vertical, 6)
+//                } else {
+//                    HStack(spacing: 12) {
+//                        if sheetType.secondaryBtnText != "" {
+//                            PrimaryButton(
+//                                title: sheetType.secondaryBtnText,
+//                                isOutLine: true,
+//                                onButtonClick: { handleSecondaryAction() },
+//                                width: (sheetType.btnWidth - 12) / 2,
+//                                height: sheetType.btnHeight,
+//                                btnTextColor: .primary,
+//                                btnColor: Color(UIColor.systemGray5)
+//                            )
+//                        }
+//
+//                        if sheetType.primaryBtnText != "" {
+//                            PrimaryButton(
+//                                title: sheetType.primaryBtnText,
+//                                isOutLine: false,
+//                                onButtonClick: { handlePrimaryAction() },
+//                                width: (sheetType.btnWidth - 12) / 2,
+//                                height: sheetType.btnHeight,
+//                                btnTextColor: .white,
+//                                btnColor: isDestructive ? ColorResource.danger : sheetType.sheetThemeColor
+//                            )
+//                            .shadow(color: (isDestructive ? Color.red.opacity(0.16) : Color.black.opacity(0.12)), radius: 8, x: 0, y: 4)
+//                        }
+//                    }
+//                    .padding(.horizontal, 14)
+//                    .padding(.vertical, 8)
+//                }
+//            }
+//            .padding(.horizontal, 18)
+//            .padding(.bottom, 12)
+//            .background(
+//                RoundedRectangle(cornerRadius: 16, style: .continuous)
+//                    .fill(Color(UIColor.systemBackground))
+//            )
+//            .padding(.horizontal, 16)
+//            .shadow(color: Color.black.opacity(0.12), radius: 20, x: 0, y: 8)
+//            .opacity(appear ? 1 : 0)
+//            .scaleEffect(appear ? 1 : 0.995)
+//            .animation(.spring(response: 0.36, dampingFraction: 0.78, blendDuration: 0), value: appear)
+//            .onAppear { withAnimation { appear = true } }
+//            .onDisappear { withAnimation { appear = false } }
+//        }
+//        .frame(maxWidth: .infinity)
+//    }
+//
+//    private func handlePrimaryAction() {
+//        if sheetType.message.contains("token") {
+//            appRootManager.currentRoot = .authentication
+//        } else {
+//            onPrimaryClick?()
+//        }
+//    }
+//
+//    private func handleSecondaryAction() {
+//        if sheetType.message.contains("token") {
+//            appRootManager.currentRoot = .authentication
+//        } else {
+//            onSecondaryClick?()
+//        }
+//    }
+//}
+
 
 
 //#Preview {
@@ -271,80 +565,3 @@ struct HeightPreferenceKey: PreferenceKey {
     }
 }
 
-
-struct CommonBottomSheet1: View {
-
-    @EnvironmentObject private var appRootManager: AppRootManager
-    @Binding var sheetType: BottomSheetType
-
-    var onPrimaryClick: (() -> Void)?
-    var onSecondaryClick: (() -> Void)?
-
-    @Binding var measuredHeight: CGFloat     // <-- NEW
-
-    var body: some View {
-        VStack(spacing: 14) {
-
-            Image(sheetType.icon)
-                .renderingMode(.template)
-                .resizable()
-                .frame(width: 40, height: 40)
-                .padding(6)
-                .background(Color(sheetType.sheetThemeColor))
-                .foregroundStyle(.white)
-                .clipShape(Circle())
-
-            Text(sheetType.title)
-                .font(.custom(poppinsBold, fixedSize: 24))
-                .foregroundStyle(.black)
-                .multilineTextAlignment(.center)
-                .fixedSize(horizontal: false, vertical: true)
-
-            Text(sheetType.message)
-                .font(.custom(poppinsMedium, fixedSize: sheetType.contentSize))
-                .foregroundStyle(.black)
-                .padding(.horizontal, 45)
-                .multilineTextAlignment(.center)
-                .fixedSize(horizontal: false, vertical: true)
-
-            if sheetType.isBtnVertical {
-                verticalButtons
-            } else {
-                horizontalButtons
-            }
-
-        }
-        .background(
-            GeometryReader { geo in
-                Color.clear
-                    .preference(key: HeightPreferenceKey.self,
-                                value: geo.size.height)
-            }
-        )
-        .onPreferenceChange(HeightPreferenceKey.self) { newHeight in
-            measuredHeight = newHeight + 40   // padding safety
-        }
-    }
-
-    private var verticalButtons: some View {
-        VStack(spacing: 15) {
-            if sheetType.primaryBtnText != "" {
-                PrimaryButton(title: sheetType.primaryBtnText) { onPrimaryClick?() }
-            }
-            if sheetType.secondaryBtnText != "" {
-                PrimaryButton(title: sheetType.secondaryBtnText) { onSecondaryClick?() }
-            }
-        }.padding(.top, 10)
-    }
-
-    private var horizontalButtons: some View {
-        HStack {
-            if sheetType.primaryBtnText != "" {
-                PrimaryButton(title: sheetType.primaryBtnText) { onPrimaryClick?() }
-            }
-            if sheetType.secondaryBtnText != "" {
-                PrimaryButton(title: sheetType.secondaryBtnText) { onSecondaryClick?() }
-            }
-        }.padding(.top, 10)
-    }
-}

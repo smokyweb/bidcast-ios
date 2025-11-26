@@ -746,7 +746,7 @@ struct LiveStreamV1: View {
                         onClose: {
                             showSheet = false
                         },
-                        onSendTip: { _, _ in
+                        onSendTip: {
                             print("Sent tip")
                         }
                     )

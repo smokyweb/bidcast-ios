@@ -7,21 +7,6 @@
 
 import SwiftUI
 
-//var id, userID, categoryID, subCategoryID: Int?
-//var title: String?
-//var variant: String? //toDo: not clear about its type
-//var width, length, weight, height: Double?
-//var mailClass, processingCategory: String?
-//var description, quantity, purchasedQuantity, pricing: String?
-//var flashSale, acceptOffers, reserveForLive: Bool?
-//var shippingProfileID: Int?
-//var status, productShow: String?
-//var images: [String]?
-//var thumbnail: [String]?
-//var createdAt: String?
-//var offer: Offer?
-//var user: SellerUser?
-//var shippingAdress: ShippingAdress?
 struct ProductDetailView: View {
     
     @StateObject var viewModel = ProductDetailsViewModel()
@@ -63,7 +48,7 @@ struct ProductDetailView: View {
     @State  var shippingCharges : Int = 0
     @State  var taxAmount : Int = 0
     
-    var sellerInfo: SellerInfoResponse?        // ✅ Entire API response
+    @Binding var sellerInfo: SellerInfoResponse?
     
     var body: some View {
         
@@ -78,6 +63,7 @@ struct ProductDetailView: View {
                         Image(systemName: "xmark")
                             .font(.custom("Poppins-SemiBold", size: 14))
                             .foregroundColor(.gray)
+                            .frame(width: 22, height: 22)
                     }
                     .padding(12)
                 }
@@ -91,11 +77,39 @@ struct ProductDetailView: View {
                     // MARK: - Save / Share Buttons
                     saveShareSection
                     
-                    // MARK: - Seller Stats Section (Screenshot 2 layout, Screenshot 1 theme)
+                    // MARK: - Seller Stats Section
                     sellerStatsSection
                 }
                 .padding(.horizontal, 12)
                 .padding(.top, 6)
+                
+                // MARK: - Send Button
+                Button(action: {
+                   
+                }) {
+                    HStack(spacing: 12) {
+                        Text("Buy Now")
+                            .font(.custom(poppinsBold, size: 17))
+                    }
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 18)
+                    .background(
+                        LinearGradient(
+                            gradient: Gradient(colors: [
+                                Color.blue,
+                                Color.blue.opacity(0.8)
+                            ]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .cornerRadius(16)
+                    .shadow(color: Color.blue.opacity(0.4), radius: 12, x: 0, y: 6)
+                }
+                .padding(.horizontal, 24)
+                .padding(.top, 8)
+                .padding(.bottom, 32)
             }
         }
         .frame(maxWidth: .infinity, alignment: .topLeading)

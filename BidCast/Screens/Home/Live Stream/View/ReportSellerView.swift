@@ -193,6 +193,7 @@ struct ReportSellerView: View {
     
 }
 
+
 extension View {
     func keyboardAwarePadding() -> some View {
         self

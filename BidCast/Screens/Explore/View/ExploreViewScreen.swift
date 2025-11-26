@@ -34,6 +34,7 @@ struct ExploreViewScreen: View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: 12) {
                 SearchBarView(placeholder: "Search") { debouncedText in
+                    if debouncedText == "" { return }
                     self.searchText = debouncedText
                     let selectedCategory = categoryTitles[selectedCategoryIndex]
                     Task { await fetchCategory(for: selectedCategory) }

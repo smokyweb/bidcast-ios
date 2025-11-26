@@ -101,6 +101,7 @@ struct LiveStream: View {
     @State var isFollow = false
     //    @State  var currentRoomID = ""
     @State var showVerificationSheet = false
+    @State var navigateToChat = false
     @State var showPaymentShipping = false
     @State var navigateToAddCardScreen = false
     @State var navigateToShipping : Bool = false
@@ -126,8 +127,11 @@ struct LiveStream: View {
     @State var maxBidUserName: String = "Demo UserName"
     @Binding var agoraToken: String
     
+    @State private var isFollowing: Bool = false
+    
     @State private var sellerInfo: SellerInfoResponse? = nil
     
+    @State private var followSheetTask: Task<Void, Never>? = nil
     
     var currentProduct: ProductData? {
         productData.first { $0.isCurrent }
@@ -174,6 +178,7 @@ struct LiveStream: View {
     }
     
     @State var showSheet: Bool = false
+    @State var showTipSheet: Bool = false
     @State var showSellerProfileSheet: Bool = false
     @State var showFollowSheet: Bool = false
     @State var winnerSheet: Bool = false
@@ -206,11 +211,14 @@ struct LiveStream: View {
     @Binding var search : String
     @Binding var currentPage : Int
     
+    @State private var chatPath: String = ""
+    
     @State var messageHeight: CGFloat = 40   // single message height
     let maxVisibleMessages = 3
     @State var sellerId = ""
     
     @State var showItemDetailSheet = false
+    
     var body: some View {
         GeometryReader { geometry in
             if liveShowsData.count != 0{
@@ -225,7 +233,6 @@ struct LiveStream: View {
                         HStack(spacing: 12) {
                             Button(action:{
                                 id = userId
-                                navigateToProfile = true
                             }){
                                 let data = liveShowsData[currentIndex]
                                 if let sellerInfo = viewModel.sellerInfo.data {
@@ -249,7 +256,7 @@ struct LiveStream: View {
                                                     .font(.system(size: 12))
                                                     .foregroundColor(.white.opacity(0.9))
                                                 
-                                                Text("\(sellerInfo.review ?? "N/A")")
+                                                Text("\(sellerInfo.review ?? "0.0")")
                                                     .font(.custom(poppinsRegular, size: 12.0))
                                                     .foregroundColor(.white.opacity(0.9))
                                             }
@@ -265,7 +272,7 @@ struct LiveStream: View {
                                                     .font(.system(size: 12))
                                                     .foregroundColor(.white.opacity(0.9))
                                                 
-                                                Text("\(sellerInfo.avg_ship ?? "N/A")")
+                                                Text("\(sellerInfo.avg_ship ?? "1d")")
                                                     .font(.custom(poppinsRegular, size: 12.0))
                                                     .foregroundColor(.white.opacity(0.9))
                                             }
@@ -276,7 +283,6 @@ struct LiveStream: View {
                                                 if let sellerId = liveShowsData[currentIndex].seller?.id {
                                                     socketManagerChat.sendFollowUnfollow(followerId: "\(UserDefaults.userId)", followingId:  sellerId)
                                                 }
-                                                showFollowSheet = true
                                             }) {
                                                 Text(sellerInfo.is_following ?? false ? "Following" : "Follow")
                                                     .font(.custom(poppinsSemiBold, size: 12.0))
@@ -810,7 +816,14 @@ struct LiveStream: View {
                                 self.showItemDetailSheet = false
                                 productId = 0
                             },
-                            productID: $productId)
+                            productID: $productId,
+                            sellerInfo: $sellerInfo)
+                )
+                CusNavLink(
+                    doNavigate: $navigateToChat,
+                    destination: ChatScreen(
+                        viewModel: prepareChatData()
+                    )
                 )
             }
             
@@ -876,9 +889,11 @@ struct LiveStream: View {
                 seller: sellerInfo,
                 onFollow: {
                     print("Follow tapped")
+                    showFollowSheet = false
                 },
                 onNotNow: {
                     print("Not now tapped")
+                    showFollowSheet = false
                 },
                 onClose: {
                     showFollowSheet = false
@@ -894,15 +909,21 @@ struct LiveStream: View {
                 sellerInfo: sellerInfo,
                 onTipOrBoost: { print("Tip or Boost")
                     showSellerProfileSheet = false
+                    showTipSheet = true
                 },
                 onViewProfile: { print("View Profile")
                     showSellerProfileSheet = false
+                    navigateToProfile = true
                 },
                 onMessage: { print("Message")
                     showSellerProfileSheet = false
+                    let currentUserId = String(UserDefaults.userId)
+                    let otherUserId =   liveShowsData[currentIndex].seller?.id ?? ""
+                    let sortedRoomId = computeRoomId(senderId: currentUserId, receiverId: otherUserId)
+                    chatPath = "chats/\(sortedRoomId)"
+                    print("Computed Chat Path: \(chatPath)")
+                    navigateToChat = true
                 },
-                onMentionInChat: { print("Mention in Chat")
-                    showSellerProfileSheet = false},
                 onBlock: { print("Block")
                     showSellerProfileSheet = false
                     alertType = .sheetType(
@@ -1031,6 +1052,32 @@ struct LiveStream: View {
                 }
             )
         }
+        
+        .bottomSheet(
+            isPresented: $showTipSheet,
+            height: screenHeight * 0.55,
+            topBarCornerRadius: 20,
+            contentBackgroundColor: Color(.systemBackground),
+            topBarBackgroundColor: Color(.systemBackground),
+            showTopIndicator: false,
+            onDismiss: {
+                showTipSheet = false
+            },
+            content: {
+                if liveShowsData.count > 0 {
+                    SendTipView(
+                        sellerId: liveShowsData[currentIndex].seller?.id ?? "",
+                        onClose: {
+                            showTipSheet = false
+                        },
+                        onSendTip: {
+                            print("Sent tip")
+                            showTipSheet = false
+                        })
+                }
+            }
+        )
+                    
         .sheet(isPresented: $showSystemShareSheet) {
             ShareSheet(items: shareItems)
         }
@@ -1052,7 +1099,7 @@ struct LiveStream: View {
                         onClose: {
                             showSheet = false
                         },
-                        onSendTip: { _, _ in
+                        onSendTip: {
                             print("Sent tip")
                         }
                     )
@@ -1218,16 +1265,25 @@ struct LiveStream: View {
 //                    joinStreamUsingSocket(roomId: roomId)
 //                }
 //            }
-//        }
+        //        }
         .onAppear {
             setupInitialState()
             loadInitialData()
             listenForRaidEvents()
+            followSheetTask = Task {
+                try? await Task.sleep(nanoseconds: 30 * 1_000_000_000)  // 30 sec
+                if !Task.isCancelled {
+                    await MainActor.run {
+                        showFollowSheet = true
+                    }
+                }
+            }
+            getProfileData()
         }
 
-        .onDisappear{
-            logoutRoom()
-        }
+//        .onDisappear{
+//            logoutRoom()
+//        }
     }
     
     private func setupInitialState() {
@@ -2277,6 +2333,85 @@ extension LiveStream {
         } else {
             alertType = .sheetType(icon: .alert, title: response?.status?.capitalized ?? "", message: response?.message?.capitalized ?? "", primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .defaultTheme)
             withAnimation(.snappy) { showErrorPopup = true }
+        }
+    }
+    
+    private func computeRoomId(senderId: String, receiverId: String) -> String {
+        let sortedIds = [senderId, receiverId].sorted()
+        return "\(sortedIds[0])_chats_\(sortedIds[1])"
+    }
+    
+    private func prepareChatData() -> ChatViewModel {
+        let currentUserId = "\(UserDefaults.userId)"
+        let currentUserName = UserDefaults.fullName
+        let currentUserImage = UserDefaults.profileURL
+        let otherUserId =   liveShowsData[currentIndex].seller?.id ?? ""
+        let otherUserName = liveShowsData[currentIndex].seller?.name ?? ""
+        let otherUserImage = liveShowsData[currentIndex].seller?.image ?? ""
+        return ChatViewModel(currentUserId: currentUserId,
+                             currentUserName: currentUserName,
+                             currentUserImage: currentUserImage,
+                             otherUserId: otherUserId,
+                             otherUserName: otherUserName,
+                             otherUserImage: otherUserImage,
+                             chatPath: $chatPath)
+    }
+}
+
+extension LiveStream {
+    
+    private func followUnfollow() {
+        guard let sellerId = liveShowsData[currentIndex].seller?.id, !sellerId.isEmpty else {
+            print("⚠️ Seller ID not available")
+            return
+        }
+        Task{
+            SVProgressHUD.show()
+            guard Reachability.isConnectedToNetwork() else {
+                hudMsg = "No Internet Connection"
+                showHud = true
+                return
+            }
+            await self.profileViewModel.followUnfollow(parameters: FollowRequest(following_id: sellerId))
+            await SVProgressHUD.dismiss()
+            profileSuccess()
+        }
+    }
+    
+    private func getProfileData() {
+        guard let sellerId = liveShowsData[currentIndex].seller?.id, !sellerId.isEmpty else {
+            print("⚠️ Seller ID not available")
+            return
+        }
+        Task{
+            SVProgressHUD.show()
+            guard Reachability.isConnectedToNetwork() else {
+                hudMsg = "No Internet Connection"
+                showHud = true
+                return
+            }
+            await profileViewModel.getProfile(param: ProfileParamRequest(id: sellerId))
+            await SVProgressHUD.dismiss()
+            profileSuccess()
+        }
+    }
+    
+    func profileSuccess() {
+        SVProgressHUD.dismiss()
+        let response = profileViewModel.getProfileDict
+        if response.status == "success" {
+            if let data = response.data {
+                isFollowing = data.is_following ?? false
+            }
+        } else {
+            showError = true
+            alertType = .sheetType(
+                icon: .alert,
+                title: "Error",
+                message: profileViewModel.errorMessage ?? "",
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
+            )
         }
     }
 }

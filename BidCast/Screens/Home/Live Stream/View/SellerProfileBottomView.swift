@@ -13,7 +13,6 @@ struct SellerProfileBottomSheet: View {
     var onTipOrBoost: () -> Void
     var onViewProfile: () -> Void
     var onMessage: () -> Void
-    var onMentionInChat: () -> Void
     var onBlock: () -> Void
     var onReport: (Int?) -> Void
     var onFollow: () -> Void
@@ -98,7 +97,6 @@ struct SellerProfileBottomSheet: View {
                     ActionButton(icon: "giftcard.fill", title: "Tip or Boost", action: onTipOrBoost)
                     ActionButton(icon: "person.circle", title: "View Profile", action: onViewProfile)
                     ActionButton(icon: "message", title: "Message", action: onMessage)
-                    ActionButton(icon: "text.bubble", title: "Mention in Chat", action: onMentionInChat)
                     ActionButton(icon: "nosign", title: "Block", titleColor: .red, action: onBlock)
                     ActionButton(icon: "exclamationmark.triangle",
                                  title: "Report",

@@ -196,14 +196,17 @@ struct ProductShopListScreen: View {
      @State private var showSortSheet = false
      @State private var selectedSort: String = "newest"
     
-    @State var viewModel = ScheduleViewModel()
+    @State private var selectedOptions: String = ""
+    
+    @State private var viewModel = ScheduleViewModel()
+    @State private var totalCount = 0
     
     @State var productData: [ProductDataModel] = []
 //    @State var categoryId: String = "-1"
     @State var sellerId: String = "-1"
     @State var currentPage: Int = 1
     
-    var options:[String] = ["Sort", "Auction", "Buy Now", "Giveaway", "Sold"]
+    var options:[String] = ["Sort", "Auction", "Buy Now"]
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -211,7 +214,10 @@ struct ProductShopListScreen: View {
             // MARK: - Search Bar + Close Button
             HStack {
                 SearchBarView(placeholder: "Search shop...") { text in
+                    if text == "" { return }
+                    resetData()
                     self.searchText = text
+                    fetchProduct()
                 }
                 .padding(.leading, 12)
                 
@@ -237,6 +243,17 @@ struct ProductShopListScreen: View {
                     // Show sort sheet when "Sort" is tapped
                     if index == 0 {
                         showSortSheet = true
+                        selectedOptions = ""
+                    }
+                    else if index == 1 {
+                        resetData()
+                        selectedOptions = "auction"
+                        fetchProduct()
+                    }
+                    else if index == 2 {
+                        resetData()
+                        selectedOptions = "accept_offers"
+                        fetchProduct()
                     }
                 }
             )
@@ -279,7 +296,9 @@ struct ProductShopListScreen: View {
         .frame(maxHeight: .infinity, alignment: .top)
         .background(Color(.systemBackground))
         .onAppear {
-             fetchProduct()
+            DispatchQueue.main.async {
+                fetchProduct()
+            }
         }
         .onDisappear {
             resetData()
@@ -314,84 +333,90 @@ extension ProductShopListScreen {
     private func resetData() {
         productData = []
         currentPage = 1
-        searchText = ""
         canLoadMore = true
         isFetchingMore = false
     }
+
     
-    func fetchProduct() {
+    func fetchProduct(isLoaderShown: Bool = true) {
         guard sellerId != "-1" else  {
             print("Category id and user id is not present")
+            isFetchingMore = false
             return
         }
         Task{
            guard Reachability.isConnectedToNetwork() else {
                 hudMsg = "No Internet Connection"
                 showhud = true
+               isFetchingMore = false
                 return
-            }
-            SVProgressHUD.show()
+           }
+            if isLoaderShown { SVProgressHUD.show() }
             let request = UserProductRequest(user_id: sellerId,
-                               page: currentPage,
-//                               type: "live",
-//                               sale_type: "auction"
-                                sort_by: selectedSort
+                                             page: currentPage,
+                                             //                               type: "live",
+                                             sale_type: selectedOptions,
+                                             sort_by: selectedSort,
+                                             search: searchText
             )
             
             await viewModel.getProductList(parameters: request)
-            await SVProgressHUD.dismiss()
+            if isLoaderShown { await SVProgressHUD.dismiss() }
             productSuccess()
         }
     }
     
     func handlePagination(index: Int) {
-        let thresholdIndex = productData.count - 2   // prefetch early
-        
-        if index == thresholdIndex && canLoadMore && !isFetchingMore {
-            fetchMoreProduct()
+        guard canLoadMore, !isFetchingMore else { return }
+        guard totalCount > (index + 1) else { return }
+        let thresholdIndex = productData.count - 1
+        if index == thresholdIndex {
+            isFetchingMore = true
+            currentPage += 1
+            fetchProduct(isLoaderShown: false)
         }
     }
 
-    func fetchMoreProduct() {
-        guard !isFetchingMore, canLoadMore else { return }
+//    func fetchMoreProduct() {
+//        guard !isFetchingMore, canLoadMore else { return }
+//
+//        isFetchingMore = true
+//        currentPage += 1
+//
+//        Task { @MainActor in
+//            guard Reachability.isConnectedToNetwork() else {
+//                isFetchingMore = false
+//                return
+//            }
+//
+//            let request = UserProductRequest(
+//                user_id: sellerId,
+//                page: currentPage,
+//                sort_by: selectedSort
+//            )
+//
+//            await viewModel.getProductList(parameters: request)
+//            appendMore()
+//        }
+//    }
 
-        isFetchingMore = true
-        currentPage += 1
-
-        Task { @MainActor in
-            guard Reachability.isConnectedToNetwork() else {
-                isFetchingMore = false
-                return
-            }
-
-            let request = UserProductRequest(
-                user_id: sellerId,
-                page: currentPage,
-                sort_by: selectedSort
-            )
-
-            await viewModel.getProductList(parameters: request)
-            appendMore()
-        }
-    }
-
-    func appendMore() {
-        guard let response = viewModel.productResponse else { return }
-
-        if response.status == "success" {
-            let newItems = response.data ?? []
-
-            if newItems.isEmpty {
-                canLoadMore = false
-            } else {
-                productData.append(contentsOf: newItems)
-            }
-        } else {
-            canLoadMore = false
-        }
-
-        isFetchingMore = false
-    }
+//    func appendMore() {
+//        guard let response = viewModel.productResponse else { return }
+//
+//        if response.status == "success" {
+//            let newItems = response.data ?? []
+//
+//            if newItems.isEmpty {
+//                canLoadMore = false
+//            } else {
+//                productData.append(contentsOf: newItems)
+//            }
+//        } else {
+//            canLoadMore = false
+//        }
+//
+//        isFetchingMore = false
+//    }
 
 
 
@@ -400,9 +425,16 @@ extension ProductShopListScreen {
     func productSuccess(){
         let response = viewModel.productResponse
         if response?.status == "success"{
-            productData = response?.data ?? [ProductDataModel]()
+            let newItems = response?.data ?? []
+            totalCount = response?.total ?? 0
+            if newItems.isEmpty {
+                canLoadMore = false
+            } else {
+                productData.append(contentsOf: newItems)
+            }
         
         }else{
+            canLoadMore = false
             alertType = .sheetType(
                 icon: .alert,
                 title: "Error",
@@ -412,5 +444,6 @@ extension ProductShopListScreen {
             )
             showError = true
         }
+        isFetchingMore = false
     }
 }
