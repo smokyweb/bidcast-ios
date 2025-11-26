@@ -182,7 +182,7 @@ struct NotificationScreen: View {
             notiListArr.append(contentsOf: response?.data ?? [])
         } else {
             alertType = .sheetType(
-                icon: .success,
+                icon: .alert,
                 title: "Error",
                 message: viewModel.errorMessage ?? "",
                 primaryBtnText: AppString.ok.localized,
@@ -207,7 +207,7 @@ struct NotificationScreen: View {
             }
         } else {
             alertType = .sheetType(
-                icon: .success,
+                icon: .alert,
                 title: "Error",
                 message: viewModel.errorMessage ?? "",
                 primaryBtnText: AppString.ok.localized,

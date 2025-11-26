@@ -39,7 +39,7 @@ struct ProductDataModel: Codable {
     var id, userID, category_id: Int?
     var subCategoryID: Int?
     var title: String?
-    var variant: [Variant]?
+    var variant: String?
     var width, length: Double?
     var weight, height: Double?
     var mailClass, processingCategory: String?

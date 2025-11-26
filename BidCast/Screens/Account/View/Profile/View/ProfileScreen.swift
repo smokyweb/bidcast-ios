@@ -130,7 +130,7 @@ struct ProfileScreen: View {
                                             return
                                         }
                                         SVProgressHUD.show()
-                                        await self.viewModel.productDetails(parameters: UserProductRequest(user_id: Int(id) ?? 0,page : currentPage))
+                                        await self.viewModel.productDetails(parameters: UserProductRequest(user_id: id,page : currentPage))
                                         await SVProgressHUD.dismiss()
                                         success()
                             
@@ -297,7 +297,7 @@ struct ProfileScreen: View {
                                 return
                             }
                             SVProgressHUD.show()
-                            await self.viewModel.productDetails(parameters: UserProductRequest(user_id: Int(id) ?? 0,page : currentPage))
+                            await self.viewModel.productDetails(parameters: UserProductRequest(user_id: id,page : currentPage))
                             await SVProgressHUD.dismiss()
                             success()
                         }
@@ -347,7 +347,7 @@ struct ProfileScreen: View {
                         return
                     }
                     SVProgressHUD.show()
-                    await self.viewModel.productDetails(parameters: UserProductRequest(user_id: Int(id) ?? 0, page: currentPage))
+                    await self.viewModel.productDetails(parameters: UserProductRequest(user_id: id, page: currentPage))
                     await SVProgressHUD.dismiss()
                     success()
                 }
@@ -412,7 +412,7 @@ struct ProfileScreen: View {
             
             if isLast && productArr.count < total {
                 SVProgressHUD.show()
-                await viewModel.productDetails(parameters: UserProductRequest(user_id: Int(id) ?? 0, page: nextPage))
+                await viewModel.productDetails(parameters: UserProductRequest(user_id: id, page: nextPage))
                 await SVProgressHUD.dismiss()
                 if viewModel.productDetailsResponseDict?.status == "success" {
                     currentPage = nextPage

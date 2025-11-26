@@ -19,16 +19,11 @@ struct SellerProfileBottomSheet: View {
     var onReport: () -> Void
     var onFollow: () -> Void
     
+    @State private var showReportSheet: Bool = false
+    
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 0) {
-                
-                // MARK: - Handle Bar
-                RoundedRectangle(cornerRadius: 3)
-                    .fill(Color.gray.opacity(0.3))
-                    .frame(width: 40, height: 5)
-                    .padding(.top, 12)
-                    .padding(.bottom, 20)
                 
                 // MARK: - Header
                 HStack(spacing: 16) {
@@ -108,13 +103,31 @@ struct SellerProfileBottomSheet: View {
                     ActionButton(icon: "message", title: "Message", action: onMessage)
                     ActionButton(icon: "text.bubble", title: "Mention in Chat", action: onMentionInChat)
                     ActionButton(icon: "nosign", title: "Block", titleColor: .red, action: onBlock)
-                    ActionButton(icon: "exclamationmark.triangle", title: "Report", titleColor: .red, action: onReport, showDivider: false)
+                    ActionButton(icon: "exclamationmark.triangle",
+                                 title: "Report",
+                                 titleColor: .red,
+                                 action: {
+                        print("Report")
+                        showReportSheet = true
+                    }
+                                    , showDivider: false)
                 }
                 .padding(.horizontal, 20)
                 .padding(.bottom, 30)
             }
         }
-        .background(Color(.systemBackground))
+        .bottomSheet(isPresented: $showReportSheet,
+                     height: screenHeight * 0.55,
+                     topBarCornerRadius: 0,
+                     contentBackgroundColor: Color(.white),
+                     topBarBackgroundColor: Color(.white),
+                     showTopIndicator: false,
+                     onDismiss: {
+            showReportSheet = false
+        }) {
+            ReportSellerView()
+                .keyboardAwarePadding()
+        }
     }
 }
 

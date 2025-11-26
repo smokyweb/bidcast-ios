@@ -321,20 +321,20 @@ struct LiveStream: View {
                                 Spacer()
                                 HStack(spacing: 5) {
                                     ZStack {
-                                           Circle()
-                                               .fill(Color.red)
-                                               .frame(width: 24, height: 24)
-
-                                           Image(systemName: "waveform")
-                                               .font(.system(size: 16, weight: .bold))
-                                               .foregroundColor(.white)
-                                       }
+                                        Circle()
+                                            .fill(Color.red)
+                                            .frame(width: 24, height: 24)
+                                        
+                                        Image(systemName: "waveform")
+                                            .font(.system(size: 16, weight: .bold))
+                                            .foregroundColor(.white)
+                                    }
                                     
                                     Text("\(socketManagerChat.viewerCount)")
                                         .foregroundColor(.white)
                                         .font(.custom(poppinsSemiBold, size: 16.0))
                                 }
-//                                .padding(.vertical, 4)
+                                //                                .padding(.vertical, 4)
                                 .frame(height: 28)
                                 .padding(.horizontal, 6)
                                 .background(Color.black.opacity(0.35))
@@ -368,17 +368,17 @@ struct LiveStream: View {
                                 HStack{
                                     ScrollViewReader { proxy in
                                         ScrollView(.vertical, showsIndicators: false) {
-
+                                            
                                             VStack {
                                                 Spacer(minLength: 0)  // bottom alignment
-
+                                                
                                                 LazyVStack(alignment: .leading, spacing: 6) {
-
+                                                    
                                                     ForEach(socketManagerChat.chats) { comment in
                                                         let data = liveShowsData[currentIndex]
                                                         let isHost = comment.userId == data.seller?.id ?? ""
                                                         let isMod = !isHost
-
+                                                        
                                                         ChatMessageBubble(comment: comment, isHost: isHost, isMod: isMod)
                                                             .background(
                                                                 GeometryReader { geo in
@@ -399,8 +399,8 @@ struct LiveStream: View {
                                         }
                                         .frame(width:screenWidth - 54
                                                , height: socketManagerChat.chats.count == 0
-                                                ? 0
-                                                : min(CGFloat(socketManagerChat.chats.count), CGFloat(maxVisibleMessages)) * messageHeight
+                                               ? 0
+                                               : min(CGFloat(socketManagerChat.chats.count), CGFloat(maxVisibleMessages)) * messageHeight
                                         )
                                         .animation(.easeOut(duration: 0.2), value: socketManagerChat.chats.count)
                                         .onChange(of: socketManagerChat.chats) { _ in
@@ -411,7 +411,7 @@ struct LiveStream: View {
                                             }
                                         }
                                     }
-
+                                    
                                 }
                                 
                             }
@@ -511,12 +511,12 @@ struct LiveStream: View {
                                         // Max Button
                                         Text("Custom")
                                             .font(.custom(poppinsBold, size: 13))
-                                                .foregroundColor(.white)
-                                                .frame(width: 80, height: 42)
-                                                .background(
-                                                    Capsule()
-                                                        .stroke(Color.white.opacity(0.5), lineWidth: 1)
-                                                )
+                                            .foregroundColor(.white)
+                                            .frame(width: 80, height: 42)
+                                            .background(
+                                                Capsule()
+                                                    .stroke(Color.white.opacity(0.5), lineWidth: 1)
+                                            )
                                             .onTapGesture {
                                                 if UserDefaults.allowBidForAllUser{
                                                     self.maxBidAmountSheet = true
@@ -531,24 +531,24 @@ struct LiveStream: View {
                                         
                                         // Swipe to Bid Section
                                         ZStack(alignment: .leading) {
-
+                                            
                                             // Background Capsule (Yellow fill)
-//                                            Capsule()
-//                                                .frame(height: 45)
-
+                                            //                                            Capsule()
+                                            //                                                .frame(height: 45)
+                                            
                                             // Inner Outline
-//                                            Capsule()
-////                                                .fill(Color(hex: "F4D447") ?? Color.darkYellow)
-//                                                .frame(height: 45)
+                                            //                                            Capsule()
+                                            ////                                                .fill(Color(hex: "F4D447") ?? Color.darkYellow)
+                                            //                                                .frame(height: 45)
                                             Capsule()
                                                 .stroke(.defaultTheme , lineWidth: 1)
                                                 .frame(height: 42)
-
+                                            
                                             // Center Text + Arrows
                                             let nextBid = nextBidAmount(for: currentPrice)
-
                                             
-
+                                            
+                                            
                                             // Draggable Button (Styled)
                                             RoundedRectangle(cornerRadius: 22)
                                                 .fill(.defaultTheme)
@@ -558,7 +558,7 @@ struct LiveStream: View {
                                                         Text("Bid: $\(Int(nextBid))")
                                                             .font(.custom(poppinsSemiBold, size: 14))
                                                             .foregroundColor(.black)
-
+                                                        
                                                         Image(systemName: "chevron.right")
                                                             .font(.system(size: 13, weight: .bold))
                                                             .foregroundColor(.black)
@@ -573,10 +573,10 @@ struct LiveStream: View {
                                                             .offset(x: animate ? 6 : 0)
                                                     }
                                                         .onAppear {
-                                                                   withAnimation(.easeInOut(duration: 0.8).repeatForever(autoreverses: true)) {
-                                                                       animate = true
-                                                                   }
-                                                               }
+                                                            withAnimation(.easeInOut(duration: 0.8).repeatForever(autoreverses: true)) {
+                                                                animate = true
+                                                            }
+                                                        }
                                                 )
                                                 .offset(x: max(4, min(dragOffset.width + 4, screenWidth * 0.3)))
                                                 .gesture(
@@ -588,10 +588,10 @@ struct LiveStream: View {
                                                         }
                                                         .onEnded { value in
                                                             if value.translation.width > totalSwipeWidth * 0.25 {
-
+                                                                
                                                                 // Trigger Bid
                                                                 dragOffset = .zero
-
+                                                                
                                                                 if UserDefaults.allowBidForAllUser {
                                                                     swipeConfirmed = true
                                                                     incrementPrice()
@@ -613,7 +613,7 @@ struct LiveStream: View {
                                         }
                                         .frame(height: 45)
                                         .frame(maxWidth: .infinity)
-                                  
+                                        
                                     }
                                     
                                     .padding(.horizontal)
@@ -650,10 +650,10 @@ struct LiveStream: View {
                                     currentBottomSheet = action
                                     showSheet = true
                                 }
-//                                else if action == .cart {
-//                                    currentBottomSheet = action
-//                                    showSheet = true
-//                                }
+                                //                                else if action == .cart {
+                                //                                    currentBottomSheet = action
+                                //                                    showSheet = true
+                                //                                }
                                 else if action == .share {
                                     shareItems = ["Live auction starting in 5 minutes! Don’t miss out on exclusive items.", URL(string: "https://www.backend.bidcast.betaplanets.com/live-show?roomid=\(currentRoomID)")!]
                                     print(shareItems)
@@ -698,11 +698,11 @@ struct LiveStream: View {
                                let img = product.image {
                                 StackedImageView(imageURL: img, totalCount: productData.count) {
                                     print("productStackTapped")
-                                    if pipManager.isPiPActive {
-                                        pipManager.stopPiP()
-                                    } else {
-                                        pipManager.startPiP()
-                                    }
+//                                    if pipManager.isPiPActive {
+//                                        pipManager.stopPiP()
+//                                    } else {
+//                                        pipManager.startPiP()
+//                                    }
                                     navigateToProductList = true
                                 }
                             }
@@ -789,21 +789,21 @@ struct LiveStream: View {
                 CusNavLink(doNavigate: $navigateToBuyer, destination: TrustedBuyerScreen(comeFromHome:$comeFromHome))
                 
                 CusNavLink(doNavigate: $navigateToAddCardScreen, destination: PaymentAndShipping_Screen())
-                CusNavLink(doNavigate: $navigateToProductList, destination: ProductShopListScreen(productData: $productData))
+                CusNavLink(doNavigate: $navigateToProductList,
+                           destination: ProductShopListScreen(sellerId: liveShowsData[currentIndex].seller?.id ?? "")
+                )
                 
                 CusNavLink(doNavigate: $navigateToShipping, destination: PaymentAndShipping_Screen())
                 CusNavLink(doNavigate: $navigateToEditPayment, destination: PaymentAndShipping_Screen())
                 CusNavLink(doNavigate: $navigateToEditAddress, destination: PaymentAndShipping_Screen())
                 CusNavLink(doNavigate: $showItemDetailSheet,
-                           destination: ProductDetailSheet(
+                           destination: ProductDetailView(
                             onDismiss : {
                                 self.showItemDetailSheet = false
                                 productId = 0
                             },
-                            productID: $productId,
-                            showoption: false,
-                            showButton: false
-                           ))
+                            productID: $productId)
+                )
             }
             
         }.gesture(

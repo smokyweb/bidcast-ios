@@ -118,7 +118,7 @@ extension WalletTabView {
         } else {
             
             alertType = .sheetType(
-                icon: .success,
+                icon: .alert,
                 title: "Error",
                 message: kycViewModel.errorMessage ?? "",
                 primaryBtnText: AppString.ok.localized,

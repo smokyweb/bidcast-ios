@@ -522,7 +522,7 @@ struct CreateProductScreen: View {
             self.mailClassList = data.map {$0.label }
         } else {
             alertType = .sheetType(
-                icon: .success,
+                icon: .alert,
                 title: "Error",
                 message: viewModel.errorMessage ?? "",
                 primaryBtnText: AppString.ok.localized,
@@ -540,7 +540,7 @@ struct CreateProductScreen: View {
             self.categoryNames = response?.data.map { $0.name ?? "No Category" } ?? [String]()
         } else {
             alertType = .sheetType(
-                icon: .success,
+                icon: .alert,
                 title: "Error",
                 message: viewModel.errorMessage ?? "",
                 primaryBtnText: AppString.ok.localized,
@@ -600,7 +600,7 @@ struct CreateProductScreen: View {
 //            }
         } else {
             alertType = .sheetType(
-                icon: .success,
+                icon: .alert,
                 title: "Error",
                 message: viewModel.errorMessage ?? "",
                 primaryBtnText: AppString.ok.localized,

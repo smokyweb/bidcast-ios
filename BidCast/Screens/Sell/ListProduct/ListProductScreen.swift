@@ -954,7 +954,7 @@ struct ListProductScreen: View {
                         "accept_offers": request.accept_offers,
                         "reserve_for_live": request.reserve_for_live,
                         "shipping_profile_id": "4",//static for now
-                        
+                        "auction": "true",
                         // ✅ Newly added fields
                         "width": request.width,
                         "length": request.length,

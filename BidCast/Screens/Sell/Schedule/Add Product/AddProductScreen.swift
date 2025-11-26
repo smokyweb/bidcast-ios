@@ -240,7 +240,7 @@ struct AddProductsScreen: View {
         }
         .bottomSheet(
             isPresented: $showError,
-            height: screenHeight * 0.37,
+            height: screenHeight * 0.26,
             topBarCornerRadius: 25,
             showTopIndicator: false,
             onDismiss: {
@@ -249,27 +249,19 @@ struct AddProductsScreen: View {
                 CommonBottomSheet(
                     sheetType: $alertType,
                     onPrimaryClick: {
-                        if viewModel.errorMessage == nil || viewModel.errorMessage == "" {
-                            backToPrepare = false
-                            withAnimation { showError = false }
-                            
-                        }else{
                         withAnimation { showError = false }
-                        
-                    }
-                    
-                }, onSecondaryClick: {
+                    }, onSecondaryClick: {
                     withAnimation { showError = false }
                 })
         })
         
         .bottomSheet(
-            isPresented: $showError,
+            isPresented: $showDeleteProduct,
             height: screenHeight * 0.37,
             topBarCornerRadius: 25,
             showTopIndicator: false,
             onDismiss: {
-                showError = false
+                showDeleteProduct = false
             },  content: {
             CommonBottomSheet(
                 sheetType: $alertType,
@@ -291,25 +283,6 @@ struct AddProductsScreen: View {
                 })
         })
             
-//        .bottomSheet(isPresented: $showError, height: screenHeight/2.8, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: {
-//            showError = false
-//        }, content: {
-//            CommonBottomSheet(
-//                sheetType: $alertType,
-//                onPrimaryClick: {
-//                    if viewModel.errorMessage == nil || viewModel.errorMessage == "" {
-//                        backToPrepare = false
-//                        withAnimation { showError = false }
-//                        
-//                    }else{
-//                        withAnimation { showError = false }
-//                        
-//                    }
-//                    
-//                }, onSecondaryClick: {
-//                    withAnimation { showError = false }
-//                })
-//        })
 //        
         CusNavLink(doNavigate: $navigateToTab, destination: TabbarScreen())
         CusNavLink(doNavigate: $navigateToAddProduct, destination: CreateProductScreen(requests: $request, thumbNail: $thumbNail,backToPrepare: $backToPrepare,fromPrepare: .constant(false)))
@@ -356,7 +329,7 @@ extension AddProductsScreen{
                 return
             }
             SVProgressHUD.show()
-            await viewModel.getProductList(parameters: UserProductRequest(user_id: UserDefaults.userId, category_id: request.category_id, page: page, type: "live"))
+            await viewModel.getProductList(parameters: UserProductRequest(user_id: "\(UserDefaults.userId)", category_id: request.category_id, page: page, type: "live"))
             await SVProgressHUD.dismiss()
             productSuccess()
         }
@@ -371,7 +344,7 @@ extension AddProductsScreen{
                 return
             }
             currentPage += 1
-            await viewModel.getProductList(parameters: UserProductRequest(user_id: UserDefaults.userId, category_id: request.category_id, page: currentPage, type: "live"))
+            await viewModel.getProductList(parameters: UserProductRequest(user_id: "\(UserDefaults.userId)", category_id: request.category_id, page: currentPage, type: "live"))
             productSuccess()
         }
     }
@@ -395,7 +368,7 @@ extension AddProductsScreen{
         
         }else{
             alertType = .sheetType(
-                icon: .success,
+                icon: .alert,
                 title: "Error",
                 message: viewModel.errorMessage ?? "",
                 primaryBtnText: AppString.ok.localized,

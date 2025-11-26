@@ -521,6 +521,8 @@
 		D615BD1F2EBB2A9200EB55C2 /* GetAllStaticAPICall.swift in Sources */ = {isa = PBXBuildFile; fileRef = D615BD1E2EBB2A9200EB55C2 /* GetAllStaticAPICall.swift */; };
 		D6447E982ECC9C4700C77BFC /* PurchasesViewScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6447E972ECC9C4700C77BFC /* PurchasesViewScreen.swift */; };
 		D65B7EE12ED579CB000B52EC /* ProductDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D65B7EE02ED579CB000B52EC /* ProductDetailView.swift */; };
+		D65B7EE32ED5CABC000B52EC /* SortByBottomSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D65B7EE22ED5CABC000B52EC /* SortByBottomSheet.swift */; };
+		D65B7EE52ED5D8A4000B52EC /* ReportSellerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D65B7EE42ED5D8A4000B52EC /* ReportSellerView.swift */; };
 		D65F96BC2EBC682B00EAAD49 /* View+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = D65F96BB2EBC682B00EAAD49 /* View+Extension.swift */; };
 		D66070A72ED02CAE00B81251 /* PipFrameProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D66070A62ED02CAE00B81251 /* PipFrameProcessor.swift */; };
 		D66070A92ED02D9C00B81251 /* PipContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D66070A82ED02D9C00B81251 /* PipContainerView.swift */; };
@@ -1074,6 +1076,8 @@
 		D615BD1E2EBB2A9200EB55C2 /* GetAllStaticAPICall.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetAllStaticAPICall.swift; sourceTree = "<group>"; };
 		D6447E972ECC9C4700C77BFC /* PurchasesViewScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchasesViewScreen.swift; sourceTree = "<group>"; };
 		D65B7EE02ED579CB000B52EC /* ProductDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductDetailView.swift; sourceTree = "<group>"; };
+		D65B7EE22ED5CABC000B52EC /* SortByBottomSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortByBottomSheet.swift; sourceTree = "<group>"; };
+		D65B7EE42ED5D8A4000B52EC /* ReportSellerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportSellerView.swift; sourceTree = "<group>"; };
 		D65F96BB2EBC682B00EAAD49 /* View+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Extension.swift"; sourceTree = "<group>"; };
 		D66070A62ED02CAE00B81251 /* PipFrameProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PipFrameProcessor.swift; sourceTree = "<group>"; };
 		D66070A82ED02D9C00B81251 /* PipContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PipContainerView.swift; sourceTree = "<group>"; };
@@ -1640,6 +1644,8 @@
 				D66070B02ED08E1100B81251 /* SellerProfileBottomView.swift */,
 				D66070AE2ED06EE500B81251 /* StackedImageView.swift */,
 				D4D048262ECC39E40033B647 /* LiveStreamV1.swift */,
+				D65B7EE22ED5CABC000B52EC /* SortByBottomSheet.swift */,
+				D65B7EE42ED5D8A4000B52EC /* ReportSellerView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -4525,6 +4531,7 @@
 				99C9080E2DC8CD6A0054620B /* DocView.swift in Sources */,
 				35C202522DEF0DEB00492F2D /* StripeManager.swift in Sources */,
 				99C9080F2DC8CD6A0054620B /* AlertPopUp.swift in Sources */,
+				D65B7EE32ED5CABC000B52EC /* SortByBottomSheet.swift in Sources */,
 				3576EAD22DDDD5DD00177C7D /* TipsCardView.swift in Sources */,
 				99C908102DC8CD6A0054620B /* HeaderWithImage.swift in Sources */,
 				99C908112DC8CD6A0054620B /* HeaderWithImageTitle.swift in Sources */,
@@ -4760,6 +4767,7 @@
 				99C909AC2DC8CD930054620B /* UIView+Extension.swift in Sources */,
 				35F8B5662DED978800FE0778 /* ProfileViewModel.swift in Sources */,
 				D4BA9C0D2DE4856900DFF6E6 /* ShowsScreen.swift in Sources */,
+				D65B7EE52ED5D8A4000B52EC /* ReportSellerView.swift in Sources */,
 				D4D453DA2E4CBC13005A2F63 /* BlockedUserListModel.swift in Sources */,
 				D66B575E2EC319DD00A334AA /* EditProductScreen.swift in Sources */,
 				D4A500E12DFAA74D008799B1 /* StepCircle.swift in Sources */,

@@ -464,10 +464,13 @@ struct UpdatePreferenceRequest: Encodable{
 
 
 struct UserProductRequest: Encodable{
-    var user_id : Int
+    var user_id : String
     var category_id : String? = ""
     var page : Int
-    var type: String?
+    var type: String? //live,flash_sale,reserve_for_live
+    var sale_type: String? //auction,accept_offers
+    var sort_by: String? //title_asc,title_desc,newest,oldest,price_low_high,price_high_low
+    var search: String?
 }
 
 struct NotifyLiveUserRequest: Encodable{

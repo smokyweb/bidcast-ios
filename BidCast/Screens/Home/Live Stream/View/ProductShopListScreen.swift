@@ -5,19 +5,7 @@
 //  Created by JamTech on 24/11/25.
 //
 import SwiftUI
-
-// MARK: - Product Model
-struct Product1: Identifiable {
-    let id: UUID = UUID()
-    let title: String
-    let quantityText: String
-    let priceText: String
-    let shippingText: String
-    let bidsText: String?
-    let imageFilePath: String?
-    let badgeCount: Int?
-    let isBuyNow: Bool
-}
+import SVProgressHUD
 
 // MARK: - Image Loader
 final class LocalImageLoader: ObservableObject {
@@ -83,7 +71,7 @@ extension View {
 
 // MARK: - Product List Item
 struct ProductListItem: View {
-    @Binding var product: ProductData
+    @Binding var product: ProductDataModel
     @State private var showBadge = true
     
     var body: some View {
@@ -92,7 +80,7 @@ struct ProductListItem: View {
             // MARK: - Product Image
             ZStack(alignment: .topTrailing) {
                 CustomProfileImage(
-                    url: product.image ?? "",
+                    url: product.images?.first ?? "",
                     isCircular: false,
                     cornerRadius: 12,
                     size: 120,
@@ -123,16 +111,16 @@ struct ProductListItem: View {
             
             // MARK: - Right Content
             VStack(alignment: .leading, spacing: 6) {
-                Text(product.name ?? "Product")
+                Text(product.title ?? "Product")
                     .font(.custom("Poppins-SemiBold", size: 16))
                     .foregroundColor(.black)
                     .lineLimit(2)
-                
+
                 HStack(spacing: 6) {
                     Text("Quantity: \(product.quantity ?? "0")")
                         .font(.custom("Poppins-Regular", size: 13))
                         .foregroundColor(.gray)
-                    
+
                     Text("New")
                         .font(.custom("Poppins-SemiBold", size: 10))
                         .padding(.horizontal, 6)
@@ -140,16 +128,17 @@ struct ProductListItem: View {
                         .foregroundColor(.gray)
                         .clipShape(Capsule())
                 }
-                
+
                 HStack(spacing: 4) {
-                    Text("$\(product.price ?? "0.0")")
+                    Text("$\(product.pricing ?? "0.0")")
                         .font(.custom("Poppins-Bold", size: 18))
                         .foregroundColor(.black)
-                    
+
                     Text("• Ships from United States")
                         .font(.custom("Poppins-Regular", size: 12))
                         .foregroundColor(.gray)
                 }
+
                 
                 // Buy Now button
                 Button(action: {}) {
@@ -196,7 +185,25 @@ struct ProductShopListScreen: View {
     @State private var selectedIndex: Int = 0
     @State private var isLoading: Bool = false
     
-    @Binding var productData: [ProductData]
+    @State private var isFetchingMore = false
+    @State private var canLoadMore = true
+    
+    @State var showhud: Bool = false
+    @State var hudMsg: String = ""
+    @State var showError: Bool = false
+    @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+    
+     @State private var showSortSheet = false
+     @State private var selectedSort: String = "newest"
+    
+    @State var viewModel = ScheduleViewModel()
+    
+    @State var productData: [ProductDataModel] = []
+//    @State var categoryId: String = "-1"
+    @State var sellerId: String = "-1"
+    @State var currentPage: Int = 1
+    
+    var options:[String] = ["Sort", "Auction", "Buy Now", "Giveaway", "Sold"]
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -220,21 +227,26 @@ struct ProductShopListScreen: View {
             
             // MARK: - Pills Selector
             PillsSelectorView(
-                titles: ["Sort", "Auction", "Buy Now", "Giveaway", "Sold"],
+                titles: options,
                 selectedIndex: $selectedIndex,
                 backgroundStyle: .roundedRect,
                 underlineEnabled: false,
                 showFilterButton: true,
                 showSortDropdown: true,
-                onSelectionChanged: { _, _ in }
+                onSelectionChanged: { index, title in
+                    // Show sort sheet when "Sort" is tapped
+                    if index == 0 {
+                        showSortSheet = true
+                    }
+                }
             )
             
             // MARK: - Heading
             ProductListHeading(count: productData.count)
             
-            // MARK: - Product List / Shimmers
             ScrollView(showsIndicators: false) {
-                VStack(spacing: 0) {
+                LazyVStack(spacing: 0) {
+
                     if isLoading {
                         ForEach(0..<8) { _ in
                             PurchasesViewShimmerView()
@@ -244,17 +256,161 @@ struct ProductShopListScreen: View {
                     } else if productData.isEmpty {
                         NoDataView(message: "No Product Found")
                     } else {
-                        ForEach($productData, id: \.id) { $data in
-                            ProductListItem(product: $data)
+                        ForEach(productData.indices, id: \.self) { index in
+                            ProductListItem(product: $productData[index])
                                 .padding(.vertical, 4)
+                                .onAppear {
+                                    handlePagination(index: index)
+                                }
                         }
+                    }
+
+                    // Loader at bottom
+                    if isFetchingMore {
+                        ProgressView()
+                            .padding(.vertical, 16)
                     }
                 }
             }
+
             
             Spacer(minLength: 0)
         }
         .frame(maxHeight: .infinity, alignment: .top)
         .background(Color(.systemBackground))
+        .onAppear {
+             fetchProduct()
+        }
+        .onDisappear {
+            resetData()
+        }
+        .onChange(of: selectedSort) { _ in
+            resetData()
+            fetchProduct()
+        }
+
+        .bottomSheet(
+                   isPresented: $showSortSheet,
+                   height: screenHeight * 0.6,
+                   topBarCornerRadius: 20,
+                   contentBackgroundColor: Color(.systemBackground),
+                   topBarBackgroundColor: Color(.systemBackground),
+                   showTopIndicator: false,
+                   onDismiss: {
+                       showSortSheet = false
+                   },
+                   content: {
+                       SortByBottomSheet(
+                           isPresented: $showSortSheet,
+                           selectedSort: $selectedSort
+                       )
+                   }
+               )
+    }
+}
+
+extension ProductShopListScreen {
+    
+    private func resetData() {
+        productData = []
+        currentPage = 1
+        searchText = ""
+        canLoadMore = true
+        isFetchingMore = false
+    }
+    
+    func fetchProduct() {
+        guard sellerId != "-1" else  {
+            print("Category id and user id is not present")
+            return
+        }
+        Task{
+           guard Reachability.isConnectedToNetwork() else {
+                hudMsg = "No Internet Connection"
+                showhud = true
+                return
+            }
+            SVProgressHUD.show()
+            let request = UserProductRequest(user_id: sellerId,
+                               page: currentPage,
+//                               type: "live",
+//                               sale_type: "auction"
+                                sort_by: selectedSort
+            )
+            
+            await viewModel.getProductList(parameters: request)
+            await SVProgressHUD.dismiss()
+            productSuccess()
+        }
+    }
+    
+    func handlePagination(index: Int) {
+        let thresholdIndex = productData.count - 2   // prefetch early
+        
+        if index == thresholdIndex && canLoadMore && !isFetchingMore {
+            fetchMoreProduct()
+        }
+    }
+
+    func fetchMoreProduct() {
+        guard !isFetchingMore, canLoadMore else { return }
+
+        isFetchingMore = true
+        currentPage += 1
+
+        Task { @MainActor in
+            guard Reachability.isConnectedToNetwork() else {
+                isFetchingMore = false
+                return
+            }
+
+            let request = UserProductRequest(
+                user_id: sellerId,
+                page: currentPage,
+                sort_by: selectedSort
+            )
+
+            await viewModel.getProductList(parameters: request)
+            appendMore()
+        }
+    }
+
+    func appendMore() {
+        guard let response = viewModel.productResponse else { return }
+
+        if response.status == "success" {
+            let newItems = response.data ?? []
+
+            if newItems.isEmpty {
+                canLoadMore = false
+            } else {
+                productData.append(contentsOf: newItems)
+            }
+        } else {
+            canLoadMore = false
+        }
+
+        isFetchingMore = false
+    }
+
+
+
+    
+    //MARK: productSuccess.
+    func productSuccess(){
+        let response = viewModel.productResponse
+        if response?.status == "success"{
+            productData = response?.data ?? [ProductDataModel]()
+        
+        }else{
+            alertType = .sheetType(
+                icon: .alert,
+                title: "Error",
+                message: viewModel.errorMessage ?? "",
+                primaryBtnText: AppString.ok.localized,
+                secondaryBtnText:""
+            )
+            showError = true
+        }
     }
 }
