@@ -237,13 +237,13 @@ struct ProductShopListScreen: View {
                 selectedIndex: $selectedIndex,
                 backgroundStyle: .roundedRect,
                 underlineEnabled: false,
-                showFilterButton: true,
+                showFilterButton: false,
                 showSortDropdown: true,
                 onSelectionChanged: { index, title in
                     // Show sort sheet when "Sort" is tapped
                     if index == 0 {
                         showSortSheet = true
-                        selectedOptions = ""
+                        selectedOptions = "newest"
                     }
                     else if index == 1 {
                         resetData()

@@ -36,7 +36,6 @@ struct ProfileScreen: View {
     @State var showNotify = false
     @State var profileId = 0
     
-    @State  var productData = ProductListingDataModel()
     @State var isFollowing = false
     @State var productId : Int = 0
     @State var productArr = [ProductListingDataModel]()
@@ -53,8 +52,21 @@ struct ProfileScreen: View {
     @State private var chatPath: String = ""
     @State private var isTipAmountButtoClicked: Bool = false
     
+    @State private var scheduleViewModel = ScheduleViewModel()
 //    @State var profileImage: String
 
+    var options:[String] = ["Sort", "Auction", "Buy Now"]
+    @State private var selectedIndex: Int = 0
+    @State private var showSortSheet = false
+    @State private var selectedSort: String = "newest"
+    @State private var selectedOptions: String = ""
+    
+    @State private var isFetchingMore = false
+    @State private var canLoadMore = true
+    
+    @State private var totalCount = 0
+    @State var productData: [ProductDataModel] = []
+    @State var searchText: String = ""
     
     @State var reviewList: [ReviewModel] = [
         ReviewModel(username: "Alice", profileImageName: "user1", rating: 4.5),
@@ -101,6 +113,7 @@ struct ProfileScreen: View {
                             }
                         },
                                            
+                                           
                         // Inside ProfileActionsView
                         onTapMessage: {
                             let currentUserId = String(UserDefaults.userId)
@@ -115,27 +128,29 @@ struct ProfileScreen: View {
                         onTapTipAmount:  {
                             self.isTipAmountButtoClicked = true
                         })
-
+                        .padding(.top, -50)
                         
                         ProfileTabsView(selectedTab: $selectedTab) { tab in
                             print("Selected Tab: \(tab)")
                             Task {
                                 switch tab {
                                 case "Shop":
-                                    print("")
-                                    Task{
-                                        guard Reachability.isConnectedToNetwork() else {
-                                            hudMsg = "No Internet Connection"
-                                            showhud = true
-                                            return
-                                        }
-                                        SVProgressHUD.show()
-                                        await self.viewModel.productDetails(parameters: UserProductRequest(user_id: id,page : currentPage))
-                                        await SVProgressHUD.dismiss()
-                                        success()
-                            
-                                    success()
-                                }
+                                    resetShopData()
+                                    fetchProduct()
+//                                    print("")
+//                                    Task{
+//                                        guard Reachability.isConnectedToNetwork() else {
+//                                            hudMsg = "No Internet Connection"
+//                                            showhud = true
+//                                            return
+//                                        }
+//                                        SVProgressHUD.show()
+//                                        await self.viewModel.productDetails(parameters: UserProductRequest(user_id: id,page : currentPage))
+//                                        await SVProgressHUD.dismiss()
+//                                        success()
+//                            
+//                                    success()
+//                                }
                                 //                                await viewModel.fetchShopItems()
                             case "Shows":
                                guard Reachability.isConnectedToNetwork() else {
@@ -165,22 +180,83 @@ struct ProfileScreen: View {
                             }
                         }
                     }
-                    if selectedTab == "Shop" {
-                        SearchAndFiltersView()
-                        ProductListView(
-                            prouduct: $productArr,
-                            onTapProduct: { index in
-                                productData = productArr[index]
-                                productId = productData.id ?? 0
-                                showSellSheet = true
-                            },
-                            onItemAppear: { index in
-                                Task {
-                                    await handlePagination(for: .shop, index: index)
+                        if selectedTab == "Shop" {
+                            // MARK: - Pills Selector
+                            VStack(spacing: 12){
+                                SearchBarView(placeholder: "Search") { debouncedText in
+                                    if debouncedText == "" { return }
+                                    resetShopData()
+                                    self.searchText = debouncedText
+                                    fetchProduct()
+                                }.padding(.horizontal, 16)
+                                PillsSelectorView(
+                                    titles: options,
+                                    selectedIndex: $selectedIndex,
+                                    backgroundStyle: .roundedRect,
+                                    underlineEnabled: false,
+                                    showFilterButton: false,
+                                    showSortDropdown: true,
+                                    onSelectionChanged: { index, title in
+                                        // Show sort sheet when "Sort" is tapped
+                                        if index == 0 {
+                                            showSortSheet = true
+                                            selectedOptions = "newest"
+                                        }
+                                        else if index == 1 {
+                                            resetShopData()
+                                            selectedOptions = "auction"
+                                            fetchProduct()
+                                        }
+                                        else if index == 2 {
+                                            resetShopData()
+                                            selectedOptions = "accept_offers"
+                                            fetchProduct()
+                                        }
+                                    })
+                                
+                                LazyVStack(spacing: 0) {
+
+                                    if isLoading {
+                                        ForEach(0..<8) { _ in
+                                            PurchasesViewShimmerView()
+                                                .padding(.horizontal, 8)
+                                                .padding(.vertical, 4)
+                                        }
+                                    } else if productData.isEmpty {
+                                        NoDataView(message: "No Product Found")
+                                    } else {
+                                        ForEach(productData.indices, id: \.self) { index in
+                                            ProductListItem(product: $productData[index])
+                                                .padding(.vertical, 4)
+                                                .onAppear {
+                                                    handlePagination(index: index)
+                                                }
+                                        }
+                                    }
+
+                                    // Loader at bottom
+                                    if isFetchingMore {
+                                        ProgressView()
+                                            .padding(.vertical, 16)
+                                    }
                                 }
                             }
-                        )
-                    }
+                        }
+//                        SearchAndFiltersView()
+//                        ProductListView(
+//                            prouduct: $productArr,
+//                            onTapProduct: { index in
+//                                productData = productArr[index]
+//                                productId = productData.id ?? 0
+//                                showSellSheet = true
+//                            },
+//                            onItemAppear: { index in
+//                                Task {
+//                                    await handlePagination(for: .shop, index: index)
+//                                }
+//                            }
+//                        )
+                        
 
                     else if selectedTab == "Shows" {
                         LazyVGrid(columns: columns, spacing: 6) {
@@ -270,6 +346,24 @@ struct ProfileScreen: View {
                 }
             )
         }
+        
+        .bottomSheet(
+                   isPresented: $showSortSheet,
+                   height: screenHeight * 0.6,
+                   topBarCornerRadius: 20,
+                   contentBackgroundColor: Color(.systemBackground),
+                   topBarBackgroundColor: Color(.systemBackground),
+                   showTopIndicator: false,
+                   onDismiss: {
+                       showSortSheet = false
+                   },
+                   content: {
+                       SortByBottomSheet(
+                           isPresented: $showSortSheet,
+                           selectedSort: $selectedSort
+                       )
+                   }
+               )
         .onAppear{
             
             let param = ProfileParamRequest(id: id)
@@ -290,17 +384,19 @@ struct ProfileScreen: View {
                     scheduleShowSuccess()
                     }else{
                         selectedTab = "Shop"
-                        Task{
-                           guard Reachability.isConnectedToNetwork() else {
-                                hudMsg = "No Internet Connection"
-                                showhud = true
-                                return
-                            }
-                            SVProgressHUD.show()
-                            await self.viewModel.productDetails(parameters: UserProductRequest(user_id: id,page : currentPage))
-                            await SVProgressHUD.dismiss()
-                            success()
-                        }
+                        resetShopData()
+                        fetchProduct()
+//                        Task{
+//                           guard Reachability.isConnectedToNetwork() else {
+//                                hudMsg = "No Internet Connection"
+//                                showhud = true
+//                                return
+//                            }
+//                            SVProgressHUD.show()
+//                            await self.viewModel.productDetails(parameters: UserProductRequest(user_id: id,page : currentPage))
+//                            await SVProgressHUD.dismiss()
+//                            success()
+//                        }
                     }
             }
         }
@@ -636,10 +732,7 @@ struct ProfileHeaderView: View {
                             .foregroundColor(.black)
                             .padding(12)
                             .frame(width: buttonSize, height: buttonSize)
-                            .background(Color.white)
-                            .clipShape(Circle())
-                            .shadow(radius: 2)
-                            .fontWeight(.bold)
+                            .fontWeight(.semibold)
                     }
 
                     Button(action: {
@@ -651,10 +744,7 @@ struct ProfileHeaderView: View {
                             .foregroundColor(.black)
                             .padding(12)
                             .frame(width: buttonSize, height: buttonSize)
-                            .background(Color.white)
-                            .clipShape(Circle())
-                            .shadow(radius: 2)
-                            .fontWeight(.bold)
+                            .fontWeight(.semibold)
                     }
 
                     Button(action: {
@@ -668,10 +758,7 @@ struct ProfileHeaderView: View {
                             .foregroundColor(.black)
                             .padding(12)
                             .frame(width: buttonSize, height: buttonSize)
-                            .background(Color.white)
-                            .clipShape(Circle())
-                            .shadow(radius: 2)
-                            .fontWeight(.bold)
+                            .fontWeight(.semibold)
                     }
                 }
 
@@ -792,37 +879,37 @@ struct ProfileTabsView: View {
     }
 }
 
-struct SearchAndFiltersView: View {
-    var body: some View {
-        VStack(spacing: 8) {
-            HStack {
-                TextField("What are you looking for?", text: .constant(""))
-                    .font(.custom(poppinsRegular, size: 13.0))
-                    .padding(.leading, 12)
-                Image(systemName: "slider.horizontal.3")
-                    .padding(.trailing, 12)
-            }
-            .frame(height: 44)
-            .background(Color(UIColor.systemGray5))
-            .cornerRadius(10)
-            
-            HStack {
-                ForEach(["Filter", "Sort", "Buy Now", "Category"], id: \.self) { title in
-                    Button(title) {
-                        // Handle filter
-                    }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(Color(UIColor.systemGray5))
-                    .cornerRadius(8)
-                }
-                
-            }
-            .padding(.horizontal)
-        }
-        .padding(.horizontal,12)
-    }
-}
+//struct SearchAndFiltersView: View {
+//    var body: some View {
+//        VStack(spacing: 8) {
+//            HStack {
+//                TextField("What are you looking for?", text: .constant(""))
+//                    .font(.custom(poppinsRegular, size: 13.0))
+//                    .padding(.leading, 12)
+//                Image(systemName: "slider.horizontal.3")
+//                    .padding(.trailing, 12)
+//            }
+//            .frame(height: 44)
+//            .background(Color(UIColor.systemGray5))
+//            .cornerRadius(10)
+//            
+//            HStack {
+//                ForEach(["Filter", "Sort", "Buy Now", "Category"], id: \.self) { title in
+//                    Button(title) {
+//                        // Handle filter
+//                    }
+//                    .padding(.horizontal, 12)
+//                    .padding(.vertical, 6)
+//                    .background(Color(UIColor.systemGray5))
+//                    .cornerRadius(8)
+//                }
+//                
+//            }
+//            .padding(.horizontal)
+//        }
+//        .padding(.horizontal,12)
+//    }
+//}
 
 struct ProductListView: View {
     @Binding var prouduct: [ProductListingDataModel]
@@ -925,3 +1012,79 @@ struct TabIcon: View {
 //#Preview {
 //    ProfileScreen()
 //}
+
+extension ProfileScreen {
+    
+    private func resetShopData() {
+        productData = []
+        currentPage = 1
+        canLoadMore = true
+        isFetchingMore = false
+    }
+    
+    
+    func fetchProduct(isLoaderShown: Bool = true) {
+        guard let sellerId = profileData.id else  {
+            print("seller id is not present")
+            isFetchingMore = false
+            return
+        }
+        Task{
+            guard Reachability.isConnectedToNetwork() else {
+                hudMsg = "No Internet Connection"
+                showhud = true
+                isFetchingMore = false
+                return
+            }
+            if isLoaderShown { SVProgressHUD.show() }
+            let request = UserProductRequest(user_id: "\(sellerId)",
+                                             page: currentPage,
+                                             //                               type: "live",
+                                             sale_type: selectedOptions,
+                                             sort_by: selectedSort,
+                                             search: searchText
+            )
+            
+            await scheduleViewModel.getProductList(parameters: request)
+            if isLoaderShown { await SVProgressHUD.dismiss() }
+            productSuccess()
+        }
+    }
+    
+    func handlePagination(index: Int) {
+        guard canLoadMore, !isFetchingMore else { return }
+        guard totalCount > (index + 1) else { return }
+        let thresholdIndex = productData.count - 1
+        if index == thresholdIndex {
+            isFetchingMore = true
+            currentPage += 1
+            fetchProduct(isLoaderShown: false)
+        }
+    }
+    
+    //MARK: productSuccess.
+    func productSuccess(){
+        let response = scheduleViewModel.productResponse
+        if response?.status == "success"{
+            let newItems = response?.data ?? []
+            totalCount = response?.total ?? 0
+            if newItems.isEmpty {
+                canLoadMore = false
+            } else {
+                productData.append(contentsOf: newItems)
+            }
+            
+        }else{
+            canLoadMore = false
+            alertType = .sheetType(
+                icon: .alert,
+                title: "Error",
+                message: scheduleViewModel.errorMessage ?? "",
+                primaryBtnText: AppString.ok.localized,
+                secondaryBtnText:""
+            )
+            showError = true
+        }
+        isFetchingMore = false
+    }
+}

@@ -351,57 +351,92 @@ struct CreateProductScreen: View {
 //                .ignoresSafeArea(.all, edges: .bottom)
 //                .background(.bg.opacity(0.5))
                 
-                .bottomSheet(
-                    isPresented: $showSubCategorySheet,
-                    height: selectedOption.count < 4 ? screenHeight * 0.35 : screenHeight/1.7,
-                    topBarCornerRadius: 25,
-                    showTopIndicator: false,
-                    onDismiss: {
-                        showSubCategorySheet = true
-                    },
-                    content: {
-                        SelectionBottomSheet(
-                            title: "Select Sub-Category",
-                            message: "Please select Sub-category.",
-                            options: $subCategoryName,
-                            selectedOptions: $selectedOption,
-                            onSelectionDone: { selectedIndexes in
-                                if let index = selectedIndexes.first {
-                                    let selectedValue = subCategoryList[index]
-                                    selectedSubCategory = selectedValue.name ?? ""
-                                    request.sub_category_id = "\(selectedValue.id ?? 0)"
-                                    selectedCategory = "\(selectedCategory) (\(selectedValue.name ?? ""))"
-                                    print("Selected SubCategory: \(selectedValue.name ?? "")")
-                                    self.extraFields = selectedValue.extra_fields ?? []
-//                                    if let extraFields =  self.viewModel.categoryResponse?.data[index].extra_fields{
-//
-//                                    }
-                                }
-                                showSubCategorySheet = false
-                            }
-                        )
-                    }
-                )
+//                .bottomSheet(
+//                    isPresented: $showSubCategorySheet,
+//                    height: selectedOption.count < 4 ? screenHeight * 0.35 : screenHeight/1.7,
+//                    topBarCornerRadius: 25,
+//                    showTopIndicator: false,
+//                    onDismiss: {
+//                        showSubCategorySheet = true
+//                    },
+//                    content: {
+//                        SelectionBottomSheet(
+//                            title: "Select Sub-Category",
+//                            message: "Please select Sub-category.",
+//                            options: $subCategoryName,
+//                            selectedOptions: $selectedOption,
+//                            onSelectionDone: { selectedIndexes in
+//                                if let index = selectedIndexes.first {
+//                                    let selectedValue = subCategoryList[index]
+//                                    selectedSubCategory = selectedValue.name ?? ""
+//                                    request.sub_category_id = "\(selectedValue.id ?? 0)"
+//                                    selectedCategory = "\(selectedCategory) (\(selectedValue.name ?? ""))"
+//                                    print("Selected SubCategory: \(selectedValue.name ?? "")")
+//                                    self.extraFields = selectedValue.extra_fields ?? []
+////                                    if let extraFields =  self.viewModel.categoryResponse?.data[index].extra_fields{
+////
+////                                    }
+//                                }
+//                                showSubCategorySheet = false
+//                            }
+//                        )
+//                    }
+//                )
                 .toast(isPresenting: $showhud) {
                     AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
                     
                 }
-                .bottomSheet(isPresented: $showError, height: screenHeight * 0.3, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: {
-                    if self.viewModel.errorMessage != "" || self.viewModel.errorMessage != nil{
-                        showError = true
-                    }else{
-                        showError = false
-                    }
-                }, content: {
+//                .bottomSheet(isPresented: $showError, height: screenHeight * 0.3, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: {
+//                    if self.viewModel.errorMessage != "" || self.viewModel.errorMessage != nil{
+//                        showError = true
+//                    }else{
+//                        showError = false
+//                    }
+//                }, content: {
+//                    CommonBottomSheet(
+//                        sheetType: $alertType,
+//                        onPrimaryClick: {
+//                            self.presentationMode.wrappedValue.dismiss()
+//                            withAnimation { showError = false }
+//                        }, onSecondaryClick: {
+//                            withAnimation { showError = false }
+//                        })
+//                })
+                BottomSheet(isPresented: $showError,
+                            height: screenHeight * 0.30) {
+
                     CommonBottomSheet(
                         sheetType: $alertType,
                         onPrimaryClick: {
-                            self.presentationMode.wrappedValue.dismiss()
-                            withAnimation { showError = false }
-                        }, onSecondaryClick: {
-                            withAnimation { showError = false }
-                        })
-                })
+                            presentationMode.wrappedValue.dismiss()
+                            showError = false
+                        },
+                        onSecondaryClick: {
+                            showError = false
+                        }
+                    )
+                }
+                BottomSheet(isPresented: $showSubCategorySheet,
+                            height: selectedOption.count < 4 ? screenHeight * 0.35 : screenHeight/1.7) {
+
+                    SelectionBottomSheet(
+                        title: "Select Sub-Category",
+                        message: "Please select Sub-category.",
+                        options: $subCategoryName,
+                        selectedOptions: $selectedOption,
+                        onSelectionDone: { selectedIndexes in
+                            if let index = selectedIndexes.first {
+                                let selectedValue = subCategoryList[index]
+                                selectedSubCategory = selectedValue.name ?? ""
+                                request.sub_category_id = "\(selectedValue.id ?? 0)"
+                                selectedCategory = "\(selectedCategory) (\(selectedValue.name ?? ""))"
+                                extraFields = selectedValue.extra_fields ?? []
+                            }
+                            showSubCategorySheet = false
+                        }
+                    )
+                }
+
 //            }
 //            .padding([.leading,.trailing],12)
         }
@@ -412,7 +447,7 @@ struct CreateProductScreen: View {
         CusNavLink(doNavigate: $navigateToProuct, destination: AddProductsScreen(request:$requests,thumbNail: $thumbNail,fromPrepare: $fromPrepare,backToPrepare: $backToPrepare, NavFromProductLibrary: .constant(false), backToCreateProduct: .constant(false), delegate: delegate))
         
         CusNavLink(doNavigate: $navigateToSalesFormat, destination: SalesFormatScreen(request: $request,storeScheduleRequest: $requests, imageUrls : $imageUrls,thumbNail: $thumbNail,backToPrepare: $backToPrepare,fromPrepare: $fromPrepare,backToCreateProduct:$navigateToSalesFormat,delegate: delegate))
-        .onFirstAppear(perform: {
+        .onAppear(perform: {
            
             Task {
                 await performAPICalls(
@@ -502,6 +537,14 @@ struct CreateProductScreen: View {
 //                
 //            
 //            }
+            alertType = .sheetType(
+                icon: .alert,
+                title: "Error",
+                message: "Error Occured, Error Occured, Error Occured,",
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
+            )
+            showError = true
         })
         .onAppear {
             //assign categoryId
@@ -728,6 +771,46 @@ struct CreateProductScreen: View {
 //        }
 //    }
    
+}
+
+extension View {
+    func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
+        clipShape(RoundedCorner(radius: radius, corners: corners))
+    }
+}
+
+struct BottomSheet<Content: View>: View {
+    @Binding var isPresented: Bool
+    var height: CGFloat
+    var content: () -> Content
+    
+    var body: some View {
+        ZStack(alignment: .bottom) {
+            
+            // Background dimmer
+            if isPresented {
+                Color.black.opacity(0.35)
+                    .ignoresSafeArea()
+                    .onTapGesture {
+                        withAnimation(.spring()) {
+                            isPresented = false
+                        }
+                    }
+            }
+            
+            // Actual sheet
+            VStack(spacing: 0) {
+                content()
+            }
+            .frame(maxWidth: .infinity)
+            .frame(height: height)
+            .background(Color.red)
+            .cornerRadius(25, corners: [.topLeft, .topRight])
+            .offset(y: isPresented ? 0 : height + 60)
+            .animation(.spring(response: 0.3, dampingFraction: 0.9), value: isPresented)
+            .ignoresSafeArea(edges: .bottom)   // IMPORTANT → no safe-area gap
+        }
+    }
 }
 
 

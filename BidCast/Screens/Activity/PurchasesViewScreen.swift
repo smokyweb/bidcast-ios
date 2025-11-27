@@ -15,6 +15,8 @@ struct PurchasesViewScreen: View {
     @State private var userImage: String = ""
     @State private var userName: String = ""
     
+    @State private var navigateToOrderTracking: Bool = false
+    
     var body: some View {
         HStack(alignment: .center, spacing: 12) {
             // MARK: - Product Image
@@ -26,7 +28,8 @@ struct PurchasesViewScreen: View {
                         RoundedRectangle(cornerRadius: 10)
                             .strokeBorder(Color.black.opacity(0.1), lineWidth: 1)
                     )
-                    .padding(.horizontal, 6)
+//                    .padding(.horizontal, 6)
+                    .padding(.trailing, 4)
                     .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 2)
             }
             
@@ -93,6 +96,12 @@ struct PurchasesViewScreen: View {
     
             Spacer()
         }
+        .onTapGesture {
+            withAnimation(.easeInOut(duration: 0.28)) {
+                let orderId = "12345"          // set required parameter
+                navigateToOrderTracking = true
+            }
+        }
         
         .padding(4)
         .background(Color.white)
@@ -103,6 +112,11 @@ struct PurchasesViewScreen: View {
                                               isComeFrom: .constant(""),
                                               userName: $userName,
                                               userImage: $userImage))
+        CusNavLink(
+            doNavigate: $navigateToOrderTracking,
+            destination: OrderTrackingView()
+        )
+
     }
     
     func formattedDate(_ isoDate: String?) -> String {

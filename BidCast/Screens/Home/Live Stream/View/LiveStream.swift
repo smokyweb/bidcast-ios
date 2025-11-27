@@ -278,21 +278,22 @@ struct LiveStream: View {
                                             }
                                             
                                             //                                        Spacer(minLength: 4)
-                                            
-                                            Button(action: {
-                                                if let sellerId = liveShowsData[currentIndex].seller?.id {
-                                                    socketManagerChat.sendFollowUnfollow(followerId: "\(UserDefaults.userId)", followingId:  sellerId)
+                                            if !isFollowing {
+                                                Button(action: {
+                                                    //                                                if let sellerId = liveShowsData[currentIndex].seller?.id {
+                                                    //                                                    socketManagerChat.sendFollowUnfollow(followerId: "\(UserDefaults.userId)", followingId:  sellerId)
+                                                    //                                                }
+                                                    followUnfollow()
+                                                }) {
+                                                    Text("Follow")
+                                                        .font(.custom(poppinsSemiBold, size: 12.0))
+                                                        .foregroundColor(.black)
+                                                        .padding(.horizontal, 10)
+                                                        .padding(.vertical, 4)
+                                                        .background(.defaultTheme)
+                                                        .cornerRadius(10)
                                                 }
-                                            }) {
-                                                Text(sellerInfo.is_following ?? false ? "Following" : "Follow")
-                                                    .font(.custom(poppinsSemiBold, size: 12.0))
-                                                    .foregroundColor(.black)
-                                                    .padding(.horizontal, 10)
-                                                    .padding(.vertical, 4)
-                                                    .background(.defaultTheme)
-                                                    .cornerRadius(10)
                                             }
-                                            
                                         }
                                     }
                                 }
@@ -890,6 +891,8 @@ struct LiveStream: View {
                 onFollow: {
                     print("Follow tapped")
                     showFollowSheet = false
+                    //API Call
+                    followUnfollow()
                 },
                 onNotNow: {
                     print("Not now tapped")
@@ -1270,15 +1273,7 @@ struct LiveStream: View {
             setupInitialState()
             loadInitialData()
             listenForRaidEvents()
-            followSheetTask = Task {
-                try? await Task.sleep(nanoseconds: 30 * 1_000_000_000)  // 30 sec
-                if !Task.isCancelled {
-                    await MainActor.run {
-                        showFollowSheet = true
-                    }
-                }
-            }
-            getProfileData()
+           
         }
 
 //        .onDisappear{
@@ -1630,24 +1625,6 @@ struct LiveStream: View {
             self.liveShowsData = socketRooms
             self.currentRoomID = roomId
             sortLiveShowsDataByCurrentRoom()
-            Task { @MainActor in
-                do {
-                    async let sellerTask: Void = fetchSellerIfAvailable()
-                    try await sellerTask
-                    
-                } catch {
-                    print("❌ loadInitialData Error:", error.localizedDescription)
-                    
-                    alertType = .sheetType(
-                        icon: .alert,
-                        title: "Error",
-                        message: error.localizedDescription,
-                        primaryBtnText: "",
-                        secondaryBtnText: AppString.ok.localized
-                    )
-                    showError = true
-                }
-            }
         }
         
         
@@ -1694,6 +1671,27 @@ struct LiveStream: View {
         
         // Update the current index to 0
         currentIndex = 0
+        
+        Task { @MainActor in
+            do {
+                async let sellerTask: Void = fetchSellerIfAvailable()
+                async let profileTask: Void =  getProfileData()
+                
+                _ = await (sellerTask, profileTask)
+                
+            } catch {
+                print("❌ loadInitialData Error:", error.localizedDescription)
+                
+                alertType = .sheetType(
+                    icon: .alert,
+                    title: "Error",
+                    message: error.localizedDescription,
+                    primaryBtnText: "",
+                    secondaryBtnText: AppString.ok.localized
+                )
+                showError = true
+            }
+        }
         
         print("🔁 Sorted live shows — current room '\(currentRoomID)' moved to top.")
     }
@@ -2361,39 +2359,39 @@ extension LiveStream {
 extension LiveStream {
     
     private func followUnfollow() {
+        guard !liveShowsData.isEmpty else  { return }
         guard let sellerId = liveShowsData[currentIndex].seller?.id, !sellerId.isEmpty else {
             print("⚠️ Seller ID not available")
             return
         }
+        guard Reachability.isConnectedToNetwork() else {
+            hudMsg = "No Internet Connection"
+            showHud = true
+            return
+        }
         Task{
             SVProgressHUD.show()
-            guard Reachability.isConnectedToNetwork() else {
-                hudMsg = "No Internet Connection"
-                showHud = true
-                return
-            }
             await self.profileViewModel.followUnfollow(parameters: FollowRequest(following_id: sellerId))
             await SVProgressHUD.dismiss()
-            profileSuccess()
+            followUnfollowSuccess()
         }
     }
     
-    private func getProfileData() {
+    private func getProfileData() async {
+        guard !liveShowsData.isEmpty else  { return }
         guard let sellerId = liveShowsData[currentIndex].seller?.id, !sellerId.isEmpty else {
             print("⚠️ Seller ID not available")
             return
         }
-        Task{
-            SVProgressHUD.show()
-            guard Reachability.isConnectedToNetwork() else {
-                hudMsg = "No Internet Connection"
-                showHud = true
-                return
-            }
-            await profileViewModel.getProfile(param: ProfileParamRequest(id: sellerId))
-            await SVProgressHUD.dismiss()
-            profileSuccess()
+        SVProgressHUD.show()
+        guard Reachability.isConnectedToNetwork() else {
+            hudMsg = "No Internet Connection"
+            showHud = true
+            return
         }
+        await profileViewModel.getProfile(param: ProfileParamRequest(id: sellerId))
+        await SVProgressHUD.dismiss()
+        profileSuccess()
     }
     
     func profileSuccess() {
@@ -2402,7 +2400,35 @@ extension LiveStream {
         if response.status == "success" {
             if let data = response.data {
                 isFollowing = data.is_following ?? false
+                followSheetTask = Task {
+                    try? await Task.sleep(nanoseconds: 30 * 1_000_000_000)  // 30 sec
+                    if !Task.isCancelled {
+                        await MainActor.run {
+                            if !isFollowing {
+                                showFollowSheet = true
+                            }
+                        }
+                    }
+                }
             }
+        } else {
+            showError = true
+            alertType = .sheetType(
+                icon: .alert,
+                title: "Error",
+                message: profileViewModel.errorMessage ?? "",
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
+            )
+        }
+    }
+    
+    func followUnfollowSuccess() {
+        SVProgressHUD.dismiss()
+        let response = profileViewModel.followDict
+        if response.status == "success" {
+            hudMsg = response.message ?? ""
+            showHud = true
         } else {
             showError = true
             alertType = .sheetType(
