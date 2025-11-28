@@ -249,7 +249,12 @@ struct AddProductsScreen: View {
                 CommonBottomSheet(
                     sheetType: $alertType,
                     onPrimaryClick: {
-                        withAnimation { showError = false }
+                        withAnimation {
+                            showError = false
+                        }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            navigateToTab = true
+                        }
                     }, onSecondaryClick: {
                     withAnimation { showError = false }
                 })
@@ -284,7 +289,11 @@ struct AddProductsScreen: View {
         })
             
 //        
-        CusNavLink(doNavigate: $navigateToTab, destination: TabbarScreen())
+//        CusNavLink(doNavigate: $navigateToTab, destination: TabbarScreen())
+        CusNavLink(doNavigate: $navigateToTab, destination:
+            TabbarScreen()
+                .environmentObject(TabBarRouter())
+        )
         CusNavLink(doNavigate: $navigateToAddProduct, destination: CreateProductScreen(requests: $request, thumbNail: $thumbNail,backToPrepare: $backToPrepare,fromPrepare: .constant(false)))
         CusNavLink(doNavigate: $navigateToEditProduct, destination: CreateProductScreen(requests: $request, thumbNail: $thumbNail,backToPrepare: $backToPrepare,fromPrepare: .constant(false)))
         CusNavLink(doNavigate: $navigateToInventry,
