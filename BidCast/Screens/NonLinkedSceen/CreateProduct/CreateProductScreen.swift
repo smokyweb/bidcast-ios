@@ -53,7 +53,7 @@ struct CreateProductScreen: View {
     @State var selectedSubCategory = ""
     @State var subCategoryList: [CategoryDataModel] = []
     @State var subCategoryName : [String] = [""]
-//    @Binding var productData : InventoryDataModel
+    //    @Binding var productData : InventoryDataModel
     @State var extraFields: [ExtraFieldModel] = []
     @State var processingListArr = ["LETTERS","FLATS","MACHINABLE","NONSTANDARD","NON_MACHINABLE"]
     @State var extraFieldValues: [String: String] = [:]
@@ -351,14 +351,14 @@ struct CreateProductScreen: View {
                     .padding(.bottom, 16)
                 }
                 .padding(.horizontal,12)
-        }
+            }
             
-        
-        CusNavLink(doNavigate: $navigateToAddProduct, destination: AddProductsScreen(request:$requests,thumbNail: $thumbNail,fromPrepare: .constant(false),backToPrepare: $backToPrepare, NavFromProductLibrary: .constant(false), backToCreateProduct:$navigateToAddProduct))
-        
-        CusNavLink(doNavigate: $navigateToProuct, destination: AddProductsScreen(request:$requests,thumbNail: $thumbNail,fromPrepare: $fromPrepare,backToPrepare: $backToPrepare, NavFromProductLibrary: .constant(false), backToCreateProduct: .constant(false), delegate: delegate))
-        
-        CusNavLink(doNavigate: $navigateToSalesFormat, destination: SalesFormatScreen(request: $request,storeScheduleRequest: $requests, imageUrls : $imageUrls,thumbNail: $thumbNail,backToPrepare: $backToPrepare,fromPrepare: $fromPrepare,backToCreateProduct:$navigateToSalesFormat,delegate: delegate))
+            
+            CusNavLink(doNavigate: $navigateToAddProduct, destination: AddProductsScreen(request:$requests,thumbNail: $thumbNail,fromPrepare: .constant(false),backToPrepare: $backToPrepare, NavFromProductLibrary: .constant(false), backToCreateProduct:$navigateToAddProduct))
+            
+            CusNavLink(doNavigate: $navigateToProuct, destination: AddProductsScreen(request:$requests,thumbNail: $thumbNail,fromPrepare: $fromPrepare,backToPrepare: $backToPrepare, NavFromProductLibrary: .constant(false), backToCreateProduct: .constant(false), delegate: delegate))
+            
+            CusNavLink(doNavigate: $navigateToSalesFormat, destination: SalesFormatScreen(request: $request,storeScheduleRequest: $requests, imageUrls : $imageUrls,thumbNail: $thumbNail,backToPrepare: $backToPrepare,fromPrepare: $fromPrepare,backToCreateProduct:$navigateToSalesFormat,delegate: delegate))
         }
         .ignoresSafeArea(edges: .bottom)
         .background(.bg.opacity(0.5))
@@ -449,65 +449,65 @@ struct CreateProductScreen: View {
                     _ = try await (categoryTask, addressTask, mailTask)
                 }
             }
-//            Task{
-//                guard Reachability.isConnectedToNetwork() else {
-//                    hudMsg = "No Internet Connection"
-//                    showhud = true
-//                    return
-//                }
-//                SVProgressHUD.show()
-//            await viewModel.getCategoryList(param: CategoryRequest(category_id: ""))
-//                if let errorMessage = self.viewModel.errorMessage, errorMessage != "" {
-//                    alertType = .sheetType(
-//                        icon: .alert,
-//                        title: "Error",
-//                        message: self.viewModel.errorMessage ?? "",
-//                        primaryBtnText: "",
-//                        secondaryBtnText: AppString.ok.localized
-//                    )
-//                    await SVProgressHUD.dismiss()
-//                    showError = true
-//                }
-//                else  {
-//                    categorySuccess()
-//                }
-//                self.viewModel.errorMessage?.removeAll()
-//                await viewModel.getAddresses()
-//
-//                if let errorMessage = self.viewModel.errorMessage, errorMessage != "" {
-//                    await SVProgressHUD.dismiss()
-//                    alertType = .sheetType(
-//                        icon: .alert,
-//                        title: "Error",
-//                        message: self.viewModel.errorMessage ?? "",
-//                        primaryBtnText: "",
-//                        secondaryBtnText: AppString.ok.localized
-//                    )
-//                    showError = true
-//                }
-//                else  {
-//                    shippingAddressSuccess()
-//                }
-//                self.viewModel.errorMessage?.removeAll()
-//                await viewModel.getMailClasses()
-//                await SVProgressHUD.dismiss()
-//                if self.viewModel.errorMessage == nil || self.viewModel.errorMessage == "" {
-//                    mailSuccess()
-//                }else{
-//                    alertType = .sheetType(
-//                        icon: .alert,
-//                        title: "Error",
-//                        message: self.viewModel.errorMessage ?? "",
-//                        primaryBtnText: "",
-//                        secondaryBtnText: AppString.ok.localized
-//                    )
-//                    showError = true
-//                }
-//
-//
-//
-//
-//            }
+            //            Task{
+            //                guard Reachability.isConnectedToNetwork() else {
+            //                    hudMsg = "No Internet Connection"
+            //                    showhud = true
+            //                    return
+            //                }
+            //                SVProgressHUD.show()
+            //            await viewModel.getCategoryList(param: CategoryRequest(category_id: ""))
+            //                if let errorMessage = self.viewModel.errorMessage, errorMessage != "" {
+            //                    alertType = .sheetType(
+            //                        icon: .alert,
+            //                        title: "Error",
+            //                        message: self.viewModel.errorMessage ?? "",
+            //                        primaryBtnText: "",
+            //                        secondaryBtnText: AppString.ok.localized
+            //                    )
+            //                    await SVProgressHUD.dismiss()
+            //                    showError = true
+            //                }
+            //                else  {
+            //                    categorySuccess()
+            //                }
+            //                self.viewModel.errorMessage?.removeAll()
+            //                await viewModel.getAddresses()
+            //
+            //                if let errorMessage = self.viewModel.errorMessage, errorMessage != "" {
+            //                    await SVProgressHUD.dismiss()
+            //                    alertType = .sheetType(
+            //                        icon: .alert,
+            //                        title: "Error",
+            //                        message: self.viewModel.errorMessage ?? "",
+            //                        primaryBtnText: "",
+            //                        secondaryBtnText: AppString.ok.localized
+            //                    )
+            //                    showError = true
+            //                }
+            //                else  {
+            //                    shippingAddressSuccess()
+            //                }
+            //                self.viewModel.errorMessage?.removeAll()
+            //                await viewModel.getMailClasses()
+            //                await SVProgressHUD.dismiss()
+            //                if self.viewModel.errorMessage == nil || self.viewModel.errorMessage == "" {
+            //                    mailSuccess()
+            //                }else{
+            //                    alertType = .sheetType(
+            //                        icon: .alert,
+            //                        title: "Error",
+            //                        message: self.viewModel.errorMessage ?? "",
+            //                        primaryBtnText: "",
+            //                        secondaryBtnText: AppString.ok.localized
+            //                    )
+            //                    showError = true
+            //                }
+            //
+            //
+            //
+            //
+            //            }
             //            Task{
             //                guard Reachability.isConnectedToNetwork() else {
             //                    hudMsg = "No Internet Connection"
@@ -600,8 +600,9 @@ struct CreateProductScreen: View {
             showError = true
         }
     }
+    
     func categorySuccess() {
-       
+        
         let response = viewModel.categoryResponse
         if response?.status == "success" {
             self.categoryList = response?.data ?? [CategoryDataModel]()
@@ -620,7 +621,7 @@ struct CreateProductScreen: View {
     }
     
     func shippingAddressSuccess() {
-       
+        
         let response = viewModel.addressesResponse
         if response?.status == "success" {
             self.ShippingAddress = response?.data ?? [AddressModel]()
@@ -636,9 +637,7 @@ struct CreateProductScreen: View {
             showError = true
         }
     }
-   
-}
-
+    
 }
 
 extension View {

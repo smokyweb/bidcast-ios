@@ -8,16 +8,82 @@
 import Foundation
 
 // MARK: - OfferListModel
-struct OfferListModel : Codable {
-    var id, user_id, product_id : Int?
-    var amount: String?
-    var status, created_at: String?
-    var user: UserDetail?
-    var product: ProductModel?
-    var schedule_show_id : Int?
-    var bid_price : Int?
-    var created_by : Int?
+//struct OfferListModel : Codable {
+//    var id, user_id, product_id : Int?
+//    var amount: String?
+//    var status, created_at: String?
+//    var user: UserDetail?
+//    var product: ProductModel?
+//    var schedule_show_id : Int?
+//    var bid_price : Int?
+//    var created_by : Int?
+//}
+
+struct OfferListModel: Codable {
+    let id: Int?
+    let order_id: String?
+    let user_id: Int?
+    let product_id: Int?
+    let shipping_address: String?
+    let card_id: String?
+    let customer_payment_profile_id: String?
+    let promo_code: String?
+    let send_as_gift: Bool?
+    let gift_user_id: String?
+    let gift_msg: String?
+    let status: String?
+    let created_at: String?
+    let product: ProductDataDetailsModel?
+    let user: UserDetailDataModel?
 }
+
+struct ProductDataDetailsModel: Codable {
+    let id: Int?
+    let user_id: Int?
+    let category_id: Int?
+    let sub_category_id: Int?
+    let title: String?
+    let variant: String?
+    let width: Int?
+    let length: Int?
+    let weight: Int?
+    let height: Int?
+    let mail_class: String?
+    let processing_category: String?
+    let description: String?
+    let quantity: String?
+    let purchased_quantity: String?
+    let pricing: String?
+    let flash_sale: Bool?
+    let auction: Bool?
+    let accept_offers: Bool?
+    let reserve_for_live: Bool?
+    let shipping_profile_id: Int?
+    let type: String?
+    let status: String?
+    let product_show: String?
+    let images: [String]?
+    let thumbnail: [String]?
+    let created_at: String?
+    let seller: SellerDetailsModel?
+}
+
+struct SellerDetailsModel: Codable {
+    let id: Int?
+    let name: String?
+    let username: String?
+    let profile_image: String?
+    let email: String?
+}
+
+struct UserDetailDataModel: Codable {
+    let id: Int?
+    let name: String?
+    let username: String?
+    let profile_image: String?
+    let email: String?
+}
+
 
 
 // MARK: - ProductModel

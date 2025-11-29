@@ -81,7 +81,7 @@ struct PurchasesViewScreen: View {
                         .foregroundColor(.gray)
                     Button {
                         userId = "\(purchaseList?.user?.id ?? 0)"
-                        userImage = purchaseList?.user?.profileImage ?? ""
+                        userImage = purchaseList?.user?.profile_image ?? ""
                         userName = purchaseList?.user?.name ?? ""
                         navigateToUserProfile = true
                     } label: {
@@ -98,7 +98,6 @@ struct PurchasesViewScreen: View {
         }
         .onTapGesture {
             withAnimation(.easeInOut(duration: 0.28)) {
-                let orderId = "12345"          // set required parameter
                 navigateToOrderTracking = true
             }
         }
@@ -114,7 +113,7 @@ struct PurchasesViewScreen: View {
                                               userImage: $userImage))
         CusNavLink(
             doNavigate: $navigateToOrderTracking,
-            destination: OrderTrackingView()
+            destination: OrderTrackingView(orderId: purchaseList?.order_id, productId: purchaseList?.product_id)
         )
 
     }

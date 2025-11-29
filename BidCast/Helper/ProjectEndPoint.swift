@@ -38,6 +38,7 @@ enum APIEndPoint{
     case storeProduct(productId: Int? ,param : [String:Any] )
     case storeAddress(param:AddressRequest)
     case getAddress
+    case getOrderDetails(param: OrderDetailsParam)
     case setDefaultAddress(param:AddressDefaultParam)
     case getPreference
     case updatePreference(param : UpdatePreferenceRequest)
@@ -271,6 +272,8 @@ extension APIEndPoint: EndPointType {
             return "upsert-shipping-address"
         case .getAddress:
             return "get-shipping-address"
+        case .getOrderDetails(param:let param):
+            return "order-details-with-shipping?product_id=\(param.product_id)&order_id=\(param.order_id)"
         case .setDefaultAddress:
             return "set-default-shipping-address"
         case .getPreference:
@@ -661,6 +664,8 @@ extension APIEndPoint: EndPointType {
             
         case .getAddress:
             return .get
+        case .getOrderDetails:
+            return .get
         case .setDefaultAddress:
             return .post
         case .getPreference:
@@ -1017,6 +1022,8 @@ extension APIEndPoint: EndPointType {
         case .storeAddress(param: let param):
             return param
         case .getAddress:
+            return nil
+        case .getOrderDetails:
             return nil
         case .setDefaultAddress(param: let param):
             return param
@@ -1382,6 +1389,8 @@ extension APIEndPoint: EndPointType {
         case .storeAddress(param: let param):
             return nil
         case .getAddress:
+            return nil
+        case .getOrderDetails:
             return nil
         case .setDefaultAddress(param: let param):
             return nil

@@ -62,13 +62,20 @@ struct AddProductsScreen: View {
     @Binding var backToCreateProduct : Bool
     var delegate: ShowStepDelegate?
     
+    @State var config: BottomSheetConfig = BottomSheetConfig(
+        icon: "checkmark.seal.fill",
+        title: "",
+        message: "",
+        primaryButtonTitle: "Okay",
+        secondaryButtonTitle: nil,
+        showButtons: true
+    )
     
     
     var body: some View {
-        VStack(spacing: 16) {
-            
-            // Header
-            VStack{
+        ZStack(alignment: .bottom) {
+            VStack(spacing: 0) {
+                // Header
                 PrimaryHeader(
                     title: "Add Products".localized,
                     isForLogo : false ,
@@ -79,217 +86,278 @@ struct AddProductsScreen: View {
                         }else{
                             self.presentationMode.wrappedValue.dismiss()
                         }
-                        
                     },
                     count: .constant(0)
                 )
-            }
-            ScrollView{
-                // Placeholder for banner/image box
-//                RoundedRectangle(cornerRadius: 12)
-//                    .fill(Color.gray.opacity(0.1))
-//                    .frame(height: 80)
-//                    .padding(.horizontal)
-                // Add More Section
-                VStack(alignment: .leading, spacing: 4) {
-                    HStack {
-                        Text("Add More Products")
-                            .fontWeight(.semibold)
-                        Spacer()
-                        Text("\(productCount)/100")
-                            .foregroundColor(.gray)
-                            .font(.footnote)
-                    }
-                    
-                    HStack(spacing: 10) {
-                        addProductOption(text: "Add another product") {
-                            if NavFromProductLibrary{
-                                presentationMode.wrappedValue.dismiss()
-                            }else{
-                                backToCreateProduct = false
+                
+                // Scrollable Content
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 16) {
+                        // Add More Section
+                        VStack(alignment: .leading, spacing: 12) {
+                            HStack {
+                                Text("Add More Products")
+                                    .font(.custom(poppinsSemiBold, size: 16))
+                                    .foregroundColor(.primary)
+                                Spacer()
+                                Text("\(productData.count)/100")
+                                    .font(.custom(poppinsMedium, size: 14))
+                                    .foregroundColor(.secondary)
                             }
                             
-                        }
-                        addProductOption(text: "Select from product Inventory"){
-//                            presentationMode.wrappedValue.dismiss()
-                            navigateToInventry = true
-                        }
-                    }
-                }
-                .padding(.horizontal)
-                .padding(.bottom, 25)
-                Spacer()
-                // Added Product Section
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Added Product")
-                        .font(.custom(poppinsSemiBold, size: 13.0))
-                    if productData.isEmpty{
-                        Text("No product found")
-                            .font(.custom(poppinsSemiBold, size: 13.0))
-                    }else{
-                        ForEach(productData.indices, id: \.self) { index in
-                            let data = productData[index]
-                            let idStr = "\(data.id ?? -1)"
-                            let isSelected = selectedProductIDs.contains(idStr)
-
-                            HStack {
-                                CustomProfileImage(
-                                    url: data.images?.first,
-                                    isCircular: false,
-                                    size: 50,
-                                    defaultImage: "fashion"
-                                )
-
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(data.title ?? "Untitled")
-                                        .font(.custom(poppinsBold, size: 14))
-
-                                    Text(data.category?.name ?? "Unknown Category")
-                                        .font(.custom(poppinsSemiBold, size: 13))
-                                        .foregroundColor(.gray)
-
-                                    Text("Quantity: \(data.quantity ?? "")")
-                                        .font(.custom(poppinsSemiBold, size: 13))
-                                        .foregroundColor(.gray)
-                                }
-
-                                Spacer()
-
-                                Button(action: {
-                                    navigateToEditProduct = true
-                                }) {
-                                    Image(systemName: "square.and.pencil")
-                                }
-
-                                Button(action: {
-                                   
-                                    deletedIndex = index
-                                    deletedProductId = idStr
-                                    // Delete action
-                                    alertType = .sheetType(
-                                        icon: .alert,
-                                        title: "Delete!",
-                                        message: "Are you sure, You want to delete this product.",
-                                        primaryBtnText: "Yes",
-                                        secondaryBtnText: "No"
-                                    )
-                                    showDeleteProduct = true
-                               
-                                }) {
-                                    Image(systemName: "trash")
-                                        .foregroundColor(.red)
-                                }
-                            }
-                            .padding()
-                            .background(Color.white)
-                            .cornerRadius(12)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .stroke(isSelected ? Color.blue : Color.gray.opacity(0.3), lineWidth: isSelected ? 2 : 1)
-                            )
-                            .onTapGesture {
-                                // Animation
-                                isTapped = true
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
-                                        isTapped = false
+                            HStack(spacing: 12) {
+                                addProductOption(text: "Add another product") {
+                                    if NavFromProductLibrary{
+                                        presentationMode.wrappedValue.dismiss()
+                                    }else{
+                                        backToCreateProduct = false
                                     }
                                 }
-
-                                // Selection toggle
-                                if isSelected {
-                                    selectedProductIDs = selectedProductIDs.filter({$0 != idStr})
-//                                    productData.remove(at: index)
-                                } else {
-//                                    productData.append(data)
-                                    selectedProductIDs.insert(idStr)
+                                
+                                addProductOption(text: "Select from product Inventory"){
+                                    navigateToInventry = true
                                 }
-                                request.product_ids = selectedProductIDs.joined(separator: ",")
                             }
                         }
-
+                        .padding(.horizontal, 16)
+                        .padding(.top, 16)
+                        
+                        // Added Product Section
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Added Products")
+                                .font(.custom(poppinsSemiBold, size: 16))
+                                .foregroundColor(.primary)
+                            
+                            if productData.isEmpty {
+                                VStack(spacing: 16) {
+                                    Image(systemName: "cube.box")
+                                        .font(.system(size: 50))
+                                        .foregroundColor(.gray.opacity(0.4))
+                                    
+                                    Text("No product found")
+                                        .font(.custom(poppinsMedium, size: 15))
+                                        .foregroundColor(.secondary)
+                                    
+                                    Text("Add products to your show")
+                                        .font(.custom(poppinsRegular, size: 13))
+                                        .foregroundColor(.secondary)
+                                }
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 60)
+                                
+                            } else {
+                                ForEach(productData.indices, id: \.self) { index in
+                                    let data = productData[index]
+                                    let idStr = "\(data.id ?? -1)"
+                                    let isSelected = selectedProductIDs.contains(idStr)
+                                    
+                                    ProductItemCard(
+                                        product: data,
+                                        isSelected: isSelected,
+                                        onTapCard: {
+                                            withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                                                if isSelected {
+                                                    selectedProductIDs.remove(idStr)
+                                                } else {
+                                                    selectedProductIDs.insert(idStr)
+                                                }
+                                                request.product_ids = selectedProductIDs.joined(separator: ",")
+                                            }
+                                        },
+                                        onTapEdit: {
+                                            navigateToEditProduct = true
+                                        },
+                                        onTapDelete: {
+                                            deletedIndex = index
+                                            deletedProductId = idStr
+                                            config = BottomSheetConfig(
+                                                   icon: "trash.circle.fill",
+                                                   title: "Delete Product?",
+                                                   message:  "Are you sure you want to remove this product?",
+                                                   primaryButtonTitle: "Delete",
+                                                   secondaryButtonTitle: "Cancel"
+                                               )
+                                            showDeleteProduct = true
+                                            
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                        .padding(.horizontal, 16)
+                        
+                        // Bottom spacing for button
+                        Spacer()
+                            .frame(height: 100)
                     }
                 }
-                .padding(.horizontal)
                 
-//                Spacer()
-               
+                // Fixed Bottom Button
+                VStack(spacing: 0) {
+                    Divider()
+                        .background(Color.gray.opacity(0.2))
+                    
+                    Button(action: handleFinishTapped) {
+                        Text("Finish")
+                            .font(.custom(poppinsSemiBold, size: 17))
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 54)
+                            .background(
+                                LinearGradient(
+                                    colors: [Color.defaultTheme, Color.defaultTheme.opacity(0.8)],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                            .cornerRadius(14)
+                            .shadow(color: Color.defaultTheme.opacity(0.3), radius: 12, x: 0, y: 4)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.top, 12)
+                    .padding(.bottom, 16)
+                }
+                .background(Color(UIColor.systemBackground))
+                .padding(.bottom, -106)
             }
+            .zIndex(0)
             
-            Spacer()
-            
-            // Finish Button
-            Button(action: handleFinishTapped) {
-                Text("Finish")
-                    .fontWeight(.semibold)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 50)
-                    .background(Color.defaultTheme)
-                    .foregroundColor(.white)
-                    .cornerRadius(12)
-            }
-            .padding([.horizontal, .bottom])
-            
+//            // Dimmed Background for Bottom Sheets
+//            if showError || showDeleteProduct {
+//                Color.black.opacity(0.4)
+//                    .ignoresSafeArea()
+//                    .onTapGesture {
+//                        withAnimation {
+//                            showError = false
+//                            showDeleteProduct = false
+//                        }
+//                    }
+//                    .zIndex(998)
+//            }
         }
         .navigationBarHidden(true)
+//        .ignoresSafeArea(edges: .bottom)
+        .background(Color(UIColor.systemGroupedBackground))
+        .onAppear {
+            // CRITICAL: Explicitly set all bottom sheet states to false on appear
+            showError = false
+            showDeleteProduct = false
+        }
         .onFirstAppear{
             fetchProduct(page: currentPage)
         }
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }
-        .bottomSheet(
-            isPresented: $showError,
-            height: screenHeight * 0.26,
-            topBarCornerRadius: 25,
-            showTopIndicator: false,
-            onDismiss: {
-                showError = false
-            }, content: {
-                CommonBottomSheet(
-                    sheetType: $alertType,
-                    onPrimaryClick: {
-                        withAnimation {
-                            showError = false
-                        }
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+        // IMPORTANT: Only attach bottom sheet modifiers when actually showing
+//        .modifier(ConditionalBottomSheet(
+//            isPresented: $showError,
+//            height: screenHeight * 0.3,
+//            content: {
+//                CommonBottomSheet(
+//                    sheetType: $alertType,
+//                    onPrimaryClick: {
+//                        withAnimation {
+//                            showError = false
+//                        }
+//                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+//                            navigateToTab = true
+//                        }
+//                    },
+//                    onSecondaryClick: {
+//                        withAnimation {
+//                            showError = false
+//                        }
+//                    }
+//                )
+//            }
+//        ))
+//        .modifier(ConditionalBottomSheet(
+//            isPresented: $showDeleteProduct,
+//            height: screenHeight * 0.35,
+//            content: {
+//                CommonBottomSheet(
+//                    sheetType: $alertType,
+//                    onPrimaryClick: {
+//                        withAnimation {
+//                            showDeleteProduct = false
+//                        }
+//                        
+//                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+//                            if let index = deletedIndex {
+//                                withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+//                                    productData.remove(at: index)
+//                                    if let productId = deletedProductId {
+//                                        selectedProductIDs.remove(productId)
+//                                        request.product_ids = selectedProductIDs.joined(separator: ",")
+//                                    }
+//                                    deletedIndex = nil
+//                                    deletedProductId = nil
+//                                }
+//                            }
+//                        }
+//                    },
+//                    onSecondaryClick: {
+//                        withAnimation {
+//                            showDeleteProduct = false
+//                        }
+//                        deletedIndex = nil
+//                        deletedProductId = nil
+//                    }
+//                )
+//            }
+//        ))
+        .overlay(
+            CustomBottomSheetView(
+                isPresented: $showError,
+                config: config,
+                primaryAction: {
+                    withAnimation {
+                        showError = false
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                             navigateToTab = true
                         }
-                    }, onSecondaryClick: {
-                    withAnimation { showError = false }
-                })
-        })
-        
-        .bottomSheet(
-            isPresented: $showDeleteProduct,
-            height: screenHeight * 0.37,
-            topBarCornerRadius: 25,
-            showTopIndicator: false,
-            onDismiss: {
-                showDeleteProduct = false
-            },  content: {
-            CommonBottomSheet(
-                sheetType: $alertType,
-                onPrimaryClick: {
-                    withAnimation { showDeleteProduct = false }
-                    isTapped = true
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                        withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
-                            isTapped = false
-                            if let index = deletedIndex {
+                    }
+                },
+                secondaryAction: {
+                    withAnimation {
+                        showError = false
+                    }
+                }
+            )
+        )
+        .overlay(
+            CustomBottomSheetView(
+                isPresented: $showDeleteProduct,
+                config: config,
+                primaryAction: {
+                    withAnimation {
+                        showDeleteProduct = false
+                    }
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                        if let index = deletedIndex {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
                                 productData.remove(at: index)
-                                selectedProductIDs = selectedProductIDs.filter({$0 != deletedProductId ?? ""})
+                                if let productId = deletedProductId {
+                                    selectedProductIDs.remove(productId)
+                                    request.product_ids = selectedProductIDs.joined(separator: ",")
+                                }
+                                deletedIndex = nil
+                                deletedProductId = nil
                             }
-                           
                         }
                     }
-                }, onSecondaryClick: {
-                    withAnimation { showDeleteProduct = false }
-                })
-        })
-            
-//        
-//        CusNavLink(doNavigate: $navigateToTab, destination: TabbarScreen())
+                },
+                secondaryAction: {
+                    withAnimation {
+                        showDeleteProduct = false
+                    }
+                }
+            )
+        )
+
+        
         CusNavLink(doNavigate: $navigateToTab, destination:
             TabbarScreen()
                 .environmentObject(TabBarRouter())
@@ -308,26 +376,131 @@ struct AddProductsScreen: View {
     // MARK: - Add Product Tile
     private func addProductOption(text: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            VStack {
-                Image(systemName: "plus")
-                    .foregroundColor(.gray)
+            VStack(spacing: 12) {
+                Image(systemName: "plus.circle.fill")
+                    .font(.system(size: 32))
+                    .foregroundColor(.defaultTheme)
+                
                 Text(text)
-                    .foregroundColor(.gray)
-                    .font(.subheadline)
+                    .font(.custom(poppinsMedium, size: 13))
+                    .foregroundColor(.primary)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 120)
+            .frame(height: 130)
+            .background(Color.white)
+            .cornerRadius(14)
+            .overlay(
+                RoundedRectangle(cornerRadius: 14)
+                    .stroke(style: StrokeStyle(lineWidth: 2, dash: [8, 6]))
+                    .foregroundColor(.defaultTheme.opacity(0.3))
+            )
+            .shadow(color: .black.opacity(0.04), radius: 6, x: 0, y: 2)
+        }
+        .buttonStyle(ScaleButtonStyle())
+    }
+}
+
+
+// MARK: - Product Item Card
+struct ProductItemCard: View {
+    let product: ProductDataModel
+    let isSelected: Bool
+    let onTapCard: () -> Void
+    let onTapEdit: () -> Void
+    let onTapDelete: () -> Void
+    
+    var body: some View {
+        HStack(spacing: 14) {
+            // Product Image
+            CustomProfileImage(
+                url: product.images?.first,
+                isCircular: false,
+                cornerRadius: 12,
+                size: 70,
+                height: 70,
+                defaultImage: "fashion"
+            ) {}
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
-                    .stroke(Color.gray.opacity(0.4), style: StrokeStyle(lineWidth: 1, dash: [4]))
+                    .stroke(Color.black.opacity(0.08), lineWidth: 1)
             )
+            .shadow(color: .black.opacity(0.08), radius: 6, x: 0, y: 2)
+            
+            // Product Details
+            VStack(alignment: .leading, spacing: 6) {
+                Text(product.title ?? "Untitled")
+                    .font(.custom(poppinsSemiBold, size: 15))
+                    .foregroundColor(.primary)
+                    .lineLimit(2)
+                
+                Text(product.category?.name ?? "Unknown Category")
+                    .font(.custom(poppinsMedium, size: 13))
+                    .foregroundColor(.secondary)
+                
+                HStack(spacing: 4) {
+                    Text("Qty:")
+                        .font(.custom(poppinsRegular, size: 12))
+                        .foregroundColor(.secondary)
+                    
+                    Text(product.quantity ?? "0")
+                        .font(.custom(poppinsSemiBold, size: 12))
+                        .foregroundColor(.primary)
+                }
+            }
+            
+            Spacer()
+            
+            // Action Buttons
+            VStack(spacing: 12) {
+                Button(action: onTapEdit) {
+                    Image(systemName: "square.and.pencil")
+                        .font(.system(size: 18, weight: .medium))
+                        .foregroundColor(.defaultTheme)
+                        .frame(width: 36, height: 36)
+                        .background(Color.defaultTheme.opacity(0.1))
+                        .cornerRadius(10)
+                }
+                
+                Button(action: onTapDelete) {
+                    Image(systemName: "trash")
+                        .font(.system(size: 18, weight: .medium))
+                        .foregroundColor(.red)
+                        .frame(width: 36, height: 36)
+                        .background(Color.red.opacity(0.1))
+                        .cornerRadius(10)
+                }
+            }
         }
+        .padding(14)
+        .background(Color.white)
+        .cornerRadius(14)
+        .overlay(
+            RoundedRectangle(cornerRadius: 14)
+                .stroke(
+                    isSelected ? Color.defaultTheme : Color.black.opacity(0.08),
+                    lineWidth: isSelected ? 2.5 : 1
+                )
+        )
+        .shadow(color: .black.opacity(isSelected ? 0.12 : 0.06), radius: isSelected ? 12 : 6, x: 0, y: isSelected ? 4 : 2)
+        .scaleEffect(isSelected ? 1.02 : 1.0)
+        .onTapGesture(perform: onTapCard)
     }
+}
 
+// MARK: - Scale Button Style
+struct ScaleButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.96 : 1.0)
+            .animation(.spring(response: 0.3, dampingFraction: 0.6), value: configuration.isPressed)
+    }
 }
 
 //MARK: API LOGIC.
-extension AddProductsScreen{
+extension AddProductsScreen {
     
     // MARK: - Fetch Inventory List
     func fetchProduct(page: Int) {
@@ -376,14 +549,15 @@ extension AddProductsScreen{
             productData = response?.data ?? [ProductDataModel]()
         
         }else{
-            alertType = .sheetType(
-                icon: .alert,
+            config = BottomSheetConfig(
+                icon: "exclamationmark.triangle.fill",
                 title: "Error",
                 message: viewModel.errorMessage ?? "",
-                primaryBtnText: AppString.ok.localized,
-                secondaryBtnText:""
+                primaryButtonTitle: AppString.ok.localized,
+                secondaryButtonTitle: nil
             )
             showError = true
+
         }
     }
     
@@ -424,25 +598,25 @@ extension AddProductsScreen{
         await performAPICalls(
             isConcurrent: false,
             showLoader: true,
-            onError: { _ in
-                alertType = .sheetType(
-                    icon: .alert,
+            onError: { error in
+                config = BottomSheetConfig(
+                    icon: "exclamationmark.triangle.fill",
                     title: "Error",
-                    message: viewModel.errorMessage ?? "",
-                    primaryBtnText: AppString.ok.localized,
-                    secondaryBtnText: ""
+                    message: errorDesc(error: error, message: viewModel.errorMessage),
+                    primaryButtonTitle: AppString.ok.localized,
+                    secondaryButtonTitle: nil
                 )
                 showError = true
             },
             onSuccess: {
                 let response = viewModel.storeShowResponse
 
-                alertType = .sheetType(
-                    icon: .success,
+                config = BottomSheetConfig(
+                    icon: "checkmark.circle.fill",
                     title: "Success",
                     message: response?.message?.capitalized ?? "",
-                    primaryBtnText: AppString.ok.localized,
-                    secondaryBtnText: ""
+                    primaryButtonTitle: AppString.ok.localized,
+                    secondaryButtonTitle: nil
                 )
                 showError = true
             }
@@ -469,9 +643,130 @@ extension AddProductsScreen{
                 key: "thumbnail[]"
             )
         }
-
     }
-
-
+    
+    private func errorDesc(error: Error?, message: String?) -> String {
+        guard let msg = message else {
+            return error?.localizedDescription ?? "Something went wrong"
+        }
+        return msg
+    }
+    
 }
+
+import SwiftUI
+
+struct CustomBottomSheetView: View {
+    
+    @Binding var isPresented: Bool
+    var config: BottomSheetConfig
+    
+    /// Actions moved here (this is what you wanted)
+    var primaryAction: (() -> Void)? = nil
+    var secondaryAction: (() -> Void)? = nil
+    
+    var body: some View {
+        ZStack {
+            
+            // Dim background
+            if isPresented {
+                Color.black.opacity(0.35)
+                    .ignoresSafeArea()
+                    .onTapGesture {
+                        withAnimation { isPresented = false }
+                    }
+            }
+            
+            VStack {
+                Spacer() // PUSH TO BOTTOM
+                
+                if isPresented {
+                    VStack(spacing: 16) {
+                        
+                        if let icon = config.icon {
+                            Image(systemName: icon)
+                                .font(.system(size: 40))
+                                .foregroundColor(.blue)
+                                .padding(.top, 20)
+                        }
+                        
+                        Text(config.title)
+                            .font(.title3)
+                            .fontWeight(.semibold)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 16)
+                        
+                        Text(config.message)
+                            .font(.body)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 16)
+                        
+                        if config.showButtons {
+                            VStack(spacing: 10) {
+                                
+                                if let title = config.primaryButtonTitle {
+                                    Button {
+                                        primaryAction?()
+                                        withAnimation { isPresented = false }
+                                    } label: {
+                                        Text(title)
+                                            .frame(maxWidth: .infinity)
+                                            .padding(.vertical, 8)
+                                            .background(Color.blue)
+                                            .cornerRadius(12)
+                                            .foregroundColor(.white)
+                                    }
+                                    .frame(width: screenWidth/1.5, height: 40)
+                                    .padding(.bottom, 12)
+                                    .padding(.top, 20)
+                                }
+                                
+                                if let title = config.secondaryButtonTitle {
+                                    Button {
+                                        secondaryAction?()
+                                        withAnimation { isPresented = false }
+                                    } label: {
+                                        Text(title)
+                                            .frame(maxWidth: .infinity)
+                                            .padding(.vertical, 8)
+                                            .background(Color.gray.opacity(0.2))
+                                            .cornerRadius(12)
+                                            .foregroundColor(.black)
+                                    }
+                                    .frame(width: screenWidth/1.5, height: 40)
+                                    .padding(.bottom, 20)
+                                }
+                            }
+                            .padding(.horizontal, 16)
+                        }
+                        
+                        Spacer().frame(height: 20)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .background(Color.white)
+                    .cornerRadius(25, corners: [.topLeft, .topRight])
+//                    .ignoresSafeArea(edges: .bottom)
+                    .padding(.bottom, -110)
+//                    .transition(.move(edge: .bottom))
+                    .animation(.easeInOut(duration: 0.25), value: isPresented)
+
+                }
+            }
+        }
+    }
+}
+
+
+
+struct BottomSheetConfig {
+    var icon: String? = nil
+    var title: String
+    var message: String
+
+    var primaryButtonTitle: String? = nil
+    var secondaryButtonTitle: String? = nil
+
+    var showButtons: Bool = true
+}
+
 

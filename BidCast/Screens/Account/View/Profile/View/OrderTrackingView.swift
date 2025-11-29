@@ -11,8 +11,26 @@ struct OrderTrackingView: View {
     @State private var progress: CGFloat = 0
     @State private var showCopied = false
     @State private var bounceAnimation = false
+    @State private var showProductDetails = false
+
+    
+    var orderId: String?
+    var productId: Int?
  
     @Environment(\.presentationMode) var presentationMode
+    
+    @StateObject private var viewModel =  ListProductViewModel()
+    
+    @State var config: BottomSheetConfig = BottomSheetConfig(
+        icon: "checkmark.seal.fill",
+        title: "",
+        message: "",
+        primaryButtonTitle: "Okay",
+        secondaryButtonTitle: nil,
+        showButtons: true
+    )
+    @State private var showError: Bool = false
+    @State private var orderResponse: OrderDetailsModel?
     
     var body: some View {
         NavigationView {
@@ -58,7 +76,7 @@ struct OrderTrackingView: View {
                         Spacer()
                         
                         // Title
-                        Text("🎀Single🎀 #212")
+                        Text(orderResponse?.order?.product?.title?.capitalizingFirstLetter() ?? "🎀Single🎀 #212")
                             .font(.custom("Poppins-SemiBold", size: 18))
                             .foregroundColor(.black)
                             .lineLimit(1)
@@ -77,8 +95,45 @@ struct OrderTrackingView: View {
             withAnimation(.easeInOut(duration: 2.0).repeatForever()) {
                 bounceAnimation.toggle()
             }
+            
+            //API Call
+            Task {
+                await getOrderDetails()
+            }
         }
     }
+    
+    
+    private func getOrderDetails() async {
+        guard let ordId = orderId, let prodId = productId else { return }
+        
+        await performAPICalls(
+            isConcurrent: false,
+            showLoader: true,
+            onError: { error in
+                config = BottomSheetConfig(
+                    icon: "exclamationmark.triangle.fill",
+                    title: "Error",
+                    message: errorDesc(error: error, message: viewModel.errorMessage),
+                    primaryButtonTitle: AppString.ok.localized,
+                    secondaryButtonTitle: nil
+                )
+                showError = true
+            },
+            onSuccess: {
+                let response = viewModel.OrderDetailsResponse
+                orderResponse = response?.data
+            }
+        ) {
+            let orderRequest = OrderDetailsParam(product_id: "\(prodId)", order_id: "\(ordId)")
+            try await viewModel.getOrderDetails(request: orderRequest)
+        }
+    }
+    
+    func encodedOrderID(_ orderId: String) -> String {
+        return orderId.replacingOccurrences(of: "#", with: "%23")
+    }
+
     
     // MARK: - Main Status Card
     var mainStatusCard: some View {
@@ -123,7 +178,7 @@ struct OrderTrackingView: View {
                 .foregroundColor(.blue)
             }
             
-            Text("Order placed Nov 25, 2025 at 10:10PM")
+            Text("Order placed \(formattedDate(orderResponse?.order?.createdAt))") // dynamic update
                 .font(.custom("Poppins-Regular", size: 12))
                 .foregroundColor(.secondary)
             
@@ -132,7 +187,7 @@ struct OrderTrackingView: View {
                 ActionButtonView(
                     icon: "mappin",
                     title: "Shipping to",
-                    subtitle: "Jay Yorty\n547 Bridgeside Dr\nAvon Lake OH 44012-2767"
+                    subtitle: formattedShippingAddress(orderResponse?.shippingAddress) // dynamic update
                 )
                 
                 ActionButtonView(
@@ -161,66 +216,120 @@ struct OrderTrackingView: View {
         .transition(.opacity.combined(with: .offset(y: 10)))
     }
     
+    // MARK: - Date Formatter
+    private func formattedDate(_ isoDate: String?) -> String {
+        guard let isoDate = isoDate else { return "" }
+
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+
+        if let date = formatter.date(from: isoDate) {
+            let output = DateFormatter()
+            output.dateFormat = "MMM dd, yyyy 'at' hh:mm a"
+            return output.string(from: date)  // dynamic update
+        }
+
+        return isoDate
+    }
+    
+    // MARK: - Shipping Address Formatter
+    private func formattedShippingAddress(_ address: ShippingAddressModel?) -> String {
+        guard let address else { return "" }
+
+        return """
+        \(address.name ?? "")
+        \(address.streetAddress ?? "")
+        \(address.city ?? "") \(address.state ?? "") \(address.pincode ?? "")
+        """ // dynamic update
+    }
+    
+    func formatOrderDate(_ isoDate: String?) -> String {
+        guard let isoDate else { return "" }
+
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+
+        guard let date = formatter.date(from: isoDate) else { return isoDate }
+
+        let output = DateFormatter()
+        output.dateFormat = "MMM dd yyyy"   // May 25 2025
+
+        return output.string(from: date)
+    }
+
+
+    
     // MARK: - Product Image Card
     var productImageCard: some View {
-        VStack {
-            Text("🎀")
-                .font(.system(size: 70))
-                .offset(y: bounceAnimation ? -10 : 0)
+        HStack(alignment: .top) {
             
-            Text("😊")
-                .font(.system(size: 60))
+            CustomProfileImage(
+                url: orderResponse?.order?.product?.images?.first,
+                isCircular: false,
+                cornerRadius: 20,
+                size: 200,
+                height: 200,
+                defaultImage: "photo"
+            ) {
+                print("profile icon tapped")
+            }
+
+            Spacer()
         }
-        .frame(maxWidth: .infinity)
-        .frame(height: 200)
-        .background(
-            LinearGradient(
-                colors: [Color.pink.opacity(0.3), Color.blue.opacity(0.3)],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-        )
-        .cornerRadius(20)
-        .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: 2)
+//        .padding(.leading, 16)
     }
     
     // MARK: - Order Details Card
     var orderDetailsCard: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("🎀Single🎀 #212")
+            Text(orderResponse?.order?.product?.title?.capitalizingFirstLetter() ?? "🎀Single🎀 #212")
                 .font(.custom("Poppins-Bold", size: 20))
             
-            Text("Near Mint")
+            Text(orderResponse?.order?.product?.description ?? "Near Mint")
                 .font(.custom("Poppins-Regular", size: 14))
                 .foregroundColor(.secondary)
             
-            Button(action: {}) {
+            Button {
+                withAnimation(.spring()) { showProductDetails.toggle() }
+            } label: {
                 HStack {
                     Text("View Product Details")
                         .font(.custom("Poppins-SemiBold", size: 14))
-                    Image(systemName: "chevron.down")
+                    
+                    Image(systemName: showProductDetails ? "chevron.up" : "chevron.down")
                         .font(.system(size: 12, weight: .semibold))
                 }
                 .foregroundColor(.blue)
             }
+
             
-            Text("Order Details")
-                .font(.custom("Poppins-Bold", size: 18))
+            // MARK: - Expanded / Collapsed Product Details
+            if showProductDetails {
+                Text("Order Details")
+                    .font(.custom("Poppins-Bold", size: 18))
+                    .padding(.top, 8)
+                
+                VStack(spacing: 0) {
+                    DetailRowView(label: "Order ID", value: orderResponse?.order?.orderID ?? "#ORD-123-345", isCopyable: true, showCopied: $showCopied)
+                    DetailRowView(label: "Order Date", value: formatOrderDate(orderResponse?.order?.createdAt) ?? "Nov 25, 2025")
+                    DetailRowView(label: "Sold By", value: orderResponse?.sellerDetails?.name ?? "wyynaut", isLink: true)
+                    DetailRowView(label: "Qty", value: orderResponse?.order?.product?.purchasedQuantity ?? "1")
+                    DetailRowView(label: "Category", value: orderResponse?.order?.product?.category?.name ?? "Near Mint", isLink: true)
+                }
+                
+                VStack(spacing: 12) {
+                    CompactActionButton(icon: "doc.text", title: "Receipt & shipping details")
+                    CompactActionButton(icon: "play.fill", title: "Video Receipt", subtitle: "Video receipt available for 60 more days")
+                }
                 .padding(.top, 8)
-            
-            VStack(spacing: 0) {
-                DetailRowView(label: "Order ID", value: "663690536", isCopyable: true, showCopied: $showCopied)
-                DetailRowView(label: "Order Date", value: "Nov 25, 2025")
-                DetailRowView(label: "Sold By", value: "wyynaut", isLink: true)
-                DetailRowView(label: "Qty", value: "1")
-                DetailRowView(label: "Category", value: "Pokémon Cards", isLink: true)
+
+            } else {
+                VStack(spacing: 12) {
+                    CompactActionButton(icon: "doc.text", title: "Receipt & shipping details")
+                    CompactActionButton(icon: "play.fill", title: "Video Receipt", subtitle: "Video receipt available for 60 more days")
+                }
+                .padding(.top, 8)
             }
-            
-            VStack(spacing: 12) {
-                CompactActionButton(icon: "doc.text", title: "Receipt & shipping details")
-                CompactActionButton(icon: "play.fill", title: "Video Receipt", subtitle: "Video receipt available for 60 more days")
-            }
-            .padding(.top, 8)
         }
         .padding(24)
         .background(Color.white)
@@ -274,12 +383,13 @@ struct OrderTrackingView: View {
     // MARK: - Seller Info Card
     var sellerInfoCard: some View {
         VStack(spacing: 16) {
+            
             Text("About the Seller")
                 .font(.custom("Poppins-Bold", size: 18))
                 .frame(maxWidth: .infinity, alignment: .leading)
             
             ZStack(alignment: .bottom) {
-                // Cover Image
+                // Seller Banner / Cover
                 LinearGradient(
                     colors: [Color.yellow, Color.orange, Color.purple],
                     startPoint: .topLeading,
@@ -287,37 +397,41 @@ struct OrderTrackingView: View {
                 )
                 .frame(height: 180)
                 .cornerRadius(20)
-                .overlay(
-                    Text("😎")
-                        .font(.system(size: 60))
-                )
+//                .overlay(
+//                    Text("😎")
+//                        .font(.system(size: 60))
+//                )
                 
-                // Profile Avatar
-                Circle()
-                    .fill(Color.white)
-                    .frame(width: 80, height: 80)
-                    .overlay(
-                        Text("🎀")
-                            .font(.system(size: 40))
-                    )
-                    .overlay(
-                        Circle()
-                            .stroke(Color.white, lineWidth: 4)
-                    )
-                    .offset(y: 40)
+                // MARK: - UPDATED: Seller Profile Image (Replaced 🎀)
+                CustomProfileImage(
+                    url: orderResponse?.sellerDetails?.profile_image,   // dynamic seller image
+                    isCircular: true,
+                    cornerRadius: 40,
+                    size: 100,
+                    height: 100,
+                    defaultImage: "user_dummy"                  // fallback image
+                ) { print("Seller tapped") }                            // optional tap
+                .overlay(
+                    Circle()
+                        .stroke(Color.white, lineWidth: 4)
+                )
+                .offset(y: 40)
             }
             
             VStack(spacing: 16) {
-                Text("wyynaut")
+                
+                // Seller Name
+                Text(orderResponse?.sellerDetails?.name ?? "Unknown Seller")
                     .font(.custom("Poppins-Bold", size: 20))
                     .padding(.top, 40)
                 
-                // MARK: - Stats Row
+                // -----------------------
+                // MARK: Stats Row
+                // -----------------------
                 HStack(spacing: 0) {
                     StatScreen(
                         icon: "star.fill",
-//                        value: String(format: "%.1f", sellerInfo?.rating_avg ?? 0.0),
-                        value: String(format: "%.1f", 0.0),
+                        value: String(format: "%.1f", Double(orderResponse?.ratingAvg ?? 0)),
                         label: "Rating"
                     )
                     
@@ -325,8 +439,7 @@ struct OrderTrackingView: View {
                     
                     StatScreen(
                         icon: nil,
-//                        value: "\(sellerInfo?.review ?? "0")",
-                        value: String("3.4K"),
+                        value: "\(orderResponse?.soldCount ?? 0)",
                         label: "Sold"
                     )
                     
@@ -334,26 +447,25 @@ struct OrderTrackingView: View {
                     
                     StatScreen(
                         icon: "clock",
-//                        value: sellerInfo?.avg_ship ?? "0",
-                        value: "1d",
+                        value: orderResponse?.avgShip ?? "0d",
                         label: "Avg Ship"
                     )
                 }
                 .padding(16)
                 .background(Color.gray.opacity(0.08))
                 .cornerRadius(12)
-
+                
+                // Seller Bio
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("I'm just a girl 🎀")
-                    Text("Struggles to open packs but we have fun.")
-                    Text("Ig: wyynaut.streams")
-                    Text("Ig: ThePokeFisher ←— For Consignments")
+                    Text(orderResponse?.sellerDetails?.username ?? "-")
+                    Text(orderResponse?.sellerDetails?.email ?? "-")
                 }
                 .font(.custom("Poppins-Regular", size: 14))
                 .foregroundColor(.primary)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
-                Button(action: {}) {
+                // View Profile Button
+                Button(action: { print("View Profile tapped") }) {
                     Text("View Profile")
                         .font(.custom("Poppins-SemiBold", size: 16))
                         .foregroundColor(.primary)
@@ -369,6 +481,7 @@ struct OrderTrackingView: View {
         .cornerRadius(20)
         .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: 2)
     }
+
 }
 
 // MARK: - Action Button Component
@@ -500,7 +613,7 @@ struct CompactActionButton: View {
     let icon: String
     let title: String
     var subtitle: String? = nil
-    
+    var btnAction: (() -> Void) = { }
     var body: some View {
         Button(action: {}) {
             HStack(spacing: 16) {
@@ -538,6 +651,9 @@ struct CompactActionButton: View {
             .cornerRadius(12)
         }
         .buttonStyle(PlainButtonStyle())
+        .onTapGesture {
+            btnAction()
+        }
     }
 }
 
@@ -547,3 +663,13 @@ struct OrderTrackingView_Previews: PreviewProvider {
         OrderTrackingView()
     }
 }
+
+extension OrderTrackingView {
+    private func errorDesc(error: Error?, message: String?) -> String {
+        guard let msg = message else {
+            return error?.localizedDescription ?? "Something went wrong"
+        }
+        return msg
+    }
+}
+

@@ -446,6 +446,10 @@ struct AddressDefaultParam : Encodable {
     var address_id : String
 }
 
+struct OrderDetailsParam : Encodable {
+    var product_id : String
+    var order_id: String
+}
 
 struct UpdatePreferenceRequest: Encodable{
     var country_of_residence: String

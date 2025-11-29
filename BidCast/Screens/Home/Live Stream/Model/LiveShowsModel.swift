@@ -36,11 +36,13 @@ struct Category: Codable {
     var thumbnail: String?
     var extraFields: [ExtraFieldModel]?
     var color: String?
+    var deletedAt: String?
 
     enum CodingKeys: String, CodingKey {
         case id, name, image, thumbnail
         case extraFields = "extra_fields"
         case color
+        case deletedAt = "deleted_at"
     }
 }
 

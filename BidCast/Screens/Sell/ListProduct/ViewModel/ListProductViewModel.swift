@@ -17,6 +17,7 @@ final class ListProductViewModel: ObservableObject {
     @Published var storeImageResponse: ResponseModal<[ImageModel]>?
     @Published var errorMessage: String?
     @Published var addressesResponse : ResponseModal<[AddressModel]>?
+    @Published var OrderDetailsResponse : ResponseModal<OrderDetailsModel>?
     @Published var requestType: String = ""
     
     // MARK: - Get Category List
@@ -123,6 +124,27 @@ final class ListProductViewModel: ObservableObject {
                 header: true
            ){
                addressesResponse = response
+           }
+        } catch(let error) {
+            if let dataError = error as? DataError {
+                self.errorMessage = dataError.getErrorMessage()
+            }
+            else {
+                self.errorMessage = error.localizedDescription
+            }
+            throw error
+        }
+       
+    }
+    
+    // MARK: - Get Addresses
+    func getOrderDetails(request: OrderDetailsParam) async throws{
+        do {
+           if  let response: ResponseModal<OrderDetailsModel> = try await APIManager.shared.request(
+            type: APIEndPoint.getOrderDetails(param: request),
+                header: true
+           ){
+               OrderDetailsResponse = response
            }
         } catch(let error) {
             if let dataError = error as? DataError {

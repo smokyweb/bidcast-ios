@@ -22,7 +22,7 @@ struct ActivityCell: View {
                 HStack(alignment: .center, spacing: 10) {
                     
                     CustomProfileImage(
-                        url: offerListing?.user?.profileImage ?? "",
+                        url: offerListing?.user?.profile_image ?? "",
                         isCircular: true
                     )
                     .padding(.leading, 16)
@@ -53,7 +53,7 @@ struct ActivityCell: View {
                     if isFor != "OffersScreen" {
                         Spacer()
                         let bidPrice = "\(offerListing?.product?.pricing ?? "0.0")"
-                        let amt = offerListing?.amount ?? ""
+                        let amt =  "\(offerListing?.product?.pricing ?? "0.0")"
                         Text("$\(isFor == "Bids" ? bidPrice : amt)")
                             .font(.custom(poppinsSemiBold, fixedSize: 12.0))
                             .foregroundStyle(.text)
@@ -89,7 +89,7 @@ struct ActivityCell: View {
                         )
                         
                         TitleWithLine(
-                            title: isFor == "Bids" ? "Asking Price : $\(offerListing?.bid_price ?? 0)".localized : "Price : $\(offerListing?.product?.pricing ?? "0")".localized,
+                            title: isFor == "Bids" ? "Asking Price : $\(offerListing?.product?.pricing ?? "0")".localized : "Price : $\(offerListing?.product?.pricing ?? "0")".localized,
                             lineLength: 0,
                             textColor: .lightGray,
                             fontName: robotoRegular,
@@ -109,7 +109,7 @@ struct ActivityCell: View {
                     if isFor != "OffersScreen" && isFor !=  "Offers" && isFor !=  "Bids"{
                         
                         SingleTitleLabel(
-                            title: "$\(offerListing?.amount ?? "")",
+                            title: "$\(offerListing?.product?.pricing ?? "")",
                             lineLength: 0,
                             textColor: .success,
                             fontValue: 12)
