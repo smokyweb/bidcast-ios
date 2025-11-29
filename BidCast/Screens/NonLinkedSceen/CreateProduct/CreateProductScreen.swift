@@ -15,7 +15,6 @@ enum CreateProductNavigation {
     case other
 }
 
-
 struct CreateProductScreen: View {
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var networkMonitor: NetworkMonitor
@@ -69,7 +68,7 @@ struct CreateProductScreen: View {
     
     var body: some View {
         
-//        ZStack {
+        ZStack(alignment: .bottom) {
             VStack{
                 VStack{
                     PrimaryHeader(
@@ -82,6 +81,8 @@ struct CreateProductScreen: View {
                         count: .constant(0)
                     )
                 }
+                .padding(.horizontal, 22)
+                
                 ScrollView(showsIndicators:false) {
                     
                     MediaPickerView(uploadedImageUrls: $imageUrls)
@@ -133,6 +134,7 @@ struct CreateProductScreen: View {
                         .disabled(isComeFrom == .inventry ? false : !selectedCategory.isEmpty)
                         .zIndex(1201.0)
                         .padding([.leading,.trailing],16)
+                        
                         AuthTextField(
                             floatingLabel: "Title".localized,
                             placeholder: "Enter Product title".localized,
@@ -151,10 +153,11 @@ struct CreateProductScreen: View {
                             description:$request.description,
                             custFontName : robotoMedium,
                             custFontSize : 14.0
-                            )
+                        )
                         { message in
                             request.description = message
                         }
+                        
                         AuthTextField(floatingLabel: "Width (cm)".localized, placeholder: "Enter width".localized, icon: .menuProfile, text: $request.width ,isIconDisplay : false,
                                       custFontName : robotoMedium,
                                       custFontSize : 14.0,
@@ -163,6 +166,7 @@ struct CreateProductScreen: View {
                         })
                         .keyboardType(.decimalPad)
                         .padding([.bottom],4)
+                        
                         AuthTextField(floatingLabel: "Height (cm)".localized, placeholder: "Enter height".localized, icon: .menuProfile, text: $request.height ,isIconDisplay : false,
                                       custFontName : robotoMedium,
                                       custFontSize : 14.0,
@@ -171,6 +175,7 @@ struct CreateProductScreen: View {
                         })
                         .keyboardType(.decimalPad)
                         .padding([.bottom],4)
+                        
                         AuthTextField(floatingLabel: "Length (cm)".localized, placeholder: "Enter length".localized, icon: .menuProfile, text: $request.length ,isIconDisplay : false,
                                       custFontName : robotoMedium,
                                       custFontSize : 14.0,
@@ -179,6 +184,7 @@ struct CreateProductScreen: View {
                         })
                         .keyboardType(.decimalPad)
                         .padding([.bottom],4)
+                        
                         AuthTextField(floatingLabel: "Weight (lbs)".localized, placeholder: "Enter Weight".localized, icon: .menuProfile, text: $request.weight ,isIconDisplay : false,
                                       custFontName : robotoMedium,
                                       custFontSize : 14.0,
@@ -187,6 +193,7 @@ struct CreateProductScreen: View {
                         })
                         .keyboardType(.decimalPad)
                         .padding([.bottom],4)
+                        
                         DropDownSelection(
                             options: $mailClassList, floatingLabel:"Mail Class",
                             hint: "Select",
@@ -197,16 +204,16 @@ struct CreateProductScreen: View {
                             custCategory : robotoRegular,
                             custCategorySize : 13.0,
                             onOptionSelected: { value in
-//                                if let id = categoryList.first(where: { $0.name == value })?.id {
-//                                    request.mail_class = "\(id)"
-//                                } else {
-                                    request.mail_class = value
-//                                }
-                               
+                                //                                if let id = categoryList.first(where: { $0.name == value })?.id {
+                                //                                    request.mail_class = "\(id)"
+                                //                                } else {
+                                request.mail_class = value
+                                //                                }
+                                
                             }
                         )
-                        
                         .padding([.leading,.trailing],16)
+                        
                         DropDownSelection(
                             options: $processingListArr, floatingLabel:"Processing Category",
                             hint: "Select",
@@ -217,16 +224,16 @@ struct CreateProductScreen: View {
                             custCategory : robotoRegular,
                             custCategorySize : 13.0,
                             onOptionSelected: { value in
-//                                if let id = categoryList.first(where: { $0.name == value })?.id {
-                                    request.processing_category = value
-//                                } else {
-//                                    request.processing_category = ""
-//                                }
+                                //                                if let id = categoryList.first(where: { $0.name == value })?.id {
+                                request.processing_category = value
+                                //                                } else {
+                                //                                    request.processing_category = ""
+                                //                                }
                             }
                         )
-                       
                         .padding([.leading,.trailing],16)
                         .background(.clear)
+                        
                         // Quantity Selector
                         HStack(spacing: 6) {
                             Button(action: {
@@ -264,9 +271,7 @@ struct CreateProductScreen: View {
                             .buttonStyle(.plain)
                         }
                         .padding(.horizontal,12)
-
-
-                
+                        
                         PrimaryButton(
                             title: "Add Variants",
                             isOutLine: false,
@@ -276,11 +281,10 @@ struct CreateProductScreen: View {
                                 print("hell")
                             }, imageName: "ic_Plus", btnColor: .white)
                     }
-                    
-//                    .background(.white)
+                    //                    .background(.white)
                     .cornerRadius(12)
                     .padding(.horizontal,12)
-
+                    
                     TwoButton(titleOne: "Continue", titleTwo: "Use Product Library", onFirstButtonClick: {
                         print(request)
                         print(imageUrls)
@@ -346,64 +350,7 @@ struct CreateProductScreen: View {
                     .padding(.horizontal,12)
                     .padding(.bottom, 16)
                 }
-//                .edgesIgnoringSafeArea(.top)
                 .padding(.horizontal,12)
-//                .ignoresSafeArea(.all, edges: .bottom)
-//                .background(.bg.opacity(0.5))
-                
-                .bottomSheet(
-                    isPresented: $showSubCategorySheet,
-                    height: selectedOption.count < 4 ? screenHeight * 0.35 : screenHeight/1.7,
-                    topBarCornerRadius: 25,
-                    showTopIndicator: false,
-                    onDismiss: {
-                        showSubCategorySheet = true
-                    },
-                    content: {
-                        SelectionBottomSheet(
-                            title: "Select Sub-Category",
-                            message: "Please select Sub-category.",
-                            options: $subCategoryName,
-                            selectedOptions: $selectedOption,
-                            onSelectionDone: { selectedIndexes in
-                                if let index = selectedIndexes.first {
-                                    let selectedValue = subCategoryList[index]
-                                    selectedSubCategory = selectedValue.name ?? ""
-                                    request.sub_category_id = "\(selectedValue.id ?? 0)"
-                                    selectedCategory = "\(selectedCategory) (\(selectedValue.name ?? ""))"
-                                    print("Selected SubCategory: \(selectedValue.name ?? "")")
-                                    self.extraFields = selectedValue.extra_fields ?? []
-//                                    if let extraFields =  self.viewModel.categoryResponse?.data[index].extra_fields{
-//
-//                                    }
-                                }
-                                showSubCategorySheet = false
-                            }
-                        )
-                    }
-                )
-                .toast(isPresenting: $showhud) {
-                    AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
-                    
-                }
-                .bottomSheet(isPresented: $showError, height: screenHeight * 0.3, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: {
-                    if self.viewModel.errorMessage != "" || self.viewModel.errorMessage != nil{
-                        showError = true
-                    }else{
-                        showError = false
-                    }
-                }, content: {
-                    CommonBottomSheet(
-                        sheetType: $alertType,
-                        onPrimaryClick: {
-                            self.presentationMode.wrappedValue.dismiss()
-                            withAnimation { showError = false }
-                        }, onSecondaryClick: {
-                            withAnimation { showError = false }
-                        })
-                })
-//            }
-//            .padding([.leading,.trailing],12)
         }
             
         
@@ -412,8 +359,67 @@ struct CreateProductScreen: View {
         CusNavLink(doNavigate: $navigateToProuct, destination: AddProductsScreen(request:$requests,thumbNail: $thumbNail,fromPrepare: $fromPrepare,backToPrepare: $backToPrepare, NavFromProductLibrary: .constant(false), backToCreateProduct: .constant(false), delegate: delegate))
         
         CusNavLink(doNavigate: $navigateToSalesFormat, destination: SalesFormatScreen(request: $request,storeScheduleRequest: $requests, imageUrls : $imageUrls,thumbNail: $thumbNail,backToPrepare: $backToPrepare,fromPrepare: $fromPrepare,backToCreateProduct:$navigateToSalesFormat,delegate: delegate))
+        }
+        .ignoresSafeArea(edges: .bottom)
+        .background(.bg.opacity(0.5))
+        .bottomSheet(isPresented: $showError,
+                     height: screenHeight * 0.35,
+                     topBarCornerRadius: 25,
+                     contentBackgroundColor: Color(.systemBackground),
+                     topBarBackgroundColor: Color(.systemBackground),
+                     showTopIndicator: false,
+                     onDismiss: {
+            if self.viewModel.errorMessage != "" || self.viewModel.errorMessage != nil{
+                //errorMessage not nil
+                showError = true
+            }else{
+                showError = false
+            }
+        }, content: {
+            CommonBottomSheet(
+                sheetType: $alertType,
+                onPrimaryClick: {
+                    self.presentationMode.wrappedValue.dismiss()
+                    withAnimation { showError = false }
+                }, onSecondaryClick: {
+                    withAnimation { showError = false }
+                })
+            .background(Color(.systemBackground))
+            .cornerRadius(25, corners: [.topLeft, .topRight])
+        })
+        .toast(isPresenting: $showhud) {
+            AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
+            
+        }
+        .bottomSheet(
+            isPresented: $showSubCategorySheet,
+            height: selectedOption.count < 4 ? screenHeight * 0.35 : screenHeight/1.7,
+            topBarCornerRadius: 25,
+            showTopIndicator: false,
+            onDismiss: {
+                showSubCategorySheet = true
+            },
+            content: {
+                SelectionBottomSheet(
+                    title: "Select Sub-Category",
+                    message: "Please select Sub-category.",
+                    options: $subCategoryName,
+                    selectedOptions: $selectedOption,
+                    onSelectionDone: { selectedIndexes in
+                        if let index = selectedIndexes.first {
+                            let selectedValue = subCategoryList[index]
+                            selectedSubCategory = selectedValue.name ?? ""
+                            request.sub_category_id = "\(selectedValue.id ?? 0)"
+                            selectedCategory = "\(selectedCategory) (\(selectedValue.name ?? ""))"
+                            print("Selected SubCategory: \(selectedValue.name ?? "")")
+                            self.extraFields = selectedValue.extra_fields ?? []
+                        }
+                        showSubCategorySheet = false
+                    }
+                )
+            }
+        )
         .onFirstAppear(perform: {
-           
             Task {
                 await performAPICalls(
                     isConcurrent: true,
@@ -421,7 +427,7 @@ struct CreateProductScreen: View {
                         alertType = .sheetType(
                             icon: .alert,
                             title: "Error",
-                            message: viewModel.errorMessage ?? "",
+                            message: errorDesc(error: error, message: viewModel.errorMessage),
                             primaryBtnText: "",
                             secondaryBtnText: AppString.ok.localized
                         )
@@ -502,20 +508,83 @@ struct CreateProductScreen: View {
 //
 //
 //            }
+            //            Task{
+            //                guard Reachability.isConnectedToNetwork() else {
+            //                    hudMsg = "No Internet Connection"
+            //                    showhud = true
+            //                    return
+            //                }
+            //                SVProgressHUD.show()
+            //            await viewModel.getCategoryList(param: CategoryRequest(category_id: ""))
+            //                if let errorMessage = self.viewModel.errorMessage, errorMessage != "" {
+            //                    alertType = .sheetType(
+            //                        icon: .alert,
+            //                        title: "Error",
+            //                        message: self.viewModel.errorMessage ?? "",
+            //                        primaryBtnText: "",
+            //                        secondaryBtnText: AppString.ok.localized
+            //                    )
+            //                    await SVProgressHUD.dismiss()
+            //                    showError = true
+            //                }
+            //                else  {
+            //                    categorySuccess()
+            //                }
+            //                self.viewModel.errorMessage?.removeAll()
+            //                await viewModel.getAddresses()
+            //
+            //                if let errorMessage = self.viewModel.errorMessage, errorMessage != "" {
+            //                    await SVProgressHUD.dismiss()
+            //                    alertType = .sheetType(
+            //                        icon: .alert,
+            //                        title: "Error",
+            //                        message: self.viewModel.errorMessage ?? "",
+            //                        primaryBtnText: "",
+            //                        secondaryBtnText: AppString.ok.localized
+            //                    )
+            //                    showError = true
+            //                }
+            //                else  {
+            //                    shippingAddressSuccess()
+            //                }
+            //                self.viewModel.errorMessage?.removeAll()
+            //                await viewModel.getMailClasses()
+            //                await SVProgressHUD.dismiss()
+            //                if self.viewModel.errorMessage == nil || self.viewModel.errorMessage == "" {
+            //                    mailSuccess()
+            //                }else{
+            //                    alertType = .sheetType(
+            //                        icon: .alert,
+            //                        title: "Error",
+            //                        message: self.viewModel.errorMessage ?? "",
+            //                        primaryBtnText: "",
+            //                        secondaryBtnText: AppString.ok.localized
+            //                    )
+            //                    showError = true
+            //                }
+            //
+            //
+            //
+            //
+            //            }
         })
         .onAppear {
             //assign categoryId
             request.category_id = "\(requests.category_id)"
         }
-        .background(.bg.opacity(0.5))
-        .ignoresSafeArea(.container, edges: .bottom)
         .onTapGesture {
             UIApplication.shared.endEditing()
         }
     }
     
+    private func errorDesc(error: Error?, message: String?) -> String {
+        guard let msg = message else {
+            return error?.localizedDescription ?? "Something went wrong"
+        }
+        return msg
+    }
+    
     func mailSuccess() {
-       
         let response = viewModel.mailClassResponse
         if response?.status == "success" {
             let data = response?.data.mail_classes ?? [MailClass]()
@@ -556,48 +625,6 @@ struct CreateProductScreen: View {
         if response?.status == "success" {
             self.ShippingAddress = response?.data ?? [AddressModel]()
             self.shippingAddressName = response?.data.map { $0.name ?? "No Category" } ?? [String]()
-            
-//            if self.productData != nil {
-//                selectedCategory = productData.category?.name ?? ""
-//                request = StoreProductParam(category_id: "\(productData.category?.id ?? 0)",
-//                                            title: productData.title ?? "",
-//                                            description: productData.description ?? "",
-//                                            quantity: "\(productData.quantity ?? 0)",
-//                                            pricing: "\(productData.pricing ?? 0.0)",
-//                                            flash_sale:productData.flashSale ?? false ? "1" : "0",
-//                                            accept_offers: productData.acceptOffers ?? false ? "1" : "0",
-//                                            reserve_for_live: productData.reserveForLive ?? false ? "1" : "0",
-//                                            shipping_profile_id: "\(productData.shippingProfileID ?? 0)",
-//                                            status: productData.status ?? "",
-//                                            width : "",
-//                                            length : "",
-//                                            weight : "",
-//                                            height : "",
-//                                            mail_class : "",
-//                                            processing_category : "")
-//
-//                quantity = productData.quantity ?? 1
-//                request.quantity = "\(quantity)"
-//
-//                isTappedFlash = productData.flashSale ?? false ? true : false
-//                isTappedAccept = productData.acceptOffers ?? false ? true : false
-//                isTappedReserve = productData.reserveForLive ?? false ? true : false
-//
-//                self.imageUrls = productData.images ?? [String]()
-//                if request.category_id == "0"{
-//                    request.category_id.removeAll()
-//                }
-//                if request.quantity == "0"{
-//                    request.quantity.removeAll()
-//                }
-//                if request.pricing == "0.00"{
-//                    request.pricing.removeAll()
-//                }
-//                if imageUrls == [""]{
-//                    self.imageUrls.removeAll()
-//                }
-//
-//            }
         } else {
             alertType = .sheetType(
                 icon: .alert,
@@ -607,130 +634,15 @@ struct CreateProductScreen: View {
                 secondaryBtnText:""
             )
             showError = true
-            
-            
         }
     }
-    
-//    func uploadSuccess() {
-//        guard let response = self.viewModel.storeImageResponse,
-//                response.status == "success"
-//                else {
-//              return
-//          }
-////            let response = self.viewModel.storeImageResponse
-//        if response.status == "success"{
-//            let uploadedUrls: [[String: String]] = response.data.map {
-//                return ["image": $0.images ?? "", "thumbnail": $0.thumbnail ?? ""]
-//            }
-//            var variantArray: [[String: Any]] = []
-//
-//            for field in extraFields {
-//                guard let title = field.label, let type = field.type else { continue }
-//
-//                if type == "text" {
-//                    // Handle text input
-//                    let value = extraFieldValues[title] ?? ""
-//                    variantArray.append([
-//                        "title": title,
-//                        "value": value
-//                    ])
-//                } else if type == "radio", let options = field.options {
-//                    // Handle radio input
-//                    let selected = selectedRadio[title] ?? ""
-//
-//                    // Find which option key is selected (e.g. option_1 or option_2)
-//                    var selectedKey: String = ""
-//                    var valueDict: [String: String] = [:]
-//
-//                    for (index, option) in options.enumerated() {
-//                        let key = "option_\(index + 1)"
-//                        valueDict[key] = option
-//
-//                        if option == selected {
-//                            selectedKey = option
-//                        }
-//                    }
-//
-//                    valueDict["selected"] = selectedKey
-//
-//                    variantArray.append([
-//                        "title": title,
-//                        "value": valueDict
-//                    ])
-//                }
-//            }
-//
-//                SVProgressHUD.dismiss()
-//                Task{
-//                    self.viewModel.errorMessage?.removeAll()
-//                    var request = [
-//
-//                        "category_id": request.category_id,
-//                        "sub_category_id": request.sub_category_id ?? "",
-//                        "title": request.title,
-//                        "description": request.description,
-//                        "quantity": request.quantity,
-//                        "pricing": request.pricing,
-//                        "flash_sale": request.flash_sale,
-//                        "accept_offers": request.accept_offers,
-//                        "reserve_for_live": request.reserve_for_live,
-//                        "shipping_profile_id": request.shipping_profile_id,
-//                        "images": uploadedUrls
-//
-//
-//                        ]
-//
-//                    if !variantArray.isEmpty {
-//                        request["variant"] = variantArray
-//                    }
-//
-//
-//                    await viewModel.storeProduct(param: request)
-//                    await SVProgressHUD.dismiss()
-//                    if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
-//                        storeSuccess()
-//                    }else{
-//                        alertType = .sheetType(
-//                            icon: .alert,
-//                            title: "Failed",
-//                            message: viewModel.errorMessage ?? "",
-//                            primaryBtnText: "",
-//                            secondaryBtnText: AppString.ok.localized
-//                        )
-//                        showError = true
-//                    }
-//                }
-//            }
-//    }
-    
-    
-//    func storeSuccess(){
-//        let response = viewModel.storeProductResponse
-//        if response?.status == "success"{
-//            alertType = .sheetType(
-//                icon: .success,
-//                title: response?.status?.capitalized ?? "",
-//                message: response?.message?.capitalized ?? "",
-//                primaryBtnText: AppString.ok.localized,
-//                secondaryBtnText: ""
-//            )
-//            showError = true
-//        }else{
-//            alertType = .sheetType(
-//                icon: .alert,
-//                title: response?.error_type?.capitalized ?? "",
-//                message: response?.message?.capitalized ?? "",
-//                primaryBtnText: "",
-//                secondaryBtnText: AppString.ok.localized
-//            )
-//            showError = true
-//        }
-//    }
    
 }
 
+}
 
-//#Preview {
-//    CreateProductScreen(requests: <#Binding<StoreScheduleShowRequest>#>, thumbNail: <#Binding<String>#>, backToPrepare: <#Binding<Bool>#>, fromPrepare: <#Binding<Bool>#>)
-//}
+extension View {
+    func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
+        clipShape(RoundedCorner(radius: radius, corners: corners))
+    }
+}

@@ -17,6 +17,11 @@ final class APIContext<T> {
     }
 }
 
+enum CustomError: Error {
+    case internetError(message: String)
+    case otherError(message: String)
+}
+
 
 extension View {
     /// Unified API handler for serial or concurrent API calls
