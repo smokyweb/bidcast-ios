@@ -2339,20 +2339,19 @@ extension LiveStream {
         return "\(sortedIds[0])_chats_\(sortedIds[1])"
     }
     
-    private func prepareChatData() -> ChatViewModel {
+    private func prepareChatData() -> ChatModel {
         let currentUserId = "\(UserDefaults.userId)"
         let currentUserName = UserDefaults.fullName
         let currentUserImage = UserDefaults.profileURL
         let otherUserId =   liveShowsData[currentIndex].seller?.id ?? ""
         let otherUserName = liveShowsData[currentIndex].seller?.name ?? ""
         let otherUserImage = liveShowsData[currentIndex].seller?.image ?? ""
-        return ChatViewModel(currentUserId: currentUserId,
+        return ChatModel(currentUserId: currentUserId,
                              currentUserName: currentUserName,
                              currentUserImage: currentUserImage,
                              otherUserId: otherUserId,
                              otherUserName: otherUserName,
-                             otherUserImage: otherUserImage,
-                             chatPath: $chatPath)
+                             otherUserImage: otherUserImage)
     }
 }
 

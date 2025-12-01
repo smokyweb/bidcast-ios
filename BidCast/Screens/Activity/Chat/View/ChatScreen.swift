@@ -8,37 +8,44 @@
 import SwiftUI
 import AlertToast
 
-//MARK: ChatScreen
 struct ChatScreen: View {
-    @State var showError: Bool = false
-    @State var isLoading: Bool = false
-    @State var showhud: Bool = false
-    @State var hudMsg: String = ""
-    @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
-    @State private var chatPath: String = ""
+
     @ObservedObject var viewModel: ChatViewModel
+
+    @State private var showhud: Bool = false
+    @State private var hudMsg: String = ""
     @Environment(\.presentationMode) var presentationMode
+
     var notiViewModel = NotificationViewModel()
 
-    init(viewModel: ChatViewModel) {
-        _chatPath = State(initialValue: viewModel.chatPath)
-        self.viewModel = viewModel
+    init(viewModel: ChatModel) {
+        let model = ChatViewModel(
+            currentUserId: viewModel.currentUserId,
+            currentUserName: viewModel.currentUserName,
+            currentUserImage: viewModel.currentUserImage,
+            otherUserId: viewModel.otherUserId,
+            otherUserName: viewModel.otherUserName,
+            otherUserImage: viewModel.otherUserImage
+        )
+        self.viewModel = model
     }
-
+    
     var body: some View {
         VStack(spacing: 0) {
+
             headerView
+
             messagesView
+
             Divider()
+
             inputBar
         }
         .background(Color(red: 248/255, green: 250/255, blue: 253/255))
         .navigationBarHidden(true)
-        .gesture(DragGesture().onChanged { _ in
-            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-        })
     }
 
+    // MARK: - Header
     private var headerView: some View {
         ChatHeaderView(
             profileImage: viewModel.otherUserImage,
@@ -48,6 +55,7 @@ struct ChatScreen: View {
         )
     }
 
+    // MARK: - Messages
     private var messagesView: some View {
         ScrollViewReader { scrollProxy in
             ScrollView {
@@ -67,75 +75,61 @@ struct ChatScreen: View {
                 .padding(.horizontal, 12)
                 .padding(.top, 10)
             }
-            .onChange(of: viewModel.messages.count) { _ in
-                DispatchQueue.main.async {
-                    if let last = viewModel.messages.last {
-                        withAnimation {
-                            scrollProxy.scrollTo(last.id, anchor: .bottom)
-                        }
-                    }
-                }
-            }
             .onAppear {
                 viewModel.fetchMessages()
             }
             .onDisappear {
                 viewModel.removeMessageListener()
             }
+            .onChange(of: viewModel.messages.count) { _ in
+                if let last = viewModel.messages.last {
+                    withAnimation {
+                        scrollProxy.scrollTo(last.id, anchor: .bottom)
+                    }
+                }
+            }
         }
     }
 
-    
+    // GROUPING BY DATE
     private var groupedMessages: [Date: [ChatMessageModel]] {
-        Dictionary(grouping: viewModel.messages) { message in
-            let date = Date(timeIntervalSince1970: TimeInterval(message.timestamp))
+        Dictionary(grouping: viewModel.messages) { msg in
+            let date = Date(timeIntervalSince1970: TimeInterval(msg.timestamp))
             return Calendar.current.startOfDay(for: date)
         }
     }
 
     private func dateHeader(for date: Date) -> some View {
         let label: String
+
         if Calendar.current.isDateInToday(date) {
             label = "Today"
         } else if Calendar.current.isDateInYesterday(date) {
             label = "Yesterday"
         } else {
-            let formatter = DateFormatter()
-            formatter.dateStyle = .medium
-            formatter.timeStyle = .none
-            label = formatter.string(from: date)
+            let f = DateFormatter()
+            f.dateStyle = .medium
+            label = f.string(from: date)
         }
 
         return Text(label)
-            .font(.custom(poppinsMedium, size: 13))
+            .font(.custom("Poppins-Medium", size: 13))
             .foregroundColor(.black)
             .frame(maxWidth: .infinity)
             .padding(.vertical, 6)
     }
 
-
+    // MARK: - Input Bar
     private var inputBar: some View {
         HStack(spacing: 10) {
+
             TextField("Type here...", text: $viewModel.messageText)
                 .padding(12)
-                .font(.custom(poppinsRegular, size: 13.0))
+                .font(.custom("Poppins-Regular", size: 13))
                 .background(Color(.systemGray6))
                 .clipShape(RoundedRectangle(cornerRadius: 20))
 
-            Button(action: {
-                let trimmedText = viewModel.messageText.trimmingCharacters(in: .whitespacesAndNewlines)
-                
-                guard !trimmedText.isEmpty else {
-                    // Show toast
-                    hudMsg = "Please enter a message to send"
-                    showhud = true
-                    return
-                }
-
-                viewModel.sendMessage()
-                sendChatNotificatio(receiverID: viewModel.otherUserId, message: trimmedText)
-                viewModel.messageText = ""
-            }) {
+            Button(action: sendMessage) {
                 Image(systemName: "paperplane.fill")
                     .foregroundColor(.white)
                     .padding(10)
@@ -144,24 +138,37 @@ struct ChatScreen: View {
         }
         .padding(.horizontal)
         .padding(.vertical, 8)
-        .toast(isPresenting: $showhud) {
-            AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)}
     }
 
-    
-    private func sendChatNotificatio(receiverID : String , message : String){
-        let param = SendChatNotification(receiver_id: Int(receiverID) ?? 0, message: message)
+    private func sendMessage() {
+        let text = viewModel.messageText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !text.isEmpty else {
+            hudMsg = "Please enter a message"
+            showhud = true
+            return
+        }
+
+        viewModel.sendMessage()
+        sendChatNotification(receiverID: viewModel.otherUserId, message: text)
+    }
+
+    private func sendChatNotification(receiverID: String, message: String) {
+        let param = SendChatNotification(
+            receiver_id: Int(receiverID) ?? 0,
+            message: message
+        )
+
         Task {
             guard Reachability.isConnectedToNetwork() else {
                 hudMsg = "No Internet Connection"
                 showhud = true
                 return
             }
-            print("Send Notification Param \(param)")
             await notiViewModel.SendNotification(param: param)
         }
     }
 }
+
 
 
 

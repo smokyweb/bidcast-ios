@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct OrderProductCardView: View {
-    var order:  MyOrderModel?
+    var order: MyOrderModel?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {

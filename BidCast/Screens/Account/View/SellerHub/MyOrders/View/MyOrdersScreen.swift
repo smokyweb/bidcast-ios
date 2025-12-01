@@ -140,7 +140,7 @@ struct MyOrdersScreen: View {
         }
         if let order = selectedOrderDetails {
             CusNavLink(doNavigate: $navigateToOrderDetails, destination: OrderStatusScreen(
-                productDetail: selectedOrderDetails,
+                productDetail: $selectedOrderDetails,
                 comeFrom: "myOrder"
             ))
         }

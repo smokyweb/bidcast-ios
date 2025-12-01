@@ -42,6 +42,122 @@ struct MyOrderModel: Codable {
     }
 }
 
+extension MyOrderModel {
+    static func convertToMyOrderModel(from details: OrderDetailsModel?) -> MyOrderModel {
+        
+        guard let details = details,
+              let order = details.order else {
+            return MyOrderModel(
+                id: nil,
+                orderID: nil,
+                userID: nil,
+                productID: nil,
+                shippingAddress: nil,
+                cardID: nil,
+                customerPaymentProfileID: nil,
+                promoCode: nil,
+                sendAsGift: nil,
+                giftUserID: nil,
+                giftMsg: nil,
+                status: nil,
+                createdAt: nil,
+                product: nil,
+                shippingTracking: nil,
+                user: nil
+            )
+        }
+        
+        // Build: MyOrderModel
+        return MyOrderModel(
+            id: order.id,
+            orderID: order.orderID,
+            userID: order.userID,
+            productID: order.productID,
+            shippingAddress: order.shippingAddress,
+            cardID: order.cardID,
+            customerPaymentProfileID: order.customerPaymentProfileID,
+            promoCode: order.promoCode,
+            sendAsGift: order.sendAsGift,
+            giftUserID: Int(order.giftUserID ?? "0") ?? 0,
+            giftMsg: order.giftMsg,
+            status: order.status,
+            createdAt: order.createdAt,
+            
+            // IMPORTANT: Product model mapping
+            product: convertProductModel(order.product),
+            
+            // Shipping tracking (we get only 1 address → create 1 tracking entry)
+            shippingTracking: convertShippingTracking(details.shippingAddress),
+            
+            // Seller/User information
+            user: UserShortModel(
+                id: details.sellerDetails?.id,
+                name: details.sellerDetails?.name,
+                username: details.sellerDetails?.username,
+                profileImage: details.sellerDetails?.profile_image,
+                email: details.sellerDetails?.email
+            )
+        )
+    }
+    
+    static func convertProductModel(_ product: ProductDetailModel?) -> ProductDetails? {
+        guard let p = product else { return nil }
+        
+        return ProductDetails(
+            id: p.id,
+            userID: p.userID,
+            categoryID: p.categoryID,
+            subCategoryID: p.subCategoryID,
+            title: p.title,
+            variant: p.variant,
+            width: p.width.map { "\($0)" },
+            length: p.length.map { "\($0)" },
+            weight: p.weight.map { "\($0)" },
+            height: p.height.map { "\($0)" },
+            mailClass: p.mailClass,
+            processingCategory: p.processingCategory,
+            description: p.description,
+            quantity: p.quantity,
+            purchasedQuantity: p.purchasedQuantity,
+            pricing: p.pricing,
+            flashSale: p.flashSale,
+            acceptOffers: p.acceptOffers,
+            reserveForLive: p.reserveForLive,
+            shippingProfileID: p.shippingProfileID,
+            status: p.status,
+            productShow: p.productShow,
+            images: p.images,
+            thumbnail: p.thumbnail,
+            createdAt: p.createdAt,
+            category: p.category
+        )
+    }
+
+    static func convertShippingTracking(_ address: ShippingAddressModel?) -> [ShippingTrackingModel]? {
+        guard let address = address else { return nil }
+        
+        let line = [
+            address.streetAddress,
+            address.city,
+            address.state,
+            address.pincode
+        ]
+            .compactMap { $0 }
+            .joined(separator: ", ")
+        
+        return [
+            ShippingTrackingModel(
+                id: address.id,
+                orderID: address.userID,
+                title: address.name,
+                createdAt: nil
+            )
+        ]
+    }
+
+
+}
+
 
 // MARK: - ProductDetails
 struct ProductDetails: Codable {

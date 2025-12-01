@@ -404,13 +404,13 @@ struct ProfileScreen: View {
         CusNavLink(
             doNavigate: $navigateToChat,
             destination: ChatScreen(
-                viewModel: ChatViewModel(
+                viewModel: ChatModel(
                     currentUserId: "\(UserDefaults.userId)",
                     currentUserName: UserDefaults.fullName,
                     currentUserImage: UserDefaults.profileURL,
                     otherUserId: id,
                     otherUserName: userName,
-                    otherUserImage: userImage, chatPath: $chatPath
+                    otherUserImage: userImage
                 )
             )
         )

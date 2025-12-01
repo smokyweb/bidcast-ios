@@ -12,7 +12,7 @@ import AlertToast
 struct OrderStatusScreen: View {
     @Environment(\.presentationMode) var presentationMode
     @StateObject var viewModel = OrderStatusViewModel()
-    @State var productDetail : MyOrderModel?
+    @Binding var productDetail : MyOrderModel?
     @EnvironmentObject var networkMonitor: NetworkMonitor
     @State private var recieptUrl : String?
     @State private var isLoading = false

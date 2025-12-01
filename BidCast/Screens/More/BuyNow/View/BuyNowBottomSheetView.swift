@@ -196,7 +196,7 @@ struct BuyNowBottomSheetView: View {
             )
             if let order = orderDetails {
                 CusNavLink(doNavigate: $navigateToOrderStatus, destination: OrderStatusScreen(
-                    productDetail: orderDetails,
+                    productDetail: $orderDetails,
                     comeFrom: "buyNow"
                 ))
             }

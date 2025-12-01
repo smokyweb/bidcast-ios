@@ -21,7 +21,7 @@ struct ActivityScreen: View {
     @State var offerList: [OfferListModel] = []
     @State var currentPage = 1
     @State var messageList: [ChatMessage] = []
-    @State private var chatVM: ChatViewModel?
+    @State private var chatVM: ChatModel?
     @State private var selectedUserId: String? = nil
     @State private var selectedUserName: String? = nil
     @State private var selectedUserImage: String? = nil
@@ -317,14 +317,13 @@ struct ActivityScreen: View {
         print("Computed Chat Path: \(chatPath)")
         
         // Reinitialize the ChatViewModel with the correct user information
-        chatVM = ChatViewModel(
+        chatVM = ChatModel(
             currentUserId: currentUserId,
             currentUserName: UserDefaults.fullName,
             currentUserImage: UserDefaults.profileURL,
             otherUserId: selectedUserId ?? "",
             otherUserName: selectedUserName ?? "",
-            otherUserImage: selectedUserImage ?? "",
-            chatPath: $chatPath
+            otherUserImage: selectedUserImage ?? ""
         )
         
         // Now, we can navigate to the chat screen

@@ -560,6 +560,7 @@
 		D68399AD2EB216A000F3BDA7 /* TimerSocketHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68399AC2EB216A000F3BDA7 /* TimerSocketHandler.swift */; };
 		D68399AF2EB216A800F3BDA7 /* RaidSocketHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68399AE2EB216A800F3BDA7 /* RaidSocketHandler.swift */; };
 		D68399B12EB21CB700F3BDA7 /* FollowUnFollowSocketHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68399B02EB21CB700F3BDA7 /* FollowUnFollowSocketHandler.swift */; };
+		D6888BDF2EDD7F3400202E89 /* VideoPlayerScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6888BDE2EDD7F3400202E89 /* VideoPlayerScreen.swift */; };
 		D68C53A32EA0B2DA008E175D /* KeyChainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68C53A22EA0B2DA008E175D /* KeyChainManager.swift */; };
 		D68DFD092EBDD9750013229C /* UIImage+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68DFD082EBDD9750013229C /* UIImage+Extension.swift */; };
 		D6929C8A2EB47E3500AF5E5B /* EmailSupportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6929C892EB47E3500AF5E5B /* EmailSupportView.swift */; };
@@ -1116,6 +1117,7 @@
 		D68399AC2EB216A000F3BDA7 /* TimerSocketHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerSocketHandler.swift; sourceTree = "<group>"; };
 		D68399AE2EB216A800F3BDA7 /* RaidSocketHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaidSocketHandler.swift; sourceTree = "<group>"; };
 		D68399B02EB21CB700F3BDA7 /* FollowUnFollowSocketHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowUnFollowSocketHandler.swift; sourceTree = "<group>"; };
+		D6888BDE2EDD7F3400202E89 /* VideoPlayerScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerScreen.swift; sourceTree = "<group>"; };
 		D68C53A22EA0B2DA008E175D /* KeyChainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyChainManager.swift; sourceTree = "<group>"; };
 		D68DFD082EBDD9750013229C /* UIImage+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extension.swift"; sourceTree = "<group>"; };
 		D6929C892EB47E3500AF5E5B /* EmailSupportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailSupportView.swift; sourceTree = "<group>"; };
@@ -2849,6 +2851,7 @@
 				D4B615EC2DE8374E00924A3D /* View */,
 				D4B615EE2DE8374E00924A3D /* Model */,
 				D4B615F02DE8374E00924A3D /* ViewModel */,
+				D6888BDE2EDD7F3400202E89 /* VideoPlayerScreen.swift */,
 			);
 			path = ProductDetails;
 			sourceTree = "<group>";
@@ -4545,6 +4548,7 @@
 				D68399AD2EB216A000F3BDA7 /* TimerSocketHandler.swift in Sources */,
 				D4BA9C0F2DE48D2A00DFF6E6 /* ShowCardView.swift in Sources */,
 				35B44F1E2DD705E100FBCBC4 /* AboutUsViewModel.swift in Sources */,
+				D6888BDF2EDD7F3400202E89 /* VideoPlayerScreen.swift in Sources */,
 				3541638A2DDB178300026B34 /* ShowTips.swift in Sources */,
 				D4B615CE2DE8280200924A3D /* NotifyMeModel.swift in Sources */,
 				D4BB9A0B2DE5A99700C1BCBC /* MyOrdersScreen.swift in Sources */,

@@ -75,7 +75,7 @@ struct MailClass: Codable {
     var notes: String?
 }
 
-// MARK: - DataClass
+// MARK: - OrderDetailsModel
 struct OrderDetailsModel: Codable {
     var sellerDetails: SellerDetails?
     var ratingAvg, soldCount: Int?
@@ -97,6 +97,7 @@ struct OrderDetailsModel: Codable {
         case bidVideoURL = "bid_video_url"
     }
 }
+    
 
 // MARK: - Order
 struct Order: Codable {

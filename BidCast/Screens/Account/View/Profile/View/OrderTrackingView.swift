@@ -12,11 +12,19 @@ struct OrderTrackingView: View {
     @State private var showCopied = false
     @State private var bounceAnimation = false
     @State private var showProductDetails = false
-
+    
+    @State private var navigateToProfile: Bool = false
+    @State private var navigateToChat: Bool = false
+    @State private var navigateToContact: Bool = false
+    @State private var navigateToReferScreen: Bool = false
+    @State private var navigateToOrderDetails: Bool = false
+    @State private var navigateToVideoReceipt: Bool = false
+    
+    @State private var chatPath: String = ""
     
     var orderId: String?
     var productId: Int?
- 
+    
     @Environment(\.presentationMode) var presentationMode
     
     @StateObject private var viewModel =  ListProductViewModel()
@@ -31,6 +39,11 @@ struct OrderTrackingView: View {
     )
     @State private var showError: Bool = false
     @State private var orderResponse: OrderDetailsModel?
+    @State var selectedOrderDetails: MyOrderModel?
+    
+    @State private var userId: String = ""
+    @State private var userImage: String = ""
+    @State private var userName: String = ""
     
     var body: some View {
         NavigationView {
@@ -58,6 +71,35 @@ struct OrderTrackingView: View {
                     .padding(.horizontal, 16)
                     .padding(.bottom, 100)
                 }
+                
+                CusNavLink(doNavigate: $navigateToProfile,
+                           destination: ProfileScreen(id:$userId,
+                                                      isComeFrom: .constant(""),
+                                                      userName: $userName,
+                                                      userImage: $userImage))
+                CusNavLink(
+                    doNavigate: $navigateToChat,
+                    destination: ChatScreen(
+                        viewModel: ChatModel(
+                            currentUserId: "\(UserDefaults.userId)",
+                            currentUserName: UserDefaults.fullName,
+                            currentUserImage: UserDefaults.profileURL,
+                            otherUserId: userId,
+                            otherUserName: userName,
+                            otherUserImage: userImage
+                        )
+                    )
+                )
+                
+                CusNavLink(doNavigate: $navigateToContact, destination: ContactUs())
+                
+                CusNavLink(doNavigate: $navigateToReferScreen, destination: ReferEarnScreen())
+                
+                CusNavLink(doNavigate: $navigateToOrderDetails, destination: OrderStatusScreen(
+                    productDetail: $selectedOrderDetails,
+                    comeFrom: "myOrder"
+                ))
+                CusNavLink(doNavigate: $navigateToVideoReceipt, destination: VideoPlayerScreen(videoURL: orderResponse?.bidVideoURL ?? ""))
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -76,7 +118,7 @@ struct OrderTrackingView: View {
                         Spacer()
                         
                         // Title
-                        Text(orderResponse?.order?.product?.title?.capitalizingFirstLetter() ?? "🎀Single🎀 #212")
+                        Text(orderResponse?.order?.product?.title?.capitalizingFirstLetter() ?? "Single #212")
                             .font(.custom("Poppins-SemiBold", size: 18))
                             .foregroundColor(.black)
                             .lineLimit(1)
@@ -103,7 +145,6 @@ struct OrderTrackingView: View {
         }
     }
     
-    
     private func getOrderDetails() async {
         guard let ordId = orderId, let prodId = productId else { return }
         
@@ -123,26 +164,25 @@ struct OrderTrackingView: View {
             onSuccess: {
                 let response = viewModel.OrderDetailsResponse
                 orderResponse = response?.data
+                userId = "\(response?.data.sellerDetails?.id ?? 0)"
+                userImage = response?.data.sellerDetails?.profile_image ?? ""
+                userName = response?.data.sellerDetails?.name ?? ""
+                selectedOrderDetails = MyOrderModel.convertToMyOrderModel(from: response?.data)
             }
         ) {
             let orderRequest = OrderDetailsParam(product_id: "\(prodId)", order_id: "\(ordId)")
             try await viewModel.getOrderDetails(request: orderRequest)
         }
     }
-    
-    func encodedOrderID(_ orderId: String) -> String {
-        return orderId.replacingOccurrences(of: "#", with: "%23")
-    }
 
-    
     // MARK: - Main Status Card
     var mainStatusCard: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 12) {
             Text("Preparing Package")
-                .font(.custom("Poppins-Bold", size: 24))
+                .font(.custom("Poppins-Bold", size: 22))
             
             Text("Typically ships in 1 day")
-                .font(.custom("Poppins-Medium", size: 16))
+                .font(.custom("Poppins-Medium", size: 14))
                 .foregroundColor(.primary)
             
             // Progress Bar
@@ -154,7 +194,7 @@ struct OrderTrackingView: View {
                     
                     RoundedRectangle(cornerRadius: 10)
                         .fill(LinearGradient(
-                            colors: [Color.yellow, Color.orange],
+                            colors: [Color.defaultTheme.opacity(0.4), Color.defaultTheme],
                             startPoint: .leading,
                             endPoint: .trailing
                         ))
@@ -164,14 +204,14 @@ struct OrderTrackingView: View {
             .frame(height: 8)
             
             Text("The seller is preparing your package to ship. They typically ship in 1 day. Once the package is scanned, you'll receive tracking updates to follow its journey to you.")
-                .font(.custom("Poppins-Regular", size: 14))
+                .font(.custom("Poppins-Regular", size: 12))
                 .foregroundColor(.secondary)
-                .lineSpacing(4)
+                .lineSpacing(2)
             
             Button(action: {}) {
                 HStack {
                     Text("Bundled with 5 other items")
-                        .font(.custom("Poppins-SemiBold", size: 14))
+                        .font(.custom("Poppins-SemiBold", size: 12))
                     Image(systemName: "chevron.down")
                         .font(.system(size: 12, weight: .semibold))
                 }
@@ -187,31 +227,44 @@ struct OrderTrackingView: View {
                 ActionButtonView(
                     icon: "mappin",
                     title: "Shipping to",
-                    subtitle: formattedShippingAddress(orderResponse?.shippingAddress) // dynamic update
-                )
+                    subtitle: formattedShippingAddress(orderResponse?.shippingAddress)
+                ) {
+                    
+                }
                 
                 ActionButtonView(
                     icon: "message",
                     title: "Message the seller"
-                )
+                ) {
+                    let currentUserId = String(UserDefaults.userId)
+                    let selectedUserId = userId
+                    let sortedRoomId = computeRoomId(senderId: currentUserId, receiverId: selectedUserId)
+                    chatPath = "chats/\(sortedRoomId)"
+                    
+                    print("Computed Chat Path: \(chatPath)")
+                    navigateToChat = true
+                }
                 
                 ActionButtonView(
                     icon: "questionmark.circle",
                     title: "Get help with this purchase",
                     subtitle: "Eligible for a refund within 7 days of delivery."
-                )
+                ) {
+                    navigateToContact = true
+                }
                 
                 ActionButtonView(
                     icon: "gift",
                     title: "Refer a buyer, earn $5!",
-                    subtitle: "Get credit towards your next purchase",
-                    isHighlighted: true
-                )
+                    subtitle: "Get credit towards your next purchase"
+                ) {
+                    navigateToReferScreen = true
+                }
             }
         }
         .padding(24)
         .background(Color.white)
-        .cornerRadius(20)
+        .cornerRadius(12)
         .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: 2)
         .transition(.opacity.combined(with: .offset(y: 10)))
     }
@@ -219,23 +272,28 @@ struct OrderTrackingView: View {
     // MARK: - Date Formatter
     private func formattedDate(_ isoDate: String?) -> String {
         guard let isoDate = isoDate else { return "" }
-
+        
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-
+        
         if let date = formatter.date(from: isoDate) {
             let output = DateFormatter()
             output.dateFormat = "MMM dd, yyyy 'at' hh:mm a"
             return output.string(from: date)  // dynamic update
         }
-
+        
         return isoDate
+    }
+    
+    private func computeRoomId(senderId: String, receiverId: String) -> String {
+        let sortedIds = [senderId, receiverId].sorted()
+        return "\(sortedIds[0])_chats_\(sortedIds[1])"
     }
     
     // MARK: - Shipping Address Formatter
     private func formattedShippingAddress(_ address: ShippingAddressModel?) -> String {
         guard let address else { return "" }
-
+        
         return """
         \(address.name ?? "")
         \(address.streetAddress ?? "")
@@ -245,105 +303,123 @@ struct OrderTrackingView: View {
     
     func formatOrderDate(_ isoDate: String?) -> String {
         guard let isoDate else { return "" }
-
+        
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-
+        
         guard let date = formatter.date(from: isoDate) else { return isoDate }
-
+        
         let output = DateFormatter()
         output.dateFormat = "MMM dd yyyy"   // May 25 2025
-
+        
         return output.string(from: date)
     }
-
-
     
     // MARK: - Product Image Card
     var productImageCard: some View {
         HStack(alignment: .top) {
-            
-            CustomProfileImage(
-                url: orderResponse?.order?.product?.images?.first,
-                isCircular: false,
-                cornerRadius: 20,
-                size: 200,
-                height: 200,
-                defaultImage: "photo"
-            ) {
-                print("profile icon tapped")
+            VStack(alignment: .leading, spacing: 12) {
+                
+                HStack(alignment: .top) {
+                    VStack(alignment: .leading) {
+                        CustomProfileImage(
+                            url: orderResponse?.order?.product?.images?.first,
+                            isCircular: false,
+                            cornerRadius: 12,
+                            size: 200,
+                            height: 200,
+                            defaultImage: "photo"
+                        ) {
+                            print("profile icon tapped")
+                        }
+                        
+                        Text(orderResponse?.order?.product?.title?.capitalizingFirstLetter() ?? "Single #212")
+                            .font(.custom("Poppins-Bold", size: 20))
+                        
+                        Text(orderResponse?.order?.product?.description ?? "Near Mint")
+                            .font(.custom("Poppins-Regular", size: 14))
+                            .foregroundColor(.secondary)
+                        
+                        Button {
+                            withAnimation(.spring()) { showProductDetails.toggle() }
+                        } label: {
+                            HStack(spacing: 4) {
+                                Text("View Product Details")
+                                    .font(.custom("Poppins-SemiBold", size: 14))
+                                
+                                Image(systemName: showProductDetails ? "chevron.up" : "chevron.down")
+                                    .font(.system(size: 12, weight: .semibold))
+                            }
+                            .foregroundColor(.blue)
+                        }
+                    }
+                    Spacer()
+                }
+                if showProductDetails {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Product Details")
+                            .font(.custom("Poppins-Bold", size: 18))
+                            .padding(.top, 8)
+                        
+                        VStack(spacing: 0) {
+                            DetailRowView(label: "Category", value: orderResponse?.order?.product?.category?.name ?? "Near Mint")
+                            DetailRowView(label: "Price", value: orderResponse?.order?.product?.pricing ?? "0.0", showDivider: false)
+                        }
+                    }
+                    .padding(16)
+                    .background(Color.white)
+                    .cornerRadius(12)
+                    .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: 2)
+                }
             }
-
-            Spacer()
+            
+        
         }
-//        .padding(.leading, 16)
+        .padding(0)
     }
     
     // MARK: - Order Details Card
     var orderDetailsCard: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text(orderResponse?.order?.product?.title?.capitalizingFirstLetter() ?? "🎀Single🎀 #212")
-                .font(.custom("Poppins-Bold", size: 20))
-            
-            Text(orderResponse?.order?.product?.description ?? "Near Mint")
-                .font(.custom("Poppins-Regular", size: 14))
-                .foregroundColor(.secondary)
-            
-            Button {
-                withAnimation(.spring()) { showProductDetails.toggle() }
-            } label: {
-                HStack {
-                    Text("View Product Details")
-                        .font(.custom("Poppins-SemiBold", size: 14))
-                    
-                    Image(systemName: showProductDetails ? "chevron.up" : "chevron.down")
-                        .font(.system(size: 12, weight: .semibold))
-                }
-                .foregroundColor(.blue)
-            }
-
-            
+        VStack(alignment: .leading, spacing: 12) {
             // MARK: - Expanded / Collapsed Product Details
-            if showProductDetails {
-                Text("Order Details")
-                    .font(.custom("Poppins-Bold", size: 18))
-                    .padding(.top, 8)
-                
-                VStack(spacing: 0) {
-                    DetailRowView(label: "Order ID", value: orderResponse?.order?.orderID ?? "#ORD-123-345", isCopyable: true, showCopied: $showCopied)
-                    DetailRowView(label: "Order Date", value: formatOrderDate(orderResponse?.order?.createdAt) ?? "Nov 25, 2025")
-                    DetailRowView(label: "Sold By", value: orderResponse?.sellerDetails?.name ?? "wyynaut", isLink: true)
-                    DetailRowView(label: "Qty", value: orderResponse?.order?.product?.purchasedQuantity ?? "1")
-                    DetailRowView(label: "Category", value: orderResponse?.order?.product?.category?.name ?? "Near Mint", isLink: true)
-                }
-                
-                VStack(spacing: 12) {
-                    CompactActionButton(icon: "doc.text", title: "Receipt & shipping details")
-                    CompactActionButton(icon: "play.fill", title: "Video Receipt", subtitle: "Video receipt available for 60 more days")
-                }
+            Text("Order Details")
+                .font(.custom("Poppins-Bold", size: 18))
                 .padding(.top, 8)
-
-            } else {
-                VStack(spacing: 12) {
-                    CompactActionButton(icon: "doc.text", title: "Receipt & shipping details")
-                    CompactActionButton(icon: "play.fill", title: "Video Receipt", subtitle: "Video receipt available for 60 more days")
-                }
-                .padding(.top, 8)
+            
+            VStack(spacing: 0) {
+                DetailRowView(label: "Order ID", value: orderResponse?.order?.orderID ?? "#ORD-123-345", isCopyable: false, showCopied: $showCopied)
+                DetailRowView(label: "Order Date", value: formatOrderDate(orderResponse?.order?.createdAt) ?? "Nov 25, 2025")
+                DetailRowView(label: "Sold By", value: orderResponse?.sellerDetails?.name ?? "wyynaut")
+                DetailRowView(label: "Qty", value: orderResponse?.order?.product?.purchasedQuantity ?? "1")
+                DetailRowView(label: "Category", value: orderResponse?.order?.product?.category?.name ?? "Near Mint")
             }
+            
+            VStack(spacing: 12) {
+                CompactActionButton(icon: "doc.text", title: "Receipt & shipping details") {
+                    navigateToOrderDetails = true
+                }
+                CompactActionButton(icon: "play.fill", title: "Video Receipt", subtitle: "Video receipt available for 60 more days") {
+                    if let videooURL = orderResponse?.bidVideoURL {
+                        navigateToVideoReceipt = true
+                    }
+                }
+            }
+            .padding(.top, 8)
+            
         }
         .padding(24)
         .background(Color.white)
-        .cornerRadius(20)
+        .cornerRadius(12)
         .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: 2)
     }
     
     // MARK: - Buyer Protections Card
     var buyerProtectionsCard: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 12) {
             Text("Buyer Protections")
                 .font(.custom("Poppins-Bold", size: 18))
             
-            HStack(spacing: 16) {
+            HStack(spacing: 12) {
                 ZStack {
                     Circle()
                         .fill(Color.blue.opacity(0.1))
@@ -364,13 +440,13 @@ struct OrderTrackingView: View {
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 
-                Spacer()
-                
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundColor(.gray)
+                //                Spacer()
+                //
+                //                Image(systemName: "chevron.right")
+                //                    .font(.system(size: 14, weight: .semibold))
+                //                    .foregroundColor(.gray)
             }
-            .padding(16)
+            .padding(12)
             .background(Color.gray.opacity(0.05))
             .cornerRadius(12)
         }
@@ -382,7 +458,8 @@ struct OrderTrackingView: View {
     
     // MARK: - Seller Info Card
     var sellerInfoCard: some View {
-        VStack(spacing: 16) {
+        
+        VStack(spacing: 12) {
             
             Text("About the Seller")
                 .font(.custom("Poppins-Bold", size: 18))
@@ -395,22 +472,25 @@ struct OrderTrackingView: View {
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
                 )
-                .frame(height: 180)
-                .cornerRadius(20)
-//                .overlay(
-//                    Text("😎")
-//                        .font(.system(size: 60))
-//                )
+                .frame(height: 120)
+                .cornerRadius(8)
+                //                .overlay(
+                //                    Text("😎")
+                //                        .font(.system(size: 60))
+                //                )
                 
-                // MARK: - UPDATED: Seller Profile Image (Replaced 🎀)
+                // MARK: - UPDATED: Seller Profile Image
                 CustomProfileImage(
                     url: orderResponse?.sellerDetails?.profile_image,   // dynamic seller image
                     isCircular: true,
                     cornerRadius: 40,
                     size: 100,
                     height: 100,
-                    defaultImage: "user_dummy"                  // fallback image
-                ) { print("Seller tapped") }                            // optional tap
+                    defaultImage: "user_dummy"
+                ) {
+                    print("Seller tapped")
+                    navigateToProfile = true
+                }
                 .overlay(
                     Circle()
                         .stroke(Color.white, lineWidth: 4)
@@ -418,7 +498,7 @@ struct OrderTrackingView: View {
                 .offset(y: 40)
             }
             
-            VStack(spacing: 16) {
+            VStack(spacing: 12) {
                 
                 // Seller Name
                 Text(orderResponse?.sellerDetails?.name ?? "Unknown Seller")
@@ -431,8 +511,16 @@ struct OrderTrackingView: View {
                 HStack(spacing: 0) {
                     StatScreen(
                         icon: "star.fill",
-                        value: String(format: "%.1f", Double(orderResponse?.ratingAvg ?? 0)),
+                        value: String(format: "%.1f", orderResponse?.ratingAvg ?? 0.0),
                         label: "Rating"
+                    )
+                    
+                    Divider().frame(height: 40).padding(.horizontal, 8)
+                    
+                    StatScreen(
+                        icon: nil,
+                        value: "\(orderResponse?.review ?? "0")",
+                        label: "Reviews"
                     )
                     
                     Divider().frame(height: 40).padding(.horizontal, 8)
@@ -447,25 +535,28 @@ struct OrderTrackingView: View {
                     
                     StatScreen(
                         icon: "clock",
-                        value: orderResponse?.avgShip ?? "0d",
+                        value: orderResponse?.avgShip ?? "0",
                         label: "Avg Ship"
                     )
                 }
-                .padding(16)
+                .padding(12)
                 .background(Color.gray.opacity(0.08))
                 .cornerRadius(12)
+                .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: 2)
                 
-                // Seller Bio
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(orderResponse?.sellerDetails?.username ?? "-")
-                    Text(orderResponse?.sellerDetails?.email ?? "-")
-                }
-                .font(.custom("Poppins-Regular", size: 14))
-                .foregroundColor(.primary)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                
+                //                // Seller Bio
+                //                VStack(alignment: .leading, spacing: 4) {
+                //                    Text(orderResponse?.sellerDetails?.username ?? "-")
+                //                    Text(orderResponse?.sellerDetails?.email ?? "-")
+                //                }
+                //                .font(.custom("Poppins-Regular", size: 14))
+                //                .foregroundColor(.primary)
+                //                .frame(maxWidth: .infinity, alignment: .leading)
+                //
                 // View Profile Button
-                Button(action: { print("View Profile tapped") }) {
+                Button(action: {
+                    navigateToProfile = true
+                }) {
                     Text("View Profile")
                         .font(.custom("Poppins-SemiBold", size: 16))
                         .foregroundColor(.primary)
@@ -474,14 +565,14 @@ struct OrderTrackingView: View {
                         .background(Color.gray.opacity(0.1))
                         .cornerRadius(12)
                 }
+                .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: 2)
             }
         }
-        .padding(24)
-        .background(Color.white)
-        .cornerRadius(20)
-        .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: 2)
+        .padding(0)
+        //        .background(Color.white)
+        //        .cornerRadius(20)
+        //        .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: 2)
     }
-
 }
 
 // MARK: - Action Button Component
@@ -489,9 +580,9 @@ struct ActionButtonView: View {
     let icon: String
     let title: String
     var subtitle: String? = nil
-    var isHighlighted: Bool = false
     
     @State private var isPressed = false
+    var btnTappedClosure: (() -> Void) = {}
     
     var body: some View {
         Button(action: {
@@ -501,11 +592,12 @@ struct ActionButtonView: View {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 isPressed = false
             }
+            btnTappedClosure()
         }) {
-            HStack(spacing: 16) {
+            HStack(spacing: 12) {
                 ZStack {
                     Circle()
-                        .fill(isHighlighted ? Color.yellow : Color.gray.opacity(0.1))
+                        .fill(Color.gray.opacity(0.1))
                         .frame(width: 48, height: 48)
                     
                     Image(systemName: icon)
@@ -533,8 +625,8 @@ struct ActionButtonView: View {
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundColor(.gray)
             }
-            .padding(16)
-            .background(isHighlighted ? Color.yellow.opacity(0.2) : Color.gray.opacity(0.05))
+            .padding(12)
+            .background(Color.gray.opacity(0.05))
             .cornerRadius(12)
         }
         .buttonStyle(PlainButtonStyle())
@@ -549,62 +641,110 @@ struct DetailRowView: View {
     var isCopyable: Bool = false
     @Binding var showCopied: Bool
     
-    init(label: String, value: String, isLink: Bool = false, isCopyable: Bool = false, showCopied: Binding<Bool> = .constant(false)) {
+    var showDivider: Bool = true
+    
+    init(label: String, value: String, isLink: Bool = false, isCopyable: Bool = false, showCopied: Binding<Bool> = .constant(false), showDivider: Bool = true) {
         self.label = label
         self.value = value
         self.isLink = isLink
         self.isCopyable = isCopyable
         self._showCopied = showCopied
+        self.showDivider = showDivider
     }
     
     var body: some View {
-        HStack {
-            Text(label)
-                .font(.custom("Poppins-Medium", size: 14))
-                .foregroundColor(.primary)
-            
-            Spacer()
-            
-            HStack(spacing: 8) {
-                Text(value)
-                    .font(.custom("Poppins-SemiBold", size: 14))
-                    .foregroundColor(isLink ? .blue : .primary)
+        if showDivider {
+            HStack {
+                Text(label)
+                    .font(.custom("Poppins-Medium", size: 14))
+                    .foregroundColor(.primary)
                 
-                if isCopyable {
-                    Button(action: {
-                        UIPasteboard.general.string = value
-                        showCopied = true
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                            showCopied = false
-                        }
-                    }) {
-                        ZStack {
-                            Image(systemName: "doc.on.doc")
-                                .font(.system(size: 14, weight: .regular))
-                                .foregroundColor(.blue)
-                            
-                            if showCopied {
-                                Text("Copied!")
-                                    .font(.custom("Poppins-Medium", size: 10))
-                                    .foregroundColor(.white)
-                                    .padding(.horizontal, 8)
-                                    .padding(.vertical, 4)
-                                    .background(Color.black.opacity(0.8))
-                                    .cornerRadius(6)
-                                    .offset(y: -30)
+                Spacer()
+                
+                HStack(spacing: 8) {
+                    Text(value)
+                        .font(.custom("Poppins-SemiBold", size: 14))
+                        .foregroundColor(isLink ? .blue : .primary)
+                    
+                    if isCopyable {
+                        Button(action: {
+                            UIPasteboard.general.string = value
+                            showCopied = true
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                showCopied = false
+                            }
+                        }) {
+                            ZStack {
+                                Image(systemName: "doc.on.doc")
+                                    .font(.system(size: 14, weight: .regular))
+                                    .foregroundColor(.blue)
+                                
+                                if showCopied {
+                                    Text("Copied!")
+                                        .font(.custom("Poppins-Medium", size: 10))
+                                        .foregroundColor(.white)
+                                        .padding(.horizontal, 8)
+                                        .padding(.vertical, 4)
+                                        .background(Color.black.opacity(0.8))
+                                        .cornerRadius(6)
+                                        .offset(y: -30)
+                                }
                             }
                         }
                     }
                 }
             }
+            .padding(.vertical, 12)
+            .overlay(
+                Rectangle()
+                    .fill(Color.gray.opacity(0.1))
+                    .frame(height: 1),
+                alignment: .bottom
+            )
         }
-        .padding(.vertical, 12)
-        .overlay(
-            Rectangle()
-                .fill(Color.gray.opacity(0.1))
-                .frame(height: 1),
-            alignment: .bottom
-        )
+        else {
+            HStack {
+                Text(label)
+                    .font(.custom("Poppins-Medium", size: 14))
+                    .foregroundColor(.primary)
+                
+                Spacer()
+                
+                HStack(spacing: 8) {
+                    Text(value)
+                        .font(.custom("Poppins-SemiBold", size: 14))
+                        .foregroundColor(isLink ? .blue : .primary)
+                    
+                    if isCopyable {
+                        Button(action: {
+                            UIPasteboard.general.string = value
+                            showCopied = true
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                showCopied = false
+                            }
+                        }) {
+                            ZStack {
+                                Image(systemName: "doc.on.doc")
+                                    .font(.system(size: 14, weight: .regular))
+                                    .foregroundColor(.blue)
+                                
+                                if showCopied {
+                                    Text("Copied!")
+                                        .font(.custom("Poppins-Medium", size: 10))
+                                        .foregroundColor(.white)
+                                        .padding(.horizontal, 8)
+                                        .padding(.vertical, 4)
+                                        .background(Color.black.opacity(0.8))
+                                        .cornerRadius(6)
+                                        .offset(y: -30)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            .padding(.vertical, 12)
+        }
     }
 }
 
@@ -615,8 +755,10 @@ struct CompactActionButton: View {
     var subtitle: String? = nil
     var btnAction: (() -> Void) = { }
     var body: some View {
-        Button(action: {}) {
-            HStack(spacing: 16) {
+        Button(action: {
+            btnAction()
+        }) {
+            HStack(spacing: 12) {
                 ZStack {
                     Circle()
                         .fill(Color.gray.opacity(0.1))
@@ -646,7 +788,7 @@ struct CompactActionButton: View {
                     .foregroundColor(.gray)
             }
             .padding(.vertical, 12)
-            .padding(.horizontal, 16)
+            .padding(.horizontal, 12)
             .background(Color.gray.opacity(0.05))
             .cornerRadius(12)
         }

@@ -10,6 +10,17 @@ import FirebaseDatabase
 import FirebaseAuth
 import SwiftUI
 
+struct ChatModel {
+    // USER VALUES
+    var currentUserId: String = ""
+    var currentUserName: String = ""
+    var currentUserImage: String = ""
+    
+    var otherUserId: String = ""
+    var otherUserName: String = ""
+    var otherUserImage: String = ""
+}
+
 class ChatViewModel: ObservableObject {
     @Published var messages: [ChatMessageModel] = []
     @Published var messageText: String = ""
@@ -17,6 +28,7 @@ class ChatViewModel: ObservableObject {
     private var ref = Database.database().reference()
     private var messageListenerHandle: DatabaseHandle?
 
+    // USER VALUES
     var currentUserId: String
     var currentUserName: String
     var currentUserImage: String
@@ -25,47 +37,49 @@ class ChatViewModel: ObservableObject {
     var otherUserName: String
     var otherUserImage: String
 
-    @Binding var chatPath: String // This should be a Binding to modify it in the view
-
+    // Clean sorted chat id
     var sortedChatId: String {
         let first = min(currentUserId, otherUserId)
         let second = max(currentUserId, otherUserId)
         return "\(first)_chats_\(second)"
     }
 
-    // This computes the chat path based on the sorted chat ID
-    var chatPathValue: String {
-        return "chats/\(sortedChatId)"
+    // FINAL computed chat path
+    var chatPath: String {
+        "chats/\(sortedChatId)"
     }
 
-    init(currentUserId: String, currentUserName: String, currentUserImage: String,
-         otherUserId: String, otherUserName: String, otherUserImage: String, chatPath: Binding<String>) {
+    // INIT (no binding needed)
+    init(
+        currentUserId: String,
+        currentUserName: String,
+        currentUserImage: String,
+        otherUserId: String,
+        otherUserName: String,
+        otherUserImage: String
+    ) {
         self.currentUserId = currentUserId
         self.currentUserName = currentUserName
         self.currentUserImage = currentUserImage
         self.otherUserId = otherUserId
         self.otherUserName = otherUserName
         self.otherUserImage = otherUserImage
-        self._chatPath = chatPath // Binding assigned here
     }
 
     deinit {
-        if let handle = messageListenerHandle {
-            ref.child(chatPath).removeObserver(withHandle: handle)
-        }
+        removeMessageListener()
     }
 
-    // MARK: - Fetch + Listen
+    // MARK: - Listen for Messages
     func fetchMessages() {
-        if let handle = messageListenerHandle {
-            ref.child(chatPath).removeObserver(withHandle: handle)
-            messageListenerHandle = nil
-        }
+        removeMessageListener()
         messages.removeAll()
 
         messageListenerHandle = ref.child(chatPath).observe(.childAdded) { snapshot in
             guard let dict = snapshot.value as? [String: Any] else { return }
+
             let message = ChatMessageModel(id: snapshot.key, from: dict)
+
             DispatchQueue.main.async {
                 self.messages.append(message)
                 self.messages.sort { $0.timestamp < $1.timestamp }
@@ -76,28 +90,34 @@ class ChatViewModel: ObservableObject {
     func removeMessageListener() {
         if let handle = messageListenerHandle {
             ref.child(chatPath).removeObserver(withHandle: handle)
-            messageListenerHandle = nil
         }
+        messageListenerHandle = nil
     }
 
     // MARK: - Send Message
     func sendMessage() {
-        guard !messageText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+        let trimmed = messageText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
 
         let messageId = UUID().uuidString
         let timestamp = Int(Date().timeIntervalSince1970)
 
         let messageData: [String: Any] = [
-            "message": messageText,
+            "message": trimmed,
             "senderId": currentUserId,
             "receiverId": otherUserId,
             "timestamp": timestamp
         ]
-        ref.child("chats").child(sortedChatId).child(messageId).setValue(messageData)
 
-        // Prepare chat preview data and save to chat list
-        let attachment: [String: Any] = ["audio": "", "image": "", "thumbnail": "", "video": ""]
+        // Save message under chat path
+        ref.child(chatPath).child(messageId).setValue(messageData)
 
+        // Attachments
+        let attachment: [String: Any] = [
+            "audio": "", "image": "", "thumbnail": "", "video": ""
+        ]
+
+        // Sender view
         let senderUsers: [String: Any] = [
             "receiverId": otherUserId,
             "receiverImage": otherUserImage,
@@ -107,6 +127,7 @@ class ChatViewModel: ObservableObject {
             "senderName": currentUserName
         ]
 
+        // Receiver view
         let receiverUsers: [String: Any] = [
             "receiverId": currentUserId,
             "receiverImage": currentUserImage,
@@ -116,11 +137,11 @@ class ChatViewModel: ObservableObject {
             "senderName": otherUserName
         ]
 
-        let senderData: [String: Any] = [
+        let senderPreview: [String: Any] = [
             "attachment": attachment,
             "id": sortedChatId,
             "isReply": false,
-            "message": messageText,
+            "message": trimmed,
             "seen": false,
             "timestamp": timestamp,
             "timezone": TimeZone.current.identifier,
@@ -128,11 +149,11 @@ class ChatViewModel: ObservableObject {
             "users": senderUsers
         ]
 
-        let receiverData: [String: Any] = [
+        let receiverPreview: [String: Any] = [
             "attachment": attachment,
             "id": sortedChatId,
             "isReply": false,
-            "message": messageText,
+            "message": trimmed,
             "seen": false,
             "timestamp": timestamp,
             "timezone": TimeZone.current.identifier,
@@ -140,13 +161,9 @@ class ChatViewModel: ObservableObject {
             "users": receiverUsers
         ]
 
-        // Update chat_list for both users
-        ref.child("chat_list").child(currentUserId).child(otherUserId).setValue(senderData)
-        ref.child("chat_list").child(otherUserId).child(currentUserId).setValue(receiverData)
+        ref.child("chat_list").child(currentUserId).child(otherUserId).setValue(senderPreview)
+        ref.child("chat_list").child(otherUserId).child(currentUserId).setValue(receiverPreview)
 
         messageText = ""
     }
 }
-
-
-
