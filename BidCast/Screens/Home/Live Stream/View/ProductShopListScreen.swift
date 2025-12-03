@@ -83,11 +83,11 @@ struct ProductListItem: View {
                     url: product.images?.first ?? "",
                     isCircular: false,
                     cornerRadius: 12,
-                    size: 120,
-                    height: 120,
+                    size: 100,
+                    height: 100,
                     defaultImage: "photo"
                 ) {}
-                .frame(width: 120, height: 120)
+                .frame(width: 100, height: 100)
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
                         .stroke(Color.black.opacity(0.1), lineWidth: 1)
@@ -139,19 +139,19 @@ struct ProductListItem: View {
                         .foregroundColor(.gray)
                 }
 
-                
-                // Buy Now button
-                Button(action: {}) {
-                    Text("Buy Now")
-                        .font(.custom("Poppins-SemiBold", size: 15))
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 10)
-                        .background(Color(.sRGB, red: 0.98, green: 0.96, blue: 0.95))
-                        .clipShape(RoundedRectangle(cornerRadius: 22))
-                }
-                .foregroundColor(.black.opacity(0.85))
+//                // Buy Now button
+//                Button(action: {}) {
+//                    Text("Buy Now")
+//                        .font(.custom("Poppins-SemiBold", size: 15))
+//                        .frame(maxWidth: .infinity)
+//                        .padding(.vertical, 10)
+//                        .background(Color(.sRGB, red: 0.98, green: 0.96, blue: 0.95))
+//                        .clipShape(RoundedRectangle(cornerRadius: 22))
+//                }
+//                .foregroundColor(.black.opacity(0.85))
             }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .padding(12)
         .background(Color.white)
         .cornerRadius(12)
@@ -160,7 +160,7 @@ struct ProductListItem: View {
             RoundedRectangle(cornerRadius: 12)
                 .stroke(Color.black.opacity(0.08), lineWidth: 1)
         )
-        .padding(.horizontal, 8)
+        .padding(.horizontal, 12)
         .padding(.vertical, 6)
     }
 }

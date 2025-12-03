@@ -21,14 +21,17 @@ struct ProfileScreen: View {
     
     @State var viewModel = ProfileViewModel()
     @Binding var id : String
-    @State var sellerID : String = ""
+    @State private var sellerID : String = ""
     @Binding var  isComeFrom : String
     @Binding var userName : String
     @Binding var userImage : String
-    @State var isLoading: Bool = false
-    @State var currentPage = 1
-    @State  var showhud = false
-    @State  var hudMsg = ""
+    @State private var isLoading: Bool = false
+    @State private var currentPage = 1
+    @State private var showhud: Bool = false
+    @State private var hudMsg = ""
+    @State private var showhudSuccess: Bool = false
+    
+    @State private var showHud = false
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @State var showError: Bool = false
     @State var profileData = ProfileModel()
@@ -51,8 +54,10 @@ struct ProfileScreen: View {
     @State var navigateToChat = false
     @State private var chatPath: String = ""
     @State private var isTipAmountButtoClicked: Bool = false
+    @State private var showReportSheet: Bool = false
     
     @State private var scheduleViewModel = ScheduleViewModel()
+    @StateObject var showViewModel = LiveShowsViewModel()
 //    @State var profileImage: String
 
     var options:[String] = ["Sort", "Auction", "Buy Now"]
@@ -82,19 +87,22 @@ struct ProfileScreen: View {
     
     
     var body: some View {
-        ZStack {
+        ZStack(alignment: .bottom) {
             VStack(spacing: 0) {
                 ScrollView {
                     VStack(spacing: 16) {
-                        ProfileHeaderView(name: profileData.name?.capitalizingFirstLetter() ?? "",
+                        ProfileHeaderView(name: $userName,
                                           email: profileData.username ?? "",
                                           profileImage: $userImage,
                                           followers: "\(profileData.follower_count ?? 0)",
                                           following: "\(profileData.following_count ?? 0)" ,
                                           bio: profileData.bio ?? "Professional photographer specializing in portrait and wedding photography. Available for bookings worldwide.",
                                           onTapNotify: {
-                            showNotify = true
-                        },sellerID : $id)
+                                                showNotify = true
+                                            },
+                                          onTapMore: {
+                                                showReportSheet = true
+                                            },sellerID : $id)
                         
                         ProfileActionsView(isFollowing: $isFollowing ,
                         onTapFollow: {
@@ -319,8 +327,8 @@ struct ProfileScreen: View {
                 
                 
             }
-            
         }
+        .background(Color(UIColor.systemGroupedBackground))
         .bottomSheet(isPresented: $showSellSheet, height: screenHeight * 0.95) {
             ProductDetailSheet(
                 onDismiss : {
@@ -333,7 +341,6 @@ struct ProfileScreen: View {
         }
         .toast(isPresenting: $showToast) {
             AlertToast(displayMode: .alert, type: .regular, title: toastMessage)
-            
         }
         .bottomSheet(isPresented: $showNotify,height: screenHeight * 0.45) {
             NotifyMeBottomSheet(
@@ -345,6 +352,57 @@ struct ProfileScreen: View {
                     self.showNotify = false
                 }
             )
+        }
+//        .overlay(
+//            NotifyMeBottomSheet(
+//                userId: $profileId, profileImage: profileData.profile_image ?? "" ,
+//                username: profileData.username ?? "",
+//                showParentToast: $showToast,
+//                parentToastMessage: $toastMessage,
+//                onDismiss: {
+//                    self.showNotify = false
+//                }
+//            )
+//        )
+        
+        .bottomSheet(
+            isPresented: $isTipAmountButtoClicked,
+            height: screenHeight * 0.55,
+            topBarCornerRadius: 20,
+            contentBackgroundColor: Color(.systemBackground),
+            topBarBackgroundColor: Color(.systemBackground),
+            showTopIndicator: false,
+            onDismiss: {
+                isTipAmountButtoClicked = false
+            },
+            content: {
+                SendTipView(
+                    sellerId: "\(profileData.id ?? -1)" ?? "",
+                    onClose: {
+                        isTipAmountButtoClicked = false
+                    },
+                    onSendTip: {
+                        print("Sent tip")
+                        isTipAmountButtoClicked = false
+                    })
+            }
+        )
+        
+        .bottomSheet(isPresented: $showReportSheet,
+                     height: screenHeight * 0.50,
+                     topBarCornerRadius: 25,
+                     contentBackgroundColor: Color(.white),
+                     topBarBackgroundColor: Color(.white),
+                     showTopIndicator: false,
+                     onDismiss: {
+            showReportSheet = false
+        }) {
+            ReportSellerView(onReportSellerClicked: { categoryId, message in
+                Task {
+                    await reportSeller(categoryId: categoryId, message: message)
+                }
+            })
+                .keyboardAwarePadding()
         }
         
         .bottomSheet(
@@ -400,7 +458,6 @@ struct ProfileScreen: View {
                     }
             }
         }
-        .background(Color(UIColor.systemGroupedBackground))
         CusNavLink(
             doNavigate: $navigateToChat,
             destination: ChatScreen(
@@ -414,15 +471,62 @@ struct ProfileScreen: View {
                 )
             )
         )
-        CusNavLink(
-            doNavigate: $isTipAmountButtoClicked,
-            destination: PayoutView(sellerID: id)
-        )
+//        CusNavLink(
+//            doNavigate: $isTipAmountButtoClicked,
+//            destination: PayoutView(sellerID: id)
+//        )
     }
     
     func computeRoomId(senderId: String, receiverId: String) -> String {
         let sortedIds = [senderId, receiverId].sorted()
         return "\(sortedIds[0])_chats_\(sortedIds[1])"
+    }
+    
+    @MainActor
+    func reportSeller(categoryId: Int?, message: String?) async {
+        guard Reachability.isConnectedToNetwork() else {
+            hudMsg = "No Internet Connection"
+            showHud = true
+            return
+        }
+        guard let cId = categoryId, let msg = message else  {
+            return
+        }
+        do {
+            SVProgressHUD.show()
+            
+            let request = SellerReportRequest(seller_id: profileData.id ?? 0,
+                                              category_id: cId,
+                                              notes: msg)
+            try await showViewModel.reportSeller(request: request)
+            await SVProgressHUD.dismiss()
+            let response = showViewModel.reportSellerResponse
+
+            if response.status == "success" {
+                hudMsg = response.message ?? ""
+                showhudSuccess = true
+                showReportSheet = false
+            } else {
+                throw NSError(
+                    domain: "APIError",
+                    code: -1,
+                    userInfo: [NSLocalizedDescriptionKey : response.message ?? "Something went wrong"]
+                )
+            }
+        }
+        catch {
+            print("❌ Failed to load categories:", error.localizedDescription)
+
+            alertType = .sheetType(
+                icon: .alert,
+                title: "Error",
+                message: viewModel.errorMessage ?? error.localizedDescription,
+                primaryBtnText: "",
+                secondaryBtnText: "OK"
+            )
+
+            showError = true
+        }
     }
     
     
@@ -449,7 +553,6 @@ struct ProfileScreen: View {
                 }
             }
         } else {
-            showError = true
             alertType = .sheetType(
                 icon: .alert,
                 title: response.error_type?.capitalized ?? "",
@@ -457,6 +560,7 @@ struct ProfileScreen: View {
                 primaryBtnText: "",
                 secondaryBtnText: AppString.ok.localized
             )
+            showError = true
         }
     }
     
@@ -552,7 +656,7 @@ struct ProfileHeaderView: View {
     @State  var showhud = false
     @State  var hudMsg = ""
     
-    var name : String
+    @Binding var name : String
     var email : String
     @Binding var profileImage : String
     var followers : String
@@ -682,6 +786,7 @@ struct ProfileHeaderView: View {
                     Button(action: {
                         showMoreMenu = false
                         // Handle Report
+                        onTapMore()
                     }) {
                         Text("Report")
                             .font(.custom(poppinsRegular, size: 14))
@@ -778,7 +883,7 @@ struct ProfileHeaderView: View {
         }
         .padding(.vertical,8)
         .padding(.horizontal, 8)
-        CusNavLink(doNavigate: $navigateToRating, destination: RateSellerView(sellerID: Int(sellerID) ?? 0, sellerImage: $profileImage, sellerName: .constant(name)))
+        CusNavLink(doNavigate: $navigateToRating, destination: RateSellerView(sellerID: Int(sellerID) ?? 0, sellerImage: $profileImage, sellerName: $name))
         CusNavLink(doNavigate: $navigateToHome, destination: HomeViewScreen(showCategory: .constant(""), comeFromExploreScreen: .constant(false)))
         
     }

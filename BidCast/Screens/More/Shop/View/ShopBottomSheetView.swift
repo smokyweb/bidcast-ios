@@ -27,27 +27,44 @@ enum ShopTab: String, CaseIterable {
 
 //struct ShopBottomSheetView: View {
 //    @Binding var isPresented: Bool
-//    @State  var searchText = ""
-//    @State  var selectedTab: ShopTab = .auction
-//    @StateObject var viewModel = ProfileViewModel()
+//    @Binding var productData: [ProductData]
+////    var NavFrom: String = ""
+//    var productShowType: ProductShowType
+//    var onLiveStreamStart: ((String) -> Void)?
+//    var onAddProduct: ((String) -> Void)?
+//    
+//    @State private var searchText = ""
+//    @State private var selectedTab: ShopTab = .auction
+//    @StateObject private var viewModel = ProfileViewModel()
 //    @EnvironmentObject var networkMonitor: NetworkMonitor
-//    var filteredProducts: [ProductListingDataModel] {
-//        viewModel.productDetailsResponseDict?.data.filter {
-//            searchText.isEmpty || (($0.title?.localizedCaseInsensitiveContains(searchText)) != nil)} ?? [ProductListingDataModel]()
-//      }
-////    @Binding var userId : String
-//    @State var showhud: Bool = false
-//    @State var hudMsg: String = ""
 //    
+//    // New: store initial selected product ID
+//    var initialSelectedProductId: String? = nil
+//
+//    // Toast states
+//    @State private var showToast = false
+//    @State private var toastMessage = ""
 //    
-//    @Binding var productData : [ProductData]
+//    private var selectedProduct: ProductData?{
+//        let selectedProduct = productData.first(where: { $0.isCurrent })
+//        return selectedProduct
+//    }
+//    
+//    private var isEveryProductSold: Bool {
+//        return productData.allSatisfy({ $0.status == "sold" })
+//    }
+//    
+//    private func isProductSelectable(for product: ProductData?) -> Bool {
+//        guard let productData = product else { return false }
+//        return productShowType != .viewOnly && productData.status != "sold"
+//    }
+//    
 //    
 //    var body: some View {
 //        VStack(spacing: 16) {
-//            
-//            // Header
+//            // MARK: Header
 //            HStack {
-//                Text("Shop")
+//                Text(productShowType == .nextProduct ? "Select Next Product For Auction" : "Shop" )
 //                    .font(.custom(poppinsBold, size: 15))
 //                Spacer()
 //                Button {
@@ -58,129 +75,246 @@ enum ShopTab: String, CaseIterable {
 //                }
 //            }
 //            
-//            // Search
-//            HStack {
-//                Image(systemName: "magnifyingglass")
-//                    .foregroundColor(.gray)
-//                TextField("Search products...", text: $searchText)
-//                    .font(.custom(poppinsSemiBold, size: 13))
-//            }
-//            .padding(.horizontal)
-//            .frame(height: 40)
-//            .background(Color(.systemGray6))
-//            .cornerRadius(10)
-//            
-//            // Tabs
-//            HStack(spacing: 10) {
-//                ForEach(ShopTab.allCases, id: \.self) { tab in
-//                    Button {
-//                        selectedTab = tab
-//                    } label: {
-//                        Text(tab.rawValue)
-//                            .font(.custom(poppinsSemiBold, size: 13))
-//                            .frame(maxWidth: .infinity)
-//                            .padding(.vertical, 10)
-//                            .background(selectedTab == tab ? Color.defaultTheme : Color(.systemGray5))
-//                            .foregroundColor(selectedTab == tab ? .white : .black)
-//                            .cornerRadius(20)
+//            // MARK: Search
+//            if productShowType != .viewOnly{
+//                HStack {
+//                    Image(systemName: "magnifyingglass")
+//                        .foregroundColor(.gray)
+//                    TextField("Search products...", text: $searchText)
+//                        .font(.custom(poppinsSemiBold, size: 13))
+//                }
+//                .padding(.horizontal)
+//                .frame(height: 40)
+//                .background(Color(.systemGray6))
+//                .cornerRadius(10)
+//                
+//                // MARK: Tabs
+//                HStack(spacing: 10) {
+//                    ForEach(ShopTab.allCases, id: \.self) { tab in
+//                        Button {
+//                            selectedTab = tab
+//                        } label: {
+//                            Text(tab.rawValue)
+//                                .font(.custom(poppinsSemiBold, size: 13))
+//                                .frame(maxWidth: .infinity)
+//                                .padding(.vertical, 10)
+//                                .background(selectedTab == tab ? Color.defaultTheme : Color(.systemGray5))
+//                                .foregroundColor(selectedTab == tab ? .white : .black)
+//                                .cornerRadius(20)
+//                        }
 //                    }
 //                }
 //            }
 //            
 //            Divider()
 //            
+//            // MARK: Product List
 //            ScrollView {
 //                LazyVStack(spacing: 12) {
 //                    ForEach(productData.indices, id: \.self) { index in
-//                        productRow(productData[index])
+//                        productRow(productData[index], index: index)
 //                    }
 //                }
 //            }
 //            
-//            // Add Product
-//            HStack {
-//                Spacer()
-//                Button {
-//                    // Add new product action
-//                } label: {
-//                    Image(systemName: "plus")
-//                        .foregroundColor(.white)
-//                        .frame(width: 40, height: 40)
-//                        .background(Color.defaultTheme)
-//                        .clipShape(Circle())
-//                        .shadow(radius: 4)
+//            //lbottom button -> not shown for user
+//            if let product = selectedProduct {
+//                if productShowType == .shop {
+//                    Button(action: {
+//                        isPresented = false
+//                        onLiveStreamStart?(product.id ?? "")
+//                    }) {
+//                        Text("Start Live Stream")
+//                            .font(.custom(poppinsSemiBold, size: 14))
+//                            .frame(maxWidth: .infinity)
+//                            .padding()
+//                            .background(Color.defaultTheme)
+//                            .foregroundColor(.white)
+//                            .cornerRadius(12)
+//                    }
+//                }
+//                else if productShowType == .nextProduct {
+//                    Button(action: {
+//                        // Case 1: Product already in a bid
+//                        if product.id == initialSelectedProductId {
+//                            // Case 2: Check sold products
+//                            if productData.count == 1 && product.status == "sold" {
+//                                // Only one product and it's sold
+//                                toastMessage = "Product Sold"
+//                                showToast = true
+//                                return
+//                            }
+//                            toastMessage = "Product already in a bid"
+//                            showToast = true
+//                            return
+//                        }
+//                        
+//                        // Case 2:
+//                        if productData.count > 1 && isEveryProductSold {
+//                            // Multiple products and all are sold
+//                            toastMessage = "All Products Sold"
+//                            showToast = true
+//                            return
+//                        }
+//                        
+//                        // Case 3: Valid product to add
+//                        isPresented = false
+//                        onAddProduct?(product.id ?? "")
+//                    }) {
+//                        Text("Add Product")
+//                            .font(.custom(poppinsSemiBold, size: 14))
+//                            .frame(maxWidth: .infinity)
+//                            .padding()
+//                            .background(Color.defaultTheme)
+//                            .foregroundColor(.white)
+//                            .cornerRadius(12)
+//                    }
+//                    
 //                }
 //            }
-//            .padding(.bottom)
 //            
+//            // MARK: Action Buttons
+////            if NavFrom != "Shop" {
+////                if productData.contains(where: { $0.isCurrent ?? false }) {
+////                    if NavFrom == "Rehearsal" {
+////                        if let selectedProduct = productData.first(where: { $0.isCurrent ?? false }) {
+////                            Button(action: {
+////                                isPresented = false
+////                                onLiveStreamStart?(selectedProduct.id ?? "")
+////                            }) {
+////                                Text("Start Live Stream")
+////                                    .font(.custom(poppinsSemiBold, size: 14))
+////                                    .frame(maxWidth: .infinity)
+////                                    .padding()
+////                                    .background(Color.defaultTheme)
+////                                    .foregroundColor(.white)
+////                                    .cornerRadius(12)
+////                            }
+////                        }
+////                    } else if NavFrom.isEmpty {
+////                        if let selectedProduct = productData.first(where: { $0.isCurrent }) {
+////                            Button(action: {
+////                                // Case 1: Product already in a bid
+////                                if selectedProduct.id == initialSelectedProductId {
+////                                    // Case 2: Check sold products
+////                                    if productData.count == 1 && selectedProduct.status == "sold" {
+////                                        // Only one product and it's sold
+////                                        toastMessage = "Product Sold"
+////                                        showToast = true
+////                                        return
+////                                    }
+////                                    toastMessage = "Product already in a bid"
+////                                    showToast = true
+////                                    return
+////                                }
+////                               
+////                                // Case 2:
+////                                   if productData.count > 1 && productData.allSatisfy({ $0.status == "sold" }) {
+////                                       // Multiple products and all are sold
+////                                       toastMessage = "All Products Sold"
+////                                       showToast = true
+////                                       return
+////                                   }
+////
+////                                   // Case 3: Valid product to add
+////                                   isPresented = false
+////                                   onAddProduct?(selectedProduct.id ?? "")
+////                            }) {
+////                                Text("Add Product")
+////                                    .font(.custom(poppinsSemiBold, size: 14))
+////                                    .frame(maxWidth: .infinity)
+////                                    .padding()
+////                                    .background(Color.defaultTheme)
+////                                    .foregroundColor(.white)
+////                                    .cornerRadius(12)
+////                            }
+////                        }
+////                    }
+////                }
+////            }
 //        }
-//        .edgesIgnoringSafeArea(.top)
 //        .padding()
-//        .background(.white)
+//        .background(Color.white)
 //        .cornerRadius(20)
-////        .onAppear {
-//////            Task{
-//////               guard Reachability.isConnectedToNetwork() else {
-//////                    hudMsg = "No Internet Connection"
-//////                    showhud = true
-//////                    return
-//////                }
-////////                SVProgressHUD.show()
-////////                await self.viewModel.productDetails(parameters: UserProductRequest(user_id: Int(userId) ?? 0, page: 1))
-////////                await SVProgressHUD.dismiss()
-////////                if self.viewModel.errorMessage == nil {
-////////                    filteredProducts = self.viewModel.productDetailsResponseDict?.data ?? [ProductListingDataModel]()
-////////                }
-//////            }
-////        }
+//        .toast(isPresenting: $showToast) {
+//            AlertToast(type: .regular, title: toastMessage)
+//        }
 //    }
 //    
-//
-//    
-//    func productRow(_ product: ProductData) -> some View {
-//            HStack(spacing: 12) {
-//                CustomProfileImage(url: product.image,isCircular: false,cornerRadius: 8,size: 60)
-//
-//                VStack(alignment: .leading, spacing: 4) {
-//                    Text(product.name)
-//                        .font(.custom(poppinsSemiBold, size: 13.0))
-////                    Text(product.description ?? "")
-////                        .font(.subheadline)
-////                        .foregroundColor(.gray)
-//                    Text(product.category)
-//                        .font(.custom(poppinsRegular, size: 11.0))
-////                        .foregroundColor(product.status == "active" ? .darkGreen : .red)
-//                }
-//
-//                Spacer()
-//
-//                Button {
-//                    // Edit action
-//                } label: {
-//                    Image(systemName: "square.and.pencil")
-//                }
-//
-//                Button {
-//                    // Delete action
-//                } label: {
-//                    Image(systemName: "trash")
+//    // MARK: - Product Row
+//    func productRow(_ product: ProductData, index: Int) -> some View {
+//        HStack(spacing: 12) {
+//            if isProductSelectable(for: product) {
+//                Button(action: {
+//                    for i in productData.indices {
+//                        productData[i].isCurrent = (i == index)
+//                    }
+//                }) {
+//                    Image(systemName: product.isCurrent ? "checkmark.circle.fill" : "circle")
+//                        .foregroundColor(product.isCurrent ? .blue : .gray)
 //                }
 //            }
-//            .padding()
-//            .background(Color(.systemGray6))
-//            .cornerRadius(12)
+//            
+//            CustomProfileImage(url: product.image, isCircular: false, cornerRadius: 8, size: 60)
+//            
+//            VStack(alignment: .leading, spacing: 4) {
+//                HStack{
+//                    Text(product.name?.capitalizingFirstLetter() ?? "")
+//                        .font(.custom(poppinsSemiBold, size: 13.0))
+//                    Spacer()
+//                    // ✅ Show Live label if this is the initial selected product
+//                    if product.id == initialSelectedProductId && product.status != "sold"{
+//                        Text("LIVE")
+//                            .font(.custom(poppinsSemiBold, size: 14))
+//                            .foregroundColor(.defaultTheme)
+//                            .padding(.trailing, -20)
+//                    }
+//                }
+//                Text("Price : $\(product.price ?? "")")
+//                    .font(.custom(poppinsRegular, size: 11.0))
+//                Text("Status: \(product.status?.capitalizingFirstLetter() ?? "")")
+//                    .font(.custom(poppinsRegular, size: 11.0))
+//                    .foregroundColor(product.status == "sold" ? .red : .black)
+//            }
+//            
+//            Spacer()
+//        
+//            
+//            // Hide edit/delete in Shop mode or if sold
+////            if NavFrom != "Shop" && product.status != "sold" && NavFrom != "" {
+////                Button {
+////                    // Edit action
+////                } label: {
+////                    Image(systemName: "square.and.pencil")
+////                }
+////                
+////                Button {
+////                    // Delete action
+////                } label: {
+////                    Image(systemName: "trash")
+////                }
+////            }
 //        }
+//        .padding()
+//        .background(
+//            RoundedRectangle(cornerRadius: 12)
+//                .fill(product.status == "sold" ? Color(.systemGray6) : Color(.white))
+//                .shadow(color: product.status == "sold" ? .clear : Color.squirrelGrey.opacity(0.5),
+//                        radius: 2, x: 0, y: 0)
+//        )
+//        .padding(.horizontal, 4)
+//        .padding(.vertical, 2)
+//        .opacity(product.status == "sold" ? 0.6 : 1)
+//    }
 //}
+
 struct ShopBottomSheetView: View {
     @Binding var isPresented: Bool
     @Binding var productData: [ProductData]
-//    var NavFrom: String = ""
     var productShowType: ProductShowType
     var onLiveStreamStart: ((String) -> Void)?
     var onAddProduct: ((String) -> Void)?
     
-    @State private var searchText = ""
-    @State private var selectedTab: ShopTab = .auction
     @StateObject private var viewModel = ProfileViewModel()
     @EnvironmentObject var networkMonitor: NetworkMonitor
     
@@ -190,8 +324,9 @@ struct ShopBottomSheetView: View {
     // Toast states
     @State private var showToast = false
     @State private var toastMessage = ""
+    @State private var buttonScale: CGFloat = 1.0
     
-    private var selectedProduct: ProductData?{
+    private var selectedProduct: ProductData? {
         let selectedProduct = productData.first(where: { $0.isCurrent })
         return selectedProduct
     }
@@ -205,183 +340,179 @@ struct ShopBottomSheetView: View {
         return productShowType != .viewOnly && productData.status != "sold"
     }
     
-    
     var body: some View {
-        VStack(spacing: 16) {
-            // MARK: Header
-            HStack {
-                Text(productShowType == .nextProduct ? "Select Next Product For Auction" : "Shop" )
-                    .font(.custom(poppinsBold, size: 15))
-                Spacer()
-                Button {
-                    isPresented = false
-                } label: {
-                    Image(systemName: "xmark")
-                        .foregroundColor(.black)
-                }
-            }
+        VStack(spacing: 0) {
             
-            // MARK: Search
-            if productShowType != .viewOnly{
+            VStack(spacing: 20) {
+                // MARK: Header
                 HStack {
-                    Image(systemName: "magnifyingglass")
-                        .foregroundColor(.gray)
-                    TextField("Search products...", text: $searchText)
-                        .font(.custom(poppinsSemiBold, size: 13))
-                }
-                .padding(.horizontal)
-                .frame(height: 40)
-                .background(Color(.systemGray6))
-                .cornerRadius(10)
-                
-                // MARK: Tabs
-                HStack(spacing: 10) {
-                    ForEach(ShopTab.allCases, id: \.self) { tab in
-                        Button {
-                            selectedTab = tab
-                        } label: {
-                            Text(tab.rawValue)
-                                .font(.custom(poppinsSemiBold, size: 13))
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 10)
-                                .background(selectedTab == tab ? Color.defaultTheme : Color(.systemGray5))
-                                .foregroundColor(selectedTab == tab ? .white : .black)
-                                .cornerRadius(20)
+                    HStack(spacing: 10) {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(Color.blue.opacity(0.1))
+                                .frame(width: 36, height: 36)
+                            
+                            Image(systemName: productShowType == .nextProduct ? "arrow.right.circle.fill" : "bag.fill")
+                                .font(.system(size: 18))
+                                .foregroundColor(.blue)
                         }
-                    }
-                }
-            }
-            
-            Divider()
-            
-            // MARK: Product List
-            ScrollView {
-                LazyVStack(spacing: 12) {
-                    ForEach(productData.indices, id: \.self) { index in
-                        productRow(productData[index], index: index)
-                    }
-                }
-            }
-            
-            //lbottom button -> not shown for user
-            if let product = selectedProduct {
-                if productShowType == .shop {
-                    Button(action: {
-                        isPresented = false
-                        onLiveStreamStart?(product.id ?? "")
-                    }) {
-                        Text("Start Live Stream")
-                            .font(.custom(poppinsSemiBold, size: 14))
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.defaultTheme)
-                            .foregroundColor(.white)
-                            .cornerRadius(12)
-                    }
-                }
-                else if productShowType == .nextProduct {
-                    Button(action: {
-                        // Case 1: Product already in a bid
-                        if product.id == initialSelectedProductId {
-                            // Case 2: Check sold products
-                            if productData.count == 1 && product.status == "sold" {
-                                // Only one product and it's sold
-                                toastMessage = "Product Sold"
-                                showToast = true
-                                return
+                        
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(productShowType == .nextProduct ? "Select Next Product" : "Shop")
+                                .font(.custom(poppinsBold, size: 17))
+                                .foregroundColor(.primary)
+                            
+                            if productShowType == .nextProduct {
+                                Text("Choose product for auction")
+                                    .font(.custom(poppinsRegular, size: 12))
+                                    .foregroundColor(.secondary)
                             }
-                            toastMessage = "Product already in a bid"
-                            showToast = true
-                            return
                         }
-                        
-                        // Case 2:
-                        if productData.count > 1 && isEveryProductSold {
-                            // Multiple products and all are sold
-                            toastMessage = "All Products Sold"
-                            showToast = true
-                            return
-                        }
-                        
-                        // Case 3: Valid product to add
-                        isPresented = false
-                        onAddProduct?(product.id ?? "")
-                    }) {
-                        Text("Add Product")
-                            .font(.custom(poppinsSemiBold, size: 14))
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.defaultTheme)
-                            .foregroundColor(.white)
-                            .cornerRadius(12)
                     }
                     
+                    Spacer()
+                    
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            isPresented = false
+                        }
+                    } label: {
+                        ZStack {
+                            Circle()
+                                .fill(Color.gray.opacity(0.1))
+                                .frame(width: 32, height: 32)
+                            
+                            Image(systemName: "xmark")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundColor(.primary)
+                        }
+                    }
+                }
+                .padding(.horizontal, 20)
+                
+                Divider()
+                    .padding(.horizontal, 20)
+                
+                // MARK: Product List
+                ScrollView(showsIndicators: false) {
+                    LazyVStack(spacing: 12) {
+                        ForEach(productData.indices, id: \.self) { index in
+                            productRow(productData[index], index: index)
+                                .padding(.vertical, 6)
+                        }
+                    }
+                    .padding(.horizontal, 20)
+                }
+                .padding(.vertical, 12)
+                
+                // Bottom button
+                if let product = selectedProduct {
+                    VStack(spacing: 4) {
+                        Divider()
+                            .padding(.horizontal, 20)
+                            .padding(.bottom, 16)
+                        
+                        if productShowType == .shop {
+                            Button(action: {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                                    buttonScale = 0.95
+                                }
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                                        buttonScale = 1.0
+                                    }
+                                    isPresented = false
+                                    onLiveStreamStart?(product.id ?? "")
+                                }
+                            }) {
+                                HStack(spacing: 10) {
+                                    Image(systemName: "play.circle.fill")
+                                        .font(.system(size: 18))
+                                    
+                                    Text("Start Live Stream")
+                                        .font(.custom(poppinsSemiBold, size: 16))
+                                }
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 16)
+                                .background(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [Color.defaultTheme, Color.defaultTheme.opacity(0.8)]),
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
+                                )
+                                .foregroundColor(.white)
+                                .cornerRadius(14)
+                                .shadow(color: Color.defaultTheme.opacity(0.4), radius: 12, x: 0, y: 6)
+                            }
+                            .scaleEffect(buttonScale)
+                            .padding(.horizontal, 20)
+                        }
+                        else if productShowType == .nextProduct {
+                            Button(action: {
+                                // Case 1: Product already in a bid
+                                if product.id == initialSelectedProductId {
+                                    // Case 2: Check sold products
+                                    if productData.count == 1 && product.status == "sold" {
+                                        // Only one product and it's sold
+                                        toastMessage = "Product Sold"
+                                        showToast = true
+                                        return
+                                    }
+                                    toastMessage = "Product already in a bid"
+                                    showToast = true
+                                    return
+                                }
+                                
+                                // Case 2:
+                                if productData.count > 1 && isEveryProductSold {
+                                    // Multiple products and all are sold
+                                    toastMessage = "All Products Sold"
+                                    showToast = true
+                                    return
+                                }
+                                
+                                // Case 3: Valid product to add
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                                    buttonScale = 0.95
+                                }
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                                        buttonScale = 1.0
+                                    }
+                                    isPresented = false
+                                    onAddProduct?(product.id ?? "")
+                                }
+                            }) {
+                                HStack(spacing: 10) {
+                                    Image(systemName: "plus.circle.fill")
+                                        .font(.system(size: 18))
+                                    
+                                    Text("Add Product")
+                                        .font(.custom(poppinsSemiBold, size: 16))
+                                }
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 16)
+                                .background(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [Color.defaultTheme, Color.defaultTheme.opacity(0.8)]),
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
+                                )
+                                .foregroundColor(.white)
+                                .cornerRadius(14)
+                                .shadow(color: Color.defaultTheme.opacity(0.4), radius: 12, x: 0, y: 6)
+                            }
+                            .scaleEffect(buttonScale)
+                            .padding(.horizontal, 20)
+                        }
+                    }
                 }
             }
-            
-            // MARK: Action Buttons
-//            if NavFrom != "Shop" {
-//                if productData.contains(where: { $0.isCurrent ?? false }) {
-//                    if NavFrom == "Rehearsal" {
-//                        if let selectedProduct = productData.first(where: { $0.isCurrent ?? false }) {
-//                            Button(action: {
-//                                isPresented = false
-//                                onLiveStreamStart?(selectedProduct.id ?? "")
-//                            }) {
-//                                Text("Start Live Stream")
-//                                    .font(.custom(poppinsSemiBold, size: 14))
-//                                    .frame(maxWidth: .infinity)
-//                                    .padding()
-//                                    .background(Color.defaultTheme)
-//                                    .foregroundColor(.white)
-//                                    .cornerRadius(12)
-//                            }
-//                        }
-//                    } else if NavFrom.isEmpty {
-//                        if let selectedProduct = productData.first(where: { $0.isCurrent }) {
-//                            Button(action: {
-//                                // Case 1: Product already in a bid
-//                                if selectedProduct.id == initialSelectedProductId {
-//                                    // Case 2: Check sold products
-//                                    if productData.count == 1 && selectedProduct.status == "sold" {
-//                                        // Only one product and it's sold
-//                                        toastMessage = "Product Sold"
-//                                        showToast = true
-//                                        return
-//                                    }
-//                                    toastMessage = "Product already in a bid"
-//                                    showToast = true
-//                                    return
-//                                }
-//                               
-//                                // Case 2:
-//                                   if productData.count > 1 && productData.allSatisfy({ $0.status == "sold" }) {
-//                                       // Multiple products and all are sold
-//                                       toastMessage = "All Products Sold"
-//                                       showToast = true
-//                                       return
-//                                   }
-//
-//                                   // Case 3: Valid product to add
-//                                   isPresented = false
-//                                   onAddProduct?(selectedProduct.id ?? "")
-//                            }) {
-//                                Text("Add Product")
-//                                    .font(.custom(poppinsSemiBold, size: 14))
-//                                    .frame(maxWidth: .infinity)
-//                                    .padding()
-//                                    .background(Color.defaultTheme)
-//                                    .foregroundColor(.white)
-//                                    .cornerRadius(12)
-//                            }
-//                        }
-//                    }
-//                }
-//            }
+            .padding(.bottom, 20)
         }
-        .padding()
-        .background(Color.white)
-        .cornerRadius(20)
+        .background(.clear)
         .toast(isPresenting: $showToast) {
             AlertToast(type: .regular, title: toastMessage)
         }
@@ -389,67 +520,120 @@ struct ShopBottomSheetView: View {
     
     // MARK: - Product Row
     func productRow(_ product: ProductData, index: Int) -> some View {
-        HStack(spacing: 12) {
+        Button(action: {
             if isProductSelectable(for: product) {
-                Button(action: {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                     for i in productData.indices {
                         productData[i].isCurrent = (i == index)
                     }
-                }) {
-                    Image(systemName: product.isCurrent ? "checkmark.circle.fill" : "circle")
-                        .foregroundColor(product.isCurrent ? .blue : .gray)
                 }
             }
-            
-            CustomProfileImage(url: product.image, isCircular: false, cornerRadius: 8, size: 60)
-            
-            VStack(alignment: .leading, spacing: 4) {
-                HStack{
-                    Text(product.name?.capitalizingFirstLetter() ?? "")
-                        .font(.custom(poppinsSemiBold, size: 13.0))
-                    Spacer()
-                    // ✅ Show Live label if this is the initial selected product
-                    if product.id == initialSelectedProductId && product.status != "sold"{
-                        Text("LIVE")
+        }) {
+            HStack(spacing: 14) {
+                // Selection indicator
+                if isProductSelectable(for: product) {
+                    ZStack {
+                        Circle()
+                            .stroke(product.isCurrent ? Color.blue : Color.gray.opacity(0.3), lineWidth: 2)
+                            .frame(width: 24, height: 24)
+                        
+                        if product.isCurrent {
+                            Circle()
+                                .fill(Color.blue)
+                                .frame(width: 24, height: 24)
+                            
+                            Image(systemName: "checkmark")
+                                .font(.system(size: 12, weight: .bold))
+                                .foregroundColor(.white)
+                        }
+                    }
+                    .animation(.spring(response: 0.3, dampingFraction: 0.7), value: product.isCurrent)
+                }
+                
+                // Product Image
+                CustomProfileImage(url: product.image, isCircular: false, cornerRadius: 12, size: 70)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(Color.gray.opacity(0.1), lineWidth: 1)
+                    )
+                    .shadow(color: Color.black.opacity(0.08), radius: 6, x: 0, y: 3)
+                
+                // Product Details
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack {
+                        Text(product.name?.capitalizingFirstLetter() ?? "")
                             .font(.custom(poppinsSemiBold, size: 14))
-                            .foregroundColor(.defaultTheme)
-                            .padding(.trailing, -20)
+                            .foregroundColor(.primary)
+                            .lineLimit(2)
+                        
+                        Spacer()
+                        
+                        // Live Badge
+                        if product.id == initialSelectedProductId && product.status != "sold" {
+                            HStack(spacing: 4) {
+                                Circle()
+                                    .fill(Color.red)
+                                    .frame(width: 6, height: 6)
+                                
+                                Text("LIVE")
+                                    .font(.custom(poppinsBold, size: 11))
+                                    .foregroundColor(.red)
+                            }
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(
+                                Capsule()
+                                    .fill(Color.red.opacity(0.1))
+                            )
+                        }
+                    }
+                    
+                    HStack(spacing: 4) {
+                        Image(systemName: "dollarsign.circle.fill")
+                            .font(.system(size: 12))
+                            .foregroundColor(.green)
+                        
+                        Text("$\(product.price ?? "")")
+                            .font(.custom(poppinsSemiBold, size: 13))
+                            .foregroundColor(.green)
+                    }
+                    
+                    HStack(spacing: 4) {
+                        Circle()
+                            .fill(product.status == "sold" ? Color.red : Color.green)
+                            .frame(width: 6, height: 6)
+                        
+                        Text(product.status?.capitalizingFirstLetter() ?? "")
+                            .font(.custom(poppinsRegular, size: 12))
+                            .foregroundColor(product.status == "sold" ? .red : .secondary)
                     }
                 }
-                Text("Price : $\(product.price ?? "")")
-                    .font(.custom(poppinsRegular, size: 11.0))
-                Text("Status: \(product.status?.capitalizingFirstLetter() ?? "")")
-                    .font(.custom(poppinsRegular, size: 11.0))
-                    .foregroundColor(product.status == "sold" ? .red : .black)
+                
+                Spacer()
             }
-            
-            Spacer()
-        
-            
-            // Hide edit/delete in Shop mode or if sold
-//            if NavFrom != "Shop" && product.status != "sold" && NavFrom != "" {
-//                Button {
-//                    // Edit action
-//                } label: {
-//                    Image(systemName: "square.and.pencil")
-//                }
-//                
-//                Button {
-//                    // Delete action
-//                } label: {
-//                    Image(systemName: "trash")
-//                }
-//            }
+            .padding(16)
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(product.status == "sold" ? Color(.systemGray6) : Color(.systemBackground))
+                    .shadow(
+                        color: product.isCurrent && product.status != "sold" ? Color.blue.opacity(0.2) : Color.black.opacity(0.06),
+                        radius: product.isCurrent && product.status != "sold" ? 12 : 8,
+                        x: 0,
+                        y: product.isCurrent && product.status != "sold" ? 6 : 3
+                    )
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(
+                        product.isCurrent && product.status != "sold" ? Color.blue.opacity(0.4) : Color.clear,
+                        lineWidth: 2
+                    )
+                    .animation(.spring(response: 0.3, dampingFraction: 0.7), value: product.isCurrent)
+            )
+            .opacity(product.status == "sold" ? 0.6 : 1)
+            .scaleEffect(product.isCurrent && product.status != "sold" ? 1.02 : 1.0)
+            .animation(.spring(response: 0.3, dampingFraction: 0.7), value: product.isCurrent)
         }
-        .padding()
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(product.status == "sold" ? Color(.systemGray6) : Color(.white))
-                .shadow(color: product.status == "sold" ? .clear : Color.squirrelGrey.opacity(0.5),
-                        radius: 2, x: 0, y: 0)
-        )
-        .padding(.horizontal, 4)
-        .padding(.vertical, 2)
-        .opacity(product.status == "sold" ? 0.6 : 1)
+        .buttonStyle(PlainButtonStyle())
     }
 }

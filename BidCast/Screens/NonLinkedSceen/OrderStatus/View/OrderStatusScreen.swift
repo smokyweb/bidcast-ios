@@ -93,7 +93,17 @@ struct OrderStatusScreen: View {
                 }
                 .padding()
             }
-            
+            /*
+            @State ->
+             a property wrapper type that can read and write values managed by swiftUI
+             you can not modify properity of struct directly because struct is value type
+             when you declared  a property as @state the  its value is stored and managed by swiftUI outside of struct to make it modify the value
+             when ever state property valuue changes, the view invalidates its current state and re-renders the body property to reflect the updated state
+             @Binding ->
+                a property wrapper type that can read and write a value owned by a source of truth outside of the current view
+             @ObserableObject ->
+             
+            */
             if comeFrom == "buyNow" {
                 // 🔙 Home Button
                 Button(action: {

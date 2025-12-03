@@ -50,6 +50,7 @@ struct RehearsalScreen: View {
     @State private var verifiedOnly = false
     @State private var currentBottomSheet: SideMenu?
     @State private var showSellSheet: Bool = false
+    @State private var showShopSheet: Bool = false
     @State private var showProductSheet : Bool = false
 
     @State private var showPollSheet : Bool = false
@@ -319,7 +320,7 @@ struct RehearsalScreen: View {
                                    let img = product.image {
                                     StackedImageView(imageURL: img, totalCount: productData.count) {
                                         print("productStackTapped")
-                                        showSellSheet = true
+                                        showShopSheet = true
                                     }
                                 }
                             }
@@ -369,7 +370,15 @@ struct RehearsalScreen: View {
                                 .padding()
                                
                             }
-                            ShopButton(action: .shop, count: "0")
+                            VStack {
+                                if let product = currentProduct,
+                                   let img = product.image {
+                                    StackedImageView(imageURL: img, totalCount: productData.count) {
+                                        print("productStackTapped")
+                                        showShopSheet = true
+                                    }
+                                }
+                            }
                             Spacer()
                         }
                     }
@@ -604,8 +613,8 @@ struct RehearsalScreen: View {
             isPresented: $showProductSheet,
             height: screenHeight * 0.6,
             topBarCornerRadius: 20,
-            contentBackgroundColor: Color(.systemBackground),
-            topBarBackgroundColor: Color(.systemBackground),
+            contentBackgroundColor: Color(.systemGroupedBackground),
+            topBarBackgroundColor: Color(.systemGroupedBackground),
             showTopIndicator: false,
             onDismiss: {
                 showProductSheet = false
@@ -676,23 +685,23 @@ struct RehearsalScreen: View {
         
         
         .bottomSheet(
-            isPresented: $showSellSheet,
+            isPresented: $showShopSheet,
             height: sheetHeight, // Adjust as needed
             topBarCornerRadius: 20,
-            contentBackgroundColor: Color(.systemBackground),
-            topBarBackgroundColor: Color(.systemBackground),
+            contentBackgroundColor: Color(.systemGroupedBackground),
+            topBarBackgroundColor: Color(.systemGroupedBackground),
             showTopIndicator: false,
             onDismiss: {
-                showSellSheet = false
+                showShopSheet = false
             },
             content: {
                 if isLive{
                     ShopBottomSheetView(
-                        isPresented: $showSellSheet,
+                        isPresented: $showShopSheet,
                         productData: $productData,
                         productShowType: .nextProduct,
                         onAddProduct: { selectedID in
-                            showSellSheet = false
+                            showShopSheet = false
                             if !selectedID.isEmpty {
                                 print("product ID is :\(selectedID)")
                                 print("Live Room ID is :\(self.roomId)")
@@ -707,7 +716,7 @@ struct RehearsalScreen: View {
                     }
                 }else{
                     ShopBottomSheetView(
-                        isPresented: $showSellSheet,
+                        isPresented: $showShopSheet,
                         productData: $productData,
                         productShowType: .shop
                     )
@@ -719,8 +728,8 @@ struct RehearsalScreen: View {
             isPresented: $showSellSheet,
             height: sheetHeight, // Adjust as needed
             topBarCornerRadius: 20,
-            contentBackgroundColor: Color(.systemBackground),
-            topBarBackgroundColor: Color(.systemBackground),
+            contentBackgroundColor: Color(.systemGroupedBackground),
+            topBarBackgroundColor: Color(.systemGroupedBackground),
             showTopIndicator: false,
             onDismiss: {
                 showSellSheet = false

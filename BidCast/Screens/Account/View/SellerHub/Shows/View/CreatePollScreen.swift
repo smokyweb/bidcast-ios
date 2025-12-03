@@ -7,8 +7,6 @@
 
 import SwiftUI
 
-import SwiftUI
-
 struct CreatePollScreen: View {
     
     @Binding var isPresented: Bool
