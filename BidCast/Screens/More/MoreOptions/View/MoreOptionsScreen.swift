@@ -346,7 +346,7 @@ struct MoreOptionsScreen: View {
         .edgesIgnoringSafeArea(.top)
     }
 }
-om 
+
 // MARK: - Option Grid Button View
 struct OptionGridButtonView: View {
     let label: String

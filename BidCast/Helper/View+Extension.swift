@@ -72,7 +72,12 @@ extension View {
         completion?(context)
     }
 
-
+    func errorDesc(error: Error?, message: String?) -> String {
+        guard let msg = message else {
+            return error?.localizedDescription ?? "Something went wrong"
+        }
+        return msg
+    }
 }
 
 

@@ -33,7 +33,7 @@ struct AddProductsScreen: View {
                                                                       weight: "",
                                                                       height:"",
                                                                       mail_class:"",
-                                                                      processing_category:"")
+                                                                      processing_category:"", product_condition: "")
     @Binding var thumbNail : String
     @State var productData = [ProductDataModel]()
     @State var viewModel = ScheduleViewModel()

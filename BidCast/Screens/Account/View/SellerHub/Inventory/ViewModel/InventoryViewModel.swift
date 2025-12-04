@@ -16,7 +16,7 @@ final class InventoryViewModel: ObservableObject {
     var request: String = ""
     
     // MARK: - Get Inventory List
-    func getInventoryList(param: InventoryRequest) async {
+    func getInventoryList(param: InventoryRequest) async throws {
         self.request = "Inventory"
         do {
             let response: ResponseModalPaginate<[InventoryDataModel]> = try await APIManager.shared.request(
@@ -24,8 +24,14 @@ final class InventoryViewModel: ObservableObject {
                 header: true
             )
             self.inventoryDict = response
-        } catch {
-            handle(error: error)
+        } catch(let error) {
+            if let dataError = error as? DataError {
+                self.errorMessage = dataError.getErrorMessage()
+            }
+            else {
+                self.errorMessage = error.localizedDescription
+            }
+            throw error
         }
     }
     

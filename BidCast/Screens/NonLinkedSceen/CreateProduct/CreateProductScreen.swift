@@ -41,7 +41,7 @@ struct CreateProductScreen: View {
     @State var ShippingAddress: [AddressModel] = []
     @State var mailClassList = [String]()
     //category request data
-    @State var request : StoreProductParam = StoreProductParam(category_id: "", title: "", description: "", quantity: "1", pricing: "", flash_sale: "0", accept_offers: "0", reserve_for_live: "0", shipping_profile_id: "2", status: "",sub_category_id: "",width: "",length: "", weight: "",height:"",mail_class:"",processing_category:"")
+    @State var request : StoreProductParam = StoreProductParam(category_id: "", title: "", description: "", quantity: "1", pricing: "", flash_sale: "0", accept_offers: "0", reserve_for_live: "0", shipping_profile_id: "2", status: "",sub_category_id: "",width: "",length: "", weight: "",height:"",mail_class:"",processing_category:"",  product_condition: "")
     
     @State var viewModel = ListProductViewModel()
     @State var imageUrls: [String] = []
@@ -56,6 +56,10 @@ struct CreateProductScreen: View {
     //    @Binding var productData : InventoryDataModel
     @State var extraFields: [ExtraFieldModel] = []
     @State var processingListArr = ["LETTERS","FLATS","MACHINABLE","NONSTANDARD","NON_MACHINABLE"]
+    
+    @State var conditionListArr = ["New","Used - Like New"]
+    
+    
     @State var extraFieldValues: [String: String] = [:]
     @State var selectedRadio: [String: String] = [:]
     @State var navigateToAddProduct = false
@@ -234,6 +238,22 @@ struct CreateProductScreen: View {
                         .padding([.leading,.trailing],16)
                         .background(.clear)
                         
+                        
+                        DropDownSelection(
+                            options: $conditionListArr, floatingLabel:"Condition",
+                            hint: "Select",
+                            selected: $request.product_condition,
+                            anchor: .top,
+                            custFontName: robotoMedium,
+                            custFontSize:  14.0,
+                            custCategory : robotoRegular,
+                            custCategorySize : 13.0,
+                            onOptionSelected: { value in
+                                request.product_condition = value
+                            }
+                        )
+                        .padding([.leading,.trailing],16)
+                        
                         // Quantity Selector
                         HStack(spacing: 6) {
                             Button(action: {
@@ -335,6 +355,11 @@ struct CreateProductScreen: View {
                         }
                         guard !request.processing_category.isEmpty else{
                             hudMsg = "Please select processing category"
+                            showhud = true
+                            return
+                        }
+                        guard !request.product_condition.isEmpty else{
+                            hudMsg = "Please select product condition"
                             showhud = true
                             return
                         }

@@ -408,6 +408,11 @@ struct InventoryRequest : Encodable{
     var page : Int
     var search : String?
     var category: String?
+    var condition: String?
+    var min_price: String?
+    var max_price: String?
+    var formate: String?
+    var marketplace: Bool?
 }
 
 //MARK: Store Product param
@@ -430,6 +435,7 @@ struct StoreProductParam : Encodable{
     var height : String
     var mail_class : String
     var processing_category : String
+    var product_condition: String
 }
 
 struct TipParam : Encodable {

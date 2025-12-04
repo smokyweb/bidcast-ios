@@ -32,7 +32,7 @@ struct ListProductScreen: View {
     @State var ShippingAddress: [AddressModel] = []
     @State var mailClassList = [String]()
 //    @State var isImageSizeExceeding: Bool = false
-    @State var request : StoreProductParam = StoreProductParam(category_id: "", title: "", description: "", quantity: "", pricing: "", flash_sale: "0", accept_offers: "0", reserve_for_live: "0", shipping_profile_id: "", status: "",sub_category_id: "",width: "",length: "", weight: "",height:"",mail_class:"",processing_category:"")
+    @State var request : StoreProductParam = StoreProductParam(category_id: "", title: "", description: "", quantity: "", pricing: "", flash_sale: "0", accept_offers: "0", reserve_for_live: "0", shipping_profile_id: "", status: "",sub_category_id: "",width: "",length: "", weight: "",height:"",mail_class:"",processing_category:"", product_condition: "")
     
     @StateObject var viewModel = ListProductViewModel()
     @State var imageUrls: [String] = []
@@ -46,8 +46,12 @@ struct ListProductScreen: View {
     @State var subCategoryName : [String] = [""]
     @Binding var productData : InventoryDataModel
     @State var extraFields: [ExtraFieldModel] = []
-//    @State var processingListArr = ["LETTERS","FLATS","MACHINABLE","NONSTANDARD","NON_MACHINABLE"]
     @State var processingListArr = ["Letters","Flats","Machinaable","Nonstandard","Non Machinable"]
+    
+//    @State var conditionListArr = ["New","Used - Like New","Used - Very Good","Used - Good","Used - Acceptable","Collectible - Like New","Collectible - Very Good","Collectible - Good","Collectible - Acceptable"]
+    
+    @State var conditionListArr = ["New","Used - Like New"]
+    
     @State var extraFieldValues: [String: String] = [:]
     @State var selectedRadio: [String: String] = [:]
 
@@ -228,7 +232,21 @@ struct ListProductScreen: View {
 //                                }
                             }
                         )
-                       
+                        .padding([.leading,.trailing],16)
+                        
+                        DropDownSelection(
+                            options: $conditionListArr, floatingLabel:"Condition",
+                            hint: "Select",
+                            selected: $request.product_condition,
+                            anchor: .top,
+                            custFontName: robotoMedium,
+                            custFontSize:  14.0,
+                            custCategory : robotoRegular,
+                            custCategorySize : 13.0,
+                            onOptionSelected: { value in
+                                request.product_condition = value
+                            }
+                        )
                         .padding([.leading,.trailing],16)
                         
 //                        var extraField = self.extraFields
@@ -962,7 +980,7 @@ struct ListProductScreen: View {
                         "height": request.height,
                         "mail_class": request.mail_class,
                         "processing_category": request.processing_category,
-                        
+                        "product_condition": request.product_condition,
                         // ✅ Images array (already present)
                         "images": uploadedUrls,
                         "type": "live"
@@ -1027,7 +1045,8 @@ struct ListProductScreen: View {
                                             weight : "",
                                             height : "",
                                             mail_class : "",
-                                            processing_category : "")
+                                            processing_category : "",
+                                            product_condition : "")
                 
                 isTappedFlash = productData.flashSale ?? false ? true : false
                 isTappedAccept = productData.acceptOffers ?? false ? true : false
@@ -1187,6 +1206,7 @@ struct ListProductScreen: View {
         if request.weight.isEmpty { hudMsg = "Please enter weight"; return false }
         if request.mail_class.isEmpty { hudMsg = "Please select mail class"; return false }
         if request.processing_category.isEmpty { hudMsg = "Please select processing category"; return false }
+        if request.product_condition.isEmpty { hudMsg = "Please select product condition"; return false }
         if request.pricing.isEmpty { hudMsg = "Please enter pricing"; return false }
         guard let price = Double(request.pricing), price >= 1 else {
             hudMsg = "Price should not be less than $1.00"

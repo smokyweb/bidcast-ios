@@ -58,8 +58,8 @@ struct ProfileScreen: View {
     
     @State private var scheduleViewModel = ScheduleViewModel()
     @StateObject var showViewModel = LiveShowsViewModel()
-//    @State var profileImage: String
-
+    //    @State var profileImage: String
+    
     var options:[String] = ["Sort", "Auction", "Buy Now"]
     @State private var selectedIndex: Int = 0
     @State private var showSortSheet = false
@@ -98,14 +98,14 @@ struct ProfileScreen: View {
                                           following: "\(profileData.following_count ?? 0)" ,
                                           bio: profileData.bio ?? "Professional photographer specializing in portrait and wedding photography. Available for bookings worldwide.",
                                           onTapNotify: {
-                                                showNotify = true
-                                            },
+                            showNotify = true
+                        },
                                           onTapMore: {
-                                                showReportSheet = true
-                                            },sellerID : $id)
+                            showReportSheet = true
+                        },sellerID : $id)
                         
                         ProfileActionsView(isFollowing: $isFollowing ,
-                        onTapFollow: {
+                                           onTapFollow: {
                             isForFollow = true
                             Task{
                                 SVProgressHUD.show()
@@ -122,8 +122,8 @@ struct ProfileScreen: View {
                         },
                                            
                                            
-                        // Inside ProfileActionsView
-                        onTapMessage: {
+                                           // Inside ProfileActionsView
+                                           onTapMessage: {
                             let currentUserId = String(UserDefaults.userId)
                             let selectedUserId = id
                             let sortedRoomId = computeRoomId(senderId: currentUserId, receiverId: selectedUserId)
@@ -133,7 +133,7 @@ struct ProfileScreen: View {
                             
                             navigateToChat = true
                         },
-                        onTapTipAmount:  {
+                                           onTapTipAmount:  {
                             self.isTipAmountButtoClicked = true
                         })
                         .padding(.top, -50)
@@ -145,49 +145,49 @@ struct ProfileScreen: View {
                                 case "Shop":
                                     resetShopData()
                                     fetchProduct()
-//                                    print("")
-//                                    Task{
-//                                        guard Reachability.isConnectedToNetwork() else {
-//                                            hudMsg = "No Internet Connection"
-//                                            showhud = true
-//                                            return
-//                                        }
-//                                        SVProgressHUD.show()
-//                                        await self.viewModel.productDetails(parameters: UserProductRequest(user_id: id,page : currentPage))
-//                                        await SVProgressHUD.dismiss()
-//                                        success()
-//                            
-//                                    success()
-//                                }
-                                //                                await viewModel.fetchShopItems()
-                            case "Shows":
-                               guard Reachability.isConnectedToNetwork() else {
-                                    hudMsg = "No Internet Connection"
-                                    showhud = true
-                                    return
+                                    //                                    print("")
+                                    //                                    Task{
+                                    //                                        guard Reachability.isConnectedToNetwork() else {
+                                    //                                            hudMsg = "No Internet Connection"
+                                    //                                            showhud = true
+                                    //                                            return
+                                    //                                        }
+                                    //                                        SVProgressHUD.show()
+                                    //                                        await self.viewModel.productDetails(parameters: UserProductRequest(user_id: id,page : currentPage))
+                                    //                                        await SVProgressHUD.dismiss()
+                                    //                                        success()
+                                    //
+                                    //                                    success()
+                                    //                                }
+                                    //                                await viewModel.fetchShopItems()
+                                case "Shows":
+                                    guard Reachability.isConnectedToNetwork() else {
+                                        hudMsg = "No Internet Connection"
+                                        showhud = true
+                                        return
+                                    }
+                                    SVProgressHUD.show()
+                                    await self.viewModel.getMyScheduleShow(parameters: GetMyScheduleShowRequest(type: "upcoming", user_id: Int(id),page : currentPage))
+                                    await SVProgressHUD.dismiss()
+                                    scheduleShowSuccess()
+                                case "Reviews":
+                                    guard Reachability.isConnectedToNetwork() else {
+                                        hudMsg = "No Internet Connection"
+                                        showhud = true
+                                        return
+                                    }
+                                    SVProgressHUD.show()
+                                    await self.viewModel.getTotalRating(parameters: GetTotalRatingRequest(seller_id: 7))
+                                    await SVProgressHUD.dismiss()
+                                    ratingSuccess()
+                                case "Clips":
+                                    print("")
+                                    //                                await viewModel.fetchClips()
+                                default:
+                                    break
                                 }
-                                SVProgressHUD.show()
-                                await self.viewModel.getMyScheduleShow(parameters: GetMyScheduleShowRequest(type: "upcoming", user_id: Int(id),page : currentPage))
-                                await SVProgressHUD.dismiss()
-                                scheduleShowSuccess()
-                            case "Reviews":
-                               guard Reachability.isConnectedToNetwork() else {
-                                    hudMsg = "No Internet Connection"
-                                    showhud = true
-                                    return
-                                }
-                                SVProgressHUD.show()
-                                await self.viewModel.getTotalRating(parameters: GetTotalRatingRequest(seller_id: 7))
-                                await SVProgressHUD.dismiss()
-                                ratingSuccess()
-                            case "Clips":
-                                print("")
-                                //                                await viewModel.fetchClips()
-                            default:
-                                break
                             }
                         }
-                    }
                         if selectedTab == "Shop" {
                             // MARK: - Pills Selector
                             VStack(spacing: 12){
@@ -223,7 +223,7 @@ struct ProfileScreen: View {
                                     })
                                 
                                 LazyVStack(spacing: 0) {
-
+                                    
                                     if isLoading {
                                         ForEach(0..<8) { _ in
                                             PurchasesViewShimmerView()
@@ -241,7 +241,7 @@ struct ProfileScreen: View {
                                                 }
                                         }
                                     }
-
+                                    
                                     // Loader at bottom
                                     if isFetchingMore {
                                         ProgressView()
@@ -250,62 +250,47 @@ struct ProfileScreen: View {
                                 }
                             }
                         }
-//                        SearchAndFiltersView()
-//                        ProductListView(
-//                            prouduct: $productArr,
-//                            onTapProduct: { index in
-//                                productData = productArr[index]
-//                                productId = productData.id ?? 0
-//                                showSellSheet = true
-//                            },
-//                            onItemAppear: { index in
-//                                Task {
-//                                    await handlePagination(for: .shop, index: index)
-//                                }
-//                            }
-//                        )
                         
-
-                    else if selectedTab == "Shows" {
-                        LazyVGrid(columns: columns, spacing: 6) {
-                            ForEach(scheduleShowArr.indices, id: \.self) { i in
-                                let show = scheduleShowArr[i]
-                                ImageCollectionView(profileImg: show.user?.profile_image ?? "",
-                                                    profileName: show.user?.username ?? show.user?.name ?? "".capitalizingFirstLetter(),
-                                                    textSize: 14.0,
-                                                    image: show.imgThumbnail?.first ?? "",
-                                                    category: show.category?.name ?? "",
-                                                    title2:show.title ?? "",
-                                                    categorySize: 14,
-                                                    title2Size: 16.0,
-                                                    liveCount:  0,
-                                                    onTapProfile: {
-                                    //                                userId = "\(show.user?.id ?? 0)"
-                                    //                                navigateToProfile = true
-                                },onTapProfileName: {
-                                    //                                userId = "\(show.user?.id ?? 0)"
-                                    //                                navigateToProfile = true
-                                },onTapMainImage: {
-                                    print(" tapped the card!,inex \(index)")
-                                    //                                self.index = i
-                                    //                                userId = "\(show.user?.id ?? 0)"
-                                    //                                navigateToLiveStream = true
-                                },onTapCategory: {
-                                    //                                self.category = show.category?.name ?? ""
-                                    //                                navigateToCategoryDetailScreen = true
-                                })
-//                                .background(.white)
-                                .cornerRadius(10)
-                                .onAppear {
-                                    Task {
-                                        await handlePagination(for: .shows, index: i)
+                        else if selectedTab == "Shows" {
+                            LazyVGrid(columns: columns, spacing: 6) {
+                                ForEach(scheduleShowArr.indices, id: \.self) { i in
+                                    let show = scheduleShowArr[i]
+                                    ImageCollectionView(profileImg: show.user?.profile_image ?? "",
+                                                        profileName: show.user?.username ?? show.user?.name ?? "".capitalizingFirstLetter(),
+                                                        textSize: 14.0,
+                                                        image: show.imgThumbnail?.first ?? "",
+                                                        category: show.category?.name ?? "",
+                                                        title2:show.title ?? "",
+                                                        categorySize: 14,
+                                                        title2Size: 16.0,
+                                                        liveCount:  0,
+                                                        onTapProfile: {
+                                        //                                userId = "\(show.user?.id ?? 0)"
+                                        //                                navigateToProfile = true
+                                    },onTapProfileName: {
+                                        //                                userId = "\(show.user?.id ?? 0)"
+                                        //                                navigateToProfile = true
+                                    },onTapMainImage: {
+                                        print(" tapped the card!,inex \(index)")
+                                        //                                self.index = i
+                                        //                                userId = "\(show.user?.id ?? 0)"
+                                        //                                navigateToLiveStream = true
+                                    },onTapCategory: {
+                                        //                                self.category = show.category?.name ?? ""
+                                        //                                navigateToCategoryDetailScreen = true
+                                    })
+                                    //                                .background(.white)
+                                    .cornerRadius(10)
+                                    .onAppear {
+                                        Task {
+                                            await handlePagination(for: .shows, index: i)
+                                        }
                                     }
                                 }
-                            }
-                        } .padding(.vertical,3)
-                            .padding(.horizontal,8)
-                    }
-
+                            } .padding(.vertical,3)
+                                .padding(.horizontal,8)
+                        }
+                        
                         else if selectedTab == "Reviews" {
                             ForEach(totalRatingArr, id: \.id) { review in
                                 ReviewCard(
@@ -353,17 +338,17 @@ struct ProfileScreen: View {
                 }
             )
         }
-//        .overlay(
-//            NotifyMeBottomSheet(
-//                userId: $profileId, profileImage: profileData.profile_image ?? "" ,
-//                username: profileData.username ?? "",
-//                showParentToast: $showToast,
-//                parentToastMessage: $toastMessage,
-//                onDismiss: {
-//                    self.showNotify = false
-//                }
-//            )
-//        )
+        //        .overlay(
+        //            NotifyMeBottomSheet(
+        //                userId: $profileId, profileImage: profileData.profile_image ?? "" ,
+        //                username: profileData.username ?? "",
+        //                showParentToast: $showToast,
+        //                parentToastMessage: $toastMessage,
+        //                onDismiss: {
+        //                    self.showNotify = false
+        //                }
+        //            )
+        //        )
         
         .bottomSheet(
             isPresented: $isTipAmountButtoClicked,
@@ -402,26 +387,26 @@ struct ProfileScreen: View {
                     await reportSeller(categoryId: categoryId, message: message)
                 }
             })
-                .keyboardAwarePadding()
+            .keyboardAwarePadding()
         }
         
         .bottomSheet(
-                   isPresented: $showSortSheet,
-                   height: screenHeight * 0.6,
-                   topBarCornerRadius: 20,
-                   contentBackgroundColor: Color(.systemBackground),
-                   topBarBackgroundColor: Color(.systemBackground),
-                   showTopIndicator: false,
-                   onDismiss: {
-                       showSortSheet = false
-                   },
-                   content: {
-                       SortByBottomSheet(
-                           isPresented: $showSortSheet,
-                           selectedSort: $selectedSort
-                       )
-                   }
-               )
+            isPresented: $showSortSheet,
+            height: screenHeight * 0.6,
+            topBarCornerRadius: 20,
+            contentBackgroundColor: Color(.systemBackground),
+            topBarBackgroundColor: Color(.systemBackground),
+            showTopIndicator: false,
+            onDismiss: {
+                showSortSheet = false
+            },
+            content: {
+                SortByBottomSheet(
+                    isPresented: $showSortSheet,
+                    selectedSort: $selectedSort
+                )
+            }
+        )
         .onAppear{
             
             let param = ProfileParamRequest(id: id)
@@ -440,22 +425,22 @@ struct ProfileScreen: View {
                     await self.viewModel.getMyScheduleShow(parameters: GetMyScheduleShowRequest(type: "upcoming", user_id: Int(id), page: currentPage))
                     await SVProgressHUD.dismiss()
                     scheduleShowSuccess()
-                    }else{
-                        selectedTab = "Shop"
-                        resetShopData()
-                        fetchProduct()
-//                        Task{
-//                           guard Reachability.isConnectedToNetwork() else {
-//                                hudMsg = "No Internet Connection"
-//                                showhud = true
-//                                return
-//                            }
-//                            SVProgressHUD.show()
-//                            await self.viewModel.productDetails(parameters: UserProductRequest(user_id: id,page : currentPage))
-//                            await SVProgressHUD.dismiss()
-//                            success()
-//                        }
-                    }
+                }else{
+                    selectedTab = "Shop"
+                    resetShopData()
+                    fetchProduct()
+                    //                        Task{
+                    //                           guard Reachability.isConnectedToNetwork() else {
+                    //                                hudMsg = "No Internet Connection"
+                    //                                showhud = true
+                    //                                return
+                    //                            }
+                    //                            SVProgressHUD.show()
+                    //                            await self.viewModel.productDetails(parameters: UserProductRequest(user_id: id,page : currentPage))
+                    //                            await SVProgressHUD.dismiss()
+                    //                            success()
+                    //                        }
+                }
             }
         }
         CusNavLink(
@@ -471,10 +456,10 @@ struct ProfileScreen: View {
                 )
             )
         )
-//        CusNavLink(
-//            doNavigate: $isTipAmountButtoClicked,
-//            destination: PayoutView(sellerID: id)
-//        )
+        //        CusNavLink(
+        //            doNavigate: $isTipAmountButtoClicked,
+        //            destination: PayoutView(sellerID: id)
+        //        )
     }
     
     func computeRoomId(senderId: String, receiverId: String) -> String {
@@ -501,7 +486,7 @@ struct ProfileScreen: View {
             try await showViewModel.reportSeller(request: request)
             await SVProgressHUD.dismiss()
             let response = showViewModel.reportSellerResponse
-
+            
             if response.status == "success" {
                 hudMsg = response.message ?? ""
                 showhudSuccess = true
@@ -516,7 +501,7 @@ struct ProfileScreen: View {
         }
         catch {
             print("❌ Failed to load categories:", error.localizedDescription)
-
+            
             alertType = .sheetType(
                 icon: .alert,
                 title: "Error",
@@ -524,7 +509,7 @@ struct ProfileScreen: View {
                 primaryBtnText: "",
                 secondaryBtnText: "OK"
             )
-
+            
             showError = true
         }
     }
@@ -771,7 +756,7 @@ struct ProfileHeaderView: View {
                             await self.viewModel.blockUser(param: param)
                             await SVProgressHUD.dismiss()
                             blockSuccess()
-                    }
+                        }
                     }) {
                         Text("Block Seller")
                             .font(.custom(poppinsRegular, size: 14))
@@ -827,7 +812,7 @@ struct ProfileHeaderView: View {
                 
                 HStack(spacing: 12) {
                     let buttonSize: CGFloat = 44 // Adjust size as needed
-
+                    
                     Button(action: {
                         onTapNotify()
                     }) {
@@ -839,7 +824,7 @@ struct ProfileHeaderView: View {
                             .frame(width: buttonSize, height: buttonSize)
                             .fontWeight(.semibold)
                     }
-
+                    
                     Button(action: {
                         // Share action
                     }) {
@@ -851,7 +836,7 @@ struct ProfileHeaderView: View {
                             .frame(width: buttonSize, height: buttonSize)
                             .fontWeight(.semibold)
                     }
-
+                    
                     Button(action: {
                         withAnimation {
                             showMoreMenu.toggle()
@@ -866,7 +851,7 @@ struct ProfileHeaderView: View {
                             .fontWeight(.semibold)
                     }
                 }
-
+                
             }
             
             HStack(spacing: 16) {
@@ -897,7 +882,7 @@ struct ProfileHeaderView: View {
             hudMsg = response?.message ?? ""
             showhud = true
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-//                navigateToHome = true
+                //                navigateToHome = true
                 self.presentationMode.wrappedValue.dismiss()
             }
         } else {
@@ -983,119 +968,6 @@ struct ProfileTabsView: View {
         .padding(.horizontal, 13)
     }
 }
-
-//struct SearchAndFiltersView: View {
-//    var body: some View {
-//        VStack(spacing: 8) {
-//            HStack {
-//                TextField("What are you looking for?", text: .constant(""))
-//                    .font(.custom(poppinsRegular, size: 13.0))
-//                    .padding(.leading, 12)
-//                Image(systemName: "slider.horizontal.3")
-//                    .padding(.trailing, 12)
-//            }
-//            .frame(height: 44)
-//            .background(Color(UIColor.systemGray5))
-//            .cornerRadius(10)
-//            
-//            HStack {
-//                ForEach(["Filter", "Sort", "Buy Now", "Category"], id: \.self) { title in
-//                    Button(title) {
-//                        // Handle filter
-//                    }
-//                    .padding(.horizontal, 12)
-//                    .padding(.vertical, 6)
-//                    .background(Color(UIColor.systemGray5))
-//                    .cornerRadius(8)
-//                }
-//                
-//            }
-//            .padding(.horizontal)
-//        }
-//        .padding(.horizontal,12)
-//    }
-//}
-
-struct ProductListView: View {
-    @Binding var prouduct: [ProductListingDataModel]
-    @State var onTap = false
-    var onTapProduct: (Int) -> () = { _ in }
-    var onItemAppear: ((Int) -> Void)? = nil
-    
-    var body: some View {
-        VStack(spacing: 12) {
-            ForEach(prouduct.indices, id: \.self) { index in
-                let item = prouduct[index]
-                ProductCardView(
-                    imageName: item.images?.first ?? "",
-                    productName: item.title ?? "",
-                    description: item.description ?? "",
-                    pricing: "$\(item.pricing ?? 0)"
-                )
-                .onTapGesture {
-                    self.onTap.toggle()
-                    self.onTapProduct(index)
-                }
-                .onAppear {
-                    onItemAppear?(index)
-                }
-            }
-        }
-    }
-}
-
-
-struct ProductCardView: View {
-    var imageName: String = "ic_bidder"
-    var productName = "Product Name"
-    var description = "Category - Condition"
-    var pricing = "$2"
-    var body: some View {
-        HStack {
-            
-            //                Image(imageName)
-            //                    .resizable()
-            //                    .frame(width: 80, height: 80)
-            //                    .cornerRadius(10)
-            AsyncImage(url: URL(string: imageName)) { phase in
-                switch phase {
-                case .empty:
-                    ProgressView()
-                        .frame(width: 80, height: 80)
-                case .success(let image):
-                    image
-                        .resizable()
-                        .frame(width: 80, height: 80)
-                        .cornerRadius(10)
-                case .failure:
-                    Image(systemName: "person.crop.circle.fill")
-                        .resizable()
-                        .clipShape(Circle())
-                        .overlay(Circle().stroke(Color.white, lineWidth: 2))
-                        .frame(width: 80, height: 80)
-                        .offset(x: 16, y: 160)
-                @unknown default:
-                    EmptyView()
-                }
-            }
-            
-            VStack(alignment: .leading) {
-                Text(productName)
-                    .font(.custom(poppinsSemiBold, size: 13.0))
-                Text(description)
-                    .foregroundColor(.gray)
-                    .font(.custom(poppinsSemiBold, size: 11.0))
-                Text(pricing)
-                    .font(.custom(poppinsBold, size: 13.0))
-            }
-            Spacer()
-        }
-        .padding()
-        .background(Color(UIColor.systemGray6))
-        .cornerRadius(12)
-    }
-}
-
 
 struct TabIcon: View {
     var title: String

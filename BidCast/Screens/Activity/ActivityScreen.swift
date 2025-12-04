@@ -72,7 +72,7 @@ struct ActivityScreen: View {
                 
                 // MARK: - Filter Pills
                 PillsSelectorView(
-                    titles:  Segment.segmentArray,
+                    titles:  InventorySegment.inventorytArray,
                     selectedIndex: $selectedTabIndex,
                     backgroundStyle: .none,
                     underlineEnabled: false,

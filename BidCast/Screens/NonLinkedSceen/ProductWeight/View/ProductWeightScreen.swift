@@ -330,7 +330,7 @@ struct ProductWeightScreen: View {
                     "processing_category": request.processing_category,
                     
                     // ✅ Images array (already present)
-                    "images": uploadedUrls,
+                    "images": uploadedUrls, 
                     "type": "live"
                 ]
               
@@ -423,7 +423,7 @@ struct ProductWeightScreen: View {
     
     func storeSuccess(){
         let response = viewModel.storeProductResponse
-        request = StoreProductParam(category_id: "", title: "", description: "", quantity: "1", pricing: "", flash_sale: "0", accept_offers: "0", reserve_for_live: "0", shipping_profile_id: "2", status: "",sub_category_id: "",width: "",length: "", weight: "",height:"",mail_class:"",processing_category:"")
+        request = StoreProductParam(category_id: "", title: "", description: "", quantity: "1", pricing: "", flash_sale: "0", accept_offers: "0", reserve_for_live: "0", shipping_profile_id: "2", status: "",sub_category_id: "",width: "",length: "", weight: "",height:"",mail_class:"",processing_category:"", product_condition: "")
         imageUrls = []
         if response?.status == "success"{
             alertType = .sheetType(
