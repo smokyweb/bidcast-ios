@@ -6,53 +6,6 @@
 //
 
 import SwiftUI
-//struct PillsSelectorView: View {
-//    let titles: [String]
-//    @Binding var selectedIndex: Int
-//    var isPillRequired: Bool = true
-//    var onSelectionChanged: ((Int, String) -> Void)?    // 🔥 NEW CALLBACK
-//
-//    let textColor: Color = isPillRequired
-//              ? ((selectedIndex == index) ? .white : .black)
-//              : ((selectedIndex == index) ? .black : .gray)
-//
-//    let bgColor: Color = isPillRequired
-//               ? ((selectedIndex == index) ? Color.defaultTheme : Color.gray.opacity(0.1))
-//               : .clear
-//    
-//    var body: some View {
-//        HStack(spacing: 10) {
-//            ForEach(titles.indices, id: \.self) { index in
-//                let isSelected = selectedIndex == index
-//                
-//                let pill = Group {
-//                    Text(titles[index])
-//                        .font(.custom(isPillRequired ? poppinsMedium : poppinsBold, size: 14))
-//                        .foregroundColor(
-//                            isPillRequired
-//                            ? (isSelected ? .white : .black)
-//                            : (isSelected ? .black : .gray)
-//                        )
-//                        .padding(.vertical, 8)
-//                        .padding(.horizontal, isPillRequired ? 16 : 1)
-//                        .background(
-//                            isPillRequired
-//                            ? (isSelected ? Color.defaultTheme : Color.gray.opacity(0.1))
-//                            : Color.clear
-//                        )
-//                        .clipShape(isPillRequired ? Capsule() : Rectangle())
-//                }
-//                .onTapGesture {
-//                    withAnimation(.spring(response: 0.25, dampingFraction: 0.7)) {
-//                        selectedIndex = index
-//                        onSelectionChanged?(index, titles[index])
-//                    }
-//                }
-//            }
-//        }
-//    }
-//}
-import SwiftUI
 
 enum PillBackgroundStyle {
     case none
@@ -215,3 +168,33 @@ extension PillsSelectorView {
     }
 
 }
+
+struct PillItemView: View {
+    var title: String
+    @Binding var isSelected: Bool
+
+    var onSelectionChanged: ((Bool) -> Void)?   // returns the new state
+    
+    var body: some View {
+        VStack(spacing: 4) {
+            
+            Text(title)
+                .font(.custom(isSelected ? poppinsBold : poppinsMedium, size: 14))
+                .foregroundColor(isSelected ? .white : .gray)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 7)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(isSelected ? Color.defaultTheme.opacity(0.85)
+                                         : Color.gray.opacity(0.15))
+                )
+                .onTapGesture {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                        isSelected.toggle()
+                        onSelectionChanged?(isSelected)
+                    }
+                }
+        }
+    }
+}
+

@@ -31,7 +31,7 @@ struct InventoryScreen: View {
     @State var segment: InventorySegment = .active
     
     @State var inventoryList: [InventoryDataModel] = []
-    @State var request: InventoryRequest = InventoryRequest(status: "active", page: 1)
+    @State var request: InventoryRequest = InventoryRequest(status: "active", page: 1, marketplace: "false")
     @EnvironmentObject var networkMonitor: NetworkMonitor
     var viewModel = InventoryViewModel()
     @State var productId : Int = 0
@@ -53,13 +53,19 @@ struct InventoryScreen: View {
     @State var productToEdit: ProductDataModel = ProductDataModel()
     @StateObject var categoryViewModel = ListProductViewModel()
     @State var categoryList: [CategoryDataModel] = []
-    @State var selectedCategoryId: String = ""
+    @State var selectedCategoryId: [Int] = []
+    @State var selectedCondition: [String] = []
+    @State var minPrice: Double = 0.0
+    @State var maxPrice: Double = 0.0
+    @State var format: String = ""
     
     var navigatedFrom: InventoryNavigation = .account
     @State private var navigateToCreateNewProduct = false
     
-    @State private var selectedIndex: Int = 0
+    @State private var selectedIndex: Int = -1
     @State private var showFilterSheet: Bool = false
+    
+    @State private var marketPlaceSelected: Bool = false
     
     var body: some View {
         VStack(spacing: 0) {
@@ -72,7 +78,30 @@ struct InventoryScreen: View {
                 }
             }
            
-            InventoryTabView(selectedTab: $segment)
+            InventoryTabView(selectedTab: $segment) {
+                clearFilter()
+                Task {
+                    await performAPICalls(
+                        isConcurrent: true,
+                        onError: { error in
+                            alertType = .sheetType(
+                                icon: .alert,
+                                title: "Error",
+                                message: errorDesc(error: error, message: viewModel.errorMessage),
+                                primaryBtnText: "",
+                                secondaryBtnText: AppString.ok.localized
+                            )
+                            showError = true
+                        }, onSuccess: {
+                            // On success
+                            handleDataLoad()
+                        }
+                        
+                    ) {
+                        try await fetchInventory(for: segment, page: 1)
+                    }
+                }
+            }
             
 //            // MARK: - Search
             SearchView { debouncedText in
@@ -110,39 +139,48 @@ struct InventoryScreen: View {
             .padding(.vertical, 10)
             
             // MARK: - Pills Selector
-            PillsSelectorView(
-                titles: [],
-                selectedIndex: $selectedIndex,
-                backgroundStyle: .roundedRect,
-                underlineEnabled: false,
-                showFilterButton: true,
-                showSortDropdown: false,
-                onSelectionChanged: { index, title in
-                    // Show sort sheet when "Sort" is tapped
-//                    if index == 0 {
-//                        showSortSheet = true
-//                        selectedOptions = "newest"
-//                    }
-//                    else if index == 1 {
-//                        resetData()
-//                        selectedOptions = "auction"
-//                        fetchProduct()
-//                    }
-//                    else if index == 2 {
-//                        resetData()
-//                        selectedOptions = "accept_offers"
-//                        fetchProduct()
-//                    }
-                },
-                onFilterTapped: {
-                    print("Filter Tapped")
-                    showFilterSheet = true
+            HStack(spacing: 0) {
+                PillsSelectorView(
+                    titles: [],
+                    selectedIndex: $selectedIndex,
+                    backgroundStyle: .roundedRect,
+                    underlineEnabled: false,
+                    showFilterButton: true,
+                    showSortDropdown: false,
+                    onSelectionChanged: { index, title in },
+                    onFilterTapped: { showFilterSheet = true }
+                )
+                .fixedSize(horizontal: true, vertical: false)   // 👈 THE FIX
+                
+                PillItemView(title: "MarketPlace", isSelected: $marketPlaceSelected) { newValue in
+                    Task {
+                        await performAPICalls(
+                            isConcurrent: true,
+                            onError: { error in
+                                alertType = .sheetType(
+                                    icon: .alert,
+                                    title: "Error",
+                                    message: errorDesc(error: error, message: viewModel.errorMessage),
+                                    primaryBtnText: "",
+                                    secondaryBtnText: AppString.ok.localized
+                                )
+                                showError = true
+                            },
+                            onSuccess: { handleDataLoad() }
+                        ) {
+                            clearFilter()
+                            try await fetchInventory(for: segment, page: 1)
+                        }
+                    }
                 }
-            )
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 12)
+
             
             // MARK: - Inventory List
             ScrollView {
-                LazyVStack(spacing: 4) {
+                LazyVStack(spacing: 12) {
                     if isLoading {
                         // Show 5 skeleton items
                         ForEach(0..<5) { _ in
@@ -169,25 +207,25 @@ struct InventoryScreen: View {
             }
             .padding(.vertical, 12)
 
-            TwoButton(titleOne: navigatedFrom.btnTitle,
-                    onFirstButtonClick: {
-                    switch navigatedFrom {
-                    case .account:
-                        print("create new Prooduct")
-                        navigateToCreateProduct = true
-                        case .addProduct:
-                            print("Select Existing Product")
-                            self.presentationMode.wrappedValue.dismiss()
-                        }
-                    },
-                      
-                      onSecButtonClick: {  },
-                      firstBtnBgColor: .defaultTheme,
-                      isHidefirstBtn: false,
-                      isHideSecBtn: true
-            )
-            .padding(.top, 20)
-            .padding(.bottom, -15)
+//            TwoButton(titleOne: navigatedFrom.btnTitle,
+//                    onFirstButtonClick: {
+//                    switch navigatedFrom {
+//                    case .account:
+//                        print("create new Prooduct")
+//                        navigateToCreateProduct = true
+//                        case .addProduct:
+//                            print("Select Existing Product")
+//                            self.presentationMode.wrappedValue.dismiss()
+//                        }
+//                    },
+//                      
+//                      onSecButtonClick: {  },
+//                      firstBtnBgColor: .defaultTheme,
+//                      isHidefirstBtn: false,
+//                      isHideSecBtn: true
+//            )
+//            .padding(.top, 20)
+//            .padding(.bottom, -15)
             
             
             CusNavLink(doNavigate: $navigateToEditProduct, destination: EditProductScreen(productData: $productToEdit)) // for edit
@@ -198,9 +236,41 @@ struct InventoryScreen: View {
                                                         backToPrepare: .constant(false),
                                                         fromPrepare: .constant(false),
                                                         isComeFrom: .inventry))
-            CusNavLink(doNavigate: $showFilterSheet, destination: FilterPageView(categories: $categoryList))
+            CusNavLink(doNavigate: $showFilterSheet,
+                       destination: FilterPageView(categoryArr: $selectedCategoryId,
+                                                   conditionArr: $selectedCondition,
+                                                   minPriceVal: $minPrice,
+                                                   maxPriceVal: $maxPrice,
+                                                   format: $format,
+                                                   apiCallClosure: {
+                //api Call
+                Task {
+                    await performAPICalls(
+                        isConcurrent: true,
+                        onError: { error in
+                            alertType = .sheetType(
+                                icon: .alert,
+                                title: "Error",
+                                message: errorDesc(error: error, message: viewModel.errorMessage),
+                                primaryBtnText: "",
+                                secondaryBtnText: AppString.ok.localized
+                            )
+                            showError = true
+                        }, onSuccess: {
+                            // On success
+                            handleDataLoad()
+                        }
+                    ) {
+                        searchText = ""
+                        currentPage = 1
+                        
+                        _ = try await fetchInventory(for: segment, page: currentPage)
+                    }
+                }
+            }, categories: $categoryList) )
         }
         .background(Color(.systemBackground))
+        
         .onAppear {
             Task {
                 await performAPICalls(
@@ -221,11 +291,9 @@ struct InventoryScreen: View {
                     }
                     
                 ) {
-                    searchText = ""
-                    currentPage = 1
-                    segment = .active
+                    clearFilter()
                     request.search = searchText
-                    selectedCategoryId = navigatedFrom == .account ? "" : selectedCategoryId
+                    selectedCategoryId = navigatedFrom == .account ? [] : selectedCategoryId
                     async let inventoryTask: () = fetchInventory(for: segment, page: currentPage)
                     // 👇 These run in parallel
                     async let categoryTask: () = categoryViewModel.getSubCategoryList(param: CategoryRequest(category_id: ""))
@@ -251,7 +319,6 @@ struct InventoryScreen: View {
             )
         }
         .bottomSheet(isPresented: $showSellSheet, height: screenHeight * 0.95) {
-            
             ProductDetailSheet(
                 onDismiss : {
                     self.showSellSheet = false
@@ -303,9 +370,36 @@ struct InventoryScreen: View {
         request.status = segment.rawValue.lowercased()
         request.page = page
         request.search = searchText
-        request.category = selectedCategoryId
+        if !selectedCategoryId.isEmpty {
+            request.categoryIds = selectedCategoryId.toCommaSeparatedString()
+        }
+       
+        request.marketplace = "\(marketPlaceSelected)"
+        if format != "" {
+            request.format = format
+        }
+        if minPrice != 0.0 {
+            request.min_price = minPrice.toString()
+        }
+        if maxPrice != 0.0 {
+            request.max_price = maxPrice.toString()
+        }
+        if !selectedCondition.isEmpty {
+            request.condition = selectedCondition.toCommaSeparatedString()
+        }
         isLoading = true
         try await viewModel.getInventoryList(param: request)
+    }
+    
+    private func clearFilter() {
+        inventoryList = []
+        currentPage = 1
+        searchText = ""
+        selectedCategoryId = []
+        format = ""
+        minPrice = 0.0
+        maxPrice = 0.0
+        selectedCondition = []
     }
     
     // MARK: - Handle ViewModel Data
@@ -373,12 +467,35 @@ struct InventoryScreen: View {
             showError = true
         }
     }
+    
     func fetchMoreInventory() {
         Task {
             currentPage += 1
-            request.status = status
+//            request.status = status
+//            request.page = currentPage
+//            if !selectedCategoryId.isEmpty {
+//                request.categoryIds = selectedCategoryId.toCommaSeparatedString()
+//            }
+            request.status = segment.rawValue.lowercased()
             request.page = currentPage
-            request.category = selectedCategoryId
+            request.search = searchText
+            if !selectedCategoryId.isEmpty {
+                request.categoryIds = selectedCategoryId.toCommaSeparatedString()
+            }
+           
+            request.marketplace = "\(marketPlaceSelected)"
+            if format != "" {
+                request.format = format
+            }
+            if minPrice != 0.0 {
+                request.min_price = minPrice.toString()
+            }
+            if maxPrice != 0.0 {
+                request.max_price = maxPrice.toString()
+            }
+            if !selectedCondition.isEmpty {
+                request.condition = selectedCondition.toCommaSeparatedString()
+            }
             isLoading = true
             try await viewModel.getInventoryList(param: request)
             handleDataLoad()
@@ -464,6 +581,7 @@ struct InventoryTabView: View {
 
     @Binding var selectedTab: InventorySegment
     
+    var tabChangeClosure: (() -> Void)? = nil
     var body: some View {
         
         VStack(spacing: 0) {
@@ -474,6 +592,7 @@ struct InventoryTabView: View {
                     Button(action: {
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                             selectedTab = tab
+                            tabChangeClosure?()
                         }
                     }) {
                         VStack(spacing: 8) {
@@ -503,155 +622,17 @@ struct InventoryTabView: View {
         .background(Color(.systemBackground))
     }
 }
-//
-//struct ProductCardView: View {
-//    let product: InventoryDataModel
-//    @State private var isPressed: Bool = false
-//    
-//    var body: some View {
-//        Button(action: {
-//            withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
-//                isPressed = true
-//            }
-//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-//                withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
-//                    isPressed = false
-//                }
-//            }
-//        }) {
-//            HStack(spacing: 16) {
-//                // MARK: - Product Image
-//                ZStack(alignment: .topLeading) {
-//                    AsyncImage(url: URL(string: product.images?.first ?? "")) { phase in
-//                        switch phase {
-//                        case .empty:
-//                            ZStack {
-//                                RoundedRectangle(cornerRadius: 16)
-//                                    .fill(Color(.systemGray6))
-//                                    .frame(width: 120, height: 120)
-//                                
-//                                ProgressView()
-//                            }
-//                        case .success(let image):
-//                            image
-//                                .resizable()
-//                                .scaledToFill()
-//                                .frame(width: 120, height: 120)
-//                                .clipShape(RoundedRectangle(cornerRadius: 16))
-//                        case .failure:
-//                            ZStack {
-//                                RoundedRectangle(cornerRadius: 16)
-//                                    .fill(Color(.systemGray5))
-//                                    .frame(width: 120, height: 120)
-//                                
-//                                Image(systemName: "photo")
-//                                    .font(.system(size: 30))
-//                                    .foregroundColor(.gray)
-//                            }
-//                        @unknown default:
-//                            EmptyView()
-//                        }
-//                    }
-//                    .overlay(
-//                        RoundedRectangle(cornerRadius: 16)
-//                            .stroke(Color.black.opacity(0.05), lineWidth: 1)
-//                    )
-//                    .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
-//                }
-//                .frame(width: 120, height: 120)
-//                
-//                // MARK: - Product Details
-//                VStack(alignment: .leading, spacing: 8) {
-//                    // Out of Stock Badge
-//                    if true { //toDo
-//                        HStack(spacing: 6) {
-//                            Circle()
-//                                .fill(Color.red)
-//                                .frame(width: 6, height: 6)
-//                            
-//                            Text("Out of Stock")
-//                                .font(.system(size: 12, weight: .semibold))
-//                                .foregroundColor(.red)
-//                        }
-//                        .padding(.horizontal, 10)
-//                        .padding(.vertical, 6)
-//                        .background(
-//                            Capsule()
-//                                .fill(Color.red.opacity(0.1))
-//                        )
-//                        .overlay(
-//                            Capsule()
-//                                .stroke(Color.red.opacity(0.2), lineWidth: 1)
-//                        )
-//                    }
-//                    
-//                    // Product Title
-//                    Text(product.title)
-//                        .font(.system(size: 16, weight: .semibold))
-//                        .foregroundColor(.primary)
-//                        .lineLimit(2)
-//                        .multilineTextAlignment(.leading)
-//                    
-//                    // Product Condition & Category
-//                    HStack(spacing: 8) {
-//                        Text("Condition")
-//                            .font(.system(size: 13, weight: .medium))
-//                            .foregroundColor(.secondary)
-//                        
-//                        Circle()
-//                            .fill(Color.secondary)
-//                            .frame(width: 3, height: 3)
-//                        
-//                        Text("Category")
-//                            .font(.system(size: 13, weight: .medium))
-//                            .foregroundColor(.secondary)
-//                    }
-//                    
-//                    Spacer()
-//                    
-//                    // Price & Bids
-//                    HStack(alignment: .bottom) {
-//                        VStack(alignment: .leading, spacing: 4) {
-//                            Text("Price")
-//                                .font(.system(size: 20, weight: .bold))
-//                                .foregroundColor(.primary)
-//                            
-//                            HStack(spacing: 4) {
-//                                Image(systemName: "hammer.fill")
-//                                    .font(.system(size: 11))
-//                                    .foregroundColor(.secondary)
-//                                
-//                                Text("\("Bid Count") bids")
-//                                    .font(.system(size: 13, weight: .regular))
-//                                    .foregroundColor(.secondary)
-//                            }
-//                        }
-//                        
-//                        Spacer()
-//                    }
-//                }
-//                .frame(maxWidth: .infinity, alignment: .leading)
-//            }
-//            .padding(16)
-//            .background(
-//                RoundedRectangle(cornerRadius: 20)
-//                    .fill(Color(.systemBackground))
-//                    .shadow(color: Color.black.opacity(0.08), radius: 12, x: 0, y: 4)
-//            )
-//            .overlay(
-//                RoundedRectangle(cornerRadius: 20)
-//                    .stroke(Color.gray.opacity(0.1), lineWidth: 1)
-//            )
-//            .scaleEffect(isPressed ? 0.98 : 1.0)
-//            .opacity(true ? 0.7 : 1.0) //todo
-//        }
-//        .buttonStyle(PlainButtonStyle())
-//    }
-//}
 
 struct ProductCardView: View {
     let product: InventoryDataModel
     @State private var isPressed: Bool = false
+    @State private var showActions: Bool = false
+    @State private var isLongPressing: Bool = false
+    
+    var onEdit: (() -> Void)?
+    var onDuplicate: (() -> Void)?
+    var onToggleActivation: (() -> Void)?
+    var onDelete: (() -> Void)?
     
     var body: some View {
         Button {
@@ -660,10 +641,43 @@ struct ProductCardView: View {
             cardContent
         }
         .buttonStyle(PlainButtonStyle())
+        .contentShape(Rectangle())
+//        .simultaneousGesture(
+//            LongPressGesture(minimumDuration: 0.5)
+//                .onChanged { _ in
+//                    isLongPressing = true
+//                    
+//                    let generator = UIImpactFeedbackGenerator(style: .medium)
+//                    generator.impactOccurred()
+//                }
+//                .onEnded { _ in
+//                    isLongPressing = false
+//                    showActions = true
+//                }
+//        )
+//        .sheet(isPresented: $showActions) {
+//            ProductActionsSheet(
+//                isPresented: $showActions,
+//                isActive: product.status == "active",
+//                onEdit: {
+//                    onEdit?()
+//                },
+//                onDuplicate: {
+//                    onDuplicate?()
+//                },
+//                onToggleActivation: {
+//                    onToggleActivation?()
+//                },
+//                onDelete: {
+//                    onDelete?()
+//                }
+//            )
+//            .presentationDetents([.height(480)])
+//            .presentationDragIndicator(.hidden)
+//        }
     }
 }
-
-private extension ProductCardView {
+extension ProductCardView {
     var cardContent: some View {
         HStack(spacing: 16) {
             productImageView
@@ -673,18 +687,25 @@ private extension ProductCardView {
         .background(
             RoundedRectangle(cornerRadius: 20)
                 .fill(Color(.systemBackground))
-                .shadow(color: Color.black.opacity(0.08), radius: 12, x: 0, y: 4)
+                .shadow(
+                    color: isLongPressing ? Color.blue.opacity(0.2) : Color.black.opacity(0.08),
+                    radius: isLongPressing ? 16 : 12,
+                    x: 0,
+                    y: isLongPressing ? 6 : 4
+                )
         )
         .overlay(
             RoundedRectangle(cornerRadius: 20)
-                .stroke(Color.gray.opacity(0.1), lineWidth: 1)
+                .stroke(
+                    isLongPressing ? Color.blue.opacity(0.3) : Color.gray.opacity(0.1),
+                    lineWidth: isLongPressing ? 2 : 1
+                )
         )
-        .scaleEffect(isPressed ? 0.98 : 1.0)
-        .opacity(false ? 0.7 : 1.0) // todo
+        .scaleEffect(isPressed ? 0.98 : (isLongPressing ? 1.02 : 1.0))
+        .opacity(product.status == "inactive" ? 0.7 : 1.0)
     }
 }
-
-private extension ProductCardView {
+extension ProductCardView {
     var productImageView: some View {
         ZStack(alignment: .topLeading) {
             AsyncImage(url: URL(string: product.images?.first ?? "")) { phase in
@@ -734,11 +755,14 @@ private extension ProductCardView {
         }
     }
 }
-
-private extension ProductCardView {
+extension ProductCardView {
     var productDetailsView: some View {
         VStack(alignment: .leading, spacing: 8) {
-//            badgeView
+//            if product.status == "inactive" {
+//                badgeView(title: "Inactive", color: .orange)
+//            } else if (product.quantity ?? 0) == 0 {
+//                badgeView(title: "Out of Stock", color: .red)
+//            }
             
             Text(product.title ?? "")
                 .font(.custom(poppinsBold, size: 16))
@@ -746,7 +770,8 @@ private extension ProductCardView {
                 .lineLimit(2)
             
             HStack(spacing: 8) {
-                Text("Condition")
+//                Text(product.condition ?? "New")
+                Text("New")
                     .font(.custom(poppinsRegular, size: 13))
                     .foregroundColor(.secondary)
                 
@@ -754,12 +779,12 @@ private extension ProductCardView {
                     .fill(Color.secondary)
                     .frame(width: 3, height: 3)
                 
-                Text("Category")
+                Text(product.category?.name ?? "Category")
                     .font(.custom(poppinsRegular, size: 13))
                     .foregroundColor(.secondary)
             }
             
-            Text("Quanity: 4")
+            Text("Quantity: \(product.quantity ?? "0")")
                 .font(.custom(poppinsRegular, size: 13))
                 .foregroundColor(.secondary)
             
@@ -768,35 +793,32 @@ private extension ProductCardView {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
-
-
-private extension ProductCardView {
-    var badgeView: some View {
+extension ProductCardView {
+    func badgeView(title: String, color: Color) -> some View {
         HStack(spacing: 6) {
             Circle()
-                .fill(Color.red)
+                .fill(color)
                 .frame(width: 6, height: 6)
             
-            Text("Out of Stock")
+            Text(title)
                 .font(.system(size: 12, weight: .semibold))
-                .foregroundColor(.red)
+                .foregroundColor(color)
         }
         .padding(.horizontal, 10)
         .padding(.vertical, 6)
-        .background(Capsule().fill(Color.red.opacity(0.1)))
+        .background(Capsule().fill(color.opacity(0.1)))
         .overlay(
             Capsule()
-                .stroke(Color.red.opacity(0.2), lineWidth: 1)
+                .stroke(color.opacity(0.2), lineWidth: 1)
         )
     }
 }
-
-private extension ProductCardView {
+extension ProductCardView {
     var priceSectionView: some View {
         HStack(spacing: 8) {
-            Text("$12.00")
-                .font(.custom(poppinsRegular, size: 13))
-                .foregroundColor(.secondary)
+            Text("$0.00")
+                .font(.custom(poppinsBold, size: 16))
+                .foregroundColor(.primary)
             
             Circle()
                 .fill(Color.secondary)
@@ -808,8 +830,7 @@ private extension ProductCardView {
         }
     }
 }
-
-private extension ProductCardView {
+extension ProductCardView {
     func animatePress() {
         withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
             isPressed = true
@@ -822,6 +843,204 @@ private extension ProductCardView {
     }
 }
 
+// MARK: - Product Actions Bottom Sheet
+struct ProductActionsSheet: View {
+    @Binding var isPresented: Bool
+    let isActive: Bool
+    var onEdit: () -> Void
+    var onDuplicate: () -> Void
+    var onToggleActivation: () -> Void
+    var onDelete: () -> Void
+    
+    @State private var selectedAction: String? = nil
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            // Drag Indicator
+            RoundedRectangle(cornerRadius: 3)
+                .fill(Color.gray.opacity(0.3))
+                .frame(width: 40, height: 5)
+                .padding(.top, 12)
+                .padding(.bottom, 20)
+            
+            VStack(spacing: 20) {
+                // MARK: - Header
+                HStack {
+                    Text("Actions")
+                        .font(.system(size: 24, weight: .bold))
+                        .foregroundColor(.primary)
+                    
+                    Spacer()
+                    
+                    Button(action: {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            isPresented = false
+                        }
+                    }) {
+                        ZStack {
+                            Circle()
+                                .fill(Color.gray.opacity(0.1))
+                                .frame(width: 36, height: 36)
+                            
+                            Image(systemName: "xmark")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundColor(.primary)
+                        }
+                    }
+                }
+                .padding(.horizontal, 24)
+                
+                // MARK: - Action Options
+                VStack(spacing: 12) {
+                    ProductActionButton(
+                        icon: "square.and.pencil",
+                        title: "Edit",
+                        subtitle: "Modify product details",
+                        color: .blue,
+                        isSelected: selectedAction == "Edit"
+                    ) {
+                        selectedAction = "Edit"
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                            onEdit()
+                            isPresented = false
+                        }
+                    }
+                    
+                    ProductActionButton(
+                        icon: "doc.on.doc",
+                        title: "Duplicate",
+                        subtitle: "Create a copy of this product",
+                        color: .purple,
+                        isSelected: selectedAction == "Duplicate"
+                    ) {
+                        selectedAction = "Duplicate"
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                            onDuplicate()
+                            isPresented = false
+                        }
+                    }
+                    
+                    ProductActionButton(
+                        icon: isActive ? "pause.circle" : "play.circle",
+                        title: isActive ? "Deactivate" : "Activate",
+                        subtitle: isActive ? "Hide from active listings" : "Show in active listings",
+                        color: isActive ? .orange : .green,
+                        isSelected: selectedAction == (isActive ? "Deactivate" : "Activate")
+                    ) {
+                        selectedAction = isActive ? "Deactivate" : "Activate"
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                            onToggleActivation()
+                            isPresented = false
+                        }
+                    }
+                    
+                    ProductActionButton(
+                        icon: "trash.fill",
+                        title: "Delete",
+                        subtitle: "Remove product permanently",
+                        color: .red,
+                        isSelected: selectedAction == "Delete"
+                    ) {
+                        selectedAction = "Delete"
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                            onDelete()
+                            isPresented = false
+                        }
+                    }
+                }
+                .padding(.horizontal, 24)
+                .padding(.bottom, 24)
+            }
+        }
+        .background(
+            RoundedRectangle(cornerRadius: 24)
+                .fill(Color(.systemGroupedBackground))
+                .shadow(color: Color.black.opacity(0.15), radius: 20, x: 0, y: -5)
+        )
+    }
+}
+
+// MARK: - Action Button Component
+struct ProductActionButton: View {
+    let icon: String
+    let title: String
+    let subtitle: String
+    let color: Color
+    let isSelected: Bool
+    let action: () -> Void
+    
+    @State private var isPressed: Bool = false
+    
+    var body: some View {
+        Button(action: {
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                isPressed = true
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                    isPressed = false
+                }
+                action()
+            }
+        }) {
+            HStack(spacing: 16) {
+                // Icon Container
+                ZStack {
+                    RoundedRectangle(cornerRadius: 14)
+                        .fill(color.opacity(0.1))
+                        .frame(width: 56, height: 56)
+                    
+                    RoundedRectangle(cornerRadius: 14)
+                        .stroke(color.opacity(0.2), lineWidth: 1)
+                        .frame(width: 56, height: 56)
+                    
+                    Image(systemName: icon)
+                        .font(.system(size: 24, weight: .semibold))
+                        .foregroundColor(color)
+                }
+                .shadow(color: color.opacity(0.2), radius: 8, x: 0, y: 4)
+                
+                // Text Container
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(title)
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundColor(.primary)
+                    
+                    Text(subtitle)
+                        .font(.system(size: 13, weight: .regular))
+                        .foregroundColor(.secondary)
+                        .lineLimit(1)
+                }
+                
+                Spacer()
+                
+                // Arrow Indicator
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(.secondary)
+                    .opacity(0.5)
+            }
+            .padding(16)
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(Color(.systemBackground))
+                    .shadow(color: Color.black.opacity(0.06), radius: 10, x: 0, y: 3)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(
+                        isSelected ? color.opacity(0.3) : Color.clear,
+                        lineWidth: 2
+                    )
+                    .animation(.easeInOut(duration: 0.2), value: isSelected)
+            )
+            .scaleEffect(isPressed ? 0.97 : 1.0)
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+}
+
+// MARK: - Skeleton Loading View
 struct SkeletonProductCardView: View {
     var body: some View {
         HStack(spacing: 16) {
@@ -870,5 +1089,27 @@ struct SkeletonProductCardView: View {
             RoundedRectangle(cornerRadius: 20)
                 .stroke(Color.gray.opacity(0.1), lineWidth: 1)
         )
+    }
+}
+
+
+extension Array where Element == Int {
+    func toCommaSeparatedString() -> String {
+        self.map { String($0) }.joined(separator: ",")
+    }
+}
+
+extension Array where Element == String {
+    func toCommaSeparatedString() -> String {
+        self
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+            .joined(separator: ",")
+    }
+}
+
+extension Double {
+    func toString(_ decimals: Int = 2) -> String {
+        String(format: "%.\(decimals)f", self)
     }
 }

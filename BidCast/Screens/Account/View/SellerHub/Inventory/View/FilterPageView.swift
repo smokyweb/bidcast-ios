@@ -12,15 +12,24 @@ struct FilterPageView: View {
     @Environment(\.presentationMode) var presentationMode
     
     // Filter States
-    @State private var selectedCategories: Set<String> = []
+    @State private var selectedCategories: Set<Int> = []
     @State private var selectedConditions: Set<String> = []
-    @State private var selectedFormat: String = "Newest First"
-    @State private var minPrice: Double = 0
-    @State private var maxPrice: Double = 1000
+    @State private var selectedFormat: String = ""
+    @State private var visibleFormat: String = ""
+    @State private var minPrice: Double = 100
+    @State private var maxPrice: Double = 10000
     @State private var isPriceExpanded: Bool = false
     @State private var isCategoryExpanded: Bool = false
     @State private var isConditionExpanded: Bool = false
     @State private var isFormatExpanded: Bool = false
+    
+    @Binding var categoryArr: [Int]
+    @Binding var conditionArr: [String]
+    @Binding var minPriceVal: Double
+    @Binding var maxPriceVal: Double
+    @Binding var format: String
+    
+    var apiCallClosure: (() -> Void)? = nil
     
     @Binding var categories: [CategoryDataModel]
     let conditions = ["New",
@@ -29,10 +38,10 @@ struct FilterPageView: View {
                       "Well Loved",
                       "Other",
                       "Trending"]
-    let formats = ["Newest First", "Oldest First", "Price: Low to High", "Price: High to Low"]
+    let formats = ["Price: Low to High", "Price: High to Low"]
     
     var hasActiveFilters: Bool {
-        !selectedCategories.isEmpty || !selectedConditions.isEmpty || selectedFormat != "Newest First" || minPrice != 0 || (maxPrice != 1000 )
+        !selectedCategories.isEmpty || !selectedConditions.isEmpty || selectedFormat != "" || minPrice != 100 || (maxPrice != 10000 )
     }
     
     var body: some View {
@@ -143,36 +152,36 @@ struct FilterPageView: View {
                                         .fill(Color(.systemGray6))
                                 )
                             }
-                            
-                            VStack(spacing: 8) {
-                                Text("Min: $\(Int(minPrice))")
-                                    .font(.system(size: 12, weight: .medium))
-                                    .foregroundColor(.secondary)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                
-                                Slider(value: $minPrice, in: 0...maxPrice, step: 10)
-                                    .tint(.blue)
-                                    .onChange(of: minPrice) { newValue in
-                                        if newValue > maxPrice {
-                                            minPrice = maxPrice
-                                        }
-                                    }
-                            }
-                            
-                            VStack(spacing: 8) {
-                                Text("Max: $\(Int(maxPrice))")
-                                    .font(.system(size: 12, weight: .medium))
-                                    .foregroundColor(.secondary)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                
-                                Slider(value: $maxPrice, in: 0...maxPrice, step: 10)
-                                    .tint(.blue)
-                                    .onChange(of: maxPrice) { newValue in
-                                        if newValue < minPrice {
-                                            maxPrice = minPrice
-                                        }
-                                    }
-                            }
+//                            
+//                            VStack(spacing: 8) {
+//                                Text("Min: $\(Int(minPrice))")
+//                                    .font(.system(size: 12, weight: .medium))
+//                                    .foregroundColor(.secondary)
+//                                    .frame(maxWidth: .infinity, alignment: .leading)
+//                                
+//                                Slider(value: $minPrice, in: 0...maxPrice, step: 10)
+//                                    .tint(.blue)
+//                                    .onChange(of: minPrice) { newValue in
+//                                        if newValue > maxPrice {
+//                                            minPrice = maxPrice
+//                                        }
+//                                    }
+//                            }
+//                            
+//                            VStack(spacing: 8) {
+//                                Text("Max: $\(Int(maxPrice))")
+//                                    .font(.system(size: 12, weight: .medium))
+//                                    .foregroundColor(.secondary)
+//                                    .frame(maxWidth: .infinity, alignment: .leading)
+//                                
+//                                Slider(value: $maxPrice, in: 0...maxPrice, step: 10)
+//                                    .tint(.blue)
+//                                    .onChange(of: maxPrice) { newValue in
+//                                        if newValue < minPrice {
+//                                            maxPrice = minPrice
+//                                        }
+//                                    }
+//                            }
                         }
                         .padding(16)
                     }
@@ -188,12 +197,12 @@ struct FilterPageView: View {
                                 ForEach(categories, id: \.id) { category in
                                     CheckboxRow(
                                         title: category.name ?? "",
-                                        isSelected: selectedCategories.contains(category.name ?? "")
+                                        isSelected: selectedCategories.contains(category.id ?? -1)
                                     ) {
-                                        if selectedCategories.contains(category.name ?? "") {
-                                            selectedCategories.remove(category.name ?? "")
+                                        if selectedCategories.contains(category.id ?? -1) {
+                                            selectedCategories.remove(category.id ?? -1)
                                         } else {
-                                            selectedCategories.insert(category.name ?? "")
+                                            selectedCategories.insert(category.id ?? -1)
                                         }
                                     }
                                 }
@@ -240,9 +249,10 @@ struct FilterPageView: View {
                                 ForEach(formats, id: \.self) { format in
                                     RadioRow(
                                         title: format,
-                                        isSelected: selectedFormat == format
+                                        isSelected: visibleFormat == format
                                     ) {
-                                        selectedFormat = format
+                                        visibleFormat = format
+                                        selectedFormat = format == "Price: Low to High" ? "asc" : "desc"
                                     }
                                 }
                             }
@@ -260,6 +270,16 @@ struct FilterPageView: View {
                 Button(action: {
                     // Apply filters
                     presentationMode.wrappedValue.dismiss()
+                    if hasActiveFilters {
+                        if isPriceExpanded{
+                            minPriceVal = minPrice
+                            maxPriceVal = maxPrice
+                        }
+                        categoryArr = Array(selectedCategories)
+                        conditionArr =  Array(selectedConditions)
+                        format = selectedFormat
+                        apiCallClosure?()
+                    }
                 }) {
                     Text("Apply Filters")
                         .font(.system(size: 17, weight: .semibold))
@@ -288,9 +308,16 @@ struct FilterPageView: View {
         withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
             selectedCategories.removeAll()
             selectedConditions.removeAll()
-            selectedFormat = "Newest First"
+            selectedFormat = ""
+            visibleFormat = ""
             minPrice = 0
             maxPrice = 1000
+            
+            categoryArr = []
+            conditionArr = []
+            minPriceVal = 0.0
+            maxPriceVal = 0.0
+            format = ""
         }
     }
 }

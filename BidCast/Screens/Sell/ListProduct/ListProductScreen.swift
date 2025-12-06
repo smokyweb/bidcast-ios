@@ -911,7 +911,7 @@ struct ListProductScreen: View {
     
     func saveProductDetails(as status: String) {
         // 🔹 Step 1: Validation
-        guard validateRequest(request, imageUrls: imageUrls) else {
+        guard validateRequest(request, imageUrls: imageUrls, status: status) else {
             showhud = true
             return
         }
@@ -1175,7 +1175,19 @@ struct ListProductScreen: View {
 //    }
     
     // MARK: - Validation
-    private func validateRequest(_ request: StoreProductParam, imageUrls: [String]) -> Bool {
+    private func validateRequest(_ request: StoreProductParam, imageUrls: [String], status: String) -> Bool {
+        if status == "draft" {
+            if request.title.isEmpty {
+                hudMsg = "Please enter title"
+                return false
+            }
+            if request.category_id.isEmpty {
+                hudMsg = "Please select category"
+                return false
+            }
+            return true
+        }
+        
         if imageUrls.isEmpty {
             hudMsg = "Please select images"
             return false

@@ -264,7 +264,7 @@ struct AccountScreen: View {
                 CusNavLink(doNavigate: $navigateToPrivacy, destination: PrivacyPolicyScreen())
                 CusNavLink(doNavigate: $navigateToContactus, destination: ContactUs())
                 CusNavLink(doNavigate: $navigateToAddress, destination: AddressesScreen())
-                CusNavLink(doNavigate: $navigateToShipping, destination: ShippingsScreen())
+                CusNavLink(doNavigate: $navigateToShipping, destination: ShippingSettingsScreen())
                 CusNavLink(doNavigate: $navigateToPreference, destination: PreferncesScreen())
                 CusNavLink(doNavigate: $navigateToCategory, destination: MultiSelectionCategoryScreen(isNavFrom : "Account"))
                 CusNavLink(doNavigate: $navigateToPayment, destination: PaymentAndShipping_Screen())

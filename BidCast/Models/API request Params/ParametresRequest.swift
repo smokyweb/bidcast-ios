@@ -407,12 +407,12 @@ struct InventoryRequest : Encodable{
     var status : String
     var page : Int
     var search : String?
-    var category: String?
+    var categoryIds: String?
     var condition: String?
     var min_price: String?
     var max_price: String?
-    var formate: String?
-    var marketplace: Bool?
+    var format: String?
+    var marketplace: String
 }
 
 //MARK: Store Product param
@@ -731,6 +731,14 @@ struct CategoryRequest  : Encodable {
     var type : String?
     var search : String?
     var get_count: Bool = true
+}
+
+struct StoreShippingRequest  : Encodable {
+    var name: String
+    var size: String
+    var weight: Double
+    var maxItems: Bool?
+    var additionalWeight: Bool?
 }
 
 

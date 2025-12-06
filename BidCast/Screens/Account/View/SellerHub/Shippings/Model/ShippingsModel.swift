@@ -7,3 +7,15 @@
 
 import Foundation
 
+// MARK: - StoreShippingModel
+struct StoreShippingModel: Codable {
+    var userID: Int?
+    var name, size: String?
+    var weight: Double?
+    var id: Int?
+
+    enum CodingKeys: String, CodingKey {
+        case userID
+        case name, size, weight, id
+    }
+}

@@ -196,6 +196,8 @@ enum APIEndPoint{
     case getSalesPerformace(param: SalesPerformanceRequest)
     case getVisitorsAnalytic(param: VisitorsAnalyticsRequest)
     case storePromoteShow(param: StorePromoteShowRequest)
+    case storeShipping(param: StoreShippingRequest)
+    case getShippinProfiles
 }
 
 extension APIEndPoint: EndPointType {
@@ -598,6 +600,10 @@ extension APIEndPoint: EndPointType {
             return "report-categories"
         case .reportSeller:
             return "report-seller"
+        case .storeShipping:
+            return "store-shipping-profile"
+        case .getShippinProfiles:
+            return "get-shipping-profile"
         }
     }
     
@@ -958,6 +964,10 @@ extension APIEndPoint: EndPointType {
         case .reportSeller:
             return .post
         case .getSellerInfo:
+            return .get
+        case .storeShipping:
+            return .post
+        case .getShippinProfiles:
             return .get
         }
     }
@@ -1331,6 +1341,10 @@ extension APIEndPoint: EndPointType {
             return nil
         case .reportSeller(param: let param):
             return param
+        case .storeShipping(param: let param):
+            return param
+        case .getShippinProfiles:
+            return nil
         }
     }
     
@@ -1681,6 +1695,10 @@ extension APIEndPoint: EndPointType {
         case .getReportSellerCategory:
             return nil
         case .reportSeller:
+            return nil
+        case .storeShipping:
+            return nil
+        case .getShippinProfiles:
             return nil
         }
     }

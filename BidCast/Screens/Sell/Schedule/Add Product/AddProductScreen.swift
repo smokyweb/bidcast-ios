@@ -368,7 +368,7 @@ struct AddProductsScreen: View {
                    destination: InventoryScreen(productData: InventoryDataModel(),
                                                 selectedProductIDs: $selectedProductIDs,
                                                 selectedProductData: $productData,
-                                                selectedCategoryId: request.category_id,
+                                                selectedCategoryId: [Int(request.category_id) ?? 0],
                                                 navigatedFrom: .addProduct))
     }
     

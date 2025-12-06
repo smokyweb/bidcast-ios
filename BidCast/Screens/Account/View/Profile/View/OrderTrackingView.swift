@@ -101,6 +101,22 @@ struct OrderTrackingView: View {
                 ))
                 CusNavLink(doNavigate: $navigateToVideoReceipt, destination: VideoPlayerScreen(videoURL: orderResponse?.bidVideoURL ?? ""))
             }
+            .overlay(
+                CustomBottomSheetView(
+                    isPresented: $showError,
+                    config: config,
+                    primaryAction: {
+                        withAnimation {
+                            showError = false
+                        }
+                    },
+                    secondaryAction: {
+                        withAnimation {
+                            showError = false
+                        }
+                    }
+                )
+            )
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {

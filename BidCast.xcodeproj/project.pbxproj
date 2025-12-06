@@ -578,6 +578,12 @@
 		D6D0DAC82E90FDD200390946 /* NoPayoutHistortyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D0DAC72E90FDD200390946 /* NoPayoutHistortyView.swift */; };
 		D6D0DACA2E9100F600390946 /* BalanceSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D0DAC92E9100F600390946 /* BalanceSummaryView.swift */; };
 		D6D0DACD2E9103DD00390946 /* PayoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D0DACC2E9103DD00390946 /* PayoutView.swift */; };
+		D6E804742EE3F0CE00B04A6C /* FreeShippingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6E804732EE3F0CE00B04A6C /* FreeShippingView.swift */; };
+		D6E804762EE3F11400B04A6C /* ShippingProfilesListScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6E804752EE3F11400B04A6C /* ShippingProfilesListScreen.swift */; };
+		D6E804782EE3F14800B04A6C /* CreateShippingProfileScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6E804772EE3F14800B04A6C /* CreateShippingProfileScreen.swift */; };
+		D6E8047A2EE3F1AC00B04A6C /* ShippingCostsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6E804792EE3F1AC00B04A6C /* ShippingCostsScreen.swift */; };
+		D6E8047C2EE3F48800B04A6C /* ShippingSettingsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6E8047B2EE3F48800B04A6C /* ShippingSettingsScreen.swift */; };
+		D6E8047E2EE410EF00B04A6C /* DomesticShipmentsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6E8047D2EE410EF00B04A6C /* DomesticShipmentsScreen.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1136,6 +1142,12 @@
 		D6D0DAC72E90FDD200390946 /* NoPayoutHistortyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoPayoutHistortyView.swift; sourceTree = "<group>"; };
 		D6D0DAC92E9100F600390946 /* BalanceSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BalanceSummaryView.swift; sourceTree = "<group>"; };
 		D6D0DACC2E9103DD00390946 /* PayoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PayoutView.swift; sourceTree = "<group>"; };
+		D6E804732EE3F0CE00B04A6C /* FreeShippingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreeShippingView.swift; sourceTree = "<group>"; };
+		D6E804752EE3F11400B04A6C /* ShippingProfilesListScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShippingProfilesListScreen.swift; sourceTree = "<group>"; };
+		D6E804772EE3F14800B04A6C /* CreateShippingProfileScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateShippingProfileScreen.swift; sourceTree = "<group>"; };
+		D6E804792EE3F1AC00B04A6C /* ShippingCostsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShippingCostsScreen.swift; sourceTree = "<group>"; };
+		D6E8047B2EE3F48800B04A6C /* ShippingSettingsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShippingSettingsScreen.swift; sourceTree = "<group>"; };
+		D6E8047D2EE410EF00B04A6C /* DomesticShipmentsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DomesticShipmentsScreen.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -3323,6 +3335,12 @@
 			isa = PBXGroup;
 			children = (
 				D4BB99EC2DE590D100C1BCBC /* ShippingsScreen.swift */,
+				D6E804772EE3F14800B04A6C /* CreateShippingProfileScreen.swift */,
+				D6E804732EE3F0CE00B04A6C /* FreeShippingView.swift */,
+				D6E804752EE3F11400B04A6C /* ShippingProfilesListScreen.swift */,
+				D6E804792EE3F1AC00B04A6C /* ShippingCostsScreen.swift */,
+				D6E8047B2EE3F48800B04A6C /* ShippingSettingsScreen.swift */,
+				D6E8047D2EE410EF00B04A6C /* DomesticShipmentsScreen.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -4529,6 +4547,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D6E804762EE3F11400B04A6C /* ShippingProfilesListScreen.swift in Sources */,
 				D68399A32EB207B600F3BDA7 /* BaseSocketManager.swift in Sources */,
 				D4B615E32DE8312200924A3D /* MakeAnOfferModel.swift in Sources */,
 				D6BEBABD2EA3AF3300424223 /* SearchTextViewModel.swift in Sources */,
@@ -4597,6 +4616,7 @@
 				35BA4A4B2DE87C2300EEC92A /* AddProductScreen.swift in Sources */,
 				D4E569CE2DD461120005A78E /* ProfileDetailCell.swift in Sources */,
 				D4D453D92E4CBC13005A2F63 /* BlockedUserListViewModel.swift in Sources */,
+				D6E8047E2EE410EF00B04A6C /* DomesticShipmentsScreen.swift in Sources */,
 				99C909D82DC8CDDC0054620B /* MenuOptionsModal.swift in Sources */,
 				99C909D92DC8CDDC0054620B /* InterviewlistModel.swift in Sources */,
 				35987D302DE5CE5C00D6C2C9 /* CardCell.swift in Sources */,
@@ -4790,6 +4810,7 @@
 				D45D7A3E2E389B34003A3842 /* ChatModel.swift in Sources */,
 				D66070B32ED09A9E00B81251 /* FollowSellerSheet.swift in Sources */,
 				99C909AE2DC8CD930054620B /* UILabel+Extension.swift in Sources */,
+				D6E804782EE3F14800B04A6C /* CreateShippingProfileScreen.swift in Sources */,
 				D4CAEC602DE6F55800705CD7 /* ReferralStatsView.swift in Sources */,
 				99C909AF2DC8CD930054620B /* EndPointType.swift in Sources */,
 				D678E3562EC89686005283BF /* LiveShowView.swift in Sources */,
@@ -4919,6 +4940,7 @@
 				35F8B55B2DED816300FE0778 /* LiveShowsModel.swift in Sources */,
 				99C9082D2DC8CD6A0054620B /* Loader.swift in Sources */,
 				D4BB99EA2DE5890D00C1BCBC /* OffersModel.swift in Sources */,
+				D6E8047C2EE3F48800B04A6C /* ShippingSettingsScreen.swift in Sources */,
 				99C9082E2DC8CD6A0054620B /* ButtonWithImage.swift in Sources */,
 				99C9082F2DC8CD6A0054620B /* DropDownSelection.swift in Sources */,
 				355AE9802DD1FC5600CD3D17 /* ActivityScreen.swift in Sources */,
@@ -4961,12 +4983,14 @@
 				D4CAEC942DE7202F00705CD7 /* PromoteShowSheet.swift in Sources */,
 				D6929C8A2EB47E3500AF5E5B /* EmailSupportView.swift in Sources */,
 				35987D272DE5C66800D6C2C9 /* SelectableCell.swift in Sources */,
+				D6E8047A2EE3F1AC00B04A6C /* ShippingCostsScreen.swift in Sources */,
 				99DF9E7A2DC4F367008C15B2 /* ContentView.swift in Sources */,
 				D448C46C2E5C6AFA004106D4 /* BlockedUserSheet.swift in Sources */,
 				D433DB0F2E4766F1001FA51D /* WinnerViewModel.swift in Sources */,
 				35CCE0172DD8774000760CEE /* LetsPrepare.swift in Sources */,
 				99DF9E7B2DC4F367008C15B2 /* Persistence.swift in Sources */,
 				D4B615DA2DE82A5400924A3D /* BuyNowViewModel.swift in Sources */,
+				D6E804742EE3F0CE00B04A6C /* FreeShippingView.swift in Sources */,
 				D4BB9A0A2DE5A99700C1BCBC /* MyOrdersModel.swift in Sources */,
 				D4BA9C2B2DE4A4E700DFF6E6 /* TipsScreen.swift in Sources */,
 			);
