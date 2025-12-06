@@ -11,7 +11,7 @@ import Foundation
 struct StoreShippingModel: Codable {
     var userID: Int?
     var name, size: String?
-    var weight: Double?
+    var weight: String?
     var id: Int?
 
     enum CodingKeys: String, CodingKey {

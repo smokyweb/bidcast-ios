@@ -106,6 +106,7 @@ struct AppString{
     static let UploadPhoto = "Upload Photo".localized
     static let Inventory = "Inventory".localized
     static let NoInventoryFound = "No inventory found".localized
+    static let NoShippingProfileFound = "No shipping profile found".localized
     static let whatAreYouLookingFor = "What are you looking for?".localized
     static let MyOrders = "My Orders".localized
     static let Wallet = "Wallet".localized

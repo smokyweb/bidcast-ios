@@ -114,8 +114,10 @@ struct ShippingSettingsScreen: View {
                     EmptyView()
                 }
                 .hidden()
+                
             }
             .navigationBarHidden(true)
+            .toolbar(.hidden,for: .tabBar)
         }
     }
 }
@@ -327,5 +329,6 @@ struct FreePickupScreen: View {
             .background(Color(.systemBackground))
         }
         .navigationBarHidden(true)
+        .toolbar(.hidden,for: .tabBar)
     }
 }

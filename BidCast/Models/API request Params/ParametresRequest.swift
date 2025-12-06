@@ -736,7 +736,7 @@ struct CategoryRequest  : Encodable {
 struct StoreShippingRequest  : Encodable {
     var name: String
     var size: String
-    var weight: Double
+    var weight: String
     var maxItems: Bool?
     var additionalWeight: Bool?
 }

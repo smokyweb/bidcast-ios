@@ -83,6 +83,7 @@ struct InventoryScreen: View {
                 Task {
                     await performAPICalls(
                         isConcurrent: true,
+                        showLoader: false,
                         onError: { error in
                             alertType = .sheetType(
                                 icon: .alert,
@@ -116,6 +117,7 @@ struct InventoryScreen: View {
                 Task {
                     await performAPICalls(
                         isConcurrent: true,
+                        showLoader: false,
                         onError: { error in
                             alertType = .sheetType(
                                 icon: .alert,
@@ -156,6 +158,7 @@ struct InventoryScreen: View {
                     Task {
                         await performAPICalls(
                             isConcurrent: true,
+                            showLoader: false,
                             onError: { error in
                                 alertType = .sheetType(
                                     icon: .alert,
@@ -247,6 +250,7 @@ struct InventoryScreen: View {
                 Task {
                     await performAPICalls(
                         isConcurrent: true,
+                        showLoader: false,
                         onError: { error in
                             alertType = .sheetType(
                                 icon: .alert,
@@ -275,6 +279,7 @@ struct InventoryScreen: View {
             Task {
                 await performAPICalls(
                     isConcurrent: true,
+                    showLoader: false,
                     onError: { error in
                         alertType = .sheetType(
                             icon: .alert,
@@ -438,6 +443,7 @@ struct InventoryScreen: View {
             Task {
                 await performAPICalls(
                     isConcurrent: true,
+                    showLoader: false,
                     onError: { error in
                         alertType = .sheetType(
                             icon: .alert,

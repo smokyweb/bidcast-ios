@@ -247,6 +247,7 @@ struct DomesticShipmentsScreen: View {
             .background(Color(.systemBackground))
         }
         .navigationBarHidden(true)
+        .toolbar(.hidden,for: .tabBar)
     }
 }
 

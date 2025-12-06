@@ -20,6 +20,7 @@ struct CreateShippingProfileScreen: View {
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
     @State var showError = false
+    @State var showSuccess = false
     @State var config: BottomSheetConfig = BottomSheetConfig(
         icon: "checkmark.seal.fill",
         title: "",
@@ -253,12 +254,6 @@ struct CreateShippingProfileScreen: View {
                                     additionalWeight: additionalWeightEnabled
                                 )
                                 
-                                // Success
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
-                                    withAnimation {
-                                        presentationMode.wrappedValue.dismiss()
-                                    }
-                                }
                                 
                             } catch {
                                 print("Shipping creation failed:", error)
@@ -295,6 +290,7 @@ struct CreateShippingProfileScreen: View {
             }
             .navigationBarHidden(true)
         }
+        .toolbar(.hidden,for: .tabBar)
         .overlay(
             CustomBottomSheetView(
                 isPresented: $showError,
@@ -307,6 +303,28 @@ struct CreateShippingProfileScreen: View {
                 secondaryAction: {
                     withAnimation {
                         showError = false
+                    }
+                }
+            )
+        )
+        .overlay(
+            CustomBottomSheetView(
+                isPresented: $showSuccess,
+                config: config,
+                primaryAction: {
+                    withAnimation {
+                        showSuccess = false
+                    }
+                },
+                secondaryAction: {
+                    withAnimation {
+                        showSuccess = false
+                        // Success
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+                            withAnimation {
+                                presentationMode.wrappedValue.dismiss()
+                            }
+                        }
                     }
                 }
             )
@@ -366,13 +384,13 @@ extension CreateShippingProfileScreen {
                     primaryButtonTitle: AppString.ok.localized,
                     secondaryButtonTitle: nil
                 )
-                showError = true
+                showSuccess = true
             }
         ) {
             let request = StoreShippingRequest(
                 name: name,
                 size: scale,
-                weight: weight
+                weight: weight.formattedString(decimalPlaces: 2)
                 //            maxItems: maxItems,
                 //            additionalWeight: additionalWeight
             )
@@ -466,4 +484,11 @@ extension UIApplication {
     func dismissKeyboard() {
         sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
+}
+
+extension Double {
+    func formattedString(decimalPlaces: Int = 2) -> String {
+        return String(format: "%.2f", self)
+    }
+
 }
