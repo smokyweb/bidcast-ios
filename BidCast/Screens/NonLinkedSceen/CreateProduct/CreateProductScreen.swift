@@ -60,7 +60,12 @@ struct CreateProductScreen: View {
     
     @State var processingListArr = ["LETTERS","FLATS","MACHINABLE","NONSTANDARD","NON_MACHINABLE"]
     
-    @State var conditionListArr = ["New","Used - Like New"]
+    @State var conditionListArr = ["New",
+                     "Like New",
+                     "Gently Loved",
+                     "Well Loved",
+                     "Other",
+                     "Trending"]
     
     
     @State var extraFieldValues: [String: String] = [:]
@@ -326,6 +331,7 @@ struct CreateProductScreen: View {
                         }
                     )
                     .padding([.leading,.trailing],16)
+                    .padding(.bottom, 20)
                     
                     TwoButton(titleOne: "Continue", titleTwo: "Use Product Library", onFirstButtonClick: {
                         print(request)

@@ -35,8 +35,29 @@ final class InventoryViewModel: ObservableObject {
         }
     }
     
+    
+    // MARK: - Get Inventory List
+//    func getInventoryList(param: InventoryRequest) async throws {
+//        self.request = "Inventory"
+//        do {
+//            let response: ResponseModalPaginate<[InventoryDataModel]> = try await APIManager.shared.request(
+//                type: APIEndPoint.getInventory(param: param),
+//                header: true
+//            )
+//            self.inventoryDict = response
+//        } catch(let error) {
+//            if let dataError = error as? DataError {
+//                self.errorMessage = dataError.getErrorMessage()
+//            }
+//            else {
+//                self.errorMessage = error.localizedDescription
+//            }
+//            throw error
+//        }
+//    }
+    
     // MARK: - DeleteProductRequest.
-    func DeleteProductRequest(parameters: DeleteProduct) async {
+    func deleteProductRequest(parameters: DeleteProduct) async {
         do {
             let response: ResponseModel<DeleteProductModel> = try await APIManager.shared.request(
                 type: APIEndPoint.deleteProduct(param: parameters),

@@ -170,7 +170,7 @@ struct ShowsScreen: View {
 
 // MARK: - Segment Enum
 enum ShowScreenSegment: String, CaseIterable, CustomStringConvertible {
-    case shows = "Shows"
+    case shows = "Upcoming Shows"
     case pastShows = "Past Shows"
 
     var description: String {

@@ -36,9 +36,14 @@ struct InventoryScreen: View {
     var viewModel = InventoryViewModel()
     @State var productId : Int = 0
     @State var showError: Bool = false
+    @State var showDeleteProduct: Bool = false
+    
     @State var isLoading: Bool = true
+    
+    @State var showSuccesshud: Bool = false
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
+    
     @State var status = "active"
     @State var currentPage = 1
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
@@ -47,6 +52,16 @@ struct InventoryScreen: View {
     @State var navigateToCreateProduct = false
     @State var navigateToEditProduct = false
     @State var searchText: String = ""
+    
+    @State var config: BottomSheetConfig = BottomSheetConfig(
+        icon: "checkmark.seal.fill",
+        title: "",
+        message: "",
+        primaryButtonTitle: "Okay",
+        secondaryButtonTitle: nil,
+        showButtons: true
+    )
+    
     
     @Binding var selectedProductIDs: Set<String>
     @Binding var selectedProductData: [ProductDataModel]
@@ -198,10 +213,30 @@ struct InventoryScreen: View {
                         ForEach(inventoryList.indices, id: \.self) { index in
                             let inventory = inventoryList[index]
                             
-                            ProductCardView(product: inventory)
-                                .onAppear {
-                                    handlePagination(index: index)
-                                }
+                            ProductCardView(product: inventory,
+                            onEdit: { product in
+                                productToEdit = product.toProductDataModel()
+                                showSellSheet = false
+                                navigateToEditProduct = true
+                                
+                            },onDuplicate: {
+                                
+                            }, onToggleActivation: { id in
+                                
+                            }, onDelete: { id in
+                                self.productId = id
+                                config = BottomSheetConfig(
+                                       icon: "trash.circle.fill",
+                                       title: "Delete Product?",
+                                       message:  "Are you sure you want to remove this product?",
+                                       primaryButtonTitle: "Delete",
+                                       secondaryButtonTitle: "Cancel"
+                                   )
+                                showDeleteProduct = true
+                            })
+                            .onAppear {
+                                handlePagination(index: index)
+                            }
                         }
                     }
                 }
@@ -210,25 +245,25 @@ struct InventoryScreen: View {
             }
             .padding(.vertical, 12)
 
-//            TwoButton(titleOne: navigatedFrom.btnTitle,
-//                    onFirstButtonClick: {
-//                    switch navigatedFrom {
-//                    case .account:
-//                        print("create new Prooduct")
-//                        navigateToCreateProduct = true
-//                        case .addProduct:
-//                            print("Select Existing Product")
-//                            self.presentationMode.wrappedValue.dismiss()
-//                        }
-//                    },
-//                      
-//                      onSecButtonClick: {  },
-//                      firstBtnBgColor: .defaultTheme,
-//                      isHidefirstBtn: false,
-//                      isHideSecBtn: true
-//            )
-//            .padding(.top, 20)
-//            .padding(.bottom, -15)
+            TwoButton(titleOne: navigatedFrom.btnTitle,
+                    onFirstButtonClick: {
+                switch navigatedFrom {
+                case .account:
+                    print("create new Prooduct")
+                    navigateToCreateProduct = true
+                case .addProduct:
+                    print("Select Existing Product")
+                    self.presentationMode.wrappedValue.dismiss()
+                }
+            },
+                      
+                      onSecButtonClick: {  },
+                      firstBtnBgColor: .defaultTheme,
+                      isHidefirstBtn: false,
+                      isHideSecBtn: true
+            )
+            .padding(.top, 20)
+            .padding(.bottom, -15)
             
             
             CusNavLink(doNavigate: $navigateToEditProduct, destination: EditProductScreen(productData: $productToEdit)) // for edit
@@ -312,6 +347,9 @@ struct InventoryScreen: View {
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }
+        .toast(isPresenting: $showSuccesshud) {
+            AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlyeSuccess)
+        }
         .bottomSheet(isPresented: $showError, height: screenHeight / 2.5, topBarCornerRadius: 25, showTopIndicator: false) {
             CommonBottomSheet(
                 sheetType: $alertType,
@@ -323,27 +361,75 @@ struct InventoryScreen: View {
                 }
             )
         }
-        .bottomSheet(isPresented: $showSellSheet, height: screenHeight * 0.95) {
-            ProductDetailSheet(
-                onDismiss : {
-                    self.showSellSheet = false
-                    productId = 0
+        
+        .overlay(
+            CustomBottomSheetView(
+                isPresented: $showDeleteProduct,
+                config: config,
+                primaryAction: {
+                    withAnimation {
+                        showDeleteProduct = false
+                        deleteProduct(with: productId)
+                    }
                 },
-                productID: $productId,
-                onTapEdit: { details  in
-                    productToEdit = details.toProductDataModel()
-                    navigateToEditProduct = true
-                    showSellSheet = false
-                },onTapDelete: {
-                    SVProgressHUD.show()
-                    let param = DeleteProduct(product_id: productId)
-                    await viewModel.DeleteProductRequest(parameters: param)
-                    await SVProgressHUD.dismiss()
-                    deleteProductSuccess()
+                secondaryAction: {
+                    withAnimation {
+                        showDeleteProduct = false
+                    }
                 }
             )
+        )
+        
+//        .bottomSheet(isPresented: $showSellSheet, height: screenHeight * 0.95) {
+//            ProductDetailSheet(
+//                onDismiss : {
+//                    self.showSellSheet = false
+//                    productId = 0
+//                },
+//                productID: $productId,
+//                onTapEdit: { details  in
+//                    productToEdit = details.toProductDataModel()
+//                    navigateToEditProduct = true
+//                    showSellSheet = false
+//                },onTapDelete: {
+////                    SVProgressHUD.show()
+//                    let param = DeleteProduct(product_id: productId)
+//                    await viewModel.deleteProductRequest(parameters: param)
+////                    await SVProgressHUD.dismiss()
+//                    deleteProductSuccess()
+//                }
+//            )
+//        }
+    }
+    
+    
+    private func deleteProduct(with productId: Int) {
+        Task {
+            await performAPICalls(
+                isConcurrent: false,
+                showLoader: true,
+                onError: { error in
+                    alertType = .sheetType(
+                        icon: .alert,
+                        title: "Error",
+                        message: errorDesc(error: error, message: viewModel.errorMessage),
+                        primaryBtnText: "",
+                        secondaryBtnText: AppString.ok.localized
+                    )
+                    showError = true
+                }, onSuccess: {
+                    // On success
+                    deleteProductSuccess()
+                }
+                
+            ) {
+                let param = DeleteProduct(product_id: productId)
+                await viewModel.deleteProductRequest(parameters: param)
+                
+            }
         }
     }
+        
     
     func handlePagination(index: Int) {
         let isLastItem = index == inventoryList.count - 1
@@ -434,12 +520,17 @@ struct InventoryScreen: View {
     
     // MARK: - deleteProductSuccess
     func deleteProductSuccess() {
-        SVProgressHUD.dismiss()
+//        SVProgressHUD.dismiss()
         let response = viewModel.inventoryDict
         if response?.status == "success" {
             self.showSellSheet = false
+            
+            hudMsg = "Product deleted successfully"
+            showSuccesshud = true
+            
             currentPage = 1
             self.inventoryList.removeAll()
+            
             Task {
                 await performAPICalls(
                     isConcurrent: true,
@@ -635,54 +726,81 @@ struct ProductCardView: View {
     @State private var showActions: Bool = false
     @State private var isLongPressing: Bool = false
     
-    var onEdit: (() -> Void)?
+    var onEdit: ((InventoryDataModel) -> Void)?
     var onDuplicate: (() -> Void)?
-    var onToggleActivation: (() -> Void)?
-    var onDelete: (() -> Void)?
+    var onToggleActivation: ((Int) -> Void)?
+    var onDelete: ((Int) -> Void)?
     
     var body: some View {
-        Button {
-            animatePress()
-        } label: {
-            cardContent
-        }
-        .buttonStyle(PlainButtonStyle())
-        .contentShape(Rectangle())
-//        .simultaneousGesture(
-//            LongPressGesture(minimumDuration: 0.5)
-//                .onChanged { _ in
-//                    isLongPressing = true
-//                    
-//                    let generator = UIImpactFeedbackGenerator(style: .medium)
-//                    generator.impactOccurred()
-//                }
-//                .onEnded { _ in
-//                    isLongPressing = false
+        cardContent
+            .onTapGesture(perform: {
+                showActions = true
+            })
+//            .onTapAndLongPress(
+//                tap: {
+//                    animatePress()
+//                    showActions = true
+//                },
+//                longPress: {
 //                    showActions = true
 //                }
-//        )
-//        .sheet(isPresented: $showActions) {
-//            ProductActionsSheet(
-//                isPresented: $showActions,
-//                isActive: product.status == "active",
-//                onEdit: {
-//                    onEdit?()
-//                },
-//                onDuplicate: {
-//                    onDuplicate?()
-//                },
-//                onToggleActivation: {
-//                    onToggleActivation?()
-//                },
-//                onDelete: {
-//                    onDelete?()
-//                }
 //            )
-//            .presentationDetents([.height(480)])
-//            .presentationDragIndicator(.hidden)
-//        }
+            .sheet(isPresented: $showActions) {
+                ProductActionsSheet(
+                    isPresented: $showActions,
+                    isActive: product.status == "active",
+                    onEdit: { handleEdit() },
+                    onDuplicate: { handleDuplicate() },
+                    onToggleActivation: { handleToggleActivation() },
+                    onDelete: { handleDelete() }
+                )
+                .presentationDetents([.height(480)])
+                .presentationDragIndicator(.hidden)
+            }
+    }
+    
+    private func handleEdit() {
+        print("Edit tapped")
+        closeActionsSheet {
+            onEdit?(product)
+        }
+    }
+    
+    private func handleDuplicate() {
+        print("Duplicate tapped")
+        closeActionsSheet {
+            onDuplicate?()
+        }
+    }
+    
+    private func handleToggleActivation() {
+        print("Toggle Activation tapped")
+        closeActionsSheet {
+            onToggleActivation?(product.id ?? 0)
+        }
+    }
+    
+    private func handleDelete() {
+        print("Delete tapped")
+        closeActionsSheet {
+            onDelete?(product.id ?? 0)
+        }
+    }
+    
+    private func closeActionsSheet(completion: @escaping () -> Void) {
+        withAnimation(.easeInOut(duration: 0.20)) {
+            isLongPressing = false
+        }
+        
+        // Delay sheet close until animation completes
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.20) {
+            showActions = false
+            completion()
+        }
     }
 }
+
+
 extension ProductCardView {
     var cardContent: some View {
         HStack(spacing: 16) {
@@ -1117,5 +1235,55 @@ extension Array where Element == String {
 extension Double {
     func toString(_ decimals: Int = 2) -> String {
         String(format: "%.\(decimals)f", self)
+    }
+}
+
+struct TapAndLongPressModifier: ViewModifier {
+    let tapAction: () -> Void
+    let longPressAction: () -> Void
+    var longPressDuration: Double = 0.5
+    var enableHaptics: Bool = true
+
+    @State private var isLongPressing = false
+
+    func body(content: Content) -> some View {
+        content
+            .contentShape(Rectangle())  // makes whole area tappable
+            .gesture(
+                LongPressGesture(minimumDuration: longPressDuration)
+                    .onChanged { _ in
+                        if !isLongPressing {
+                            isLongPressing = true
+                            if enableHaptics {
+                                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                            }
+                        }
+                    }
+                    .onEnded { _ in
+                        isLongPressing = false
+                        longPressAction()
+                    }
+            )
+            .onTapGesture {
+                tapAction()
+            }
+    }
+}
+
+extension View {
+    func onTapAndLongPress(
+        tap: @escaping () -> Void,
+        longPress: @escaping () -> Void,
+        longPressDuration: Double = 0.5,
+        enableHaptics: Bool = true
+    ) -> some View {
+        self.modifier(
+            TapAndLongPressModifier(
+                tapAction: tap,
+                longPressAction: longPress,
+                longPressDuration: longPressDuration,
+                enableHaptics: enableHaptics
+            )
+        )
     }
 }

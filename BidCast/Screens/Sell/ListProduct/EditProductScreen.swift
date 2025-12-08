@@ -34,7 +34,12 @@ struct EditProductScreen: View {
     @State var ShippingAddress: [AddressModel] = []
     @State var mailClassList = [String]()
     
-    @State var conditionListArr = ["New","Used - Like New"]
+    @State var conditionListArr = ["New",
+                                   "Like New",
+                                   "Gently Loved",
+                                   "Well Loved",
+                                   "Other",
+                                   "Trending"]
     
 //    @State var isImageSizeExceeding: Bool = false
     @State var request : StoreProductParam = StoreProductParam(category_id: "", title: "", description: "", quantity: "", pricing: "", flash_sale: "0", accept_offers: "0", reserve_for_live: "0", shipping_profile_id: "", status: "",sub_category_id: "",width: "",length: "", weight: "",height:"",mail_class:"",processing_category:"", product_condition: "")
@@ -399,6 +404,7 @@ struct EditProductScreen: View {
                         })
                         .padding(.vertical,4)
                         .padding([.leading,.trailing],8)
+                        
                     }
                     .zIndex(1000)
                     .background(.white)

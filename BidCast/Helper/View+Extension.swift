@@ -38,12 +38,16 @@ extension View {
             return
         }
 
-        if showLoader { SVProgressHUD.show() }
+        if showLoader {
+            SVProgressHUD.show()
+        }
 
         do {
             try await tasks()   // executes sequentially or concurrently as per your logic
 
-            if showLoader { await SVProgressHUD.dismiss() }
+            if showLoader {
+                await SVProgressHUD.dismiss()
+            }
 
             onSuccess()   // 🔥 success callback (only if tasks didn't throw)
 
