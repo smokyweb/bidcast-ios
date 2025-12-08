@@ -16,7 +16,7 @@ struct ActiveInventoryScreen: View {
     var body: some View {
         VStack(spacing: 10) {
             HStack(alignment: .center, spacing: 10) {
-                let imageUrlString = inventory.thumbnails?.first ?? ""
+                let imageUrlString = inventory.thumbnail?.first ?? ""
                 CustomProfileImage(url: imageUrlString, isCircular: false, size: 64, defaultImage: "photo")
                     .padding(.leading, 12)
                 

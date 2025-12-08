@@ -36,15 +36,17 @@ struct CreateProductScreen: View {
     @State var categoryNames: [String] = []
     @State var selectedCategory = ""
     @State var categoryList: [CategoryDataModel] = []
-    @State var shippingAddressName: [String] = []
-    @State var shippingId = ""
-    @State var ShippingAddress: [AddressModel] = []
     @State var mailClassList = [String]()
     //category request data
     @State var request : StoreProductParam = StoreProductParam(category_id: "", title: "", description: "", quantity: "1", pricing: "", flash_sale: "0", accept_offers: "0", reserve_for_live: "0", shipping_profile_id: "2", status: "",sub_category_id: "",width: "",length: "", weight: "",height:"",mail_class:"",processing_category:"",  product_condition: "")
     
     @State var viewModel = ListProductViewModel()
     @State var imageUrls: [String] = []
+    
+    @State var shippingProfileNames: [String] = []
+    @State var selectedShippingProfileName: String = ""
+    @State private var profiles: [StoreShippingModel] = []
+    @StateObject private var shippingViewModel = ShippingViewModel()
     
     @State var showSellerSheet = false
     @State var navigateToSeller = false
@@ -55,6 +57,7 @@ struct CreateProductScreen: View {
     @State var subCategoryName : [String] = [""]
     //    @Binding var productData : InventoryDataModel
     @State var extraFields: [ExtraFieldModel] = []
+    
     @State var processingListArr = ["LETTERS","FLATS","MACHINABLE","NONSTANDARD","NON_MACHINABLE"]
     
     @State var conditionListArr = ["New","Used - Like New"]
@@ -305,6 +308,25 @@ struct CreateProductScreen: View {
                     .cornerRadius(12)
                     .padding(.horizontal,12)
                     
+                    DropDownSelection(
+                        options: $shippingProfileNames, floatingLabel:"Shipping Profile",
+                        hint: "Select",
+                        selected: $selectedShippingProfileName,
+                        anchor: .top,
+                        custFontName: robotoMedium,
+                        custFontSize:  14.0,
+                        custCategory : robotoRegular,
+                        custCategorySize : 13.0,
+                        onOptionSelected: { value in
+                            //string value not id -> get Id from name
+                            if let profile = profiles.first(where: { $0.name == value }) {
+                                request.shipping_profile_id = profile.id != nil ? "\(profile.id!)" : ""
+                            }
+                            
+                        }
+                    )
+                    .padding([.leading,.trailing],16)
+                    
                     TwoButton(titleOne: "Continue", titleTwo: "Use Product Library", onFirstButtonClick: {
                         print(request)
                         print(imageUrls)
@@ -460,138 +482,20 @@ struct CreateProductScreen: View {
                     }, onSuccess: {
                         // On success
                         categorySuccess()
-                        shippingAddressSuccess()
+                        successShippingProfiles()
                         mailSuccess()
                     }
                     
                 ) {
                     // 👇 These run in parallel
                     async let categoryTask: () = viewModel.getSubCategoryList(param: CategoryRequest(category_id: ""))
-                    async let addressTask: () = viewModel.getAddresses()
+                    async let shippingTask: () = shippingViewModel.getShippingProfiles()
                     async let mailTask: () = viewModel.getMailClasses()
                     
                     // Wait for all
-                    _ = try await (categoryTask, addressTask, mailTask)
+                    _ = try await (categoryTask, shippingTask, mailTask)
                 }
             }
-            //            Task{
-            //                guard Reachability.isConnectedToNetwork() else {
-            //                    hudMsg = "No Internet Connection"
-            //                    showhud = true
-            //                    return
-            //                }
-            //                SVProgressHUD.show()
-            //            await viewModel.getCategoryList(param: CategoryRequest(category_id: ""))
-            //                if let errorMessage = self.viewModel.errorMessage, errorMessage != "" {
-            //                    alertType = .sheetType(
-            //                        icon: .alert,
-            //                        title: "Error",
-            //                        message: self.viewModel.errorMessage ?? "",
-            //                        primaryBtnText: "",
-            //                        secondaryBtnText: AppString.ok.localized
-            //                    )
-            //                    await SVProgressHUD.dismiss()
-            //                    showError = true
-            //                }
-            //                else  {
-            //                    categorySuccess()
-            //                }
-            //                self.viewModel.errorMessage?.removeAll()
-            //                await viewModel.getAddresses()
-            //
-            //                if let errorMessage = self.viewModel.errorMessage, errorMessage != "" {
-            //                    await SVProgressHUD.dismiss()
-            //                    alertType = .sheetType(
-            //                        icon: .alert,
-            //                        title: "Error",
-            //                        message: self.viewModel.errorMessage ?? "",
-            //                        primaryBtnText: "",
-            //                        secondaryBtnText: AppString.ok.localized
-            //                    )
-            //                    showError = true
-            //                }
-            //                else  {
-            //                    shippingAddressSuccess()
-            //                }
-            //                self.viewModel.errorMessage?.removeAll()
-            //                await viewModel.getMailClasses()
-            //                await SVProgressHUD.dismiss()
-            //                if self.viewModel.errorMessage == nil || self.viewModel.errorMessage == "" {
-            //                    mailSuccess()
-            //                }else{
-            //                    alertType = .sheetType(
-            //                        icon: .alert,
-            //                        title: "Error",
-            //                        message: self.viewModel.errorMessage ?? "",
-            //                        primaryBtnText: "",
-            //                        secondaryBtnText: AppString.ok.localized
-            //                    )
-            //                    showError = true
-            //                }
-            //
-            //
-            //
-            //
-            //            }
-            //            Task{
-            //                guard Reachability.isConnectedToNetwork() else {
-            //                    hudMsg = "No Internet Connection"
-            //                    showhud = true
-            //                    return
-            //                }
-            //                SVProgressHUD.show()
-            //            await viewModel.getCategoryList(param: CategoryRequest(category_id: ""))
-            //                if let errorMessage = self.viewModel.errorMessage, errorMessage != "" {
-            //                    alertType = .sheetType(
-            //                        icon: .alert,
-            //                        title: "Error",
-            //                        message: self.viewModel.errorMessage ?? "",
-            //                        primaryBtnText: "",
-            //                        secondaryBtnText: AppString.ok.localized
-            //                    )
-            //                    await SVProgressHUD.dismiss()
-            //                    showError = true
-            //                }
-            //                else  {
-            //                    categorySuccess()
-            //                }
-            //                self.viewModel.errorMessage?.removeAll()
-            //                await viewModel.getAddresses()
-            //
-            //                if let errorMessage = self.viewModel.errorMessage, errorMessage != "" {
-            //                    await SVProgressHUD.dismiss()
-            //                    alertType = .sheetType(
-            //                        icon: .alert,
-            //                        title: "Error",
-            //                        message: self.viewModel.errorMessage ?? "",
-            //                        primaryBtnText: "",
-            //                        secondaryBtnText: AppString.ok.localized
-            //                    )
-            //                    showError = true
-            //                }
-            //                else  {
-            //                    shippingAddressSuccess()
-            //                }
-            //                self.viewModel.errorMessage?.removeAll()
-            //                await viewModel.getMailClasses()
-            //                await SVProgressHUD.dismiss()
-            //                if self.viewModel.errorMessage == nil || self.viewModel.errorMessage == "" {
-            //                    mailSuccess()
-            //                }else{
-            //                    alertType = .sheetType(
-            //                        icon: .alert,
-            //                        title: "Error",
-            //                        message: self.viewModel.errorMessage ?? "",
-            //                        primaryBtnText: "",
-            //                        secondaryBtnText: AppString.ok.localized
-            //                    )
-            //                    showError = true
-            //                }
-            //
-            //
-            //
-            //
-            //            }
         })
         .onAppear {
             //assign categoryId
@@ -645,22 +549,10 @@ struct CreateProductScreen: View {
         }
     }
     
-    func shippingAddressSuccess() {
-        
-        let response = viewModel.addressesResponse
-        if response?.status == "success" {
-            self.ShippingAddress = response?.data ?? [AddressModel]()
-            self.shippingAddressName = response?.data.map { $0.name ?? "No Category" } ?? [String]()
-        } else {
-            alertType = .sheetType(
-                icon: .alert,
-                title: "Error",
-                message: viewModel.errorMessage ?? "",
-                primaryBtnText: AppString.ok.localized,
-                secondaryBtnText:""
-            )
-            showError = true
-        }
+    private func successShippingProfiles() {
+        let response = shippingViewModel.getShippingProfilesResponse
+        self.profiles = response?.data ?? []
+        self.shippingProfileNames = profiles.map { $0.name ?? "" }
     }
     
 }

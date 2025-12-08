@@ -14,7 +14,25 @@ struct InventoryModel: Codable {
     var total, totalPage, currentPage, perPage: Int?
 }
 
+// MARK: - Category
+struct CategoryInventoryModel: Codable {
+    var id: Int?
+    var name: String?
+    var image: String?
+    var thumbnail: String?
+    var extraFields: [ExtraFieldModel]?
+    var color: String?
+    var deletedAt: String?
+    var categoryID: Int?
 
+    enum CodingKeys: String, CodingKey {
+        case id, name, image, thumbnail
+        case extraFields
+        case color
+        case deletedAt
+        case categoryID
+    }
+}
 
 // MARK: - InventoryDataModel
 struct InventoryDataModel: Codable {
@@ -22,30 +40,34 @@ struct InventoryDataModel: Codable {
     var categoryID: Int?
     var subCategoryID: Int?
     var title, description: String?
-    var quantity: String?
+    var variant: String?
+    var productCondition: String?
+    var quantity, type: String?
     var pricing: String?
-    var flashSale: Bool?
+    var flashSale, auction: Bool?
     var acceptOffers: Bool?
     var reserveForLive: Bool?
-    var shippingProfileID: Int?
+    var shippingProfileID, bidsCount: Int?
     var status: String?
     var images: [String]?
-    var thumbnails: [String]?
-    var offer: String?
+    var thumbnail: [String]?
     var weight, length, width, height: Float?
     var productShow: String?
-    var processingCategory: String?
+    var processingCategory, mailClass: String?
     var purchasedQuantity: String?
     var createdAt: String?
     var userID: Int?
     var user: UserDataModel?
     var shippingAddress: ShippingAddressModel?
-    var category : CategoryDataModel?
-    var sub_category : CategoryDataModel?
+    var category : CategoryInventoryModel?
+    var sub_category : CategoryInventoryModel?
     
     enum CodingKeys: String, CodingKey {
         case id
+        case variant, productCondition, type, auction
         case categoryID = "category_id"
+        case mailClass = "mail_class"
+        case bidsCount = "bids_count"
         case subCategoryID = "sub_category_id"
         case title, description, quantity, pricing
         case flashSale = "flash_sale"
@@ -53,8 +75,8 @@ struct InventoryDataModel: Codable {
         case reserveForLive = "reserve_for_live"
         case shippingProfileID = "shipping_profile_id"
         case status, images
-        case thumbnails = "thumbnail"
-        case offer, weight, length, width, height
+        case thumbnail = "thumbnail"
+        case weight, length, width, height
         case productShow = "product_show"
         case processingCategory = "processing_category"
         case purchasedQuantity = "purchased_quantity"
@@ -123,7 +145,7 @@ extension InventoryDataModel {
             status: self.status,
             productShow: self.productShow,
             images: self.images,
-            thumbnail: self.thumbnails,
+            thumbnail: self.thumbnail,
             createdAt: self.createdAt,
             category: self.category.map { ProductCategoryModel(
                 id: $0.id,

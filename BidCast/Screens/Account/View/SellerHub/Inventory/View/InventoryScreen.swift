@@ -274,7 +274,7 @@ struct InventoryScreen: View {
             }, categories: $categoryList) )
         }
         .background(Color(.systemBackground))
-        
+        .padding(.bottom, -70)
         .onAppear {
             Task {
                 await performAPICalls(
@@ -771,13 +771,13 @@ extension ProductCardView {
 //            }
             
             Text(product.title ?? "")
-                .font(.custom(poppinsBold, size: 16))
+                .font(.custom(poppinsSemiBold, size: 16))
                 .foregroundColor(.primary)
                 .lineLimit(2)
             
             HStack(spacing: 8) {
 //                Text(product.condition ?? "New")
-                Text("New")
+                Text(product.productCondition ?? "New")
                     .font(.custom(poppinsRegular, size: 13))
                     .foregroundColor(.secondary)
                 
@@ -822,15 +822,15 @@ extension ProductCardView {
 extension ProductCardView {
     var priceSectionView: some View {
         HStack(spacing: 8) {
-            Text("$0.00")
-                .font(.custom(poppinsBold, size: 16))
+            Text("$\(product.pricing ?? "$0.00")")
+                .font(.custom(poppinsSemiBold, size: 16))
                 .foregroundColor(.primary)
             
             Circle()
                 .fill(Color.secondary)
                 .frame(width: 3, height: 3)
             
-            Text("Auction")
+            Text(product.productShow ?? "Auction")
                 .font(.custom(poppinsRegular, size: 13))
                 .foregroundColor(.secondary)
         }
