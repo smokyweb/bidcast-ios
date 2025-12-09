@@ -245,26 +245,37 @@ struct InventoryScreen: View {
             }
             .padding(.vertical, 12)
 
-            TwoButton(titleOne: navigatedFrom.btnTitle,
-                    onFirstButtonClick: {
-                switch navigatedFrom {
-                case .account:
-                    print("create new Prooduct")
-                    navigateToCreateProduct = true
-                case .addProduct:
-                    print("Select Existing Product")
-                    self.presentationMode.wrappedValue.dismiss()
+            // Bottom Button
+            VStack(spacing: 0) {
+                Divider()
+                Button(action: {
+                    switch navigatedFrom {
+                    case .account:
+                        print("create new Prooduct")
+                        navigateToCreateProduct = true
+                    case .addProduct:
+                        print("Select Existing Product")
+                        self.presentationMode.wrappedValue.dismiss()
+                    }
+                }) {
+                    Text(navigatedFrom.btnTitle)
+                        .font(.custom(poppinsSemiBold, size: 16))
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .background(
+                            LinearGradient(
+                                gradient: Gradient(colors: [Color.blue, Color.blue.opacity(0.8)]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .cornerRadius(14)
+                        .shadow(color: Color.blue.opacity(0.4), radius: 12, x: 0, y: 6)
                 }
-            },
-                      
-                      onSecButtonClick: {  },
-                      firstBtnBgColor: .defaultTheme,
-                      isHidefirstBtn: false,
-                      isHideSecBtn: true
-            )
-            .padding(.top, 20)
-            .padding(.bottom, -15)
-            
+                .padding(.horizontal, 20)
+                .padding(.vertical, 16)
+            }
             
             CusNavLink(doNavigate: $navigateToEditProduct, destination: EditProductScreen(productData: $productToEdit)) // for edit
             CusNavLink(doNavigate: $navigateToCreateProduct, destination: ListProductScreen(productData:.constant(productData)))
@@ -310,6 +321,7 @@ struct InventoryScreen: View {
         }
         .background(Color(.systemBackground))
         .padding(.bottom, -70)
+        .toolbar(.hidden,for: .tabBar)
         .onAppear {
             Task {
                 await performAPICalls(
@@ -379,27 +391,6 @@ struct InventoryScreen: View {
                 }
             )
         )
-        
-//        .bottomSheet(isPresented: $showSellSheet, height: screenHeight * 0.95) {
-//            ProductDetailSheet(
-//                onDismiss : {
-//                    self.showSellSheet = false
-//                    productId = 0
-//                },
-//                productID: $productId,
-//                onTapEdit: { details  in
-//                    productToEdit = details.toProductDataModel()
-//                    navigateToEditProduct = true
-//                    showSellSheet = false
-//                },onTapDelete: {
-////                    SVProgressHUD.show()
-//                    let param = DeleteProduct(product_id: productId)
-//                    await viewModel.deleteProductRequest(parameters: param)
-////                    await SVProgressHUD.dismiss()
-//                    deleteProductSuccess()
-//                }
-//            )
-//        }
     }
     
     

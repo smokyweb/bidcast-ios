@@ -741,6 +741,11 @@ struct StoreShippingRequest  : Encodable {
     var additionalWeight: Bool?
 }
 
+struct ShowOverviewRequest  : Encodable {
+    var show_id: String
+}
+
+
 
 struct SubCategoryRequest  : Encodable {
     var category_ids : [Int]?

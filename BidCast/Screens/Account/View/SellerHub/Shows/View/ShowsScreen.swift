@@ -33,6 +33,7 @@ struct ShowsScreen: View {
     @EnvironmentObject var networkMonitor: NetworkMonitor
     
     @State var navigateToReherseal = false
+    @State var navigateToShowAnalytics = false
     @State private var isActiveOnShowsScreen = false
     @State var viewModel = ShowsViewModel()
     @State var showsData = [HomeModel]()
@@ -85,21 +86,27 @@ struct ShowsScreen: View {
                     }
                 }
                 .padding(.horizontal)
-
+            
             // MARK: - Scrollable Content
             ScrollView {
                 VStack(spacing: 10) {
-                 if showsData.isEmpty {
-                     NoDataView(message: "No Shows found")
+                    if showsData.isEmpty {
+                        NoDataView(message: "No Shows found")
                     } else {
                         ForEach(showsData.indices,id: \.self) { index in
                             let data = showsData[index]
                             ShowCardView(show: data,onTap: {
-                                showID = "\(data.id ?? 0)"
-                                isLive = data.is_live ?? false
-                                selectedProductData = data.products ?? []
-                                selectedShowsData = data
-                                navigateToReherseal = true
+                                if segment == .pastShows {
+                                    showID = "\(data.id ?? 0)"
+                                    navigateToShowAnalytics = true
+                                }
+                                else {
+                                    showID = "\(data.id ?? 0)"
+                                    isLive = data.is_live ?? false
+                                    selectedProductData = data.products ?? []
+                                    selectedShowsData = data
+                                    navigateToReherseal = true
+                                }
                             })
                         }
                     }
@@ -127,6 +134,9 @@ struct ShowsScreen: View {
                                                     isLive: isLive, 
                                                     backToTabBar: .constant(true),
                                                     showsData: $selectedShowsData))
+            CusNavLink(doNavigate: $navigateToShowAnalytics,
+                       destination:  MyShowsAnalyticsScreen(showId: $showID))
+           
         }
         .navigationBarHidden(true)
         .toolbar(.hidden,for: .tabBar)

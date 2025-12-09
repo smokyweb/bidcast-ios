@@ -175,3 +175,45 @@ struct SellerCategoryDetailsModel: Codable {
         case updatedAt = "updated_at"
     }
 }
+
+// MARK: - GetShowOverviewModel
+struct GetShowOverviewModel: Codable {
+    var orderCount, totalSales: Int?
+     var videoDuration: String?
+     var shareCount, viewerCount, newFollowers, contributionsCount: Int?
+     var totalBids: Int?
+
+     enum CodingKeys: String, CodingKey {
+         case orderCount = "order_count"
+         case totalSales = "total_sales"
+         case videoDuration = "video_duration"
+         case shareCount = "share_count"
+         case viewerCount = "viewer_count"
+         case newFollowers = "new_followers"
+         case contributionsCount = "contributions_count"
+         case totalBids = "total_bids"
+     }
+ }
+
+// MARK: - GetShowOverviewModel
+struct ShowOverviewModel: Codable {
+    var orderCount: Int = 0
+    var totalSales: String = ""
+    var videoDuration: String = ""
+    var shareCount: Int = 0
+    var viewerCount: Int = 0
+    var newFollowers: Int = 0
+    var contributionsCount: Int = 0
+    var totalBids: Int = 0
+
+    enum CodingKeys: String, CodingKey {
+        case orderCount
+        case totalSales
+        case videoDuration
+        case shareCount
+        case viewerCount
+        case newFollowers
+        case contributionsCount
+        case totalBids
+    }
+}
