@@ -199,6 +199,7 @@ enum APIEndPoint{
     case storeShipping(param: StoreShippingRequest)
     case getShippinProfiles
     case getShowOverview(param: ShowOverviewRequest)
+    case updateProductStatus(param: UpdateProductStatusRequest)
 }
 
 extension APIEndPoint: EndPointType {
@@ -607,6 +608,8 @@ extension APIEndPoint: EndPointType {
             return "get-shipping-profile"
         case .getShowOverview(param: let param):
             return "get-show-overview?show_id=\(param.show_id)"
+        case .updateProductStatus:
+            return "update-product-status"
         }
     }
     
@@ -974,6 +977,8 @@ extension APIEndPoint: EndPointType {
             return .get
         case .getShowOverview:
             return .get
+        case .updateProductStatus:
+            return .post
         }
     }
     
@@ -1352,6 +1357,8 @@ extension APIEndPoint: EndPointType {
             return nil
         case .getShowOverview:
             return nil
+        case .updateProductStatus(param: let param):
+            return param
         }
     }
     
@@ -1708,6 +1715,8 @@ extension APIEndPoint: EndPointType {
         case .getShippinProfiles:
             return nil
         case .getShowOverview:
+            return nil
+        case .updateProductStatus:
             return nil
         }
     }

@@ -37,6 +37,7 @@ struct InventoryScreen: View {
     @State var productId : Int = 0
     @State var showError: Bool = false
     @State var showDeleteProduct: Bool = false
+    @State var showErrorPopup: Bool = false
     
     @State var isLoading: Bool = true
     
@@ -214,6 +215,7 @@ struct InventoryScreen: View {
                             let inventory = inventoryList[index]
                             
                             ProductCardView(product: inventory,
+                                            segmant: $segment,
                             onEdit: { product in
                                 productToEdit = product.toProductDataModel()
                                 showSellSheet = false
@@ -222,8 +224,19 @@ struct InventoryScreen: View {
                             },onDuplicate: {
                                 
                             }, onToggleActivation: { id in
+                                self.productId = id
+                                var status = "active"
                                 
-                            }, onDelete: { id in
+                                changeProductStatus(status: status)
+                            },
+                                            onToggleDeActivation: { id in
+                                self.productId = id
+                                var status = "inactive"
+                                
+                                changeProductStatus(status: status)
+                            },
+                                            
+                                            onDelete: { id in
                                 self.productId = id
                                 config = BottomSheetConfig(
                                        icon: "trash.circle.fill",
@@ -391,6 +404,23 @@ struct InventoryScreen: View {
                 }
             )
         )
+        
+        .overlay(
+            CustomBottomSheetView(
+                isPresented: $showErrorPopup,
+                config: config,
+                primaryAction: {
+                    withAnimation {
+                        showErrorPopup = false
+                    }
+                },
+                secondaryAction: {
+                    withAnimation {
+                        showErrorPopup = false
+                    }
+                }
+            )
+        )
     }
     
     
@@ -419,6 +449,57 @@ struct InventoryScreen: View {
                 
             }
         }
+    }
+    
+    private func changeProductStatus(status: String) {
+        Task {
+            await performAPICalls(
+                isConcurrent: false,
+                showLoader: true,
+                onError: { error in
+                    config = BottomSheetConfig(
+                        icon: "exclamationmark.triangle.fill",
+                        title: "Error",
+                        message: viewModel.errorMessage ?? "",
+                        primaryButtonTitle: AppString.ok.localized,
+                        secondaryButtonTitle: nil
+                    )
+                    showErrorPopup = true
+                }, onSuccess: {
+                    // On success
+                    hudMsg = "Product Statuss changed Successfully!"
+                    showSuccesshud = true
+                    Task {
+                        await performAPICalls(
+                            isConcurrent: true,
+                            showLoader: false,
+                            onError: { error in
+                                alertType = .sheetType(
+                                    icon: .alert,
+                                    title: "Error",
+                                    message: errorDesc(error: error, message: viewModel.errorMessage),
+                                    primaryBtnText: "",
+                                    secondaryBtnText: AppString.ok.localized
+                                )
+                                showError = true
+                            }, onSuccess: {
+                                // On success
+                                handleDataLoad()
+                            }
+                            
+                        ) {
+                            try await fetchInventory(for: segment, page: 1)
+                        }
+                    }
+                    
+                }
+                
+            ) {
+                let param = UpdateProductStatusRequest(status: status, product_id: "\(productId)")
+                try await viewModel.updateProductStatus(param: param)
+            }
+        }
+        
     }
         
     
@@ -716,10 +797,11 @@ struct ProductCardView: View {
     @State private var isPressed: Bool = false
     @State private var showActions: Bool = false
     @State private var isLongPressing: Bool = false
-    
+    @Binding var segmant: InventorySegment
     var onEdit: ((InventoryDataModel) -> Void)?
     var onDuplicate: (() -> Void)?
     var onToggleActivation: ((Int) -> Void)?
+    var onToggleDeActivation: ((Int) -> Void)?
     var onDelete: ((Int) -> Void)?
     
     var body: some View {
@@ -743,6 +825,8 @@ struct ProductCardView: View {
                     onEdit: { handleEdit() },
                     onDuplicate: { handleDuplicate() },
                     onToggleActivation: { handleToggleActivation() },
+                    onToggleDeActivation: { onToggleDeActivation?(product.id ?? 0) },
+                    segmant: segmant,
                     onDelete: { handleDelete() }
                 )
                 .presentationDetents([.height(480)])
@@ -965,19 +1049,14 @@ struct ProductActionsSheet: View {
     var onEdit: () -> Void
     var onDuplicate: () -> Void
     var onToggleActivation: () -> Void
+    var onToggleDeActivation: () -> Void
+    var segmant: InventorySegment
     var onDelete: () -> Void
     
     @State private var selectedAction: String? = nil
     
     var body: some View {
         VStack(spacing: 0) {
-            // Drag Indicator
-            RoundedRectangle(cornerRadius: 3)
-                .fill(Color.gray.opacity(0.3))
-                .frame(width: 40, height: 5)
-                .padding(.top, 12)
-                .padding(.bottom, 20)
-            
             VStack(spacing: 20) {
                 // MARK: - Header
                 HStack {
@@ -1021,31 +1100,47 @@ struct ProductActionsSheet: View {
                         }
                     }
                     
-                    ProductActionButton(
-                        icon: "doc.on.doc",
-                        title: "Duplicate",
-                        subtitle: "Create a copy of this product",
-                        color: .purple,
-                        isSelected: selectedAction == "Duplicate"
-                    ) {
-                        selectedAction = "Duplicate"
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                            onDuplicate()
-                            isPresented = false
+//                    ProductActionButton(
+//                        icon: "doc.on.doc",
+//                        title: "Duplicate",
+//                        subtitle: "Create a copy of this product",
+//                        color: .purple,
+//                        isSelected: selectedAction == "Duplicate"
+//                    ) {
+//                        selectedAction = "Duplicate"
+//                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+//                            onDuplicate()
+//                            isPresented = false
+//                        }
+//                    }
+                    if segmant == .active || segmant == .draft {
+                        ProductActionButton(
+                            icon: "pause.circle",
+                            title: "Deactivate" ,
+                            subtitle:"Hide from active listings",
+                            color: .orange,
+                            isSelected: selectedAction == "Deactivate"
+                        ) {
+                            selectedAction = "Deactivate"
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                onToggleDeActivation()
+                                isPresented = false
+                            }
                         }
                     }
-                    
-                    ProductActionButton(
-                        icon: isActive ? "pause.circle" : "play.circle",
-                        title: isActive ? "Deactivate" : "Activate",
-                        subtitle: isActive ? "Hide from active listings" : "Show in active listings",
-                        color: isActive ? .orange : .green,
-                        isSelected: selectedAction == (isActive ? "Deactivate" : "Activate")
-                    ) {
-                        selectedAction = isActive ? "Deactivate" : "Activate"
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                            onToggleActivation()
-                            isPresented = false
+                    if segmant == .inactive || segmant == .draft {
+                        ProductActionButton(
+                            icon: "play.circle",
+                            title: "Activate",
+                            subtitle: "Show in active listings",
+                            color: .green,
+                            isSelected: selectedAction == "Activate"
+                        ) {
+                            selectedAction = "Activate"
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                onToggleActivation()
+                                isPresented = false
+                            }
                         }
                     }
                     

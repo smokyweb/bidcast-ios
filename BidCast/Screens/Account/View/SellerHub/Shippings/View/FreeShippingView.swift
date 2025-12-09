@@ -7,100 +7,171 @@
 
 import SwiftUI
 
+// MARK: - Free Pickup Screen
+struct FreePickupScreen: View {
+    @Environment(\.presentationMode) var presentationMode
+    @State private var isFreePickupEnabled: Bool = false
+    @StateObject var viewModel = PreferenceViewModel()
+    
+    @State private var showError: Bool = false
+    
+    var changeFreeToggle: ((Bool) -> Void) = {_ in}
+    
+    @State var config: BottomSheetConfig = BottomSheetConfig(
+        icon: "checkmark.seal.fill",
+        title: "",
+        message: "",
+        primaryButtonTitle: "Okay",
+        secondaryButtonTitle: nil,
+        showButtons: true
+    )
+    @State var showhud: Bool = false
+    @State var hudMsg: String = ""
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            // Header
+            HStack {
+                Button(action: {
+                    presentationMode.wrappedValue.dismiss()
+                }) {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 20, weight: .semibold))
+                        .foregroundColor(.primary)
+                }
+                
+                Spacer()
+                
+                Text("Free Pickup")
+                    .font(.system(size: 22, weight: .bold))
+                    .foregroundColor(.primary)
+                
+                Spacer()
+                
+                Image(systemName: "chevron.left")
+                    .font(.system(size: 20))
+                    .opacity(0)
+            }
+            .padding(.horizontal, 20)
+            .padding(.vertical, 16)
+            .background(Color(.systemBackground))
+            
+            Divider()
+            
+            ScrollView {
+                VStack(spacing: 24) {
+                    // Toggle Card
+                    VStack(alignment: .leading, spacing: 16) {
+                        Toggle(isOn: $isFreePickupEnabled) {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("Enable Free Pickup")
+                                    .font(.system(size: 18, weight: .bold))
+                                    .foregroundColor(.primary)
+                                
+                                Text("Allow buyers to pick up any order from an address of your choice")
+                                    .font(.system(size: 14, weight: .regular))
+                                    .foregroundColor(.secondary)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
+                        }
+                        .toggleStyle(SwitchToggleStyle(tint: .blue))
+                        .padding(20)
+                        .background(
+                            RoundedRectangle(cornerRadius: 16)
+                                .fill(Color(.systemBackground))
+                                .shadow(color: Color.black.opacity(0.08), radius: 12, x: 0, y: 4)
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16)
+                                .stroke(isFreePickupEnabled ? Color.blue.opacity(0.3) : Color.gray.opacity(0.1), lineWidth: isFreePickupEnabled ? 2 : 1)
+                                .animation(.easeInOut(duration: 0.2), value: isFreePickupEnabled)
+                        )
+                    }
+                }
+                .padding(20)
+            }
+            .background(Color(.systemGroupedBackground))
+            
+            // Save Button
+            VStack(spacing: 0) {
+                Divider()
+                
+                Button(action: {
+                   updateFreePickup()
+                }) {
+                    Text("Save")
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .background(
+                            LinearGradient(
+                                gradient: Gradient(colors: [Color.blue, Color.blue.opacity(0.8)]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .cornerRadius(14)
+                        .shadow(color: Color.blue.opacity(0.4), radius: 12, x: 0, y: 6)
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 16)
+            }
+            .background(Color(.systemBackground))
+        }
+        .overlay(
+            CustomBottomSheetView(
+                isPresented: $showError,
+                config: config,
+                primaryAction: {
+                    withAnimation {
+                        showError = false
+                    }
+                },
+                secondaryAction: {
+                    withAnimation {
+                        showError = false
+                    }
+                }
+            )
+        )
+        .navigationBarHidden(true)
+        .toolbar(.hidden,for: .tabBar)
+    }
+}
 
-//
-//// MARK: - 4. Domestic Shipments Screen
-//struct DomesticShipmentsScreen: View {
-//    @Environment(\.presentationMode) var presentationMode
-//    @State private var selectedMethod: String? = nil
-//    
-//    let shipmentMethods = [
-//        ShipmentMethod(
-//            category: "Eligible Shipments under 3 oz",
-//            methods: [
-//                Method(icon: "envelope.fill", name: "USPS First-Class Mail Letter", description: "For shipments under $20 that weigh 3 oz or less in Trading Card Games, Sports Cards, or Stickers categories. View the full criteria here.")
-//            ]
-//        ),
-//        ShipmentMethod(
-//            category: "Domestic Shipments from 1 to 5 lbs",
-//            methods: [
-//                Method(icon: "box.truck.fill", name: "USPS Priority Mail", description: "Arrives in 1-3 business days. Best for time-sensitive shipments."),
-//                Method(icon: "shippingbox.fill", name: "USPS Flat-Rate Boxes", description: "Ships at a fixed rate within the United States, regardless of weight or distance. Learn More")
-//            ]
-//        ),
-//        ShipmentMethod(
-//            category: "Domestic Shipments over 5 lbs",
-//            methods: [
-//                Method(icon: "box.truck.fill", name: "USPS Priority Mail", description: "Arrives in 1-3 business days. Best for time-sensitive shipments."),
-//                Method(icon: "shippingbox.fill", name: "USPS Flat-Rate Boxes", description: "Ships at a fixed rate within the United States, regardless of weight or distance. Learn More"),
-//                Method(icon: "cube.box.fill", name: "USPS Ground Advantage", description: "Best for shipping heavier items that aren't time-sensitive. Learn More")
-//            ]
-//        )
-//    ]
-//    
-//    var body: some View {
-//        VStack(spacing: 0) {
-//            // Header
-//            HStack {
-//                Button(action: {
-//                    presentationMode.wrappedValue.dismiss()
-//                }) {
-//                    Image(systemName: "chevron.left")
-//                        .font(.system(size: 20, weight: .semibold))
-//                        .foregroundColor(.primary)
-//                }
-//                
-//                Spacer()
-//                
-//                Text("Domestic Shipments")
-//                    .font(.system(size: 20, weight: .bold))
-//                    .foregroundColor(.primary)
-//                
-//                Spacer()
-//                
-//                Image(systemName: "chevron.left")
-//                    .font(.system(size: 20))
-//                    .opacity(0)
-//            }
-//            .padding(.horizontal, 20)
-//            .padding(.vertical, 16)
-//            .background(Color(.systemBackground))
-//            
-//            Divider()
-//            
-//            ScrollView {
-//                VStack(spacing: 24) {
-//                    // Info Box
-//                    HStack(spacing: 12) {
-//                        Image(systemName: "info.circle.fill")
-//                            .font(.system(size: 20))
-//                            .foregroundColor(.blue)
-//                        
-//                        Text("All orders falling outside of your shipping preferences will default to USPS Ground Advantage. Eligible sellers will default to Media Mail shipping.")
-//                            .font(.system(size: 14, weight: .regular))
-//                            .foregroundColor(.secondary)
-//                            .fixedSize(horizontal: false, vertical: true)
-//                    }
-//                    .padding(16)
-//                    .background(
-//                        RoundedRectangle(cornerRadius: 14)
-//                            .fill(Color.blue.opacity(0.05))
-//                    )
-//                    .overlay(
-//                        RoundedRectangle(cornerRadius: 14)
-//                            .stroke(Color.blue.opacity(0.1), lineWidth: 1)
-//                    )
-//                    .padding(.horizontal, 20)
-//                    .padding(.top, 20)
-//                    
-//                    // Shipment Methods
-//                    ForEach(shipmentMethods) { shipmentMethod in
-//                        VStack(alignment: .leading, spacing: 12) {
-//                            Text(shipmentMethod.category)
-//                                .font(.system(size: 18, weight: .bold))
-//                                .foregroundColor(.primary)
-//                                .padding(.horizontal, 20)
-//                            
-//                            VStack(spacing: 12) {
-//                                ForEach(shipmentMethod.methods) { method in
-//                                    Ship
+extension FreePickupScreen {
+    private func updateFreePickup() {
+        Task {
+            await performAPICalls(
+                isConcurrent: false,
+                showLoader: true,
+                onError: { error in
+                    config = BottomSheetConfig(
+                        icon: "exclamationmark.triangle.fill",
+                        title: "Error",
+                        message: errorDesc(error: error, message: viewModel.errorMessage),
+                        primaryButtonTitle: AppString.ok.localized,
+                        secondaryButtonTitle: nil
+                    )
+                    showError = true
+                },
+                onSuccess: {
+                    let message = viewModel.preferenceResponse.message ?? ""
+                    hudMsg  = message
+                    showhud = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                        showhud = true
+                        presentationMode.wrappedValue.dismiss()
+                        changeFreeToggle(isFreePickupEnabled)
+                    }
+                }
+            ) {
+                let request = UpdatePreferenceRequest(
+                    free_shipping: isFreePickupEnabled
+                )
+                await viewModel.updatePreference(parameters: request)
+            }
+        }
+    }
+}

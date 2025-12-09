@@ -415,6 +415,12 @@ struct InventoryRequest : Encodable{
     var marketplace: String
 }
 
+//MARK: InventoryRequest
+struct UpdateProductStatusRequest : Encodable{
+    var status : String
+    var product_id: String
+}
+
 //MARK: Store Product param
 
 struct StoreProductParam : Encodable{
@@ -458,18 +464,19 @@ struct OrderDetailsParam : Encodable {
 }
 
 struct UpdatePreferenceRequest: Encodable{
-    var country_of_residence: String
-    var direct_message: Int
-    var receive_gifts: Int
-    var enable_private_entry: Int
-    var show_reward_status: Int
-    var show_seller_tools: Int
-    var enable_clips: Int
-    var save_past_shows: Int
-    var activity_status: Int
-    var sync_phone_contacts: Int
-    var suggest_my_account: Int
-    var haptic_feedback: Int
+    var country_of_residence: String?
+    var direct_message: Int?
+    var receive_gifts: Int?
+    var enable_private_entry: Int?
+    var show_reward_status: Int?
+    var show_seller_tools: Int?
+    var enable_clips: Int?
+    var save_past_shows: Int?
+    var activity_status: Int?
+    var sync_phone_contacts: Int?
+    var suggest_my_account: Int?
+    var haptic_feedback: Int?
+    var free_shipping: Bool?
 }
 
 

@@ -167,3 +167,15 @@ extension InventoryDataModel {
     }
 }
 
+
+
+// MARK: - DataClass
+struct ChangeProductStatusModel: Codable {
+    var productID: Int?
+    var status: String?
+
+    enum CodingKeys: String, CodingKey {
+        case productID = "product_id"
+        case status
+    }
+}

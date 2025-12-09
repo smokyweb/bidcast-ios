@@ -12,6 +12,7 @@ final class InventoryViewModel: ObservableObject {
     
     @Published var inventoryDict: ResponseModalPaginate<[InventoryDataModel]>?
     @Published var deleteProductResponse = ResponseModel<DeleteProductModel>()
+    @Published var changeProductStatusResponse: ResponseModel<ChangeProductStatusModel>?
     @Published var errorMessage: String? = nil
     var request: String = ""
     
@@ -66,6 +67,26 @@ final class InventoryViewModel: ObservableObject {
             self.deleteProductResponse = response
         } catch {
             self.handle(error: error)
+        }
+    }
+    
+    // MARK: - Update Prooduct Status
+    func updateProductStatus(param: UpdateProductStatusRequest) async throws {
+        self.request = "Inventory"
+        do {
+            let response: ResponseModel<ChangeProductStatusModel> = try await APIManager.shared.request(
+                type: APIEndPoint.updateProductStatus(param: param),
+                header: true
+            )
+            self.changeProductStatusResponse = response
+        } catch(let error) {
+            if let dataError = error as? DataError {
+                self.errorMessage = dataError.getErrorMessage()
+            }
+            else {
+                self.errorMessage = error.localizedDescription
+            }
+            throw error
         }
     }
     
