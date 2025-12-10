@@ -176,24 +176,28 @@ struct SellerCategoryDetailsModel: Codable {
     }
 }
 
+
 // MARK: - GetShowOverviewModel
 struct GetShowOverviewModel: Codable {
-    var orderCount, totalSales: Int?
-     var videoDuration: String?
-     var shareCount, viewerCount, newFollowers, contributionsCount: Int?
-     var totalBids: Int?
+    var orderCount : Int?
+    var videoDuration, totalSales: String?
+    var shareCount, viewerCount, newFollowers, contributionsCount: Int?
+    var totalBids: Int?
+    var fileURL: String?
 
-     enum CodingKeys: String, CodingKey {
-         case orderCount = "order_count"
-         case totalSales = "total_sales"
-         case videoDuration = "video_duration"
-         case shareCount = "share_count"
-         case viewerCount = "viewer_count"
-         case newFollowers = "new_followers"
-         case contributionsCount = "contributions_count"
-         case totalBids = "total_bids"
-     }
- }
+    enum CodingKeys: String, CodingKey {
+        case orderCount = "order_count"
+        case totalSales = "total_sales"
+        case videoDuration = "video_duration"
+        case shareCount = "share_count"
+        case viewerCount = "viewer_count"
+        case newFollowers = "new_followers"
+        case contributionsCount = "contributions_count"
+        case totalBids = "total_bids"
+        case fileURL = "file_url"
+    }
+}
+
 
 // MARK: - GetShowOverviewModel
 struct ShowOverviewModel: Codable {

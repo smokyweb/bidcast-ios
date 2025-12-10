@@ -72,7 +72,7 @@ struct ActivityScreen: View {
                 
                 // MARK: - Filter Pills
                 PillsSelectorView(
-                    titles:  InventorySegment.inventorytArray,
+                    titles:  Segment.segmentArray,
                     selectedIndex: $selectedTabIndex,
                     backgroundStyle: .none,
                     underlineEnabled: false,
@@ -352,7 +352,7 @@ struct ActivityScreen: View {
             messageList.removeAll()
             await fetchBlockedList()
             
-            self.isLoading = false
+            self.isLoading = false 
             
             FirebaseManager.shared.fetchMessageList(forUserId: "\(UserDefaults.userId)") { messages in
                 DispatchQueue.main.async {

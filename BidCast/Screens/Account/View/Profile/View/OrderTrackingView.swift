@@ -20,6 +20,8 @@ struct OrderTrackingView: View {
     @State private var navigateToOrderDetails: Bool = false
     @State private var navigateToVideoReceipt: Bool = false
     
+    @State private var videoURL: String = ""
+    
     @State private var chatPath: String = ""
     
     var orderId: String?
@@ -180,6 +182,7 @@ struct OrderTrackingView: View {
             onSuccess: {
                 let response = viewModel.OrderDetailsResponse
                 orderResponse = response?.data
+                videoURL = orderResponse?.bidVideoURL ?? ""
                 userId = "\(response?.data.sellerDetails?.id ?? 0)"
                 userImage = response?.data.sellerDetails?.profile_image ?? ""
                 userName = response?.data.sellerDetails?.name ?? ""

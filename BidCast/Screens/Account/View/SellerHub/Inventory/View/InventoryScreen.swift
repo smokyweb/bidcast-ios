@@ -683,7 +683,7 @@ enum InventorySegment: String, CaseIterable, CustomStringConvertible {
     }
     
     static var inventorytArray: [String] {
-        return Segment.allCases.map { $0.rawValue }
+        return InventorySegment.allCases.map { $0.rawValue }
     }
     
     // Get segment by index

@@ -279,7 +279,7 @@ struct AccountScreen: View {
                 CusNavLink(doNavigate: $navigateToSellerTraining, destination: SellingTips(isNavFrom : "Account", backToTabBar: .constant(true)))
                 CusNavLink(doNavigate: $navigateToPromoteTool, destination: PromoteToolsView())
                 CusNavLink(doNavigate: $navigateTips, destination: TipsScreen())
-                CusNavLink(doNavigate: $navigateToWallet, destination: WalletScreen())
+                CusNavLink(doNavigate: $navigateToWallet, destination: FinancesView())
                 CusNavLink(doNavigate: $navigateToSellerStatus, destination:   SellerStatusScreen())
                 CusNavLink(doNavigate: $navigateToMyOrder, destination: MyOrdersScreen())
                 CusNavLink(doNavigate: $navigateToBlockedList, destination: BlockedUserScreen())

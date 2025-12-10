@@ -15,6 +15,10 @@ struct MyShowsAnalyticsScreen: View {
     
     @Binding var showId: String
     @State var showhud: Bool = false
+    
+    @State var navigateToVideoReceipt: Bool = false
+    @State private var videoURL: String = ""
+    
     @State var hudMsg: String = ""
     @State var showError = false
     @State var config: BottomSheetConfig = BottomSheetConfig(
@@ -62,9 +66,18 @@ struct MyShowsAnalyticsScreen: View {
                 VStack(spacing: 20) {
                     
                     // MARK: Watch VOD Card
-                    WatchVODCard(duration: showsOverviewData.videoDuration ?? "--:--")
-                        .padding(.horizontal, 20)
-                        .padding(.top, 20)
+//                    Button {
+//                        
+//                    } label: {
+                    WatchVODCard(duration: showsOverviewData.videoDuration ?? "--:--") {
+                        navigateToVideoReceipt = true
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.top, 20)
+                    //                    }
+                    //                    .buttonStyle(.plain)
+                    
+                    
                     
                     // MARK: Overview Section
                     VStack(alignment: .leading, spacing: 16) {
@@ -76,7 +89,7 @@ struct MyShowsAnalyticsScreen: View {
                         VStack(spacing: 12) {
                             HStack(spacing: 12) {
                                 StatCard(title: "Sales",
-                                         value: "\(showsOverviewData.totalSales ?? 0)",
+                                         value: showsOverviewData.totalSales ?? "0",
                                          icon: "dollarsign.circle.fill",
                                          color: .green)
                                 
@@ -149,49 +162,77 @@ struct MyShowsAnalyticsScreen: View {
 extension MyShowsAnalyticsScreen {
     private func getShowOverviewData()  {
         
-        guard showId != "" else { return }
+        // Convert showId from String → Int
+        guard let id = Int(showId), id > 0 else {
+            print("❌ Invalid showId →", showId)
+            return
+        }
         
         Task {
             await performAPICalls(
                 isConcurrent: false,
                 showLoader: true,
+                
+                // ----------------------
+                // MARK: ERROR HANDLER
+                // ----------------------
                 onError: { error in
                     config = BottomSheetConfig(
                         icon: "exclamationmark.triangle.fill",
                         title: "Error",
                         message: errorDesc(error: error, message: showsViewModel.errorMessage),
-                        primaryButtonTitle: AppString.ok.localized,
-                        secondaryButtonTitle: nil
+                        primaryButtonTitle: AppString.ok.localized
                     )
                     showError = true
                 },
-                onSuccess: {
-                    let data = showsViewModel.getShowOverviewModel?.data
-                    
-                    // Assign fallback values so UI ALWAYS changes
-                    self.showsOverviewData = GetShowOverviewModel(
-                        orderCount: data?.orderCount ?? 0,
-                        totalSales: data?.totalSales ?? 0,
-                        videoDuration: data?.videoDuration ?? "--:--",
-                        shareCount: data?.shareCount ?? 0,
-                        viewerCount: data?.viewerCount ?? 0,
-                        newFollowers: data?.newFollowers ?? 0,
-                        contributionsCount: data?.contributionsCount ?? 0,
-                        totalBids: data?.totalBids ?? 0
-                    )
-                }
+                
+                // ----------------------
+                // MARK: SUCCESS HANDLER
+                // ----------------------
+                onSuccess: handleShowOverviewSuccess(id: id)
+                
             ) {
-                try await showsViewModel.getShowOverview(request: ShowOverviewRequest(show_id: showId))
+                // ----------------------
+                // MARK: API CALL
+                // ----------------------
+                try await showsViewModel.getShowOverview(
+                    request: ShowOverviewRequest(show_id: showId)
+                )
             }
         }
     }
+    
+    private func handleShowOverviewSuccess(id: Int) -> () -> Void {
+        return {
+            let api = showsViewModel.getShowOverviewModel?.data
+
+            let overview = GetShowOverviewModel(
+                orderCount: api?.orderCount ?? 0,
+                videoDuration: api?.videoDuration ?? "--:--",
+                totalSales: api?.totalSales ?? "0",
+                shareCount: api?.shareCount ?? 0,
+                viewerCount: api?.viewerCount ?? 0,
+                newFollowers: api?.newFollowers ?? 0,
+                contributionsCount: api?.contributionsCount ?? 0,
+                totalBids: api?.totalBids ?? 0,
+                fileURL: api?.fileURL ?? ""
+            )
+
+            DispatchQueue.main.async {
+                self.showsOverviewData = overview
+                self.videoURL = overview.fileURL ?? ""
+            }
+        }
+    }
+
+
 }
 
 // MARK: - Watch VOD Card
 struct WatchVODCard: View {
     var duration: String
     @State private var isPressed: Bool = false
-    
+    var buttonPressedClosure: (() -> Void)?
     var body: some View {
         Button(action: {
             withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
@@ -202,6 +243,7 @@ struct WatchVODCard: View {
                     isPressed = false
                 }
             }
+            buttonPressedClosure?()
         }) {
             HStack(spacing: 16) {
                 // Play Button Icon

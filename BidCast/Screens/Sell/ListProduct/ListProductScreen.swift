@@ -1629,8 +1629,9 @@ struct SectionHeader: View {
     
     var body: some View {
         Text(title)
-            .font(.custom(robotoMedium, size: 16.0))
+            .font(.custom(poppinsSemiBold, size: 16.0))
             .foregroundColor(.primary)
+          
     }
 }
 
