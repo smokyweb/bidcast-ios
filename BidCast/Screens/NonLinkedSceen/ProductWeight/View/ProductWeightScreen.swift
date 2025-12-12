@@ -27,6 +27,16 @@ struct ProductWeightScreen: View {
     
     @Binding var imageUrls: [String]
     
+    @State private var isHazardousMaterial = false
+    
+    var strokeColor: Color {
+        isHazardousMaterial ? Color.blue.opacity(0.3) : Color.gray.opacity(0.1)
+    }
+
+    var lineWidth: CGFloat {
+        isHazardousMaterial ? 2 : 1
+    }
+    
     @Binding var request: StoreProductParam
     @Binding var storeScheduleRequest : StoreScheduleShowRequest
     @EnvironmentObject private var appRootManager: AppRootManager
@@ -120,24 +130,49 @@ struct ProductWeightScreen: View {
                                 }
                             }
                         }
+//                        
+//                        // Hazardous Toggle
+//                        VStack(alignment: .leading, spacing: 8) {
+//                            HStack {
+//                                Text("Hazardous Material")
+//                                    .font(.custom(poppinsSemiBold, size: 13.0))
+//                                Spacer()
+//                                Toggle("", isOn: $isHazardous)
+//                                    .labelsHidden()
+//                            }
+//                            Text("Items containing flammable, explosive, or other dangerous materials. ")
+//                                .font(.custom(poppinsRegular, size: 11.0))
+//                            + Text(" Learn more about hazardous materials")
+//                                .font(.custom(poppinsRegular, size: 11.0))
+//                                .foregroundColor(.defaultTheme)
+//                        }
+//                        
+//                        Spacer(minLength: 100)
+//                        
                         
-                        // Hazardous Toggle
-                        VStack(alignment: .leading, spacing: 8) {
-                            HStack {
-                                Text("Hazardous Material")
-                                    .font(.custom(poppinsSemiBold, size: 13.0))
-                                Spacer()
-                                Toggle("", isOn: $isHazardous)
-                                    .labelsHidden()
+                        VStack(alignment: .leading, spacing: 16) {
+
+                            Toggle(isOn: $isHazardousMaterial) {
+                                HazardousLabel()
                             }
-                            Text("Items containing flammable, explosive, or other dangerous materials. ")
-                                .font(.custom(poppinsRegular, size: 11.0))
-                            + Text(" Learn more about hazardous materials")
-                                .font(.custom(poppinsRegular, size: 11.0))
-                                .foregroundColor(.defaultTheme)
+                            .toggleStyle(SwitchToggleStyle(tint: .blue))
+                            .padding(20)
+                            .background(
+                                RoundedRectangle(cornerRadius: 16)
+                                    .fill(Color(.systemBackground))
+                                    .shadow(
+                                        color: Color.black.opacity(0.08),
+                                        radius: 12, x: 0, y: 4
+                                    )
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 16)
+                                    .stroke(strokeColor, lineWidth: lineWidth)
+                                    .animation(.easeInOut(duration: 0.2), value: isHazardousMaterial)
+                            )
                         }
+//                        .padding(.horizontal, 16)
                         
-                        Spacer(minLength: 100)
                     }
                     .padding()
                     
@@ -226,6 +261,7 @@ struct ProductWeightScreen: View {
         print(request)
         print(imageUrls)
         request.weight = weight
+        $isHazardousMaterial
         guard !request.weight.isEmpty else{
             hudMsg = "Please enter weight"
             showhud = true
@@ -310,6 +346,7 @@ struct ProductWeightScreen: View {
                 
                 // 🔹 Prepare request body
                 var productRequest: [String: Any] = [
+                    
                     "category_id": request.category_id,
                     "sub_category_id": request.sub_category_id ?? "",
                     "title": request.title,
@@ -319,8 +356,8 @@ struct ProductWeightScreen: View {
                     "flash_sale": request.flash_sale,
                     "accept_offers": request.accept_offers,
                     "reserve_for_live": request.reserve_for_live,
-                    "shipping_profile_id": "4", //static for now
-                    "auction": "true",
+                    "shipping_profile_id": request.shipping_profile_id,
+//                    "auction": "true",
                     // ✅ Newly added fields
                     "width": request.width,
                     "length": request.length,
@@ -330,8 +367,10 @@ struct ProductWeightScreen: View {
                     "processing_category": request.processing_category,
                     
                     // ✅ Images array (already present)
-                    "images": uploadedUrls, 
-                    "type": "live"
+                    "images": uploadedUrls,
+                    "status": request.status,
+//                    "type": "live"
+                    "hazardous_material": isHazardousMaterial
                 ]
               
                 

@@ -12,6 +12,7 @@ struct DropDownSelection: View {
     
     @Binding var options: [String]
     @State var floatingLabel: String = ""
+    @State var description: String = ""
     @State var hint: String = ""
     
     @Binding var selected: String
@@ -23,6 +24,8 @@ struct DropDownSelection: View {
     
     @State var custFontName: String = poppinsBold
     @State var custFontSize: Double = 13.0
+    @State var descFontName: String = poppinsRegular
+    @State var descFontSize: Double = 13.0
     @State var custCategory: String = poppinsMedium
     @State var custCategorySize: Double = 13.0
     
@@ -41,6 +44,13 @@ struct DropDownSelection: View {
             if floatingLabel != "" {
                 Text(floatingLabel)
                     .font(.custom(custFontName, fixedSize: custFontSize))
+                    .foregroundStyle(.text)
+                    .multilineTextAlignment(.leading)
+            }
+            
+            if description != "" {
+                Text(description)
+                    .font(.custom(descFontName, fixedSize: descFontSize))
                     .foregroundStyle(.text)
                     .multilineTextAlignment(.leading)
             }

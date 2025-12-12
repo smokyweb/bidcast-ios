@@ -180,8 +180,8 @@ struct ShowsScreen: View {
 
 // MARK: - Segment Enum
 enum ShowScreenSegment: String, CaseIterable, CustomStringConvertible {
-    case shows = "Upcoming Shows"
-    case pastShows = "Past Shows"
+    case shows = "Upcoming"
+    case pastShows = "Past"
 
     var description: String {
         NSLocalizedString(rawValue, comment: "")

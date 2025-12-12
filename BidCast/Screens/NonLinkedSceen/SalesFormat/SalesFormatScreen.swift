@@ -28,6 +28,10 @@ struct SalesFormatScreen: View {
     @State var hudMsg: String = ""
     @State var showError: Bool = false
     
+    @State var isTappedFlash: Bool = false
+    @State var isTappedAccept: Bool = false
+    @State var isTappedReserve: Bool = false
+    
     @Binding var fromPrepare : Bool
     @Binding var backToCreateProduct : Bool
     var delegate: ShowStepDelegate?
@@ -83,74 +87,73 @@ struct SalesFormatScreen: View {
                 }
                 Spacer()
                 // Starting Bid
+                
+                VStack(alignment: .leading, spacing: 12) {
+                    AuthTextField(floatingLabel: "Starting Bid".localized, placeholder: "$0.0".localized, icon: .menuProfile, text: $request.pricing,isIconDisplay : false, isForPrice:true,
+                                  custFontName : poppinsSemiBold,
+                                  custFontSize : 13.0,
+                                  enteredText:  { price in
+                        request.pricing = price
+                    })
+                    .keyboardType(.decimalPad)
+                    
+                    Text("Minimum starting bid is $1.00")
+                        .font(.custom(poppinsRegular, size: 11.0))
+                        .foregroundColor(.gray)
+                        .padding(.horizontal , 16)
+                }
+                
                 if selectedFormat == .auction {
-                    VStack(alignment: .leading, spacing: 12) {
-                        
-                        AuthTextField(floatingLabel: "Starting Bid".localized, placeholder: "0.0".localized, icon: .menuProfile, text: $request.pricing,isIconDisplay : false, isForPrice:true,
-                                      custFontName : poppinsSemiBold,
-                                      custFontSize : 13.0,
-                                      enteredText:  { price in
-                            //                            if let amt = Double(price) {
-                            //                                if amt < 1.0 {
-                            //                                    hudMsg = "Price should not be less than $1.00"
-                            //                                    showhud = true
-                            //                                } else {
-                            request.pricing = price
-                            //                                }
-                            //                            }
-                        })
-                        .keyboardType(.numberPad)
-                        
-                        Text("Minimum starting bid is $1.00")
-                            .font(.custom(poppinsRegular, size: 11.0))
-                            .foregroundColor(.gray)
-                            .padding(.horizontal , 16)
+                    VStack(spacing: 12) {
+                        EnhancedToggleCard(
+                            title: "Reserve for Live",
+                            subtitle: "Save for live auction only",
+                            icon: "video.fill",
+                            iconColor: Color.defaultTheme,
+                            isOn: $isTappedReserve
+                        )
                     }
-                }else{
-                    VStack(alignment: .leading, spacing: 12) {
-//                        Text("Starting Bid")
-//                            .font(.custom(poppinsSemiBold, size: 13.0))
-//                        
-//                        HStack {
-//                            Text("$")
-//                                .font(.custom(poppinsSemiBold, size: 13.0))
-//                            TextField("0.00", text: $startingBid)
-//                                .font(.custom(poppinsSemiBold, size: 12.0))
-//                                .keyboardType(.decimalPad)
-//                        }
-//                        .padding()
-//                        .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.gray.opacity(0.4)))
-                        AuthTextField(floatingLabel: "Starting Bid".localized, placeholder: "0.0".localized, icon: .menuProfile, text: $request.pricing,isIconDisplay : false, isForPrice:true,
-                                      custFontName : poppinsSemiBold,
-                                      custFontSize : 13.0,
-                                      enteredText:  { price in
-                            //                            if let amt = Double(price) {
-                            //                                if amt < 1.0 {
-                            //                                    hudMsg = "Price should not be less than $1.00"
-                            //                                    showhud = true
-                            //                                } else {
-                            request.pricing = price
-                            //                                }
-                            //                            }
-                        })
-                        
-                        Text("Minimum starting bid is $1.00")
-                            .font(.custom(poppinsRegular, size: 11.0))
-                            .foregroundColor(.gray)
-                            .padding(.horizontal , 16)
-                    }
-//                    .padding(.horizontal)
-                    VStack(alignment: .leading, spacing: 6) {
-                        Toggle(isOn: $allowOffers) {
-                            Text("Allow Offers")
-                                .font(.custom(poppinsSemiBold, size: 13.0))
+                    .padding(.horizontal, 16)
+                    .onChange(of: isTappedReserve) { newValue in
+                        if newValue {
+                            request.reserve_for_live = "1"
+                        } else {
+                            request.reserve_for_live = "0"
                         }
-                        
-                        Text("Enable Allow Offers to let buyers offer a different price for your product. You may counter, accept, or simply decline the offer.")
-                            .font(.custom(poppinsRegular, size: 11.0))
-                            .foregroundColor(.gray)
                     }
-                    .padding(.horizontal)
+                    
+                }else{
+                    VStack(spacing: 12) {
+                        EnhancedToggleCard(
+                            title: "Flash Sale",
+                            subtitle: "Limited time offer",
+                            icon: "bolt.fill",
+                            iconColor: Color.defaultTheme,
+                            isOn: $isTappedFlash
+                        )
+                        EnhancedToggleCard(
+                            title: "Accept Offers",
+                            subtitle: "Allow buyers to make offers",
+                            icon: "hand.raised.fill",
+                            iconColor: Color.defaultTheme,
+                            isOn: $isTappedAccept
+                        )
+                    }
+                    .padding(.horizontal, 16)
+                    .onChange(of: isTappedFlash) { newValue in
+                        if newValue {
+                            request.flash_sale = "1"
+                        } else {
+                            request.flash_sale = "0"
+                        }
+                    }
+                    .onChange(of: isTappedAccept) { newValue in
+                        if newValue {
+                            request.accept_offers = "1"
+                        } else {
+                            request.accept_offers = "0"
+                        }
+                    }
                 }
                 
                 Spacer()
@@ -221,8 +224,8 @@ struct SalesFormatScreen: View {
         )
         .cornerRadius(12)
     }
-    
-    enum SalesFormat {
-        case auction, buyItNow
-    }
+}
+
+enum SalesFormat {
+    case auction, buyItNow
 }

@@ -47,6 +47,7 @@ struct CreateProductScreen: View {
     @State var selectedShippingProfileName: String = ""
     @State private var profiles: [StoreShippingModel] = []
     @StateObject private var shippingViewModel = ShippingViewModel()
+
     
     @State var showSellerSheet = false
     @State var navigateToSeller = false
@@ -313,25 +314,40 @@ struct CreateProductScreen: View {
                     .cornerRadius(12)
                     .padding(.horizontal,12)
                     
-                    DropDownSelection(
-                        options: $shippingProfileNames, floatingLabel:"Shipping Profile",
-                        hint: "Select",
-                        selected: $selectedShippingProfileName,
-                        anchor: .top,
-                        custFontName: robotoMedium,
-                        custFontSize:  14.0,
-                        custCategory : robotoRegular,
-                        custCategorySize : 13.0,
-                        onOptionSelected: { value in
-                            //string value not id -> get Id from name
-                            if let profile = profiles.first(where: { $0.name == value }) {
-                                request.shipping_profile_id = profile.id != nil ? "\(profile.id!)" : ""
+                    VStack(alignment:.leading,spacing: 8){
+
+                        // Sales Options - Enhanced Toggle Cards
+                        DropDownSelection(
+                            options: $shippingProfileNames, floatingLabel:"Shipping Profile",
+                            hint: "Select",
+                            selected: $selectedShippingProfileName,
+                            anchor: .top,
+                            custFontName: robotoMedium,
+                            custFontSize:  14.0,
+                            custCategory : robotoRegular,
+                            custCategorySize : 13.0,
+                            onOptionSelected: { value in
+                                //string value not id -> get Id from name
+                                if let profile = profiles.first(where: { $0.name == value }) {
+                                    request.shipping_profile_id = profile.id != nil ? "\(profile.id!)" : ""
+                                }
+                                
                             }
-                            
-                        }
+                        )
+                        .padding([.leading,.trailing],16)
+                        
+                    }
+                    .padding(.vertical, 16)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(Color(.systemBackground))
+                            .shadow(color: Color.black.opacity(0.08), radius: 12, x: 0, y: 4)
                     )
-                    .padding([.leading,.trailing],16)
-                    .padding(.bottom, 20)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(Color.gray.opacity(0.1), lineWidth: 1)
+                    )
+                    .padding(.horizontal, 12)
                     
                     TwoButton(titleOne: "Continue", titleTwo: "Use Product Library", onFirstButtonClick: {
                         print(request)

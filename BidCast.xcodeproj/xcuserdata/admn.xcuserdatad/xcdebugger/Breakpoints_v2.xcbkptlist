@@ -178,36 +178,6 @@
             endingLineNumber = "2362"
             landmarkName = "followUnfollow()"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "76028553-745C-410C-BF71-618592B6C1C7 - 529a25e5ddb0b5b7"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "BidCast.LiveStream.followUnfollow() -&gt; ()"
-                  moduleName = "BidCast.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/admn/Documents/JamProject/bidcast/BidCast/Screens/Home/Live%20Stream/View/LiveStream.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "2362"
-                  endingLineNumber = "2362">
-               </Location>
-               <Location
-                  uuid = "76028553-745C-410C-BF71-618592B6C1C7 - 529a25e5ddb0b5b7"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "BidCast.LiveStream.followUnfollow() -&gt; ()"
-                  moduleName = "BidCast.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/admn/Documents/JamProject/bidcast/BidCast/Screens/Home/Live%20Stream/View/LiveStream.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "2362"
-                  endingLineNumber = "2362">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -240,36 +210,6 @@
             endingLineNumber = "1004"
             landmarkName = "fetchProduct(isLoaderShown:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "10D2097D-DD2A-4411-BC8B-AA21C785A852 - a4575fba21cc6426"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "BidCast.ProfileScreen.fetchProduct(isLoaderShown: Swift.Bool) -&gt; ()"
-                  moduleName = "BidCast.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/admn/Documents/JamProject/bidcast/BidCast/Screens/Account/View/Profile/View/ProfileScreen.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1004"
-                  endingLineNumber = "1004">
-               </Location>
-               <Location
-                  uuid = "10D2097D-DD2A-4411-BC8B-AA21C785A852 - a4575fba21cc6426"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "BidCast.ProfileScreen.fetchProduct(isLoaderShown: Swift.Bool) -&gt; ()"
-                  moduleName = "BidCast.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/admn/Documents/JamProject/bidcast/BidCast/Screens/Account/View/Profile/View/ProfileScreen.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1004"
-                  endingLineNumber = "1004">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -282,8 +222,8 @@
             filePath = "BidCast/Screens/NonLinkedSceen/CreateProduct/CreateProductScreen.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "136"
-            endingLineNumber = "136"
+            startingLineNumber = "137"
+            endingLineNumber = "137"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -366,36 +306,6 @@
             endingLineNumber = "180"
             landmarkName = "fetchReciept()"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "C500DED8-E801-426D-8CC9-EF8A7AB8D79E - 4f395f2b168540b5"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(1) suspend resume partial function for closure #1 () async -&gt; () in BidCast.OrderStatusScreen.fetchReciept() -&gt; ()"
-                  moduleName = "BidCast.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/admn/Documents/JamProject/bidcast/BidCast/Screens/NonLinkedSceen/OrderStatus/View/OrderStatusScreen.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "180"
-                  endingLineNumber = "180">
-               </Location>
-               <Location
-                  uuid = "C500DED8-E801-426D-8CC9-EF8A7AB8D79E - e028a10c7c251955"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(2) await resume partial function for closure #1 () async -&gt; () in BidCast.OrderStatusScreen.fetchReciept() -&gt; ()"
-                  moduleName = "BidCast.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/admn/Documents/JamProject/bidcast/BidCast/Screens/NonLinkedSceen/OrderStatus/View/OrderStatusScreen.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "180"
-                  endingLineNumber = "180">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -408,54 +318,10 @@
             filePath = "BidCast/Screens/Sell/ListProduct/ListProductScreen.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "700"
-            endingLineNumber = "700"
+            startingLineNumber = "722"
+            endingLineNumber = "722"
             landmarkName = "saveProductDetails(as:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "D120A832-727B-4E76-BEA2-830170374985 - 2f1101e2cdd76327"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(3) suspend resume partial function for closure #2 () async throws -&gt; () in closure #1 () async -&gt; () in BidCast.ListProductScreen.saveProductDetails(as: Swift.String) -&gt; ()"
-                  moduleName = "BidCast.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/admn/Documents/JamProject/bidcast/BidCast/Screens/Sell/ListProduct/ListProductScreen.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "700"
-                  endingLineNumber = "700">
-               </Location>
-               <Location
-                  uuid = "D120A832-727B-4E76-BEA2-830170374985 - d5733d493375ff3"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(4) await resume partial function for closure #2 () async throws -&gt; () in closure #1 () async -&gt; () in BidCast.ListProductScreen.saveProductDetails(as: Swift.String) -&gt; ()"
-                  moduleName = "BidCast.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/admn/Documents/JamProject/bidcast/BidCast/Screens/Sell/ListProduct/ListProductScreen.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "700"
-                  endingLineNumber = "700">
-               </Location>
-               <Location
-                  uuid = "D120A832-727B-4E76-BEA2-830170374985 - bf6a77326a617b1b"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(7) suspend resume partial function for closure #2 () async throws -&gt; () in closure #1 () async -&gt; () in BidCast.ListProductScreen.saveProductDetails(as: Swift.String) -&gt; ()"
-                  moduleName = "BidCast.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/admn/Documents/JamProject/bidcast/BidCast/Screens/Sell/ListProduct/ListProductScreen.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "700"
-                  endingLineNumber = "700">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -472,50 +338,6 @@
             endingLineNumber = "118"
             landmarkName = "body"
             landmarkType = "24">
-            <Locations>
-               <Location
-                  uuid = "0BCD4EFE-6658-4233-845D-5D39A724A45F - 55ac432c75e319d"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(1) suspend resume partial function for closure #3 () async throws -&gt; () in closure #1 () async -&gt; () in closure #2 () -&gt; () in closure #1 () -&gt; SwiftUI.TupleView&lt;(SwiftUI.VStack&lt;BidCast.InventoryTopHeaderView&gt;, BidCast.InventoryTabView, &lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0, SwiftUI.VStack&lt;SwiftUI.TupleView&lt;(SwiftUI.Divider, &lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0)&gt;&gt;, BidCast.CusNavLink&lt;BidCast.EditProductScreen&gt;, BidCast.CusNavLink&lt;BidCast.ListProductScreen&gt;, BidCast.CusNavLink&lt;BidCast.CreateProductScreen&gt;, BidCast.CusNavLink&lt;BidCast.FilterPageView&gt;)&gt; in BidCast.InventoryScreen.body.getter : some"
-                  moduleName = "BidCast.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/admn/Documents/JamProject/bidcast/BidCast/Screens/Account/View/SellerHub/Inventory/View/InventoryScreen.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "118"
-                  endingLineNumber = "118">
-               </Location>
-               <Location
-                  uuid = "0BCD4EFE-6658-4233-845D-5D39A724A45F - f056dfc4963dbcc"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(2) await resume partial function for closure #3 () async throws -&gt; () in closure #1 () async -&gt; () in closure #2 () -&gt; () in closure #1 () -&gt; SwiftUI.TupleView&lt;(SwiftUI.VStack&lt;BidCast.InventoryTopHeaderView&gt;, BidCast.InventoryTabView, &lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0, SwiftUI.VStack&lt;SwiftUI.TupleView&lt;(SwiftUI.Divider, &lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0)&gt;&gt;, BidCast.CusNavLink&lt;BidCast.EditProductScreen&gt;, BidCast.CusNavLink&lt;BidCast.ListProductScreen&gt;, BidCast.CusNavLink&lt;BidCast.CreateProductScreen&gt;, BidCast.CusNavLink&lt;BidCast.FilterPageView&gt;)&gt; in BidCast.InventoryScreen.body.getter : some"
-                  moduleName = "BidCast.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/admn/Documents/JamProject/bidcast/BidCast/Screens/Account/View/SellerHub/Inventory/View/InventoryScreen.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "118"
-                  endingLineNumber = "118">
-               </Location>
-               <Location
-                  uuid = "0BCD4EFE-6658-4233-845D-5D39A724A45F - 804c62aa7fc02fe0"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(4) suspend resume partial function for closure #3 () async throws -&gt; () in closure #1 () async -&gt; () in closure #2 () -&gt; () in closure #1 () -&gt; SwiftUI.TupleView&lt;(SwiftUI.VStack&lt;BidCast.InventoryTopHeaderView&gt;, BidCast.InventoryTabView, &lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0, SwiftUI.VStack&lt;SwiftUI.TupleView&lt;(SwiftUI.Divider, &lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0)&gt;&gt;, BidCast.CusNavLink&lt;BidCast.EditProductScreen&gt;, BidCast.CusNavLink&lt;BidCast.ListProductScreen&gt;, BidCast.CusNavLink&lt;BidCast.CreateProductScreen&gt;, BidCast.CusNavLink&lt;BidCast.FilterPageView&gt;)&gt; in BidCast.InventoryScreen.body.getter : some"
-                  moduleName = "BidCast.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/admn/Documents/JamProject/bidcast/BidCast/Screens/Account/View/SellerHub/Inventory/View/InventoryScreen.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "118"
-                  endingLineNumber = "118">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
