@@ -23,14 +23,14 @@ struct CategoryInventoryModel: Codable {
     var extraFields: [ExtraFieldModel]?
     var color: String?
     var deletedAt: String?
-    var categoryID: Int?
+//    var categoryID: Int?
 
     enum CodingKeys: String, CodingKey {
         case id, name, image, thumbnail
-        case extraFields
+        case extraFields = "extra_fields"
         case color
-        case deletedAt
-        case categoryID
+        case deletedAt = "deleted_at"
+//        case categoryID
     }
 }
 

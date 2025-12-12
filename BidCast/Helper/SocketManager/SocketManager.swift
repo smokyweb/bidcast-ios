@@ -447,57 +447,57 @@ final class SocketManagerService: NSObject, ObservableObject {
             
             // Parse winner info
             var winner: HighestBid?
-                   if let winnerJson = json["winner"] as? [String: Any] {
-                       do {
-                           let decodedWinner = try JSONSerialization.data(withJSONObject: winnerJson)
-                           winner = try JSONDecoder().decode(HighestBid.self, from: decodedWinner)
-                       } catch {
-                           print("❌ Failed to decode winner:", error)
-                       }
-                   }
-
-                   // Parse product updates
-                   var updatedProducts: [ProductData] = []
-                   if let productsJson = json["products"] as? [[String: Any]] {
-                       do {
-                           let decodedData = try JSONSerialization.data(withJSONObject: productsJson)
-                           updatedProducts = try JSONDecoder().decode([ProductData].self, from: decodedData)
-                       } catch {
-                           print("❌ Failed to decode products:", error)
-                       }
-                   }
-//
+            if let winnerJson = json["winner"] as? [String: Any] {
+                do {
+                    let decodedWinner = try JSONSerialization.data(withJSONObject: winnerJson)
+                    winner = try JSONDecoder().decode(HighestBid.self, from: decodedWinner)
+                } catch {
+                    print("❌ Failed to decode winner:", error)
+                }
+            }
+            
+            // Parse product updates
+            var updatedProducts: [ProductData] = []
+            if let productsJson = json["products"] as? [[String: Any]] {
+                do {
+                    let decodedData = try JSONSerialization.data(withJSONObject: productsJson)
+                    updatedProducts = try JSONDecoder().decode([ProductData].self, from: decodedData)
+                } catch {
+                    print("❌ Failed to decode products:", error)
+                }
+            }
+            //
             // Update product status in the room
             if let roomIndex = rooms.firstIndex(where: { $0.room_id == roomId }),
-                      var updatedRoom = rooms[safe: roomIndex] {
-
-                       // Merge updated products into existing list
-                       if var existingProducts = updatedRoom.products {
-                           for updatedProduct in updatedProducts {
-                               if let productIndex = existingProducts.firstIndex(where: { $0.id == updatedProduct.id }) {
-                                   existingProducts[productIndex] = updatedProduct
-                               }
-                           }
-                           updatedRoom.products = existingProducts
-                       }
-
-                       // Update winner (highest bid)
-                       updatedRoom.highest_bid = winner
-                       hasWon = true
-
-                       // Save changes to main array
-                       DispatchQueue.main.async {
-                           self.rooms[roomIndex] = updatedRoom
-                           print("✅ Updated room \(roomId) with sold product and winner \(winner?.user_name ?? "unknown")")
-                           print("✅ Updated roomdata  \(self.rooms)")
-                           completion?(roomId, winner?.product_id ?? "", winner)
-                       }
-                   }
-
-                   logger.info("✅ Bid finalized for room \(roomId), product \(winner?.product_id ?? "unknown")")
-
-                   // Trigger completion callback
-                   
+               var updatedRoom = rooms[safe: roomIndex] {
+                
+                // Merge updated products into existing list
+                if var existingProducts = updatedRoom.products {
+                    for updatedProduct in updatedProducts {
+                        if let productIndex = existingProducts.firstIndex(where: { $0.id == updatedProduct.id }) {
+                            existingProducts[productIndex] = updatedProduct
+                        }
+                    }
+                    updatedRoom.products = existingProducts
+                }
+                
+                // Update winner (highest bid)
+                updatedRoom.highest_bid = winner
+                hasWon = true
+                
+                // Save changes to main array
+                DispatchQueue.main.async {
+                    self.rooms[roomIndex] = updatedRoom
+                    print("✅ Updated room \(roomId) with sold product and winner \(winner?.user_name ?? "unknown")")
+                    print("✅ Updated roomdata  \(self.rooms)")
+                    completion?(roomId, winner?.product_id ?? "", winner)
+                }
+            }
+            
+            logger.info("✅ Bid finalized for room \(roomId), product \(winner?.product_id ?? "unknown")")
+            
+            // Trigger completion callback
+            
         }
     }
     

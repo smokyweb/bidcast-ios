@@ -1198,18 +1198,19 @@ struct LiveStream: View {
             }
             )
         
-        .bottomSheet(isPresented: $winnerSheet,height: screenHeight * 0.38) {
-            WinnerBottomSheet(
-                winnerAmount: $winnerAmount, profileImage: $winnerProfileImage,
-                username: $winnerName,
-                winnerProfileID : $winnerProfileID,
-                showParentToast: $showToast,
-                parentToastMessage: $toastMessage,
-                onDismiss: {
-                    self.winnerSheet = false
-                }
-            )
-        }
+//        .bottomSheet(isPresented: $winnerSheet,height: screenHeight * 0.38) {
+//            WinnerBottomSheet(
+//                winnerAmount: $winnerAmount, profileImage: $winnerProfileImage,
+//                username: $winnerName,
+//                winnerProfileID : $winnerProfileID,
+//                showParentToast: $showToast,
+//                parentToastMessage: $toastMessage,
+//                onDismiss: {
+//                    self.winnerSheet = false
+//                }
+//            )
+//        }
+        
         .bottomSheet(isPresented: $maxBidAmountSheet, height: screenHeight * 0.35) {
             if let currentProduct = productData.first {
                 MaxBidBottomSheet(
@@ -1543,7 +1544,13 @@ struct LiveStream: View {
         winnerProfileID = id
         winnerProfileImage = image
         winnerAmount = amount
-        winnerSheet = true
+//        winnerSheet = true
+        let message = "Congratulations! You won the bid with an amount of $\(winnerAmount)"
+        let roomId = liveShowsData[currentIndex].room_id ?? ""
+        let userId = UserDefaults.userId
+        let userName = UserDefaults.userName
+        let userImage = UserDefaults.profileURL
+        SocketManagerService.shared.sendChat(roomId: roomId, message: message, userId: userId, userName: userName, userImage: userImage)
     }
     
     private func handleBuyerVerification() {

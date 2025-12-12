@@ -809,15 +809,6 @@ struct ProductCardView: View {
             .onTapGesture(perform: {
                 showActions = true
             })
-//            .onTapAndLongPress(
-//                tap: {
-//                    animatePress()
-//                    showActions = true
-//                },
-//                longPress: {
-//                    showActions = true
-//                }
-//            )
             .sheet(isPresented: $showActions) {
                 ProductActionsSheet(
                     isPresented: $showActions,
@@ -906,52 +897,10 @@ extension ProductCardView {
 }
 extension ProductCardView {
     var productImageView: some View {
-        ZStack(alignment: .topLeading) {
-            AsyncImage(url: URL(string: product.images?.first ?? "")) { phase in
-                switch phase {
-                case .empty:
-                    placeholderView
-                case .success(let image):
-                    imageView(image)
-                case .failure:
-                    failureView
-                @unknown default:
-                    EmptyView()
-                }
-            }
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(Color.black.opacity(0.2), lineWidth: 1)
-            )
-            .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
+        VStack {
+            CustomProfileImage(url: product.images?.first ?? "", isCircular: false, size: 120)
         }
         .frame(width: 120, height: 120)
-    }
-    
-    var placeholderView: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemGray6))
-            ProgressView()
-        }
-    }
-    
-    func imageView(_ image: Image) -> some View {
-        image
-            .resizable()
-            .scaledToFill()
-            .frame(width: 120, height: 120)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
-    }
-    
-    var failureView: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemGray5))
-            Image(systemName: "photo")
-                .font(.system(size: 30))
-                .foregroundColor(.gray)
-        }
     }
 }
 extension ProductCardView {

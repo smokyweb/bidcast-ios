@@ -203,8 +203,8 @@ struct RehearsalScreen: View {
                                 if !isLive{
                                     self.presentationMode.wrappedValue.dismiss()
                                 }else{
-                                    self.showSellSheet = true
                                     currentBottomSheet = .endShow
+                                    self.showSellSheet = true
                                 }
                                 //
                                 
@@ -557,19 +557,10 @@ struct RehearsalScreen: View {
                             Button(action: {
                                 if UserDefaults.sellerVerafied == "verified"{
                                     if !isLive{
-                                        //                                        showProductSheet = true
                                         Task {
-                                            //                                            if !castManager.isPublishing {
-                                            
                                             showProductSheet = true
-                                            //                                            self.isLive = true
-                                            //                                            self.UpdateStatus(status : false)
-                                            //                                            } else {
-                                            //                                                try await castManager.unpublish()
-                                            //                                            }
                                         }
                                     }
-                                    //                                    self.UpdateStatus(status : false)
                                 }else{
                                     showSellerSheet = true
                                 }
@@ -1139,7 +1130,10 @@ struct RehearsalScreen: View {
         socketManager.listenForChat(roomId: roomId)
         socketManager.listenForViewerCount()
         socketManager.listenForShowTimer(roomId: roomId)
-        socketManager.listenForBidFinalized()
+        // Bid finalized listener
+        SocketManagerService.shared.listenForBidFinalized { roomId, productId, winner in
+            handleBidFinalized(for: roomId, winner: winner)
+        }
         socketManager.observePollVoteUpdate { pollModel in
             print(pollModel)
             self.remainingTimer = timerStringToSeconds(pollModel.remainingTime)
@@ -1148,10 +1142,14 @@ struct RehearsalScreen: View {
         }
     }
     
+    private func handleBidFinalized(for roomId: String, winner: HighestBid?) {
+        fetchProducts(for: roomId)
+    }
+    
     private func handleCountdownCompletion() {
         fetchProducts(for: roomId)
         currentBottomSheet = .shop
-        showSellSheet = true
+        showShopSheet = true
         fetchLatestProductList()
         hasCountdownStarted = false
     }
