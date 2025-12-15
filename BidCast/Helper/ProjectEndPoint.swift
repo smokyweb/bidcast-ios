@@ -221,10 +221,15 @@ extension APIEndPoint: EndPointType {
     
     var url: URL? {
         switch self {
-        case .getProduct:
+        case .getProduct,
+                .productPurchaseDetail,
+                .productOrder,
+                .productOrderListing,
+                .productOrderDetails,
+                .orderReciept,
+                .getOrderDetails,
+                .fetchProduct:
             return URL(string: "\(baseURL1)\(path)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)
-        case .fetchProduct:
-          return URL(string: "\(baseURL1)\(path)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)
         default :
             return URL(string: "\(baseURL)\(path)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)
         }
@@ -294,7 +299,7 @@ extension APIEndPoint: EndPointType {
         case .getAddress:
             return "get-shipping-address"
         case .getOrderDetails(param:let param):
-            return "order-details-with-shipping?product_id=\(param.product_id)&order_id=\(param.order_id)"
+            return "get-my-purchases-orders?product_id=\(param.product_id)&order_id=\(param.order_id)"
         case .setDefaultAddress:
             return "set-default-shipping-address"
         case .getPreference:
@@ -341,13 +346,13 @@ extension APIEndPoint: EndPointType {
         case .getMyScheduleShow(param:let param):
             return "get-my-schedule-show?=\(param.type)&user_id=\(param.user_id)&page=\(param.page)"
         case .productOrderListing:
-            return "product/order-listing"
+            return "get-my-orders"
         case .productPurchaseDetail:
             return "checkout-product-detail"
         case .productOrder:
-            return "product/order"
+            return "place-order"
         case .productOrderDetails:
-            return "product/order-details"
+            return "get-order-status"
         case .makeOffer:
             return "offer/make"
         case .makeOfferList(param:let param):
@@ -361,7 +366,7 @@ extension APIEndPoint: EndPointType {
         case .getReferralCode:
             return "referral-code/fetch"
         case .orderReciept:
-            return "product/order-receipt"
+            return "get-order-details"
         case .AddCard:
             return "add-card-net"
         case .deleteCard:
