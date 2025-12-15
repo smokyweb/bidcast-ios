@@ -402,18 +402,7 @@ struct LogoutRequest : Encodable{
     var device_token : String
 }
 
-//MARK: InventoryRequest
-struct InventoryRequest : Encodable{
-    var status : String
-    var page : Int
-    var search : String?
-    var categoryIds: String?
-    var condition: String?
-    var min_price: String?
-    var max_price: String?
-    var format: String?
-    var marketplace: String
-}
+
 
 //MARK: InventoryRequest
 struct UpdateProductStatusRequest : Encodable{
@@ -674,14 +663,13 @@ struct ProductRequest : Encodable {
     var conditions: String?
     var min_price: String?
     var max_price: String?
-    var status: String?
-    var marketplace: String?
+    var status: String? //active,inactive, draft
+    var marketplace: String? //true, false
     var page: Int
-    var category_id : String? = ""
     var type: String? //live,flash_sale,reserve_for_live
-    var sale_type: String? //newest, auction,accept_offers
-    var sort_by: String? //title_asc,title_desc,newest,oldest,price_low_high,price_high_low
-    var format: String?
+    var sale_type: String? //buy_now, auction,accept_offers
+    var sort_by: String? //title_asc, title_desc, newest, oldest, price_low_high, price_high_low
+    var format: String? //asc, desc
 }
 
 struct GetLiveShowsRequest : Encodable{

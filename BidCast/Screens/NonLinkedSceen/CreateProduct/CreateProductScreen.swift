@@ -42,6 +42,7 @@ struct CreateProductScreen: View {
     
     @State var viewModel = ListProductViewModel()
     @State var imageUrls: [String] = []
+    @State var videoUrls: [String] = []
     
     @State var shippingProfileNames: [String] = []
     @State var selectedShippingProfileName: String = ""
@@ -98,7 +99,7 @@ struct CreateProductScreen: View {
                 
                 ScrollView(showsIndicators:false) {
                     
-                    MediaPickerView(uploadedImageUrls: $imageUrls)
+                    MediaPickerView(uploadedImageUrls: $imageUrls, uploadedVideoUrls: $videoUrls)
                         .padding(.horizontal,12)
                         .background(.clear)
                     
@@ -427,7 +428,15 @@ struct CreateProductScreen: View {
             
             CusNavLink(doNavigate: $navigateToProuct, destination: AddProductsScreen(request:$requests,thumbNail: $thumbNail,fromPrepare: $fromPrepare,backToPrepare: $backToPrepare, NavFromProductLibrary: .constant(false), backToCreateProduct: .constant(false), delegate: delegate))
             
-            CusNavLink(doNavigate: $navigateToSalesFormat, destination: SalesFormatScreen(request: $request,storeScheduleRequest: $requests, imageUrls : $imageUrls,thumbNail: $thumbNail,backToPrepare: $backToPrepare,fromPrepare: $fromPrepare,backToCreateProduct:$navigateToSalesFormat,delegate: delegate))
+            CusNavLink(doNavigate: $navigateToSalesFormat, destination: SalesFormatScreen(request: $request,
+                                                                                          storeScheduleRequest: $requests,
+                                                                                          imageUrls : $imageUrls,
+                                                                                          videoUrls: $videoUrls,
+                                                                                          thumbNail: $thumbNail,
+                                                                                          backToPrepare: $backToPrepare,
+                                                                                          fromPrepare: $fromPrepare,
+                                                                                          backToCreateProduct:$navigateToSalesFormat,
+                                                                                          delegate: delegate))
         }
         .ignoresSafeArea(edges: .bottom)
         .background(.bg.opacity(0.5))

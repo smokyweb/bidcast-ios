@@ -21,12 +21,18 @@ struct SalesFormatScreen: View {
     let quickWeights = ["1 oz", "5 oz", "10 oz", "1 lb", "5 lb", "10 lb"]
     @Binding var request : StoreProductParam
     @Binding var storeScheduleRequest : StoreScheduleShowRequest
+    
     @Binding var imageUrls: [String]
+    @Binding var videoUrls: [String]
+    
     @Binding var thumbNail : String
     @Binding var backToPrepare : Bool
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
     @State var showError: Bool = false
+    
+   
+    
     
     @State var isTappedFlash: Bool = false
     @State var isTappedAccept: Bool = false
@@ -190,7 +196,9 @@ struct SalesFormatScreen: View {
                 isHazardous: $isHazardous,
                 unitOptions: unitOptions,
                 quickWeights: quickWeights,
-                imageUrls : $imageUrls, request : $request,storeScheduleRequest: $storeScheduleRequest,
+                imageUrls : $imageUrls,
+                videoUrls: $videoUrls,
+                request : $request,storeScheduleRequest: $storeScheduleRequest,
                 thumbNail: $thumbNail,
                 backToPrepare: $backToPrepare,
                 fromPrepare:$fromPrepare,

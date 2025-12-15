@@ -676,7 +676,7 @@ final class APIManager {
     }
     
     
-    func uploadImageWithMultipleKeys<T: Decodable>(
+    func uploadImageWithMultipleKeys1<T: Decodable>(
         type: EndPointType,
         urlArray: [[String]]? = nil,
         mimeType: [String],
@@ -774,6 +774,196 @@ final class APIManager {
           print("Other Error: \(error.localizedDescription)")
             throw DataError.invalidCode("Other Error: \(error.localizedDescription)")
         }
+    }
+    
+    func uploadImageWithMultipleKeys<T: Decodable>(
+        type: EndPointType,
+        urlArray: [[String]]? = nil,
+        mimeType: [String],
+        keyName: [String],
+        parameters: [String: Any]?,
+        modelType: T.Type,
+        header: Bool
+    ) async throws -> T  {
+       print("Upload File API Request - - - - - - - - - - >>>>>")
+        guard let url = type.url else {
+            throw DataError.invalidURL
+        }
+       print("URL >> \(url)")
+        var request = URLRequest(url: url)
+        request.httpMethod = type.method.rawValue
+       print("Method >> \(type.method.rawValue)")
+        
+        let boundary = generateBoundary()
+        
+        var media =  [MediaData1]()
+        
+        for (index,key) in keyName.enumerated()  {
+            urlArray?[index].forEach { url in
+                if url.contains("media") {
+                    guard let med = MediaData1(withURL: url, forKey: key, mimeType: mimeType[index]) else {
+                        return
+                    }
+                    media.append(med)
+                } else {
+                    guard let med = MediaData1(withURL: url, forKey: key, mimeType: mimeType[index]) else {
+                        return
+                    }
+                    media.append(med)
+                }
+            }
+        }
+
+       print(media as Any)
+   
+        let params  = parameters
+        
+       print(params)
+        
+        request.allHTTPHeaderFields = type.headers
+        if header {
+            if header{
+               print("Access Token >>>> \(UserDefaults.accessToken)")
+                request.allHTTPHeaderFields = ["Authorization":"Bearer \(UserDefaults.accessToken)"]
+            }
+        }
+        
+        request.allHTTPHeaderFields = [
+            "Accept": "application/json",
+            "Content-Type": "multipart/form-data; boundary=\(boundary)"
+        ]
+        
+       print(media as Any)
+        
+        let dataBody = createDataBody1(withParameters: params, media: media, boundary: boundary)
+        
+        request.httpBody = dataBody
+        
+       print("Headers >>> \(request.allHTTPHeaderFields ?? [:])")
+        
+       print(request)
+        let config = URLSessionConfiguration.default
+        config.waitsForConnectivity = true
+        config.timeoutIntervalForResource = 250
+        
+       let (data, response) = try await URLSession(configuration: config).data(for: request)
+       print("response >>> \(response)")
+       print("API Response >>> \n\(data.prettyPrintedJSONString ?? "")")
+        
+        guard let response = response as? HTTPURLResponse,
+              200 == response.statusCode || 201 == response.statusCode else {
+            
+            // ✅ Handle 401 with single alert
+            if let response = response as? HTTPURLResponse, response.statusCode == 401 {
+                DispatchQueue.main.async {
+                    // 🚫 Do not show popup if already logged out
+                    if UserDefaults.accessToken.isEmpty || UserDefaults.accessToken == ""{
+                        return
+                    }
+                    
+                    if !APIManager.isShowingUnauthorizedAlert {
+                        APIManager.isShowingUnauthorizedAlert = true
+                        do {
+                            let dataObj = try JSONDecoder().decode(ApiError.self, from: data)
+                            if dataObj.error_type == "UNAUTHORIZED" {
+                                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                                   let rootVC = windowScene.windows.first(where: { $0.isKeyWindow })?.rootViewController {
+                                    
+                                    let alert = UIAlertController(
+                                        title: "Session Expired",
+                                        message: "Your account has been logged in from another device",
+                                        preferredStyle: .alert
+                                    )
+                                    
+                                    let loginAction = UIAlertAction(title: "Login", style: .default) { _ in
+                                        APIManager.isShowingUnauthorizedAlert = false
+                                        // clear token on popup
+                                        UserDefaults.accessToken = ""
+                                        rootVC.topMostViewController.dismiss(animated: true) {
+                                            NotificationCenter.default.post(name: .userSessionExpired, object: nil)
+                                        }
+                                    }
+                                    
+                                    alert.addAction(loginAction)
+                                    rootVC.topMostViewController.present(alert, animated: true, completion: nil)
+                                }
+                            }else if dataObj.error_type == "invalid_token"{
+                                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                                   let rootVC = windowScene.windows.first(where: { $0.isKeyWindow })?.rootViewController {
+                                    
+                                    let alert = UIAlertController(
+                                        title: "Session Expired",
+                                        message: "Your account has been deleted or your session is no longer valid. Please log in again.",
+                                        preferredStyle: .alert
+                                    )
+                                    
+                                    let loginAction = UIAlertAction(title: "Login", style: .default) { _ in
+                                        APIManager.isShowingUnauthorizedAlert = false
+                                        // clear token on popup
+                                        UserDefaults.accessToken = ""
+                                        rootVC.topMostViewController.dismiss(animated: true) {
+                                            NotificationCenter.default.post(name: .userSessionExpired, object: nil)
+                                        }
+                                    }
+                                    
+                                    alert.addAction(loginAction)
+                                    rootVC.topMostViewController.present(alert, animated: true, completion: nil)
+                                }
+                            }
+                            return
+                            
+                        } catch {
+                            print("Failed to decode ApiError: \(error)")
+                            APIManager.isShowingUnauthorizedAlert = false
+                        }
+                    }
+                }
+            }
+            
+            
+            let dataObj = try JSONDecoder().decode(ApiError.self, from: data)
+            print(dataObj)
+            if let message = dataObj.message {
+                throw DataError.invalidCode(message)
+            }else if let errors = dataObj.errors{
+                if let emailError = errors.email { throw DataError.invalidCode(emailError) }
+                if let passwordError = errors.password { throw DataError.invalidCode(passwordError) }
+                
+                throw DataError.invalidCode(errors.email)
+               
+            }else{
+                throw DataError.invalidCode(dataObj.message)
+            }
+        }
+        do {
+            let jsonData = try JSONSerialization.jsonObject(with: data, options: [])
+           print("jsonData: \(jsonData)")
+            let object = try JSONDecoder().decode(T.self, from: data)
+           print("decoded data: \(object)")
+            return object
+        }
+        catch let error as DecodingError {
+            switch error {
+            case .typeMismatch(_, let context),
+                 .valueNotFound(_, let context),
+                 .keyNotFound(_, let context),
+                 .dataCorrupted(let context):
+                
+                // Extract the coding path (which contains "data" and "created_by")
+                let codingKeys = context.codingPath.map { $0.stringValue }.joined(separator: " -> ")
+                
+               print("Decoding Error: \(context.debugDescription)")
+               print("Coding Path: \(codingKeys)")
+                throw DataError.invalidCode("Decoding Error: \(context.debugDescription), Path: \(codingKeys)")
+            @unknown default:
+               print("Unknown Decoding Error: \(error)")
+                throw DataError.invalidCode("Unknown Decoding Error: \(error)")
+            }
+        } catch {
+           print("Other Error: \(error.localizedDescription)")
+            throw DataError.invalidCode("Other Error: \(error.localizedDescription)")
+        }
+        
     }
     
     private func createDataBody1(withParameters params: [String: Any]?, media: [MediaData1]?, boundary: String) -> Data {

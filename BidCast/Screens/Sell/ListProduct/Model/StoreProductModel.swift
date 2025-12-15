@@ -56,10 +56,22 @@ struct StoreProductModel: Codable {
     }
 }
 
-struct ImageModel : Codable {
-    var images : String?
-    var thumbnail: String?
+// MARK: - DataClass
+struct ImageModel: Codable {
+    var images: [ImagesModel]?
+    var videos: [VideosModel]?
 }
+
+// MARK: - Image
+struct ImagesModel: Codable {
+    var images, thumbnail: String?
+}
+
+// MARK: - Video
+struct VideosModel: Codable {
+    var videos: String?
+}
+
 
 struct MailClassesData: Codable {
     var mail_classes: [MailClass]

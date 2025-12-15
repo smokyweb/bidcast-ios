@@ -46,6 +46,7 @@ struct EditProductScreen: View {
     
     @StateObject var viewModel = ListProductViewModel()
     @State var imageUrls: [String] = []
+    @State var videoUrls: [String] = []
     @State var thumbnailUrls: [String] = []
     
     @State var showSellerSheet = false
@@ -80,11 +81,17 @@ struct EditProductScreen: View {
                 .background(Color.white)
                 
                 ScrollView(showsIndicators:false){
-                    
-                    MediaPickerView(uploadedImageUrls: $imageUrls) { index in
-                        thumbnailUrls.remove(at: index)
+                    MediaPickerView(uploadedImageUrls: $imageUrls, uploadedVideoUrls: $videoUrls) { index, mediaType in
+                        if mediaType == .image{
+                            thumbnailUrls.remove(at: index)
+                        }
+                        else if mediaType == .video {
+                            
+                        }
+                        
                     }
-                    
+//                    MediaPickerView(uploadedImageUrls: $imageUrls)
+//                    
                     VStack(alignment:.leading,spacing: 8){
                         Text("Product Details".localized)
                             .font(.custom(robotoMedium, size: 16.0))
@@ -642,7 +649,7 @@ struct EditProductScreen: View {
 
                 // 2️⃣ Upload only local images
                 if !localImages.isEmpty {
-                    try await viewModel.uploadStoreImage(images: localImages, key: "images[]")
+//                    try await viewModel.uploadStoreImage(images: localImages, key: "images[]") //todo
                 } else {
                     print("✅ No new local images to upload")
                 }
@@ -662,9 +669,9 @@ struct EditProductScreen: View {
                         guard let response = self.viewModel.storeImageResponse,
                               response.status == "success" else { return }
                         
-                        uploadedUrls = response.data.map {
+                        uploadedUrls = response.data.images?.map {
                             ["image": $0.images ?? "", "thumbnail": $0.thumbnail ?? ""]
-                        }
+                        } ?? []
                     }
                     // 🔹 Build uploaded image data
                    

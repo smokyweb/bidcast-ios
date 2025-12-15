@@ -27,7 +27,7 @@ enum APIEndPoint{
     case storeFavCategories(param:[String:Any] )
     case auctionType
     case logout
-    case getInventory(param : InventoryRequest)
+//    case getInventory(param : InventoryRequest)
     
     case getLesson
     case getSellingTips
@@ -282,8 +282,8 @@ extension APIEndPoint: EndPointType {
             return "get-category?category_id=\(param.category_id ?? "")&type=\(param.type ?? "")&search=\(param.search ?? "")&get_count=\(param.get_count)"
         case .auctionType:
             return "get-auction-type"
-        case .getInventory:
-            return "get-my-inventory"
+//        case .getInventory:
+//            return "get-my-inventory"
         case .storeProduct(param:let param):
             if let id = param.productId {
                 return "store-product?product_id=\(id)"
@@ -687,8 +687,8 @@ extension APIEndPoint: EndPointType {
             return .get
         case .auctionType:
             return .get
-        case .getInventory:
-            return .post
+//        case .getInventory:
+//            return .post
         case .storeProduct:
             return .post
         case .getAllTips:
@@ -1053,8 +1053,8 @@ extension APIEndPoint: EndPointType {
             return param
         case .verifyOTP(let param):
             return param
-        case .getInventory(let param):
-            return param
+//        case .getInventory(let param):
+//            return param
         case .getLesson:
             return nil
         case .getSellingTips:
@@ -1438,8 +1438,8 @@ extension APIEndPoint: EndPointType {
             return nil
         case .logout:
             return nil
-        case .getInventory(param: let param):
-            return nil
+//        case .getInventory(param: let param):
+//            return nil
         case .getLesson:
             return nil
         case .getSellingTips:

@@ -26,6 +26,7 @@ struct ProductWeightScreen: View {
     var quickWeights: [String]
     
     @Binding var imageUrls: [String]
+    @Binding var videoUrls: [String]
     
     @State private var isHazardousMaterial = false
     
@@ -332,15 +333,65 @@ struct ProductWeightScreen: View {
                     showError = true
                 }
             ) {
-                try await viewModel.uploadStoreImage(images: imageUrls, key: "images[]")
-                request.shipping_profile_id = "4" //TODO : need to dynamic
+                var mimeType: [String] = []
+                var photos = [[String]]()
+                var keysValue: [String] = []
+            
+                if imageUrls.count > 0 {
+                    mimeType.append("image/png")
+                    keysValue.append("images[]")
+                    let imagesArr = self.imageUrls.map({$0.description})
+                    photos.append(imagesArr)
+                }
+                
+                
+                if self.videoUrls.count > 0 {
+                    // Check video URL extension to set the appropriate MIME type
+                    for urlString in videoUrls {
+                        guard let url = URL(string: urlString) else { return }
+                        let fileExtension = url.pathExtension.lowercased()
+                        
+                        switch fileExtension {
+                        case "mp4":
+                            keysValue.append("videos[]")
+                            mimeType.append("video/mp4")
+                            photos.append([url.description])
+                        case "avi":
+                            keysValue.append("videos[]")
+                            mimeType.append("video/avi")
+                            photos.append([url.description])
+                        case "mov":
+                            keysValue.append("videos[]")
+                            mimeType.append("video/mov")
+                            photos.append([url.description])
+                        case "mkv":
+                            keysValue.append("videos[]")
+                            mimeType.append("video/x-matroska")
+                            photos.append([url.description])
+                        default:
+                            keysValue.append("videos[]")
+                            mimeType.append("video/*") // Default case for unknown video types
+                            photos.append([url.description])
+                        }
+                    }
+                }
+                try await viewModel.uploadStoreImage(images: photos, mimeType: mimeType, keysValue: keysValue)
+                
+                
+                
+//                try await viewModel.uploadStoreImage(images: imageUrls, key: "images[]")
+//                request.shipping_profile_id = "4" //TODO : need to dynamic
                 guard let response = self.viewModel.storeImageResponse, response.status == "success" else {
                     return
                 }
                 
-                let uploadedUrls: [[String: String]] = response.data.map {
+                let uploadedImagesUrls: [[String: String]] = response.data.images?.compactMap {
                     return ["image": $0.images ?? "", "thumbnail": $0.thumbnail ?? ""]
-                }
+                } ?? []
+                let uploadedVideoUrls: [[String: String]] = response.data.videos?.compactMap {
+                    return ["videos": $0.videos ?? ""]
+                } ?? []
+                
                 var variantArray: [[String: Any]] = []
                 //TODO: eed to manage varient
                 
@@ -367,7 +418,8 @@ struct ProductWeightScreen: View {
                     "processing_category": request.processing_category,
                     
                     // ✅ Images array (already present)
-                    "images": uploadedUrls,
+                    "images": uploadedImagesUrls,
+                    "videos": uploadedVideoUrls,
                     "status": request.status,
 //                    "type": "live"
                     "hazardous_material": isHazardousMaterial

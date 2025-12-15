@@ -31,9 +31,12 @@ struct InventoryScreen: View {
     @State var segment: InventorySegment = .active
     
     @State var inventoryList: [InventoryDataModel] = []
-    @State var request: InventoryRequest = InventoryRequest(status: "active", page: 1, marketplace: "false")
+    @State var request: ProductRequest = ProductRequest(status: "active", marketplace: "false", page: 1)
     @EnvironmentObject var networkMonitor: NetworkMonitor
+    
     var viewModel = InventoryViewModel()
+    @StateObject private var productViewModel = ProductViewModel()
+    
     @State var productId : Int = 0
     @State var showError: Bool = false
     @State var showDeleteProduct: Bool = false
@@ -534,7 +537,7 @@ struct InventoryScreen: View {
         request.page = page
         request.search = searchText
         if !selectedCategoryId.isEmpty {
-            request.categoryIds = selectedCategoryId.toCommaSeparatedString()
+            request.category_ids = selectedCategoryId.toCommaSeparatedString()
         }
        
         request.marketplace = "\(marketPlaceSelected)"
@@ -548,10 +551,10 @@ struct InventoryScreen: View {
             request.max_price = maxPrice.toString()
         }
         if !selectedCondition.isEmpty {
-            request.condition = selectedCondition.toCommaSeparatedString()
+            request.conditions = selectedCondition.toCommaSeparatedString()
         }
         isLoading = true
-        try await viewModel.getInventoryList(param: request)
+        try await productViewModel.getProductsData(parameters: request)
     }
     
     private func clearFilter() {
@@ -649,7 +652,7 @@ struct InventoryScreen: View {
             request.page = currentPage
             request.search = searchText
             if !selectedCategoryId.isEmpty {
-                request.categoryIds = selectedCategoryId.toCommaSeparatedString()
+                request.category_ids = selectedCategoryId.toCommaSeparatedString()
             }
            
             request.marketplace = "\(marketPlaceSelected)"
@@ -663,10 +666,10 @@ struct InventoryScreen: View {
                 request.max_price = maxPrice.toString()
             }
             if !selectedCondition.isEmpty {
-                request.condition = selectedCondition.toCommaSeparatedString()
+                request.conditions = selectedCondition.toCommaSeparatedString()
             }
             isLoading = true
-            try await viewModel.getInventoryList(param: request)
+            try await productViewModel.getProductsData(parameters: request)
             handleDataLoad()
         }
     }

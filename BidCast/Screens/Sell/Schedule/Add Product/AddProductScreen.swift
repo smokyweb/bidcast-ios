@@ -522,7 +522,9 @@ extension AddProductsScreen {
                     productSuccess()
                 }
             ) {
-                try await productViewModel.getProductsData(parameters: ProductRequest(user_id: "\(UserDefaults.userId)", page: page, category_id: request.category_id, type: "live"))
+                try  await productViewModel.getProductsData(parameters: ProductRequest(user_id: "\(UserDefaults.userId)",
+                                                                                       category_ids: request.category_id,
+                                                                                       page: currentPage))
             }
         }
     }
@@ -547,7 +549,9 @@ extension AddProductsScreen {
                 }
             ) {
                 currentPage += 1
-                try  await productViewModel.getProductsData(parameters: ProductRequest(user_id: "\(UserDefaults.userId)", page: currentPage, category_id: request.category_id, type: "live"))
+                try  await productViewModel.getProductsData(parameters: ProductRequest(user_id: "\(UserDefaults.userId)",
+                                                                                       category_ids: request.category_id,
+                                                                                       page: currentPage))
             }
         }
     }

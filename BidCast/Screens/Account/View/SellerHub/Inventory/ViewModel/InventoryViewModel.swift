@@ -16,28 +16,7 @@ final class InventoryViewModel: ObservableObject {
     @Published var errorMessage: String? = nil
     var request: String = ""
     
-    // MARK: - Get Inventory List
-    func getInventoryList(param: InventoryRequest) async throws {
-        self.request = "Inventory"
-        do {
-            let response: ResponseModalPaginate<[InventoryDataModel]> = try await APIManager.shared.request(
-                type: APIEndPoint.getInventory(param: param),
-                header: true
-            )
-            self.inventoryDict = response
-        } catch(let error) {
-            if let dataError = error as? DataError {
-                self.errorMessage = dataError.getErrorMessage()
-            }
-            else {
-                self.errorMessage = error.localizedDescription
-            }
-            throw error
-        }
-    }
-    
-    
-    // MARK: - Get Inventory List
+//    // MARK: - Get Inventory List
 //    func getInventoryList(param: InventoryRequest) async throws {
 //        self.request = "Inventory"
 //        do {
@@ -56,6 +35,7 @@ final class InventoryViewModel: ObservableObject {
 //            throw error
 //        }
 //    }
+
     
     // MARK: - DeleteProductRequest.
     func deleteProductRequest(parameters: DeleteProduct) async {

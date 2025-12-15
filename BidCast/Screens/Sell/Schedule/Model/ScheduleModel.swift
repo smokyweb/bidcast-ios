@@ -34,7 +34,7 @@ struct TipsData : Codable {
     var description: String?
 }
 
-// MARK: - ProductDataModel
+//// MARK: - ProductDataModel
 struct ProductDataModel: Codable {
     var id, userID, category_id: Int?
     var subCategoryID: Int?
@@ -53,7 +53,6 @@ struct ProductDataModel: Codable {
     var createdAt: String?
     var category: ProductCategoryModel?
     var subCategory: ProductCategoryModel?
-
     enum CodingKeys: String, CodingKey {
         case id
         case userID = "user_id"
@@ -75,6 +74,28 @@ struct ProductDataModel: Codable {
         case createdAt = "created_at"
         case category
         case subCategory = "sub_category"
+    }
+}
+
+// MARK: - Datum
+struct ProductDataModel1: Codable {
+    var id: Int?
+    var title: String?
+    var image: String?
+    var thumbanail: String?
+    var condition, category: String?
+    var sellerID: Int?
+    var sellerName: String?
+    var price: String?
+    var status: String?
+    var bids: Int?
+    var quantity: String?
+
+    enum CodingKeys: String, CodingKey {
+        case id, title, image, thumbanail, condition, category
+        case sellerID = "seller_id"
+        case sellerName = "seller_name"
+        case price, status, bids, quantity
     }
 }
 

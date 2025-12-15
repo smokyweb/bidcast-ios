@@ -14,7 +14,7 @@ final class ListProductViewModel: ObservableObject {
     @Published var categoryResponse: ResponseModal<[CategoryDataModel]>?
     @Published var storeProductResponse: ResponseModal<StoreProductModel>?
     @Published var mailClassResponse: ResponseModal<MailClassesData>?
-    @Published var storeImageResponse: ResponseModal<[ImageModel]>?
+    @Published var storeImageResponse: ResponseModal<ImageModel>?
     @Published var errorMessage: String?
     @Published var addressesResponse : ResponseModal<[AddressModel]>?
     @Published var OrderDetailsResponse : ResponseModal<OrderDetailsModel>?
@@ -84,25 +84,23 @@ final class ListProductViewModel: ObservableObject {
         }
     }
     
-    func uploadStoreImage(images: [String], key: String) async throws{
+    func uploadStoreImage(images: [[String]]? = nil,
+                          mimeType: [String],
+                          keysValue: [String]) async throws{
         self.requestType = "store"
         
         do {
-//            let parameters = try param.asDictionary()
-            
-           if let response = try await APIManager.shared.uploadImage(
+            let response: ResponseModal<ImageModel>? = try await APIManager.shared.uploadImageWithMultipleKeys(
                 type: APIEndPoint.uploadProductImage,
                 urlArray: images,
-                mimeType: "image/jpeg",
-                keyName: "images[]",
+                mimeType: mimeType,
+                keyName: keysValue,
                 parameters: [:],
-                modalType: ResponseModal<[ImageModel]>?.self,
+                modelType: ResponseModal<ImageModel>?.self,
                 header: true
-           ){
-                self.storeImageResponse = response
-            }
-
-        } catch(let error) {
+            )
+            self.storeImageResponse = response
+        }catch(let error) {
             if let dataError = error as? DataError {
                 self.errorMessage = dataError.getErrorMessage()
             }

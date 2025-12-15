@@ -1001,7 +1001,6 @@ extension ProfileScreen {
             ) {
                 let request = ProductRequest(user_id: "\(sellerId)",
                                              search: searchText, page: currentPage,
-                                             //                               type: "live",
                                              sale_type: selectedOptions,
                                              sort_by: selectedSort
                 )

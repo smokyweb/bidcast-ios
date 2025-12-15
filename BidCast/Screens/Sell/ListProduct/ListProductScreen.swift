@@ -43,6 +43,7 @@ struct ListProductScreen: View {
     @StateObject var viewModel = ListProductViewModel()
     
     @State var imageUrls: [String] = []
+    @State var uploadedVideoUrls: [String] = []
     
     @State private var isHazardousMaterial: Bool = false
     @State private var selectedFormat: SalesFormat = .auction
@@ -98,7 +99,7 @@ struct ListProductScreen: View {
                 
                 ScrollView(showsIndicators:false){
                     
-                    MediaPickerView(uploadedImageUrls: $imageUrls)
+                    MediaPickerView(uploadedImageUrls: $imageUrls, uploadedVideoUrls: $uploadedVideoUrls)
                     
                     VStack(alignment:.leading,spacing: 8){
                         Text("Product Details".localized)
@@ -660,7 +661,49 @@ struct ListProductScreen: View {
                 }
             ) {
                 viewModel.errorMessage?.removeAll()
-                try await viewModel.uploadStoreImage(images: imageUrls, key: "images[]")
+                var mimeType: [String] = []
+                var photos = [[String]]()
+                var keysValue: [String] = []
+            
+                if imageUrls.count > 0 {
+                    mimeType.append("image/jpeg")
+                    keysValue.append("images[]")
+                    let imagesArr = self.imageUrls.map({$0.description})
+                    photos.append(imagesArr)
+                }
+                
+                
+                if self.uploadedVideoUrls.count > 0 {
+                    // Check video URL extension to set the appropriate MIME type
+                    for urlString in uploadedVideoUrls {
+                        guard let url = URL(string: urlString) else { return }
+                        let fileExtension = url.pathExtension.lowercased()
+                        
+                        switch fileExtension {
+                        case "mp4":
+                            keysValue.append("videos[]")
+                            mimeType.append("video/mp4")
+                            photos.append([url.description])
+                        case "avi":
+                            keysValue.append("videos[]")
+                            mimeType.append("video/avi")
+                            photos.append([url.description])
+                        case "mov":
+                            keysValue.append("videos[]")
+                            mimeType.append("video/mov")
+                            photos.append([url.description])
+                        case "mkv":
+                            keysValue.append("videos[]")
+                            mimeType.append("video/x-matroska")
+                            photos.append([url.description])
+                        default:
+                            keysValue.append("videos[]")
+                            mimeType.append("video/*") // Default case for unknown video types
+                            photos.append([url.description])
+                        }
+                    }
+                }
+                try await viewModel.uploadStoreImage(images: photos, mimeType: mimeType, keysValue: keysValue)
                 if let errorMessage = self.viewModel.errorMessage, errorMessage != "" {
                     alertType = .sheetType(
                         icon: .alert,
@@ -675,10 +718,13 @@ struct ListProductScreen: View {
                     guard let response = self.viewModel.storeImageResponse,
                           response.status == "success" else { return }
                     
-                    // 🔹 Build uploaded image data
-                    let uploadedUrls: [[String: String]] = response.data.map {
-                        ["image": $0.images ?? "", "thumbnail": $0.thumbnail ?? ""]
-                    }
+                    let uploadedImagesUrls: [[String: String]] = response.data.images?.compactMap {
+                        return ["image": $0.images ?? "", "thumbnail": $0.thumbnail ?? ""]
+                    } ?? []
+                    let uploadedVideoUrls: [[String: String]] = response.data.videos?.compactMap {
+                        return ["videos": $0.videos ?? ""]
+                    } ?? []
+                    
                     
                     // 🔹 Build extra fields
                     let variantArray = buildVariantArray(extraFields: extraFields,
@@ -707,7 +753,8 @@ struct ListProductScreen: View {
                         "processing_category": request.processing_category,
                         "product_condition": request.product_condition,
                         // ✅ Images array (already present)
-                        "images": uploadedUrls,
+                        "images": uploadedImagesUrls,
+                        "videos": uploadedVideoUrls,
 //                        "type": "live",
                         "status": request.status,
                         "hazardous_material": isHazardousMaterial
