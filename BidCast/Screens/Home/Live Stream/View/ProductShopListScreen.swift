@@ -199,6 +199,8 @@ struct ProductShopListScreen: View {
     @State private var selectedOptions: String = ""
     
     @State private var viewModel = ScheduleViewModel()
+    @State var productViewModel = ProductViewModel()
+    
     @State private var totalCount = 0
     
     @State var productData: [ProductDataModel] = []
@@ -344,25 +346,35 @@ extension ProductShopListScreen {
             isFetchingMore = false
             return
         }
+        
         Task{
-           guard Reachability.isConnectedToNetwork() else {
-                hudMsg = "No Internet Connection"
-                showhud = true
-               isFetchingMore = false
-                return
-           }
-            if isLoaderShown { SVProgressHUD.show() }
-            let request = UserProductRequest(user_id: sellerId,
-                                             page: currentPage,
+            await performAPICalls(
+                isConcurrent: false,
+                showLoader: isLoaderShown,
+                onError: { error in
+                    canLoadMore = false
+                    isFetchingMore = false
+                    alertType = .sheetType(
+                        icon: .alert,
+                        title: "Error",
+                        message: viewModel.errorMessage ?? "",
+                        primaryBtnText: AppString.ok.localized,
+                        secondaryBtnText:""
+                    )
+                    showError = true
+                },
+                onSuccess: {
+                    productSuccess()
+                }
+            ) {
+                let request = ProductRequest(user_id: sellerId,
+                                             search: searchText, page: currentPage,
                                              //                               type: "live",
                                              sale_type: selectedOptions,
-                                             sort_by: selectedSort,
-                                             search: searchText
-            )
-            
-            await viewModel.getProductList(parameters: request)
-            if isLoaderShown { await SVProgressHUD.dismiss() }
-            productSuccess()
+                                             sort_by: selectedSort
+                )
+                try await productViewModel.getProductsData(parameters: request)
+            }
         }
     }
     
@@ -376,54 +388,10 @@ extension ProductShopListScreen {
             fetchProduct(isLoaderShown: false)
         }
     }
-
-//    func fetchMoreProduct() {
-//        guard !isFetchingMore, canLoadMore else { return }
-//
-//        isFetchingMore = true
-//        currentPage += 1
-//
-//        Task { @MainActor in
-//            guard Reachability.isConnectedToNetwork() else {
-//                isFetchingMore = false
-//                return
-//            }
-//
-//            let request = UserProductRequest(
-//                user_id: sellerId,
-//                page: currentPage,
-//                sort_by: selectedSort
-//            )
-//
-//            await viewModel.getProductList(parameters: request)
-//            appendMore()
-//        }
-//    }
-
-//    func appendMore() {
-//        guard let response = viewModel.productResponse else { return }
-//
-//        if response.status == "success" {
-//            let newItems = response.data ?? []
-//
-//            if newItems.isEmpty {
-//                canLoadMore = false
-//            } else {
-//                productData.append(contentsOf: newItems)
-//            }
-//        } else {
-//            canLoadMore = false
-//        }
-//
-//        isFetchingMore = false
-//    }
-
-
-
     
     //MARK: productSuccess.
     func productSuccess(){
-        let response = viewModel.productResponse
+        let response = productViewModel.productsResponse
         if response?.status == "success"{
             let newItems = response?.data ?? []
             totalCount = response?.total ?? 0

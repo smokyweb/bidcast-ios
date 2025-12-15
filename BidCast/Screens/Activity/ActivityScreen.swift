@@ -19,6 +19,7 @@ struct ActivityScreen: View {
     @StateObject var viewModel = OffersViewModel()
     @EnvironmentObject var networkMonitor: NetworkMonitor
     @State var offerList: [OfferListModel] = []
+    @State var productList: [ProductDataModel] = []
     @State var currentPage = 1
     @State var messageList: [ChatMessage] = []
     @State private var chatVM: ChatModel?
@@ -38,6 +39,7 @@ struct ActivityScreen: View {
     @State var blockUserName = ""
     @State var blockUserImage = ""
 
+    @State var productViewModel = ProductViewModel()
     
     @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     
@@ -402,27 +404,12 @@ struct ActivityScreen: View {
             if selectedFilterIdex < filterArray.count {
                 filter = filterArray[selectedFilterIdex]
             }
-            let request = ItemListRequest(type: "purchased", page: currentPage)
-            await viewModel.getItemList(parameters: request)
-//            await SVProgressHUD.dismiss()
             isLoading = false
-            if viewModel.itemListResponse.status == "success" {
-                offerList = viewModel.itemListResponse.data ?? []
-            }
+            fetchProduct(type: "purchased")
         case .savedItems:
-            guard Reachability.isConnectedToNetwork() else {
-                hudMsg = "No Internet Connection"
-                showhud = true
-                return
-            }
-            SVProgressHUD.show()
             offerList.removeAll()
-            let request = ItemListRequest(type: "saved", page: currentPage)
-            await viewModel.getItemList(parameters: request)
-            await SVProgressHUD.dismiss()
-            if viewModel.itemListResponse.status == "success" {
-                offerList = viewModel.itemListResponse.data ?? []
-            }
+            isLoading = false
+            fetchProduct(type: "saved")
         }
     }
     
@@ -452,6 +439,42 @@ struct ActivityScreen: View {
         }
     }
 
+    
+    func fetchProduct(type: String, isLoaderShown: Bool = true) {
+//        guard sellerId != "-1" else  {
+//            print("Category id and user id is not present")
+//            isFetchingMore = false
+//            return
+//        }
+        
+        Task {
+            await performAPICalls(
+                isConcurrent: false,
+                showLoader: isLoaderShown,
+                onError: { error in
+//                    canLoadMore = false
+//                    isFetchingMore = false
+                    alertType = .sheetType(
+                        icon: .alert,
+                        title: "Error",
+                        message: viewModel.errorMessage ?? "",
+                        primaryBtnText: AppString.ok.localized,
+                        secondaryBtnText:""
+                    )
+                    showError = true
+                },
+                onSuccess: {
+                    if productViewModel.productsResponse?.status == "success" {
+                        productList = productViewModel.productsResponse?.data ?? []
+                    }
+                }
+            ) {
+                let request = ProductRequest(page: currentPage, type: type)
+                isLoading = false
+                try await productViewModel.getProductsData(parameters: request)
+            }
+        }
+    }
 
     
     
@@ -473,7 +496,7 @@ struct ActivityScreen: View {
         case .bid, .offer:
             totalItems = viewModel.offerListResponse.total ?? 0
         case .purchases, .savedItems:
-            totalItems = viewModel.itemListResponse.total ?? 0
+            totalItems = productViewModel.productsResponse?.total ?? 0
         default:
             totalItems = 0
         }
@@ -498,19 +521,11 @@ struct ActivityScreen: View {
                     offerList.append(contentsOf: viewModel.offerListResponse.data ?? [])
                 }
             case .purchases:
-                let request = ItemListRequest(type: "purchased", page: nextPage)
-                await viewModel.getItemList(parameters: request)
-                if viewModel.itemListResponse.status == "success" {
-                    currentPage = nextPage
-                    offerList.append(contentsOf: viewModel.itemListResponse.data ?? [])
-                }
+                currentPage = nextPage
+                fetchProduct(type: "purchased")
             case .savedItems:
-                let request = ItemListRequest(type: "saved", page: nextPage)
-                await viewModel.getItemList(parameters: request)
-                if viewModel.itemListResponse.status == "success" {
-                    currentPage = nextPage
-                    offerList.append(contentsOf: viewModel.itemListResponse.data ?? [])
-                }
+                currentPage = nextPage
+                fetchProduct(type: "saved")
             default:
                 break
             }

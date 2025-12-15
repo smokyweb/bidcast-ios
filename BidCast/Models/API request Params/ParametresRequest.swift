@@ -668,7 +668,20 @@ struct StoreScheduleShowRequest: Encodable {
 }
 
 struct ProductRequest : Encodable {
-    var category_id : String
+    var user_id: String?
+    var search: String?
+    var category_ids: String?
+    var conditions: String?
+    var min_price: String?
+    var max_price: String?
+    var status: String?
+    var marketplace: String?
+    var page: Int
+    var category_id : String? = ""
+    var type: String? //live,flash_sale,reserve_for_live
+    var sale_type: String? //newest, auction,accept_offers
+    var sort_by: String? //title_asc,title_desc,newest,oldest,price_low_high,price_high_low
+    var format: String?
 }
 
 struct GetLiveShowsRequest : Encodable{

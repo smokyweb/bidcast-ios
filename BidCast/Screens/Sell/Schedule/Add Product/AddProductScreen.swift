@@ -37,6 +37,7 @@ struct AddProductsScreen: View {
     @Binding var thumbNail : String
     @State var productData = [ProductDataModel]()
     @State var viewModel = ScheduleViewModel()
+    @State var productViewModel = ProductViewModel()
     
     @State var deletedIndex: Int?
     @State var deletedProductId: String?
@@ -505,36 +506,56 @@ extension AddProductsScreen {
     // MARK: - Fetch Inventory List
     func fetchProduct(page: Int) {
         Task{
-           guard Reachability.isConnectedToNetwork() else {
-                hudMsg = "No Internet Connection"
-                showhud = true
-                return
+            await performAPICalls(
+                isConcurrent: false,
+                onError: { error in
+                    config = BottomSheetConfig(
+                        icon: "exclamationmark.triangle.fill",
+                        title: "Error",
+                        message: viewModel.errorMessage ?? "",
+                        primaryButtonTitle: AppString.ok.localized,
+                        secondaryButtonTitle: nil
+                    )
+                    showError = true
+                },
+                onSuccess: {
+                    productSuccess()
+                }
+            ) {
+                try await productViewModel.getProductsData(parameters: ProductRequest(user_id: "\(UserDefaults.userId)", page: page, category_id: request.category_id, type: "live"))
             }
-            SVProgressHUD.show()
-            await viewModel.getProductList(parameters: UserProductRequest(user_id: "\(UserDefaults.userId)", category_id: request.category_id, page: page, type: "live"))
-            await SVProgressHUD.dismiss()
-            productSuccess()
         }
     }
     
     //MARK: fetchMoreProduct.
     func fetchMoreProduct() {
-        Task {
-           guard Reachability.isConnectedToNetwork() else {
-                hudMsg = "No Internet Connection"
-                showhud = true
-                return
+        Task{
+            await performAPICalls(
+                isConcurrent: false,
+                onError: { error in
+                    config = BottomSheetConfig(
+                        icon: "exclamationmark.triangle.fill",
+                        title: "Error",
+                        message: viewModel.errorMessage ?? "",
+                        primaryButtonTitle: AppString.ok.localized,
+                        secondaryButtonTitle: nil
+                    )
+                    showError = true
+                },
+                onSuccess: {
+                    productSuccess()
+                }
+            ) {
+                currentPage += 1
+                try  await productViewModel.getProductsData(parameters: ProductRequest(user_id: "\(UserDefaults.userId)", page: currentPage, category_id: request.category_id, type: "live"))
             }
-            currentPage += 1
-            await viewModel.getProductList(parameters: UserProductRequest(user_id: "\(UserDefaults.userId)", category_id: request.category_id, page: currentPage, type: "live"))
-            productSuccess()
         }
     }
     
     //MARK: handlePagination.
     func handlePagination(index: Int) {
         let isLastItem = index == productData.count - 1
-        let canFetchMore = (viewModel.productResponse?.total ?? 0) > productData.count
+        let canFetchMore = (productViewModel.productsResponse?.total ?? 0) > productData.count
 
         if isLastItem && canFetchMore {
             fetchMoreProduct()
@@ -544,7 +565,7 @@ extension AddProductsScreen {
     
     //MARK: productSuccess.
     func productSuccess(){
-        let response = viewModel.productResponse
+        let response = productViewModel.productsResponse
         if response?.status == "success"{
             productData = response?.data ?? [ProductDataModel]()
         

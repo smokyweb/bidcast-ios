@@ -19,8 +19,6 @@ final class ScheduleViewModel: ObservableObject {
     // MARK: - Published Properties
     @Published var lessonsResponse: ResponseModal<[LessonModel]>?
     @Published var tipsResponse: ResponseModal<TitleTipsModel>?
-    @Published var productResponse: ResponseModalPaginate<[ProductDataModel]>?
-    @Published var getProductResponse: ResponseModal<[ProductDataModel]>?
     @Published var storeShowResponse : ResponseModal<HomeModel>?
     @Published var errorMessage: String? = nil
     @Published var requestType: String = ""
@@ -136,33 +134,21 @@ final class ScheduleViewModel: ObservableObject {
         }
     }
     
-    // MARK: - Get Product List
-    func getProductList(parameters: UserProductRequest) async {
-        
-        do {
-            let response: ResponseModalPaginate<[ProductDataModel]> = try await APIManager.shared.request(
-                type: APIEndPoint.getUserProduct(param: parameters),
-                header: true
-            )
-            self.productResponse = response
-        } catch {
-            handle(error: error)
-        }
-    }
+//    // MARK: - Get Product List
+//    func getProductList(parameters: UserProductRequest) async {
+//        
+//        do {
+//            let response: ResponseModalPaginate<[ProductDataModel]> = try await APIManager.shared.request(
+//                type: APIEndPoint.getUserProduct(param: parameters),
+//                header: true
+//            )
+//            self.productResponse = response
+//        } catch {
+//            handle(error: error)
+//        }
+//    }
     
-    // MARK: - Get Product
-    func getProduct(parameters: ProductRequest) async {
-        
-        do {
-            let response: ResponseModal<[ProductDataModel]> = try await APIManager.shared.request(
-                type: APIEndPoint.getProduct(param: parameters),
-                header: true
-            )
-            self.getProductResponse = response
-        } catch {
-            handle(error: error)
-        }
-    }
+   
     
     // MARK: - Store Schedule Show
 //    func storeScheduleShow(param: StoreScheduleShowRequest, images: [String], key: String) async {
@@ -227,6 +213,34 @@ final class ScheduleViewModel: ObservableObject {
             }
         } else {
             self.errorMessage = error.localizedDescription
+        }
+    }
+}
+
+
+final class ProductViewModel: ObservableObject {
+    // MARK: - Get Product
+    @Published var productsResponse: ResponseModelPaginate<[ProductDataModel]>?
+    @Published var errorMessage: String? = nil
+    @Published var requestType: String = ""
+    
+    func getProductsData(parameters: ProductRequest) async throws{
+        
+        do {
+            let response: ResponseModelPaginate<[ProductDataModel]> = try await APIManager.shared.request(
+                type: APIEndPoint.getProduct(param: parameters),
+                header: true
+            )
+            self.productsResponse = response
+        }
+        catch(let error) {
+            if let dataError = error as? DataError {
+                self.errorMessage = dataError.getErrorMessage()
+            }
+            else {
+                self.errorMessage = error.localizedDescription
+            }
+            throw error
         }
     }
 }

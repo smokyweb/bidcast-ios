@@ -20,6 +20,8 @@ enum ProfileTabType {
 struct ProfileScreen: View {
     
     @State var viewModel = ProfileViewModel()
+    @State var productViewModel = ProductViewModel()
+    
     @Binding var id : String
     @State private var sellerID : String = ""
     @Binding var  isComeFrom : String
@@ -41,7 +43,7 @@ struct ProfileScreen: View {
     
     @State var isFollowing = false
     @State var productId : Int = 0
-    @State var productArr = [ProductListingDataModel]()
+//    @State var productArr = [ProductListingDataModel]()
     @State var scheduleShowArr = [GetMyScheduleShowModel]()
     @State var totalRatingArr = [RatingDetail]()
     @EnvironmentObject var networkMonitor: NetworkMonitor
@@ -145,21 +147,6 @@ struct ProfileScreen: View {
                                 case "Shop":
                                     resetShopData()
                                     fetchProduct()
-                                    //                                    print("")
-                                    //                                    Task{
-                                    //                                        guard Reachability.isConnectedToNetwork() else {
-                                    //                                            hudMsg = "No Internet Connection"
-                                    //                                            showhud = true
-                                    //                                            return
-                                    //                                        }
-                                    //                                        SVProgressHUD.show()
-                                    //                                        await self.viewModel.productDetails(parameters: UserProductRequest(user_id: id,page : currentPage))
-                                    //                                        await SVProgressHUD.dismiss()
-                                    //                                        success()
-                                    //
-                                    //                                    success()
-                                    //                                }
-                                    //                                await viewModel.fetchShopItems()
                                 case "Shows":
                                     guard Reachability.isConnectedToNetwork() else {
                                         hudMsg = "No Internet Connection"
@@ -429,17 +416,6 @@ struct ProfileScreen: View {
                     selectedTab = "Shop"
                     resetShopData()
                     fetchProduct()
-                    //                        Task{
-                    //                           guard Reachability.isConnectedToNetwork() else {
-                    //                                hudMsg = "No Internet Connection"
-                    //                                showhud = true
-                    //                                return
-                    //                            }
-                    //                            SVProgressHUD.show()
-                    //                            await self.viewModel.productDetails(parameters: UserProductRequest(user_id: id,page : currentPage))
-                    //                            await SVProgressHUD.dismiss()
-                    //                            success()
-                    //                        }
                 }
             }
         }
@@ -524,19 +500,20 @@ struct ProfileScreen: View {
             profileId = profileData.id ?? 0
             userName = response.data?.username ?? ""
             userImage = response.data?.profile_image ?? ""
-            if !isForFollow{
-                Task{
-                    guard Reachability.isConnectedToNetwork() else {
-                        hudMsg = "No Internet Connection"
-                        showhud = true
-                        return
-                    }
-                    SVProgressHUD.show()
-                    await self.viewModel.productDetails(parameters: UserProductRequest(user_id: id, page: currentPage))
-                    await SVProgressHUD.dismiss()
-                    success()
-                }
-            }
+//            if !isForFollow{
+//                Task{
+//                    guard Reachability.isConnectedToNetwork() else {
+//                        hudMsg = "No Internet Connection"
+//                        showhud = true
+//                        return
+//                    }
+//                    SVProgressHUD.show()
+//                    let request  = ProductRequest(user_id: id, page: currentPage)
+//                    await self.productViewModel.getProductsData(parameters: request)
+//                    await SVProgressHUD.dismiss()
+//                    success()
+//                }
+//            }
         } else {
             alertType = .sheetType(
                 icon: .alert,
@@ -549,18 +526,18 @@ struct ProfileScreen: View {
         }
     }
     
-    //MARK: success.
-    func success(){
-        SVProgressHUD.dismiss()
-        let response = viewModel.productDetailsResponseDict
-        if response?.status == "success" {
-            productArr = response?.data ?? []
-            
-        } else {
-            alertType = .sheetType(icon: .alert, title: response?.status?.capitalized ?? "", message: response?.message?.capitalized ?? "", primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .defaultTheme)
-            withAnimation(.snappy) { showError = true }
-        }
-    }
+//    //MARK: success.
+//    func success(){
+//        SVProgressHUD.dismiss()
+//        let response = viewModel.productDetailsResponseDict
+//        if response?.status == "success" {
+//            productArr = response?.data ?? []
+//            
+//        } else {
+//            alertType = .sheetType(icon: .alert, title: response?.status?.capitalized ?? "", message: response?.message?.capitalized ?? "", primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .defaultTheme)
+//            withAnimation(.snappy) { showError = true }
+//        }
+//    }
     
     //MARK: scheduleShowSuccess.
     func scheduleShowSuccess(){
@@ -589,20 +566,14 @@ struct ProfileScreen: View {
     }
     
     func handlePagination(for tab: ProfileTabType, index: Int) async {
-        let nextPage = currentPage + 1
+        currentPage = currentPage + 1
         switch tab {
         case .shop:
-            let isLast = index == productArr.count - 1
-            let total = viewModel.productDetailsResponseDict?.total ?? 0
+            let isLast = index == productData.count - 1
+            let total = productViewModel.productsResponse?.total ?? 0
             
-            if isLast && productArr.count < total {
-                SVProgressHUD.show()
-                await viewModel.productDetails(parameters: UserProductRequest(user_id: id, page: nextPage))
-                await SVProgressHUD.dismiss()
-                if viewModel.productDetailsResponseDict?.status == "success" {
-                    currentPage = nextPage
-                    productArr.append(contentsOf: viewModel.productDetailsResponseDict?.data ?? [])
-                }
+            if isLast && productData.count < total {
+                fetchProduct(isLoaderShown: true)
             }
             
         case .shows:
@@ -611,10 +582,10 @@ struct ProfileScreen: View {
             
             if isLast && scheduleShowArr.count < total {
                 SVProgressHUD.show()
-                await viewModel.getMyScheduleShow(parameters: GetMyScheduleShowRequest(type: "upcoming", user_id: Int(id) ?? 0, page: nextPage))
+                await viewModel.getMyScheduleShow(parameters: GetMyScheduleShowRequest(type: "upcoming", user_id: Int(id) ?? 0, page: currentPage))
                 await SVProgressHUD.dismiss()
                 if viewModel.getMyScheduleShowResponseDict?.status == "success" {
-                    currentPage = nextPage
+                    currentPage = currentPage
                     scheduleShowArr.append(contentsOf: viewModel.getMyScheduleShowResponseDict?.data ?? [])
                 }
             }
@@ -1006,25 +977,37 @@ extension ProfileScreen {
             isFetchingMore = false
             return
         }
+        
+        
         Task{
-            guard Reachability.isConnectedToNetwork() else {
-                hudMsg = "No Internet Connection"
-                showhud = true
-                isFetchingMore = false
-                return
-            }
-            if isLoaderShown { SVProgressHUD.show() }
-            let request = UserProductRequest(user_id: "\(sellerId)",
-                                             page: currentPage,
+            await performAPICalls(
+                isConcurrent: false,
+                showLoader: isLoaderShown,
+                onError: { error in
+                    canLoadMore = false
+                    isFetchingMore = false
+                    alertType = .sheetType(
+                        icon: .alert,
+                        title: "Error",
+                        message: viewModel.errorMessage ?? "",
+                        primaryBtnText: AppString.ok.localized,
+                        secondaryBtnText:""
+                    )
+                    showError = true
+                },
+                onSuccess: {
+                    productSuccess()
+                }
+            ) {
+                let request = ProductRequest(user_id: "\(sellerId)",
+                                             search: searchText, page: currentPage,
                                              //                               type: "live",
                                              sale_type: selectedOptions,
-                                             sort_by: selectedSort,
-                                             search: searchText
-            )
-            
-            await scheduleViewModel.getProductList(parameters: request)
-            if isLoaderShown { await SVProgressHUD.dismiss() }
-            productSuccess()
+                                             sort_by: selectedSort
+                )
+                
+                try await productViewModel.getProductsData(parameters: request)
+            }
         }
     }
     
@@ -1041,7 +1024,7 @@ extension ProfileScreen {
     
     //MARK: productSuccess.
     func productSuccess(){
-        let response = scheduleViewModel.productResponse
+        let response = productViewModel.productsResponse
         if response?.status == "success"{
             let newItems = response?.data ?? []
             totalCount = response?.total ?? 0

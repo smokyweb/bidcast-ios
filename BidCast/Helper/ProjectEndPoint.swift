@@ -46,7 +46,7 @@ enum APIEndPoint{
     case deleteAddress(param:AddressDefaultParam)
     case getLiveShows(param:GetLiveShowsRequest)
     case getProfileById(param:ProfileParamRequest)
-    case getUserProduct(param : UserProductRequest)
+
     case followUnfollow(param:FollowRequest)
     case getSellerInfo(param: SellerInfoRequest)
     case getReportSellerCategory
@@ -83,11 +83,11 @@ enum APIEndPoint{
     case deleteCard(param:DeleteCardRequest)
     case getCard
     case getTransactionList(param : TransactionRequest)
-    case getProduct(param:ProductRequest)
+
     case getScheduledShow(param:GetLiveShowsRequest)
     case UpdateShowStatus(param:LiveShowUpdateRequest)
     case getBidList(param:PageRequest)
-    case getItemList(param: ItemListRequest)
+
     case getNotificationListing(param:PageRequest)
     case saveDeviceDetail(param : DeviceDetailRequest)
     case getWalletInfo
@@ -200,6 +200,12 @@ enum APIEndPoint{
     case getShippinProfiles
     case getShowOverview(param: ShowOverviewRequest)
     case updateProductStatus(param: UpdateProductStatusRequest)
+    
+    //MARK: - V1
+    case getProduct(param:ProductRequest)
+//    case getUserProduct(param : UserProductRequest)
+//    case getItemList(param: ItemListRequest)
+    
 }
 
 extension APIEndPoint: EndPointType {
@@ -209,8 +215,19 @@ extension APIEndPoint: EndPointType {
         return "https://backend.bidcast.betaplanets.com/api/"
     }
     
+    var baseURL1: String {
+        return "https://backend.bidcast.betaplanets.com/api/v1/"
+    }
+    
     var url: URL? {
-        return URL(string: "\(baseURL)\(path)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)
+        switch self {
+        case .getProduct:
+            return URL(string: "\(baseURL1)\(path)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)
+        case .fetchProduct:
+          return URL(string: "\(baseURL1)\(path)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)
+        default :
+            return URL(string: "\(baseURL)\(path)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)
+        }
     }
     
     var path: String {
@@ -292,14 +309,13 @@ extension APIEndPoint: EndPointType {
             return "get-live-show"
         case .getProfileById:
             return "get-profile-by-id"
-        case .getUserProduct:
-            return "get-user-product"
+            
         case .followUnfollow:
             return "follow-unfollow"
         case .countUpdate:
             return "zegocloud/webhook"
         case .fetchProduct:
-            return "fetch-product"
+            return "get-product-details"
         case .storeIDCard:
             return "store-id-card"
         case .storePhoneNumber:
@@ -327,7 +343,7 @@ extension APIEndPoint: EndPointType {
         case .productOrderListing:
             return "product/order-listing"
         case .productPurchaseDetail:
-            return "product/purchase-details"
+            return "checkout-product-detail"
         case .productOrder:
             return "product/order"
         case .productOrderDetails:
@@ -356,16 +372,14 @@ extension APIEndPoint: EndPointType {
             return "transaction-history/listing"
         case .storeScheduleShow:
             return "store-schedule-show"
-        case .getProduct:
-            return "get-product"
+ 
         case .getScheduledShow:
             return "get-my-schedule-show"
         case .UpdateShowStatus:
             return "schedule-show/update-live-status"
         case .getBidList(param:let param):
             return "bid/fetch?page=\(param.page)"
-        case .getItemList(let param):
-            return "product/fetch-by-status?type=\(param.type)&page=\(param.page)"
+       
         case .getWalletInfo:
             return "wallet-info"
         case .getprofile:
@@ -610,6 +624,14 @@ extension APIEndPoint: EndPointType {
             return "get-show-overview?show_id=\(param.show_id)"
         case .updateProductStatus:
             return "update-product-status"
+            
+            //MARK: - V1
+//        case .getUserProduct:
+//            return "get-user-product"
+        case .getProduct:
+            return "get-product"
+//        case .getItemList(let param):
+//            return "product/fetch-by-status?type=\(param.type)&page=\(param.page)"
         }
     }
     
@@ -692,8 +714,10 @@ extension APIEndPoint: EndPointType {
             return .post
         case .getProfileById:
             return .post
-        case .getUserProduct:
-            return .post
+            
+     
+            
+            
         case .followUnfollow:
             return .post
         case .fetchProduct:
@@ -750,16 +774,14 @@ extension APIEndPoint: EndPointType {
             return .post
         case .storeScheduleShow:
             return .post
-        case .getProduct:
-            return .post
+      
         case .getScheduledShow:
             return .post
         case .UpdateShowStatus:
             return .post
         case .getBidList:
             return .get
-        case .getItemList:
-            return .post
+       
         case .getprofile:
             return .get
         case .updateProfile:
@@ -979,6 +1001,14 @@ extension APIEndPoint: EndPointType {
             return .get
         case .updateProductStatus:
             return .post
+            
+            //MARK: V1
+//        case .getUserProduct:
+//            return .post
+        case .getProduct:
+            return .post
+//        case .getItemList:
+//            return .post
         }
     }
     
@@ -1061,8 +1091,7 @@ extension APIEndPoint: EndPointType {
             return param
         case .getProfileById(param: let param):
             return param
-        case .getUserProduct(param: let param):
-            return param
+       
         case .followUnfollow(param: let param):
             return param
             
@@ -1129,16 +1158,14 @@ extension APIEndPoint: EndPointType {
 //            return param
         case .storeScheduleShow:
             return nil
-        case .getProduct(param: let param):
-            return param
+       
         case .getScheduledShow(param: let param):
             return param
         case .UpdateShowStatus(param: let param):
             return param
         case .getBidList:
             return nil
-        case .getItemList(param: let param):
-            return param
+       
         case .getprofile:
             return nil
         case .updateProfile(param: let param):
@@ -1359,6 +1386,14 @@ extension APIEndPoint: EndPointType {
             return nil
         case .updateProductStatus(param: let param):
             return param
+            
+        //MARK: V1
+//        case .getUserProduct(param: let param):
+//            return param
+        case .getProduct(param: let param):
+            return param
+//        case .getItemList(param: let param):
+//            return param
         }
     }
     
@@ -1434,8 +1469,7 @@ extension APIEndPoint: EndPointType {
             return nil
         case .getProfileById:
             return nil
-        case .getUserProduct:
-            return nil
+       
         case .followUnfollow:
             return nil
         case .countUpdate(param: _):
@@ -1502,16 +1536,14 @@ extension APIEndPoint: EndPointType {
             return nil
         case .getTransactionList:
             return nil
-        case .getProduct(param: let param):
-            return nil
+    
         case .getScheduledShow(param: let param):
             return nil
         case .UpdateShowStatus(param: let param):
             return nil
         case .getBidList(param: let param):
             return nil
-        case .getItemList(param: let param):
-            return nil
+       
         case .getNotificationListing(param: let param):
             return nil
         case .saveDeviceDetail(param: let param):
@@ -1718,6 +1750,13 @@ extension APIEndPoint: EndPointType {
             return nil
         case .updateProductStatus:
             return nil
+            //MARK: - V1
+//        case .getUserProduct:
+//            return nil
+        case .getProduct(param: let param):
+            return nil
+//        case .getItemList(param: let param):
+//            return nil
         }
     }
     

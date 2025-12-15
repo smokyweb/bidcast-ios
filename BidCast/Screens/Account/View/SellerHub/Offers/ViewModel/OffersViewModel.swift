@@ -12,7 +12,7 @@ final class OffersViewModel: ObservableObject {
     
     @Published var offerListResponse = ResponseModelOffer<[OfferListModel]>()
     @Published var offerUpdateResponse = ResponseModel<OfferUpdateStatus>()
-    @Published var itemListResponse = ResponseModelOffer<[OfferListModel]>()
+//    @Published var itemListResponse = ResponseModelOffer<[OfferListModel]>()
     @Published var errorMessage: String? = nil
 
     // MARK: - Get Preference
@@ -41,18 +41,18 @@ final class OffersViewModel: ObservableObject {
         }
     }
     
-    // MARK: - getItemList
-    func getItemList(parameters: ItemListRequest) async {
-        do {
-            let response: ResponseModelOffer<[OfferListModel]> = try await APIManager.shared.request(
-                type: APIEndPoint.getItemList(param: parameters),
-                header: true
-            )
-            self.itemListResponse = response
-        } catch {
-            self.handle(error: error)
-        }
-    }
+//    // MARK: - getItemList
+//    func getItemList(parameters: ItemListRequest) async {
+//        do {
+//            let response: ResponseModelOffer<[OfferListModel]> = try await APIManager.shared.request(
+//                type: APIEndPoint.getItemList(param: parameters),
+//                header: true
+//            )
+//            self.itemListResponse = response
+//        } catch {
+//            self.handle(error: error)
+//        }
+//    }
     
     
     

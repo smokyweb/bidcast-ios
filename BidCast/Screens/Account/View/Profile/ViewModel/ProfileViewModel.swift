@@ -61,20 +61,20 @@ final class ProfileViewModel: ObservableObject {
             handle(error: error)
         }
     }
-    
-    // MARK: - Product Details
-    func productDetails(parameters: UserProductRequest) async {
-        do {
-           if let response: ResponseModalPaginate<[ProductListingDataModel]> = try await APIManager.shared.request(
-                type: APIEndPoint.getUserProduct(param: parameters),
-                header: true
-           ){
-               self.productDetailsResponseDict = response
-           }
-        } catch {
-            handle(error: error)
-        }
-    }
+//    
+//    // MARK: - Product Details
+//    func productDetails(parameters: UserProductRequest) async {
+//        do {
+//           if let response: ResponseModalPaginate<[ProductListingDataModel]> = try await APIManager.shared.request(
+//                type: APIEndPoint.getUserProduct(param: parameters),
+//                header: true
+//           ){
+//               self.productDetailsResponseDict = response
+//           }
+//        } catch {
+//            handle(error: error)
+//        }
+//    }
     
     // MARK: - Follow / Unfollow
     func followUnfollow(parameters: FollowRequest) async {
