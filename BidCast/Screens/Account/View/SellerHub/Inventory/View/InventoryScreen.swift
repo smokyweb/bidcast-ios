@@ -30,7 +30,7 @@ struct InventoryScreen: View {
     @State private var selectedTabIndex: Int = InventorySegment.active.index
     @State var segment: InventorySegment = .active
     
-    @State var inventoryList: [InventoryDataModel] = []
+    @State var inventoryList: [ProductDataModel1] = []
     @State var request: ProductRequest = ProductRequest(status: "active", marketplace: "false", page: 1)
     @EnvironmentObject var networkMonitor: NetworkMonitor
     
@@ -52,7 +52,7 @@ struct InventoryScreen: View {
     @State var currentPage = 1
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @State var showSellSheet = false
-    @State var productData : InventoryDataModel
+    @State var productData : ProductDataModel1
     @State var navigateToCreateProduct = false
     @State var navigateToEditProduct = false
     @State var searchText: String = ""
@@ -107,7 +107,7 @@ struct InventoryScreen: View {
                             alertType = .sheetType(
                                 icon: .alert,
                                 title: "Error",
-                                message: errorDesc(error: error, message: viewModel.errorMessage),
+                                message: errorDesc(error: error, message: productViewModel.errorMessage),
                                 primaryBtnText: "",
                                 secondaryBtnText: AppString.ok.localized
                             )
@@ -141,7 +141,7 @@ struct InventoryScreen: View {
                             alertType = .sheetType(
                                 icon: .alert,
                                 title: "Error",
-                                message: errorDesc(error: error, message: viewModel.errorMessage),
+                                message: errorDesc(error: error, message: productViewModel.errorMessage),
                                 primaryBtnText: "",
                                 secondaryBtnText: AppString.ok.localized
                             )
@@ -182,7 +182,7 @@ struct InventoryScreen: View {
                                 alertType = .sheetType(
                                     icon: .alert,
                                     title: "Error",
-                                    message: errorDesc(error: error, message: viewModel.errorMessage),
+                                    message: errorDesc(error: error, message: productViewModel.errorMessage),
                                     primaryBtnText: "",
                                     secondaryBtnText: AppString.ok.localized
                                 )
@@ -214,15 +214,15 @@ struct InventoryScreen: View {
                         NoDataView(message: AppString.NoInventoryFound.localized)
                     }
                     else {
-                        ForEach(inventoryList.indices, id: \.self) { index in
+                        ForEach(Array(inventoryList.enumerated()), id: \.element.id) { index, inventory in
                             let inventory = inventoryList[index]
                             
                             ProductCardView(product: inventory,
                                             segmant: $segment,
-                            onEdit: { product in
-                                productToEdit = product.toProductDataModel()
-                                showSellSheet = false
-                                navigateToEditProduct = true
+                                            onEdit: { product in
+//                                productToEdit = product.toProductDataModel()
+//                                showSellSheet = false
+//                                navigateToEditProduct = true
                                 
                             },onDuplicate: {
                                 
@@ -294,7 +294,7 @@ struct InventoryScreen: View {
             }
             
             CusNavLink(doNavigate: $navigateToEditProduct, destination: EditProductScreen(productData: $productToEdit)) // for edit
-            CusNavLink(doNavigate: $navigateToCreateProduct, destination: ListProductScreen(productData:.constant(productData)))
+            CusNavLink(doNavigate: $navigateToCreateProduct, destination: ListProductScreen())
             CusNavLink(doNavigate: $navigateToCreateNewProduct,
                        destination: CreateProductScreen(requests: .constant(StoreScheduleShowRequest(title: "", date: "", time: "", category_id: "", auction_type_id: "", product_ids: "", isExplicitContent: false, discoverablitity: "", primaryLanguage: "", repeats: "")),
                                                         thumbNail: .constant(""),
@@ -317,7 +317,7 @@ struct InventoryScreen: View {
                             alertType = .sheetType(
                                 icon: .alert,
                                 title: "Error",
-                                message: errorDesc(error: error, message: viewModel.errorMessage),
+                                message: errorDesc(error: error, message: productViewModel.errorMessage),
                                 primaryBtnText: "",
                                 secondaryBtnText: AppString.ok.localized
                             )
@@ -347,7 +347,7 @@ struct InventoryScreen: View {
                         alertType = .sheetType(
                             icon: .alert,
                             title: "Error",
-                            message: errorDesc(error: error, message: viewModel.errorMessage ?? categoryViewModel.errorMessage),
+                            message: errorDesc(error: error, message: productViewModel.errorMessage ?? categoryViewModel.errorMessage),
                             primaryBtnText: "",
                             secondaryBtnText: AppString.ok.localized
                         )
@@ -463,7 +463,7 @@ struct InventoryScreen: View {
                     config = BottomSheetConfig(
                         icon: "exclamationmark.triangle.fill",
                         title: "Error",
-                        message: viewModel.errorMessage ?? "",
+                        message: productViewModel.errorMessage ?? "",
                         primaryButtonTitle: AppString.ok.localized,
                         secondaryButtonTitle: nil
                     )
@@ -480,7 +480,7 @@ struct InventoryScreen: View {
                                 alertType = .sheetType(
                                     icon: .alert,
                                     title: "Error",
-                                    message: errorDesc(error: error, message: viewModel.errorMessage),
+                                    message: errorDesc(error: error, message: productViewModel.errorMessage),
                                     primaryBtnText: "",
                                     secondaryBtnText: AppString.ok.localized
                                 )
@@ -494,9 +494,7 @@ struct InventoryScreen: View {
                             try await fetchInventory(for: segment, page: 1)
                         }
                     }
-                    
                 }
-                
             ) {
                 let param = UpdateProductStatusRequest(status: status, product_id: "\(productId)")
                 try await viewModel.updateProductStatus(param: param)
@@ -508,7 +506,7 @@ struct InventoryScreen: View {
     
     func handlePagination(index: Int) {
         let isLastItem = index == inventoryList.count - 1
-        let canFetchMore = (viewModel.inventoryDict?.total ?? 0) > inventoryList.count
+        let canFetchMore = (productViewModel.productsResponse1?.total ?? 0) > inventoryList.count
 
         if isLastItem && canFetchMore {
             fetchMoreInventory()
@@ -554,7 +552,7 @@ struct InventoryScreen: View {
             request.conditions = selectedCondition.toCommaSeparatedString()
         }
         isLoading = true
-        try await productViewModel.getProductsData(parameters: request)
+        try await productViewModel.getProductsData1(parameters: request)
     }
     
     private func clearFilter() {
@@ -571,7 +569,7 @@ struct InventoryScreen: View {
     // MARK: - Handle ViewModel Data
     func handleDataLoad() {
 
-        let response = viewModel.inventoryDict
+        let response = productViewModel.productsResponse1
         isLoading = false
         if response?.status == "success" {
             // append new data
@@ -585,7 +583,7 @@ struct InventoryScreen: View {
             alertType = .sheetType(
                 icon: .alert,
                 title: "Error",
-                message: viewModel.errorMessage ?? "",
+                message: productViewModel.errorMessage ?? "",
                 primaryBtnText: AppString.ok.localized,
                 secondaryBtnText:""
             )
@@ -614,7 +612,7 @@ struct InventoryScreen: View {
                         alertType = .sheetType(
                             icon: .alert,
                             title: "Error",
-                            message: errorDesc(error: error, message: viewModel.errorMessage),
+                            message: errorDesc(error: error, message: productViewModel.errorMessage),
                             primaryBtnText: "",
                             secondaryBtnText: AppString.ok.localized
                         )
@@ -669,7 +667,7 @@ struct InventoryScreen: View {
                 request.conditions = selectedCondition.toCommaSeparatedString()
             }
             isLoading = true
-            try await productViewModel.getProductsData(parameters: request)
+            try await productViewModel.getProductsData1(parameters: request)
             handleDataLoad()
         }
     }
@@ -796,12 +794,12 @@ struct InventoryTabView: View {
 }
 
 struct ProductCardView: View {
-    let product: InventoryDataModel
+    let product: ProductDataModel1
     @State private var isPressed: Bool = false
     @State private var showActions: Bool = false
     @State private var isLongPressing: Bool = false
     @Binding var segmant: InventorySegment
-    var onEdit: ((InventoryDataModel) -> Void)?
+    var onEdit: ((ProductDataModel1) -> Void)?
     var onDuplicate: (() -> Void)?
     var onToggleActivation: ((Int) -> Void)?
     var onToggleDeActivation: ((Int) -> Void)?
@@ -875,6 +873,7 @@ extension ProductCardView {
         HStack(spacing: 16) {
             productImageView
             productDetailsView
+            
         }
         .padding(16)
         .background(
@@ -901,7 +900,7 @@ extension ProductCardView {
 extension ProductCardView {
     var productImageView: some View {
         VStack {
-            CustomProfileImage(url: product.images?.first ?? "", isCircular: false, size: 120)
+            CustomProfileImage(url: product.image ?? "", isCircular: false, size: 120)
         }
         .frame(width: 120, height: 120)
     }
@@ -922,7 +921,7 @@ extension ProductCardView {
             
             HStack(spacing: 8) {
 //                Text(product.condition ?? "New")
-                Text(product.productCondition ?? "New")
+                Text(product.condition ?? "New")
                     .font(.custom(poppinsRegular, size: 13))
                     .foregroundColor(.secondary)
                 
@@ -930,7 +929,7 @@ extension ProductCardView {
                     .fill(Color.secondary)
                     .frame(width: 3, height: 3)
                 
-                Text(product.category?.name ?? "Category")
+                Text(product.category ?? "Category")
                     .font(.custom(poppinsRegular, size: 13))
                     .foregroundColor(.secondary)
             }
@@ -966,16 +965,12 @@ extension ProductCardView {
 }
 extension ProductCardView {
     var priceSectionView: some View {
-        HStack(spacing: 8) {
-            Text("$\(product.pricing ?? "$0.00")")
+        VStack(spacing: 8) {
+            Text("$\(product.price ?? "$0.00")")
                 .font(.custom(poppinsSemiBold, size: 16))
                 .foregroundColor(.primary)
             
-            Circle()
-                .fill(Color.secondary)
-                .frame(width: 3, height: 3)
-            
-            Text(product.productShow ?? "Auction")
+            Text("\(product.bids ?? 0) Bids")
                 .font(.custom(poppinsRegular, size: 13))
                 .foregroundColor(.secondary)
         }

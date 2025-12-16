@@ -55,7 +55,6 @@ struct ListProductScreen: View {
     @State var selectedSubCategory = ""
     @State var subCategoryList: [CategoryDataModel] = []
     @State var subCategoryName : [String] = [""]
-    @Binding var productData : InventoryDataModel
     @State var extraFields: [ExtraFieldModel] = []
     @State var processingListArr = ["Letters","Flats","Machinaable","Nonstandard","Non Machinable"]
     
@@ -579,10 +578,11 @@ struct ListProductScreen: View {
                 await performAPICalls(
                     isConcurrent: true,
                     onError: { error in
+                        var errorMessage = viewModel.errorMessage ?? shippingViewModel.errorMessage
                         alertType = .sheetType(
                             icon: .alert,
                             title: "Error",
-                            message: viewModel.errorMessage ?? "",
+                            message: errorDesc(error: error, message: errorMessage),
                             primaryBtnText: "",
                             secondaryBtnText: AppString.ok.localized
                         )
@@ -653,7 +653,7 @@ struct ListProductScreen: View {
                     alertType = .sheetType(
                         icon: .alert,
                         title: "Error",
-                        message: viewModel.errorMessage ?? "",
+                        message: errorDesc(error: error, message: viewModel.errorMessage),
                         primaryBtnText: "",
                         secondaryBtnText: AppString.ok.localized
                     )

@@ -326,7 +326,7 @@ struct ProductWeightScreen: View {
                     alertType = .sheetType(
                         icon: .alert,
                         title: "Error",
-                        message: error.localizedDescription,
+                        message: errorDesc(error: error, message: viewModel.errorMessage),
                         primaryBtnText: "",
                         secondaryBtnText: AppString.ok.localized
                     )
@@ -338,7 +338,7 @@ struct ProductWeightScreen: View {
                 var keysValue: [String] = []
             
                 if imageUrls.count > 0 {
-                    mimeType.append("image/png")
+                    mimeType.append("image/jpeg")
                     keysValue.append("images[]")
                     let imagesArr = self.imageUrls.map({$0.description})
                     photos.append(imagesArr)

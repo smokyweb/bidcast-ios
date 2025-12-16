@@ -221,6 +221,7 @@ final class ScheduleViewModel: ObservableObject {
 final class ProductViewModel: ObservableObject {
     // MARK: - Get Product
     @Published var productsResponse: ResponseModelPaginate<[ProductDataModel]>?
+    @Published var productsResponse1: ResponseModelPaginate<[ProductDataModel1]>?
     @Published var errorMessage: String? = nil
     @Published var requestType: String = ""
     
@@ -232,6 +233,30 @@ final class ProductViewModel: ObservableObject {
                 header: true
             )
             self.productsResponse = response
+        }
+        catch(let error) {
+            if let dataError = error as? DataError {
+                DispatchQueue.main.async {
+                    self.errorMessage = dataError.getErrorMessage()
+                }
+            }
+            else {
+                DispatchQueue.main.async {
+                    self.errorMessage = error.localizedDescription
+                }
+            }
+            throw error
+        }
+    }
+    
+    func getProductsData1(parameters: ProductRequest) async throws{
+        
+        do {
+            let response: ResponseModelPaginate<[ProductDataModel1]> = try await APIManager.shared.request(
+                type: APIEndPoint.getProduct(param: parameters),
+                header: true
+            )
+            self.productsResponse1 = response
         }
         catch(let error) {
             if let dataError = error as? DataError {

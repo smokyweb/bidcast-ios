@@ -35,7 +35,7 @@ struct AddProductsScreen: View {
                                                                       mail_class:"",
                                                                       processing_category:"", product_condition: "")
     @Binding var thumbNail : String
-    @State var productData = [ProductDataModel]()
+    @State var productData = [ProductDataModel1]()
     @State var viewModel = ScheduleViewModel()
     @State var productViewModel = ProductViewModel()
     
@@ -365,12 +365,13 @@ struct AddProductsScreen: View {
         )
         CusNavLink(doNavigate: $navigateToAddProduct, destination: CreateProductScreen(requests: $request, thumbNail: $thumbNail,backToPrepare: $backToPrepare,fromPrepare: .constant(false)))
         CusNavLink(doNavigate: $navigateToEditProduct, destination: CreateProductScreen(requests: $request, thumbNail: $thumbNail,backToPrepare: $backToPrepare,fromPrepare: .constant(false)))
-        CusNavLink(doNavigate: $navigateToInventry,
-                   destination: InventoryScreen(productData: InventoryDataModel(),
-                                                selectedProductIDs: $selectedProductIDs,
-                                                selectedProductData: $productData,
-                                                selectedCategoryId: [Int(request.category_id) ?? 0],
-                                                navigatedFrom: .addProduct))
+        //toDo: Need to change
+//        CusNavLink(doNavigate: $navigateToInventry,
+//                   destination: InventoryScreen(productData: InventoryDataModel(),
+//                                                selectedProductIDs: $selectedProductIDs,
+//                                                selectedProductData: $productData,
+//                                                selectedCategoryId: [Int(request.category_id) ?? 0],
+//                                                navigatedFrom: .addProduct))
     }
     
     
@@ -407,7 +408,7 @@ struct AddProductsScreen: View {
 
 // MARK: - Product Item Card
 struct ProductItemCard: View {
-    let product: ProductDataModel
+    let product: ProductDataModel1
     let isSelected: Bool
     let onTapCard: () -> Void
     let onTapEdit: () -> Void
@@ -417,7 +418,7 @@ struct ProductItemCard: View {
         HStack(spacing: 14) {
             // Product Image
             CustomProfileImage(
-                url: product.images?.first,
+                url: product.image ?? "",
                 isCircular: false,
                 cornerRadius: 12,
                 size: 70,
@@ -437,7 +438,7 @@ struct ProductItemCard: View {
                     .foregroundColor(.primary)
                     .lineLimit(2)
                 
-                Text(product.category?.name ?? "Unknown Category")
+                Text(product.category ?? "Unknown Category")
                     .font(.custom(poppinsMedium, size: 13))
                     .foregroundColor(.secondary)
                 
@@ -512,7 +513,7 @@ extension AddProductsScreen {
                     config = BottomSheetConfig(
                         icon: "exclamationmark.triangle.fill",
                         title: "Error",
-                        message: viewModel.errorMessage ?? "",
+                        message: errorDesc(error: error, message: productViewModel.errorMessage),
                         primaryButtonTitle: AppString.ok.localized,
                         secondaryButtonTitle: nil
                     )
@@ -522,7 +523,7 @@ extension AddProductsScreen {
                     productSuccess()
                 }
             ) {
-                try  await productViewModel.getProductsData(parameters: ProductRequest(user_id: "\(UserDefaults.userId)",
+                try  await productViewModel.getProductsData1(parameters: ProductRequest(user_id: "\(UserDefaults.userId)",
                                                                                        category_ids: request.category_id,
                                                                                        page: currentPage))
             }
@@ -538,7 +539,7 @@ extension AddProductsScreen {
                     config = BottomSheetConfig(
                         icon: "exclamationmark.triangle.fill",
                         title: "Error",
-                        message: viewModel.errorMessage ?? "",
+                        message: errorDesc(error: error, message: productViewModel.errorMessage),
                         primaryButtonTitle: AppString.ok.localized,
                         secondaryButtonTitle: nil
                     )
@@ -549,7 +550,7 @@ extension AddProductsScreen {
                 }
             ) {
                 currentPage += 1
-                try  await productViewModel.getProductsData(parameters: ProductRequest(user_id: "\(UserDefaults.userId)",
+                try  await productViewModel.getProductsData1(parameters: ProductRequest(user_id: "\(UserDefaults.userId)",
                                                                                        category_ids: request.category_id,
                                                                                        page: currentPage))
             }
@@ -559,7 +560,7 @@ extension AddProductsScreen {
     //MARK: handlePagination.
     func handlePagination(index: Int) {
         let isLastItem = index == productData.count - 1
-        let canFetchMore = (productViewModel.productsResponse?.total ?? 0) > productData.count
+        let canFetchMore = (productViewModel.productsResponse1?.total ?? 0) > productData.count
 
         if isLastItem && canFetchMore {
             fetchMoreProduct()
@@ -569,10 +570,9 @@ extension AddProductsScreen {
     
     //MARK: productSuccess.
     func productSuccess(){
-        let response = productViewModel.productsResponse
+        let response = productViewModel.productsResponse1
         if response?.status == "success"{
-            productData = response?.data ?? [ProductDataModel]()
-        
+            productData = response?.data ?? [ProductDataModel1]()
         }else{
             config = BottomSheetConfig(
                 icon: "exclamationmark.triangle.fill",
@@ -582,7 +582,6 @@ extension AddProductsScreen {
                 secondaryButtonTitle: nil
             )
             showError = true
-
         }
     }
     

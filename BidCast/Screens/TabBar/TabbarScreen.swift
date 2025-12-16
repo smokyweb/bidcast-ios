@@ -147,7 +147,7 @@ struct TabbarScreen: View {
                         backToPrepare: $navigateToTitle
                        )
             )
-            CusNavLink(doNavigate: $navigateTolist, destination: ListProductScreen( productData: .constant(InventoryDataModel())))
+            CusNavLink(doNavigate: $navigateTolist, destination: ListProductScreen())
             
             CusNavLink(doNavigate: $navigateToShow, destination: HomeViewScreen(showCategory: .constant(""), comeFromExploreScreen: .constant(false)))
             

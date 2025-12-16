@@ -10,7 +10,7 @@ import Foundation
 @MainActor
 final class InventoryViewModel: ObservableObject {
     
-    @Published var inventoryDict: ResponseModalPaginate<[InventoryDataModel]>?
+    @Published var inventoryDict: ResponseModalPaginate<[ProductDataModel1]>?
     @Published var deleteProductResponse = ResponseModel<DeleteProductModel>()
     @Published var changeProductStatusResponse: ResponseModel<ChangeProductStatusModel>?
     @Published var errorMessage: String? = nil
