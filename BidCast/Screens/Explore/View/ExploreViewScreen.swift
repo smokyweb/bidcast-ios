@@ -282,3 +282,319 @@ struct SubCategoryExpandableView: View {
         .padding(.top, 8)
     }
 }
+//
+//
+//struct SubCategoryExpandableView: View {
+//    let isLoading: Bool
+//    let subCategories: [SubCategoryDataModel]
+//    let onSubCategoryTap: ((SubCategoryDataModel) -> Void)?
+//    
+//    private let itemHeight: CGFloat = 60
+//    private let maxVisibleItems: Int = 3
+//    
+//    @State private var selectedSubCategory: SubCategoryDataModel?
+//    @State private var hoveredId: Int?
+//    
+//    private var shouldScroll: Bool {
+//        subCategories.count > maxVisibleItems
+//    }
+//    
+//    private var scrollViewHeight: CGFloat {
+//        let itemsToShow = min(subCategories.count, maxVisibleItems)
+//        return CGFloat(itemsToShow) * itemHeight
+//    }
+//    
+//    init(isLoading: Bool,
+//         subCategories: [SubCategoryDataModel],
+//         onSubCategoryTap: ((SubCategoryDataModel) -> Void)? = nil) {
+//        self.isLoading = isLoading
+//        self.subCategories = subCategories
+//        self.onSubCategoryTap = onSubCategoryTap
+//    }
+//    
+//    var body: some View {
+//        VStack(spacing: 0) {
+//            if isLoading {
+//                loadingView
+//            } else if subCategories.isEmpty {
+//                emptyView
+//            } else {
+//                subCategoryList
+//            }
+//        }
+//        .background(
+//            RoundedRectangle(cornerRadius: 16)
+//                .fill(
+//                    LinearGradient(
+//                        gradient: Gradient(colors: [
+//                            Color.white,
+//                            Color(.systemGray6).opacity(0.3)
+//                        ]),
+//                        startPoint: .topLeading,
+//                        endPoint: .bottomTrailing
+//                    )
+//                )
+//        )
+//        .overlay(
+//            RoundedRectangle(cornerRadius: 16)
+//                .stroke(
+//                    LinearGradient(
+//                        gradient: Gradient(colors: [
+//                            Color.blue.opacity(0.2),
+//                            Color.purple.opacity(0.1)
+//                        ]),
+//                        startPoint: .topLeading,
+//                        endPoint: .bottomTrailing
+//                    ),
+//                    lineWidth: 1.5
+//                )
+//        )
+//        .shadow(color: Color.black.opacity(0.08), radius: 12, x: 0, y: 4)
+//        .shadow(color: Color.blue.opacity(0.05), radius: 20, x: 0, y: 8)
+//        .padding(.horizontal, 12)
+//        .padding(.top, 8)
+//    }
+//    
+//    // MARK: - Loading View
+//    private var loadingView: some View {
+//        VStack(spacing: 16) {
+//            ProgressView()
+//                .scaleEffect(1.2)
+//                .tint(.blue)
+//            
+//            Text("Loading categories...")
+//                .font(.custom("Poppins-Medium", size: 13))
+//                .foregroundColor(.gray)
+//        }
+//        .frame(maxWidth: .infinity)
+//        .frame(height: 120)
+//    }
+//    
+//    // MARK: - Empty View
+//    private var emptyView: some View {
+//        VStack(spacing: 12) {
+//            Image(systemName: "tray")
+//                .font(.system(size: 32))
+//                .foregroundColor(.gray.opacity(0.6))
+//            
+//            Text("No subcategories available")
+//                .font(.custom("Poppins-Medium", size: 14))
+//                .foregroundColor(.gray)
+//        }
+//        .frame(maxWidth: .infinity)
+//        .frame(height: 100)
+//    }
+//    
+//    // MARK: - SubCategory List
+//    private var subCategoryList: some View {
+//        VStack(spacing: 0) {
+//            // Header
+//            HStack {
+//                Text("Subcategories")
+//                    .font(.custom("Poppins-SemiBold", size: 15))
+//                    .foregroundColor(.primary)
+//                
+//                Spacer()
+//                
+//                Text("\(subCategories.count)")
+//                    .font(.custom("Poppins-Medium", size: 13))
+//                    .foregroundColor(.white)
+//                    .frame(minWidth: 28, minHeight: 22)
+//                    .background(
+//                        Capsule()
+//                            .fill(
+//                                LinearGradient(
+//                                    gradient: Gradient(colors: [Color.blue, Color.purple]),
+//                                    startPoint: .leading,
+//                                    endPoint: .trailing
+//                                )
+//                            )
+//                    )
+//            }
+//            .padding(.horizontal, 16)
+//            .padding(.vertical, 12)
+//            .background(Color(.systemGray6).opacity(0.3))
+//            
+//            Divider()
+//            
+//            // Scrollable List
+//            ScrollView(showsIndicators: shouldScroll) {
+//                LazyVStack(spacing: 0) {
+//                    ForEach(Array(subCategories.enumerated()), id: \.element.id) { index, subCategory in
+//                        SubCategoryRow(
+//                            subCategory: subCategory,
+//                            isHovered: hoveredId == subCategory.id,
+//                            isSelected: selectedSubCategory?.id == subCategory.id
+//                        )
+//                        .onTapGesture {
+//                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+//                                selectedSubCategory = subCategory
+//                            }
+//                            onSubCategoryTap?(subCategory)
+//                        }
+//                        .onLongPressGesture(minimumDuration: 0.01, pressing: { isPressing in
+//                            withAnimation(.easeInOut(duration: 0.2)) {
+//                                hoveredId = isPressing ? subCategory.id : nil
+//                            }
+//                        }, perform: {})
+//                        
+//                        if index < subCategories.count - 1 {
+//                            Divider()
+//                                .padding(.leading, 56)
+//                        }
+//                    }
+//                }
+//            }
+//            .frame(height: scrollViewHeight)
+//            
+//            // Scroll Indicator (if scrollable)
+//            if shouldScroll {
+//                HStack {
+//                    Spacer()
+//                    Text("Scroll for more")
+//                        .font(.custom("Poppins-Regular", size: 11))
+//                        .foregroundColor(.gray.opacity(0.7))
+//                    Image(systemName: "chevron.down")
+//                        .font(.system(size: 10, weight: .semibold))
+//                        .foregroundColor(.gray.opacity(0.7))
+//                    Spacer()
+//                }
+//                .padding(.vertical, 8)
+//                .background(Color(.systemGray6).opacity(0.2))
+//            }
+//        }
+//        .clipShape(RoundedRectangle(cornerRadius: 16))
+//    }
+//}
+//
+//// MARK: - SubCategory Row
+//struct SubCategoryRow: View {
+//    let subCategory: SubCategoryDataModel
+//    let isHovered: Bool
+//    let isSelected: Bool
+//    
+//    var body: some View {
+//        HStack(spacing: 12) {
+//            // Icon/Image
+//            ZStack {
+//                Circle()
+//                    .fill(
+//                        LinearGradient(
+//                            gradient: Gradient(colors: [
+//                                isSelected ? Color.blue : Color(.systemGray5),
+//                                isSelected ? Color.purple : Color(.systemGray4)
+//                            ]),
+//                            startPoint: .topLeading,
+//                            endPoint: .bottomTrailing
+//                        )
+//                    )
+//                    .frame(width: 40, height: 40)
+//                
+//                if let imageName = subCategory.imageName, !imageName.isEmpty {
+//                    Image(systemName: imageName)
+//                        .font(.system(size: 18, weight: .semibold))
+//                        .foregroundColor(.white)
+//                } else {
+//                    Text(subCategory.name?.prefix(1).uppercased() ?? "?")
+//                        .font(.custom("Poppins-Bold", size: 18))
+//                        .foregroundColor(.white)
+//                }
+//            }
+//            
+//            // Name and Count
+//            VStack(alignment: .leading, spacing: 2) {
+//                Text(subCategory.name ?? "Unknown")
+//                    .font(.custom("Poppins-SemiBold", size: 14))
+//                    .foregroundColor(isSelected ? .blue : .primary)
+//                    .lineLimit(1)
+//                
+//                if let count = subCategory.itemCount {
+//                    Text("\(count) items")
+//                        .font(.custom("Poppins-Regular", size: 11))
+//                        .foregroundColor(.gray)
+//                }
+//            }
+//            
+//            Spacer()
+//            
+//            // Arrow
+//            Image(systemName: "chevron.right")
+//                .font(.system(size: 14, weight: .semibold))
+//                .foregroundColor(isSelected ? .blue : .gray.opacity(0.4))
+//                .scaleEffect(isHovered ? 1.2 : 1.0)
+//        }
+//        .padding(.horizontal, 16)
+//        .padding(.vertical, 10)
+//        .background(
+//            RoundedRectangle(cornerRadius: 12)
+//                .fill(isHovered ? Color.blue.opacity(0.05) : Color.clear)
+//        )
+//        .overlay(
+//            RoundedRectangle(cornerRadius: 12)
+//                .stroke(isSelected ? Color.blue.opacity(0.3) : Color.clear, lineWidth: 1.5)
+//        )
+//        .scaleEffect(isHovered ? 1.02 : 1.0)
+//        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isHovered)
+//        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isSelected)
+//    }
+//}
+//
+//// MARK: - Data Model
+//struct SubCategoryDataModel: Identifiable, Equatable {
+//    let id: Int?
+//    let name: String?
+//    let imageName: String?
+//    let itemCount: Int?
+//    
+//    static func == (lhs: SubCategoryDataModel, rhs: SubCategoryDataModel) -> Bool {
+//        lhs.id == rhs.id
+//    }
+//}
+//
+//// MARK: - Preview
+//struct SubCategoryExpandableView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        VStack(spacing: 20) {
+//            // Loading State
+//            SubCategoryExpandableView(
+//                isLoading: true,
+//                subCategories: []
+//            )
+//            
+//            // Empty State
+//            SubCategoryExpandableView(
+//                isLoading: false,
+//                subCategories: []
+//            )
+//            
+//            // With 2 Items (No Scroll)
+//            SubCategoryExpandableView(
+//                isLoading: false,
+//                subCategories: [
+//                    SubCategoryDataModel(id: 1, name: "Running Shoes", imageName: "figure.run", itemCount: 45),
+//                    SubCategoryDataModel(id: 2, name: "Basketball Shoes", imageName: "basketball", itemCount: 32)
+//                ],
+//                onSubCategoryTap: { sub in
+//                    print("Tapped: \(sub.name ?? "")")
+//                }
+//            )
+//            
+//            // With 5 Items (Scrollable)
+//            SubCategoryExpandableView(
+//                isLoading: false,
+//                subCategories: [
+//                    SubCategoryDataModel(id: 1, name: "Running Shoes", imageName: "figure.run", itemCount: 45),
+//                    SubCategoryDataModel(id: 2, name: "Basketball Shoes", imageName: "basketball", itemCount: 32),
+//                    SubCategoryDataModel(id: 3, name: "Tennis Shoes", imageName: "tennis.racket", itemCount: 28),
+//                    SubCategoryDataModel(id: 4, name: "Football Boots", imageName: "soccerball", itemCount: 19),
+//                    SubCategoryDataModel(id: 5, name: "Training Shoes", imageName: "figure.strengthtraining.traditional", itemCount: 56)
+//                ],
+//                onSubCategoryTap: { sub in
+//                    print("Tapped: \(sub.name ?? "")")
+//                }
+//            )
+//        }
+//        .padding()
+//        .background(Color(.systemGroupedBackground))
+//    }
+//}

@@ -500,6 +500,7 @@ struct ListProductScreen: View {
                 .padding(.horizontal, 12)
                 .zIndex(1000)
                 
+                
                 .bottomSheet(
                     isPresented: $showSubCategorySheet,
                     height: selectedOption.count < 4 ? screenHeight * 0.4 : screenHeight/1.7,

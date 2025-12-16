@@ -598,7 +598,7 @@ struct GenericTabView<T>: View where T: CaseIterable & Hashable & RawRepresentab
 
     @Binding var selectedTab: T
     var onTabChange: (() -> Void)? = nil
-    var tabWidth: CGFloat = 80
+    var tabWidth: CGFloat = 120
     var selectedColor: Color = .black
     var unselectedColor: Color = .gray
     

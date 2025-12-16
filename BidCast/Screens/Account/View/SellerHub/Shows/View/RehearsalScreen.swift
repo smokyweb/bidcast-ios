@@ -52,6 +52,9 @@ struct RehearsalScreen: View {
     @State private var showSellSheet: Bool = false
     @State private var showShopSheet: Bool = false
     @State private var showProductSheet : Bool = false
+    
+    @State private var navigateToProductList : Bool = false
+    
 
     @State private var showPollSheet : Bool = false
     @State private var showButton: Bool = false
@@ -320,7 +323,8 @@ struct RehearsalScreen: View {
                                    let img = product.image {
                                     StackedImageView(imageURL: img, totalCount: productData.count) {
                                         print("productStackTapped")
-                                        showShopSheet = true
+//                                        showShopSheet = true
+                                        navigateToProductList = true
                                     }
                                 }
                             }
@@ -375,7 +379,7 @@ struct RehearsalScreen: View {
                                    let img = product.image {
                                     StackedImageView(imageURL: img, totalCount: productData.count) {
                                         print("productStackTapped")
-                                        showShopSheet = true
+//                                        showShopSheet = true
                                     }
                                 }
                             }
@@ -594,6 +598,9 @@ struct RehearsalScreen: View {
                     }
                 }.zIndex(1)
                 CusNavLink(doNavigate: $navigateToSeller, destination: SellerVerificationScreen())
+                CusNavLink(doNavigate: $navigateToProductList,
+                           destination: ProductShopRehersalScreen(sellerId: "\(showsData.user?.id ?? 0)")
+                )
             }
         }
         .navigationBarHidden(true)
@@ -1149,7 +1156,8 @@ struct RehearsalScreen: View {
     private func handleCountdownCompletion() {
         fetchProducts(for: roomId)
         currentBottomSheet = .shop
-        showShopSheet = true
+//        showShopSheet = true
+        navigateToProductList = true
         fetchLatestProductList()
         hasCountdownStarted = false
     }

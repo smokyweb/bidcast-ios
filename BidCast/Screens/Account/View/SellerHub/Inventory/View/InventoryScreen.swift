@@ -37,6 +37,8 @@ struct InventoryScreen: View {
     var viewModel = InventoryViewModel()
     @StateObject private var productViewModel = ProductViewModel()
     
+    @State private var showAuctionSheet = false
+    
     @State var productId : Int = 0
     @State var showError: Bool = false
     @State var showDeleteProduct: Bool = false
@@ -339,6 +341,7 @@ struct InventoryScreen: View {
         .padding(.bottom, -70)
         .toolbar(.hidden,for: .tabBar)
         .onAppear {
+//            showAuctionSheet = false
             Task {
                 await performAPICalls(
                     isConcurrent: true,
@@ -389,6 +392,26 @@ struct InventoryScreen: View {
                 }
             )
         }
+        .bottomSheet(
+            isPresented: $showAuctionSheet,
+            height:screenHeight * 0.75,
+            topBarCornerRadius: 25,
+            showTopIndicator: false,
+            onDismiss: {
+                showAuctionSheet = false
+            },
+            content: {
+                AuctionSettingsSheet(
+                    onStartAuction: { bid, reqTime, counterTime, suddenDeath in
+                        print("Starting Bid: $\(bid)")
+                        print("Required Time: \(reqTime)s")
+                        print("Counter-Bid Time: \(counterTime)s")
+                        print("Sudden Death: \(suddenDeath)")
+                        showAuctionSheet = false
+                    }
+                )
+            }
+        )
         
         .overlay(
             CustomBottomSheetView(

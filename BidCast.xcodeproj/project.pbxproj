@@ -572,6 +572,8 @@
 		D694B1BD2EB08C8200411242 /* AgoraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D694B1BC2EB08C8200411242 /* AgoraManager.swift */; };
 		D69528472E93CE990033EA7A /* ApplyPremierShopModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D69528462E93CE990033EA7A /* ApplyPremierShopModel.swift */; };
 		D69B74E12EC7592C00D862BB /* CreatePollScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D69B74E02EC7592C00D862BB /* CreatePollScreen.swift */; };
+		D6A27F982EF1716000CF5E7A /* ProductShopRehersalScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6A27F972EF1716000CF5E7A /* ProductShopRehersalScreen.swift */; };
+		D6A27F9A2EF185B000CF5E7A /* AuctionSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6A27F992EF185B000CF5E7A /* AuctionSheetView.swift */; };
 		D6A8129C2E9F663400BE22AB /* CustomSearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6A8129B2E9F663400BE22AB /* CustomSearchBar.swift */; };
 		D6A812A02E9F787F00BE22AB /* SellerAnalyticsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6A8129D2E9F787F00BE22AB /* SellerAnalyticsModel.swift */; };
 		D6A812A12E9F787F00BE22AB /* SellerAnalyticsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6A8129E2E9F787F00BE22AB /* SellerAnalyticsViewModel.swift */; };
@@ -1141,6 +1143,8 @@
 		D694B1BC2EB08C8200411242 /* AgoraManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgoraManager.swift; sourceTree = "<group>"; };
 		D69528462E93CE990033EA7A /* ApplyPremierShopModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplyPremierShopModel.swift; sourceTree = "<group>"; };
 		D69B74E02EC7592C00D862BB /* CreatePollScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatePollScreen.swift; sourceTree = "<group>"; };
+		D6A27F972EF1716000CF5E7A /* ProductShopRehersalScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductShopRehersalScreen.swift; sourceTree = "<group>"; };
+		D6A27F992EF185B000CF5E7A /* AuctionSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuctionSheetView.swift; sourceTree = "<group>"; };
 		D6A8129B2E9F663400BE22AB /* CustomSearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSearchBar.swift; sourceTree = "<group>"; };
 		D6A8129D2E9F787F00BE22AB /* SellerAnalyticsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SellerAnalyticsModel.swift; sourceTree = "<group>"; };
 		D6A8129E2E9F787F00BE22AB /* SellerAnalyticsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SellerAnalyticsViewModel.swift; sourceTree = "<group>"; };
@@ -3167,6 +3171,7 @@
 			isa = PBXGroup;
 			children = (
 				3504BCAB2E00040A0069182D /* RehearsalScreen.swift */,
+				D6A27F972EF1716000CF5E7A /* ProductShopRehersalScreen.swift */,
 				D6631E6C2ECF429B00704ED1 /* PollPreviewCardView.swift */,
 				D6631E682ECF196D00704ED1 /* LivePollView.swift */,
 				D6631E6A2ECF3DCC00704ED1 /* LivePollViewerView.swift */,
@@ -3175,6 +3180,7 @@
 				D4BA9C0E2DE48D2A00DFF6E6 /* ShowCardView.swift */,
 				D69B74E02EC7592C00D862BB /* CreatePollScreen.swift */,
 				D6C5A2C92EE7EBD60071A43C /* MyShowsAnalyticsScreen.swift */,
+				D6A27F992EF185B000CF5E7A /* AuctionSheetView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -4649,6 +4655,7 @@
 				D4CAEC6B2DE6F74A00705CD7 /* AnalyticsViewModel.swift in Sources */,
 				D4BA9C1F2DE4A35200DFF6E6 /* TransactionRowView.swift in Sources */,
 				99C909DC2DC8CDDC0054620B /* SavedJobListResponse.swift in Sources */,
+				D6A27F982EF1716000CF5E7A /* ProductShopRehersalScreen.swift in Sources */,
 				35C202572DEF128300492F2D /* AddCardViewModel.swift in Sources */,
 				D4B6163D2DE87F1100924A3D /* OBSSetupModel.swift in Sources */,
 				99C909DD2DC8CDDC0054620B /* ContactModel.swift in Sources */,
@@ -4804,6 +4811,7 @@
 				D4D304502E55D031006A15EF /* UpcomingBottomSheet.swift in Sources */,
 				D4BA9C0C2DE4856900DFF6E6 /* ShowsModel.swift in Sources */,
 				99C909AA2DC8CD930054620B /* Logger.swift in Sources */,
+				D6A27F9A2EF185B000CF5E7A /* AuctionSheetView.swift in Sources */,
 				D64A2C1E2EE1B24B00D0F2B6 /* FilterPageView.swift in Sources */,
 				D4A500E32DFAC474008799B1 /* OTPVerificationScreen.swift in Sources */,
 				D66070A92ED02D9C00B81251 /* PipContainerView.swift in Sources */,
