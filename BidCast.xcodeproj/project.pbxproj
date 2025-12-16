@@ -271,6 +271,10 @@
 		D433DB0F2E4766F1001FA51D /* WinnerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D433DB0B2E4766F1001FA51D /* WinnerViewModel.swift */; };
 		D433DB102E4766F1001FA51D /* WinnerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D433DB092E4766F1001FA51D /* WinnerModel.swift */; };
 		D448C46C2E5C6AFA004106D4 /* BlockedUserSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D448C46B2E5C6AFA004106D4 /* BlockedUserSheet.swift */; };
+		D44B0BBA2EF128570084F58A /* AnalyticsScreen_2.swift in Sources */ = {isa = PBXBuildFile; fileRef = D44B0BB92EF128570084F58A /* AnalyticsScreen_2.swift */; };
+		D44B0BBC2EF133ED0084F58A /* priceCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D44B0BBB2EF133ED0084F58A /* priceCardView.swift */; };
+		D44B0BBE2EF136B10084F58A /* ToolGridAnalyticsView_2.swift in Sources */ = {isa = PBXBuildFile; fileRef = D44B0BBD2EF136B10084F58A /* ToolGridAnalyticsView_2.swift */; };
+		D44B0BC02EF13DE80084F58A /* TopBuyersBySalesCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = D44B0BBF2EF13DE80084F58A /* TopBuyersBySalesCard.swift */; };
 		D4588AC62E20F68E0089B1A3 /* ReviewCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4588AC52E20F68E0089B1A3 /* ReviewCard.swift */; };
 		D45D7A382E389AAD003A3842 /* ChatScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D45D7A372E389AAD003A3842 /* ChatScreen.swift */; };
 		D45D7A3C2E389AE4003A3842 /* ChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D45D7A3B2E389AE4003A3842 /* ChatViewModel.swift */; };
@@ -836,6 +840,10 @@
 		D433DB092E4766F1001FA51D /* WinnerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WinnerModel.swift; sourceTree = "<group>"; };
 		D433DB0B2E4766F1001FA51D /* WinnerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WinnerViewModel.swift; sourceTree = "<group>"; };
 		D448C46B2E5C6AFA004106D4 /* BlockedUserSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockedUserSheet.swift; sourceTree = "<group>"; };
+		D44B0BB92EF128570084F58A /* AnalyticsScreen_2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsScreen_2.swift; sourceTree = "<group>"; };
+		D44B0BBB2EF133ED0084F58A /* priceCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = priceCardView.swift; sourceTree = "<group>"; };
+		D44B0BBD2EF136B10084F58A /* ToolGridAnalyticsView_2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolGridAnalyticsView_2.swift; sourceTree = "<group>"; };
+		D44B0BBF2EF13DE80084F58A /* TopBuyersBySalesCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopBuyersBySalesCard.swift; sourceTree = "<group>"; };
 		D4588AC52E20F68E0089B1A3 /* ReviewCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewCard.swift; sourceTree = "<group>"; };
 		D45D7A372E389AAD003A3842 /* ChatScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatScreen.swift; sourceTree = "<group>"; };
 		D45D7A3B2E389AE4003A3842 /* ChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewModel.swift; sourceTree = "<group>"; wrapsLines = 0; };
@@ -3665,7 +3673,11 @@
 			isa = PBXGroup;
 			children = (
 				D4CAEC612DE6F74A00705CD7 /* AnalyticsScreen.swift */,
+				D44B0BB92EF128570084F58A /* AnalyticsScreen_2.swift */,
 				D4CAEC6F2DE6FF1400705CD7 /* ToolGridAnalyticsView.swift */,
+				D44B0BBD2EF136B10084F58A /* ToolGridAnalyticsView_2.swift */,
+				D44B0BBB2EF133ED0084F58A /* priceCardView.swift */,
+				D44B0BBF2EF13DE80084F58A /* TopBuyersBySalesCard.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -4651,10 +4663,12 @@
 				99C909E02DC8CDDC0054620B /* ParametresRequest.swift in Sources */,
 				D408478F2ECD85BE001CC925 /* RehearsalScreenV1.swift in Sources */,
 				D4CAECBD2DE73BCC00705CD7 /* EndShowModel.swift in Sources */,
+				D44B0BC02EF13DE80084F58A /* TopBuyersBySalesCard.swift in Sources */,
 				99C909E12DC8CDDC0054620B /* UserProfileUpdateResponseModal.swift in Sources */,
 				99C909E22DC8CDDC0054620B /* InterviewScheduleModal.swift in Sources */,
 				99C909E32DC8CDDC0054620B /* NotificationResponseModel.swift in Sources */,
 				35BDF0382E13C88700412446 /* AccountViewModel.swift in Sources */,
+				D44B0BBE2EF136B10084F58A /* ToolGridAnalyticsView_2.swift in Sources */,
 				D4DDF62D2E0BD358007AD383 /* NotificationCardView.swift in Sources */,
 				D4BA9C1A2DE49D1300DFF6E6 /* WalletModel.swift in Sources */,
 				99C909E42DC8CDDC0054620B /* LinkedInUserDetail.swift in Sources */,
@@ -4690,6 +4704,7 @@
 				D69B74E12EC7592C00D862BB /* CreatePollScreen.swift in Sources */,
 				35B44F1C2DD705C200FBCBC4 /* ABoutUsModel.swift in Sources */,
 				D4F2EA1D2EAA4410001CD4CB /* SellerScreen.swift in Sources */,
+				D44B0BBA2EF128570084F58A /* AnalyticsScreen_2.swift in Sources */,
 				D4BA9C192DE49D1300DFF6E6 /* WalletViewModel.swift in Sources */,
 				D4CAECAA2DE7360F00705CD7 /* ShowSummarySheet.swift in Sources */,
 				D4CAEC7A2DE711F900705CD7 /* MoreOptionsViewModel.swift in Sources */,
@@ -4972,6 +4987,7 @@
 				99C908392DC8CD6A0054620B /* LinkedInBottomSheet.swift in Sources */,
 				D4C0C7C12E53125500A84165 /* PaymentBottomSheet.swift in Sources */,
 				D4BB9A0D2DE5A99700C1BCBC /* MyOrdersViewModel.swift in Sources */,
+				D44B0BBC2EF133ED0084F58A /* priceCardView.swift in Sources */,
 				99C9083A2DC8CD6A0054620B /* SubmitVideoResumeSheet.swift in Sources */,
 				99C9083B2DC8CD6A0054620B /* VideoResumeSheet.swift in Sources */,
 				D4B615D02DE8280200924A3D /* NotifyMeViewModel.swift in Sources */,

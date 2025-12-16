@@ -46,6 +46,14 @@ struct AnalyticsScreen: View {
     @State var salesData: [ChartData] = []
     @State var visitorsData : [ChartData] = []
     
+    @State private var startDate = Calendar.current.date(byAdding: .day, value: -14, to: Date()) ?? Date()
+    @State private var endDate = Date()
+    @State private var showDatePicker = false
+    @State private var showMetricsInfo = false
+    @State var topBuyers: [TopBuyerBySales] = []
+    @State var topOrders: [TopBuyerByOrders] = []
+   
+    
     struct ToolItem: Identifiable {
         let id = UUID()
         let iconName: String
@@ -103,43 +111,112 @@ struct AnalyticsScreen: View {
                              isVectorImgHidden: true)
                         .padding(.bottom,1)
                         .frame(height: 80)
+                        .padding(.horizontal , 16)
                     
                     CustomSegmentedControl(preselectedIndex: $segment ,
                                            options: AnalyticsSegment.allCases)
                     .padding(.horizontal , 16)
                     
                     VStack(alignment: .leading, spacing: 12) {
-                        TwoVerticalLabelCell(
-                            dataModel: sellerAlytics,
-                            topLabel: { $0.title },
-                            bottomLabel: { $0.value }
-                        )
-                            
-                            VStack(spacing: 16) {
-                                ToolGridAnalyticsView(
-                                    title: AppString.SalePerformance,
-                                    chartData: salesData,
-                                    chartType: .bar
-                                )
-
-                                ToolGridAnalyticsView(
-                                    title: AppString.VisitorAnalytics,
-                                    chartData: visitorsData,
-                                    chartType: .line
-                                )
+                        SellerAnalyticsHeaderView(
+                            startDate: $startDate,
+                            endDate: $endDate,
+                            onPreviousPeriod: {
+                                let days = Calendar.current.dateComponents([.day], from: startDate, to: endDate).day ?? 14
+                                startDate = Calendar.current.date(byAdding: .day, value: -days, to: startDate) ?? startDate
+                                endDate = Calendar.current.date(byAdding: .day, value: -days, to: endDate) ?? endDate
+                                
+                                Task {
+                                    let request = SellerAnalyticsRequest(
+                                        filter: "custom",
+                                        start_date: ISO8601DateFormatter().string(from: startDate),
+                                        end_date: ISO8601DateFormatter().string(from: endDate)
+                                    )
+                                    await fetchSellerAnalyticsAsync(using: request)
+                                }
+                            },
+                            onNextPeriod: {
+                                
+                                let days = Calendar.current.dateComponents([.day], from: startDate, to: endDate).day ?? 14
+                                startDate = Calendar.current.date(byAdding: .day, value: days, to: startDate) ?? startDate
+                                endDate = Calendar.current.date(byAdding: .day, value: days, to: endDate) ?? endDate
+                                
+                                
+                                if endDate > Date() {
+                                    endDate = Date()
+                                }
+                                
+                                
+                                Task {
+                                    let request = SellerAnalyticsRequest(
+                                        filter: "custom",
+                                        start_date: ISO8601DateFormatter().string(from: startDate),
+                                        end_date: ISO8601DateFormatter().string(from: endDate)
+                                    )
+                                    await fetchSellerAnalyticsAsync(using: request)
+                                }
+                            },
+                            onEditDates: {
+                                showDatePicker = true
+                            },
+                            onShowMetricsInfo: {
+                                showMetricsInfo = true
                             }
-                            .padding(.vertical)
+                        )
+                        .padding(.horizontal,16)
+                        
+                        priceCardView(amount: "00.00", label: "Estimated sales", onMoreTapped: {
+                            
+                        })
+                        .padding(.horizontal, 16)
+                        
+                        VStack(spacing: 16) {
+                            ToolGridAnalyticsView(
+                                title: AppString.SalePerformance,
+                                chartData: salesData,
+                                chartType: .bar
+                            )
+                            
+                            //                                ToolGridAnalyticsView(
+                            //                                    title: AppString.VisitorAnalytics,
+                            //                                    chartData: visitorsData,
+                            //                                    chartType: .line
+                            //                                )
                         }
+                        .padding(.vertical)
+                        
+                        Text("Who is watching my live shows?")
+                            .font(.custom(poppinsBold, size: 16.0))
+                            .foregroundStyle(.black)
+                            .padding(.horizontal, 16)
+                        
+                        TopBuyersBySalesCard(
+                            title: "Top Buyers by Sales",
+                            buyers: topBuyers, orders: topOrders,
+                             onExportData: {
+                             },forBuyers: true
+                         )
+                         .padding(.horizontal,16)
+                        
+                        TopBuyersBySalesCard(
+                            title: "Top Buyers by Orders",
+                            buyers: topBuyers, orders: topOrders,
+                             onExportData: {
+                             },forBuyers: false
+                         )
+                         .padding(.horizontal,16)
+                        
+                    }
 //                        .padding(.horizontal)
                         .padding(.top,10)
                         
                         // Tools Grid
-                        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
-                            ForEach(tools) { tool in
-                                ToolGridItemsView(tool: tool)
-                            }
-                        }
-                        .padding(.horizontal)
+//                        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
+//                            ForEach(tools) { tool in
+//                                ToolGridItemsView(tool: tool)
+//                            }
+//                        }
+//                        .padding(.horizontal)
                     }
                     .padding(.top)
                 }
@@ -158,6 +235,21 @@ struct AnalyticsScreen: View {
                 await seller
                 await sales
             }
+        }
+        .sheet(isPresented: $showDatePicker) {
+            DateRangePickerView(startDate: $startDate, endDate: $endDate) {
+                Task {
+                    let request = SellerAnalyticsRequest(
+                        filter: "custom",
+                        start_date: ISO8601DateFormatter().string(from: startDate),
+                        end_date: ISO8601DateFormatter().string(from: endDate)
+                    )
+                    await fetchSellerAnalyticsAsync(using: request)
+                }
+            }
+        }
+        .sheet(isPresented: $showMetricsInfo) {
+//            MetricsInfoView()
         }
     }
     
@@ -244,6 +336,8 @@ struct AnalyticsScreen: View {
         let response = viewModel.sellerAnalyticsResponse
         if response?.status == "success"{
             sellerAnalyticsData = response?.data
+            topBuyers = sellerAnalyticsData?.top_buyers_by_sales ?? []
+            topOrders = sellerAnalyticsData?.top_buyers_by_orders ?? []
         }else{
             showError = true
             alertType = .sheetType(
@@ -260,6 +354,16 @@ struct AnalyticsScreen: View {
         let response = viewModel.salesPerformanceResponse
         if response?.status == "success"{
             salesPerformanceData = response?.data
+//            salesData.append(ChartData(month: "February",
+//                                       value: 12))
+//            salesData.append(ChartData(month: "March",
+//                                       value: 14))
+//            salesData.append(ChartData(month: "April",
+//                                       value: 16))
+//            salesData.append(ChartData(month: "May",
+//                                       value: 12))
+//            salesData.append(ChartData(month: "June",
+//                                       value: 22))
             if let charts = salesPerformanceData?.chart {
                 for item in charts {
                     salesData.append(ChartData(month: item.label ?? "",
@@ -286,7 +390,7 @@ enum AnalyticsSegment : String, CaseIterable, CustomStringConvertible{
     case overall = "Overall"
     case livestream = "Livestream"
     case promote = "Promote"
-    case trust = "Trust"
+//    case trust = "Trust"
     
     var description: String {
         return NSLocalizedString(rawValue, comment: "").localized
@@ -351,5 +455,97 @@ struct AreaChartView: View {
         }
         .frame(height: 150)
         .padding()
+    }
+}
+
+struct DateRangePickerView: View {
+    @Binding var startDate: Date
+    @Binding var endDate: Date
+    var onApply: () -> Void
+    
+    @Environment(\.dismiss) var dismiss
+    
+    var body: some View {
+        NavigationView {
+            VStack(spacing: 20) {
+                DatePicker("Start Date", selection: $startDate, displayedComponents: .date)
+                    .datePickerStyle(.graphical)
+                
+                DatePicker("End Date", selection: $endDate, in: startDate..., displayedComponents: .date)
+                    .datePickerStyle(.graphical)
+                
+                Button(action: {
+                    onApply()
+                    dismiss()
+                }) {
+                    Text("Apply")
+                        .font(.custom(poppinsSemiBold, size: 16))
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.defaultTheme)
+                        .cornerRadius(12)
+                }
+                .padding(.horizontal)
+                
+                Spacer()
+            }
+            .padding()
+            .navigationTitle("Select Date Range")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Cancel") {
+                        dismiss()
+                    }
+                }
+            }
+        }
+    }
+}
+struct MetricsInfoView: View {
+    @Environment(\.dismiss) var dismiss
+    
+    let metrics = [
+        ("Total Followers", "The total number of users following your seller account"),
+        ("Average Rating", "Your average customer rating based on all reviews"),
+        ("Live Sessions", "Total number of live streaming sessions conducted"),
+        ("Total Sales", "Total number of items sold across all sessions"),
+        ("Revenue", "Total revenue generated from sales"),
+        ("Items", "Total number of items listed")
+    ]
+    
+    var body: some View {
+        NavigationView {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 20) {
+                    ForEach(metrics, id: \.0) { metric in
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(metric.0)
+                                .font(.custom(poppinsSemiBold, size: 16))
+                                .foregroundColor(.black)
+                            
+                            Text(metric.1)
+                                .font(.custom(poppinsRegular, size: 14))
+                                .foregroundColor(.gray)
+                        }
+                        .padding()
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(Color(.systemGray6))
+                        .cornerRadius(12)
+                    }
+                }
+                .padding()
+            }
+            .navigationTitle("Metrics Information")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Done") {
+                        dismiss()
+                    }
+                }
+            }
+        }
     }
 }

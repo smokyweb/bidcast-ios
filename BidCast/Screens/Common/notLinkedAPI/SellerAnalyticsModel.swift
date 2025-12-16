@@ -12,6 +12,8 @@ import Foundation
 struct SellerAnalyticsModel: Codable {
     var seller: Seller?
     var stats: Stats?
+    var top_buyers_by_sales: [TopBuyerBySales]?
+    var top_buyers_by_orders: [TopBuyerByOrders]?
 }
 
 // MARK: - Seller
@@ -68,4 +70,16 @@ struct SalesChart: Codable {
         case totalSales = "total_sales"
         case totalRevenue = "total_revenue"
     }
+}
+struct TopBuyerBySales: Codable {
+    var user_id: Int?
+    var total: String?
+    var user: User?
+}
+
+// MARK: - Top Buyers By Orders
+struct TopBuyerByOrders: Codable {
+    var user_id: Int?
+    var total_orders: Int?
+    var user: User?
 }
