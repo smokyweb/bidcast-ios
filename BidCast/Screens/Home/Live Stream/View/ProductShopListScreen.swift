@@ -71,7 +71,7 @@ extension View {
 
 // MARK: - Product List Item
 struct ProductListItem: View {
-    @Binding var product: ProductDataModel
+    @Binding var product: ProductDataModel1
     @State private var showBadge = true
     
     var body: some View {
@@ -203,7 +203,7 @@ struct ProductShopListScreen: View {
     
     @State private var totalCount = 0
     
-    @State var productData: [ProductDataModel] = []
+    @State var productData: [ProductDataModel1] = []
 //    @State var categoryId: String = "-1"
     @State var sellerId: String = "-1"
     @State var currentPage: Int = 1
@@ -373,7 +373,7 @@ extension ProductShopListScreen {
                                              sale_type: selectedOptions,
                                              sort_by: selectedSort
                 )
-                try await productViewModel.getProductsData(parameters: request)
+                try await productViewModel.getProductsData1(parameters: request)
             }
         }
     }
@@ -391,7 +391,7 @@ extension ProductShopListScreen {
     
     //MARK: productSuccess.
     func productSuccess(){
-        let response = productViewModel.productsResponse
+        let response = productViewModel.productsResponse1
         if response?.status == "success"{
             let newItems = response?.data ?? []
             totalCount = response?.total ?? 0

@@ -76,28 +76,132 @@ struct ProductDataModel: Codable {
         case subCategory = "sub_category"
     }
 }
+//// MARK: - Datum
+//struct ProductDataModel1: Codable {
+//    var id: Int?
+//    var title: String?
+//    var image: String?
+//    var thumbanail: String?
+//    var condition, category: String?
+//    var sellerID: Int?
+//    var sellerName: String?
+//    var price: String?
+//    var status: String?
+//    var bids: Int?
+//    var quantity: String?
+//
+//    enum CodingKeys: String, CodingKey {
+//        case id, title, image, thumbanail, condition, category
+//        case sellerID = "seller_id"
+//        case sellerName = "seller_name"
+//        case price, status, bids, quantity
+//    }
+//}
 
-// MARK: - Datum
-struct ProductDataModel1: Codable {
+// MARK: - ProductDataModel1
+struct ProductDataModel1: Codable, Identifiable {
     var id: Int?
+    
     var title: String?
-    var image: String?
-    var thumbanail: String?
-    var condition, category: String?
-    var sellerID: Int?
-    var sellerName: String?
-    var price: String?
-    var status: String?
-    var bids: Int?
+    var description: String?
+    var pricing: String?
     var quantity: String?
+    var purchasedQuantity: String?
+
+    var sku: String?
+    var status: String?
+    var type: String?
+    var variant: String?
+    var productCondition: String?
+    var productShow: String?
+
+    var acceptOffers: Bool?
+    var auction: Bool?
+    var flashSale: Bool?
+    var reserveForLive: Bool?
+    var hazardousMaterial: Bool?
+
+    var bidCount: Int?
+
+    var height: Double?
+    var length: Double?
+    var width: Double?
+    var weight: Double?
+
+    var mailClass: String?
+    var processingCategory: String?
+
+    var shippingProfileId: Int?
+    var subCategoryId: Int?
+    var userId: Int?
+
+    var images: [String?]?
+    var thumbnail: [String?]?
+    var videos: [String?]?
+
+    var createdAt: String?
+
+    var category: ProductCategory?
+    var user: ProductUser?
+}
+
+struct ProductUser: Codable, Identifiable {
+    var id: Int?
+    var name: String?
+    var username: String?
+    var email: String?
+    var profileImage: String?
+    var sellerVerification: Bool?
+}
+
+struct ProductCategory: Codable, Identifiable {
+    var id: Int?
+    var name: String?
+    var image: String?
+    var thumbnail: String?
+    var color: String?
+}
+
+extension ProductDataModel1 {
 
     enum CodingKeys: String, CodingKey {
-        case id, title, image, thumbanail, condition, category
-        case sellerID = "seller_id"
-        case sellerName = "seller_name"
-        case price, status, bids, quantity
+        case id
+        case title
+        case description
+        case pricing
+        case quantity
+        case purchasedQuantity = "purchased_quantity"
+        case sku
+        case bidCount = "bid_count"
+        case status
+        case type
+        case variant
+        case productCondition = "product_condition"
+        case productShow = "product_show"
+        case acceptOffers = "accept_offers"
+        case auction
+        case flashSale = "flash_sale"
+        case reserveForLive = "reserve_for_live"
+        case hazardousMaterial = "hazardous_material"
+        case height
+        case length
+        case width
+        case weight
+        case mailClass = "mail_class"
+        case processingCategory = "processing_category"
+        case shippingProfileId = "shipping_profile_id"
+        case subCategoryId = "sub_category_id"
+        case userId = "user_id"
+        case images
+        case thumbnail
+        case videos
+        case createdAt = "created_at"
+        case category
+        case user
     }
 }
+
+
 
 // MARK: - Category
 struct ProductCategoryModel: Codable {

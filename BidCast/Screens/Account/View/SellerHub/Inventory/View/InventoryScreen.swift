@@ -792,6 +792,7 @@ struct InventoryTabView: View {
         .background(Color(.systemBackground))
     }
 }
+import SwiftUI
 
 struct ProductCardView: View {
     let product: ProductDataModel1
@@ -806,67 +807,193 @@ struct ProductCardView: View {
     var onDelete: ((Int) -> Void)?
     
     var body: some View {
-        cardContent
-            .onTapGesture(perform: {
-                showActions = true
-            })
-            .sheet(isPresented: $showActions) {
-                ProductActionsSheet(
-                    isPresented: $showActions,
-                    isActive: product.status == "active",
-                    onEdit: { handleEdit() },
-                    onDuplicate: { handleDuplicate() },
-                    onToggleActivation: { handleToggleActivation() },
-                    onToggleDeActivation: { onToggleDeActivation?(product.id ?? 0) },
-                    segmant: segmant,
-                    onDelete: { handleDelete() }
+        ZStack(alignment: .topTrailing) {
+            cardContent
+            Menu {
+                VStack(alignment: .leading, spacing: 0) {
+                    // Edit Option
+                    MenuOptionButton(
+                        icon: "pencil",
+                        title: "Edit",
+                        iconColor: .blue
+                    ) {
+                        handleEdit()
+                    }
+                    
+//                    Divider()
+//                        .padding(.horizontal, 12)
+                    
+                    // Activate/Deactivate Option
+                    if segmant == .active {
+                        MenuOptionButton(
+                            icon: product.status == "active" ? "eye.slash" : "eye",
+                            title: product.status == "active" ? "Deactivate" : "Activate",
+                            iconColor: product.status == "active" ? .orange : .green
+                        ) {
+                            if product.status == "active" {
+                                handleToggleDeActivation()
+                            } else {
+                                handleToggleActivation()
+                            }
+                        }
+                    } else {
+                        MenuOptionButton(
+                            icon: "eye",
+                            title: "Activate",
+                            iconColor: .green
+                        ) {
+                            handleToggleActivation()
+                        }
+                    }
+//                    
+//                    Divider()
+//                        .padding(.horizontal, 12)
+                    
+                    // Delete Option
+                    MenuOptionButton(
+                        icon: "trash",
+                        title: "Delete",
+                        iconColor: .red
+                    ) {
+                        handleDelete()
+                    }
+                }
+                .frame(width: 120)
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(Color(.systemBackground))
+                        .shadow(
+                            color: Color.black.opacity(0.15),
+                            radius: 20,
+                            x: 0,
+                            y: 8
+                        )
                 )
-                .presentationDetents([.height(480)])
-                .presentationDragIndicator(.hidden)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(Color.gray.opacity(0.15), lineWidth: 1)
+                )
+                .padding(.top, 56)
+                .padding(.trailing, 16)
+                .transition(.scale(scale: 0.95).combined(with: .opacity))
+                .zIndex(3)
+            } label: {
+                Image(systemName: "ellipsis")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(.gray)
+                    .frame(width: 32, height: 32)
+                    .background(Color(.systemBackground))
+                    .clipShape(Circle())
             }
+//            // Three Dots Menu Button
+//            Button(action: {
+//                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+//                    showActions.toggle()
+//                }
+//            }) {
+//                Image(systemName: "ellipsis")
+//                    .font(.system(size: 18, weight: .semibold))
+//                    .foregroundColor(.gray)
+//                    .frame(width: 32, height: 32)
+//                    .background(Color(.systemBackground))
+//                    .clipShape(Circle())
+//            }
+//            .padding([.top, .trailing], 24)
+//            .zIndex(1001)
+            
+            // Dropdown Menu
+        }
+        .background(
+            Color.black.opacity(0.001)
+                .onTapGesture {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                        showActions = false
+                    }
+                }
+                .allowsHitTesting(showActions)
+        )
     }
     
     private func handleEdit() {
-        print("Edit tapped")
-        closeActionsSheet {
+        closeActionsMenu {
             onEdit?(product)
         }
     }
     
     private func handleDuplicate() {
-        print("Duplicate tapped")
-        closeActionsSheet {
+        closeActionsMenu {
             onDuplicate?()
         }
     }
     
     private func handleToggleActivation() {
-        print("Toggle Activation tapped")
-        closeActionsSheet {
+        closeActionsMenu {
             onToggleActivation?(product.id ?? 0)
         }
     }
     
+    private func handleToggleDeActivation() {
+        closeActionsMenu {
+            onToggleDeActivation?(product.id ?? 0)
+        }
+    }
+    
     private func handleDelete() {
-        print("Delete tapped")
-        closeActionsSheet {
+        closeActionsMenu {
             onDelete?(product.id ?? 0)
         }
     }
     
-    private func closeActionsSheet(completion: @escaping () -> Void) {
-        withAnimation(.easeInOut(duration: 0.20)) {
-            isLongPressing = false
+    private func closeActionsMenu(completion: @escaping () -> Void) {
+        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+            showActions = false
         }
         
-        // Delay sheet close until animation completes
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.20) {
-            showActions = false
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             completion()
         }
     }
 }
 
+// MARK: - Menu Option Button
+struct MenuOptionButton: View {
+    let icon: String
+    let title: String
+    let iconColor: Color
+    let action: () -> Void
+    
+    @State private var isPressed = false
+    
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 12) {
+                Image(systemName: icon)
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(iconColor)
+                    .frame(width: 24, height: 24)
+                
+                Text(title)
+                    .font(.system(size: 15, weight: .medium))
+                    .foregroundColor(.primary)
+                
+                Spacer()
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 14)
+            .background(isPressed ? Color.gray.opacity(0.1) : Color.clear)
+        }
+        .buttonStyle(PlainButtonStyle())
+        .simultaneousGesture(
+            DragGesture(minimumDistance: 0)
+                .onChanged { _ in
+                    isPressed = true
+                }
+                .onEnded { _ in
+                    isPressed = false
+                }
+        )
+    }
+}
 
 extension ProductCardView {
     var cardContent: some View {
@@ -900,7 +1027,7 @@ extension ProductCardView {
 extension ProductCardView {
     var productImageView: some View {
         VStack {
-            CustomProfileImage(url: product.image ?? "", isCircular: false, size: 120)
+            CustomProfileImage(url: product.images?.first ?? "", isCircular: false, size: 120)
         }
         .frame(width: 120, height: 120)
     }
@@ -921,7 +1048,7 @@ extension ProductCardView {
             
             HStack(spacing: 8) {
 //                Text(product.condition ?? "New")
-                Text(product.condition ?? "New")
+                Text(product.productCondition ?? "New")
                     .font(.custom(poppinsRegular, size: 13))
                     .foregroundColor(.secondary)
                 
@@ -929,7 +1056,7 @@ extension ProductCardView {
                     .fill(Color.secondary)
                     .frame(width: 3, height: 3)
                 
-                Text(product.category ?? "Category")
+                Text(product.category?.name ?? "Category")
                     .font(.custom(poppinsRegular, size: 13))
                     .foregroundColor(.secondary)
             }
@@ -966,11 +1093,11 @@ extension ProductCardView {
 extension ProductCardView {
     var priceSectionView: some View {
         VStack(spacing: 8) {
-            Text("$\(product.price ?? "$0.00")")
+            Text("$\(product.pricing ?? "$0.00")")
                 .font(.custom(poppinsSemiBold, size: 16))
                 .foregroundColor(.primary)
             
-            Text("\(product.bids ?? 0) Bids")
+            Text("\(product.bidCount ?? 0) Bids")
                 .font(.custom(poppinsRegular, size: 13))
                 .foregroundColor(.secondary)
         }
@@ -1268,55 +1395,5 @@ extension Array where Element == String {
 extension Double {
     func toString(_ decimals: Int = 2) -> String {
         String(format: "%.\(decimals)f", self)
-    }
-}
-
-struct TapAndLongPressModifier: ViewModifier {
-    let tapAction: () -> Void
-    let longPressAction: () -> Void
-    var longPressDuration: Double = 0.5
-    var enableHaptics: Bool = true
-
-    @State private var isLongPressing = false
-
-    func body(content: Content) -> some View {
-        content
-            .contentShape(Rectangle())  // makes whole area tappable
-            .gesture(
-                LongPressGesture(minimumDuration: longPressDuration)
-                    .onChanged { _ in
-                        if !isLongPressing {
-                            isLongPressing = true
-                            if enableHaptics {
-                                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                            }
-                        }
-                    }
-                    .onEnded { _ in
-                        isLongPressing = false
-                        longPressAction()
-                    }
-            )
-            .onTapGesture {
-                tapAction()
-            }
-    }
-}
-
-extension View {
-    func onTapAndLongPress(
-        tap: @escaping () -> Void,
-        longPress: @escaping () -> Void,
-        longPressDuration: Double = 0.5,
-        enableHaptics: Bool = true
-    ) -> some View {
-        self.modifier(
-            TapAndLongPressModifier(
-                tapAction: tap,
-                longPressAction: longPress,
-                longPressDuration: longPressDuration,
-                enableHaptics: enableHaptics
-            )
-        )
     }
 }

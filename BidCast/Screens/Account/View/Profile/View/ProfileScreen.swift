@@ -72,7 +72,7 @@ struct ProfileScreen: View {
     @State private var canLoadMore = true
     
     @State private var totalCount = 0
-    @State var productData: [ProductDataModel] = []
+    @State var productData: [ProductDataModel1] = []
     @State var searchText: String = ""
     
     @State var reviewList: [ReviewModel] = [
@@ -325,6 +325,25 @@ struct ProfileScreen: View {
                 }
             )
         }
+        .bottomSheet(isPresented: $showError,
+                     height: screenHeight * 0.35,
+                     topBarCornerRadius: 25,
+                     contentBackgroundColor: Color(.systemBackground),
+                     topBarBackgroundColor: Color(.systemBackground),
+                     showTopIndicator: false,
+                     onDismiss: {
+                showError = false
+        }, content: {
+            CommonBottomSheet(
+                sheetType: $alertType,
+                onPrimaryClick: {
+                    withAnimation { showError = false }
+                }, onSecondaryClick: {
+                    withAnimation { showError = false }
+                })
+            .background(Color(.systemBackground))
+            .cornerRadius(25, corners: [.topLeft, .topRight])
+        })
         //        .overlay(
         //            NotifyMeBottomSheet(
         //                userId: $profileId, profileImage: profileData.profile_image ?? "" ,
@@ -570,7 +589,7 @@ struct ProfileScreen: View {
         switch tab {
         case .shop:
             let isLast = index == productData.count - 1
-            let total = productViewModel.productsResponse?.total ?? 0
+            let total = productViewModel.productsResponse1?.total ?? 0
             
             if isLast && productData.count < total {
                 fetchProduct(isLoaderShown: true)
@@ -989,9 +1008,9 @@ extension ProfileScreen {
                     alertType = .sheetType(
                         icon: .alert,
                         title: "Error",
-                        message: viewModel.errorMessage ?? "",
+                        message:  errorDesc(error: error, message: productViewModel.errorMessage),
                         primaryBtnText: AppString.ok.localized,
-                        secondaryBtnText:""
+                        secondaryBtnText: ""
                     )
                     showError = true
                 },
@@ -1005,7 +1024,7 @@ extension ProfileScreen {
                                              sort_by: selectedSort
                 )
                 
-                try await productViewModel.getProductsData(parameters: request)
+                try await productViewModel.getProductsData1(parameters: request)
             }
         }
     }
@@ -1023,7 +1042,7 @@ extension ProfileScreen {
     
     //MARK: productSuccess.
     func productSuccess(){
-        let response = productViewModel.productsResponse
+        let response = productViewModel.productsResponse1
         if response?.status == "success"{
             let newItems = response?.data ?? []
             totalCount = response?.total ?? 0

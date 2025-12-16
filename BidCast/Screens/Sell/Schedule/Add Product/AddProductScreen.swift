@@ -418,7 +418,7 @@ struct ProductItemCard: View {
         HStack(spacing: 14) {
             // Product Image
             CustomProfileImage(
-                url: product.image ?? "",
+                url: product.images?.first ?? "",
                 isCircular: false,
                 cornerRadius: 12,
                 size: 70,
@@ -438,7 +438,7 @@ struct ProductItemCard: View {
                     .foregroundColor(.primary)
                     .lineLimit(2)
                 
-                Text(product.category ?? "Unknown Category")
+                Text(product.category?.name ?? "Unknown Category")
                     .font(.custom(poppinsMedium, size: 13))
                     .foregroundColor(.secondary)
                 

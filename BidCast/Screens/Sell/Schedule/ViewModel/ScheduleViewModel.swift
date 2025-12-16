@@ -217,7 +217,7 @@ final class ScheduleViewModel: ObservableObject {
     }
 }
 
-
+@MainActor
 final class ProductViewModel: ObservableObject {
     // MARK: - Get Product
     @Published var productsResponse: ResponseModelPaginate<[ProductDataModel]>?
