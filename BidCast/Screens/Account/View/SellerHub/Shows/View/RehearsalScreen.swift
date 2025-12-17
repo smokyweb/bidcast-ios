@@ -114,10 +114,6 @@ struct RehearsalScreen: View {
     @StateObject private var agoraManager = AgoraManager(asHost: true)
     @State private var isHost = true
     
-    @State private var showNotes: String = ""
-    @State private var showNotesSheet = false
-    @State private var isEditingNotes = false
-    
     @State var agoraToken: String = ""
     @State var uId: Int = 0
     @State var channelName: String = ""
@@ -152,9 +148,9 @@ struct RehearsalScreen: View {
     @State var showItemDetailSheet = false
     @State var productId: Int = 0
     
-    @State private var showNotes: String = ""
-    @State private var showNotesSheet = false
-    @State private var isEditingNotes = false
+    @State var showNotes: String = ""
+    @State var showNotesSheet = false
+    @State var isEditingNotes = false
     
     @State var showAuctionSetting = false
     
