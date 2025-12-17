@@ -8,6 +8,7 @@
 import SwiftUI
 import Charts
 import SVProgressHUD
+import AlertToast
 
 struct AnalyticsScreen: View {
     let stats: [StatItem] = [
@@ -42,6 +43,7 @@ struct AnalyticsScreen: View {
     
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     
+    @StateObject private var downloadManager = CSVDownloadManager.shared
     
     @State var salesData: [ChartData] = []
     @State var visitorsData : [ChartData] = []
@@ -53,6 +55,7 @@ struct AnalyticsScreen: View {
     @State var topBuyers: [TopBuyerBySales] = []
     @State var topOrders: [TopBuyerByOrders] = []
    
+    @State private var exportRequest: SellerAnalyticsRequest?
     
     struct ToolItem: Identifiable {
         let id = UUID()
@@ -146,7 +149,6 @@ struct AnalyticsScreen: View {
                                     endDate = Date()
                                 }
                                 
-                                
                                 Task {
                                     let request = SellerAnalyticsRequest(
                                         filter: "custom",
@@ -175,13 +177,14 @@ struct AnalyticsScreen: View {
                                 title: AppString.SalePerformance,
                                 chartData: salesData,
                                 chartType: .bar
-                            )
-                            
-                            //                                ToolGridAnalyticsView(
-                            //                                    title: AppString.VisitorAnalytics,
-                            //                                    chartData: visitorsData,
-                            //                                    chartType: .line
-                            //                                )
+                            ) { filter in
+                                Task {
+                                    let request = SellerAnalyticsRequest(
+                                        filter: filter
+                                    )
+                                    await fetchSellerAnalyticsAsync(using: request)
+                                }
+                            }
                         }
                         .padding(.vertical)
                         
@@ -194,7 +197,11 @@ struct AnalyticsScreen: View {
                             title: "Top Buyers by Sales",
                             buyers: topBuyers, orders: topOrders,
                              onExportData: {
-                             },forBuyers: true
+                                 let type = "sale"
+                                 Task {
+                                     await downloadToFiles(type: type)
+                                 }
+                             }, forBuyers: true
                          )
                          .padding(.horizontal,16)
                         
@@ -202,6 +209,10 @@ struct AnalyticsScreen: View {
                             title: "Top Buyers by Orders",
                             buyers: topBuyers, orders: topOrders,
                              onExportData: {
+                                 let type = "order"
+                                 Task {
+                                     await downloadToFiles(type: type)
+                                 }
                              },forBuyers: false
                          )
                          .padding(.horizontal,16)
@@ -235,6 +246,9 @@ struct AnalyticsScreen: View {
                 await seller
                 await sales
             }
+        }
+        .toast(isPresenting: $showhud) {
+            AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }
         .sheet(isPresented: $showDatePicker) {
             DateRangePickerView(startDate: $startDate, endDate: $endDate) {
@@ -275,39 +289,139 @@ struct AnalyticsScreen: View {
     }
     
     func fetchVisitorsAnalyticsAsync(using request: VisitorsAnalyticsRequest) async {
-        guard Reachability.isConnectedToNetwork() else {
-            hudMsg = "No Internet Connection"
-            showhud = true
-            return
+        await performAPICalls(
+            isConcurrent: true,
+            showLoader: true,
+            onError: { error in
+                alertType = .sheetType(
+                    icon: .alert,
+                    title: "Error",
+                    message: errorDesc(error: error, message: viewModel.errorMessage),
+                    primaryBtnText: "",
+                    secondaryBtnText: AppString.ok.localized
+                )
+                showError = true
+            }, onSuccess: {
+                // On success
+                visitorsSuccess()
+            }
+            
+        ) {
+            try await viewModel.getVisitorsAnalyticsReport(request: request)
         }
-        SVProgressHUD.show()
-        await viewModel.getVisitorsAnalyticsReport(request: request) // You need async version of ViewModel call
-        await SVProgressHUD.dismiss()
-        visitorsSuccess()
+        
     }
 
     func fetchSellerAnalyticsAsync(using request: SellerAnalyticsRequest) async {
-        guard Reachability.isConnectedToNetwork() else {
-            hudMsg = "No Internet Connection"
-            showhud = true
-            return
-        }
-        SVProgressHUD.show()
-        await viewModel.getSellerAnalyticsReport(request: request)
-        await SVProgressHUD.dismiss()
-        sellerSuccess()
+            await performAPICalls(
+                isConcurrent: true,
+                showLoader: true,
+                onError: { error in
+                    alertType = .sheetType(
+                        icon: .alert,
+                        title: "Error",
+                        message: errorDesc(error: error, message: viewModel.errorMessage),
+                        primaryBtnText: "",
+                        secondaryBtnText: AppString.ok.localized
+                    )
+                    showError = true
+                }, onSuccess: {
+                    // On success
+                    sellerSuccess()
+                }
+                
+            ) {
+                exportRequest = request
+                try await viewModel.getSellerAnalyticsReport(request: request)
+            }
     }
+    
+//    func exportDetails(using type: String) async {
+//        await performAPICalls(
+//            isConcurrent: true,
+//            showLoader: true,
+//            onError: { error in
+//                alertType = .sheetType(
+//                    icon: .alert,
+//                    title: "Error",
+//                    message: errorDesc(error: error, message: viewModel.errorMessage),
+//                    primaryBtnText: "",
+//                    secondaryBtnText: AppString.ok.localized
+//                )
+//                showError = true
+//            }, onSuccess: {
+//                // On success
+//                sellerSuccess()
+//            }
+//            
+//        ) {
+//            let request = ExportDetailsRequest(filter: exportRequest?.filter ?? "",
+//                                               start_date: exportRequest?.start_date ?? "",
+//                                               end_date: exportRequest?.end_date ?? "",
+//                                               type: type
+//            )
+//            try await viewModel.getExportDetailsReport(request: request)
+//        }
+//    }
+    
+    private func downloadToFiles(type: String) async {
+        do {
+            let fileName = "sales_report_\(formatDate(Date())).csv"
+            
+            let request = ExportDetailsRequest(filter: exportRequest?.filter ?? "",
+                                               start_date: exportRequest?.start_date ?? "",
+                                               end_date: exportRequest?.end_date ?? "",
+                                               type: type
+            )
+            
+            let fileURL = try await downloadManager.downloadCSV(
+                request: request,
+                endPoint: APIEndPoint.getExportDetails(param: request),
+                fileName: fileName,
+                saveLocation: .downloads
+            )
+            
+            await MainActor.run {
+                hudMsg = "File saved successfully"
+                showhud = true
+                //                  loadDownloadedFiles()
+            }
+            
+        } catch {
+            await MainActor.run {
+                hudMsg = "Download Failed"
+                showhud = true
+            }
+        }
+    }
+    
+    private func formatDate(_ date: Date) -> String {
+           let formatter = DateFormatter()
+           formatter.dateFormat = "yyyy-MM-dd_HHmmss"
+           return formatter.string(from: date)
+       }
 
     func fetchSalesPerformanceAsync(using request: SalesPerformanceRequest) async {
-        guard Reachability.isConnectedToNetwork() else {
-            hudMsg = "No Internet Connection"
-            showhud = true
-            return
+        await performAPICalls(
+            isConcurrent: true,
+            showLoader: true,
+            onError: { error in
+                alertType = .sheetType(
+                    icon: .alert,
+                    title: "Error",
+                    message: errorDesc(error: error, message: viewModel.errorMessage),
+                    primaryBtnText: "",
+                    secondaryBtnText: AppString.ok.localized
+                )
+                showError = true
+            }, onSuccess: {
+                // On success
+                salesSuccess()
+            }
+            
+        ) {
+            try await viewModel.getSalesPreformanceReport(request: request)
         }
-        SVProgressHUD.show()
-        await viewModel.getSalesPreformanceReport(request: request)
-        await SVProgressHUD.dismiss()
-        salesSuccess()
     }
     
     func visitorsSuccess(){
@@ -342,7 +456,7 @@ struct AnalyticsScreen: View {
             showError = true
             alertType = .sheetType(
                 icon: .alert,
-                title: response?.error_type?.capitalized ?? "",
+                title: "Error",
                 message: response?.message?.capitalized ?? "",
                 primaryBtnText: "",
                 secondaryBtnText: AppString.ok.localized
@@ -547,5 +661,87 @@ struct MetricsInfoView: View {
                 }
             }
         }
+    }
+}
+
+struct SellerAnalyticsHeaderView: View {
+    @Binding var startDate: Date
+    @Binding var endDate: Date
+    
+    var onPreviousPeriod: () -> Void
+    var onNextPeriod: () -> Void
+    var onEditDates: () -> Void
+    var onShowMetricsInfo: () -> Void
+    
+    private var dateFormatter: DateFormatter {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMM dd, yyyy"
+        return formatter
+    }
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            // Title
+            Text("Seller Analytics")
+                .font(.custom(poppinsBold, size: 16))
+                .foregroundColor(.black)
+            
+            // Date Range and Navigation
+            HStack {
+                Text("\(dateFormatter.string(from: startDate)) - \(dateFormatter.string(from: endDate))")
+                    .font(.custom(poppinsRegular, size: 12))
+                    .foregroundColor(.black)
+                
+                Spacer()
+                
+                HStack(spacing: 12) {
+                    // Left Arrow Button
+                    Button(action: onPreviousPeriod) {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(.black)
+                            .frame(width: 32, height: 32)
+                            .background(Color.white)
+                            .cornerRadius(8)
+                            .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
+                    }
+                    
+                    Button(action: onNextPeriod) {
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(.black)
+                            .frame(width: 32, height: 32)
+                            .background(Color.white)
+                            .cornerRadius(8)
+                            .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
+                    }
+                }
+            }
+            
+            HStack(spacing: 12) {
+                Button(action: onEditDates) {
+                    Text("Edit Dates")
+                        .font(.custom(poppinsSemiBold, size: 14))
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 10)
+                        .background(Color.defaultTheme)
+                        .cornerRadius(20)
+                }
+                Spacer()
+                
+                // What do these metrics mean Button
+                Button(action: onShowMetricsInfo) {
+                    Text("What do these metrics mean?")
+                        .font(.custom(poppinsRegular, size: 12))
+                        .foregroundColor(.defaultTheme)
+                }
+                
+            }
+        }
+        .padding(16)
+        .background(Color.white)
+        .cornerRadius(12)
+        .shadow(color: Color.black.opacity(0.10), radius: 8, x: 0, y: 2)
     }
 }

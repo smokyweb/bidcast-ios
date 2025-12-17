@@ -565,6 +565,7 @@
 		D68399AD2EB216A000F3BDA7 /* TimerSocketHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68399AC2EB216A000F3BDA7 /* TimerSocketHandler.swift */; };
 		D68399AF2EB216A800F3BDA7 /* RaidSocketHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68399AE2EB216A800F3BDA7 /* RaidSocketHandler.swift */; };
 		D68399B12EB21CB700F3BDA7 /* FollowUnFollowSocketHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68399B02EB21CB700F3BDA7 /* FollowUnFollowSocketHandler.swift */; };
+		D68441352EF2D83800D4F587 /* CSVManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68441342EF2D83800D4F587 /* CSVManager.swift */; };
 		D6888BDF2EDD7F3400202E89 /* VideoPlayerScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6888BDE2EDD7F3400202E89 /* VideoPlayerScreen.swift */; };
 		D68C53A32EA0B2DA008E175D /* KeyChainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68C53A22EA0B2DA008E175D /* KeyChainManager.swift */; };
 		D68DFD092EBDD9750013229C /* UIImage+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68DFD082EBDD9750013229C /* UIImage+Extension.swift */; };
@@ -1140,6 +1141,7 @@
 		D68399AC2EB216A000F3BDA7 /* TimerSocketHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerSocketHandler.swift; sourceTree = "<group>"; };
 		D68399AE2EB216A800F3BDA7 /* RaidSocketHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaidSocketHandler.swift; sourceTree = "<group>"; };
 		D68399B02EB21CB700F3BDA7 /* FollowUnFollowSocketHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowUnFollowSocketHandler.swift; sourceTree = "<group>"; };
+		D68441342EF2D83800D4F587 /* CSVManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVManager.swift; sourceTree = "<group>"; };
 		D6888BDE2EDD7F3400202E89 /* VideoPlayerScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerScreen.swift; sourceTree = "<group>"; };
 		D68C53A22EA0B2DA008E175D /* KeyChainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyChainManager.swift; sourceTree = "<group>"; };
 		D68DFD082EBDD9750013229C /* UIImage+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extension.swift"; sourceTree = "<group>"; };
@@ -3693,6 +3695,7 @@
 				D44B0BBD2EF136B10084F58A /* ToolGridAnalyticsView_2.swift */,
 				D44B0BBB2EF133ED0084F58A /* priceCardView.swift */,
 				D44B0BBF2EF13DE80084F58A /* TopBuyersBySalesCard.swift */,
+				D68441342EF2D83800D4F587 /* CSVManager.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -4744,6 +4747,7 @@
 				D4BB99F42DE590D100C1BCBC /* ShippingsViewModel.swift in Sources */,
 				D4C0C7C22E53125500A84165 /* AddPaymentAndMethodModel.swift in Sources */,
 				D4CAEC702DE6FF1400705CD7 /* ToolGridAnalyticsView.swift in Sources */,
+				D68441352EF2D83800D4F587 /* CSVManager.swift in Sources */,
 				D4B615F32DE8374E00924A3D /* ProductDetailSheet.swift in Sources */,
 				99C909452DC8CD790054620B /* ForgotViewModel.swift in Sources */,
 				35BA4A512DE883E800EEC92A /* CompleteProfileScreen.swift in Sources */,

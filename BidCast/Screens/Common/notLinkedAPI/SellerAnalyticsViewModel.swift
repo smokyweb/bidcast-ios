@@ -16,41 +16,81 @@ final class SellerAnalyticsViewModel: ObservableObject {
     
     @Published var errorMessage: String? = nil
 
-    func getVisitorsAnalyticsReport(request: VisitorsAnalyticsRequest) async {
+    func getVisitorsAnalyticsReport(request: VisitorsAnalyticsRequest) async throws {
         do {
             let response: ResponseModel<VisitorsAnalyticsModel>? = try await APIManager.shared.request(
                 type: APIEndPoint.getVisitorsAnalytic(param: request),
                 header: true
             )
             self.visitorsAnalyticsResponse = response
-        } catch {
-            self.handle(error: error)
         }
+        catch(let error) {
+           if let dataError = error as? DataError {
+               self.errorMessage = dataError.getErrorMessage()
+           }
+           else {
+               self.errorMessage = error.localizedDescription
+           }
+           throw error
+       }
     }
     
-    func getSellerAnalyticsReport(request: SellerAnalyticsRequest) async {
+    func getSellerAnalyticsReport(request: SellerAnalyticsRequest) async throws {
         do {
             let response: ResponseModel<SellerAnalyticsModel>? = try await APIManager.shared.request(
                 type: APIEndPoint.getSellerAnalytic(param: request),
                 header: true
             )
             self.sellerAnalyticsResponse = response
-        } catch {
-            self.handle(error: error)
         }
+        catch(let error) {
+           if let dataError = error as? DataError {
+               self.errorMessage = dataError.getErrorMessage()
+           }
+           else {
+               self.errorMessage = error.localizedDescription
+           }
+           throw error
+       }
     }
     
-    func getSalesPreformanceReport(request: SalesPerformanceRequest) async {
+    func getSalesPreformanceReport(request: SalesPerformanceRequest) async throws{
         do {
             let response: ResponseModel<SalesPerformanceModel>? = try await APIManager.shared.request(
                 type: APIEndPoint.getSalesPerformace(param: request),
                 header: true
             )
             self.salesPerformanceResponse = response
-        } catch {
-            self.handle(error: error)
+        }
+        catch(let error) {
+            if let dataError = error as? DataError {
+                self.errorMessage = dataError.getErrorMessage()
+            }
+            else {
+                self.errorMessage = error.localizedDescription
+            }
+            throw error
         }
     }
+    
+    func getExportDetailsReport(request: ExportDetailsRequest) async throws {
+        do {
+            let response: ResponseModel<SellerAnalyticsModel>? = try await APIManager.shared.request(
+                type: APIEndPoint.getExportDetails(param: request),
+                header: true
+            )
+            self.sellerAnalyticsResponse = response
+        } catch(let error) {
+            if let dataError = error as? DataError {
+                self.errorMessage = dataError.getErrorMessage()
+            }
+            else {
+                self.errorMessage = error.localizedDescription
+            }
+            throw error
+        }
+    }
+    
 
     private func handle(error: Error) {
         self.errorMessage = error.localizedDescription

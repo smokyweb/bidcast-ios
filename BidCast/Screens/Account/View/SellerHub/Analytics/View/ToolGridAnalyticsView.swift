@@ -20,15 +20,24 @@ struct ToolGridAnalyticsView: View {
     @State private var noDataMessage: String = ""
     @State private var selectedFilter: String = "All"
     
+    var completion: ((String) -> Void) = { _ in }
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             // Dropdown Filter
             HStack {
                 Menu {
-                    Button("All") { selectedFilter = "All" }
-                    Button("Today") { selectedFilter = "Today" }
-                    Button("This Week") { selectedFilter = "This Week" }
-                    Button("This Month") { selectedFilter = "This Month" }
+                    Button("All") {
+                        selectedFilter = "all"
+                        completion(selectedFilter)
+                    }
+                    Button("Monthly") {
+                        selectedFilter = "monthly"
+                        completion(selectedFilter)
+                    }
+                    Button("Yearly") {
+                        selectedFilter = "yearly"
+                        completion(selectedFilter)
+                    }
                 } label: {
                     HStack(spacing: 8) {
                         Text(selectedFilter)

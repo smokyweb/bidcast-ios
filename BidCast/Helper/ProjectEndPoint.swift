@@ -193,6 +193,7 @@ enum APIEndPoint{
     case getTipsData
     case sendTipAmount(param: TipAmountRequest)
     case getSellerAnalytic(param: SellerAnalyticsRequest)
+    case getExportDetails(param: ExportDetailsRequest)
     case getSalesPerformace(param: SalesPerformanceRequest)
     case getVisitorsAnalytic(param: VisitorsAnalyticsRequest)
     case storePromoteShow(param: StorePromoteShowRequest)
@@ -582,6 +583,12 @@ extension APIEndPoint: EndPointType {
             let start_date = param.start_date ?? ""
             let end_date = param.end_date ?? ""
             return "seller-analytic?filter=\(filter)&start_date=\(start_date)&end_date=\(end_date)"
+        case .getExportDetails(let param):
+            let filter = param.filter ?? ""
+            let start_date = param.start_date ?? ""
+            let end_date = param.end_date ?? ""
+            let type = param.type ?? ""
+            return "export-deatils?type=\(type)&filter=\(filter)&start_date=\(start_date)&end_date=\(end_date)"
         case .getSalesPerformace(let param):
             let filter = param.filter
             let year = param.year
@@ -981,6 +988,8 @@ extension APIEndPoint: EndPointType {
             return .post
         case .getSellerAnalytic:
             return .get
+        case .getExportDetails:
+            return .get
         case .getSalesPerformace:
             return .get
         case .getVisitorsAnalytic:
@@ -1365,6 +1374,9 @@ extension APIEndPoint: EndPointType {
             return param
         case .getSellerAnalytic:
             return  nil
+        case .getExportDetails:
+            return  nil
+
         case .getSalesPerformace:
             return  nil
         case .getVisitorsAnalytic:
@@ -1730,6 +1742,8 @@ extension APIEndPoint: EndPointType {
         case .sendTipAmount:
             return nil
         case .getSellerAnalytic:
+            return  nil
+        case .getExportDetails:
             return  nil
         case .getSalesPerformace:
             return  nil

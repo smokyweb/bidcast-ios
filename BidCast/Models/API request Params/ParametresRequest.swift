@@ -809,6 +809,13 @@ struct SellerAnalyticsRequest : Encodable{
     var end_date: String?
 }
 
+struct ExportDetailsRequest : Encodable{
+    var filter : String?
+    var start_date: String?
+    var end_date: String?
+    var type: String?
+}
+
 struct SalesPerformanceRequest : Encodable{
     var filter : String
     var year: String
