@@ -59,7 +59,7 @@ final class SocketManagerService: NSObject, ObservableObject {
     @Published var showTime: String = "00:00:00"
     @Published var bidTime: String = "00:00"
     @Published var hasWon = false
-    
+    @Published var countdownTimer : Int = 30
     /// Published follow status for UI binding
     @Published var isFollowed: Bool = false
     @Published var lastActionSuccess: Bool = false
@@ -565,7 +565,7 @@ final class SocketManagerService: NSObject, ObservableObject {
                 onUpdate(remaining)
                 
                
-                if remaining == 30 {
+                if remaining == self.countdownTimer {
                     onStart()
                 }
                 
@@ -1068,7 +1068,125 @@ extension SocketManagerService {
             logger.info("✅ get_show_note received, notesCount=\(notes.count)")
         }
     }
+    
+    func runNextProduct(roomId: String) {
+        performIfConnected {
+            let payload: [String: Any] = [
+                "room_id": roomId
+            ]
+            socket.emit("run_next_product", payload)
+            logger.info("📦 Emitted run_next_product for room \(roomId)")
+        }
+    }
+    
+    func listenForAuctionNextProduct(
+        completion: @escaping (_ roomId: String, _ products: [ProductDataModel1]) -> Void
+    ) {
+        socket.on("auction_next_product") { [weak self] data, _ in
+            guard let self else { return }
+            guard let json = data.first as? [String: Any],
+                  let roomId = json["room_id"] as? String else {
+                print("❌ Invalid auction_next_product payload:", data)
+                return
+            }
 
+            var products: [ProductDataModel1] = []
+
+            if let productsJson = json["products"] as? [[String: Any]] {
+                do {
+                    let decoded = try JSONSerialization.data(withJSONObject: productsJson)
+                    products = try JSONDecoder().decode([ProductDataModel1].self, from: decoded)
+                } catch {
+                    print("❌ Failed to decode auction_next_product products:", error)
+                }
+            }
+
+            DispatchQueue.main.async {
+                completion(roomId, products)
+            }
+
+            self.logger.info("✅ auction_next_product received for room \(roomId)")
+        }
+    }
+
+    
+    func startAuction(
+        roomId: String,
+        products: [String],
+        startingBidAmount: Int,
+        requireTime: Int,
+        counterBidTime: Int,
+        suddenDeath: Bool
+    ) {
+        performIfConnected {
+            let payload: [String: Any] = [
+                "room_id": roomId,
+                "products": products,
+                "starting_bid_amount": startingBidAmount,
+                "require_time": requireTime,
+                "counter_bid_time": counterBidTime,
+                "sudden_death": suddenDeath
+            ]
+
+            socket.emit("start_auction", payload)
+            logger.info("🚀 Sent start_auction: \(payload)")
+        }
+    }
+    func listenForAuctionStarted(
+        completion: @escaping (
+            _ roomId: String,
+            _ products: [ProductDataModel1],
+            _ startingBidAmount: Int,
+            _ requireTime: Int,
+            _ counterBidTime: Int,
+            _ suddenDeath: Bool
+        ) -> Void
+    ) {
+        socket.on("auction_started") { [weak self] data, _ in
+            guard let self else { return }
+
+            guard let json = data.first as? [String: Any],
+                  let roomId = json["room_id"] as? String else {
+                print("❌ Invalid auction_started payload:", data)
+                return
+            }
+
+            let startingBidAmount = json["starting_bid_amount"] as? Int ?? 0
+            let requireTime = json["require_time"] as? Int ?? 0
+            let counterBidTime = json["counter_bid_time"] as? Int ?? 0
+            let suddenDeath = json["sudden_death"] as? Bool ?? false
+
+            var products: [ProductDataModel1] = []
+            if let productsJson = json["products"] as? [[String: Any]] {
+                do {
+                    let decoded = try JSONSerialization.data(withJSONObject: productsJson)
+                    products = try JSONDecoder().decode([ProductDataModel1].self, from: decoded)
+                } catch {
+                    print("❌ Failed to decode auction_started products:", error)
+                }
+            }
+            self.countdownTimer = counterBidTime
+
+            DispatchQueue.main.async {
+                completion(
+                    roomId,
+                    products,
+                    startingBidAmount,
+                    requireTime,
+                    counterBidTime,
+                    suddenDeath
+                )
+            }
+
+            self.logger.info("🔥 auction_started received for room \(roomId)")
+        }
+    }
+
+    func removeAuctionListeners() {
+        socket.off("auction_next_product")
+        socket.off("auction_started")
+        print("🧹 Removed auction listeners")
+    }
     // MARK: - Emit Event: Get Show Notes
     /// Requests stored show notes for a room.
     /// - Parameter roomId: Room identifier
@@ -1124,7 +1242,6 @@ extension SocketManagerService {
             self.logger.info("✅ product_pinned received → productId=\(productId), pinned=\(pinned)")
         }
     }
-
 }
 
 

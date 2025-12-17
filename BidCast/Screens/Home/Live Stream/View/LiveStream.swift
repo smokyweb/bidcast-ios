@@ -123,7 +123,7 @@ struct LiveStream: View {
     @State var maxBidUserName: String = "Demo UserName"
     @Binding var agoraToken: String
     
-    @State private var isFollowing: Bool = false
+    @State var isFollowing: Bool = false
     
     @State private var sellerInfo: SellerInfoResponse? = nil
     
@@ -214,6 +214,10 @@ struct LiveStream: View {
     
     @State var showItemDetailSheet = false
     
+    @State private var auctionStartedRooms: Set<String> = []
+    var isAuctionStartedForCurrentRoom: Bool {
+        auctionStartedRooms.contains(currentRoomID)
+    }
     
     var body: some View {
         ZStack {
@@ -309,6 +313,22 @@ struct LiveStream: View {
             if liveShowsData.count != 0 {
                 contentStack(geometry: geometry)
                     .gesture(verticalSwipeGesture(geometry: geometry))
+                    .toast(isPresenting: $showHud, duration: 1.5) {
+                        AlertToast(
+                            displayMode: .alert,
+                            type: .regular,
+                            title: hudMsg,
+                            style: .style(backgroundColor: Color.black.opacity(0.4), titleColor: Color.white)
+                        )
+                    }
+                    .toast(isPresenting: $showhudSuccess, duration: 1.5) {
+                        AlertToast(
+                            displayMode: .hud,
+                            type: .regular,
+                            title: hudMsg,
+                            style: alertStlyeSuccess
+                        )
+                    }
             }
         }
     }
@@ -354,6 +374,7 @@ struct LiveStream: View {
         .padding(.top, 50)
     }
     
+    //MARK: Profile section
     @ViewBuilder
     private var profileSection: some View {
         if let sellerInfo = viewModel.sellerInfo.data {
@@ -372,7 +393,7 @@ struct LiveStream: View {
             shimmerProfileSection
         }
     }
-    
+    //MARK: Seller info
     @ViewBuilder
     private func sellerInfoColumn(sellerInfo: SellerInfoResponse) -> some View {
         VStack(alignment: .leading, spacing: 2) {
@@ -428,7 +449,7 @@ struct LiveStream: View {
                 .foregroundColor(.white.opacity(0.9))
         }
     }
-    
+    //MARK: Follow button
     @ViewBuilder
     private var followButton: some View {
         Button(action: { followUnfollow() }) {
@@ -441,7 +462,7 @@ struct LiveStream: View {
                 .cornerRadius(10)
         }
     }
-    
+    //MARK: Shimmer section
     @ViewBuilder
     private var shimmerProfileSection: some View {
         HStack(spacing: 12) {
@@ -475,7 +496,7 @@ struct LiveStream: View {
             }
         }
     }
-    
+    //MARK: Viewwer count badge
     @ViewBuilder
     private var viewerCountBadge: some View {
         HStack(spacing: 5) {
@@ -499,6 +520,7 @@ struct LiveStream: View {
         .clipShape(Capsule())
     }
     
+    //MARK: close button section
     @ViewBuilder
     private var closeButton: some View {
         Button(action: {
@@ -515,7 +537,7 @@ struct LiveStream: View {
         .buttonStyle(.plain)
     }
     
-    // MARK: - Bottom Content Stack
+    // MARK: - Bottom Content Stack - comment , product and poll
     @ViewBuilder
     private var bottomContentStack: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -526,6 +548,7 @@ struct LiveStream: View {
         .padding(.bottom, keyboardResponder.currentHeight == 0 ? (tabBarHeight + 20) : 10)
     }
     
+    //MARK: Comment section
     @ViewBuilder
     private var commentSection: some View {
         if socketManagerChat.chats.count > 0 {
@@ -629,6 +652,7 @@ struct LiveStream: View {
         }
     }
     
+    //MARK: Send comment section
     @ViewBuilder
     private var sendButton: some View {
         Button(action: {
@@ -666,7 +690,7 @@ struct LiveStream: View {
             productDetailsView
         }
     }
-    
+    //MARK: Poll section
     @ViewBuilder
     private func pollPreview(poll: PollModel) -> some View {
         PollPreviewCardView(
@@ -678,21 +702,27 @@ struct LiveStream: View {
             }
         )
     }
-    
+    //MARK: Product detail section
     @ViewBuilder
     private var productDetailsView: some View {
-        let currentProducts = productData.first
-        
-        if let product = currentProducts {
-            VStack(alignment: .leading, spacing: 12) {
-                currentProductCard(product: product)
-                biddingControls
+       
+      
+        if isAuctionStartedForCurrentRoom {
+            let currentProducts = productData.first
+            if let product = currentProducts {
+                VStack(alignment: .leading, spacing: 12) {
+                    currentProductCard(product: product)
+                    biddingControls
+                }
+            } else {
+                waitingForProductView
             }
-        } else {
+        }else{
             waitingForProductView
         }
     }
     
+    //MARK: Current product section
     @ViewBuilder
     private func currentProductCard(product: ProductDataModel1) -> some View {
         CurrentProductView(
@@ -712,14 +742,15 @@ struct LiveStream: View {
     
     @ViewBuilder
     private var waitingForProductView: some View {
-        Text("Waiting for next product...")
-            .font(.custom(poppinsSemiBold, size: 14.0))
+        Text("Waiting for product...")
+            .font(.custom(poppinsBold, size: 14.0))
             .foregroundColor(.white)
             .padding(.horizontal)
             .padding(.leading, 16)
             .padding(.trailing, 16)
     }
     
+    //MARK: Bid  section
     @ViewBuilder
     private var biddingControls: some View {
         HStack(spacing: 8) {
@@ -731,7 +762,7 @@ struct LiveStream: View {
             setupBiddingIfNeeded()
         }
     }
-    
+    //MARK: Cusotm bid section
     @ViewBuilder
     private var customBidButton: some View {
         Text("Custom")
@@ -746,7 +777,7 @@ struct LiveStream: View {
                 handleCustomBidTap()
             }
     }
-    
+    //MARK: Cusotm bid section action
     private func handleCustomBidTap() {
         if UserDefaults.allowBidForAllUser {
             self.maxBidAmountSheet = true
@@ -758,6 +789,8 @@ struct LiveStream: View {
             }
         }
     }
+    
+    //MARK: Swipe bid section
     
     @ViewBuilder
     private var swipeToBidSection: some View {
@@ -1656,7 +1689,56 @@ extension LiveStream {
         SocketManagerService.shared.listenForNextProduct { roomId, _ in
             fetchProducts(for: roomId)
         }
+        
+        socketManagerChat.listenForAuctionStarted { roomId,products,startingBidAmount,requireTime,counterBidTime,suddenDeath in
+//            guard let self else { return }
+
+                self.updateProducts(
+                    for: roomId,
+                    products: products,
+                    startingBidAmount: Double(startingBidAmount),
+                    requireTime: requireTime,
+                    counterBidTime: counterBidTime,
+                    suddenDeath: suddenDeath
+                )
+
+                // 🔥 unlock product details for this room
+                self.auctionStartedRooms.insert(roomId)
+        }
+        
+        socketManagerChat.listenForAuctionNextProduct {roomId,products in
+            
+        }
+        
     }
+    
+    @MainActor
+    private func updateProducts(
+        for roomId: String,
+        products: [ProductDataModel1],
+        startingBidAmount: Double,
+        requireTime: Int,
+        counterBidTime: Int,
+        suddenDeath: Bool
+    ) {
+        // Update only matching room
+        guard currentRoomID == roomId else { return }
+
+        // Update product list
+        self.productData = products
+
+        // Optional: set current product
+        self.currentProductID = "\(products.first?.id ?? 0)"
+
+        // Auction config
+//        self.startingBidAmount = startingBidAmount
+//        self.requireTime = requireTime
+//        self.counterBidTime = counterBidTime
+//        self.isSuddenDeath = suddenDeath
+
+        print("🟢 Products updated for room:", roomId)
+    }
+
 
     private func handleBidFinalized(for roomId: String, winner: HighestBid?) {
         fetchProducts(for: roomId)
@@ -2089,12 +2171,18 @@ extension LiveStream {
             if let data = response.data {
                 isFollowing = data.is_following ?? false
                 followSheetTask = Task {
-                    try? await Task.sleep(nanoseconds: 30 * 1_000_000_000)
-                    if !Task.isCancelled {
-                        await MainActor.run {
-                            if !isFollowing {
+                    Task {
+                        do {
+                            try await Task.sleep(nanoseconds: 30 * 1_000_000_000)
+
+                            guard !Task.isCancelled else { return }
+                            guard !isFollowing else { return }
+
+                            await MainActor.run {
                                 showFollowSheet = true
                             }
+                        } catch {
+                            // Task was cancelled — do nothing
                         }
                     }
                 }
@@ -2117,6 +2205,8 @@ extension LiveStream {
         if response.status == "success" {
             hudMsg = response.message ?? ""
             showHud = true
+            
+            isFollowing = true
         } else {
             showError = true
             alertType = .sheetType(
