@@ -13,26 +13,25 @@ struct BoostCardView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 4) {
+                HStack {
+                    CustomProfileImage(url: boost.icon ?? "",isCircular: false, size: 48)
+                    Spacer()
                     Text(boost.title ?? "")
                         .font(.custom(poppinsSemiBold, size: 14.0))
                         .foregroundColor(.white)
-                    Text(boost.sub_title ?? "")
-                        .font(.custom(poppinsSemiBold, size: 12.0))
-                        .foregroundColor(.white.opacity(0.8))
+                }
+               
+                VStack(alignment: .leading, spacing: 4) {
                     Text(boost.description ?? "")
                         .font(.custom(poppinsRegular, size: 11.0))
                         .foregroundColor(.white.opacity(0.7))
                 }
-                Spacer()
-                CustomProfileImage(url: boost.icon ?? "",isCircular: false, size: 48)
-                
             }
             Button {
                 onBoostCardClick(boost)
             } label: {
-                Text("Select • \(boost.price ?? "")")
+                Text("Promote Show • $\(boost.price ?? "0.00")")
                     .font(.custom(poppinsSemiBold, size: 14.0))
                     .padding(.vertical, 10)
                     .frame(maxWidth: .infinity)
@@ -44,18 +43,20 @@ struct BoostCardView: View {
             
         }
         .padding()
-        .background(
-            LinearGradient(
-                colors: [
-                    hexToColor(boost.colors?.start ?? "#000000"),
-                    hexToColor(boost.colors?.end ?? "#000000")
-                ],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
+        .background(.white
+//            LinearGradient(
+//                colors: [
+//                    hexToColor(boost.colors?.start ?? "#000000"),
+//                    hexToColor(boost.colors?.end ?? "#000000")
+//                ],
+//                startPoint: .topLeading,
+//                endPoint: .bottomTrailing
+//            )
         )
         .cornerRadius(20)
     }
+    
+    
     func hexToColor(_ hex: String) -> Color {
            var hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
            var int: UInt64 = 0

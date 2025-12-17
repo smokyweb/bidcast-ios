@@ -1025,6 +1025,65 @@ extension SocketManagerService {
     }
 }
 
+extension SocketManagerService {
+
+    // MARK: - Emit Event: Add Show Note
+    /// Sends a show note to be stored in the database.
+    /// - Parameters:
+    ///   - roomId: Room identifier
+    ///   - showNote: Note text
+    func sendAddShowNote(roomId: String, showNote: String) {
+        let payload: [String: Any] = [
+            "room_id": roomId,
+            "show_note": showNote
+        ]
+
+        performIfConnected {
+            socket.emit("add_show_note", payload)
+            logger.info("📤 Sent add_show_note: \(payload)")
+        }
+    }
+
+    // MARK: - Emit Event: Get Show Notes
+    /// Requests stored show notes for a room.
+    /// - Parameter roomId: Room identifier
+//    func getShowNote(roomId: String) {
+//        let payload: [String: Any] = [
+//            "room_id": roomId
+//        ]
+//
+//        performIfConnected {
+//            socket.emit("get_show_note", payload)
+//            logger.info("📤 Sent get_show_note: \(payload)")
+//        }
+//    }
+
+    // MARK: - Listen: Get Show Notes Response
+    /// Listens for show notes fetched from the server.
+    /// Expected server payload example:
+    /// `{ "success": true, "data": [ { "id": 1, "show_note": "...", "created_at": "..." } ] }`
+    func listenForGetShowNote() {
+        socket.on("get_show_note") { [weak self] data, _ in
+            guard let self else { return }
+
+            guard let json = data.first as? [String: Any] else {
+                logger.warning("⚠️ Invalid get_show_note_response payload: \(data)")
+                return
+            }
+
+            let success = json["success"] as? Bool ?? false
+            let notes = json["data"] as? [[String: Any]] ?? []
+
+            DispatchQueue.main.async {
+                self.lastActionSuccess = success
+                self.showNotes = notes
+            }
+
+            logger.info("✅ get_show_note_response received: success=\(success), notesCount=\(notes.count)")
+        }
+    }
+}
+
 
 
 

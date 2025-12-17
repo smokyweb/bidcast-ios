@@ -90,7 +90,6 @@
 		35B44F172DD7053B00FBCBC4 /* AboutUsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B44F162DD7053B00FBCBC4 /* AboutUsScreen.swift */; };
 		35B44F1C2DD705C200FBCBC4 /* ABoutUsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B44F1B2DD705C200FBCBC4 /* ABoutUsModel.swift */; };
 		35B44F1E2DD705E100FBCBC4 /* AboutUsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B44F1D2DD705E100FBCBC4 /* AboutUsViewModel.swift */; };
-		35B44F212DD7152600FBCBC4 /* RichText in Frameworks */ = {isa = PBXBuildFile; productRef = 35B44F202DD7152600FBCBC4 /* RichText */; };
 		35B44F242DD741A000FBCBC4 /* ListProductScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B44F232DD741A000FBCBC4 /* ListProductScreen.swift */; };
 		35B44F262DD7446000FBCBC4 /* MediaPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B44F252DD7446000FBCBC4 /* MediaPickerView.swift */; };
 		35B44F282DD74CCA00FBCBC4 /* PhotoPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B44F272DD74CCA00FBCBC4 /* PhotoPicker.swift */; };
@@ -591,6 +590,8 @@
 		D6E8047A2EE3F1AC00B04A6C /* ShippingCostsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6E804792EE3F1AC00B04A6C /* ShippingCostsScreen.swift */; };
 		D6E8047C2EE3F48800B04A6C /* ShippingSettingsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6E8047B2EE3F48800B04A6C /* ShippingSettingsScreen.swift */; };
 		D6E8047E2EE410EF00B04A6C /* DomesticShipmentsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6E8047D2EE410EF00B04A6C /* DomesticShipmentsScreen.swift */; };
+		D6F4C7862EF269880082B45F /* TipSettingsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F4C7852EF269880082B45F /* TipSettingsSheet.swift */; };
+		D6F4C7882EF2749C0082B45F /* ShowNotesSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F4C7872EF2749C0082B45F /* ShowNotesSheet.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1162,6 +1163,8 @@
 		D6E804792EE3F1AC00B04A6C /* ShippingCostsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShippingCostsScreen.swift; sourceTree = "<group>"; };
 		D6E8047B2EE3F48800B04A6C /* ShippingSettingsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShippingSettingsScreen.swift; sourceTree = "<group>"; };
 		D6E8047D2EE410EF00B04A6C /* DomesticShipmentsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DomesticShipmentsScreen.swift; sourceTree = "<group>"; };
+		D6F4C7852EF269880082B45F /* TipSettingsSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TipSettingsSheet.swift; sourceTree = "<group>"; };
+		D6F4C7872EF2749C0082B45F /* ShowNotesSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowNotesSheet.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1193,7 +1196,6 @@
 				D4848BA62E97E8A100DC8B85 /* Stripe in Frameworks */,
 				D613DBB02EB0A0D500521D42 /* RtcBasic in Frameworks */,
 				3504BCC52E000A3D0069182D /* FirebaseCrashlytics in Frameworks */,
-				35B44F212DD7152600FBCBC4 /* RichText in Frameworks */,
 				35B424A72E043D0E00626E02 /* ZIM in Frameworks */,
 				358B9D182DDF049600932250 /* FSCalendar in Frameworks */,
 				3504BCC32E000A3D0069182D /* FirebaseCore in Frameworks */,
@@ -3181,6 +3183,8 @@
 				D69B74E02EC7592C00D862BB /* CreatePollScreen.swift */,
 				D6C5A2C92EE7EBD60071A43C /* MyShowsAnalyticsScreen.swift */,
 				D6A27F992EF185B000CF5E7A /* AuctionSheetView.swift */,
+				D6F4C7852EF269880082B45F /* TipSettingsSheet.swift */,
+				D6F4C7872EF2749C0082B45F /* ShowNotesSheet.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -4303,7 +4307,6 @@
 				35A045122DC8DF4E0067C447 /* BottomSheet */,
 				35A0451B2DC8E19E0067C447 /* ActivityIndicatorView */,
 				355AE9672DD1D51A00CD3D17 /* IQKeyboardManagerSwift */,
-				35B44F202DD7152600FBCBC4 /* RichText */,
 				35F63D672DDC5DF100D29878 /* SwiftfulLoadingIndicators */,
 				358B9D172DDF049600932250 /* FSCalendar */,
 				354652682DF2EE5900EB353F /* SVProgressHUD */,
@@ -4434,7 +4437,6 @@
 				35A0450B2DC8DEC30067C447 /* XCRemoteSwiftPackageReference "AlertToast" */,
 				35A045112DC8DF4E0067C447 /* XCRemoteSwiftPackageReference "bottom-sheet" */,
 				35A0451A2DC8E19E0067C447 /* XCRemoteSwiftPackageReference "ActivityIndicatorView" */,
-				35B44F1F2DD7152600FBCBC4 /* XCRemoteSwiftPackageReference "RichText" */,
 				35F63D662DDC5DF100D29878 /* XCRemoteSwiftPackageReference "SwiftfulLoadingIndicators" */,
 				358B9D162DDF049600932250 /* XCRemoteSwiftPackageReference "FSCalendar" */,
 				354652672DF2EE5900EB353F /* XCRemoteSwiftPackageReference "SVProgressHUD" */,
@@ -4837,7 +4839,9 @@
 				D66070B32ED09A9E00B81251 /* FollowSellerSheet.swift in Sources */,
 				99C909AE2DC8CD930054620B /* UILabel+Extension.swift in Sources */,
 				D6E804782EE3F14800B04A6C /* CreateShippingProfileScreen.swift in Sources */,
+				D6F4C7882EF2749C0082B45F /* ShowNotesSheet.swift in Sources */,
 				D4CAEC602DE6F55800705CD7 /* ReferralStatsView.swift in Sources */,
+				D6F4C7862EF269880082B45F /* TipSettingsSheet.swift in Sources */,
 				99C909AF2DC8CD930054620B /* EndPointType.swift in Sources */,
 				D678E3562EC89686005283BF /* LiveShowView.swift in Sources */,
 				D65F96BC2EBC682B00EAAD49 /* View+Extension.swift in Sources */,
@@ -5528,14 +5532,6 @@
 				minimumVersion = 2.20.0;
 			};
 		};
-		35B44F1F2DD7152600FBCBC4 /* XCRemoteSwiftPackageReference "RichText" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/NuPlay/RichText.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.5.0;
-			};
-		};
 		35F63D662DDC5DF100D29878 /* XCRemoteSwiftPackageReference "SwiftfulLoadingIndicators" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SwiftfulThinking/SwiftfulLoadingIndicators.git";
@@ -5755,11 +5751,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 35B424A52E043D0E00626E02 /* XCRemoteSwiftPackageReference "zim-ios" */;
 			productName = ZIM;
-		};
-		35B44F202DD7152600FBCBC4 /* RichText */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 35B44F1F2DD7152600FBCBC4 /* XCRemoteSwiftPackageReference "RichText" */;
-			productName = RichText;
 		};
 		35F63D672DDC5DF100D29878 /* SwiftfulLoadingIndicators */ = {
 			isa = XCSwiftPackageProductDependency;

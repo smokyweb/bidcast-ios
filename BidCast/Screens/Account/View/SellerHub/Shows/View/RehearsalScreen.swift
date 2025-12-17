@@ -802,10 +802,10 @@ struct RehearsalScreen: View {
                 case .promote:
                     PromoteShowSheet(
                         boosts: $boosts,
-                        onClose: { showSellSheet = false },
-                        onBoostCardClick: { selectedBoost in
+                        onPromotionSelected: { selectedBoost in
                             handleBoostClick(selectedBoost)
-                        }
+                        },
+                        onClose: { showSellSheet = false }
                     )
                 case .clip:
                     CreateClipBottomSheetView(

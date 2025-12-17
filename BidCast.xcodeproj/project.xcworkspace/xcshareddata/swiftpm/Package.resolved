@@ -1,5 +1,5 @@
 {
-  "originHash" : "f8709853338c5f5cff79356c96d67ac1da932e618b901c6600843df486e0a966",
+  "originHash" : "967ae4622831c6021dfb7b217344dc80d9f8c54f2ddc73bc88a83e7c00842374",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -272,12 +272,12 @@
       }
     },
     {
-      "identity" : "richtext",
+      "identity" : "richtextkit",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/NuPlay/RichText.git",
+      "location" : "https://github.com/danielsaidi/RichTextKit.git",
       "state" : {
-        "revision" : "3910393f3837a21fd2e414b758942ffd2d62aaa2",
-        "version" : "2.5.0"
+        "revision" : "8aa44cfa645404ad84e52e3ab7723ecf4b82f92b",
+        "version" : "1.2.0"
       }
     },
     {

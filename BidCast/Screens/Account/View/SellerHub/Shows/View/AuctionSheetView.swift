@@ -2,10 +2,8 @@
 //  AuctionSheetView.swift
 //  BidCast
 //
-//  Created by JamTech on 16/12/25.
+//  Created by JamTech on 12/12/25.
 //
-
-import SwiftUI
 
 import SwiftUI
 
@@ -29,12 +27,12 @@ struct AuctionSettingsSheet: View {
             VStack(spacing: 0) {
                 // Title
                 Text("Auction Settings")
-                    .font(.custom(poppinsBold, size: 24))
-                    .padding(.top, 24)
-                    .padding(.bottom, 28)
+                    .font(.custom(poppinsBold, size: 18))
+                    .padding(.top, 12)
+                    .padding(.bottom, 12)
                 
                 ScrollView {
-                    VStack(spacing: 24) {
+                    VStack(spacing: 12) {
                         // Starting Bid & Required Time
                         HStack(spacing: 12) {
                             startingBidField
@@ -47,8 +45,8 @@ struct AuctionSettingsSheet: View {
                         // Sudden Death
                         suddenDeathSection
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 100)
+                    .padding(.horizontal, 12)
+                    .padding(.bottom, 40)
                 }
                 
                 Spacer()
@@ -64,12 +62,12 @@ struct AuctionSettingsSheet: View {
                         dismiss()
                     }) {
                         Text("Cancel")
-                            .font(.custom(poppinsSemiBold, size: 17))
+                            .font(.custom(poppinsSemiBold, size: 16))
                             .foregroundColor(.primary)
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 56)
+//                            .frame(maxWidth: .infinity)
+                            .frame(width: 120, height: 56)
                             .background(
-                                RoundedRectangle(cornerRadius: 28)
+                                RoundedRectangle(cornerRadius: 24)
                                     .fill(Color(.systemGray6))
                             )
                             .overlay(
@@ -84,7 +82,7 @@ struct AuctionSettingsSheet: View {
                         dismiss()
                     }) {
                         Text("Start Auction")
-                            .font(.custom(poppinsSemiBold, size: 17))
+                            .font(.custom(poppinsSemiBold, size: 16))
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .frame(height: 56)
@@ -124,19 +122,19 @@ struct AuctionSettingsSheet: View {
     private var startingBidField: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Starting Bid")
-                .font(.custom(poppinsMedium, size: 15))
+                .font(.custom(poppinsMedium, size: 13))
                 .foregroundColor(.primary)
             
             HStack {
                 Text("$")
-                    .font(.custom(poppinsSemiBold, size: 17))
+                    .font(.custom(poppinsSemiBold, size: 14))
                     .foregroundColor(.primary)
                 
                 TextField("1", text: $startingBid)
-                    .font(.custom(poppinsRegular, size: 17))
+                    .font(.custom(poppinsRegular, size: 14))
                     .keyboardType(.decimalPad)
             }
-            .padding(.horizontal, 16)
+            .padding(.horizontal, 12)
             .padding(.vertical, 14)
             .background(
                 RoundedRectangle(cornerRadius: 12)
@@ -153,7 +151,7 @@ struct AuctionSettingsSheet: View {
     private var requiredTimeField: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Required Time")
-                .font(.custom(poppinsMedium, size: 15))
+                .font(.custom(poppinsMedium, size: 13))
                 .foregroundColor(.primary)
             
             Button(action: {
@@ -163,18 +161,18 @@ struct AuctionSettingsSheet: View {
             }) {
                 HStack {
                     Text("\(selectedRequiredTime)s")
-                        .font(.custom(poppinsRegular, size: 17))
+                        .font(.custom(poppinsRegular, size: 14))
                         .foregroundColor(.primary)
                     
                     Spacer()
                     
                     Image(systemName: "chevron.down")
-                        .font(.custom(poppinsSemiBold, size: 14))
+                        .font(.custom(poppinsSemiBold, size: 12))
                         .foregroundColor(.gray)
                         .rotationEffect(.degrees(showTimeDropdown ? 180 : 0))
                 }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 14)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 12)
                 .background(
                     RoundedRectangle(cornerRadius: 12)
                         .fill(Color(.systemGray6))
@@ -196,25 +194,25 @@ struct AuctionSettingsSheet: View {
                         }) {
                             HStack {
                                 Text("\(time)s")
-                                    .font(.custom(poppinsRegular, size: 16))
+                                    .font(.custom(poppinsRegular, size: 14))
                                     .foregroundColor(.primary)
                                 
                                 Spacer()
                                 
                                 if time == selectedRequiredTime {
                                     Image(systemName: "checkmark")
-                                        .font(.system(size: 14, weight: .bold))
+                                        .font(.system(size: 12, weight: .bold))
                                         .foregroundColor(.blue)
                                 }
                             }
-                            .padding(.horizontal, 16)
+                            .padding(.horizontal, 12)
                             .padding(.vertical, 12)
                             .background(time == selectedRequiredTime ? Color.blue.opacity(0.08) : Color.clear)
                         }
                         
                         if time != requiredTimeOptions.last {
                             Divider()
-                                .padding(.leading, 16)
+                                .padding(.leading, 12)
                         }
                     }
                 }
@@ -238,20 +236,20 @@ struct AuctionSettingsSheet: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 6) {
                 Text("Counter-Bid Time")
-                    .font(.custom(poppinsSemiBold, size: 17))
+                    .font(.custom(poppinsSemiBold, size: 14))
                     .foregroundColor(.primary)
                 
                 Button(action: {
                     // Show info
                 }) {
                     Image(systemName: "info.circle")
-                        .font(.custom(poppinsSemiBold, size: 16))
+                        .font(.custom(poppinsSemiBold, size: 14))
                         .foregroundColor(.gray)
                 }
             }
             
             Text("When the auction has less than 10 seconds remaining, any new bids will reset the timer to the selected amount.")
-                .font(.custom(poppinsRegular, size: 14))
+                .font(.custom(poppinsRegular, size: 12))
                 .foregroundColor(.gray)
                 .fixedSize(horizontal: false, vertical: true)
             
@@ -263,7 +261,7 @@ struct AuctionSettingsSheet: View {
                         }
                     }) {
                         Text("\(time)s")
-                            .font(.custom(poppinsSemiBold, size: 16))
+                            .font(.custom(poppinsSemiBold, size: 14))
                             .foregroundColor(selectedCounterBidTime == time ? .white : .primary)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 14)
@@ -291,25 +289,25 @@ struct AuctionSettingsSheet: View {
         }
         .padding(20)
         .background(
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: 12)
                 .fill(Color(.systemGray6).opacity(0.5))
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: 12)
                 .stroke(Color.gray.opacity(0.1), lineWidth: 1)
         )
     }
     
     // MARK: - Sudden Death Section
     private var suddenDeathSection: some View {
-        HStack(spacing: 16) {
+        HStack(spacing: 12) {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Sudden Death")
-                    .font(.custom(poppinsSemiBold, size: 17))
+                    .font(.custom(poppinsSemiBold, size: 14))
                     .foregroundColor(.primary)
                 
                 Text("This means when you're down to 00:01, the last person to bid wins!")
-                    .font(.custom(poppinsRegular, size: 14))
+                    .font(.custom(poppinsRegular, size: 12))
                     .foregroundColor(.gray)
                     .fixedSize(horizontal: false, vertical: true)
             }
@@ -320,13 +318,13 @@ struct AuctionSettingsSheet: View {
                 .labelsHidden()
                 .tint(.black)
         }
-        .padding(20)
+        .padding(12)
         .background(
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: 12)
                 .fill(Color(.systemGray6).opacity(0.5))
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: 12)
                 .stroke(Color.gray.opacity(0.1), lineWidth: 1)
         )
     }
