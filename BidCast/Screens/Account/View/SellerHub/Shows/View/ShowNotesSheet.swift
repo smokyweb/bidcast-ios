@@ -60,7 +60,6 @@ struct ShowNotesSheet: View {
             Button(action: {
                 if !noteText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                     onPost?(noteText)
-                    dismiss()
                 }
             }) {
                 Text("Post")
