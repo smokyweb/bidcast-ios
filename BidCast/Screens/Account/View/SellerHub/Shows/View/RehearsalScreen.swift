@@ -153,6 +153,10 @@ struct RehearsalScreen: View {
     @State var isEditingNotes = false
     
     @State var showAuctionSetting = false
+    @State var showAuctionSheet = false
+    @State var hasAuctionStarted = false
+    
+    @State var auctionedProductData = ProductDataModel1()
     
     var body: some View {
         GeometryReader { geometry in
@@ -346,12 +350,19 @@ struct RehearsalScreen: View {
                             SideButton(label: "Share", icon: .sharee,action: .share)
                             SideButton(label: "Switch", icon: .camera,action: .switchView)
                             VStack {
-                                if let product = currentProduct,
-                                   let img = product.images?.first {
-                                    StackedImageView(imageURL: img, totalCount: productData.count) {
+                                if hasAuctionStarted{
+                                    if let product = currentProduct,
+                                       let img = product.images?.first {
+                                        StackedImageView(imageURL: img, totalCount: productData.count) {
+                                            print("productStackTapped")
+                                            showShopSheet = true
+                                            //                                        navigateToProductList = true
+                                        }
+                                    }
+                                }else{
+                                    StackedImageView(imageURL: productData.first?.images?.first ?? "", totalCount: productData.count) {
                                         print("productStackTapped")
                                         showShopSheet = true
-//                                        navigateToProductList = true
                                     }
                                 }
                             }
@@ -553,27 +564,29 @@ struct RehearsalScreen: View {
                                     }
                                     
                                     //MARK: Product Details
+                                    
 //                                    let currentProducts = productData.filter { $0.isCurrent }
-                                    let currentProducts = productData.first
-                                    if let product = currentProducts {
-                                        
-                                        CurrentProductView(product: product,
-                                                           currentPrice: $currentPrice,
-                                                           bidTime: $socketManager.bidTime,
-                                                           userName: $winnerName,
-                                                           userImage: $winnerProfileImage,
-                                                           categoryName: $categoryName,
-                                                           hasWon: socketManager.hasWon,onTap: {
-                                            showItemDetailSheet = true
-                                        })
-                                        .frame(maxWidth: .infinity)
-                                        
-                                        .background(Color.black.opacity(0.3))
-                                        .cornerRadius(10)
-                                        .padding(.horizontal,16)
-                                        
+                                    if hasAuctionStarted{
+                                        let currentProducts = productData.first
+                                        if let product = currentProducts {
+                                            
+                                            CurrentProductView(product: product,
+                                                               currentPrice: $currentPrice,
+                                                               bidTime: $socketManager.bidTime,
+                                                               userName: $winnerName,
+                                                               userImage: $winnerProfileImage,
+                                                               categoryName: $categoryName,
+                                                               hasWon: socketManager.hasWon,onTap: {
+                                                showItemDetailSheet = true
+                                            })
+                                            .frame(maxWidth: .infinity)
+                                            
+                                            .background(Color.black.opacity(0.3))
+                                            .cornerRadius(10)
+                                            .padding(.horizontal,16)
+                                        }
                                     }else {
-                                        Text("Waiting for next product...")
+                                        Text("Waiting for product...")
                                             .font(.custom(poppinsSemiBold, size: 14.0))
                                             .foregroundColor(.white)
                                             .padding(.horizontal)
@@ -756,10 +769,45 @@ struct RehearsalScreen: View {
                 ProductShopRehersalScreen(
                     roomId: self.roomId,
                     productDataFromEvent: $productData,
-                    categoryId: "\(showsData.category_id ?? 0)"
+                    categoryId: "\(showsData.category_id ?? 0)",
+                    onTapCancel: {
+                        showShopSheet = false
+                    },onAuctionTapped: { product in
+                        auctionedProductData = product
+                        showAuctionSheet = true
+                      
+                    }
                 )
                 
             })
+        .bottomSheet(
+            isPresented: $showAuctionSheet,
+            height:screenHeight * 0.75,
+            topBarCornerRadius: 25,
+            showTopIndicator: false,
+            onDismiss: {
+                showAuctionSheet = false
+            },
+            content: {
+                AuctionSettingsSheet(
+                    onStartAuction: { bid, reqTime, counterTime, suddenDeath in
+                        print("Starting Bid: $\(bid)")
+                        print("Required Time: \(reqTime)s")
+                        print("Counter-Bid Time: \(counterTime)s")
+                        print("Sudden Death: \(suddenDeath)")
+                        showShopSheet = false
+                        showAuctionSheet = false
+                        hasAuctionStarted = true
+                        socketManager.startAuction(roomId: self.roomId,
+                                                   products: ["\(auctionedProductData.id ?? 0)"],
+                                                   startingBidAmount: "\(bid)",
+                                                   requireTime: reqTime,
+                                                   counterBidTime: counterTime,
+                                                   suddenDeath: suddenDeath)
+                    }
+                )
+            }
+        )
 //        .bottomSheet(
 //            isPresented: $showShopSheet,
 //            height: sheetHeight, // Adjust as needed
@@ -1230,8 +1278,55 @@ struct RehearsalScreen: View {
             self.currentPollModel = pollModel
             showPollCard = true
         }
+        socketManager.listenForAuctionStarted { roomId,products,startingBidAmount,requireTime,counterBidTime,suddenDeath in
+//            guard let self else { return }
+            print("AUCtioned data")
+            print("\(roomId)")
+            print("\(products)")
+            print("\(startingBidAmount)")
+            print("\(requireTime)")
+            print("\(counterBidTime)")
+            print("\(suddenDeath)")
+                self.updateProducts(
+                    for: roomId,
+                    products: products,
+                    startingBidAmount: Double(startingBidAmount) ?? 0.0,
+                    requireTime: requireTime,
+                    counterBidTime: counterBidTime,
+                    suddenDeath: suddenDeath
+                )
+
+//                // 🔥 unlock product details for this room
+//                self.auctionStartedRooms.insert(roomId)
+        }
+        
     }
-    
+    @MainActor
+    private func updateProducts(
+        for roomId: String,
+        products: [ProductDataModel1],
+        startingBidAmount: Double,
+        requireTime: Int,
+        counterBidTime: Int,
+        suddenDeath: Bool
+    ) {
+        // Update only matching room
+        guard self.roomId == roomId else { return }
+
+        // Update product list
+//        self.productData = products
+
+        // Optional: set current product
+//        self.currentProductID = "\(products.first?.id ?? 0)"
+        currentPrice = startingBidAmount
+        // Auction config
+//        self.startingBidAmount = startingBidAmount
+//        self.requireTime = requireTime
+//        self.counterBidTime = counterBidTime
+//        self.isSuddenDeath = suddenDeath
+
+        print("🟢 Products updated for room:", roomId)
+    }
     private func handleBidFinalized(for roomId: String, winner: HighestBid?) {
         fetchProducts(for: roomId)
     }

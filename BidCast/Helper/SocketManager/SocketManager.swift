@@ -1113,7 +1113,7 @@ extension SocketManagerService {
     func startAuction(
         roomId: String,
         products: [String],
-        startingBidAmount: Int,
+        startingBidAmount: String,
         requireTime: Int,
         counterBidTime: Int,
         suddenDeath: Bool
@@ -1136,7 +1136,7 @@ extension SocketManagerService {
         completion: @escaping (
             _ roomId: String,
             _ products: [ProductDataModel1],
-            _ startingBidAmount: Int,
+            _ startingBidAmount: String,
             _ requireTime: Int,
             _ counterBidTime: Int,
             _ suddenDeath: Bool
@@ -1145,26 +1145,32 @@ extension SocketManagerService {
         socket.on("auction_started") { [weak self] data, _ in
             guard let self else { return }
 
-            guard let json = data.first as? [String: Any],
-                  let roomId = json["room_id"] as? String else {
+            guard
+                let json = data.first as? [String: Any],
+                let roomId = json["room_id"] as? String
+            else {
                 print("❌ Invalid auction_started payload:", data)
                 return
             }
 
-            let startingBidAmount = json["starting_bid_amount"] as? Int ?? 0
+            let startingBidAmount = json["starting_bid_amount"] as? String ?? ""
             let requireTime = json["require_time"] as? Int ?? 0
             let counterBidTime = json["counter_bid_time"] as? Int ?? 0
             let suddenDeath = json["sudden_death"] as? Bool ?? false
 
             var products: [ProductDataModel1] = []
-            if let productsJson = json["products"] as? [[String: Any]] {
+
+            // ✅ FIX: product is a SINGLE dictionary
+            if let productJson = json["product"] as? [String: Any] {
                 do {
-                    let decoded = try JSONSerialization.data(withJSONObject: productsJson)
-                    products = try JSONDecoder().decode([ProductDataModel1].self, from: decoded)
+                    let data = try JSONSerialization.data(withJSONObject: productJson)
+                    let product = try JSONDecoder().decode(ProductDataModel1.self, from: data)
+                    products = [product]   // ✅ wrap into array
                 } catch {
-                    print("❌ Failed to decode auction_started products:", error)
+                    print("❌ Failed to decode auction_started product:", error)
                 }
             }
+
             self.countdownTimer = counterBidTime
 
             DispatchQueue.main.async {
@@ -1181,6 +1187,7 @@ extension SocketManagerService {
             self.logger.info("🔥 auction_started received for room \(roomId)")
         }
     }
+
 
     func removeAuctionListeners() {
         socket.off("auction_next_product")
@@ -1224,7 +1231,7 @@ extension SocketManagerService {
     /// Listens for pinned/unpinned product updates.
     /// Expected server payload:
     /// { "product_id": "...", "pinned": Bool }
-    func listenForPinnedProductStatus(completion: @escaping (_ productId: Int, _ isPinned: Bool) -> Void) {
+    func listenForPinnedProductStatus(completion: @escaping (_ productId: String, _ isPinned: Bool) -> Void) {
         socket.on("product_pinned") { data, _ in
             
             guard let json = data.first as? [String: Any] else {
@@ -1232,7 +1239,7 @@ extension SocketManagerService {
                 return
             }
 
-            let productId = json["product_id"] as? Int ?? 0
+            let productId = json["product_id"] as? String ?? ""
             let pinned = json["pinned"] as? Bool ?? false
 
             DispatchQueue.main.async {

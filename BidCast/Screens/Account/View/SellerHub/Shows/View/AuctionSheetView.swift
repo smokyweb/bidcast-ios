@@ -79,7 +79,6 @@ struct AuctionSettingsSheet: View {
                     // Start Auction Button
                     Button(action: {
                         onStartAuction?(startingBid, selectedRequiredTime, selectedCounterBidTime, isSuddenDeathEnabled)
-                        dismiss()
                     }) {
                         Text("Start Auction")
                             .font(.custom(poppinsSemiBold, size: 16))

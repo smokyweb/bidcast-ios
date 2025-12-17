@@ -964,9 +964,16 @@ struct LiveStream: View {
     @ViewBuilder
     private var productStackView: some View {
         VStack {
-            if let product = currentProduct,
-               let img = product.images?.first {
-                StackedImageView(imageURL: img, totalCount: productData.count) {
+            if isAuctionStartedForCurrentRoom {
+                if let product = currentProduct,
+                   let img = product.images?.first {
+                    StackedImageView(imageURL: img, totalCount: productData.count) {
+                        print("productStackTapped")
+                        navigateToProductList = true
+                    }
+                }
+            }else{
+                StackedImageView(imageURL: "", totalCount: 0) {
                     print("productStackTapped")
                     navigateToProductList = true
                 }
@@ -1639,6 +1646,7 @@ extension LiveStream {
         )
     }
 
+    //MARK: SOcket listeners-
     @MainActor
     private func setupSocketListeners(for roomId: String) async {
         let userId = UserDefaults.userId
@@ -1692,11 +1700,17 @@ extension LiveStream {
         
         socketManagerChat.listenForAuctionStarted { roomId,products,startingBidAmount,requireTime,counterBidTime,suddenDeath in
 //            guard let self else { return }
-
+            print("AUCtioned data")
+            print("\(roomId)")
+            print("\(products)")
+            print("\(startingBidAmount)")
+            print("\(requireTime)")
+            print("\(counterBidTime)")
+            print("\(suddenDeath)")
                 self.updateProducts(
                     for: roomId,
                     products: products,
-                    startingBidAmount: Double(startingBidAmount),
+                    startingBidAmount: Double(startingBidAmount) ?? 0.0,
                     requireTime: requireTime,
                     counterBidTime: counterBidTime,
                     suddenDeath: suddenDeath
@@ -1729,7 +1743,7 @@ extension LiveStream {
 
         // Optional: set current product
         self.currentProductID = "\(products.first?.id ?? 0)"
-
+        currentPrice = startingBidAmount
         // Auction config
 //        self.startingBidAmount = startingBidAmount
 //        self.requireTime = requireTime

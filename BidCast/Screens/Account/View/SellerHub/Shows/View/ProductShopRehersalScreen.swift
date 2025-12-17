@@ -84,6 +84,8 @@ struct ProductShopRehersalScreen: View {
     @State var currentPage: Int = 1
     
     @State var segment: RehearsalProductSegment = .auction
+    var onTapCancel: (() -> Void)?
+    var onAuctionTapped: ((ProductDataModel1) -> Void)?
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -99,7 +101,7 @@ struct ProductShopRehersalScreen: View {
                 .padding(.leading, 12)
                 
                 Button(action: {
-                    presentationMode.wrappedValue.dismiss()
+                    onTapCancel?()
                 }) {
                     Image(systemName: "xmark")
                         .font(.custom("Poppins-SemiBold", size: 14))
@@ -127,7 +129,10 @@ struct ProductShopRehersalScreen: View {
                         ForEach(sortedProductData.indices, id: \.self) { index in
                             ProductRehearsalListItem(product: $sortedProductData[index],
                                                      roomId: roomId,
-                                                     isPinned: pinnedProductId.contains(sortedProductData[index].id ?? 0))
+                                                     isPinned: pinnedProductId.contains(sortedProductData[index].id ?? 0),
+                            onTapAuction: {
+                                onAuctionTapped?(sortedProductData[index])
+                            })
                                 .padding(.vertical, 4)
                                 .onAppear {
                                     handlePagination(index: index)
@@ -155,8 +160,9 @@ struct ProductShopRehersalScreen: View {
             
             socketManager.listenForPinnedProductStatus { productId, isPinned in
                 print("\(productId) is \(isPinned)")
-                pinnedProductId.insert(productId, at: 0)
-                sortedProductData = updatedProductsByPinnedEvent(pinnedProductId: productId, apiProducts: sortedProductData)
+                let id = Int(productId) ?? 0
+                pinnedProductId.insert(id, at: 0)
+                sortedProductData = updatedProductsByPinnedEvent(pinnedProductId: id, apiProducts: sortedProductData)
             }
         }
         .onDisappear {
@@ -314,6 +320,7 @@ struct ProductRehearsalListItem: View {
     var roomId: String
     var isPinned: Bool
 //    var pinnedProduct: ((Int) -> Void) = {_ in}
+    var onTapAuction: (() -> Void)?
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
             
@@ -365,7 +372,7 @@ struct ProductRehearsalListItem: View {
                 // Buy Now button
                 HStack(spacing: 4) {
                     Button(action: {
-                        
+                        onTapAuction?()
                     }) {
                         Text("Start Auction")
                             .font(.custom("Poppins-SemiBold", size: 15))

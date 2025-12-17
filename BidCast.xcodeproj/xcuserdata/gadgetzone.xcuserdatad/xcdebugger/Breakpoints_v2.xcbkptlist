@@ -140,7 +140,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "219"
             endingLineNumber = "219"
-            landmarkName = "body"
+            landmarkName = "isAuctionStartedForCurrentRoom"
             landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
@@ -156,7 +156,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "422"
             endingLineNumber = "422"
-            landmarkName = "shippingView(sellerInfo:)"
+            landmarkName = "statsRow(sellerInfo:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
