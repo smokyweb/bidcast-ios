@@ -448,7 +448,7 @@ struct ShopBottomSheetView: View {
                                     Image(systemName: "play.circle.fill")
                                         .font(.system(size: 18))
                                     
-                                    Text("Start Live Stream")
+                                    Text("Start Auction")
                                         .font(.custom(poppinsSemiBold, size: 16))
                                 }
                                 .frame(maxWidth: .infinity)

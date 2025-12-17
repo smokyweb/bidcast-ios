@@ -350,8 +350,8 @@ struct RehearsalScreen: View {
                                    let img = product.images?.first {
                                     StackedImageView(imageURL: img, totalCount: productData.count) {
                                         print("productStackTapped")
-//                                        showShopSheet = true
-                                        navigateToProductList = true
+                                        showShopSheet = true
+//                                        navigateToProductList = true
                                     }
                                 }
                             }
@@ -628,7 +628,7 @@ struct RehearsalScreen: View {
                 }.zIndex(1)
                 CusNavLink(doNavigate: $navigateToSeller, destination: SellerVerificationScreen())
                 CusNavLink(doNavigate: $navigateToProductList,
-                           destination: ProductShopRehersalScreen(sellerId: "\(showsData.user?.id ?? 0)")
+                           destination: ProductShopRehersalScreen(productData: .constant([ProductDataModel1]()), sellerId: "\(showsData.user?.id ?? 0)")
                 )
             }
         }
@@ -652,15 +652,15 @@ struct RehearsalScreen: View {
                     productData: $productData,
                     productShowType: .shop,
                     onLiveStreamStart: { selectedID in
-                        guard Reachability.isConnectedToNetwork() else {
-                            hudMsg = "No Internet Connection"
-                            showhud = true
-                            return
-                        }
-                        showProductSheet = false
-                        print("product ID is :\(selectedID)")
-                        print("Live Room ID is :\(self.roomId)")
-                        UpdateStatus(status: false, selectedID: selectedID)
+//                        guard Reachability.isConnectedToNetwork() else {
+//                            hudMsg = "No Internet Connection"
+//                            showhud = true
+//                            return
+//                        }
+//                        showProductSheet = false
+//                        print("product ID is :\(selectedID)")
+//                        print("Live Room ID is :\(self.roomId)")
+//                        UpdateStatus(status: false, selectedID: selectedID)
                     },
                     initialSelectedProductId: initialSelectedProductId
                 )
@@ -742,7 +742,6 @@ struct RehearsalScreen: View {
                 }
             )
         }
-        
         .bottomSheet(
             isPresented: $showShopSheet,
             height: sheetHeight, // Adjust as needed
@@ -754,33 +753,46 @@ struct RehearsalScreen: View {
                 showShopSheet = false
             },
             content: {
-                if isLive{
-                    ShopBottomSheetView(
-                        isPresented: $showShopSheet,
-                        productData: $productData,
-                        productShowType: .nextProduct,
-                        onAddProduct: { selectedID in
-                            showShopSheet = false
-                            if !selectedID.isEmpty {
-                                print("product ID is :\(selectedID)")
-                                print("Live Room ID is :\(self.roomId)")
-                                setProductAsCurrent(selectedID: selectedID)
-                                fetchLatestProductList()
-                            }
-                        },
-                        initialSelectedProductId: initialSelectedProductId
-                    )
-                    .onAppear {
-                        fetchLatestProductList()
-                    }
-                }else{
-                    ShopBottomSheetView(
-                        isPresented: $showShopSheet,
-                        productData: $productData,
-                        productShowType: .shop
-                    )
-                }
+                ProductShopRehersalScreen(productData:$productData)
             })
+//        .bottomSheet(
+//            isPresented: $showShopSheet,
+//            height: sheetHeight, // Adjust as needed
+//            topBarCornerRadius: 20,
+//            contentBackgroundColor: Color(.systemGroupedBackground),
+//            topBarBackgroundColor: Color(.systemGroupedBackground),
+//            showTopIndicator: false,
+//            onDismiss: {
+//                showShopSheet = false
+//            },
+//            content: {
+//                if isLive{
+//                    ShopBottomSheetView(
+//                        isPresented: $showShopSheet,
+//                        productData: $productData,
+//                        productShowType: .shop,
+//                        onAddProduct: { selectedID in
+////                            showShopSheet = false
+////                            if !selectedID.isEmpty {
+////                                print("product ID is :\(selectedID)")
+////                                print("Live Room ID is :\(self.roomId)")
+////                                setProductAsCurrent(selectedID: selectedID)
+////                                fetchLatestProductList()
+////                            }
+//                        },
+//                        initialSelectedProductId: initialSelectedProductId
+//                    )
+//                    .onAppear {
+//                        fetchLatestProductList()
+//                    }
+//                }else{
+//                    ShopBottomSheetView(
+//                        isPresented: $showShopSheet,
+//                        productData: $productData,
+//                        productShowType: .shop
+//                    )
+//                }
+//            })
         
         .bottomSheet(
             isPresented: $showSellSheet,

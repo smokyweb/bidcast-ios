@@ -39,58 +39,6 @@ enum RehearsalProductSegment: String, CaseIterable, CustomStringConvertible {
     }
 }
 
-//#Preview {
-//    ProductShopRehersalScreen(sellerId: "79", categoryId: "10")
-//}
-#Preview {
-    ProductRehearsalListItem(product: .constant(ProductDataModel1(
-        id: 1,
-        title: "Sample Product",
-        description: nil,
-        pricing: "49.99",
-        quantity: "10",
-        purchasedQuantity: nil,
-
-        sku: nil,
-        status: "active",
-        type: nil,
-        variant: nil,
-        productCondition: nil,
-        productShow: nil,
-
-        acceptOffers: nil,
-        auction: nil,
-        flashSale: nil,
-        reserveForLive: nil,
-        hazardousMaterial: nil,
-
-        bidCount: nil,
-
-        height: nil,
-        length: nil,
-        width: nil,
-        weight: nil,
-
-        mailClass: nil,
-        processingCategory: nil,
-
-        shippingProfileId: nil,
-        subCategoryId: nil,
-        userId: nil,
-
-        images: [
-            "https://via.placeholder.com/300"
-        ],
-        thumbnail: nil,
-        videos: nil,
-
-        createdAt: nil,
-
-        category: nil,
-        user: nil
-    )))
-        .padding(.vertical, 4)
-}
 // MARK: - Main Screen
 struct ProductShopRehersalScreen: View {
     @State var searchText: String = ""
@@ -116,7 +64,7 @@ struct ProductShopRehersalScreen: View {
     
     @State private var totalCount = 0
     
-    @State var productData: [ProductDataModel1] = []
+    @Binding var productData: [ProductDataModel1]
 //    @State var categoryId: String = "-1"
     var sellerId: String = "-1"
     var categoryId: String = "-1"

@@ -26,7 +26,7 @@ struct ShowNotesSheet: View {
                 Spacer()
                 
                 Button(action: {
-                    dismiss()
+                    self.dismiss()
                 }) {
                     Image(systemName: "xmark")
                         .font(.system(size: 16, weight: .bold))
@@ -102,7 +102,7 @@ struct ShowNotesSheet: View {
         .onAppear {
             // Auto-focus text editor when sheet appears
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                isTextEditorFocused = true
+                isTextEditorFocused = false
             }
         }
     }
