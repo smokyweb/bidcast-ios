@@ -8,7 +8,6 @@
 import SwiftUI
 import RichText
 
-
 struct TipsCardView: View {
     var image = ""
     var title = ""

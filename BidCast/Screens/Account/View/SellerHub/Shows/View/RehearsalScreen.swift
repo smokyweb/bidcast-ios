@@ -114,7 +114,9 @@ struct RehearsalScreen: View {
     @StateObject private var agoraManager = AgoraManager(asHost: true)
     @State private var isHost = true
     
-    
+    @State private var showNotes: String = ""
+    @State private var showNotesSheet = false
+    @State private var isEditingNotes = false
     
     @State var agoraToken: String = ""
     @State var uId: Int = 0
@@ -171,7 +173,7 @@ struct RehearsalScreen: View {
                 //                    .background(Color.black)
                 
                 VStack {
-                    HStack {
+                    VStack {
                         HStack(spacing: 8) {
                             CustomProfileImage(url: UserDefaults.profileURL,isCircular: true)
                             
@@ -220,6 +222,28 @@ struct RehearsalScreen: View {
                             }
                         }
                         .padding(.horizontal)
+                        .padding(.bottom, 20)
+                        HStack {
+                            Button(action: {
+                                showNotesSheet = true
+                                isEditingNotes = showNotes.isEmpty
+                            }) {
+                                Text("Show\nNotes")
+                                    .foregroundColor(.black)
+                                    .font(.custom(poppinsSemiBold, size: 13.0))
+                                    .multilineTextAlignment(.center)
+                                    .padding(.horizontal, 20)
+                                    .padding(.vertical, 12)
+                                    .background(Color.white)
+                                    .cornerRadius(8)
+                            }
+                            .padding(16)
+                            
+                            Spacer()
+                        }
+                                        .padding(.top, 8)
+                                        
+                                        Spacer()
                     }
                     .padding(.top, 40)
                     
@@ -680,7 +704,23 @@ struct RehearsalScreen: View {
                 }
             }
         )
-        
+        .bottomSheet(isPresented: $showNotesSheet,
+                     height: screenHeight * 0.80,
+                     topBarCornerRadius: 25,
+                     showTopIndicator: false,
+                     onDismiss: {
+            showNotesSheet = false
+        }) {
+            ShowNotesSheet(
+                onPost: { note in
+                    showNotes += note
+                    print("Posted note: \(note)")
+                    showNotesSheet = false
+                    socketManager.sendAddShowNote(roomId: self.roomId,
+                                                  showNote: showNotes)
+                }
+            )
+        }
         
         .bottomSheet(
             isPresented: $showShopSheet,
@@ -720,7 +760,6 @@ struct RehearsalScreen: View {
                     )
                 }
             })
-        
         
         .bottomSheet(
             isPresented: $showSellSheet,
@@ -1133,6 +1172,7 @@ struct RehearsalScreen: View {
             self.updateHighestBid(bid: highestBid)
         }
         
+        socketManager.listenForGetShowNote()
         socketManager.listenForBidTimer(roomId: roomId)
         socketManager.listenForChat(roomId: roomId)
         socketManager.listenForViewerCount()

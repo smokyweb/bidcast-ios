@@ -592,6 +592,7 @@
 		D6E8047E2EE410EF00B04A6C /* DomesticShipmentsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6E8047D2EE410EF00B04A6C /* DomesticShipmentsScreen.swift */; };
 		D6F4C7862EF269880082B45F /* TipSettingsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F4C7852EF269880082B45F /* TipSettingsSheet.swift */; };
 		D6F4C7882EF2749C0082B45F /* ShowNotesSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F4C7872EF2749C0082B45F /* ShowNotesSheet.swift */; };
+		D6F4C7932EF28FB90082B45F /* RichText in Frameworks */ = {isa = PBXBuildFile; productRef = D6F4C7922EF28FB90082B45F /* RichText */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1191,6 +1192,7 @@
 				3504BCB52E000A3D0069182D /* FirebaseAnalyticsIdentitySupport in Frameworks */,
 				3504BCD52E000A3D0069182D /* FirebaseInstallations in Frameworks */,
 				3504BCCD2E000A3D0069182D /* FirebaseFirestoreCombine-Community in Frameworks */,
+				D6F4C7932EF28FB90082B45F /* RichText in Frameworks */,
 				D4848BAA2E97E8A100DC8B85 /* StripeCardScan in Frameworks */,
 				3504BCC12E000A3D0069182D /* FirebaseAuthCombine-Community in Frameworks */,
 				D4848BA62E97E8A100DC8B85 /* Stripe in Frameworks */,
@@ -4350,6 +4352,7 @@
 				D613DBAF2EB0A0D500521D42 /* RtcBasic */,
 				D613DBB12EB0A0D500521D42 /* SpatialAudio */,
 				D613DBB32EB0A0D500521D42 /* VirtualBackground */,
+				D6F4C7922EF28FB90082B45F /* RichText */,
 			);
 			productName = BidCast;
 			productReference = 99DF9E3F2DC4F35D008C15B2 /* BidCast.app */;
@@ -4448,6 +4451,7 @@
 				D4848BA12E97E6C900DC8B85 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				D4848BA42E97E8A100DC8B85 /* XCRemoteSwiftPackageReference "stripe-ios" */,
 				D613DBAE2EB0A0D500521D42 /* XCRemoteSwiftPackageReference "AgoraRtcEngine_iOS" */,
+				D6F4C7912EF28FB90082B45F /* XCRemoteSwiftPackageReference "RichText" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 99DF9E402DC4F35D008C15B2 /* Products */;
@@ -5564,6 +5568,14 @@
 				minimumVersion = 4.6.0;
 			};
 		};
+		D6F4C7912EF28FB90082B45F /* XCRemoteSwiftPackageReference "RichText" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/NuPlay/RichText.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.0.2;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -5801,6 +5813,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = D613DBAE2EB0A0D500521D42 /* XCRemoteSwiftPackageReference "AgoraRtcEngine_iOS" */;
 			productName = VirtualBackground;
+		};
+		D6F4C7922EF28FB90082B45F /* RichText */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D6F4C7912EF28FB90082B45F /* XCRemoteSwiftPackageReference "RichText" */;
+			productName = RichText;
 		};
 /* End XCSwiftPackageProductDependency section */
 

@@ -1074,10 +1074,10 @@ extension SocketManagerService {
             let success = json["success"] as? Bool ?? false
             let notes = json["data"] as? [[String: Any]] ?? []
 
-            DispatchQueue.main.async {
-                self.lastActionSuccess = success
-                self.showNotes = notes
-            }
+//            DispatchQueue.main.async {
+//                self.lastActionSuccess = success
+//                self.showNotes = notes
+//            }
 
             logger.info("✅ get_show_note_response received: success=\(success), notesCount=\(notes.count)")
         }
