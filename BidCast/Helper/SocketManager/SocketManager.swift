@@ -6,7 +6,7 @@
 //
 
 struct RoomModel: Codable {
-    var products: [ProductData]?
+    var products: [ProductDataModel1]?
     let room_id: String?
     let rtc_token: String?
     let seller: SellerModel?
@@ -457,11 +457,11 @@ final class SocketManagerService: NSObject, ObservableObject {
             }
             
             // Parse product updates
-            var updatedProducts: [ProductData] = []
+            var updatedProducts: [ProductDataModel1] = []
             if let productsJson = json["products"] as? [[String: Any]] {
                 do {
                     let decodedData = try JSONSerialization.data(withJSONObject: productsJson)
-                    updatedProducts = try JSONDecoder().decode([ProductData].self, from: decodedData)
+                    updatedProducts = try JSONDecoder().decode([ProductDataModel1].self, from: decodedData)
                 } catch {
                     print("❌ Failed to decode products:", error)
                 }
@@ -511,11 +511,11 @@ final class SocketManagerService: NSObject, ObservableObject {
             }
             
             // Parse updated products
-            var updatedProducts: [ProductData] = []
+            var updatedProducts: [ProductDataModel1] = []
             if let productsJson = json["products"] as? [[String: Any]] {
                 do {
                     let decodedData = try JSONSerialization.data(withJSONObject: productsJson)
-                    updatedProducts = try JSONDecoder().decode([ProductData].self, from: decodedData)
+                    updatedProducts = try JSONDecoder().decode([ProductDataModel1].self, from: decodedData)
                 } catch {
                     print("❌ Failed to decode next products:", error)
                 }
@@ -536,12 +536,13 @@ final class SocketManagerService: NSObject, ObservableObject {
                 }
 
                 // Save changes to main array
-                DispatchQueue.main.async {
+//                DispatchQueue.main.async {
                     self.rooms[roomIndex] = updatedRoom
                     print("✅ Updated room \(roomId) with next product set")
                     print("✅ Updated room data \(updatedRoom) with next product set")
-                    completion?(roomId, updatedProducts.first(where: { $0.isCurrent })?.id ?? "")
-                }
+//                    completion?(roomId, updatedProducts.first(where: { $0.isCurrent })?.id ?? "")
+                completion?(roomId, "\(updatedProducts.first?.id ?? 0)")
+//                }
             }
 
             logger.info("✅ Next product set for room \(roomId)")

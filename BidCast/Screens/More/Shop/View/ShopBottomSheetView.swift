@@ -310,7 +310,7 @@ enum ShopTab: String, CaseIterable {
 
 struct ShopBottomSheetView: View {
     @Binding var isPresented: Bool
-    @Binding var productData: [ProductData]
+    @Binding var productData: [ProductDataModel1]
     var productShowType: ProductShowType
     var onLiveStreamStart: ((String) -> Void)?
     var onAddProduct: ((String) -> Void)?
@@ -326,20 +326,39 @@ struct ShopBottomSheetView: View {
     @State private var toastMessage = ""
     @State private var buttonScale: CGFloat = 1.0
     
-    private var selectedProduct: ProductData? {
-        let selectedProduct = productData.first(where: { $0.isCurrent })
-        return selectedProduct
+//    private var selectedProduct: ProductData? {
+//        let selectedProduct = productData.first(where: { $0.isCurrent })
+//        return selectedProduct
+//    }
+    var selectedProduct: ProductDataModel1? {
+        productData.first
     }
     
-    private var isEveryProductSold: Bool {
-        return productData.allSatisfy({ $0.status == "sold" })
-    }
+//    private var isEveryProductSold: Bool {
+//        return productData.allSatisfy({ $0.status == "sold" })
+//    }
     
-    private func isProductSelectable(for product: ProductData?) -> Bool {
+    private func isProductSelectable(for product: ProductDataModel1?) -> Bool {
         guard let productData = product else { return false }
         return productShowType != .viewOnly && productData.status != "sold"
     }
     
+    
+    
+    private var currentProduct: ProductDataModel1? {
+           productData.first
+       }
+
+       /// First unsold product after current
+       private func nextEligibleProduct() -> ProductDataModel1? {
+           productData
+               .dropFirst()
+               .first { $0.status != "sold" }
+       }
+
+       private var isEveryProductSold: Bool {
+           productData.allSatisfy { $0.status == "sold" }
+       }
     var body: some View {
         VStack(spacing: 0) {
             
@@ -422,7 +441,7 @@ struct ShopBottomSheetView: View {
                                         buttonScale = 1.0
                                     }
                                     isPresented = false
-                                    onLiveStreamStart?(product.id ?? "")
+                                    onLiveStreamStart?("\(product.id ?? 0)")
                                 }
                             }) {
                                 HStack(spacing: 10) {
@@ -451,7 +470,7 @@ struct ShopBottomSheetView: View {
                         else if productShowType == .nextProduct {
                             Button(action: {
                                 // Case 1: Product already in a bid
-                                if product.id == initialSelectedProductId {
+                                if product.id == Int(initialSelectedProductId ?? "") {
                                     // Case 2: Check sold products
                                     if productData.count == 1 && product.status == "sold" {
                                         // Only one product and it's sold
@@ -481,7 +500,7 @@ struct ShopBottomSheetView: View {
                                         buttonScale = 1.0
                                     }
                                     isPresented = false
-                                    onAddProduct?(product.id ?? "")
+                                    onAddProduct?("\(product.id ?? 0)")
                                 }
                             }) {
                                 HStack(spacing: 10) {
@@ -519,121 +538,227 @@ struct ShopBottomSheetView: View {
     }
     
     // MARK: - Product Row
-    func productRow(_ product: ProductData, index: Int) -> some View {
-        Button(action: {
-            if isProductSelectable(for: product) {
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                    for i in productData.indices {
-                        productData[i].isCurrent = (i == index)
+//    func productRow(_ product: ProductDataModel1, index: Int) -> some View {
+//        Button(role: {
+//            if isProductSelectable(for: product) {
+//                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+//                    for i in productData.indices {
+////                        productData[i].isCurrent = (i == index)
+//                    }
+//                }
+//            }
+//        }) {
+//            HStack(spacing: 14) {
+//                // Selection indicator
+//                if isProductSelectable(for: product) {
+//                    ZStack {
+//                        Circle()
+//                            .stroke(product.isCurrent ? Color.blue : Color.gray.opacity(0.3), lineWidth: 2)
+//                            .frame(width: 24, height: 24)
+//                        
+//                        if product.isCurrent {
+//                            Circle()
+//                                .fill(Color.blue)
+//                                .frame(width: 24, height: 24)
+//                            
+//                            Image(systemName: "checkmark")
+//                                .font(.system(size: 12, weight: .bold))
+//                                .foregroundColor(.white)
+//                        }
+//                    }
+//                    .animation(.spring(response: 0.3, dampingFraction: 0.7), value: product.isCurrent)
+//                }
+//                
+//                // Product Image
+//                CustomProfileImage(url: product.image, isCircular: false, cornerRadius: 12, size: 70)
+//                    .overlay(
+//                        RoundedRectangle(cornerRadius: 12)
+//                            .stroke(Color.gray.opacity(0.1), lineWidth: 1)
+//                    )
+//                    .shadow(color: Color.black.opacity(0.08), radius: 6, x: 0, y: 3)
+//                
+//                // Product Details
+//                VStack(alignment: .leading, spacing: 6) {
+//                    HStack {
+//                        Text(product.name?.capitalizingFirstLetter() ?? "")
+//                            .font(.custom(poppinsSemiBold, size: 14))
+//                            .foregroundColor(.primary)
+//                            .lineLimit(2)
+//                        
+//                        Spacer()
+//                        
+//                        // Live Badge
+//                        if product.id == initialSelectedProductId && product.status != "sold" {
+//                            HStack(spacing: 4) {
+//                                Circle()
+//                                    .fill(Color.red)
+//                                    .frame(width: 6, height: 6)
+//                                
+//                                Text("LIVE")
+//                                    .font(.custom(poppinsBold, size: 11))
+//                                    .foregroundColor(.red)
+//                            }
+//                            .padding(.horizontal, 8)
+//                            .padding(.vertical, 4)
+//                            .background(
+//                                Capsule()
+//                                    .fill(Color.red.opacity(0.1))
+//                            )
+//                        }
+//                    }
+//                    
+//                    HStack(spacing: 4) {
+//                        Image(systemName: "dollarsign.circle.fill")
+//                            .font(.system(size: 12))
+//                            .foregroundColor(.green)
+//                        
+//                        Text("$\(product.price ?? "")")
+//                            .font(.custom(poppinsSemiBold, size: 13))
+//                            .foregroundColor(.green)
+//                    }
+//                    
+//                    HStack(spacing: 4) {
+//                        Circle()
+//                            .fill(product.status == "sold" ? Color.red : Color.green)
+//                            .frame(width: 6, height: 6)
+//                        
+//                        Text(product.status?.capitalizingFirstLetter() ?? "")
+//                            .font(.custom(poppinsRegular, size: 12))
+//                            .foregroundColor(product.status == "sold" ? .red : .secondary)
+//                    }
+//                }
+//                
+//                Spacer()
+//            }
+//            .padding(16)
+//            .background(
+//                RoundedRectangle(cornerRadius: 16)
+//                    .fill(product.status == "sold" ? Color(.systemGray6) : Color(.systemBackground))
+//                    .shadow(
+//                        color: product.isCurrent && product.status != "sold" ? Color.blue.opacity(0.2) : Color.black.opacity(0.06),
+//                        radius: product.isCurrent && product.status != "sold" ? 12 : 8,
+//                        x: 0,
+//                        y: product.isCurrent && product.status != "sold" ? 6 : 3
+//                    )
+//            )
+//            .overlay(
+//                RoundedRectangle(cornerRadius: 16)
+//                    .stroke(
+//                        product.isCurrent && product.status != "sold" ? Color.blue.opacity(0.4) : Color.clear,
+//                        lineWidth: 2
+//                    )
+//                    .animation(.spring(response: 0.3, dampingFraction: 0.7), value: product.isCurrent)
+//            )
+//            .opacity(product.status == "sold" ? 0.6 : 1)
+//            .scaleEffect(product.isCurrent && product.status != "sold" ? 1.02 : 1.0)
+//            .animation(.spring(response: 0.3, dampingFraction: 0.7), value: product.isCurrent)
+//        }
+//        .buttonStyle(PlainButtonStyle())
+//    }
+    
+    private func productRow(_ product: ProductDataModel1, index: Int) -> some View {
+
+           let isCurrent = index == 0
+           let isNext = product.id == nextEligibleProduct()?.id
+
+           return HStack(spacing: 14) {
+
+               // Product Image
+               CustomProfileImage(
+                   url: product.thumbnail?.first ?? product.images?.first,
+                   isCircular: false,
+                   cornerRadius: 12,
+                   size: 70
+               )
+
+               VStack(alignment: .leading, spacing: 6) {
+
+                   HStack {
+                       Text(product.title ?? "")
+                           .font(.custom(poppinsSemiBold, size: 14))
+                           .lineLimit(2)
+
+                       Spacer()
+
+                       // LIVE / NEXT badge
+                       if isCurrent && product.status != "sold" {
+                           badgeView(text: "LIVE", color: .red)
+                       } else if isNext {
+                           badgeView(text: "NEXT", color: .orange)
+                       }
+                   }
+
+                   Text("$\(product.pricing ?? "")")
+                       .font(.custom(poppinsSemiBold, size: 13))
+                       .foregroundColor(.green)
+
+                   Text(product.status?.capitalizingFirstLetter() ?? "")
+                       .font(.custom(poppinsRegular, size: 12))
+                       .foregroundColor(product.status == "sold" ? .red : .secondary)
+               }
+
+               Spacer()
+           }
+           .padding(16)
+           .background(
+               RoundedRectangle(cornerRadius: 16)
+                   .fill(product.status == "sold"
+                         ? Color(.systemGray6)
+                         : Color(.systemBackground))
+                   .shadow(
+                       color: isCurrent ? Color.blue.opacity(0.25) : Color.black.opacity(0.06),
+                       radius: isCurrent ? 12 : 8,
+                       x: 0,
+                       y: isCurrent ? 6 : 3
+                   )
+           )
+           .overlay(
+               RoundedRectangle(cornerRadius: 16)
+                   .stroke(isCurrent ? Color.blue.opacity(0.4) : Color.clear, lineWidth: 2)
+           )
+           .opacity(product.status == "sold" ? 0.6 : 1)
+       }
+    
+    private func bottomButton() -> some View {
+            Button {
+
+                if productShowType == .nextProduct {
+
+                    guard let nextProduct = nextEligibleProduct() else {
+                        toastMessage = "All Products Sold"
+                        showToast = true
+                        return
                     }
+
+                    isPresented = false
+                    onAddProduct?(String(nextProduct.id ?? 0))
+
+                } else {
+
+                    guard let current = currentProduct else { return }
+
+                    isPresented = false
+                    onLiveStreamStart?(String(current.id ?? 0))
                 }
+
+            } label: {
+                Text(productShowType == .nextProduct ? "Add Product" : "Start Auction")
+                    .font(.custom(poppinsSemiBold, size: 16))
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background(Color.defaultTheme)
+                    .foregroundColor(.white)
+                    .cornerRadius(14)
+                    .padding(.horizontal, 20)
             }
-        }) {
-            HStack(spacing: 14) {
-                // Selection indicator
-                if isProductSelectable(for: product) {
-                    ZStack {
-                        Circle()
-                            .stroke(product.isCurrent ? Color.blue : Color.gray.opacity(0.3), lineWidth: 2)
-                            .frame(width: 24, height: 24)
-                        
-                        if product.isCurrent {
-                            Circle()
-                                .fill(Color.blue)
-                                .frame(width: 24, height: 24)
-                            
-                            Image(systemName: "checkmark")
-                                .font(.system(size: 12, weight: .bold))
-                                .foregroundColor(.white)
-                        }
-                    }
-                    .animation(.spring(response: 0.3, dampingFraction: 0.7), value: product.isCurrent)
-                }
-                
-                // Product Image
-                CustomProfileImage(url: product.image, isCircular: false, cornerRadius: 12, size: 70)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color.gray.opacity(0.1), lineWidth: 1)
-                    )
-                    .shadow(color: Color.black.opacity(0.08), radius: 6, x: 0, y: 3)
-                
-                // Product Details
-                VStack(alignment: .leading, spacing: 6) {
-                    HStack {
-                        Text(product.name?.capitalizingFirstLetter() ?? "")
-                            .font(.custom(poppinsSemiBold, size: 14))
-                            .foregroundColor(.primary)
-                            .lineLimit(2)
-                        
-                        Spacer()
-                        
-                        // Live Badge
-                        if product.id == initialSelectedProductId && product.status != "sold" {
-                            HStack(spacing: 4) {
-                                Circle()
-                                    .fill(Color.red)
-                                    .frame(width: 6, height: 6)
-                                
-                                Text("LIVE")
-                                    .font(.custom(poppinsBold, size: 11))
-                                    .foregroundColor(.red)
-                            }
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
-                            .background(
-                                Capsule()
-                                    .fill(Color.red.opacity(0.1))
-                            )
-                        }
-                    }
-                    
-                    HStack(spacing: 4) {
-                        Image(systemName: "dollarsign.circle.fill")
-                            .font(.system(size: 12))
-                            .foregroundColor(.green)
-                        
-                        Text("$\(product.price ?? "")")
-                            .font(.custom(poppinsSemiBold, size: 13))
-                            .foregroundColor(.green)
-                    }
-                    
-                    HStack(spacing: 4) {
-                        Circle()
-                            .fill(product.status == "sold" ? Color.red : Color.green)
-                            .frame(width: 6, height: 6)
-                        
-                        Text(product.status?.capitalizingFirstLetter() ?? "")
-                            .font(.custom(poppinsRegular, size: 12))
-                            .foregroundColor(product.status == "sold" ? .red : .secondary)
-                    }
-                }
-                
-                Spacer()
-            }
-            .padding(16)
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(product.status == "sold" ? Color(.systemGray6) : Color(.systemBackground))
-                    .shadow(
-                        color: product.isCurrent && product.status != "sold" ? Color.blue.opacity(0.2) : Color.black.opacity(0.06),
-                        radius: product.isCurrent && product.status != "sold" ? 12 : 8,
-                        x: 0,
-                        y: product.isCurrent && product.status != "sold" ? 6 : 3
-                    )
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(
-                        product.isCurrent && product.status != "sold" ? Color.blue.opacity(0.4) : Color.clear,
-                        lineWidth: 2
-                    )
-                    .animation(.spring(response: 0.3, dampingFraction: 0.7), value: product.isCurrent)
-            )
-            .opacity(product.status == "sold" ? 0.6 : 1)
-            .scaleEffect(product.isCurrent && product.status != "sold" ? 1.02 : 1.0)
-            .animation(.spring(response: 0.3, dampingFraction: 0.7), value: product.isCurrent)
         }
-        .buttonStyle(PlainButtonStyle())
-    }
+    
+    func badgeView(text: String, color: Color) -> some View {
+            Text(text)
+                .font(.custom(poppinsBold, size: 11))
+                .foregroundColor(color)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(Capsule().fill(color.opacity(0.12)))
+        }
 }

@@ -18,7 +18,7 @@ struct MaxBidBottomSheet: View {
     
     @Binding var showParentToast: Bool
     @Binding var parentToastMessage: String
-    var currentProduct: ProductData
+    var currentProduct: ProductDataModel1
     var onSubmit: (_ amount: String) -> Void = { _ in }
     var onDismiss: (() -> Void)? = nil
     @State private var showHUD = false
@@ -64,8 +64,8 @@ struct MaxBidBottomSheet: View {
                     return
                 }
                 
-                if let currentPrice = Double(currentProduct.price ?? ""), enteredAmount <= currentPrice {
-                    showTemporaryHUD(message: "Please enter an amount greater than current price $\(currentProduct.price)")
+                if let currentPrice = Double(currentProduct.pricing ?? ""), enteredAmount <= currentPrice {
+                    showTemporaryHUD(message: "Please enter an amount greater than current price $\(currentProduct.pricing ?? "")")
                     return
                 }
                 

@@ -68,7 +68,7 @@
 		358B9D182DDF049600932250 /* FSCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = 358B9D172DDF049600932250 /* FSCalendar */; };
 		358B9D1A2DDF04FA00932250 /* FSCalendar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 358B9D192DDF04FA00932250 /* FSCalendar.swift */; };
 		358B9D1C2DDF11A400932250 /* ContactUsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 358B9D1B2DDF11A400932250 /* ContactUsViewModel.swift */; };
-		35987D1E2DE5863100D6C2C9 /* LiveStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35987D1D2DE5863100D6C2C9 /* LiveStream.swift */; };
+		35987D1E2DE5863100D6C2C9 /* LiveStream_1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35987D1D2DE5863100D6C2C9 /* LiveStream_1.swift */; };
 		35987D222DE5A04300D6C2C9 /* PreferncesScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35987D212DE5A04300D6C2C9 /* PreferncesScreen.swift */; };
 		35987D252DE5C65700D6C2C9 /* CountryPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35987D242DE5C65700D6C2C9 /* CountryPickerView.swift */; };
 		35987D272DE5C66800D6C2C9 /* SelectableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35987D262DE5C66800D6C2C9 /* SelectableCell.swift */; };
@@ -260,6 +260,7 @@
 		99DF9E822DC4F370008C15B2 /* BidCastUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99DF9E7F2DC4F370008C15B2 /* BidCastUITests.swift */; };
 		99DF9E832DC4F370008C15B2 /* BidCastUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99DF9E802DC4F370008C15B2 /* BidCastUITestsLaunchTests.swift */; };
 		D408478F2ECD85BE001CC925 /* RehearsalScreenV1.swift in Sources */ = {isa = PBXBuildFile; fileRef = D408478E2ECD85BE001CC925 /* RehearsalScreenV1.swift */; };
+		D4163AB72EF272E200AFCEFB /* LiveStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4163AB62EF272E200AFCEFB /* LiveStream.swift */; };
 		D41711DE2DF7FEF700ED39BC /* TrustedBuyerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D41711DD2DF7FEF700ED39BC /* TrustedBuyerModel.swift */; };
 		D41711E02DF7FF1300ED39BC /* TrustedBuyerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D41711DF2DF7FF1300ED39BC /* TrustedBuyerViewModel.swift */; };
 		D4181BC32E0D4B15002962A3 /* KycModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4181BBC2E0D4B15002962A3 /* KycModel.swift */; };
@@ -641,7 +642,7 @@
 		358B9D142DDEFB9900932250 /* SelectShowScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectShowScreen.swift; sourceTree = "<group>"; };
 		358B9D192DDF04FA00932250 /* FSCalendar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FSCalendar.swift; sourceTree = "<group>"; };
 		358B9D1B2DDF11A400932250 /* ContactUsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactUsViewModel.swift; sourceTree = "<group>"; };
-		35987D1D2DE5863100D6C2C9 /* LiveStream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveStream.swift; sourceTree = "<group>"; };
+		35987D1D2DE5863100D6C2C9 /* LiveStream_1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveStream_1.swift; sourceTree = "<group>"; };
 		35987D212DE5A04300D6C2C9 /* PreferncesScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferncesScreen.swift; sourceTree = "<group>"; };
 		35987D232DE5C63500D6C2C9 /* ToggleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToggleCell.swift; sourceTree = "<group>"; };
 		35987D242DE5C65700D6C2C9 /* CountryPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountryPickerView.swift; sourceTree = "<group>"; };
@@ -834,6 +835,7 @@
 		99DF9E7F2DC4F370008C15B2 /* BidCastUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BidCastUITests.swift; sourceTree = "<group>"; };
 		99DF9E802DC4F370008C15B2 /* BidCastUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BidCastUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		D408478E2ECD85BE001CC925 /* RehearsalScreenV1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RehearsalScreenV1.swift; sourceTree = "<group>"; };
+		D4163AB62EF272E200AFCEFB /* LiveStream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveStream.swift; sourceTree = "<group>"; };
 		D41711DD2DF7FEF700ED39BC /* TrustedBuyerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrustedBuyerModel.swift; sourceTree = "<group>"; };
 		D41711DF2DF7FF1300ED39BC /* TrustedBuyerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrustedBuyerViewModel.swift; sourceTree = "<group>"; };
 		D4181BBC2E0D4B15002962A3 /* KycModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KycModel.swift; sourceTree = "<group>"; };
@@ -1673,7 +1675,8 @@
 		35F8B5552DED802500FE0778 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				35987D1D2DE5863100D6C2C9 /* LiveStream.swift */,
+				35987D1D2DE5863100D6C2C9 /* LiveStream_1.swift */,
+				D4163AB62EF272E200AFCEFB /* LiveStream.swift */,
 				D6C27BDD2ED466A600A2B724 /* ProductShopListScreen.swift */,
 				D65B7EE02ED579CB000B52EC /* ProductDetailView.swift */,
 				D66070B22ED09A9E00B81251 /* FollowSellerSheet.swift */,
@@ -4799,6 +4802,7 @@
 				D66070AF2ED06EE500B81251 /* StackedImageView.swift in Sources */,
 				D4BB99F32DE590D100C1BCBC /* ShippingsScreen.swift in Sources */,
 				3541638E2DDB370C00026B34 /* ListProductViewModel.swift in Sources */,
+				D4163AB72EF272E200AFCEFB /* LiveStream.swift in Sources */,
 				D4B616272DE87A1000924A3D /* OrderProductCardView.swift in Sources */,
 				D6B8E3CE2EB33DB600A91DA0 /* AgoraModel.swift in Sources */,
 				35CA09DE2DD5CC29002ABB83 /* CustomSegmentedControl.swift in Sources */,
@@ -4872,7 +4876,7 @@
 				D4C0C7C32E53125500A84165 /* AddPaymentAndMethodViewModel.swift in Sources */,
 				99C909B52DC8CD930054620B /* UserDefaults+Extension.swift in Sources */,
 				D4B615D82DE82A5400924A3D /* BuyNowModel.swift in Sources */,
-				35987D1E2DE5863100D6C2C9 /* LiveStream.swift in Sources */,
+				35987D1E2DE5863100D6C2C9 /* LiveStream_1.swift in Sources */,
 				99C909B62DC8CD930054620B /* CusNavLink.swift in Sources */,
 				D68399B12EB21CB700F3BDA7 /* FollowUnFollowSocketHandler.swift in Sources */,
 				354163902DDB3A2100026B34 /* StoreProductModel.swift in Sources */,

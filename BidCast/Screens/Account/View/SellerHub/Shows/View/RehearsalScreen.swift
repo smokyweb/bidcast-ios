@@ -30,7 +30,7 @@ struct RehearsalScreen: View {
     @StateObject var agoraViewModel = AgoraViewModel()
     
     @State var BiddingDetail = BiddingModel()
-    @State var productData = [ProductData]()
+    @State var productData = [ProductDataModel1]()
     @Binding var productListData: [ProductDataModel]
     @State var comments: [CommentModel] = []
     @State  var  boosts = [BoostModel]()
@@ -71,8 +71,8 @@ struct RehearsalScreen: View {
     @State private var currentPollModel: PollModel?
     @State private var remainingTimer: Int?
     
-    var currentProduct: ProductData? {
-        productData.first { $0.isCurrent }
+    var currentProduct: ProductDataModel1? {
+        productData.first /*{ $0.isCurrent }*/
     }
     
     
@@ -151,6 +151,13 @@ struct RehearsalScreen: View {
     @State var sellerId = ""
     @State var showItemDetailSheet = false
     @State var productId: Int = 0
+    
+    @State private var showNotes: String = ""
+    @State private var showNotesSheet = false
+    @State private var isEditingNotes = false
+    
+    @State var showAuctionSetting = false
+    
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -344,7 +351,7 @@ struct RehearsalScreen: View {
                             SideButton(label: "Switch", icon: .camera,action: .switchView)
                             VStack {
                                 if let product = currentProduct,
-                                   let img = product.image {
+                                   let img = product.images?.first {
                                     StackedImageView(imageURL: img, totalCount: productData.count) {
                                         print("productStackTapped")
 //                                        showShopSheet = true
@@ -400,7 +407,7 @@ struct RehearsalScreen: View {
                             }
                             VStack {
                                 if let product = currentProduct,
-                                   let img = product.image {
+                                   let img = product.images?.first {
                                     StackedImageView(imageURL: img, totalCount: productData.count) {
                                         print("productStackTapped")
 //                                        showShopSheet = true
@@ -550,8 +557,9 @@ struct RehearsalScreen: View {
                                     }
                                     
                                     //MARK: Product Details
-                                    let currentProducts = productData.filter { $0.isCurrent }
-                                    if let product = currentProducts.first {
+//                                    let currentProducts = productData.filter { $0.isCurrent }
+                                    let currentProducts = productData.first
+                                    if let product = currentProducts {
                                         
                                         CurrentProductView(product: product,
                                                            currentPrice: $currentPrice,
@@ -586,7 +594,8 @@ struct RehearsalScreen: View {
                                 if UserDefaults.sellerVerafied == "verified"{
                                     if !isLive{
                                         Task {
-                                            showProductSheet = true
+//                                            showProductSheet = true
+                                            UpdateStatus(status: false)
                                         }
                                     }
                                 }else{
@@ -681,6 +690,21 @@ struct RehearsalScreen: View {
                     },
                     roomId: self.roomId
                 )
+            }
+        )
+        
+        .bottomSheet(
+            isPresented: $showAuctionSetting,
+            height: screenHeight * 0.6,
+            topBarCornerRadius: 20,
+            contentBackgroundColor: Color(.systemBackground),
+            topBarBackgroundColor: Color(.systemBackground),
+            showTopIndicator: false,
+            onDismiss: {
+                showPollSheet = false
+            },
+            content: {
+                AuctionSettingsSheet()
             }
         )
         
@@ -1009,7 +1033,7 @@ struct RehearsalScreen: View {
                     quantity: productModel.quantity ?? ""
                 )
             }
-            productData.append(contentsOf: mappedProducts)
+//            productData.append(contentsOf: mappedProducts)
             categoryName = showsData.category?.name ?? ""
             
             //get agora token -> did not call it on preview screen
@@ -1028,8 +1052,10 @@ struct RehearsalScreen: View {
         
         print("DEBUG: fetchLatestProductList with roomId = \(self.roomId)")
         print("DEBUG: initialSelectedProductId= \(initialSelectedProductId)")
-        initialSelectedProductId = productData.first(where: { $0.isCurrent })?.id ?? ""
-        currentPrice = Double(productData.first(where: { $0.isCurrent })?.price ?? "") ?? 0.0
+//        initialSelectedProductId = productData.first(where: { $0.isCurrent })?.id ?? ""
+//        currentPrice = Double(productData.first(where: { $0.isCurrent })?.price ?? "") ?? 0.0
+        initialSelectedProductId = "\(productData.first?.id ?? 0)"
+        currentPrice = Double(productData.first?.pricing ?? "") ?? 0.0
     }
     
     func setProductAsCurrent(selectedID : String){
@@ -1080,7 +1106,7 @@ struct RehearsalScreen: View {
             self.sendCreateRoomEvent(
                 showId: "\(showId)",
                 roomId: roomId,
-                products: products,
+                products: data.product_ids,
                 seller: seller,
                 thumbnail: data.thumbnail?.first ?? "",
                 time: data.time ?? "",
@@ -1353,9 +1379,10 @@ struct RehearsalScreen: View {
         if let products = socketRoom.products {
             productData = products
             print("print PRoduct: \(products)")
-            let currentProducts = productData.filter { $0.isCurrent }
-            self.currentPrice = Double(currentProducts.first?.price ?? "") ?? 0.0
-            self.productId = Int(currentProducts.first?.id ?? "") ?? 0
+//            let currentProducts = productData.filter { $0.isCurrent }
+            let currentProducts = productData.first
+            self.currentPrice = Double(currentProducts?.pricing ?? "") ?? 0.0
+            self.productId = currentProducts?.id ?? 0
             print("after product \(productData)")
         }
     }
@@ -1525,17 +1552,17 @@ struct RehearsalScreen: View {
             let seller = SellerModel(isFollowed: data.user?.is_followed ?? false, id: "\(data.user?.id ?? 0 )", name: data.user?.name ?? "", rating: data.user?.rating ?? "")
             
             
-            sendCreateRoomEvent(
-                showId: "\(data.id ?? 0)",
-                roomId: self.roomId,
-                products: product,
-                seller: seller,
-                thumbnail: data.thumbnail?.first ?? "",
-                time: data.time ?? "",
-                date: data.date ?? "",
-                allowBidForAll: true,
-                showTimer: ""
-            )
+//            sendCreateRoomEvent(
+//                showId: "\(data.id ?? 0)",
+//                roomId: self.roomId,
+//                products: product,
+//                seller: seller,
+//                thumbnail: data.thumbnail?.first ?? "",
+//                time: data.time ?? "",
+//                date: data.date ?? "",
+//                allowBidForAll: true,
+//                showTimer: ""
+//            )
             
             
         }
@@ -1544,7 +1571,7 @@ struct RehearsalScreen: View {
     func sendCreateRoomEvent(
         showId: String,
         roomId: String,
-        products: [ProductData],
+        products: [String]?,
         seller: SellerModel,
         thumbnail: String,
         time: String,
@@ -1553,18 +1580,18 @@ struct RehearsalScreen: View {
         showTimer:String
     ) {
         
-        let productPayload = products.map { product in
-            [
-                "category": product.category,
-                "id": product.id,
-                "image": product.image,
-                "name": product.name,
-                "price": product.price,
-                "status": product.status,
-                "is_current": product.isCurrent,
-                "quantity": product.quantity
-            ] as [String : Any]
-        }
+//        let productPayload = products.map { product in
+//            [
+//                "category": product.category,
+//                "id": product.id,
+//                "image": product.image,
+//                "name": product.name,
+//                "price": product.price,
+//                "status": product.status,
+//                "is_current": product.isCurrent,
+//                "quantity": product.quantity
+//            ] as [String : Any]
+//        }
         
         let sellerPayload: [String: Any] = [
             "id": seller.id,
@@ -1578,7 +1605,7 @@ struct RehearsalScreen: View {
         let payload: [String: Any] = [
             "show_id": showId,
             "room_id": roomId,
-            "products": productPayload,
+            "products": products,
             "seller": sellerPayload,
             "thumbnail": thumbnail,
             "time": timestamp,

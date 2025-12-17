@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CurrentProductView: View {
     
-    let product: ProductData
+    let product: ProductDataModel1
     
     @Binding var currentPrice: Double
     @Binding var bidTime: String
@@ -24,7 +24,7 @@ struct CurrentProductView: View {
     var body: some View {
         
         VStack(alignment: .leading) {
-            if let price = product.price, let priceInDouble = Double(price) {
+            if let price = product.pricing, let priceInDouble = Double(price) {
                 if !userName.isEmpty && currentPrice > priceInDouble {
                     // Text with different colors for username and "Winning"
                     HStack(spacing: 0) {
@@ -73,14 +73,14 @@ struct CurrentProductView: View {
             
             HStack(spacing: 12) {
                 CustomProfileImage(
-                    url: product.image,
+                    url: product.images?.first,
                     isCircular: false,
                     cornerRadius: 8.0,
                     size: 80.0
                 )
                 
                 VStack(alignment: .leading, spacing: 0) {
-                    Text(product.name?.capitalizingFirstLetter() ?? "")
+                    Text(product.title?.capitalizingFirstLetter() ?? "")
                         .font(.custom(poppinsBold, size: 13.0))
                         .foregroundColor(.white)
                     if !categoryName.isEmpty{
@@ -90,7 +90,7 @@ struct CurrentProductView: View {
                             .foregroundColor(.white)
                     }
                     
-                    Text("Price : $\(product.price ?? "0.0")")
+                    Text("Price : $\(product.pricing ?? "0.0")")
                         .font(.custom(poppinsSemiBold, size: 12.0))
                         .padding(4)
                         .foregroundColor(.white)

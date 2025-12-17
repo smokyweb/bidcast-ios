@@ -332,13 +332,13 @@ struct AuctionSettingsSheet: View {
 
 
 
-#Preview {
-    AuctionSettingsSheet(
-        onStartAuction: { bid, reqTime, counterTime, suddenDeath in
-            print("Starting Bid: $\(bid)")
-            print("Required Time: \(reqTime)s")
-            print("Counter-Bid Time: \(counterTime)s")
-            print("Sudden Death: \(suddenDeath)")
-        }
-    )
-}
+//#Preview {
+//    AuctionSettingsSheet(
+//        onStartAuction: { bid, reqTime, counterTime, suddenDeath in
+//            print("Starting Bid: $\(bid)")
+//            print("Required Time: \(reqTime)s")
+//            print("Counter-Bid Time: \(counterTime)s")
+//            print("Sudden Death: \(suddenDeath)")
+//        }
+//    )
+//}

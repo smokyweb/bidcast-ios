@@ -135,9 +135,9 @@ struct ProductDataModel1: Codable, Identifiable {
     var subCategoryId: Int?
     var userId: Int?
 
-    var images: [String?]?
-    var thumbnail: [String?]?
-    var videos: [String?]?
+    var images: [String]?
+    var thumbnail: [String]?
+    var videos: [String]?
 
     var createdAt: String?
 

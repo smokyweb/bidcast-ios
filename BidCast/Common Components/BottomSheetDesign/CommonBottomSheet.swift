@@ -334,7 +334,7 @@ struct CommonBottomSheet: View {
                 .padding(.bottom, 20)
             }
         }
-        .padding(.horizontal, 20)
+        .padding(.horizontal, 16)
         .padding(.top, 10)
         .frame(maxWidth: .infinity)
 //        .background(
