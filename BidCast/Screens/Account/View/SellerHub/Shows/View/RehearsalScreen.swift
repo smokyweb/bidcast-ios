@@ -754,10 +754,11 @@ struct RehearsalScreen: View {
             },
             content: {
                 ProductShopRehersalScreen(
+                    roomId: self.roomId,
                     productDataFromEvent: $productData,
-                    categoryId: "\(showsData.category_id ?? 0)",
-                    roomId: self.roomId
+                    categoryId: "\(showsData.category_id ?? 0)"
                 )
+                
             })
 //        .bottomSheet(
 //            isPresented: $showShopSheet,
