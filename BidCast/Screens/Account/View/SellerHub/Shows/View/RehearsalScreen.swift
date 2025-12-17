@@ -1172,7 +1172,10 @@ struct RehearsalScreen: View {
             self.updateHighestBid(bid: highestBid)
         }
         
-        socketManager.listenForGetShowNote()
+        socketManager.listenForGetShowNote { notes in
+            self.showNotes = notes
+        }
+        
         socketManager.listenForBidTimer(roomId: roomId)
         socketManager.listenForChat(roomId: roomId)
         socketManager.listenForViewerCount()

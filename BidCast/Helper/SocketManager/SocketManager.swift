@@ -1062,7 +1062,7 @@ extension SocketManagerService {
     /// Listens for show notes fetched from the server.
     /// Expected server payload example:
     /// `{ "success": true, "data": [ { "id": 1, "show_note": "...", "created_at": "..." } ] }`
-    func listenForGetShowNote() {
+    func listenForGetShowNote(completion: ((String) -> Void) ) {
         socket.on("get_show_note") { [weak self] data, _ in
             guard let self else { return }
 
@@ -1072,12 +1072,13 @@ extension SocketManagerService {
             }
 
             let success = json["success"] as? Bool ?? false
-            let notes = json["data"] as? [[String: Any]] ?? []
+            let notes = json["show_note"] as? String ?? ""
 
 //            DispatchQueue.main.async {
 //                self.lastActionSuccess = success
 //                self.showNotes = notes
 //            }
+            completion(notes)
 
             logger.info("✅ get_show_note_response received: success=\(success), notesCount=\(notes.count)")
         }
