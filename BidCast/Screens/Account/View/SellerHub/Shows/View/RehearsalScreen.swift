@@ -627,9 +627,9 @@ struct RehearsalScreen: View {
                     }
                 }.zIndex(1)
                 CusNavLink(doNavigate: $navigateToSeller, destination: SellerVerificationScreen())
-                CusNavLink(doNavigate: $navigateToProductList,
-                           destination: ProductShopRehersalScreen(productData: .constant([ProductDataModel1]()), sellerId: "\(showsData.user?.id ?? 0)")
-                )
+//                CusNavLink(doNavigate: $navigateToProductList,
+//                           destination: ProductShopRehersalScreen(productData: .constant([ProductDataModel1]()), sellerId: "\(showsData.user?.id ?? 0)")
+//                )
             }
         }
         .navigationBarHidden(true)
@@ -744,7 +744,7 @@ struct RehearsalScreen: View {
         }
         .bottomSheet(
             isPresented: $showShopSheet,
-            height: sheetHeight, // Adjust as needed
+            height: sheetHeight * 0.85,
             topBarCornerRadius: 20,
             contentBackgroundColor: Color(.systemGroupedBackground),
             topBarBackgroundColor: Color(.systemGroupedBackground),
@@ -753,7 +753,11 @@ struct RehearsalScreen: View {
                 showShopSheet = false
             },
             content: {
-                ProductShopRehersalScreen(productData:$productData)
+                ProductShopRehersalScreen(
+                    productDataFromEvent: $productData,
+                    categoryId: "\(showsData.category_id ?? 0)",
+                    roomId: self.roomId
+                )
             })
 //        .bottomSheet(
 //            isPresented: $showShopSheet,
@@ -1199,7 +1203,7 @@ struct RehearsalScreen: View {
             }
         )
         
-        SocketManagerService.shared.listenForNextProduct {roomId, _ in
+        socketManager.listenForNextProduct {roomId, _ in
             self.fetchProducts(for: roomId)
         }
         

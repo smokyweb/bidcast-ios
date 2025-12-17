@@ -1044,26 +1044,12 @@ extension SocketManagerService {
             logger.info("📤 Sent add_show_note: \(payload)")
         }
     }
-
-    // MARK: - Emit Event: Get Show Notes
-    /// Requests stored show notes for a room.
-    /// - Parameter roomId: Room identifier
-//    func getShowNote(roomId: String) {
-//        let payload: [String: Any] = [
-//            "room_id": roomId
-//        ]
-//
-//        performIfConnected {
-//            socket.emit("get_show_note", payload)
-//            logger.info("📤 Sent get_show_note: \(payload)")
-//        }
-//    }
-
+    
     // MARK: - Listen: Get Show Notes Response
     /// Listens for show notes fetched from the server.
     /// Expected server payload example:
     /// `{ "success": true, "data": [ { "id": 1, "show_note": "...", "created_at": "..." } ] }`
-    /// 
+    ///
     func listenForGetShowNote(completion: @escaping (String) -> Void) {
         socket.on("get_show_note") { [weak self] data, _ in
             guard let self = self else { return }
@@ -1080,6 +1066,62 @@ extension SocketManagerService {
             }
 
             logger.info("✅ get_show_note received, notesCount=\(notes.count)")
+        }
+    }
+
+    // MARK: - Emit Event: Get Show Notes
+    /// Requests stored show notes for a room.
+    /// - Parameter roomId: Room identifier
+//    func getShowNote(roomId: String) {
+//        let payload: [String: Any] = [
+//            "room_id": roomId
+//        ]
+//
+//        performIfConnected {
+//            socket.emit("get_show_note", payload)
+//            logger.info("📤 Sent get_show_note: \(payload)")
+//        }
+//    }
+}
+
+extension SocketManagerService {
+    // MARK: - Emit Event: Pin Product
+    /// Pins a product inside a room.
+    /// - Parameters:
+    ///   - roomId: Room identifier
+    ///   - productId: Product identifier
+    func sendPinProduct(roomId: String, productId: String) {
+        let payload: [String: Any] = [
+            "room_id": roomId,
+            "product_id": productId
+        ]
+
+        performIfConnected {
+            socket.emit("pin_product", payload)
+            logger.info("📤 Sent pin_product: \(payload)")
+        }
+    }
+
+    // MARK: - Listen: Product Pinned Status
+    /// Listens for pinned/unpinned product updates.
+    /// Expected server payload:
+    /// { "product_id": "...", "pinned": Bool }
+    func listenForPinnedProductStatus(completion: @escaping (_ productId: String, _ isPinned: Bool) -> Void) {
+        socket.on("product_pinned") { data, _ in
+            
+            guard let json = data.first as? [String: Any] else {
+                self.logger.warning("⚠️ Invalid product_pinned payload: \(data)")
+                return
+            }
+
+            let productId = json["product_id"] as? String ?? ""
+            let pinned = json["pinned"] as? Bool ?? false
+
+            DispatchQueue.main.async {
+                completion(productId, pinned)
+            }
+
+            self.logger.info("✅ product_pinned received → productId=\(productId), pinned=\(pinned)")
         }
     }
 
