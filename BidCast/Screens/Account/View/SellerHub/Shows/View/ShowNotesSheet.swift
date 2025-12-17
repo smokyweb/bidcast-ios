@@ -10,7 +10,7 @@ import SwiftUI
 struct ShowNotesSheet: View {
     @Environment(\.dismiss) private var dismiss
     
-    @State private var noteText: String = ""
+    @Binding private var noteText: String = ""
     @FocusState private var isTextEditorFocused: Bool
     
     var onPost: ((String) -> Void)?

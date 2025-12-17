@@ -736,6 +736,7 @@ struct RehearsalScreen: View {
             showNotesSheet = false
         }) {
             ShowNotesSheet(
+                noteText: $showNotes,
                 onPost: { note in
                     showNotes += note
                     print("Posted note: \(note)")
