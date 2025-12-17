@@ -1106,7 +1106,7 @@ extension SocketManagerService {
     /// Listens for pinned/unpinned product updates.
     /// Expected server payload:
     /// { "product_id": "...", "pinned": Bool }
-    func listenForPinnedProductStatus(completion: @escaping (_ productId: String, _ isPinned: Bool) -> Void) {
+    func listenForPinnedProductStatus(completion: @escaping (_ productId: Int, _ isPinned: Bool) -> Void) {
         socket.on("product_pinned") { data, _ in
             
             guard let json = data.first as? [String: Any] else {
@@ -1114,7 +1114,7 @@ extension SocketManagerService {
                 return
             }
 
-            let productId = json["product_id"] as? String ?? ""
+            let productId = json["product_id"] as? Int ?? 0
             let pinned = json["pinned"] as? Bool ?? false
 
             DispatchQueue.main.async {
