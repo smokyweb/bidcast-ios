@@ -218,6 +218,7 @@ struct LiveStream: View {
     var isAuctionStartedForCurrentRoom: Bool {
         auctionStartedRooms.contains(currentRoomID)
     }
+    @State var auctionedProductData: ProductDataModel1? = nil
     
     var body: some View {
         ZStack {
@@ -708,12 +709,14 @@ struct LiveStream: View {
        
       
         if isAuctionStartedForCurrentRoom {
-            let currentProducts = productData.first
-            if let product = currentProducts {
+            let currentProducts = auctionedProductData
+            let product = currentProducts
+            if product != nil{
                 VStack(alignment: .leading, spacing: 12) {
-                    currentProductCard(product: product)
+                    currentProductCard(product: product ?? ProductDataModel1() )
                     biddingControls
                 }
+                
             } else {
                 waitingForProductView
             }
@@ -731,7 +734,7 @@ struct LiveStream: View {
             bidTime: $socketManagerChat.bidTime,
             userName: $winnerName,
             userImage: $winnerProfileImage,
-            categoryName: $categoryName,
+            categoryName: $categoryName, hasWon: .constant(false),
             onTap: { self.showItemDetailSheet = true }
         )
         .frame(maxWidth: .infinity)
@@ -1720,7 +1723,9 @@ extension LiveStream {
                 self.auctionStartedRooms.insert(roomId)
         }
         
-        socketManagerChat.listenForAuctionNextProduct {roomId,products in
+        socketManagerChat.listenForAuctionNextProduct { roomID,products,source  in
+            guard roomId == roomID else { return}
+            self.auctionedProductData = products
             
         }
         
@@ -1739,7 +1744,7 @@ extension LiveStream {
         guard currentRoomID == roomId else { return }
 
         // Update product list
-        self.productData = products
+        self.auctionedProductData = products.first ?? ProductDataModel1()
 
         // Optional: set current product
         self.currentProductID = "\(products.first?.id ?? 0)"
@@ -1763,7 +1768,7 @@ extension LiveStream {
         let amount = winner?.bid_amount ?? ""
         
         print("🏁 Bid finalized - Winner: \(name), Amount: \(amount)")
-        
+        auctionedProductData = nil
         winnerName = name
         winnerProfileID = id
         winnerProfileImage = image
@@ -1915,11 +1920,13 @@ extension LiveStream {
             self.productData = []
             self.currentProductIndex = 0
             self.currentPrice = 0.0
+            self.auctionedProductData = nil
             return
         }
         
         if let products = socketRoom.products {
             productData = products
+            
         }
     }
 

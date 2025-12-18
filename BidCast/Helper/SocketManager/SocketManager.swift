@@ -774,6 +774,29 @@ final class SocketManagerService: NSObject, ObservableObject {
         }
     }
     
+    func listenForRunNextProductError(
+        completion: @escaping (_ roomId: String, _ message: String?) -> Void
+    ) {
+        socket.on("run_next_product_error") { [weak self] data, _ in
+            guard let self else { return }
+
+            guard let json = data.first as? [String: Any],
+                  let roomId = json["room_id"] as? String else {
+                print("❌ Invalid run_next_product_error payload:", data)
+                return
+            }
+
+            let message = json["message"] as? String
+
+            DispatchQueue.main.async {
+                completion(roomId, message)
+            }
+
+            self.logger.error("❌ run_next_product_error received for room \(roomId): \(message ?? "Unknown error")")
+        }
+    }
+
+    
     func removeFollowListener() {
         socket.off("user_follow_status")
         socket.off("follow_unfollow_status")
@@ -1080,34 +1103,64 @@ extension SocketManagerService {
     }
     
     func listenForAuctionNextProduct(
-        completion: @escaping (_ roomId: String, _ products: [ProductDataModel1]) -> Void
+        completion: @escaping (_ roomId: String, _ product: ProductDataModel1, _ source: String?) -> Void
     ) {
         socket.on("auction_next_product") { [weak self] data, _ in
             guard let self else { return }
-            guard let json = data.first as? [String: Any],
-                  let roomId = json["room_id"] as? String else {
+
+            guard
+                let json = data.first as? [String: Any],
+                let roomId = json["room_id"] as? String,
+                let productJson = json["product"] as? [String: Any]
+            else {
                 print("❌ Invalid auction_next_product payload:", data)
                 return
             }
 
-            var products: [ProductDataModel1] = []
+            do {
+                let decodedData = try JSONSerialization.data(withJSONObject: productJson)
+                let product = try JSONDecoder().decode(ProductDataModel1.self, from: decodedData)
 
-            if let productsJson = json["products"] as? [[String: Any]] {
-                do {
-                    let decoded = try JSONSerialization.data(withJSONObject: productsJson)
-                    products = try JSONDecoder().decode([ProductDataModel1].self, from: decoded)
-                } catch {
-                    print("❌ Failed to decode auction_next_product products:", error)
+                let source = json["source"] as? String
+
+                DispatchQueue.main.async {
+                    completion(roomId, product, source)
                 }
-            }
 
-            DispatchQueue.main.async {
-                completion(roomId, products)
-            }
+                self.logger.info("✅ auction_next_product received for room \(roomId)")
 
-            self.logger.info("✅ auction_next_product received for room \(roomId)")
+            } catch {
+                print("❌ Failed to decode auction_next_product:", error)
+            }
         }
     }
+
+    func listenForProductUnpinned(
+        completion: @escaping (_ roomId: String, _ productId: String, _ message: String?) -> Void
+    ) {
+        socket.on("product_unpinned") { [weak self] data, _ in
+            guard let self else { return }
+
+            guard let json = data.first as? [String: Any],
+                  let roomId = json["room_id"] as? String,
+                  let productId = json["product_id"] as? String else {
+                print("❌ Invalid product_unpinned payload:", data)
+                return
+            }
+
+            let message = json["message"] as? String
+
+            DispatchQueue.main.async {
+                completion(roomId, productId, message)
+            }
+
+            self.logger.info(
+                "📌 product_unpinned received | roomId: \(roomId), productId: \(productId), message: \(message ?? "")"
+            )
+        }
+    }
+
+
 
     
     func startAuction(
@@ -1127,7 +1180,7 @@ extension SocketManagerService {
                 "counter_bid_time": counterBidTime,
                 "sudden_death": suddenDeath
             ]
-
+            hasWon = false
             socket.emit("start_auction", payload)
             logger.info("🚀 Sent start_auction: \(payload)")
         }
@@ -1152,7 +1205,7 @@ extension SocketManagerService {
                 print("❌ Invalid auction_started payload:", data)
                 return
             }
-
+            
             let startingBidAmount = json["starting_bid_amount"] as? String ?? ""
             let requireTime = json["require_time"] as? Int ?? 0
             let counterBidTime = json["counter_bid_time"] as? Int ?? 0
@@ -1220,39 +1273,42 @@ extension SocketManagerService {
             "room_id": roomId,
             "product_id": productId
         ]
-
+        
         performIfConnected {
             socket.emit("pin_product", payload)
             logger.info("📤 Sent pin_product: \(payload)")
         }
     }
-
+    
     // MARK: - Listen: Product Pinned Status
     /// Listens for pinned/unpinned product updates.
     /// Expected server payload:
     /// { "product_id": "...", "pinned": Bool }
-    func listenForPinnedProductStatus(completion: @escaping (_ productId: String, _ isPinned: Bool) -> Void) {
+    func listenForPinnedProductStatus(
+        completion: @escaping (_ roomId: String, _ productId: String, _ message: String?) -> Void
+    ) {
         socket.on("product_pinned") { data, _ in
             
-            guard let json = data.first as? [String: Any] else {
-                self.logger.warning("⚠️ Invalid product_pinned payload: \(data)")
+            guard let json = data.first as? [String: Any],
+                  let roomId = json["room_id"] as? String,
+                  let productId = json["product_id"] as? String else {
+                print("❌ Invalid product_unpinned payload:", data)
                 return
             }
-
-            let productId = json["product_id"] as? String ?? ""
-            let pinned = json["pinned"] as? Bool ?? false
-
+            
+            let message = json["message"] as? String
+            
             DispatchQueue.main.async {
-                completion(productId, pinned)
+                completion(roomId, productId, message)
             }
-
-            self.logger.info("✅ product_pinned received → productId=\(productId), pinned=\(pinned)")
+            
+            self.logger.info(
+                "📌 product_pinned received | roomId: \(roomId), productId: \(productId), message: \(message ?? "")"
+            )
         }
     }
+    
 }
-
-
-
 
 //Event =  allow_bid_for_all -> payload = room_id = abc , allow_bid_for_all = true/false
 //allow_bid_for_all_get

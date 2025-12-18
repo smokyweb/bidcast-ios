@@ -155,8 +155,9 @@ struct RehearsalScreen: View {
     @State var showAuctionSetting = false
     @State var showAuctionSheet = false
     @State var hasAuctionStarted = false
-    
+    @State var isProductPinned = false
     @State var auctionedProductData = ProductDataModel1()
+    @State var nextProductId = ""
     
     var body: some View {
         GeometryReader { geometry in
@@ -563,21 +564,29 @@ struct RehearsalScreen: View {
                                         }
                                     }
                                     
-                                    //MARK: Product Details
+                                    //MARK: -  Product Details -
                                     
 //                                    let currentProducts = productData.filter { $0.isCurrent }
                                     if hasAuctionStarted{
-                                        let currentProducts = productData.first
-                                        if let product = currentProducts {
-                                            
+                                        let currentProducts = auctionedProductData
+                                        let product = currentProducts
+                                        if product != nil{
                                             CurrentProductView(product: product,
                                                                currentPrice: $currentPrice,
                                                                bidTime: $socketManager.bidTime,
                                                                userName: $winnerName,
                                                                userImage: $winnerProfileImage,
                                                                categoryName: $categoryName,
-                                                               hasWon: socketManager.hasWon,onTap: {
+                                                               hasWon: $socketManager.hasWon,onTap: {
                                                 showItemDetailSheet = true
+                                            },onTapRunNext: {
+//                                                if isProductPinned{
+//                                                    showAuctionSheet = true
+//                                                }else{
+//                                                    showShopSheet = true
+//                                                }
+                                                socketManager.runNextProduct(roomId: self.roomId)
+//                                                runNextProduct
                                             })
                                             .frame(maxWidth: .infinity)
                                             
@@ -702,21 +711,7 @@ struct RehearsalScreen: View {
             }
         )
         
-        .bottomSheet(
-            isPresented: $showAuctionSetting,
-            height: screenHeight * 0.6,
-            topBarCornerRadius: 20,
-            contentBackgroundColor: Color(.systemBackground),
-            topBarBackgroundColor: Color(.systemBackground),
-            showTopIndicator: false,
-            onDismiss: {
-                showPollSheet = false
-            },
-            content: {
-                AuctionSettingsSheet()
-            }
-        )
-        
+       
         .bottomSheet(
             isPresented: $showLivePollScreen,
             height: screenHeight * 0.8,
@@ -757,7 +752,7 @@ struct RehearsalScreen: View {
         }
         .bottomSheet(
             isPresented: $showShopSheet,
-            height: sheetHeight * 0.85,
+            height: screenHeight * 0.85,
             topBarCornerRadius: 20,
             contentBackgroundColor: Color(.systemGroupedBackground),
             topBarBackgroundColor: Color(.systemGroupedBackground),
@@ -1055,13 +1050,6 @@ struct RehearsalScreen: View {
             logoutRoom()
             showTopBadge = true
             agoraManager.setupLocalVideo()
-            //            Task {
-            //                do {
-            //                    try await castManager.startPreview()
-            //                } catch {
-            //                    print("erro \(error.localizedDescription)")
-            //                }
-            //            }
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                 if comeFromPrepare && !comeForLive{
                     showReadyModal = false
@@ -1114,8 +1102,6 @@ struct RehearsalScreen: View {
         
         print("DEBUG: fetchLatestProductList with roomId = \(self.roomId)")
         print("DEBUG: initialSelectedProductId= \(initialSelectedProductId)")
-//        initialSelectedProductId = productData.first(where: { $0.isCurrent })?.id ?? ""
-//        currentPrice = Double(productData.first(where: { $0.isCurrent })?.price ?? "") ?? 0.0
         initialSelectedProductId = "\(productData.first?.id ?? 0)"
         currentPrice = Double(productData.first?.pricing ?? "") ?? 0.0
     }
@@ -1137,12 +1123,10 @@ struct RehearsalScreen: View {
             return
         }
         
-        // Prepare room ID (light operation)
         let roomId = "live_room_\(userId)_\(showId)"
         self.roomId = roomId
         print("🎬 Preparing live stream room: \(roomId)")
         
-        // STEP 2: Build product list in background (to avoid blocking UI)
         DispatchQueue.global(qos: .userInitiated).async {
             let products = self.makeProductList(from: data.products, selectedID: selectedID)
             guard !products.isEmpty else {
@@ -1227,7 +1211,7 @@ struct RehearsalScreen: View {
             agoraManager.joinChannel(asHost: true, channelName: channelName, token: agoraToken)
         }
     }
-    
+    //MARK: - Socket listener -
     private func setupLiveSocketListeners(for roomId: String) {
         print("🔌 Setting up socket listeners for \(roomId)")
         
@@ -1299,6 +1283,26 @@ struct RehearsalScreen: View {
 //                // 🔥 unlock product details for this room
 //                self.auctionStartedRooms.insert(roomId)
         }
+        socketManager.listenForAuctionNextProduct { roomId, product,source in
+            print("====get next product for auctioned====")
+            print("Room Id :- \(roomId)")
+            print("Product :- \(product)")
+            guard self.roomId ==  roomId else{
+                return
+            }
+//            auctionedProductData = product.first ?? ProductDataModel1()
+            nextProductId = "\(product.id ?? 0)"
+            showAuctionSheet = true
+        }
+        socketManager.listenForRunNextProductError { roomID , message in
+            print("No Pinned products found for \(roomID)")
+            guard self.roomId ==  roomId else{
+                return
+            }
+            showShopSheet = true
+        }
+        
+        
         
     }
     @MainActor
@@ -1313,17 +1317,7 @@ struct RehearsalScreen: View {
         // Update only matching room
         guard self.roomId == roomId else { return }
 
-        // Update product list
-//        self.productData = products
-
-        // Optional: set current product
-//        self.currentProductID = "\(products.first?.id ?? 0)"
         currentPrice = startingBidAmount
-        // Auction config
-//        self.startingBidAmount = startingBidAmount
-//        self.requireTime = requireTime
-//        self.counterBidTime = counterBidTime
-//        self.isSuddenDeath = suddenDeath
 
         print("🟢 Products updated for room:", roomId)
     }
@@ -1501,7 +1495,7 @@ struct RehearsalScreen: View {
     
     func endShow1(){
         Task{
-            //            try await castManager.unpublish()
+          
             //            if agoraManager.isJoined {
             agoraManager.leaveChannel()
             //            }
@@ -1512,19 +1506,7 @@ struct RehearsalScreen: View {
             SocketManagerService.shared.removeChatListener()
             self.comments.removeAll()
             SocketManagerService.shared.chats.removeAll()
-            //
             initialSelectedProductId = ""
-            //            SocketManagerService.shared.reset(with: self.roomId)
-            //
-            //            self.comments.removeAll()
-            //            SocketManagerService.shared.chats.removeAll()
-            //
-            //            initialSelectedProductId = ""
-            //            self.productData = []
-            //            self.currentPrice = 0.0
-            //            isLive = false
-            
-            
             previewResetTrigger.toggle()
             self.showLiveControls = false
             self.showPreLiveControls = true

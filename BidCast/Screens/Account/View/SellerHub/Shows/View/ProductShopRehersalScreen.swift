@@ -78,7 +78,8 @@ struct ProductShopRehersalScreen: View {
     @State private var productDataFromAPI: [ProductDataModel1] = []
 
     @State private var sortedProductData: [ProductDataModel1] = []
-    @State private var pinnedProductId: [Int] = []
+//    @State private var pinnedProductId: [Int] = []
+    @State private var pinnedProductIds: Set<Int> = []
     //    @State var categoryId: String = "-1"
     var categoryId: String = "-1"
     @State var currentPage: Int = 1
@@ -127,9 +128,14 @@ struct ProductShopRehersalScreen: View {
                         NoDataView(message: "No Product Found")
                     } else {
                         ForEach(sortedProductData.indices, id: \.self) { index in
+                            let product = sortedProductData[index]
+                            let productId = product.id ?? 0
                             ProductRehearsalListItem(product: $sortedProductData[index],
                                                      roomId: roomId,
-                                                     isPinned: pinnedProductId.contains(sortedProductData[index].id ?? 0),
+                                                     isPinned: pinnedProductIds.contains(sortedProductData[index].id ?? 0),
+                                                     onPinTapped: {
+                                togglePin(productId)
+                            },
                             onTapAuction: {
                                 onAuctionTapped?(sortedProductData[index])
                             })
@@ -158,11 +164,33 @@ struct ProductShopRehersalScreen: View {
                 fetchProduct()
             }
             
-            socketManager.listenForPinnedProductStatus { productId, isPinned in
-                print("\(productId) is \(isPinned)")
-                let id = Int(productId) ?? 0
-                pinnedProductId.insert(id, at: 0)
-                sortedProductData = updatedProductsByPinnedEvent(pinnedProductId: id, apiProducts: sortedProductData)
+            socketManager.listenForPinnedProductStatus {roomID, productId, message in
+//                print("\(productId) is \(isPinned)")
+                guard roomId == roomID else { return }
+
+                    let id = Int(productId) ?? 0
+
+                    pinnedProductIds.insert(id)
+
+                    sortedProductData = reorderProducts(
+                        pinnedIds: pinnedProductIds,
+                        eventIds: eventProductIds,
+                        apiProducts: productDataFromAPI
+                    )
+            }
+            socketManager.listenForProductUnpinned{ roomID,productID,msg in
+                guard roomId == roomID else { return }
+
+                   let id = Int(productID) ?? 0
+
+                   pinnedProductIds.remove(id)
+
+                   sortedProductData = reorderProducts(
+                       pinnedIds: pinnedProductIds,
+                       eventIds: eventProductIds,
+                       apiProducts: productDataFromAPI
+                   )
+                
             }
         }
         .onDisappear {
@@ -190,6 +218,27 @@ struct ProductShopRehersalScreen: View {
                        )
                    }
                )
+    }
+    private func togglePin(_ productId: Int) {
+
+        if pinnedProductIds.contains(productId) {
+            pinnedProductIds.remove(productId)
+        } else {
+            pinnedProductIds.insert(productId)
+        }
+
+        // 🔁 Reorder immediately
+        sortedProductData = reorderProducts(
+            pinnedIds: pinnedProductIds,
+            eventIds: eventProductIds,
+            apiProducts: productDataFromAPI
+        )
+
+        // 🔥 Backend toggle
+        SocketManagerService.shared.sendPinProduct(
+            roomId: roomId,
+            productId: "\(productId)"
+        )
     }
 }
 
@@ -246,58 +295,76 @@ extension ProductShopRehersalScreen {
         }
     }
     
-    func reorderProductsByEvent(
-        priorityIds: Set<Int>,
+    func reorderProducts(
+        pinnedIds: Set<Int>,
+        eventIds: Set<Int>,
         apiProducts: [ProductDataModel1]
     ) -> [ProductDataModel1] {
-        
-        var priority: [ProductDataModel1] = []
-        var remaining: [ProductDataModel1] = []
-        
+
+        var pinned: [ProductDataModel1] = []
+        var event: [ProductDataModel1] = []
+        var normal: [ProductDataModel1] = []
+
         for product in apiProducts {
-            if priorityIds.contains(product.id ?? 0) {
-                priority.append(product)
+            let id = product.id ?? 0
+
+            if pinnedIds.contains(id) {
+                pinned.append(product)
+            } else if eventIds.contains(id) {
+                event.append(product)
             } else {
-                remaining.append(product)
+                normal.append(product)
             }
         }
-        
-        return priority + remaining
-    }
-    
-    func updatedProductsByPinnedEvent(pinnedProductId: Int,
-        apiProducts: [ProductDataModel1]
-    ) -> [ProductDataModel1] {
 
-        let eventIds =  Set([pinnedProductId])
-        return reorderProductsByEvent( priorityIds: eventIds, apiProducts: apiProducts)
+        return pinned + event + normal
     }
+
+    
+//    func updatedProductsByPinnedEvent(pinnedProductId: Int,
+//        apiProducts: [ProductDataModel1]
+//    ) -> [ProductDataModel1] {
+//
+//        let eventIds =  Set([pinnedProductId])
+//        return reorderProductsByEvent( priorityIds: eventIds, apiProducts: apiProducts)
+//    }
 
     //MARK: productSuccess.
-    func productSuccess(){
+    func productSuccess() {
         let response = productViewModel.productsResponse1
-        if response?.status == "success"{
+
+        if response?.status == "success" {
             let newItems = response?.data ?? []
             totalCount = response?.total ?? 0
+
             if newItems.isEmpty {
                 canLoadMore = false
             } else {
                 productDataFromAPI.append(contentsOf: newItems)
             }
-            sortedProductData = reorderProductsByEvent(priorityIds: eventProductIds, apiProducts: productDataFromAPI)
-        }else{
+
+            // 🔥 ALWAYS reorder with pinned + event
+            sortedProductData = reorderProducts(
+                pinnedIds: pinnedProductIds,
+                eventIds: eventProductIds,
+                apiProducts: productDataFromAPI
+            )
+
+        } else {
             canLoadMore = false
             alertType = .sheetType(
                 icon: .alert,
                 title: "Error",
                 message: viewModel.errorMessage ?? "",
                 primaryBtnText: AppString.ok.localized,
-                secondaryBtnText:""
+                secondaryBtnText: ""
             )
             showError = true
         }
+
         isFetchingMore = false
     }
+
 }
 
 // MARK: - Product List Heading
@@ -320,6 +387,7 @@ struct ProductRehearsalListItem: View {
     var roomId: String
     var isPinned: Bool
 //    var pinnedProduct: ((Int) -> Void) = {_ in}
+    var onPinTapped: (() -> Void)?
     var onTapAuction: (() -> Void)?
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
@@ -383,8 +451,7 @@ struct ProductRehearsalListItem: View {
                     }
                     .foregroundColor(.black.opacity(0.85))
                         Button(action: {
-                            SocketManagerService.shared.sendPinProduct(roomId: roomId, productId: "\(product.id ?? 0)")
-                            
+                            onPinTapped?()
                         }) {
                             Image(systemName: "pin.circle.fill")
                                 .resizable()
