@@ -38,7 +38,10 @@ enum APIEndPoint{
     case storeProduct(productId: Int? ,param : [String:Any] )
     case storeAddress(param:AddressRequest)
     case getAddress
-    case getOrderDetails(param: OrderDetailsParam)
+    
+    case getMyPurchasedOrder(param: PurchaseOrderRequuest)
+    case getPurchasedOrderDetails(param : PurchaseOrderDetailsRequest)
+    
     case setDefaultAddress(param:AddressDefaultParam)
     case getPreference
     case updatePreference(param : UpdatePreferenceRequest)
@@ -76,7 +79,7 @@ enum APIEndPoint{
     case searching(param : SearchingRequest)
     case promo(param : PromoCodeRequest)
     case getReferralCode
-    case orderReciept(param : OrderRecieptRequest)
+
 //    case storeScheduleShow(param : StoreScheduleShowRequest)
     case storeScheduleShow
     case AddCard(param:AddCardRequest)
@@ -227,8 +230,8 @@ extension APIEndPoint: EndPointType {
                 .productOrder,
                 .productOrderListing,
                 .productOrderDetails,
-                .orderReciept,
-                .getOrderDetails,
+                .getPurchasedOrderDetails,
+                .getMyPurchasedOrder,
                 .fetchProduct:
             return URL(string: "\(baseURL1)\(path)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)
         default :
@@ -299,8 +302,12 @@ extension APIEndPoint: EndPointType {
             return "upsert-shipping-address"
         case .getAddress:
             return "get-shipping-address"
-        case .getOrderDetails(param:let param):
-            return "get-my-purchases-orders?product_id=\(param.product_id)&order_id=\(param.order_id)"
+            
+            
+        case .getMyPurchasedOrder:
+            return "get-my-purchases-orders"
+            
+            
         case .setDefaultAddress:
             return "set-default-shipping-address"
         case .getPreference:
@@ -366,7 +373,7 @@ extension APIEndPoint: EndPointType {
             return "promo/verify-code"
         case .getReferralCode:
             return "referral-code/fetch"
-        case .orderReciept:
+        case .getPurchasedOrderDetails:
             return "get-order-details"
         case .AddCard:
             return "add-card-net"
@@ -710,8 +717,8 @@ extension APIEndPoint: EndPointType {
             
         case .getAddress:
             return .get
-        case .getOrderDetails:
-            return .get
+        case .getMyPurchasedOrder:
+            return .post
         case .setDefaultAddress:
             return .post
         case .getPreference:
@@ -774,7 +781,7 @@ extension APIEndPoint: EndPointType {
             return .post
         case .getReferralCode:
             return .get
-        case .orderReciept:
+        case .getPurchasedOrderDetails:
             return .post
         case .AddCard:
             return .post
@@ -1087,8 +1094,10 @@ extension APIEndPoint: EndPointType {
             return param
         case .getAddress:
             return nil
-        case .getOrderDetails:
-            return nil
+            
+        case .getMyPurchasedOrder(param: let param):
+            return param
+            
         case .setDefaultAddress(param: let param):
             return param
         case .getPreference:
@@ -1158,7 +1167,7 @@ extension APIEndPoint: EndPointType {
             return param
         case .getReferralCode:
             return nil
-        case .orderReciept(param: let param):
+        case .getPurchasedOrderDetails(param: let param):
             return param
         case .AddCard(param: let param):
             return param
@@ -1470,7 +1479,7 @@ extension APIEndPoint: EndPointType {
             return nil
         case .getAddress:
             return nil
-        case .getOrderDetails:
+        case .getMyPurchasedOrder:
             return nil
         case .setDefaultAddress(param: let param):
             return nil
@@ -1539,7 +1548,7 @@ extension APIEndPoint: EndPointType {
             return nil
         case .getReferralCode:
             return nil
-        case .orderReciept(param: let param):
+        case .getPurchasedOrderDetails(param: let param):
             return nil
 //        case .storeScheduleShow(param: let param):
 //            return nil

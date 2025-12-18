@@ -76,6 +76,53 @@ struct ProductDataModel: Codable {
         case subCategory = "sub_category"
     }
 }
+
+struct ProductVariant: Codable, Identifiable {
+    let id = UUID()
+    let title: String
+    let value: VariantValue
+}
+
+enum VariantValue: Codable {
+    case string(String)
+    case options(VariantOptions)
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+
+        if let string = try? container.decode(String.self) {
+            self = .string(string)
+        } else if let options = try? container.decode(VariantOptions.self) {
+            self = .options(options)
+        } else {
+            self = .string("")
+        }
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+
+        switch self {
+        case .string(let value):
+            try container.encode(value)
+        case .options(let options):
+            try container.encode(options)
+        }
+    }
+}
+
+struct VariantOptions: Codable {
+    let option1: String?
+    let option2: String?
+    let selected: String?
+
+    enum CodingKeys: String, CodingKey {
+        case option1 = "option_1"
+        case option2 = "option_2"
+        case selected
+    }
+}
+
 //// MARK: - Datum
 //struct ProductDataModel1: Codable {
 //    var id: Int?
@@ -111,7 +158,7 @@ struct ProductDataModel1: Codable, Identifiable {
     var sku: String?
     var status: String?
     var type: String?
-    var variant: String?
+    var variant: [ProductVariant]?
     var productCondition: String?
     var productShow: String?
 

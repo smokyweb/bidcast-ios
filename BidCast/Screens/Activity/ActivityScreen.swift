@@ -19,7 +19,7 @@ struct ActivityScreen: View {
     @StateObject var viewModel = OffersViewModel()
     @EnvironmentObject var networkMonitor: NetworkMonitor
     @State var offerList: [OfferListModel] = []
-    @State var productList: [ProductDataModel] = []
+    @State var purchaseOrderList: [PurchasedOrderModel] = []
     @State var currentPage = 1
     @State var messageList: [ChatMessage] = []
     @State private var chatVM: ChatModel?
@@ -41,9 +41,19 @@ struct ActivityScreen: View {
 
     @State var productViewModel = ProductViewModel()
     
+    @State private var navigateToUserProfile: Bool = false
+    @State private var navigateToOrderTracking: Bool = false
+    
+    @State private var selectedOrder: PurchasedOrderModel?
+    @State private var selectedOrderId: String = ""
+    @State private var selectedProductId: String = ""
+    @State private var userId: String = ""
+    @State private var userImage: String = ""
+    @State private var userName: String = ""
+    
     @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     
-    var filterArray: [String] = ["All", "In Progress", "Completed", "Refunds", "Cancelled"]
+    var filterArray: [String] = ["All", "In Progress", "Completed"]
     
     @State private var selected: Segment = .message
     @State private var selectedTabIndex: Int = Segment.message.index
@@ -201,7 +211,7 @@ struct ActivityScreen: View {
                             }
                         }
                         
-                    case .purchases:
+                    case .purchases, .savedItems:
                         if isLoading {
                             ForEach(0..<8) { _ in
                                 PurchasesViewShimmerView()
@@ -209,40 +219,51 @@ struct ActivityScreen: View {
                                     .padding(.vertical, 4)
                             }
                         }
-                        else if offerList.isEmpty {
+                        else if purchaseOrderList.isEmpty {
                             NoDataView(message: "No List Found")
                         }
                         else {
-                            ForEach(offerList.indices, id: \.self) { i in
-                                let offer = offerList[i]
+                            ForEach(Array(purchaseOrderList.enumerated()), id: \.element.id) { i, txn in
+                                let offer = purchaseOrderList[i]
                                 PurchasesViewScreen(
-                                    purchaseList: offer
+                                    purchaseList: offer,
+                                    onTapOrderTracking: { order in
+                                        selectedOrder = order
+                                        selectedOrderId = selectedOrder?.orderID ?? ""
+                                        selectedProductId = "\(selectedOrder?.productID ?? 0)"
+                                        navigateToOrderTracking = true
+                                    },onTapUserProfile: { userId, userImage, userName in
+                                        self.userId = userId
+                                        self.userImage = userImage
+                                        self.userName = userName
+                                        navigateToUserProfile = true
+                                    }
                                 )
                                 .padding(.horizontal,8)
-                                .padding(.vertical, -4)
+                                .padding(.vertical, 8)
 //                                .background(Color.gray.opacity(0.1))
                             }
                         }
                         
-                    case .savedItems:
-                        if offerList.isEmpty {
-                            NoDataView(message: "No List Found")
-                        } else {
-                            ForEach(offerList.indices, id: \.self) { i in
-                                let offer = offerList[i]
-                                ActivityCell(
-                                    offerListing: offer,
-                                    isFor: "Saved Items",
-                                    status: offer.status ?? ""
-                                )
-                                .onAppear {
-                                    Task {
-                                        await handlePagination(index: i)
-                                    }
-                                }
-                            }
-                        }
-                        
+//                    case .savedItems:
+//                        if purchaseOrderList.isEmpty {
+//                            NoDataView(message: "No List Found")
+//                        } else {
+//                            ForEach(purchaseOrderList.indices, id: \.self) { i in
+//                                let offer = purchaseOrderList[i]
+//                                ActivityCell(
+//                                    offerListing: offer,
+//                                    isFor: "Saved Items",
+//                                    status: offer.status ?? ""
+//                                )
+//                                .onAppear {
+//                                    Task {
+//                                        await handlePagination(index: i)
+//                                    }
+//                                }
+//                            }
+//                        }
+//                        
                     }
                 }
             }
@@ -258,6 +279,17 @@ struct ActivityScreen: View {
             
             CusNavLink(doNavigate: $navigateToNotification, destination: NotificationScreen())
             CusNavLink(doNavigate: $navigateToBlockedList, destination: BlockedUserScreen())
+            CusNavLink(doNavigate: $navigateToUserProfile,
+                       destination: ProfileScreen(id:$userId,
+                                                  isComeFrom: .constant(""),
+                                                  userName: $userName,
+                                                  userImage: $userImage))
+            CusNavLink(
+                doNavigate: $navigateToOrderTracking,
+                destination: OrderTrackingView(orderId: $selectedOrderId,
+                                               productId: $selectedProductId)
+            )
+            
         }
         .background(Color(.systemGroupedBackground))
         .toast(isPresenting: $showhud) {
@@ -405,11 +437,11 @@ struct ActivityScreen: View {
                 filter = filterArray[selectedFilterIdex]
             }
             isLoading = false
-            fetchProduct(type: "purchased")
+            fetchPurchasedOrderList(type: "purchased", status: filter)
         case .savedItems:
             offerList.removeAll()
             isLoading = false
-            fetchProduct(type: "saved")
+            fetchPurchasedOrderList(type: "saved", status: "")
         }
     }
     
@@ -440,17 +472,11 @@ struct ActivityScreen: View {
     }
 
     
-    func fetchProduct(type: String, isLoaderShown: Bool = true) {
-//        guard sellerId != "-1" else  {
-//            print("Category id and user id is not present")
-//            isFetchingMore = false
-//            return
-//        }
-        
+    func fetchPurchasedOrderList(type: String, status: String = "") {
         Task {
             await performAPICalls(
                 isConcurrent: false,
-                showLoader: isLoaderShown,
+                showLoader: true,
                 onError: { error in
 //                    canLoadMore = false
 //                    isFetchingMore = false
@@ -464,14 +490,19 @@ struct ActivityScreen: View {
                     showError = true
                 },
                 onSuccess: {
-                    if productViewModel.productsResponse?.status == "success" {
-                        productList = productViewModel.productsResponse?.data ?? []
+                    if viewModel.purchasedOrderListResponse.status == "success" {
+                        purchaseOrderList = viewModel.purchasedOrderListResponse.data ?? []
                     }
                 }
             ) {
-                let request = ProductRequest(page: currentPage, type: type)
                 isLoading = false
-                try await productViewModel.getProductsData(parameters: request)
+                var filter = ""
+               
+                if status == "All" { filter = "" }
+                else  if status == "In Progress"  { filter = "in_progress" }
+                else  if status == "Completed"  { filter = "completed" }
+                let request = PurchaseOrderRequuest(type: type, status: filter)
+                await viewModel.getMyPurchasedOrderList(parameters: request)
             }
         }
     }
@@ -522,10 +553,10 @@ struct ActivityScreen: View {
                 }
             case .purchases:
                 currentPage = nextPage
-                fetchProduct(type: "purchased")
+                fetchPurchasedOrderList(type: "purchased", status: filterArray[selectedFilterIdex])
             case .savedItems:
                 currentPage = nextPage
-                fetchProduct(type: "saved")
+                fetchPurchasedOrderList(type: "saved")
             default:
                 break
             }

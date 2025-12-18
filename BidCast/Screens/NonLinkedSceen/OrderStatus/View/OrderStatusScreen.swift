@@ -175,11 +175,11 @@ struct OrderStatusScreen: View {
                 showhud = true
                 return
             }
-            SVProgressHUD.show()
-            let param = OrderRecieptRequest(order_id: orderID)
-            await viewModel.getReceipt(parameters: param)
-            await SVProgressHUD.dismiss()
-            getRecieptSuccess()
+//            SVProgressHUD.show()
+//            let param = OrderRecieptRequest(order_id: orderID)
+//            await viewModel.getReceipt(parameters: param)
+//            await SVProgressHUD.dismiss()
+//            getRecieptSuccess()
         }
     }
     

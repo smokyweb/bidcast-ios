@@ -8,14 +8,13 @@
 import SwiftUI
 
 struct PurchasesViewScreen: View {
-    var purchaseList: OfferListModel?
-    @State private var navigateToUserProfile: Bool = false
-    
+    var purchaseList: PurchasedOrderModel?
     @State private var userId: String = ""
     @State private var userImage: String = ""
     @State private var userName: String = ""
     
-    @State private var navigateToOrderTracking: Bool = false
+    var onTapOrderTracking: ((PurchasedOrderModel?) -> Void)?
+    var onTapUserProfile: ((String, String, String) -> Void)?
     
     var body: some View {
         HStack(alignment: .center, spacing: 12) {
@@ -69,7 +68,7 @@ struct PurchasesViewScreen: View {
                         .font(.custom(poppinsMedium, size: 12.0))
                         .foregroundColor(.gray)
                     
-                    Text(purchaseList?.created_at?.toDateString() ?? "N/A")
+                    Text(purchaseList?.createdAt?.toDateString() ?? "N/A")
                         .font(.custom(poppinsMedium, size: 12.0))
                         .foregroundColor(.black)
                 }
@@ -81,9 +80,9 @@ struct PurchasesViewScreen: View {
                         .foregroundColor(.gray)
                     Button {
                         userId = "\(purchaseList?.user?.id ?? 0)"
-                        userImage = purchaseList?.user?.profile_image ?? ""
+                        userImage = purchaseList?.user?.profileImage ?? ""
                         userName = purchaseList?.user?.name ?? ""
-                        navigateToUserProfile = true
+                        onTapUserProfile?(userId, userImage, userName)
                     } label: {
                         Text(purchaseList?.user?.name ?? "")
                             .font(.custom(poppinsMedium, size: 12.0))
@@ -98,7 +97,7 @@ struct PurchasesViewScreen: View {
         }
         .onTapGesture {
             withAnimation(.easeInOut(duration: 0.28)) {
-                navigateToOrderTracking = true
+                onTapOrderTracking?(purchaseList)
             }
         }
         
@@ -106,16 +105,6 @@ struct PurchasesViewScreen: View {
         .background(Color.white)
         .cornerRadius(12)
         .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 2)
-        CusNavLink(doNavigate: $navigateToUserProfile,
-                   destination: ProfileScreen(id:$userId,
-                                              isComeFrom: .constant(""),
-                                              userName: $userName,
-                                              userImage: $userImage))
-        CusNavLink(
-            doNavigate: $navigateToOrderTracking,
-            destination: OrderTrackingView(orderId: purchaseList?.order_id, productId: purchaseList?.product_id)
-        )
-
     }
     
     func formattedDate(_ isoDate: String?) -> String {

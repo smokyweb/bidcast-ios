@@ -46,8 +46,7 @@ struct OffersScreen: View {
                     TwoVerticalLabelCell(dataModel: OffersValue.allCases,
                                          topLabel: { offer in offerCount(for: offer) },
                                          bottomLabel: { $0.description.localized})
-                    ForEach(offerList.indices, id: \.self) { i in
-                        let txn = offerList[i]
+                    ForEach(Array(offerList.enumerated()), id: \.element.id) { i, txn in
                         ActivityCell(
                             offerListing: txn,
                             isFor: "OffersScreen",

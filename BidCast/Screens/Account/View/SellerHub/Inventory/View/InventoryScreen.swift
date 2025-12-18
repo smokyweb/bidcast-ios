@@ -46,6 +46,9 @@ struct InventoryScreen: View {
     
     @State var isLoading: Bool = true
     
+    @State private var isFetchingMore = false
+    @State private var canLoadMore = true
+    
     @State var showSuccesshud: Bool = false
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
@@ -54,7 +57,6 @@ struct InventoryScreen: View {
     @State var currentPage = 1
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @State var showSellSheet = false
-    @State var productData : ProductDataModel1
     @State var navigateToCreateProduct = false
     @State var navigateToEditProduct = false
     @State var searchText: String = ""
@@ -70,8 +72,8 @@ struct InventoryScreen: View {
     
     
     @Binding var selectedProductIDs: Set<String>
-    @Binding var selectedProductData: [ProductDataModel]
-    @State var productToEdit: ProductDataModel = ProductDataModel()
+    @Binding var selectedProductData: [ProductDataModel1]
+    @State var productToEdit: ProductDataModel1 = ProductDataModel1()
     @StateObject var categoryViewModel = ListProductViewModel()
     @State var categoryList: [CategoryDataModel] = []
     @State var selectedCategoryId: [Int] = []
@@ -114,6 +116,8 @@ struct InventoryScreen: View {
                                 secondaryBtnText: AppString.ok.localized
                             )
                             showError = true
+                            canLoadMore = false
+                            isFetchingMore = false
                         }, onSuccess: {
                             // On success
                             handleDataLoad()
@@ -148,6 +152,8 @@ struct InventoryScreen: View {
                                 secondaryBtnText: AppString.ok.localized
                             )
                             showError = true
+                            canLoadMore = false
+                            isFetchingMore = false
                         }, onSuccess: {
                             // On success
                             handleDataLoad()
@@ -189,6 +195,8 @@ struct InventoryScreen: View {
                                     secondaryBtnText: AppString.ok.localized
                                 )
                                 showError = true
+                                canLoadMore = false
+                                isFetchingMore = false
                             },
                             onSuccess: { handleDataLoad() }
                         ) {
@@ -222,8 +230,7 @@ struct InventoryScreen: View {
                             ProductCardView(product: inventory,
                                             segmant: $segment,
                                             onEdit: { product in
-//                                productToEdit = product.toProductDataModel()
-//                                showSellSheet = false
+                                productToEdit = product
 //                                navigateToEditProduct = true
                                 
                             },onDuplicate: {
@@ -253,7 +260,7 @@ struct InventoryScreen: View {
                                 showDeleteProduct = true
                             })
                             .onAppear {
-                                handlePagination(index: index)
+                                checkAndLoadMore(currentIndex: index)
                             }
                         }
                     }
@@ -263,6 +270,12 @@ struct InventoryScreen: View {
             }
             .padding(.vertical, 12)
 
+            // Loader at bottom
+            if isFetchingMore {
+                ProgressView()
+                    .padding(.vertical, 16)
+            }
+            
             // Bottom Button
             VStack(spacing: 0) {
                 Divider()
@@ -324,6 +337,8 @@ struct InventoryScreen: View {
                                 secondaryBtnText: AppString.ok.localized
                             )
                             showError = true
+                            canLoadMore = false
+                            isFetchingMore = false
                         }, onSuccess: {
                             // On success
                             handleDataLoad()
@@ -355,6 +370,8 @@ struct InventoryScreen: View {
                             secondaryBtnText: AppString.ok.localized
                         )
                         showError = true
+                        canLoadMore = false
+                        isFetchingMore = false
                     }, onSuccess: {
                         // On success
                         handleDataLoad()
@@ -458,6 +475,55 @@ struct InventoryScreen: View {
         }
     }
     
+    // MARK: - deleteProductSuccess
+    func deleteProductSuccess() {
+//        SVProgressHUD.dismiss()
+        let response = viewModel.inventoryDict
+        if response?.status == "success" {
+            self.showSellSheet = false
+            
+            hudMsg = "Product deleted successfully"
+            showSuccesshud = true
+            
+            currentPage = 1
+            self.inventoryList.removeAll()
+            
+            Task {
+                await performAPICalls(
+                    isConcurrent: true,
+                    showLoader: false,
+                    onError: { error in
+                        alertType = .sheetType(
+                            icon: .alert,
+                            title: "Error",
+                            message: errorDesc(error: error, message: productViewModel.errorMessage),
+                            primaryBtnText: "",
+                            secondaryBtnText: AppString.ok.localized
+                        )
+                        showError = true
+                        canLoadMore = false
+                        isFetchingMore = false
+                    }, onSuccess: {
+                        // On success
+                        handleDataLoad()
+                    }
+                    
+                ) {
+                    try await fetchInventory(for: segment, page: 1)
+                }
+            }
+        } else {
+            alertType = .sheetType(
+                icon: .alert,
+                title: response?.error_type?.capitalized ?? "",
+                message: response?.message?.capitalized ?? "",
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
+            )
+            showError = true
+        }
+    }
+    
     private func changeProductStatus(status: String) {
         Task {
             await performAPICalls(
@@ -506,16 +572,6 @@ struct InventoryScreen: View {
         }
         
     }
-        
-    
-    func handlePagination(index: Int) {
-        let isLastItem = index == inventoryList.count - 1
-        let canFetchMore = (productViewModel.productsResponse1?.total ?? 0) > inventoryList.count
-
-        if isLastItem && canFetchMore {
-            fetchMoreInventory()
-        }
-    }
     
     func categorySuccess() {
         let response = categoryViewModel.categoryResponse
@@ -533,148 +589,294 @@ struct InventoryScreen: View {
         }
     }
     
-    // MARK: - Fetch Inventory List
-    func fetchInventory(for segment: InventorySegment,page: Int) async throws{
-        request.status = segment.rawValue.lowercased()
-        request.page = page
-        request.search = searchText
-        if !selectedCategoryId.isEmpty {
-            request.category_ids = selectedCategoryId.toCommaSeparatedString()
-        }
-       
-        request.marketplace = "\(marketPlaceSelected)"
-        if format != "" {
-            request.format = format
-        }
-        if minPrice != 0.0 {
-            request.min_price = minPrice.toString()
-        }
-        if maxPrice != 0.0 {
-            request.max_price = maxPrice.toString()
-        }
-        if !selectedCondition.isEmpty {
-            request.conditions = selectedCondition.toCommaSeparatedString()
-        }
-        isLoading = true
-        try await productViewModel.getProductsData1(parameters: request)
-    }
-    
-    private func clearFilter() {
-        inventoryList = []
-        currentPage = 1
-        searchText = ""
-        selectedCategoryId = []
-        format = ""
-        minPrice = 0.0
-        maxPrice = 0.0
-        selectedCondition = []
-    }
-    
-    // MARK: - Handle ViewModel Data
-    func handleDataLoad() {
-
-        let response = productViewModel.productsResponse1
-        isLoading = false
-        if response?.status == "success" {
-            // append new data
-            if currentPage == 1  {
-                self.inventoryList = response?.data ?? []
-            }
-            else  {
-                self.inventoryList += response?.data ?? []
-            }
-        } else {
-            alertType = .sheetType(
-                icon: .alert,
-                title: "Error",
-                message: productViewModel.errorMessage ?? "",
-                primaryBtnText: AppString.ok.localized,
-                secondaryBtnText:""
-            )
-            showError = true
-        }
-    }
-    
-    // MARK: - deleteProductSuccess
-    func deleteProductSuccess() {
-//        SVProgressHUD.dismiss()
-        let response = viewModel.inventoryDict
-        if response?.status == "success" {
-            self.showSellSheet = false
-            
-            hudMsg = "Product deleted successfully"
-            showSuccesshud = true
-            
-            currentPage = 1
-            self.inventoryList.removeAll()
-            
-            Task {
-                await performAPICalls(
-                    isConcurrent: true,
-                    showLoader: false,
-                    onError: { error in
-                        alertType = .sheetType(
-                            icon: .alert,
-                            title: "Error",
-                            message: errorDesc(error: error, message: productViewModel.errorMessage),
-                            primaryBtnText: "",
-                            secondaryBtnText: AppString.ok.localized
-                        )
-                        showError = true
-                    }, onSuccess: {
-                        // On success
-                        handleDataLoad()
-                    }
-                    
-                ) {
-                    try await fetchInventory(for: segment, page: 1)
-                }
-            }
-        } else {
-            alertType = .sheetType(
-                icon: .alert,
-                title: response?.error_type?.capitalized ?? "",
-                message: response?.message?.capitalized ?? "",
-                primaryBtnText: "",
-                secondaryBtnText: AppString.ok.localized
-            )
-            showError = true
-        }
-    }
-    
-    func fetchMoreInventory() {
-        Task {
-            currentPage += 1
-//            request.status = status
-//            request.page = currentPage
-//            if !selectedCategoryId.isEmpty {
-//                request.categoryIds = selectedCategoryId.toCommaSeparatedString()
+//    // MARK: - Fetch Inventory List
+//    func fetchInventory(for segment: InventorySegment,page: Int) async throws{
+//        request.status = segment.rawValue.lowercased()
+//        request.page = page
+//        request.search = searchText
+//        if !selectedCategoryId.isEmpty {
+//            request.category_ids = selectedCategoryId.toCommaSeparatedString()
+//        }
+//       
+//        request.marketplace = "\(marketPlaceSelected)"
+//        if format != "" {
+//            request.format = format
+//        }
+//        if minPrice != 0.0 {
+//            request.min_price = minPrice.toString()
+//        }
+//        if maxPrice != 0.0 {
+//            request.max_price = maxPrice.toString()
+//        }
+//        if !selectedCondition.isEmpty {
+//            request.conditions = selectedCondition.toCommaSeparatedString()
+//        }
+//        isLoading = true
+//        canLoadMore = false
+//        isFetchingMore = false
+//        try await productViewModel.getProductsData1(parameters: request)
+//    }
+//    
+//    func handlePagination(index: Int) {
+//        let isLastItem = index == inventoryList.count - 1
+//        let canFetchMore = (productViewModel.productsResponse1?.total ?? 0) > inventoryList.count
+//        guard canLoadMore, !isFetchingMore else { return }
+//        if isLastItem && canFetchMore {
+//            isFetchingMore = true
+//            fetchMoreInventory()
+//        }
+//    }
+//    
+//    private func clearFilter() {
+//        inventoryList = []
+//        currentPage = 1
+//        searchText = ""
+//        selectedCategoryId = []
+//        format = ""
+//        minPrice = 0.0
+//        maxPrice = 0.0
+//        selectedCondition = []
+//    }
+//    
+//    // MARK: - Handle ViewModel Data
+//    func handleDataLoad() {
+//
+//        let response = productViewModel.productsResponse1
+//        isLoading = false
+//        if response?.status == "success" {
+//            // append new data
+//            if currentPage == 1  {
+//                self.inventoryList = response?.data ?? []
 //            }
-            request.status = segment.rawValue.lowercased()
-            request.page = currentPage
-            request.search = searchText
-            if !selectedCategoryId.isEmpty {
-                request.category_ids = selectedCategoryId.toCommaSeparatedString()
-            }
+//            else  {
+//                self.inventoryList += response?.data ?? []
+//            }
+//        } else {
+//            alertType = .sheetType(
+//                icon: .alert,
+//                title: "Error",
+//                message: productViewModel.errorMessage ?? "",
+//                primaryBtnText: AppString.ok.localized,
+//                secondaryBtnText:""
+//            )
+//            showError = true
+//        }
+//        isFetchingMore = false
+//        canLoadMore = false
+//    }
+//    
+//    func fetchMoreInventory() {
+//        Task {
+//            currentPage += 1
+////            request.status = status
+////            request.page = currentPage
+////            if !selectedCategoryId.isEmpty {
+////                request.categoryIds = selectedCategoryId.toCommaSeparatedString()
+////            }
+//            request.status = segment.rawValue.lowercased()
+//            request.page = currentPage
+//            request.search = searchText
+//            if !selectedCategoryId.isEmpty {
+//                request.category_ids = selectedCategoryId.toCommaSeparatedString()
+//            }
+//           
+//            request.marketplace = "\(marketPlaceSelected)"
+//            if format != "" {
+//                request.format = format
+//            }
+//            if minPrice != 0.0 {
+//                request.min_price = minPrice.toString()
+//            }
+//            if maxPrice != 0.0 {
+//                request.max_price = maxPrice.toString()
+//            }
+//            if !selectedCondition.isEmpty {
+//                request.conditions = selectedCondition.toCommaSeparatedString()
+//            }
+////            isLoading = true
+//            
+//            try await productViewModel.getProductsData1(parameters: request)
+//            handleDataLoad()
+//        }
+//    }
+    
+    
+       /// Checks if we should load more data when a specific item appears
+       private func checkAndLoadMore(currentIndex: Int) {
+           // Don't load if:
+           // 1. Already fetching
+           // 2. Can't load more (reached end)
+           // 3. Still loading initial data
+           guard !isFetchingMore, canLoadMore, !isLoading else { return }
            
-            request.marketplace = "\(marketPlaceSelected)"
-            if format != "" {
-                request.format = format
-            }
-            if minPrice != 0.0 {
-                request.min_price = minPrice.toString()
-            }
-            if maxPrice != 0.0 {
-                request.max_price = maxPrice.toString()
-            }
-            if !selectedCondition.isEmpty {
-                request.conditions = selectedCondition.toCommaSeparatedString()
-            }
-            isLoading = true
-            try await productViewModel.getProductsData1(parameters: request)
-            handleDataLoad()
-        }
-    }
+           // Calculate threshold (load more when user is 3 items from the end)
+           let thresholdIndex = inventoryList.count - 3
+           
+           // Trigger load more when user scrolls near the end
+           if currentIndex >= thresholdIndex {
+               loadMoreData()
+           }
+       }
+       
+       /// Loads the next page of data
+       private func loadMoreData() {
+           // Prevent multiple simultaneous calls
+           guard !isFetchingMore else { return }
+           
+           // Check if there's more data to load
+           let totalItems = productViewModel.productsResponse1?.total ?? 0
+           let currentItemCount = inventoryList.count
+           
+           guard currentItemCount < totalItems else {
+               // We've loaded all items
+               canLoadMore = false
+               return
+           }
+           
+           // Set fetching flag
+           isFetchingMore = true
+           
+           // Increment page and fetch
+           currentPage += 1
+           
+           Task {
+               await performAPICalls(
+                   isConcurrent: false,
+                   showLoader: false,
+                   onError: { error in
+                       // ✅ Reset pagination state on error
+                       isFetchingMore = false
+                       currentPage -= 1 // Rollback page increment
+                       
+                       alertType = .sheetType(
+                        icon: .alert,
+                        title: "Error",
+                        message: errorDesc(error: error, message: productViewModel.errorMessage),
+                        primaryBtnText: "",
+                        secondaryBtnText: AppString.ok.localized
+                       )
+                       showError = true
+                   },
+                   onSuccess: {
+                       // ✅ Handle successful data load
+                       
+                       handlePaginationSuccess()
+                       
+                   }
+               ) {
+                   try await fetchInventory(for: segment, page: currentPage)
+               }
+           }
+       }
+       
+       /// Handles successful pagination response
+       private func handlePaginationSuccess() {
+           let response = productViewModel.productsResponse1
+           
+           guard response?.status == "success" else {
+               // Handle error case
+               isFetchingMore = false
+               currentPage -= 1 // Rollback
+               return
+           }
+           
+           // Append new data
+           let newData = response?.data ?? []
+           inventoryList.append(contentsOf: newData)
+           
+           // Update pagination state
+           let totalItems = response?.total ?? 0
+           let currentItemCount = inventoryList.count
+           
+           // Check if we can load more
+           canLoadMore = currentItemCount < totalItems
+           isFetchingMore = false
+           
+           print("📄 Loaded page \(currentPage): \(newData.count) items | Total: \(currentItemCount)/\(totalItems)")
+       }
+       
+       // MARK: - ✅ CORRECTED Fetch Inventory
+       func fetchInventory(for segment: InventorySegment, page: Int) async throws {
+           // Build request
+           request.status = segment.rawValue.lowercased()
+           request.page = page
+           request.search = searchText
+           request.marketplace = "\(marketPlaceSelected)"
+           
+           // Apply filters
+           if !selectedCategoryId.isEmpty {
+               request.category_ids = selectedCategoryId.toCommaSeparatedString()
+           }
+           if format != "" {
+               request.format = format
+           }
+           if minPrice != 0.0 {
+               request.min_price = minPrice.toString()
+           }
+           if maxPrice != 0.0 {
+               request.max_price = maxPrice.toString()
+           }
+           if !selectedCondition.isEmpty {
+               request.conditions = selectedCondition.toCommaSeparatedString()
+           }
+           
+           // ✅ Only show loading for first page
+           if page == 1 {
+               isLoading = true
+           }
+           
+           // Make API call
+           try await productViewModel.getProductsData1(parameters: request)
+       }
+       
+       // MARK: - ✅ CORRECTED Handle Data Load
+       func handleDataLoad() {
+           let response = productViewModel.productsResponse1
+           isLoading = false
+           
+           if response?.status == "success" {
+               // ✅ For page 1, replace data. For other pages, append (handled in handlePaginationSuccess)
+               if currentPage == 1 {
+                   self.inventoryList = response?.data ?? []
+                   
+                   // ✅ Reset pagination state for fresh data
+                   let totalItems = response?.total ?? 0
+                   canLoadMore = inventoryList.count < totalItems
+                   isFetchingMore = false
+                   
+                   print("📄 Initial load: \(inventoryList.count) items | Total: \(totalItems)")
+               }
+           } else {
+               alertType = .sheetType(
+                   icon: .alert,
+                   title: "Error",
+                   message: productViewModel.errorMessage ?? "",
+                   primaryBtnText: AppString.ok.localized,
+                   secondaryBtnText: ""
+               )
+               showError = true
+               
+               // ✅ Reset pagination state
+               canLoadMore = false
+               isFetchingMore = false
+           }
+       }
+       
+       // MARK: - ✅ UPDATED Clear Filter
+       private func clearFilter() {
+           inventoryList = []
+           currentPage = 1
+           searchText = ""
+           selectedCategoryId = []
+           format = ""
+           minPrice = 0.0
+           maxPrice = 0.0
+           selectedCondition = []
+           
+           // ✅ Reset pagination state
+           canLoadMore = true
+           isFetchingMore = false
+       }
 }
 
 // MARK: - Inventory Segment Enum
@@ -885,27 +1087,13 @@ struct ProductCardView: View {
                 Image(systemName: "ellipsis")
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundColor(.gray)
+                    .padding(.top, 20)
                     .frame(width: 32, height: 32)
                     .background(Color(.systemBackground))
                     .clipShape(Circle())
+                    .rotationEffect(.degrees(90))
             }
-//            // Three Dots Menu Button
-//            Button(action: {
-//                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-//                    showActions.toggle()
-//                }
-//            }) {
-//                Image(systemName: "ellipsis")
-//                    .font(.system(size: 18, weight: .semibold))
-//                    .foregroundColor(.gray)
-//                    .frame(width: 32, height: 32)
-//                    .background(Color(.systemBackground))
-//                    .clipShape(Circle())
-//            }
-//            .padding([.top, .trailing], 24)
-//            .zIndex(1001)
-            
-            // Dropdown Menu
+
         }
         .background(
             Color.black.opacity(0.001)
@@ -1004,7 +1192,6 @@ extension ProductCardView {
         HStack(spacing: 16) {
             productImageView
             productDetailsView
-            
         }
         .padding(16)
         .background(

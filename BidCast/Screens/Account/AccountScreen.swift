@@ -274,7 +274,7 @@ struct AccountScreen: View {
                 
                 //MARK: Seller hub navigation
                 CusNavLink(doNavigate: $navigateToShows, destination: ShowsScreen())
-                CusNavLink(doNavigate: $navigateToInventry, destination: InventoryScreen(productData: ProductDataModel1(), selectedProductIDs: .constant([]), selectedProductData: .constant([])))
+                CusNavLink(doNavigate: $navigateToInventry, destination: InventoryScreen(selectedProductIDs: .constant([]), selectedProductData: .constant([])))
                 CusNavLink(doNavigate: $navigateToOffers, destination: OffersScreen())
                 CusNavLink(doNavigate: $navigateToSellerTraining, destination: SellingTips(isNavFrom : "Account", backToTabBar: .constant(true)))
                 CusNavLink(doNavigate: $navigateToPromoteTool, destination: PromoteToolsView())

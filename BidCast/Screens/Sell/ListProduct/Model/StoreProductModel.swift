@@ -96,7 +96,7 @@ struct OrderDetailsModel: Codable {
     var shippingAddress: ShippingAddressModel?
     var order: Order?
     var bidVideoURL: String?
-
+    
     enum CodingKeys: String, CodingKey {
         case sellerDetails = "seller_details"
         case ratingAvg = "rating_avg"

@@ -367,7 +367,7 @@ struct AddProductsScreen: View {
         CusNavLink(doNavigate: $navigateToEditProduct, destination: CreateProductScreen(requests: $request, thumbNail: $thumbNail,backToPrepare: $backToPrepare,fromPrepare: .constant(false)))
         //toDo: Need to change
 //        CusNavLink(doNavigate: $navigateToInventry,
-//                   destination: InventoryScreen(productData: InventoryDataModel(),
+//                   destination: InventoryScreen(productData: ProductDataModel1(),
 //                                                selectedProductIDs: $selectedProductIDs,
 //                                                selectedProductData: $productData,
 //                                                selectedCategoryId: [Int(request.category_id) ?? 0],

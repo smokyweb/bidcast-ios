@@ -447,9 +447,9 @@ struct AddressDefaultParam : Encodable {
     var address_id : String
 }
 
-struct OrderDetailsParam : Encodable {
-    var product_id : String
-    var order_id: String
+struct PurchaseOrderRequuest : Encodable {
+    var type : String?
+    var status: String?
 }
 
 struct UpdatePreferenceRequest: Encodable{
@@ -619,8 +619,9 @@ struct PromoCodeRequest : Encodable{
     var promo_code : String
 }
 
-struct OrderRecieptRequest : Encodable{
-    var order_id : Int
+struct PurchaseOrderDetailsRequest : Encodable{
+    var order_id : String
+    var product_id: String
 }
 
 

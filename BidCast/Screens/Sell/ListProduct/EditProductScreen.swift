@@ -56,7 +56,7 @@ struct EditProductScreen: View {
     @State var selectedSubCategory = ""
     @State var subCategoryList: [CategoryDataModel] = []
     @State var subCategoryName : [String] = [""]
-    @Binding var productData : ProductDataModel
+    @Binding var productData : ProductDataModel1
     @State var extraFields: [ExtraFieldModel] = []
     @State var processingListArr = ["Letters","Flats","Machinaable","Nonstandard","Non Machinable"]
     @State var extraFieldValues: [String: String] = [:]
@@ -751,7 +751,7 @@ struct EditProductScreen: View {
     func getProductDetails() {
             selectedCategory = productData.category?.name ?? ""
             productId = productData.id ?? 0
-            request = StoreProductParam(category_id: "\(productData.category_id ?? 0)",
+        request = StoreProductParam(category_id: "\(productData.category?.id ?? 0)",
                                         title: productData.title ?? "",
                                         description: productData.description ?? "",
                                         quantity: "\(productData.quantity ?? "0")",
@@ -759,7 +759,7 @@ struct EditProductScreen: View {
                                         flash_sale:productData.flashSale ?? false ? "1" : "0",
                                         accept_offers: productData.acceptOffers ?? false ? "1" : "0",
                                         reserve_for_live: productData.reserveForLive ?? false ? "1" : "0",
-                                        shipping_profile_id: "\(productData.shippingProfileID ?? 0)",
+                                        shipping_profile_id: "\(productData.shippingProfileId ?? 0)",
                                         status: productData.status ?? "",
                                         width : "\(productData.width ?? 0.0)",
                                         length : "\(productData.length ?? 0.0)",

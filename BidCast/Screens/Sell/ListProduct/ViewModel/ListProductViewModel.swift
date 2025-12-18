@@ -135,25 +135,25 @@ final class ListProductViewModel: ObservableObject {
     }
     
     // MARK: - Get Addresses
-    func getOrderDetails(request: OrderDetailsParam) async throws{
-        do {
-           if  let response: ResponseModal<OrderDetailsModel> = try await APIManager.shared.request(
-            type: APIEndPoint.getOrderDetails(param: request),
-                header: true
-           ){
-               OrderDetailsResponse = response
-           }
-        } catch(let error) {
-            if let dataError = error as? DataError {
-                self.errorMessage = dataError.getErrorMessage()
-            }
-            else {
-                self.errorMessage = error.localizedDescription
-            }
-            throw error
-        }
-       
-    }
+//    func getOrderDetails(request: OrderDetailsParam) async throws{
+//        do {
+//           if  let response: ResponseModal<OrderDetailsModel> = try await APIManager.shared.request(
+//            type: APIEndPoint.getOrderDetails(param: request),
+//                header: true
+//           ){
+//               OrderDetailsResponse = response
+//           }
+//        } catch(let error) {
+//            if let dataError = error as? DataError {
+//                self.errorMessage = dataError.getErrorMessage()
+//            }
+//            else {
+//                self.errorMessage = error.localizedDescription
+//            }
+//            throw error
+//        }
+//       
+//    }
 
 
 // MARK: - Centralized Error Handler

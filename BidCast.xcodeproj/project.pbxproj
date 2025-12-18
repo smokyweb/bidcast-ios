@@ -566,6 +566,7 @@
 		D68399AF2EB216A800F3BDA7 /* RaidSocketHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68399AE2EB216A800F3BDA7 /* RaidSocketHandler.swift */; };
 		D68399B12EB21CB700F3BDA7 /* FollowUnFollowSocketHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68399B02EB21CB700F3BDA7 /* FollowUnFollowSocketHandler.swift */; };
 		D68441352EF2D83800D4F587 /* CSVManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68441342EF2D83800D4F587 /* CSVManager.swift */; };
+		D68441372EF2EBD200D4F587 /* AccountHealthScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68441362EF2EBD200D4F587 /* AccountHealthScreen.swift */; };
 		D6888BDF2EDD7F3400202E89 /* VideoPlayerScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6888BDE2EDD7F3400202E89 /* VideoPlayerScreen.swift */; };
 		D68C53A32EA0B2DA008E175D /* KeyChainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68C53A22EA0B2DA008E175D /* KeyChainManager.swift */; };
 		D68DFD092EBDD9750013229C /* UIImage+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68DFD082EBDD9750013229C /* UIImage+Extension.swift */; };
@@ -1142,6 +1143,7 @@
 		D68399AE2EB216A800F3BDA7 /* RaidSocketHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaidSocketHandler.swift; sourceTree = "<group>"; };
 		D68399B02EB21CB700F3BDA7 /* FollowUnFollowSocketHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowUnFollowSocketHandler.swift; sourceTree = "<group>"; };
 		D68441342EF2D83800D4F587 /* CSVManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVManager.swift; sourceTree = "<group>"; };
+		D68441362EF2EBD200D4F587 /* AccountHealthScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountHealthScreen.swift; sourceTree = "<group>"; };
 		D6888BDE2EDD7F3400202E89 /* VideoPlayerScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerScreen.swift; sourceTree = "<group>"; };
 		D68C53A22EA0B2DA008E175D /* KeyChainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyChainManager.swift; sourceTree = "<group>"; };
 		D68DFD082EBDD9750013229C /* UIImage+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extension.swift"; sourceTree = "<group>"; };
@@ -3696,6 +3698,7 @@
 				D44B0BBB2EF133ED0084F58A /* priceCardView.swift */,
 				D44B0BBF2EF13DE80084F58A /* TopBuyersBySalesCard.swift */,
 				D68441342EF2D83800D4F587 /* CSVManager.swift */,
+				D68441362EF2EBD200D4F587 /* AccountHealthScreen.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -4769,6 +4772,7 @@
 				D4C4D79C2DD32F3D00274E51 /* TwoButton.swift in Sources */,
 				D4BA9C292DE4A4E700DFF6E6 /* TipsModel.swift in Sources */,
 				D4CAEC822DE7135B00705CD7 /* OptionGridButtonView.swift in Sources */,
+				D68441372EF2EBD200D4F587 /* AccountHealthScreen.swift in Sources */,
 				D6D0DACA2E9100F600390946 /* BalanceSummaryView.swift in Sources */,
 				35CCE0112DD876C500760CEE /* GetStartedScreen.swift in Sources */,
 				D4B616292DE87A3900924A3D /* ShippingStatusView.swift in Sources */,

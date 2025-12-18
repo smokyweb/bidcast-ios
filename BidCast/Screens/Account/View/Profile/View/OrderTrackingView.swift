@@ -24,12 +24,12 @@ struct OrderTrackingView: View {
     
     @State private var chatPath: String = ""
     
-    var orderId: String?
-    var productId: Int?
+    @Binding var orderId: String
+    @Binding var productId: String
     
     @Environment(\.presentationMode) var presentationMode
     
-    @StateObject private var viewModel =  ListProductViewModel()
+    @StateObject private var viewModel =  OffersViewModel()
     
     @State var config: BottomSheetConfig = BottomSheetConfig(
         icon: "checkmark.seal.fill",
@@ -164,7 +164,6 @@ struct OrderTrackingView: View {
     }
     
     private func getOrderDetails() async {
-        guard let ordId = orderId, let prodId = productId else { return }
         
         await performAPICalls(
             isConcurrent: false,
@@ -180,17 +179,17 @@ struct OrderTrackingView: View {
                 showError = true
             },
             onSuccess: {
-                let response = viewModel.OrderDetailsResponse
+                let response = viewModel.purchaseOrderDetailsResponse
                 orderResponse = response?.data
                 videoURL = orderResponse?.bidVideoURL ?? ""
-                userId = "\(response?.data.sellerDetails?.id ?? 0)"
-                userImage = response?.data.sellerDetails?.profile_image ?? ""
-                userName = response?.data.sellerDetails?.name ?? ""
+                userId = "\(response?.data?.sellerDetails?.id ?? 0)"
+                userImage = response?.data?.sellerDetails?.profile_image ?? ""
+                userName = response?.data?.sellerDetails?.name ?? ""
                 selectedOrderDetails = MyOrderModel.convertToMyOrderModel(from: response?.data)
             }
         ) {
-            let orderRequest = OrderDetailsParam(product_id: "\(prodId)", order_id: "\(ordId)")
-            try await viewModel.getOrderDetails(request: orderRequest)
+            let request = PurchaseOrderDetailsRequest(order_id: "\(orderId)", product_id: "\(productId)")
+            try await viewModel.getPurchasedOrderDetails(request: request)
         }
     }
 
@@ -502,7 +501,7 @@ struct OrderTrackingView: View {
                 CustomProfileImage(
                     url: orderResponse?.sellerDetails?.profile_image,   // dynamic seller image
                     isCircular: true,
-                    cornerRadius: 40,
+                    cornerRadius: 50,
                     size: 100,
                     height: 100,
                     defaultImage: "user_dummy"
@@ -818,12 +817,6 @@ struct CompactActionButton: View {
     }
 }
 
-// MARK: - Preview
-struct OrderTrackingView_Previews: PreviewProvider {
-    static var previews: some View {
-        OrderTrackingView()
-    }
-}
 
 extension OrderTrackingView {
     private func errorDesc(error: Error?, message: String?) -> String {

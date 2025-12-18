@@ -28,17 +28,17 @@ final class OrderStatusViewModel: ObservableObject {
     }
     
     // MARK: - getReceipt.
-    func getReceipt(parameters: OrderRecieptRequest) async {
-        do {
-            let response: ResponseModel<String> = try await APIManager.shared.request(
-                type: APIEndPoint.orderReciept(param: parameters),
-                header: true
-            )
-            self.recieptResponse = response
-        } catch {
-            self.handle(error: error)
-        }
-    }
+//    func getReceipt(parameters: OrderRecieptRequest) async {
+//        do {
+//            let response: ResponseModel<String> = try await APIManager.shared.request(
+//                type: APIEndPoint.orderReciept(param: parameters),
+//                header: true
+//            )
+//            self.recieptResponse = response
+//        } catch {
+//            self.handle(error: error)
+//        }
+//    }
 
     // MARK: - Error Handling
     private func handle(error: Error) {
