@@ -308,14 +308,17 @@ struct FinancesView: View {
                     
                     Spacer()
                     
-                    Text("Finances")
+                    Text("Wallet")
                         .font(.system(size: 22, weight: .bold))
                     
                     Spacer()
-                    
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 20))
-                        .opacity(0)
+                    Button(action:{
+                        self.presentationMode.wrappedValue.dismiss()
+                    }){
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 20))
+                            .opacity(0)
+                    }
                 }
                 .padding(.horizontal, 20)
                 .padding(.vertical, 16)
