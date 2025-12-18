@@ -911,6 +911,7 @@ enum InventorySegment: String, CaseIterable, CustomStringConvertible {
 struct InventoryTopHeaderView: View {
     var backBtnTapped: (() -> Void) = {}
     var manageBtnTapped: (() -> Void) = {}
+    
     var body: some View {
         // MARK: - Navigation Header
         HStack {

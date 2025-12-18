@@ -193,6 +193,7 @@ struct PromoteToolsView: View {
     @State var segment: PromoteToolsSegment = .overview
     
     var options:[String] = ["Last 30 days", "Last 3 months", "Last 6 months", "Last year"]
+    
     @State private var selectedIndex: Int = 0
     
     var body: some View {

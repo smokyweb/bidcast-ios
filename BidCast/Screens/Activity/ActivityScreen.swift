@@ -92,7 +92,6 @@ struct ActivityScreen: View {
                         selected = Segment.segment(at: index) ?? .message
                     }
                 )
-
                 .padding(.horizontal, 12)
                 .padding(.top, 10)
                 

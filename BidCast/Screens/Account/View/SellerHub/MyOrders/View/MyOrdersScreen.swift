@@ -12,6 +12,56 @@ import Combine
 
 // MARK: - MyOrdersScreen
 struct MyOrdersScreen: View {
+    
+    // Enum for the segmented control
+    enum Segment: String, CaseIterable, CustomStringConvertible {
+        case newOrder = "New Order"
+//        case created = "Created"
+        case processing = "Processing"
+        case completed = "Completed"
+//        case cancellations = "Cancellations"
+//        case refunds = "Refunds"
+        
+        var description: String { rawValue }
+        
+        static var segmentArray: [String] {
+            return Segment.allCases.map { $0.rawValue }
+        }
+        
+        // Get segment by index
+        static func segment(at index: Int) -> Segment? {
+            let allSegments = Segment.allCases
+            guard allSegments.indices.contains(index) else {
+                return nil
+            }
+            return Array(allSegments)[index]
+        }
+        
+        // Get index of current segment
+        var index: Int {
+            return Array(Segment.allCases).firstIndex(of: self) ?? 0
+        }
+        
+        var apiValue: String {
+            switch self {
+            case .newOrder:
+                return "new_order"
+//            case .all:
+//                return "all"
+//            case .created:
+//                return "created"
+            case .processing:
+                return "processing"
+            case .completed:
+                return "completed"
+//            case .cancellations:
+//                return "cancellations"
+//            case .refunds:
+//                return "refunds"
+            }
+        }
+    }
+    
     @Environment(\.presentationMode) var presentationMode
     @StateObject var viewModel = MyOrdersViewModel()
     @State private var myOrderListArr : [MyOrderModel] = []
@@ -32,6 +82,9 @@ struct MyOrdersScreen: View {
     @State var ProcessingOrder = ""
     @State var currentPage = 1
     
+    @State private var selected: Segment = .newOrder
+    @State private var selectedTabIndex: Int = Segment.newOrder.index
+    
 //    var filteredOrder: [MyOrderModel] {
 //        if searchText.isEmpty {
 //            return myOrderListArr
@@ -49,43 +102,63 @@ struct MyOrdersScreen: View {
             VStack(spacing: 4) {
                 VStack{
                     // MARK: - Top Header (fixed)
-                    PrimaryHeader(
-                        title: AppString.MyOrders,
-                        isForBoth: true,
-                        leadingImgArr: [.icBack,.appName],
-                        trailingImgArr: [.icSetting],
-                        onClickLeading: { _ in
-                            self.presentationMode.wrappedValue.dismiss()
-                        },
-                        count: .constant(0)
-                    )
+//                    PrimaryHeader(
+//                        title: AppString.MyOrders,
+//                        isForBoth: true,
+//                        leadingImgArr: [.icBack,.appName],
+//                        trailingImgArr: [.icSetting],
+//                        onClickLeading: { _ in
+//                            self.presentationMode.wrappedValue.dismiss()
+//                        },
+//                        count: .constant(0)
+//                    )
+                    TopHeaderView(backBtnTapped: {
+                        self.presentationMode.wrappedValue.dismiss()
+                    }, title: AppString.MyOrders)
                 }
+                VStack(spacing: 16) {
+                    //                    TwoVerticalLabelCell(
+                    //                        dataModel: MyOrderValue.allCases,
+                    //                        topLabel: { order in
+                    //                            offerCount(for: order)
+                    //                        },
+                    //                        bottomLabel: { $0.description.localized },
+                    //                        selection: $selectedOrderType
+                    //                    )
+                    //                    .onChange(of: selectedOrderType ?? .newOrders) { newType in
+                    //                        searchText = ""
+                    ////                        fetchOrders(for: newType)
+                    //                    }
+                    SearchBarView(placeholder: "Search") { debouncedText in
+                        if debouncedText == "" { return }
+                        currentPage = 1
+                        debounceSearch(with: searchText)
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .cornerRadius(28, corners: .allCorners)
+                    // MARK: - Filter Pills
+                    PillsSelectorView(
+                        titles:  Segment.segmentArray,
+                        selectedIndex: $selectedTabIndex,
+                        backgroundStyle: .roundedRect,
+                        underlineEnabled: false,
+                        onSelectionChanged: { index, data in
+                            selected = Segment.segment(at: index) ?? .newOrder
+                        }
+                    )
+                    .padding(.horizontal, 12)
+                    .padding(.bottom, 12)
+                    .onChange(of: selected) { newSegment in
+                        fetchOrders(for: selected ?? .newOrder)
+                    }
+                }
+//                .padding(.horizontal)
                 
                 
                 // MARK: - Scrollable Order List
                 ScrollView {
                     VStack(spacing: 16) {
-                        TwoVerticalLabelCell(
-                            dataModel: MyOrderValue.allCases,
-                            topLabel: { order in
-                                offerCount(for: order)
-                            },
-                            bottomLabel: { $0.description.localized },
-                            selection: $selectedOrderType
-                        )
-                        .onChange(of: selectedOrderType ?? .newOrders) { newType in
-                            searchText = ""
-                            fetchOrders(for: newType)
-                        }
-                        CustomSearchBar(searchText: $searchText)
-                            .frame(height: 45)
-                            .padding([.leading , .trailing] , 0)
-                            .shadow(color: .black.opacity(0.2), radius: 2, x: 0, y: 0)
-                            .onChange(of: searchText) { searchText in
-                                // Reset to first page if needed
-                                currentPage = 1
-                                debounceSearch(with: searchText)
-                            }
                         if !myOrderListArr.isEmpty {
                             ForEach(myOrderListArr , id: \.id) { order in
                                 Button(action: {
@@ -99,7 +172,7 @@ struct MyOrdersScreen: View {
                             Spacer(minLength: 80)
                         }
                         else  {
-                            NoDataView(message: "No Shows found")
+                            NoDataView(message: "No Orders found")
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                         }
                     }
@@ -117,7 +190,7 @@ struct MyOrdersScreen: View {
             UIScrollView.appearance().bounces = true
         }
         .onFirstAppear {
-            fetchOrders(for: selectedOrderType ?? .newOrders)
+            fetchOrders(for: selected ?? .newOrder)
         }
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
@@ -147,21 +220,21 @@ struct MyOrdersScreen: View {
     }
 }
 
-//MARK: API Call Passing Param.
-extension MyOrderValue {
-    var apiValue: String {
-        switch self {
-        case .newOrders: return "new_order"
-        case .processing: return "processing"
-        case .completed: return "completed"
-        }
-    }
-}
+////MARK: API Call Passing Param.
+//extension MyOrderValue {
+//    var apiValue: String {
+//        switch self {
+//        case .newOrders: return "new_order"
+//        case .processing: return "processing"
+//        case .completed: return "completed"
+//        }
+//    }
+//}
 
 //MARK: API CALL LOGIC.
 extension MyOrdersScreen{
     //MARK: fetchOrders.
-    func fetchOrders(for type: MyOrderValue) {
+    func fetchOrders(for type: Segment) {
         Task {
            guard Reachability.isConnectedToNetwork() else {
                 hudMsg = "No Internet Connection"
@@ -200,7 +273,7 @@ extension MyOrdersScreen{
     //MARK: fetchMoreOrder.
     func fetchMoreOrder() {
         currentPage += 1
-        fetchOrders(for: selectedOrderType ?? .newOrders)
+        fetchOrders(for: selected ?? .newOrder)
     }
     
     //MARK: handlePagination
@@ -236,8 +309,42 @@ extension MyOrdersScreen{
                 self.searchText = value
                 print("Search triggered for: \(value)")
                 // Perform your search here
-                fetchOrders(for: selectedOrderType ?? .newOrders)
+                fetchOrders(for: selected ?? .newOrder)
             }
+    }
+}
+
+
+struct TopHeaderView: View {
+    var backBtnTapped: (() -> Void) = {}
+    var title: String = "Title"
+    var body: some View {
+        // MARK: - Navigation Header
+        HStack {
+            Button(action: {
+                backBtnTapped()
+            }) {
+                HStack(spacing: 8) {
+                    Image(systemName: "chevron.left")
+                        .font(.custom(poppinsBold, size: 16))
+                    
+                    Text("Back")
+                        .font(.custom(poppinsSemiBold, size: 16))
+                }
+                .foregroundColor(.primary)
+            }
+            
+            Spacer()
+            
+            Text(title)
+                .font(.custom(poppinsBold, size: 16))
+                .foregroundColor(.black)
+            
+            Spacer()
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 12)
+        .background(Color(.systemBackground))
     }
 }
 
