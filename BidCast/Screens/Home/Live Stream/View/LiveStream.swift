@@ -1655,7 +1655,7 @@ extension LiveStream {
         let userId = UserDefaults.userId
         let userName = UserDefaults.userName
         let userImage = UserDefaults.profileURL
-        
+        self.currentRoomID = roomId
         SocketManagerService.shared.sendChat(
             roomId: roomId,
             message: "Joined 👋 ",
@@ -1721,6 +1721,7 @@ extension LiveStream {
 
                 // 🔥 unlock product details for this room
                 self.auctionStartedRooms.insert(roomId)
+           
         }
         
         socketManagerChat.listenForAuctionNextProduct { roomID,products,source  in

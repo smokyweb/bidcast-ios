@@ -154,6 +154,7 @@ struct RehearsalScreen: View {
     
     @State var showAuctionSetting = false
     @State var showAuctionSheet = false
+    @State var showTipSetting = false
     @State var hasAuctionStarted = false
     @State var isProductPinned = false
     @State var auctionedProductData = ProductDataModel1()
@@ -864,7 +865,11 @@ struct RehearsalScreen: View {
                             endShow()
                         },
                         onCloneItems: { print("Clone Items") },
-                        onTipSettings: { print("Tip Settings") },
+                        onTipSettings: {
+                            print("Tip Settings")
+                            showTipSetting = true
+                            showSellSheet  = false
+                        },
                         onMulticast: { print("Multicast") },
                         onAddCoupons: { print("Add Coupons") },
                         onRaid: {
@@ -1006,6 +1011,21 @@ struct RehearsalScreen: View {
                 },onCancel: {
                     showRaidSheet = false
                     selectedSellers = nil
+                }
+            )
+        }
+        .bottomSheet(isPresented: $showTipSetting, height: screenHeight * 0.75, topBarCornerRadius: 25, showTopIndicator: false,onDismiss: {
+            showTipSetting = false
+            showSellSheet = false
+        }) {
+            TipSettingsSheet(
+                onSave: { message, showMessages in
+                    print("Tip Message: \(message)")
+                    print("Show Buyer Tip Messages: \(showMessages)")
+                    showTipSetting = false
+                    socketManager.saveTipSettings(showId: self.roomId, tipMessage: message, showInLiveChat: showMessages)
+                },onCancel: {
+                    showTipSetting = false
                 }
             )
         }
@@ -1949,7 +1969,7 @@ extension RehearsalScreen {
         if response?.status == "success" {
             self.agoraToken = response?.data?.token ?? ""
             hudMsg = response?.message ?? ""
-            showhudSuccess = true
+            showhudSuccess = false
             print("channelName: \(channelName), uid: \(uId), token: \(agoraToken)")
         } else {
             hudMsg = response?.message ?? ""

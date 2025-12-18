@@ -1310,180 +1310,79 @@ extension SocketManagerService {
     
 }
 
-//Event =  allow_bid_for_all -> payload = room_id = abc , allow_bid_for_all = true/false
-//allow_bid_for_all_get
+// MARK: - Tip Events
+extension SocketManagerService {
 
+    // MARK: - Emit: Save Tip Settings
+    /// Sends tip settings for a live show
+    /// - Parameters:
+    ///   - showId: The ID of the show
+    ///   - tipMessage: The tip message to display
+    ///   - showInLiveChat: Whether the tip message should appear in live chat
+    func saveTipSettings(showId: String, tipMessage: String, showInLiveChat: Bool) {
+        let payload: [String: Any] = [
+            "show_id": showId,
+            "tip_message": tipMessage,
+            "show_in_live_chat": showInLiveChat
+        ]
+        
+        performIfConnected {
+            socket.emit("tip_setting_save", payload)
+            logger.info("💰 Sent tip_setting_save: \(payload)")
+        }
+    }
 
-//
-//@MainActor
-//final class SocketManagerService: NSObject, ObservableObject {
-//    
-//    static let shared = SocketManagerService()
-//    
-//    // MARK: - Published Properties
-//    @Published var isConnected = false
-//    @Published var rooms: [RoomModel] = []
-//    @Published var chats: [CommentModel] = []
-//    @Published var viewerCount: Int = 0
-//    @Published var showTime: String = "00:00:00"
-//    @Published var bidTime: String = "00:00:00"
-////    @Published var hasWon: Bool = false
-//    
-//    // MARK: - Internal Managers
-//    private let baseSocket = BaseSocketManager.shared
-//    private let roomHandler = RoomSocketHandler()
-//    private let chatHandler = ChatSocketHandler()
-//    private let bidHandler = BidSocketHandler()
-//    private let timerHandler = TimerSocketHandler()
-//    private let viewerHandler = ViewerSocketHandler()
-//    private let raidHandler = RaidSocketHandler()
-//    private let followHandler = FollowSocketHandler()
-//
-//    private var cancellables = Set<AnyCancellable>()
-//    
-//    private override init() {
-//        super.init()
-//        setupBindings()
-//    }
-//    
-//    // MARK: - Setup
-//    private func setupBindings() {
-//        baseSocket.$isConnected.assign(to: &$isConnected)
-//        roomHandler.$rooms.assign(to: &$rooms)
-//        chatHandler.$chats.assign(to: &$chats)
-//        viewerHandler.$viewerCount.assign(to: &$viewerCount)
-//        timerHandler.$showTime.assign(to: &$showTime)
-//        timerHandler.$bidTime.assign(to: &$bidTime)
-//    }
-//}
-//
-//// MARK: - Socket Connection Management
-//extension SocketManagerService {
-//    func disconnect() {
-//        baseSocket.disconnect()
-//    }
-//    
-////    func reconnect() {
-////        baseSocket.c()
-////    }
-//}
-//
-//extension SocketManagerService {
-//    func createRoom(payload: [String: Any]) {
-//        roomHandler.createRoom(payload)
-//    }
-//    
-//    func joinRoom(roomId: String, userId: Int = UserDefaults.userId, completion: @escaping () -> Void) {
-//        roomHandler.joinRoom(roomId, userId: userId, completion: completion)
-//    }
-//    
-//    func leaveRoom(roomId: String, userId: Int) {
-//        roomHandler.leaveRoom(roomId, userId: userId)
-//    }
-//    
-////    func endStreaming(roomId: String) {
-////        roomHandler.endStreaming(roomId: roomId)
-////    }
-//    
-//    func observeRoomUpdates(completion: @escaping (RoomModel) -> Void) {
-//        roomHandler.observeRoomUpdates(onUpdate: completion)
-//    }
-//    
-////    func listenForRoomEnded(onEnd: @escaping (_ roomId: String) -> Void) {
-////        roomHandler.observeRoomUpdates(onEnd: onEnd)
-////    }
-//}
-//
-//extension SocketManagerService {
-//    func sendChat(roomId: String, message: String, userId: Int, userName: String, userImage: String) {
-//        chatHandler.sendChat(roomId: roomId, message: message, userId: userId, userName: userName, userImage: userImage)
-//    }
-//    
-//    func listenForChat(roomId: String) {
-//        chatHandler.observeChat(forRoom: roomId)
-//    }
-//}
-//
-//
-//extension SocketManagerService {
-//    func sendBid(payload: [String: Any]) {
-//        bidHandler.sendBid(payload: payload)
-//    }
-//    
-//    func listenForHighestBid(forRoom roomId: String, completion: @escaping (HighestBid?) -> Void) {
-//        bidHandler.listenForHighestBid(forRoom: roomId, completion: completion)
-//    }
-//    
-//    func listenForBidFinalized(completion: @escaping (_ roomId: String, _ winner: HighestBid?) -> Void) {
-//        bidHandler.listenForBidFinalized(completion: completion)
-//    }
-//    
-//    func observeBidCountdown(for roomId: String,
-//                             onUpdate: @escaping (Int) -> Void,
-//                             onStart: @escaping () -> Void,
-//                             onComplete: @escaping () -> Void) {
-//        bidHandler.observeBidCountdown(for: roomId, onUpdate: onUpdate, onStart: onStart, onComplete: onComplete)
-//    }
-//    
-//    func AllowBidForAll(roomId: String, allow_bid_for_all: Bool) {
-//        bidHandler.AllowBidForAll(roomId: roomId, allow_bid_for_all: allow_bid_for_all)
-//    }
-//    
-//    func getAllowBidForAll(forRoom roomId: String, completion: ((_ isAllowed: Bool) -> Void)? = nil) {
-//        bidHandler.getAllowBidForAll(forRoom: roomId, completion: completion)
-//    }
-//}
-//
-//extension SocketManagerService {
-//    func listenForShowTimer(roomId: String) {
-//        timerHandler.listenForShowTimer(roomId: roomId)
-//    }
-//    
-//    func listenForBidTimer(roomId: String) {
-//        timerHandler.listenForBidTimer(roomId: roomId)
-//    }
-//    
-//    func startLiveScheduler(roomId: String) {
-//        timerHandler.startLiveScheduler(roomId: roomId)
-//    }
-//    
-//    func stopLiveScheduler() {
-//        timerHandler.stopLiveScheduler()
-//    }
-//}
-//
-//extension SocketManagerService {
-//    func listenForViewerCount() {
-//        viewerHandler.listenForViewerCount()
-//    }
-//}
-//
-//extension SocketManagerService {
-//    func sendRaidEvent(sourceRoomId: String,
-//                       targetRoomId: String,
-//                       sourceHostId: String,
-//                       targetHostId: String) {
-//        raidHandler.sendRaidEvent(sourceRoomId: sourceRoomId,
-//                                  targetRoomId: targetRoomId,
-//                                  sourceHostId: sourceHostId,
-//                                  targetHostId: targetHostId)
-//    }
-//    
-//    func listenForRaidEvent(completion: @escaping (_ raidInfo: RaidInfo?) -> Void) {
-//        raidHandler.listenForRaidEvent(completion: completion)
-//    }
-//}
-//
-//extension SocketManagerService {
-//    func sendFollowUnfollowEvent(followerId: String, followingId: String) {
-//        followHandler.sendFollowUnfollow(followerId: followerId, followingId: followingId)
-//    }
-//    
-//    func listenForFollowUnfollowStatus() {
-//        followHandler.listenForFollowUnfollowStatus()
-//    }
-//    
-//    func listenForUserFollowStatus() {
-//        followHandler.listenForUserFollowStatus()
-//    }
-//}
+    // MARK: - Listen: Tip Setting Updated
+    /// Listen for updates to tip settings
+    /// - Parameter completion: Returns showId, tipMessage, and showInLiveChat status
+    func listenForTipSettingUpdated(completion: @escaping (_ showId: String, _ tipMessage: String, _ showInLiveChat: Bool) -> Void) {
+        socket.on("tip_setting_updated") { data, _ in
+            guard let json = data.first as? [String: Any],
+                  let showId = json["show_id"] as? String,
+                  let tipMessage = json["tip_message"] as? String,
+                  let showInLiveChat = json["show_in_live_chat"] as? Bool else {
+                self.logger.warning("⚠️ Invalid tip_setting_updated payload: \(data)")
+                return
+            }
+            
+            DispatchQueue.main.async {
+                completion(showId, tipMessage, showInLiveChat)
+            }
+            
+            self.logger.info("✅ tip_setting_updated received for show \(showId)")
+        }
+    }
+
+    // MARK: - Emit: Send Tip
+    /// Sends a tip during a live show
+    /// - Parameters:
+    ///   - showId: The ID of the show
+    ///   - userId: The ID of the user sending the tip
+    ///   - amount: The tip amount
+    ///   - message: Optional message with the tip
+    func sendTip(showId: String, userId: Int, amount: Double, message: String?) {
+        var payload: [String: Any] = [
+            "show_id": showId,
+            "user_id": userId,
+            "amount": amount
+        ]
+        
+        if let message {
+            payload["message"] = message
+        }
+        
+        performIfConnected {
+            socket.emit("send_tip", payload)
+            logger.info("💸 Sent send_tip: \(payload)")
+        }
+    }
+
+    
+
+    // MARK: - Remove Tip Listeners
+    func removeTipListeners() {
+        socket.off("tip_setting_updated")
+        socket.off("tip_received")
+        print("🗑️ Removed all tip listeners")
+    }
+}

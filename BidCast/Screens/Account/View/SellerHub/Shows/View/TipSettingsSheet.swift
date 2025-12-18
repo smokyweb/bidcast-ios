@@ -13,11 +13,11 @@ struct TipSettingsSheet: View {
     @State private var tipMessage: String = ""
     @State private var showBuyerTipMessages: Bool = false
     @FocusState private var isTextFieldFocused: Bool
-    
+    @StateObject private var keyboard = KeyboardResponder()
     let characterLimit = 24
     
     var onSave: ((String, Bool) -> Void)?
-    
+    var onCancel: () -> Void = {}
     var body: some View {
         ZStack {
             VStack(spacing: 0) {
@@ -44,10 +44,12 @@ struct TipSettingsSheet: View {
                     .padding(.horizontal, 20)
                     .padding(.bottom, 120)
                 }
+               
                 
                 Spacer()
             }
-            
+            .padding(.bottom, keyboard.currentHeight) // ✅ Add this
+                .animation(.easeOut(duration: 0.25), value: keyboard.currentHeight)
             // Bottom Buttons
             VStack {
                 Spacer()
@@ -55,7 +57,8 @@ struct TipSettingsSheet: View {
                 HStack(spacing: 12) {
                     // Cancel Button
                     Button(action: {
-                        dismiss()
+//                        dismiss()
+                        onCancel()
                     }) {
                         Text("Cancel")
                             .font(.custom(poppinsSemiBold, size: 16))
@@ -75,7 +78,7 @@ struct TipSettingsSheet: View {
                     // Save Button
                     Button(action: {
                         onSave?(tipMessage, showBuyerTipMessages)
-                        dismiss()
+//                        dismiss()
                     }) {
                         Text("Save")
                             .font(.custom(poppinsSemiBold, size: 16))
@@ -112,6 +115,9 @@ struct TipSettingsSheet: View {
             }
         }
         .background(Color(.systemBackground))
+        .onTapGesture {
+            hideKeyboard()
+        }
     }
     
     // MARK: - Personalize Section

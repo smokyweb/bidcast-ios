@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import AlertToast
 
 struct AuctionSettingsSheet: View {
     @Environment(\.dismiss) private var dismiss
@@ -14,7 +15,8 @@ struct AuctionSettingsSheet: View {
     @State private var selectedRequiredTime: Int = 30
     @State private var selectedCounterBidTime: Int = 10
     @State private var isSuddenDeathEnabled: Bool = false
-    
+    @State var showHud: Bool = false
+    @State var hudMsg: String = ""
     @State private var showTimeDropdown: Bool = false
     
     let requiredTimeOptions = [15, 30, 45, 60, 90, 120]
@@ -78,6 +80,12 @@ struct AuctionSettingsSheet: View {
                     
                     // Start Auction Button
                     Button(action: {
+                        let bidStarT = Int(startingBid) ?? 0
+                        guard bidStarT > 1 else {
+                            hudMsg = "Please enter bid amount"
+                            showHud = true
+                            return
+                        }
                         onStartAuction?(startingBid, selectedRequiredTime, selectedCounterBidTime, isSuddenDeathEnabled)
                     }) {
                         Text("Start Auction")
@@ -113,6 +121,9 @@ struct AuctionSettingsSheet: View {
                     .offset(y: -32)
                 )
             }
+        }
+        .toast(isPresenting: $showHud) {
+            AlertToast(displayMode: .hud, type: .regular, title: hudMsg)
         }
         .background(Color(.systemBackground))
     }
