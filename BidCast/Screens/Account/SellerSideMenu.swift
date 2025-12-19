@@ -4,9 +4,15 @@
 //
 //  Created by JamTech on 19/12/25.
 //
+//
+//  SellerSideMenu.swift
+//  BidCast
+//
+//  Created by JamTech on 19/12/25.
+//
 import SwiftUI
 
-// MARK: - Seller Menu Screen (Normal Navigation)
+// MARK: - Seller Menu Screen (Fixed Scrolling & Touch)
 struct SellerMenuScreen: View {
     @Environment(\.presentationMode) var presentationMode
     
@@ -29,14 +35,17 @@ struct SellerMenuScreen: View {
     @State private var isRehearsalMode = false
     @State private var isVacationMode = false
     
+    private let twoColumnGrid = [
+        GridItem(.flexible(), spacing: 12),
+        GridItem(.flexible(), spacing: 12)
+    ]
+    
     var body: some View {
         VStack(spacing: 0) {
-            // Header
             menuHeader
-            
-            // Menu Sections
+
             ScrollView(showsIndicators: false) {
-                VStack(spacing: 20) {
+                LazyVStack(spacing: 20) {
                     manageSection
                     salesSection
                     promotionsSection
@@ -44,15 +53,15 @@ struct SellerMenuScreen: View {
                     settingsSection
                 }
                 .padding(.horizontal, 16)
-                .padding(.vertical, 20)
-                .padding(.bottom, 40)
+                .padding(.top, 20)
             }
-            
-            // Navigation Links (Hidden)
+            .frame(maxHeight: .infinity)
+            .ignoresSafeArea(.container, edges: .bottom)
+            .padding(.bottom, 12)
+
             navigationLinks
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(.systemGroupedBackground))
+        .background(Color.bg)
         .navigationBarHidden(true)
     }
     
@@ -89,16 +98,16 @@ struct SellerMenuScreen: View {
     // MARK: - Manage Section
     private var manageSection: some View {
         MenuSection(title: "Manage") {
-            HStack(spacing: 12) {
+            LazyVGrid(columns: twoColumnGrid, spacing: 12) {
                 MenuSubsectionCard(
-                    icon: "cube.box",
+                    icon: .asset(.inventory),
                     title: "Inventory"
                 ) {
                     navigateToInventory = true
                 }
-                
+
                 MenuSubsectionCard(
-                    icon: "tv",
+                    icon: .asset(.mic),
                     title: "Shows"
                 ) {
                     navigateToShows = true
@@ -106,155 +115,139 @@ struct SellerMenuScreen: View {
             }
         }
     }
+
     
     // MARK: - Sales Section
     private var salesSection: some View {
         MenuSection(title: "Sales") {
-            VStack(spacing: 12) {
-                HStack(spacing: 12) {
-                    MenuSubsectionCard(
-                        icon: "dollarsign.circle",
-                        title: "Payouts"
-                    ) {
-                        navigateToPayouts = true
-                    }
-                    
-                    MenuSubsectionCard(
-                        icon: "shippingbox",
-                        title: "Fulfillment"
-                    ) {
-                        navigateToFulfillment = true
-                    }
+            LazyVGrid(columns: twoColumnGrid, spacing: 12) {
+
+                MenuSubsectionCard(
+                    icon: .asset(.wallet),
+                    title: "Payouts"
+                ) {
+                    navigateToPayouts = true
                 }
-                
-                HStack(spacing: 12) {
-                    MenuSubsectionCard(
-                        icon: "cart",
-                        title: "Orders"
-                    ) {
-                        navigateToOrders = true
-                    }
-                    
-                    MenuSubsectionCard(
-                        icon: "star.circle",
-                        title: "Tips"
-                    ) {
-                        navigateToTips = true
-                    }
+
+                MenuSubsectionCard(
+                    icon: .asset(.shipping),
+                    title: "Fulfillment"
+                ) {
+                    navigateToFulfillment = true
+                }
+
+                MenuSubsectionCard(
+                    icon: .asset(.orders),
+                    title: "Orders"
+                ) {
+                    navigateToOrders = true
+                }
+
+                MenuSubsectionCard(
+                    icon: .asset(.tag),
+                    title: "Tips"
+                ) {
+                    navigateToTips = true
                 }
             }
         }
     }
+
     
     // MARK: - Promotions Section
     private var promotionsSection: some View {
         MenuSection(title: "Promotions") {
-            VStack(spacing: 12) {
-                HStack(spacing: 12) {
-                    MenuSubsectionCard(
-                        icon: "person.badge.plus",
-                        title: "Invite Seller\n& Earn $100"
-                    ) {
-                        navigateToSellerReferrals = true
-                    }
-                    
-                    MenuSubsectionCard(
-                        icon: "person.2",
-                        title: "Refer Buyers\nGain Followers"
-                    ) {
-                        navigateToBuyerReferrals = true
-                    }
+            LazyVGrid(columns: twoColumnGrid, spacing: 12) {
+
+                MenuSubsectionCard(
+                    icon: .asset(.people),
+                    title: "Invite Seller\n& Earn $100"
+                ) {
+                    navigateToSellerReferrals = true
                 }
-                
-                HStack(spacing: 12) {
-                    MenuSubsectionCard(
-                        icon: "megaphone",
-                        title: "Promote Tools"
-                    ) {
-                        navigateToPromote = true
-                    }
-                    
-                    // Empty spacer for alignment
-                    Spacer()
-                        .frame(maxWidth: .infinity)
+
+                MenuSubsectionCard(
+                    icon: .asset(.people),
+                    title: "Refer Buyers\nGain Followers"
+                ) {
+                    navigateToBuyerReferrals = true
+                }
+
+                MenuSubsectionCard(
+                    icon: .asset(.promoteTool),
+                    title: "Promote Tools"
+                ) {
+                    navigateToPromote = true
                 }
             }
         }
     }
+
     
     // MARK: - Performance Section
     private var performanceSection: some View {
         MenuSection(title: "Performance") {
-            VStack(spacing: 12) {
-                HStack(spacing: 12) {
-                    MenuSubsectionCard(
-                        icon: "crown",
-                        title: "Premier Shop"
-                    ) {
-                        navigateToPremier = true
-                    }
-                    
-                    MenuSubsectionCard(
-                        icon: "chart.bar",
-                        title: "Seller Analytics"
-                    ) {
-                        navigateToAnalytics = true
-                    }
+            LazyVGrid(columns: twoColumnGrid, spacing: 12) {
+
+                MenuSubsectionCard(
+                    icon: .asset(.shop),
+                    title: "Premier Shop"
+                ) {
+                    navigateToPremier = true
                 }
-                
-                HStack(spacing: 12) {
-                    MenuSubsectionCard(
-                        icon: "heart.text.square",
-                        title: "Account Health"
-                    ) {
-                        navigateToAccountHealth = true
-                    }
-                    
-                    // Empty spacer for alignment
-                    Spacer()
-                        .frame(maxWidth: .infinity)
+
+                MenuSubsectionCard(
+                    icon: .asset(.analysis),
+                    title: "Seller Analytics"
+                ) {
+                    navigateToAnalytics = true
+                }
+
+                MenuSubsectionCard(
+                    icon: .asset(.analysis),
+                    title: "Account Health"
+                ) {
+                    navigateToAccountHealth = true
                 }
             }
         }
     }
+
     
     // MARK: - Settings Section
     private var settingsSection: some View {
         MenuSection(title: "Settings") {
-            VStack(spacing: 12) {
-                HStack(spacing: 12) {
-                    MenuSubsectionCard(
-                        icon: "box.truck",
-                        title: "Shipping Settings"
-                    ) {
-                        navigateToShipping = true
-                    }
-                    
-                    MenuSubsectionCard(
-                        icon: "person.crop.circle.badge",
-                        title: "Seller Status"
-                    ) {
-                        navigateToSellerStatus = true
-                    }
+            LazyVGrid(columns: twoColumnGrid, spacing: 12) {
+
+                MenuSubsectionCard(
+                    icon: .asset(.shipping),
+                    title: "Shipping Settings"
+                ) {
+                    navigateToShipping = true
                 }
-                
-                // Toggle Cards
-                HStack(spacing: 12) {
-                    ToggleSubsectionCard(
-                        icon: "play.circle",
-                        title: "Rehearsal Mode",
-                        isOn: $isRehearsalMode
-                    )
-                    
-                    ToggleSubsectionCard(
-                        icon: "beach.umbrella",
-                        title: "Vacation Mode",
-                        isOn: $isVacationMode
-                    )
+
+                MenuSubsectionCard(
+                    icon: .asset(.seller),
+                    title: "Seller Status"
+                ) {
+                    navigateToSellerStatus = true
                 }
+
+                ToggleSubsectionCard(
+                    icon: "play.circle",
+                    title: "Rehearsal Mode",
+                    isOn: $isRehearsalMode
+                )
+
+                ToggleSubsectionCard(
+                    icon: "beach.umbrella",
+                    title: "Vacation Mode",
+                    isOn: $isVacationMode
+                )
             }
         }
     }
+
     
     // MARK: - Navigation Links
     private var navigationLinks: some View {
@@ -299,71 +292,73 @@ struct MenuSection<Content: View>: View {
     }
 }
 
-// MARK: - Menu Subsection Card
+// MARK: - Menu Subsection Card (Fixed Touch Handling)
 struct MenuSubsectionCard: View {
-    let icon: String
+    let icon: MenuIcon
     let title: String
     let action: () -> Void
-    
+
     @State private var isPressed = false
-    
+
     var body: some View {
-        Button(action: {
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                action()
-            }
-        }) {
-            VStack(spacing: 10) {
-                Image(systemName: icon)
-                    .font(.system(size: 26, weight: .medium))
-                    .foregroundColor(.defaultTheme)
-                    .frame(height: 30)
-                
+        Button {
+            action()
+        } label: {
+            VStack(spacing: 8) {
+
+                iconView
+                    .frame(width: 26, height: 26)
+
                 Text(title)
                     .font(.custom(poppinsMedium, size: 12))
-                    .foregroundColor(.primary)
+                    .foregroundColor(.black)
                     .multilineTextAlignment(.center)
                     .lineLimit(2)
-                    .fixedSize(horizontal: false, vertical: true)
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 100)
-            .padding(.vertical, 12)
+            .frame(height: 92)
             .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(Color(.systemBackground))
-                    .shadow(color: .black.opacity(isPressed ? 0.1 : 0.05), radius: isPressed ? 4 : 8, x: 0, y: isPressed ? 1 : 2)
+                RoundedRectangle(cornerRadius: 14)
+                    .fill(isPressed ? Color.defaultTheme : Color.white)
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(
-                        LinearGradient(
-                            gradient: Gradient(colors: [
-                                Color.defaultTheme.opacity(0.2),
-                                Color.defaultTheme.opacity(0.05)
-                            ]),
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        lineWidth: 1
-                    )
+                RoundedRectangle(cornerRadius: 14)
+                    .stroke(Color.white, lineWidth: 1)
             )
-            .scaleEffect(isPressed ? 0.96 : 1.0)
         }
-        .buttonStyle(PlainButtonStyle())
-        .simultaneousGesture(
-            DragGesture(minimumDistance: 0)
-                .onChanged { _ in
-                    withAnimation(.easeInOut(duration: 0.1)) {
-                        isPressed = true
+        .buttonStyle(.plain)
+        .pressAnimation($isPressed)
+    }
+
+    @ViewBuilder
+    private var iconView: some View {
+        switch icon {
+        case .system(let name):
+            Image(systemName: name)
+                .foregroundColor(.black)
+
+        case .asset(let image):
+            Image(image)
+                .resizable()
+                .scaledToFit()
+                .foregroundColor(.black)
+        }
+    }
+}
+
+extension View {
+    func pressAnimation(_ isPressed: Binding<Bool>) -> some View {
+        self
+            .scaleEffect(isPressed.wrappedValue ? 0.97 : 1)
+            .onLongPressGesture(
+                minimumDuration: .infinity,
+                pressing: { pressing in
+                    withAnimation(.easeInOut(duration: 0.12)) {
+                        isPressed.wrappedValue = pressing
                     }
-                }
-                .onEnded { _ in
-                    withAnimation(.easeInOut(duration: 0.1)) {
-                        isPressed = false
-                    }
-                }
-        )
+                },
+                perform: {}
+            )
     }
 }
 
@@ -430,3 +425,8 @@ Button("Open Seller Menu") {
 //        }
 //    }
 //}
+
+enum MenuIcon {
+    case system(String)
+    case asset(ImageResource)
+}

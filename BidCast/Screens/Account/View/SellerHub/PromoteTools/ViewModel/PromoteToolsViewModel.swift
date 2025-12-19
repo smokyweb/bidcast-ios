@@ -11,6 +11,8 @@ import Foundation
 final class PromoteToolsViewModel: ObservableObject {
 
     @Published var promoteToolResponse = ResponseModel<PromoteToolModel>()
+    @Published var promoteDetailResponse = ResponseModel<AnalyticsData>()
+    
     @Published var errorMessage: String? = nil
 
     func getPromoteToolContent() async {
@@ -20,6 +22,17 @@ final class PromoteToolsViewModel: ObservableObject {
                 header: true
             )
             self.promoteToolResponse = response
+        } catch {
+            self.handle(error: error)
+        }
+    }
+    func getPromoteToolDetails(param:promoteToolRequest) async {
+        do {
+            let response: ResponseModel<AnalyticsData> = try await APIManager.shared.request(
+                type: APIEndPoint.getPromoteToolDetails(param: param),
+                header: true
+            )
+            self.promoteDetailResponse = response
         } catch {
             self.handle(error: error)
         }
