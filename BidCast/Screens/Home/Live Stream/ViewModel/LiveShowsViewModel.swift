@@ -20,6 +20,8 @@ final class LiveShowsViewModel: ObservableObject {
     @Published var followDict = ResponseModel<FolloweModel>()
     @Published var categoriesResponse = ResponseModel<[SellerCategoryDetailsModel]>()
     @Published var reportSellerResponse = ResponseModel<[String?]>()
+    @Published var storePromoteShowModel : ResponseModel<StorePromoteShowModel>?
+    @Published var promoteShow: ResponseModelPaginate<[BoostModel]>?
     @Published var requestType: String = ""
     @Published var titleStream : String = "Stream Ended"
     @Published var messageStream : String = "The live stream has ended."
@@ -38,7 +40,33 @@ final class LiveShowsViewModel: ObservableObject {
             self.errorMessage = error.localizedDescription
         }
     }
-
+    func storePromoteShow(parameters: StorePromoteShowRequest) async {
+        requestType = "promoteShow"
+        do {
+           if let response:  ResponseModel<StorePromoteShowModel>? = try await APIManager.shared.request(
+                type: APIEndPoint.storePromoteShow(param: parameters),
+                header: true
+           ){
+               self.storePromoteShowModel = response
+           }
+        } catch {
+            self.errorMessage = error.localizedDescription
+        }
+    }
+    // MARK: - Get Lessons
+    func getPromoteShows() async {
+        requestType = "promote"
+        do {
+            let response: ResponseModelPaginate<[BoostModel]> = try await APIManager.shared.request(
+                type: APIEndPoint.getPromoteShow,
+                header: true
+            )
+            promoteShow = response
+        } catch {
+            handle(error: error)
+        }
+    }
+    
     // MARK: - Get Live Shows
     func getLiveShows(param:GetLiveShowsRequest) async {
         requestType = "get"

@@ -11,9 +11,14 @@ import Combine
 // MARK: - Models
 
 struct PollOption: Codable {
-    var text: String
+    var text: TextModel
     var voteCount: Int
     var percentage: Double   // use 0...100
+}
+struct TextModel : Codable {
+    var text: String
+    var vote_count: Int
+    var percentage: Double
 }
 
 struct PollModel: Codable {
@@ -125,7 +130,7 @@ struct LivePollHostView: View {
                 
                 // Options list
                 VStack(spacing: 12) {
-                    ForEach(poll.options, id: \.text) { option in
+                    ForEach(poll.options, id: \.text.text) { option in
                         OptionRowView(option: option, percentage: option.percentage)
                             .padding(.horizontal)
                         //                        .overlay(
@@ -226,7 +231,7 @@ struct OptionRowView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text(option.text.capitalized)
+                Text(option.text.text.capitalizingFirstLetter())
                     .font(.custom(poppinsRegular, size: 14))
                     .foregroundColor(.primary)
                 Spacer()
@@ -289,9 +294,15 @@ struct LivePollHostView_Previews: PreviewProvider {
             roomId: "room_01",
             question: "Do you like the product?",
             options: [
-                PollOption(text: "yes", voteCount: 1, percentage: 100),
-                PollOption(text: "no", voteCount: 0, percentage: 0),
-                PollOption(text: "not very much", voteCount: 0, percentage: 0)
+                PollOption(text: TextModel(text: "yes", vote_count: 2, percentage: 2.0),
+                           voteCount: 1,
+                           percentage: 100),
+                PollOption(text: TextModel(text: "no", vote_count: 2, percentage: 2.0),
+                           voteCount: 0,
+                           percentage: 0),
+                PollOption(text: TextModel(text: "not very much", vote_count: 2, percentage: 2.0),
+                           voteCount: 0,
+                           percentage: 0)
             ],
             totalVotes: 1,
             remainingTime: "02:08",

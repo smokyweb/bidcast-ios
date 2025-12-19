@@ -770,7 +770,7 @@ struct CustomBottomSheetView: View {
                     .background(Color.white)
                     .cornerRadius(25, corners: [.topLeft, .topRight])
 //                    .ignoresSafeArea(edges: .bottom)
-                    .padding(.bottom, -110)
+                    .padding(.bottom, -90)
 //                    .transition(.move(edge: .bottom))
                     .animation(.easeInOut(duration: 0.25), value: isPresented)
 

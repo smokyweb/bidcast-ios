@@ -314,6 +314,7 @@ struct CreateShippingProfileScreen: View {
                 primaryAction: {
                     withAnimation {
                         showSuccess = false
+                        presentationMode.wrappedValue.dismiss()
                     }
                 },
                 secondaryAction: {

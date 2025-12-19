@@ -159,6 +159,8 @@ struct RehearsalScreen: View {
     @State var isProductPinned = false
     @State var auctionedProductData = ProductDataModel1()
     @State var nextProductId = ""
+    @State var showNotesEditorSheet = false
+    
     
     var body: some View {
         GeometryReader { geometry in
@@ -234,8 +236,13 @@ struct RehearsalScreen: View {
                         .padding(.bottom, 20)
                         HStack {
                             Button(action: {
-                                showNotesSheet = true
-                                isEditingNotes = showNotes.isEmpty
+                                if showNotes.isEmpty {
+                                    showNotesEditorSheet = true  // Open editor if empty
+                                } else {
+                                    showNotesSheet = true  // Show existing notes
+                                    isEditingNotes = false
+                                }
+                                
                             }) {
                                 Text("Show\nNotes")
                                     .foregroundColor(.black)
@@ -713,26 +720,58 @@ struct RehearsalScreen: View {
         )
         
        
-        .bottomSheet(
-            isPresented: $showLivePollScreen,
-            height: screenHeight * 0.8,
-            topBarCornerRadius: 20,
-            contentBackgroundColor: Color(.systemBackground),
-            topBarBackgroundColor: Color(.systemBackground),
-            showTopIndicator: false,
-            onDismiss: {
-                showLivePollScreen = false
-            },
-            content: {
-                if let poll = currentPollModel {
-                    LivePollHostView(poll: poll) { pollId, rooomId in
-                        print("End Poll")
-                        showPollCard = false
-                        showLivePollScreen = false
-                    }
+//        .bottomSheet(
+//            isPresented: $showLivePollScreen,
+//            height: screenHeight * 0.8,
+//            topBarCornerRadius: 20,
+//            contentBackgroundColor: Color(.systemBackground),
+//            topBarBackgroundColor: Color(.systemBackground),
+//            showTopIndicator: false,
+//            onDismiss: {
+//                showLivePollScreen = false
+//            },
+//            content: {
+//                if let poll = currentPollModel {
+//                    LivePollHostView(poll: poll) { pollId, rooomId in
+//                        print("End Poll")
+//                        showPollCard = false
+//                        showLivePollScreen = false
+//                    }
+//                }
+//            }
+//        )
+        .sheet(isPresented: $showLivePollScreen) {
+            if let poll = currentPollModel {
+                LivePollHostView(poll: poll) { pollId, rooomId in
+                    print("End Poll")
+                    showPollCard = false
+                    showLivePollScreen = false
                 }
+                .presentationDetents([.fraction(0.80)])   // ✅ Bottom-sheet height
+                .presentationCornerRadius(24)              // ✅ Rounded top corners
+                .presentationDragIndicator(.hidden)
             }
-        )
+                  // optional
+        }
+        
+        .sheet(isPresented: $showNotesEditorSheet) {
+            
+                RichTextEditorSheet(
+                    onSave: { attributedText in
+                        let richText = attributedText.toHTML()
+                        showNotes = richText
+                        socketManager.sendAddShowNote(roomId: self.roomId, showNote: richText)
+                        showNotesEditorSheet = false
+                    },
+                    onCancel: {
+                        showNotesEditorSheet = false
+                    }
+                )
+                .presentationDetents([.fraction(0.50)])
+                .presentationCornerRadius(25)
+                .presentationDragIndicator(.hidden)
+            }
+        
         .bottomSheet(isPresented: $showNotesSheet,
                      height: screenHeight * 0.80,
                      topBarCornerRadius: 25,
@@ -776,34 +815,31 @@ struct RehearsalScreen: View {
                 )
                 
             })
-        .bottomSheet(
-            isPresented: $showAuctionSheet,
-            height:screenHeight * 0.75,
-            topBarCornerRadius: 25,
-            showTopIndicator: false,
-            onDismiss: {
-                showAuctionSheet = false
-            },
-            content: {
-                AuctionSettingsSheet(
-                    onStartAuction: { bid, reqTime, counterTime, suddenDeath in
-                        print("Starting Bid: $\(bid)")
-                        print("Required Time: \(reqTime)s")
-                        print("Counter-Bid Time: \(counterTime)s")
-                        print("Sudden Death: \(suddenDeath)")
-                        showShopSheet = false
-                        showAuctionSheet = false
-                        hasAuctionStarted = true
-                        socketManager.startAuction(roomId: self.roomId,
-                                                   products: ["\(auctionedProductData.id ?? 0)"],
-                                                   startingBidAmount: "\(bid)",
-                                                   requireTime: reqTime,
-                                                   counterBidTime: counterTime,
-                                                   suddenDeath: suddenDeath)
-                    }
-                )
-            }
-        )
+
+        .sheet(isPresented: $showAuctionSheet) {
+            AuctionSettingsSheet(
+                onTapCancel: {
+                    showAuctionSheet = false
+                },
+                onStartAuction: { bid, reqTime, counterTime, suddenDeath in
+                    showAuctionSheet = false
+                    showShopSheet = false
+                    hasAuctionStarted = true
+
+                    socketManager.startAuction(
+                        roomId: roomId,
+                        products: ["\(auctionedProductData.id ?? 0)"],
+                        startingBidAmount: bid,
+                        requireTime: reqTime,
+                        counterBidTime: counterTime,
+                        suddenDeath: suddenDeath
+                    )
+                }
+            )
+            .presentationDetents([.fraction(0.60)])   // ✅ Bottom-sheet height
+            .presentationCornerRadius(25)              // ✅ Rounded top corners
+            .presentationDragIndicator(.hidden)        // optional
+        }
 //        .bottomSheet(
 //            isPresented: $showShopSheet,
 //            height: sheetHeight, // Adjust as needed
@@ -874,18 +910,19 @@ struct RehearsalScreen: View {
                         onAddCoupons: { print("Add Coupons") },
                         onRaid: {
                             print("Raid")
-                            SellerScreen(
-                                sellers: $sellers,
-                                selectedSellerID: $selectedSellers,
-                                onRaidCreated: { selectedSellers in
-                                    // Handle the selected sellers when raid is created
-                                    print("Raid created with sellers: \(String(describing: selectedSellers))")
-                                    handleRaid(selectedSeller: selectedSellers)
-                                },onCancel: {
-                                    showRaidSheet = false
-                                    selectedSellers = nil
-                                }
-                            )
+                            showRaidSheet = true
+//                            SellerScreen(
+//                                sellers: $sellers,
+//                                selectedSellerID: $selectedSellers,
+//                                onRaidCreated: { selectedSellers in
+//                                    // Handle the selected sellers when raid is created
+//                                    print("Raid created with sellers: \(String(describing: selectedSellers))")
+//                                    handleRaid(selectedSeller: selectedSellers)
+//                                },onCancel: {
+//                                    showRaidSheet = false
+//                                    selectedSellers = nil
+//                                }
+//                            )
                         },
                         onCreatePoll: {
                             print("Create Poll")
@@ -1014,10 +1051,13 @@ struct RehearsalScreen: View {
                 }
             )
         }
-        .bottomSheet(isPresented: $showTipSetting, height: screenHeight * 0.75, topBarCornerRadius: 25, showTopIndicator: false,onDismiss: {
-            showTipSetting = false
-            showSellSheet = false
-        }) {
+//        .bottomSheet(isPresented: $showTipSetting, height: screenHeight * 0.75, topBarCornerRadius: 25, showTopIndicator: false,onDismiss: {
+//            showTipSetting = false
+//            showSellSheet = false
+//        }) {
+//            
+//        }
+        .sheet(isPresented: $showTipSetting) {
             TipSettingsSheet(
                 onSave: { message, showMessages in
                     print("Tip Message: \(message)")
@@ -1028,7 +1068,31 @@ struct RehearsalScreen: View {
                     showTipSetting = false
                 }
             )
+            .presentationDetents([.fraction(0.70)])   // ✅ Bottom-sheet height
+            .presentationCornerRadius(25)              // ✅ Rounded top corners
+            .presentationDragIndicator(.hidden)        // optional
         }
+        .sheet(isPresented: $showRaidSheet) {
+            SellerScreen(
+                sellers: $sellers,
+                selectedSellerID: $selectedSellers,
+                onRaidCreated: { selectedSellers in
+                    // Handle the selected sellers when raid is created
+                    print("Raid created with sellers: \(String(describing: selectedSellers))")
+                    handleRaid(selectedSeller: selectedSellers)
+                },onCancel: {
+                    showRaidSheet = false
+                    selectedSellers = nil
+                }
+            )
+            .presentationDetents([.fraction(0.70)])   // ✅ Bottom-sheet height
+            .presentationCornerRadius(25)              // ✅ Rounded top corners
+            .presentationDragIndicator(.hidden)        // optional
+        }
+        
+      
+        
+        
         .bottomSheet(isPresented: $showSellerSheet, height: screenHeight / 2.5, topBarCornerRadius: 25, showTopIndicator: false,onDismiss: {
             showSellerSheet = false
         }) {

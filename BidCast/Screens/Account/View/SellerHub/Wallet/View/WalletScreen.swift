@@ -300,7 +300,9 @@ struct FinancesView: View {
             VStack(spacing: 0) {
                 // Header
                 HStack {
-                    Button(action: {}) {
+                    Button(action: {
+                        self.presentationMode.wrappedValue.dismiss()
+                    }) {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 20, weight: .semibold))
                             .foregroundColor(.black)

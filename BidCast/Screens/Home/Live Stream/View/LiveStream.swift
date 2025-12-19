@@ -186,6 +186,7 @@ struct LiveStream: View {
     var sheetHeight: CGFloat {
         switch currentBottomSheet {
         case .paperclip: return screenHeight * 0.5
+            
         case .share: return screenHeight * 0.6
         case .wallet: return screenHeight * 0.39
         case .cart: return screenHeight * 0.7
@@ -219,6 +220,7 @@ struct LiveStream: View {
         auctionStartedRooms.contains(currentRoomID)
     }
     @State var auctionedProductData: ProductDataModel1? = nil
+    @State  var  boosts = [BoostModel]()
     
     var body: some View {
         ZStack {
@@ -935,7 +937,10 @@ struct LiveStream: View {
         if action == .gift {
             currentBottomSheet = action
             showSheet = true
-        } else if action == .share {
+        } else if action == .promote {
+            currentBottomSheet = action
+            showSheet = true
+        } else  if action == .share {
             shareItems = [
                 "Live auction starting in 5 minutes! Don't miss out on exclusive items.",
                 URL(string: "https://www.backend.bidcast.betaplanets.com/live-show?roomid=\(currentRoomID)")!
@@ -1421,6 +1426,14 @@ struct LiveStream: View {
                 onClose: { showSheet = false },
                 onSendTip: { print("Sent tip") }
             )
+        case .promote:
+            PromoteShowSheet(
+                boosts: $boosts,
+                onPromotionSelected: { selectedBoost in
+                    handleBoostClick(selectedBoost)
+                },
+                onClose: { showSheet = false }
+            )
         case .paperclip:
             CreateClipBottomSheetView(
                 isPresented: $showSheet,
@@ -1438,6 +1451,75 @@ struct LiveStream: View {
         case .none:
             EmptyView()
         }
+    }
+    private func handleBoostClick(_ boost: BoostModel) {
+        print("🔥 User clicked boost: \(boost.title)")
+        showSheet = false
+        storePromoteShow(boost: boost)
+    }
+    
+    func storePromoteShow(boost: BoostModel) {
+        guard let promoteId = boost.id else {
+            hudMsg = "Either promoteId or ShowId not found."
+            showHud = true
+            return
+        }
+        
+            let showId = liveShowsData[currentIndex].show_id ?? ""
+        Task {
+            if isInternetAvailable() {
+                SVProgressHUD.show()
+                let request = StorePromoteShowRequest(scheduleShowId: "\(showId)", promoteShowId: "\(promoteId)")
+                await viewModel.storePromoteShow(parameters: request)
+                await SVProgressHUD.dismiss()
+                successPromoteShow()
+            }
+        }
+    }
+    
+    private func successPromoteShow() {
+        let response = viewModel.storePromoteShowModel
+        if response?.status == "success" {
+            hudMsg = "show promoted successfully."
+            showhudSuccess = true
+            socketManagerChat.sendPromotionEvent(userId: "\(response?.data?.userID ?? 0)", showId: "\(response?.data?.id ?? 0)", promoteShowId: "\(response?.data?.promoteShowID ?? 0)")
+        } else {
+            hudMsg = response?.message ?? ""
+            showHud = true
+        }
+    }
+    
+    func getPromoteShows() {
+        Task{
+            if isInternetAvailable() {
+                self.viewModel.errorMessage?.removeAll()
+//                SVProgressHUD.show()
+                await self.viewModel.getPromoteShows()
+//                await SVProgressHUD.dismiss()
+                if let message = self.viewModel.errorMessage, message != "" {
+                    hudMsg = self.viewModel.promoteShow?.message ?? ""
+                    showHud = true
+                }else{
+                    self.successPromote()
+                }
+            }
+        }
+    }
+    
+    func successPromote(){
+        let response  = self.viewModel.promoteShow
+        if response?.status == "success"{
+            self.boosts = response?.data ?? [BoostModel]()
+        }
+    }
+    
+    func isInternetAvailable()  -> Bool {
+        guard Reachability.isConnectedToNetwork() else {
+            hudMsg = "No Internet Connection"
+            showHud = true
+            return false
+        }
+        return true
     }
     
     @ViewBuilder
@@ -1503,7 +1585,7 @@ extension LiveStream {
                 await SVProgressHUD.dismiss()
                 await getProfileSuccess()
                 joinChatRoom(roomId: currentRoomID)
-                
+                self.getPromoteShows()
             } catch {
                 await SVProgressHUD.dismiss()
                 print("❌ loadInitialData Error:", error.localizedDescription)
@@ -1701,29 +1783,29 @@ extension LiveStream {
             fetchProducts(for: roomId)
         }
         
-        socketManagerChat.listenForAuctionStarted { roomId,products,startingBidAmount,requireTime,counterBidTime,suddenDeath in
-//            guard let self else { return }
-            print("AUCtioned data")
-            print("\(roomId)")
-            print("\(products)")
-            print("\(startingBidAmount)")
-            print("\(requireTime)")
-            print("\(counterBidTime)")
-            print("\(suddenDeath)")
-                self.updateProducts(
-                    for: roomId,
-                    products: products,
-                    startingBidAmount: Double(startingBidAmount) ?? 0.0,
-                    requireTime: requireTime,
-                    counterBidTime: counterBidTime,
-                    suddenDeath: suddenDeath
-                )
-
-                // 🔥 unlock product details for this room
-                self.auctionStartedRooms.insert(roomId)
-           
-        }
-        
+//        socketManagerChat.listenForAuctionStarted { roomId,products,startingBidAmount,requireTime,counterBidTime,suddenDeath in
+////            guard let self else { return }
+//            print("AUCtioned data")
+//            print("\(roomId)")
+//            print("\(products)")
+//            print("\(startingBidAmount)")
+//            print("\(requireTime)")
+//            print("\(counterBidTime)")
+//            print("\(suddenDeath)")
+//                self.updateProducts(
+//                    for: roomId,
+//                    products: products,
+//                    startingBidAmount: Double(startingBidAmount) ?? 0.0,
+//                    requireTime: requireTime,
+//                    counterBidTime: counterBidTime,
+//                    suddenDeath: suddenDeath
+//                )
+//
+//                // 🔥 unlock product details for this room
+//                self.auctionStartedRooms.insert(roomId)
+//           
+//        }
+//        
         socketManagerChat.listenForAuctionNextProduct { roomID,products,source  in
             guard roomId == roomID else { return}
             self.auctionedProductData = products
@@ -1870,8 +1952,30 @@ extension LiveStream {
             await setupSocketListeners(for: roomId)
         }
         
-        fetchProducts(for: roomId)
+//        fetchProducts(for: roomId)
         handleBuyerVerification()
+        socketManagerChat.listenForAuctionStarted { roomId,products,startingBidAmount,requireTime,counterBidTime,suddenDeath in
+//            guard let self else { return }
+            print("AUCtioned data")
+            print("\(roomId)")
+            print("\(products)")
+            print("\(startingBidAmount)")
+            print("\(requireTime)")
+            print("\(counterBidTime)")
+            print("\(suddenDeath)")
+                self.updateProducts(
+                    for: roomId,
+                    products: products,
+                    startingBidAmount: Double(startingBidAmount) ?? 0.0,
+                    requireTime: requireTime,
+                    counterBidTime: counterBidTime,
+                    suddenDeath: suddenDeath
+                )
+
+                // 🔥 unlock product details for this room
+                self.auctionStartedRooms.insert(roomId)
+           
+        }
     }
 
     func sortLiveShowsDataByCurrentRoom() {
@@ -2021,6 +2125,8 @@ extension LiveStream {
             switch action {
             case .gift:
                 Text("🎁 Gift Sheet")
+            case .promote:
+                Text("📣 Promote Sheet")
             case .paperclip:
                 Text("📎 Attachment Sheet")
             case .share:
@@ -2243,10 +2349,11 @@ extension LiveStream {
 }
 // MARK: - Menu Action Enum
 enum MenuAction: CaseIterable {
-    case gift, paperclip, share, wallet, cart
+    case gift,promote, paperclip, share, wallet, cart
     var iconName: ImageResource {
         switch self {
         case .gift: return .gift
+        case .promote: return .rPromote
         case .paperclip: return .clip
         case .share: return .share
         case .wallet: return .wallet
@@ -2257,6 +2364,7 @@ enum MenuAction: CaseIterable {
     var label: String {
         switch self {
         case .gift: return "Gift"
+        case .promote: return "Promote"
         case .paperclip: return "Attachment"
         case .share: return "Share"
         case .wallet: return "Wallet"

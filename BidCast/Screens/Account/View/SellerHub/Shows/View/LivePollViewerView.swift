@@ -54,31 +54,33 @@ struct LivePollViewerView: View {
                     .padding(.horizontal)
 
                 VStack(spacing: 12) {
-                    ForEach(Array(zip(poll.options.indices, poll.options)), id: \.1.text) { index, option in
+                    ForEach(poll.options.indices, id: \.self) { index in
+                        let option = poll.options[index]
+
                         if !hasVoted && poll.isActive {
-                            // Pre-vote: selectable cards with radio button
                             ViewerOptionSelectableRow(
-                                optionText: option.text,
-                                isSelected: selectedOption == option.text,
+                                optionText: option.text.text,
+                                isSelected: selectedOption == option.text.text,
                                 onTap: {
-                                    vote(optionText: option.text, optionIndex: index)
+                                    vote(
+                                        optionText: option.text.text,
+                                        optionIndex: index
+                                    )
                                 }
                             )
                             .padding(.horizontal)
                             .transition(.opacity.combined(with: .move(edge: .bottom)))
                         } else {
-                            // Post-vote: stats bar view
                             ViewerOptionStatsRow(
                                 option: option,
                                 percentage: option.percentage,
-                                isSelected: selectedOption == option.text,
+                                isSelected: selectedOption == option.text.text,
                                 animateToPercentage: option.percentage
                             )
                             .padding(.horizontal)
                             .animation(.easeInOut(duration: 0.45), value: option.percentage)
                         }
-                    }
-                }
+                    }                }
                 .padding(.top, 6)
 
                 // If user hasn't voted but poll inactive, show disabled state
@@ -205,7 +207,7 @@ struct LivePollViewerView: View {
         withAnimation(.easeInOut(duration: 0.35)) {
             self.poll = updatedPoll
             // if server shows viewer has voted, optionally set hasVoted true
-            if let sel = selectedOption, updatedPoll.options.contains(where: { $0.text == sel && $0.voteCount > 0 }) {
+            if let sel = selectedOption, updatedPoll.options.contains(where: { $0.text.text == sel && $0.voteCount > 0 }) {
                 hasVoted = true
             }
         }
@@ -300,7 +302,7 @@ struct ViewerOptionStatsRow: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
-                Text(option.text.capitalized)
+                Text(option.text.text.capitalized)
                     .font(.custom(poppinsRegular, size: 15))
                     .foregroundColor(.primary)
                 Spacer()

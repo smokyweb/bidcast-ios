@@ -13,7 +13,7 @@ struct CreatePollScreen: View {
     var onCreatePoll: ((PollModel) -> Void)?
     
     @State private var pollQuestion: String = ""
-    @State private var options: [String] = [""]
+    @State private var options: [TextModel] = []
     @State private var selectedDuration: String = "5 minutes"
     var roomId: String = ""
     
@@ -81,7 +81,8 @@ struct CreatePollScreen: View {
                         Spacer()
                         
                         Button(action: {
-                            options.append("")
+                            let text = TextModel(text: "", vote_count: 0, percentage: 0.0)
+                            options.append(text)
                         }) {
                             Text("+ Add")
                                 .font(.custom(poppinsSemiBold, size: 14))
@@ -100,7 +101,7 @@ struct CreatePollScreen: View {
                             floatingLabel: "Option \(index + 1)",
                             placeholder: "Enter option",
                             icon: .menuProfile,
-                            text: $options[index],
+                            text: $options[index].text,
                             isIconDisplay: false,
                             custFontName: robotoMedium,
                             custFontSize: 14
@@ -156,14 +157,22 @@ struct CreatePollScreen: View {
         guard !pollQuestion.trimmingCharacters(in: .whitespaces).isEmpty else { return }
         
         let cleanOptions = options
-            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .map { $0.text.trimmingCharacters(in: .whitespaces) }
             .filter { !$0.isEmpty }
         
         guard cleanOptions.count >= 1 else { return }
         
         // 🔥 Prepare PollOption list
-        let pollOptions = cleanOptions.map { text in
-            PollOption(text: text, voteCount: 0, percentage: 0)
+        let pollOptions = cleanOptions.map { optionText in
+            PollOption(
+                text: TextModel(
+                    text: optionText,
+                    vote_count: 0,
+                    percentage: 0
+                ),
+                voteCount: 0,
+                percentage: 0
+            )
         }
         
         let poll = PollModel(

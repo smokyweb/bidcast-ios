@@ -21,7 +21,7 @@ struct AuctionSettingsSheet: View {
     
     let requiredTimeOptions = [15, 30, 45, 60, 90, 120]
     let counterBidTimeOptions = [5, 7, 10]
-    
+    var onTapCancel : () -> () = { }
     var onStartAuction: ((String, Int, Int, Bool) -> Void)?
     
     var body: some View {
@@ -61,7 +61,8 @@ struct AuctionSettingsSheet: View {
                 HStack(spacing: 12) {
                     // Cancel Button
                     Button(action: {
-                        dismiss()
+//                        dismiss()
+                        onTapCancel()
                     }) {
                         Text("Cancel")
                             .font(.custom(poppinsSemiBold, size: 16))
@@ -126,6 +127,7 @@ struct AuctionSettingsSheet: View {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg)
         }
         .background(Color(.systemBackground))
+        .ignoresSafeArea(.keyboard, edges: .bottom)
     }
     
     // MARK: - Starting Bid Field

@@ -1018,6 +1018,19 @@ extension SocketManagerService {
         }
     }
     
+    func sendPromotionEvent(userId: String, showId: String, promoteShowId: String) {
+        performIfConnected {
+            let payload: [String: Any] = [
+                "user_id": userId,
+                "show_id": showId,
+                "promote_show_id": promoteShowId
+            ]
+            
+            socket.emit("set_promotion_data", payload)
+            print("🚀 Sent set_promotion_data event:", payload)
+        }
+    }
+    
     /// Observes vote errors
     /// - Parameter callback: Returns poll ID, room ID, and error message
     func observeVoteError(callback: @escaping (_ pollId: String, _ roomId: String, _ message: String) -> Void) {

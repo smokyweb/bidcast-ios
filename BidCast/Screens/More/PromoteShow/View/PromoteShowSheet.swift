@@ -139,7 +139,7 @@ struct PromoteShowSheet: View {
                                 option: boost,
                                 onTap: {
                                     onPromotionSelected?(boost)
-                                    dismiss()
+//                                    dismiss()
                                 }
                             )
                         }
@@ -186,10 +186,10 @@ struct PromotionCard: View {
                             )
                         )
                         .frame(width: 40, height: 40)
-                    
-                    Image(systemName: option.icon ?? "")
-                        .font(.system(size: 18, weight: .bold))
-                        .foregroundColor(.white)
+                    CustomProfileImage(url: option.icon ?? "",isCircular:  true,size: 18)
+//                    Image(systemName: option.icon ?? "")
+//                        .font(.system(size: 18, weight: .bold))
+//                        .foregroundColor(.white)
                 }
                 
                 Text(option.title ?? "")
@@ -280,14 +280,14 @@ struct PromotionCard: View {
         )
     }
 }
-
-#Preview {
-
-    PromoteShowSheet(
-        boosts: .constant(BoostModel.dummyBoosts),
-        onPromotionSelected: { selectedBoost in
-            print("Selected: \(selectedBoost.title) - \(selectedBoost.price)")
-        },
-        onClose: { print(" Close") }
-    )
-}
+//
+//#Preview {
+//
+//    PromoteShowSheet(
+//        boosts: .constant(BoostModel.dummyBoosts),
+//        onPromotionSelected: { selectedBoost in
+//            print("Selected: \(selectedBoost.title) - \(selectedBoost.price)")
+//        },
+//        onClose: { print(" Close") }
+//    )
+//}

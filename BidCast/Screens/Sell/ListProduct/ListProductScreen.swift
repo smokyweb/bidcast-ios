@@ -57,7 +57,7 @@ struct ListProductScreen: View {
     @State var subCategoryName : [String] = [""]
     @State var extraFields: [ExtraFieldModel] = []
     @State var processingListArr = ["Letters","Flats","Machinaable","Nonstandard","Non Machinable"]
-    
+    @State var openShippingSheet = false
     var strokeColor: Color {
         isHazardousMaterial ? Color.blue.opacity(0.3) : Color.gray.opacity(0.1)
     }
@@ -77,6 +77,16 @@ struct ListProductScreen: View {
     
     @State var extraFieldValues: [String: String] = [:]
     @State var selectedRadio: [String: String] = [:]
+    @State var navigateToShippingProfiles = false
+    
+    @State var config: BottomSheetConfig = BottomSheetConfig(
+        icon: "checkmark.seal.fill",
+        title: "",
+        message: "",
+        primaryButtonTitle: "Okay",
+        secondaryButtonTitle: nil,
+        showButtons: true
+    )
 
     var body: some View {
         
@@ -568,8 +578,27 @@ struct ListProductScreen: View {
                             }
                         })
                 })
-//            }
-//            .padding([.leading,.trailing],12)
+                .overlay(
+                    CustomBottomSheetView(
+                        isPresented: $openShippingSheet,
+                        config: config,
+                        primaryAction: {
+                            withAnimation {
+                                openShippingSheet = false
+//                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                    navigateToShippingProfiles = true
+//                                }
+                            }
+                        },
+                        secondaryAction: {
+                            withAnimation {
+                                openShippingSheet = false
+                            }
+                        }
+                    )
+                )
+                
+                CusNavLink(doNavigate: $navigateToShippingProfiles, destination: ShippingSettingsScreen())
         }
 //        .edgesIgnoringSafeArea(.top/)
         .background(Color(.systemBackground))
@@ -614,7 +643,20 @@ struct ListProductScreen: View {
     private func successShippingProfiles() {
         let response = shippingViewModel.getShippingProfilesResponse
         self.profiles = response?.data ?? []
-        self.shippingProfileNames = profiles.map { $0.name ?? "" }
+        if profiles.count != 0{
+            openShippingSheet = false
+            self.shippingProfileNames = profiles.map { $0.name ?? "" }
+        }else{
+            openShippingSheet = true
+          
+            config = BottomSheetConfig(
+                icon: "exclamationmark.triangle.fill",
+                title: "Error",
+                message: "Please add Shipping profile first for the successful product creation.",
+                primaryButtonTitle: "Add Shipping Profile",
+                secondaryButtonTitle: nil
+            )
+        }
     }
     
     func mailSuccess() {
