@@ -74,7 +74,14 @@ struct MyOrdersScreen: View {
     @State var searchText: String = ""
     
     @EnvironmentObject var networkMonitor: NetworkMonitor
-    @State var navigateToOrderDetails = false
+    
+    @State private var navigateToOrderDetails = false
+    @State private var navigateToProfile = false
+    
+    @State private var userId: String = ""
+    @State private var userImage: String = ""
+    @State private var userName: String = ""
+    
     @State private var showhud = false
     @State private var hudMsg = ""
     @State var newOrder = ""
@@ -147,7 +154,6 @@ struct MyOrdersScreen: View {
                             selected = Segment.segment(at: index) ?? .newOrder
                         }
                     )
-                    .padding(.horizontal, 12)
                     .padding(.bottom, 12)
                     .onChange(of: selected) { newSegment in
                         fetchOrders(for: selected ?? .newOrder)
@@ -161,13 +167,17 @@ struct MyOrdersScreen: View {
                     VStack(spacing: 16) {
                         if !myOrderListArr.isEmpty {
                             ForEach(myOrderListArr , id: \.id) { order in
-                                Button(action: {
+                                OrderCardView(order: order,
+                                              onTapCardView: {
                                     selectedOrderDetails = order
                                     navigateToOrderDetails = true
-                                }) {
-                                    OrderCardView(order: order)
-                                        .padding([.leading , .trailing] , 0)
-                                }
+                                }, onTapBuyerView: {
+                                    userId = "\(order.user?.id ?? 0)"
+                                    userImage = order.user?.profileImage ?? ""
+                                    userName = order.user?.name ?? ""
+                                    navigateToProfile = true
+                                })
+                                .padding([.leading , .trailing] , 0)
                             }
                             Spacer(minLength: 80)
                         }
@@ -182,6 +192,7 @@ struct MyOrdersScreen: View {
             }
         }
         .background(Color.blue.opacity(0.05).ignoresSafeArea())
+        
         .onAppear {
             UIScrollView.appearance().bounces = false
             
@@ -217,6 +228,11 @@ struct MyOrdersScreen: View {
                 comeFrom: "myOrder"
             ))
         }
+        CusNavLink(doNavigate: $navigateToProfile,
+                   destination: ProfileScreen(id:$userId,
+                                              isComeFrom: .constant(""),
+                                              userName: $userName,
+                                              userImage: $userImage))
     }
 }
 
@@ -326,10 +342,8 @@ struct TopHeaderView: View {
             }) {
                 HStack(spacing: 8) {
                     Image(systemName: "chevron.left")
-                        .font(.custom(poppinsBold, size: 16))
-                    
-                    Text("Back")
                         .font(.custom(poppinsSemiBold, size: 16))
+                    
                 }
                 .foregroundColor(.primary)
             }

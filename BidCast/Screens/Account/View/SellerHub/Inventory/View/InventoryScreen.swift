@@ -922,8 +922,8 @@ struct InventoryTopHeaderView: View {
                     Image(systemName: "chevron.left")
                         .font(.custom(poppinsBold, size: 16))
                     
-                    Text("Back")
-                        .font(.custom(poppinsSemiBold, size: 16))
+//                    Text("Back")
+//                        .font(.custom(poppinsSemiBold, size: 16))
                 }
                 .foregroundColor(.primary)
             }

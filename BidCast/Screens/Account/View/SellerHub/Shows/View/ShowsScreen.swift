@@ -52,7 +52,7 @@ struct ShowsScreen: View {
             // MARK: - Top Header (fixed)
             VStack{
                 PrimaryHeader(
-                    title: "",
+                    title: "Shows",
                     isForBoth: true,
                     leadingImgArr: [.icBack,.appName],
                     trailingImgArr: [.search, .notification],
