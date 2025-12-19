@@ -342,7 +342,7 @@ struct TopHeaderView: View {
             }) {
                 HStack(spacing: 8) {
                     Image(systemName: "chevron.left")
-                        .font(.custom(poppinsSemiBold, size: 16))
+                        .font(.custom(poppinsBold, size: 16))
                     
                 }
                 .foregroundColor(.primary)

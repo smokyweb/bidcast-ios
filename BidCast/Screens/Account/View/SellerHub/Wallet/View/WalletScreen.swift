@@ -433,7 +433,7 @@ struct WalletStatTile: View {
 struct TransactionsView: View {
     @State var selectedButton: WalletSegment
 
-    @State var transactions = [TransactionModel]()
+    @Binding var transactions: [TransactionModel]
 
     var segmentChangeClosure: ((WalletSegment) -> Void)
     
@@ -486,7 +486,7 @@ struct TransactionRow: View {
                         .foregroundColor(.black)
                         .fixedSize(horizontal: false, vertical: true)
                         .lineSpacing(2)
-                    Text("\(formatISODateString(transaction.date ?? "")) • \(transaction.status)")
+                    Text("\(formatISODateString(transaction.date ?? "")) • \(transaction.status ?? "")")
 //                    Text("11/18/25 • Completed")
 
                         .font(.system(size: 13))
@@ -593,7 +593,7 @@ struct WalletPayoutView: View {
                         self.presentationMode.wrappedValue.dismiss()
                     }) {
                         Image(systemName: "chevron.left")
-                            .font(.system(size: 20, weight: .semibold))
+                            .font(.custom(poppinsBold, size: 16))
                             .foregroundColor(.black)
                     }
                     
@@ -604,6 +604,7 @@ struct WalletPayoutView: View {
                     
                     Spacer()
                 }
+                .padding(.horizontal, 20)
 //                    Button(action:{
 //
 //                PrimaryHeader(
@@ -640,7 +641,9 @@ struct WalletPayoutView: View {
                         if segment == .wallet {
                             walletContent
                         } else {
-                            TransactionsView(selectedButton: .all) { _ in }
+                            TransactionsView(selectedButton: .all, transactions: $dataTransaction) { _ in
+                                
+                            }
                         }
 
                         Spacer(minLength: 100)

@@ -242,7 +242,7 @@ struct ChatHeaderView: View {
             Button(action: onBack) {
                 Image(systemName: "chevron.left")
                     .foregroundColor(.black)
-                    .font(.system(size: 20, weight: .semibold))
+                    .font(.custom(poppinsBold, size: 16))
                     .frame(width: 36, height: 36)
             }
 

@@ -28,7 +28,7 @@ struct ShippingSettingsScreen: View {
                         presentationMode.wrappedValue.dismiss()
                     }) {
                         Image(systemName: "chevron.left")
-                            .font(.system(size: 20, weight: .semibold))
+                            .font(.custom(poppinsBold, size: 16))
                             .foregroundColor(.primary)
                     }
                     

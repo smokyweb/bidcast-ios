@@ -53,7 +53,7 @@ struct FilterPageView: View {
                 }) {
                     HStack(spacing: 8) {
                         Image(systemName: "chevron.left")
-                            .font(.system(size: 16, weight: .semibold))
+                            .font(.custom(poppinsBold, size: 16))
                         
                         Text("Back")
                             .font(.system(size: 17, weight: .regular))

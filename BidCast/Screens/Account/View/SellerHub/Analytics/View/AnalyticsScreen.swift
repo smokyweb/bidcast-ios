@@ -698,7 +698,7 @@ struct SellerAnalyticsHeaderView: View {
                     // Left Arrow Button
                     Button(action: onPreviousPeriod) {
                         Image(systemName: "chevron.left")
-                            .font(.system(size: 14, weight: .semibold))
+                            .font(.custom(poppinsBold, size: 16))
                             .foregroundColor(.black)
                             .frame(width: 32, height: 32)
                             .background(Color.white)

@@ -10,7 +10,7 @@ import Foundation
 // MARK: - TransactionModel
 struct TransactionModel: Codable {
     var id, userID, sellerID: Int?
-    var orderID: String?
+    var orderID: Int?
     var showID: Int?
     var promoteShowID: Int?
     var cardNumber, accountNumber: String?
@@ -18,7 +18,7 @@ struct TransactionModel: Codable {
     var type: String?
     var date: String?
     var status: String?
-    var productPrice: String?
+    var productPrice: Int?
     var total: String?
     var subTotal, taxAmount, shippingCharges, discount: Int?
     var paymentIntentID, chargeID: String?

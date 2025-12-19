@@ -89,7 +89,7 @@ struct VideoPlayerHeader: View {
         HStack(spacing: 16) {
             Button(action: onBack) {
                 Image(systemName: "chevron.left")
-                    .font(.system(size: 20, weight: .semibold))
+                    .font(.custom(poppinsBold, size: 16))
                     .foregroundColor(.white)
                     .frame(width: 44, height: 44)
                     .background(Color.white.opacity(0.1))

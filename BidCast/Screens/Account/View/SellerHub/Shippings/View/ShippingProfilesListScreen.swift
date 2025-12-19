@@ -53,7 +53,7 @@ struct ShippingProfilesListScreen: View {
                         presentationMode.wrappedValue.dismiss()
                     }) {
                         Image(systemName: "chevron.left")
-                            .font(.custom(poppinsSemiBold, size: 20))
+                            .font(.custom(poppinsBold, size: 16))
                             .foregroundColor(.primary)
                     }
                     

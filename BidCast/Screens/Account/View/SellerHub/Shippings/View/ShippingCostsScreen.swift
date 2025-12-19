@@ -27,6 +27,7 @@ struct ShippingCostsScreen: View {
                     presentationMode.wrappedValue.dismiss()
                 }) {
                     Image(systemName: "chevron.left")
+                    .font(.custom(poppinsBold, size: 16))
                         .font(.system(size: 20, weight: .semibold))
                         .foregroundColor(.primary)
                 }

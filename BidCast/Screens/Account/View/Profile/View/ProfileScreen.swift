@@ -664,7 +664,7 @@ struct ProfileHeaderView: View {
                 presentationMode.wrappedValue.dismiss()
             }) {
                 Image(systemName: "chevron.left")
-                    .font(.system(size: 20, weight: .bold))
+                    .font(.custom(poppinsBold, size: 16))
                     .foregroundColor(.white)
                     .padding(10)
                     .background(Color.black.opacity(0.6))

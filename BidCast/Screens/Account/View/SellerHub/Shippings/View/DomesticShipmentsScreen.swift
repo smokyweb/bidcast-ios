@@ -30,7 +30,7 @@ struct DomesticShipmentsScreen: View {
                     presentationMode.wrappedValue.dismiss()
                 }) {
                     Image(systemName: "chevron.left")
-                        .font(.system(size: 20, weight: .semibold))
+                        .font(.custom(poppinsBold, size: 16))
                         .foregroundColor(.primary)
                 }
                 
@@ -397,7 +397,7 @@ struct DomesticShipmentsEnhancedScreen: View {
                     presentationMode.wrappedValue.dismiss()
                 }) {
                     Image(systemName: "chevron.left")
-                        .font(.system(size: 20, weight: .semibold))
+                        .font(.custom(poppinsBold, size: 16))
                         .foregroundColor(.primary)
                 }
                 
@@ -410,7 +410,7 @@ struct DomesticShipmentsEnhancedScreen: View {
                 Spacer()
                 
                 Image(systemName: "chevron.left")
-                    .font(.system(size: 20))
+                    .font(.custom(poppinsBold, size: 16))
                     .opacity(0)
             }
             .padding(.horizontal, 20)
