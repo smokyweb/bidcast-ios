@@ -46,14 +46,12 @@ struct PremierShopScreen: View {
                     tipSection
                     
                     // Shop Performance Section
-                    ShopView
-                    
-                    // Performance Metrics (On-Time & Defect-Free)
-                    performanceMetricsSection
-                
-                    RequirnmentView
-                   
-                    
+                    VStack {
+                        ShopView
+                        // Performance Metrics (On-Time & Defect-Free)
+                        performanceMetricsSection
+                    }
+                    .background(.white)
 //                    // Requirements Section
 //                    requirementsSection
                     
@@ -63,11 +61,13 @@ struct PremierShopScreen: View {
                     premierShopSection
                     
                     ReviewProcessView
-                    
-                    ApplyPremiumButton
+                   
+                    RequirnmentView
                     
 //                    // Sales Performance
 //                    salesPerformanceSection
+                    ApplyPremiumButton
+                    
                     
                 }
                 .padding(.horizontal, 16)
@@ -289,9 +289,30 @@ struct PremierShopScreen: View {
                 
                 HStack {
                     if let options = premierShopData.shopOptions {
-                        MetricView(title: "Rating", value: String(format: "%.1f", options.rating))
-                        MetricView(title: "Response", value: options.response)
-                        MetricView(title: "Delivery", value: options.delivery)
+//                        MetricView(title: "Rating", value: String(format: "%.1f", options.rating))
+//                        MetricView(title: "Response", value: options.response)
+//                        MetricView(title: "Delivery", value: options.delivery)
+                        PerformanceMetricCard(
+                            percentage:  String(format: "%.1f", options.rating),
+                            title: "Rating",
+                            color: .green,
+                            size: 40,
+                            rightArraowRequired: false
+                        )
+                        PerformanceMetricCard(
+                            percentage: options.response,
+                            title: "Response",
+                            color: .green,
+                            size: 40,
+                            rightArraowRequired: false
+                        )
+                        PerformanceMetricCard(
+                            percentage: options.delivery,
+                            title: "Delivery",
+                            color: .green,
+                            size: 40,
+                            rightArraowRequired: false
+                        )
                     }
                 }
             }
@@ -614,22 +635,24 @@ struct PerformanceMetricCard: View {
     let percentage: String
     let title: String
     let color: Color
+    var size: CGFloat = 120
+    var rightArraowRequired: Bool = true
     
     var body: some View {
         VStack(spacing: 16) {
             ZStack {
                 Circle()
-                    .stroke(color.opacity(0.2), lineWidth: 12)
-                    .frame(width: 120, height: 120)
+                    .stroke(color.opacity(0.2), lineWidth: rightArraowRequired ? 12 : 4)
+                    .frame(width: size, height: size)
                 
                 Circle()
                     .trim(from: 0, to: CGFloat(Double(percentage.replacingOccurrences(of: "%", with: "")) ?? 0) / 100)
-                    .stroke(color, style: StrokeStyle(lineWidth: 12, lineCap: .round))
-                    .frame(width: 120, height: 120)
+                    .stroke(color, style: StrokeStyle(lineWidth: rightArraowRequired ? 12 : 4, lineCap: .round))
+                    .frame(width: size, height: size)
                     .rotationEffect(.degrees(-90))
                 
                 Text(percentage)
-                    .font(.custom(poppinsBold, size: 32))
+                    .font(rightArraowRequired ? .custom(poppinsBold, size: 32) : .custom(poppinsBold, size: 16))
                     .foregroundColor(.primary)
             }
             
@@ -638,23 +661,24 @@ struct PerformanceMetricCard: View {
                     .font(.custom(poppinsMedium, size: 13))
                     .foregroundColor(.primary)
                     .multilineTextAlignment(.center)
-                
-                Image(systemName: "arrow.right")
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundColor(.defaultTheme)
+                if rightArraowRequired {
+                    Image(systemName: "arrow.right")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundColor(.defaultTheme)
+                }
             }
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 20)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemBackground))
-                .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 2)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.gray.opacity(0.1), lineWidth: 1)
-        )
+//        .background(
+//            RoundedRectangle(cornerRadius: 16)
+//                .fill(Color(.systemBackground))
+//                .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 2)
+//        )
+//        .overlay(
+//            RoundedRectangle(cornerRadius: 16)
+//                .stroke(Color.gray.opacity(0.1), lineWidth: 1)
+//        )
     }
 }
 

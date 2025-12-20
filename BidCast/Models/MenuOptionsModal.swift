@@ -19,7 +19,7 @@ struct SellerhubInfoModel: Codable {
     var upcomingShow: HomeModel?
     var accountHealth: AccountHealth?
     var payouts, totalOrders: Int?
-    var vacationMode: Bool?
+    var vacationMode: String?
 
     enum CodingKeys: String, CodingKey {
         case items, revenue, rating

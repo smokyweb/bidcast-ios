@@ -1,5 +1,5 @@
 {
-  "originHash" : "05bca4a81798da31e225e78dbd4e3308f1b13dba1a5f49af0381f9e8a0e2d6e0",
+  "originHash" : "465fb2f72ab6dc8cfacb065bea7e5d2a9c130a97551ea0d782e7e9170c18aafa",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -80,6 +80,15 @@
       "state" : {
         "revision" : "45d327fcbe7793747295346c2209ad419bdead74",
         "version" : "11.14.0"
+      }
+    },
+    {
+      "identity" : "fortunewheel",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/sameersyd/FortuneWheel.git",
+      "state" : {
+        "revision" : "900461e1c22ca70ee0b0e15cf97e3cef4132d84b",
+        "version" : "0.1.5"
       }
     },
     {

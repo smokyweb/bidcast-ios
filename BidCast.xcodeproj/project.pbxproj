@@ -567,6 +567,8 @@
 		D68399AF2EB216A800F3BDA7 /* RaidSocketHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68399AE2EB216A800F3BDA7 /* RaidSocketHandler.swift */; };
 		D68399B12EB21CB700F3BDA7 /* FollowUnFollowSocketHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68399B02EB21CB700F3BDA7 /* FollowUnFollowSocketHandler.swift */; };
 		D683F6A42EF67653002E4949 /* SellerToolsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D683F6A32EF67653002E4949 /* SellerToolsScreen.swift */; };
+		D683F6A72EF6B350002E4949 /* FortuneWheel in Frameworks */ = {isa = PBXBuildFile; productRef = D683F6A62EF6B350002E4949 /* FortuneWheel */; };
+		D683F6A92EF6B39B002E4949 /* Randomizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D683F6A82EF6B39B002E4949 /* Randomizer.swift */; };
 		D68441352EF2D83800D4F587 /* CSVManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68441342EF2D83800D4F587 /* CSVManager.swift */; };
 		D68441372EF2EBD200D4F587 /* AccountHealthScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68441362EF2EBD200D4F587 /* AccountHealthScreen.swift */; };
 		D6888BDF2EDD7F3400202E89 /* VideoPlayerScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6888BDE2EDD7F3400202E89 /* VideoPlayerScreen.swift */; };
@@ -1148,6 +1150,7 @@
 		D68399AE2EB216A800F3BDA7 /* RaidSocketHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaidSocketHandler.swift; sourceTree = "<group>"; };
 		D68399B02EB21CB700F3BDA7 /* FollowUnFollowSocketHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowUnFollowSocketHandler.swift; sourceTree = "<group>"; };
 		D683F6A32EF67653002E4949 /* SellerToolsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SellerToolsScreen.swift; sourceTree = "<group>"; };
+		D683F6A82EF6B39B002E4949 /* Randomizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Randomizer.swift; sourceTree = "<group>"; };
 		D68441342EF2D83800D4F587 /* CSVManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVManager.swift; sourceTree = "<group>"; };
 		D68441362EF2EBD200D4F587 /* AccountHealthScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountHealthScreen.swift; sourceTree = "<group>"; };
 		D6888BDE2EDD7F3400202E89 /* VideoPlayerScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerScreen.swift; sourceTree = "<group>"; };
@@ -1235,6 +1238,7 @@
 				3504BCDF2E000A3D0069182D /* FirebaseStorage in Frameworks */,
 				355AE9682DD1D51A00CD3D17 /* IQKeyboardManagerSwift in Frameworks */,
 				3504BCD12E000A3D0069182D /* FirebaseFunctionsCombine-Community in Frameworks */,
+				D683F6A72EF6B350002E4949 /* FortuneWheel in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1692,6 +1696,7 @@
 			children = (
 				35987D1D2DE5863100D6C2C9 /* LiveStream_1.swift */,
 				D4163AB62EF272E200AFCEFB /* LiveStream.swift */,
+				D683F6A82EF6B39B002E4949 /* Randomizer.swift */,
 				D6C27BDD2ED466A600A2B724 /* ProductShopListScreen.swift */,
 				D65B7EE02ED579CB000B52EC /* ProductDetailView.swift */,
 				D66070B22ED09A9E00B81251 /* FollowSellerSheet.swift */,
@@ -4374,6 +4379,7 @@
 				D613DBB12EB0A0D500521D42 /* SpatialAudio */,
 				D613DBB32EB0A0D500521D42 /* VirtualBackground */,
 				D6F4C7922EF28FB90082B45F /* RichText */,
+				D683F6A62EF6B350002E4949 /* FortuneWheel */,
 			);
 			productName = BidCast;
 			productReference = 99DF9E3F2DC4F35D008C15B2 /* BidCast.app */;
@@ -4473,6 +4479,7 @@
 				D4848BA42E97E8A100DC8B85 /* XCRemoteSwiftPackageReference "stripe-ios" */,
 				D613DBAE2EB0A0D500521D42 /* XCRemoteSwiftPackageReference "AgoraRtcEngine_iOS" */,
 				D6F4C7912EF28FB90082B45F /* XCRemoteSwiftPackageReference "RichText" */,
+				D683F6A52EF6B350002E4949 /* XCRemoteSwiftPackageReference "FortuneWheel" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 99DF9E402DC4F35D008C15B2 /* Products */;
@@ -4734,6 +4741,7 @@
 				D66531752E9E79F400F19B94 /* FileDownloadManager.swift in Sources */,
 				99C909EA2DC8CDDC0054620B /* QualificationResponse.swift in Sources */,
 				D4B6161B2DE86C9700924A3D /* OrderStatusModel.swift in Sources */,
+				D683F6A92EF6B39B002E4949 /* Randomizer.swift in Sources */,
 				D4CAEC362DE6D79600705CD7 /* PremierShopScreen.swift in Sources */,
 				D678E34C2EC86ED5005283BF /* PillSelectorView.swift in Sources */,
 				D4CAEC592DE6F11F00705CD7 /* AffiliateProgramModel.swift in Sources */,
@@ -5596,6 +5604,14 @@
 				minimumVersion = 4.6.0;
 			};
 		};
+		D683F6A52EF6B350002E4949 /* XCRemoteSwiftPackageReference "FortuneWheel" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sameersyd/FortuneWheel.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.5;
+			};
+		};
 		D6F4C7912EF28FB90082B45F /* XCRemoteSwiftPackageReference "RichText" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/NuPlay/RichText.git";
@@ -5841,6 +5857,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = D613DBAE2EB0A0D500521D42 /* XCRemoteSwiftPackageReference "AgoraRtcEngine_iOS" */;
 			productName = VirtualBackground;
+		};
+		D683F6A62EF6B350002E4949 /* FortuneWheel */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D683F6A52EF6B350002E4949 /* XCRemoteSwiftPackageReference "FortuneWheel" */;
+			productName = FortuneWheel;
 		};
 		D6F4C7922EF28FB90082B45F /* RichText */ = {
 			isa = XCSwiftPackageProductDependency;

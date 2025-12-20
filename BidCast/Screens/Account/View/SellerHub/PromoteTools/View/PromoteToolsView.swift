@@ -190,7 +190,7 @@ struct MetricItem {
 
 struct PromoteToolsView: View {
     @State private var selectedTab = 0
-    
+    @Environment(\.presentationMode) var presentationMode
     @State var segment: PromoteToolsSegment = .overview
     
     var options:[String] = ["Last 30 days", "Last 3 months", "Last 6 months", "Last year"]
@@ -205,7 +205,9 @@ struct PromoteToolsView: View {
                 VStack(spacing: 0) {
                     // Header with Back Button and Title
                     HStack {
-                        Button(action: {}) {
+                        Button(action: {
+                            presentationMode.wrappedValue.dismiss()
+                        }) {
                             Image(systemName: "chevron.left")
                                 .font(.custom(poppinsBold, size: 16))
                                 .foregroundColor(.black)

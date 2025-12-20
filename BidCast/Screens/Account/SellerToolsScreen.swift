@@ -109,55 +109,55 @@ struct SellerToolsScreen: View {
     private var sellerSection: some View {
         SectionCard(title: "Seller") {
             VStack(spacing: 0) {
-                ToolsRowItem(icon: "graduationcap", title: "Seller Training") {
+                ToolsRowItem(icon: "sellerTraining", title: "Seller Training") {
                     navigationState.navigateToSellerTraining = true
                 }
                 
 //                Divider().padding(.leading, 68)
                 
-                ToolsRowItem(icon: "shield.checkered", title: "Seller Verification") {
+                ToolsRowItem(icon: "sellerVerification", title: "Seller Verification") {
                     navigationState.navigateToSellerVerification = true
                 }
                 
 //                Divider().padding(.leading, 68)
                 
-                ToolsRowItem(icon: "person.badge.shield.checkmark", title: "Identity Verification") {
+                ToolsRowItem(icon: "identityVerification", title: "Identity Verification") {
                     navigationState.navigateToIdentityVerification = true
                 }
                 
 //                Divider().padding(.leading, 68)
                 
-                ToolsRowItem(icon: "cube.box", title: "Inventory") {
+                ToolsRowItem(icon: "inventory", title: "Inventory") {
                     navigationState.navigateToInventory = true
                 }
                 
 //                Divider().padding(.leading, 68)
                 
-                ToolsRowItem(icon: "tv", title: "Shows") {
+                ToolsRowItem(icon: "shows", title: "Shows") {
                     navigationState.navigateToShows = true
                 }
                 
 //                Divider().padding(.leading, 68)
                 
-                ToolsRowItem(icon: "bag", title: "Orders") {
+                ToolsRowItem(icon: "orders", title: "Orders") {
                     navigationState.navigateToOrders = true
                 }
                 
 //                Divider().padding(.leading, 68)
                 
-                ToolsRowItem(icon: "wallet.pass", title: "Wallet") {
+                ToolsRowItem(icon: "wallet", title: "Wallet") {
                     navigationState.navigateToWallet = true
                 }
                 
 //                Divider().padding(.leading, 68)
                 
-                ToolsRowItem(icon: "tag", title: "Offers") {
+                ToolsRowItem(icon: "offers", title: "Offers") {
                     navigationState.navigateToOffers = true
                 }
                 
 //                Divider().padding(.leading, 68)
                 
-                ToolsRowItem(icon: "giftcard", title: "Tips") {
+                ToolsRowItem(icon: "tips", title: "Tips") {
                     navigationState.navigateToTips = true
                 }
             }
@@ -168,13 +168,13 @@ struct SellerToolsScreen: View {
     private var promotionSection: some View {
         SectionCard(title: "Promotion") {
             VStack(spacing: 0) {
-                ToolsRowItem(icon: "person.3", title: "Affiliate Program") {
+                ToolsRowItem(icon: "affilateProgram", title: "Affiliate Program") {
                     navigationState.navigateToAffiliate = true
                 }
                 
 //                Divider().padding(.leading, 68)
                 
-                ToolsRowItem(icon: "megaphone", title: "Promote Tools") {
+                ToolsRowItem(icon: "promoteTools", title: "Promote Tools") {
                     navigationState.navigateToPromoteTools = true
                 }
             }
@@ -185,13 +185,13 @@ struct SellerToolsScreen: View {
     private var performanceSection: some View {
         SectionCard(title: "Performance") {
             VStack(spacing: 0) {
-                ToolsRowItem(icon: "crown", title: "Premier Shop") {
+                ToolsRowItem(icon: "premierShop", title: "Premier Shop") {
                     navigationState.navigateToPremier = true
                 }
                 
 //                Divider().padding(.leading, 68)
                 
-                ToolsRowItem(icon: "chart.bar", title: "Seller Analytics") {
+                ToolsRowItem(icon: "sellerAnalytics", title: "Seller Analytics") {
                     navigationState.navigateToAnalytics = true
                 }
             }
@@ -202,13 +202,13 @@ struct SellerToolsScreen: View {
     private var settingsSection: some View {
         SectionCard(title: "Settings") {
             VStack(spacing: 0) {
-                ToolsRowItem(icon: "box.truck", title: "Shipping") {
+                ToolsRowItem(icon: "shipping", title: "Shipping") {
                     navigationState.navigateToShipping = true
                 }
                 
 //                Divider().padding(.leading, 68)
                 
-                ToolsRowItem(icon: "chart.line.uptrend.xyaxis", title: "Seller Status") {
+                ToolsRowItem(icon: "sellerAnalytics", title: "Seller Status") {
                     navigationState.navigateToSellerStatus = true
                 }
             }
@@ -269,7 +269,7 @@ struct SectionCard<Content: View>: View {
         }
     }
 }
-
+//
 // MARK: - Tools Row Item
 struct ToolsRowItem: View {
     let icon: String
@@ -288,7 +288,7 @@ struct ToolsRowItem: View {
                 // Icon
                 ZStack {
                     
-                    Image(systemName: icon)
+                    Image(icon)
                         .font(.system(size: 20, weight: .medium))
                         .foregroundColor(.primary)
                 }
