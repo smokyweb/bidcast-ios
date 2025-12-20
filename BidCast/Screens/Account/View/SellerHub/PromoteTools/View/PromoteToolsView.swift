@@ -153,6 +153,7 @@
 //}
 
 import SwiftUI
+import SVProgressHUD
 
 // MARK: - Inventory Segment Enum
 enum PromoteToolsSegment: String, CaseIterable, CustomStringConvertible {
@@ -195,6 +196,8 @@ struct PromoteToolsView: View {
     var options:[String] = ["Last 30 days", "Last 3 months", "Last 6 months", "Last year"]
     
     @State private var selectedIndex: Int = 0
+    @StateObject private var viewModel = PromoteToolsViewModel()
+    @State var promoteToolDetail = AnalyticsData()
     
     var body: some View {
         NavigationView {
@@ -266,37 +269,37 @@ struct PromoteToolsView: View {
                         SectionHeaderView(title: "Audience Reached")
                         MetricCardLarge(
                             title: "Number of Show Boosts",
-                            value: "N/A",
+                            value: "\(promoteToolDetail.number_of_boost ?? 0)",
                             description: "Run a few more promotions to start seeing results for this metric!"
                         )
                      
                         MetricCardLarge(
                             title: "Number of Show Promotions",
-                            value: "N/A",
+                            value: "\(promoteToolDetail.number_of_show_promote ?? 0)",
                             description: "Run a few more promotions to start seeing results for this metric!"
                         )
                      
                         MetricCardLarge(
                             title: "Community Boosts",
-                            value: "1",
+                            value: "\(promoteToolDetail.community_boost ?? 0)",
                             description: "The total number of Community Boosts buyers unlocked during your shows."
                         )
                      
                         MetricCardLarge(
                             title: "Impressions",
-                            value: "572",
+                            value: "\(promoteToolDetail.impressions ?? 0)",
                             description: "The total number of times a Whatnot user saw your livestreams in their feeds due to a promotion."
                         )
                      
                         MetricCardLarge(
                             title: "Number of promoted hours",
-                            value: "N/A",
+                            value: promoteToolDetail.promote_hours ?? "",
                             description: "Run a few more promotions to start seeing results for this metric!"
                         )
                      
                         MetricCardLarge(
                             title: "Promoted impressions per hour",
-                            value: "N/A",
+                            value: "\(promoteToolDetail.impression_per_hours ?? 0)",
                             description: "Run a few more promotions to start seeing results for this metric!"
                         )
                         // Pro Tips
@@ -332,7 +335,7 @@ struct PromoteToolsView: View {
                         
                         MetricCardLarge(
                             title: "Follows from Promotion",
-                            value: "4",
+                            value: "\(promoteToolDetail.follows_from_promotion ?? 0)",
                             description: "Number of buyers that followed your account by finding you via promotions"
                         )
                  
@@ -369,7 +372,7 @@ struct PromoteToolsView: View {
                         
                         MetricCardLarge(
                             title: "Direct Sales from Promotion",
-                            value: "N/A",
+                            value: promoteToolDetail.direct_sales_form_promotion ?? "",
                             description: "Run a few more promotions to start seeing results for this metric!"
                         )
                         
@@ -410,6 +413,23 @@ struct PromoteToolsView: View {
             }
             .background(Color(UIColor.systemBackground))
             .navigationBarHidden(true)
+            .onFirstAppear {
+                Task{
+                    SVProgressHUD.show()
+                    await viewModel.getPromoteToolDetails(param: promoteToolRequest(filter:"all"))
+                    await SVProgressHUD.dismiss()
+                    if self.viewModel.errorMessage == nil || viewModel.errorMessage == ""{
+                        success()
+                    }
+                }
+            }
+        }
+    }
+    
+    func success(){
+        let response  = viewModel.promoteDetailResponse
+        if response.status == "success"{
+            promoteToolDetail = response.data ?? AnalyticsData()
         }
     }
 }
@@ -643,11 +663,11 @@ struct GenericTabView<T>: View where T: CaseIterable & Hashable & RawRepresentab
     }
 }
 
-struct PromoteToolsView_Previews: PreviewProvider {
-    static var previews: some View {
-        PromoteToolsView()
-    }
-}
+//struct PromoteToolsView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        PromoteToolsView()
+//    }
+//}
 
 
 

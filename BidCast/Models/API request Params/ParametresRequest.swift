@@ -409,6 +409,9 @@ struct UpdateProductStatusRequest : Encodable{
     var status : String
     var product_id: String
 }
+struct promoteToolRequest : Encodable{
+    var filter : String
+}
 
 //MARK: Store Product param
 

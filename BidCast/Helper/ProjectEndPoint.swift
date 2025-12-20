@@ -204,6 +204,7 @@ enum APIEndPoint{
     case getShippinProfiles
     case getShowOverview(param: ShowOverviewRequest)
     case updateProductStatus(param: UpdateProductStatusRequest)
+    case getPromoteToolDetails(param:promoteToolRequest)
     
     //MARK: - V1
     case getProduct(param:ProductRequest)
@@ -651,6 +652,8 @@ extension APIEndPoint: EndPointType {
             return "get-product"
 //        case .getItemList(let param):
 //            return "product/fetch-by-status?type=\(param.type)&page=\(param.page)"
+        case .getPromoteToolDetails(param: let param):
+            return "promote-tool-details?filter=\(param.filter)"
         }
     }
     
@@ -1030,6 +1033,8 @@ extension APIEndPoint: EndPointType {
             return .post
 //        case .getItemList:
 //            return .post
+        case .getPromoteToolDetails(param: let param):
+            return .get
         }
     }
     
@@ -1420,6 +1425,8 @@ extension APIEndPoint: EndPointType {
             return param
 //        case .getItemList(param: let param):
 //            return param
+        case .getPromoteToolDetails(param: let param):
+            return nil
         }
     }
     
@@ -1785,6 +1792,8 @@ extension APIEndPoint: EndPointType {
             return nil
 //        case .getItemList(param: let param):
 //            return nil
+        case .getPromoteToolDetails(param: let param):
+            return nil
         }
     }
     
