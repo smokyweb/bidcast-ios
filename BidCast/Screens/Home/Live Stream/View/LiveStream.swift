@@ -1963,7 +1963,7 @@ extension LiveStream {
             print("\(requireTime)")
             print("\(counterBidTime)")
             print("\(suddenDeath)")
-            if status != "sold"{
+            if status != "sold" && status != ""{
                 self.updateProducts(
                     for: roomId,
                     products: products,
@@ -1976,6 +1976,8 @@ extension LiveStream {
                 // 🔥 unlock product details for this room
                 self.auctionStartedRooms.insert(roomId)
             }else{
+                auctionedProductData = nil
+                
                 self.auctionStartedRooms.remove(roomId)
             }
         }
