@@ -124,7 +124,7 @@ struct RehearsalScreen: View {
         case .more: return screenHeight * 0.7
         case .promote: return screenHeight * 0.7
         case .clip: return screenHeight * 0.6
-        case .share: return screenHeight * 0.8 // Or screenHeight * 0.5
+        case .share: return screenHeight * 0.9 // Or screenHeight * 0.5
         case .shop: return screenHeight * 0.8
         case .endShow: return screenHeight * 0.3
         default: return screenHeight * 0.65
