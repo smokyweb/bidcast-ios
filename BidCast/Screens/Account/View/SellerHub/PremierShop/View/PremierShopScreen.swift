@@ -46,12 +46,12 @@ struct PremierShopScreen: View {
                     tipSection
                     
                     // Shop Performance Section
-                    VStack {
+//                    VStack {
                         ShopView
                         // Performance Metrics (On-Time & Defect-Free)
                         performanceMetricsSection
-                    }
-                    .background(.white)
+//                    }
+//                    .background(.white)
 //                    // Requirements Section
 //                    requirementsSection
                     
@@ -289,30 +289,30 @@ struct PremierShopScreen: View {
                 
                 HStack {
                     if let options = premierShopData.shopOptions {
-//                        MetricView(title: "Rating", value: String(format: "%.1f", options.rating))
-//                        MetricView(title: "Response", value: options.response)
-//                        MetricView(title: "Delivery", value: options.delivery)
-                        PerformanceMetricCard(
-                            percentage:  String(format: "%.1f", options.rating),
-                            title: "Rating",
-                            color: .green,
-                            size: 40,
-                            rightArraowRequired: false
-                        )
-                        PerformanceMetricCard(
-                            percentage: options.response,
-                            title: "Response",
-                            color: .green,
-                            size: 40,
-                            rightArraowRequired: false
-                        )
-                        PerformanceMetricCard(
-                            percentage: options.delivery,
-                            title: "Delivery",
-                            color: .green,
-                            size: 40,
-                            rightArraowRequired: false
-                        )
+                        MetricView(title: "Rating", value: String(format: "%.1f", options.rating))
+                        MetricView(title: "Response", value: options.response)
+                        MetricView(title: "Delivery", value: options.delivery)
+//                        PerformanceMetricCard(
+//                            percentage:  String(format: "%.1f", options.rating),
+//                            title: "Rating",
+//                            color: .green,
+//                            size: 40,
+//                            rightArraowRequired: false
+//                        )
+//                        PerformanceMetricCard(
+//                            percentage: options.response,
+//                            title: "Response",
+//                            color: .green,
+//                            size: 40,
+//                            rightArraowRequired: false
+//                        )
+//                        PerformanceMetricCard(
+//                            percentage: options.delivery,
+//                            title: "Delivery",
+//                            color: .green,
+//                            size: 40,
+//                            rightArraowRequired: false
+//                        )
                     }
                 }
             }
@@ -670,15 +670,15 @@ struct PerformanceMetricCard: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 20)
-//        .background(
-//            RoundedRectangle(cornerRadius: 16)
-//                .fill(Color(.systemBackground))
-//                .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 2)
-//        )
-//        .overlay(
-//            RoundedRectangle(cornerRadius: 16)
-//                .stroke(Color.gray.opacity(0.1), lineWidth: 1)
-//        )
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color(.systemBackground))
+                .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 2)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(Color.gray.opacity(0.1), lineWidth: 1)
+        )
     }
 }
 
