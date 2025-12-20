@@ -973,8 +973,8 @@ struct LiveStream: View {
     private var productStackView: some View {
         VStack {
             if isAuctionStartedForCurrentRoom {
-                if let product = currentProduct,
-                   let img = product.images?.first {
+                 let product = currentProduct
+                if let img = product?.images?.first {
                     StackedImageView(imageURL: img, totalCount: productData.count) {
                         print("productStackTapped")
                         navigateToProductList = true
