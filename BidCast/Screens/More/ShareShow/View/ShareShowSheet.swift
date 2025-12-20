@@ -182,7 +182,7 @@ struct DynamicShareBottomSheetView: View {
         VStack(spacing: 0) {
             HStack{
                 ZStack(alignment: .topLeading) {
-                    CustomProfileImage(url: imageURL, isCircular: false,size: 200)
+                    CustomProfileImage(url: imageURL, isCircular: false,size: 200,height: 300)
                         
                         .clipped()
                     
@@ -301,22 +301,22 @@ struct DynamicShareBottomSheetView: View {
                 }
 
                 socialShareButton(
-                    title: "WhatsApp",
-                    icon: "logo.whatsapp"
+                    title: "Facebook",
+                    icon: "facebook"
                 ) {
                     shareViaWhatsApp()
                 }
 
                 socialShareButton(
                     title: "Instagram",
-                    icon: "logo.instagram"
+                    icon: "instagram"
                 ) {
                     shareViaInstagram()
                 }
 
                 socialShareButton(
-                    title: "More",
-                    icon: "ellipsis"
+                    title: "LinkedIn",
+                    icon: "linkedin"
                 ) {
                     openSystemShareSheet()
                 }
