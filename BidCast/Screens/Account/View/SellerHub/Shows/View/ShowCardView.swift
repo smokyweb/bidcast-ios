@@ -10,27 +10,27 @@ import SwiftUI
 
 // MARK: - Show Card View
 struct ShowCardView: View {
-    let show: HomeModel
+    let show: HomeModel?
     var onTap : () -> () = { }
     var body: some View {
         HStack {
             
-            CustomProfileImage(url: show.img_thumbnail?.first ?? "", isCircular: false, size: 70)
+            CustomProfileImage(url: show?.img_thumbnail?.first ?? "", isCircular: false, size: 70)
             
             VStack(alignment: .leading, spacing: 5) {
-                Text(show.title?.capitalizingFirstLetter() ?? "")
+                Text(show?.title?.capitalizingFirstLetter() ?? "")
                     .font(.custom(poppinsBold, size: 14.0))
-                Text(show.category?.name ?? "")
+                Text(show?.category?.name ?? "")
                     .font(.custom(poppinsSemiBold, size: 13.0))
                     .foregroundColor(.black)
-                Text(show.date ?? "")
+                Text(show?.date ?? "")
                     .font(.custom(poppinsSemiBold, size: 13.0))
                     .foregroundColor(.gray)
 
                 HStack {
-                    Label(formatTo12HourTime(show.time ?? ""), systemImage: "clock")
+                    Label(formatTo12HourTime(show?.time ?? ""), systemImage: "clock")
                         .font(.custom(poppinsSemiBold, size: 13.0))
-                    Label("\(show.viewer_count ?? 0) RSVPs", systemImage: "person.3")
+                    Label("\(show?.viewer_count ?? 0) RSVPs", systemImage: "person.3")
                         .font(.custom(poppinsSemiBold, size: 13.0))
                 }
             }

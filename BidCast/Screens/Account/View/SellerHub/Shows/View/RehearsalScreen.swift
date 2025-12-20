@@ -1212,13 +1212,13 @@ struct RehearsalScreen: View {
         print("🎬 Preparing live stream room: \(roomId)")
         
         DispatchQueue.global(qos: .userInitiated).async {
-            let products = self.makeProductList(from: data.products, selectedID: selectedID)
-            guard !products.isEmpty else {
-                DispatchQueue.main.async {
-                    self.showhudMessage("Unable to start streaming — product category is missing.")
-                }
-                return
-            }
+//            let products = self.makeProductList(from: data.products, selectedID: selectedID)
+//            guard !products.isEmpty else {
+//                DispatchQueue.main.async {
+//                    self.showhudMessage("Unable to start streaming — product category is missing.")
+//                }
+//                return
+//            }
             
             // STEP 3: Join Agora Channel — runs best on background thread
             self.joinAgoraChannelIfNeeded()

@@ -42,8 +42,8 @@ struct SellerToolsScreen: View {
                 settingsSection
             }
             .padding(.horizontal, 16)
-            .padding(.vertical, 20)
-            .padding(.bottom, 40)
+            .padding(.vertical, 4)
+            .padding(.bottom, 60)
             
         }
         .frame(height: contentHeight, alignment: .top)
@@ -113,49 +113,49 @@ struct SellerToolsScreen: View {
                     navigationState.navigateToSellerTraining = true
                 }
                 
-                Divider().padding(.leading, 68)
+//                Divider().padding(.leading, 68)
                 
                 ToolsRowItem(icon: "shield.checkered", title: "Seller Verification") {
                     navigationState.navigateToSellerVerification = true
                 }
                 
-                Divider().padding(.leading, 68)
+//                Divider().padding(.leading, 68)
                 
                 ToolsRowItem(icon: "person.badge.shield.checkmark", title: "Identity Verification") {
                     navigationState.navigateToIdentityVerification = true
                 }
                 
-                Divider().padding(.leading, 68)
+//                Divider().padding(.leading, 68)
                 
                 ToolsRowItem(icon: "cube.box", title: "Inventory") {
                     navigationState.navigateToInventory = true
                 }
                 
-                Divider().padding(.leading, 68)
+//                Divider().padding(.leading, 68)
                 
                 ToolsRowItem(icon: "tv", title: "Shows") {
                     navigationState.navigateToShows = true
                 }
                 
-                Divider().padding(.leading, 68)
+//                Divider().padding(.leading, 68)
                 
                 ToolsRowItem(icon: "bag", title: "Orders") {
                     navigationState.navigateToOrders = true
                 }
                 
-                Divider().padding(.leading, 68)
+//                Divider().padding(.leading, 68)
                 
                 ToolsRowItem(icon: "wallet.pass", title: "Wallet") {
                     navigationState.navigateToWallet = true
                 }
                 
-                Divider().padding(.leading, 68)
+//                Divider().padding(.leading, 68)
                 
                 ToolsRowItem(icon: "tag", title: "Offers") {
                     navigationState.navigateToOffers = true
                 }
                 
-                Divider().padding(.leading, 68)
+//                Divider().padding(.leading, 68)
                 
                 ToolsRowItem(icon: "giftcard", title: "Tips") {
                     navigationState.navigateToTips = true
@@ -172,7 +172,7 @@ struct SellerToolsScreen: View {
                     navigationState.navigateToAffiliate = true
                 }
                 
-                Divider().padding(.leading, 68)
+//                Divider().padding(.leading, 68)
                 
                 ToolsRowItem(icon: "megaphone", title: "Promote Tools") {
                     navigationState.navigateToPromoteTools = true
@@ -189,7 +189,7 @@ struct SellerToolsScreen: View {
                     navigationState.navigateToPremier = true
                 }
                 
-                Divider().padding(.leading, 68)
+//                Divider().padding(.leading, 68)
                 
                 ToolsRowItem(icon: "chart.bar", title: "Seller Analytics") {
                     navigationState.navigateToAnalytics = true
@@ -206,7 +206,7 @@ struct SellerToolsScreen: View {
                     navigationState.navigateToShipping = true
                 }
                 
-                Divider().padding(.leading, 68)
+//                Divider().padding(.leading, 68)
                 
                 ToolsRowItem(icon: "chart.line.uptrend.xyaxis", title: "Seller Status") {
                     navigationState.navigateToSellerStatus = true
@@ -287,9 +287,6 @@ struct ToolsRowItem: View {
             HStack(spacing: 16) {
                 // Icon
                 ZStack {
-                    Circle()
-                        .fill(Color(.systemGray6))
-                        .frame(width: 44, height: 44)
                     
                     Image(systemName: icon)
                         .font(.system(size: 20, weight: .medium))
@@ -309,7 +306,7 @@ struct ToolsRowItem: View {
                     .foregroundColor(.gray)
             }
             .padding(.horizontal, 16)
-            .padding(.vertical, 14)
+            .padding(.vertical, 12)
             .background(isPressed ? Color(.systemGray6).opacity(0.5) : Color.clear)
         }
         .buttonStyle(PlainButtonStyle())

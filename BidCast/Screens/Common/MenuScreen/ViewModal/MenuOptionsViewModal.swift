@@ -12,11 +12,33 @@ final class MenuOptionsViewModel: ObservableObject {
     
     // MARK: - Published Response Variables
     @Published var logOutResponse = ResponseModel<MenuOptionsModal>()
+    @Published var sellerHubInfoResponse: ResponseModel<SellerhubInfoModel>?
     @Published var privacyResponse = ResponseModel<MenuOptionsModal>()
     @Published var termsResponse = ResponseModel<MenuOptionsModal>()
     @Published var aboutUsResponse = ResponseModel<MenuOptionsModal>()
     
     @Published var errorMessage: String? = nil
+    
+    // MARK: - Logout
+    func getSellerHubInfo() async throws{
+        do {
+            if let response: ResponseModel<SellerhubInfoModel> = try await APIManager.shared.request(
+                type: APIEndPoint.sellerHubInfo,
+                header: true
+            ) {
+                self.sellerHubInfoResponse = response
+            }
+        } catch(let error) {
+            if let dataError = error as? DataError {
+                self.errorMessage = dataError.getErrorMessage()
+            }
+            else {
+                self.errorMessage = error.localizedDescription
+            }
+            throw error
+        }
+    }
+
     
     // MARK: - Logout
     func logOut() async {

@@ -12,15 +12,14 @@ import SwiftUI
 // MARK: - Seller Hub Section
 struct SellerHubSection: View {
     @State private var isLoadingStats = true
-    @State private var isLoadingShows = true
-    @Binding var showsData: [HomeModel]
+    @Binding var sellerInfo: SellerhubInfoModel?
     
     // Stats data
     @State private var itemsCount = 0
     @State private var revenue = "$0.00"
     @State private var rating = 0.0
-    @State private var onTimeRate = "100%"
-    @State private var defectFreeRate = "100%"
+    @State private var onTimeRate = "100"
+    @State private var defectFreeRate = "100"
     @State private var policyStanding = "Excellent"
     @State private var payouts = "$199.00"
     @State private var totalOrders = "22 Items"
@@ -56,7 +55,7 @@ struct SellerHubSection: View {
             vacationModeCard
             CusNavLink(doNavigate: $navigateToReherseal,
                        destination: RehearsalScreen(showUd: $showID,
-                                                    productListData: $selectedProductData,
+                                                    productListData: .constant([]),
                                                     isLive: isLive,
                                                     backToTabBar: .constant(true),
                                                     showsData: $selectedShowsData))
@@ -151,31 +150,30 @@ struct SellerHubSection: View {
                 }
             }
             
-            if isLoadingShows {
+            if isLoadingStats {
                 // Shimmer Loading
                 VStack(spacing: 12) {
                     ForEach(0..<2) { _ in
                         ShowShimmerCard()
                     }
                 }
-            } else if showsData.isEmpty {
-                // Empty State
-                EmptyShowsCard()
-            } else {
+            }
+            else if let showData = sellerInfo?.upcomingShow {
                 // Shows List (Top 5)
                 VStack(spacing: 12) {
-                    ForEach(showsData.indices,id: \.self) { index in
-                        let data = showsData[index]
-                        ShowCardView(show: data,onTap: {
-                            showID = "\(data.id ?? 0)"
-                            isLive = data.is_live ?? false
-                            selectedProductData = data.products ?? []
-                            selectedShowsData = data
-                            navigateToReherseal = true
-                        })
-                        .padding(.horizontal, -12)
-                    }
+                    ShowCardView(show: showData,onTap: {
+                        showID = "\(showData.id ?? 0)"
+                        isLive = showData.is_live ?? false
+//                        selectedProductData = showData.products ?? []
+                        selectedShowsData = showData
+                        navigateToReherseal = true
+                    })
+                    .padding(.horizontal , -12)
                 }
+            }
+            else  {
+                // Empty State
+                EmptyShowsCard()
             }
         }
     }
@@ -284,18 +282,20 @@ struct SellerHubSection: View {
         // Simulate API call for stats
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             withAnimation {
-                itemsCount = 284
-                revenue = "$5.2K"
-                rating = 4.8
-                isLoadingStats = false
-            }
-        }
-        
-        // Simulate API call for shows
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
-            withAnimation {
-                // Load your shows data here
-                isLoadingShows = false
+//                itemsCount = 284
+//                revenue = "$5.2K"
+//                rating = 4.8
+                if let info = sellerInfo {
+                    itemsCount = info.items ?? 0
+                    revenue = "\(info.revenue ?? 0.0)"
+                    rating = info.rating ?? 0.0
+                    onTimeRate = "\(info.accountHealth?.onTimeScanRate ?? "0")%"
+                    defectFreeRate = "\(info.accountHealth?.defectFreeOrderRate ?? "")%"
+                    policyStanding = "Excellent"
+                    payouts = "$\(info.payouts ?? 0)"
+                    totalOrders = "\(info.totalOrders ?? 0) Items"
+                    isLoadingStats = false
+                }
             }
         }
     }
@@ -1203,7 +1203,6 @@ struct AccountScreen: View {
     @EnvironmentObject var networkMonitor: NetworkMonitor
     
     // MARK: - State Objects
-    @StateObject private var showsViewModel = ShowsViewModel()
     @StateObject private var menuViewModel = MenuOptionsViewModel()
     
     // MARK: - UI State
@@ -1213,9 +1212,13 @@ struct AccountScreen: View {
     @State private var showError = false
     @State private var showhud = false
     @State private var hudMsg = ""
+
+    @State private var isLoading: Bool = false
+    
+    @State private var sellerInfo:SellerhubInfoModel?
     
     // MARK: - Data State
-    @State private var showsData: [HomeModel] = []
+//    @State private var showsData: [HomeModel] = []
     @State private var request = StoreScheduleShowRequest(
         title: "", date: "", time: "", category_id: "",
         auction_type_id: "", product_ids: "", isExplicitContent: false,
@@ -1249,7 +1252,10 @@ struct AccountScreen: View {
                 navigationLinks
             }
             .background(Color.bg.opacity(0.5))
-            .onAppear(perform: loadData)
+            .onAppear {
+                getSellerHubInfo()
+            }
+            
             .bottomSheet(
                 isPresented: $userLogOut,
                 height: screenHeight / 2,
@@ -1257,6 +1263,26 @@ struct AccountScreen: View {
                 showTopIndicator: false,
                 content: { logoutSheet }
             )
+            .bottomSheet(isPresented: $showError,
+                         height: screenHeight * 0.35,
+                         topBarCornerRadius: 25,
+                         contentBackgroundColor: Color(.systemBackground),
+                         topBarBackgroundColor: Color(.systemBackground),
+                         showTopIndicator: false,
+                         onDismiss: {
+                showError = false
+            }, content: {
+                CommonBottomSheet(
+                    sheetType: $alertType,
+                    onPrimaryClick: {
+                        withAnimation { showError = false }
+                    }, onSecondaryClick: {
+                        withAnimation { showError = false }
+                    })
+                .background(Color(.systemBackground))
+                .cornerRadius(25, corners: [.topLeft, .topRight])
+            })
+
         }
     }
     
@@ -1332,7 +1358,7 @@ struct AccountScreen: View {
     
     // MARK: - Seller Hub Section
     private var sellerHubSection: some View {
-        SellerHubSection(showsData: $showsData) {
+        SellerHubSection(sellerInfo: $sellerInfo) {
             navigationState.navigateToTitle = true
         } onCreateProduct: {
             navigationState.navigateToCreateProduct = true
@@ -1505,54 +1531,6 @@ extension AccountScreen {
         }
     }
     
-    // MARK: - Load Data
-    private func loadData() {
-        Task {
-            await fetchUpcomingShows()
-        }
-    }
-    
-    // MARK: - Fetch Upcoming Shows
-    private func fetchUpcomingShows() async {
-        await performAPICalls(
-            isConcurrent: true,
-            onError: { _ in
-                alertType = .sheetType(
-                    icon: .alert,
-                    title: "Error",
-                    message: showsViewModel.errorMessage ?? "",
-                    primaryBtnText: "",
-                    secondaryBtnText: AppString.ok.localized
-                )
-                showError = true
-            },
-            onSuccess: {
-                handleShowsSuccess()
-            }
-        ) {
-            try await showsViewModel.getLiveSHows(
-                param: GetLiveShowsRequest(type: "upcoming", page: "1")
-            )
-        }
-    }
-    
-    // MARK: - Handle Shows Success
-    private func handleShowsSuccess() {
-        guard let response = showsViewModel.scheduledShow,
-              response.status == "success" else {
-            alertType = .sheetType(
-                icon: .alert,
-                title: "Error",
-                message: showsViewModel.errorMessage ?? "",
-                primaryBtnText: "",
-                secondaryBtnText: AppString.ok.localized
-            )
-            showError = true
-            return
-        }
-        showsData = response.data ?? []
-    }
-    
     // MARK: - Handle Logout
     private func handleLogout() {
         Task {
@@ -1571,6 +1549,37 @@ extension AccountScreen {
             }
         }
     }
+    
+    // MARK: - Handle Logout
+    private func getSellerHubInfo() {
+        Task {
+            await performAPICalls(
+                isConcurrent: false,
+                showLoader: true,
+                onError: { error in
+                    alertType = .sheetType(
+                        icon: .alert,
+                        title: "Error",
+                        message: menuViewModel.errorMessage ?? "",
+                        primaryBtnText: AppString.ok.localized,
+                        secondaryBtnText:""
+                    )
+                    showError = true
+                    isLoading = true
+                },
+                onSuccess: {
+                    isLoading = true
+                    if menuViewModel.sellerHubInfoResponse?.status == "success" {
+                        sellerInfo = menuViewModel.sellerHubInfoResponse?.data
+                    }
+                }
+            ) {
+                isLoading = true
+                try await menuViewModel.getSellerHubInfo()
+            }
+        }
+    }
+    
     
     // MARK: - Perform User Logout
     private func performUserLogout() {

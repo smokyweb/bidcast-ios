@@ -27,6 +27,7 @@ enum APIEndPoint{
     case storeFavCategories(param:[String:Any] )
     case auctionType
     case logout
+    case sellerHubInfo
 //    case getInventory(param : InventoryRequest)
     
     case getLesson
@@ -272,6 +273,8 @@ extension APIEndPoint: EndPointType {
             return "get-promote-tools"
         case .logout:
             return "logout"
+        case .sellerHubInfo:
+            return "seller-hub-info"
         case .getLesson:
             return "get-lesson"
         case .getSellingTips:
@@ -666,6 +669,8 @@ extension APIEndPoint: EndPointType {
             
         case .logout:
             return .post
+        case .sellerHubInfo:
+            return .get
         case .resetPassword:
             return .post
         case .changePassword:
@@ -1061,6 +1066,8 @@ extension APIEndPoint: EndPointType {
         case .faq:
             return nil
         case .logout:
+            return nil
+        case .sellerHubInfo:
             return nil
         case .aboutUs:
             return nil
@@ -1465,6 +1472,8 @@ extension APIEndPoint: EndPointType {
         case .auctionType:
             return nil
         case .logout:
+            return nil
+        case .sellerHubInfo:
             return nil
 //        case .getInventory(param: let param):
 //            return nil

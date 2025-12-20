@@ -37,7 +37,7 @@ struct ShowsScreen: View {
     @State private var isActiveOnShowsScreen = false
     @State var viewModel = ShowsViewModel()
     @State var showsData = [HomeModel]()
-    @State private var selectedProductData: [ProductDataModel] = []
+    @State private var selectedProductIds: [String] = []
     @State var selectedShowsData = HomeModel()
     @State var showID = ""
 
@@ -103,7 +103,7 @@ struct ShowsScreen: View {
                                 else {
                                     showID = "\(data.id ?? 0)"
                                     isLive = data.is_live ?? false
-                                    selectedProductData = data.products ?? []
+                                    selectedProductIds = data.product_ids ?? []
                                     selectedShowsData = data
                                     navigateToReherseal = true
                                 }
@@ -130,8 +130,8 @@ struct ShowsScreen: View {
 //            }
             CusNavLink(doNavigate: $navigateToReherseal,
                        destination: RehearsalScreen(showUd: $showID,
-                                                    productListData: $selectedProductData,
-                                                    isLive: isLive, 
+                                                    productListData: .constant([]),
+                                                    isLive: isLive,
                                                     backToTabBar: .constant(true),
                                                     showsData: $selectedShowsData))
             CusNavLink(doNavigate: $navigateToShowAnalytics,

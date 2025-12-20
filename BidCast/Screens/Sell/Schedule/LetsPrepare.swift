@@ -35,7 +35,7 @@ struct LetsPrepare: View,ShowStepDelegate {
     @State var navigateToRehearsal = false
     @State var navigateToReferScreen = false
     @State var navigateForLive = false
-    @State var product = [ProductDataModel]()
+    @State var productIds: [String] = []
     @State var showId : String = ""
     
     private var currentProgress: Double {
@@ -127,11 +127,13 @@ struct LetsPrepare: View,ShowStepDelegate {
                                                     productListData: .constant([ProductDataModel]()),
                                                     comeFromPrepare: true,
                                                     backToTabBar: .constant(true),
-                                                    showsData: .constant(HomeModel())))
+                                                    showsData: .constant(HomeModel())
+                                                   )
+            )
             
             CusNavLink(doNavigate: $navigateForLive,
                        destination: RehearsalScreen(showUd: $showId,
-                                                    productListData:$product,
+                                                    productListData: .constant([ProductDataModel]()),
                                                     comeFromPrepare: true,
                                                     comeForLive: true,
                                                     backToTabBar: $backToTabBar,
@@ -301,8 +303,8 @@ struct LetsPrepare: View,ShowStepDelegate {
                     "auction_type_id": request.auction_type_id,
                 ]
                 let products = request.product_ids.toIntArray()
-                for (index, product) in products.enumerated() {
-                    param["product_ids[\(index)]"] = product
+                for (index, id) in productIds.enumerated() {
+                    param["product_ids[\(index)]"] = id
                 }
                 
                 try await viewModel.storeScheduleShow(param: param,images: [thumbNAil],key: "thumbnail[]")
@@ -349,7 +351,7 @@ struct LetsPrepare: View,ShowStepDelegate {
         SVProgressHUD.dismiss()
         let response = viewModel.storeShowResponse
         if response?.status == "success"{
-            product = response?.data.products ?? [ProductDataModel]()
+            productIds = response?.data.product_ids ?? []
             showId = "\(response?.data.id ?? 0)"
             print("showID \(self.showId)")
             showsData = response?.data ?? HomeModel()
