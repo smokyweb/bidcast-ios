@@ -713,7 +713,7 @@ struct LiveStream: View {
         if isAuctionStartedForCurrentRoom {
             let currentProducts = auctionedProductData
             let product = currentProducts
-            if product != nil{
+            if product != nil && product?.status != "sold"{
                 VStack(alignment: .leading, spacing: 12) {
                     currentProductCard(product: product ?? ProductDataModel1() )
                     biddingControls
@@ -1954,7 +1954,7 @@ extension LiveStream {
         
 //        fetchProducts(for: roomId)
         handleBuyerVerification()
-        socketManagerChat.listenForAuctionStarted { roomId,products,startingBidAmount,requireTime,counterBidTime,suddenDeath in
+        socketManagerChat.listenForAuctionStarted { status,roomId,products,startingBidAmount,requireTime,counterBidTime,suddenDeath in
 //            guard let self else { return }
             print("AUCtioned data")
             print("\(roomId)")
@@ -1963,6 +1963,7 @@ extension LiveStream {
             print("\(requireTime)")
             print("\(counterBidTime)")
             print("\(suddenDeath)")
+            if status != "sold"{
                 self.updateProducts(
                     for: roomId,
                     products: products,
@@ -1971,10 +1972,12 @@ extension LiveStream {
                     counterBidTime: counterBidTime,
                     suddenDeath: suddenDeath
                 )
-
+                
                 // 🔥 unlock product details for this room
                 self.auctionStartedRooms.insert(roomId)
-           
+            }else{
+                self.auctionStartedRooms.remove(roomId)
+            }
         }
     }
 
@@ -2277,7 +2280,8 @@ extension LiveStream {
     }
     private func getProfileData() async {
         guard !liveShowsData.isEmpty else { return }
-        guard let sellerId = liveShowsData[currentIndex].seller?.id, !sellerId.isEmpty else {
+        let sellerId = liveShowsData[currentIndex].products?.first?.user?.id ?? 0
+        guard sellerId != 0 else {
             print("⚠️ Seller ID not available")
             return
         }
@@ -2287,7 +2291,7 @@ extension LiveStream {
             showHud = true
             return
         }
-        await profileViewModel.getProfile(param: ProfileParamRequest(id: sellerId))
+        await profileViewModel.getProfile(param: ProfileParamRequest(id: "\(sellerId)"))
         await SVProgressHUD.dismiss()
         profileSuccess()
     }

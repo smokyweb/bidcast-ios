@@ -1381,7 +1381,7 @@ struct RehearsalScreen: View {
             self.currentPollModel = pollModel
             showPollCard = true
         }
-        socketManager.listenForAuctionStarted { roomId,products,startingBidAmount,requireTime,counterBidTime,suddenDeath in
+        socketManager.listenForAuctionStarted { status,roomId,products,startingBidAmount,requireTime,counterBidTime,suddenDeath in
 //            guard let self else { return }
             print("AUCtioned data")
             print("\(roomId)")
@@ -1390,6 +1390,7 @@ struct RehearsalScreen: View {
             print("\(requireTime)")
             print("\(counterBidTime)")
             print("\(suddenDeath)")
+            if status != "sold"{
                 self.updateProducts(
                     for: roomId,
                     products: products,
@@ -1398,9 +1399,12 @@ struct RehearsalScreen: View {
                     counterBidTime: counterBidTime,
                     suddenDeath: suddenDeath
                 )
-
-//                // 🔥 unlock product details for this room
+                
+                // 🔥 unlock product details for this room
 //                self.auctionStartedRooms.insert(roomId)
+//            }else{
+//                self.auctionStartedRooms.remove(roomId)
+            }
         }
         socketManager.listenForAuctionNextProduct { roomId, product,source in
             print("====get next product for auctioned====")

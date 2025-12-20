@@ -1202,6 +1202,7 @@ extension SocketManagerService {
     }
     func listenForAuctionStarted(
         completion: @escaping (
+            _ status:String,
             _ roomId: String,
             _ products: [ProductDataModel1],
             _ startingBidAmount: String,
@@ -1222,10 +1223,11 @@ extension SocketManagerService {
             }
             
             let startingBidAmount = json["starting_bid_amount"] as? String ?? ""
+            let status = json["status"] as? String ?? ""
             let requireTime = json["require_time"] as? Int ?? 0
             let counterBidTime = json["counter_bid_time"] as? Int ?? 0
             let suddenDeath = json["sudden_death"] as? Bool ?? false
-
+            
             var products: [ProductDataModel1] = []
 
             // ✅ FIX: product is a SINGLE dictionary
@@ -1243,6 +1245,7 @@ extension SocketManagerService {
 
             DispatchQueue.main.async {
                 completion(
+                    status,
                     roomId,
                     products,
                     startingBidAmount,
