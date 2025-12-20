@@ -152,7 +152,7 @@ struct TabbarScreen: View {
             CusNavLink(doNavigate: $navigateToShow, destination: HomeViewScreen(showCategory: .constant(""), comeFromExploreScreen: .constant(false)))
             
 //            CusNavLink(doNavigate: $navigateTolist, destination: CreateProductScreen(requests: .constant(StoreScheduleShowRequest(title: "", date: "", time: "", category_id: "", auction_type_id: "", product_ids: "")), thumbNail: .constant(""), backToPrepare: .constant(false), fromPrepare: .constant(false)))
-            CusNavLink(doNavigate: $navigateToAccountScreen, destination: AccountScreen(isNavFrom: true,comeFromSeller: true))
+            CusNavLink(doNavigate: $navigateToAccountScreen, destination: AccountScreen(comeFromSeller: true, isNavFrom: true))
             CusNavLink(doNavigate: $navigateToSeller, destination: SellerVerificationScreen())
             CusNavLink(doNavigate: $navigateToShipping, destination: CreateAddress())
         }

@@ -566,6 +566,7 @@
 		D68399AD2EB216A000F3BDA7 /* TimerSocketHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68399AC2EB216A000F3BDA7 /* TimerSocketHandler.swift */; };
 		D68399AF2EB216A800F3BDA7 /* RaidSocketHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68399AE2EB216A800F3BDA7 /* RaidSocketHandler.swift */; };
 		D68399B12EB21CB700F3BDA7 /* FollowUnFollowSocketHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68399B02EB21CB700F3BDA7 /* FollowUnFollowSocketHandler.swift */; };
+		D683F6A42EF67653002E4949 /* SellerToolsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D683F6A32EF67653002E4949 /* SellerToolsScreen.swift */; };
 		D68441352EF2D83800D4F587 /* CSVManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68441342EF2D83800D4F587 /* CSVManager.swift */; };
 		D68441372EF2EBD200D4F587 /* AccountHealthScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68441362EF2EBD200D4F587 /* AccountHealthScreen.swift */; };
 		D6888BDF2EDD7F3400202E89 /* VideoPlayerScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6888BDE2EDD7F3400202E89 /* VideoPlayerScreen.swift */; };
@@ -1146,6 +1147,7 @@
 		D68399AC2EB216A000F3BDA7 /* TimerSocketHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerSocketHandler.swift; sourceTree = "<group>"; };
 		D68399AE2EB216A800F3BDA7 /* RaidSocketHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaidSocketHandler.swift; sourceTree = "<group>"; };
 		D68399B02EB21CB700F3BDA7 /* FollowUnFollowSocketHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowUnFollowSocketHandler.swift; sourceTree = "<group>"; };
+		D683F6A32EF67653002E4949 /* SellerToolsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SellerToolsScreen.swift; sourceTree = "<group>"; };
 		D68441342EF2D83800D4F587 /* CSVManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVManager.swift; sourceTree = "<group>"; };
 		D68441362EF2EBD200D4F587 /* AccountHealthScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountHealthScreen.swift; sourceTree = "<group>"; };
 		D6888BDE2EDD7F3400202E89 /* VideoPlayerScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerScreen.swift; sourceTree = "<group>"; };
@@ -1354,6 +1356,7 @@
 				35BDF0362E13C71E00412446 /* View */,
 				35BDF0342E13C6FF00412446 /* ViewModel */,
 				D698ACB42EF569E900D47058 /* SellerSideMenu.swift */,
+				D683F6A32EF67653002E4949 /* SellerToolsScreen.swift */,
 			);
 			path = Account;
 			sourceTree = "<group>";
@@ -4668,6 +4671,7 @@
 				35987D302DE5CE5C00D6C2C9 /* CardCell.swift in Sources */,
 				D4BB99F52DE590D100C1BCBC /* ShippingsModel.swift in Sources */,
 				D4CAEC3E2DE6DC8400705CD7 /* RequirementView.swift in Sources */,
+				D683F6A42EF67653002E4949 /* SellerToolsScreen.swift in Sources */,
 				D4CAEC372DE6D79600705CD7 /* PremierShopViewModel.swift in Sources */,
 				D4E569E92DD49A970005A78E /* AppString.swift in Sources */,
 				355AE97E2DD1FC4900CD3D17 /* SellScreen.swift in Sources */,
