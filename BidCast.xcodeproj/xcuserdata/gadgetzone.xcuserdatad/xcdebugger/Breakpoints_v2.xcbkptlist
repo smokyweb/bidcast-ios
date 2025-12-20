@@ -39,22 +39,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "11F9F9CD-AA4C-4EAF-B700-BF963125B5C4"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "BidCast/Screens/Account/View/SellerHub/Shows/View/RehearsalScreen.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1393"
-            endingLineNumber = "1393"
-            landmarkName = "setupLiveSocketListeners(for:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "BC037A63-E18E-47E8-9918-1D176C3B81B0"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
@@ -62,8 +46,8 @@
             filePath = "BidCast/Screens/Home/Live Stream/View/LiveStream.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1979"
-            endingLineNumber = "1979"
+            startingLineNumber = "1980"
+            endingLineNumber = "1980"
             landmarkName = "joinStreamUsingSocket(roomId:switchStreamType:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -78,9 +62,41 @@
             filePath = "BidCast/Screens/Home/Live Stream/View/LiveStream.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1968"
+            endingLineNumber = "1968"
+            landmarkName = "joinStreamUsingSocket(roomId:switchStreamType:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "993421E6-5DD5-436F-AD13-BB06F06FFBAB"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BidCast/Screens/Home/Live Stream/View/LiveStream.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1967"
             endingLineNumber = "1967"
             landmarkName = "joinStreamUsingSocket(roomId:switchStreamType:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "4A52EC42-554A-4C28-841C-2B847532E0C9"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BidCast/Screens/Home/Live Stream/View/LiveStream.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1765"
+            endingLineNumber = "1765"
+            landmarkName = "setupSocketListeners(for:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
