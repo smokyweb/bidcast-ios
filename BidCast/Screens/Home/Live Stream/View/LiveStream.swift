@@ -1858,18 +1858,18 @@ extension LiveStream {
         winnerProfileImage = image
         winnerAmount = amount
         
-//        let message = "Congratulations! "\(winnerName)" won the bid with an amount of $\(winnerAmount)"
+        let message = "Congratulations! \(winnerName) has won the bid with an amount of $\(winnerAmount)"
         let roomId = liveShowsData[currentIndex].room_id ?? ""
         let userId = UserDefaults.userId
         let userName = UserDefaults.userName
         let userImage = UserDefaults.profileURL
-//        SocketManagerService.shared.sendChat(
-//            roomId: roomId,
-//            message: message,
-//            userId: userId,
-//            userName: userName,
-//            userImage: userImage
-//        )
+        SocketManagerService.shared.sendChat(
+            roomId: roomId,
+            message: message,
+            userId: userId,
+            userName: userName,
+            userImage: userImage
+        )
     }
 
     private func handleBuyerVerification() {
