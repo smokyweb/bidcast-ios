@@ -14,7 +14,7 @@ struct ShowNotesSheet: View {
     @FocusState private var isTextEditorFocused: Bool
     
     var onPost: ((String) -> Void)?
-    
+    var didTapCancel : () -> () = { }
     var body: some View {
         VStack(spacing: 0) {
             // Header
@@ -26,7 +26,7 @@ struct ShowNotesSheet: View {
                 Spacer()
                 
                 Button(action: {
-                    self.dismiss()
+                    didTapCancel()
                 }) {
                     Image(systemName: "xmark")
                         .font(.system(size: 16, weight: .bold))

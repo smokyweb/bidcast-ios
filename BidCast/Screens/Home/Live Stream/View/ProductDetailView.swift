@@ -503,7 +503,7 @@ struct ProductDetailSheet1: View {
         .bottomSheet(isPresented: $showMakeOfferSheet, height: screenHeight * 0.95) {
             MakeOfferBottomSheet(
                 isPresented: $showMakeOfferSheet,
-                listedPrice: Double(productPrice),
+                listedPrice: "\(productPrice)",
                 offerOptions: offerArr,onSendOffer : { text in
                     let text = "\(text ?? 0.0)"
                     Task{

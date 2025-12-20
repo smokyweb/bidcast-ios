@@ -365,3 +365,7 @@ extension ProductDataModel {
 //        processing_category
 //    }
 }
+
+struct ScheduleModel : Codable {
+    var isExists : Bool?
+}

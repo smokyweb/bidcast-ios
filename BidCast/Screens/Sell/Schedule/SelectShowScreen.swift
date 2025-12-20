@@ -9,6 +9,7 @@ import SwiftUI
 import RichText
 import SwiftfulLoadingIndicators
 import AlertToast
+import SVProgressHUD
 
 struct SelectShowScreen: View {
     
@@ -122,11 +123,25 @@ struct SelectShowScreen: View {
                         showhud = true
                         return
                     }
-                    
-                    navigateToAddProduct = true
+                    Task{
+                        SVProgressHUD.show()
+                        let param = checkScheduleRequest(date: request.date, time: request.time)
+                        await viewModel.CheckScheduleShow(param: param)
+                        await SVProgressHUD.dismiss()
+                        if self.viewModel.errorMessage == nil || viewModel.errorMessage == ""{
+                            scheduleSuccess()
+                        }else{
+                            
+                        }
+                    }
+//                    navigateToAddProduct = true
                 }
 //                navigateToSelectCategory = true
             },cornerRadius: 12, btnTextColor: .white)
+            
+            
+            
+            
             CusNavLink(doNavigate: $navigateToAddProduct, destination: CreateProductScreen(requests: $request, thumbNail: $thumbNail,backToPrepare: $backToPrepare,fromPrepare: .constant(false)))
 //            CusNavLink(doNavigate: $navigateToAddProduct, destination: AddProductsScreen(request:$request,thumbNail: $thumbNail,fromPrepare: .constant(false),backToPrepare: $backToPrepare))
            
@@ -137,6 +152,19 @@ struct SelectShowScreen: View {
         .toolbar(.hidden,for: .tabBar)
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
+        }
+    }
+    func scheduleSuccess(){
+        let response = viewModel.checkScheduleResponse
+        if response?.status == "success"{
+            if response?.data.isExists ?? false{
+                showhud = true
+                hudMsg = "Please select another date for scheduling show"
+            }else{
+                navigateToAddProduct = true
+            }
+        }else{
+            
         }
     }
     

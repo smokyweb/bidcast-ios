@@ -23,7 +23,7 @@ struct AuctionSettingsSheet: View {
     let counterBidTimeOptions = [5, 7, 10]
     var onTapCancel : () -> () = { }
     var onStartAuction: ((String, Int, Int, Bool) -> Void)?
-    
+    var onShowToast: ((String) -> Void)?
     var body: some View {
         ZStack {
             VStack(spacing: 0) {
@@ -82,9 +82,10 @@ struct AuctionSettingsSheet: View {
                     // Start Auction Button
                     Button(action: {
                         let bidStarT = Int(startingBid) ?? 0
-                        guard bidStarT > 1 else {
-                            hudMsg = "Please enter bid amount"
-                            showHud = true
+                        guard bidStarT > 0 else {
+//                            hudMsg = "Please enter bid amount"
+//                            showHud = true
+                            onShowToast?("Please enter bid amount")
                             return
                         }
                         onStartAuction?(startingBid, selectedRequiredTime, selectedCounterBidTime, isSuddenDeathEnabled)
@@ -104,6 +105,7 @@ struct AuctionSettingsSheet: View {
                                         )
                                     )
                             )
+                        
                             .shadow(color: Color.black.opacity(0.2), radius: 12, x: 0, y: 4)
                     }
                 }
@@ -122,12 +124,18 @@ struct AuctionSettingsSheet: View {
                     .offset(y: -32)
                 )
             }
+            
         }
         .toast(isPresenting: $showHud) {
-            AlertToast(displayMode: .hud, type: .regular, title: hudMsg)
-        }
+               AlertToast(
+                   displayMode: .hud,
+                   type: .regular,
+                   title: hudMsg
+               )
+           }
         .background(Color(.systemBackground))
         .ignoresSafeArea(.keyboard, edges: .bottom)
+       
     }
     
     // MARK: - Starting Bid Field

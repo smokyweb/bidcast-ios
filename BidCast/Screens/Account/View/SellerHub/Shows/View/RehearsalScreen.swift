@@ -70,6 +70,7 @@ struct RehearsalScreen: View {
     @State private var showPollCard = false
     @State private var currentPollModel: PollModel?
     @State private var remainingTimer: Int?
+    @State var messageList: [ChatMessage] = []
     
     var currentProduct: ProductDataModel1? {
         productData.first /*{ $0.isCurrent }*/
@@ -106,6 +107,7 @@ struct RehearsalScreen: View {
     @EnvironmentObject var networkMonitor: NetworkMonitor
     @State var showhud: Bool = false
     @State var showhudSuccess: Bool = false
+    @State var showhudAlert: Bool = false
     @State var hudMsg: String = ""
     @Binding var backToTabBar : Bool
     
@@ -122,7 +124,7 @@ struct RehearsalScreen: View {
         case .more: return screenHeight * 0.7
         case .promote: return screenHeight * 0.7
         case .clip: return screenHeight * 0.6
-        case .share: return screenHeight * 0.6 // Or screenHeight * 0.5
+        case .share: return screenHeight * 0.8 // Or screenHeight * 0.5
         case .shop: return screenHeight * 0.8
         case .endShow: return screenHeight * 0.3
         default: return screenHeight * 0.65
@@ -697,27 +699,40 @@ struct RehearsalScreen: View {
             }
         )
         
-        .bottomSheet(
-            isPresented: $showPollSheet,
-            height: bottomSheetHeight,
-            topBarCornerRadius: 20,
-            contentBackgroundColor: Color(.systemBackground),
-            topBarBackgroundColor: Color(.systemBackground),
-            showTopIndicator: false,
-            onDismiss: {
-                showPollSheet = false
-            },
-            content: {
-                CreatePollScreen(
-                    isPresented: $showPollSheet,
-                    onCreatePoll: { pollModel in
-                        print(pollModel)
-                        SocketManagerService.shared.createPoll(poll: pollModel)
-                    },
-                    roomId: self.roomId
-                )
-            }
-        )
+//        .bottomSheet(
+//            isPresented: $showPollSheet,
+//            height: bottomSheetHeight,
+//            topBarCornerRadius: 20,
+//            contentBackgroundColor: Color(.systemBackground),
+//            topBarBackgroundColor: Color(.systemBackground),
+//            showTopIndicator: false,
+//            onDismiss: {
+//                showPollSheet = false
+//            },
+//            content: {
+//                CreatePollScreen(
+//                    isPresented: $showPollSheet,
+//                    onCreatePoll: { pollModel in
+//                        print(pollModel)
+//                        SocketManagerService.shared.createPoll(poll: pollModel)
+//                    },
+//                    roomId: self.roomId
+//                )
+//            }
+//        )
+        .sheet(isPresented: $showPollSheet) {
+            CreatePollScreen(
+                isPresented: $showPollSheet,
+                onCreatePoll: { pollModel in
+                    print(pollModel)
+                    SocketManagerService.shared.createPoll(poll: pollModel)
+                },
+                roomId: self.roomId
+            )
+            .presentationDetents([.fraction(0.80)])   // ✅ Bottom-sheet height
+            .presentationCornerRadius(25)              // ✅ Rounded top corners
+            .presentationDragIndicator(.hidden)        // optional
+        }
         
        
 //        .bottomSheet(
@@ -742,11 +757,11 @@ struct RehearsalScreen: View {
 //        )
         .sheet(isPresented: $showLivePollScreen) {
             if let poll = currentPollModel {
-                LivePollHostView(poll: poll) { pollId, rooomId in
-                    print("End Poll")
+                LivePollHostView(poll: poll,onEndPoll: { pollId,roomId in
+                    socketManager.endPoll(pollId: "\(pollId)", roomId: roomId)
                     showPollCard = false
                     showLivePollScreen = false
-                }
+                }) 
                 .presentationDetents([.fraction(0.80)])   // ✅ Bottom-sheet height
                 .presentationCornerRadius(24)              // ✅ Rounded top corners
                 .presentationDragIndicator(.hidden)
@@ -758,7 +773,7 @@ struct RehearsalScreen: View {
             
                 RichTextEditorSheet(
                     onSave: { attributedText in
-                        let richText = attributedText.toHTML()
+                        let richText = attributedText.toHTML().htmlToString
                         showNotes = richText
                         socketManager.sendAddShowNote(roomId: self.roomId, showNote: richText)
                         showNotesEditorSheet = false
@@ -787,6 +802,8 @@ struct RehearsalScreen: View {
                     showNotesSheet = false
                     socketManager.sendAddShowNote(roomId: self.roomId,
                                                   showNote: showNotes)
+                },didTapCancel: {
+                    showNotesSheet = false
                 }
             )
         }
@@ -834,9 +851,13 @@ struct RehearsalScreen: View {
                         counterBidTime: counterTime,
                         suddenDeath: suddenDeath
                     )
-                }
+                },
+                onShowToast: { message in
+                           hudMsg = message
+                    showhudAlert = true
+                       },
             )
-            .presentationDetents([.fraction(0.60)])   // ✅ Bottom-sheet height
+            .presentationDetents([.fraction(0.70)])   // ✅ Bottom-sheet height
             .presentationCornerRadius(25)              // ✅ Rounded top corners
             .presentationDragIndicator(.hidden)        // optional
         }
@@ -978,22 +999,33 @@ struct RehearsalScreen: View {
                         }
                     )
                 case .share:
-                    ShareShowBottomSheetView(
-                        isPresented: $showSellSheet,
-                        showTitle: "John's Live Show",
-                        username: "johnsmith",
-                        showImage: Image("icWatch"),
-                        message: "Live auction starting in 5 minutes! Don’t miss out on exclusive items.",
-                        onShare: { platform in
-                            print("Shared to \(platform)")
-                        },
-                        onSavePDF: {
-                            print("PDF Saved")
-                        },
-                        onShareEmail: {
-                            print("Email sent")
-                        }
-                    )
+//                    ShareShowBottomSheetView(
+//                        isPresented: $showSellSheet,
+//                        showTitle: "John's Live Show",
+//                        username: "johnsmith",
+//                        showImage: Image("icWatch"),
+//                        message: "Live auction starting in 5 minutes! Don’t miss out on exclusive items.",
+//                        onShare: { platform in
+//                            print("Shared to \(platform)")
+//                        }
+//                        
+//                    )
+                    
+                    DynamicShareBottomSheetView(
+                            isPresented: $showSellSheet,
+                            contentType: .show(
+                                title: showsData.title ?? "Live Show",
+                                username: UserDefaults.userName,
+                                imageURL: showsData.thumbnail?.first ?? "",
+                                isLive: isLive,
+                                message: "Join my live auction! Don't miss out."
+                            ),
+                            messageList: messageList,
+                            onSendToChat: { chat, message in
+                                // Prepare chat navigation
+//                                prepareChatNavigationAndSend(for: chat, message: message)
+                            }
+                        )
                     //                          .presentationDetents([.height(500)])
                     .presentationDragIndicator(.visible)
                 case .switchView:
@@ -1124,9 +1156,12 @@ struct RehearsalScreen: View {
             )
         }
         .toast(isPresenting: $showhudSuccess) {
-            AlertToast(displayMode: .hud, type: .regular, title: hudMsg)
+            AlertToast(displayMode: .hud, type:.regular, title: hudMsg)
         }
         .toast(isPresenting: $showhud) {
+            AlertToast(displayMode: .hud, type: .regular, title: hudMsg)
+        }
+        .toast(isPresenting: $showhudAlert) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg)
         }
         .onAppear {
@@ -1385,7 +1420,14 @@ struct RehearsalScreen: View {
             }
             showShopSheet = true
         }
-        
+        FirebaseManager.shared.fetchMessageList(forUserId: "\(UserDefaults.userId)") { messages in
+            DispatchQueue.main.async {
+                self.messageList = messages
+//                self.isLoadingMessages = false
+//                self.showFloatingChat = true
+                
+            }
+        }
         
         
     }

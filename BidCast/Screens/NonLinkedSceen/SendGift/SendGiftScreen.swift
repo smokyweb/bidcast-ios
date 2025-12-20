@@ -42,7 +42,7 @@ struct SendGiftScreen: View {
     var shippingCharges : Int
     var taxAmount : Int
     var sendAsGift : Int = 1
-    var total : Int
+    var total : Double
     
     var body: some View {
         ZStack(alignment: .bottomTrailing) {

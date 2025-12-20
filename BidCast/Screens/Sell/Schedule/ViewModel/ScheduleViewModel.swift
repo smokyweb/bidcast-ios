@@ -20,6 +20,7 @@ final class ScheduleViewModel: ObservableObject {
     @Published var lessonsResponse: ResponseModal<[LessonModel]>?
     @Published var tipsResponse: ResponseModal<TitleTipsModel>?
     @Published var storeShowResponse : ResponseModal<HomeModel>?
+    @Published var checkScheduleResponse : ResponseModal<ScheduleModel>?
     @Published var errorMessage: String? = nil
     @Published var requestType: String = ""
     @Published var isStoreAPIDone = false
@@ -61,6 +62,20 @@ final class ScheduleViewModel: ObservableObject {
                 header: true
             )
             lessonsResponse = response
+        } catch {
+            handle(error: error)
+        }
+    }
+    
+    // MARK: - Get Selling Tips
+    func CheckScheduleShow(param :  checkScheduleRequest) async {
+        requestType = "check"
+        do {
+            let response: ResponseModal<ScheduleModel> = try await APIManager.shared.request(
+                type: APIEndPoint.checkValidShowDate(param: param),
+                header: true
+            )
+            checkScheduleResponse = response
         } catch {
             handle(error: error)
         }

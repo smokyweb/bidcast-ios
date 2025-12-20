@@ -191,7 +191,7 @@ struct BuyNowBottomSheetView: View {
                     shippingCharges: shippingCharges,
                     taxAmount: taxAmount,
                     sendAsGift: 1,
-                    total: Int(subtotal)
+                    total: subtotal
                 )
             )
             if let order = orderDetails {

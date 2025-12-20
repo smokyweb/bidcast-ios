@@ -857,29 +857,31 @@ extension SocketManagerService {
     func createPoll(poll: PollModel) {
         performIfConnected {
             var payload: [String: Any] = [
-//                "poll_id": poll.pollId,
+                "poll_id": poll.pollId,
                 "room_id": poll.roomId,
                 "question": poll.question,
                 "total_votes": poll.totalVotes,
                 "remaining_time": poll.remainingTime,
                 "is_active": poll.isActive
             ]
-            var optionPayload: [[String: Any]] =  []
+
+            var optionPayload: [[String: Any]] = []
+
             for opt in poll.options {
-                optionPayload.append(
-                    [
-                        "text": opt.text,
-                        "vote_count": opt.voteCount,
-                        "percentage": opt.percentage
-                    ]
-                )
+                optionPayload.append([
+                    "text": opt.text.text,          // ✅ String
+                    "vote_count": opt.voteCount,    // ✅ Int
+                    "percentage": opt.percentage    // ✅ Double
+                ])
             }
+
             payload["options"] = optionPayload
-            
+
             socket.emit("create_poll", payload)
             print("📊 Sent create_poll:", payload)
         }
     }
+
     
     // MARK: - 2. Poll Created (Listen)
     

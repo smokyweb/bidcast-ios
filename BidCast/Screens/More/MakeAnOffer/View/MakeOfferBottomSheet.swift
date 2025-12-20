@@ -9,13 +9,25 @@ import SwiftUI
 
 struct MakeOfferBottomSheet: View {
     @Binding var isPresented: Bool
-    var listedPrice: Double
+    var listedPrice: String
     var offerOptions: [Double]
     var onSendOffer: (Double?) -> Void
     @State var discountedPrice : Double?
     @State private var selectedOffer: Double?
     @State private var customOffer: String = ""
     var enteredText : (String) -> () = { _ in}
+    
+    // Computed properties to break up complex expressions
+    private var formattedListedPrice: String {
+        if let price = Double(listedPrice) {
+            return String(format: "%.2f", price)
+        }
+        return listedPrice
+    }
+    
+    private var listedPriceDouble: Double {
+        return Double(listedPrice) ?? 0.0
+    }
 
     var body: some View {
         VStack(spacing: 16) {
@@ -41,35 +53,14 @@ struct MakeOfferBottomSheet: View {
                     .font(.custom(poppinsSemiBold, size: 13.0))
                     .foregroundColor(.gray)
                 Spacer()
-                Text("$\(Int(listedPrice))")
+                Text("$\(formattedListedPrice)")
                     .font(.custom(poppinsSemiBold, size: 13.0))
             }
 
             // Offer Options
             LazyVGrid(columns: [GridItem(), GridItem()], spacing: 12) {
                 ForEach(offerOptions, id: \.self) { offer in
-                    let discount = Int(100 - (offer / listedPrice * 100))
-                    Button {
-                        selectedOffer = offer
-                        customOffer = "\(discount)"
-                        discountedPrice = Double(discount)
-                        
-                    } label: {
-                        VStack {
-                            Text("$ \(Int(offer))  off")
-                                .font(.custom(poppinsBold, size: 14.0))
-                                .foregroundColor(.red)
-                            Text("$ \(discount)")
-                                .font(.custom(poppinsSemiBold, size: 12.0))
-                                .foregroundColor(.gray)
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(selectedOffer == offer ? Color.defaultTheme : Color.gray.opacity(0.3), lineWidth: selectedOffer == offer ? 2 : 1)
-                        )
-                    }
+                    offerButton(for: offer)
                 }
             }
 
@@ -88,9 +79,9 @@ struct MakeOfferBottomSheet: View {
                             .stroke(Color.gray.opacity(0.3), lineWidth: 1)
                     )
                     .onChange(of: customOffer) { newValue in
-                                            enteredText(newValue)
-                                            selectedOffer = nil // Unselect preset if custom entered
-                                        }
+                        enteredText(newValue)
+                        selectedOffer = nil
+                    }
             }
 
             // Info note
@@ -117,11 +108,51 @@ struct MakeOfferBottomSheet: View {
                     .background(Color.defaultTheme)
                     .cornerRadius(20)
             }
-
         }
         .padding()
         .background(Color.white)
         .clipShape(RoundedRectangle(cornerRadius: 20))
+    }
+    
+    // Extract offer button to a separate view
+    @ViewBuilder
+    private func offerButton(for offer: Double) -> some View {
+        let discount = calculateDiscount(offer: offer)
+        var discountedPrice = calculateDiscountedPrice(offer: offer)
         
+        Button {
+            selectedOffer = offer
+            customOffer = String(format: "%.0f", discountedPrice)
+            discountedPrice = discountedPrice
+        } label: {
+            VStack {
+                Text("$\(String(format: "%.0f", offer)) off")
+                    .font(.custom(poppinsBold, size: 14.0))
+                    .foregroundColor(.red)
+                Text("$\(String(format: "%.0f", discountedPrice))")
+                    .font(.custom(poppinsSemiBold, size: 12.0))
+                    .foregroundColor(.gray)
+            }
+            .frame(maxWidth: .infinity)
+            .padding()
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(
+                        selectedOffer == offer ? Color.defaultTheme : Color.gray.opacity(0.3),
+                        lineWidth: selectedOffer == offer ? 2 : 1
+                    )
+            )
+        }
+    }
+    
+    // Helper functions
+    private func calculateDiscount(offer: Double) -> Double {
+        let price = listedPriceDouble
+        guard price > 0 else { return 0 }
+        return 100 - (offer / price * 100)
+    }
+    
+    private func calculateDiscountedPrice(offer: Double) -> Double {
+        return listedPriceDouble - offer
     }
 }

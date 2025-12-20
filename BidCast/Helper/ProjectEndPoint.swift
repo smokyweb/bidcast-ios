@@ -39,6 +39,7 @@ enum APIEndPoint{
     case storeProduct(productId: Int? ,param : [String:Any] )
     case storeAddress(param:AddressRequest)
     case getAddress
+    case checkValidShowDate(param:checkScheduleRequest)
     
     case getMyPurchasedOrder(param: PurchaseOrderRequuest)
     case getPurchasedOrderDetails(param : PurchaseOrderDetailsRequest)
@@ -657,6 +658,8 @@ extension APIEndPoint: EndPointType {
 //            return "product/fetch-by-status?type=\(param.type)&page=\(param.page)"
         case .getPromoteToolDetails(param: let param):
             return "promote-tool-details?filter=\(param.filter)"
+        case .checkValidShowDate(param: let param):
+            return "check-schedule-show"
         }
     }
     
@@ -1040,6 +1043,8 @@ extension APIEndPoint: EndPointType {
 //            return .post
         case .getPromoteToolDetails(param: let param):
             return .get
+        case .checkValidShowDate(param: let param):
+            return .post
         }
     }
     
@@ -1434,6 +1439,8 @@ extension APIEndPoint: EndPointType {
 //            return param
         case .getPromoteToolDetails(param: let param):
             return nil
+        case .checkValidShowDate(param: let param):
+            return param
         }
     }
     
@@ -1802,6 +1809,8 @@ extension APIEndPoint: EndPointType {
 //        case .getItemList(param: let param):
 //            return nil
         case .getPromoteToolDetails(param: let param):
+            return nil
+        case .checkValidShowDate(param: let param):
             return nil
         }
     }

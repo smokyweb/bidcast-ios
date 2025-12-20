@@ -446,6 +446,11 @@ struct AddressRequest : Encodable {
     var phone_number,street_address,pincode,city,state : String
 }
 
+struct checkScheduleRequest : Encodable{
+    var date : String
+    var time : String
+}
+
 struct AddressDefaultParam : Encodable {
     var address_id : String
 }

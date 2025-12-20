@@ -35,7 +35,7 @@ struct PollModel: Codable {
 
 struct LivePollHostView: View {
     @State var poll: PollModel
-    var onEndPoll: ((Int, String) -> Void)?    // (pollId, roomId)
+    var onEndPoll: ((String, String) -> Void)?    // (pollId, roomId)
     
     // Timer
     @State private var timerSubscription: Cancellable? = nil
@@ -45,7 +45,7 @@ struct LivePollHostView: View {
     // Animation namespace (optional for matched animations)
     @Namespace private var ns
     
-    init(poll: PollModel, onEndPoll: ((Int, String) -> Void)? = nil) {
+    init(poll: PollModel, onEndPoll: ((String, String) -> Void)? = nil) {
         _poll = State(initialValue: poll)
         _remainingSeconds = State(initialValue: timerStringToSeconds(poll.remainingTime))
         self.onEndPoll = onEndPoll
@@ -159,7 +159,7 @@ struct LivePollHostView: View {
                     // end poll callback
                     poll.isActive = false
                     stopTimer()
-                    onEndPoll?(poll.pollId, poll.roomId)
+                    onEndPoll?("\(poll.pollId)", poll.roomId)
                 }) {
                     Text("End Poll")
                         .font(.custom(poppinsSemiBold, size: 16))
@@ -174,7 +174,7 @@ struct LivePollHostView: View {
                 .opacity(poll.isActive ? 1 : 0.6)
                 .padding(.bottom, 30)
             }
-            .background(Color(.systemBackground))
+            .background(Color(.white))
             .cornerRadius(18)
         }
         .onAppear {
@@ -211,7 +211,7 @@ struct LivePollHostView: View {
             poll.isActive = false
             stopTimer()
             // Optionally auto-end poll
-            onEndPoll?(poll.pollId, poll.roomId)
+            onEndPoll?("\(poll.pollId)", poll.roomId)
         }
     }
     
@@ -233,7 +233,7 @@ struct OptionRowView: View {
             HStack {
                 Text(option.text.text.capitalizingFirstLetter())
                     .font(.custom(poppinsRegular, size: 14))
-                    .foregroundColor(.primary)
+                    .foregroundColor(.defaultTheme)
                 Spacer()
                 Text("\(option.voteCount) vote" + (option.voteCount == 1 ? "" : "s"))
                     .font(.custom(poppinsRegular, size: 12))
