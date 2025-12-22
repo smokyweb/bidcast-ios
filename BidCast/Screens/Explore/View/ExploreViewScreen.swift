@@ -50,6 +50,8 @@ struct ExploreViewScreen: View {
                 }, count: .constant(0))
             }
             .padding(.horizontal)
+            .padding(.vertical, 4)
+            .background(.white)
             
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 12) {
@@ -77,7 +79,6 @@ struct ExploreViewScreen: View {
                         // NO DATA VIEW
                         NoDataView(message: searchText.isEmpty ? "No categories found" : "No searched categories found")
                             .padding(.top, 40)
-                        
                     } else {
                         // GRID LIST WITH SUBCATEGORIES
                         LazyVStack(spacing: 16) {
@@ -86,10 +87,12 @@ struct ExploreViewScreen: View {
                                 // CATEGORY ROW (3 items)
                                 HStack(spacing: 12) {
                                     ForEach(row, id: \.id) { category in
+                                        let isSelected = expandedCategoryIndex == categoryList.firstIndex(where: { $0.id == category.id })
                                         CategoryCardView(
                                             title: category.name ?? "",
                                             imageURL: category.image ?? "",
-                                            liveCount: category.liveCount ?? 0
+                                            liveCount: category.liveCount ?? 0,
+                                            isSelected: isSelected
                                         )
                                         .onTapGesture {
                                             if let index = categoryList.firstIndex(where: { $0.id == category.id }) {
@@ -97,6 +100,9 @@ struct ExploreViewScreen: View {
                                             }
                                         }
                                     }
+                                    if row.count < 3 {
+                                           Spacer() // keeps items leading
+                                       }
                                 }
                                 
                                 // INLINE SUBCATEGORY VIEW
@@ -111,6 +117,7 @@ struct ExploreViewScreen: View {
                                             isLoading: loadingSubCategoryId == key,
                                             subCategories: subCategoryCache[key] ?? [],
                                             parentCategory: categoryName,
+                                            viewersCount: 0,
                                             onSubCategoryTap: { subCat in
                                                 category = categoryName
                                                 subCategory = subCat.name ?? ""
@@ -129,7 +136,8 @@ struct ExploreViewScreen: View {
                 }
             }
             .padding(.top, 12)
-            .padding(.horizontal, 13)
+            .padding(.horizontal, 12)
+            .background(.backGround)
             
             // Navigation Links
             CusNavLink(doNavigate: $navigateToCategoryDetailScreen,
@@ -138,9 +146,9 @@ struct ExploreViewScreen: View {
                                                    comeFromExploreScreen: $navigateToCategoryDetailScreen))
             CusNavLink(doNavigate: $navigateToNoti, destination: NotificationScreen())
         }
-        .background(.bg.opacity(0.4))
+        .background(.backGround)
         .padding(.bottom, -27)
-        .onAppear {
+        .onFirstAppear {
             Task { await fetchCategory(for: "Recommended") }
         }
     }
@@ -208,7 +216,9 @@ struct ExploreViewScreen: View {
         loadingSubCategoryId = "\(categoryId)"
         
         Task {
+           
             await fetchSubCategories(categoryId: "\(categoryId)", categoryName: categoryName)
+            
         }
     }
     
@@ -216,14 +226,24 @@ struct ExploreViewScreen: View {
         let param = [
             "category_ids": [categoryId]
         ]
+        SVProgressHUD.show()
         await viewModel.getSubCategoryList(param: param)
-        
+        await SVProgressHUD.dismiss()
         if viewModel.subCategoryResponse?.status == "success" {
             let subCats = viewModel.subCategoryResponse?.data ?? []
             
             // SAVE TO CACHE
             if let subCategories = subCats.first?.subcategories {
-                subCategoryCache[categoryId] = subCategories
+                if subCategories.count != 0{
+                    subCategoryCache[categoryId] = subCategories
+                }else{
+                    subCategoryCache[categoryId] = []
+                        expandedCategoryIndex = nil
+                    
+                    category = categoryName
+                    subCategory = ""
+                    navigateToCategoryDetailScreen = true
+                }
             }
             else  {
                 subCategoryCache[categoryId] = []
@@ -256,6 +276,7 @@ struct SubCategoryListView: View {
     let isLoading: Bool
     let subCategories: [SelectedSubCategoryDataModel]
     let parentCategory: String
+    let viewersCount : Int
     let onSubCategoryTap: ((SelectedSubCategoryDataModel) -> Void)?
     
     var body: some View {
@@ -283,25 +304,45 @@ struct SubCategoryListView: View {
     private var subCategoryList: some View {
         VStack(spacing: 8) {
             ForEach(subCategories, id: \.id) { subCategory in
-                SubCategoryRow(subCategory: subCategory)
-                    .onTapGesture {
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            onSubCategoryTap?(subCategory)
-                        }
-                    }
+                SubCategoryRow(viewersCount:viewersCount,subCategory: subCategory,onSubCategoryTap: {
+                   print("SubCategory clicked")
+                    onSubCategoryTap?(subCategory)
+                })
+                
+                    
             }
         }
+       
     }
 }
 
 // MARK: - SubCategory Row
 struct SubCategoryRow: View {
+    let viewersCount: Int
     let subCategory: SelectedSubCategoryDataModel
+    let onSubCategoryTap: () -> Void
+
     @State private var isPressed = false
-    
+
     var body: some View {
+        Button {
+            onSubCategoryTap()
+        } label: {
+            rowContent
+        }
+        .buttonStyle(PlainButtonStyle()) // ✅ prevents default blue tint
+        .scaleEffect(isPressed ? 0.98 : 1.0)
+        .shadow(
+            color: isPressed ? Color.defaultTheme.opacity(0.15) : Color.black.opacity(0.06),
+            radius: isPressed ? 8 : 4,
+            x: 0,
+            y: isPressed ? 4 : 2
+        )
+    }
+
+    private var rowContent: some View {
         HStack(spacing: 12) {
-            // Icon/Image
+            // Image
             AsyncImage(url: URL(string: subCategory.image ?? "")) { phase in
                 switch phase {
                 case .empty:
@@ -313,55 +354,22 @@ struct SubCategoryRow: View {
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 50, height: 50)
                         .clipped()
-                case .failure:
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [
-                                        Color(.systemGray5),
-                                        Color(.systemGray4)
-                                    ]),
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                )
-                            )
-                        
-                        Image(systemName: "photo")
-                            .font(.system(size: 20))
-                            .foregroundColor(.gray.opacity(0.5))
-                    }
-                    .frame(width: 50, height: 50)
-                @unknown default:
-                    EmptyView()
+                default:
+                    placeholder
                 }
             }
             .clipShape(RoundedRectangle(cornerRadius: 12))
-            
+
             // Name
             Text(subCategory.name ?? "Unknown")
                 .font(.custom(poppinsSemiBold, size: 15))
                 .foregroundColor(.primary)
                 .lineLimit(1)
-            
+
             Spacer()
-            
-            // Viewer Count Badge
-            HStack(spacing: 4) {
-                Image(systemName: "eye.fill")
-                    .font(.system(size: 11))
-                    .foregroundColor(.white)
-                
-                Text("0 Viewers")
-                    .font(.custom(poppinsMedium, size: 12))
-                    .foregroundColor(.white)
-            }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 6)
-            .background(
-                Capsule()
-                    .fill(Color.defaultTheme)
-            )
+
+            // Viewer Badge
+            viewersBadge
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
@@ -373,20 +381,33 @@ struct SubCategoryRow: View {
             RoundedRectangle(cornerRadius: 16)
                 .stroke(Color.gray.opacity(0.15), lineWidth: 1)
         )
-        .shadow(
-            color: isPressed ? Color.defaultTheme.opacity(0.15) : Color.black.opacity(0.06),
-            radius: isPressed ? 8 : 4,
-            x: 0,
-            y: isPressed ? 4 : 2
-        )
-        .scaleEffect(isPressed ? 0.98 : 1.0)
-        .onLongPressGesture(minimumDuration: 0.01, pressing: { pressing in
-            withAnimation(.easeInOut(duration: 0.1)) {
-                isPressed = pressing
-            }
-        }, perform: {})
+    }
+
+    private var viewersBadge: some View {
+        HStack(spacing: 4) {
+            Image(systemName: "dot.radiowaves.left.and.right")
+                .foregroundColor(.red)
+                .font(.system(size: 11, weight: .bold))
+
+            Text("\(viewersCount) Viewers")
+                .font(.custom(poppinsMedium, size: 12))
+                .foregroundColor(.black)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 6)
+    }
+
+    private var placeholder: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color(.systemGray5))
+            Image(systemName: "photo")
+                .foregroundColor(.gray.opacity(0.5))
+        }
+        .frame(width: 50, height: 50)
     }
 }
+
 
 // MARK: - SubCategory Shimmer Row
 struct SubCategoryShimmerRow: View {

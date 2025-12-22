@@ -26,7 +26,7 @@ struct AuthTextField: View {
     var isRequiredValue: ((Int) -> Void)?
     var width: CGFloat = screenWidth - 30
     var height: CGFloat = 40
-    var cornerRadius : CGFloat = 8.0
+    var cornerRadius : CGFloat = 19.0
     
      var isForCVV: Bool = false
      var isForExpiry: Bool = false

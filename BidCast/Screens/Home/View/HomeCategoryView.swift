@@ -130,8 +130,10 @@ struct HomeCategoryCardView: View {
         .background(
             LinearGradient(
                 colors: [
-                    isSelected ? Color.yellow.opacity(0.4) : Color.gray.opacity(0.2),
-                    isSelected ? Color.darkYellow.opacity(1.0): Color.gray.opacity(0.7)
+//                    isSelected ? Color.yellow.opacity(0.4) : Color.gray.opacity(0.2),
+//                    isSelected ? Color.darkYellow.opacity(1.0): Color.gray.opacity(0.7)
+                    isSelected ? Color.yellow.opacity(0.4) : Color.white,
+                    isSelected ? Color.darkYellow.opacity(1.0): Color.white,
                 ],
                 startPoint: .top,
                 endPoint: .bottom
@@ -143,7 +145,7 @@ struct HomeCategoryCardView: View {
 //                .strokeBorder(strokeColor, lineWidth: strokeWidth)
 //        )
         .padding(2) 
-        .shadow(color: Color.black.opacity(0.15), radius: 10, x: 0, y: 2)
+        .shadow(color: Color.black.opacity(0.05), radius: 2, x: 0, y: 2)
         .scaleEffect(isSelected ? 1.05 : 1.0) // Add scale animation
         .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isSelected)
         .animation(.easeInOut(duration: 0.2), value: isScrolling)

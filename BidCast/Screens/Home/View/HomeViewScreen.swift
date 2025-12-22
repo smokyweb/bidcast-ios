@@ -86,7 +86,7 @@ struct HomeViewScreen: View {
                     }
                     
                 }
-                SearchBarView(placeholder: "Search") { debouncedText in
+                SearchBarView(placeholder: "What are you looking for?") { debouncedText in
                     if debouncedText == "" { return }
                     self.searchText = debouncedText
                 }
@@ -99,7 +99,8 @@ struct HomeViewScreen: View {
                 )
             }
             .padding(.horizontal,12)
-            .padding(.top, 5)
+            .padding(.vertical, 4)
+            .background(.white)
             
             if !comeFromExploreScreen {
                 ScrollView(.horizontal, showsIndicators: false) {
@@ -151,6 +152,7 @@ struct HomeViewScreen: View {
                         .padding(.leading)
                     }
                 }
+                .background(.backGround)
 //                .padding([.leading,.trailing],18)
                 .padding(.top , 5)
                 
@@ -236,6 +238,7 @@ struct HomeViewScreen: View {
                     .cornerRadius(10)
                 }
             }
+            .background(.backGround)
             .padding([.leading,.trailing],18)
             .padding(.top , 10)
             
@@ -259,6 +262,7 @@ struct HomeViewScreen: View {
             CusNavLink(doNavigate: $navigateToNoti, destination: NotificationScreen())
             CusNavLink(doNavigate: $navigateToCategoryDetailScreen, destination: HomeViewScreen(showCategory:$category,comeFromExploreScreen : $navigateToCategoryDetailScreen))
         }
+        .background(.backGround)
 //        .bottomSheet(
 //            isPresented: $navigateToNoti,
 //            height: screenHeight * 0.8,

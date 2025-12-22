@@ -1419,6 +1419,28 @@ struct RehearsalScreen: View {
     }
     private func handleBidFinalized(for roomId: String, winner: HighestBid?) {
         fetchProducts(for: roomId)
+        
+        let name = winner?.user_name ?? ""
+        let id = Int(winner?.user_id ?? "") ?? 0
+        let image = winner?.user_image ?? ""
+        let amount = winner?.bid_amount ?? ""
+        
+        print("🏁 Bid finalized - Winner: \(name), Amount: \(amount)")
+//        auctionedProductData = nil
+        winnerName = name
+        winnerProfileID = id
+        winnerProfileImage = image
+        winnerAmount = amount
+        
+        let message = "Congratulations! \(winnerName) has won the bid with an amount of $\(winnerAmount)"
+        
+        SocketManagerService.shared.sendChat(
+            roomId: roomId,
+            message: message,
+            userId: id,
+            userName: name,
+            userImage: image
+        )
     }
     
     private func handleCountdownCompletion() {
