@@ -15,6 +15,7 @@ struct MyOrdersScreen: View {
     
     // Enum for the segmented control
     enum Segment: String, CaseIterable, CustomStringConvertible {
+        case all = "All"
         case newOrder = "New Order"
 //        case created = "Created"
         case processing = "Processing"
@@ -46,8 +47,8 @@ struct MyOrdersScreen: View {
             switch self {
             case .newOrder:
                 return "new_order"
-//            case .all:
-//                return "all"
+            case .all:
+                return ""
 //            case .created:
 //                return "created"
             case .processing:
@@ -89,8 +90,8 @@ struct MyOrdersScreen: View {
     @State var ProcessingOrder = ""
     @State var currentPage = 1
     
-    @State private var selected: Segment = .newOrder
-    @State private var selectedTabIndex: Int = Segment.newOrder.index
+    @State private var selected: Segment = .all
+    @State private var selectedTabIndex: Int = Segment.all.index
     
 //    var filteredOrder: [MyOrderModel] {
 //        if searchText.isEmpty {
@@ -261,7 +262,17 @@ extension MyOrdersScreen{
             let param = ProductOrderListingRequest(type: type.apiValue, page: currentPage, search: searchText)
             await viewModel.getMyOrderList(parameters: param)
             await SVProgressHUD.dismiss()
-            getOrderSuccess()
+            if self.viewModel.errorMessage == "" || viewModel.errorMessage == nil{
+                getOrderSuccess()
+            }else{
+                alertType = .sheetType(
+                    icon: .alert,
+                    title: "Error",
+                    message: viewModel.errorMessage?.capitalizingFirstLetter() ?? "",
+                    primaryBtnText: "",
+                    secondaryBtnText: AppString.ok.localized
+                )
+            }
         }
     }
     
@@ -383,7 +394,7 @@ enum MyOrderValue: String, CaseIterable, CustomStringConvertible {
     }
 }
 
-
-#Preview {
-    MyOrdersScreen()
-}
+//
+//#Preview {
+//    MyOrdersScreen()
+//}

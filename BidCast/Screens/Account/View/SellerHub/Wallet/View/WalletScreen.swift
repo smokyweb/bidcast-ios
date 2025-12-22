@@ -100,7 +100,7 @@ struct TransactionRow: View {
 
                 Spacer()
 
-                Text(transaction.total ?? "0.00")
+                Text("$ \(transaction.total ?? "0.00")")
 //                Text("$5.42")
                     .font(.system(size: 17, weight: .semibold))
                     .foregroundColor(Color(red: 0.0, green: 0.7, blue: 0.4))

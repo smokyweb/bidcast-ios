@@ -125,8 +125,8 @@ struct CurrentProductView: View {
                         //                        .font(.custom(poppinsSemiBold, size: 13))
                         //                        .foregroundColor(.white)
                     }
-                    .frame(width: 70, height: 50)
-                    .background(Color.black.opacity(0.3))
+                    .frame(width: 100, height: 50)
+//                    .background(Color.black.opacity(0.3))
                     .cornerRadius(10)
                     
                     

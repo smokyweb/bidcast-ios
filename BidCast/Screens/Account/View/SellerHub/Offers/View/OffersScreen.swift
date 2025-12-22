@@ -46,28 +46,34 @@ struct OffersScreen: View {
                     TwoVerticalLabelCell(dataModel: OffersValue.allCases,
                                          topLabel: { offer in offerCount(for: offer) },
                                          bottomLabel: { $0.description.localized})
-                    ForEach(Array(offerList.enumerated()), id: \.element.id) { i, txn in
-                        ActivityCell(
-                            offerListing: txn,
-                            isFor: "OffersScreen",
-                            onDecline: {
-                                handleOfferAction(offer: txn, newStatus: "rejected")
-                            },
-                            onAccept: {
-                                handleOfferAction(offer: txn, newStatus: "accepted")
-                            },
-                            status: txn.status ?? ""
-                        )
-                        .padding([.leading, .trailing], 15)
-                        .onAppear {
-                            Task {
-                                await handlePagination(index: i)
+                    if offerList.count != 0{
+                        ForEach(Array(offerList.enumerated()), id: \.element.id) { i, txn in
+                            ActivityCell(
+                                offerListing: txn,
+                                isFor: "OffersScreen",
+                                onDecline: {
+                                    handleOfferAction(offer: txn, newStatus: "rejected")
+                                },
+                                onAccept: {
+                                    handleOfferAction(offer: txn, newStatus: "accepted")
+                                },
+                                status: txn.status ?? ""
+                            )
+                            .padding([.leading, .trailing], 15)
+                            .onAppear {
+                                Task {
+                                    await handlePagination(index: i)
+                                }
                             }
                         }
+                    }else{
+                        NoDataView(message: "No Orders found")
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        
+                        
                     }
                 }
                 .padding(.top)
-                
             }
         }
         .background(Color(UIColor.systemGroupedBackground))
@@ -219,7 +225,7 @@ enum OffersValue : String, CaseIterable, CustomStringConvertible{
 }
 
 // MARK: - Preview
-#Preview {
-    OffersScreen()
-}
+//#Preview {
+//    OffersScreen()
+//}
 
