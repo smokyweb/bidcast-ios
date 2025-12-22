@@ -16,23 +16,23 @@ struct ExploreViewScreen: View {
     var viewModel = SelectCategoryViewModel()
     
     @State var selectedCategoryIndex = 0
-    var categoryTitles =  ["Recommended", "Popular", "All"]
+    var categoryTitles = ["Recommended", "Popular", "All"]
     @State var category: String = ""
+    @State var subCategory: String = ""
     @State var navigateToCategoryDetailScreen = false
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
     @State var isLoading: Bool = false
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @State var showError: Bool = false
-    @State var searchText: String = ""  
+    @State var searchText: String = ""
     
     @State var categoryList = [CategoryDataModel]()
     @State var navigateToNoti: Bool = false
     @State var isLoadingAPI: Bool = true
     
     @State private var expandedCategoryIndex: Int? = nil
-    @State private var subCategoryCache: [String: [SubCategoryDataModel]] = [:]
-    @State private var subCategoryLoadingId: String? = nil
+    @State private var subCategoryCache: [String: [SelectedSubCategoryDataModel]] = [:]
     @State var loadingSubCategoryId: String? = nil
     
     var body: some View {
@@ -53,7 +53,7 @@ struct ExploreViewScreen: View {
             
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 12) {
-                  
+                    
                     PillsSelectorView(titles: categoryTitles,
                                       selectedIndex: $selectedCategoryIndex,
                                       backgroundStyle: .pill,
@@ -66,80 +66,65 @@ struct ExploreViewScreen: View {
                     })
                     
                     if isLoadingAPI {
-                        // 1️⃣ FULL CARD SHIMMER
+                        // FULL CARD SHIMMER
                         LazyVGrid(columns: columns, spacing: 16) {
                             ForEach(0..<12, id: \.self) { _ in
                                 CategoryCardFullShimmerView()
                             }
                         }
-
+                        
                     } else if !isLoadingAPI && categoryList.isEmpty {
-                        // 2️⃣ NO DATA VIEW
+                        // NO DATA VIEW
                         NoDataView(message: searchText.isEmpty ? "No categories found" : "No searched categories found")
                             .padding(.top, 40)
-
-                    } else {
-                        // 3️⃣ GRID LIST
-//                        LazyVGrid(columns: columns, spacing: 16) {
-//                            ForEach(categoryList.indices, id: \.self) { ind in
-//                                let id = categoryList[ind].id ?? 0
-//                                let key = String(id)
-//                                
-//                                CategoryCardView(
-//                                    title: categoryList[ind].name ?? "",
-//                                    imageURL: categoryList[ind].image ?? "",
-//                                    liveCount: categoryList[ind].liveCount ?? 0
-//                                )
-//                                .onTapGesture {
-//                                    handleCategoryTap(ind)
-////                                    category = categoryList[ind].name ?? ""
-////                                    navigateToCategoryDetailScreen = true
-//                                }
-//                                if expandedCategoryIndex == ind {
-//                                    SubCategoryExpandableView(
-//                                        isLoading: loadingSubCategoryId == key,
-//                                        subCategories: subCategoryCache[key] ?? []
-//                                    )
-//                                }
-//                            }
-//                        }
-                        LazyVStack(spacing: 16) {
-
-                               ForEach(Array(categoryRows().enumerated()), id: \.offset) { rowIndex, row in
-
-                                   // 🔹 CATEGORY ROW (3 items)
-                                   HStack(spacing: 12) {
-                                       ForEach(row, id: \.id) { category in
-
-                                           CategoryCardView(
-                                               title: category.name ?? "",
-                                               imageURL: category.image ?? "",
-                                               liveCount: category.liveCount ?? 0
-                                           )
-                                           .onTapGesture {
-                                               if let index = categoryList.firstIndex(where: { $0.id == category.id }) {
-                                                   handleCategoryTap(index)
-                                               }
-                                           }
-                                       }
-                                   }
-
-                                   // 🔽 INLINE SUBCATEGORY VIEW (ONLY ONCE PER ROW)
-                                   if let expandedIndex = expandedCategoryIndex,
-                                      expandedIndex / 3 == rowIndex {
-
-                                       let categoryId = categoryList[expandedIndex].id ?? 0
-                                       let key = "\(categoryId)"
-
-                                       SubCategoryExpandableView(
-                                           isLoading: loadingSubCategoryId == key,
-                                           subCategories: subCategoryCache[key] ?? []
-                                       )
-                                       .transition(.opacity.combined(with: .move(edge: .top)))
-                                   }
-                               }
-                           }
                         
+                    } else {
+                        // GRID LIST WITH SUBCATEGORIES
+                        LazyVStack(spacing: 16) {
+                            ForEach(Array(categoryRows().enumerated()), id: \.offset) { rowIndex, row in
+                                
+                                // CATEGORY ROW (3 items)
+                                HStack(spacing: 12) {
+                                    ForEach(row, id: \.id) { category in
+                                        CategoryCardView(
+                                            title: category.name ?? "",
+                                            imageURL: category.image ?? "",
+                                            liveCount: category.liveCount ?? 0
+                                        )
+                                        .onTapGesture {
+                                            if let index = categoryList.firstIndex(where: { $0.id == category.id }) {
+                                                handleCategoryTap(index)
+                                            }
+                                        }
+                                    }
+                                }
+                                
+                                // INLINE SUBCATEGORY VIEW
+                                if let expandedIndex = expandedCategoryIndex,
+                                   expandedIndex / 3 == rowIndex {
+                                    
+                                    let categoryId = categoryList[expandedIndex].id ?? 0
+                                    let key = "\(categoryId)"
+                                    let categoryName = categoryList[expandedIndex].name ?? ""
+                                    if let subCache = subCategoryCache[key], !subCache.isEmpty {
+                                        SubCategoryListView(
+                                            isLoading: loadingSubCategoryId == key,
+                                            subCategories: subCategoryCache[key] ?? [],
+                                            parentCategory: categoryName,
+                                            onSubCategoryTap: { subCat in
+                                                category = categoryName
+                                                subCategory = subCat.name ?? ""
+                                                navigateToCategoryDetailScreen = true
+                                            }
+                                        )
+                                        .transition(.asymmetric(
+                                            insertion: .opacity.combined(with: .move(edge: .top)),
+                                            removal: .opacity
+                                        ))
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -148,7 +133,9 @@ struct ExploreViewScreen: View {
             
             // Navigation Links
             CusNavLink(doNavigate: $navigateToCategoryDetailScreen,
-                       destination: HomeViewScreen(showCategory: $category, comeFromExploreScreen: $navigateToCategoryDetailScreen))
+                       destination: HomeViewScreen(showCategory: $category,
+//                                                   showSubCategory: $subCategory,
+                                                   comeFromExploreScreen: $navigateToCategoryDetailScreen))
             CusNavLink(doNavigate: $navigateToNoti, destination: NotificationScreen())
         }
         .background(.bg.opacity(0.4))
@@ -167,16 +154,13 @@ struct ExploreViewScreen: View {
             return
         }
         isLoadingAPI = true
-//        SVProgressHUD.show()
         categoryList.removeAll()
-
+        
         await viewModel.getCategoryList(param: CategoryRequest(category_id: "", type: tab.lowercased(), search: searchText))
-//        await SVProgressHUD.dismiss()
         success()
     }
     
     func success() {
-
         let response = viewModel.categoryResponse
         if response.status == "success" {
             self.categoryList = response.data ?? []
@@ -192,6 +176,7 @@ struct ExploreViewScreen: View {
             )
         }
     }
+    
     func categoryRows() -> [[CategoryDataModel]] {
         stride(from: 0, to: categoryList.count, by: 3).map {
             Array(categoryList[$0..<min($0 + 3, categoryList.count)])
@@ -199,402 +184,243 @@ struct ExploreViewScreen: View {
     }
     
     func handleCategoryTap(_ index: Int) {
-
         let categoryId = categoryList[index].id ?? 0
-
+        let categoryName = categoryList[index].name ?? ""
+        
         // Collapse if same category tapped again
-        if expandedCategoryIndex == index {
-            expandedCategoryIndex = nil
+        if let expInd = expandedCategoryIndex, expInd == index {
+            withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                expandedCategoryIndex = nil
+            }
             return
         }
-
-        expandedCategoryIndex = index
-
-        // 🔁 USE CACHE IF AVAILABLE
-        if let cachedSubCategories = subCategoryCache["\(categoryId)"] {
-            // Already loaded → do NOT call API
+        
+        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+            expandedCategoryIndex = index
+        }
+        
+        // USE CACHE IF AVAILABLE
+        if let cachedSubCategories = subCategoryCache["\(categoryId)"], !cachedSubCategories.isEmpty {
             print("Using cached subcategories for \(categoryId)")
             return
         }
-
-        // 🚀 Call API only first time
-        subCategoryLoadingId = "\(categoryId)"
+        
         loadingSubCategoryId = "\(categoryId)"
-
+        
         Task {
-            await fetchSubCategories(categoryId: "\(categoryId)")
+            await fetchSubCategories(categoryId: "\(categoryId)", categoryName: categoryName)
         }
     }
     
-    func fetchSubCategories(categoryId: String) async {
+    func fetchSubCategories(categoryId: String, categoryName: String) async {
         let param = [
-            "category_ids":[categoryId]
+            "category_ids": [categoryId]
         ]
         await viewModel.getSubCategoryList(param: param)
         
         if viewModel.subCategoryResponse?.status == "success" {
             let subCats = viewModel.subCategoryResponse?.data ?? []
-
-            // ✅ SAVE TO CACHE
-            subCategoryCache[categoryId] = subCats
+            
+            // SAVE TO CACHE
+            if let subCategories = subCats.first?.subcategories {
+                subCategoryCache[categoryId] = subCategories
+            }
+            else  {
+                subCategoryCache[categoryId] = []
+                    expandedCategoryIndex = nil
+                
+                category = categoryName
+                subCategory = ""
+                navigateToCategoryDetailScreen = true
+            }
+            
+            // If no subcategories, navigate directly to category
+//            if subCats.isEmpty {
+//                DispatchQueue.main.async {
+//                    withAnimation {
+//                        expandedCategoryIndex = nil
+//                    }
+//                    category = categoryName
+//                    subCategory = ""
+//                    navigateToCategoryDetailScreen = true
+//                }
+//            }
         }
-
-        subCategoryLoadingId = nil
+        
         loadingSubCategoryId = nil
     }
-    
-    
 }
 
-struct SubCategoryExpandableView: View {
-
+// MARK: - SubCategory List View
+struct SubCategoryListView: View {
     let isLoading: Bool
-    let subCategories: [SubCategoryDataModel]
-
-    private let maxHeight: CGFloat = 4 * 55   // 4 rows
-
+    let subCategories: [SelectedSubCategoryDataModel]
+    let parentCategory: String
+    let onSubCategoryTap: ((SelectedSubCategoryDataModel) -> Void)?
+    
     var body: some View {
-        VStack {
+        VStack(spacing: 8) {
             if isLoading {
-                ProgressView()
-                    .frame(maxWidth: .infinity, minHeight: 120)
-            } else {
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 12) {
-                        ForEach(subCategories, id: \.id) { sub in
-                            
-                            Text(sub.name ?? "")
-                                .font(.custom(poppinsSemiBold, size: 14.0))
-                                .padding(.vertical, 6)
-                        }
-                    }
-                    .padding()
-                }
-                .frame(maxHeight: maxHeight)
+                loadingView
+            } else if !subCategories.isEmpty {
+                subCategoryList
+
             }
         }
-        .frame(maxWidth: .infinity)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color.white)
-                .shadow(color: .black.opacity(0.08), radius: 6)
-        )
-        .padding(.top, 8)
+        .padding(.vertical, 8)
+    }
+    
+    // MARK: - Loading View
+    private var loadingView: some View {
+        VStack(spacing: 8) {
+            ForEach(0..<2) { _ in
+                SubCategoryShimmerRow()
+            }
+        }
+    }
+    
+    // MARK: - SubCategory List
+    private var subCategoryList: some View {
+        VStack(spacing: 8) {
+            ForEach(subCategories, id: \.id) { subCategory in
+                SubCategoryRow(subCategory: subCategory)
+                    .onTapGesture {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            onSubCategoryTap?(subCategory)
+                        }
+                    }
+            }
+        }
     }
 }
-//
-//
-//struct SubCategoryExpandableView: View {
-//    let isLoading: Bool
-//    let subCategories: [SubCategoryDataModel]
-//    let onSubCategoryTap: ((SubCategoryDataModel) -> Void)?
-//    
-//    private let itemHeight: CGFloat = 60
-//    private let maxVisibleItems: Int = 3
-//    
-//    @State private var selectedSubCategory: SubCategoryDataModel?
-//    @State private var hoveredId: Int?
-//    
-//    private var shouldScroll: Bool {
-//        subCategories.count > maxVisibleItems
-//    }
-//    
-//    private var scrollViewHeight: CGFloat {
-//        let itemsToShow = min(subCategories.count, maxVisibleItems)
-//        return CGFloat(itemsToShow) * itemHeight
-//    }
-//    
-//    init(isLoading: Bool,
-//         subCategories: [SubCategoryDataModel],
-//         onSubCategoryTap: ((SubCategoryDataModel) -> Void)? = nil) {
-//        self.isLoading = isLoading
-//        self.subCategories = subCategories
-//        self.onSubCategoryTap = onSubCategoryTap
-//    }
-//    
-//    var body: some View {
-//        VStack(spacing: 0) {
-//            if isLoading {
-//                loadingView
-//            } else if subCategories.isEmpty {
-//                emptyView
-//            } else {
-//                subCategoryList
-//            }
-//        }
-//        .background(
-//            RoundedRectangle(cornerRadius: 16)
-//                .fill(
-//                    LinearGradient(
-//                        gradient: Gradient(colors: [
-//                            Color.white,
-//                            Color(.systemGray6).opacity(0.3)
-//                        ]),
-//                        startPoint: .topLeading,
-//                        endPoint: .bottomTrailing
-//                    )
-//                )
-//        )
-//        .overlay(
-//            RoundedRectangle(cornerRadius: 16)
-//                .stroke(
-//                    LinearGradient(
-//                        gradient: Gradient(colors: [
-//                            Color.blue.opacity(0.2),
-//                            Color.purple.opacity(0.1)
-//                        ]),
-//                        startPoint: .topLeading,
-//                        endPoint: .bottomTrailing
-//                    ),
-//                    lineWidth: 1.5
-//                )
-//        )
-//        .shadow(color: Color.black.opacity(0.08), radius: 12, x: 0, y: 4)
-//        .shadow(color: Color.blue.opacity(0.05), radius: 20, x: 0, y: 8)
-//        .padding(.horizontal, 12)
-//        .padding(.top, 8)
-//    }
-//    
-//    // MARK: - Loading View
-//    private var loadingView: some View {
-//        VStack(spacing: 16) {
-//            ProgressView()
-//                .scaleEffect(1.2)
-//                .tint(.blue)
-//            
-//            Text("Loading categories...")
-//                .font(.custom("Poppins-Medium", size: 13))
-//                .foregroundColor(.gray)
-//        }
-//        .frame(maxWidth: .infinity)
-//        .frame(height: 120)
-//    }
-//    
-//    // MARK: - Empty View
-//    private var emptyView: some View {
-//        VStack(spacing: 12) {
-//            Image(systemName: "tray")
-//                .font(.system(size: 32))
-//                .foregroundColor(.gray.opacity(0.6))
-//            
-//            Text("No subcategories available")
-//                .font(.custom("Poppins-Medium", size: 14))
-//                .foregroundColor(.gray)
-//        }
-//        .frame(maxWidth: .infinity)
-//        .frame(height: 100)
-//    }
-//    
-//    // MARK: - SubCategory List
-//    private var subCategoryList: some View {
-//        VStack(spacing: 0) {
-//            // Header
-//            HStack {
-//                Text("Subcategories")
-//                    .font(.custom("Poppins-SemiBold", size: 15))
-//                    .foregroundColor(.primary)
-//                
-//                Spacer()
-//                
-//                Text("\(subCategories.count)")
-//                    .font(.custom("Poppins-Medium", size: 13))
-//                    .foregroundColor(.white)
-//                    .frame(minWidth: 28, minHeight: 22)
-//                    .background(
-//                        Capsule()
-//                            .fill(
-//                                LinearGradient(
-//                                    gradient: Gradient(colors: [Color.blue, Color.purple]),
-//                                    startPoint: .leading,
-//                                    endPoint: .trailing
-//                                )
-//                            )
-//                    )
-//            }
-//            .padding(.horizontal, 16)
-//            .padding(.vertical, 12)
-//            .background(Color(.systemGray6).opacity(0.3))
-//            
-//            Divider()
-//            
-//            // Scrollable List
-//            ScrollView(showsIndicators: shouldScroll) {
-//                LazyVStack(spacing: 0) {
-//                    ForEach(Array(subCategories.enumerated()), id: \.element.id) { index, subCategory in
-//                        SubCategoryRow(
-//                            subCategory: subCategory,
-//                            isHovered: hoveredId == subCategory.id,
-//                            isSelected: selectedSubCategory?.id == subCategory.id
-//                        )
-//                        .onTapGesture {
-//                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-//                                selectedSubCategory = subCategory
-//                            }
-//                            onSubCategoryTap?(subCategory)
-//                        }
-//                        .onLongPressGesture(minimumDuration: 0.01, pressing: { isPressing in
-//                            withAnimation(.easeInOut(duration: 0.2)) {
-//                                hoveredId = isPressing ? subCategory.id : nil
-//                            }
-//                        }, perform: {})
-//                        
-//                        if index < subCategories.count - 1 {
-//                            Divider()
-//                                .padding(.leading, 56)
-//                        }
-//                    }
-//                }
-//            }
-//            .frame(height: scrollViewHeight)
-//            
-//            // Scroll Indicator (if scrollable)
-//            if shouldScroll {
-//                HStack {
-//                    Spacer()
-//                    Text("Scroll for more")
-//                        .font(.custom("Poppins-Regular", size: 11))
-//                        .foregroundColor(.gray.opacity(0.7))
-//                    Image(systemName: "chevron.down")
-//                        .font(.system(size: 10, weight: .semibold))
-//                        .foregroundColor(.gray.opacity(0.7))
-//                    Spacer()
-//                }
-//                .padding(.vertical, 8)
-//                .background(Color(.systemGray6).opacity(0.2))
-//            }
-//        }
-//        .clipShape(RoundedRectangle(cornerRadius: 16))
-//    }
-//}
-//
-//// MARK: - SubCategory Row
-//struct SubCategoryRow: View {
-//    let subCategory: SubCategoryDataModel
-//    let isHovered: Bool
-//    let isSelected: Bool
-//    
-//    var body: some View {
-//        HStack(spacing: 12) {
-//            // Icon/Image
-//            ZStack {
-//                Circle()
-//                    .fill(
-//                        LinearGradient(
-//                            gradient: Gradient(colors: [
-//                                isSelected ? Color.blue : Color(.systemGray5),
-//                                isSelected ? Color.purple : Color(.systemGray4)
-//                            ]),
-//                            startPoint: .topLeading,
-//                            endPoint: .bottomTrailing
-//                        )
-//                    )
-//                    .frame(width: 40, height: 40)
-//                
-//                if let imageName = subCategory.imageName, !imageName.isEmpty {
-//                    Image(systemName: imageName)
-//                        .font(.system(size: 18, weight: .semibold))
-//                        .foregroundColor(.white)
-//                } else {
-//                    Text(subCategory.name?.prefix(1).uppercased() ?? "?")
-//                        .font(.custom("Poppins-Bold", size: 18))
-//                        .foregroundColor(.white)
-//                }
-//            }
-//            
-//            // Name and Count
-//            VStack(alignment: .leading, spacing: 2) {
-//                Text(subCategory.name ?? "Unknown")
-//                    .font(.custom("Poppins-SemiBold", size: 14))
-//                    .foregroundColor(isSelected ? .blue : .primary)
-//                    .lineLimit(1)
-//                
-//                if let count = subCategory.itemCount {
-//                    Text("\(count) items")
-//                        .font(.custom("Poppins-Regular", size: 11))
-//                        .foregroundColor(.gray)
-//                }
-//            }
-//            
-//            Spacer()
-//            
-//            // Arrow
-//            Image(systemName: "chevron.right")
-//                .font(.system(size: 14, weight: .semibold))
-//                .foregroundColor(isSelected ? .blue : .gray.opacity(0.4))
-//                .scaleEffect(isHovered ? 1.2 : 1.0)
-//        }
-//        .padding(.horizontal, 16)
-//        .padding(.vertical, 10)
-//        .background(
-//            RoundedRectangle(cornerRadius: 12)
-//                .fill(isHovered ? Color.blue.opacity(0.05) : Color.clear)
-//        )
-//        .overlay(
-//            RoundedRectangle(cornerRadius: 12)
-//                .stroke(isSelected ? Color.blue.opacity(0.3) : Color.clear, lineWidth: 1.5)
-//        )
-//        .scaleEffect(isHovered ? 1.02 : 1.0)
-//        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isHovered)
-//        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isSelected)
-//    }
-//}
-//
-//// MARK: - Data Model
-//struct SubCategoryDataModel: Identifiable, Equatable {
-//    let id: Int?
-//    let name: String?
-//    let imageName: String?
-//    let itemCount: Int?
-//    
-//    static func == (lhs: SubCategoryDataModel, rhs: SubCategoryDataModel) -> Bool {
-//        lhs.id == rhs.id
-//    }
-//}
-//
-//// MARK: - Preview
-//struct SubCategoryExpandableView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        VStack(spacing: 20) {
-//            // Loading State
-//            SubCategoryExpandableView(
-//                isLoading: true,
-//                subCategories: []
-//            )
-//            
-//            // Empty State
-//            SubCategoryExpandableView(
-//                isLoading: false,
-//                subCategories: []
-//            )
-//            
-//            // With 2 Items (No Scroll)
-//            SubCategoryExpandableView(
-//                isLoading: false,
-//                subCategories: [
-//                    SubCategoryDataModel(id: 1, name: "Running Shoes", imageName: "figure.run", itemCount: 45),
-//                    SubCategoryDataModel(id: 2, name: "Basketball Shoes", imageName: "basketball", itemCount: 32)
-//                ],
-//                onSubCategoryTap: { sub in
-//                    print("Tapped: \(sub.name ?? "")")
-//                }
-//            )
-//            
-//            // With 5 Items (Scrollable)
-//            SubCategoryExpandableView(
-//                isLoading: false,
-//                subCategories: [
-//                    SubCategoryDataModel(id: 1, name: "Running Shoes", imageName: "figure.run", itemCount: 45),
-//                    SubCategoryDataModel(id: 2, name: "Basketball Shoes", imageName: "basketball", itemCount: 32),
-//                    SubCategoryDataModel(id: 3, name: "Tennis Shoes", imageName: "tennis.racket", itemCount: 28),
-//                    SubCategoryDataModel(id: 4, name: "Football Boots", imageName: "soccerball", itemCount: 19),
-//                    SubCategoryDataModel(id: 5, name: "Training Shoes", imageName: "figure.strengthtraining.traditional", itemCount: 56)
-//                ],
-//                onSubCategoryTap: { sub in
-//                    print("Tapped: \(sub.name ?? "")")
-//                }
-//            )
-//        }
-//        .padding()
-//        .background(Color(.systemGroupedBackground))
-//    }
-//}
+
+// MARK: - SubCategory Row
+struct SubCategoryRow: View {
+    let subCategory: SelectedSubCategoryDataModel
+    @State private var isPressed = false
+    
+    var body: some View {
+        HStack(spacing: 12) {
+            // Icon/Image
+            AsyncImage(url: URL(string: subCategory.image ?? "")) { phase in
+                switch phase {
+                case .empty:
+                    ShimmerView()
+                        .frame(width: 50, height: 50)
+                case .success(let image):
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 50, height: 50)
+                        .clipped()
+                case .failure:
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [
+                                        Color(.systemGray5),
+                                        Color(.systemGray4)
+                                    ]),
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                        
+                        Image(systemName: "photo")
+                            .font(.system(size: 20))
+                            .foregroundColor(.gray.opacity(0.5))
+                    }
+                    .frame(width: 50, height: 50)
+                @unknown default:
+                    EmptyView()
+                }
+            }
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+            
+            // Name
+            Text(subCategory.name ?? "Unknown")
+                .font(.custom(poppinsSemiBold, size: 15))
+                .foregroundColor(.primary)
+                .lineLimit(1)
+            
+            Spacer()
+            
+            // Viewer Count Badge
+            HStack(spacing: 4) {
+                Image(systemName: "eye.fill")
+                    .font(.system(size: 11))
+                    .foregroundColor(.white)
+                
+                Text("0 Viewers")
+                    .font(.custom(poppinsMedium, size: 12))
+                    .foregroundColor(.white)
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
+            .background(
+                Capsule()
+                    .fill(Color.defaultTheme)
+            )
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color.white)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(Color.gray.opacity(0.15), lineWidth: 1)
+        )
+        .shadow(
+            color: isPressed ? Color.defaultTheme.opacity(0.15) : Color.black.opacity(0.06),
+            radius: isPressed ? 8 : 4,
+            x: 0,
+            y: isPressed ? 4 : 2
+        )
+        .scaleEffect(isPressed ? 0.98 : 1.0)
+        .onLongPressGesture(minimumDuration: 0.01, pressing: { pressing in
+            withAnimation(.easeInOut(duration: 0.1)) {
+                isPressed = pressing
+            }
+        }, perform: {})
+    }
+}
+
+// MARK: - SubCategory Shimmer Row
+struct SubCategoryShimmerRow: View {
+    var body: some View {
+        HStack(spacing: 12) {
+            // Icon Shimmer
+            ShimmerView()
+                .frame(width: 50, height: 50)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+            
+            // Name Shimmer
+            VStack(alignment: .leading, spacing: 4) {
+                ShimmerView()
+                    .frame(width: 120, height: 16)
+                    .clipShape(RoundedRectangle(cornerRadius: 4))
+            }
+            
+            Spacer()
+            
+            // Badge Shimmer
+            ShimmerView()
+                .frame(width: 80, height: 28)
+                .clipShape(Capsule())
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color.white)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(Color.gray.opacity(0.15), lineWidth: 1)
+        )
+        .shadow(color: Color.black.opacity(0.04), radius: 4, x: 0, y: 2)
+    }
+}

@@ -40,14 +40,14 @@ final class SelectCategoryViewModel: ObservableObject {
         do {
             
             if let response: ResponseModal<[SubCategoryDataModel]> = try await APIManager.shared.requestWithJSONBody(type: APIEndPoint.getSubCategories(param: param), parameters: param, modalType: ResponseModal<[SubCategoryDataModel]>?.self, header: true){
-                DispatchQueue.main.async {
+//                DispatchQueue.main.async {
                     self.subCategoryResponse = response
-                }
+//                }
             }
         } catch {
-            DispatchQueue.main.async {
+//            DispatchQueue.main.async {
                 self.errorMessage = error.localizedDescription
-            }
+//            }
         }
     }
     
