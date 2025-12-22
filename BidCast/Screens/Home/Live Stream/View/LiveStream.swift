@@ -973,11 +973,15 @@ struct LiveStream: View {
     private var productStackView: some View {
         VStack {
             if isAuctionStartedForCurrentRoom {
-                 let product = currentProduct
-                if let img = product?.images?.first {
-                    StackedImageView(imageURL: img, totalCount: productData.count) {
-                        print("productStackTapped")
-                        navigateToProductList = true
+                let currentProducts = auctionedProductData ?? ProductDataModel1()
+                let product = currentProducts
+                if product != nil{
+                 
+                    if let img = product.images?.first {
+                        StackedImageView(imageURL: img, totalCount: productData.count) {
+                            print("productStackTapped")
+                            navigateToProductList = true
+                        }
                     }
                 }
             }else{
@@ -1110,12 +1114,20 @@ struct LiveStream: View {
             ) {
                 paymentShippingSheetContent
             }
-            .bottomSheet(
-                isPresented: $maxBidAmountSheet,
-                height: screenHeight * 0.35
-            ) {
+//            .bottomSheet(
+//                isPresented: $maxBidAmountSheet,
+//                height: screenHeight * 0.35
+//            ) {
+//                maxBidSheetContent
+//            }
+            .sheet(isPresented: $maxBidAmountSheet){
                 maxBidSheetContent
+                    .presentationDetents([.fraction(0.35)])
+                    .presentationCornerRadius(25)
+                    .presentationDragIndicator(.hidden)
+                    .interactiveDismissDisabled(true)
             }
+            
             .bottomSheet(
                 isPresented: $showFollowSheet,
                 height: screenHeight / 2.5,
@@ -1247,11 +1259,13 @@ struct LiveStream: View {
     
     @ViewBuilder
     private var maxBidSheetContent: some View {
-        if let currentProduct = productData.first {
+        let currentProducts = auctionedProductData ?? ProductDataModel1()
+        let product = currentProducts
+        if product != nil && product.status != "sold"{
             MaxBidBottomSheet(
                 showParentToast: $showToast,
                 parentToastMessage: $toastMessage,
-                currentProduct: currentProduct,
+                currentProduct: product,
                 onSubmit: { amount in
                     if let amount = Double(amount) {
                         placeBid(amount: amount)
@@ -1262,6 +1276,7 @@ struct LiveStream: View {
                 }
             )
         }
+        
     }
     
     @ViewBuilder
@@ -1853,6 +1868,7 @@ extension LiveStream {
         
         print("🏁 Bid finalized - Winner: \(name), Amount: \(amount)")
         auctionedProductData = nil
+        maxBidAmountSheet = false
         winnerName = name
         winnerProfileID = id
         winnerProfileImage = image

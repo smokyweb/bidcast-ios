@@ -53,7 +53,7 @@ struct MaxBidBottomSheet: View {
                 .padding(.horizontal, 16)
                 .background(Color.white)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 8)
+                    RoundedRectangle(cornerRadius: 19)
                         .stroke(Color.gray.opacity(0.3), lineWidth: 1)
                 )
             
@@ -64,10 +64,10 @@ struct MaxBidBottomSheet: View {
                     return
                 }
                 
-                if let currentPrice = Double(currentProduct.pricing ?? ""), enteredAmount <= currentPrice {
-                    showTemporaryHUD(message: "Please enter an amount greater than current price $\(currentProduct.pricing ?? "")")
-                    return
-                }
+//                if let currentPrice = Double(currentProduct.pricing ?? ""), enteredAmount <= currentPrice {
+//                    showTemporaryHUD(message: "Please enter an amount greater than current price $\(currentProduct.pricing ?? "")")
+//                    return
+//                }
                 
                 onSubmit(bidAmount)
                 bidAmount = ""

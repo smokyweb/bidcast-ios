@@ -26,6 +26,7 @@ struct ShowTitleTips: View {
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
     @Binding var backToPrepare : Bool
+    @Binding var showId : Int
     
     @State private var titleCharCount: Int = 0
     
@@ -157,6 +158,7 @@ struct ShowTitleTips: View {
         .toolbar(.hidden,for: .tabBar)
         .onAppear {
             getTilteTips()
+            
         }
         
     }
@@ -173,9 +175,62 @@ struct ShowTitleTips: View {
             await viewModel.getTitleTips(param: TipParam(type: "title"))
             await SVProgressHUD.dismiss()
             success()
+            if showId != 0{
+                getShowsData()
+            }
         }
     }
-    
+    func getShowsData() {
+        Task {
+            guard Reachability.isConnectedToNetwork() else {
+                hudMsg = "No Internet Connection"
+                showhud = true
+                return
+            }
+            
+            SVProgressHUD.show()
+            let request = getShowRequest(show_id: showId)
+            await viewModel.getScheduleShowData(param: request)
+            await SVProgressHUD.dismiss()
+            if self.viewModel.errorMessage == nil || viewModel.errorMessage == ""{
+                scheduleShowSuccess()
+            }else{
+                showhud = true
+                hudMsg = "Somwthing went wrong"
+            }
+        }
+    }
+    func scheduleShowSuccess(){
+        let dict = viewModel.scheduledShow
+        if dict?.status == "success" {
+            
+//            tip = dict?.data ?? TitleTipsModel()
+            let showData = dict?.data ?? HomeModel()
+            request = StoreScheduleShowRequest(title: showData.title ?? "",
+                                               date: showData.date ?? "",
+                                               time: showData.time ?? "",
+                                               category_id: "\(showData.category_id ?? 0)",
+                                               auction_type_id: "\(showData.auction_type_id ?? 0)",
+                                               product_ids: showData.product_ids?.first ?? "",
+                                               isExplicitContent: showData.is_explicit ?? false,
+                                               discoverablitity: showData.show_discoverability ?? "",
+                                               primaryLanguage: showData.language ?? "",
+                                               repeats: showData.repeat_value ?? "")
+            title = showData.title ?? ""
+//            request.title = title
+//            request.date = showData.date ?? ""
+//            request.time = showData.time ?? ""
+//            request.category_id = "\(showData.category_id ?? 0)"
+//            request.auction_type_id = "\(showData.auction_type_id ?? 0)"
+//            request.isExplicitContent = showData.is_explicit ?? false
+//            request.repeats = showData.repeat_value ?? ""
+//            request.discoverablitity = showData.show_discoverability ?? ""
+            print(request)
+            
+        } else {
+            print("API error: \(dict?.status ?? "")")
+        }
+    }
     
     func success() {
         let dict = viewModel.tipsResponse

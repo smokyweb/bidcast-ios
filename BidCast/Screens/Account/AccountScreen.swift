@@ -8,440 +8,6 @@
 import SwiftUI
 import SVProgressHUD
 
-//// MARK: - Account Screen
-//struct AccountScreen: View {
-//    // MARK: - Environment & Observed Objects
-//    @Environment(\.presentationMode) var presentationMode
-//    @EnvironmentObject var appRootManager: AppRootManager
-//    @EnvironmentObject var networkMonitor: NetworkMonitor
-//    
-//    // MARK: - State Objects
-//    @StateObject private var menuViewModel = MenuOptionsViewModel()
-//    
-//    // MARK: - UI State
-//    @State private var segment: AccountSegment = .sellerHub
-//    @State private var showSideMenu = false
-//    @State private var userLogOut = false
-//    @State private var showError = false
-//    @State private var showhud = false
-//    @State private var hudMsg = ""
-//
-//    @State private var isLoading: Bool = false
-//    
-//    @State private var sellerInfo:SellerhubInfoModel?
-//    
-//    // MARK: - Data State
-////    @State private var showsData: [HomeModel] = []
-//    @State private var request = StoreScheduleShowRequest(
-//        title: "", date: "", time: "", category_id: "",
-//        auction_type_id: "", product_ids: "", isExplicitContent: false,
-//        discoverablitity: "", primaryLanguage: "", repeats: ""
-//    )
-//    
-//    // MARK: - Navigation State
-//    @State private var navigationState = NavigationState()
-//    var isNavFrom : Bool
-//    
-//    // MARK: - Alert State
-//    @State private var alertType: BottomSheetType = .sheetType(
-//        icon: .alert, title: "", message: "",
-//        primaryBtnText: "", secondaryBtnText: ""
-//    )
-//    
-//    // MARK: - Props
-//    let comeFromSeller: Bool
-//    
-//    init(comeFromSeller: Bool = false, isNavFrom: Bool = false) {
-//        self.comeFromSeller = comeFromSeller
-//        self.isNavFrom = isNavFrom
-//    }
-//    
-//    // MARK: - Body
-//    var body: some View {
-////        GeometryReader { geometry in
-//        ZStack {
-//            VStack(spacing: 0) {
-//                headerView
-//                contentView
-//                navigationLinks
-//            }
-//            .background(Color.bg.opacity(0.5))
-//            .onFirstAppear {
-//                getSellerHubInfo()
-//            }
-//            
-////            .bottomSheet(
-////                isPresented: $userLogOut,
-////                height: screenHeight / 2,
-////                topBarCornerRadius: 25,
-////                showTopIndicator: false,
-////                content: {
-////                    LogOutSheet(
-////                        onLogoutClick: {
-////                            withAnimation(.snappy) { userLogOut = false }
-////                            handleLogout()
-////                        },
-////                        onCancelClick: {
-////                            withAnimation(.snappy) { userLogOut = false }
-////                        }
-////                    )
-////                }
-////            )
-//            .bottomSheet(isPresented: $userLogOut, height: screenHeight/2, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: {  }, content: {
-//                LogOutSheet(onLogoutClick: {
-//                    withAnimation(.snappy) { userLogOut = false }
-//                    handleLogout()
-//                    
-//                }, onCancelClick: {
-//                    withAnimation(.snappy) { userLogOut = false }
-//                })
-//            })
-//            
-//            .bottomSheet(isPresented: $showError,
-//                         height: screenHeight * 0.35,
-//                         topBarCornerRadius: 25,
-//                         contentBackgroundColor: Color(.systemBackground),
-//                         topBarBackgroundColor: Color(.systemBackground),
-//                         showTopIndicator: false,
-//                         onDismiss: {
-//                showError = false
-//            }, content: {
-//                CommonBottomSheet(
-//                    sheetType: $alertType,
-//                    onPrimaryClick: {
-//                        withAnimation { showError = false }
-//                    }, onSecondaryClick: {
-//                        withAnimation { showError = false }
-//                    })
-//                .background(Color(.systemBackground))
-//                .cornerRadius(25, corners: [.topLeft, .topRight])
-//            })
-//
-//        }
-//    }
-//    
-//    // MARK: - Header View
-//    private var headerView: some View {
-//        PrimaryHeader(
-//            title: AppString.Account.localized,
-//            isForLogo: !comeFromSeller,
-//            leadingImgArr: [],
-//            trailingImgArr: [.icMenu],
-//            onClickLeading: { _ in
-//                presentationMode.wrappedValue.dismiss()
-//            },
-//            onClickTrailing: { _ in
-//                showSideMenu = true
-//            },
-//            count: .constant(0)
-//        )
-//    }
-//    
-//    // MARK: - Content View
-//    private var contentView: some View {
-//           GeometryReader { geometry in
-//               let safeBottom = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?
-//                   .windows.first?.safeAreaInsets.bottom ?? 0
-//               let contentHeight = max(0, geometry.size.height - safeBottom + 23)
-//               
-//               ScrollView(showsIndicators: false) {
-//                   VStack(alignment: .leading, spacing: 4) {
-//                       VStack {
-//                           profileCell
-//                           segmentControl
-//                       }
-//                       .padding(12)
-//                       .background(.white)
-//                       VStack {
-//                           if segment == .sellerHub {
-//                               sellerHubSection
-//                           } else {
-//                               myAccountSection
-//                           }
-//                       }
-//                       .padding(.horizontal, 8)
-//                   }
-//                   .frame(maxWidth: .infinity)
-//               }
-//               .frame(height: contentHeight, alignment: .top)
-//               .padding(.bottom, safeBottom)
-//           }
-//       }
-//    
-//    // MARK: - Profile Cell
-//    private var profileCell: some View {
-//        ListCell(
-//            image: UserDefaults.profileURL.isEmpty ? "user_dummy" : UserDefaults.profileURL,
-//            title: UserDefaults.fullName.capitalizingFirstLetter(),
-//            vectorImg: .circleEditPencil,
-//            angle: 0.0,
-//            subLabel: UserDefaults.userName.capitalizingFirstLetter(),
-//            titleFontName: poppinsSemiBold,
-//            titleFontSize: 16.0,
-//            subLabelFontName: poppinsRegular,
-//            subLabelFontSize: 12.0,
-//            isVectorImgHidden: false,
-//            onTapMenuCell: {
-//                navigationState.navigateToProfile = true
-//            }
-//        )
-//        .padding(.all, 1)
-//        .frame(height: 80)
-//    }
-//    
-//    // MARK: - Segment Control
-//    private var segmentControl: some View {
-//        CustomSegmentedControl(
-//            preselectedIndex: $segment,
-//            options: AccountSegment.allCases
-//        )
-//    }
-//    
-//    // MARK: - Seller Hub Section
-//    private var sellerHubSection: some View {
-//        SellerHubSection(sellerInfo: $sellerInfo) {
-//            navigationState.navigateToTitle = true
-//        } onCreateProduct: {
-//            navigationState.navigateToCreateProduct = true
-//        } onViewAllShows: {
-//            navigationState.navigateToShows = true
-//        }
-//    }
-//    
-//    // MARK: - My Account Section
-//    private var myAccountSection: some View {
-//        VStack(spacing: 6) {
-//            creditSection
-//            accountTabGrid
-//            accountMenuList
-//        }
-//        .padding(.bottom, 40)
-//    }
-//    
-//    // MARK: - Credit Section
-//    private var creditSection: some View {
-//        TwoVerticalLabelCell(
-//            dataModel: AccountCredit.allCases,
-//            topLabel: { $0.labelOlt },
-//            bottomLabel: { $0.description },
-//            columnsPerRow: 2
-//        )
-//    }
-//    
-//    // MARK: - Account Tab Grid
-//    private var accountTabGrid: some View {
-//        let columns = Array(repeating: GridItem(.flexible(), spacing: 6), count: 2)
-//        
-//        return LazyVGrid(columns: columns, spacing: 6) {
-//            ForEach(Array(AccountTabSection.allCases.enumerated()), id: \.offset) { index, section in
-//                VerticalLabelImageCell(
-//                    topLabel: section.img,
-//                    bottomLabel: section.description
-//                ) {
-//                    handleAccountTabSelection(index: index)
-//                }
-//                .aspectRatio(1, contentMode: .fill)
-//            }
-//        }
-//        .padding(.horizontal, 4)
-//        .padding(.vertical, 6)
-//    }
-//    
-//    // MARK: - Account Menu List
-//    private var accountMenuList: some View {
-//        ForEach(Array(AccountMenuSection.allCases.enumerated()), id: \.offset) { index, section in
-//            AccountMenu(
-//                title: section.description,
-//                textColor: .black,
-//                fontValue: 14.0,
-//                menuImg: section.img,
-//                vectorImg: .icArrowUp,
-//                isSelectable: false,
-//                isTappedSwitch: .constant(false),
-//                onToggle: { _ in },
-//                onTapMenuCell: {
-//                    handleMenuSelection(index: index)
-//                }
-//            )
-//            .frame(height: 70)
-//        }
-//    }
-//    
-////    // MARK: - Logout Sheet
-////    private var logoutSheet: some View {
-////
-////    }
-//    
-//    // MARK: - Navigation Links
-//    private var navigationLinks: some View {
-//        Group {
-//            // Profile & Verification
-//            CusNavLink(doNavigate: $navigationState.navigateToProfile, destination: CompleteProfileScreen())
-//            CusNavLink(doNavigate: $navigationState.navigateToSellerVerification, destination: SellerVerificationScreen())
-//            
-//            // My Account Navigation
-//            myAccountNavigationLinks
-//            
-//            // Seller Hub Navigation
-//            sellerHubNavigationLinks
-//            
-//            // Menu Navigation
-//            CusNavLink(doNavigate: $showSideMenu, destination: SellerToolsScreen())
-//        }
-//    }
-//    
-//    // MARK: - My Account Navigation Links
-//    private var myAccountNavigationLinks: some View {
-//        Group {
-//            CusNavLink(doNavigate: $navigationState.navigateToPayment, destination: PaymentAndShipping_Screen())
-//            CusNavLink(doNavigate: $navigationState.navigateToAddress, destination: AddressesScreen())
-//            CusNavLink(doNavigate: $navigationState.navigateTrustedBuyer, destination: TrustedBuyerScreen(comeFromHome: .constant(false)))
-//            CusNavLink(doNavigate: $navigationState.navigateToPreference, destination: PreferncesScreen())
-//            CusNavLink(doNavigate: $navigationState.navigateToCategory, destination: MultiSelectionCategoryScreen(isNavFrom: "Account"))
-//            CusNavLink(doNavigate: $navigationState.navigateToContactus, destination: ContactUs())
-//            CusNavLink(doNavigate: $navigationState.navigateToSales, destination: SalesTaxScreen())
-//            CusNavLink(doNavigate: $navigationState.navigateToBlockedList, destination: BlockedUserScreen())
-//        }
-//    }
-//    
-//    // MARK: - Seller Hub Navigation Links
-//    private var sellerHubNavigationLinks: some View {
-//        Group {
-//            CusNavLink(doNavigate: $navigationState.navigateToShows, destination: ShowsScreen())
-//            CusNavLink(doNavigate: $navigationState.navigateToInventry, destination: InventoryScreen(selectedProductIDs: .constant([]), selectedProductData: .constant([])))
-//            CusNavLink(doNavigate: $navigationState.navigateToOffers, destination: OffersScreen())
-//            CusNavLink(doNavigate: $navigationState.navigateTips, destination: TipsScreen())
-//            CusNavLink(doNavigate: $navigationState.navigateToWallet, destination: WalletPayoutView())
-//            CusNavLink(doNavigate: $navigationState.navigateToMyOrder, destination: MyOrdersScreen())
-//            CusNavLink(doNavigate: $navigationState.navigateToShipping, destination: ShippingSettingsScreen())
-//            CusNavLink(doNavigate: $navigationState.navigateToSellerStatus, destination: SellerStatusScreen())
-//            CusNavLink(doNavigate: $navigationState.navigateToPromoteTool, destination: PromoteToolsView())
-//            CusNavLink(doNavigate: $navigationState.navigateToSellerTraining, destination: SellingTips(isNavFrom: "Account", backToTabBar: .constant(true)))
-//            CusNavLink(doNavigate: $navigationState.navigateToPremierShop, destination: PremierShopScreen())
-//            CusNavLink(doNavigate: $navigationState.navigateToAnalytics, destination: AnalyticsScreen())
-//            CusNavLink(doNavigate: $navigationState.navigateToAffilateProgram, destination: AffiliateProgramScreen(referralCode: "SELLER2025", stats: ReferralStats(totalReferrals: 0, earnings: 0.0), onShare: {}))
-//            CusNavLink(doNavigate: $navigationState.navigateToCreateProduct, destination: ListProductScreen())
-//            CusNavLink(doNavigate: $navigationState.navigateToTitle, destination: ShowTitleTips(request: $request, fromPrepare: .constant(false), backToPrepare: $navigationState.navigateToTitle))
-//        }
-//    }
-//}
-//
-//// MARK: - Actions Extension
-//extension AccountScreen {
-//    // MARK: - Handle Account Tab Selection
-//    private func handleAccountTabSelection(index: Int) {
-//        withAnimation {
-//            switch index {
-//            case 0: navigationState.navigateToPayment = true
-//            case 1: navigationState.navigateToAddress = true
-//            case 2: navigationState.navigateTrustedBuyer = true
-//            case 4: navigationState.navigateToPreference = true
-//            case 5: navigationState.navigateToCategory = true
-//            default: break
-//            }
-//        }
-//    }
-//    
-//    // MARK: - Handle Menu Selection
-//    private func handleMenuSelection(index: Int) {
-//        switch index {
-//        case 0: openURL("https://backend.bidcast.betaplanets.com/about-us")
-//        case 1: navigationState.navigateToContactus = true
-//        case 2: navigationState.navigateToSales = true
-//        case 3: openURL("https://backend.bidcast.betaplanets.com/terms-condition")
-//        case 4: openURL("https://backend.bidcast.betaplanets.com/privacy-policy")
-//        case 5: openURL("https://backend.bidcast.betaplanets.com/faq")
-//        case 6: navigationState.navigateToBlockedList = true
-//        case 7: userLogOut = true
-//        default: break
-//        }
-//    }
-//    
-//    // MARK: - Open URL
-//    private func openURL(_ urlString: String) {
-//        if let url = URL(string: urlString) {
-//            UIApplication.shared.open(url)
-//        }
-//    }
-//    
-//    // MARK: - Handle Logout
-//    private func handleLogout() {
-//        Task {
-//            guard Reachability.isConnectedToNetwork() else {
-//                hudMsg = "No Internet Connection"
-//                showhud = true
-//                return
-//            }
-//            
-//            SVProgressHUD.show()
-//            await menuViewModel.logOut()
-//            await SVProgressHUD.dismiss()
-//            
-//            if menuViewModel.logOutResponse != nil {
-//                performUserLogout()
-//            }
-//        }
-//    }
-//    
-//    // MARK: - Handle Logout
-//    private func getSellerHubInfo() {
-//        Task {
-//            await performAPICalls(
-//                isConcurrent: false,
-//                showLoader: true,
-//                onError: { error in
-//                    alertType = .sheetType(
-//                        icon: .alert,
-//                        title: "Error",
-//                        message: menuViewModel.errorMessage ?? "",
-//                        primaryBtnText: AppString.ok.localized,
-//                        secondaryBtnText:""
-//                    )
-//                    showError = true
-//                    isLoading = true
-//                },
-//                onSuccess: {
-//                    isLoading = true
-//                    if menuViewModel.sellerHubInfoResponse?.status == "success" {
-//                        sellerInfo = menuViewModel.sellerHubInfoResponse?.data
-//                    }
-//                }
-//            ) {
-//                isLoading = true
-//                try await menuViewModel.getSellerHubInfo()
-//            }
-//        }
-//    }
-//    
-//    
-//    // MARK: - Perform User Logout
-//    private func performUserLogout() {
-//        DispatchQueue.main.async {
-//            // Clear user data
-//            UserDefaults.accessToken.removeAll()
-//            UserDefaults.sellerVerafied.removeAll()
-//            UserDefaults.buyerVerafied.removeAll()
-//            
-//            // Handle remember me
-//            let rememberMe = UserDefaults.rememberMe
-//            if !rememberMe {
-//                _ = KeychainManager.shared.delete(email: UserDefaults.userEmail)
-//                UserDefaults.userEmail = ""
-//                UserDefaults.rememberMe = false
-//            }
-//            
-//            UserDefaults.userId = -1
-//            
-//            // Navigate to authentication
-//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-//                withAnimation {
-//                    appRootManager.currentRoot = .authentication
-//                }
-//            }
-//        }
-//    }
-//}
-
 // MARK: - Account Screen
 struct AccountScreen: View {
     // MARK: - Environment & Observed Objects
@@ -578,7 +144,7 @@ struct AccountScreen: View {
             title: AppString.Account.localized,
             isForLogo: !comeFromSeller,
             leadingImgArr: [],
-            trailingImgArr: [.icMenu],
+            trailingImgArr: [.sMenu],
             onClickLeading: { _ in
                 presentationMode.wrappedValue.dismiss()
             },
@@ -738,7 +304,7 @@ struct AccountScreen: View {
             CusNavLink(doNavigate: $navigationState.navigateToAnalytics, destination: AnalyticsScreen())
             CusNavLink(doNavigate: $navigationState.navigateToAffilateProgram, destination: AffiliateProgramScreen(referralCode: "SELLER2025", stats: ReferralStats(totalReferrals: 0, earnings: 0.0), onShare: {}))
             CusNavLink(doNavigate: $navigationState.navigateToCreateProduct, destination: ListProductScreen())
-            CusNavLink(doNavigate: $navigationState.navigateToTitle, destination: ShowTitleTips(request: $request, fromPrepare: .constant(false), backToPrepare: $navigationState.navigateToTitle))
+            CusNavLink(doNavigate: $navigationState.navigateToTitle, destination: ShowTitleTips(request: $request, fromPrepare: .constant(false), backToPrepare: $navigationState.navigateToTitle, showId: .constant(0)))
         }
     }
 }
@@ -958,15 +524,10 @@ struct SellerHubSection: View {
                     .frame(height: 52)
                     .background(
                         RoundedRectangle(cornerRadius: 26)
-                            .fill(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [.defaultTheme, .defaultTheme.opacity(0.8)]),
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
+                            .fill(.defaultTheme)
+                            
                     )
-                    .shadow(color: .defaultTheme.opacity(0.3), radius: 8, x: 0, y: 4)
+                    .shadow(color: .defaultTheme.opacity(0.1), radius: 1, x: 0, y: 2)
             }
             
             // Create Product Button
@@ -980,10 +541,10 @@ struct SellerHubSection: View {
                         RoundedRectangle(cornerRadius: 26)
                             .fill(Color.defaultTheme.opacity(0.1))
                     )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 26)
-                            .stroke(Color.defaultTheme.opacity(0.3), lineWidth: 1.5)
-                    )
+//                    .overlay(
+//                        RoundedRectangle(cornerRadius: 26)
+////                            .stroke(Color.defaultTheme.opacity(0.3), lineWidth: 1.5)
+//                    )
             }
         }
     }
@@ -1142,7 +703,7 @@ struct SellerHubSection: View {
 //                rating = 4.8
                 if let info = sellerInfo {
                     itemsCount = info.items ?? 0
-                    revenue = "\(info.revenue ?? 0.0)"
+                    revenue = "$\(info.revenue ?? 0.0)"
                     rating = info.rating ?? 0.0
                     onTimeRate = "\(info.accountHealth?.onTimeScanRate ?? "0")"
                     defectFreeRate = "\(info.accountHealth?.defectFreeOrderRate ?? "")"
@@ -1170,7 +731,7 @@ struct StatCardView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 8))
             } else {
                 Text(value)
-                    .font(.custom(poppinsBold, size: 24))
+                    .font(.custom(poppinsBold, size: 20))
                     .foregroundColor(.primary)
             }
             
@@ -1519,3 +1080,437 @@ extension UIDevice {
         return bottom > 0
     }
 }
+
+//// MARK: - Account Screen
+//struct AccountScreen: View {
+//    // MARK: - Environment & Observed Objects
+//    @Environment(\.presentationMode) var presentationMode
+//    @EnvironmentObject var appRootManager: AppRootManager
+//    @EnvironmentObject var networkMonitor: NetworkMonitor
+//
+//    // MARK: - State Objects
+//    @StateObject private var menuViewModel = MenuOptionsViewModel()
+//
+//    // MARK: - UI State
+//    @State private var segment: AccountSegment = .sellerHub
+//    @State private var showSideMenu = false
+//    @State private var userLogOut = false
+//    @State private var showError = false
+//    @State private var showhud = false
+//    @State private var hudMsg = ""
+//
+//    @State private var isLoading: Bool = false
+//
+//    @State private var sellerInfo:SellerhubInfoModel?
+//
+//    // MARK: - Data State
+////    @State private var showsData: [HomeModel] = []
+//    @State private var request = StoreScheduleShowRequest(
+//        title: "", date: "", time: "", category_id: "",
+//        auction_type_id: "", product_ids: "", isExplicitContent: false,
+//        discoverablitity: "", primaryLanguage: "", repeats: ""
+//    )
+//
+//    // MARK: - Navigation State
+//    @State private var navigationState = NavigationState()
+//    var isNavFrom : Bool
+//
+//    // MARK: - Alert State
+//    @State private var alertType: BottomSheetType = .sheetType(
+//        icon: .alert, title: "", message: "",
+//        primaryBtnText: "", secondaryBtnText: ""
+//    )
+//
+//    // MARK: - Props
+//    let comeFromSeller: Bool
+//
+//    init(comeFromSeller: Bool = false, isNavFrom: Bool = false) {
+//        self.comeFromSeller = comeFromSeller
+//        self.isNavFrom = isNavFrom
+//    }
+//
+//    // MARK: - Body
+//    var body: some View {
+////        GeometryReader { geometry in
+//        ZStack {
+//            VStack(spacing: 0) {
+//                headerView
+//                contentView
+//                navigationLinks
+//            }
+//            .background(Color.bg.opacity(0.5))
+//            .onFirstAppear {
+//                getSellerHubInfo()
+//            }
+//
+////            .bottomSheet(
+////                isPresented: $userLogOut,
+////                height: screenHeight / 2,
+////                topBarCornerRadius: 25,
+////                showTopIndicator: false,
+////                content: {
+////                    LogOutSheet(
+////                        onLogoutClick: {
+////                            withAnimation(.snappy) { userLogOut = false }
+////                            handleLogout()
+////                        },
+////                        onCancelClick: {
+////                            withAnimation(.snappy) { userLogOut = false }
+////                        }
+////                    )
+////                }
+////            )
+//            .bottomSheet(isPresented: $userLogOut, height: screenHeight/2, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: {  }, content: {
+//                LogOutSheet(onLogoutClick: {
+//                    withAnimation(.snappy) { userLogOut = false }
+//                    handleLogout()
+//
+//                }, onCancelClick: {
+//                    withAnimation(.snappy) { userLogOut = false }
+//                })
+//            })
+//
+//            .bottomSheet(isPresented: $showError,
+//                         height: screenHeight * 0.35,
+//                         topBarCornerRadius: 25,
+//                         contentBackgroundColor: Color(.systemBackground),
+//                         topBarBackgroundColor: Color(.systemBackground),
+//                         showTopIndicator: false,
+//                         onDismiss: {
+//                showError = false
+//            }, content: {
+//                CommonBottomSheet(
+//                    sheetType: $alertType,
+//                    onPrimaryClick: {
+//                        withAnimation { showError = false }
+//                    }, onSecondaryClick: {
+//                        withAnimation { showError = false }
+//                    })
+//                .background(Color(.systemBackground))
+//                .cornerRadius(25, corners: [.topLeft, .topRight])
+//            })
+//
+//        }
+//    }
+//
+//    // MARK: - Header View
+//    private var headerView: some View {
+//        PrimaryHeader(
+//            title: AppString.Account.localized,
+//            isForLogo: !comeFromSeller,
+//            leadingImgArr: [],
+//            trailingImgArr: [.icMenu],
+//            onClickLeading: { _ in
+//                presentationMode.wrappedValue.dismiss()
+//            },
+//            onClickTrailing: { _ in
+//                showSideMenu = true
+//            },
+//            count: .constant(0)
+//        )
+//    }
+//
+//    // MARK: - Content View
+//    private var contentView: some View {
+//           GeometryReader { geometry in
+//               let safeBottom = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?
+//                   .windows.first?.safeAreaInsets.bottom ?? 0
+//               let contentHeight = max(0, geometry.size.height - safeBottom + 23)
+//
+//               ScrollView(showsIndicators: false) {
+//                   VStack(alignment: .leading, spacing: 4) {
+//                       VStack {
+//                           profileCell
+//                           segmentControl
+//                       }
+//                       .padding(12)
+//                       .background(.white)
+//                       VStack {
+//                           if segment == .sellerHub {
+//                               sellerHubSection
+//                           } else {
+//                               myAccountSection
+//                           }
+//                       }
+//                       .padding(.horizontal, 8)
+//                   }
+//                   .frame(maxWidth: .infinity)
+//               }
+//               .frame(height: contentHeight, alignment: .top)
+//               .padding(.bottom, safeBottom)
+//           }
+//       }
+//
+//    // MARK: - Profile Cell
+//    private var profileCell: some View {
+//        ListCell(
+//            image: UserDefaults.profileURL.isEmpty ? "user_dummy" : UserDefaults.profileURL,
+//            title: UserDefaults.fullName.capitalizingFirstLetter(),
+//            vectorImg: .circleEditPencil,
+//            angle: 0.0,
+//            subLabel: UserDefaults.userName.capitalizingFirstLetter(),
+//            titleFontName: poppinsSemiBold,
+//            titleFontSize: 16.0,
+//            subLabelFontName: poppinsRegular,
+//            subLabelFontSize: 12.0,
+//            isVectorImgHidden: false,
+//            onTapMenuCell: {
+//                navigationState.navigateToProfile = true
+//            }
+//        )
+//        .padding(.all, 1)
+//        .frame(height: 80)
+//    }
+//
+//    // MARK: - Segment Control
+//    private var segmentControl: some View {
+//        CustomSegmentedControl(
+//            preselectedIndex: $segment,
+//            options: AccountSegment.allCases
+//        )
+//    }
+//
+//    // MARK: - Seller Hub Section
+//    private var sellerHubSection: some View {
+//        SellerHubSection(sellerInfo: $sellerInfo) {
+//            navigationState.navigateToTitle = true
+//        } onCreateProduct: {
+//            navigationState.navigateToCreateProduct = true
+//        } onViewAllShows: {
+//            navigationState.navigateToShows = true
+//        }
+//    }
+//
+//    // MARK: - My Account Section
+//    private var myAccountSection: some View {
+//        VStack(spacing: 6) {
+//            creditSection
+//            accountTabGrid
+//            accountMenuList
+//        }
+//        .padding(.bottom, 40)
+//    }
+//
+//    // MARK: - Credit Section
+//    private var creditSection: some View {
+//        TwoVerticalLabelCell(
+//            dataModel: AccountCredit.allCases,
+//            topLabel: { $0.labelOlt },
+//            bottomLabel: { $0.description },
+//            columnsPerRow: 2
+//        )
+//    }
+//
+//    // MARK: - Account Tab Grid
+//    private var accountTabGrid: some View {
+//        let columns = Array(repeating: GridItem(.flexible(), spacing: 6), count: 2)
+//
+//        return LazyVGrid(columns: columns, spacing: 6) {
+//            ForEach(Array(AccountTabSection.allCases.enumerated()), id: \.offset) { index, section in
+//                VerticalLabelImageCell(
+//                    topLabel: section.img,
+//                    bottomLabel: section.description
+//                ) {
+//                    handleAccountTabSelection(index: index)
+//                }
+//                .aspectRatio(1, contentMode: .fill)
+//            }
+//        }
+//        .padding(.horizontal, 4)
+//        .padding(.vertical, 6)
+//    }
+//
+//    // MARK: - Account Menu List
+//    private var accountMenuList: some View {
+//        ForEach(Array(AccountMenuSection.allCases.enumerated()), id: \.offset) { index, section in
+//            AccountMenu(
+//                title: section.description,
+//                textColor: .black,
+//                fontValue: 14.0,
+//                menuImg: section.img,
+//                vectorImg: .icArrowUp,
+//                isSelectable: false,
+//                isTappedSwitch: .constant(false),
+//                onToggle: { _ in },
+//                onTapMenuCell: {
+//                    handleMenuSelection(index: index)
+//                }
+//            )
+//            .frame(height: 70)
+//        }
+//    }
+//
+////    // MARK: - Logout Sheet
+////    private var logoutSheet: some View {
+////
+////    }
+//
+//    // MARK: - Navigation Links
+//    private var navigationLinks: some View {
+//        Group {
+//            // Profile & Verification
+//            CusNavLink(doNavigate: $navigationState.navigateToProfile, destination: CompleteProfileScreen())
+//            CusNavLink(doNavigate: $navigationState.navigateToSellerVerification, destination: SellerVerificationScreen())
+//
+//            // My Account Navigation
+//            myAccountNavigationLinks
+//
+//            // Seller Hub Navigation
+//            sellerHubNavigationLinks
+//
+//            // Menu Navigation
+//            CusNavLink(doNavigate: $showSideMenu, destination: SellerToolsScreen())
+//        }
+//    }
+//
+//    // MARK: - My Account Navigation Links
+//    private var myAccountNavigationLinks: some View {
+//        Group {
+//            CusNavLink(doNavigate: $navigationState.navigateToPayment, destination: PaymentAndShipping_Screen())
+//            CusNavLink(doNavigate: $navigationState.navigateToAddress, destination: AddressesScreen())
+//            CusNavLink(doNavigate: $navigationState.navigateTrustedBuyer, destination: TrustedBuyerScreen(comeFromHome: .constant(false)))
+//            CusNavLink(doNavigate: $navigationState.navigateToPreference, destination: PreferncesScreen())
+//            CusNavLink(doNavigate: $navigationState.navigateToCategory, destination: MultiSelectionCategoryScreen(isNavFrom: "Account"))
+//            CusNavLink(doNavigate: $navigationState.navigateToContactus, destination: ContactUs())
+//            CusNavLink(doNavigate: $navigationState.navigateToSales, destination: SalesTaxScreen())
+//            CusNavLink(doNavigate: $navigationState.navigateToBlockedList, destination: BlockedUserScreen())
+//        }
+//    }
+//
+//    // MARK: - Seller Hub Navigation Links
+//    private var sellerHubNavigationLinks: some View {
+//        Group {
+//            CusNavLink(doNavigate: $navigationState.navigateToShows, destination: ShowsScreen())
+//            CusNavLink(doNavigate: $navigationState.navigateToInventry, destination: InventoryScreen(selectedProductIDs: .constant([]), selectedProductData: .constant([])))
+//            CusNavLink(doNavigate: $navigationState.navigateToOffers, destination: OffersScreen())
+//            CusNavLink(doNavigate: $navigationState.navigateTips, destination: TipsScreen())
+//            CusNavLink(doNavigate: $navigationState.navigateToWallet, destination: WalletPayoutView())
+//            CusNavLink(doNavigate: $navigationState.navigateToMyOrder, destination: MyOrdersScreen())
+//            CusNavLink(doNavigate: $navigationState.navigateToShipping, destination: ShippingSettingsScreen())
+//            CusNavLink(doNavigate: $navigationState.navigateToSellerStatus, destination: SellerStatusScreen())
+//            CusNavLink(doNavigate: $navigationState.navigateToPromoteTool, destination: PromoteToolsView())
+//            CusNavLink(doNavigate: $navigationState.navigateToSellerTraining, destination: SellingTips(isNavFrom: "Account", backToTabBar: .constant(true)))
+//            CusNavLink(doNavigate: $navigationState.navigateToPremierShop, destination: PremierShopScreen())
+//            CusNavLink(doNavigate: $navigationState.navigateToAnalytics, destination: AnalyticsScreen())
+//            CusNavLink(doNavigate: $navigationState.navigateToAffilateProgram, destination: AffiliateProgramScreen(referralCode: "SELLER2025", stats: ReferralStats(totalReferrals: 0, earnings: 0.0), onShare: {}))
+//            CusNavLink(doNavigate: $navigationState.navigateToCreateProduct, destination: ListProductScreen())
+//            CusNavLink(doNavigate: $navigationState.navigateToTitle, destination: ShowTitleTips(request: $request, fromPrepare: .constant(false), backToPrepare: $navigationState.navigateToTitle))
+//        }
+//    }
+//}
+//
+//// MARK: - Actions Extension
+//extension AccountScreen {
+//    // MARK: - Handle Account Tab Selection
+//    private func handleAccountTabSelection(index: Int) {
+//        withAnimation {
+//            switch index {
+//            case 0: navigationState.navigateToPayment = true
+//            case 1: navigationState.navigateToAddress = true
+//            case 2: navigationState.navigateTrustedBuyer = true
+//            case 4: navigationState.navigateToPreference = true
+//            case 5: navigationState.navigateToCategory = true
+//            default: break
+//            }
+//        }
+//    }
+//
+//    // MARK: - Handle Menu Selection
+//    private func handleMenuSelection(index: Int) {
+//        switch index {
+//        case 0: openURL("https://backend.bidcast.betaplanets.com/about-us")
+//        case 1: navigationState.navigateToContactus = true
+//        case 2: navigationState.navigateToSales = true
+//        case 3: openURL("https://backend.bidcast.betaplanets.com/terms-condition")
+//        case 4: openURL("https://backend.bidcast.betaplanets.com/privacy-policy")
+//        case 5: openURL("https://backend.bidcast.betaplanets.com/faq")
+//        case 6: navigationState.navigateToBlockedList = true
+//        case 7: userLogOut = true
+//        default: break
+//        }
+//    }
+//
+//    // MARK: - Open URL
+//    private func openURL(_ urlString: String) {
+//        if let url = URL(string: urlString) {
+//            UIApplication.shared.open(url)
+//        }
+//    }
+//
+//    // MARK: - Handle Logout
+//    private func handleLogout() {
+//        Task {
+//            guard Reachability.isConnectedToNetwork() else {
+//                hudMsg = "No Internet Connection"
+//                showhud = true
+//                return
+//            }
+//
+//            SVProgressHUD.show()
+//            await menuViewModel.logOut()
+//            await SVProgressHUD.dismiss()
+//
+//            if menuViewModel.logOutResponse != nil {
+//                performUserLogout()
+//            }
+//        }
+//    }
+//
+//    // MARK: - Handle Logout
+//    private func getSellerHubInfo() {
+//        Task {
+//            await performAPICalls(
+//                isConcurrent: false,
+//                showLoader: true,
+//                onError: { error in
+//                    alertType = .sheetType(
+//                        icon: .alert,
+//                        title: "Error",
+//                        message: menuViewModel.errorMessage ?? "",
+//                        primaryBtnText: AppString.ok.localized,
+//                        secondaryBtnText:""
+//                    )
+//                    showError = true
+//                    isLoading = true
+//                },
+//                onSuccess: {
+//                    isLoading = true
+//                    if menuViewModel.sellerHubInfoResponse?.status == "success" {
+//                        sellerInfo = menuViewModel.sellerHubInfoResponse?.data
+//                    }
+//                }
+//            ) {
+//                isLoading = true
+//                try await menuViewModel.getSellerHubInfo()
+//            }
+//        }
+//    }
+//
+//
+//    // MARK: - Perform User Logout
+//    private func performUserLogout() {
+//        DispatchQueue.main.async {
+//            // Clear user data
+//            UserDefaults.accessToken.removeAll()
+//            UserDefaults.sellerVerafied.removeAll()
+//            UserDefaults.buyerVerafied.removeAll()
+//
+//            // Handle remember me
+//            let rememberMe = UserDefaults.rememberMe
+//            if !rememberMe {
+//                _ = KeychainManager.shared.delete(email: UserDefaults.userEmail)
+//                UserDefaults.userEmail = ""
+//                UserDefaults.rememberMe = false
+//            }
+//
+//            UserDefaults.userId = -1
+//
+//            // Navigate to authentication
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+//                withAnimation {
+//                    appRootManager.currentRoot = .authentication
+//                }
+//            }
+//        }
+//    }
+//}

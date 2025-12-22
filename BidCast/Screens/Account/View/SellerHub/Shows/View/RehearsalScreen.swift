@@ -530,8 +530,9 @@ struct RehearsalScreen: View {
                                         )
                                         
                                         
-                                        if !commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                                            Button(action: {
+                                       
+                                        Button(action: {
+                                            if !commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                                                 let roomId = self.roomId
                                                 //                                            ZIMChatManager.shared.sendMessage(message: commentText,roomId: roomId,image: UserDefaults.profileURL,name: UserDefaults.fullName)
                                                 let userId = UserDefaults.userId
@@ -539,16 +540,17 @@ struct RehearsalScreen: View {
                                                 let userImage = UserDefaults.profileURL
                                                 SocketManagerService.shared.sendChat(roomId: roomId, message: commentText, userId: userId, userName: userName, userImage: userImage)
                                                 commentText = ""
-                                            }) {
-                                                Image(systemName: "chevron.right")
-                                                    .resizable()
-                                                    .frame(width: 16, height: 16)
-                                                    .foregroundColor(.white)
-                                                    .padding(10)
                                             }
-                                            .transition(.opacity)
-                                            .animation(.easeInOut(duration: 0.2), value: commentText)
+                                        }) {
+                                            Image(systemName: "chevron.right")
+                                                .resizable()
+                                                .frame(width: 12, height: 12)
+                                                .foregroundColor(.white)
+                                                .padding(10)
                                         }
+                                        .transition(.opacity)
+                                        .animation(.easeInOut(duration: 0.2), value: commentText)
+                                        
                                     }
                                     
                                 }

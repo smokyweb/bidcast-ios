@@ -703,6 +703,11 @@ struct FundTransferRequest : Encodable {
     var amount : Int
 }
 
+struct getShowRequest : Encodable {
+    var show_id : Int
+}
+
+
 struct UpdateProfileRequest : Encodable {
     var first_name  : String
     var last_name : String

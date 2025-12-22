@@ -12,6 +12,7 @@ import SwiftUI
 struct ShowCardView: View {
     let show: HomeModel?
     var onTap : () -> () = { }
+    var onTapMenu : () -> () = { }
     var body: some View {
         HStack {
             
@@ -35,7 +36,22 @@ struct ShowCardView: View {
                 }
             }
             Spacer()
-            Image(systemName: "ellipsis")
+            Menu {
+                Button("Edit") {
+                    print("Edit tapped")
+                    onTapMenu()
+                }
+
+            } label: {
+                Image(systemName: "ellipsis")
+                    .resizable()
+                    .scaledToFit()
+                    .foregroundColor(.black)
+                    .padding(12)
+                    .frame(width: 50, height: 32)
+                    .font(.custom(poppinsSemiBold, size: 32))
+                    .fontWeight(.semibold)
+            }
         }
         .padding()
         .background(Color.white)

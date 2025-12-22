@@ -210,6 +210,7 @@ enum APIEndPoint{
     
     //MARK: - V1
     case getProduct(param:ProductRequest)
+    case getScheduleShow(param:getShowRequest)
 //    case getUserProduct(param : UserProductRequest)
 //    case getItemList(param: ItemListRequest)
     
@@ -660,6 +661,8 @@ extension APIEndPoint: EndPointType {
             return "promote-tool-details?filter=\(param.filter)"
         case .checkValidShowDate(param: let param):
             return "check-schedule-show"
+        case .getScheduleShow(param: let param):
+            return "get-show-details-by-id?show_id=\(param.show_id)"
         }
     }
     
@@ -1045,6 +1048,8 @@ extension APIEndPoint: EndPointType {
             return .get
         case .checkValidShowDate(param: let param):
             return .post
+        case .getScheduleShow(param: let param):
+            return .get
         }
     }
     
@@ -1441,6 +1446,8 @@ extension APIEndPoint: EndPointType {
             return nil
         case .checkValidShowDate(param: let param):
             return param
+        case .getScheduleShow(param: let param):
+            return nil
         }
     }
     
@@ -1811,6 +1818,8 @@ extension APIEndPoint: EndPointType {
         case .getPromoteToolDetails(param: let param):
             return nil
         case .checkValidShowDate(param: let param):
+            return nil
+        case .getScheduleShow(param: let param):
             return nil
         }
     }

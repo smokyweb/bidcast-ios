@@ -139,7 +139,7 @@ struct LetsPrepare: View,ShowStepDelegate {
                                                     backToTabBar: $backToTabBar,
                                                     showsData: $showsData ))
             
-            CusNavLink(doNavigate: $navigateToshowTitle, destination: ShowTitleTips(request : $request,fromPrepare:.constant(true),backToPrepare: $navigateToshowTitle, delegate: self))
+            CusNavLink(doNavigate: $navigateToshowTitle, destination: ShowTitleTips(request : $request,fromPrepare:.constant(true),backToPrepare: $navigateToshowTitle, showId: .constant(0), delegate: self))
             CusNavLink(doNavigate: $navigateToReferScreen, destination: ReferEarnScreen())
             
             

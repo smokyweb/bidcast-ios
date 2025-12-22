@@ -517,7 +517,7 @@ struct ProfileScreen: View {
             profileData = response.data ?? ProfileModel()
             isFollowing = profileData.is_following ?? false
             profileId = profileData.id ?? 0
-            userName = response.data?.username ?? ""
+            userName = response.data?.username ?? "\(response.data?.name ?? "")"
             userImage = response.data?.profile_image ?? ""
 //            if !isForFollow{
 //                Task{
@@ -704,85 +704,8 @@ struct ProfileHeaderView: View {
                 }
             }
             
-            // Tap outside to dismiss menu
-            if showMoreMenu {
-                Color.black.opacity(0.001)
-                    .ignoresSafeArea()
-                    .onTapGesture {
-                        withAnimation {
-                            showMoreMenu = false
-                        }
-                    }
-                    .zIndex(1)
-            }
-            
-            // More menu
-            if showMoreMenu {
-                VStack(alignment: .leading, spacing: 0) {
-                    Button(action: {
-                        showMoreMenu = false
-                        navigateToRating = true
-                    }) {
-                        Text("Rate Seller")
-                            .font(.custom(poppinsRegular, size: 14))
-                            .foregroundColor(.black)
-                            .padding(.vertical, 12)
-                            .padding(.horizontal, 16)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    }
-                    
-                    Divider()
-                    
-                    Button(action: {
-                        showMoreMenu = false
-                        Task{
-                            guard Reachability.isConnectedToNetwork() else {
-                                hudMsg = "No Internet Connection"
-                                showhud = true
-                                return
-                            }
-                            SVProgressHUD.show()
-                            let param = BlockUserRequest(blocked_id: Int(sellerID) ?? 0)
-                            await self.viewModel.blockUser(param: param)
-                            await SVProgressHUD.dismiss()
-                            blockSuccess()
-                        }
-                    }) {
-                        Text("Block Seller")
-                            .font(.custom(poppinsRegular, size: 14))
-                            .foregroundColor(.black)
-                            .padding(.vertical, 12)
-                            .padding(.horizontal, 16)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    }
-                    
-                    Divider()
-                    
-                    Button(action: {
-                        showMoreMenu = false
-                        // Handle Report
-                        onTapMore()
-                    }) {
-                        Text("Report")
-                            .font(.custom(poppinsRegular, size: 14))
-                            .foregroundColor(.black)
-                            .padding(.vertical, 12)
-                            .padding(.horizontal, 16)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    }
-                }
-                .background(Color.white)
-                .cornerRadius(12)
-                .shadow(radius: 8)
-                .frame(width: 180)
-                .padding(.top, 80) // Align under button
-                .padding(.trailing, 16)
-                .frame(maxWidth: .infinity, alignment: .topTrailing)
-                .transition(.opacity.combined(with: .move(edge: .top)))
-                .zIndex(2)
-            }
         }
-        .frame(height: 220)
+//        .frame(height: 220)
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }
@@ -827,11 +750,30 @@ struct ProfileHeaderView: View {
                             .fontWeight(.semibold)
                     }
                     
-                    Button(action: {
-                        withAnimation {
-                            showMoreMenu.toggle()
+                    Menu {
+                        Button("Rate Seller") {
+                            navigateToRating = true
                         }
-                    }) {
+
+                        Button("Block Seller") {
+                            Task {
+                                guard Reachability.isConnectedToNetwork() else {
+                                    hudMsg = "No Internet Connection"
+                                    showhud = true
+                                    return
+                                }
+                                SVProgressHUD.show()
+                                let param = BlockUserRequest(blocked_id: Int(sellerID) ?? 0)
+                                await viewModel.blockUser(param: param)
+                                await SVProgressHUD.dismiss()
+                                blockSuccess()
+                            }
+                        }
+
+                        Button("Report", role: .destructive) {
+                            onTapMore()
+                        }
+                    } label: {
                         Image(systemName: "ellipsis")
                             .resizable()
                             .scaledToFit()
@@ -900,9 +842,9 @@ struct ProfileActionsView: View {
             .frame(maxWidth: .infinity)
             .frame(height: 18)
             .padding()
-            .background(Color(UIColor.systemGray5))
+            .background(.defaultTheme.opacity(0.1))
             .foregroundColor(.defaultTheme)
-            .cornerRadius(12)
+            .cornerRadius(19)
             
             Button("Message") {
                 self.onTapMessage()
@@ -913,7 +855,7 @@ struct ProfileActionsView: View {
             .padding()
             .background(.defaultTheme)
             .foregroundColor(.white)
-            .cornerRadius(12)
+            .cornerRadius(19)
             
             Button(action: {
                 // Handle action
@@ -922,7 +864,7 @@ struct ProfileActionsView: View {
                 Image(systemName: "dollarsign.circle")
                     .resizable()
                     .frame(width:32,height: 32)
-                    .foregroundColor(.defaultTheme)
+                    .foregroundColor(.black)
                     .font(.title2)
             }
         }

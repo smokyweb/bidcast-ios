@@ -144,7 +144,7 @@ struct TabbarScreen: View {
             CusNavLink(doNavigate: $navigateToTitle,
                        destination: ShowTitleTips(request:$request,
                         fromPrepare:.constant(false),
-                        backToPrepare: $navigateToTitle
+                                                  backToPrepare: $navigateToTitle, showId: .constant(0)
                        )
             )
             CusNavLink(doNavigate: $navigateTolist, destination: ListProductScreen())

@@ -40,6 +40,8 @@ struct ShowsScreen: View {
     @State private var selectedProductIds: [String] = []
     @State var selectedShowsData = HomeModel()
     @State var showID = ""
+    @State var SHowId = 0
+    @State var navigateToshowTitle = false
 
     // Sample data
     let shows = [
@@ -107,6 +109,9 @@ struct ShowsScreen: View {
                                     selectedShowsData = data
                                     navigateToReherseal = true
                                 }
+                            },onTapMenu: {
+                                SHowId = data.id ?? 0
+                                navigateToshowTitle = true
                             })
                         }
                     }
@@ -136,6 +141,21 @@ struct ShowsScreen: View {
                                                     showsData: $selectedShowsData))
             CusNavLink(doNavigate: $navigateToShowAnalytics,
                        destination:  MyShowsAnalyticsScreen(showId: $showID))
+            
+            CusNavLink(doNavigate: $navigateToshowTitle, destination:
+                        ShowTitleTips(request : .constant(StoreScheduleShowRequest(title: "",
+                                                                                   date: "",
+                                                                                   time: "",
+                                                                                   category_id: "",
+                                                                                   auction_type_id: "",
+                                                                                   product_ids: "",
+                                                                                   isExplicitContent: false,
+                                                                                   discoverablitity: "",
+                                                                                   primaryLanguage: "",
+                                                                                   repeats: "")),
+                                      fromPrepare:.constant(true),
+                                      backToPrepare: $navigateToshowTitle,
+                                      showId: $SHowId))
            
         }
         .navigationBarHidden(true)

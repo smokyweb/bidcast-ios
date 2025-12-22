@@ -21,6 +21,7 @@ final class ScheduleViewModel: ObservableObject {
     @Published var tipsResponse: ResponseModal<TitleTipsModel>?
     @Published var storeShowResponse : ResponseModal<HomeModel>?
     @Published var checkScheduleResponse : ResponseModal<ScheduleModel>?
+    @Published var scheduledShow: ResponseModelPaginate<HomeModel>?
     @Published var errorMessage: String? = nil
     @Published var requestType: String = ""
     @Published var isStoreAPIDone = false
@@ -149,19 +150,25 @@ final class ScheduleViewModel: ObservableObject {
         }
     }
     
-//    // MARK: - Get Product List
-//    func getProductList(parameters: UserProductRequest) async {
-//        
-//        do {
-//            let response: ResponseModalPaginate<[ProductDataModel]> = try await APIManager.shared.request(
-//                type: APIEndPoint.getUserProduct(param: parameters),
-//                header: true
-//            )
-//            self.productResponse = response
-//        } catch {
-//            handle(error: error)
-//        }
-//    }
+    // MARK: - Get scxhedule showData
+    @MainActor
+    func getScheduleShowData(param: getShowRequest) async {
+//        guard !hasLoadedTitleTips else { return }
+//        hasLoadedTitleTips = true
+        requestType = "show"
+        
+        do {
+            let response: ResponseModelPaginate<HomeModel> = try await APIManager.shared.request(
+                type: APIEndPoint.getScheduleShow(param: param),
+                header: true
+            )
+            scheduledShow = response
+        } catch {
+            handle(error: error)
+        }
+    }
+    
+
     
    
     
