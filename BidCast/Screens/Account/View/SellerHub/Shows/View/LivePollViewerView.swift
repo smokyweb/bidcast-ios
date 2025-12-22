@@ -59,11 +59,11 @@ struct LivePollViewerView: View {
 
                         if !hasVoted && poll.isActive {
                             ViewerOptionSelectableRow(
-                                optionText: option.text.text,
-                                isSelected: selectedOption == option.text.text,
+                                optionText: option.text,
+                                isSelected: selectedOption == option.text,
                                 onTap: {
                                     vote(
-                                        optionText: option.text.text,
+                                        optionText: option.text,
                                         optionIndex: index
                                     )
                                 }
@@ -74,7 +74,7 @@ struct LivePollViewerView: View {
                             ViewerOptionStatsRow(
                                 option: option,
                                 percentage: option.percentage,
-                                isSelected: selectedOption == option.text.text,
+                                isSelected: selectedOption == option.text,
                                 animateToPercentage: option.percentage
                             )
                             .padding(.horizontal)
@@ -207,7 +207,7 @@ struct LivePollViewerView: View {
         withAnimation(.easeInOut(duration: 0.35)) {
             self.poll = updatedPoll
             // if server shows viewer has voted, optionally set hasVoted true
-            if let sel = selectedOption, updatedPoll.options.contains(where: { $0.text.text == sel && $0.voteCount > 0 }) {
+            if let sel = selectedOption, updatedPoll.options.contains(where: { $0.text == sel && $0.voteCount > 0 }) {
                 hasVoted = true
             }
         }
@@ -302,7 +302,7 @@ struct ViewerOptionStatsRow: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
-                Text(option.text.text.capitalized)
+                Text(option.text.capitalized)
                     .font(.custom(poppinsRegular, size: 15))
                     .foregroundColor(.primary)
                 Spacer()

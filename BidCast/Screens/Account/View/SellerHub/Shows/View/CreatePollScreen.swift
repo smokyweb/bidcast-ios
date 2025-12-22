@@ -21,13 +21,13 @@ struct CreatePollScreen: View {
     
     // --- Convert duration into seconds ---
     private func durationToSeconds(_ str: String) -> String {
-        if str.contains("1 minute") { return "01:00" }
-        if str.contains("3 minutes") { return "03:00" }
-        if str.contains("5 minutes") { return "05:00" }
-        if str.contains("10 minutes") { return "10:00" }
-        if str.contains("15 minutes") { return "15:00" }
-        if str.contains("30 minutes") { return "30:00" }
-        return "05:00"
+        if str.contains("1 minute") { return "\(1*60)" }
+        if str.contains("3 minutes") { return "\(3*60)" }
+        if str.contains("5 minutes") { return "\(5*60)" }
+        if str.contains("10 minutes") { return "\(10*60)" }
+        if str.contains("15 minutes") { return "\(15*60)" }
+        if str.contains("30 minutes") { return "\(30*60)" }
+        return "\(5*60)"
     }
 
     var body: some View {
@@ -165,11 +165,7 @@ struct CreatePollScreen: View {
         // 🔥 Prepare PollOption list
         let pollOptions = cleanOptions.map { optionText in
             PollOption(
-                text: TextModel(
-                    text: optionText,
-                    vote_count: 0,
-                    percentage: 0
-                ),
+                text: optionText,
                 voteCount: 0,
                 percentage: 0
             )

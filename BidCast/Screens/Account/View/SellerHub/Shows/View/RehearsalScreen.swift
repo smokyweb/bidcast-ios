@@ -698,33 +698,13 @@ struct RehearsalScreen: View {
                 )
             }
         )
-        
-//        .bottomSheet(
-//            isPresented: $showPollSheet,
-//            height: bottomSheetHeight,
-//            topBarCornerRadius: 20,
-//            contentBackgroundColor: Color(.systemBackground),
-//            topBarBackgroundColor: Color(.systemBackground),
-//            showTopIndicator: false,
-//            onDismiss: {
-//                showPollSheet = false
-//            },
-//            content: {
-//                CreatePollScreen(
-//                    isPresented: $showPollSheet,
-//                    onCreatePoll: { pollModel in
-//                        print(pollModel)
-//                        SocketManagerService.shared.createPoll(poll: pollModel)
-//                    },
-//                    roomId: self.roomId
-//                )
-//            }
-//        )
+ 
         .sheet(isPresented: $showPollSheet) {
             CreatePollScreen(
                 isPresented: $showPollSheet,
                 onCreatePoll: { pollModel in
                     print(pollModel)
+                    
                     SocketManagerService.shared.createPoll(poll: pollModel)
                 },
                 roomId: self.roomId
@@ -734,34 +714,16 @@ struct RehearsalScreen: View {
             .presentationDragIndicator(.hidden)        // optional
         }
         
-       
-//        .bottomSheet(
-//            isPresented: $showLivePollScreen,
-//            height: screenHeight * 0.8,
-//            topBarCornerRadius: 20,
-//            contentBackgroundColor: Color(.systemBackground),
-//            topBarBackgroundColor: Color(.systemBackground),
-//            showTopIndicator: false,
-//            onDismiss: {
-//                showLivePollScreen = false
-//            },
-//            content: {
-//                if let poll = currentPollModel {
-//                    LivePollHostView(poll: poll) { pollId, rooomId in
-//                        print("End Poll")
-//                        showPollCard = false
-//                        showLivePollScreen = false
-//                    }
-//                }
-//            }
-//        )
+
         .sheet(isPresented: $showLivePollScreen) {
             if let poll = currentPollModel {
                 LivePollHostView(poll: poll,onEndPoll: { pollId,roomId in
                     socketManager.endPoll(pollId: "\(pollId)", roomId: roomId)
                     showPollCard = false
                     showLivePollScreen = false
-                }) 
+                },onCancel:{
+                    showLivePollScreen = false
+                })
                 .presentationDetents([.fraction(0.80)])   // ✅ Bottom-sheet height
                 .presentationCornerRadius(24)              // ✅ Rounded top corners
                 .presentationDragIndicator(.hidden)
@@ -1379,7 +1341,11 @@ struct RehearsalScreen: View {
             print(pollModel)
             self.remainingTimer = timerStringToSeconds(pollModel.remainingTime)
             self.currentPollModel = pollModel
-            showPollCard = true
+            if pollModel.isActive{
+                showPollCard = true
+            }else{
+                showPollCard = false
+            }
         }
         socketManager.listenForAuctionStarted { status,roomId,products,startingBidAmount,requireTime,counterBidTime,suddenDeath in
 //            guard let self else { return }
