@@ -43,8 +43,21 @@ struct EndShowBottomSheetView: View {
                         .foregroundColor(.gray)
                 }
                 .padding()
-                .background(Color(.systemGray6))
-                .cornerRadius(14)
+                .background(
+                    RoundedRectangle(cornerRadius: 14)
+                        .fill(Color.white)
+                        .shadow(
+                            color: Color.black.opacity(0.12),
+                            radius: 6,
+                            x: 0,
+                            y: 3
+                        )
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 14)
+                        .stroke(Color.black, lineWidth: 1.5)
+                )
+                
             }
 
             // End Show Button

@@ -852,41 +852,28 @@ extension SocketManagerService {
     
     // MARK: - 1. Create Poll (Emit)
     
-    /// Triggers the creation of a new poll
-    /// - Parameter poll: The poll model to create
+
     func createPoll(poll: PollModel) {
         performIfConnected {
-            var payload: [String: Any] = [
-                "poll_id": poll.pollId,
+
+            
+
+            let payload: [String: Any] = [
                 "room_id": poll.roomId,
                 "question": poll.question,
-                "total_votes": poll.totalVotes,
-                "remaining_time": poll.remainingTime,
-                "is_active": poll.isActive
+                "options": poll.options.map { $0.text },
+                "duration": Int(poll.remainingTime) ?? 300
             ]
-
-            var optionPayload: [[String: Any]] = []
-
-            for opt in poll.options {
-                optionPayload.append([
-                    "text": opt.text.text,          // ✅ String
-                    "vote_count": opt.voteCount,    // ✅ Int
-                    "percentage": opt.percentage    // ✅ Double
-                ])
-            }
-
-            payload["options"] = optionPayload
 
             socket.emit("create_poll", payload)
             print("📊 Sent create_poll:", payload)
         }
     }
 
+
     
     // MARK: - 2. Poll Created (Listen)
     
-    /// Observes when a new poll is created
-    /// - Parameter callback: Returns the full poll data
     func observePollCreated(callback: @escaping (PollModel) -> Void) {
         socket.on("poll_created") { data, _ in
             guard let json = data.first as? [String: Any] else {
@@ -907,8 +894,6 @@ extension SocketManagerService {
     
     // MARK: - 3. Poll Ended (Listen)
     
-    /// Observes when a poll ends
-    /// - Parameter callback: Returns the poll ID and room ID
     func observePollEnded(callback: @escaping (_ pollId: String) -> Void) {
         socket.on("poll_ended") { data, _ in
             guard let json = data.first as? [String: Any] else {
@@ -960,26 +945,28 @@ extension SocketManagerService {
     
     // MARK: - 5. Poll Vote Update (Listen)
     
-    /// Observes real-time vote updates for a poll
-    /// - Parameter callback: Returns the updated poll model
     func observePollVoteUpdate(callback: @escaping (PollModel) -> Void) {
         socket.on("poll_vote_update") { data, _ in
             guard let json = data.first as? [String: Any] else {
-                print("❌ poll_vote_update: Invalid data format")
+                print("❌ poll_vote_update: Invalid data")
                 return
             }
-            
-            print("🔄 Received poll_vote_update raw data:", json)
+
+            print("🔄 poll_vote_update raw:", json)
+
             do {
-                let decoded = try JSONSerialization.data(withJSONObject: json)
-                let poll = try JSONDecoder().decode(PollModel.self, from: decoded)
-                print("🔄 Received poll_vote_update:\(poll.pollId)")
-                callback(poll)
+                let jsonData = try JSONSerialization.data(withJSONObject: json)
+                let poll = try JSONDecoder().decode(PollModel.self, from: jsonData)
+
+                DispatchQueue.main.async {
+                    callback(poll)
+                }
             } catch {
                 print("❌ poll_vote_update decode error:", error)
             }
         }
     }
+
     
     // MARK: - 6. Poll Countdown (Listen)
     

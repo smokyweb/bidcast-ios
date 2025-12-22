@@ -11,7 +11,7 @@ import Combine
 // MARK: - Models
 
 struct PollOption: Codable {
-    var text: TextModel
+    var text: String
     var voteCount: Int
     var percentage: Double   // use 0...100
 }
@@ -41,14 +41,15 @@ struct LivePollHostView: View {
     @State private var timerSubscription: Cancellable? = nil
     @State private var remainingSeconds: Int
     @State private var now = Date()
-    
+    var onCancel: (() -> Void)?
     // Animation namespace (optional for matched animations)
     @Namespace private var ns
     
-    init(poll: PollModel, onEndPoll: ((String, String) -> Void)? = nil) {
+    init(poll: PollModel, onEndPoll: ((String, String) -> Void)? = nil,onCancel:(() -> Void)? = nil) {
         _poll = State(initialValue: poll)
         _remainingSeconds = State(initialValue: timerStringToSeconds(poll.remainingTime))
         self.onEndPoll = onEndPoll
+        self.onCancel = onCancel
     }
     
     var body: some View {
@@ -60,7 +61,7 @@ struct LivePollHostView: View {
                         .font(.custom(poppinsBold, size: 22.0))
                     Spacer()
                     Button(action: {
-                        // Close handled by parent (sheet dismiss)
+                        onCancel?()
                     }) {
                         Image(systemName: "xmark.circle.fill")
                             .font(.custom(poppinsSemiBold, size: 28.0))
@@ -130,7 +131,7 @@ struct LivePollHostView: View {
                 
                 // Options list
                 VStack(spacing: 12) {
-                    ForEach(poll.options, id: \.text.text) { option in
+                    ForEach(poll.options, id: \.text) { option in
                         OptionRowView(option: option, percentage: option.percentage)
                             .padding(.horizontal)
                         //                        .overlay(
@@ -231,7 +232,7 @@ struct OptionRowView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text(option.text.text.capitalizingFirstLetter())
+                Text(option.text.capitalizingFirstLetter())
                     .font(.custom(poppinsRegular, size: 14))
                     .foregroundColor(.defaultTheme)
                 Spacer()
@@ -294,13 +295,13 @@ struct LivePollHostView_Previews: PreviewProvider {
             roomId: "room_01",
             question: "Do you like the product?",
             options: [
-                PollOption(text: TextModel(text: "yes", vote_count: 2, percentage: 2.0),
+                PollOption(text: "yes",
                            voteCount: 1,
                            percentage: 100),
-                PollOption(text: TextModel(text: "no", vote_count: 2, percentage: 2.0),
+                PollOption(text: "no",
                            voteCount: 0,
                            percentage: 0),
-                PollOption(text: TextModel(text: "not very much", vote_count: 2, percentage: 2.0),
+                PollOption(text: "not very much",
                            voteCount: 0,
                            percentage: 0)
             ],
