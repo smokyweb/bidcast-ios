@@ -46,21 +46,19 @@ struct PremierShopScreen: View {
                     tipSection
                     
                     // Shop Performance Section
-//                    VStack {
-                        ShopView
-                        // Performance Metrics (On-Time & Defect-Free)
-                        performanceMetricsSection
-//                    }
+                    ShopView
+                        .padding(.bottom, 20)
+                    
 //                    .background(.white)
-//                    // Requirements Section
-//                    requirementsSection
+//                    .padding(.bottom, 60)
                     
                     // Policy Standing (Excellent)
                     policyStandingSection
                     
+                  
+                    
                     premierShopSection
                     
-                    ReviewProcessView
                    
                     RequirnmentView
                     
@@ -94,18 +92,43 @@ struct PremierShopScreen: View {
     
     private var RequirnmentView: some View {
         // MARK: Requirements
-        HStack {
-            if let requirements = premierShopData.requirements {
-                VStack(alignment: .leading, spacing: 12) {
-                    Text(AppString.Requirements)
-                        .font(.custom(poppinsSemiBold, size: 18))
-                    
-                    ForEach(requirements, id: \.platform) { req in
-                        RequirementView(requirement: req)
+        VStack(alignment: .leading, spacing: 12) {
+            Text(AppString.Requirements)
+                .font(.custom(poppinsBold, size: 20))
+                .foregroundColor(.primary)
+            
+            HStack {
+                if let requirements = premierShopData.requirements {
+                    VStack(alignment: .leading, spacing: 12) {
+//                        Text(AppString.Requirements)
+//                            .font(.custom(poppinsSemiBold, size: 18))
+                        
+                        ForEach(requirements, id: \.platform) { req in
+                            RequirementView(requirement: req)
+                        }
                     }
+//                    .padding(.horizontal)
                 }
-                .padding(.horizontal)
             }
+            .padding(.vertical, 20)
+            .background(
+                RoundedRectangle(cornerRadius: 18)
+                    .fill(Color.white)
+                    .shadow(color: .black.opacity(0.06), radius: 10, y: 4)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 18)
+                         .stroke(.defaultTheme.opacity(0.15), lineWidth: 1)
+                    )
+            )
+//            .background(
+//                RoundedRectangle(cornerRadius: 16)
+//                    .fill(Color(.systemBackground))
+//                    .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 2)
+//            )
+//            .overlay(
+//                RoundedRectangle(cornerRadius: 16)
+//                    .stroke(Color.gray.opacity(0.1), lineWidth: 1)
+//            )
         }
     }
     
@@ -133,9 +156,9 @@ struct PremierShopScreen: View {
                    .foregroundColor(.secondary)
 //                   .lineSpacing(4)
                    
-                   Text("Buyer Protection Policy")
-                       .font(.custom(poppinsMedium, size: 14))
-                       .foregroundColor(.defaultTheme)
+//                   Text("Buyer Protection Policy")
+//                       .font(.custom(poppinsMedium, size: 14))
+//                       .foregroundColor(.defaultTheme)
                }
                .padding(16)
                .background(
@@ -158,8 +181,8 @@ struct PremierShopScreen: View {
     private var ReviewProcessView: some View {
         // MARK: Review Process
         VStack(alignment: .leading, spacing: 12) {
-            Text(AppString.ReviewProcess)
-                .font(.custom(poppinsSemiBold, size: 18))
+//            Text(AppString.ReviewProcess)
+//                .font(.custom(poppinsSemiBold, size: 18))
             
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
@@ -196,10 +219,10 @@ struct PremierShopScreen: View {
                     .foregroundColor(.gray)
             }
 //            .padding()
-            .background(Color(.systemGray6))
+//            .background(Color(.systemGray6))
             .cornerRadius(12)
         }
-        .padding(.horizontal)
+//        .padding(.horizontal)
         
     }
     private var ApplyPremiumButton: some View {
@@ -221,10 +244,12 @@ struct PremierShopScreen: View {
 //        .padding()
         //
     }
+    
 
+    // MARK: - Best Solution: Proper Container
     private var ShopView: some View {
-//        MARK: Header Section
-        ZStack(alignment: .top) {
+        VStack(spacing: 0) {
+            // Top section with blue background
             VStack(spacing: 8) {
                 AsyncImage(url: URL(string: premierShopData.pageLogo ?? "")) { phase in
                     if let image = phase.image {
@@ -253,18 +278,20 @@ struct PremierShopScreen: View {
                     .font(.custom(poppinsRegular, size: 14))
                     .foregroundColor(.white.opacity(0.9))
                     .multilineTextAlignment(.center)
+                    .padding(.horizontal)
             }
-            .padding()
-            .padding(.bottom, 80)
-            .cornerRadius(12, corners: .allCorners)
-            .frame(maxWidth: .infinity, minHeight: 220)
+            .padding(.top, 20)
+            .padding(.bottom, 100)  // Space for overlapping card
+            .frame(maxWidth: .infinity)
             .background(.defaultTheme)
-            //                        .background(
-            //                            LinearGradient(colors: [Color.defaultTheme.opacity(0.9), Color.darkRed],
-            //                                           startPoint: .top, endPoint: .bottom)
-            //                        )
+            .cornerRadius(12)
             
-            // Shop Status Card
+            // Spacer for card overlap
+            Spacer()
+                .frame(height: 80)  // Half of card height visible below
+        }
+        .overlay(
+            // Overlapping card
             VStack(spacing: 12) {
                 HStack {
                     AsyncImage(url: URL(string: premierShopData.shopLogo ?? "")) { image in
@@ -277,7 +304,7 @@ struct PremierShopScreen: View {
                     }
                     .frame(width: 32, height: 32)
                     
-                    VStack(alignment: .leading) {
+                    VStack(alignment: .leading, spacing: 2) {
                         Text(premierShopData.shopTitle ?? "")
                             .font(.custom(poppinsSemiBold, size: 16))
                         Text(premierShopData.shopDetails ?? "")
@@ -287,43 +314,46 @@ struct PremierShopScreen: View {
                     Spacer()
                 }
                 
-                HStack {
+                HStack(spacing: 8) {
                     if let options = premierShopData.shopOptions {
-                        MetricView(title: "Rating", value: String(format: "%.1f", options.rating))
-                        MetricView(title: "Response", value: options.response)
-                        MetricView(title: "Delivery", value: options.delivery)
-//                        PerformanceMetricCard(
-//                            percentage:  String(format: "%.1f", options.rating),
-//                            title: "Rating",
-//                            color: .green,
-//                            size: 40,
-//                            rightArraowRequired: false
-//                        )
-//                        PerformanceMetricCard(
-//                            percentage: options.response,
-//                            title: "Response",
-//                            color: .green,
-//                            size: 40,
-//                            rightArraowRequired: false
-//                        )
-//                        PerformanceMetricCard(
-//                            percentage: options.delivery,
-//                            title: "Delivery",
-//                            color: .green,
-//                            size: 40,
-//                            rightArraowRequired: false
-//                        )
+                        PerformanceMetricCard(
+                            value: String(format: "%.1f", options.rating),
+                            outOf: 5.0,
+                            title: "Rating",
+                            color: .green,
+                            size: 40,
+                            rightArraowRequired: false
+                        )
+                        PerformanceMetricCard(
+                            value: options.response,
+                            outOf: 100.0,
+                            title: "Response",
+                            color: .green,
+                            size: 40,
+                            rightArraowRequired: false
+                        )
+                        PerformanceMetricCard(
+                            value: options.delivery,
+                            outOf: 100.0,
+                            title: "Delivery",
+                            color: .green,
+                            size: 40,
+                            rightArraowRequired: false
+                        )
                     }
                 }
             }
-            .padding()
-            .background(Color.white)
-            .cornerRadius(16)
-            .shadow(radius: 2)
-            .padding(.horizontal)
-            .offset(y: 150)
-        }
-        .padding(.bottom, 50)
+            .padding(16)
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(Color.white)
+                    .shadow(color: .black.opacity(0.08), radius: 8, y: 4)
+            )
+            .padding(.horizontal, 16)
+            .offset(y: 150)  // Position card to overlap
+            ,
+            alignment: .top
+        )
     }
     
     // MARK: - Header
@@ -413,26 +443,26 @@ struct PremierShopScreen: View {
     }
     
     // MARK: - Performance Metrics Section
-    private var performanceMetricsSection: some View {
-        HStack(spacing: 16) {
-            if isLoading {
-                PerformanceMetricShimmer()
-                PerformanceMetricShimmer()
-            } else {
-                PerformanceMetricCard(
-                    percentage: onTimeScanRate,
-                    title: "On-Time Scan\nRate",
-                    color: .green
-                )
-                
-                PerformanceMetricCard(
-                    percentage: defectFreeRate,
-                    title: "Defect-Free Order\nRate",
-                    color: .green
-                )
-            }
-        }
-    }
+//    private var performanceMetricsSection: some View {
+//        HStack(spacing: 16) {
+//            if isLoading {
+//                PerformanceMetricShimmer()
+//                PerformanceMetricShimmer()
+//            } else {
+//                PerformanceMetricCard(
+//                    percentage: onTimeScanRate,
+//                    title: "On-Time Scan\nRate",
+//                    color: .green
+//                )
+//                
+//                PerformanceMetricCard(
+//                    percentage: defectFreeRate,
+//                    title: "Defect-Free Order\nRate",
+//                    color: .green
+//                )
+//            }
+//        }
+//    }
     
 //    // MARK: - Requirements Section
 //    private var requirementsSection: some View {
@@ -462,21 +492,21 @@ struct PremierShopScreen: View {
                 
                 Spacer()
                 
-                if isLoading {
-                    ShimmerView()
-                        .frame(width: 80, height: 24)
-                        .clipShape(Capsule())
-                } else {
-                    Text(policyStanding)
-                        .font(.custom(poppinsSemiBold, size: 14))
-                        .foregroundColor(.green)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 6)
-                        .background(
-                            Capsule()
-                                .fill(Color.green.opacity(0.15))
-                        )
-                }
+//                if isLoading {
+//                    ShimmerView()
+//                        .frame(width: 80, height: 24)
+//                        .clipShape(Capsule())
+//                } else {
+//                    Text(policyStanding)
+//                        .font(.custom(poppinsSemiBold, size: 14))
+//                        .foregroundColor(.green)
+//                        .padding(.horizontal, 12)
+//                        .padding(.vertical, 6)
+//                        .background(
+//                            Capsule()
+//                                .fill(Color.green.opacity(0.15))
+//                        )
+//                }
             }
             
             if isLoading {
@@ -505,24 +535,38 @@ struct PremierShopScreen: View {
                     + Text(" violations, they'll display here. Violations typically remain on your account for 180 days. If you think a violation was issued in error, you can appeal by responding to the email from Trust & Safety with details about the violation. ")
                         .font(.custom(poppinsRegular, size: 13))
                         .foregroundColor(.secondary)
-                    + Text("Learn more")
-                        .font(.custom(poppinsSemiBold, size: 13))
-                        .foregroundColor(.defaultTheme)
-                    + Text(".")
-                        .font(.custom(poppinsRegular, size: 13))
-                        .foregroundColor(.secondary)
+//                    + Text("Learn more")
+//                        .font(.custom(poppinsSemiBold, size: 13))
+//                        .foregroundColor(.defaultTheme)
+//                    + Text(".")
+//                        .font(.custom(poppinsRegular, size: 13))
+//                        .foregroundColor(.secondary)
+                    
+                    ReviewProcessView
                 }
                 .padding(16)
                 .background(
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(Color(.systemBackground))
-                        .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 2)
+                    RoundedRectangle(cornerRadius: 18)
+                        .fill(Color.white)
+                        .shadow(color: .black.opacity(0.06), radius: 10, y: 4)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 18)
+                             .stroke(.defaultTheme.opacity(0.15), lineWidth: 1)
+                        )
                 )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(Color.gray.opacity(0.1), lineWidth: 1)
-                )
+//                .background(
+//                    RoundedRectangle(cornerRadius: 16)
+//                        .fill(Color(.systemBackground))
+//                        .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 2)
+//                )
+//                .overlay(
+//                    RoundedRectangle(cornerRadius: 16)
+//                        .stroke(Color.gray.opacity(0.1), lineWidth: 1)
+//                )
+//                
             }
+            
+           
         }
     }
     
@@ -632,7 +676,10 @@ extension PremierShopScreen {
 
 // MARK: - Performance Metric Card
 struct PerformanceMetricCard: View {
-    let percentage: String
+    
+    var value: String
+    var outOf: Double
+    
     let title: String
     let color: Color
     var size: CGFloat = 120
@@ -646,12 +693,12 @@ struct PerformanceMetricCard: View {
                     .frame(width: size, height: size)
                 
                 Circle()
-                    .trim(from: 0, to: CGFloat(Double(percentage.replacingOccurrences(of: "%", with: "")) ?? 0) / 100)
+                    .trim(from: 0, to: CGFloat(Double(value.replacingOccurrences(of: "%", with: "")) ?? 0) / outOf)
                     .stroke(color, style: StrokeStyle(lineWidth: rightArraowRequired ? 12 : 4, lineCap: .round))
                     .frame(width: size, height: size)
                     .rotationEffect(.degrees(-90))
                 
-                Text(percentage)
+                Text(value)
                     .font(rightArraowRequired ? .custom(poppinsBold, size: 32) : .custom(poppinsBold, size: 16))
                     .foregroundColor(.primary)
             }

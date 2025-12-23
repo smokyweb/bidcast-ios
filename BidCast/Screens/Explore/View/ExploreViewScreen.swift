@@ -414,6 +414,7 @@ struct SubCategoryShimmerRow: View {
     var body: some View {
         HStack(spacing: 12) {
             // Icon Shimmer
+            
             ShimmerView()
                 .frame(width: 50, height: 50)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
@@ -445,3 +446,4 @@ struct SubCategoryShimmerRow: View {
         .shadow(color: Color.black.opacity(0.04), radius: 4, x: 0, y: 2)
     }
 }
+
