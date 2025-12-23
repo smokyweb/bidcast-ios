@@ -936,14 +936,14 @@ struct InventoryTopHeaderView: View {
             
             Spacer()
             
-            Button(action: {
-                // Manage action
-                manageBtnTapped()
-            }) {
-                Text("Manage")
-                    .font(.custom(poppinsSemiBold, size: 16))
-                    .foregroundColor(.defaultTheme)
-            }
+//            Button(action: {
+//                // Manage action
+//                manageBtnTapped()
+//            }) {
+//                Text("Manage")
+//                    .font(.custom(poppinsSemiBold, size: 16))
+//                    .foregroundColor(.defaultTheme)
+//            }
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 12)

@@ -308,6 +308,7 @@ struct ToolsRowItem: View {
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
             .background(isPressed ? Color(.systemGray6).opacity(0.5) : Color.clear)
+            .contentShape(Rectangle())
         }
         .buttonStyle(PlainButtonStyle())
         .simultaneousGesture(
@@ -370,10 +371,10 @@ struct IdentityVerificationScreen: View {
 }
 
 // MARK: - Preview
-struct SellerToolsScreen_Previews: PreviewProvider {
-    static var previews: some View {
-        NavigationView {
-            SellerToolsScreen()
-        }
-    }
-}
+//struct SellerToolsScreen_Previews: PreviewProvider {
+//    static var previews: some View {
+//        NavigationView {
+//            SellerToolsScreen()
+//        }
+//    }
+//}
