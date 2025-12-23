@@ -61,6 +61,7 @@ struct TransactionsView: View {
                 }
             }
         }
+        
     }
 }
 
@@ -240,6 +241,7 @@ struct WalletPayoutView: View {
                     }
                 })
                 .padding(.horizontal)
+                .padding(.vertical,12)
 
                 ScrollView {
                     VStack(spacing: 20) {
@@ -256,7 +258,9 @@ struct WalletPayoutView: View {
                     .padding(.horizontal)
                     .padding(.top, 12)
                 }
-                .background(Color(.systemGroupedBackground))
+                .background(.backGround)
+                .padding(.bottom,-40)
+                
             }
             .navigationBarHidden(true)
             .onAppear {
@@ -518,45 +522,83 @@ extension WalletPayoutView{
 
     // MARK: - Fetch Inventory List
     func fetchTransaction() {
+        
         Task{
-           guard Reachability.isConnectedToNetwork() else {
-                hudMsg = "No Internet Connection"
-                showhud = true
-                return
-            }
-            SVProgressHUD.show()
-            if selectedButton == .all {
-                await viewModel.getTransaction(param: TransactionRequest(page: currentPage))
-            }
-            else  {
-                await viewModel.getTransaction(param: TransactionRequest(page: currentPage, status: selectedButton.rawValue))
-            }
-            await SVProgressHUD.dismiss()
-            if viewModel.errorMessage == nil || viewModel.errorMessage == ""{
-                transactionSuccess()
-            }else{
-                alertType = .sheetType(
-                    icon: .alert,
-                    title: "Error",
-                    message: viewModel.errorMessage ?? "".capitalizingFirstLetter(),
-                    primaryBtnText: "",
-                    secondaryBtnText: AppString.ok.localized
-                )
+            await performAPICalls(
+                isConcurrent: false,
+                onError: { error in
+                    alertType = .sheetType(
+                        icon: .alert,
+                        title: "Error",
+                        message: errorDesc(error: error, message: viewModel.errorMessage),
+                        primaryBtnText: "",
+                        secondaryBtnText: AppString.ok.localized
+                    )
+                    showError = true
+                },
+                onSuccess: {
+                    transactionSuccess()
+                }
+            ) {
+                if selectedButton == .all {
+                    try await viewModel.getTransaction(param: TransactionRequest(page: currentPage))
+                }
+                else  {
+                    try await viewModel.getTransaction(param: TransactionRequest(page: currentPage, status: selectedButton.rawValue))
+                }
             }
         }
+        
+//        Task{
+//           guard Reachability.isConnectedToNetwork() else {
+//                hudMsg = "No Internet Connection"
+//                showhud = true
+//                return
+//            }
+//            SVProgressHUD.show()
+//            
+//            await SVProgressHUD.dismiss()
+//            if viewModel.errorMessage == nil || viewModel.errorMessage == ""{
+//                
+//            }else{
+//                alertType = .sheetType(
+//                    icon: .alert,
+//                    title: "Error",
+//                    message: viewModel.errorMessage ?? "".capitalizingFirstLetter(),
+//                    primaryBtnText: "",
+//                    secondaryBtnText: AppString.ok.localized
+//                )
+//            }
+//        }
     }
 
     //MARK: fetchMoreNotificartion.
     func fetchMoreTransaction() {
-        Task {
-            currentPage += 1
-            if selectedButton == .all {
-                await viewModel.getTransaction(param: TransactionRequest(page: currentPage))
+        Task{
+            await performAPICalls(
+                isConcurrent: false,
+                onError: { error in
+                    alertType = .sheetType(
+                        icon: .alert,
+                        title: "Error",
+                        message: errorDesc(error: error, message: viewModel.errorMessage),
+                        primaryBtnText: "",
+                        secondaryBtnText: AppString.ok.localized
+                    )
+                    showError = true
+                },
+                onSuccess: {
+                    transactionSuccess()
+                }
+            ) {
+                currentPage += 1
+                if selectedButton == .all {
+                    try await viewModel.getTransaction(param: TransactionRequest(page: currentPage))
+                }
+                else  {
+                    try await viewModel.getTransaction(param: TransactionRequest(page: currentPage, status: selectedButton.rawValue))
+                }
             }
-            else  {
-                await viewModel.getTransaction(param: TransactionRequest(page: currentPage, status: selectedButton.rawValue))
-            }
-            transactionSuccess()
         }
     }
 
@@ -582,14 +624,15 @@ extension WalletPayoutView{
                 dataTransaction.append(contentsOf: newData)
             }
         } else {
-            showError = true
+            
             alertType = .sheetType(
                 icon: .alert,
-                title: response.error_type?.capitalized ?? "",
-                message: response.message?.capitalized ?? "",
+                title: "Error",
+                message: viewModel.errorMessage ?? "",
                 primaryBtnText: "",
                 secondaryBtnText: AppString.ok.localized
             )
+            showError = true
         }
     }
 

@@ -23,7 +23,8 @@ struct SellerToolsScreen: View {
                     // Navigation Links
                     navigationLinks
                 }
-                .background(Color(.systemGroupedBackground))
+                .background(.backGround)
+                .toolbar(.hidden,for: .tabBar)
                 .navigationBarHidden(true)
             }
         }

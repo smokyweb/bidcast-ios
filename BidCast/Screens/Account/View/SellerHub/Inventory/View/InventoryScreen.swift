@@ -101,87 +101,44 @@ struct InventoryScreen: View {
                 }
             }
            
-            InventoryTabView(selectedTab: $segment) {
-                clearFilter()
-                Task {
-                    await performAPICalls(
-                        isConcurrent: true,
-                        showLoader: false,
-                        onError: { error in
-                            alertType = .sheetType(
-                                icon: .alert,
-                                title: "Error",
-                                message: errorDesc(error: error, message: productViewModel.errorMessage),
-                                primaryBtnText: "",
-                                secondaryBtnText: AppString.ok.localized
-                            )
-                            showError = true
-                            canLoadMore = false
-                            isFetchingMore = false
-                        }, onSuccess: {
-                            // On success
-                            handleDataLoad()
-                        }
-                        
-                    ) {
-                        try await fetchInventory(for: segment, page: 1)
+//            InventoryTabView(selectedTab: $segment) {
+//                clearFilter()
+//                Task {
+//                    await performAPICalls(
+//                        isConcurrent: true,
+//                        showLoader: false,
+//                        onError: { error in
+//                            alertType = .sheetType(
+//                                icon: .alert,
+//                                title: "Error",
+//                                message: errorDesc(error: error, message: productViewModel.errorMessage),
+//                                primaryBtnText: "",
+//                                secondaryBtnText: AppString.ok.localized
+//                            )
+//                            showError = true
+//                            canLoadMore = false
+//                            isFetchingMore = false
+//                        }, onSuccess: {
+//                            // On success
+//                            handleDataLoad()
+//                        }
+//                        
+//                    ) {
+//                        try await fetchInventory(for: segment, page: 1)
+//                    }
+//                }
+//            }
+            HStack{
+                //            // MARK: - Search
+                SearchBarView(placeholder: "What are you looking for?") { debouncedText in
+                    print("User stopped typing. Search: \(debouncedText)")
+                    guard !debouncedText.isEmpty else {
+                        return
                     }
-                }
-            }
-            
-//            // MARK: - Search
-            SearchView { debouncedText in
-                print("User stopped typing. Search: \(debouncedText)")
-                guard !debouncedText.isEmpty else {
-                    return
-                }
-                // Perform search logic here
-                searchText = debouncedText
-                currentPage = 1
-                self.inventoryList.removeAll()
-                Task {
-                    await performAPICalls(
-                        isConcurrent: true,
-                        showLoader: false,
-                        onError: { error in
-                            alertType = .sheetType(
-                                icon: .alert,
-                                title: "Error",
-                                message: errorDesc(error: error, message: productViewModel.errorMessage),
-                                primaryBtnText: "",
-                                secondaryBtnText: AppString.ok.localized
-                            )
-                            showError = true
-                            canLoadMore = false
-                            isFetchingMore = false
-                        }, onSuccess: {
-                            // On success
-                            handleDataLoad()
-                        }
-                        
-                    ) {
-                        try await fetchInventory(for: segment, page: 1)
-                    }
-                }
-            }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 10)
-            
-            // MARK: - Pills Selector
-            HStack(spacing: 0) {
-                PillsSelectorView(
-                    titles: [],
-                    selectedIndex: $selectedIndex,
-                    backgroundStyle: .roundedRect,
-                    underlineEnabled: false,
-                    showFilterButton: true,
-                    showSortDropdown: false,
-                    onSelectionChanged: { index, title in },
-                    onFilterTapped: { showFilterSheet = true }
-                )
-                .fixedSize(horizontal: true, vertical: false)   // 👈 THE FIX
-                
-                PillItemView(title: "MarketPlace", isSelected: $marketPlaceSelected) { newValue in
+                    // Perform search logic here
+                    searchText = debouncedText
+                    currentPage = 1
+                    self.inventoryList.removeAll()
                     Task {
                         await performAPICalls(
                             isConcurrent: true,
@@ -197,17 +154,105 @@ struct InventoryScreen: View {
                                 showError = true
                                 canLoadMore = false
                                 isFetchingMore = false
-                            },
-                            onSuccess: { handleDataLoad() }
+                            }, onSuccess: {
+                                // On success
+                                handleDataLoad()
+                            }
+                            
                         ) {
-                            clearFilter()
                             try await fetchInventory(for: segment, page: 1)
                         }
                     }
                 }
+//                .padding(.horizontal, 12)
+                PillsSelectorView(
+                    titles: [],
+                    selectedIndex: $selectedIndex,
+                    backgroundStyle: .roundedRect,
+                    underlineEnabled: false,
+                    showFilterButton: true,
+                    showSortDropdown: false,
+                    onSelectionChanged: { index, title in },
+                    onFilterTapped: { showFilterSheet = true }
+                )
+                .fixedSize(horizontal: true, vertical: false)
+                
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 12)
+            .padding(.top, 16)
+            .padding(.bottom, 12)
+            // MARK: - Segmented Control
+            CustomSegmentedControl(preselectedIndex: $segment, options: InventorySegment.allCases)
+                .onChange(of: segment) { newSegment in
+                    clearFilter()
+                    Task {
+                        await performAPICalls(
+                            isConcurrent: true,
+                            showLoader: false,
+                            onError: { error in
+                                alertType = .sheetType(
+                                    icon: .alert,
+                                    title: "Error",
+                                    message: errorDesc(error: error, message: productViewModel.errorMessage),
+                                    primaryBtnText: "",
+                                    secondaryBtnText: AppString.ok.localized
+                                )
+                                showError = true
+                                canLoadMore = false
+                                isFetchingMore = false
+                            }, onSuccess: {
+                                // On success
+                                handleDataLoad()
+                            }
+                            
+                        ) {
+                            try await fetchInventory(for: segment, page: 1)
+                        }
+                    }
+                }
+                .padding(.horizontal)
+            // MARK: - Pills Selector
+//            HStack(spacing: 0) {
+////                PillsSelectorView(
+////                    titles: [],
+////                    selectedIndex: $selectedIndex,
+////                    backgroundStyle: .roundedRect,
+////                    underlineEnabled: false,
+////                    showFilterButton: true,
+////                    showSortDropdown: false,
+////                    onSelectionChanged: { index, title in },
+////                    onFilterTapped: { showFilterSheet = true }
+////                )
+////                .fixedSize(horizontal: true, vertical: false)   // 👈 THE FIX
+//                
+//                PillItemView(title: "MarketPlace", isSelected: $marketPlaceSelected) { newValue in
+//                    Task {
+//                        await performAPICalls(
+//                            isConcurrent: true,
+//                            showLoader: false,
+//                            onError: { error in
+//                                alertType = .sheetType(
+//                                    icon: .alert,
+//                                    title: "Error",
+//                                    message: errorDesc(error: error, message: productViewModel.errorMessage),
+//                                    primaryBtnText: "",
+//                                    secondaryBtnText: AppString.ok.localized
+//                                )
+//                                showError = true
+//                                canLoadMore = false
+//                                isFetchingMore = false
+//                            },
+//                            onSuccess: { handleDataLoad() }
+//                        ) {
+//                            clearFilter()
+//                            try await fetchInventory(for: segment, page: 1)
+//                        }
+//                    }
+//                }
+//            }
+//            .frame(maxWidth: .infinity, alignment: .leading)
+//            .padding(.horizontal, 12)
 
             
             // MARK: - Inventory List
@@ -269,6 +314,7 @@ struct InventoryScreen: View {
                 .padding(.horizontal, 12)
             }
             .padding(.vertical, 12)
+            .background(.backGround)
 
             // Loader at bottom
             if isFetchingMore {
@@ -295,14 +341,10 @@ struct InventoryScreen: View {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
                         .background(
-                            LinearGradient(
-                                gradient: Gradient(colors: [Color.defaultTheme, Color.defaultTheme.opacity(0.8)]),
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
+                            .defaultTheme
                         )
                         .cornerRadius(14)
-                        .shadow(color: Color.defaultTheme.opacity(0.4), radius: 12, x: 0, y: 6)
+//                        .shadow(color: Color.defaultTheme.opacity(0.4), radius: 12, x: 0, y: 6)
                 }
                 .padding(.horizontal, 20)
                 .padding(.vertical, 16)
@@ -352,7 +394,7 @@ struct InventoryScreen: View {
                 }
             }, categories: $categoryList) )
         }
-        .background(Color(.systemBackground))
+        .background(.backGround)
         .padding(.bottom, -70)
         .toolbar(.hidden,for: .tabBar)
         .onAppear {

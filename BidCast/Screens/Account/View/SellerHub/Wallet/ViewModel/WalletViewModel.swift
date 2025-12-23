@@ -19,7 +19,7 @@ final class WalletViewModel: ObservableObject {
     
 
     // MARK: - Get Cards
-    func getTransaction(param:TransactionRequest) async {
+    func getTransaction(param:TransactionRequest) async throws{
         do {
             if let response: ResponseModelPaginate<[TransactionModel]> = try await APIManager.shared.request(
                 type: APIEndPoint.getTransactionList(param: param),
@@ -27,8 +27,14 @@ final class WalletViewModel: ObservableObject {
             ){
                 self.transactionDict = response
             }
-        } catch {
-            handle(error: error)
+        } catch(let error) {
+            if let dataError = error as? DataError {
+                self.errorMessage = dataError.getErrorMessage()
+            }
+            else {
+                self.errorMessage = error.localizedDescription
+            }
+            throw error
         }
     }
     
