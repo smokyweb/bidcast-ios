@@ -39,12 +39,9 @@ struct HeaderWithSegmentController: View {
                             ind in
                             Button(action: { withAnimation { onClickLeading?(ind) } }, label: {
                                 Image(leadingImgArr[ind])
-                                    .renderingMode(.template)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 30, height: 30)
-                                    .tint(.white)
-                                    .padding(.all, 8)
+                                    .font(.custom(poppinsBold, size: 16))
+                                    .foregroundColor(.primary)
+                                    .frame(width: 36, height: 36)
                             })
                         }
                     }

@@ -30,7 +30,7 @@ struct FAQScreen: View {
                 PrimaryHeader(
                     title: "FAQ",
                     isForLogo: false,
-                    leadingImgArr: [.icBack],
+                    leadingImgArr: ["chevron.left"],
                     trailingImgArr: [.search],
                     onClickLeading: { _ in
                         self.presentationMode.wrappedValue.dismiss()

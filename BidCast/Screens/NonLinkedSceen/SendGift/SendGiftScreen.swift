@@ -52,7 +52,7 @@ struct SendGiftScreen: View {
                     PrimaryHeader(
                         title: "Send as a Gift".localized,
                         isForLogo : false ,
-                        leadingImgArr: [.icBack],
+                        leadingImgArr: ["chevron.left"],
                         onClickLeading: { _ in
                             self.presentationMode.wrappedValue.dismiss()
                         },

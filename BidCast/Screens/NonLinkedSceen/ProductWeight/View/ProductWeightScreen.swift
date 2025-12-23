@@ -60,7 +60,7 @@ struct ProductWeightScreen: View {
                     PrimaryHeader(
                         title: "Product Weight",
                         isForLogo: false,
-                        leadingImgArr: [.icBack],
+                        leadingImgArr: ["chevron.left"],
                         trailingImgArr: [],
                         onClickLeading: { _ in
                             presentationMode.wrappedValue.dismiss()

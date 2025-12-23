@@ -718,10 +718,11 @@ final class SocketManagerService: NSObject, ObservableObject {
     /// - Parameters:
     ///   - followerId: The ID of the user performing the action.
     ///   - followingId: The ID of the user being followed/unfollowed.
-    func sendFollowUnfollow(followerId: String, followingId: String) {
+    func sendFollowUnfollow(followerId: String, followingId: String,showId : String) {
         let payload: [String: Any] = [
             "follower_id": followerId,
-            "following_id": followingId
+            "following_id": followingId,
+            "show_id":showId
         ]
         
         performIfConnected {

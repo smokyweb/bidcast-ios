@@ -29,7 +29,7 @@ struct LiveShowTipsScreen: View {
             PrimaryHeader(
                 title: "Bring in Buyers",
                 isForLogo: false,
-                leadingImgArr: [.icBack],
+                leadingImgArr: ["chevron.left"],
                 trailingImgArr: [.icInfo],
                 onClickLeading: { _ in
                     self.presentationMode.wrappedValue.dismiss()

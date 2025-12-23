@@ -112,7 +112,7 @@ struct MyOrdersScreen: View {
                     // MARK: - Top Header (fixed)
 //                    PrimaryHeader(
 //                        title: AppString.MyOrders,
-//                        isForBoth: true,
+//                        isForBoth: false,
 //                        leadingImgArr: [.icBack,.appName],
 //                        trailingImgArr: [.icSetting],
 //                        onClickLeading: { _ in

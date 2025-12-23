@@ -31,8 +31,8 @@ struct OffersScreen: View {
             VStack{
                 PrimaryHeader(
                     title: AppString.Offers,
-                    isForBoth : true,
-                    leadingImgArr: [.icBack,.appName],
+                    isForBoth : false,
+                    leadingImgArr: ["chevron.left"],
                     trailingImgArr: [.icSetting],
                     onClickLeading: { _ in
                         self.presentationMode.wrappedValue.dismiss()

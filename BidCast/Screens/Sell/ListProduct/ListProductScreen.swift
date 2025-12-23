@@ -46,7 +46,7 @@ struct ListProductScreen: View {
     @State var uploadedVideoUrls: [String] = []
     
     @State private var isHazardousMaterial: Bool = false
-    @State private var selectedFormat: SalesFormat = .auction
+    @State private var selectedFormat: SalesFormat = .buyItNow
     
     @State var showSellerSheet = false
     @State var navigateToSeller = false
@@ -65,6 +65,8 @@ struct ListProductScreen: View {
     var lineWidth: CGFloat {
         isHazardousMaterial ? 2 : 1
     }
+    
+    @State private var segment: lisProductScreenSegment = .Buyit
     
 //    @State var conditionListArr = ["New","Used - Like New","Used - Very Good","Used - Good","Used - Acceptable","Collectible - Like New","Collectible - Very Good","Collectible - Good","Collectible - Acceptable"]
     
@@ -95,7 +97,7 @@ struct ListProductScreen: View {
                 VStack{
                     PrimaryHeader(
                         title: "List a Product".localized,
-                        isForLogo : false, leadingImgArr: [.sideArrow],
+                        isForLogo : false, leadingImgArr: ["chevron.left"],
                         trailingImgArr: [],
                         onClickLeading: { _ in
                             self.presentationMode.wrappedValue.dismiss()
@@ -305,44 +307,57 @@ struct ListProductScreen: View {
                                 
                             }
                         }
-                        PrimaryButton(
-                            title: "Add Variants",
-                            isOutLine: false,
-                            custFontName : poppinsSemiBold,
-                            custFontSize : 14.0,
-                            onButtonClick: {
-                                print("hell")
-                            }, imageName: "ic_Plus", btnColor: .white)
+//                        PrimaryButton(
+//                            title: "Add Variants",
+//                            isOutLine: false,
+//                            custFontName : poppinsSemiBold,
+//                            custFontSize : 14.0,
+//                            onButtonClick: {
+//                                print("hell")
+//                            }, imageName: "ic_Plus", btnColor: .white)
                     }
                     
                     .background(.white)
                     .cornerRadius(12)
+                    .padding(.top,2)
                     .padding(.horizontal,12)
                     
                     VStack(alignment: .leading){
                         // Select Format Label
-                        Text("Select Format")
-                            .font(.custom(poppinsSemiBold, size: 13.0))
+                        Text("Pricing")
+                            .font(.custom(poppinsMedium, size: 13.0))
                             .padding(.horizontal)
+                            .padding(.top)
                         
                         // Format Buttons
-                        HStack(spacing: 12) {
-                            formatButton(title: "Auction", systemImage: "hammer.fill", isSelected: selectedFormat == .auction)
-                                .onTapGesture {
+                        //                        HStack(spacing: 12) {
+                        //                            formatButton(title: "Auction", systemImage: "hammer.fill", isSelected: selectedFormat == .auction)
+                        //                                .onTapGesture {
+                        //                                    selectedFormat = .auction
+                        //                                }
+                        //
+                        //                            formatButton(title: "Buy It Now", systemImage: "tag.fill", isSelected: selectedFormat == .buyItNow)
+                        //                                .onTapGesture {
+                        //                                    selectedFormat = .buyItNow
+                        //                                }
+                        //
+                        //
+                        //                        }
+                        //                        .padding(.horizontal)
+                        
+                        CustomSegmentedControl(preselectedIndex: $segment, options: lisProductScreenSegment.allCases)
+                            .onChange(of: segment) { newSegment in
+                                if segment == .Buyit{
+                                    selectedFormat = .buyItNow
+                                }else{
                                     selectedFormat = .auction
                                 }
-                            
-                            formatButton(title: "Buy It Now", systemImage: "tag.fill", isSelected: selectedFormat == .buyItNow)
-                                .onTapGesture {
-                                    selectedFormat = .buyItNow
-                                }
-                        }
-                        .padding(.horizontal)
-                    }
-                    .padding(.horizontal, 16)
-                    Spacer()
-                    VStack(alignment:.leading,spacing: 8){
-                        Text("Pricing".localized)
+                                
+                            }
+                            .padding(.horizontal)
+                        
+                        
+                        Text("Price".localized)
                             .font(.custom(robotoMedium, size: 16.0))
                             .padding(.top,8)
                             .padding([.leading,.trailing],16.0)
@@ -359,64 +374,68 @@ struct ListProductScreen: View {
                             request.pricing = price
                         })
                         .keyboardType(.decimalPad)
-                    }
-                    .padding(.horizontal, 16)
-                    
-                    if selectedFormat == .auction {
-                        VStack(spacing: 12) {
-                            EnhancedToggleCard(
-                                title: "Reserve for Live",
-                                subtitle: "Save for live auction only",
-                                icon: "video.fill",
-                                iconColor: Color.defaultTheme,
-                                isOn: $isTappedReserve
-                            )
-                            .padding(.horizontal, 12)
-                        }
-                        .padding(.horizontal, 16)
-                        .onChange(of: isTappedReserve) { newValue in
-                            if newValue {
-                                request.reserve_for_live = "1"
-                            } else {
-                                request.reserve_for_live = "0"
-                            }
-                        }
                         
-                    }else{
-                        VStack(spacing: 12) {
-                            EnhancedToggleCard(
-                                title: "Flash Sale",
-                                subtitle: "Limited time offer",
-                                icon: "bolt.fill",
-                                iconColor: Color.defaultTheme,
-                                isOn: $isTappedFlash
-                            )
-                            .padding(.horizontal, 12)
-                            EnhancedToggleCard(
-                                title: "Accept Offers",
-                                subtitle: "Allow buyers to make offers",
-                                icon: "hand.raised.fill",
-                                iconColor: Color.defaultTheme,
-                                isOn: $isTappedAccept
-                            )
-                            .padding(.horizontal, 12)
-                        }
-                        .padding(.horizontal, 16)
-                        .onChange(of: isTappedFlash) { newValue in
-                            if newValue {
-                                request.flash_sale = "1"
-                            } else {
-                                request.flash_sale = "0"
+                        
+                        if selectedFormat == .auction {
+                            VStack(spacing: 12) {
+                                EnhancedToggleCard(
+                                    title: "Reserve for Live",
+                                    subtitle: "Save for live auction only",
+                                    icon: "video.fill",
+                                    iconColor: Color.defaultTheme,
+                                    isOn: $isTappedReserve
+                                )
+                                .padding(.horizontal, 12)
                             }
-                        }
-                        .onChange(of: isTappedAccept) { newValue in
-                            if newValue {
-                                request.accept_offers = "1"
-                            } else {
-                                request.accept_offers = "0"
+//                            .padding(.horizontal, 16)
+                            .onChange(of: isTappedReserve) { newValue in
+                                if newValue {
+                                    request.reserve_for_live = "1"
+                                } else {
+                                    request.reserve_for_live = "0"
+                                }
+                            }
+                            
+                        }else{
+                            VStack(spacing: 12) {
+                                EnhancedToggleCard(
+                                    title: "Flash Sale",
+                                    subtitle: "Limited time offer",
+                                    icon: "bolt.fill",
+                                    iconColor: Color.defaultTheme,
+                                    isOn: $isTappedFlash
+                                )
+                                .padding(.horizontal, 12)
+                                EnhancedToggleCard(
+                                    title: "Accept Offers",
+                                    subtitle: "Allow buyers to make offers",
+                                    icon: "hand.raised.fill",
+                                    iconColor: Color.defaultTheme,
+                                    isOn: $isTappedAccept
+                                )
+                                .padding(.horizontal, 12)
                             }
                         }
                     }
+                    .background(.white)
+                    .cornerRadius(12)
+                    .padding(.vertical,2)
+                    .padding(.horizontal, 16)
+                    .onChange(of: isTappedFlash) { newValue in
+                        if newValue {
+                            request.flash_sale = "1"
+                        } else {
+                            request.flash_sale = "0"
+                        }
+                    }
+                    .onChange(of: isTappedAccept) { newValue in
+                        if newValue {
+                            request.accept_offers = "1"
+                        } else {
+                            request.accept_offers = "0"
+                        }
+                    }
+                    
                     
                     VStack(alignment:.leading,spacing: 8){
 
@@ -478,36 +497,37 @@ struct ListProductScreen: View {
                     
                     // Bottom Buttons
                     TwoButton(
-                        titleOne: "Save Draft",
-                        titleTwo: "Publish",
+                        titleOne: "Publish",
+                        titleTwo: "Save Draft",
                         onFirstButtonClick: {
-                            hideKeyboardPopup()
-                            saveProductDetails(as: "draft")
-                        },
-                        onSecButtonClick: {
                             hideKeyboardPopup()
                             saveProductDetails(as: "active")
                         },
+                        onSecButtonClick: {
+                            hideKeyboardPopup()
+                            saveProductDetails(as: "draft")
+                        },
                         height: 45,
-                        firstBtnTitleColor: .darkGray,
+                        firstBtnTitleColor: .defaultTheme,
                         secBtnTitleColor: .white,
-                        firstBtnBgColor: .white,
-                        secBtnBgColor: .darkBlue
+                        firstBtnBgColor: .defaultTheme.opacity(0.2),
+                        secBtnBgColor: .defaultTheme
                     )
                     .padding(.horizontal, 12)
                     .padding(.bottom, 20)
                 }
                 .padding(.vertical, 16)
-                .background(
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(Color(.systemBackground))
-                        .shadow(color: Color.black.opacity(0.08), radius: 12, x: 0, y: 4)
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(Color.gray.opacity(0.1), lineWidth: 1)
-                )
-                .padding(.horizontal, 12)
+                .background(.backGround)
+//                .background(
+//                    RoundedRectangle(cornerRadius: 16)
+//                        .fill(Color(.systemBackground))
+//                        .shadow(color: Color.black.opacity(0.08), radius: 12, x: 0, y: 4)
+//                )
+//                .overlay(
+//                    RoundedRectangle(cornerRadius: 16)
+//                        .stroke(Color.gray.opacity(0.1), lineWidth: 1)
+//                )
+//                .padding(.horizontal, 12)
                 .zIndex(1000)
                 
                 
@@ -601,7 +621,7 @@ struct ListProductScreen: View {
                 CusNavLink(doNavigate: $navigateToShippingProfiles, destination: ShippingSettingsScreen())
         }
 //        .edgesIgnoringSafeArea(.top/)
-        .background(Color(.systemBackground))
+            .background(.backGround)
         .onFirstAppear(perform: {
             Task{
                 
@@ -983,6 +1003,16 @@ struct HazardousLabel: View {
     }
 }
 
+enum lisProductScreenSegment : String, CaseIterable, CustomStringConvertible {
+    case Buyit = "Buy it Now"
+    case Auction = "Auction"
+
+    var description: String {
+        NSLocalizedString(rawValue, comment: "")
+    }
+}
+
+
 
 //#Preview {
 //    ListProductScreen()
@@ -990,10 +1020,10 @@ struct HazardousLabel: View {
 //
 
 
-import SwiftUI
-import SwiftfulLoadingIndicators
-import SVProgressHUD
-import AlertToast
+//import SwiftUI
+//import SwiftfulLoadingIndicators
+//import SVProgressHUD
+//import AlertToast
 
 //struct ListProductScreen1: View {
 //    @Environment(\.presentationMode) var presentationMode
@@ -1946,7 +1976,7 @@ struct EnhancedToggleCard: View {
                         .font(.system(size: 22, weight: .semibold))
                         .foregroundColor(iconColor)
                 }
-                .shadow(color: isOn ? iconColor.opacity(0.3) : Color.clear, radius: 8, x: 0, y: 4)
+                .shadow(color: isOn ? iconColor.opacity(0.1) : Color.clear, radius: 1, x: 0, y: 4)
                 
                 // Text Content
                 VStack(alignment: .leading, spacing: 4) {
@@ -1971,7 +2001,7 @@ struct EnhancedToggleCard: View {
             .background(
                 RoundedRectangle(cornerRadius: 16)
                     .fill(Color(.systemBackground))
-                    .shadow(color: Color.black.opacity(0.08), radius: 12, x: 0, y: 4)
+//                    .shadow(color: Color.black.opacity(0.08), radius: 12, x: 0, y: 4)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 16)

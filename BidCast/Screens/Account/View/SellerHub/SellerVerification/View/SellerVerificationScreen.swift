@@ -70,7 +70,7 @@ struct SellerVerificationScreen: View {
                 PrimaryHeader(
                     title: AppString.SellerVerification,
                     isForLogo: false,
-                    leadingImgArr: [.icBack],
+                    leadingImgArr: ["chevron.left"],
                     trailingImgArr: [],
                     onClickLeading: { _ in self.presentationMode.wrappedValue.dismiss() },
                     count: .constant(0)

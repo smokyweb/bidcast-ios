@@ -27,7 +27,7 @@ struct AboutUsScreen: View {
                 PrimaryHeader(
                     title: "Select Your Favourite Category".localized,
                     isForLogo: false,
-                    leadingImgArr: [.sideArrow],
+                    leadingImgArr: ["chevron.left"],
                     trailingImgArr: [],
                     onClickLeading: { _ in
                         self.presentationMode.wrappedValue.dismiss()

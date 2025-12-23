@@ -29,7 +29,7 @@ struct BlockedUserScreen: View {
             PrimaryHeader(
                 title: "Blocked Users",
                 isForLogo: false,
-                leadingImgArr: [.sideArrow],
+                leadingImgArr: ["chevron.left"],
                 trailingImgArr: [],
                 onClickLeading: { _ in
                     self.presentationMode.wrappedValue.dismiss()

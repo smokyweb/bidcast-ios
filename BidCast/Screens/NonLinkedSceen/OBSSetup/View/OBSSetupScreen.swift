@@ -22,7 +22,7 @@ struct OBSSetupScreen: View {
             PrimaryHeader(
                 title: "OBS Setup",
                 isForLogo: false,
-                leadingImgArr: [.icBack],
+                leadingImgArr: ["chevron.left"],
                 trailingImgArr: [],
                 onClickLeading: { _ in
                     self.presentationMode.wrappedValue.dismiss()

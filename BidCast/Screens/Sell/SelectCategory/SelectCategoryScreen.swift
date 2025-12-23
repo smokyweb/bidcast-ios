@@ -63,7 +63,7 @@ struct SelectCategoryScreen: View {
                 PrimaryHeader(
                     title: "Select Category".localized,
                     isForLogo: false,
-                    leadingImgArr: [.icBack],
+                    leadingImgArr: ["chevron.left"],
                     trailingImgArr: [],
                     onClickLeading: { _ in
                         self.presentationMode.wrappedValue.dismiss()

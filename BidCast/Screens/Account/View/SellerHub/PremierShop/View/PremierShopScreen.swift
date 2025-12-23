@@ -960,7 +960,7 @@ struct MetricView: View {
 //            PrimaryHeader(
 //                title: AppString.PremierShop,
 //                isForLogo: false,
-//                leadingImgArr: [.icBack],
+//                leadingImgArr: ["chevron.left"],
 //                trailingImgArr: [],
 //                onClickLeading: { _ in presentationMode.wrappedValue.dismiss() },
 //                count: .constant(0)

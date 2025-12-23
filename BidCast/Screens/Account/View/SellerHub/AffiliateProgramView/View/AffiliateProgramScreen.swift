@@ -35,8 +35,8 @@ struct AffiliateProgramScreen: View {
             VStack{
                 PrimaryHeader(
                     title: AppString.AffiliateProgram,
-                    isForBoth: true,
-                    leadingImgArr: [.icBack,.appName],
+                    isForBoth: false,
+                    leadingImgArr: ["chevron.left"],
                     onClickLeading: { _ in
                         self.presentationMode.wrappedValue.dismiss()
                     },

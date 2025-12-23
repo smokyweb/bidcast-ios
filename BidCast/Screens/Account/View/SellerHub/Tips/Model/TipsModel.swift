@@ -15,7 +15,7 @@ struct TipsModel: Codable {
 
 // MARK: - Summary
 struct Summary: Codable {
-    var totalTips: String?
+    var totalTips: Int?
     var todayTips: Int?
 
     enum CodingKeys: String, CodingKey {

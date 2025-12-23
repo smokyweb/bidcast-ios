@@ -80,7 +80,7 @@ struct AddProductsScreen: View {
                 PrimaryHeader(
                     title: "Add Products".localized,
                     isForLogo : false ,
-                    leadingImgArr:[.icBack],
+                    leadingImgArr:["chevron.left"],
                     onClickLeading: { _ in
                         if backToCreateProduct{
                             backToCreateProduct = false
@@ -715,13 +715,13 @@ struct CustomBottomSheetView: View {
                         }
                         
                         Text(config.title)
-                            .font(.title3)
+                            .font(.custom(poppinsBold, size: 24.0))
                             .fontWeight(.semibold)
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 16)
                         
                         Text(config.message)
-                            .font(.body)
+                            .font(.custom(poppinsMedium, size: 18.0))
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 16)
                         

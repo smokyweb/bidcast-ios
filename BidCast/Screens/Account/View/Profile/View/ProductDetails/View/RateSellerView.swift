@@ -40,8 +40,8 @@ struct RateSellerView: View {
             // MARK: - Custom Header
             PrimaryHeader(
                 title: "Rate Seller",
-                isForBoth: true,
-                leadingImgArr: [.icBack,.appName],
+                isForBoth: false,
+                leadingImgArr: ["chevron.left"],
                 trailingImgArr: [],
                 onClickLeading: { _ in
                     self.presentationMode.wrappedValue.dismiss()

@@ -34,7 +34,7 @@ struct LanguagePickerView: View {
             // MARK: - Primary Header
             PrimaryHeader(
                 title: AppString.forgotPassword.localized,
-                leadingImgArr: [.icBack],
+                leadingImgArr: ["chevron.left"],
                 onClickLeading: { _ in
                     self.presentationMode.wrappedValue.dismiss()
                 },

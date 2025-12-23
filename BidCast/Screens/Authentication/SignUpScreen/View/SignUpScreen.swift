@@ -33,7 +33,7 @@ struct SignUpScreen: View {
     var body: some View {
         VStack(spacing: 0) {
             VStack{
-                PrimaryHeader(title: AppString.createAccount.localized, leadingImgArr: [.icBack], onClickLeading:  { _ in
+                PrimaryHeader(title: AppString.createAccount.localized, leadingImgArr: ["chevron.left"], onClickLeading:  { _ in
                     
                     self.presentationMode.wrappedValue.dismiss()
                 }, count: .constant(0))

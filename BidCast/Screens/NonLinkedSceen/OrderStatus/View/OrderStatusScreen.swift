@@ -29,7 +29,7 @@ struct OrderStatusScreen: View {
             PrimaryHeader(
                 title: "Order Status",
                 isForLogo: false,
-                leadingImgArr: [.icBack],
+                leadingImgArr: ["chevron.left"],
                 trailingImgArr: [],
                 onClickLeading: { _ in
                     self.presentationMode.wrappedValue.dismiss()

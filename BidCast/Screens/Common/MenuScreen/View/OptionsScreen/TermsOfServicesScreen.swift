@@ -28,7 +28,7 @@ struct TermsOfServicesScreen: View {
                 PrimaryHeader(
                     title: "Terms and Conditions".localized,
                     isForLogo: false,
-                    leadingImgArr: [.sideArrow],
+                    leadingImgArr: ["chevron.left"],
                     trailingImgArr: [],
                     onClickLeading: { _ in
                         presentationMode.wrappedValue.dismiss()

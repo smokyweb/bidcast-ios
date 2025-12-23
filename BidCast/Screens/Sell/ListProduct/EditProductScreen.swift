@@ -69,7 +69,7 @@ struct EditProductScreen: View {
                 VStack{
                     PrimaryHeader(
                         title: "Edit Product".localized,
-                        isForLogo : false, leadingImgArr: [.sideArrow],
+                        isForLogo : false, leadingImgArr: ["chevron.left"],
                         trailingImgArr: [],
                         onClickLeading: { _ in
                             self.presentationMode.wrappedValue.dismiss()

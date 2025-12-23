@@ -38,7 +38,7 @@ struct TrustedBuyerScreen: View {
             PrimaryHeader(
                 title: "Trusted Buyer".localized,
                 isForLogo: false,
-                leadingImgArr: [.icBack],
+                leadingImgArr: ["chevron.left"],
                 trailingImgArr: [],
                 onClickLeading: { index in
                     presentationMode.wrappedValue.dismiss()

@@ -39,7 +39,7 @@ struct MultiSelectionSubCategoryScreen: View {
             
             HeaderWithTitle(
                 title: "Select Your Favourite Sub Category".localized,
-                leadingImgArr: [.icBack],
+                leadingImgArr: ["chevron.left"],
                 onClickLeading: { _ in
                     self.presentationMode.wrappedValue.dismiss()
                 },

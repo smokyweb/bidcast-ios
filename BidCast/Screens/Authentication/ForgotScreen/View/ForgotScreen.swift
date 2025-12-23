@@ -33,7 +33,7 @@ struct ForgotScreen: View {
             VStack{
                 PrimaryHeader(
                     title: AppString.forgetPassword.localized,
-                    leadingImgArr: [.icBack],
+                    leadingImgArr: ["chevron.left"],
                     onClickLeading: { _ in
                         self.presentationMode.wrappedValue.dismiss()
                     },

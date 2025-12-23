@@ -39,7 +39,7 @@ struct SelectShowScreen: View {
             VStack{
                 PrimaryHeader(
                     title: "Select Show Time".localized,
-                    isForLogo : false, leadingImgArr: [.sideArrow],
+                    isForLogo : false, leadingImgArr: ["chevron.left"],
                     trailingImgArr: [],
                     onClickLeading: { _ in
                         self.presentationMode.wrappedValue.dismiss()

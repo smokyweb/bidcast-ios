@@ -33,7 +33,7 @@ struct MultiSelectionCategoryScreen: View {
         VStack(spacing: 0) {
             HeaderWithTitle(
                 title: "Select Your Favourite Category".localized,
-                leadingImgArr: [.icBack],
+                leadingImgArr: ["chevron.left"],
                 onClickLeading: { _ in
                     self.presentationMode.wrappedValue.dismiss()
                 },

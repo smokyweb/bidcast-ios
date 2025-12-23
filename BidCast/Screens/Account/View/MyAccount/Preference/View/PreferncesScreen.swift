@@ -42,7 +42,7 @@ struct PreferncesScreen: View {
                     PrimaryHeader(
                         title: "Preferences".localized,
                         isForLogo: false,
-                        leadingImgArr: [.icBack],
+                        leadingImgArr: ["chevron.left"],
                         trailingImgArr: [],
                         onClickLeading: { _ in
                             presentationMode.wrappedValue.dismiss()

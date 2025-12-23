@@ -20,7 +20,7 @@ struct DropDownSelection: View {
     
     var anchor: Anchor = .bottom
     var maxWidth: CGFloat = .infinity//UIScreen.main.bounds.width - 30
-    var cornerRadius: CGFloat = 9
+    var cornerRadius: CGFloat = 24
     
     @State var custFontName: String = poppinsBold
     @State var custFontSize: Double = 13.0
@@ -69,13 +69,13 @@ struct DropDownSelection: View {
                         .scaledToFill()
                         .frame(width: 16, height: 16)
                         .foregroundStyle(.text)
-                        .rotationEffect(.degrees(showOption ? 0 : -180))
+                        .rotationEffect(.degrees(showOption ? -180 : 0))
                 }
                 .padding(.horizontal, 16)
                 .frame(height: 50)
                 .background(scheme == .dark ? .black : .white)
                 .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
-                .shadow(color: .gray.opacity(0.5), radius: 1, x: 0, y: 0)
+                .shadow(color: .gray.opacity(0.7), radius: 1, x: 0, y: 0)
                 .onTapGesture {
                     index += 1
                     zIndex = index

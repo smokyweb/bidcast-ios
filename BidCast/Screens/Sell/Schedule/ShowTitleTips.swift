@@ -41,7 +41,7 @@ struct ShowTitleTips: View {
             VStack{
                 PrimaryHeader(
                     title: "Show Title".localized,
-                    isForLogo : false, leadingImgArr: [.sideArrow],
+                    isForLogo : false, leadingImgArr: ["chevron.left"],
                     trailingImgArr: [],
                     onClickLeading: { _ in
                         self.presentationMode.wrappedValue.dismiss()

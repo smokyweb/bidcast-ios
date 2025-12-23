@@ -22,7 +22,7 @@ struct ReferEarnScreen: View {
             VStack{
                 PrimaryHeader(
                     title: "Refer a Friend".localized,
-                    isForLogo : false ,leadingImgArr: [.icBack],
+                    isForLogo : false ,leadingImgArr: ["chevron.left"],
                     trailingImgArr: [.help],
                     onClickLeading: { _ in
                         self.presentationMode.wrappedValue.dismiss()

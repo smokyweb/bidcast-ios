@@ -25,7 +25,7 @@ struct DescriptionFieldView: View {
                 .foregroundColor(.black)
             
             ZStack(alignment: .topLeading) {
-                RoundedRectangle(cornerRadius: 6)
+                RoundedRectangle(cornerRadius: 32)
                     .stroke(Color.gray.opacity(0.3), lineWidth: 1)
                     .background(Color.white)
                     .frame(minHeight: 100)
@@ -39,7 +39,7 @@ struct DescriptionFieldView: View {
 
                 TextEditor(text: $description)
                     .font(.custom(custPlaceHolderName, size: placeHolder))
-                    .padding(.all, 4)
+                    .padding(.all, 8)
                     .background(Color.clear)
                     .frame(minHeight: 100)
                     .opacity(description.isEmpty ? 0.6 : 1)

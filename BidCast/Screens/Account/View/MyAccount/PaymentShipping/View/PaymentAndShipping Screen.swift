@@ -32,7 +32,7 @@ struct PaymentAndShipping_Screen: View {
                 PrimaryHeader(
                     title: "Payment & Shipping".localized,
                     isForLogo: false,
-                    leadingImgArr: [.icBack],
+                    leadingImgArr: ["chevron.left"],
                     trailingImgArr: [],
                     onClickLeading: { index in
                         self.presentationMode.wrappedValue.dismiss()

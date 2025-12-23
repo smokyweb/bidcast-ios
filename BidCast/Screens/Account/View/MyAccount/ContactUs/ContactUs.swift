@@ -29,7 +29,7 @@ struct ContactUs: View {
                     PrimaryHeader(
                         title: "Contact Us",
                         isForLogo: false,
-                        leadingImgArr: [.icBack],
+                        leadingImgArr: ["chevron.left"],
                         onClickLeading: { _ in
                             self.presentationMode.wrappedValue.dismiss()
                         },

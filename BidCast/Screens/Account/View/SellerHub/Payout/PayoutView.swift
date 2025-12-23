@@ -42,8 +42,8 @@ struct PayoutView: View {
                 // MARK: Top-Header (fixed)
                 PrimaryHeader(
                     title: AppString.Payout,
-                    isForBoth: true,
-                    leadingImgArr: [.icBack,.appName],
+                    isForBoth: false,
+                    leadingImgArr: ["chevron.left"],
                     onClickLeading: { _ in presentationMode.wrappedValue.dismiss() },
                     count: .constant(0)
                 )

@@ -55,8 +55,8 @@ struct ShowsScreen: View {
             VStack{
                 PrimaryHeader(
                     title: "Shows",
-                    isForBoth: true,
-                    leadingImgArr: [.icBack,.appName],
+                    isForBoth: false,
+                    leadingImgArr: ["chevron.left"],
                     trailingImgArr: [.search, .notification],
                     onClickLeading: { _ in
                         self.presentationMode.wrappedValue.dismiss()

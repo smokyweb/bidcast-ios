@@ -27,7 +27,7 @@ struct OTPVerificationScreen: View {
             VStack{
                 PrimaryHeader(
                     title: "OTP Verification",
-                    leadingImgArr: [.icBack],
+                    leadingImgArr: ["chevron.left"],
                     onClickLeading: { _ in
                         self.presentationMode.wrappedValue.dismiss()
                     },

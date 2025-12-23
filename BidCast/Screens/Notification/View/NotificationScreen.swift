@@ -28,7 +28,7 @@ struct NotificationScreen: View {
         VStack(spacing: 0) {
             PrimaryHeader(
                 title: "Notification",
-                leadingImgArr: [.icBack],
+                leadingImgArr: ["chevron.left"],
                 onClickLeading: { _ in
                     self.presentationMode.wrappedValue.dismiss()
                 },

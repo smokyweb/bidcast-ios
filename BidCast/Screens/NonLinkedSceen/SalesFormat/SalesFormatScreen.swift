@@ -48,7 +48,7 @@ struct SalesFormatScreen: View {
             VStack{
                 PrimaryHeader(
                     title: "Sales Format".localized,
-                    isForLogo : false ,leadingImgArr: [.icBack],
+                    isForLogo : false ,leadingImgArr: ["chevron.left"],
                     onClickLeading: { _ in
                         self.presentationMode.wrappedValue.dismiss()
                     },

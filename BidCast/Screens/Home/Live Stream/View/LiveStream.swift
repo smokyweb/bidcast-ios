@@ -164,6 +164,7 @@ struct LiveStream: View {
     @State  var currentBottomSheet: MenuAction? = nil
     
     @State var sellerId = ""
+    @State var showId = ""
     
     var filteredActions: [MenuAction] {
         if let userId = viewModel.liveShowsResponse.data?.first?.user?.id,
@@ -1959,6 +1960,7 @@ extension LiveStream {
         self.roomID = socketRooms.compactMap { $0.room_id }
         self.streamID = self.roomID
         let showId = socketRooms[matchingRoomIndex].show_id ?? ""
+        self.showId = showId
         if switchStreamType == .none {
             self.liveShowsData = socketRooms
             self.currentRoomID = roomId
@@ -2363,6 +2365,7 @@ extension LiveStream {
             showHud = true
             
             isFollowing = true
+            socketManagerChat.sendFollowUnfollow(followerId: "\(UserDefaults.userId)", followingId: sellerId, showId: showId)
         } else {
             showError = true
             alertType = .sheetType(

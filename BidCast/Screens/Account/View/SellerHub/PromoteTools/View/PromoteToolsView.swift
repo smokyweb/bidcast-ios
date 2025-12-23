@@ -5,152 +5,6 @@
 //  Created by JAM_E_329 on 26/05/25.
 //
 
-//import SwiftUI
-//import SVProgressHUD
-//
-//struct PromoteToolsView: View {
-//    
-//    @Environment(\.presentationMode) var presentationMode
-//    @State private var showError: Bool = false
-//    @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
-//    @State private var showhud: Bool = false
-//    @State private var hudMsg: String = ""
-//    @State private var navigateToLesson = false
-//    
-//    @EnvironmentObject var networkMonitor: NetworkMonitor
-//    @StateObject private var viewModel = PromoteToolsViewModel()
-//    @State private var promoteToolData = PromoteToolModel()
-//    
-//    var body: some View {
-//        VStack(spacing: 0) {
-//            // Header
-//            PrimaryHeader(
-//                title: AppString.Promote,
-//                isForBoth: true,
-//                leadingImgArr: [.icBack,.appName],
-//                trailingImgArr: [.icSetting],
-//                onClickLeading: { _ in
-//                    self.presentationMode.wrappedValue.dismiss()
-//                },
-//                count: .constant(0)
-//            )
-//            
-//            // Scrollable Content
-//            ScrollView {
-//                VStack(spacing: 24) {
-//                    
-//                    // Top Banner
-//                    HStack {
-//                        AsyncImage(url: URL(string: promoteToolData.showIcon ?? "")) { image in
-//                            image.resizable()
-//                                .scaledToFit()
-//                                .frame(width: 50, height: 50)
-//                        } placeholder: {
-//                            ProgressView()
-//                                .frame(width: 50, height: 50)
-//                        }
-//                        
-//                        VStack(alignment: .leading, spacing: 4) {
-//                            Text(promoteToolData.showTitle ?? "")
-//                                .font(.custom(poppinsSemiBold, size: 20.0))
-//                                .fontWeight(.semibold)
-//                            Text(promoteToolData.showDetails ?? "")
-//                                .font(.custom(poppinsRegular, size: 16.0))
-//                                .foregroundColor(.darkGray)
-//                        }
-//                        .padding(.horizontal)
-//                        Spacer()
-//                    }
-//                    .padding(.horizontal)
-//                    
-//                    // Stats
-//                    if let options = promoteToolData.showOptions {
-//                        HStack {
-//                            if let shows = options.shows {
-//                                StatView(stat: StatItem(label: "Shows", value: "\(shows)"))
-//                            }
-//                            if let views = options.views {
-//                                StatView(stat: StatItem(label: "Views", value: "\(views)"))
-//                            }
-//                            if let followers = options.followers {
-//                                StatView(stat: StatItem(label: "Followers", value: "\(followers)"))
-//                            }
-//                        }
-//                        .padding(.horizontal)
-//                    }
-//
-//
-//                    // Tools Grid
-//                    if promoteToolData.features?.count != 0{
-//                        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
-//                            ForEach(0 ..< (promoteToolData.features?.count ?? 0), id: \.self) { index in
-//                                let feature = promoteToolData.features?[index] ?? Feature()
-//                                ToolGridItemView(feature: feature)
-//                            }
-//                        }
-//                        .padding(.horizontal)
-//                    }
-//
-////                    .padding(.horizontal)
-//                    
-//                    // Learn Section
-//                    VStack(spacing: 12) {
-//                        Text(promoteToolData.promoteTitle ?? "")
-//                            .font(.custom(poppinsSemiBold, size: 16.0))
-//                            .foregroundColor(.white)
-//                        Text(promoteToolData.promoteDetails ?? "")
-//                            .font(.custom(poppinsSemiBold, size: 16.0))
-//                            .foregroundColor(.white.opacity(0.9))
-//                        Button(action: { navigateToLesson = true }) {
-//                            Text(AppString.startLearning)
-//                                .font(.custom(poppinsSemiBold, size: 13.0))
-//                                .padding()
-//                                .frame(maxWidth: .infinity)
-//                                .background(Color.white)
-//                                .foregroundColor(.defaultTheme)
-//                                .cornerRadius(10)
-//                        }
-//                    }
-//                    .padding()
-//                    .background(.defaultTheme)
-//                    .cornerRadius(20)
-//                    .padding(.horizontal)
-//                }
-//            }
-//            .padding(.top , 15)
-//        }
-//        .onFirstAppear {
-//            Task { await loadData() }
-//        }
-//        CusNavLink(doNavigate: $navigateToLesson, destination: LessonScreen(backToTabBar:.constant(true),comeFromAccount: true))
-//    }
-//    
-//    // MARK: Load API
-//    func loadData() async {
-//        guard Reachability.isConnectedToNetwork() else {
-//            hudMsg = "No Internet Connection"
-//            showhud = true
-//            return
-//        }
-//        SVProgressHUD.show()
-//        await viewModel.getPromoteToolContent()
-//        await SVProgressHUD.dismiss()
-//        
-//        if viewModel.promoteToolResponse.status != "success" {
-//            alertType = .sheetType(
-//                icon: .alert,
-//                title: "Error",
-//                message: viewModel.promoteToolResponse.message ?? "Something went wrong.",
-//                primaryBtnText: "",
-//                secondaryBtnText: "OK",
-//                sheetThemeColor: .pinkBtn
-//            )
-//            withAnimation(.snappy) { showError = true }
-//        } else {
-//            promoteToolData = viewModel.promoteToolResponse.data ?? PromoteToolModel()
-//        }
-//    }
-//}
 
 import SwiftUI
 import SVProgressHUD
@@ -201,7 +55,6 @@ struct PromoteToolsView: View {
     
     var body: some View {
         NavigationView {
-            ScrollView {
                 VStack(spacing: 0) {
                     // Header with Back Button and Title
                     HStack {
@@ -228,192 +81,192 @@ struct PromoteToolsView: View {
                     .padding(.horizontal, 20)
                     .padding(.vertical, 16)
                     .background(Color.white)
-                    
-                    GenericTabView(selectedTab: $segment) {
-                    }
-                    
-                    VStack(spacing: 12) {
-                        InfoCard(
-                            title: "Promote Tools",
-                            description: "Promote your livestreams to reach a wider audience on Bidcast."
-                        )
-                        PillsSelectorView(
-                            titles: options,
-                            selectedIndex: $selectedIndex,
-                            backgroundStyle: .roundedRect,
-                            underlineEnabled: false,
-                            showFilterButton: false,
-                            showSortDropdown: false,
-                            onSelectionChanged: { index, title in
-                                // Show sort sheet when "Sort" is tapped
-                                if index == 0 {
-                                   
-                                }
-                                else if index == 1 {
-                                   
-                                }
-                                else if index == 2 {
-                                   
-                                }
-                            })
-                        
-                        VStack(spacing: 0) {
-                            // One Promotion, Two Benefits Card
-                            BenefitsCard()
+                    ScrollView {
+                        GenericTabView(selectedTab: $segment) {
                         }
-                        .padding(.horizontal, 12)
+                        
+                        VStack(spacing: 12) {
+                            InfoCard(
+                                title: "Promote Tools",
+                                description: "Promote your livestreams to reach a wider audience on Bidcast."
+                            )
+                            PillsSelectorView(
+                                titles: options,
+                                selectedIndex: $selectedIndex,
+                                backgroundStyle: .roundedRect,
+                                underlineEnabled: false,
+                                showFilterButton: false,
+                                showSortDropdown: false,
+                                onSelectionChanged: { index, title in
+                                    // Show sort sheet when "Sort" is tapped
+                                    if index == 0 {
+                                        
+                                    }
+                                    else if index == 1 {
+                                        
+                                    }
+                                    else if index == 2 {
+                                        
+                                    }
+                                })
+                            
+                            VStack(spacing: 0) {
+                                // One Promotion, Two Benefits Card
+                                BenefitsCard()
+                            }
+                            .padding(.horizontal, 12)
+                            
+                        }
+                        
+                        // Audience Reached
+                        VStack(spacing: 12) {
+                            
+                            SectionHeaderView(title: "Audience Reached")
+                            MetricCardLarge(
+                                title: "Number of Show Boosts",
+                                value: "\(promoteToolDetail.number_of_boost ?? 0)",
+                                description: "Run a few more promotions to start seeing results for this metric!"
+                            )
+                            
+                            MetricCardLarge(
+                                title: "Number of Show Promotions",
+                                value: "\(promoteToolDetail.number_of_show_promote ?? 0)",
+                                description: "Run a few more promotions to start seeing results for this metric!"
+                            )
+                            
+                            MetricCardLarge(
+                                title: "Community Boosts",
+                                value: "\(promoteToolDetail.community_boost ?? 0)",
+                                description: "The total number of Community Boosts buyers unlocked during your shows."
+                            )
+                            
+                            MetricCardLarge(
+                                title: "Impressions",
+                                value: "\(promoteToolDetail.impressions ?? 0)",
+                                description: "The total number of times a Whatnot user saw your livestreams in their feeds due to a promotion."
+                            )
+                            
+                            MetricCardLarge(
+                                title: "Number of promoted hours",
+                                value: promoteToolDetail.promote_hours ?? "",
+                                description: "Run a few more promotions to start seeing results for this metric!"
+                            )
+                            
+                            MetricCardLarge(
+                                title: "Promoted impressions per hour",
+                                value: "\(promoteToolDetail.impression_per_hours ?? 0)",
+                                description: "Run a few more promotions to start seeing results for this metric!"
+                            )
+                            // Pro Tips
+                            ProTipCard(
+                                text: "Pro Tip: Running longer promotions through Show Promote is more cost-efficient and offers the most sustained increase in discoverability."
+                            )
+                            
+                            SectionHeaderView(title: "Discovery Impact")
+                            
+                            MetricCardLarge(
+                                title: "Total Taps and Clicks",
+                                value: "214",
+                                description: "Number of users that tapped into your livestream to view your show as a result of your promotions"
+                            )
+                            
+                            MetricCardLarge(
+                                title: "CTR (Click Through Rate)",
+                                value: "12.9%",
+                                description: "Percentage of time your promotions in feeds resulted in a buyer entering your show (taps and clicks)"
+                            )
+                            
+                            MetricCardLarge(
+                                title: "Sustained Watches",
+                                value: "34",
+                                description: "Number of users that clicked into your stream and stayed to watch your show for longer than 30 seconds"
+                            )
+                            
+                            MetricCardLarge(
+                                title: "Sustained Watch Rate",
+                                value: "11.49%",
+                                description: "The percentage of visitors from promotions that converted into sustained viewers"
+                            )
+                            
+                            MetricCardLarge(
+                                title: "Follows from Promotion",
+                                value: "\(promoteToolDetail.follows_from_promotion ?? 0)",
+                                description: "Number of buyers that followed your account by finding you via promotions"
+                            )
+                            
+                            
+                            ProTipCard(
+                                text: "Pro Tip: Improve your promotion CTR by experimenting with different titles and thumbnails to make your livestream tile more compelling to browsers.")
+                            
+                            ProTipCard(
+                                text: "Pro Tip: Increase Sustained Watches: Keep the potential buyers in the room once they enter. Consider always having an item or auction pinned, or engaging more with your audience.")
+                            
+                            ProTipCard(
+                                text: "Pro Tip: Follow Rate: Remember to remind your viewers to follow you while you are selling. Use the opportunity to tell them what to expect from future shows.")
+                            
+                        }
+                        .padding(12)
+                        .background(Color(UIColor.systemBackground))
+                        
+                        //                    // Content
+                        //                    VStack(spacing: 12) {
+                        //
+                        //                    }
+                        //                    .padding(12)
+                        //                    .background(Color(UIColor.systemBackground))
+                        //
+                        // Audience Reached
+                        VStack(spacing: 12) {
+                            SectionHeaderView(title: "Buyers Converted")
+                            
+                            MetricCardLarge(
+                                title: "First Time Buyers from Promotion",
+                                value: "N/A",
+                                description: "Run a few more promotions to start seeing results for this metric!"
+                            )
+                            
+                            MetricCardLarge(
+                                title: "Direct Sales from Promotion",
+                                value: promoteToolDetail.direct_sales_form_promotion ?? "",
+                                description: "Run a few more promotions to start seeing results for this metric!"
+                            )
+                            
+                            MetricCardLarge(
+                                title: "Spend",
+                                value: "N/A",
+                                description: "Run a few more promotions to start seeing results for this metric!"
+                            )
+                            
+                            MetricCardLarge(
+                                title: "Immediate Return on Spend",
+                                value: "N/A",
+                                description: "Run a few more promotions to start seeing results for this metric!"
+                            )
+                            
+                            MetricCardLarge(
+                                title: "7-Day Return on Spend",
+                                value: "N/A",
+                                description: "Run a few more promotions to start seeing results for this metric!"
+                            )
+                            
+                            MetricCardLarge(
+                                title: "Bids from Promotion",
+                                value: "3",
+                                description: "The number of bids from buyers who found your show via promotion"
+                            )
+                            
+                            ProTipCard(
+                                text: "Pro Tip: A buyer who makes a purchase in your show is more likely to be recommended your show in the future by our discovery algorithm. Consider using tools like Rewards Club to keep them engaged.")
+                            
+                            ProTipCard(
+                                text: "Pro Tip: Extra bidders in the room are valuable (even if they don't directly generate sales), as they provide engagement, boost the order value, and also benefit your discoverability.")
+                        }
+                        .padding(12)
+                        .background(Color(UIColor.systemBackground))
                         
                     }
-                    
-                    // Audience Reached
-                    VStack(spacing: 12) {
-                        
-                        SectionHeaderView(title: "Audience Reached")
-                        MetricCardLarge(
-                            title: "Number of Show Boosts",
-                            value: "\(promoteToolDetail.number_of_boost ?? 0)",
-                            description: "Run a few more promotions to start seeing results for this metric!"
-                        )
-                     
-                        MetricCardLarge(
-                            title: "Number of Show Promotions",
-                            value: "\(promoteToolDetail.number_of_show_promote ?? 0)",
-                            description: "Run a few more promotions to start seeing results for this metric!"
-                        )
-                     
-                        MetricCardLarge(
-                            title: "Community Boosts",
-                            value: "\(promoteToolDetail.community_boost ?? 0)",
-                            description: "The total number of Community Boosts buyers unlocked during your shows."
-                        )
-                     
-                        MetricCardLarge(
-                            title: "Impressions",
-                            value: "\(promoteToolDetail.impressions ?? 0)",
-                            description: "The total number of times a Whatnot user saw your livestreams in their feeds due to a promotion."
-                        )
-                     
-                        MetricCardLarge(
-                            title: "Number of promoted hours",
-                            value: promoteToolDetail.promote_hours ?? "",
-                            description: "Run a few more promotions to start seeing results for this metric!"
-                        )
-                     
-                        MetricCardLarge(
-                            title: "Promoted impressions per hour",
-                            value: "\(promoteToolDetail.impression_per_hours ?? 0)",
-                            description: "Run a few more promotions to start seeing results for this metric!"
-                        )
-                        // Pro Tips
-                        ProTipCard(
-                            text: "Pro Tip: Running longer promotions through Show Promote is more cost-efficient and offers the most sustained increase in discoverability."
-                        )
-                        
-                        SectionHeaderView(title: "Discovery Impact")
-                        
-                        MetricCardLarge(
-                            title: "Total Taps and Clicks",
-                            value: "214",
-                            description: "Number of users that tapped into your livestream to view your show as a result of your promotions"
-                        )
-                        
-                        MetricCardLarge(
-                            title: "CTR (Click Through Rate)",
-                            value: "12.9%",
-                            description: "Percentage of time your promotions in feeds resulted in a buyer entering your show (taps and clicks)"
-                        )
-                        
-                        MetricCardLarge(
-                            title: "Sustained Watches",
-                            value: "34",
-                            description: "Number of users that clicked into your stream and stayed to watch your show for longer than 30 seconds"
-                        )
-                        
-                        MetricCardLarge(
-                            title: "Sustained Watch Rate",
-                            value: "11.49%",
-                            description: "The percentage of visitors from promotions that converted into sustained viewers"
-                        )
-                        
-                        MetricCardLarge(
-                            title: "Follows from Promotion",
-                            value: "\(promoteToolDetail.follows_from_promotion ?? 0)",
-                            description: "Number of buyers that followed your account by finding you via promotions"
-                        )
-                 
-                        
-                        ProTipCard(
-                            text: "Pro Tip: Improve your promotion CTR by experimenting with different titles and thumbnails to make your livestream tile more compelling to browsers.")
-                        
-                        ProTipCard(
-                            text: "Pro Tip: Increase Sustained Watches: Keep the potential buyers in the room once they enter. Consider always having an item or auction pinned, or engaging more with your audience.")
-                        
-                        ProTipCard(
-                            text: "Pro Tip: Follow Rate: Remember to remind your viewers to follow you while you are selling. Use the opportunity to tell them what to expect from future shows.")
-
-                    }
-                    .padding(12)
-                    .background(Color(UIColor.systemBackground))
-                    
-//                    // Content
-//                    VStack(spacing: 12) {
-//                       
-//                    }
-//                    .padding(12)
-//                    .background(Color(UIColor.systemBackground))
-//                    
-                    // Audience Reached
-                    VStack(spacing: 12) {
-                        SectionHeaderView(title: "Buyers Converted")
-                        
-                        MetricCardLarge(
-                            title: "First Time Buyers from Promotion",
-                            value: "N/A",
-                            description: "Run a few more promotions to start seeing results for this metric!"
-                        )
-                        
-                        MetricCardLarge(
-                            title: "Direct Sales from Promotion",
-                            value: promoteToolDetail.direct_sales_form_promotion ?? "",
-                            description: "Run a few more promotions to start seeing results for this metric!"
-                        )
-                        
-                        MetricCardLarge(
-                            title: "Spend",
-                            value: "N/A",
-                            description: "Run a few more promotions to start seeing results for this metric!"
-                        )
-                        
-                        MetricCardLarge(
-                            title: "Immediate Return on Spend",
-                            value: "N/A",
-                            description: "Run a few more promotions to start seeing results for this metric!"
-                        )
-                        
-                        MetricCardLarge(
-                            title: "7-Day Return on Spend",
-                            value: "N/A",
-                            description: "Run a few more promotions to start seeing results for this metric!"
-                        )
-                        
-                        MetricCardLarge(
-                            title: "Bids from Promotion",
-                            value: "3",
-                            description: "The number of bids from buyers who found your show via promotion"
-                        )
-                        
-                        ProTipCard(
-                            text: "Pro Tip: A buyer who makes a purchase in your show is more likely to be recommended your show in the future by our discovery algorithm. Consider using tools like Rewards Club to keep them engaged.")
-                        
-                        ProTipCard(
-                            text: "Pro Tip: Extra bidders in the room are valuable (even if they don't directly generate sales), as they provide engagement, boost the order value, and also benefit your discoverability.")
-                    }
-                    .padding(12)
-                    .background(Color(UIColor.systemBackground))
-                    
-                }
             }
-            .background(Color(UIColor.systemBackground))
+            .background(.backGround)
             .navigationBarHidden(true)
             .onFirstAppear {
                 Task{
@@ -673,3 +526,152 @@ struct GenericTabView<T>: View where T: CaseIterable & Hashable & RawRepresentab
 
 
 
+
+
+
+//import SwiftUI
+//import SVProgressHUD
+//
+//struct PromoteToolsView: View {
+//
+//    @Environment(\.presentationMode) var presentationMode
+//    @State private var showError: Bool = false
+//    @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+//    @State private var showhud: Bool = false
+//    @State private var hudMsg: String = ""
+//    @State private var navigateToLesson = false
+//
+//    @EnvironmentObject var networkMonitor: NetworkMonitor
+//    @StateObject private var viewModel = PromoteToolsViewModel()
+//    @State private var promoteToolData = PromoteToolModel()
+//
+//    var body: some View {
+//        VStack(spacing: 0) {
+//            // Header
+//            PrimaryHeader(
+//                title: AppString.Promote,
+//                isForBoth: false,
+//                leadingImgArr: [.icBack,.appName],
+//                trailingImgArr: [.icSetting],
+//                onClickLeading: { _ in
+//                    self.presentationMode.wrappedValue.dismiss()
+//                },
+//                count: .constant(0)
+//            )
+//
+//            // Scrollable Content
+//            ScrollView {
+//                VStack(spacing: 24) {
+//
+//                    // Top Banner
+//                    HStack {
+//                        AsyncImage(url: URL(string: promoteToolData.showIcon ?? "")) { image in
+//                            image.resizable()
+//                                .scaledToFit()
+//                                .frame(width: 50, height: 50)
+//                        } placeholder: {
+//                            ProgressView()
+//                                .frame(width: 50, height: 50)
+//                        }
+//
+//                        VStack(alignment: .leading, spacing: 4) {
+//                            Text(promoteToolData.showTitle ?? "")
+//                                .font(.custom(poppinsSemiBold, size: 20.0))
+//                                .fontWeight(.semibold)
+//                            Text(promoteToolData.showDetails ?? "")
+//                                .font(.custom(poppinsRegular, size: 16.0))
+//                                .foregroundColor(.darkGray)
+//                        }
+//                        .padding(.horizontal)
+//                        Spacer()
+//                    }
+//                    .padding(.horizontal)
+//
+//                    // Stats
+//                    if let options = promoteToolData.showOptions {
+//                        HStack {
+//                            if let shows = options.shows {
+//                                StatView(stat: StatItem(label: "Shows", value: "\(shows)"))
+//                            }
+//                            if let views = options.views {
+//                                StatView(stat: StatItem(label: "Views", value: "\(views)"))
+//                            }
+//                            if let followers = options.followers {
+//                                StatView(stat: StatItem(label: "Followers", value: "\(followers)"))
+//                            }
+//                        }
+//                        .padding(.horizontal)
+//                    }
+//
+//
+//                    // Tools Grid
+//                    if promoteToolData.features?.count != 0{
+//                        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
+//                            ForEach(0 ..< (promoteToolData.features?.count ?? 0), id: \.self) { index in
+//                                let feature = promoteToolData.features?[index] ?? Feature()
+//                                ToolGridItemView(feature: feature)
+//                            }
+//                        }
+//                        .padding(.horizontal)
+//                    }
+//
+////                    .padding(.horizontal)
+//
+//                    // Learn Section
+//                    VStack(spacing: 12) {
+//                        Text(promoteToolData.promoteTitle ?? "")
+//                            .font(.custom(poppinsSemiBold, size: 16.0))
+//                            .foregroundColor(.white)
+//                        Text(promoteToolData.promoteDetails ?? "")
+//                            .font(.custom(poppinsSemiBold, size: 16.0))
+//                            .foregroundColor(.white.opacity(0.9))
+//                        Button(action: { navigateToLesson = true }) {
+//                            Text(AppString.startLearning)
+//                                .font(.custom(poppinsSemiBold, size: 13.0))
+//                                .padding()
+//                                .frame(maxWidth: .infinity)
+//                                .background(Color.white)
+//                                .foregroundColor(.defaultTheme)
+//                                .cornerRadius(10)
+//                        }
+//                    }
+//                    .padding()
+//                    .background(.defaultTheme)
+//                    .cornerRadius(20)
+//                    .padding(.horizontal)
+//                }
+//            }
+//            .padding(.top , 15)
+//        }
+//        .onFirstAppear {
+//            Task { await loadData() }
+//        }
+//        CusNavLink(doNavigate: $navigateToLesson, destination: LessonScreen(backToTabBar:.constant(true),comeFromAccount: true))
+//    }
+//
+//    // MARK: Load API
+//    func loadData() async {
+//        guard Reachability.isConnectedToNetwork() else {
+//            hudMsg = "No Internet Connection"
+//            showhud = true
+//            return
+//        }
+//        SVProgressHUD.show()
+//        await viewModel.getPromoteToolContent()
+//        await SVProgressHUD.dismiss()
+//
+//        if viewModel.promoteToolResponse.status != "success" {
+//            alertType = .sheetType(
+//                icon: .alert,
+//                title: "Error",
+//                message: viewModel.promoteToolResponse.message ?? "Something went wrong.",
+//                primaryBtnText: "",
+//                secondaryBtnText: "OK",
+//                sheetThemeColor: .pinkBtn
+//            )
+//            withAnimation(.snappy) { showError = true }
+//        } else {
+//            promoteToolData = viewModel.promoteToolResponse.data ?? PromoteToolModel()
+//        }
+//    }
+//}

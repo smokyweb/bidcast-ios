@@ -26,7 +26,7 @@ struct AuthTextField: View {
     var isRequiredValue: ((Int) -> Void)?
     var width: CGFloat = screenWidth - 30
     var height: CGFloat = 40
-    var cornerRadius : CGFloat = 19.0
+    var cornerRadius : CGFloat = 32.0
     
      var isForCVV: Bool = false
      var isForExpiry: Bool = false
@@ -56,7 +56,7 @@ struct AuthTextField: View {
                         if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                             Text(placeholder)
                                 .font(.custom(custPlaceHolderName, fixedSize: custPlaceHolderFontSize))
-                                .foregroundColor(.mediumLightGray)
+                                .foregroundColor(.gray)
                                 .padding(.top, 12)
                                 .padding(.leading, isIconDisplay ? 40 : 8)
                         }
@@ -75,7 +75,7 @@ struct AuthTextField: View {
                                         RoundedRectangle(cornerRadius: cornerRadius)
                                             .stroke(isFocused ? Color.defaultTheme.opacity(0.6) : .mediumLightGray, lineWidth: 1)
                                     )
-                                    .shadow(color: .ultraLightGray, radius: 1)
+                                    .shadow(color: .gray.opacity(0.5), radius: 1, x: 0, y: 0)
                             )
                             .onChange(of: text) { value in
                                 enteredText?(value)
@@ -100,7 +100,7 @@ struct AuthTextField: View {
                                 .font(.custom(custPlaceHolderName, fixedSize: placeHolder))
                                 .autocorrectionDisabled(true)
                                 .autocapitalization(.none)
-                                .foregroundStyle(.text)
+                                .foregroundStyle(.gray)
                                 .submitLabel(.next)
                                 .accentColor(.text)
                                 .focused($isFocused)
@@ -125,7 +125,7 @@ struct AuthTextField: View {
                                     .font(.custom(custPlaceHolderName, fixedSize: custPlaceHolderFontSize))
                                     .autocorrectionDisabled(true)
                                     .autocapitalization(.none)
-                                    .foregroundStyle(.text)
+                                    .foregroundStyle(.gray)
                                     .submitLabel(.next)
                                     .accentColor(.text)
                                     .focused($isFocused)
@@ -207,11 +207,11 @@ struct AuthTextField: View {
                         RoundedRectangle(cornerRadius: cornerRadius)
                             .fill(.white)
     //                        .fill(.text.opacity(0.1))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: cornerRadius)
-                                    .stroke(.mediumLightGray, lineWidth: 1)
-                            )
-                            .shadow(color: .ultraLightGray, radius: 1, x: 0, y: 0)
+//                            .overlay(
+//                                RoundedRectangle(cornerRadius: cornerRadius)
+//                                    .stroke(.gray.opacity(0.5), lineWidth: 1)
+//                            )
+                            .shadow(color: .gray.opacity(0.7), radius: 1, x: 0, y: 0)
                     )
                     .onTapGesture {
                         isFocused = true
@@ -243,6 +243,6 @@ struct AuthTextField: View {
     
 }
 
-#Preview {
-    AuthTextField(icon: .gradCap, text: .constant(""))
-}
+//#Preview {
+//    AuthTextField(icon: .gradCap, text: .constant(""))
+//}

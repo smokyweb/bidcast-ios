@@ -30,7 +30,7 @@ struct TipsScreen: View {
         guard let summary = tipsList?.summary else { return [] }
         
         return [
-            TipSummaryItem(title: "Total Tips", value: "$ \(summary.totalTips ?? "0")"),
+            TipSummaryItem(title: "Total Tips", value: "$ \(summary.totalTips ?? 0)"),
             TipSummaryItem(title: "Today Tips", value: "$ \(summary.todayTips ?? 0)")
         ]
     }
@@ -42,7 +42,7 @@ struct TipsScreen: View {
                 PrimaryHeader(
                     title: AppString.Tips,
                     isForLogo: false,
-                    leadingImgArr: [.icBack],
+                    leadingImgArr: ["chevron.left"],
                     trailingImgArr: [],
                     onClickLeading: { _ in
                         self.presentationMode.wrappedValue.dismiss()
@@ -54,7 +54,7 @@ struct TipsScreen: View {
             }
            
             // MARK: - Scrollable Show List
-            ScrollView {
+            
                 VStack(spacing: 10) {
                     
                     TwoVerticalLabelCell(
@@ -62,20 +62,14 @@ struct TipsScreen: View {
                         topLabel: { $0.title },
                         bottomLabel: { $0.value }
                     )
+                    ScrollView {
                     TipsListView(tips: tipsList?.tips, isLoading: $isLoading)
                 }
                 .padding(.top)
             }.safeAreaInset(edge: .bottom) {
-                // MARK: - Fixed Bottom Button
-//                PrimaryButton(title: AppString.submit.localized, isOutLine: false, onButtonClick: {
-//                    // Action
-//                },btnTextColor: .white)
-//                .padding(.horizontal)
-//                .padding(.vertical, 0)
-//                .background(Color(UIColor.systemGroupedBackground))
             }
         }
-        .background(Color(UIColor.systemGroupedBackground))
+        .background(.backGround)
         .toast(isPresenting: $showhud) {
             AlertToast(type: .regular, title: hudMsg)
         }
@@ -105,7 +99,6 @@ struct TipsScreen: View {
                 message: tipsViewModel.getTipsResponse?.message ?? "Something went wrong.",
                 primaryBtnText: "",
                 secondaryBtnText: "OK",
-                sheetThemeColor: .pinkBtn
             )
             withAnimation(.snappy) { showError = true }
         } else {
@@ -142,9 +135,9 @@ enum TipsValue : String, CaseIterable, CustomStringConvertible{
 }
 
 // MARK: - Preview
-#Preview {
-    TipsScreen()
-}
+//#Preview {
+//    TipsScreen()
+//}
 
 
 

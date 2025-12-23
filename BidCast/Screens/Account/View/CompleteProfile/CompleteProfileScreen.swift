@@ -42,7 +42,7 @@ struct CompleteProfileScreen: View {
             VStack(alignment: .leading, spacing: 12){
                 PrimaryHeader(
                     title: AppString.CompleteProfile.localized,
-                    leadingImgArr: [.icBack],
+                    leadingImgArr: ["chevron.left"],
                     onClickLeading: { _ in
                         self.presentationMode.wrappedValue.dismiss()
                     },

@@ -26,7 +26,7 @@ struct SalesTaxScreen: View {
               VStack{
               PrimaryHeader(
                 title: "Sales Tax Exemption".localized,
-                isForLogo : false, leadingImgArr: [.icBack],
+                isForLogo : false, leadingImgArr: ["chevron.left"],
                 trailingImgArr: [],
                 onClickLeading: { _ in
                     self.presentationMode.wrappedValue.dismiss()

@@ -215,7 +215,7 @@ struct WalletPayoutView: View {
 //                PrimaryHeader(
 //                    title: "Wallet",
 //                    isForLogo: false,
-//                    leadingImgArr: [.icBack],
+//                    leadingImgArr: ["chevron.left"],
 //                    trailingImgArr: [],
 //                    onClickLeading: { _ in
 //                        self.presentationMode.wrappedValue.dismiss()
@@ -952,7 +952,7 @@ extension WalletPayoutView{
 //                // MARK: Top-Header (fixed)
 //                PrimaryHeader(
 //                    title: AppString.Account,
-//                    isForBoth: true,
+//                    isForBoth: false,
 //                    leadingImgArr: [.icBack,.appName],
 //                    trailingImgArr: [.icSetting],
 //                    onClickLeading: { _ in presentationMode.wrappedValue.dismiss() },

@@ -211,7 +211,7 @@ struct PrimaryHeader: View {
     var isForLogo: Bool = false
     var isForBoth = false
     
-    var leadingImgArr: [ImageResource] = [.icBack,.appName]
+    var leadingImgArr: [String] = ["chevron.left"]
     var trailingImgArr: [ImageResource] = []
     
     var onClickLeading: ((Int) -> Void)?
@@ -232,13 +232,10 @@ struct PrimaryHeader: View {
                             Button(action: {
                                 withAnimation { onClickLeading?(ind) }
                             }) {
-                                Image(leadingImgArr[ind])
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(maxWidth:.infinity)
-                                    .frame(height: 24)
-                                    .tint(.black)
-                                    .clipped()
+                                Image(systemName: leadingImgArr[ind])
+                                    .font(.custom(poppinsBold, size: 16))
+                                    .foregroundColor(.primary)
+                                    .frame(width: 36, height: 36)
                                    
                             }
                         }
@@ -257,12 +254,10 @@ struct PrimaryHeader: View {
                             Button(action: {
                                 withAnimation { onClickLeading?(ind) }
                             }) {
-                                Image(leadingImgArr[ind])
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: 24, height: 24)
-                                    .tint(.black)
-                                    .clipped()
+                                Image(systemName:leadingImgArr[ind])
+                                    .font(.custom(poppinsBold, size: 16))
+                                    .foregroundColor(.primary)
+                                    .frame(width: 36, height: 36)
                             }
                         }
                     }
@@ -325,7 +320,7 @@ import SwiftUI
 
 struct HeaderWithTitle: View {
     var title: String = "Header Title"
-    var leadingImgArr: [ImageResource] = [.icBack]
+    var leadingImgArr: [String] = []
     var onClickLeading: ((Int) -> Void)?
     
     @Binding var count: Int
@@ -336,7 +331,7 @@ struct HeaderWithTitle: View {
                 Button(action: {
                     withAnimation { onClickLeading?(ind) }
                 }) {
-                    Image(leadingImgArr[ind])
+                    Image(systemName:leadingImgArr[ind])
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 24, height: 24)

@@ -49,7 +49,7 @@ struct VerifyOtpScreen: View {
             VStack{
                 PrimaryHeader(
                     title: AppString.verifyOtp.localized ,
-                    leadingImgArr: [.icBack],
+                    leadingImgArr: ["chevron.left"],
                     onClickLeading: { _ in
                         withAnimation {
                             self.presentationMode.wrappedValue.dismiss()

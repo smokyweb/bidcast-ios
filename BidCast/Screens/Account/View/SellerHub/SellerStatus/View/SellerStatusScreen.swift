@@ -34,8 +34,8 @@ struct SellerStatusScreen: View {
                 // MARK: - Fixed Header
                 PrimaryHeader(
                     title: AppString.SellerStatus,
-                    isForBoth: true,
-                    leadingImgArr: [.icBack,.appName],
+                    isForBoth: false,
+                    leadingImgArr: ["chevron.left"],
                     trailingImgArr: [.icSetting],
                     onClickLeading: { _ in
                         self.presentationMode.wrappedValue.dismiss()

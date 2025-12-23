@@ -32,7 +32,7 @@ struct AddressesScreen: View {
                 PrimaryHeader(
                     title: "My Addresses",
                     isForLogo: false,
-                    leadingImgArr: [.icBack],
+                    leadingImgArr: ["chevron.left"],
                     onClickLeading: { _ in
                         self.presentationMode.wrappedValue.dismiss()
                     },

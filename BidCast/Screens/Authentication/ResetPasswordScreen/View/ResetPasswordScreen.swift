@@ -40,7 +40,7 @@ struct ResetPasswordScreen: View {
             VStack{
                 PrimaryHeader(
                     title: AppString.resetPassword,
-                    leadingImgArr: [.icBack],
+                    leadingImgArr: ["chevron.left"],
                     onClickLeading: { _ in
                         withAnimation {
                             appRootManager.currentRoot = .authentication

@@ -36,7 +36,7 @@ struct CreateAddress: View {
                 PrimaryHeader(
                     title: "Create New Address",
                     isForLogo: false,
-                    leadingImgArr: [.icBack],
+                    leadingImgArr: ["chevron.left"],
                     onClickLeading: { index in
                         self.presentationMode.wrappedValue.dismiss()
                         // maybe open menu or do nothing

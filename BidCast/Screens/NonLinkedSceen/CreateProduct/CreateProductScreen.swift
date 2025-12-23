@@ -87,7 +87,7 @@ struct CreateProductScreen: View {
                 VStack{
                     PrimaryHeader(
                         title: "Create Product".localized,
-                        isForLogo : false, leadingImgArr: [.sideArrow],
+                        isForLogo : false, leadingImgArr: ["chevron.left"],
                         trailingImgArr: [],
                         onClickLeading: { _ in
                             self.presentationMode.wrappedValue.dismiss()

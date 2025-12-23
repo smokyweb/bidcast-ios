@@ -33,7 +33,7 @@ struct AddCardScreen: View {
                 PrimaryHeader(
                     title: "Add Payment Card".localized,
                     isForLogo: false,
-                    leadingImgArr: [.icBack], // logo on left
+                    leadingImgArr: ["chevron.left"], // logo on left
                     trailingImgArr: [],
                     onClickLeading: { index in
                         self.presentationMode.wrappedValue.dismiss()
