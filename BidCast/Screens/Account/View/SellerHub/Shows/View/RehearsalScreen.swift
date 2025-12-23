@@ -533,6 +533,7 @@ struct RehearsalScreen: View {
                                         
                                        
                                         Button(action: {
+                                            hideKeyboard()
                                             if !commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                                                 let roomId = self.roomId
                                                 //                                            ZIMChatManager.shared.sendMessage(message: commentText,roomId: roomId,image: UserDefaults.profileURL,name: UserDefaults.fullName)

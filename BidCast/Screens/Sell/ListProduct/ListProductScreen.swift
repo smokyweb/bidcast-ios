@@ -317,10 +317,12 @@ struct ListProductScreen: View {
 //                            }, imageName: "ic_Plus", btnColor: .white)
                     }
                     
+                    .padding(.bottom, 16)
                     .background(.white)
                     .cornerRadius(12)
                     .padding(.top,2)
-                    .padding(.horizontal,12)
+                    .padding(.horizontal, 12)
+                    
                     
                     VStack(alignment: .leading){
                         // Select Format Label
@@ -329,21 +331,6 @@ struct ListProductScreen: View {
                             .padding(.horizontal)
                             .padding(.top)
                         
-                        // Format Buttons
-                        //                        HStack(spacing: 12) {
-                        //                            formatButton(title: "Auction", systemImage: "hammer.fill", isSelected: selectedFormat == .auction)
-                        //                                .onTapGesture {
-                        //                                    selectedFormat = .auction
-                        //                                }
-                        //
-                        //                            formatButton(title: "Buy It Now", systemImage: "tag.fill", isSelected: selectedFormat == .buyItNow)
-                        //                                .onTapGesture {
-                        //                                    selectedFormat = .buyItNow
-                        //                                }
-                        //
-                        //
-                        //                        }
-                        //                        .padding(.horizontal)
                         
                         CustomSegmentedControl(preselectedIndex: $segment, options: lisProductScreenSegment.allCases)
                             .onChange(of: segment) { newSegment in
@@ -417,10 +404,12 @@ struct ListProductScreen: View {
                             }
                         }
                     }
+                    .padding(.bottom, 16)
                     .background(.white)
                     .cornerRadius(12)
-                    .padding(.vertical,2)
+                    
                     .padding(.horizontal, 16)
+                    
                     .onChange(of: isTappedFlash) { newValue in
                         if newValue {
                             request.flash_sale = "1"

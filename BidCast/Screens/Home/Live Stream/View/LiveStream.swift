@@ -663,6 +663,7 @@ struct LiveStream: View {
     @ViewBuilder
     private var sendButton: some View {
         Button(action: {
+            hideKeyboard()
             let roomId = liveShowsData[currentIndex].room_id ?? ""
             let userId = UserDefaults.userId
             let userName = UserDefaults.userName
