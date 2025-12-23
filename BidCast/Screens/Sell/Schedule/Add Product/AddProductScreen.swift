@@ -650,8 +650,23 @@ extension AddProductsScreen {
                 "date": request.date,
                 "time": request.time,
                 "category_id": request.category_id,
-                "auction_type_id": request.auction_type_id
+                "auction_type_id": request.auction_type_id,
+                "show_discoverability": request.show_discoverability,
+                "repeat_value": request.repeat_value,
+                "language": request.language,
+                
             ]
+            if request.is_explicit{
+                params["is_explicit"] = 1
+            }else{
+                params["is_explicit"] = 0
+            }
+            
+            if request.is_repeat{
+                params["is_repeat"] = 1
+            }else{
+                params["is_repeat"] = 0
+            }
 
             // Convert product IDs
             var prodIds = Array(selectedProductIDs)

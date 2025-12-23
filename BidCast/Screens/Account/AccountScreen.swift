@@ -29,11 +29,7 @@ struct AccountScreen: View {
     @State private var sellerInfo: SellerhubInfoModel?
     
     // MARK: - Data State
-    @State private var request = StoreScheduleShowRequest(
-        title: "", date: "", time: "", category_id: "",
-        auction_type_id: "", product_ids: "", isExplicitContent: false,
-        discoverablitity: "", primaryLanguage: "", repeats: ""
-    )
+    @State private var request = StoreScheduleShowRequest(title: "", date: "", time: "", category_id: "", auction_type_id: "", product_ids: "", is_explicit: false, show_discoverability: "", repeat_value: "", is_repeat: false, language: "english")
     
     // MARK: - Navigation State
     @State private var navigationState = NavigationState()

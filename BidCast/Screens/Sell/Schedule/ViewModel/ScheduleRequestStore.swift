@@ -22,11 +22,11 @@ import Combine
 final class ScheduleRequestStore: ObservableObject {
     @Published var request: StoreScheduleShowRequest
     
-    init(request: StoreScheduleShowRequest = StoreScheduleShowRequest(title: "", date: "", time: "", category_id: "", auction_type_id: "", product_ids: "", isExplicitContent: false, discoverablitity: "", primaryLanguage: "", repeats: "")) {
+    init(request: StoreScheduleShowRequest = StoreScheduleShowRequest(title: "", date: "", time: "", category_id: "", auction_type_id: "", product_ids: "", is_explicit: false, show_discoverability: "", repeat_value: "", is_repeat: false, language: "english")) {
         self.request = request
     }
 
     func reset() {
-        self.request = StoreScheduleShowRequest(title: "", date: "", time: "", category_id: "", auction_type_id: "", product_ids: "", isExplicitContent: false, discoverablitity: "", primaryLanguage: "", repeats: "")
+        self.request = StoreScheduleShowRequest(title: "", date: "", time: "", category_id: "", auction_type_id: "", product_ids: "", is_explicit: false, show_discoverability: "", repeat_value: "", is_repeat: false, language: "english")
     }
 }

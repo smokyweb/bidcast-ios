@@ -649,10 +649,11 @@ struct StoreScheduleShowRequest: Encodable {
     var product_ids: String
 //    var thumbnail : String
 //    var isHazardiousMaterial: Bool
-    var isExplicitContent: Bool
-    var discoverablitity: String
-    var primaryLanguage: String
-    var repeats: String
+    var is_explicit: Bool
+    var show_discoverability: String
+    var repeat_value: String
+    var is_repeat : Bool
+    var language : String
     
     enum CodingKeys: String, CodingKey {
         case title

@@ -133,10 +133,12 @@ struct SelectCategoryScreen: View {
                         custCategorySize : 13.0,
                         onOptionSelected: { value in
                             if value == "Does Not Repeat" {
-                                request.repeats = ""
+                                request.repeat_value = ""
+                                request.is_repeat = false
                             }
                             else  {
-                                request.repeats = value
+                                request.is_repeat = true
+                                request.repeat_value = value
                             }
                         }
                     )
@@ -189,7 +191,7 @@ struct SelectCategoryScreen: View {
                         custCategory : poppinsRegular,
                         custCategorySize : 13.0,
                         onOptionSelected: { value in
-                            request.primaryLanguage = value
+                            request.language = value
                             //                        if let id = auctionTypeList.first(where: { $0.name == value })?.id {
                             //                            request.auction_type_id = "\(id)"
                             //
@@ -221,7 +223,11 @@ struct SelectCategoryScreen: View {
                         ) {
                             withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                                 selectedDiscoverability = .publicMode
-                                request.primaryLanguage = "public"
+                                if selectedDiscoverability == .publicMode{
+                                    request.show_discoverability = "public"
+                                }else{
+                                    request.show_discoverability = "private"
+                                }
                             }
                         }
                         .padding(.vertical, 8)
@@ -236,7 +242,11 @@ struct SelectCategoryScreen: View {
                         ) {
                             withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                                 selectedDiscoverability = .privateMode
-                                request.primaryLanguage = "private"
+                                if selectedDiscoverability == .publicMode{
+                                    request.show_discoverability = "public"
+                                }else{
+                                    request.show_discoverability = "private"
+                                }
                             }
                         }
                         .padding(.vertical, 8)
@@ -247,8 +257,8 @@ struct SelectCategoryScreen: View {
                     Spacer()
                     PrimaryButton(title: AppString.continueBtn.localized, isOutLine: false, onButtonClick: {
 //                        request.title = title
-                        print("Store title,category,auction \(request)")
-                        request.isExplicitContent = isExplicitContent
+                        print("Store title,category,auction,repeat \(request)")
+                        request.is_explicit = isExplicitContent
                         guard !request.title.isEmpty else {
                             hudMsg = "Please enter title"
                             showhud = true
@@ -278,7 +288,7 @@ struct SelectCategoryScreen: View {
         .background(Color.bg.opacity(0.5))
         
         .onFirstAppear {
-            request.discoverablitity = "public"
+            request.show_discoverability = "public"
             Task {
                 guard Reachability.isConnectedToNetwork() else {
                     hudMsg = "No Internet Connection"

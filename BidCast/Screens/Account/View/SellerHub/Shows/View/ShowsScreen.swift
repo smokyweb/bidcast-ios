@@ -143,16 +143,7 @@ struct ShowsScreen: View {
                        destination:  MyShowsAnalyticsScreen(showId: $showID))
             
             CusNavLink(doNavigate: $navigateToshowTitle, destination:
-                        ShowTitleTips(request : .constant(StoreScheduleShowRequest(title: "",
-                                                                                   date: "",
-                                                                                   time: "",
-                                                                                   category_id: "",
-                                                                                   auction_type_id: "",
-                                                                                   product_ids: "",
-                                                                                   isExplicitContent: false,
-                                                                                   discoverablitity: "",
-                                                                                   primaryLanguage: "",
-                                                                                   repeats: "")),
+                        ShowTitleTips(request : .constant(StoreScheduleShowRequest(title: "", date: "", time: "", category_id: "", auction_type_id: "", product_ids: "", is_explicit: false, show_discoverability: "", repeat_value: "", is_repeat: false, language: "english")),
                                       fromPrepare:.constant(true),
                                       backToPrepare: $navigateToshowTitle,
                                       showId: $SHowId))

@@ -59,13 +59,14 @@ struct LivePollHostView: View {
                 HStack {
                     Text("Live Poll")
                         .font(.custom(poppinsBold, size: 22.0))
+                        .foregroundStyle(.black)
                     Spacer()
                     Button(action: {
                         onCancel?()
                     }) {
                         Image(systemName: "xmark.circle.fill")
                             .font(.custom(poppinsSemiBold, size: 28.0))
-                            .foregroundColor(Color(white: 0.2))
+                            .foregroundStyle(.black)
                     }
                 }
                 .padding(.horizontal)
@@ -76,11 +77,11 @@ struct LivePollHostView: View {
                     Text("Question")
                         .frame(maxWidth: .infinity)
                         .font(.custom(poppinsSemiBold, size: 14))
-                        .foregroundColor(.blue)
+                        .foregroundStyle(.black)
                     Text(poll.question)
                         .frame(maxWidth: .infinity)
                         .font(.custom(poppinsRegular, size: 15))
-                        .foregroundColor(.primary)
+                        .foregroundStyle(.black)
                 }
                 .padding(.horizontal, 22)
                 .padding(.vertical)
@@ -113,7 +114,7 @@ struct LivePollHostView: View {
                             .cornerRadius(10)
                         Text("\(poll.totalVotes) total votes")
                             .font(.custom(poppinsMedium, size: 14))
-                            .foregroundColor(.blue)
+                            .foregroundStyle(.black)
                     }
                     .padding(.vertical, 6)
                     .padding(.horizontal, 6)
@@ -124,7 +125,7 @@ struct LivePollHostView: View {
                 HStack {
                     Text("Options")
                         .font(.custom(poppinsSemiBold, size: 16))
-                        .foregroundColor(.primary)
+                        .foregroundStyle(.black)
                     Spacer()
                 }
                 .padding(.horizontal)
@@ -234,11 +235,11 @@ struct OptionRowView: View {
             HStack {
                 Text(option.text.capitalizingFirstLetter())
                     .font(.custom(poppinsRegular, size: 14))
-                    .foregroundColor(.defaultTheme)
+                    .foregroundStyle(.black)
                 Spacer()
                 Text("\(option.voteCount) vote" + (option.voteCount == 1 ? "" : "s"))
                     .font(.custom(poppinsRegular, size: 12))
-                    .foregroundColor(.gray)
+                    .foregroundStyle(.black)
                     .padding(.top, 8)
             }
             .padding(.bottom, 6)
@@ -262,14 +263,14 @@ struct OptionRowView: View {
                     }
                     Text("\(Int(percentage))%")
                         .font(.custom(poppinsSemiBold, size: 12))
-                        .foregroundColor(.blue)
+                        .foregroundStyle(.black)
                         .padding(.leading, 8)
                 }
             }
             .frame(height: 18)
         }
         .padding()
-        .background(Color.white)
+        .background(.backGround)
         .cornerRadius(10)
         .shadow(color: Color.black.opacity(0.04), radius: 8, x: 0, y: 4)
     }

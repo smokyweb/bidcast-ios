@@ -212,10 +212,10 @@ struct ShowTitleTips: View {
                                                category_id: "\(showData.category_id ?? 0)",
                                                auction_type_id: "\(showData.auction_type_id ?? 0)",
                                                product_ids: showData.product_ids?.first ?? "",
-                                               isExplicitContent: showData.is_explicit ?? false,
-                                               discoverablitity: showData.show_discoverability ?? "",
-                                               primaryLanguage: showData.language ?? "",
-                                               repeats: showData.repeat_value ?? "")
+                                               is_explicit: showData.is_explicit ?? false,
+                                               show_discoverability: showData.show_discoverability ?? "",
+                                               repeat_value: showData.language ?? "", is_repeat: showData.is_repeat ?? false,
+                                               language: showData.repeat_value ?? "")
             title = showData.title ?? ""
 //            request.title = title
 //            request.date = showData.date ?? ""
