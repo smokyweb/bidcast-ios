@@ -248,7 +248,7 @@ struct WatchVODCard: View {
                     Circle()
                         .fill(
                             LinearGradient(
-                                gradient: Gradient(colors: [Color.blue, Color.blue.opacity(0.7)]),
+                                gradient: Gradient(colors: [Color.defaultTheme, Color.defaultTheme.opacity(0.7)]),
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             )
@@ -260,7 +260,7 @@ struct WatchVODCard: View {
                         .foregroundColor(.white)
                         .offset(x: 2)
                 }
-                .shadow(color: Color.blue.opacity(0.3), radius: 12, x: 0, y: 6)
+                .shadow(color: Color.defaultTheme.opacity(0.3), radius: 12, x: 0, y: 6)
                 
                 // Text Content
                 VStack(alignment: .leading, spacing: 4) {
@@ -379,7 +379,7 @@ struct ContributionCard: View {
                 }) {
                     ZStack {
                         Circle()
-                            .fill(Color.blue.opacity(0.1))
+                            .fill(Color.defaultTheme.opacity(0.1))
                             .frame(width: 32, height: 32)
                         
                         Image(systemName: "info.circle.fill")
@@ -411,7 +411,7 @@ struct ContributionCard: View {
                 .padding(12)
                 .background(
                     RoundedRectangle(cornerRadius: 10)
-                        .fill(Color.blue.opacity(0.05))
+                        .fill(Color.defaultTheme.opacity(0.05))
                 )
                 .transition(.opacity.combined(with: .scale))
             }
@@ -448,7 +448,7 @@ struct SellerAnalyticsCTA: View {
                 // Chart Icon
                 ZStack {
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(Color.blue.opacity(0.12))
+                        .fill(Color.defaultTheme.opacity(0.12))
                         .frame(width: 50, height: 50)
                     
                     Image(systemName: "chart.line.uptrend.xyaxis")
@@ -479,7 +479,7 @@ struct SellerAnalyticsCTA: View {
                 RoundedRectangle(cornerRadius: 16)
                     .fill(
                         LinearGradient(
-                            gradient: Gradient(colors: [Color.blue.opacity(0.1), Color.blue.opacity(0.05)]),
+                            gradient: Gradient(colors: [Color.defaultTheme.opacity(0.1), Color.defaultTheme.opacity(0.05)]),
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
@@ -487,9 +487,9 @@ struct SellerAnalyticsCTA: View {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 16)
-                    .stroke(Color.blue.opacity(0.2), lineWidth: 1.5)
+                    .stroke(Color.defaultTheme.opacity(0.2), lineWidth: 1.5)
             )
-            .shadow(color: Color.blue.opacity(0.15), radius: 12, x: 0, y: 6)
+            .shadow(color: Color.defaultTheme.opacity(0.15), radius: 12, x: 0, y: 6)
             .scaleEffect(isPressed ? 0.98 : 1.0)
         }
         .buttonStyle(PlainButtonStyle())

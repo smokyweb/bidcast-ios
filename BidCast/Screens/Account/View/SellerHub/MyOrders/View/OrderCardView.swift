@@ -262,7 +262,7 @@ struct OrderCardView: View {
     }
     
     private var shadowColor: Color {
-        isPressed ? Color.blue.opacity(0.2) : Color.black.opacity(0.06)
+        isPressed ? Color.defaultTheme.opacity(0.2) : Color.black.opacity(0.06)
     }
     
     private var shadowRadius: CGFloat {

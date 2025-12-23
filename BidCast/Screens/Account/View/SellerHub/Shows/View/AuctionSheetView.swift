@@ -227,7 +227,7 @@ struct AuctionSettingsSheet: View {
                             }
                             .padding(.horizontal, 12)
                             .padding(.vertical, 12)
-                            .background(time == selectedRequiredTime ? Color.blue.opacity(0.08) : Color.clear)
+                            .background(time == selectedRequiredTime ? Color.defaultTheme.opacity(0.08) : Color.clear)
                         }
                         
                         if time != requiredTimeOptions.last {

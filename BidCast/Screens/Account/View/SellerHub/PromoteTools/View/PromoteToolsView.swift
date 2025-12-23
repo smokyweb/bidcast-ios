@@ -570,7 +570,7 @@ struct ProTipCard: View {
                 Circle()
                     .fill(
                         LinearGradient(
-                            colors: [Color.defaultTheme.opacity(0.2), Color.blue.opacity(0.8)],
+                            colors: [Color.defaultTheme.opacity(0.2), Color.defaultTheme.opacity(0.8)],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )

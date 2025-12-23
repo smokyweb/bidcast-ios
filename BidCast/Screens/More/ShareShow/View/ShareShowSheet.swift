@@ -500,7 +500,7 @@ struct MessageBubble: View {
                     .foregroundColor(isCurrentUser ? .white : .black)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 8)
-                    .background(isCurrentUser ? Color.blue : Color(.systemGray5))
+                    .background(isCurrentUser ? Color.defaultTheme : Color(.systemGray5))
                     .cornerRadius(16)
                 
                 Text(formatTimestamp(message.timestamp))

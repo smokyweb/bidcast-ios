@@ -79,7 +79,7 @@ struct CreateShippingProfileScreen: View {
                                     .cornerRadius(12)
                                     .overlay(
                                         RoundedRectangle(cornerRadius: 12)
-                                            .stroke(name.isEmpty ? Color.gray.opacity(0.2) : Color.blue.opacity(0.5), lineWidth: name.isEmpty ? 1 : 2)
+                                            .stroke(name.isEmpty ? Color.gray.opacity(0.2) : Color.defaultTheme.opacity(0.5), lineWidth: name.isEmpty ? 1 : 2)
                                     )
                                     .shadow(color: Color.black.opacity(0.04), radius: 8, x: 0, y: 2)
                             }
@@ -95,7 +95,7 @@ struct CreateShippingProfileScreen: View {
                                         .cornerRadius(12)
                                         .overlay(
                                             RoundedRectangle(cornerRadius: 12)
-                                                .stroke(weight.isEmpty ? Color.gray.opacity(0.2) : Color.blue.opacity(0.5), lineWidth: weight.isEmpty ? 1 : 2)
+                                                .stroke(weight.isEmpty ? Color.gray.opacity(0.2) : Color.defaultTheme.opacity(0.5), lineWidth: weight.isEmpty ? 1 : 2)
                                         )
                                         .shadow(color: Color.black.opacity(0.04), radius: 8, x: 0, y: 2)
                                 }
@@ -141,11 +141,11 @@ struct CreateShippingProfileScreen: View {
                             .padding(14)
                             .background(
                                 RoundedRectangle(cornerRadius: 12)
-                                    .fill(Color.blue.opacity(0.05))
+                                    .fill(Color.defaultTheme.opacity(0.05))
                             )
                             .overlay(
                                 RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color.blue.opacity(0.1), lineWidth: 1)
+                                    .stroke(Color.defaultTheme.opacity(0.1), lineWidth: 1)
                             )
                         }
                         .padding(.horizontal, 20)
@@ -190,7 +190,7 @@ struct CreateShippingProfileScreen: View {
                                 )
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 14)
-                                        .stroke(maxItemsEnabled ? Color.blue.opacity(0.3) : Color.clear, lineWidth: 2)
+                                        .stroke(maxItemsEnabled ? Color.defaultTheme.opacity(0.3) : Color.clear, lineWidth: 2)
                                         .animation(.easeInOut(duration: 0.2), value: maxItemsEnabled)
                                 )
                             }
@@ -218,7 +218,7 @@ struct CreateShippingProfileScreen: View {
                                 )
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 14)
-                                        .stroke(additionalWeightEnabled ? Color.blue.opacity(0.3) : Color.clear, lineWidth: 2)
+                                        .stroke(additionalWeightEnabled ? Color.defaultTheme.opacity(0.3) : Color.clear, lineWidth: 2)
                                         .animation(.easeInOut(duration: 0.2), value: additionalWeightEnabled)
                                 )
                             }
@@ -272,13 +272,13 @@ struct CreateShippingProfileScreen: View {
                             .padding(.vertical, 16)
                             .background(
                                 LinearGradient(
-                                    gradient: Gradient(colors: [Color.blue, Color.blue.opacity(0.8)]),
+                                    gradient: Gradient(colors: [Color.defaultTheme, Color.defaultTheme.opacity(0.8)]),
                                     startPoint: .leading,
                                     endPoint: .trailing
                                 )
                             )
                             .cornerRadius(14)
-                            .shadow(color: Color.blue.opacity(0.4), radius: 12, x: 0, y: 6)
+                            .shadow(color: Color.defaultTheme.opacity(0.4), radius: 12, x: 0, y: 6)
                     }
                     .padding(.horizontal, 20)
                     .padding(.vertical, 16)

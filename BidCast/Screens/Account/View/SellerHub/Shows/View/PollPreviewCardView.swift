@@ -19,7 +19,7 @@ struct PollPreviewCardView: View {
             // MARK: - Poll Icon
             ZStack {
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(Color.blue.opacity(0.12))
+                    .fill(Color.defaultTheme.opacity(0.12))
                 
                 Image(systemName: "chart.bar.fill")
                     .foregroundColor(.blue)

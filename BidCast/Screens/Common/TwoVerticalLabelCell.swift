@@ -16,7 +16,7 @@ struct TwoVerticalLabelCell<T: Hashable & CustomStringConvertible>: View {
     @Binding var selection: T?
 
     var h1fontname = poppinsSemiBold
-    var h1fontSize = 18.0
+    var h1fontSize = 15.0
     var h2fontname = poppinsRegular
     var h2fontSize = 12.0
 
@@ -28,7 +28,7 @@ struct TwoVerticalLabelCell<T: Hashable & CustomStringConvertible>: View {
         bottomLabel: @escaping (T) -> String,
         selection: Binding<T?>? = nil,
         h1fontname: String = poppinsSemiBold,
-        h1fontSize: Double = 18.0,
+        h1fontSize: Double = 15.0,
         h2fontname: String = poppinsRegular,
         h2fontSize: Double = 12.0,
         columnsPerRow: Int = 3, // 🔥 You can control columns here
@@ -59,10 +59,10 @@ struct TwoVerticalLabelCell<T: Hashable & CustomStringConvertible>: View {
                 }
                 .frame(maxWidth: .infinity,minHeight: 70) // 🟢 Auto-stretch to fit the cell
                 .aspectRatio(1, contentMode: .fill) // 🟢 Square cells
-                .background(selection == item ? Color.blue.opacity(0.1) : Color.white)
+                .background(selection == item ? Color.defaultTheme.opacity(0.1) : Color.white)
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
-                        .stroke(selection == item ? Color.blue : Color.clear, lineWidth: 1)
+                        .stroke(selection == item ? Color.defaultTheme : Color.clear, lineWidth: 1)
                 )
                 .cornerRadius(12)
                 .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)

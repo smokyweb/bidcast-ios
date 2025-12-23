@@ -736,7 +736,7 @@ struct CustomBottomSheetView: View {
                                         Text(title)
                                             .frame(maxWidth: .infinity)
                                             .padding(.vertical, 8)
-                                            .background(Color.blue)
+                                            .background(Color.defaultTheme)
                                             .cornerRadius(12)
                                             .foregroundColor(.white)
                                     }

@@ -296,13 +296,13 @@ struct InventoryScreen: View {
                         .padding(.vertical, 16)
                         .background(
                             LinearGradient(
-                                gradient: Gradient(colors: [Color.blue, Color.blue.opacity(0.8)]),
+                                gradient: Gradient(colors: [Color.defaultTheme, Color.defaultTheme.opacity(0.8)]),
                                 startPoint: .leading,
                                 endPoint: .trailing
                             )
                         )
                         .cornerRadius(14)
-                        .shadow(color: Color.blue.opacity(0.4), radius: 12, x: 0, y: 6)
+                        .shadow(color: Color.defaultTheme.opacity(0.4), radius: 12, x: 0, y: 6)
                 }
                 .padding(.horizontal, 20)
                 .padding(.vertical, 16)
@@ -1199,7 +1199,7 @@ extension ProductCardView {
             RoundedRectangle(cornerRadius: 20)
                 .fill(Color(.systemBackground))
                 .shadow(
-                    color: isLongPressing ? Color.blue.opacity(0.2) : Color.black.opacity(0.08),
+                    color: isLongPressing ? Color.defaultTheme.opacity(0.2) : Color.black.opacity(0.08),
                     radius: isLongPressing ? 16 : 12,
                     x: 0,
                     y: isLongPressing ? 6 : 4
@@ -1208,7 +1208,7 @@ extension ProductCardView {
         .overlay(
             RoundedRectangle(cornerRadius: 20)
                 .stroke(
-                    isLongPressing ? Color.blue.opacity(0.3) : Color.gray.opacity(0.1),
+                    isLongPressing ? Color.defaultTheme.opacity(0.3) : Color.gray.opacity(0.1),
                     lineWidth: isLongPressing ? 2 : 1
                 )
         )

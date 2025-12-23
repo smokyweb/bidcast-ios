@@ -133,7 +133,7 @@ struct LivePollViewerView: View {
                 .foregroundColor(.primary)
         }
         .padding()
-        .background(Color.blue.opacity(0.10))
+        .background(Color.defaultTheme.opacity(0.10))
         .cornerRadius(14)
     }
 
@@ -156,7 +156,7 @@ struct LivePollViewerView: View {
                 Image(systemName: "list.bullet")
                     .foregroundColor(.blue)
                     .padding(6)
-                    .background(Color.blue.opacity(0.12))
+                    .background(Color.defaultTheme.opacity(0.12))
                     .cornerRadius(10)
                 Text("\(poll.totalVotes) total votes")
                     .font(.custom(poppinsMedium, size: 14))
@@ -238,14 +238,14 @@ struct ViewerOptionSelectableRow: View {
                 ZStack {
                     Circle()
                         .stroke(
-                            isSelected ? Color.blue : Color.gray.opacity(0.4),
+                            isSelected ? Color.defaultTheme : Color.gray.opacity(0.4),
                             lineWidth: isSelected ? 3 : 1.5
                         )
                         .frame(width: 22, height: 22)
 
                     if isSelected {
                         Circle()
-                            .fill(Color.blue)
+                            .fill(Color.defaultTheme)
                             .frame(width: 12, height: 12)
                     }
                 }
@@ -264,13 +264,13 @@ struct ViewerOptionSelectableRow: View {
             // MARK: - Card Background
             .background(
                 RoundedRectangle(cornerRadius: 14)
-                    .fill(isSelected ? Color.blue.opacity(0.08) : Color(UIColor.secondarySystemBackground))
+                    .fill(isSelected ? Color.defaultTheme.opacity(0.08) : Color(UIColor.secondarySystemBackground))
             )
 
             // MARK: - Border Highlight
             .overlay(
                 RoundedRectangle(cornerRadius: 14)
-                    .stroke(isSelected ? Color.blue : Color.clear, lineWidth: 1.8)
+                    .stroke(isSelected ? Color.defaultTheme : Color.clear, lineWidth: 1.8)
             )
 
             // MARK: - Press Animation
@@ -318,7 +318,7 @@ struct ViewerOptionStatsRow: View {
                         .frame(height: 10)
 
                     RoundedRectangle(cornerRadius: 6)
-                        .fill(LinearGradient(gradient: Gradient(colors: [Color.blue, Color.blue.opacity(0.8)]),
+                        .fill(LinearGradient(gradient: Gradient(colors: [Color.defaultTheme, Color.defaultTheme.opacity(0.8)]),
                                              startPoint: .leading, endPoint: .trailing))
                         .frame(width: barWidth(total: g.size.width, pct: animateToPercentage), height: 10)
                         .animation(.spring(response: 0.45, dampingFraction: 0.8), value: animateToPercentage)
@@ -336,11 +336,11 @@ struct ViewerOptionStatsRow: View {
             .frame(height: 18)
         }
         .padding()
-        .background(isSelected ? Color.blue.opacity(0.08) : Color.white)
+        .background(isSelected ? Color.defaultTheme.opacity(0.08) : Color.white)
         .cornerRadius(12)
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(isSelected ? Color.blue : Color.clear, lineWidth: isSelected ? 1.6 : 0)
+                .stroke(isSelected ? Color.defaultTheme : Color.clear, lineWidth: isSelected ? 1.6 : 0)
         )
         .shadow(color: Color.black.opacity(0.04), radius: 6, x: 0, y: 4)
     }

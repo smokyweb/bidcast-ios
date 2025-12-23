@@ -279,7 +279,7 @@ struct SubCategoryCard: View {
             .cornerRadius(8)
             .overlay(
                 RoundedRectangle(cornerRadius: 8)
-                    .stroke(isSelected ? Color.blue : Color.clear, lineWidth: 2)
+                    .stroke(isSelected ? Color.defaultTheme : Color.clear, lineWidth: 2)
             )
             
             .shadow(color: isSelected ? Color.clear : Color.gray.opacity(0.4), radius: 4, x: 0, y: 2)

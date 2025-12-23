@@ -83,7 +83,7 @@ struct StackedImageView: View {
                     .foregroundColor(.white)
                     .padding(.horizontal, 7)
                     .padding(.vertical, 3)
-                    .background(Color.blue)
+                    .background(Color.defaultTheme)
                     .clipShape(Capsule())
                     .offset(x: 10, y: -10)
                     .shadow(color: .black.opacity(0.2), radius: 4, x: 0, y: 2)

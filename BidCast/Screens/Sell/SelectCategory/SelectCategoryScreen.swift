@@ -168,7 +168,7 @@ struct SelectCategoryScreen: View {
                         )
                         .overlay(
                             RoundedRectangle(cornerRadius: 16)
-                                .stroke(isExplicitContent ? Color.blue.opacity(0.3) : Color.gray.opacity(0.1), lineWidth: isExplicitContent ? 2 : 1)
+                                .stroke(isExplicitContent ? Color.defaultTheme.opacity(0.3) : Color.gray.opacity(0.1), lineWidth: isExplicitContent ? 2 : 1)
                                 .animation(.easeInOut(duration: 0.2), value: isExplicitContent)
                         )
                     }

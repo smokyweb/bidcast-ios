@@ -67,7 +67,7 @@ struct SalesFormatScreen: View {
                         .foregroundColor(.black)
                 }
                 .padding()
-                .background(Color.blue.opacity(0.1))
+                .background(Color.defaultTheme.opacity(0.1))
                 .cornerRadius(12)
                 .padding(.horizontal)
                 Spacer()
@@ -225,10 +225,10 @@ struct SalesFormatScreen: View {
         }
         .padding()
         .frame(maxWidth: .infinity)
-        .background(isSelected ? Color.blue.opacity(0.1) : Color.white)
+        .background(isSelected ? Color.defaultTheme.opacity(0.1) : Color.white)
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(isSelected ? Color.blue : Color.gray.opacity(0.3), lineWidth: 2)
+                .stroke(isSelected ? Color.defaultTheme : Color.gray.opacity(0.3), lineWidth: 2)
         )
         .cornerRadius(12)
     }

@@ -95,7 +95,7 @@ import SVProgressHUD
 //                            .fontWeight(.bold)
 //                            .frame(maxWidth: .infinity)
 //                            .padding()
-//                            .background(Color.blue)
+//                            .background(Color.defaultTheme)
 //                            .foregroundColor(.white)
 //                            .cornerRadius(30)
 //                    }
@@ -297,7 +297,7 @@ struct NotifyMeBottomSheet: View {
                         HStack(spacing: 12) {
                             ZStack {
                                 RoundedRectangle(cornerRadius: 12)
-                                    .fill(Color.blue.opacity(0.1))
+                                    .fill(Color.defaultTheme.opacity(0.1))
                                     .frame(width: 44, height: 44)
                                 
                                 Image(systemName: "bell.badge.fill")
@@ -327,7 +327,7 @@ struct NotifyMeBottomSheet: View {
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: 16)
-                            .stroke(Color.blue.opacity(0.1), lineWidth: 1)
+                            .stroke(Color.defaultTheme.opacity(0.1), lineWidth: 1)
                     )
                     .padding(.horizontal, 20)
                     
@@ -356,14 +356,14 @@ struct NotifyMeBottomSheet: View {
                             .padding(.vertical, 16)
                             .background(
                                 LinearGradient(
-                                    gradient: Gradient(colors: [Color.blue, Color.blue.opacity(0.8)]),
+                                    gradient: Gradient(colors: [Color.defaultTheme, Color.defaultTheme.opacity(0.8)]),
                                     startPoint: .leading,
                                     endPoint: .trailing
                                 )
                             )
                             .foregroundColor(.white)
                             .cornerRadius(14)
-                            .shadow(color: Color.blue.opacity(0.4), radius: 12, x: 0, y: 6)
+                            .shadow(color: Color.defaultTheme.opacity(0.4), radius: 12, x: 0, y: 6)
                         }
                         .scaleEffect(yesButtonScale)
                         

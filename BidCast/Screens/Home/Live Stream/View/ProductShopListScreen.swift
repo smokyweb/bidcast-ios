@@ -205,8 +205,9 @@ struct ProductShopListScreen: View {
     
     @State var productData: [ProductDataModel1] = []
 //    @State var categoryId: String = "-1"
-    @State var sellerId: String = "-1"
+    @Binding var sellerId: String
     @State var currentPage: Int = 1
+    @Binding var categoryIds : Int
     
     var options:[String] = ["Sort", "Auction", "Buy Now"]
     
@@ -368,8 +369,9 @@ extension ProductShopListScreen {
                 }
             ) {
                 let request = ProductRequest(user_id: sellerId,
-                                             search: searchText, page: currentPage,
-                                             //                               type: "live",
+                                             search: searchText,
+                                             category_ids:"\(categoryIds)",
+                                             page: currentPage,
                                              sale_type: selectedOptions,
                                              sort_by: selectedSort
                 )

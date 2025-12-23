@@ -102,12 +102,12 @@ struct SortOptionRow: View {
                 // Radio Button
                 ZStack {
                     Circle()
-                        .stroke(isSelected ? Color.blue : Color.gray.opacity(0.4), lineWidth: 2)
+                        .stroke(isSelected ? Color.defaultTheme : Color.gray.opacity(0.4), lineWidth: 2)
                         .frame(width: 24, height: 24)
                     
                     if isSelected {
                         Circle()
-                            .fill(Color.blue)
+                            .fill(Color.defaultTheme)
                             .frame(width: 12, height: 12)
                             .transition(.scale.combined(with: .opacity))
                     }

@@ -203,7 +203,7 @@ struct MoreOptionsScreen: View {
                                 HStack(spacing: 12) {
                                     ZStack {
                                         RoundedRectangle(cornerRadius: 10)
-                                            .fill(Color.blue.opacity(0.1))
+                                            .fill(Color.defaultTheme.opacity(0.1))
                                             .frame(width: 40, height: 40)
                                         
                                         Image(systemName: "checkmark.shield.fill")
@@ -239,7 +239,7 @@ struct MoreOptionsScreen: View {
                         )
                         .overlay(
                             RoundedRectangle(cornerRadius: 16)
-                                .stroke(isVerifiedBuyersOn ? Color.blue.opacity(0.3) : Color.clear, lineWidth: 2)
+                                .stroke(isVerifiedBuyersOn ? Color.defaultTheme.opacity(0.3) : Color.clear, lineWidth: 2)
                                 .animation(.easeInOut(duration: 0.3), value: isVerifiedBuyersOn)
                         )
                         .scaleEffect(toggleScale)
@@ -371,9 +371,9 @@ struct OptionGridButtonView: View {
             VStack(spacing: 10) {
                 ZStack {
                     Circle()
-                        .fill(isSelected ? Color.blue.opacity(0.15) : Color.gray.opacity(0.1))
+                        .fill(isSelected ? Color.defaultTheme.opacity(0.15) : Color.gray.opacity(0.1))
                         .frame(width: 50, height: 50)
-                        .shadow(color: isSelected ? Color.blue.opacity(0.2) : Color.clear, radius: 8, x: 0, y: 4)
+                        .shadow(color: isSelected ? Color.defaultTheme.opacity(0.2) : Color.clear, radius: 8, x: 0, y: 4)
                     
                     Image(systemName: icon)
                         .font(.system(size: 22))
@@ -396,7 +396,7 @@ struct OptionGridButtonView: View {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
-                    .stroke(isSelected ? Color.blue.opacity(0.3) : Color.clear, lineWidth: 2)
+                    .stroke(isSelected ? Color.defaultTheme.opacity(0.3) : Color.clear, lineWidth: 2)
             )
             .scaleEffect(isPressed ? 0.95 : 1.0)
         }
@@ -427,7 +427,7 @@ struct OptionButtonView: View {
             VStack(spacing: 8) {
                 ZStack {
                     Circle()
-                        .fill(isActive ? Color.blue.opacity(0.15) : Color.gray.opacity(0.1))
+                        .fill(isActive ? Color.defaultTheme.opacity(0.15) : Color.gray.opacity(0.1))
                         .frame(width: 44, height: 44)
                     
                     Image(systemName: icon)
@@ -448,7 +448,7 @@ struct OptionButtonView: View {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
-                    .stroke(isActive ? Color.blue.opacity(0.3) : Color.clear, lineWidth: 2)
+                    .stroke(isActive ? Color.defaultTheme.opacity(0.3) : Color.clear, lineWidth: 2)
             )
             .scaleEffect(isPressed ? 0.95 : 1.0)
         }

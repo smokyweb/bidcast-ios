@@ -64,7 +64,7 @@ struct PayoutView: View {
             }
             .padding()
             .frame(maxWidth: .infinity)
-            .background(Color.blue.opacity(0.1))
+            .background(Color.defaultTheme.opacity(0.1))
             .cornerRadius(16)
             .padding()
             
@@ -105,7 +105,7 @@ struct PayoutView: View {
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(Color.blue)
+                    .background(Color.defaultTheme)
                     .cornerRadius(10)
             }
             .padding(.horizontal)

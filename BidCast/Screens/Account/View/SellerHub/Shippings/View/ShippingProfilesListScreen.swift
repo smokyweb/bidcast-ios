@@ -111,13 +111,13 @@ struct ShippingProfilesListScreen: View {
                             .padding(.vertical, 16)
                             .background(
                                 LinearGradient(
-                                    gradient: Gradient(colors: [Color.blue, Color.blue.opacity(0.8)]),
+                                    gradient: Gradient(colors: [Color.defaultTheme, Color.defaultTheme.opacity(0.8)]),
                                     startPoint: .leading,
                                     endPoint: .trailing
                                 )
                             )
                             .cornerRadius(14)
-                            .shadow(color: Color.blue.opacity(0.4), radius: 12, x: 0, y: 6)
+                            .shadow(color: Color.defaultTheme.opacity(0.4), radius: 12, x: 0, y: 6)
                     }
                     .padding(.horizontal, 20)
                     .padding(.vertical, 16)

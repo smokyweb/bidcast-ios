@@ -234,7 +234,7 @@ struct ControlButton: View {
                     Circle()
                         .fill(
                             LinearGradient(
-                                colors: [Color.blue, Color.blue.opacity(0.8)],
+                                colors: [Color.defaultTheme, Color.defaultTheme.opacity(0.8)],
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             )
@@ -279,7 +279,7 @@ struct VideoProgressBar: View {
                 RoundedRectangle(cornerRadius: 4)
                     .fill(
                         LinearGradient(
-                            colors: [Color.blue, Color.cyan],
+                            colors: [Color.defaultTheme, Color.cyan],
                             startPoint: .leading,
                             endPoint: .trailing
                         )
@@ -582,7 +582,7 @@ class VideoDownloader: NSObject, URLSessionDownloadDelegate, ObservableObject {
 //                                    .foregroundColor(.white)
 //                                    .padding(.horizontal, 32)
 //                                    .padding(.vertical, 12)
-//                                    .background(Color.blue)
+//                                    .background(Color.defaultTheme)
 //                                    .cornerRadius(25)
 //                            }
 //                        }

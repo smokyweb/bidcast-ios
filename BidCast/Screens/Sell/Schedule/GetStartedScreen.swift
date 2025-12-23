@@ -40,7 +40,7 @@ struct GetStartedScreen: View {
                 VStack(alignment: .leading,spacing: 16){
                     GuidelineRow(
                         icon: "cart",
-                        iconColor: Color.blue.opacity(0.3),
+                        iconColor: Color.defaultTheme.opacity(0.3),
                         title: "Honor Purchases & Freebies",
                         description: "Fulfill all orders promptly and honor your commitments"
                     )

@@ -120,7 +120,7 @@ struct RateSellerView: View {
                                 
                                 RoundedRectangle(cornerRadius: 14)
                                     .stroke(
-                                        comment.isEmpty ? Color.gray.opacity(0.2) : Color.blue.opacity(0.4),
+                                        comment.isEmpty ? Color.gray.opacity(0.2) : Color.defaultTheme.opacity(0.4),
                                         lineWidth: comment.isEmpty ? 1 : 2
                                     )
                                     .animation(.easeInOut(duration: 0.2), value: comment.isEmpty)
@@ -210,14 +210,14 @@ struct RateSellerView: View {
                                 .padding(.vertical, 16)
                                 .background(
                                     LinearGradient(
-                                        gradient: Gradient(colors: [Color.blue, Color.blue.opacity(0.8)]),
+                                        gradient: Gradient(colors: [Color.defaultTheme, Color.defaultTheme.opacity(0.8)]),
                                         startPoint: .leading,
                                         endPoint: .trailing
                                     )
                                 )
                                 .foregroundColor(.white)
                                 .cornerRadius(14)
-                                .shadow(color: Color.blue.opacity(0.4), radius: 12, x: 0, y: 6)
+                                .shadow(color: Color.defaultTheme.opacity(0.4), radius: 12, x: 0, y: 6)
                         }
                         .padding(.top, 8)
                         .padding(.bottom, 20)

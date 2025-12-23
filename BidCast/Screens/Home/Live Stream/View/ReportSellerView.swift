@@ -98,7 +98,7 @@ struct ReportSellerView: View {
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color.blue)
+                        .background(Color.defaultTheme)
                         .cornerRadius(30)
                 }
                 .padding(.top, 10)

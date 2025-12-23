@@ -184,7 +184,7 @@ struct CustomBarChartView: View {
                             Spacer()
                             if item.value > 0 {
                                 RoundedRectangle(cornerRadius: 4)
-                                    .fill(Color.blue)
+                                    .fill(Color.defaultTheme)
                                     .frame(width: barWidth, height: calculateBarHeight(value: item.value, maxHeight: chartHeight * 0.75))
                             } else {
                                 Spacer()
@@ -231,7 +231,7 @@ struct CustomAreaChartView: View {
                 areaPath(in: geometry.size)
                     .fill(
                         LinearGradient(
-                            gradient: Gradient(colors: [Color.blue.opacity(0.3), Color.blue.opacity(0.05)]),
+                            gradient: Gradient(colors: [Color.defaultTheme.opacity(0.3), Color.defaultTheme.opacity(0.05)]),
                             startPoint: .top,
                             endPoint: .bottom
                         )
@@ -239,12 +239,12 @@ struct CustomAreaChartView: View {
                 
                 // Line
                 linePath(in: geometry.size)
-                    .stroke(Color.blue, style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round))
+                    .stroke(Color.defaultTheme, style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round))
                 
                 // Data points
                 ForEach(Array(data.enumerated()), id: \.element.id) { index, item in
                     Circle()
-                        .fill(Color.blue)
+                        .fill(Color.defaultTheme)
                         .frame(width: 6, height: 6)
                         .position(pointPosition(for: index, in: geometry.size))
                 }

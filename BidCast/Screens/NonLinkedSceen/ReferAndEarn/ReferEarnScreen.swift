@@ -37,7 +37,7 @@ struct ReferEarnScreen: View {
             Image(systemName: "gift.fill")
                 .resizable()
                 .frame(width: 60, height: 60)
-                .foregroundColor(Color.blue)
+                .foregroundColor(Color.defaultTheme)
                 .padding(.top)
 
             // Title & Subtitle

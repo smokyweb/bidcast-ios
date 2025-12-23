@@ -192,7 +192,7 @@ struct MyOrdersScreen: View {
                 }
             }
         }
-        .background(Color.blue.opacity(0.05).ignoresSafeArea())
+        .background(Color.defaultTheme.opacity(0.05).ignoresSafeArea())
         
         .onAppear {
             UIScrollView.appearance().bounces = false

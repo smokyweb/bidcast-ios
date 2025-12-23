@@ -73,7 +73,7 @@ struct AuthTextField: View {
                                     .fill(Color.white)
                                     .overlay(
                                         RoundedRectangle(cornerRadius: cornerRadius)
-                                            .stroke(isFocused ? Color.blue.opacity(0.6) : .mediumLightGray, lineWidth: 1)
+                                            .stroke(isFocused ? Color.defaultTheme.opacity(0.6) : .mediumLightGray, lineWidth: 1)
                                     )
                                     .shadow(color: .ultraLightGray, radius: 1)
                             )

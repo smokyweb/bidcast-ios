@@ -31,7 +31,7 @@ struct ProductWeightScreen: View {
     @State private var isHazardousMaterial = false
     
     var strokeColor: Color {
-        isHazardousMaterial ? Color.blue.opacity(0.3) : Color.gray.opacity(0.1)
+        isHazardousMaterial ? Color.defaultTheme.opacity(0.3) : Color.gray.opacity(0.1)
     }
 
     var lineWidth: CGFloat {
@@ -81,7 +81,7 @@ struct ProductWeightScreen: View {
                                 .foregroundColor(.blue)
                         }
                         .padding()
-                        .background(Color.blue.opacity(0.1))
+                        .background(Color.defaultTheme.opacity(0.1))
                         .cornerRadius(10)
                         
                         // Item Weight Input

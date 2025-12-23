@@ -59,7 +59,7 @@ struct ListProductScreen: View {
     @State var processingListArr = ["Letters","Flats","Machinaable","Nonstandard","Non Machinable"]
     @State var openShippingSheet = false
     var strokeColor: Color {
-        isHazardousMaterial ? Color.blue.opacity(0.3) : Color.gray.opacity(0.1)
+        isHazardousMaterial ? Color.defaultTheme.opacity(0.3) : Color.gray.opacity(0.1)
     }
 
     var lineWidth: CGFloat {
@@ -958,10 +958,10 @@ struct ListProductScreen: View {
         }
         .padding()
         .frame(maxWidth: .infinity)
-        .background(isSelected ? Color.blue.opacity(0.1) : Color.white)
+        .background(isSelected ? Color.defaultTheme.opacity(0.1) : Color.white)
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(isSelected ? Color.blue : Color.gray.opacity(0.3), lineWidth: 2)
+                .stroke(isSelected ? Color.defaultTheme : Color.gray.opacity(0.3), lineWidth: 2)
         )
         .cornerRadius(12)
     }
@@ -1279,12 +1279,12 @@ import AlertToast
 //                                                        HStack(spacing: 12) {
 //                                                            ZStack {
 //                                                                Circle()
-//                                                                    .stroke(selectedRadio[field.label ?? ""] == option ? Color.blue : Color.gray.opacity(0.3), lineWidth: 2)
+//                                                                    .stroke(selectedRadio[field.label ?? ""] == option ? Color.defaultTheme : Color.gray.opacity(0.3), lineWidth: 2)
 //                                                                    .frame(width: 20, height: 20)
 //                                                                
 //                                                                if selectedRadio[field.label ?? ""] == option {
 //                                                                    Circle()
-//                                                                        .fill(Color.blue)
+//                                                                        .fill(Color.defaultTheme)
 //                                                                        .frame(width: 10, height: 10)
 //                                                                }
 //                                                            }
@@ -1845,11 +1845,11 @@ struct DimensionsSection: View {
         .padding(.vertical, 12)
         .background(
             RoundedRectangle(cornerRadius: 14)
-                .fill(Color.blue.opacity(0.04))
+                .fill(Color.defaultTheme.opacity(0.04))
         )
         .overlay(
             RoundedRectangle(cornerRadius: 14)
-                .stroke(Color.blue.opacity(0.1), lineWidth: 1)
+                .stroke(Color.defaultTheme.opacity(0.1), lineWidth: 1)
         )
         .padding(.horizontal, 16)
     }
@@ -1901,9 +1901,9 @@ struct DimensionField: View {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 10)
-                    .stroke(isFocused ? Color.blue.opacity(0.5) : Color.gray.opacity(0.2), lineWidth: isFocused ? 2 : 1)
+                    .stroke(isFocused ? Color.defaultTheme.opacity(0.5) : Color.gray.opacity(0.2), lineWidth: isFocused ? 2 : 1)
             )
-            .shadow(color: isFocused ? Color.blue.opacity(0.1) : Color.clear, radius: 8, x: 0, y: 4)
+            .shadow(color: isFocused ? Color.defaultTheme.opacity(0.1) : Color.clear, radius: 8, x: 0, y: 4)
         }
     }
 }

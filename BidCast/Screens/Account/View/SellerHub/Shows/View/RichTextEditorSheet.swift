@@ -252,7 +252,7 @@ struct RichTextEditorSheet: View {
         Button(action: action) {
             Text(title)
                 .frame(width: 36, height: 36)
-                .background(active ? Color.blue : Color.clear)
+                .background(active ? Color.defaultTheme : Color.clear)
                 .foregroundColor(active ? .white : .black)
                 .cornerRadius(6)
                 .animation(.easeInOut, value: active)

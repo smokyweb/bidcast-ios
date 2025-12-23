@@ -306,7 +306,7 @@ struct SellingTips: View {
 //                        .frame(height: 10)
 //                        .foregroundColor(.white)
 //                        .padding()
-//                        .background(currentIndex == 0 ? Color.gray : Color.blue)
+//                        .background(currentIndex == 0 ? Color.gray : Color.defaultTheme)
 //                        .cornerRadius(8)
 //
 //                        Spacer()

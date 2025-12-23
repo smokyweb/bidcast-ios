@@ -72,6 +72,7 @@ final class SocketManagerService: NSObject, ObservableObject {
     private var socket: SocketIOClient!
     private var socketManager: SocketManager!
     private let logger = Logger(subsystem: "io.bidcast", category: "Socket")
+    private var sustainedWatchWorkItem: DispatchWorkItem?
     
     // MARK: - Init
     override private init() {
@@ -867,6 +868,42 @@ extension SocketManagerService {
 
             socket.emit("create_poll", payload)
             print("📊 Sent create_poll:", payload)
+        }
+    }
+    
+    func joinShowForPromotionalData(showId:String,UserId : String) {
+        performIfConnected {
+            let payload: [String: Any] = [
+                "show_id": showId,
+                "user_id": UserId,
+            ]
+            
+            socket.emit("join_show", payload)
+            print("📊 Sent join_show :", payload)
+            sustainedWatchWorkItem?.cancel()
+            
+            // Create new delayed task
+            let workItem = DispatchWorkItem { [weak self] in
+                self?.sustainedWatchesForPromotionalData(showId: showId, UserId: UserId)
+            }
+            
+            sustainedWatchWorkItem = workItem
+            
+            // ⏱ Fire after 30 seconds
+            DispatchQueue.main.asyncAfter(deadline: .now() + 30, execute: workItem)
+            
+        }
+    }
+
+    func sustainedWatchesForPromotionalData(showId:String,UserId : String) {
+        performIfConnected {
+            let payload: [String: Any] = [
+                "show_id": showId,
+                "user_id": UserId,
+            ]
+
+            socket.emit("sustained_watches", payload)
+            print("📊 Sent sustained_watches :", payload)
         }
     }
 

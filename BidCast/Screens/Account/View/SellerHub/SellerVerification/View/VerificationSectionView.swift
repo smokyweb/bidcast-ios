@@ -55,7 +55,7 @@ struct VerificationSectionView: View {
                             .foregroundColor(.white)
                             .padding(.horizontal, 24)
                             .padding(.vertical, 10)
-                            .background(isActionEnabled ? Color.blue : Color.gray)
+                            .background(isActionEnabled ? Color.defaultTheme : Color.gray)
                             .cornerRadius(12)
                     }.disabled(!isActionEnabled)
                 }

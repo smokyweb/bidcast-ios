@@ -38,7 +38,7 @@ struct ActiveInventoryScreen: View {
         .overlay(
             RoundedRectangle(cornerRadius: 12)
                 .stroke(
-                    (navigatedFrom == .addProduct && isSelected) ? Color.blue : Color.clear,
+                    (navigatedFrom == .addProduct && isSelected) ? Color.defaultTheme : Color.clear,
                     lineWidth: 2
                 )
         )

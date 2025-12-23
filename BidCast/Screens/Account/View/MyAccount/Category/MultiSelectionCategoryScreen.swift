@@ -157,11 +157,11 @@ struct CategoryCard: View {
         }
         .padding(.vertical, 20)
         .frame(maxWidth: .infinity)
-        .background(isSelected ? Color.blue.opacity(0.2) : Color.gray.opacity(0.1))
+        .background(isSelected ? Color.defaultTheme.opacity(0.2) : Color.gray.opacity(0.1))
         .cornerRadius(12)
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(isSelected ? Color.blue : Color.clear, lineWidth: 2)
+                .stroke(isSelected ? Color.defaultTheme : Color.clear, lineWidth: 2)
         )
     }
 }

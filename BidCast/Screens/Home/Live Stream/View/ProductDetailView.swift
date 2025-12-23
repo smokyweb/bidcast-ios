@@ -97,15 +97,15 @@ struct ProductDetailView: View {
                     .background(
                         LinearGradient(
                             gradient: Gradient(colors: [
-                                Color.blue,
-                                Color.blue.opacity(0.8)
+                                Color.defaultTheme,
+                                Color.defaultTheme.opacity(0.8)
                             ]),
                             startPoint: .leading,
                             endPoint: .trailing
                         )
                     )
                     .cornerRadius(16)
-                    .shadow(color: Color.blue.opacity(0.4), radius: 12, x: 0, y: 6)
+                    .shadow(color: Color.defaultTheme.opacity(0.4), radius: 12, x: 0, y: 6)
                 }
                 .padding(.horizontal, 24)
                 .padding(.top, 8)

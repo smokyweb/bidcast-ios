@@ -87,11 +87,11 @@ struct TopBuyersBySalesCard: View {
                     .foregroundColor(.blue)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
-                    .background(Color.blue.opacity(0.1))
+                    .background(Color.defaultTheme.opacity(0.1))
                     .cornerRadius(25)
                     .overlay(
                         RoundedRectangle(cornerRadius: 25)
-                            .stroke(Color.blue, lineWidth: 2)
+                            .stroke(Color.defaultTheme, lineWidth: 2)
                     )
             }
             .padding(.horizontal, 20)
@@ -126,7 +126,7 @@ struct TopBuyerRow: View {
                             .aspectRatio(contentMode: .fill)
                     } placeholder: {
                         Circle()
-                            .fill(Color.blue.opacity(0.2))
+                            .fill(Color.defaultTheme.opacity(0.2))
                             .overlay(
                                 Image(systemName: "person.fill")
                                     .foregroundColor(.blue)
@@ -136,7 +136,7 @@ struct TopBuyerRow: View {
                     .clipShape(Circle())
                 } else {
                     Circle()
-                        .fill(Color.blue.opacity(0.2))
+                        .fill(Color.defaultTheme.opacity(0.2))
                         .frame(width: 40, height: 40)
                         .overlay(
                             Image(systemName: "person.fill")
@@ -164,7 +164,7 @@ struct TopBuyerRow: View {
                             .aspectRatio(contentMode: .fill)
                     } placeholder: {
                         Circle()
-                            .fill(Color.blue.opacity(0.2))
+                            .fill(Color.defaultTheme.opacity(0.2))
                             .overlay(
                                 Image(systemName: "person.fill")
                                     .foregroundColor(.blue)
@@ -174,7 +174,7 @@ struct TopBuyerRow: View {
                     .clipShape(Circle())
                 } else {
                     Circle()
-                        .fill(Color.blue.opacity(0.2))
+                        .fill(Color.defaultTheme.opacity(0.2))
                         .frame(width: 40, height: 40)
                         .overlay(
                             Image(systemName: "person.fill")

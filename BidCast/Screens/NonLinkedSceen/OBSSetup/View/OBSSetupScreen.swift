@@ -50,7 +50,7 @@ struct OBSSetupScreen: View {
                         }
                     }
                     .padding()
-                    .background(Color.blue.opacity(0.1))
+                    .background(Color.defaultTheme.opacity(0.1))
                     .cornerRadius(12)
 
                     // Stream Key
@@ -93,7 +93,7 @@ struct OBSSetupScreen: View {
                         ForEach(1..<5) { step in
                             HStack(alignment: .top, spacing: 8) {
                                 Circle()
-                                    .fill(Color.blue)
+                                    .fill(Color.defaultTheme)
                                     .frame(width: 24, height: 24)
                                     .overlay(
                                         Text("\(step)")
@@ -120,7 +120,7 @@ struct OBSSetupScreen: View {
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(Color.blue)
+                            .background(Color.defaultTheme)
                             .cornerRadius(10)
                         }
                     }
@@ -131,7 +131,7 @@ struct OBSSetupScreen: View {
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(Color.blue)
+                            .background(Color.defaultTheme)
                             .cornerRadius(10)
                     }
                 }

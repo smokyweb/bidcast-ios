@@ -83,7 +83,7 @@ struct UpcomingBottomSheet: View {
                     .fontWeight(.bold)
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(Color.blue)
+                    .background(Color.defaultTheme)
                     .foregroundColor(.white)
                     .cornerRadius(30)
             }

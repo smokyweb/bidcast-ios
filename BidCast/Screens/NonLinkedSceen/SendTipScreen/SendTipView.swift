@@ -69,12 +69,12 @@ import SVProgressHUD
 //                        } label: {
 //                            Text("$\(Int(amount))")
 //                                .frame(width: 80, height: 45)
-//                                .background(selectedAmount == amount ? Color.blue.opacity(0.2) : Color(.systemGray6))
+//                                .background(selectedAmount == amount ? Color.defaultTheme.opacity(0.2) : Color(.systemGray6))
 //                                .foregroundColor(selectedAmount == amount ? .blue : .black)
 //                                .cornerRadius(10)
 //                                .overlay(
 //                                    RoundedRectangle(cornerRadius: 10)
-//                                        .stroke(selectedAmount == amount ? Color.blue : Color.clear, lineWidth: 1.5)
+//                                        .stroke(selectedAmount == amount ? Color.defaultTheme : Color.clear, lineWidth: 1.5)
 //                                )
 //                        }
 //                    }
@@ -248,11 +248,11 @@ import SVProgressHUD
 //                
 //                // Selection Circle
 //                Circle()
-//                    .stroke(isSelected ? Color.blue : Color.gray.opacity(0.4), lineWidth: 2)
+//                    .stroke(isSelected ? Color.defaultTheme : Color.gray.opacity(0.4), lineWidth: 2)
 //                    .frame(width: 22, height: 22)
 //                    .overlay(
 //                        Circle()
-//                            .fill(isSelected ? Color.blue : Color.clear)
+//                            .fill(isSelected ? Color.defaultTheme : Color.clear)
 //                            .frame(width: 10, height: 10)
 //                    )
 //            }
@@ -378,7 +378,7 @@ struct SendTipView: View {
                         )
                         .overlay(
                             RoundedRectangle(cornerRadius: 14)
-                                .stroke(customAmount.isEmpty ? Color.clear : Color.blue.opacity(0.3), lineWidth: 1.5)
+                                .stroke(customAmount.isEmpty ? Color.clear : Color.defaultTheme.opacity(0.3), lineWidth: 1.5)
                         )
                     }
                     .padding(.horizontal, 24)
@@ -455,15 +455,15 @@ struct SendTipView: View {
                         .background(
                             LinearGradient(
                                 gradient: Gradient(colors: [
-                                    Color.blue,
-                                    Color.blue.opacity(0.8)
+                                    Color.defaultTheme,
+                                    Color.defaultTheme.opacity(0.8)
                                 ]),
                                 startPoint: .leading,
                                 endPoint: .trailing
                             )
                         )
                         .cornerRadius(16)
-                        .shadow(color: Color.blue.opacity(0.4), radius: 12, x: 0, y: 6)
+                        .shadow(color: Color.defaultTheme.opacity(0.4), radius: 12, x: 0, y: 6)
                     }
                     .disabled(
                         (selectedAmount == nil && customAmount.isEmpty) ||
@@ -574,8 +574,8 @@ struct TipOptionButton: View {
                         if isSelected {
                             LinearGradient(
                                 gradient: Gradient(colors: [
-                                    Color.blue,
-                                    Color.blue.opacity(0.8)
+                                    Color.defaultTheme,
+                                    Color.defaultTheme.opacity(0.8)
                                 ]),
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
@@ -588,10 +588,10 @@ struct TipOptionButton: View {
                 .cornerRadius(14)
                 .overlay(
                     RoundedRectangle(cornerRadius: 14)
-                        .stroke(isSelected ? Color.blue : Color.clear, lineWidth: 2)
+                        .stroke(isSelected ? Color.defaultTheme : Color.clear, lineWidth: 2)
                 )
                 .shadow(
-                    color: isSelected ? Color.blue.opacity(0.3) : Color.clear,
+                    color: isSelected ? Color.defaultTheme.opacity(0.3) : Color.clear,
                     radius: isSelected ? 8 : 0,
                     x: 0,
                     y: isSelected ? 4 : 0
@@ -617,8 +617,8 @@ struct ElegantPaymentOptionRow: View {
                         .fill(
                             LinearGradient(
                                 gradient: Gradient(colors: [
-                                    Color.blue.opacity(0.8),
-                                    Color.blue
+                                    Color.defaultTheme.opacity(0.8),
+                                    Color.defaultTheme
                                 ]),
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
@@ -650,12 +650,12 @@ struct ElegantPaymentOptionRow: View {
                 // Selection Indicator
                 ZStack {
                     Circle()
-                        .stroke(isSelected ? Color.blue : Color.gray.opacity(0.3), lineWidth: 2)
+                        .stroke(isSelected ? Color.defaultTheme : Color.gray.opacity(0.3), lineWidth: 2)
                         .frame(width: 24, height: 24)
                     
                     if isSelected {
                         Circle()
-                            .fill(Color.blue)
+                            .fill(Color.defaultTheme)
                             .frame(width: 12, height: 12)
                             .transition(.scale.combined(with: .opacity))
                     }
@@ -665,14 +665,14 @@ struct ElegantPaymentOptionRow: View {
             .padding(16)
             .background(
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(isSelected ? Color.blue.opacity(0.06) : Color(.systemGray6))
+                    .fill(isSelected ? Color.defaultTheme.opacity(0.06) : Color(.systemGray6))
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 16)
-                    .stroke(isSelected ? Color.blue.opacity(0.4) : Color.clear, lineWidth: 1.5)
+                    .stroke(isSelected ? Color.defaultTheme.opacity(0.4) : Color.clear, lineWidth: 1.5)
             )
             .shadow(
-                color: isSelected ? Color.blue.opacity(0.15) : Color.black.opacity(0.03),
+                color: isSelected ? Color.defaultTheme.opacity(0.15) : Color.black.opacity(0.03),
                 radius: isSelected ? 8 : 4,
                 x: 0,
                 y: isSelected ? 4 : 2

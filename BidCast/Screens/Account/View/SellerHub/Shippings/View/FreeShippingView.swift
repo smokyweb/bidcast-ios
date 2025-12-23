@@ -83,7 +83,7 @@ struct FreePickupScreen: View {
                         )
                         .overlay(
                             RoundedRectangle(cornerRadius: 16)
-                                .stroke(isFreePickupEnabled ? Color.blue.opacity(0.3) : Color.gray.opacity(0.1), lineWidth: isFreePickupEnabled ? 2 : 1)
+                                .stroke(isFreePickupEnabled ? Color.defaultTheme.opacity(0.3) : Color.gray.opacity(0.1), lineWidth: isFreePickupEnabled ? 2 : 1)
                                 .animation(.easeInOut(duration: 0.2), value: isFreePickupEnabled)
                         )
                     }
@@ -106,13 +106,13 @@ struct FreePickupScreen: View {
                         .padding(.vertical, 16)
                         .background(
                             LinearGradient(
-                                gradient: Gradient(colors: [Color.blue, Color.blue.opacity(0.8)]),
+                                gradient: Gradient(colors: [Color.defaultTheme, Color.defaultTheme.opacity(0.8)]),
                                 startPoint: .leading,
                                 endPoint: .trailing
                             )
                         )
                         .cornerRadius(14)
-                        .shadow(color: Color.blue.opacity(0.4), radius: 12, x: 0, y: 6)
+                        .shadow(color: Color.defaultTheme.opacity(0.4), radius: 12, x: 0, y: 6)
                 }
                 .padding(.horizontal, 20)
                 .padding(.vertical, 16)

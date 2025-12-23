@@ -62,7 +62,7 @@ struct FollowSellerSheet: View {
                                 .foregroundColor(.gray)
                         )
                         .overlay(
-                            Circle().stroke(Color.blue, lineWidth: 3)  // ⭐ Border for default image
+                            Circle().stroke(Color.defaultTheme, lineWidth: 3)  // ⭐ Border for default image
                         )
                         .shadow(color: .black.opacity(0.25), radius: 6, x: 0, y: 3)
                 }

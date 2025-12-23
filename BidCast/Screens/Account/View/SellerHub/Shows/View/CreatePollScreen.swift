@@ -89,7 +89,7 @@ struct CreatePollScreen: View {
                                 .foregroundColor(.white)
                                 .padding(.horizontal, 16)
                                 .padding(.vertical, 8)
-                                .background(Color.blue)
+                                .background(Color.defaultTheme)
                                 .cornerRadius(8)
                         }
                     }
@@ -141,7 +141,7 @@ struct CreatePollScreen: View {
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(Color.blue)
+                    .background(Color.defaultTheme)
                     .cornerRadius(12)
             }
             .padding(.horizontal)
@@ -269,7 +269,7 @@ struct CreatePollScreen: View {
 //                                    .foregroundColor(.white)
 //                                    .padding(.horizontal, 16)
 //                                    .padding(.vertical, 8)
-//                                    .background(Color.blue)
+//                                    .background(Color.defaultTheme)
 //                                    .cornerRadius(8)
 //                            }
 //                        }
@@ -319,7 +319,7 @@ struct CreatePollScreen: View {
 //                                .foregroundColor(.white)
 //                                .frame(maxWidth: .infinity)
 //                                .padding()
-//                                .background(Color.blue)
+//                                .background(Color.defaultTheme)
 //                                .cornerRadius(12)
 //                        }
 //                        .padding(.horizontal)

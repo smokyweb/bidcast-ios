@@ -7,81 +7,137 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "BB44F5AD-A086-4883-870F-54C255D5CBEA"
-            shouldBeEnabled = "Yes"
+            uuid = "7C3EEF87-EE2F-47DA-9C89-33275B5C29AA"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "BidCast/Screens/Sell/Schedule/ShowTitleTips.swift"
+            filePath = "BidCast/Screens/Home/Live Stream/View/ProductShopListScreen.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "140"
-            endingLineNumber = "140"
+            startingLineNumber = "378"
+            endingLineNumber = "378"
+            landmarkName = "fetchProduct(isLoaderShown:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "7C3EEF87-EE2F-47DA-9C89-33275B5C29AA - b2cd5602a589b01a"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for closure #3 () async throws -&gt; () in closure #1 () async -&gt; () in BidCast.ProductShopListScreen.fetchProduct(isLoaderShown: Swift.Bool) -&gt; ()"
+                  moduleName = "BidCast.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/gadgetzone/Documents/bidcast/BidCast/Screens/Home/Live%20Stream/View/ProductShopListScreen.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "378"
+                  endingLineNumber = "378">
+               </Location>
+               <Location
+                  uuid = "7C3EEF87-EE2F-47DA-9C89-33275B5C29AA - f0f38f403e888b3c"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(2) await resume partial function for closure #3 () async throws -&gt; () in closure #1 () async -&gt; () in BidCast.ProductShopListScreen.fetchProduct(isLoaderShown: Swift.Bool) -&gt; ()"
+                  moduleName = "BidCast.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/gadgetzone/Documents/bidcast/BidCast/Screens/Home/Live%20Stream/View/ProductShopListScreen.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "378"
+                  endingLineNumber = "378">
+               </Location>
+               <Location
+                  uuid = "7C3EEF87-EE2F-47DA-9C89-33275B5C29AA - 528ba42bca33aa1f"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(4) suspend resume partial function for closure #3 () async throws -&gt; () in closure #1 () async -&gt; () in BidCast.ProductShopListScreen.fetchProduct(isLoaderShown: Swift.Bool) -&gt; ()"
+                  moduleName = "BidCast.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/gadgetzone/Documents/bidcast/BidCast/Screens/Home/Live%20Stream/View/ProductShopListScreen.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "378"
+                  endingLineNumber = "378">
+               </Location>
+               <Location
+                  uuid = "7C3EEF87-EE2F-47DA-9C89-33275B5C29AA - b2cd5602a589b01a"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for closure #3 () async throws -&gt; () in closure #1 () async -&gt; () in BidCast.ProductShopListScreen.fetchProduct(isLoaderShown: Swift.Bool) -&gt; ()"
+                  moduleName = "BidCast.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/gadgetzone/Documents/bidcast/BidCast/Screens/Home/Live%20Stream/View/ProductShopListScreen.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "378"
+                  endingLineNumber = "378">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "5B41D392-F1E3-457B-B739-429FEEBF4184"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BidCast/Screens/Home/Live Stream/View/LiveStream.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "257"
+            endingLineNumber = "257"
             landmarkName = "body"
             landmarkType = "24">
+            <Locations>
+               <Location
+                  uuid = "5B41D392-F1E3-457B-B739-429FEEBF4184 - 62c71881ec9efcd2"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of BidCast.LiveStream.baseContentLayer : some&gt;&gt;.0, &lt;&lt;opaque return type of BidCast.LiveStream.toastLayer : some&gt;&gt;.0, &lt;&lt;opaque return type of BidCast.LiveStream.bottomSheetLayer : some&gt;&gt;.0, BidCast.CusNavLink&lt;BidCast.ProfileScreen&gt;, BidCast.CusNavLink&lt;BidCast.TrustedBuyerScreen&gt;, BidCast.CusNavLink&lt;BidCast.PaymentAndShipping_Screen&gt;, BidCast.CusNavLink&lt;BidCast.ProductShopListScreen&gt;, BidCast.CusNavLink&lt;BidCast.PaymentAndShipping_Screen&gt;, BidCast.CusNavLink&lt;BidCast.PaymentAndShipping_Screen&gt;, BidCast.CusNavLink&lt;BidCast.PaymentAndShipping_Screen&gt;, BidCast.CusNavLink&lt;BidCast.ProductDetailView&gt;, BidCast.CusNavLink&lt;BidCast.ChatScreen&gt;)&gt; in BidCast.LiveStream.body.getter : some"
+                  moduleName = "BidCast.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/gadgetzone/Documents/bidcast/BidCast/Screens/Home/Live%20Stream/View/LiveStream.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "259"
+                  endingLineNumber = "259">
+               </Location>
+               <Location
+                  uuid = "5B41D392-F1E3-457B-B739-429FEEBF4184 - 62c71881ec9efc90"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of BidCast.LiveStream.baseContentLayer : some&gt;&gt;.0, &lt;&lt;opaque return type of BidCast.LiveStream.toastLayer : some&gt;&gt;.0, &lt;&lt;opaque return type of BidCast.LiveStream.bottomSheetLayer : some&gt;&gt;.0, BidCast.CusNavLink&lt;BidCast.ProfileScreen&gt;, BidCast.CusNavLink&lt;BidCast.TrustedBuyerScreen&gt;, BidCast.CusNavLink&lt;BidCast.PaymentAndShipping_Screen&gt;, BidCast.CusNavLink&lt;BidCast.ProductShopListScreen&gt;, BidCast.CusNavLink&lt;BidCast.PaymentAndShipping_Screen&gt;, BidCast.CusNavLink&lt;BidCast.PaymentAndShipping_Screen&gt;, BidCast.CusNavLink&lt;BidCast.PaymentAndShipping_Screen&gt;, BidCast.CusNavLink&lt;BidCast.ProductDetailView&gt;, BidCast.CusNavLink&lt;BidCast.ChatScreen&gt;)&gt; in BidCast.LiveStream.body.getter : some"
+                  moduleName = "BidCast.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/gadgetzone/Documents/bidcast/BidCast/Screens/Home/Live%20Stream/View/LiveStream.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "257"
+                  endingLineNumber = "257">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "4EF50D2E-F567-45A9-B8F3-7488ADBC4EF9"
+            uuid = "E31053C3-7A39-44AD-B257-FDD718521A99"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "BidCast/Screens/Sell/Schedule/ShowTitleTips.swift"
+            filePath = "BidCast/Screens/Home/Live Stream/View/ProductShopListScreen.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "220"
-            endingLineNumber = "220"
-            landmarkName = "scheduleShowSuccess()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "715D713C-7CCC-4095-8AEE-F9260F1726F2"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "BidCast/Screens/Sell/Schedule/ShowTitleTips.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "219"
-            endingLineNumber = "219"
-            landmarkName = "scheduleShowSuccess()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "1B087587-9AE9-414D-A283-949DC0783020"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "BidCast/Screens/Sell/Schedule/ShowTitleTips.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "227"
-            endingLineNumber = "227"
-            landmarkName = "scheduleShowSuccess()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "1572AF65-C2A8-41C3-8CA3-E0EF02DE6232"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "BidCast/Screens/Sell/Schedule/ShowTitleTips.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "223"
-            endingLineNumber = "223"
-            landmarkName = "scheduleShowSuccess()"
-            landmarkType = "7">
+            startingLineNumber = "265"
+            endingLineNumber = "265"
+            landmarkName = "body"
+            landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

@@ -528,7 +528,7 @@ struct BarChartView: View {
                     x: .value("Month", item.month),
                     y: .value("Value", item.value)
                 )
-                .foregroundStyle(Color.blue.opacity(0.5))
+                .foregroundStyle(Color.defaultTheme.opacity(0.5))
                 .cornerRadius(5) // Rounded corners
                 .shadow(color: .gray.opacity(0.5), radius: 3, x: 0, y: 2)
                 
@@ -555,7 +555,7 @@ struct AreaChartView: View {
                     x: .value("Month", item.month),
                     y: .value("Value", item.value)
                 )
-                .foregroundStyle(Color.blue.opacity(0.5))
+                .foregroundStyle(Color.defaultTheme.opacity(0.5))
                 .cornerRadius(5) // Rounded corners
                 .shadow(color: .gray.opacity(0.5), radius: 3, x: 0, y: 2)
                 

@@ -101,7 +101,7 @@ struct PaymentAndShipping_Screen: View {
                             .padding()
                             .overlay(
                                 RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color.blue, lineWidth: 1)
+                                    .stroke(Color.defaultTheme, lineWidth: 1)
                             )
                         }
                     }
@@ -168,7 +168,7 @@ struct PaymentAndShipping_Screen: View {
                             .padding()
                             .overlay(
                                 RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color.blue, lineWidth: 1)
+                                    .stroke(Color.defaultTheme, lineWidth: 1)
                             )
                         }
                     }

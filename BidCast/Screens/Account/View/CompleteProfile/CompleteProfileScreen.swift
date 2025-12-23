@@ -94,7 +94,7 @@ struct CompleteProfileScreen: View {
                                     Image(systemName: "camera.fill")
                                         .foregroundColor(.white)
                                         .padding(8)
-                                        .background(Color.blue)
+                                        .background(Color.defaultTheme)
                                         .clipShape(Circle())
                                         .shadow(radius: 1)
                                 }
@@ -133,7 +133,7 @@ struct CompleteProfileScreen: View {
                                     Image(systemName: "camera.fill")
                                         .foregroundColor(.white)
                                         .padding(8)
-                                        .background(Color.blue)
+                                        .background(Color.defaultTheme)
                                         .clipShape(Circle())
                                         .shadow(radius: 1)
                                 }

@@ -612,7 +612,7 @@ private struct IDVerificationCard: View {
             }
         }
         .padding()
-        .background(RoundedRectangle(cornerRadius: 16).stroke(Color.blue, lineWidth: 1))
+        .background(RoundedRectangle(cornerRadius: 16).stroke(Color.defaultTheme, lineWidth: 1))
     }
 }
 

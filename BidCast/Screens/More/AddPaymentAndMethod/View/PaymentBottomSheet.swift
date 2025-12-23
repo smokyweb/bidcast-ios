@@ -56,7 +56,7 @@ struct PaymentBottomSheet: View {
                         Image(systemName: "pencil")
                             .foregroundColor(.blue)
                             .padding(10)
-                            .background(Color.blue.opacity(0.15))
+                            .background(Color.defaultTheme.opacity(0.15))
                             .clipShape(Circle())
                     }
                 }
@@ -94,7 +94,7 @@ struct PaymentBottomSheet: View {
                         Image(systemName: "pencil")
                             .foregroundColor(.blue)
                             .padding(10)
-                            .background(Color.blue.opacity(0.15))
+                            .background(Color.defaultTheme.opacity(0.15))
                             .clipShape(Circle())
                     }
                 }
@@ -124,7 +124,7 @@ struct PaymentBottomSheet: View {
 //                    .foregroundColor(.white)
 //                    .frame(maxWidth: .infinity)
 //                    .padding()
-//                    .background(Color.blue)
+//                    .background(Color.defaultTheme)
 //                    .cornerRadius(12)
 //            }
 //            .padding(.bottom, 20) // safe area padding

@@ -79,7 +79,7 @@ struct MaxBidBottomSheet: View {
                     .font(.system(size: 16, weight: .bold))
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
-                    .background(Color.blue)
+                    .background(Color.defaultTheme)
                     .cornerRadius(8)
             }
             

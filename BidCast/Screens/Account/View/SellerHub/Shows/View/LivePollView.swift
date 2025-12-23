@@ -84,7 +84,7 @@ struct LivePollHostView: View {
                 }
                 .padding(.horizontal, 22)
                 .padding(.vertical)
-                .background(Color.blue.opacity(0.10))
+                .background(Color.defaultTheme.opacity(0.10))
                 .cornerRadius(14)
                 //            .padding(.horizontal)
                 
@@ -109,7 +109,7 @@ struct LivePollHostView: View {
                         Image(systemName: "list.bullet")
                             .foregroundColor(.blue)
                             .padding(6)
-                            .background(Color.blue.opacity(0.12))
+                            .background(Color.defaultTheme.opacity(0.12))
                             .cornerRadius(10)
                         Text("\(poll.totalVotes) total votes")
                             .font(.custom(poppinsMedium, size: 14))
@@ -167,7 +167,7 @@ struct LivePollHostView: View {
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color.blue)
+                        .background(Color.defaultTheme)
                         .cornerRadius(10)
                         .padding(.horizontal)
                 }
@@ -253,7 +253,7 @@ struct OptionRowView: View {
                         // Animated bar
                         RoundedRectangle(cornerRadius: 6)
                             .fill(LinearGradient(
-                                gradient: Gradient(colors: [Color.blue, Color.blue.opacity(0.8)]),
+                                gradient: Gradient(colors: [Color.defaultTheme, Color.defaultTheme.opacity(0.8)]),
                                 startPoint: .leading,
                                 endPoint: .trailing
                             ))

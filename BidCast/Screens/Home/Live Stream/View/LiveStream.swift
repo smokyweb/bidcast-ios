@@ -163,6 +163,8 @@ struct LiveStream: View {
     @Binding var comeFromHome : Bool
     @State  var currentBottomSheet: MenuAction? = nil
     
+    @State var sellerId = ""
+    
     var filteredActions: [MenuAction] {
         if let userId = viewModel.liveShowsResponse.data?.first?.user?.id,
            UserDefaults.userId != userId {
@@ -182,6 +184,7 @@ struct LiveStream: View {
     @State private var renderer = MCAcceleratedVideoRenderer()
     @State var currentProductID: String? = nil
     @State var productId: Int = 0
+    @State var categoryId : Int = 0
     
     var sheetHeight: CGFloat {
         switch currentBottomSheet {
@@ -211,7 +214,7 @@ struct LiveStream: View {
     
     @State var messageHeight: CGFloat = 40
     let maxVisibleMessages = 3
-    @State var sellerId = ""
+  
     
     @State var showItemDetailSheet = false
     
@@ -251,7 +254,7 @@ struct LiveStream: View {
             CusNavLink(
                 doNavigate: $navigateToProductList,
                 destination: ProductShopListScreen(
-                    sellerId: liveShowsData[safe: currentIndex]?.seller?.id ?? ""
+                    sellerId: $sellerId ,categoryIds : $categoryId
                 )
             )
             
@@ -1945,6 +1948,8 @@ extension LiveStream {
             return
         }
         
+        categoryId = socketRooms[matchingRoomIndex].products?.first?.category?.id ?? 0
+        sellerId = "\(socketRooms[matchingRoomIndex].products?.first?.user?.id ?? 0)"
         self.agoraToken = socketRooms[matchingRoomIndex].rtc_token ?? ""
         if !agoraToken.isEmpty && !roomId.isEmpty {
             print("🎥 Joining Agora with token: \(agoraToken)")
@@ -1953,7 +1958,7 @@ extension LiveStream {
         
         self.roomID = socketRooms.compactMap { $0.room_id }
         self.streamID = self.roomID
-        
+        let showId = socketRooms[matchingRoomIndex].show_id ?? ""
         if switchStreamType == .none {
             self.liveShowsData = socketRooms
             self.currentRoomID = roomId
@@ -1961,7 +1966,7 @@ extension LiveStream {
         }
         
         print("🎬 Joining stream: \(roomId)")
-        
+        socketManagerChat.joinShowForPromotionalData(showId: showId, UserId: "\(UserDefaults.userId)")
         socketManagerChat.listenForUserFollowStatus()
         SocketManagerService.shared.removeAllListeners()
         

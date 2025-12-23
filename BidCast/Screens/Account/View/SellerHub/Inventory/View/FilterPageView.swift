@@ -288,13 +288,13 @@ struct FilterPageView: View {
                         .padding(.vertical, 16)
                         .background(
                             LinearGradient(
-                                gradient: Gradient(colors: [Color.blue, Color.blue.opacity(0.8)]),
+                                gradient: Gradient(colors: [Color.defaultTheme, Color.defaultTheme.opacity(0.8)]),
                                 startPoint: .leading,
                                 endPoint: .trailing
                             )
                         )
                         .cornerRadius(14)
-                        .shadow(color: Color.blue.opacity(0.4), radius: 12, x: 0, y: 6)
+                        .shadow(color: Color.defaultTheme.opacity(0.4), radius: 12, x: 0, y: 6)
                 }
                 .padding(.horizontal, 20)
                 .padding(.vertical, 16)
@@ -346,7 +346,7 @@ struct FilterSection<Content: View>: View {
                 HStack(spacing: 12) {
                     ZStack {
                         RoundedRectangle(cornerRadius: 8)
-                            .fill(Color.blue.opacity(0.1))
+                            .fill(Color.defaultTheme.opacity(0.1))
                             .frame(width: 32, height: 32)
                         
                         Image(systemName: icon)
@@ -395,12 +395,12 @@ struct CheckboxRow: View {
             HStack(spacing: 12) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 6)
-                        .stroke(isSelected ? Color.blue : Color.gray.opacity(0.3), lineWidth: 2)
+                        .stroke(isSelected ? Color.defaultTheme : Color.gray.opacity(0.3), lineWidth: 2)
                         .frame(width: 24, height: 24)
                     
                     if isSelected {
                         RoundedRectangle(cornerRadius: 6)
-                            .fill(Color.blue)
+                            .fill(Color.defaultTheme)
                             .frame(width: 24, height: 24)
                         
                         Image(systemName: "checkmark")
@@ -434,12 +434,12 @@ struct RadioRow: View {
             HStack(spacing: 12) {
                 ZStack {
                     Circle()
-                        .stroke(isSelected ? Color.blue : Color.gray.opacity(0.3), lineWidth: 2)
+                        .stroke(isSelected ? Color.defaultTheme : Color.gray.opacity(0.3), lineWidth: 2)
                         .frame(width: 24, height: 24)
                     
                     if isSelected {
                         Circle()
-                            .fill(Color.blue)
+                            .fill(Color.defaultTheme)
                             .frame(width: 12, height: 12)
                     }
                 }

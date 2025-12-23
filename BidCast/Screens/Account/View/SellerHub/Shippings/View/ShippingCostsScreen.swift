@@ -66,11 +66,11 @@ struct ShippingCostsScreen: View {
                     .padding(16)
                     .background(
                         RoundedRectangle(cornerRadius: 14)
-                            .fill(Color.blue.opacity(0.05))
+                            .fill(Color.defaultTheme.opacity(0.05))
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: 14)
-                            .stroke(Color.blue.opacity(0.1), lineWidth: 1)
+                            .stroke(Color.defaultTheme.opacity(0.1), lineWidth: 1)
                     )
                     .padding(.horizontal, 20)
                     .padding(.top, 20)
@@ -120,12 +120,12 @@ struct ShippingCostsScreen: View {
                     HStack(spacing: 12) {
                         ZStack {
                             RoundedRectangle(cornerRadius: 6)
-                                .stroke(applyToScheduled ? Color.blue : Color.gray.opacity(0.3), lineWidth: 2)
+                                .stroke(applyToScheduled ? Color.defaultTheme : Color.gray.opacity(0.3), lineWidth: 2)
                                 .frame(width: 24, height: 24)
                             
                             if applyToScheduled {
                                 RoundedRectangle(cornerRadius: 6)
-                                    .fill(Color.blue)
+                                    .fill(Color.defaultTheme)
                                     .frame(width: 24, height: 24)
                                 
                                 Image(systemName: "checkmark")
@@ -154,13 +154,13 @@ struct ShippingCostsScreen: View {
                         .padding(.vertical, 16)
                         .background(
                             LinearGradient(
-                                gradient: Gradient(colors: [Color.blue, Color.blue.opacity(0.8)]),
+                                gradient: Gradient(colors: [Color.defaultTheme, Color.defaultTheme.opacity(0.8)]),
                                 startPoint: .leading,
                                 endPoint: .trailing
                             )
                         )
                         .cornerRadius(14)
-                        .shadow(color: Color.blue.opacity(0.4), radius: 12, x: 0, y: 6)
+                        .shadow(color: Color.defaultTheme.opacity(0.4), radius: 12, x: 0, y: 6)
                 }
                 .padding(.horizontal, 20)
                 .padding(.bottom, 16)
@@ -205,12 +205,12 @@ struct ShippingCostOptionCard: View {
                 
                 ZStack {
                     Circle()
-                        .stroke(isSelected ? Color.blue : Color.gray.opacity(0.3), lineWidth: 2)
+                        .stroke(isSelected ? Color.defaultTheme : Color.gray.opacity(0.3), lineWidth: 2)
                         .frame(width: 24, height: 24)
                     
                     if isSelected {
                         Circle()
-                            .fill(Color.blue)
+                            .fill(Color.defaultTheme)
                             .frame(width: 12, height: 12)
                     }
                 }
@@ -223,7 +223,7 @@ struct ShippingCostOptionCard: View {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 14)
-                    .stroke(isSelected ? Color.blue.opacity(0.3) : Color.clear, lineWidth: 2)
+                    .stroke(isSelected ? Color.defaultTheme.opacity(0.3) : Color.clear, lineWidth: 2)
                     .animation(.easeInOut(duration: 0.2), value: isSelected)
             )
         }

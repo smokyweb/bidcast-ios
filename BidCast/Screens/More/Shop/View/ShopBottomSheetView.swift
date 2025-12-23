@@ -368,7 +368,7 @@ struct ShopBottomSheetView: View {
                     HStack(spacing: 10) {
                         ZStack {
                             RoundedRectangle(cornerRadius: 10)
-                                .fill(Color.blue.opacity(0.1))
+                                .fill(Color.defaultTheme.opacity(0.1))
                                 .frame(width: 36, height: 36)
                             
                             Image(systemName: productShowType == .nextProduct ? "arrow.right.circle.fill" : "bag.fill")
@@ -553,12 +553,12 @@ struct ShopBottomSheetView: View {
 //                if isProductSelectable(for: product) {
 //                    ZStack {
 //                        Circle()
-//                            .stroke(product.isCurrent ? Color.blue : Color.gray.opacity(0.3), lineWidth: 2)
+//                            .stroke(product.isCurrent ? Color.defaultTheme : Color.gray.opacity(0.3), lineWidth: 2)
 //                            .frame(width: 24, height: 24)
 //                        
 //                        if product.isCurrent {
 //                            Circle()
-//                                .fill(Color.blue)
+//                                .fill(Color.defaultTheme)
 //                                .frame(width: 24, height: 24)
 //                            
 //                            Image(systemName: "checkmark")
@@ -635,7 +635,7 @@ struct ShopBottomSheetView: View {
 //                RoundedRectangle(cornerRadius: 16)
 //                    .fill(product.status == "sold" ? Color(.systemGray6) : Color(.systemBackground))
 //                    .shadow(
-//                        color: product.isCurrent && product.status != "sold" ? Color.blue.opacity(0.2) : Color.black.opacity(0.06),
+//                        color: product.isCurrent && product.status != "sold" ? Color.defaultTheme.opacity(0.2) : Color.black.opacity(0.06),
 //                        radius: product.isCurrent && product.status != "sold" ? 12 : 8,
 //                        x: 0,
 //                        y: product.isCurrent && product.status != "sold" ? 6 : 3
@@ -644,7 +644,7 @@ struct ShopBottomSheetView: View {
 //            .overlay(
 //                RoundedRectangle(cornerRadius: 16)
 //                    .stroke(
-//                        product.isCurrent && product.status != "sold" ? Color.blue.opacity(0.4) : Color.clear,
+//                        product.isCurrent && product.status != "sold" ? Color.defaultTheme.opacity(0.4) : Color.clear,
 //                        lineWidth: 2
 //                    )
 //                    .animation(.spring(response: 0.3, dampingFraction: 0.7), value: product.isCurrent)
@@ -706,7 +706,7 @@ struct ShopBottomSheetView: View {
                          ? Color(.systemGray6)
                          : Color(.systemBackground))
                    .shadow(
-                       color: isCurrent ? Color.blue.opacity(0.25) : Color.black.opacity(0.06),
+                       color: isCurrent ? Color.defaultTheme.opacity(0.25) : Color.black.opacity(0.06),
                        radius: isCurrent ? 12 : 8,
                        x: 0,
                        y: isCurrent ? 6 : 3
@@ -714,7 +714,7 @@ struct ShopBottomSheetView: View {
            )
            .overlay(
                RoundedRectangle(cornerRadius: 16)
-                   .stroke(isCurrent ? Color.blue.opacity(0.4) : Color.clear, lineWidth: 2)
+                   .stroke(isCurrent ? Color.defaultTheme.opacity(0.4) : Color.clear, lineWidth: 2)
            )
            .opacity(product.status == "sold" ? 0.6 : 1)
        }

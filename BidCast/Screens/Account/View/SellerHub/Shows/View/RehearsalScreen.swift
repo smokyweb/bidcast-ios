@@ -329,7 +329,7 @@ struct RehearsalScreen: View {
                                     message: "Before you interact with live shows.you need to become a verified seller.",
                                     primaryBtnText: "OK",
                                     secondaryBtnText: "",
-                                    buttonWidth:screenWidth - 24,
+                                    buttonWidth:screenWidth - 60,
                                     contentSize: 12.0
                                 )
                                 withAnimation(.snappy){
@@ -2082,6 +2082,7 @@ extension RehearsalScreen {
         if response?.status == "success" {
             hudMsg = "show promoted successfully."
             showhudSuccess = true
+            socketManager.sendPromotionEvent(userId: "\(response?.data?.userID ?? 0)", showId: "\(response?.data?.id ?? 0)", promoteShowId: "\(response?.data?.promoteShowID ?? 0)")
         } else {
             hudMsg = response?.message ?? ""
             showhud = true
