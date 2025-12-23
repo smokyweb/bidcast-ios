@@ -498,6 +498,7 @@ struct ProfileParamRequest : Encodable{
 
 struct FollowRequest : Encodable {
     var following_id : String
+    var show_id : String
 }
 
 struct SellerInfoRequest: Encodable {

@@ -1322,7 +1322,7 @@ struct LiveStream: View {
                 print("Message")
                 showSellerProfileSheet = false
                 let currentUserId = String(UserDefaults.userId)
-                let otherUserId = liveShowsData[currentIndex].seller?.id ?? ""
+                let otherUserId = self.sellerId
                 let sortedRoomId = computeRoomId(senderId: currentUserId, receiverId: otherUserId)
                 chatPath = "chats/\(sortedRoomId)"
                 print("Computed Chat Path: \(chatPath)")
@@ -1404,7 +1404,7 @@ struct LiveStream: View {
             sheetType: $alertType,
             onPrimaryClick: {
                 withAnimation { showBlockSeller = false }
-                let sellerId = liveShowsData[currentIndex].seller?.id ?? ""
+                let sellerId = self.sellerId
                 blockSeller(with: sellerId)
             },
             onSecondaryClick: {
@@ -1427,7 +1427,7 @@ struct LiveStream: View {
     private var tipSheetContent: some View {
         if liveShowsData.count > 0 {
             SendTipView(
-                sellerId: liveShowsData[currentIndex].seller?.id ?? "",
+                sellerId: self.sellerId,
                 onClose: { showTipSheet = false },
                 onSendTip: {
                     print("Sent tip")
@@ -1442,7 +1442,7 @@ struct LiveStream: View {
         switch currentBottomSheet {
         case .gift:
             SendTipView(
-                sellerId: liveShowsData[currentIndex].seller?.id ?? "",
+                sellerId: self.sellerId,
                 onClose: { showSheet = false },
                 onSendTip: { print("Sent tip") }
             )
@@ -1599,11 +1599,11 @@ extension LiveStream {
             SVProgressHUD.show()
             
             do {
-                async let profileTask: Void = homeViewModel.getProfile()
-                try await profileTask
+                await homeViewModel.getProfile()
                 
                 await SVProgressHUD.dismiss()
-                await getProfileSuccess()
+                
+                 getProfileSuccess()
                 joinChatRoom(roomId: currentRoomID)
                 self.getPromoteShows()
             } catch {
@@ -1651,13 +1651,14 @@ extension LiveStream {
 
     @MainActor
     private func fetchSellerIfAvailable() async {
-        guard let sellerId = liveShowsData[currentIndex].seller?.id, !sellerId.isEmpty else {
+        guard let product = liveShowsData[currentIndex].products?.first,
+                let sellerId = product.user?.id else {
             print("⚠️ Seller ID not available")
             return
         }
         
         do {
-            try await viewModel.getSellerInfo(sellerID: sellerId)
+            try await viewModel.getSellerInfo(sellerID: "\(sellerId)")
             print("✅ Seller info updated")
             await SVProgressHUD.dismiss()
             
@@ -1720,7 +1721,7 @@ extension LiveStream {
         return (minutes * 60) + seconds
     }
 
-    func getProfileSuccess() async {
+    func getProfileSuccess() {
         let response = homeViewModel.accountInfo
         if response.status == "success" {
             let response = self.homeViewModel.accountInfo.data
@@ -2270,7 +2271,7 @@ extension LiveStream {
         let currentUserId = "\(UserDefaults.userId)"
         let currentUserName = UserDefaults.fullName
         let currentUserImage = UserDefaults.profileURL
-        let otherUserId = liveShowsData[currentIndex].seller?.id ?? ""
+        let otherUserId = self.sellerId
         let otherUserName = liveShowsData[currentIndex].seller?.name ?? ""
         let otherUserImage = liveShowsData[currentIndex].seller?.image ?? ""
         return ChatModel(
@@ -2287,10 +2288,10 @@ extension LiveStream {
 extension LiveStream {
     private func followUnfollow() {
         guard !liveShowsData.isEmpty else { return }
-        guard let sellerId = liveShowsData[currentIndex].seller?.id, !sellerId.isEmpty else {
-            print("⚠️ Seller ID not available")
-            return
-        }
+//        guard let sellerId = liveShowsData[currentIndex].seller?.id, !sellerId.isEmpty else {
+//            print("⚠️ Seller ID not available")
+//            return
+//        }
         guard Reachability.isConnectedToNetwork() else {
             hudMsg = "No Internet Connection"
             showHud = true
@@ -2299,7 +2300,7 @@ extension LiveStream {
         Task {
             SVProgressHUD.show()
             await self.profileViewModel.followUnfollow(
-                parameters: FollowRequest(following_id: sellerId)
+                parameters: FollowRequest(following_id: self.sellerId,show_id: showId)
             )
             await SVProgressHUD.dismiss()
             followUnfollowSuccess()
@@ -2366,7 +2367,7 @@ extension LiveStream {
             showHud = true
             
             isFollowing = true
-            socketManagerChat.sendFollowUnfollow(followerId: "\(UserDefaults.userId)", followingId: sellerId, showId: showId)
+//            socketManagerChat.sendFollowUnfollow(followerId: "\(UserDefaults.userId)", followingId: sellerId, showId: showId)
         } else {
             showError = true
             alertType = .sheetType(

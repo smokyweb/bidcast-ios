@@ -116,7 +116,7 @@ struct ProfileScreen: View {
                                     showhud = true
                                     return
                                 }
-                                await self.viewModel.followUnfollow(parameters: FollowRequest(following_id: id))
+                                await self.viewModel.followUnfollow(parameters: FollowRequest(following_id: id, show_id: ""))
                                 await viewModel.getProfile(param: ProfileParamRequest(id: id))
                                 await SVProgressHUD.dismiss()
                                 profileSuccess()
