@@ -259,7 +259,9 @@ struct HomeViewScreen: View {
                 userName: $userName,
                 userImage: $userImage))
             
-            CusNavLink(doNavigate: $navigateToNoti, destination: NotificationScreen())
+//            CusNavLink(doNavigate: $navigateToNoti, destination: NotificationScreen())
+            CusNavLink(doNavigate: $navigateToNoti, destination: RandomizerView())
+          
             CusNavLink(doNavigate: $navigateToCategoryDetailScreen, destination: HomeViewScreen(showCategory:$category,comeFromExploreScreen : $navigateToCategoryDetailScreen))
         }
         .background(.backGround)

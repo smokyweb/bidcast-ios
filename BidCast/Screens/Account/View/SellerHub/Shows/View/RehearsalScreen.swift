@@ -54,6 +54,7 @@ struct RehearsalScreen: View {
     @State private var showProductSheet : Bool = false
     
     @State private var navigateToProductList : Bool = false
+    @State private var navigateToRandomizer : Bool = false
     
 
     @State private var showPollSheet : Bool = false
@@ -661,6 +662,7 @@ struct RehearsalScreen: View {
                     }
                 }.zIndex(1)
                 CusNavLink(doNavigate: $navigateToSeller, destination: SellerVerificationScreen())
+//                CusNavLink(doNavigate: $navigateToRandomizer, destination: RandomizerView())
 //                CusNavLink(doNavigate: $navigateToProductList,
 //                           destination: ProductShopRehersalScreen(productData: .constant([ProductDataModel1]()), sellerId: "\(showsData.user?.id ?? 0)")
 //                )
@@ -698,6 +700,21 @@ struct RehearsalScreen: View {
                     },
                     initialSelectedProductId: initialSelectedProductId
                 )
+            }
+        )
+        
+        .bottomSheet(
+            isPresented: $navigateToRandomizer,
+            height: screenHeight * 0.95,
+            topBarCornerRadius: 20,
+            contentBackgroundColor: Color(.clear),
+            topBarBackgroundColor: Color(.clear),
+            showTopIndicator: false,
+            onDismiss: {
+                navigateToRandomizer = false
+            },
+            content: {
+                RandomizerView()
             }
         )
  
@@ -893,6 +910,10 @@ struct RehearsalScreen: View {
                         },
                         onMulticast: { print("Multicast") },
                         onAddCoupons: { print("Add Coupons") },
+                        onClickRandomizer:  {
+                            showSellSheet = false
+                            navigateToRandomizer = true
+                        },
                         onRaid: {
                             print("Raid")
                             showRaidSheet = true
@@ -914,6 +935,7 @@ struct RehearsalScreen: View {
                             showPollSheet = true
                             showSellSheet = false
                         },
+                        
                         onZoomOut: {
                             print("Zoom Out")
                             var zoomFactor = agoraManager.zoomFactor

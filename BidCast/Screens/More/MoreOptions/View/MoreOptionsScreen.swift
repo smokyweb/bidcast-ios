@@ -143,6 +143,7 @@ struct MoreOptionsScreen: View {
     var onTipSettings: () -> Void
     var onMulticast: () -> Void
     var onAddCoupons: () -> Void
+    var onClickRandomizer: () -> Void
     var onRaid: () -> Void
     var onCreatePoll: () -> Void
     var onZoomOut: () -> Void
@@ -266,22 +267,22 @@ struct MoreOptionsScreen: View {
                                     selectedOption = "End Show"
                                     onEndShow()
                                 })
-                                OptionGridButtonView(label: "Clone Items", icon: "doc.on.doc", isSelected: selectedOption == "Clone Items", action: {
-                                    selectedOption = "Clone Items"
-                                    onCloneItems()
-                                })
+//                                OptionGridButtonView(label: "Clone Items", icon: "doc.on.doc", isSelected: selectedOption == "Clone Items", action: {
+//                                    selectedOption = "Clone Items"
+//                                    onCloneItems()
+//                                })
                                 OptionGridButtonView(label: "Tip Settings", icon: "dollarsign.circle", isSelected: selectedOption == "Tip Settings", action: {
                                     selectedOption = "Tip Settings"
                                     onTipSettings()
                                 })
-                                OptionGridButtonView(label: "Multicast", icon: "rectangle.stack", isSelected: selectedOption == "Multicast", action: {
-                                    selectedOption = "Multicast"
-                                    onMulticast()
-                                })
-                                OptionGridButtonView(label: "Add Coupons", icon: "tag", isSelected: selectedOption == "Add Coupons", action: {
-                                    selectedOption = "Add Coupons"
-                                    onAddCoupons()
-                                })
+//                                OptionGridButtonView(label: "Multicast", icon: "rectangle.stack", isSelected: selectedOption == "Multicast", action: {
+//                                    selectedOption = "Multicast"
+//                                    onMulticast()
+//                                })
+//                                OptionGridButtonView(label: "Add Coupons", icon: "tag", isSelected: selectedOption == "Add Coupons", action: {
+//                                    selectedOption = "Add Coupons"
+//                                    onAddCoupons()
+//                                })
                                 OptionGridButtonView(label: "Raid", icon: "paperplane", isSelected: selectedOption == "Raid", action: {
                                     selectedOption = "Raid"
                                     onRaid()
@@ -289,6 +290,10 @@ struct MoreOptionsScreen: View {
                                 OptionGridButtonView(label: "Create Poll", icon: "list.bullet", isSelected: selectedOption == "Create Poll", action: {
                                     selectedOption = "Create Poll"
                                     onCreatePoll()
+                                })
+                                OptionGridButtonView(label: "Randomizer", icon: "tag", isSelected: selectedOption == "Randomizer", action: {
+                                    selectedOption = "Randomizer"
+                                    onClickRandomizer()
                                 })
                             }
                             .padding(.horizontal, 16)
