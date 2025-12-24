@@ -423,9 +423,10 @@ struct CreateProductScreen: View {
                 .padding(.horizontal,12)
             }
             
-            
+            //add from libaray
             CusNavLink(doNavigate: $navigateToAddProduct, destination: AddProductsScreen(request:$requests,thumbNail: $thumbNail,fromPrepare: .constant(false),backToPrepare: $backToPrepare, NavFromProductLibrary: .constant(false), backToCreateProduct:$navigateToAddProduct))
             
+            //from prepare
             CusNavLink(doNavigate: $navigateToProuct, destination: AddProductsScreen(request:$requests,thumbNail: $thumbNail,fromPrepare: $fromPrepare,backToPrepare: $backToPrepare, NavFromProductLibrary: .constant(false), backToCreateProduct: .constant(false), delegate: delegate))
             
             CusNavLink(doNavigate: $navigateToSalesFormat, destination: SalesFormatScreen(request: $request,

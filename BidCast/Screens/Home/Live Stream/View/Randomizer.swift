@@ -322,7 +322,7 @@ struct RandomizerControlPanel: View {
             }
             .padding(.horizontal, 20)
             .padding(.bottom, 30)
-            .background(Color(.systemBackground))
+            .background(.clear)
         }
         .background(
             RoundedRectangle(cornerRadius: 24)

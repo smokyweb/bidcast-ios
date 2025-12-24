@@ -732,12 +732,15 @@ struct RehearsalScreen: View {
                 isPresented: $showPollSheet,
                 onCreatePoll: { pollModel in
                     print(pollModel)
-                    
                     SocketManagerService.shared.createPoll(poll: pollModel)
                 },
-                roomId: self.roomId
+                roomId: self.roomId,
+                errorMessageClosure: { msg in
+                    hudMsg = msg
+                    showhudAlert = true
+                }
             )
-            .presentationDetents([.fraction(0.80)])   // ✅ Bottom-sheet height
+            .presentationDetents([.fraction(0.60)])   // ✅ Bottom-sheet height
             .presentationCornerRadius(25)              // ✅ Rounded top corners
             .presentationDragIndicator(.hidden)        // optional
         }
@@ -926,6 +929,7 @@ struct RehearsalScreen: View {
                         onRaid: {
                             print("Raid")
                             showRaidSheet = true
+                            showSellSheet = false
 //                            SellerScreen(
 //                                sellers: $sellers,
 //                                selectedSellerID: $selectedSellers,

@@ -858,8 +858,6 @@ extension SocketManagerService {
     func createPoll(poll: PollModel) {
         performIfConnected {
 
-            
-
             let payload: [String: Any] = [
                 "room_id": poll.roomId,
                 "question": poll.question,
