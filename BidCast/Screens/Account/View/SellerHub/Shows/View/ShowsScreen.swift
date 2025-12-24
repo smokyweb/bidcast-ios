@@ -42,6 +42,20 @@ struct ShowsScreen: View {
     @State var showID = ""
     @State var SHowId = 0
     @State var navigateToshowTitle = false
+    
+    @State private var scheduleRequest = StoreScheduleShowRequest(
+        title: "",
+        date: "",
+        time: "",
+        category_id: "",
+        auction_type_id: "",
+        product_ids: "",
+        is_explicit: false,
+        show_discoverability: "",
+        repeat_value: "",
+        is_repeat: false,
+        language: "english"
+    )
 
     // Sample data
     let shows = [
@@ -143,8 +157,8 @@ struct ShowsScreen: View {
                        destination:  MyShowsAnalyticsScreen(showId: $showID))
             
             CusNavLink(doNavigate: $navigateToshowTitle, destination:
-                        ShowTitleTips(request : .constant(StoreScheduleShowRequest(title: "", date: "", time: "", category_id: "", auction_type_id: "", product_ids: "", is_explicit: false, show_discoverability: "", repeat_value: "", is_repeat: false, language: "english")),
-                                      fromPrepare:.constant(true),
+                        ShowTitleTips(request : $scheduleRequest,
+                                      fromPrepare:.constant(false),
                                       backToPrepare: $navigateToshowTitle,
                                       showId: $SHowId))
            

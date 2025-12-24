@@ -32,6 +32,11 @@ struct SelectThumbnailScreen: View {
     @State var hudMsg: String = ""
     @Binding var fromPrepare : Bool
     @Binding var backToPrepare : Bool
+    
+    @State private var isLoadingThumbnail = false
+       @State private var thumbnailURL: String = ""
+    
+    
     var delegate: ShowStepDelegate?
     var body: some View {
         VStack{
@@ -53,7 +58,7 @@ struct SelectThumbnailScreen: View {
                     UploadThumbnailView(onTap: {
                         print("thumbnail upload")
                         showPickerOptions = true
-                    }, image: selectedMedia)
+                    }, image: selectedMedia, thumbnailURL: thumbnailURL, isLoadingThumbnail: isLoadingThumbnail  )
                     
                     Text("Tips for a Great Thumbnail")
                         .font(.custom(poppinsBold, size: 16.0))
@@ -179,7 +184,7 @@ struct SelectThumbnailScreen: View {
             .ignoresSafeArea()
         }
         .onAppear {
-            
+            loadExistingThumbnail()
             Task{
                guard Reachability.isConnectedToNetwork() else {
                     hudMsg = "No Internet Connection"
@@ -206,6 +211,60 @@ struct SelectThumbnailScreen: View {
         
     }
     
+    func loadExistingThumbnail() {
+            // Check if thumbNail binding already has a value (local file path)
+            if !thumbNail.isEmpty {
+                // If it's a local file path, load it as UIImage
+                if let image = UIImage(contentsOfFile: thumbNail) {
+                    selectedMedia = image
+                    print("✅ Loaded thumbnail from local path: \(thumbNail)")
+                }
+            }
+            // If no local thumbnail, check if request has a thumbnail URL
+            else if let thumbnailUrlString = getThumbnailFromRequest(), !thumbnailUrlString.isEmpty {
+                thumbnailURL = thumbnailUrlString
+                thumbNail = thumbnailUrlString // Set thumbNail to the URL
+                isLoadingThumbnail = true
+                print("✅ Loading thumbnail from URL: \(thumbnailUrlString)")
+                
+                // Download the image
+                Task {
+                    await downloadThumbnail(from: thumbnailUrlString)
+                }
+            }
+        }
+    func getThumbnailFromRequest() -> String? {
+           // If your StoreScheduleShowRequest has a thumbnail property, use it
+           // For example: return request.thumbnail
+           // For now, returning nil - you'll need to add this property to your request model
+        if request.thumbnail != ""{
+            return request.thumbnail ?? ""
+        }
+        
+           return nil
+       }
+    func downloadThumbnail(from urlString: String) async {
+           guard let url = URL(string: urlString) else {
+               isLoadingThumbnail = false
+               return
+           }
+           
+           do {
+               let (data, _) = try await URLSession.shared.data(from: url)
+               if let image = UIImage(data: data) {
+                   await MainActor.run {
+                       selectedMedia = image
+                       isLoadingThumbnail = false
+                       print("✅ Successfully downloaded thumbnail image")
+                   }
+               }
+           } catch {
+               await MainActor.run {
+                   isLoadingThumbnail = false
+                   print("❌ Failed to download thumbnail: \(error.localizedDescription)")
+               }
+           }
+       }
 }
 
 
@@ -213,6 +272,8 @@ struct SelectThumbnailScreen: View {
 struct UploadThumbnailView: View {
     var onTap: () -> Void
     var image = UIImage()
+    var thumbnailURL: String = ""
+       var isLoadingThumbnail: Bool = false
     var body: some View {
         Button(action: {
             onTap()
@@ -222,6 +283,48 @@ struct UploadThumbnailView: View {
                     Image(uiImage: image)
                         .resizable()
                         .scaledToFit()
+                } else if isLoadingThumbnail {
+                    ProgressView()
+                        .scaleEffect(1.5)
+                        .frame(width: 40, height: 40)
+                    
+                    Text("Loading thumbnail...")
+                        .font(.system(size: 14))
+                        .foregroundColor(.gray)
+                }
+                // ⭐ Priority 3: Show thumbnail from URL
+                else if !thumbnailURL.isEmpty {
+                    AsyncImage(url: URL(string: thumbnailURL)) { phase in
+                        switch phase {
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .scaledToFit()
+                                .frame(maxWidth: .infinity)
+                                .cornerRadius(8)
+                        case .failure(_):
+                            VStack(spacing: 8) {
+                                Image(systemName: "exclamationmark.triangle")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 40, height: 40)
+                                    .foregroundColor(.orange)
+                                
+                                Text("Failed to load thumbnail")
+                                    .font(.system(size: 14))
+                                    .foregroundColor(.gray)
+                                
+                                Text("Tap to upload new")
+                                    .font(.system(size: 12))
+                                    .foregroundColor(.gray.opacity(0.6))
+                            }
+                        case .empty:
+                            ProgressView()
+                                .scaleEffect(1.5)
+                        @unknown default:
+                            EmptyView()
+                        }
+                    }
                 }else{
                     Image(systemName: "photo.on.rectangle")
                         .resizable()

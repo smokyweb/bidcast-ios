@@ -84,6 +84,7 @@ enum APIEndPoint{
 
 //    case storeScheduleShow(param : StoreScheduleShowRequest)
     case storeScheduleShow
+    case updateScheduleShow
     case AddCard(param:AddCardRequest)
     case deleteCard(param:DeleteCardRequest)
     case getCard
@@ -391,7 +392,8 @@ extension APIEndPoint: EndPointType {
             return "transaction-history/listing"
         case .storeScheduleShow:
             return "store-schedule-show"
- 
+        case .updateScheduleShow:
+            return "update-schedule-show"
         case .getScheduledShow:
             return "get-my-schedule-show"
         case .UpdateShowStatus:
@@ -807,7 +809,8 @@ extension APIEndPoint: EndPointType {
             return .post
         case .storeScheduleShow:
             return .post
-      
+        case .updateScheduleShow:
+            return .post
         case .getScheduledShow:
             return .post
         case .UpdateShowStatus:
@@ -1203,6 +1206,8 @@ extension APIEndPoint: EndPointType {
 //            return param
         case .storeScheduleShow:
             return nil
+        case .updateScheduleShow:
+            return nil
        
         case .getScheduledShow(param: let param):
             return param
@@ -1583,6 +1588,8 @@ extension APIEndPoint: EndPointType {
 //        case .storeScheduleShow(param: let param):
 //            return nil
         case .storeScheduleShow:
+            return nil
+        case .updateScheduleShow:
             return nil
         case .AddCard(param: let param):
             return nil

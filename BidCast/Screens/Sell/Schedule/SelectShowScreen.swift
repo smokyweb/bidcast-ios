@@ -65,7 +65,9 @@ struct SelectShowScreen: View {
                         }
                         .padding(.top,4)
                         
-                        TimePickerView(selectedDate: $selectedDate,onTImeSelected: { time in
+                        TimePickerView(selectedDate: $selectedDate,
+                                       selectedTime: $selectedTime,
+                                       onTImeSelected: { time in
                             selectedTime = time
                         })
                     }
@@ -125,9 +127,15 @@ struct SelectShowScreen: View {
                     }
                     Task{
                         SVProgressHUD.show()
-                        let param = checkScheduleRequest(date: request.date, time: request.time)
-                        await viewModel.CheckScheduleShow(param: param)
-                        await SVProgressHUD.dismiss()
+                        if request.show_id != "" {
+                            let param = checkScheduleRequest(showId:request.show_id ?? "" ,date: request.date, time: request.time)
+                            await viewModel.CheckScheduleShow(param: param)
+                            await SVProgressHUD.dismiss()
+                        }else{
+                            let param = checkScheduleRequest(date: request.date, time: request.time)
+                            await viewModel.CheckScheduleShow(param: param)
+                            await SVProgressHUD.dismiss()
+                        }
                         if self.viewModel.errorMessage == nil || viewModel.errorMessage == ""{
                             scheduleSuccess()
                         }else{
@@ -153,7 +161,47 @@ struct SelectShowScreen: View {
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }
+        .onAppear {
+                    // ⭐ LOAD EXISTING DATE AND TIME
+                    loadExistingDateTime()
+                }
     }
+    
+    func loadExistingDateTime() {
+            // Parse date if available
+            if !request.date.isEmpty {
+                if let date = parseDate(request.date, format: "yyyy-MM-dd") {
+                    selectedDate = date
+                    print("✅ Loaded existing date: \(request.date) -> \(selectedDate)")
+                }
+            }
+            
+            // Parse time if available
+        if !request.time.isEmpty {
+            // Try parsing with seconds first (HH:mm:ss), then fallback to HH:mm
+            let timeFormat = request.time.contains(":") && request.time.split(separator: ":").count == 3 ? "HH:mm:ss" : "HH:mm"
+            
+            if let time = parseDate(request.time, format: timeFormat) {
+                // Combine the selected date with the parsed time
+                let calendar = Calendar.current
+                let timeComponents = calendar.dateComponents([.hour, .minute], from: time)
+                if let combinedDateTime = calendar.date(bySettingHour: timeComponents.hour ?? 0,
+                                                        minute: timeComponents.minute ?? 0,
+                                                        second: 0,
+                                                        of: selectedDate) {
+                    selectedTime = combinedDateTime
+                    print("✅ Loaded existing time: \(request.time) -> \(selectedTime)")
+                }
+            }
+        }
+        }
+    func parseDate(_ dateString: String, format: String) -> Date? {
+           let formatter = DateFormatter()
+           formatter.timeZone = .current
+           formatter.locale = .current
+           formatter.dateFormat = format
+           return formatter.date(from: dateString)
+       }
     func scheduleSuccess(){
         let response = viewModel.checkScheduleResponse
         if response?.status == "success"{
@@ -203,7 +251,8 @@ struct SelectShowScreen: View {
 
 struct TimePickerView: View {
     @Binding var selectedDate: Date
-    @State var selectedTime: Date? = nil
+    
+    @Binding var selectedTime: Date
 
     let intervalMinutes = 60
     let calendar: Calendar = {
@@ -246,6 +295,15 @@ struct TimePickerView: View {
         .cornerRadius(16)
     }
 
+    func isTimeSelected(_ time: Date) -> Bool {
+           let timeHour = calendar.component(.hour, from: time)
+           let timeMinute = calendar.component(.minute, from: time)
+           let selectedHour = calendar.component(.hour, from: selectedTime)
+           let selectedMinute = calendar.component(.minute, from: selectedTime)
+           
+           return timeHour == selectedHour && timeMinute == selectedMinute
+       }
+    
     func formatTime(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.locale = Locale.current

@@ -246,6 +246,8 @@ struct AddProductsScreen: View {
         }
         .onFirstAppear{
             fetchProduct(page: currentPage)
+            
+            loadSelectedProductsFromRequest()
         }
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
@@ -315,8 +317,12 @@ struct AddProductsScreen: View {
                 primaryAction: {
                     withAnimation {
                         showError = false
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                            navigateToTab = true
+                        if viewModel.errorMessage == "" || viewModel.errorMessage == nil {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                navigateToTab = true
+                            }
+                        }else{
+                            
                         }
                     }
                 },
@@ -567,12 +573,46 @@ extension AddProductsScreen {
         }
     }
     
-    
+    func loadSelectedProductsFromRequest() {
+           // Parse product_ids from request (comma-separated string)
+           if !request.product_ids.isEmpty {
+               let productIds = request.product_ids
+                   .split(separator: ",")
+                   .map { String($0).trimmingCharacters(in: .whitespaces) }
+               
+               selectedProductIDs = Set(productIds)
+               
+               print("✅ Pre-selected \(selectedProductIDs.count) products from request:")
+               print("   Product IDs: \(Array(selectedProductIDs).joined(separator: ", "))")
+           }
+       }
     //MARK: productSuccess.
     func productSuccess(){
         let response = productViewModel.productsResponse1
         if response?.status == "success"{
-            productData = response?.data ?? [ProductDataModel1]()
+//            productData = response?.data ?? [ProductDataModel1]()
+            let newProducts = response?.data ?? [ProductDataModel1]()
+                       
+                       // If this is the first page, replace data
+                       if currentPage == 1 {
+                           productData = newProducts
+                       } else {
+                           // If paginating, append new products
+                           productData.append(contentsOf: newProducts)
+                       }
+                       
+                       // ⭐ IMPORTANT: Re-validate selectedProductIDs after loading products
+                       // Remove any IDs that don't exist in the loaded products
+                       let validProductIds = Set(productData.compactMap {
+                           $0.id != nil ? String($0.id!) : nil
+                       })
+                       selectedProductIDs = selectedProductIDs.intersection(validProductIds)
+                       
+                       // Update request with valid IDs
+                       request.product_ids = selectedProductIDs.joined(separator: ",")
+                       
+                       print("✅ Loaded \(productData.count) products")
+                       print("   Valid selected IDs: \(Array(selectedProductIDs).joined(separator: ", "))")
         }else{
             config = BottomSheetConfig(
                 icon: "exclamationmark.triangle.fill",
@@ -601,7 +641,11 @@ extension AddProductsScreen {
         }
         
         Task {
-            await performSaveRequest()
+            if request.show_id != "" && request.show_id != nil {
+                await performUpdateRequest()
+            }else{
+                await performSaveRequest()
+            }
         }
         
     }
@@ -617,7 +661,72 @@ extension AddProductsScreen {
 
         return nil
     }
-    
+    func performUpdateRequest() async {
+        await performAPICalls(
+            isConcurrent: false,
+            showLoader: true,
+            onError: { error in
+                config = BottomSheetConfig(
+                    icon: "exclamationmark.triangle.fill",
+                    title: "Error",
+                    message: errorDesc(error: error, message: viewModel.errorMessage),
+                    primaryButtonTitle: AppString.ok.localized,
+                    secondaryButtonTitle: nil
+                )
+                showError = true
+            },
+            onSuccess: {
+                let response = viewModel.storeShowResponse
+
+                config = BottomSheetConfig(
+                    icon: "checkmark.circle.fill",
+                    title: "Success",
+                    message: response?.message?.capitalized ?? "",
+                    primaryButtonTitle: AppString.ok.localized,
+                    secondaryButtonTitle: nil
+                )
+                showError = true
+            }
+        ) {
+            var params: [String: Any] = [
+                "show_id" : request.show_id ?? "",
+                "title": request.title,
+                "date": request.date,
+                "time": request.time,
+                "category_id": request.category_id,
+                "auction_type_id": request.auction_type_id,
+                "show_discoverability": request.show_discoverability,
+                "repeat_value": request.repeat_value,
+                "language": request.language,
+                
+            ]
+            if request.is_explicit{
+                params["is_explicit"] = 1
+            }else{
+                params["is_explicit"] = 0
+            }
+            
+            if request.is_repeat{
+                params["is_repeat"] = 1
+            }else{
+                params["is_repeat"] = 0
+            }
+
+            // Convert product IDs
+            var prodIds = Array(selectedProductIDs)
+            for (index, product) in prodIds.enumerated() {
+                params["product_ids[\(index)]"] = product
+            }
+
+            viewModel.errorMessage = ""
+
+            try await viewModel.updateScheduleShow(
+                param: params,
+                images: [thumbNail],
+                key: "thumbnail[]"
+            )
+        }
+    }
     func performSaveRequest() async {
         await performAPICalls(
             isConcurrent: false,

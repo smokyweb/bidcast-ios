@@ -216,6 +216,31 @@ final class ScheduleViewModel: ObservableObject {
             throw error
         }
     }
+    
+    func updateScheduleShow(param: [String: Any], images: [String], key: String) async throws{
+        self.requestType = "update"
+        
+        do {
+            let response: ResponseModal<HomeModel> = try await APIManager.shared.uploadImage(
+                type: APIEndPoint.updateScheduleShow,
+                urlArray: images,
+                mimeType: "image/jpeg",
+                keyName: key,
+                parameters: param,
+                modalType: ResponseModal<HomeModel>.self,
+                header: true
+            )
+            self.storeShowResponse = response
+        }catch(let error) {
+            if let dataError = error as? DataError {
+                self.errorMessage = dataError.getErrorMessage()
+            }
+            else {
+                self.errorMessage = error.localizedDescription
+            }
+            throw error
+        }
+    }
 
     // MARK: - Centralized Error Handler
     func handle(error: Error) {

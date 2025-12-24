@@ -447,6 +447,7 @@ struct AddressRequest : Encodable {
 }
 
 struct checkScheduleRequest : Encodable{
+    var showId : String?
     var date : String
     var time : String
 }
@@ -642,6 +643,7 @@ struct TransactionRequest : Encodable {
 }
 
 struct StoreScheduleShowRequest: Encodable {
+    var show_id : String?
     var title: String
     var date: String
     var time: String
@@ -655,6 +657,7 @@ struct StoreScheduleShowRequest: Encodable {
     var repeat_value: String
     var is_repeat : Bool
     var language : String
+    var thumbnail : String?
     
     enum CodingKeys: String, CodingKey {
         case title

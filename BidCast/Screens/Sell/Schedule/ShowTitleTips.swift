@@ -206,7 +206,8 @@ struct ShowTitleTips: View {
             
 //            tip = dict?.data ?? TitleTipsModel()
             let showData = dict?.data ?? HomeModel()
-            request = StoreScheduleShowRequest(title: showData.title ?? "",
+            request = StoreScheduleShowRequest(show_id:"\(showData.id ?? 0)",
+                                               title: showData.title ?? "",
                                                date: showData.date ?? "",
                                                time: showData.time ?? "",
                                                category_id: "\(showData.category_id ?? 0)",
@@ -214,8 +215,9 @@ struct ShowTitleTips: View {
                                                product_ids: showData.product_ids?.first ?? "",
                                                is_explicit: showData.is_explicit ?? false,
                                                show_discoverability: showData.show_discoverability ?? "",
-                                               repeat_value: showData.language ?? "", is_repeat: showData.is_repeat ?? false,
-                                               language: showData.repeat_value ?? "")
+                                               repeat_value: showData.repeat_value ?? "", is_repeat: showData.is_repeat ?? false,
+                                               language: showData.language ?? "",
+                                               thumbnail : showData.thumbnail?.first ?? "")
             title = showData.title ?? ""
 //            request.title = title
 //            request.date = showData.date ?? ""

@@ -288,7 +288,7 @@ struct SelectCategoryScreen: View {
         .background(Color.bg.opacity(0.5))
         
         .onFirstAppear {
-            request.show_discoverability = "public"
+//            request.show_discoverability = "public"
             Task {
                 guard Reachability.isConnectedToNetwork() else {
                     hudMsg = "No Internet Connection"
@@ -307,6 +307,8 @@ struct SelectCategoryScreen: View {
 
                 categorySuccess()
                 auctionSuccess()
+                
+                populateExistingData()
             }
         }
        
@@ -362,6 +364,52 @@ struct SelectCategoryScreen: View {
             showError = true
         }
     }
+    
+    func populateExistingData() {
+            // 1. Set Category
+            if !request.category_id.isEmpty,
+               let categoryId = Int(request.category_id),
+               let category = categoryList.first(where: { $0.id == categoryId }) {
+                selectedCategory = category.name ?? ""
+            }
+            
+            // 2. Set Auction Type
+            if !request.auction_type_id.isEmpty,
+               let auctionId = Int(request.auction_type_id),
+               let auction = auctionTypeList.first(where: { $0.id == auctionId }) {
+                selectedAuctionType = auction.name ?? ""
+            }
+            
+            // 3. Set Repeats
+            if request.is_repeat {
+                selectedRepeatOptions = request.repeat_value.isEmpty ? "Does Not Repeat" : request.repeat_value
+            } else {
+                selectedRepeatOptions = "Does Not Repeat"
+            }
+            
+            // 4. Set Explicit Content
+            isExplicitContent = request.is_explicit
+            
+            // 5. Set Language
+            if !request.language.isEmpty {
+                selectedLanguageOptions = request.language.capitalized
+            }
+            
+            // 6. Set Discoverability
+            if request.show_discoverability.lowercased() == "public" {
+                selectedDiscoverability = .publicMode
+            } else if request.show_discoverability.lowercased() == "private" {
+                selectedDiscoverability = .privateMode
+            }
+            
+            print("✅ Data populated:")
+            print("- Category: \(selectedCategory)")
+            print("- Auction: \(selectedAuctionType)")
+            print("- Repeats: \(selectedRepeatOptions)")
+            print("- Explicit: \(isExplicitContent)")
+            print("- Language: \(selectedLanguageOptions)")
+            print("- Discoverability: \(selectedDiscoverability?.rawValue ?? "none")")
+        }
     
 }
 

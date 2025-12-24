@@ -106,6 +106,7 @@ struct LoginScreen: View {
                     
                     PrimaryButton(title: AppString.login.localized, isOutLine: false,onButtonClick: {
                         UIApplication.shared.endEditing()
+                        hideKeyboard()
                         guard Reachability.isConnectedToNetwork() else {
                             hudMsg = "No Internet Connection"
                             showhud = true
