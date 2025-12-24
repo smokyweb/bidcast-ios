@@ -12,10 +12,13 @@ struct CreatePollScreen: View {
     @Binding var isPresented: Bool
     var onCreatePoll: ((PollModel) -> Void)?
     
+    @State var hudMsg: String = ""
+    
     @State private var pollQuestion: String = ""
     @State private var options: [TextModel] = []
     @State private var selectedDuration: String = "5 minutes"
     var roomId: String = ""
+    var errorMessageClosure: ((String) -> Void) = {_ in}
     
     @State var durations = ["1 minute", "3 minutes", "5 minutes", "10 minutes", "15 minutes", "30 minutes"]
     
@@ -67,7 +70,7 @@ struct CreatePollScreen: View {
                 custFontName: robotoMedium,
                 custFontSize: 14
             )
-            .padding(.horizontal)
+//            .padding(.horizontal)
             .padding(.bottom, 12)
             
             ScrollView(showsIndicators: false) {
@@ -106,7 +109,7 @@ struct CreatePollScreen: View {
                             custFontName: robotoMedium,
                             custFontSize: 14
                         )
-                        .padding(.horizontal)
+//                        .padding(.horizontal)
                     }
                     
                     
@@ -154,13 +157,21 @@ struct CreatePollScreen: View {
     private func createPoll() {
         
         // 🔐 Validation
-        guard !pollQuestion.trimmingCharacters(in: .whitespaces).isEmpty else { return }
+        guard !pollQuestion.trimmingCharacters(in: .whitespaces).isEmpty else {
+            hudMsg = "Please Enter Poll Question."
+            errorMessageClosure(hudMsg)
+            return
+        }
         
         let cleanOptions = options
             .map { $0.text.trimmingCharacters(in: .whitespaces) }
             .filter { !$0.isEmpty }
         
-        guard cleanOptions.count >= 1 else { return }
+        guard cleanOptions.count >= 2 else {
+            hudMsg = "Please Enter atleast two options."
+            errorMessageClosure(hudMsg)
+            return
+        }
         
         // 🔥 Prepare PollOption list
         let pollOptions = cleanOptions.map { optionText in
@@ -188,10 +199,10 @@ struct CreatePollScreen: View {
         isPresented = false
     }
     
-    // MARK: Keyboard Helper
-    private func hideKeyboard() {
-         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-     }
+//    // MARK: Keyboard Helper
+//    private func hideKeyboard() {
+//         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+//     }
  }
 
 //

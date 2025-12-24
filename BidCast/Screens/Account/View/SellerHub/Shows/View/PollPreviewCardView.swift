@@ -66,16 +66,16 @@ struct PollPreviewCardView: View {
         }
         .padding()
         .background(
-            RoundedRectangle(cornerRadius: 18)
+            RoundedRectangle(cornerRadius: 12)
                 .fill(Color(UIColor.systemGray6))
                 .overlay(
                     RoundedRectangle(cornerRadius: 18)
-                        .stroke(Color.black.opacity(0.10), lineWidth: 0.6)
+                        .stroke(Color.gray.opacity(0.10), lineWidth: 0.6)
                 )
-                .shadow(color: Color.black.opacity(0.10), radius: 6, x: 0, y: 3)
+                .shadow(color: Color.gray.opacity(0.10), radius: 6, x: 0, y: 3)
         )
         .padding(.horizontal)
-        .padding(.vertical, 4)
+        .padding(.vertical, 12)
         .onTapGesture {
             onPollCardTapped?()
         }
