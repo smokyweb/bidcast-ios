@@ -582,7 +582,7 @@ struct InventoryScreen: View {
                     showErrorPopup = true
                 }, onSuccess: {
                     // On success
-                    hudMsg = "Product Statuss changed Successfully!"
+                    hudMsg = "Product Status changed Successfully!"
                     showSuccesshud = true
                     Task {
                         await performAPICalls(
