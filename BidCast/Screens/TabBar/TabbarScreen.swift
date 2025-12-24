@@ -55,7 +55,7 @@ struct TabbarScreen: View {
                     .id(homeViewID)
                     .tabItem {
                         VStack {
-                            Image(systemName: tabIcon(for: 0))
+                            Image(tabIcon(for: 0))
 //                                .foregroundColor(.black)
                             Text("Home")
                         }
@@ -66,7 +66,7 @@ struct TabbarScreen: View {
                     .id(exploreViewID)
                     .tabItem {
                         VStack {
-                            Image(systemName: tabIcon(for: 1))
+                            Image(tabIcon(for: 1))
 //                                .foregroundColor(.black)
                             Text("Explore")
                         }
@@ -76,7 +76,7 @@ struct TabbarScreen: View {
                 Color.clear
                     .tabItem {
                         VStack {
-                            Image(systemName: tabIcon(for: 2))
+                            Image(tabIcon(for: 2))
 //                                .foregroundColor(.black)
                             Text("Sell")
                         }
@@ -87,7 +87,7 @@ struct TabbarScreen: View {
                     .id(activityViewID)
                     .tabItem {
                         VStack {
-                            Image(systemName: tabIcon(for: 3))
+                            Image(tabIcon(for: 3))
 //                                .foregroundColor(.black)
                             Text("Activity")
                         }
@@ -98,7 +98,7 @@ struct TabbarScreen: View {
                     .id(accountViewID)
                     .tabItem {
                         VStack {
-                            Image(systemName: tabIcon(for: 4))
+                            Image(tabIcon(for: 4))
 //                                .foregroundColor(.black)
                             Text("Account")
                         }
@@ -348,15 +348,15 @@ struct TabbarScreen: View {
     func tabIcon(for tab: Int) -> String {
         switch tab {
         case 0:
-            return tabBarRouter.selectedTab == 0 ? "house.fill" : "house"
-        case 1: 
-            return tabBarRouter.selectedTab == 1 ? "safari.fill" : "safari"
-        case 2: 
-            return tabBarRouter.selectedTab == 2 ? "plus.circle.fill" : "plus.circle"
+            return tabBarRouter.selectedTab == 0 ? "homeBold" : "home"
+        case 1:
+            return tabBarRouter.selectedTab == 1 ? "searchBold" : "search"
+        case 2:
+            return tabBarRouter.selectedTab == 2 ? "sellerBold" : "seller"
         case 3:
-            return tabBarRouter.selectedTab == 3 ? "suit.heart.fill" : "suit.heart"
-        case 4: 
-            return tabBarRouter.selectedTab == 4 ? "person.fill" : "person"
+            return tabBarRouter.selectedTab == 3 ? "activityBold" : "activity"
+        case 4:
+            return tabBarRouter.selectedTab == 4 ? "profileBold" : "profile"
         default: return "circle"
         }
     }

@@ -233,6 +233,7 @@ struct SpinWheelView: View {
                         .fill(colors[index % colors.count])
                     Text(labels[index]).foregroundColor(Color.white).fontWeight(.bold)
                         .offset(viewOffset(for: index, in: geo.size)).zIndex(1)
+                    
                 }
             }
         }
@@ -268,7 +269,7 @@ struct SpinWheelView: View {
 @available(iOS 13.0, *)
 struct SpinWheelCell: Shape {
     
-    let startAngle: Double, endAngle: Double
+    let startAngle: Double, endAngle: Double    
     
     func path(in rect: CGRect) -> Path {
         var path = Path()
