@@ -1027,7 +1027,7 @@ enum AccountTabSection: String, CaseIterable, CustomStringConvertible {
         case .address: return .addresses
         case .buyer: return .identityVerification
         case .notifications: return .notifications
-        case .preference: return .tag
+        case .preference: return .offers
         case .favCategory: return .favourites
         }
     }

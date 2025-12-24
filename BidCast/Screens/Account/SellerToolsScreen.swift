@@ -288,7 +288,10 @@ struct ToolsRowItem: View {
             HStack(spacing: 16) {
                 // Icon
                 ZStack {
-                    
+                    Color.defaultTheme.opacity(0.2)
+                          .frame(width: 36, height: 36)
+                          .clipShape(Circle())
+                        
                     Image(icon)
                         .font(.system(size: 20, weight: .medium))
                         .foregroundColor(.primary)
@@ -307,7 +310,7 @@ struct ToolsRowItem: View {
                     .foregroundColor(.gray)
             }
             .padding(.horizontal, 16)
-            .padding(.vertical, 12)
+            .padding(.vertical, 6)
             .background(isPressed ? Color(.systemGray6).opacity(0.5) : Color.clear)
             .contentShape(Rectangle())
         }
