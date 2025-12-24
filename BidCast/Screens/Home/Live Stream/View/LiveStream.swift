@@ -597,7 +597,7 @@ struct LiveStream: View {
         let isHost = comment.userId == data.seller?.id ?? ""
         let isMod = !isHost
         
-        ChatMessageBubble(comment: comment, isHost: isHost, isMod: isMod)
+        ChatMessageBubble(comment: comment, isHost: isHost)
             .background(
                 GeometryReader { geo in
                     Color.clear.onAppear {
@@ -1830,7 +1830,7 @@ extension LiveStream {
 //        
         socketManagerChat.listenForAuctionNextProduct { roomID,products,source  in
             guard roomId == roomID else { return}
-            self.auctionedProductData = products
+//            self.auctionedProductData = products
             
         }
         
@@ -2423,7 +2423,7 @@ struct ShareSheet: UIViewControllerRepresentable {
 struct ChatMessageBubble: View {
     let comment: CommentModel
     let isHost: Bool
-    let isMod: Bool
+    let isMod: Bool = false
     var body: some View {
         HStack(alignment: .top, spacing: 6) {
             CustomProfileImage(

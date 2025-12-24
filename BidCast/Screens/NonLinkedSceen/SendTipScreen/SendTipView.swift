@@ -378,7 +378,7 @@ struct SendTipView: View {
                         )
                         .overlay(
                             RoundedRectangle(cornerRadius: 14)
-                                .stroke(customAmount.isEmpty ? Color.clear : Color.defaultTheme.opacity(0.3), lineWidth: 1.5)
+                                .stroke(customAmount.isEmpty ? Color.clear : Color.defaultThemeLight, lineWidth: 1.5)
                         )
                     }
                     .padding(.horizontal, 24)
@@ -452,18 +452,9 @@ struct SendTipView: View {
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 18)
-                        .background(
-                            LinearGradient(
-                                gradient: Gradient(colors: [
-                                    Color.defaultTheme,
-                                    Color.defaultTheme.opacity(0.8)
-                                ]),
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-                        )
+                        .background(.defaultTheme )
                         .cornerRadius(16)
-                        .shadow(color: Color.defaultTheme.opacity(0.4), radius: 12, x: 0, y: 6)
+                        .shadow(color: Color.defaultThemeLight, radius: 12, x: 0, y: 6)
                     }
                     .disabled(
                         (selectedAmount == nil && customAmount.isEmpty) ||
@@ -569,34 +560,20 @@ struct TipOptionButton: View {
                 .foregroundColor(isSelected ? .white : .primary)
                 .frame(maxWidth: .infinity)
                 .frame(height: 56)
-                .background(
-                    ZStack {
-                        if isSelected {
-                            LinearGradient(
-                                gradient: Gradient(colors: [
-                                    Color.defaultTheme,
-                                    Color.defaultTheme.opacity(0.8)
-                                ]),
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        } else {
-                            Color(.systemGray6)
-                        }
-                    }
-                )
+                .background(isSelected ? .defaultTheme : Color(.systemGray6) )
                 .cornerRadius(14)
                 .overlay(
                     RoundedRectangle(cornerRadius: 14)
                         .stroke(isSelected ? Color.defaultTheme : Color.clear, lineWidth: 2)
                 )
                 .shadow(
-                    color: isSelected ? Color.defaultTheme.opacity(0.3) : Color.clear,
+                    color: isSelected ? Color.defaultThemeLight : Color.clear,
                     radius: isSelected ? 8 : 0,
                     x: 0,
                     y: isSelected ? 4 : 0
                 )
                 .scaleEffect(isSelected ? 1.02 : 1.0)
+                
         }
         .buttonStyle(PlainButtonStyle())
     }

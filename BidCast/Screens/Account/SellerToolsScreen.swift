@@ -231,6 +231,24 @@ struct SellerToolsScreen: View {
     private var navigationLinks: some View {
         Group {
             CusNavLink(doNavigate: $navigationState.navigateToSellerTraining, destination: SellingTips(isNavFrom: .constant("Account"), backToTabBar: .constant(false)))
+            
+//            CusNavLink(doNavigate: $navigationState.navigateToSellerTraining, destination: ProductWeightScreen(
+//                weight: .constant(""),
+//                selectedUnit: .constant(""),
+//                isHazardous: .constant(false),
+//                unitOptions: [""],
+//                quickWeights: [""],
+//                imageUrls: .constant([""]),
+//                videoUrls: .constant([""]),
+//                request: .constant(StoreProductParam(category_id: "", title: "", description: "", quantity: "", pricing: "", flash_sale: "", accept_offers: "", reserve_for_live: "", shipping_profile_id: "", status: "", width: "", length: "", weight: "", height: "", mail_class: "", processing_category: "", product_condition: "")),
+//                storeScheduleRequest: .constant(StoreScheduleShowRequest(title: "", date: "", time: "", category_id: "", auction_type_id: "", product_ids: "", is_explicit: false, show_discoverability: "", repeat_value: "", is_repeat: false, language: "")),
+//                thumbNail: .constant(""),
+//                backToPrepare: .constant(false),
+//                fromPrepare: .constant(false),
+//                backToCreateProduct: .constant(false), onContinue: {}))
+//            
+            
+            
             CusNavLink(doNavigate: $navigationState.navigateToSellerVerification, destination: SellerVerificationScreen())
             CusNavLink(doNavigate: $navigationState.navigateToIdentityVerification, destination: IdentityVerificationScreen())
             CusNavLink(doNavigate: $navigationState.navigateToInventory, destination: InventoryScreen(selectedProductIDs: .constant([]), selectedProductData: .constant([])))

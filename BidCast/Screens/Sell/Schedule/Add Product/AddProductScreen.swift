@@ -61,6 +61,7 @@ struct AddProductsScreen: View {
     @State var navigateToAddProduct  = false
     @State var navigateToEditProduct  = false
     @Binding var backToCreateProduct : Bool
+    var didTapBack : ((Bool) -> Void)?
     var delegate: ShowStepDelegate?
     
     @State var config: BottomSheetConfig = BottomSheetConfig(
@@ -83,6 +84,7 @@ struct AddProductsScreen: View {
                     leadingImgArr:["chevron.left"],
                     onClickLeading: { _ in
                         if backToCreateProduct{
+                            didTapBack?(true)
                             backToCreateProduct = false
                         }else{
                             self.presentationMode.wrappedValue.dismiss()
@@ -109,8 +111,10 @@ struct AddProductsScreen: View {
                             HStack(spacing: 12) {
                                 addProductOption(text: "Add another product") {
                                     if NavFromProductLibrary{
+                                        didTapBack?(true)
                                         presentationMode.wrappedValue.dismiss()
                                     }else{
+                                        didTapBack?(true)
                                         backToCreateProduct = false
                                     }
                                 }
@@ -238,7 +242,7 @@ struct AddProductsScreen: View {
         }
         .navigationBarHidden(true)
 //        .ignoresSafeArea(edges: .bottom)
-        .background(Color(UIColor.systemGroupedBackground))
+        .background(.backGround)
         .onAppear {
             // CRITICAL: Explicitly set all bottom sheet states to false on appear
             showError = false

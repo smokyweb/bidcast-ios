@@ -33,7 +33,7 @@ struct ProductWeightScreen: View {
     var strokeColor: Color {
         isHazardousMaterial ? Color.defaultTheme.opacity(0.3) : Color.gray.opacity(0.1)
     }
-
+    
     var lineWidth: CGFloat {
         isHazardousMaterial ? 2 : 1
     }
@@ -53,174 +53,188 @@ struct ProductWeightScreen: View {
     var onContinue: () -> Void
     
     var body: some View {
-        ZStack {
-            VStack(spacing: 0) {
-                VStack {
-                    // Header
-                    PrimaryHeader(
-                        title: "Product Weight",
-                        isForLogo: false,
-                        leadingImgArr: ["chevron.left"],
-                        trailingImgArr: [],
-                        onClickLeading: { _ in
-                            presentationMode.wrappedValue.dismiss()
-                        },
-                        count: .constant(0)
-                    )
-                    .background(Color.white)
-                    .frame(height: 40)
-                    
-                    VStack(alignment: .leading, spacing: 20) {
-                        
-                        // Info
-                        HStack(alignment: .top) {
-                            Image(systemName: "info.circle.fill")
-                                .foregroundColor(.blue)
-                            Text("BidCast calculates shipping fees based on the product weight. You can adjust this later if needed.")
-                                .font(.custom(poppinsSemiBold, size: 13.0))
-                                .foregroundColor(.blue)
-                        }
-                        .padding()
-                        .background(Color.defaultTheme.opacity(0.1))
-                        .cornerRadius(10)
-                        
-                        // Item Weight Input
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("Item Weight")
-                                .font(.custom(poppinsSemiBold, size: 13.0))
-                            
-                            HStack(spacing: 10) {
-                                TextField("0.00", text: $weight)
-                                    .keyboardType(.decimalPad)
-                                    .padding()
-                                    .background(Color.gray.opacity(0.1))
-                                    .foregroundColor(.black)
-                                    .cornerRadius(8)
-                                
-                                Menu {
-                                    ForEach(unitOptions, id: \.self) { unit in
-                                        Button(unit) { selectedUnit = unit }
-                                    }
-                                } label: {
-                                    HStack {
-                                        Text(selectedUnit)
-                                            .font(.custom(poppinsSemiBold, size: 11.0))
-                                        Image(systemName: "chevron.down")
-                                    }
-                                    .padding()
-                                    .foregroundColor(.black)
-                                    .background(Color.gray.opacity(0.1))
-                                    .cornerRadius(8)
-                                }
-                            }
-                        }
-                        
-                        // Quick Weights
-                        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 3), spacing: 12) {
-                            ForEach(quickWeights, id: \.self) { qw in
-                                Button(action: {
-                                    weight = qw.replacingOccurrences(of: " oz", with: "")
-                                }) {
-                                    Text(qw)
-                                        .font(.custom(poppinsSemiBold, size: 12.0))
-                                        .frame(maxWidth: .infinity)
-                                        .padding()
-                                        .foregroundColor(.black)
-                                        .background(Color.gray.opacity(0.1))
-                                        .cornerRadius(8)
-                                }
-                            }
-                        }
-//                        
-//                        // Hazardous Toggle
-//                        VStack(alignment: .leading, spacing: 8) {
-//                            HStack {
-//                                Text("Hazardous Material")
-//                                    .font(.custom(poppinsSemiBold, size: 13.0))
-//                                Spacer()
-//                                Toggle("", isOn: $isHazardous)
-//                                    .labelsHidden()
-//                            }
-//                            Text("Items containing flammable, explosive, or other dangerous materials. ")
-//                                .font(.custom(poppinsRegular, size: 11.0))
-//                            + Text(" Learn more about hazardous materials")
-//                                .font(.custom(poppinsRegular, size: 11.0))
-//                                .foregroundColor(.defaultTheme)
-//                        }
-//                        
-//                        Spacer(minLength: 100)
-//                        
-                        
-                        VStack(alignment: .leading, spacing: 16) {
-
-                            Toggle(isOn: $isHazardousMaterial) {
-                                HazardousLabel()
-                            }
-                            .toggleStyle(SwitchToggleStyle(tint: .blue))
-                            .padding(20)
-                            .background(
-                                RoundedRectangle(cornerRadius: 16)
-                                    .fill(Color(.systemBackground))
-                                    .shadow(
-                                        color: Color.black.opacity(0.08),
-                                        radius: 12, x: 0, y: 4
-                                    )
-                            )
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 16)
-                                    .stroke(strokeColor, lineWidth: lineWidth)
-                                    .animation(.easeInOut(duration: 0.2), value: isHazardousMaterial)
-                            )
-                        }
-//                        .padding(.horizontal, 16)
-                        
-                    }
-                    .padding()
-                    
-                    // Continue Button
-                    VStack {
-                        Button(action: {
-                            submitProduct()
-                        }) {
-                            Text("Continue")
-                                .foregroundColor(.white)
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .background(.defaultTheme)
-                                .cornerRadius(10)
-                        }
-                        .padding(.horizontal)
-                        .padding(.bottom)
-                    }
-                    .background(Color.white)
-                }
-                
-                CusNavLink(
-                    doNavigate: $navigateToAddProduct,
-                    destination: AddProductsScreen(
-                        request:$storeScheduleRequest,
-                        thumbNail: $thumbNail,
-                        fromPrepare: .constant(false),
-                        backToPrepare: $backToPrepare, NavFromProductLibrary: .constant(false),
-                        backToCreateProduct: $backToCreateProduct
-                    )
-                )
-                CusNavLink(
-                    doNavigate: $navigateToProuct,
-                    destination: AddProductsScreen(
-                        request:$storeScheduleRequest,
-                        thumbNail: $thumbNail,
-                        fromPrepare: $fromPrepare,
-                        backToPrepare: $backToPrepare,
-                        NavFromProductLibrary: .constant(false),
-                        backToCreateProduct: $backToCreateProduct,
-                        delegate: delegate
-                    )
+        //        ZStack {
+        VStack(spacing: 0) {
+            VStack {
+                // Header
+                PrimaryHeader(
+                    title: "Product Weight",
+                    isForLogo: false,
+                    leadingImgArr: ["chevron.left"],
+                    trailingImgArr: [],
+                    onClickLeading: { _ in
+                        presentationMode.wrappedValue.dismiss()
+                    },
+                    count: .constant(0)
                 )
             }
-            .edgesIgnoringSafeArea(.bottom)
+            .background(Color.white)
+            //                    .frame(height: 40)
+            ScrollView{
+                VStack(alignment: .leading, spacing: 20) {
+                    
+                    // Info
+                    HStack(alignment: .top) {
+                        Image(systemName: "info.circle.fill")
+                            .foregroundColor(.blue)
+                        Text("BidCast calculates shipping fees based on the product weight. You can adjust this later if needed.")
+                            .font(.custom(poppinsSemiBold, size: 13.0))
+                            .foregroundColor(.blue)
+                    }
+                    .padding()
+                    .background(Color.defaultThemeLight)
+                    .cornerRadius(10)
+                    
+                    // Item Weight Input
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Item Weight")
+                            .font(.custom(poppinsSemiBold, size: 13.0))
+                        
+                        HStack(spacing: 10) {
+                            TextField("0.00", text: $weight)
+                                .keyboardType(.decimalPad)
+                                .padding()
+                                .foregroundStyle(.text)
+                                .submitLabel(.next)
+                                .accentColor(.text)
+                                .frame(height: 40)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 32)
+                                        .fill(.white)
+                                        .shadow(color: .gray.opacity(0.7), radius: 1, x: 0, y: 0)
+                                )
+                                
+                            
+                            Menu {
+                                ForEach(unitOptions, id: \.self) { unit in
+                                    Button(unit) { selectedUnit = unit }
+                                }
+                            } label: {
+                                HStack {
+                                    Text(selectedUnit)
+                                        .font(.custom(poppinsSemiBold, size: 11.0))
+                                    Image(systemName: "chevron.down")
+                                }
+                                .padding()
+                                .foregroundColor(.black)
+                                .frame(height: 40)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 32)
+                                        .fill(.white)
+                                        .shadow(color: .gray.opacity(0.7), radius: 1, x: 0, y: 0)
+                                )
+                               
+                            }
+                        }
+                    }
+                    
+                    // Quick Weights
+                    LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 3), spacing: 12) {
+                        ForEach(quickWeights, id: \.self) { qw in
+                            Button(action: {
+                                weight = qw.replacingOccurrences(of: " oz", with: "")
+                            }) {
+                                Text(qw)
+                                    .font(.custom(poppinsSemiBold, size: 12.0))
+                                    .frame(maxWidth: .infinity)
+                                    .padding()
+                                    .foregroundColor(.black)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .fill(.white)
+                                            .shadow(color: .gray.opacity(0.7), radius: 1, x: 0, y: 0)
+                                    )
+                            }
+                        }
+                    }
+                    //
+                    //                        // Hazardous Toggle
+                    //                        VStack(alignment: .leading, spacing: 8) {
+                    //                            HStack {
+                    //                                Text("Hazardous Material")
+                    //                                    .font(.custom(poppinsSemiBold, size: 13.0))
+                    //                                Spacer()
+                    //                                Toggle("", isOn: $isHazardous)
+                    //                                    .labelsHidden()
+                    //                            }
+                    //                            Text("Items containing flammable, explosive, or other dangerous materials. ")
+                    //                                .font(.custom(poppinsRegular, size: 11.0))
+                    //                            + Text(" Learn more about hazardous materials")
+                    //                                .font(.custom(poppinsRegular, size: 11.0))
+                    //                                .foregroundColor(.defaultTheme)
+                    //                        }
+                    //
+                    //                        Spacer(minLength: 100)
+                    //
+                    
+                    VStack(alignment: .leading, spacing: 16) {
+                        
+                        Toggle(isOn: $isHazardousMaterial) {
+                            HazardousLabel()
+                        }
+                        .toggleStyle(SwitchToggleStyle(tint: .blue))
+                        .padding(20)
+                        .background(
+                            RoundedRectangle(cornerRadius: 16)
+                                .fill(Color(.systemBackground))
+                                .shadow(
+                                    color: Color.black.opacity(0.08),
+                                    radius: 12, x: 0, y: 4
+                                )
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16)
+                                .stroke(strokeColor, lineWidth: lineWidth)
+                                .animation(.easeInOut(duration: 0.2), value: isHazardousMaterial)
+                        )
+                    }
+                    //                        .padding(.horizontal, 16)
+                    
+                }
+                .padding()
+                
+                // Continue Button
+                VStack {
+                    Button(action: {
+                        submitProduct()
+                    }) {
+                        Text("Continue")
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(.defaultTheme)
+                            .cornerRadius(10)
+                    }
+                    .padding(.horizontal)
+                    .padding(.bottom)
+                }
+//                .background(Color.white)
+            }.background(.backGround)
+            
+            CusNavLink(
+                doNavigate: $navigateToAddProduct,
+                destination: AddProductsScreen(
+                    request:$storeScheduleRequest,
+                    thumbNail: $thumbNail,
+                    fromPrepare: .constant(false),
+                    backToPrepare: $backToPrepare, NavFromProductLibrary: .constant(false),
+                    backToCreateProduct: $backToCreateProduct
+                )
+            )
+            CusNavLink(
+                doNavigate: $navigateToProuct,
+                destination: AddProductsScreen(
+                    request:$storeScheduleRequest,
+                    thumbNail: $thumbNail,
+                    fromPrepare: $fromPrepare,
+                    backToPrepare: $backToPrepare,
+                    NavFromProductLibrary: .constant(false),
+                    backToCreateProduct: $backToCreateProduct,
+                    delegate: delegate
+                )
+            )
         }
-        // Toast is fine here
+        .background(.backGround)
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }
@@ -253,8 +267,9 @@ struct ProductWeightScreen: View {
                 )
             }
         )
+        
     }
-
+    
     
     // MARK: - Submit Product Logic
     func submitProduct(){
@@ -336,7 +351,7 @@ struct ProductWeightScreen: View {
                 var mimeType: [String] = []
                 var photos = [[String]]()
                 var keysValue: [String] = []
-            
+                
                 if imageUrls.count > 0 {
                     mimeType.append("image/jpeg")
                     keysValue.append("images[]")
@@ -379,8 +394,8 @@ struct ProductWeightScreen: View {
                 
                 
                 
-//                try await viewModel.uploadStoreImage(images: imageUrls, key: "images[]")
-//                request.shipping_profile_id = "4" //TODO : need to dynamic
+                //                try await viewModel.uploadStoreImage(images: imageUrls, key: "images[]")
+                //                request.shipping_profile_id = "4" //TODO : need to dynamic
                 guard let response = self.viewModel.storeImageResponse, response.status == "success" else {
                     return
                 }
@@ -408,7 +423,7 @@ struct ProductWeightScreen: View {
                     "accept_offers": request.accept_offers,
                     "reserve_for_live": request.reserve_for_live,
                     "shipping_profile_id": request.shipping_profile_id,
-//                    "auction": "true",
+                    //                    "auction": "true",
                     // ✅ Newly added fields
                     "width": request.width,
                     "length": request.length,
@@ -421,10 +436,10 @@ struct ProductWeightScreen: View {
                     "images": uploadedImagesUrls,
                     "videos": uploadedVideoUrls,
                     "status": request.status,
-//                    "type": "live"
+                    //                    "type": "live"
                     "hazardous_material": isHazardousMaterial
                 ]
-              
+                
                 
                 if !variantArray.isEmpty {
                     productRequest["variant"] = variantArray
@@ -435,87 +450,89 @@ struct ProductWeightScreen: View {
             }
         }
         
-//        Task {
-//            guard Reachability.isConnectedToNetwork() else {
-//                hudMsg = "No Internet Connection"
-//                showhud = true
-//                return
-//            }
-//            SVProgressHUD.show()
-//            viewModel.errorMessage?.removeAll()
-//            await viewModel.uploadStoreImage(images: imageUrls, key: "images[]")
-//            request.shipping_profile_id = "4" //TODO : need to dynamic
-//            if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
-//                uploadSuccess()
-//            }else{
-//                alertType = .sheetType(
-//                    icon: .alert,
-//                    title: "Failed",
-//                    message: viewModel.errorMessage ?? "",
-//                    primaryBtnText: "",
-//                    secondaryBtnText: AppString.ok.localized
-//                )
-//                showError = true
-//            }
-//        }
+        //        Task {
+        //            guard Reachability.isConnectedToNetwork() else {
+        //                hudMsg = "No Internet Connection"
+        //                showhud = true
+        //                return
+        //            }
+        //            SVProgressHUD.show()
+        //            viewModel.errorMessage?.removeAll()
+        //            await viewModel.uploadStoreImage(images: imageUrls, key: "images[]")
+        //            request.shipping_profile_id = "4" //TODO : need to dynamic
+        //            if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
+        //                uploadSuccess()
+        //            }else{
+        //                alertType = .sheetType(
+        //                    icon: .alert,
+        //                    title: "Failed",
+        //                    message: viewModel.errorMessage ?? "",
+        //                    primaryBtnText: "",
+        //                    secondaryBtnText: AppString.ok.localized
+        //                )
+        //                showError = true
+        //            }
+        //        }
     }
     
-//    func uploadSuccess(){
-//        guard let response = self.viewModel.storeImageResponse,
-//              response.status == "success"
-//        else {
-//            return
-//        }
-//        if response.status == "success"{
-//            let uploadedUrls: [[String: String]] = response.data.map {
-//                return ["image": $0.images ?? "", "thumbnail": $0.thumbnail ?? ""]
-//            }
-//            var variantArray: [[String: Any]] = []
-//            SVProgressHUD.dismiss()
-//            Task{
-//                self.viewModel.errorMessage?.removeAll()
-//                var request = [
-//                    
-//                    "category_id": request.category_id,
-//                    "sub_category_id": request.sub_category_id ?? "",
-//                    "title": request.title,
-//                    "description": request.description,
-//                    "quantity": request.quantity,
-//                    "pricing": request.pricing,
-//                    "flash_sale": request.flash_sale,
-//                    "accept_offers": request.accept_offers,
-//                    "reserve_for_live": request.reserve_for_live,
-//                    "shipping_profile_id": request.shipping_profile_id,
-//                    "images": uploadedUrls
-//                ]
-//                
-//                if !variantArray.isEmpty {
-//                    request["variant"] = variantArray
-//                }
-//                
-//                await viewModel.storeProduct(param: request)
-//                await SVProgressHUD.dismiss()
-//                if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
-//                    storeSuccess()
-//                }else{
-//                    alertType = .sheetType(
-//                        icon: .alert,
-//                        title: "Failed",
-//                        message: viewModel.errorMessage ?? "",
-//                        primaryBtnText: "",
-//                        secondaryBtnText: AppString.ok.localized
-//                    )
-//                    showError = true
-//                }
-//            }
-//        }
-//    }
+    //    func uploadSuccess(){
+    //        guard let response = self.viewModel.storeImageResponse,
+    //              response.status == "success"
+    //        else {
+    //            return
+    //        }
+    //        if response.status == "success"{
+    //            let uploadedUrls: [[String: String]] = response.data.map {
+    //                return ["image": $0.images ?? "", "thumbnail": $0.thumbnail ?? ""]
+    //            }
+    //            var variantArray: [[String: Any]] = []
+    //            SVProgressHUD.dismiss()
+    //            Task{
+    //                self.viewModel.errorMessage?.removeAll()
+    //                var request = [
+    //
+    //                    "category_id": request.category_id,
+    //                    "sub_category_id": request.sub_category_id ?? "",
+    //                    "title": request.title,
+    //                    "description": request.description,
+    //                    "quantity": request.quantity,
+    //                    "pricing": request.pricing,
+    //                    "flash_sale": request.flash_sale,
+    //                    "accept_offers": request.accept_offers,
+    //                    "reserve_for_live": request.reserve_for_live,
+    //                    "shipping_profile_id": request.shipping_profile_id,
+    //                    "images": uploadedUrls
+    //                ]
+    //
+    //                if !variantArray.isEmpty {
+    //                    request["variant"] = variantArray
+    //                }
+    //
+    //                await viewModel.storeProduct(param: request)
+    //                await SVProgressHUD.dismiss()
+    //                if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
+    //                    storeSuccess()
+    //                }else{
+    //                    alertType = .sheetType(
+    //                        icon: .alert,
+    //                        title: "Failed",
+    //                        message: viewModel.errorMessage ?? "",
+    //                        primaryBtnText: "",
+    //                        secondaryBtnText: AppString.ok.localized
+    //                    )
+    //                    showError = true
+    //                }
+    //            }
+    //        }
+    //    }
     
     
     func storeSuccess(){
         let response = viewModel.storeProductResponse
-        request = StoreProductParam(category_id: "", title: "", description: "", quantity: "1", pricing: "", flash_sale: "0", accept_offers: "0", reserve_for_live: "0", shipping_profile_id: "2", status: "",sub_category_id: "",width: "",length: "", weight: "",height:"",mail_class:"",processing_category:"", product_condition: "")
+        request = StoreProductParam(category_id: "", title: "", description: "", quantity: "1", pricing: "", flash_sale: "0", accept_offers: "0", reserve_for_live: "0", shipping_profile_id: "", status: "",sub_category_id: "",width: "",length: "", weight: "",height:"",mail_class:"",processing_category:"", product_condition: "")
         imageUrls = []
+        videoUrls = []
+        
         if response?.status == "success"{
             alertType = .sheetType(
                 icon: .success,
@@ -552,3 +569,20 @@ extension Encodable {
         as? [String: Any]
     }
 }
+
+//#Preview {
+//    ProductWeightScreen(
+//        weight: .constant(""),
+//        selectedUnit: .constant(""),
+//        isHazardous: .constant(false),
+//        unitOptions: [""],
+//        quickWeights: [""],
+//        imageUrls: .constant([""]),
+//        videoUrls: .constant([""]),
+//        request: .constant(StoreProductParam(category_id: "", title: "", description: "", quantity: "", pricing: "", flash_sale: "", accept_offers: "", reserve_for_live: "", shipping_profile_id: "", status: "", width: "", length: "", weight: "", height: "", mail_class: "", processing_category: "", product_condition: "")),
+//        storeScheduleRequest: .constant(StoreScheduleShowRequest(title: "", date: "", time: "", category_id: "", auction_type_id: "", product_ids: "", is_explicit: false, show_discoverability: "", repeat_value: "", is_repeat: false, language: "")),
+//        thumbNail: .constant(""),
+//        backToPrepare: .constant(false),
+//        fromPrepare: .constant(false),
+//        backToCreateProduct: .constant(false), onContinue: {})
+//}

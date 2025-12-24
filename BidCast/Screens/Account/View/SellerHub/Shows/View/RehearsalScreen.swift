@@ -461,7 +461,7 @@ struct RehearsalScreen: View {
                                                 let isHost = comment.userId == "\(UserDefaults.userId)"
                                                 let isMod = !isHost
 
-                                                ChatMessageBubble(comment: comment, isHost: isHost, isMod: isMod)
+                                                ChatMessageBubble(comment: comment, isHost: isHost)
                                                     .background(
                                                         GeometryReader { geo in
                                                             Color.clear.onAppear {
@@ -819,6 +819,7 @@ struct RehearsalScreen: View {
                         showShopSheet = false
                     },onAuctionTapped: { product in
                         auctionedProductData = product
+                        nextProductId = "\(auctionedProductData.id ?? 0)"
                         showAuctionSheet = true
                       
                     }
@@ -838,7 +839,7 @@ struct RehearsalScreen: View {
 
                     socketManager.startAuction(
                         roomId: roomId,
-                        products: ["\(auctionedProductData.id ?? 0)"],
+                        products: [nextProductId],
                         startingBidAmount: bid,
                         requireTime: reqTime,
                         counterBidTime: counterTime,
@@ -1375,6 +1376,7 @@ struct RehearsalScreen: View {
             handleBidFinalized(for: roomId, winner: winner)
         }
         socketManager.observePollVoteUpdate { pollModel in
+            guard pollModel.roomId == self.roomId else { return }
             print(pollModel)
             self.remainingTimer = timerStringToSeconds(pollModel.remainingTime)
             self.currentPollModel = pollModel
@@ -1449,7 +1451,7 @@ struct RehearsalScreen: View {
     ) {
         // Update only matching room
         guard self.roomId == roomId else { return }
-
+        self.auctionedProductData = products.first ?? ProductDataModel1()
         currentPrice = startingBidAmount
 
         print("🟢 Products updated for room:", roomId)

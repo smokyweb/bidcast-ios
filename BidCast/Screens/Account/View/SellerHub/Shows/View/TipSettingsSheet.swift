@@ -48,8 +48,8 @@ struct TipSettingsSheet: View {
                 
                 Spacer()
             }
-            .padding(.bottom, keyboard.currentHeight) // ✅ Add this
-                .animation(.easeOut(duration: 0.25), value: keyboard.currentHeight)
+//            .padding(.bottom, keyboard.currentHeight) // ✅ Add this
+//                .animation(.easeOut(duration: 0.25), value: keyboard.currentHeight)
             // Bottom Buttons
             VStack {
                 Spacer()

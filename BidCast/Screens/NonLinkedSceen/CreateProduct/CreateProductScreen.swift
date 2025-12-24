@@ -69,17 +69,26 @@ struct CreateProductScreen: View {
                      "Other",
                      "Trending"]
     
-    
+    @State var navigateToShippingProfiles = false
     @State var extraFieldValues: [String: String] = [:]
     @State var selectedRadio: [String: String] = [:]
     @State var navigateToAddProduct = false
     @State var navigateToSalesFormat = false
     @State var navigateToProuct = false
+    @State var comeFromProductLibrary = false
     @Binding var fromPrepare : Bool
     var delegate: ShowStepDelegate?
     
     var isComeFrom: CreateProductNavigation = .other
-    
+    @State var openShippingSheet = false
+    @State var config: BottomSheetConfig = BottomSheetConfig(
+        icon: "checkmark.seal.fill",
+        title: "",
+        message: "",
+        primaryButtonTitle: "Okay",
+        secondaryButtonTitle: nil,
+        showButtons: true
+    )
     var body: some View {
         
         ZStack(alignment: .bottom) {
@@ -90,17 +99,22 @@ struct CreateProductScreen: View {
                         isForLogo : false, leadingImgArr: ["chevron.left"],
                         trailingImgArr: [],
                         onClickLeading: { _ in
-                            self.presentationMode.wrappedValue.dismiss()
+                            if comeFromProductLibrary{
+                                navigateToAddProduct = true
+                            }else{
+                               
+                                self.presentationMode.wrappedValue.dismiss()
+                            }
                         },
                         count: .constant(0)
                     )
                 }
-                .padding(.horizontal, 22)
+//                .padding(.horizontal, 12)
                 
                 ScrollView(showsIndicators:false) {
                     
                     MediaPickerView(uploadedImageUrls: $imageUrls, uploadedVideoUrls: $videoUrls)
-                        .padding(.horizontal,12)
+//                        .padding(.horizontal,12)
                         .background(.clear)
                     
                     VStack(alignment:.leading,spacing: 8){
@@ -302,18 +316,21 @@ struct CreateProductScreen: View {
                         }
                         .padding(.horizontal,12)
                         
-                        PrimaryButton(
-                            title: "Add Variants",
-                            isOutLine: false,
-                            custFontName : poppinsSemiBold,
-                            custFontSize : 14.0,
-                            onButtonClick: {
-                                print("hell")
-                            }, imageName: "ic_Plus", btnColor: .white)
+//                        PrimaryButton(
+//                            title: "Add Variants",
+//                            isOutLine: false,
+//                            custFontName : poppinsSemiBold,
+//                            custFontSize : 14.0,
+//                            onButtonClick: {
+//                                print("hell")
+//                            }, imageName: "ic_Plus", btnColor: .white)
                     }
                     //                    .background(.white)
+                    .padding(.bottom, 16)
+                    .background(.white)
                     .cornerRadius(12)
-                    .padding(.horizontal,12)
+                    .padding(.top,4)
+                    .padding(.horizontal, 12)
                     
                     VStack(alignment:.leading,spacing: 8){
 
@@ -335,20 +352,15 @@ struct CreateProductScreen: View {
                                 
                             }
                         )
-                        .padding([.leading,.trailing],16)
+                        .padding([.leading,.trailing],12)
                         
                     }
-                    .padding(.vertical, 16)
-                    .background(
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(Color(.systemBackground))
-                            .shadow(color: Color.black.opacity(0.08), radius: 12, x: 0, y: 4)
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 16)
-                            .stroke(Color.gray.opacity(0.1), lineWidth: 1)
-                    )
+                    .padding(.bottom, 16)
+                    .background(.white)
+                    .cornerRadius(12)
+                    .padding(.top,2)
                     .padding(.horizontal, 12)
+                    
                     
                     TwoButton(titleOne: "Continue", titleTwo: "Use Product Library", onFirstButtonClick: {
                         print(request)
@@ -417,14 +429,17 @@ struct CreateProductScreen: View {
                         }
                         
                     }, height: 45, firstBtnTitleColor: .darkGray, secBtnTitleColor: .white, firstBtnBgColor: .white, secBtnBgColor:.darkBlue)
-                    .padding(.horizontal,12)
+//                    .padding(.horizontal,12)
                     .padding(.bottom, 16)
                 }
-                .padding(.horizontal,12)
+//                .padding(.horizontal,12)
             }
             
-            //add from libaray
-            CusNavLink(doNavigate: $navigateToAddProduct, destination: AddProductsScreen(request:$requests,thumbNail: $thumbNail,fromPrepare: .constant(false),backToPrepare: $backToPrepare, NavFromProductLibrary: .constant(false), backToCreateProduct:$navigateToAddProduct))
+
+            
+            CusNavLink(doNavigate: $navigateToAddProduct, destination: AddProductsScreen(request:$requests,thumbNail: $thumbNail,fromPrepare: .constant(false),backToPrepare: $backToPrepare, NavFromProductLibrary: .constant(false), backToCreateProduct:$navigateToAddProduct,didTapBack:{ value in
+                comeFromProductLibrary = value
+            } ))
             
             //from prepare
             CusNavLink(doNavigate: $navigateToProuct, destination: AddProductsScreen(request:$requests,thumbNail: $thumbNail,fromPrepare: $fromPrepare,backToPrepare: $backToPrepare, NavFromProductLibrary: .constant(false), backToCreateProduct: .constant(false), delegate: delegate))
@@ -438,9 +453,10 @@ struct CreateProductScreen: View {
                                                                                           fromPrepare: $fromPrepare,
                                                                                           backToCreateProduct:$navigateToSalesFormat,
                                                                                           delegate: delegate))
+            CusNavLink(doNavigate: $navigateToShippingProfiles, destination: ShippingSettingsScreen())
         }
         .ignoresSafeArea(edges: .bottom)
-        .background(.bg.opacity(0.5))
+        .background(.backGround)
         .bottomSheet(isPresented: $showError,
                      height: screenHeight * 0.35,
                      topBarCornerRadius: 25,
@@ -498,6 +514,25 @@ struct CreateProductScreen: View {
                 )
             }
         )
+        .overlay(
+            CustomBottomSheetView(
+                isPresented: $openShippingSheet,
+                config: config,
+                primaryAction: {
+                    withAnimation {
+                        openShippingSheet = false
+//                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                            navigateToShippingProfiles = true
+//                                }
+                    }
+                },
+                secondaryAction: {
+                    withAnimation {
+                        openShippingSheet = false
+                    }
+                }
+            )
+        )
         .onFirstAppear(perform: {
             Task {
                 await performAPICalls(
@@ -534,8 +569,9 @@ struct CreateProductScreen: View {
             request.category_id = "\(requests.category_id)"
         }
         .onTapGesture {
-            UIApplication.shared.endEditing()
+            hideKeyboard()
         }
+        
     }
     
     private func errorDesc(error: Error?, message: String?) -> String {
@@ -584,7 +620,20 @@ struct CreateProductScreen: View {
     private func successShippingProfiles() {
         let response = shippingViewModel.getShippingProfilesResponse
         self.profiles = response?.data ?? []
-        self.shippingProfileNames = profiles.map { $0.name ?? "" }
+        if profiles.count != 0{
+            openShippingSheet = false
+            self.shippingProfileNames = profiles.map { $0.name ?? "" }
+        }else{
+            openShippingSheet = true
+          
+            config = BottomSheetConfig(
+                icon: "exclamationmark.triangle.fill",
+                title: "Error",
+                message: "Please add Shipping profile first for the successful product creation.",
+                primaryButtonTitle: "Add Shipping Profile",
+                secondaryButtonTitle: nil
+            )
+        }
     }
     
 }
