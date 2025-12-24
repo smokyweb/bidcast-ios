@@ -123,7 +123,7 @@ struct SellerToolsScreen: View {
 //                Divider().padding(.leading, 68)
                 
                 ToolsRowItem(icon: "identityVerification", title: "Identity Verification") {
-                    navigationState.navigateToIdentityVerification = true
+//                    navigationState.navigateToIdentityVerification = true
                 }
                 
 //                Divider().padding(.leading, 68)
@@ -288,13 +288,14 @@ struct ToolsRowItem: View {
             HStack(spacing: 16) {
                 // Icon
                 ZStack {
-                    Color.defaultTheme.opacity(0.2)
+                    Color.defaultThemeLight
                           .frame(width: 36, height: 36)
                           .clipShape(Circle())
+                    
                         
                     Image(icon)
                         .font(.system(size: 20, weight: .medium))
-                        .foregroundColor(.primary)
+                        .foregroundColor(.defaultTheme)
                 }
                 
                 // Title

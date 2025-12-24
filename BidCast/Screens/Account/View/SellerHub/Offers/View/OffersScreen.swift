@@ -67,7 +67,7 @@ struct OffersScreen: View {
                             }
                         }
                     }else{
-                        NoDataView(message: "No Orders found")
+                        NoDataView(message: "No Offers found")
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                         
                         
