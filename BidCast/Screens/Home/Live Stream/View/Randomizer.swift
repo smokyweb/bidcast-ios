@@ -16,7 +16,7 @@ struct RandomizerView: View {
     var body: some View {
         ZStack {
             // Background dimmed view
-            Color.clear.opacity(0.5)
+            Color.clear
                 .edgesIgnoringSafeArea(.all)
                 .onTapGesture {
                     if !isSpinning {

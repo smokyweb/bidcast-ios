@@ -49,6 +49,7 @@ struct ShowCardView: View {
                     .foregroundColor(.black)
                     .padding(12)
                     .frame(width: 50, height: 32)
+                    .rotationEffect(.degrees(90))
                     .font(.custom(poppinsSemiBold, size: 32))
                     .fontWeight(.semibold)
             }

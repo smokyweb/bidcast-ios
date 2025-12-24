@@ -219,7 +219,7 @@ struct SellerToolsScreen: View {
     // MARK: - Navigation Links
     private var navigationLinks: some View {
         Group {
-            CusNavLink(doNavigate: $navigationState.navigateToSellerTraining, destination: SellingTips(isNavFrom: "SellerTools", backToTabBar: .constant(false)))
+            CusNavLink(doNavigate: $navigationState.navigateToSellerTraining, destination: SellingTips(isNavFrom: .constant("Account"), backToTabBar: .constant(false)))
             CusNavLink(doNavigate: $navigationState.navigateToSellerVerification, destination: SellerVerificationScreen())
             CusNavLink(doNavigate: $navigationState.navigateToIdentityVerification, destination: IdentityVerificationScreen())
             CusNavLink(doNavigate: $navigationState.navigateToInventory, destination: InventoryScreen(selectedProductIDs: .constant([]), selectedProductData: .constant([])))

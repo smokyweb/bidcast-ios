@@ -704,20 +704,28 @@ struct RehearsalScreen: View {
             }
         )
         
-        .bottomSheet(
-            isPresented: $navigateToRandomizer,
-            height: screenHeight * 0.95,
-            topBarCornerRadius: 20,
-            contentBackgroundColor: Color(.clear),
-            topBarBackgroundColor: Color(.clear),
-            showTopIndicator: false,
-            onDismiss: {
-                navigateToRandomizer = false
-            },
-            content: {
-                RandomizerView()
-            }
-        )
+//        .bottomSheet(
+//            isPresented: $navigateToRandomizer,
+//            height: screenHeight * 0.95,
+//            topBarCornerRadius: 20,
+//            contentBackgroundColor: Color(.clear),
+//            topBarBackgroundColor: Color(.clear),
+//            showTopIndicator: false,
+//            onDismiss: {
+//                navigateToRandomizer = false
+//            },
+//            content: {
+//                RandomizerView()
+//            }
+//        )
+        .sheet(isPresented: $navigateToRandomizer) {
+            RandomizerView()
+                .presentationDetents([.fraction(0.90)])
+                .presentationCornerRadius(25)             
+                .presentationDragIndicator(.hidden)
+                .interactiveDismissDisabled(true)
+        }
+       
  
         .sheet(isPresented: $showPollSheet) {
             CreatePollScreen(

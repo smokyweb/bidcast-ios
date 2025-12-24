@@ -28,7 +28,7 @@ struct SellingTips: View {
     
     @State var navigateToPrepare = false
     @State  var showNextButton = false
-    @State var isNavFrom : String = ""
+    @Binding var isNavFrom : String
     
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var networkMonitor: NetworkMonitor
@@ -134,7 +134,9 @@ struct SellingTips: View {
             .onAppear {
                 Task{
                     if staticAPI.sellingLessons.isEmpty {
+                         SVProgressHUD.show()
                         await staticAPI.fetchHowToSell()
+                        await SVProgressHUD.dismiss()
                         lessons = staticAPI.sellingLessons
                     }
                     else  {

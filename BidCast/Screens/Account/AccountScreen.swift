@@ -295,7 +295,7 @@ struct AccountScreen: View {
             CusNavLink(doNavigate: $navigationState.navigateToShipping, destination: ShippingSettingsScreen())
             CusNavLink(doNavigate: $navigationState.navigateToSellerStatus, destination: SellerStatusScreen())
             CusNavLink(doNavigate: $navigationState.navigateToPromoteTool, destination: PromoteToolsView())
-            CusNavLink(doNavigate: $navigationState.navigateToSellerTraining, destination: SellingTips(isNavFrom: "Account", backToTabBar: .constant(true)))
+            CusNavLink(doNavigate: $navigationState.navigateToSellerTraining, destination: SellingTips(isNavFrom: .constant("Account"), backToTabBar: .constant(true)))
             CusNavLink(doNavigate: $navigationState.navigateToPremierShop, destination: PremierShopScreen())
             CusNavLink(doNavigate: $navigationState.navigateToAnalytics, destination: AnalyticsScreen())
             CusNavLink(doNavigate: $navigationState.navigateToAffilateProgram, destination: AffiliateProgramScreen(referralCode: "SELLER2025", stats: ReferralStats(totalReferrals: 0, earnings: 0.0), onShare: {}))

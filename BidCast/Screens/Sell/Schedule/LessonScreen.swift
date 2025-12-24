@@ -167,7 +167,7 @@ struct LessonScreen: View {
                         .padding(.horizontal, 20)
                 }
                 
-                CusNavLink(doNavigate: $navigateToSell, destination: SellingTips(backToTabBar:$backToTabBar))
+                CusNavLink(doNavigate: $navigateToSell, destination: SellingTips(isNavFrom: .constant(""), backToTabBar:$backToTabBar))
             }
             .toolbar(.hidden,for: .tabBar)
             .onAppear {
