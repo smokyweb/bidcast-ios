@@ -945,8 +945,8 @@ struct RehearsalScreen: View {
                         },
                         onCreatePoll: {
                             print("Create Poll")
-                            showPollSheet = true
-                            showSellSheet = false
+//                            showPollSheet = true
+//                            showSellSheet = false
                         },
                         
                         onZoomOut: {

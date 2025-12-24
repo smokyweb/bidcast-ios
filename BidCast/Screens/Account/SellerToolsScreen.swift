@@ -12,44 +12,55 @@ struct SellerToolsScreen: View {
     @State private var navigationState = SellerToolsNavigationState()
     
     var body: some View {
-            GeometryReader { geometry in
-                VStack(spacing: 0) {
-                    // Header
-                    headerView
-                    
-                    // Content
-                    contentView(geometry: geometry)
-                    
-                    // Navigation Links
-                    navigationLinks
-                }
-                .background(.backGround)
-                .toolbar(.hidden,for: .tabBar)
-                .navigationBarHidden(true)
-            }
-        }
+          VStack(spacing: 0) {
+
+              // Header
+              headerView
+
+              // Scrollable Content
+              ScrollView(showsIndicators: false) {
+                  VStack(spacing: 20) {
+                      sellerSection
+                      promotionSection
+                      performanceSection
+                      settingsSection
+                  }
+                  .padding(.horizontal, 16)
+                  .padding(.vertical, 12)
+                  .padding(.bottom, 24)
+              }
+              .background(Color(.backGround))
+
+              // Navigation Links
+              navigationLinks
+          }
+          .background(Color(.systemGroupedBackground))
+          .toolbar(.hidden, for: .tabBar)
+          .navigationBarHidden(true)
+//          .padding(.bottom, -70)
+      }
         
     // MARK: - Content View
-    private func contentView(geometry: GeometryProxy) -> some View {
-        let safeBottom = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?
-            .windows.first?.safeAreaInsets.bottom ?? 0
-        let contentHeight = max(0, geometry.size.height - safeBottom + 23)
-        
-        return ScrollView(showsIndicators: false) {
-            VStack(spacing: 20) {
-                sellerSection
-                promotionSection
-                performanceSection
-                settingsSection
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 4)
-            .padding(.bottom, 60)
-            
-        }
-        .frame(height: contentHeight, alignment: .top)
-        .background(Color(.systemGroupedBackground))
-    }
+//    private func contentView(geometry: GeometryProxy) -> some View {
+//        let safeBottom = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?
+//            .windows.first?.safeAreaInsets.bottom ?? 0
+//        let contentHeight = max(0, geometry.size.height - safeBottom + 23)
+//        
+//        return ScrollView(showsIndicators: false) {
+//            VStack(spacing: 20) {
+//                sellerSection
+//                promotionSection
+//                performanceSection
+//                settingsSection
+//            }
+//            .padding(.horizontal, 16)
+//            .padding(.vertical, 4)
+//            .padding(.bottom, 60)
+//            
+//        }
+//        .frame(height: contentHeight, alignment: .top)
+//        .background(Color(.systemGroupedBackground))
+//    }
     
 //    var body: some View {
 //        VStack(spacing: 0) {
@@ -235,6 +246,8 @@ struct SellerToolsScreen: View {
             CusNavLink(doNavigate: $navigationState.navigateToShipping, destination: ShippingSettingsScreen())
             CusNavLink(doNavigate: $navigationState.navigateToSellerStatus, destination: SellerStatusScreen())
         }
+        .frame(width: 0, height: 0)
+        .hidden()
     }
 }
 
@@ -276,61 +289,36 @@ struct ToolsRowItem: View {
     let icon: String
     let title: String
     let action: () -> Void
-    
-    @State private var isPressed = false
-    
+
     var body: some View {
-        Button(action: {
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                action()
-            }
-        }) {
+        Button(action: action) {
             HStack(spacing: 16) {
-                // Icon
                 ZStack {
                     Color.defaultThemeLight
-                          .frame(width: 36, height: 36)
-                          .clipShape(Circle())
-                    
-                        
+                        .frame(width: 36, height: 36)
+                        .clipShape(Circle())
+
                     Image(icon)
-                        .font(.system(size: 20, weight: .medium))
                         .foregroundColor(.defaultTheme)
                 }
-                
-                // Title
+
                 Text(title)
                     .font(.custom(poppinsRegular, size: 16))
                     .foregroundColor(.primary)
-                
+
                 Spacer()
-                
-                // Chevron
+
                 Image(systemName: "chevron.right")
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundColor(.gray)
             }
             .padding(.horizontal, 16)
-            .padding(.vertical, 6)
-            .background(isPressed ? Color(.systemGray6).opacity(0.5) : Color.clear)
-            .contentShape(Rectangle())
+            .padding(.vertical, 10)
         }
-        .buttonStyle(PlainButtonStyle())
-        .simultaneousGesture(
-            DragGesture(minimumDistance: 0)
-                .onChanged { _ in
-                    withAnimation(.easeInOut(duration: 0.1)) {
-                        isPressed = true
-                    }
-                }
-                .onEnded { _ in
-                    withAnimation(.easeInOut(duration: 0.1)) {
-                        isPressed = false
-                    }
-                }
-        )
+        .buttonStyle(.plain)
     }
 }
+
 
 // MARK: - Navigation State
 struct SellerToolsNavigationState {
