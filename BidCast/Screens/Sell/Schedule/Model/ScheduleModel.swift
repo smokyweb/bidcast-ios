@@ -192,6 +192,64 @@ struct ProductDataModel1: Codable, Identifiable {
     var user: ProductUser?
 }
 
+extension ProductDataModel1 {
+    
+    static let sampleProducts: [ProductDataModel1] = [
+        
+        ProductDataModel1(
+            id: 1,
+            title: "iPhone 14 Pro",
+            pricing: "999",
+            quantity: "10",
+            productCondition: "New",
+            bidCount: 25,
+            category: ProductCategory(
+                id: 101,
+                name: "Mobiles"
+            )
+        ),
+        
+        ProductDataModel1(
+            id: 2,
+            title: "MacBook Air M2",
+            pricing: "1199",
+            quantity: "5",
+            productCondition: "Like New",
+            bidCount: 12,
+            category: ProductCategory(
+                id: 102,
+                name: "Laptops"
+            )
+        ),
+        
+        ProductDataModel1(
+            id: 3,
+            title: "Sony WH-1000XM5 Headphones",
+            pricing: "399",
+            quantity: "20",
+            productCondition: "Used",
+            bidCount: 8,
+            category: ProductCategory(
+                id: 103,
+                name: "Electronics"
+            )
+        ),
+        
+        ProductDataModel1(
+            id: 4,
+            title: "Apple Watch Series 8",
+            pricing: "499",
+            quantity: "15",
+            productCondition: "New",
+            bidCount: 18,
+            category: ProductCategory(
+                id: 104,
+                name: "Wearables"
+            )
+        )
+    ]
+}
+
 struct ProductUser: Codable, Identifiable {
     var id: Int?
     var name: String?
