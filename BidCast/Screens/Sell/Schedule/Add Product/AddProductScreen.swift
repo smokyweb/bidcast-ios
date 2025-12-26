@@ -898,7 +898,7 @@ struct CustomBottomSheetView: View {
                     .background(Color.white)
                     .cornerRadius(25, corners: [.topLeft, .topRight])
 //                    .ignoresSafeArea(edges: .bottom)
-                    .padding(.bottom, -90)
+                    .padding(.bottom, config.bottomPadding)
 //                    .transition(.move(edge: .bottom))
                     .animation(.easeInOut(duration: 0.25), value: isPresented)
 
@@ -919,6 +919,7 @@ struct BottomSheetConfig {
     var secondaryButtonTitle: String? = nil
 
     var showButtons: Bool = true
+    var bottomPadding : CGFloat = -90
 }
 
 

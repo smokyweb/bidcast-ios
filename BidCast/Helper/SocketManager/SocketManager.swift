@@ -1326,13 +1326,14 @@ extension SocketManagerService {
     /// Expected server payload:
     /// { "product_id": "...", "pinned": Bool }
     func listenForPinnedProductStatus(
-        completion: @escaping (_ roomId: String, _ productId: String, _ message: String?) -> Void
+        completion: @escaping (_ roomId: String, _ productId: String, _ message: String?, _ multipleProductId : [Int]) -> Void
     ) {
         socket.on("product_pinned") { data, _ in
             
             guard let json = data.first as? [String: Any],
                   let roomId = json["room_id"] as? String,
-                  let productId = json["product_id"] as? String else {
+                  let productId = json["product_id"] as? String,
+                  let productIds = json["pinned_products"] as? [Int] else {
                 print("❌ Invalid product_unpinned payload:", data)
                 return
             }
@@ -1340,11 +1341,11 @@ extension SocketManagerService {
             let message = json["message"] as? String
             
             DispatchQueue.main.async {
-                completion(roomId, productId, message)
+                completion(roomId, productId, message,productIds)
             }
             
             self.logger.info(
-                "📌 product_pinned received | roomId: \(roomId), productId: \(productId), message: \(message ?? "")"
+                "📌 product_pinned received | roomId: \(roomId), productId: \(productId), message: \(message ?? "") , productIds : \(productIds)"
             )
         }
     }
