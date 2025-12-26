@@ -170,7 +170,7 @@ struct AddProductsScreen: View {
                                             }
                                         },
                                         onTapEdit: {
-                                            navigateToEditProduct = true
+//                                            navigateToEditProduct = true
                                         },
                                         onTapDelete: {
                                             deletedIndex = index

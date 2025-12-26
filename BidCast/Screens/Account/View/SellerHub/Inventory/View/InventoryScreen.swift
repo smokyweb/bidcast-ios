@@ -850,18 +850,21 @@ struct InventoryScreen: View {
            if !selectedCategoryId.isEmpty {
                request.category_ids = selectedCategoryId.toCommaSeparatedString()
            }
-           if format != "" {
-               request.format = format
+           else {
+               request.category_ids?.removeAll()
            }
+//           if format != "" {
+               request.format = format
+//           }
            if minPrice != 0.0 {
                request.min_price = minPrice.toString()
            }
            if maxPrice != 0.0 {
                request.max_price = maxPrice.toString()
            }
-           if !selectedCondition.isEmpty {
+//           if !selectedCondition.isEmpty {
                request.conditions = selectedCondition.toCommaSeparatedString()
-           }
+//           }
            
            // ✅ Only show loading for first page
            if page == 1 {
@@ -1058,85 +1061,105 @@ struct ProductCardView: View {
     
     var body: some View {
         ZStack(alignment: .topTrailing) {
-            cardContent
-            Menu {
-                VStack(alignment: .leading, spacing: 0) {
-                    // Edit Option
-                    MenuOptionButton(
-                        icon: "pencil",
-                        title: "Edit",
-                        iconColor: .blue
-                    ) {
-                        handleEdit()
-                    }
-                    
-//                    Divider()
-//                        .padding(.horizontal, 12)
-                    
-                    // Activate/Deactivate Option
-                    if segmant == .active {
+            HStack{
+                cardContent
+                Spacer()
+                Menu {
+                    VStack(alignment: .leading, spacing: 0) {
+                        // Edit Option
                         MenuOptionButton(
-                            icon: product.status == "active" ? "eye.slash" : "eye",
-                            title: product.status == "active" ? "Deactivate" : "Activate",
-                            iconColor: product.status == "active" ? .orange : .green
+                            icon: "pencil",
+                            title: "Edit",
+                            iconColor: .blue
                         ) {
-                            if product.status == "active" {
-                                handleToggleDeActivation()
-                            } else {
+                            handleEdit()
+                        }
+                        
+                        //                    Divider()
+                        //                        .padding(.horizontal, 12)
+                        
+                        // Activate/Deactivate Option
+                        if segmant == .active {
+                            MenuOptionButton(
+                                icon: product.status == "active" ? "eye.slash" : "eye",
+                                title: product.status == "active" ? "Deactivate" : "Activate",
+                                iconColor: product.status == "active" ? .orange : .green
+                            ) {
+                                if product.status == "active" {
+                                    handleToggleDeActivation()
+                                } else {
+                                    handleToggleActivation()
+                                }
+                            }
+                        } else {
+                            MenuOptionButton(
+                                icon: "eye",
+                                title: "Activate",
+                                iconColor: .green
+                            ) {
                                 handleToggleActivation()
                             }
                         }
-                    } else {
+                        //
+                        //                    Divider()
+                        //                        .padding(.horizontal, 12)
+                        
+                        // Delete Option
                         MenuOptionButton(
-                            icon: "eye",
-                            title: "Activate",
-                            iconColor: .green
+                            icon: "trash",
+                            title: "Delete",
+                            iconColor: .red
                         ) {
-                            handleToggleActivation()
+                            handleDelete()
                         }
                     }
-//                    
-//                    Divider()
-//                        .padding(.horizontal, 12)
-                    
-                    // Delete Option
-                    MenuOptionButton(
-                        icon: "trash",
-                        title: "Delete",
-                        iconColor: .red
-                    ) {
-                        handleDelete()
-                    }
+                    .frame(width: 120)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(Color(.systemBackground))
+                            .shadow(
+                                color: Color.black.opacity(0.15),
+                                radius: 20,
+                                x: 0,
+                                y: 8
+                            )
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(Color.gray.opacity(0.15), lineWidth: 1)
+                    )
+                    .padding(.top, 56)
+                    .padding(.trailing, 16)
+                    .transition(.scale(scale: 0.95).combined(with: .opacity))
+                    .zIndex(3)
+                } label: {
+                    Image(systemName: "ellipsis")
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundColor(.gray)
+                        .padding(.top, 20)
+                        .frame(width: 32, height: 32)
+                        .background(Color(.systemBackground))
+                        .clipShape(Circle())
+                        .rotationEffect(.degrees(90))
                 }
-                .frame(width: 120)
-                .background(
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(Color(.systemBackground))
-                        .shadow(
-                            color: Color.black.opacity(0.15),
-                            radius: 20,
-                            x: 0,
-                            y: 8
-                        )
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(Color.gray.opacity(0.15), lineWidth: 1)
-                )
-                .padding(.top, 56)
-                .padding(.trailing, 16)
-                .transition(.scale(scale: 0.95).combined(with: .opacity))
-                .zIndex(3)
-            } label: {
-                Image(systemName: "ellipsis")
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(.gray)
-                    .padding(.top, 20)
-                    .frame(width: 32, height: 32)
-                    .background(Color(.systemBackground))
-                    .clipShape(Circle())
-                    .rotationEffect(.degrees(90))
             }
+            .background(
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(Color(.systemBackground))
+                    .shadow(
+                        color: Color.black.opacity(0.08),
+                        radius: 12,
+                        x: 0,
+                        y: 4
+                    )
+            )
+//            .overlay(
+//                RoundedRectangle(cornerRadius: 20)
+//                    .stroke(
+//                        Color.gray.opacity(0.1),
+//                        lineWidth: 1
+//                    )
+//            )
 
         }
         .background(
@@ -1237,24 +1260,25 @@ extension ProductCardView {
             productImageView
             productDetailsView
         }
-        .padding(16)
-        .background(
-            RoundedRectangle(cornerRadius: 20)
-                .fill(Color(.systemBackground))
-                .shadow(
-                    color: isLongPressing ? Color.defaultTheme.opacity(0.2) : Color.black.opacity(0.08),
-                    radius: isLongPressing ? 16 : 12,
-                    x: 0,
-                    y: isLongPressing ? 6 : 4
-                )
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .stroke(
-                    isLongPressing ? Color.defaultTheme.opacity(0.3) : Color.gray.opacity(0.1),
-                    lineWidth: isLongPressing ? 2 : 1
-                )
-        )
+        .padding(.horizontal,8)
+        .padding(.vertical,16)
+//        .background(
+//            RoundedRectangle(cornerRadius: 20)
+//                .fill(Color(.systemBackground))
+//                .shadow(
+//                    color: isLongPressing ? Color.defaultTheme.opacity(0.2) : Color.black.opacity(0.08),
+//                    radius: isLongPressing ? 16 : 12,
+//                    x: 0,
+//                    y: isLongPressing ? 6 : 4
+//                )
+//        )
+//        .overlay(
+//            RoundedRectangle(cornerRadius: 20)
+//                .stroke(
+//                    isLongPressing ? Color.defaultTheme.opacity(0.3) : Color.gray.opacity(0.1),
+//                    lineWidth: isLongPressing ? 2 : 1
+//                )
+//        )
         .scaleEffect(isPressed ? 0.98 : (isLongPressing ? 1.02 : 1.0))
         .opacity(product.status == "inactive" ? 0.7 : 1.0)
     }

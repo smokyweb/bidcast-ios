@@ -38,11 +38,11 @@ struct CreateProductScreen: View {
     @State var categoryList: [CategoryDataModel] = []
     @State var mailClassList = [String]()
     //category request data
-    @State var request : StoreProductParam = StoreProductParam(category_id: "", title: "", description: "", quantity: "1", pricing: "", flash_sale: "0", accept_offers: "0", reserve_for_live: "0", shipping_profile_id: "2", status: "",sub_category_id: "",width: "",length: "", weight: "",height:"",mail_class:"",processing_category:"",  product_condition: "")
+    @State var request : StoreProductParam = StoreProductParam(category_id: "", title: "", description: "", quantity: "1", pricing: "", flash_sale: "0", accept_offers: "0", reserve_for_live: "0", shipping_profile_id: "", status: "",sub_category_id: "",width: "",length: "", weight: "",height:"",mail_class:"",processing_category:"",  product_condition: "")
     
     @State var viewModel = ListProductViewModel()
-    @State var imageUrls: [String] = []
-    @State var videoUrls: [String] = []
+    @State private var imageUrls: [String] = []
+    @State private var videoUrls: [String] = []
     
     @State var shippingProfileNames: [String] = []
     @State var selectedShippingProfileName: String = ""
@@ -420,8 +420,17 @@ struct CreateProductScreen: View {
                             showhud = true
                             return
                         }
+                        guard !request.shipping_profile_id.isEmpty else{
+                            hudMsg = "Please select shipping profile"
+                            showhud = true
+                            return
+                        }
                         navigateToSalesFormat = true
                     }, onSecButtonClick: {
+                        request = StoreProductParam(category_id: "", title: "", description: "", quantity: "", pricing: "", flash_sale: "", accept_offers: "", reserve_for_live: "", shipping_profile_id: "", status: "", width: "", length: "", weight: "", height: "", mail_class: "", processing_category: "", product_condition: "")
+                        imageUrls.removeAll()
+                        videoUrls.removeAll()
+                        selectedShippingProfileName.removeAll()
                         if self.fromPrepare{
                             navigateToProuct = true
                         }else{
@@ -570,6 +579,9 @@ struct CreateProductScreen: View {
         .onAppear {
             //assign categoryId
             request.category_id = "\(requests.category_id)"
+            imageUrls.removeAll()
+            videoUrls.removeAll()
+            selectedShippingProfileName.removeAll()
         }
         .onTapGesture {
             hideKeyboard()
