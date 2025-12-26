@@ -101,7 +101,7 @@ struct OrderTrackingView: View {
                     productDetail: $selectedOrderDetails,
                     comeFrom: "myOrder"
                 ))
-                CusNavLink(doNavigate: $navigateToVideoReceipt, destination: VideoPlayerScreen(videoURL: orderResponse?.bidVideoURL ?? ""))
+                CusNavLink(doNavigate: $navigateToVideoReceipt, destination: VideoPlayerScreen(videoURL: $videoURL))
             }
             .overlay(
                 CustomBottomSheetView(

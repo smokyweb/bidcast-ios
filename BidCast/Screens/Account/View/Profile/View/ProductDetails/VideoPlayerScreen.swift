@@ -14,14 +14,21 @@ struct VideoPlayerScreen: View {
     @Environment(\.presentationMode) var presentationMode
     @StateObject private var viewModel: VideoPlayerViewModel
     
-    let videoURL: String
+   
     let videoTitle: String
     
-    init(videoURL: String, videoTitle: String = "Video Receipt") {
-        self.videoURL = videoURL
-        self.videoTitle = videoTitle
-        _viewModel = StateObject(wrappedValue: VideoPlayerViewModel(urlString: videoURL))
-    }
+    @Binding var videoURL: String
+
+       init(
+           videoURL: Binding<String>,
+           videoTitle: String = "Video Receipt"
+       ) {
+           self._videoURL = videoURL
+           self.videoTitle = videoTitle
+           _viewModel = StateObject(
+               wrappedValue: VideoPlayerViewModel(urlString: videoURL.wrappedValue)
+           )
+       }
     
     var body: some View {
         ZStack {
@@ -72,7 +79,7 @@ struct VideoPlayerScreen: View {
         .navigationBarHidden(true)
         .preferredColorScheme(.dark)
         .onAppear {
-            viewModel.setupPlayer()
+            viewModel.setupPlayer(url: videoURL)
         }
         .onDisappear {
             viewModel.cleanup()
@@ -109,32 +116,36 @@ struct VideoPlayerHeader: View {
 // MARK: - Video Player View (AVPlayer Wrapper)
 struct VideoPlayerView: UIViewRepresentable {
     let player: AVPlayer
-    
-    func makeUIView(context: Context) -> UIView {
-        let view = UIView()
-        let playerLayer = AVPlayerLayer(player: player)
-        playerLayer.videoGravity = .resizeAspect
-        view.layer.addSublayer(playerLayer)
-        
-        context.coordinator.playerLayer = playerLayer
-        
+
+    func makeUIView(context: Context) -> PlayerView {
+        let view = PlayerView()
+        view.playerLayer.player = player
         return view
     }
-    
-    func updateUIView(_ uiView: UIView, context: Context) {
-        if let playerLayer = context.coordinator.playerLayer {
-            playerLayer.frame = uiView.bounds
-        }
-    }
-    
-    func makeCoordinator() -> Coordinator {
-        Coordinator()
-    }
-    
-    class Coordinator {
-        var playerLayer: AVPlayerLayer?
+
+    func updateUIView(_ uiView: PlayerView, context: Context) {
+        uiView.playerLayer.player = player
     }
 }
+
+// MARK: - PlayerView
+final class PlayerView: UIView {
+
+    override class var layerClass: AnyClass {
+        AVPlayerLayer.self
+    }
+
+    var playerLayer: AVPlayerLayer {
+        layer as! AVPlayerLayer
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        playerLayer.frame = bounds
+        playerLayer.videoGravity = .resizeAspect
+    }
+}
+
 
 // MARK: - Video Controls View
 struct VideoControlsView: View {
@@ -328,12 +339,12 @@ class VideoPlayerViewModel: ObservableObject {
         self.originalURL = urlString
     }
     
-    func setupPlayer() {
+    func setupPlayer(url : String) {
         let localURL = localFileURL()
-        
-        if FileManager.default.fileExists(atPath: localURL.path) {
+        let videoUrl = URL(string: url) ?? URL(fileURLWithPath: "")
+        if  !url.isEmpty{
             // play local file
-            playVideo(url: localURL)
+            playVideo(url: videoUrl)
         } else {
             downloadVideo()
         }
@@ -369,20 +380,30 @@ class VideoPlayerViewModel: ObservableObject {
         
         observePlayer(item: item)
         player.play()
+        isPlaying = true
     }
     
     private func observePlayer(item: AVPlayerItem) {
         
-        let interval = CMTime(seconds: 0.2, preferredTimescale: 600)
-        timeObserver = player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { [weak self] time in
-            self?.currentTime = time.seconds
-        }
-        
-        item.observe(\.duration, options: [.new]) { item, _ in
-            DispatchQueue.main.async {
-                self.duration = item.duration.seconds
-            }
-        }
+        // Remove old observer
+          if let observer = timeObserver {
+              player.removeTimeObserver(observer)
+              timeObserver = nil
+          }
+
+          let interval = CMTime(seconds: 0.2, preferredTimescale: 600)
+          timeObserver = player.addPeriodicTimeObserver(
+              forInterval: interval,
+              queue: .main
+          ) { [weak self] time in
+              self?.currentTime = time.seconds
+          }
+
+          playerItemStatusObserver = item.observe(\.duration, options: [.new]) { [weak self] item, _ in
+              DispatchQueue.main.async {
+                  self?.duration = item.duration.seconds
+              }
+          }
     }
     
     func togglePlayPause() {
@@ -408,11 +429,14 @@ class VideoPlayerViewModel: ObservableObject {
     
     func cleanup() {
         player.pause()
-        if let observer = timeObserver {
-            player.removeTimeObserver(observer)
-        }
-        playerItemStatusObserver?.invalidate()
-        NotificationCenter.default.removeObserver(self)
+
+          if let observer = timeObserver {
+              player.removeTimeObserver(observer)
+              timeObserver = nil
+          }
+
+          playerItemStatusObserver?.invalidate()
+          playerItemStatusObserver = nil
     }
     
     deinit {

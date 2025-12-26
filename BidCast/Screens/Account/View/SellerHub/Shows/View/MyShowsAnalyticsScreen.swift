@@ -149,7 +149,7 @@ struct MyShowsAnalyticsScreen: View {
             }
             .background(Color.backGround)
             
-            CusNavLink(doNavigate: $navigateToVideoReceipt, destination: VideoPlayerScreen(videoURL: showsOverviewData.fileURL ?? ""))
+            CusNavLink(doNavigate: $navigateToVideoReceipt, destination: VideoPlayerScreen(videoURL: $videoURL))
         }
         .onFirstAppear {
             getShowOverviewData()

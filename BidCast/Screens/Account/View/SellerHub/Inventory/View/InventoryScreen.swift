@@ -276,7 +276,7 @@ struct InventoryScreen: View {
                                             segmant: $segment,
                                             onEdit: { product in
                                 productToEdit = product
-//                                navigateToEditProduct = true
+                                navigateToEditProduct = true
                                 
                             },onDuplicate: {
                                 
