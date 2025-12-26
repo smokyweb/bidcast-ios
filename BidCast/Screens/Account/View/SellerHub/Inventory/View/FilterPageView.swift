@@ -12,26 +12,27 @@ struct FilterPageView: View {
     @Environment(\.presentationMode) var presentationMode
     
     // Filter States
-    @State private var selectedCategories: Set<Int> = []
-    @State private var selectedConditions: Set<String> = []
-    @State private var selectedFormat: String = ""
+//    @State private var selectedCategories: Set<Int> = []
+//    @State private var selectedConditions: Set<String> = []
+//    @State private var selectedFormat: String = ""
     @State private var visibleFormat: String = ""
-    @State private var minPrice: Double = 100
-    @State private var maxPrice: Double = 10000
+//    @State private var minPrice: Double = 100
+//    @State private var maxPrice: Double = 10000
     @State private var isPriceExpanded: Bool = false
     @State private var isCategoryExpanded: Bool = false
     @State private var isConditionExpanded: Bool = false
     @State private var isFormatExpanded: Bool = false
     
-    @Binding var categoryArr: [Int]
-    @Binding var conditionArr: [String]
+    @Binding var selectedCategoryArr: [Int]
+    @Binding var selectedConditionArr: [String]
     @Binding var minPriceVal: Double
     @Binding var maxPriceVal: Double
-    @Binding var format: String
+    @Binding var selectedFormat: String
     
     var apiCallClosure: (() -> Void)? = nil
     
     @Binding var categories: [CategoryDataModel]
+    
     let conditions = ["New",
                       "Like New",
                       "Gently Loved",
@@ -41,7 +42,7 @@ struct FilterPageView: View {
     let formats = ["Price: Low to High", "Price: High to Low"]
     
     var hasActiveFilters: Bool {
-        !selectedCategories.isEmpty || !selectedConditions.isEmpty || selectedFormat != "" || minPrice != 100 || (maxPrice != 10000 )
+        !selectedCategoryArr.isEmpty || !selectedConditionArr.isEmpty || selectedFormat != "" || minPriceVal != 100 || (maxPriceVal != 10000 )
     }
     
     var body: some View {
@@ -106,13 +107,13 @@ struct FilterPageView: View {
                                             .font(.system(size: 16, weight: .semibold))
                                             .foregroundColor(.primary)
                                         
-                                        TextField("0", value: $minPrice, format: .number)
+                                        TextField("0", value: $minPriceVal, format: .number)
                                             .keyboardType(.numberPad)
                                             .font(.system(size: 16, weight: .semibold))
                                             .foregroundColor(.primary)
-                                            .onChange(of: minPrice) { newValue in
-                                                if newValue > maxPrice {
-                                                    minPrice = maxPrice
+                                            .onChange(of: minPriceVal) { newValue in
+                                                if newValue > maxPriceVal {
+                                                    minPriceVal = maxPriceVal
                                                 }
                                             }
                                     }
@@ -134,13 +135,13 @@ struct FilterPageView: View {
                                             .font(.system(size: 16, weight: .semibold))
                                             .foregroundColor(.primary)
                                         
-                                        TextField("1000", value: $maxPrice, format: .number)
+                                        TextField("1000", value: $maxPriceVal, format: .number)
                                             .keyboardType(.numberPad)
                                             .font(.system(size: 16, weight: .semibold))
                                             .foregroundColor(.primary)
-                                            .onChange(of: maxPrice) { newValue in
-                                                if newValue < minPrice {
-                                                    maxPrice = minPrice
+                                            .onChange(of: maxPriceVal) { newValue in
+                                                if newValue < minPriceVal {
+                                                    maxPriceVal = minPriceVal
                                                 }
                                             }
                                     }
@@ -197,12 +198,12 @@ struct FilterPageView: View {
                                 ForEach(categories, id: \.id) { category in
                                     CheckboxRow(
                                         title: category.name ?? "",
-                                        isSelected: selectedCategories.contains(category.id ?? -1)
+                                        isSelected: selectedCategoryArr.contains(category.id ?? -1)
                                     ) {
-                                        if selectedCategories.contains(category.id ?? -1) {
-                                            selectedCategories.remove(category.id ?? -1)
+                                        if selectedCategoryArr.contains(category.id ?? -1) {
+                                            selectedCategoryArr = selectedCategoryArr.filter({$0 != (category.id ?? -1)})
                                         } else {
-                                            selectedCategories.insert(category.id ?? -1)
+                                            selectedCategoryArr.append(category.id ?? -1)
                                         }
                                     }
                                 }
@@ -223,12 +224,12 @@ struct FilterPageView: View {
                                 ForEach(conditions, id: \.self) { condition in
                                     CheckboxRow(
                                         title: condition,
-                                        isSelected: selectedConditions.contains(condition)
+                                        isSelected: selectedConditionArr.contains(condition)
                                     ) {
-                                        if selectedConditions.contains(condition) {
-                                            selectedConditions.remove(condition)
+                                        if selectedConditionArr.contains(condition) {
+                                            selectedConditionArr = selectedConditionArr.filter({$0 != condition})
                                         } else {
-                                            selectedConditions.insert(condition)
+                                            selectedConditionArr.append(condition)
                                         }
                                     }
                                 }
@@ -271,13 +272,13 @@ struct FilterPageView: View {
                     // Apply filters
                     presentationMode.wrappedValue.dismiss()
                     if hasActiveFilters {
-                        if isPriceExpanded{
-                            minPriceVal = minPrice
-                            maxPriceVal = maxPrice
-                        }
-                        categoryArr = Array(selectedCategories)
-                        conditionArr =  Array(selectedConditions)
-                        format = selectedFormat
+//                        if isPriceExpanded{
+//                            minPriceVal = minPrice
+//                            maxPriceVal = maxPrice
+//                        }
+//                        categoryArr = Array(selectedCategoryArr)
+//                        conditionArr =  Array(selectedConditions)
+//                        format = selectedFormat
                         apiCallClosure?()
                     }
                 }) {
@@ -302,22 +303,31 @@ struct FilterPageView: View {
             .background(Color(.systemBackground))
         }
         .background(Color(.systemGroupedBackground))
+        .onAppear {
+            print(selectedCategoryArr)
+            visibleFormat = selectedFormat == "asc" ? "Price: Low to High" : "Price: High to Low"
+//            selectedCategories = Set(categoryArr)
+//            selectedConditions = Set(conditionArr)
+//            minPrice = minPriceVal
+//            maxPrice = maxPriceVal
+//            selectedFormat = format
+        }
     }
     
     func clearAllFilters() {
         withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-            selectedCategories.removeAll()
-            selectedConditions.removeAll()
+            selectedCategoryArr.removeAll()
+            selectedConditionArr.removeAll()
             selectedFormat = ""
             visibleFormat = ""
-            minPrice = 0
-            maxPrice = 1000
+            minPriceVal = 0
+            maxPriceVal = 0
             
-            categoryArr = []
-            conditionArr = []
-            minPriceVal = 0.0
-            maxPriceVal = 0.0
-            format = ""
+//            categoryArr = []
+//            conditionArr = []
+//            minPriceVal = 0.0
+//            maxPriceVal = 0.0
+//            selectedFormat = ""
         }
     }
 }

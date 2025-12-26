@@ -94,7 +94,7 @@ struct ProductShopRehersalScreen: View {
             // MARK: - Search Bar + Close Button
             HStack {
                 SearchBarView(placeholder: "Search shop...") { text in
-                    if text == "" { return }
+//                    if text == "" { return }
                     resetData()
                     self.searchText = text
                     fetchProduct()

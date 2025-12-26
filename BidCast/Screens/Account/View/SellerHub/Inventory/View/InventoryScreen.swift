@@ -132,9 +132,9 @@ struct InventoryScreen: View {
                 //            // MARK: - Search
                 SearchBarView(placeholder: "What are you looking for?") { debouncedText in
                     print("User stopped typing. Search: \(debouncedText)")
-                    guard !debouncedText.isEmpty else {
-                        return
-                    }
+//                    guard !debouncedText.isEmpty else {
+//                        return
+//                    }
                     // Perform search logic here
                     searchText = debouncedText
                     currentPage = 1
@@ -359,11 +359,11 @@ struct InventoryScreen: View {
                                                         fromPrepare: .constant(false),
                                                         isComeFrom: .inventry))
             CusNavLink(doNavigate: $showFilterSheet,
-                       destination: FilterPageView(categoryArr: $selectedCategoryId,
-                                                   conditionArr: $selectedCondition,
+                       destination: FilterPageView(selectedCategoryArr: $selectedCategoryId,
+                                                   selectedConditionArr: $selectedCondition,
                                                    minPriceVal: $minPrice,
                                                    maxPriceVal: $maxPrice,
-                                                   format: $format,
+                                                   selectedFormat: $format,
                                                    apiCallClosure: {
                 //api Call
                 Task {
@@ -397,7 +397,7 @@ struct InventoryScreen: View {
         .background(.backGround)
         .padding(.bottom, -70)
         .toolbar(.hidden,for: .tabBar)
-        .onAppear {
+        .onFirstAppear {
 //            showAuctionSheet = false
             Task {
                 await performAPICalls(

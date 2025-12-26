@@ -138,7 +138,7 @@ struct MyOrdersScreen: View {
                     ////                        fetchOrders(for: newType)
                     //                    }
                     SearchBarView(placeholder: "Search") { debouncedText in
-                        if debouncedText == "" { return }
+//                        if debouncedText == "" { return }
                         currentPage = 1
                         debounceSearch(with: searchText)
                     }

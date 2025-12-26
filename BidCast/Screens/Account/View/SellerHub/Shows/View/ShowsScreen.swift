@@ -71,7 +71,7 @@ struct ShowsScreen: View {
                     title: "Shows",
                     isForBoth: false,
                     leadingImgArr: ["chevron.left"],
-                    trailingImgArr: [.search, .notification],
+                    trailingImgArr: [],
                     onClickLeading: { _ in
                         self.presentationMode.wrappedValue.dismiss()
                     },

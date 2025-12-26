@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SearchBarView: View {
-    var placeholder: String = "Search"
+    var placeholder: String = "What are you looking for?"
     var cornerRadius: CGFloat = 19
     var borderColor: Color = Color.gray.opacity(0.5)
     var borderWidth: CGFloat = 1
@@ -17,7 +17,7 @@ struct SearchBarView: View {
     @StateObject private var viewModel: SearchTextViewModel
     
     init(
-        placeholder: String = "Search",
+        placeholder: String = "What are you looking for?",
         onDebouncedSearch: @escaping (String) -> Void
     ) {
         self.placeholder = placeholder

@@ -179,7 +179,7 @@ struct ProfileScreen: View {
                             // MARK: - Pills Selector
                             VStack(spacing: 12){
                                 SearchBarView(placeholder: "Search") { debouncedText in
-                                    if debouncedText == "" { return }
+//                                    if debouncedText == "" { return }
                                     resetShopData()
                                     self.searchText = debouncedText
                                     fetchProduct()
