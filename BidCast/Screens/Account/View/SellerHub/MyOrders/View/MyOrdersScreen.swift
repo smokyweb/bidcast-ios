@@ -90,6 +90,9 @@ struct MyOrdersScreen: View {
     @State var ProcessingOrder = ""
     @State var currentPage = 1
     
+    @State private var isFetchingMore: Bool = false
+    @State private var canLoadMore: Bool = true
+    
     @State private var selected: Segment = .all
     @State private var selectedTabIndex: Int = Segment.all.index
     
@@ -137,10 +140,11 @@ struct MyOrdersScreen: View {
                     //                        searchText = ""
                     ////                        fetchOrders(for: newType)
                     //                    }
-                    SearchBarView(placeholder: "Search") { debouncedText in
+                    SearchBarView(placeholder: "What are you looking for?") { debouncedText in
 //                        if debouncedText == "" { return }
                         currentPage = 1
-                        debounceSearch(with: searchText)
+                        searchText = debouncedText
+                        fetchOrders(for: selected ?? .newOrder)
                     }
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
@@ -165,9 +169,9 @@ struct MyOrdersScreen: View {
                 
                 // MARK: - Scrollable Order List
                 ScrollView {
-                    VStack(spacing: 16) {
+                    LazyVStack(spacing: 16) {
                         if !myOrderListArr.isEmpty {
-                            ForEach(myOrderListArr , id: \.id) { order in
+                            ForEach(Array(myOrderListArr.enumerated()), id: \.element.id) { index, order in
                                 OrderCardView(order: order,
                                               onTapCardView: {
                                     selectedOrderDetails = order
@@ -179,6 +183,9 @@ struct MyOrdersScreen: View {
                                     navigateToProfile = true
                                 })
                                 .padding([.leading , .trailing] , 0)
+                                .onAppear {
+                                    checkAndLoadMore(currentIndex: index)
+                                }
                             }
                             Spacer(minLength: 80)
                         }
@@ -190,6 +197,12 @@ struct MyOrdersScreen: View {
                     .padding(.horizontal)
                     .padding(.top, 0)
                 }
+                
+                if isFetchingMore {
+                    ProgressView()
+                        .padding(.vertical, 16)
+                }
+                
             }
         }
         .background(Color.defaultTheme.opacity(0.05).ignoresSafeArea())
@@ -262,6 +275,7 @@ extension MyOrdersScreen{
             let param = ProductOrderListingRequest(type: type.apiValue, page: currentPage, search: searchText)
             await viewModel.getMyOrderList(parameters: param)
             await SVProgressHUD.dismiss()
+            isFetchingMore = false
             if self.viewModel.errorMessage == "" || viewModel.errorMessage == nil{
                 getOrderSuccess()
             }else{
@@ -297,21 +311,131 @@ extension MyOrdersScreen{
         }
     }
     
-    //MARK: fetchMoreOrder.
-    func fetchMoreOrder() {
-        currentPage += 1
-        fetchOrders(for: selected ?? .newOrder)
-    }
-    
-    //MARK: handlePagination
-    func handlePagination(index: Int) {
-        let isLastItem = index == myOrderListArr.count - 1
-        let canFetchMore = (viewModel.myOrderResponse.total ?? 0) > myOrderListArr.count
+//    //MARK: fetchMoreOrder.
+//    func fetchMoreOrder() {
+//        currentPage += 1
+//        isFetchingMore = true
+//        fetchOrders(for: selected ?? .newOrder)
+//    }
+//    
+//    //MARK: handlePagination
+//    func handlePagination(index: Int) {
+//        let isLastItem = index == myOrderListArr.count - 1
+//        let canFetchMore = (viewModel.myOrderResponse.total ?? 0) > myOrderListArr.count
+//        
+//        if isLastItem && canFetchMore {
+//            fetchMoreOrder()
+//        }
+//    }
+    /// Checks if we should load more data when a specific item appears
+    private func checkAndLoadMore(currentIndex: Int) {
+        // Don't load if:
+        // 1. Already fetching
+        // 2. Can't load more (reached end)
+        // 3. Still loading initial data
+        guard !isFetchingMore, canLoadMore else {
+            return
+        }
         
-        if isLastItem && canFetchMore {
-            fetchMoreOrder()
+        // Calculate threshold (load more when user is 3 items from the end)
+        let thresholdIndex = myOrderListArr.count - 3
+        
+        // Trigger load more when user scrolls near the end
+        if currentIndex >= thresholdIndex {
+            loadMoreData()
         }
     }
+    
+    /// Loads the next page of data
+    private func loadMoreData() {
+        // Prevent multiple simultaneous calls
+        guard !isFetchingMore else { return }
+        
+        // Check if there's more data to load
+        let totalItems = viewModel.myOrderResponse.total ?? 0
+        let currentItemCount = myOrderListArr.count
+        
+        guard currentItemCount < totalItems else {
+            // We've loaded all items
+            canLoadMore = false
+            return
+        }
+        
+        // Set fetching flag
+        isFetchingMore = true
+        
+        // Increment page and fetch
+        currentPage += 1
+        
+        Task {
+            await performAPICalls(
+                isConcurrent: false,
+                showLoader: false,
+                onError: { error in
+                    // ✅ Reset pagination state on error
+                    isFetchingMore = false
+                    currentPage -= 1 // Rollback page increment
+                    
+                    alertType = .sheetType(
+                     icon: .alert,
+                     title: "Error",
+                     message: errorDesc(error: error, message: viewModel.errorMessage),
+                     primaryBtnText: "",
+                     secondaryBtnText: AppString.ok.localized
+                    )
+                    showError = true
+                },
+                onSuccess: {
+                    // ✅ Handle successful data load
+                    
+                    handlePaginationSuccess()
+                    
+                }
+            ) {
+                let param = ProductOrderListingRequest(type: selected.apiValue, page: currentPage, search: searchText)
+                await viewModel.getMyOrderList(parameters: param)
+                isFetchingMore = false
+                if self.viewModel.errorMessage == "" || viewModel.errorMessage == nil{
+                    getOrderSuccess()
+                }else{
+                    alertType = .sheetType(
+                        icon: .alert,
+                        title: "Error",
+                        message: viewModel.errorMessage?.capitalizingFirstLetter() ?? "",
+                        primaryBtnText: "",
+                        secondaryBtnText: AppString.ok.localized
+                    )
+                }
+            }
+        }
+    }
+    
+    /// Handles successful pagination response
+    private func handlePaginationSuccess() {
+        let response = viewModel.myOrderResponse
+        
+        guard response.status == "success" else {
+            // Handle error case
+            isFetchingMore = false
+            currentPage -= 1 // Rollback
+            return
+        }
+        
+        // Append new data
+        let newData = response.data ?? []
+        myOrderListArr.append(contentsOf: newData)
+        
+        // Update pagination state
+        let totalItems = response.total ?? 0
+        let currentItemCount = myOrderListArr.count
+        
+        // Check if we can load more
+        canLoadMore = currentItemCount < totalItems
+        isFetchingMore = false
+        
+        print("📄 Loaded page \(currentPage): \(newData.count) items | Total: \(currentItemCount)/\(totalItems)")
+    }
+    
     
     //MARK: offerCount.
     func offerCount(for offer: MyOrderValue) -> String {
@@ -323,21 +447,6 @@ extension MyOrdersScreen{
         case .completed:
             return "\(viewModel.myOrderResponse.completed_order_count  ?? 0)"
         }
-    }
-    // MARK: - Search Management
-    private func debounceSearch(with text: String) {
-        // Cancel previous debounce if any
-        debounceCancellable?.cancel()
-        
-        // Start a new debounce pipeline
-        debounceCancellable = Just(text)
-            .delay(for: .seconds(0.5), scheduler: RunLoop.main)
-            .sink { value in
-                self.searchText = value
-                print("Search triggered for: \(value)")
-                // Perform your search here
-                fetchOrders(for: selected ?? .newOrder)
-            }
     }
 }
 

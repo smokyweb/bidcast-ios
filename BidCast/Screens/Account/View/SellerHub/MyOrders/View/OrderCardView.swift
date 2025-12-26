@@ -177,7 +177,7 @@ struct OrderCardView: View {
     
     // MARK: - Order Title
     private var orderTitle: some View {
-        Text(order.product?.title ?? "Order Title")
+        Text(order.product?.title?.capitalizingFirstLetter() ?? "Order Title")
             .font(.custom(poppinsSemiBold, size: 15))
             .foregroundColor(.primary)
             .lineLimit(2)
