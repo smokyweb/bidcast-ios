@@ -164,7 +164,7 @@ struct ProductShopRehersalScreen: View {
                 fetchProduct()
             }
             
-            socketManager.listenForPinnedProductStatus {roomID, productId, message in
+            socketManager.listenForPinnedProductStatus {roomID, productId, message,productIDs in
 //                print("\(productId) is \(isPinned)")
                 guard roomId == roomID else { return }
 

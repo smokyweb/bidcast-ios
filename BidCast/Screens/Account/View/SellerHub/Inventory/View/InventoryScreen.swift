@@ -300,7 +300,8 @@ struct InventoryScreen: View {
                                        title: "Delete Product?",
                                        message:  "Are you sure you want to remove this product?",
                                        primaryButtonTitle: "Delete",
-                                       secondaryButtonTitle: "Cancel"
+                                       secondaryButtonTitle: "Cancel",
+                                       bottomPadding: -80
                                    )
                                 showDeleteProduct = true
                             })
@@ -520,8 +521,8 @@ struct InventoryScreen: View {
     // MARK: - deleteProductSuccess
     func deleteProductSuccess() {
 //        SVProgressHUD.dismiss()
-        let response = viewModel.inventoryDict
-        if response?.status == "success" {
+        let response = viewModel.deleteProductResponse
+        if response.status == "success" {
             self.showSellSheet = false
             
             hudMsg = "Product deleted successfully"
@@ -557,8 +558,8 @@ struct InventoryScreen: View {
         } else {
             alertType = .sheetType(
                 icon: .alert,
-                title: response?.error_type?.capitalized ?? "",
-                message: response?.message?.capitalized ?? "",
+                title: response.error_type?.capitalized ?? "",
+                message: response.message?.capitalized ?? "",
                 primaryBtnText: "",
                 secondaryBtnText: AppString.ok.localized
             )
