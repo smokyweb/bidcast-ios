@@ -54,8 +54,8 @@ struct ShippingSettingsScreen: View {
                 ScrollView {
                     VStack(spacing: 16) {
                         ShippingOptionCard(
-                            icon: "mappin.and.ellipse",
-                            iconColor: .green,
+                            icon: "premierShop",
+                            iconColor: .defaultTheme,
                             title: "Free Pickup",
                             badge: "New",
                             subtitle: "Allow buyers to pick up any order from a specified address.",
@@ -65,8 +65,8 @@ struct ShippingSettingsScreen: View {
                             }
                         
                         ShippingOptionCard(
-                            icon: "shippingbox.fill",
-                            iconColor: .orange,
+                            icon: "shipping",
+                            iconColor: .defaultTheme,
                             title: "Domestic Shipments",
                             badge: nil,
                             subtitle: "Customize your default shipping options.",
@@ -75,8 +75,8 @@ struct ShippingSettingsScreen: View {
                             }
                         
                         ShippingOptionCard(
-                            icon: "dollarsign.circle.fill",
-                            iconColor: .blue,
+                            icon: "dollor",
+                            iconColor: .defaultTheme,
                             title: "Shipping Costs",
                             badge: nil,
                             subtitle: "Offer reduced or free shipping to buyers. Selections apply to all future shipments.",
@@ -85,12 +85,12 @@ struct ShippingSettingsScreen: View {
                             }
                         
                         ShippingOptionCard(
-                            icon: "doc.text.fill",
-                            iconColor: .purple,
+                            icon: "setting",
+                            iconColor: .defaultTheme,
                             title: "Shipping Profiles",
                             badge: nil,
                             subtitle: nil,
-                            status: "You have \(savedProfilesCount) saved shipping profiles") {
+                            status: "Customize sipping Profile") {
                                 navigateToProfiles = true
                             }
                     }
@@ -147,7 +147,7 @@ struct ShippingOptionCard: View {
                         .fill(iconColor.opacity(0.12))
                         .frame(width: 44, height: 44)
                     
-                    Image(systemName: icon)
+                    Image(icon)
                         .font(.custom(poppinsSemiBold, size: 20))
                         .font(.system(size: 20, weight: .semibold))
                         .foregroundColor(iconColor)
