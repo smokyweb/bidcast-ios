@@ -255,7 +255,7 @@ struct CreateShippingProfileScreen: View {
                             } catch {
                                 print("Shipping creation failed:", error)
                                 config = BottomSheetConfig(
-                                    icon: "exclamationmark.triangle.fill",
+                                    icon: "exclamationmark.circle",
                                     title: "Error",
                                     message: errorDesc(error: error, message: shippingViewModel.errorMessage),
                                     primaryButtonTitle: AppString.ok.localized,
@@ -366,7 +366,7 @@ extension CreateShippingProfileScreen {
             showLoader: true,
             onError: { error in
                 config = BottomSheetConfig(
-                    icon: "exclamationmark.triangle.fill",
+                    icon: "exclamationmark.circle",
                     title: "Error",
                     message: errorDesc(error: error, message: shippingViewModel.errorMessage),
                     primaryButtonTitle: AppString.ok.localized,
@@ -388,9 +388,9 @@ extension CreateShippingProfileScreen {
             let request = StoreShippingRequest(
                 name: name,
                 size: scale,
-                weight: weight.formattedString(decimalPlaces: 2)
-                //            maxItems: maxItems,
-                //            additionalWeight: additionalWeight
+                weight: weight.formattedString(decimalPlaces: 2),
+                maxItems: maxItems,
+                additionalWeight: additionalWeight
             )
             try await shippingViewModel.storeShippingProfile(request: request)
         }

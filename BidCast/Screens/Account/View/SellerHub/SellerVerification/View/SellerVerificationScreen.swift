@@ -367,7 +367,7 @@ struct SellerVerificationScreen: View {
                 success()
             } else {
                 config = BottomSheetConfig(
-                       icon: "exclamationmark.triangle.fill",
+                       icon: "exclamationmark.circle",
                        title: "Error",
                        message: self.viewModel.errorMessage ?? "",
                        primaryButtonTitle: nil,
@@ -444,7 +444,7 @@ struct SellerVerificationScreen: View {
             getCard = cardArr.isEmpty
         } else {
             config = BottomSheetConfig(
-                icon: "exclamationmark.triangle.fill",
+                icon: "exclamationmark.circle",
                 title: "Error",
                 message: viewModel.errorMessage ?? "",
                 primaryButtonTitle: nil,
@@ -472,7 +472,7 @@ struct SellerVerificationScreen: View {
             }
         } else {
             config = BottomSheetConfig(
-                   icon: "exclamationmark.triangle.fill",
+                   icon: "exclamationmark.circle",
                    title: "Error",
                    message: self.viewModel.errorMessage ?? "",
                    primaryButtonTitle: nil,
@@ -524,7 +524,7 @@ struct SellerVerificationScreen: View {
             SVProgressHUD.dismiss()
 //            hudMsg = "Seller Verification Failed"
             config = BottomSheetConfig(
-                icon: "exclamationmark.triangle.fill",
+                icon: "exclamationmark.circle",
                 title: "Error",
                 message: viewModel.errorMessage ?? "",
                 primaryButtonTitle: nil,

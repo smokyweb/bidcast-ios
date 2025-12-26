@@ -148,7 +148,7 @@ extension FreePickupScreen {
                 showLoader: true,
                 onError: { error in
                     config = BottomSheetConfig(
-                        icon: "exclamationmark.triangle.fill",
+                        icon: "exclamationmark.circle",
                         title: "Error",
                         message: errorDesc(error: error, message: viewModel.errorMessage),
                         primaryButtonTitle: AppString.ok.localized,

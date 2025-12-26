@@ -627,7 +627,7 @@ struct CreateProductScreen: View {
             openShippingSheet = true
           
             config = BottomSheetConfig(
-                icon: "exclamationmark.triangle.fill",
+                icon: "exclamationmark.circle",
                 title: "Error",
                 message: "Please add Shipping profile first for the successful product creation.",
                 primaryButtonTitle: "Add Shipping Profile",

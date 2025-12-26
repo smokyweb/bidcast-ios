@@ -175,7 +175,7 @@ extension MyShowsAnalyticsScreen {
                 // ----------------------
                 onError: { error in
                     config = BottomSheetConfig(
-                        icon: "exclamationmark.triangle.fill",
+                        icon: "exclamationmark.circle",
                         title: "Error",
                         message: errorDesc(error: error, message: showsViewModel.errorMessage),
                         primaryButtonTitle: AppString.ok.localized

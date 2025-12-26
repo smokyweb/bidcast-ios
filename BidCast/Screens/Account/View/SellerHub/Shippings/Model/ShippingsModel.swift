@@ -13,9 +13,12 @@ struct StoreShippingModel: Codable {
     var name, size: String?
     var weight: String?
     var id: Int?
+    var additionalWeight: Bool?
+    var maxItems: Bool?
 
     enum CodingKeys: String, CodingKey {
         case userID
         case name, size, weight, id
+        case additionalWeight, maxItems
     }
 }

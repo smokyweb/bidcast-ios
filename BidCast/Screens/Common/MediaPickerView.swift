@@ -614,7 +614,7 @@ struct VideoPlayerView1: View {
                     } else if let errorMessage = viewModel.errorMessage {
                         // Error
                         VStack(spacing: 16) {
-                            Image(systemName: "exclamationmark.triangle.fill")
+                            Image(systemName: "exclamationmark.circle")
                                 .font(.system(size: 50))
                                 .foregroundColor(.red)
                             

@@ -75,7 +75,7 @@ struct OBSSetupScreen: View {
                         .cornerRadius(8)
                         
                         HStack(spacing: 6) {
-                            Image(systemName: "exclamationmark.triangle.fill")
+                            Image(systemName: "exclamationmark.circle")
                                 .foregroundColor(.orange)
                             Text("Never share your stream key with anyone")
                                 .font(.caption)

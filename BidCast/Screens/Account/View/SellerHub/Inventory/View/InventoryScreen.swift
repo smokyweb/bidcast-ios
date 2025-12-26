@@ -574,7 +574,7 @@ struct InventoryScreen: View {
                 showLoader: true,
                 onError: { error in
                     config = BottomSheetConfig(
-                        icon: "exclamationmark.triangle.fill",
+                        icon: "exclamationmark.circle",
                         title: "Error",
                         message: productViewModel.errorMessage ?? "",
                         primaryButtonTitle: AppString.ok.localized,

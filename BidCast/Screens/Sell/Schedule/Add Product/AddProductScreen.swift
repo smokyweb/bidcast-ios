@@ -521,7 +521,7 @@ extension AddProductsScreen {
                 isConcurrent: false,
                 onError: { error in
                     config = BottomSheetConfig(
-                        icon: "exclamationmark.triangle.fill",
+                        icon: "exclamationmark.circle",
                         title: "Error",
                         message: errorDesc(error: error, message: productViewModel.errorMessage),
                         primaryButtonTitle: AppString.ok.localized,
@@ -547,7 +547,7 @@ extension AddProductsScreen {
                 isConcurrent: false,
                 onError: { error in
                     config = BottomSheetConfig(
-                        icon: "exclamationmark.triangle.fill",
+                        icon: "exclamationmark.circle",
                         title: "Error",
                         message: errorDesc(error: error, message: productViewModel.errorMessage),
                         primaryButtonTitle: AppString.ok.localized,
@@ -619,7 +619,7 @@ extension AddProductsScreen {
                        print("   Valid selected IDs: \(Array(selectedProductIDs).joined(separator: ", "))")
         }else{
             config = BottomSheetConfig(
-                icon: "exclamationmark.triangle.fill",
+                icon: "exclamationmark.circle",
                 title: "Error",
                 message: viewModel.errorMessage ?? "",
                 primaryButtonTitle: AppString.ok.localized,
@@ -671,7 +671,7 @@ extension AddProductsScreen {
             showLoader: true,
             onError: { error in
                 config = BottomSheetConfig(
-                    icon: "exclamationmark.triangle.fill",
+                    icon: "exclamationmark.circle",
                     title: "Error",
                     message: errorDesc(error: error, message: viewModel.errorMessage),
                     primaryButtonTitle: AppString.ok.localized,
@@ -737,7 +737,7 @@ extension AddProductsScreen {
             showLoader: true,
             onError: { error in
                 config = BottomSheetConfig(
-                    icon: "exclamationmark.triangle.fill",
+                    icon: "exclamationmark.circle",
                     title: "Error",
                     message: errorDesc(error: error, message: viewModel.errorMessage),
                     primaryButtonTitle: AppString.ok.localized,

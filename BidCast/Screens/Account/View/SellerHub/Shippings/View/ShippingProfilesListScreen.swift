@@ -146,7 +146,7 @@ extension ShippingProfilesListScreen {
                 showLoader: false,
                 onError: { error in
                     config = BottomSheetConfig(
-                        icon: "exclamationmark.triangle.fill",
+                        icon: "exclamationmark.circle",
                         title: "Error",
                         message: errorDesc(error: error, message: shippingViewModel.errorMessage),
                         primaryButtonTitle: AppString.ok.localized,
@@ -219,8 +219,8 @@ struct ShippingProfileCard: View {
                     
                     Spacer()
                     
-                    Text("No")
-//                    Text(profile.maxItems ? "Yes" : "No")
+//                    Text("No")
+                    Text((profile.maxItems ?? false) ? "Yes" : "No")
                         .font(.custom(poppinsSemiBold, size: 15))
                         .foregroundColor(.blue)
                 }
@@ -231,8 +231,8 @@ struct ShippingProfileCard: View {
                         .foregroundColor(.primary)
                     
                     Spacer()
-                    Text("No")
-//                    Text(profile.additionalWeight ? "Yes" : "No")
+//                    Text("No")
+                    Text((profile.additionalWeight ?? false) ? "Yes" : "No")
                         .font(.custom(poppinsSemiBold, size: 15))
                         .foregroundColor(.blue)
                 }
