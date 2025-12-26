@@ -497,12 +497,12 @@ struct ListProductScreen: View {
                             saveProductDetails(as: "draft")
                         },
                         height: 45,
-                        firstBtnTitleColor: .defaultTheme,
-                        secBtnTitleColor: .white,
-                        firstBtnBgColor: .defaultTheme.opacity(0.2),
-                        secBtnBgColor: .defaultTheme
+                        firstBtnTitleColor: .white,
+                        secBtnTitleColor: .defaultTheme,
+                        firstBtnBgColor: .defaultTheme,
+                        secBtnBgColor: .defaultThemeLight
                     )
-                    .padding(.horizontal, 12)
+//                    .padding(.horizontal, 12)
                     .padding(.bottom, 20)
                 }
                 .padding(.vertical, 16)
@@ -526,7 +526,7 @@ struct ListProductScreen: View {
                     topBarCornerRadius: 25,
                     showTopIndicator: false,
                     onDismiss: {
-                        showSubCategorySheet = true
+                        showSubCategorySheet = false
                     },
                     content: {
                         SelectionBottomSheet(
@@ -549,6 +549,7 @@ struct ListProductScreen: View {
                                 showSubCategorySheet = false
                             }
                         )
+               
                     }
                 )
                 .toast(isPresenting: $showhud) {
@@ -558,7 +559,7 @@ struct ListProductScreen: View {
 //                .toast(isPresenting: $isImageSizeExceeding) {
 //                    AlertToast(displayMode: .hud, type: .regular, title: "Please select image size less than 5 MB", style: alertStlye)
 //                }
-                .bottomSheet(isPresented: $showError, height: screenHeight * 0.28, topBarCornerRadius: 25, showTopIndicator: false,
+                .bottomSheet(isPresented: $showError, height: screenHeight * 0.35, topBarCornerRadius: 25, showTopIndicator: false,
                     onDismiss: {
                     if let errorMessage = viewModel.errorMessage {
                         showError = false
@@ -586,7 +587,40 @@ struct ListProductScreen: View {
                                 viewModel.errorMessage = nil
                             }
                         })
+                    .ignoresSafeArea(.keyboard)
                 })
+                .bottomSheet(
+                    isPresented: $showSubCategorySheet,
+                    height: selectedOption.count < 4 ? screenHeight * 0.4 : screenHeight/1.7,
+                    topBarCornerRadius: 25,
+                    showTopIndicator: false,
+                    onDismiss: {
+                        showSubCategorySheet = false
+                    },
+                    content: {
+                        SelectionBottomSheet(
+                            title: "Select sub category",
+                            message: "Please select subcategory.",
+                            options: $subCategoryName,
+                            selectedOptions: $selectedOption,
+                            onSelectionDone: { selectedIndexes in
+                                if let index = selectedIndexes.first {
+                                    let selectedValue = subCategoryList[index]
+                                    selectedSubCategory = selectedValue.name ?? ""
+                                    request.sub_category_id = "\(selectedValue.id ?? 0)"
+                                    selectedCategory = "\(selectedCategory) (\(selectedValue.name ?? ""))"
+                                    print("Selected SubCategory: \(selectedValue.name ?? "")")
+                                    self.extraFields = selectedValue.extra_fields ?? []
+//                                    if let extraFields =  self.viewModel.categoryResponse?.data[index].extra_fields{
+//
+//                                    }
+                                }
+                                showSubCategorySheet = false
+                            }
+                        )
+               
+                    }
+                )
                 .overlay(
                     CustomBottomSheetView(
                         isPresented: $openShippingSheet,
@@ -605,11 +639,12 @@ struct ListProductScreen: View {
                             }
                         }
                     )
+                    .ignoresSafeArea(.keyboard)
                 )
                 
                 CusNavLink(doNavigate: $navigateToShippingProfiles, destination: ShippingSettingsScreen())
         }
-//        .edgesIgnoringSafeArea(.top/)
+        .edgesIgnoringSafeArea(.bottom)
             .background(.backGround)
         .onFirstAppear(perform: {
             Task{
@@ -645,7 +680,7 @@ struct ListProductScreen: View {
             }
         })
         .onTapGesture {
-            UIApplication.shared.endEditing()
+           hideKeyboard()
         }
     }
     
@@ -656,7 +691,7 @@ struct ListProductScreen: View {
             openShippingSheet = false
             self.shippingProfileNames = profiles.map { $0.name ?? "" }
         }else{
-            openShippingSheet = true
+            
           
             config = BottomSheetConfig(
                 icon: "exclamationmark.circle",
@@ -665,6 +700,7 @@ struct ListProductScreen: View {
                 primaryButtonTitle: "Add Shipping Profile",
                 secondaryButtonTitle: nil
             )
+            openShippingSheet = true
         }
     }
     
@@ -689,7 +725,7 @@ struct ListProductScreen: View {
     
     func saveProductDetails(as status: String) {
         // 🔹 Step 1: Validation
-        guard validateRequest(request, imageUrls: imageUrls, status: status) else {
+        guard validateRequest(request, imageUrls: imageUrls, videoUrls: uploadedVideoUrls, status: status) else {
             showhud = true
             return
         }
@@ -831,6 +867,7 @@ struct ListProductScreen: View {
         if response?.status == "success" {
             self.categoryList = response?.data ?? [CategoryDataModel]()
             self.categoryNames = response?.data.map { $0.name ?? "No Category" } ?? [String]()
+            
         } else {
             alertType = .sheetType(
                 icon: .alert,
@@ -846,7 +883,7 @@ struct ListProductScreen: View {
     }
     
     // MARK: - Validation
-    private func validateRequest(_ request: StoreProductParam, imageUrls: [String], status: String) -> Bool {
+    private func validateRequest(_ request: StoreProductParam, imageUrls: [String],videoUrls: [String], status: String) -> Bool {
         if status == "draft" {
             if request.title.isEmpty {
                 hudMsg = "Please enter title"
@@ -859,8 +896,8 @@ struct ListProductScreen: View {
             return true
         }
         
-        if imageUrls.isEmpty {
-            hudMsg = "Please select images"
+        if imageUrls.isEmpty && videoUrls.isEmpty {
+            hudMsg = "Please add media"
             return false
         }
         if request.category_id.isEmpty {
@@ -967,7 +1004,7 @@ struct ListProductScreen: View {
         }
         .padding()
         .frame(maxWidth: .infinity)
-        .background(isSelected ? Color.defaultTheme.opacity(0.1) : Color.white)
+        .background(isSelected ? Color.defaultThemeLight : Color.white)
         .overlay(
             RoundedRectangle(cornerRadius: 12)
                 .stroke(isSelected ? Color.defaultTheme : Color.gray.opacity(0.3), lineWidth: 2)
@@ -1868,7 +1905,7 @@ struct DimensionsSection: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: 14)
-                .stroke(Color.defaultTheme.opacity(0.1), lineWidth: 1)
+                .stroke(Color.defaultThemeLight, lineWidth: 1)
         )
         .padding(.horizontal, 16)
     }
@@ -1922,7 +1959,7 @@ struct DimensionField: View {
                 RoundedRectangle(cornerRadius: 10)
                     .stroke(isFocused ? Color.defaultTheme.opacity(0.5) : Color.gray.opacity(0.2), lineWidth: isFocused ? 2 : 1)
             )
-            .shadow(color: isFocused ? Color.defaultTheme.opacity(0.1) : Color.clear, radius: 8, x: 0, y: 4)
+            .shadow(color: isFocused ? Color.defaultThemeLight : Color.clear, radius: 8, x: 0, y: 4)
         }
     }
 }

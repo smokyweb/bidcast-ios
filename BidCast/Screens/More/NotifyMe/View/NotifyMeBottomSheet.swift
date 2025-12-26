@@ -297,7 +297,7 @@ struct NotifyMeBottomSheet: View {
                         HStack(spacing: 12) {
                             ZStack {
                                 RoundedRectangle(cornerRadius: 12)
-                                    .fill(Color.defaultTheme.opacity(0.1))
+                                    .fill(Color.defaultThemeLight)
                                     .frame(width: 44, height: 44)
                                 
                                 Image(systemName: "bell.badge.fill")
@@ -327,7 +327,7 @@ struct NotifyMeBottomSheet: View {
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: 16)
-                            .stroke(Color.defaultTheme.opacity(0.1), lineWidth: 1)
+                            .stroke(Color.defaultThemeLight, lineWidth: 1)
                     )
                     .padding(.horizontal, 20)
                     

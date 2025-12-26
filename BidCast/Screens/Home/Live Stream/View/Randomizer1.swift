@@ -418,7 +418,7 @@
 //                            .padding(.vertical, 14)
 //                            .background(
 //                                RoundedRectangle(cornerRadius: 12)
-//                                    .fill(Color.defaultTheme.opacity(0.1))
+//                                    .fill(Color.defaultThemeLight)
 //                            )
 //                            .overlay(
 //                                RoundedRectangle(cornerRadius: 12)

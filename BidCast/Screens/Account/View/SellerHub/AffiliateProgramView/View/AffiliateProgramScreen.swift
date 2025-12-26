@@ -74,7 +74,7 @@ struct AffiliateProgramScreen: View {
                             .foregroundColor(.defaultTheme)
                             .padding(.horizontal, 12)
                             .padding(.vertical, 10)
-                            .background(Color.defaultTheme.opacity(0.1))
+                            .background(Color.defaultThemeLight)
                             .cornerRadius(10)
                         }
 

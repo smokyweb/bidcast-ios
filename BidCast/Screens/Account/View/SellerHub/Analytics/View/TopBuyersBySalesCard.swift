@@ -87,7 +87,7 @@ struct TopBuyersBySalesCard: View {
                     .foregroundColor(.blue)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
-                    .background(Color.defaultTheme.opacity(0.1))
+                    .background(Color.defaultThemeLight)
                     .cornerRadius(25)
                     .overlay(
                         RoundedRectangle(cornerRadius: 25)

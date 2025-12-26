@@ -548,7 +548,7 @@ struct SellerHubSection: View {
                             .fill(.defaultTheme)
                             
                     )
-                    .shadow(color: .defaultTheme.opacity(0.1), radius: 1, x: 0, y: 2)
+                    .shadow(color: .defaultThemeLight, radius: 1, x: 0, y: 2)
             }
             
             // Create Product Button
@@ -560,7 +560,7 @@ struct SellerHubSection: View {
                     .frame(height: 52)
                     .background(
                         RoundedRectangle(cornerRadius: 26)
-                            .fill(Color.defaultTheme.opacity(0.1))
+                            .fill(Color.defaultThemeLight)
                     )
 //                    .overlay(
 //                        RoundedRectangle(cornerRadius: 26)

@@ -40,6 +40,7 @@ struct SalesFormatScreen: View {
     
     @Binding var fromPrepare : Bool
     @Binding var backToCreateProduct : Bool
+    var didTapBack : ((Bool) -> Void)?
     var delegate: ShowStepDelegate?
     
     var body: some View {
@@ -67,7 +68,7 @@ struct SalesFormatScreen: View {
                         .foregroundColor(.black)
                 }
                 .padding()
-                .background(Color.defaultTheme.opacity(0.1))
+                .background(Color.defaultThemeLight)
                 .cornerRadius(12)
                 .padding(.horizontal)
                 Spacer()
@@ -203,6 +204,9 @@ struct SalesFormatScreen: View {
                 backToPrepare: $backToPrepare,
                 fromPrepare:$fromPrepare,
                 backToCreateProduct: $backToCreateProduct,
+                didTapBack:{ value in
+                    didTapBack?(value)
+                },
                 delegate:delegate,
                 onContinue: {
                     request.pricing = startingBid
@@ -225,7 +229,7 @@ struct SalesFormatScreen: View {
         }
         .padding()
         .frame(maxWidth: .infinity)
-        .background(isSelected ? Color.defaultTheme.opacity(0.1) : Color.white)
+        .background(isSelected ? Color.defaultThemeLight : Color.white)
         .overlay(
             RoundedRectangle(cornerRadius: 12)
                 .stroke(isSelected ? Color.defaultTheme : Color.gray.opacity(0.3), lineWidth: 2)

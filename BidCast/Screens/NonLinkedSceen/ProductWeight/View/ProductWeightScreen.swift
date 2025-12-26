@@ -48,6 +48,9 @@ struct ProductWeightScreen: View {
     @State var navigateToProuct = false
     @Binding var fromPrepare : Bool
     @Binding var backToCreateProduct : Bool
+    
+    var didTapBack : ((Bool) -> Void)?
+    
     var delegate: ShowStepDelegate?
     
     var onContinue: () -> Void
@@ -218,8 +221,10 @@ struct ProductWeightScreen: View {
                     thumbNail: $thumbNail,
                     fromPrepare: .constant(false),
                     backToPrepare: $backToPrepare, NavFromProductLibrary: .constant(false),
-                    backToCreateProduct: $backToCreateProduct
-                )
+                    backToCreateProduct: $backToCreateProduct,
+                    didTapBack:{ value in
+                        didTapBack?(value)
+                    })
             )
             CusNavLink(
                 doNavigate: $navigateToProuct,

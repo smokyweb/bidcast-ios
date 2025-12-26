@@ -67,7 +67,7 @@ struct SendGiftScreen: View {
                         .font(.system(size: 40))
                         .foregroundColor(.red.opacity(0.8))
                         .padding()
-                        .background(Color.defaultTheme.opacity(0.1))
+                        .background(Color.defaultThemeLight)
                         .clipShape(Circle())
                     
                     Text("Gift to a Friend")

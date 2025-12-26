@@ -26,7 +26,7 @@ import SwiftUI
 //            }
 //            .padding()
 //            .frame(maxWidth: .infinity,maxHeight: .infinity)
-//            .background(isSelected ? Color.defaultTheme.opacity(0.1) : Color(.systemGray6))
+//            .background(isSelected ? Color.defaultThemeLight : Color(.systemGray6))
 //            .cornerRadius(12)
 //        }
 //    }

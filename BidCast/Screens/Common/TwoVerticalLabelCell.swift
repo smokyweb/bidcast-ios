@@ -59,7 +59,7 @@ struct TwoVerticalLabelCell<T: Hashable & CustomStringConvertible>: View {
                 }
                 .frame(maxWidth: .infinity,minHeight: 70) // 🟢 Auto-stretch to fit the cell
                 .aspectRatio(1, contentMode: .fill) // 🟢 Square cells
-                .background(selection == item ? Color.defaultTheme.opacity(0.1) : Color.white)
+                .background(selection == item ? Color.defaultThemeLight : Color.white)
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
                         .stroke(selection == item ? Color.defaultTheme : Color.clear, lineWidth: 1)

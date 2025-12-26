@@ -70,7 +70,7 @@ struct ShippingCostsScreen: View {
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: 14)
-                            .stroke(Color.defaultTheme.opacity(0.1), lineWidth: 1)
+                            .stroke(Color.defaultThemeLight, lineWidth: 1)
                     )
                     .padding(.horizontal, 20)
                     .padding(.top, 20)

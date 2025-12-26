@@ -86,7 +86,7 @@ struct MyShowsAnalyticsScreen: View {
                         VStack(spacing: 12) {
                             HStack(spacing: 12) {
                                 StatCard(title: "Sales",
-                                         value: showsOverviewData.totalSales ?? "0",
+                                         value: formatCurrencyCompact(Double(showsOverviewData.totalSales ?? "") ?? 0.0),
                                          icon: "dollarsign.circle.fill",
                                          color: .green)
                                 
@@ -131,7 +131,7 @@ struct MyShowsAnalyticsScreen: View {
                                          color: .pink)
                             }
                             
-                            ContributionCard(total: "$\(showsOverviewData.contributionsCount ?? 0)")
+                            ContributionCard(total: showsOverviewData.contributionsCount ?? "")
                             
                             StatCard(title: "Total Bids",
                                      value: "\(showsOverviewData.totalBids ?? 0)",
@@ -147,13 +147,35 @@ struct MyShowsAnalyticsScreen: View {
                         .padding(.bottom, 30)
                 }
             }
-            .background(Color(.systemGroupedBackground))
+            .background(Color.backGround)
+            
+            CusNavLink(doNavigate: $navigateToVideoReceipt, destination: VideoPlayerScreen(videoURL: showsOverviewData.fileURL ?? ""))
         }
-        .onAppear {
+        .onFirstAppear {
             getShowOverviewData()
         }
         .navigationBarHidden(true)
     }
+    
+    private func formatCurrencyCompact(_ value: Double) -> String {
+           let absValue = abs(value)
+           let sign = value < 0 ? "-" : ""
+           
+           switch absValue {
+           case 1_000_000_000...:
+               // Billions
+               return String(format: "%@$%.2fB", sign, absValue / 1_000_000_000)
+           case 1_000_000...:
+               // Millions
+               return String(format: "%@$%.2fM", sign, absValue / 1_000_000)
+           case 1_000...:
+               // Thousands
+               return String(format: "%@$%.1fK", sign, absValue / 1_000)
+           default:
+               // Less than 1000 - show full amount
+               return String(format: "%@$%.2f", sign, absValue)
+           }
+       }
 }
 
 extension MyShowsAnalyticsScreen {
@@ -210,7 +232,7 @@ extension MyShowsAnalyticsScreen {
                 shareCount: api?.shareCount ?? 0,
                 viewerCount: api?.viewerCount ?? 0,
                 newFollowers: api?.newFollowers ?? 0,
-                contributionsCount: api?.contributionsCount ?? 0,
+                contributionsCount: api?.contributionsCount ?? "",
                 totalBids: api?.totalBids ?? 0,
                 fileURL: api?.fileURL ?? ""
             )
@@ -379,7 +401,7 @@ struct ContributionCard: View {
                 }) {
                     ZStack {
                         Circle()
-                            .fill(Color.defaultTheme.opacity(0.1))
+                            .fill(Color.defaultThemeLight)
                             .frame(width: 32, height: 32)
                         
                         Image(systemName: "info.circle.fill")
@@ -479,7 +501,7 @@ struct SellerAnalyticsCTA: View {
                 RoundedRectangle(cornerRadius: 16)
                     .fill(
                         LinearGradient(
-                            gradient: Gradient(colors: [Color.defaultTheme.opacity(0.1), Color.defaultTheme.opacity(0.05)]),
+                            gradient: Gradient(colors: [Color.defaultThemeLight, Color.defaultTheme.opacity(0.05)]),
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
@@ -498,8 +520,8 @@ struct SellerAnalyticsCTA: View {
 
 
 // MARK: - Preview
-struct MyShowsAnalyticsScreen_Previews: PreviewProvider {
-    static var previews: some View {
-        MyShowsAnalyticsScreen(showId: .constant("1"))
-    }
-}
+//struct MyShowsAnalyticsScreen_Previews: PreviewProvider {
+//    static var previews: some View {
+//        MyShowsAnalyticsScreen(showId: .constant("1"))
+//    }
+//}

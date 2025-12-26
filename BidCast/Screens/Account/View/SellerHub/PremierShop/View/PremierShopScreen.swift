@@ -741,7 +741,7 @@ struct RequirementCard: View {
                 .frame(width: 40, height: 40)
                 .background(
                     Circle()
-                        .fill(Color.defaultTheme.opacity(0.1))
+                        .fill(Color.defaultThemeLight)
                 )
             
             VStack(alignment: .leading, spacing: 4) {

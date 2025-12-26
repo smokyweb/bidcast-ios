@@ -356,7 +356,7 @@ struct FilterSection<Content: View>: View {
                 HStack(spacing: 12) {
                     ZStack {
                         RoundedRectangle(cornerRadius: 8)
-                            .fill(Color.defaultTheme.opacity(0.1))
+                            .fill(Color.defaultThemeLight)
                             .frame(width: 32, height: 32)
                         
                         Image(systemName: icon)

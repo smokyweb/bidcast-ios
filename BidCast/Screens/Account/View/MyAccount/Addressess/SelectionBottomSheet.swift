@@ -66,7 +66,7 @@ struct SelectionBottomSheet: View {
                     }
                     onSelectionDone?(selectedIndexes)
                 },
-                width: screenWidth - 24,
+                width: screenWidth - 60,
                 height: 40,
                 btnTextColor: .white,
                 btnColor: themeColor

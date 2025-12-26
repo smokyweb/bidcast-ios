@@ -368,7 +368,7 @@ struct ShopBottomSheetView: View {
                     HStack(spacing: 10) {
                         ZStack {
                             RoundedRectangle(cornerRadius: 10)
-                                .fill(Color.defaultTheme.opacity(0.1))
+                                .fill(Color.defaultThemeLight)
                                 .frame(width: 36, height: 36)
                             
                             Image(systemName: productShowType == .nextProduct ? "arrow.right.circle.fill" : "bag.fill")

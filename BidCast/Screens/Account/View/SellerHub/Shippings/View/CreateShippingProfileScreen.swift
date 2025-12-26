@@ -145,7 +145,7 @@ struct CreateShippingProfileScreen: View {
                             )
                             .overlay(
                                 RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color.defaultTheme.opacity(0.1), lineWidth: 1)
+                                    .stroke(Color.defaultThemeLight, lineWidth: 1)
                             )
                         }
                         .padding(.horizontal, 20)

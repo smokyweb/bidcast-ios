@@ -90,10 +90,8 @@ struct VideoPlayerHeader: View {
             Button(action: onBack) {
                 Image(systemName: "chevron.left")
                     .font(.custom(poppinsBold, size: 16))
-                    .foregroundColor(.white)
-                    .frame(width: 44, height: 44)
-                    .background(Color.white.opacity(0.1))
-                    .clipShape(Circle())
+                    .foregroundColor(.primary)
+                    .frame(width: 36, height: 36)
             }
             
             Text(title)
@@ -425,14 +423,14 @@ class VideoPlayerViewModel: ObservableObject {
 
 
 // MARK: - Preview
-struct VideoPlayerScreen_Previews: PreviewProvider {
-    static var previews: some View {
-        VideoPlayerScreen(
-            videoURL: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-            videoTitle: "Sample Video"
-        )
-    }
-}
+//struct VideoPlayerScreen_Previews: PreviewProvider {
+//    static var previews: some View {
+//        VideoPlayerScreen(
+//            videoURL: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+//            videoTitle: "Sample Video"
+//        )
+//    }
+//}
 
 import Foundation
 

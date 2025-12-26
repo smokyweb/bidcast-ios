@@ -114,8 +114,8 @@ struct SellerToolsScreen: View {
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 16)
-        .background(Color(.systemBackground))
-        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+        .background(.backGround)
+        .shadow(color: .backGround.opacity(0.05), radius: 4, x: 0, y: 2)
     }
     
     // MARK: - Seller Section
@@ -333,6 +333,7 @@ struct ToolsRowItem: View {
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
     }

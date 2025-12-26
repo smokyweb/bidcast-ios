@@ -440,7 +440,7 @@ struct OrderTrackingView: View {
             HStack(spacing: 12) {
                 ZStack {
                     Circle()
-                        .fill(Color.defaultTheme.opacity(0.1))
+                        .fill(Color.defaultThemeLight)
                         .frame(width: 50, height: 50)
                     
                     Image(systemName: "shield.checkered")

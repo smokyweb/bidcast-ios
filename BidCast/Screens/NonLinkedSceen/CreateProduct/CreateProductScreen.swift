@@ -365,8 +365,8 @@ struct CreateProductScreen: View {
                     TwoButton(titleOne: "Continue", titleTwo: "Use Product Library", onFirstButtonClick: {
                         print(request)
                         print(imageUrls)
-                        guard !imageUrls.isEmpty,imageUrls.count != 0 else{
-                            hudMsg = "Please select images"
+                        guard !(imageUrls.isEmpty && videoUrls.isEmpty) else {
+                            hudMsg = "Please add images or videos"
                             showhud = true
                             return
                         }
@@ -452,6 +452,9 @@ struct CreateProductScreen: View {
                                                                                           backToPrepare: $backToPrepare,
                                                                                           fromPrepare: $fromPrepare,
                                                                                           backToCreateProduct:$navigateToSalesFormat,
+                                                                                          didTapBack:{ value in
+                comeFromProductLibrary = value
+            },
                                                                                           delegate: delegate))
             CusNavLink(doNavigate: $navigateToShippingProfiles, destination: ShippingSettingsScreen())
         }

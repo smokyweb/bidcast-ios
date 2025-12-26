@@ -204,7 +204,7 @@ struct MoreOptionsScreen: View {
                                 HStack(spacing: 12) {
                                     ZStack {
                                         RoundedRectangle(cornerRadius: 10)
-                                            .fill(Color.defaultTheme.opacity(0.1))
+                                            .fill(Color.defaultThemeLight)
                                             .frame(width: 40, height: 40)
                                         
                                         Image(systemName: "checkmark.shield.fill")

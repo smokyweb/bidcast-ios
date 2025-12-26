@@ -72,7 +72,7 @@ struct DomesticShipmentsScreen: View {
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: 14)
-                            .stroke(Color.defaultTheme.opacity(0.1), lineWidth: 1)
+                            .stroke(Color.defaultThemeLight, lineWidth: 1)
                     )
                     .padding(.horizontal, 20)
                     .padding(.top, 20)
@@ -284,7 +284,7 @@ struct ShippingMethodCard: View {
                 // USPS Logo/Icon
                 ZStack {
                     RoundedRectangle(cornerRadius: 10)
-                        .fill(Color.defaultTheme.opacity(0.1))
+                        .fill(Color.defaultThemeLight)
                         .frame(width: 50, height: 50)
                     
                     Image(systemName: icon)
@@ -577,7 +577,7 @@ struct InfoBanner: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: 14)
-                .stroke(Color.defaultTheme.opacity(0.1), lineWidth: 1)
+                .stroke(Color.defaultThemeLight, lineWidth: 1)
         )
     }
 }

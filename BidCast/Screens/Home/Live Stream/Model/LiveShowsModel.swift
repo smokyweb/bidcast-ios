@@ -181,7 +181,8 @@ struct SellerCategoryDetailsModel: Codable {
 struct GetShowOverviewModel: Codable {
     var orderCount : Int?
     var videoDuration, totalSales: String?
-    var shareCount, viewerCount, newFollowers, contributionsCount: Int?
+    var shareCount, viewerCount, newFollowers : Int?
+    var contributionsCount : String?
     var totalBids: Int?
     var fileURL: String?
 

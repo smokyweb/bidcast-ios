@@ -472,7 +472,7 @@ struct ProductItemCard: View {
                         .font(.system(size: 18, weight: .medium))
                         .foregroundColor(.defaultTheme)
                         .frame(width: 36, height: 36)
-                        .background(Color.defaultTheme.opacity(0.1))
+                        .background(Color.defaultThemeLight)
                         .cornerRadius(10)
                 }
                 
@@ -623,7 +623,8 @@ extension AddProductsScreen {
                 title: "Error",
                 message: viewModel.errorMessage ?? "",
                 primaryButtonTitle: AppString.ok.localized,
-                secondaryButtonTitle: nil
+                secondaryButtonTitle: nil,
+              
             )
             showError = true
         }

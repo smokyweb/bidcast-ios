@@ -154,7 +154,7 @@ struct ShowTitleTips: View {
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)}
         .edgesIgnoringSafeArea(.bottom)
-        .background(.bg.opacity(0.5))
+        .background(.backGround)
         .toolbar(.hidden,for: .tabBar)
         .onAppear {
             getTilteTips()

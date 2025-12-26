@@ -205,7 +205,7 @@ struct MyOrdersScreen: View {
                 
             }
         }
-        .background(Color.defaultTheme.opacity(0.05).ignoresSafeArea())
+        .background(.backGround)
         
         .onAppear {
             UIScrollView.appearance().bounces = false

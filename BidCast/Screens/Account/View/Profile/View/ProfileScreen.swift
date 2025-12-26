@@ -842,7 +842,7 @@ struct ProfileActionsView: View {
             .frame(maxWidth: .infinity)
             .frame(height: 18)
             .padding()
-            .background(.defaultTheme.opacity(0.1))
+            .background(.defaultThemeLight)
             .foregroundColor(.defaultTheme)
             .cornerRadius(19)
             

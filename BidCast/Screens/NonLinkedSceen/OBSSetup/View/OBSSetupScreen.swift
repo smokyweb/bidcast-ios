@@ -50,7 +50,7 @@ struct OBSSetupScreen: View {
                         }
                     }
                     .padding()
-                    .background(Color.defaultTheme.opacity(0.1))
+                    .background(Color.defaultThemeLight)
                     .cornerRadius(12)
 
                     // Stream Key
@@ -139,7 +139,7 @@ struct OBSSetupScreen: View {
             }
             .background(Color.white)
         }
-        .background(Color(red: 0.93, green: 0.96, blue: 1.0)) // light blue background
+        .background(.backGround) 
         .cornerRadius(16)
         .padding()
     }
