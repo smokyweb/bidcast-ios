@@ -16,6 +16,7 @@ struct SellerToolsScreen: View {
 
               // Header
               headerView
+                  .frame(height: 40)
 
               // Scrollable Content
               ScrollView(showsIndicators: false) {
@@ -34,7 +35,7 @@ struct SellerToolsScreen: View {
               // Navigation Links
               navigationLinks
           }
-          .background(Color(.systemGroupedBackground))
+          .background(.backGround)
           .toolbar(.hidden, for: .tabBar)
           .navigationBarHidden(true)
 //          .padding(.bottom, -70)

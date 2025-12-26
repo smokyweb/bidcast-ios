@@ -660,7 +660,7 @@ struct ListProductScreen: View {
           
             config = BottomSheetConfig(
                 icon: "exclamationmark.circle",
-                title: "Error",
+                title: "Missing",
                 message: "Please add Shipping profile first for the successful product creation.",
                 primaryButtonTitle: "Add Shipping Profile",
                 secondaryButtonTitle: nil
@@ -895,10 +895,10 @@ struct ListProductScreen: View {
             hudMsg = "Price should not be less than $1.00"
             return false
         }
-//        if request.shipping_profile_id.isEmpty {
-//            hudMsg = "Please select shipping address"
-//            return false
-//        }
+        if request.shipping_profile_id.isEmpty {
+            hudMsg = "Please select shipping address"
+            return false
+        }
         return true
     }
 

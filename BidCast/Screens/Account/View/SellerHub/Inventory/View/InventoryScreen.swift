@@ -1276,7 +1276,7 @@ extension ProductCardView {
 //                badgeView(title: "Out of Stock", color: .red)
 //            }
             
-            Text(product.title ?? "")
+            Text(product.title?.capitalizingFirstLetter() ?? "")
                 .font(.custom(poppinsSemiBold, size: 16))
                 .foregroundColor(.primary)
                 .lineLimit(2)

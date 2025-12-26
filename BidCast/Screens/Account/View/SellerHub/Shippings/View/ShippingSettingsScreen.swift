@@ -96,7 +96,7 @@ struct ShippingSettingsScreen: View {
                     }
                     .padding(20)
                 }
-                .background(Color(.systemGroupedBackground))
+                .background(.backGround)
                 // MARK: - Navigation Links
                 NavigationLink(destination: FreePickupScreen(changeFreeToggle: { status in
                     isFreePickupEnabled = status

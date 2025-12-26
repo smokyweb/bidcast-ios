@@ -78,10 +78,9 @@ struct HomeViewScreen: View {
                         presentationMode.wrappedValue.dismiss()
                     } label: {
                         Image(systemName:"chevron.left")
-                            .resizable()
-                            .frame(width: 22, height: 22)
-                            .foregroundStyle(.black)
-                            .background(.clear)
+                            .font(.custom(poppinsBold, size: 16))
+                            .foregroundColor(.primary)
+                            .frame(width: 36, height: 36)
                         
                     }
                     

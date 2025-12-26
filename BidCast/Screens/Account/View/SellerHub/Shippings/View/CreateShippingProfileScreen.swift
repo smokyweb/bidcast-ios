@@ -358,8 +358,8 @@ extension CreateShippingProfileScreen {
         name: String,
         weight: Double,
         scale: String,
-        maxItems: Bool?,
-        additionalWeight: Bool?
+        maxItems: Bool,
+        additionalWeight: Bool
     ) async throws {
         await performAPICalls(
             isConcurrent: false,
@@ -380,7 +380,9 @@ extension CreateShippingProfileScreen {
                     title: "Success",
                     message: shippingViewModel.storeShippingResponse?.message ?? "Shipping profile created successfully.",
                     primaryButtonTitle: AppString.ok.localized,
-                    secondaryButtonTitle: nil
+                    secondaryButtonTitle: nil,
+                    bottomPadding: -80,
+                    backgroundDismissal: true
                 )
                 showSuccess = true
             }

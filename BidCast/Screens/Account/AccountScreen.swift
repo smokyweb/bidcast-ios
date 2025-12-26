@@ -28,6 +28,10 @@ struct AccountScreen: View {
     @State private var isLoading: Bool = false
     @State private var sellerInfo: SellerhubInfoModel?
     
+    @State private var hasLoadedData = false
+        @State private var isRefreshing = false
+    
+    
     // MARK: - Data State
     @State private var request = StoreScheduleShowRequest(title: "", date: "", time: "", category_id: "", auction_type_id: "", product_ids: "", is_explicit: false, show_discoverability: "", repeat_value: "", is_repeat: false, language: "english")
     
@@ -83,8 +87,15 @@ struct AccountScreen: View {
             .background(Color.bg.opacity(0.5))
             .edgesIgnoringSafeArea(.bottom)
             .onFirstAppear {
-                getSellerHubInfo()
+//                getSellerHubInfo()
+                if !hasLoadedData {
+                    getSellerHubInfo()
+                    hasLoadedData = true
+                }
             }
+            .refreshable {
+                   await refreshData()
+               }
         }
         .bottomSheet(
             isPresented: $userLogOut,
@@ -138,8 +149,8 @@ struct AccountScreen: View {
     private var headerView: some View {
         PrimaryHeader(
             title: AppString.Account.localized,
-            isForLogo: !comeFromSeller,
-            leadingImgArr: [],
+            isForLogo: false,
+            leadingImgArr: [comeFromSeller ? "chevron.left" : ""],
             trailingImgArr: [.sMenu],
             onClickLeading: { _ in
                 presentationMode.wrappedValue.dismiss()
@@ -182,7 +193,7 @@ struct AccountScreen: View {
     
     // MARK: - Seller Hub Section
     private var sellerHubSection: some View {
-        SellerHubSection(sellerInfo: $sellerInfo) {
+        SellerHubSection(sellerInfo: $sellerInfo, isRefreshing: $isRefreshing) {
             navigationState.navigateToTitle = true
         } onCreateProduct: {
             navigationState.navigateToCreateProduct = true
@@ -366,13 +377,18 @@ extension AccountScreen {
             }
         }
     }
+    private func refreshData() async {
+            isRefreshing = true
+            await getSellerHubInfo()
+            isRefreshing = false
+        }
     
     // MARK: - Get Seller Hub Info
     private func getSellerHubInfo() {
         Task {
             await performAPICalls(
                 isConcurrent: false,
-                showLoader: true,
+                showLoader: !isRefreshing,
                 onError: { error in
                     alertType = .sheetType(
                         icon: .alert,
@@ -404,7 +420,8 @@ extension AccountScreen {
             UserDefaults.accessToken.removeAll()
             UserDefaults.sellerVerafied.removeAll()
             UserDefaults.buyerVerafied.removeAll()
-            
+            hasLoadedData = false
+            sellerInfo = nil
             // Handle remember me
             let rememberMe = UserDefaults.rememberMe
             if !rememberMe {
@@ -429,6 +446,7 @@ extension AccountScreen {
 struct SellerHubSection: View {
     @State private var isLoadingStats = true
     @Binding var sellerInfo: SellerhubInfoModel?
+        @Binding var isRefreshing: Bool
     
     // Stats data
     @State private var itemsCount = 0
@@ -482,7 +500,14 @@ struct SellerHubSection: View {
         .onAppear {
             loadData()
         }
-        
+        .onChange(of: isRefreshing) { oldValue, newValue in
+            if newValue {
+                isLoadingStats = true
+            } else {
+                // Reload data after refresh completes
+                loadData()
+            }
+        }
     }
     
     // MARK: - Stats Cards Row
@@ -699,18 +724,37 @@ struct SellerHubSection: View {
 //                rating = 4.8
                 if let info = sellerInfo {
                     itemsCount = info.items ?? 0
-                    revenue = "$\(info.revenue ?? 0.0)"
+                    revenue = "\(formatCurrencyCompact(info.revenue ?? 0.0))"
                     rating = info.rating ?? 0.0
                     onTimeRate = "\(info.accountHealth?.onTimeScanRate ?? "0")"
                     defectFreeRate = "\(info.accountHealth?.defectFreeOrderRate ?? "")"
                     policyStanding = "Excellent"
-                    payouts = "$\(info.payouts ?? 0)"
+                    payouts = "\(formatCurrencyCompact(Double(info.payouts ?? 0)))"
                     totalOrders = "\(info.totalOrders ?? 0) Items"
                     isLoadingStats = false
                 }
             }
         }
     }
+    private func formatCurrencyCompact(_ value: Double) -> String {
+           let absValue = abs(value)
+           let sign = value < 0 ? "-" : ""
+           
+           switch absValue {
+           case 1_000_000_000...:
+               // Billions
+               return String(format: "%@$%.2fB", sign, absValue / 1_000_000_000)
+           case 1_000_000...:
+               // Millions
+               return String(format: "%@$%.2fM", sign, absValue / 1_000_000)
+           case 1_000...:
+               // Thousands
+               return String(format: "%@$%.1fK", sign, absValue / 1_000)
+           default:
+               // Less than 1000 - show full amount
+               return String(format: "%@$%.2f", sign, absValue)
+           }
+       }
 }
 
 // MARK: - Stat Card

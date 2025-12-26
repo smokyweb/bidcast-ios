@@ -125,7 +125,7 @@ struct ShippingProfilesListScreen: View {
                 .onAppear {
                     getShippingProfiles()
                 }
-                .background(Color(.systemBackground))
+                .background(.backGround)
                 NavigationLink(destination: CreateShippingProfileScreen().navigationBarBackButtonHidden(true), isActive: $showCreateProfile) {
                     EmptyView()
                 }

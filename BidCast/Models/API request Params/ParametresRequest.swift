@@ -447,7 +447,7 @@ struct AddressRequest : Encodable {
 }
 
 struct checkScheduleRequest : Encodable{
-    var showId : String?
+    var show_id : String?
     var date : String
     var time : String
 }
@@ -769,8 +769,8 @@ struct StoreShippingRequest  : Encodable {
     var name: String
     var size: String
     var weight: String
-    var maxItems: Bool?
-    var additionalWeight: Bool?
+    var maxItems: Bool
+    var additionalWeight: Bool
 }
 
 struct ShowOverviewRequest  : Encodable {

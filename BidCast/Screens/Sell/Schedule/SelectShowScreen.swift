@@ -128,7 +128,7 @@ struct SelectShowScreen: View {
                     Task{
                         SVProgressHUD.show()
                         if request.show_id != "" {
-                            let param = checkScheduleRequest(showId:request.show_id ?? "" ,date: request.date, time: request.time)
+                            let param = checkScheduleRequest(show_id:request.show_id ?? "" ,date: request.date, time: request.time)
                             await viewModel.CheckScheduleShow(param: param)
                             await SVProgressHUD.dismiss()
                         }else{

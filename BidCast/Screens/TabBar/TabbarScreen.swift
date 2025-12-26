@@ -15,7 +15,6 @@ final class TabBarRouter: ObservableObject {
 struct TabbarScreen: View {
     
     @EnvironmentObject var tabBarRouter: TabBarRouter
-//    @State private var selectedTab = 0
     @State private var previousTab = 0
     @State private var showSellSheet = false
     @State private var selectedSellTab: SellTabOption? = nil
@@ -46,70 +45,91 @@ struct TabbarScreen: View {
     @EnvironmentObject var deepLinkManager: DeepLinkManager
     @State private var navigateToShow = false
     @State private var selectedShowId: String?
+    
+    // Add navigation state container
+    @State private var pendingNavigation: PendingNavigation?
+    
+    enum PendingNavigation {
+        case getStarted
+        case title
+        case list
+        case account
+        case seller
+        case shipping
+    }
 
     var body: some View {
-        ZStack {
+        // Wrap everything in NavigationStack
+        NavigationStack {
             TabView(selection: $tabBarRouter.selectedTab) {
                 
-                NavigationContainer(navigationPath: $homeNavigationPath) { HomeViewScreen(showCategory: .constant(""), comeFromExploreScreen: .constant(false),isNavFrom : "Login") }
-                    .id(homeViewID)
-                    .tabItem {
-                        VStack {
-                            Image(tabIcon(for: 0))
-//                                .foregroundColor(.black)
-                            Text("Home")
-                        }
+                NavigationContainer(navigationPath: $homeNavigationPath) {
+                    HomeViewScreen(showCategory: .constant(""), comeFromExploreScreen: .constant(false), isNavFrom: "Login")
+                }
+                .id(homeViewID)
+                .disabled(showSellSheet) // Disable interaction when sheet is open
+                .tabItem {
+                    VStack {
+                        Image(tabIcon(for: 0))
+                        Text("Home")
                     }
-                    .tag(0)
+                }
+                .tag(0)
                 
-                NavigationContainer(navigationPath: $exploreNavigationPath) { ExploreViewScreen() }
-                    .id(exploreViewID)
-                    .tabItem {
-                        VStack {
-                            Image(tabIcon(for: 1))
-//                                .foregroundColor(.black)
-                            Text("Explore")
-                        }
+                NavigationContainer(navigationPath: $exploreNavigationPath) {
+                    ExploreViewScreen()
+                }
+                .id(exploreViewID)
+                .disabled(showSellSheet) // Disable interaction when sheet is open
+                .tabItem {
+                    VStack {
+                        Image(tabIcon(for: 1))
+                        Text("Explore")
                     }
-                    .tag(1)
+                }
+                .tag(1)
                 
                 Color.clear
                     .tabItem {
                         VStack {
                             Image(tabIcon(for: 2))
-//                                .foregroundColor(.black)
                             Text("Sell")
                         }
                     }
                     .tag(2)
                 
-                NavigationContainer(navigationPath: $activityNavigationPath) { ActivityScreen() }
-                    .id(activityViewID)
-                    .tabItem {
-                        VStack {
-                            Image(tabIcon(for: 3))
-//                                .foregroundColor(.black)
-                            Text("Activity")
-                        }
+                NavigationContainer(navigationPath: $activityNavigationPath) {
+                    ActivityScreen()
+                }
+                .id(activityViewID)
+                .disabled(showSellSheet) // Disable interaction when sheet is open
+                .tabItem {
+                    VStack {
+                        Image(tabIcon(for: 3))
+                        Text("Activity")
                     }
-                    .tag(3)
+                }
+                .tag(3)
                 
-                NavigationContainer(navigationPath: $accountNavigationPath) { AccountScreen() }
-                    .id(accountViewID)
-                    .tabItem {
-                        VStack {
-                            Image(tabIcon(for: 4))
-//                                .foregroundColor(.black)
-                            Text("Account")
-                        }
+                NavigationContainer(navigationPath: $accountNavigationPath) {
+                    AccountScreen()
+                }
+                .id(accountViewID)
+                .disabled(showSellSheet) // Disable interaction when sheet is open
+                .tabItem {
+                    VStack {
+                        Image(tabIcon(for: 4))
+                        Text("Account")
                     }
-                    .tag(4)
+                }
+                .tag(4)
             }
             .accentColor(.black)
-            .edgesIgnoringSafeArea(.top)
             .onChange(of: tabBarRouter.selectedTab) { newTab in
+                // Prevent onChange from triggering when sheet is open
+                guard !showSellSheet else { return }
+                
                 if newTab == 2 {
-                    // handle sell sheet if needed and revert
                     showSellSheet = true
                     tabBarRouter.selectedTab = previousTab
                 } else {
@@ -117,215 +137,193 @@ struct TabbarScreen: View {
                     previousTab = newTab
                 }
             }
-//            .onChange(of: deepLinkManager.destination) { destination in
-//                switch destination {
-//                case .showDetail(let id):
-//                    // Switch to Home tab and reset Home navigation to ensure fresh UI
-//                    selectedTab = 0
-//                    homeNavigationPath = NavigationPath()   // clear stack
-//                    homeViewID = UUID()                     // force view refresh
-//                    selectedShowId = id
-//                    navigateToShow = true
-//
-////                case .home:
-////                    // Just switch to Home tab
-////                    selectedTab = 0
-////                    homeNavigationPath = NavigationPath()
-////                    homeViewID = UUID()
-//
-//                default:
-//                    break
-//                }
-//            }
-          
-            // Navigation Links
-//            CusNavLink(doNavigate: $navigateTogetStarted, destination: LetsPrepare())
-            CusNavLink(doNavigate: $navigateTogetStarted, destination: GetStartedScreen(backToTabBar:$navigateTogetStarted))
-            CusNavLink(doNavigate: $navigateToTitle,
-                       destination: ShowTitleTips(request:$request,
-                        fromPrepare:.constant(false),
-                                                  backToPrepare: $navigateToTitle, showId: .constant(0)
-                       )
-            )
-            CusNavLink(doNavigate: $navigateTolist, destination: ListProductScreen())
-            
-            CusNavLink(doNavigate: $navigateToShow, destination: HomeViewScreen(showCategory: .constant(""), comeFromExploreScreen: .constant(false)))
-            
-//            CusNavLink(doNavigate: $navigateTolist, destination: CreateProductScreen(requests: .constant(StoreScheduleShowRequest(title: "", date: "", time: "", category_id: "", auction_type_id: "", product_ids: "")), thumbNail: .constant(""), backToPrepare: .constant(false), fromPrepare: .constant(false)))
-            CusNavLink(doNavigate: $navigateToAccountScreen, destination: AccountScreen(comeFromSeller: true, isNavFrom: true))
-//            CusNavLink(doNavigate: $navigateToAccountScreen, destination: AccountScreen(isNavFrom: true, comeFromSeller: true))
-            CusNavLink(doNavigate: $navigateToSeller, destination: SellerVerificationScreen())
-            CusNavLink(doNavigate: $navigateToShipping, destination: CreateAddress())
+            // Navigation destinations
+            .navigationDestination(isPresented: $navigateTogetStarted) {
+                            GetStartedScreen(backToTabBar: $navigateTogetStarted)
+                                .navigationBarHidden(true)
+                                .toolbar(.hidden, for: .navigationBar)
+                        }
+                        .navigationDestination(isPresented: $navigateToTitle) {
+                            ShowTitleTips(
+                                request: $request,
+                                fromPrepare: .constant(false),
+                                backToPrepare: $navigateToTitle,
+                                showId: .constant(0)
+                            )
+                            .navigationBarHidden(true)
+                            .toolbar(.hidden, for: .navigationBar)
+                        }
+                        .navigationDestination(isPresented: $navigateTolist) {
+                            ListProductScreen()
+                                .navigationBarHidden(true)
+                                .toolbar(.hidden, for: .navigationBar)
+                        }
+                        .navigationDestination(isPresented: $navigateToAccountScreen) {
+                            AccountScreen(comeFromSeller: true, isNavFrom: true)
+                                .navigationBarHidden(true)
+                        }
+                        .navigationDestination(isPresented: $navigateToSeller) {
+                            SellerVerificationScreen()
+                                .navigationBarHidden(true)
+                                .toolbar(.hidden, for: .navigationBar)
+                        }
+                        .navigationDestination(isPresented: $navigateToShipping) {
+                            CreateAddress()
+                                .navigationBarHidden(true)
+                                .toolbar(.hidden, for: .navigationBar)
+                        }
+                        .navigationDestination(isPresented: $navigateToShow) {
+                            HomeViewScreen(showCategory: .constant(""), comeFromExploreScreen: .constant(false))
+                                .navigationBarHidden(true)
+                                .toolbar(.hidden, for: .navigationBar)
+                        }
         }
-        .bottomSheet(
-            isPresented: $showSellSheet,
-            height: screenHeight / 2.6,
-            topBarCornerRadius: 12,
-            contentBackgroundColor: .clear,
-            topBarBackgroundColor: .clear,
-            showTopIndicator: false,
-            onDismiss: {
-                showSellSheet = false
-            },
-            content: {
-                SellScreen { tappedTab in
-                    if tappedTab == .lesson {
-                        if UserDefaults.isFirstShowCreated{
-                            if UserDefaults.sellerVerafied == "verified"{
-                                navigateToTitle = true
-//                                navigateTogetStarted = true
-                            }else{
-
-                                if UserDefaults.sellerVerafied == "pending" {
-                                    alertType = .sheetType(
-                                        icon: .info,
-                                        title: "Become a Verified Buyer!",
-                                        message: "Your verification is currently pending approval by the admin. You will be notified once the process is complete.",
-                                        primaryBtnText: "OK",
-                                        secondaryBtnText: "",
-                                        buttonWidth:screenWidth - 40,
-                                        contentSize: 12.0
-                                    )
-                                    withAnimation(.snappy){
-                                        showSellerSheet = true
-                                    }
-                                    
-                                }else{
-                                    alertType = .sheetType(
-                                        icon: .info,
-                                        title: "Become a Verified Seller!",
-                                        message: "Before you interact with live shows.you need to become a verified seller.",
-                                        primaryBtnText: "OK",
-                                        secondaryBtnText: "",
-                                        buttonWidth:screenWidth - 32,
-                                        contentSize: 12.0
-                                    )
-                                    withAnimation(.snappy){
-                                        showSellerSheet = true
-                                    }
-                                }
-                            }
-                        }else{
-                            if UserDefaults.sellerVerafied == "verified"{
-//                                navigateToTitle = true
-                                navigateTogetStarted = true
-                            }else{
-                                if UserDefaults.sellerVerafied == "pending" {
-                                    alertType = .sheetType(
-                                        icon: .info,
-                                        title: "Become a Verified Buyer!",
-                                        message: "Your verification is currently pending approval by the admin. You will be notified once the process is complete.",
-                                        primaryBtnText: "OK",
-                                        secondaryBtnText: "",
-                                        buttonWidth:screenWidth - 40,
-                                        contentSize: 12.0
-                                    )
-                                    withAnimation(.snappy){
-                                        showSellerSheet = true
-                                    }
-                                    
-                                }else{
-                                    alertType = .sheetType(
-                                        icon: .info,
-                                        title: "Become a Verified Seller!",
-                                        message: "Before you interact with live shows.you need to become a verified seller.",
-                                        primaryBtnText: "OK",
-                                        secondaryBtnText: "",
-                                        buttonWidth:screenWidth - 32,
-                                        contentSize: 12.0
-                                    )
-                                    withAnimation(.snappy){
-                                        showSellerSheet = true
-                                    }
-                                }
-                            }
-                        }
-                    } else if tappedTab == .listProduct {
-                        if UserDefaults.sellerVerafied == "verified"{
-                            
-                            if UserDefaults.sellerAddress{
-                                navigateTolist = true
-                            }else{
-                                titleText = "Add Address"
-                                showPaymentShipping = true
-                            }
-                        }else{
-                            if UserDefaults.sellerVerafied == "pending" {
-                                alertType = .sheetType(
-                                    icon: .info,
-                                    title: "Become a Verified Buyer!",
-                                    message: "Your verification is currently pending approval by the admin. You will be notified once the process is complete.",
-                                    primaryBtnText: "OK",
-                                    secondaryBtnText: "",
-                                    buttonWidth:screenWidth - 40,
-                                    contentSize: 12.0
-                                )
-                                withAnimation(.snappy){
-                                    showSellerSheet = true
-                                }
-                                
-                            }else{
-                                alertType = .sheetType(
-                                    icon: .info,
-                                    title: "Become a Verified Seller!",
-                                    message: "Before you interact with live shows.you need to become a verified seller.",
-                                    primaryBtnText: "OK",
-                                    secondaryBtnText: "",
-                                    buttonWidth:screenWidth - 24,
-                                    contentSize: 12.0
-                                )
-                                withAnimation(.snappy){
-                                    showSellerSheet = true
-                                }
-                            }
-                        }
-                    
-                    } else if tappedTab == .sellerHub {
-                        navigateToAccountScreen = true
-                    }
-                } onTapCancel: {
-                    showSellSheet = false
-                }
-                .presentationDetents([.fraction(0.35)])
+        .sheet(isPresented: $showSellSheet) {
+            // On dismiss, wait a bit before processing any pending navigation
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                processPendingNavigation()
             }
-        )
+        } content: {
+            SellScreen { tappedTab in
+                // Store the navigation intent
+                storePendingNavigation(for: tappedTab)
+                // Dismiss sheet
+                showSellSheet = false
+            } onTapCancel: {
+                showSellSheet = false
+                pendingNavigation = nil
+            }
+            .presentationDetents([.fraction(0.43)])
+            .presentationDragIndicator(.visible)
+        }
         .bottomSheet(isPresented: $showPaymentShipping, height: screenHeight / 2.8) {
             PaymentAndShippingInfoSheet(
                 isPresented: $showPaymentShipping,
                 onAddInfo: {
                     if UserDefaults.sellerAddress != true {
-                        navigateToShipping = true
                         showPaymentShipping = false
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            navigateToShipping = true
+                        }
                     }
-                }, buttonText: $titleText
+                },
+                buttonText: $titleText
             )
         }
-        .bottomSheet(isPresented: $showSellerSheet, height: screenHeight / 2.5, topBarCornerRadius: 25, showTopIndicator: false,onDismiss: {
+        .bottomSheet(isPresented: $showSellerSheet, height: screenHeight / 2.5, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: {
             showSellerSheet = false
         }) {
             CommonBottomSheet(
                 sheetType: $alertType,
                 onPrimaryClick: {
                     withAnimation {
-                        if UserDefaults.buyerVerafied == "pending" {
-                            showSellerSheet = false
-                        }else{
-                            navigateToSeller = true
-                            showSellerSheet = false
+                        showSellerSheet = false
+                        if UserDefaults.buyerVerafied != "pending" {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                navigateToSeller = true
+                            }
                         }
-                        
                     }
-                    
                 },
                 onSecondaryClick: {
                     withAnimation {
                         showSellerSheet = false
-                        
                     }
                 }
             )
         }
     }
+    
+    // Store navigation intent when sell sheet button is tapped
+    private func storePendingNavigation(for tappedTab: SellTabOption) {
+        if tappedTab == .lesson {
+            if UserDefaults.isFirstShowCreated {
+                if UserDefaults.sellerVerafied == "verified" {
+                    pendingNavigation = .title
+                } else {
+                    pendingNavigation = nil
+                    handleSellerVerification()
+                }
+            } else {
+                if UserDefaults.sellerVerafied == "verified" {
+                    pendingNavigation = .getStarted
+                } else {
+                    pendingNavigation = nil
+                    handleSellerVerification()
+                }
+            }
+        } else if tappedTab == .listProduct {
+            if UserDefaults.sellerVerafied == "verified" {
+                if UserDefaults.sellerAddress {
+                    pendingNavigation = .list
+                } else {
+                    pendingNavigation = nil
+                    titleText = "Add Address"
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                        showPaymentShipping = true
+                    }
+                }
+            } else {
+                pendingNavigation = nil
+                handleSellerVerification()
+            }
+        } else if tappedTab == .sellerHub {
+            pendingNavigation = .account
+        }
+    }
+    
+    // Process the stored navigation after sheet dismisses
+    private func processPendingNavigation() {
+        guard let navigation = pendingNavigation else { return }
+        
+        switch navigation {
+        case .getStarted:
+            navigateTogetStarted = true
+        case .title:
+            navigateToTitle = true
+        case .list:
+            navigateTolist = true
+        case .account:
+            navigateToAccountScreen = true
+        case .seller:
+            navigateToSeller = true
+        case .shipping:
+            navigateToShipping = true
+        }
+        
+        pendingNavigation = nil
+    }
+    
+    private func handleSellerVerification() {
+        if UserDefaults.sellerVerafied == "pending" {
+            alertType = .sheetType(
+                icon: .info,
+                title: "Become a Verified Buyer!",
+                message: "Your verification is currently pending approval by the admin. You will be notified once the process is complete.",
+                primaryBtnText: "OK",
+                secondaryBtnText: "",
+                buttonWidth: screenWidth - 40,
+                contentSize: 12.0
+            )
+        } else {
+            alertType = .sheetType(
+                icon: .info,
+                title: "Become a Verified Seller!",
+                message: "Before you interact with live shows.you need to become a verified seller.",
+                primaryBtnText: "OK",
+                secondaryBtnText: "",
+                buttonWidth: screenWidth - 32,
+                contentSize: 12.0
+            )
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            withAnimation(.snappy) {
+                showSellerSheet = true
+            }
+        }
+    }
+    
     func resetNavigation(for tab: Int) {
         switch tab {
         case 0:
@@ -360,39 +358,7 @@ struct TabbarScreen: View {
         default: return "circle"
         }
     }
-    
-    func resetNavigation1(for tab: Int) {
-        switch tab {
-        case 0:
-            if !homeNavigationPath.isEmpty {
-                homeNavigationPath = NavigationPath()
-            }
-        case 1:
-            if !exploreNavigationPath.isEmpty {
-                exploreNavigationPath = NavigationPath()
-            }
-        case 3:
-            if !activityNavigationPath.isEmpty {
-                activityNavigationPath = NavigationPath()
-            }
-        case 4:
-            if !accountNavigationPath.isEmpty {
-                accountNavigationPath = NavigationPath()
-            }
-        default:
-            break
-        }
-    }
 }
-
-extension View {
-    func hideTabBar() -> some View {
-        self
-            .onAppear { UITabBar.appearance().isHidden = true }
-            .onDisappear { UITabBar.appearance().isHidden = false }
-    }
-}
-        
         
 //        .bottomSheet(
 //            isPresented: $showSellSheet,

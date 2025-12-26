@@ -687,7 +687,9 @@ extension AddProductsScreen {
                     title: "Success",
                     message: response?.message?.capitalized ?? "",
                     primaryButtonTitle: AppString.ok.localized,
-                    secondaryButtonTitle: nil
+                    secondaryButtonTitle: nil,
+                    bottomPadding: -80,
+                    backgroundDismissal: true
                 )
                 showError = true
             }
@@ -753,7 +755,9 @@ extension AddProductsScreen {
                     title: "Success",
                     message: response?.message?.capitalized ?? "",
                     primaryButtonTitle: AppString.ok.localized,
-                    secondaryButtonTitle: nil
+                    secondaryButtonTitle: nil,
+                    bottomPadding: -80,
+                    backgroundDismissal: true
                 )
                 showError = true
             }
@@ -825,7 +829,7 @@ struct CustomBottomSheetView: View {
                 Color.black.opacity(0.35)
                     .ignoresSafeArea()
                     .onTapGesture {
-                        withAnimation { isPresented = false }
+                        withAnimation { isPresented = config.backgroundDismissal }
                     }
             }
             
@@ -920,6 +924,7 @@ struct BottomSheetConfig {
 
     var showButtons: Bool = true
     var bottomPadding : CGFloat = -90
+    var backgroundDismissal : Bool = false
 }
 
 
