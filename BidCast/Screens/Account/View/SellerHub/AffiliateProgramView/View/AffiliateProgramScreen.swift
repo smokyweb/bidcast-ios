@@ -23,6 +23,7 @@ struct AffiliateProgramScreen: View {
     @State private var showError = false
     @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @State private var showhud = false
+    @State private var showhudSuccess = false
     @State private var hudMsg = ""
     
     @State var referralCode: String = ""
@@ -81,7 +82,7 @@ struct AffiliateProgramScreen: View {
                         Button(action: {
                             UIPasteboard.general.string = referralCode
                             hudMsg = AppString.CodeCopied
-                            showhud = true
+                            showhudSuccess = true
                         }) {
                             HStack {
                                 Image(systemName: "doc.on.doc")
@@ -125,6 +126,9 @@ struct AffiliateProgramScreen: View {
         }
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
+        }
+        .toast(isPresenting: $showhudSuccess) {
+            AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlyeSuccess)
         }
         .bottomSheet(
             isPresented: $showError,

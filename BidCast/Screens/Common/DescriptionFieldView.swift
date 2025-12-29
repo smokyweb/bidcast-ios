@@ -5,17 +5,71 @@
 //  Created by Ankit-JAM-E-294 on 17/05/25.
 //
 
+//
+//import SwiftUI
+//
+//struct DescriptionFieldView: View {
+//    @Binding var description: String
+//    var title : String = "Description"
+//    var placeholder : String = "Enter your Description"
+//    @State var custFontName: String = poppinsBold
+//    @State var custFontSize: Double = 13.0
+//    @State var custPlaceHolderName : String = poppinsRegular
+//    @State var custPlaceHolderFontSize : Double = placeHolder
+//    var enteredText: ((String) -> Void)?
+//    
+//    var body: some View {
+//        VStack(alignment: .leading, spacing: 8) {
+//            Text(title)
+//                .font(.custom(custFontName, size: custFontSize))
+//                .foregroundColor(.black)
+//            
+//            ZStack(alignment: .topLeading) {
+//                RoundedRectangle(cornerRadius: 32)
+//                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+//                    .background(Color.white)
+//                    .frame(minHeight: 100)
+//                
+//                if description.isEmpty {
+//                    Text(placeholder)
+//                        .font(.custom(custPlaceHolderName, size: placeHolder))
+//                        .foregroundColor(Color.gray)
+//                        .padding(.all, 8)
+//                }
+//
+//                TextEditor(text: $description)
+//                    .font(.custom(custPlaceHolderName, size: placeHolder))
+//                    .padding(.all, 8)
+//                    .background(Color.clear)
+//                    .frame(minHeight: 100)
+//                    .opacity(description.isEmpty ? 0.6 : 1)
+//                    .onChange(of: description) { newValue in
+//                           self.enteredText?(newValue)
+//                    }
+//            }
+//        }
+//        .padding([.top,.bottom], 4)
+//        .padding([.leading,.trailing],16)
+//    }
+//}
+
+//
+//  DescriptionFieldView_Fixed.swift
+//  BidCast
+//
+//  Fixed rounded corners issue
+//
 
 import SwiftUI
 
 struct DescriptionFieldView: View {
     @Binding var description: String
-    var title : String = "Description"
-    var placeholder : String = "Enter your Description"
+    var title: String = "Description"
+    var placeholder: String = "Enter your Description"
     @State var custFontName: String = poppinsBold
     @State var custFontSize: Double = 13.0
-    @State var custPlaceHolderName : String = poppinsRegular
-    @State var custPlaceHolderFontSize : Double = placeHolder
+    @State var custPlaceHolderName: String = poppinsRegular
+    @State var custPlaceHolderFontSize: Double = placeHolder
     var enteredText: ((String) -> Void)?
     
     var body: some View {
@@ -25,30 +79,35 @@ struct DescriptionFieldView: View {
                 .foregroundColor(.black)
             
             ZStack(alignment: .topLeading) {
-                RoundedRectangle(cornerRadius: 32)
-                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                    .background(Color.white)
-                    .frame(minHeight: 100)
-                
+                // Placeholder
                 if description.isEmpty {
                     Text(placeholder)
                         .font(.custom(custPlaceHolderName, size: placeHolder))
                         .foregroundColor(Color.gray)
-                        .padding(.all, 8)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 16)
                 }
-
+                
+                // TextEditor
                 TextEditor(text: $description)
                     .font(.custom(custPlaceHolderName, size: placeHolder))
-                    .padding(.all, 8)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 12)
                     .background(Color.clear)
                     .frame(minHeight: 100)
                     .opacity(description.isEmpty ? 0.6 : 1)
                     .onChange(of: description) { newValue in
-                           self.enteredText?(newValue)
+                        self.enteredText?(newValue)
                     }
             }
+            .background(Color.white)
+            .clipShape(RoundedRectangle(cornerRadius: 16))  // ✅ clipShape instead of overlay
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+            )
         }
-        .padding([.top,.bottom], 4)
-        .padding([.leading,.trailing],16)
+        .padding([.top, .bottom], 4)
+        .padding([.leading, .trailing], 16)
     }
 }

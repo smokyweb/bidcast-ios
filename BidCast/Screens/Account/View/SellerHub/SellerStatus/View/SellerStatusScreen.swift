@@ -42,6 +42,7 @@ struct SellerStatusScreen: View {
                     },
                     count: .constant(0)
                 )
+                .padding(.horizontal, 16)
             }
             
             // MARK: - Scrollable Content
@@ -59,30 +60,33 @@ struct SellerStatusScreen: View {
                     
                     Spacer(minLength: 80)
                 }
+                .padding(.horizontal, 16)
                 //                .padding(.top, 0)
             }
+            
+            // MARK: - Primary Button fixed at bottom
+            VStack(spacing: 0) {
+                Divider()
+                PrimaryButton(
+                    title: AppString.ContactSupport,
+                    isOutLine: false,
+                    onButtonClick: {
+                       navigateToContact = true
+                    },
+                    btnTextColor: .white
+                )
+                .padding(.horizontal)
+                .padding(.top, 8)
+                .padding(.bottom, 0)
+                .background(Color(UIColor.systemGroupedBackground))
+            }
+            
         }
         .edgesIgnoringSafeArea(.bottom)
         .background(Color.bg.opacity(0.4))
         
         
-        // MARK: - Primary Button fixed at bottom
-        VStack(spacing: 0) {
-            Divider()
-            PrimaryButton(
-                title: AppString.ContactSupport,
-                isOutLine: false,
-                onButtonClick: {
-                   navigateToContact = true
-                },
-                btnTextColor: .white
-            )
-            .padding(.horizontal)
-            .padding(.top, 8)
-            .padding(.bottom, 0)
-            .background(Color(UIColor.systemGroupedBackground))
-        }
-        
+       
         .onAppear{
             Task{
                guard Reachability.isConnectedToNetwork() else {

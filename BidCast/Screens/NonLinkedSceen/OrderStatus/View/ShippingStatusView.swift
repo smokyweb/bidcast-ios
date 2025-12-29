@@ -27,7 +27,7 @@ struct ShippingStatusView: View {
                     ForEach(shippingTracking, id: \.id) { track in
                         ShippingStepView(
                             icon: "checkmark.circle.fill",
-                            title: track.title ?? "",
+                            title: track.title?.capitalizingFirstLetter() ?? "",
                             subtitle: track.createdAt?.formattedDate(toFormat: "MMM dd, yyyy") ?? "N/A",
                             iconColor: .red
                         )

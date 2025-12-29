@@ -176,7 +176,9 @@ struct ContactUs: View {
         }
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)}
-        .bottomSheet(isPresented: $showError, height: screenHeight / 2.5, topBarCornerRadius: 25, showTopIndicator: false) {
+        .bottomSheet(isPresented: $showError, height: screenHeight / 2.5, topBarCornerRadius: 25, showTopIndicator: false,onDismiss: {
+            showError = true
+        }) {
             CommonBottomSheet(
                 sheetType: $alertType,
                 onPrimaryClick: {

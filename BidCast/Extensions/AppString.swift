@@ -60,7 +60,7 @@ struct AppString{
     static let pleaseEnterLastName = "Please enter Last Name".localized
     static let backToLogin  = "Back to Login".localized
     static let selectALanguage  = "Select a language".localized
-    static let fullName = "First Name".localized
+    static let fullName = "Full Name".localized
     static let subject = "Subject".localized
     static let enterSubject = "Enter Subject".localized
     static let message = "Message".localized
