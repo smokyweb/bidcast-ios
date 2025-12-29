@@ -20,7 +20,7 @@ struct PrimaryButton: View {
     
     var width: CGFloat = screenWidth - 30
     var height: CGFloat = 50
-    var cornerRadius : CGFloat = 8.0
+    var cornerRadius : CGFloat = 32.0
     var imageName : String = ""
     var btnTextColor : Color = .darkBlue
     var btnColor: ColorResource = .defaultTheme

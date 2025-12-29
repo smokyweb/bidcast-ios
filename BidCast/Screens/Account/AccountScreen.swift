@@ -44,7 +44,6 @@ struct AccountScreen: View {
         icon: .alert, title: "", message: "",
         primaryBtnText: "", secondaryBtnText: ""
     )
-    
     // MARK: - Props
     let comeFromSeller: Bool
     
@@ -459,10 +458,26 @@ struct SellerHubSection: View {
     @State private var totalOrders = "22 Items"
     
     @State var showID = ""
+    @State var SHowId = 0
     @State var isLive = false
     @State private var selectedProductData: [ProductDataModel] = []
     @State var selectedShowsData = HomeModel()
     @State var navigateToReherseal = false
+    @State var navigateToshowTitle = false
+    @State private var scheduleRequest = StoreScheduleShowRequest(
+        title: "",
+        date: "",
+        time: "",
+        category_id: "",
+        auction_type_id: "",
+        product_ids: "",
+        is_explicit: false,
+        show_discoverability: "",
+        repeat_value: "",
+        is_repeat: false,
+        language: "english"
+    )
+
     
     var onCreateShow: () -> Void
     var onCreateProduct: () -> Void
@@ -494,6 +509,11 @@ struct SellerHubSection: View {
                                                     isLive: isLive,
                                                     backToTabBar: .constant(true),
                                                     showsData: $selectedShowsData))
+            CusNavLink(doNavigate: $navigateToshowTitle, destination:
+                        ShowTitleTips(request : $scheduleRequest,
+                                      fromPrepare:.constant(false),
+                                      backToPrepare: $navigateToshowTitle,
+                                      showId:$SHowId) )
         }
         .padding(.horizontal, 12)
         .padding(.top, 8)
@@ -604,6 +624,9 @@ struct SellerHubSection: View {
 //                        selectedProductData = showData.products ?? []
                         selectedShowsData = showData
                         navigateToReherseal = true
+                    },onTapMenu:{
+                        SHowId = showData.id ?? 0
+                        navigateToshowTitle = true
                     })
                     .padding(.horizontal , -12)
                 }

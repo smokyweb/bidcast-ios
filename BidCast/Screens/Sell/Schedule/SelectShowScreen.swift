@@ -145,7 +145,7 @@ struct SelectShowScreen: View {
 //                    navigateToAddProduct = true
                 }
 //                navigateToSelectCategory = true
-            },cornerRadius: 12, btnTextColor: .white)
+            },cornerRadius: 32, btnTextColor: .white)
             
             
             

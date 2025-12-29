@@ -146,7 +146,7 @@ struct ShowTitleTips: View {
                 print(request)
                 
                 navigateToSelectCategory = true
-            },cornerRadius: 12, btnTextColor: .white)
+            },cornerRadius: 32, btnTextColor: .white)
             
             CusNavLink(doNavigate: $navigateToSelectCategory, destination: SelectCategoryScreen(request:$request,title: $title,fromPrepare: $fromPrepare,backToPrepare: $backToPrepare, delegate: delegate))
            

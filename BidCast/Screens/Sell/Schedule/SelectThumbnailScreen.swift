@@ -139,7 +139,7 @@ struct SelectThumbnailScreen: View {
                     navigateToSelectTime = true
                 }
                 
-            },cornerRadius: 12, btnTextColor: .white)
+            },cornerRadius: 32, btnTextColor: .white)
             .padding(.top , 10)
             
             CusNavLink(doNavigate: $navigateToSelectTime, destination: SelectShowScreen(request:$request,thumbNail: $thumbNail, comeFromPrepareScreen: .constant(false),backToPrepare: $backToPrepare))

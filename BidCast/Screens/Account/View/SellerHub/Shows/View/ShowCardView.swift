@@ -31,8 +31,8 @@ struct ShowCardView: View {
                 HStack {
                     Label(formatTo12HourTime(show?.time ?? ""), systemImage: "clock")
                         .font(.custom(poppinsSemiBold, size: 13.0))
-                    Label("\(show?.viewer_count ?? 0) RSVPs", systemImage: "person.3")
-                        .font(.custom(poppinsSemiBold, size: 13.0))
+//                    Label("\(show?.viewer_count ?? 0) RSVPs", systemImage: "person.3")
+//                        .font(.custom(poppinsSemiBold, size: 13.0))
                 }
             }
             Spacer()
@@ -47,7 +47,8 @@ struct ShowCardView: View {
                     .resizable()
                     .scaledToFit()
                     .foregroundColor(.black)
-                    .padding(12)
+                    .padding(.vertical,12)
+                    .padding(.trailing,4)
                     .frame(width: 50, height: 32)
                     .rotationEffect(.degrees(90))
                     .font(.custom(poppinsSemiBold, size: 32))

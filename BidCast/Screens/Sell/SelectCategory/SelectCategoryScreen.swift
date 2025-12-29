@@ -276,7 +276,7 @@ struct SelectCategoryScreen: View {
                         }
                         navigateToThumbnail = true
                         
-                    },cornerRadius : 12.0, btnTextColor: .white)
+                    },cornerRadius : 32.0, btnTextColor: .white)
                     .padding(.bottom, 0)
                 }
                 
