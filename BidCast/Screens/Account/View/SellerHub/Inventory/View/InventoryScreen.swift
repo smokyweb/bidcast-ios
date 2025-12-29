@@ -69,10 +69,7 @@ struct InventoryScreen: View {
         secondaryButtonTitle: nil,
         showButtons: true
     )
-    
-    
-    @Binding var selectedProductIDs: Set<String>
-    @Binding var selectedProductData: [ProductDataModel1]
+    var preSelectedProducts: [ProductDataModel1]?
     @State var productToEdit: ProductDataModel1 = ProductDataModel1()
     @StateObject var categoryViewModel = ListProductViewModel()
     @State var categoryList: [CategoryDataModel] = []
@@ -89,6 +86,9 @@ struct InventoryScreen: View {
     @State private var showFilterSheet: Bool = false
     
     @State private var marketPlaceSelected: Bool = false
+    @State var selectedProductIDs: Set<Int> = []
+    @State var selectedProducts: [ProductDataModel1] = []
+    var onProductsSelected: (([ProductDataModel1]) -> Void)?
     
     var body: some View {
         VStack(spacing: 0) {
@@ -100,42 +100,12 @@ struct InventoryScreen: View {
                     print("Manage Tapped")
                 }
             }
-           
-//            InventoryTabView(selectedTab: $segment) {
-//                clearFilter()
-//                Task {
-//                    await performAPICalls(
-//                        isConcurrent: true,
-//                        showLoader: false,
-//                        onError: { error in
-//                            alertType = .sheetType(
-//                                icon: .alert,
-//                                title: "Error",
-//                                message: errorDesc(error: error, message: productViewModel.errorMessage),
-//                                primaryBtnText: "",
-//                                secondaryBtnText: AppString.ok.localized
-//                            )
-//                            showError = true
-//                            canLoadMore = false
-//                            isFetchingMore = false
-//                        }, onSuccess: {
-//                            // On success
-//                            handleDataLoad()
-//                        }
-//                        
-//                    ) {
-//                        try await fetchInventory(for: segment, page: 1)
-//                    }
-//                }
-//            }
+            
+            
             HStack{
                 //            // MARK: - Search
                 SearchBarView(placeholder: "What are you looking for?") { debouncedText in
                     print("User stopped typing. Search: \(debouncedText)")
-//                    guard !debouncedText.isEmpty else {
-//                        return
-//                    }
-                    // Perform search logic here
                     searchText = debouncedText
                     currentPage = 1
                     self.inventoryList.removeAll()
@@ -164,7 +134,7 @@ struct InventoryScreen: View {
                         }
                     }
                 }
-//                .padding(.horizontal, 12)
+                //                .padding(.horizontal, 12)
                 PillsSelectorView(
                     titles: [],
                     selectedIndex: $selectedIndex,
@@ -213,47 +183,47 @@ struct InventoryScreen: View {
                 }
                 .padding(.horizontal)
             // MARK: - Pills Selector
-//            HStack(spacing: 0) {
-////                PillsSelectorView(
-////                    titles: [],
-////                    selectedIndex: $selectedIndex,
-////                    backgroundStyle: .roundedRect,
-////                    underlineEnabled: false,
-////                    showFilterButton: true,
-////                    showSortDropdown: false,
-////                    onSelectionChanged: { index, title in },
-////                    onFilterTapped: { showFilterSheet = true }
-////                )
-////                .fixedSize(horizontal: true, vertical: false)   // 👈 THE FIX
-//                
-//                PillItemView(title: "MarketPlace", isSelected: $marketPlaceSelected) { newValue in
-//                    Task {
-//                        await performAPICalls(
-//                            isConcurrent: true,
-//                            showLoader: false,
-//                            onError: { error in
-//                                alertType = .sheetType(
-//                                    icon: .alert,
-//                                    title: "Error",
-//                                    message: errorDesc(error: error, message: productViewModel.errorMessage),
-//                                    primaryBtnText: "",
-//                                    secondaryBtnText: AppString.ok.localized
-//                                )
-//                                showError = true
-//                                canLoadMore = false
-//                                isFetchingMore = false
-//                            },
-//                            onSuccess: { handleDataLoad() }
-//                        ) {
-//                            clearFilter()
-//                            try await fetchInventory(for: segment, page: 1)
-//                        }
-//                    }
-//                }
-//            }
-//            .frame(maxWidth: .infinity, alignment: .leading)
-//            .padding(.horizontal, 12)
-
+            //            HStack(spacing: 0) {
+            ////                PillsSelectorView(
+            ////                    titles: [],
+            ////                    selectedIndex: $selectedIndex,
+            ////                    backgroundStyle: .roundedRect,
+            ////                    underlineEnabled: false,
+            ////                    showFilterButton: true,
+            ////                    showSortDropdown: false,
+            ////                    onSelectionChanged: { index, title in },
+            ////                    onFilterTapped: { showFilterSheet = true }
+            ////                )
+            ////                .fixedSize(horizontal: true, vertical: false)   // 👈 THE FIX
+            //
+            //                PillItemView(title: "MarketPlace", isSelected: $marketPlaceSelected) { newValue in
+            //                    Task {
+            //                        await performAPICalls(
+            //                            isConcurrent: true,
+            //                            showLoader: false,
+            //                            onError: { error in
+            //                                alertType = .sheetType(
+            //                                    icon: .alert,
+            //                                    title: "Error",
+            //                                    message: errorDesc(error: error, message: productViewModel.errorMessage),
+            //                                    primaryBtnText: "",
+            //                                    secondaryBtnText: AppString.ok.localized
+            //                                )
+            //                                showError = true
+            //                                canLoadMore = false
+            //                                isFetchingMore = false
+            //                            },
+            //                            onSuccess: { handleDataLoad() }
+            //                        ) {
+            //                            clearFilter()
+            //                            try await fetchInventory(for: segment, page: 1)
+            //                        }
+            //                    }
+            //                }
+            //            }
+            //            .frame(maxWidth: .infinity, alignment: .leading)
+            //            .padding(.horizontal, 12)
+            
             
             // MARK: - Inventory List
             ScrollView {
@@ -274,6 +244,11 @@ struct InventoryScreen: View {
                             
                             ProductCardView(product: inventory,
                                             segmant: $segment,
+                                            isSelectionMode: navigatedFrom == .addProduct,
+                                            isSelected: selectedProductIDs.contains(inventory.id ?? 0),
+                                            onSelect: { product in
+                                toggleProductSelection(product)
+                            },
                                             onEdit: { product in
                                 productToEdit = product
                                 navigateToEditProduct = true
@@ -282,13 +257,13 @@ struct InventoryScreen: View {
                                 
                             }, onToggleActivation: { id in
                                 self.productId = id
-                                var status = "active"
+                                let status = "active"
                                 
                                 changeProductStatus(status: status)
                             },
                                             onToggleDeActivation: { id in
                                 self.productId = id
-                                var status = "inactive"
+                                let status = "inactive"
                                 
                                 changeProductStatus(status: status)
                             },
@@ -296,13 +271,13 @@ struct InventoryScreen: View {
                                             onDelete: { id in
                                 self.productId = id
                                 config = BottomSheetConfig(
-                                       icon: "trash.circle.fill",
-                                       title: "Delete Product?",
-                                       message:  "Are you sure you want to remove this product?",
-                                       primaryButtonTitle: "Delete",
-                                       secondaryButtonTitle: "Cancel",
-                                       bottomPadding: -80
-                                   )
+                                    icon: "trash.circle.fill",
+                                    title: "Delete Product?",
+                                    message:  "Are you sure you want to remove this product?",
+                                    primaryButtonTitle: "Delete",
+                                    secondaryButtonTitle: "Cancel",
+                                    bottomPadding: -80
+                                )
                                 showDeleteProduct = true
                             })
                             .onAppear {
@@ -316,7 +291,7 @@ struct InventoryScreen: View {
             }
             .padding(.vertical, 12)
             .background(.backGround)
-
+            
             // Loader at bottom
             if isFetchingMore {
                 ProgressView()
@@ -333,20 +308,30 @@ struct InventoryScreen: View {
                         navigateToCreateProduct = true
                     case .addProduct:
                         print("Select Existing Product")
+                        onProductsSelected?(selectedProducts)
                         self.presentationMode.wrappedValue.dismiss()
                     }
                 }) {
-                    Text(navigatedFrom.btnTitle)
-                        .font(.custom(poppinsSemiBold, size: 16))
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .background(
-                            .defaultTheme
-                        )
-                        .cornerRadius(14)
-//                        .shadow(color: Color.defaultTheme.opacity(0.4), radius: 12, x: 0, y: 6)
+                    HStack {
+                        Text(navigatedFrom.btnTitle)
+                            .font(.custom(poppinsSemiBold, size: 16))
+                        
+                        if navigatedFrom == .addProduct && !selectedProducts.isEmpty {
+                            Text("(\(selectedProducts.count))")
+                                .font(.custom(poppinsSemiBold, size: 16))
+                        }
+                    }
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background(
+                        navigatedFrom == .addProduct && selectedProducts.isEmpty
+                        ? Color.gray.opacity(0.5)
+                        : Color.defaultTheme
+                    )
+                    .cornerRadius(32)
                 }
+                .disabled(navigatedFrom == .addProduct && selectedProducts.isEmpty)
                 .padding(.horizontal, 20)
                 .padding(.vertical, 16)
             }
@@ -399,7 +384,8 @@ struct InventoryScreen: View {
         .padding(.bottom, -70)
         .toolbar(.hidden,for: .tabBar)
         .onFirstAppear {
-//            showAuctionSheet = false
+            //            showAuctionSheet = false
+            initializeSelectedProducts()
             Task {
                 await performAPICalls(
                     isConcurrent: true,
@@ -433,7 +419,7 @@ struct InventoryScreen: View {
                     _ = try await (categoryTask, inventoryTask)
                 }
             }
-           
+            
         }
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
@@ -488,8 +474,43 @@ struct InventoryScreen: View {
                 }
             )
         )
+        
+        
     }
-    
+    func toggleProductSelection(_ product: ProductDataModel1) {
+        guard let productId = product.id else { return }
+        
+        if selectedProductIDs.contains(productId) {
+            // Deselect
+            selectedProductIDs.remove(productId)
+            selectedProducts.removeAll { $0.id == productId }
+        } else {
+            // Select
+            selectedProductIDs.insert(productId)
+            selectedProducts.append(product)
+        }
+    }
+    private func maintainSelections() {
+            // Ensure selectedProducts contains the actual product objects from the loaded list
+            var updatedSelectedProducts: [ProductDataModel1] = []
+            
+            for selectedId in selectedProductIDs {
+                if let product = inventoryList.first(where: { $0.id == selectedId }) {
+                    updatedSelectedProducts.append(product)
+                }
+            }
+            
+            selectedProducts = updatedSelectedProducts
+            print("🟢 Maintained \(selectedProducts.count) selections after data load")
+        }
+    private func initializeSelectedProducts() {
+            // Set selected product IDs from pre-selected products
+        selectedProductIDs = Set(preSelectedProducts?.compactMap { $0.id } ?? [])
+        selectedProducts = preSelectedProducts ?? []
+            
+            print("🔵 Initialized with \(selectedProducts.count) pre-selected products")
+            print("🔵 Selected IDs: \(selectedProductIDs)")
+        }
     
     private func deleteProduct(with productId: Int) {
         Task {
@@ -520,7 +541,7 @@ struct InventoryScreen: View {
     
     // MARK: - deleteProductSuccess
     func deleteProductSuccess() {
-//        SVProgressHUD.dismiss()
+        //        SVProgressHUD.dismiss()
         let response = viewModel.deleteProductResponse
         if response.status == "success" {
             self.showSellSheet = false
@@ -632,297 +653,299 @@ struct InventoryScreen: View {
         }
     }
     
-//    // MARK: - Fetch Inventory List
-//    func fetchInventory(for segment: InventorySegment,page: Int) async throws{
-//        request.status = segment.rawValue.lowercased()
-//        request.page = page
-//        request.search = searchText
-//        if !selectedCategoryId.isEmpty {
-//            request.category_ids = selectedCategoryId.toCommaSeparatedString()
-//        }
-//       
-//        request.marketplace = "\(marketPlaceSelected)"
-//        if format != "" {
-//            request.format = format
-//        }
-//        if minPrice != 0.0 {
-//            request.min_price = minPrice.toString()
-//        }
-//        if maxPrice != 0.0 {
-//            request.max_price = maxPrice.toString()
-//        }
-//        if !selectedCondition.isEmpty {
-//            request.conditions = selectedCondition.toCommaSeparatedString()
-//        }
-//        isLoading = true
-//        canLoadMore = false
-//        isFetchingMore = false
-//        try await productViewModel.getProductsData1(parameters: request)
-//    }
-//    
-//    func handlePagination(index: Int) {
-//        let isLastItem = index == inventoryList.count - 1
-//        let canFetchMore = (productViewModel.productsResponse1?.total ?? 0) > inventoryList.count
-//        guard canLoadMore, !isFetchingMore else { return }
-//        if isLastItem && canFetchMore {
-//            isFetchingMore = true
-//            fetchMoreInventory()
-//        }
-//    }
-//    
-//    private func clearFilter() {
-//        inventoryList = []
-//        currentPage = 1
-//        searchText = ""
-//        selectedCategoryId = []
-//        format = ""
-//        minPrice = 0.0
-//        maxPrice = 0.0
-//        selectedCondition = []
-//    }
-//    
-//    // MARK: - Handle ViewModel Data
-//    func handleDataLoad() {
-//
-//        let response = productViewModel.productsResponse1
-//        isLoading = false
-//        if response?.status == "success" {
-//            // append new data
-//            if currentPage == 1  {
-//                self.inventoryList = response?.data ?? []
-//            }
-//            else  {
-//                self.inventoryList += response?.data ?? []
-//            }
-//        } else {
-//            alertType = .sheetType(
-//                icon: .alert,
-//                title: "Error",
-//                message: productViewModel.errorMessage ?? "",
-//                primaryBtnText: AppString.ok.localized,
-//                secondaryBtnText:""
-//            )
-//            showError = true
-//        }
-//        isFetchingMore = false
-//        canLoadMore = false
-//    }
-//    
-//    func fetchMoreInventory() {
-//        Task {
-//            currentPage += 1
-////            request.status = status
-////            request.page = currentPage
-////            if !selectedCategoryId.isEmpty {
-////                request.categoryIds = selectedCategoryId.toCommaSeparatedString()
-////            }
-//            request.status = segment.rawValue.lowercased()
-//            request.page = currentPage
-//            request.search = searchText
-//            if !selectedCategoryId.isEmpty {
-//                request.category_ids = selectedCategoryId.toCommaSeparatedString()
-//            }
-//           
-//            request.marketplace = "\(marketPlaceSelected)"
-//            if format != "" {
-//                request.format = format
-//            }
-//            if minPrice != 0.0 {
-//                request.min_price = minPrice.toString()
-//            }
-//            if maxPrice != 0.0 {
-//                request.max_price = maxPrice.toString()
-//            }
-//            if !selectedCondition.isEmpty {
-//                request.conditions = selectedCondition.toCommaSeparatedString()
-//            }
-////            isLoading = true
-//            
-//            try await productViewModel.getProductsData1(parameters: request)
-//            handleDataLoad()
-//        }
-//    }
+    //    // MARK: - Fetch Inventory List
+    //    func fetchInventory(for segment: InventorySegment,page: Int) async throws{
+    //        request.status = segment.rawValue.lowercased()
+    //        request.page = page
+    //        request.search = searchText
+    //        if !selectedCategoryId.isEmpty {
+    //            request.category_ids = selectedCategoryId.toCommaSeparatedString()
+    //        }
+    //
+    //        request.marketplace = "\(marketPlaceSelected)"
+    //        if format != "" {
+    //            request.format = format
+    //        }
+    //        if minPrice != 0.0 {
+    //            request.min_price = minPrice.toString()
+    //        }
+    //        if maxPrice != 0.0 {
+    //            request.max_price = maxPrice.toString()
+    //        }
+    //        if !selectedCondition.isEmpty {
+    //            request.conditions = selectedCondition.toCommaSeparatedString()
+    //        }
+    //        isLoading = true
+    //        canLoadMore = false
+    //        isFetchingMore = false
+    //        try await productViewModel.getProductsData1(parameters: request)
+    //    }
+    //
+    //    func handlePagination(index: Int) {
+    //        let isLastItem = index == inventoryList.count - 1
+    //        let canFetchMore = (productViewModel.productsResponse1?.total ?? 0) > inventoryList.count
+    //        guard canLoadMore, !isFetchingMore else { return }
+    //        if isLastItem && canFetchMore {
+    //            isFetchingMore = true
+    //            fetchMoreInventory()
+    //        }
+    //    }
+    //
+    //    private func clearFilter() {
+    //        inventoryList = []
+    //        currentPage = 1
+    //        searchText = ""
+    //        selectedCategoryId = []
+    //        format = ""
+    //        minPrice = 0.0
+    //        maxPrice = 0.0
+    //        selectedCondition = []
+    //    }
+    //
+    //    // MARK: - Handle ViewModel Data
+    //    func handleDataLoad() {
+    //
+    //        let response = productViewModel.productsResponse1
+    //        isLoading = false
+    //        if response?.status == "success" {
+    //            // append new data
+    //            if currentPage == 1  {
+    //                self.inventoryList = response?.data ?? []
+    //            }
+    //            else  {
+    //                self.inventoryList += response?.data ?? []
+    //            }
+    //        } else {
+    //            alertType = .sheetType(
+    //                icon: .alert,
+    //                title: "Error",
+    //                message: productViewModel.errorMessage ?? "",
+    //                primaryBtnText: AppString.ok.localized,
+    //                secondaryBtnText:""
+    //            )
+    //            showError = true
+    //        }
+    //        isFetchingMore = false
+    //        canLoadMore = false
+    //    }
+    //
+    //    func fetchMoreInventory() {
+    //        Task {
+    //            currentPage += 1
+    ////            request.status = status
+    ////            request.page = currentPage
+    ////            if !selectedCategoryId.isEmpty {
+    ////                request.categoryIds = selectedCategoryId.toCommaSeparatedString()
+    ////            }
+    //            request.status = segment.rawValue.lowercased()
+    //            request.page = currentPage
+    //            request.search = searchText
+    //            if !selectedCategoryId.isEmpty {
+    //                request.category_ids = selectedCategoryId.toCommaSeparatedString()
+    //            }
+    //
+    //            request.marketplace = "\(marketPlaceSelected)"
+    //            if format != "" {
+    //                request.format = format
+    //            }
+    //            if minPrice != 0.0 {
+    //                request.min_price = minPrice.toString()
+    //            }
+    //            if maxPrice != 0.0 {
+    //                request.max_price = maxPrice.toString()
+    //            }
+    //            if !selectedCondition.isEmpty {
+    //                request.conditions = selectedCondition.toCommaSeparatedString()
+    //            }
+    ////            isLoading = true
+    //
+    //            try await productViewModel.getProductsData1(parameters: request)
+    //            handleDataLoad()
+    //        }
+    //    }
     
     
-       /// Checks if we should load more data when a specific item appears
-       private func checkAndLoadMore(currentIndex: Int) {
-           // Don't load if:
-           // 1. Already fetching
-           // 2. Can't load more (reached end)
-           // 3. Still loading initial data
-           guard !isFetchingMore, canLoadMore, !isLoading else { return }
-           
-           // Calculate threshold (load more when user is 3 items from the end)
-           let thresholdIndex = inventoryList.count - 3
-           
-           // Trigger load more when user scrolls near the end
-           if currentIndex >= thresholdIndex {
-               loadMoreData()
-           }
-       }
-       
-       /// Loads the next page of data
-       private func loadMoreData() {
-           // Prevent multiple simultaneous calls
-           guard !isFetchingMore else { return }
-           
-           // Check if there's more data to load
-           let totalItems = productViewModel.productsResponse1?.total ?? 0
-           let currentItemCount = inventoryList.count
-           
-           guard currentItemCount < totalItems else {
-               // We've loaded all items
-               canLoadMore = false
-               return
-           }
-           
-           // Set fetching flag
-           isFetchingMore = true
-           
-           // Increment page and fetch
-           currentPage += 1
-           
-           Task {
-               await performAPICalls(
-                   isConcurrent: false,
-                   showLoader: false,
-                   onError: { error in
-                       // ✅ Reset pagination state on error
-                       isFetchingMore = false
-                       currentPage -= 1 // Rollback page increment
-                       
-                       alertType = .sheetType(
+    /// Checks if we should load more data when a specific item appears
+    private func checkAndLoadMore(currentIndex: Int) {
+        // Don't load if:
+        // 1. Already fetching
+        // 2. Can't load more (reached end)
+        // 3. Still loading initial data
+        guard !isFetchingMore, canLoadMore, !isLoading else { return }
+        
+        // Calculate threshold (load more when user is 3 items from the end)
+        let thresholdIndex = inventoryList.count - 3
+        
+        // Trigger load more when user scrolls near the end
+        if currentIndex >= thresholdIndex {
+            loadMoreData()
+        }
+    }
+    
+    /// Loads the next page of data
+    private func loadMoreData() {
+        // Prevent multiple simultaneous calls
+        guard !isFetchingMore else { return }
+        
+        // Check if there's more data to load
+        let totalItems = productViewModel.productsResponse1?.total ?? 0
+        let currentItemCount = inventoryList.count
+        
+        guard currentItemCount < totalItems else {
+            // We've loaded all items
+            canLoadMore = false
+            return
+        }
+        
+        // Set fetching flag
+        isFetchingMore = true
+        
+        // Increment page and fetch
+        currentPage += 1
+        
+        Task {
+            await performAPICalls(
+                isConcurrent: false,
+                showLoader: false,
+                onError: { error in
+                    // ✅ Reset pagination state on error
+                    isFetchingMore = false
+                    currentPage -= 1 // Rollback page increment
+                    
+                    alertType = .sheetType(
                         icon: .alert,
                         title: "Error",
                         message: errorDesc(error: error, message: productViewModel.errorMessage),
                         primaryBtnText: "",
                         secondaryBtnText: AppString.ok.localized
-                       )
-                       showError = true
-                   },
-                   onSuccess: {
-                       // ✅ Handle successful data load
-                       
-                       handlePaginationSuccess()
-                       
-                   }
-               ) {
-                   try await fetchInventory(for: segment, page: currentPage)
-               }
-           }
-       }
-       
-       /// Handles successful pagination response
-       private func handlePaginationSuccess() {
-           let response = productViewModel.productsResponse1
-           
-           guard response?.status == "success" else {
-               // Handle error case
-               isFetchingMore = false
-               currentPage -= 1 // Rollback
-               return
-           }
-           
-           // Append new data
-           let newData = response?.data ?? []
-           inventoryList.append(contentsOf: newData)
-           
-           // Update pagination state
-           let totalItems = response?.total ?? 0
-           let currentItemCount = inventoryList.count
-           
-           // Check if we can load more
-           canLoadMore = currentItemCount < totalItems
-           isFetchingMore = false
-           
-           print("📄 Loaded page \(currentPage): \(newData.count) items | Total: \(currentItemCount)/\(totalItems)")
-       }
-       
-       // MARK: - ✅ CORRECTED Fetch Inventory
-       func fetchInventory(for segment: InventorySegment, page: Int) async throws {
-           // Build request
-           request.status = segment.rawValue.lowercased()
-           request.page = page
-           request.search = searchText
-           request.marketplace = "\(marketPlaceSelected)"
-           
-           // Apply filters
-           if !selectedCategoryId.isEmpty {
-               request.category_ids = selectedCategoryId.toCommaSeparatedString()
-           }
-           else {
-               request.category_ids?.removeAll()
-           }
-//           if format != "" {
-               request.format = format
-//           }
-           if minPrice != 0.0 {
-               request.min_price = minPrice.toString()
-           }
-           if maxPrice != 0.0 {
-               request.max_price = maxPrice.toString()
-           }
-//           if !selectedCondition.isEmpty {
-               request.conditions = selectedCondition.toCommaSeparatedString()
-//           }
-           
-           // ✅ Only show loading for first page
-           if page == 1 {
-               isLoading = true
-           }
-           
-           // Make API call
-           try await productViewModel.getProductsData1(parameters: request)
-       }
-       
-       // MARK: - ✅ CORRECTED Handle Data Load
-       func handleDataLoad() {
-           let response = productViewModel.productsResponse1
-           isLoading = false
-           
-           if response?.status == "success" {
-               // ✅ For page 1, replace data. For other pages, append (handled in handlePaginationSuccess)
-               if currentPage == 1 {
-                   self.inventoryList = response?.data ?? []
-                   
-                   // ✅ Reset pagination state for fresh data
-                   let totalItems = response?.total ?? 0
-                   canLoadMore = inventoryList.count < totalItems
-                   isFetchingMore = false
-                   
-                   print("📄 Initial load: \(inventoryList.count) items | Total: \(totalItems)")
-               }
-           } else {
-               alertType = .sheetType(
-                   icon: .alert,
-                   title: "Error",
-                   message: productViewModel.errorMessage ?? "",
-                   primaryBtnText: AppString.ok.localized,
-                   secondaryBtnText: ""
-               )
-               showError = true
-               
-               // ✅ Reset pagination state
-               canLoadMore = false
-               isFetchingMore = false
-           }
-       }
-       
-       // MARK: - ✅ UPDATED Clear Filter
-       private func clearFilter() {
-           inventoryList = []
-           currentPage = 1
-           searchText = ""
-           selectedCategoryId = []
-           format = ""
-           minPrice = 0.0
-           maxPrice = 0.0
-           selectedCondition = []
-           
-           // ✅ Reset pagination state
-           canLoadMore = true
-           isFetchingMore = false
-       }
+                    )
+                    showError = true
+                },
+                onSuccess: {
+                    // ✅ Handle successful data load
+                    
+                    handlePaginationSuccess()
+                    
+                }
+            ) {
+                try await fetchInventory(for: segment, page: currentPage)
+            }
+        }
+    }
+    
+    /// Handles successful pagination response
+    private func handlePaginationSuccess() {
+        let response = productViewModel.productsResponse1
+        
+        guard response?.status == "success" else {
+            // Handle error case
+            isFetchingMore = false
+            currentPage -= 1 // Rollback
+            return
+        }
+        
+        // Append new data
+        let newData = response?.data ?? []
+        inventoryList.append(contentsOf: newData)
+        
+        // Update pagination state
+        let totalItems = response?.total ?? 0
+        let currentItemCount = inventoryList.count
+        
+        // Check if we can load more
+        canLoadMore = currentItemCount < totalItems
+        isFetchingMore = false
+        
+        print("📄 Loaded page \(currentPage): \(newData.count) items | Total: \(currentItemCount)/\(totalItems)")
+    }
+    
+    // MARK: - ✅ CORRECTED Fetch Inventory
+    func fetchInventory(for segment: InventorySegment, page: Int) async throws {
+        // Build request
+        request.status = segment.rawValue.lowercased()
+        request.page = page
+        request.search = searchText
+        request.marketplace = "\(marketPlaceSelected)"
+        
+        // Apply filters
+        if !selectedCategoryId.isEmpty {
+            request.category_ids = selectedCategoryId.toCommaSeparatedString()
+        }
+        else {
+            request.category_ids?.removeAll()
+        }
+        //           if format != "" {
+        request.format = format
+        //           }
+        if minPrice != 0.0 {
+            request.min_price = minPrice.toString()
+        }
+        if maxPrice != 0.0 {
+            request.max_price = maxPrice.toString()
+        }
+        //           if !selectedCondition.isEmpty {
+        request.conditions = selectedCondition.toCommaSeparatedString()
+        //           }
+        
+        // ✅ Only show loading for first page
+        if page == 1 {
+            isLoading = true
+        }
+        
+        // Make API call
+        try await productViewModel.getProductsData1(parameters: request)
+    }
+    
+    // MARK: - ✅ CORRECTED Handle Data Load
+    func handleDataLoad() {
+        let response = productViewModel.productsResponse1
+        isLoading = false
+        
+        if response?.status == "success" {
+            // ✅ For page 1, replace data. For other pages, append (handled in handlePaginationSuccess)
+            if currentPage == 1 {
+                self.inventoryList = response?.data ?? []
+                maintainSelections()
+                // ✅ Reset pagination state for fresh data
+                let totalItems = response?.total ?? 0
+                canLoadMore = inventoryList.count < totalItems
+                isFetchingMore = false
+                
+                print("📄 Initial load: \(inventoryList.count) items | Total: \(totalItems)")
+            }
+        } else {
+            alertType = .sheetType(
+                icon: .alert,
+                title: "Error",
+                message: productViewModel.errorMessage ?? "",
+                primaryBtnText: AppString.ok.localized,
+                secondaryBtnText: ""
+            )
+            showError = true
+            
+            // ✅ Reset pagination state
+            canLoadMore = false
+            isFetchingMore = false
+        }
+    }
+    
+    // MARK: - ✅ UPDATED Clear Filter
+    private func clearFilter() {
+        inventoryList = []
+        currentPage = 1
+        searchText = ""
+        if navigatedFrom != .addProduct{
+            selectedCategoryId = []
+        }
+        format = ""
+        minPrice = 0.0
+        maxPrice = 0.0
+        selectedCondition = []
+        
+        // ✅ Reset pagination state
+        canLoadMore = true
+        isFetchingMore = false
+    }
 }
 
 // MARK: - Inventory Segment Enum
@@ -968,8 +991,8 @@ struct InventoryTopHeaderView: View {
                     Image(systemName: "chevron.left")
                         .font(.custom(poppinsBold, size: 16))
                     
-//                    Text("Back")
-//                        .font(.custom(poppinsSemiBold, size: 16))
+                    //                    Text("Back")
+                    //                        .font(.custom(poppinsSemiBold, size: 16))
                 }
                 .foregroundColor(.primary)
             }
@@ -982,14 +1005,14 @@ struct InventoryTopHeaderView: View {
             
             Spacer()
             
-//            Button(action: {
-//                // Manage action
-//                manageBtnTapped()
-//            }) {
-//                Text("Manage")
-//                    .font(.custom(poppinsSemiBold, size: 16))
-//                    .foregroundColor(.defaultTheme)
-//            }
+            //            Button(action: {
+            //                // Manage action
+            //                manageBtnTapped()
+            //            }) {
+            //                Text("Manage")
+            //                    .font(.custom(poppinsSemiBold, size: 16))
+            //                    .foregroundColor(.defaultTheme)
+            //            }
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 12)
@@ -1001,7 +1024,7 @@ struct InventoryTopHeaderView: View {
 import SwiftUI
 
 struct InventoryTabView: View {
-
+    
     @Binding var selectedTab: InventorySegment
     
     var tabChangeClosure: (() -> Void)? = nil
@@ -1045,7 +1068,6 @@ struct InventoryTabView: View {
         .background(Color(.systemBackground))
     }
 }
-import SwiftUI
 
 struct ProductCardView: View {
     let product: ProductDataModel1
@@ -1053,6 +1075,11 @@ struct ProductCardView: View {
     @State private var showActions: Bool = false
     @State private var isLongPressing: Bool = false
     @Binding var segmant: InventorySegment
+    
+    var isSelectionMode: Bool = false
+    var isSelected: Bool = false
+    var onSelect: ((ProductDataModel1) -> Void)?
+    
     var onEdit: ((ProductDataModel1) -> Void)?
     var onDuplicate: (() -> Void)?
     var onToggleActivation: ((Int) -> Void)?
@@ -1060,119 +1087,170 @@ struct ProductCardView: View {
     var onDelete: ((Int) -> Void)?
     
     var body: some View {
-        ZStack(alignment: .topTrailing) {
-            HStack{
-                cardContent
-                Spacer()
-                Menu {
-                    VStack(alignment: .leading, spacing: 0) {
-                        // Edit Option
-                        MenuOptionButton(
-                            icon: "pencil",
-                            title: "Edit",
-                            iconColor: .blue
-                        ) {
-                            handleEdit()
-                        }
-                        
-                        //                    Divider()
-                        //                        .padding(.horizontal, 12)
-                        
-                        // Activate/Deactivate Option
-                        if segmant == .active {
-                            MenuOptionButton(
-                                icon: product.status == "active" ? "eye.slash" : "eye",
-                                title: product.status == "active" ? "Deactivate" : "Activate",
-                                iconColor: product.status == "active" ? .orange : .green
-                            ) {
-                                if product.status == "active" {
-                                    handleToggleDeActivation()
-                                } else {
-                                    handleToggleActivation()
-                                }
-                            }
-                        } else {
-                            MenuOptionButton(
-                                icon: "eye",
-                                title: "Activate",
-                                iconColor: .green
-                            ) {
-                                handleToggleActivation()
-                            }
-                        }
-                        //
-                        //                    Divider()
-                        //                        .padding(.horizontal, 12)
-                        
-                        // Delete Option
-                        MenuOptionButton(
-                            icon: "trash",
-                            title: "Delete",
-                            iconColor: .red
-                        ) {
-                            handleDelete()
-                        }
-                    }
-                    .frame(width: 120)
-                    .background(
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(Color(.systemBackground))
-                            .shadow(
-                                color: Color.black.opacity(0.15),
-                                radius: 20,
-                                x: 0,
-                                y: 8
-                            )
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 16)
-                            .stroke(Color.gray.opacity(0.15), lineWidth: 1)
-                    )
-                    .padding(.top, 56)
-                    .padding(.trailing, 16)
-                    .transition(.scale(scale: 0.95).combined(with: .opacity))
-                    .zIndex(3)
-                } label: {
-                    Image(systemName: "ellipsis")
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(.gray)
-                        .padding(.top, 20)
-                        .frame(width: 32, height: 32)
-                        .background(Color(.systemBackground))
-                        .clipShape(Circle())
-                        .rotationEffect(.degrees(90))
-                }
-            }
-            .background(
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(Color(.systemBackground))
-                    .shadow(
-                        color: Color.black.opacity(0.08),
-                        radius: 12,
-                        x: 0,
-                        y: 4
-                    )
-            )
-//            .overlay(
-//                RoundedRectangle(cornerRadius: 20)
-//                    .stroke(
-//                        Color.gray.opacity(0.1),
-//                        lineWidth: 1
-//                    )
-//            )
-
-        }
-        .background(
-            Color.black.opacity(0.001)
-                .onTapGesture {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                        showActions = false
-                    }
-                }
-                .allowsHitTesting(showActions)
-        )
+        mainContent
+            .background(backgroundDimmer)
     }
     
+    // MARK: - Main Content
+    private var mainContent: some View {
+        ZStack(alignment: .topTrailing) {
+            cardContainer
+        }
+    }
+    
+    // MARK: - Card Container
+    private var cardContainer: some View {
+        HStack {
+            cardContent
+            Spacer()
+            if !isSelectionMode {
+                menuButton
+            }
+        }
+        .background(cardBackground)
+        .overlay(cardBorder)
+        .onTapGesture {
+            if isSelectionMode {
+                onSelect?(product)
+            }
+        }
+    }
+    
+    // MARK: - Card Background
+    private var cardBackground: some View {
+        RoundedRectangle(cornerRadius: 20)
+            .fill(Color(.systemBackground))
+            .shadow(
+                color: Color.black.opacity(0.08),
+                radius: 12,
+                x: 0,
+                y: 4
+            )
+    }
+    
+    // MARK: - Card Border
+    private var cardBorder: some View {
+        RoundedRectangle(cornerRadius: 20)
+            .stroke(
+                borderColor,
+                lineWidth: borderWidth
+            )
+            .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isSelected)
+    }
+    
+    private var borderColor: Color {
+        isSelectionMode && isSelected ? Color.defaultTheme : Color.gray.opacity(0.1)
+    }
+    
+    private var borderWidth: CGFloat {
+        isSelectionMode && isSelected ? 3 : 1
+    }
+    
+    // MARK: - Menu Button
+    private var menuButton: some View {
+        Menu {
+            menuContent
+        } label: {
+            menuButtonLabel
+        }
+    }
+    
+    // MARK: - Menu Content
+    @ViewBuilder
+    private var menuContent: some View {
+        Group {
+            editOption
+            activationOption
+            deleteOption
+        }
+    }
+    
+    private var menuBackground: some View {
+        RoundedRectangle(cornerRadius: 16)
+            .fill(Color(.systemBackground))
+            .shadow(
+                color: Color.black.opacity(0.15),
+                radius: 20,
+                x: 0,
+                y: 8
+            )
+    }
+    
+    private var menuBorder: some View {
+        RoundedRectangle(cornerRadius: 16)
+            .stroke(Color.gray.opacity(0.15), lineWidth: 1)
+    }
+    
+    // MARK: - Menu Options
+    private var editOption: some View {
+        MenuOptionButton(
+            icon: "pencil",
+            title: "Edit",
+            iconColor: .blue
+        ) {
+            handleEdit()
+        }
+    }
+    
+    @ViewBuilder
+    private var activationOption: some View {
+        if segmant == .active {
+            MenuOptionButton(
+                icon: product.status == "active" ? "eye.slash" : "eye",
+                title: product.status == "active" ? "Deactivate" : "Activate",
+                iconColor: product.status == "active" ? .orange : .green
+            ) {
+                if product.status == "active" {
+                    handleToggleDeActivation()
+                } else {
+                    handleToggleActivation()
+                }
+            }
+        } else {
+            MenuOptionButton(
+                icon: "eye",
+                title: "Activate",
+                iconColor: .green
+            ) {
+                handleToggleActivation()
+            }
+        }
+    }
+    
+    private var deleteOption: some View {
+        MenuOptionButton(
+            icon: "trash",
+            title: "Delete",
+            iconColor: .red
+        ) {
+            handleDelete()
+        }
+    }
+    
+    // MARK: - Menu Button Label
+    private var menuButtonLabel: some View {
+        Image(systemName: "ellipsis")
+            .font(.system(size: 18, weight: .semibold))
+            .foregroundColor(.gray)
+            .padding(.top, 20)
+            .frame(width: 32, height: 32)
+            .background(Color(.systemBackground))
+            .clipShape(Circle())
+            .rotationEffect(.degrees(90))
+    }
+    
+    // MARK: - Background Dimmer
+    private var backgroundDimmer: some View {
+        Color.black.opacity(0.001)
+            .onTapGesture {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                    showActions = false
+                }
+            }
+            .allowsHitTesting(showActions)
+    }
+    
+    // MARK: - Action Handlers
     private func handleEdit() {
         closeActionsMenu {
             onEdit?(product)
@@ -1214,121 +1292,83 @@ struct ProductCardView: View {
     }
 }
 
-// MARK: - Menu Option Button
-struct MenuOptionButton: View {
-    let icon: String
-    let title: String
-    let iconColor: Color
-    let action: () -> Void
-    
-    @State private var isPressed = false
-    
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: 12) {
-                Image(systemName: icon)
-                    .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(iconColor)
-                    .frame(width: 24, height: 24)
-                
-                Text(title)
-                    .font(.system(size: 15, weight: .medium))
-                    .foregroundColor(.primary)
-                
-                Spacer()
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 14)
-            .background(isPressed ? Color.gray.opacity(0.1) : Color.clear)
-        }
-        .buttonStyle(PlainButtonStyle())
-        .simultaneousGesture(
-            DragGesture(minimumDistance: 0)
-                .onChanged { _ in
-                    isPressed = true
-                }
-                .onEnded { _ in
-                    isPressed = false
-                }
-        )
-    }
-}
-
+// MARK: - Card Content Extension
 extension ProductCardView {
     var cardContent: some View {
         HStack(spacing: 16) {
             productImageView
             productDetailsView
         }
-        .padding(.horizontal,8)
-        .padding(.vertical,16)
-//        .background(
-//            RoundedRectangle(cornerRadius: 20)
-//                .fill(Color(.systemBackground))
-//                .shadow(
-//                    color: isLongPressing ? Color.defaultTheme.opacity(0.2) : Color.black.opacity(0.08),
-//                    radius: isLongPressing ? 16 : 12,
-//                    x: 0,
-//                    y: isLongPressing ? 6 : 4
-//                )
-//        )
-//        .overlay(
-//            RoundedRectangle(cornerRadius: 20)
-//                .stroke(
-//                    isLongPressing ? Color.defaultTheme.opacity(0.3) : Color.gray.opacity(0.1),
-//                    lineWidth: isLongPressing ? 2 : 1
-//                )
-//        )
-        .scaleEffect(isPressed ? 0.98 : (isLongPressing ? 1.02 : 1.0))
-        .opacity(product.status == "inactive" ? 0.7 : 1.0)
+        .padding(.horizontal, 8)
+        .padding(.vertical, 16)
+        .scaleEffect(scaleAmount)
+        .opacity(opacityAmount)
+    }
+    
+    private var scaleAmount: CGFloat {
+        isPressed ? 0.98 : (isLongPressing ? 1.02 : 1.0)
+    }
+    
+    private var opacityAmount: Double {
+        product.status == "inactive" ? 0.7 : 1.0
     }
 }
+
+// MARK: - Product Image Extension
 extension ProductCardView {
     var productImageView: some View {
-        VStack {
-            CustomProfileImage(url: product.images?.first ?? "", isCircular: false, size: 120)
-        }
+        CustomProfileImage(
+            url: product.images?.first ?? "",
+            isCircular: false,
+            size: 120
+        )
         .frame(width: 120, height: 120)
     }
 }
+
+// MARK: - Product Details Extension
 extension ProductCardView {
     var productDetailsView: some View {
         VStack(alignment: .leading, spacing: 8) {
-//            if product.status == "inactive" {
-//                badgeView(title: "Inactive", color: .orange)
-//            } else if (product.quantity ?? 0) == 0 {
-//                badgeView(title: "Out of Stock", color: .red)
-//            }
-            
-            Text(product.title?.capitalizingFirstLetter() ?? "")
-                .font(.custom(poppinsSemiBold, size: 16))
-                .foregroundColor(.primary)
-                .lineLimit(2)
-            
-            HStack(spacing: 8) {
-//                Text(product.condition ?? "New")
-                Text(product.productCondition ?? "New")
-                    .font(.custom(poppinsRegular, size: 13))
-                    .foregroundColor(.secondary)
-                
-                Circle()
-                    .fill(Color.secondary)
-                    .frame(width: 3, height: 3)
-                
-                Text(product.category?.name ?? "Category")
-                    .font(.custom(poppinsRegular, size: 13))
-                    .foregroundColor(.secondary)
-            }
-            
-            Text("Quantity: \(product.quantity ?? "0")")
-                .font(.custom(poppinsRegular, size: 13))
-                .foregroundColor(.secondary)
-            
+            productTitle
+            productMetadata
+            productQuantity
             priceSectionView
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
+    
+    private var productTitle: some View {
+        Text(product.title?.capitalizingFirstLetter() ?? "")
+            .font(.custom(poppinsSemiBold, size: 16))
+            .foregroundColor(.primary)
+            .lineLimit(2)
+    }
+    
+    private var productMetadata: some View {
+        HStack(spacing: 8) {
+            Text(product.productCondition ?? "New")
+                .font(.custom(poppinsRegular, size: 13))
+                .foregroundColor(.secondary)
+            
+            Circle()
+                .fill(Color.secondary)
+                .frame(width: 3, height: 3)
+            
+            Text(product.category?.name ?? "Category")
+                .font(.custom(poppinsRegular, size: 13))
+                .foregroundColor(.secondary)
+        }
+    }
+    
+    private var productQuantity: some View {
+        Text("Quantity: \(product.quantity ?? "0")")
+            .font(.custom(poppinsRegular, size: 13))
+            .foregroundColor(.secondary)
+    }
 }
+
+// MARK: - Badge View Extension
 extension ProductCardView {
     func badgeView(title: String, color: Color) -> some View {
         HStack(spacing: 6) {
@@ -1349,6 +1389,8 @@ extension ProductCardView {
         )
     }
 }
+
+// MARK: - Price Section Extension
 extension ProductCardView {
     var priceSectionView: some View {
         VStack(spacing: 8) {
@@ -1362,6 +1404,8 @@ extension ProductCardView {
         }
     }
 }
+
+// MARK: - Animation Extension
 extension ProductCardView {
     func animatePress() {
         withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
@@ -1374,6 +1418,219 @@ extension ProductCardView {
         }
     }
 }
+
+// MARK: - Menu Option Button (Keep as is)
+struct MenuOptionButton: View {
+    let icon: String
+    let title: String
+    let iconColor: Color
+    let action: () -> Void
+    
+    @State private var isPressed = false
+    
+    var body: some View {
+        Button(action: action) {
+            menuContent
+        }
+        .buttonStyle(PlainButtonStyle())
+        .simultaneousGesture(pressGesture)
+    }
+    
+    private var menuContent: some View {
+        HStack(spacing: 12) {
+            iconView
+            titleView
+            Spacer()
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 14)
+        .background(isPressed ? Color.gray.opacity(0.1) : Color.clear)
+    }
+    
+    private var iconView: some View {
+        Image(systemName: icon)
+            .font(.system(size: 16, weight: .medium))
+            .foregroundColor(iconColor)
+            .frame(width: 24, height: 24)
+    }
+    
+    private var titleView: some View {
+        Text(title)
+            .font(.system(size: 15, weight: .medium))
+            .foregroundColor(.primary)
+    }
+    
+    private var pressGesture: some Gesture {
+        DragGesture(minimumDistance: 0)
+            .onChanged { _ in
+                isPressed = true
+            }
+            .onEnded { _ in
+                isPressed = false
+            }
+    }
+}
+
+// MARK: - Menu Option Button
+//struct MenuOptionButton: View {
+//    let icon: String
+//    let title: String
+//    let iconColor: Color
+//    let action: () -> Void
+//    
+//    @State private var isPressed = false
+//    
+//    var body: some View {
+//        Button(action: action) {
+//            HStack(spacing: 12) {
+//                Image(systemName: icon)
+//                    .font(.system(size: 16, weight: .medium))
+//                    .foregroundColor(iconColor)
+//                    .frame(width: 24, height: 24)
+//                
+//                Text(title)
+//                    .font(.system(size: 15, weight: .medium))
+//                    .foregroundColor(.primary)
+//                
+//                Spacer()
+//            }
+//            .padding(.horizontal, 16)
+//            .padding(.vertical, 14)
+//            .background(isPressed ? Color.gray.opacity(0.1) : Color.clear)
+//        }
+//        .buttonStyle(PlainButtonStyle())
+//        .simultaneousGesture(
+//            DragGesture(minimumDistance: 0)
+//                .onChanged { _ in
+//                    isPressed = true
+//                }
+//                .onEnded { _ in
+//                    isPressed = false
+//                }
+//        )
+//    }
+//}
+
+//extension ProductCardView {
+//    var cardContent: some View {
+//        HStack(spacing: 16) {
+//            productImageView
+//            productDetailsView
+//        }
+//        .padding(.horizontal,8)
+//        .padding(.vertical,16)
+//        //        .background(
+//        //            RoundedRectangle(cornerRadius: 20)
+//        //                .fill(Color(.systemBackground))
+//        //                .shadow(
+//        //                    color: isLongPressing ? Color.defaultTheme.opacity(0.2) : Color.black.opacity(0.08),
+//        //                    radius: isLongPressing ? 16 : 12,
+//        //                    x: 0,
+//        //                    y: isLongPressing ? 6 : 4
+//        //                )
+//        //        )
+//        //        .overlay(
+//        //            RoundedRectangle(cornerRadius: 20)
+//        //                .stroke(
+//        //                    isLongPressing ? Color.defaultTheme.opacity(0.3) : Color.gray.opacity(0.1),
+//        //                    lineWidth: isLongPressing ? 2 : 1
+//        //                )
+//        //        )
+//        .scaleEffect(isPressed ? 0.98 : (isLongPressing ? 1.02 : 1.0))
+//        .opacity(product.status == "inactive" ? 0.7 : 1.0)
+//    }
+//}
+//extension ProductCardView {
+//    var productImageView: some View {
+//        VStack {
+//            CustomProfileImage(url: product.images?.first ?? "", isCircular: false, size: 120)
+//        }
+//        .frame(width: 120, height: 120)
+//    }
+//}
+//extension ProductCardView {
+//    var productDetailsView: some View {
+//        VStack(alignment: .leading, spacing: 8) {
+//            //            if product.status == "inactive" {
+//            //                badgeView(title: "Inactive", color: .orange)
+//            //            } else if (product.quantity ?? 0) == 0 {
+//            //                badgeView(title: "Out of Stock", color: .red)
+//            //            }
+//            
+//            Text(product.title?.capitalizingFirstLetter() ?? "")
+//                .font(.custom(poppinsSemiBold, size: 16))
+//                .foregroundColor(.primary)
+//                .lineLimit(2)
+//            
+//            HStack(spacing: 8) {
+//                //                Text(product.condition ?? "New")
+//                Text(product.productCondition ?? "New")
+//                    .font(.custom(poppinsRegular, size: 13))
+//                    .foregroundColor(.secondary)
+//                
+//                Circle()
+//                    .fill(Color.secondary)
+//                    .frame(width: 3, height: 3)
+//                
+//                Text(product.category?.name ?? "Category")
+//                    .font(.custom(poppinsRegular, size: 13))
+//                    .foregroundColor(.secondary)
+//            }
+//            
+//            Text("Quantity: \(product.quantity ?? "0")")
+//                .font(.custom(poppinsRegular, size: 13))
+//                .foregroundColor(.secondary)
+//            
+//            priceSectionView
+//        }
+//        .frame(maxWidth: .infinity, alignment: .leading)
+//    }
+//}
+//extension ProductCardView {
+//    func badgeView(title: String, color: Color) -> some View {
+//        HStack(spacing: 6) {
+//            Circle()
+//                .fill(color)
+//                .frame(width: 6, height: 6)
+//            
+//            Text(title)
+//                .font(.system(size: 12, weight: .semibold))
+//                .foregroundColor(color)
+//        }
+//        .padding(.horizontal, 10)
+//        .padding(.vertical, 6)
+//        .background(Capsule().fill(color.opacity(0.1)))
+//        .overlay(
+//            Capsule()
+//                .stroke(color.opacity(0.2), lineWidth: 1)
+//        )
+//    }
+//}
+//extension ProductCardView {
+//    var priceSectionView: some View {
+//        VStack(spacing: 8) {
+//            Text("$\(product.pricing ?? "$0.00")")
+//                .font(.custom(poppinsSemiBold, size: 16))
+//                .foregroundColor(.primary)
+//            
+//            Text("\(product.bidCount ?? 0) Bids")
+//                .font(.custom(poppinsRegular, size: 13))
+//                .foregroundColor(.secondary)
+//        }
+//    }
+//}
+//extension ProductCardView {
+//    func animatePress() {
+//        withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+//            isPressed = true
+//        }
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+//            withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+//                isPressed = false
+//            }
+//        }
+//    }
+//}
 
 // MARK: - Product Actions Bottom Sheet
 struct ProductActionsSheet: View {
@@ -1433,19 +1690,19 @@ struct ProductActionsSheet: View {
                         }
                     }
                     
-//                    ProductActionButton(
-//                        icon: "doc.on.doc",
-//                        title: "Duplicate",
-//                        subtitle: "Create a copy of this product",
-//                        color: .purple,
-//                        isSelected: selectedAction == "Duplicate"
-//                    ) {
-//                        selectedAction = "Duplicate"
-//                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-//                            onDuplicate()
-//                            isPresented = false
-//                        }
-//                    }
+                    //                    ProductActionButton(
+                    //                        icon: "doc.on.doc",
+                    //                        title: "Duplicate",
+                    //                        subtitle: "Create a copy of this product",
+                    //                        color: .purple,
+                    //                        isSelected: selectedAction == "Duplicate"
+                    //                    ) {
+                    //                        selectedAction = "Duplicate"
+                    //                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                    //                            onDuplicate()
+                    //                            isPresented = false
+                    //                        }
+                    //                    }
                     if segmant == .active || segmant == .draft {
                         ProductActionButton(
                             icon: "pause.circle",

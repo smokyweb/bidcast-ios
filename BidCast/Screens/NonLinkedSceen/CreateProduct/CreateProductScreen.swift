@@ -449,7 +449,7 @@ struct CreateProductScreen: View {
             
 
             
-            CusNavLink(doNavigate: $navigateToAddProduct, destination: AddProductsScreen(request:$requests,thumbNail: $thumbNail,fromPrepare: .constant(false),backToPrepare: $backToPrepare, NavFromProductLibrary: .constant(false), backToCreateProduct:$navigateToAddProduct,didTapBack:{ value in
+            CusNavLink(doNavigate: $navigateToAddProduct, destination: AddProductsScreen(request:$requests,thumbNail: $thumbNail,productData: .constant([ProductDataModel1]()), fromPrepare: .constant(false),backToPrepare: $backToPrepare, NavFromProductLibrary: .constant(false), backToCreateProduct:$navigateToAddProduct,didTapBack:{ value in
                 comeFromProductLibrary = value
             },didTapEdit:{ product in
                 comeFromProductLibrary = true
@@ -458,7 +458,7 @@ struct CreateProductScreen: View {
             } ))
             
             //from prepare
-            CusNavLink(doNavigate: $navigateToProuct, destination: AddProductsScreen(request:$requests,thumbNail: $thumbNail,fromPrepare: $fromPrepare,backToPrepare: $backToPrepare, NavFromProductLibrary: .constant(false), backToCreateProduct: .constant(false), delegate: delegate))
+            CusNavLink(doNavigate: $navigateToProuct, destination: AddProductsScreen(request:$requests,thumbNail: $thumbNail,productData: .constant([ProductDataModel1]()),fromPrepare: $fromPrepare,backToPrepare: $backToPrepare, NavFromProductLibrary: .constant(false), backToCreateProduct: .constant(false), delegate: delegate))
             
             CusNavLink(doNavigate: $navigateToSalesFormat,
                        destination: SalesFormatScreen(request: $request,

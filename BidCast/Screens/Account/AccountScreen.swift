@@ -298,7 +298,7 @@ struct AccountScreen: View {
     private var sellerHubNavigationLinks: some View {
         Group {
             CusNavLink(doNavigate: $navigationState.navigateToShows, destination: ShowsScreen())
-            CusNavLink(doNavigate: $navigationState.navigateToInventry, destination: InventoryScreen(selectedProductIDs: .constant([]), selectedProductData: .constant([])))
+            CusNavLink(doNavigate: $navigationState.navigateToInventry, destination: InventoryScreen())
             CusNavLink(doNavigate: $navigationState.navigateToOffers, destination: OffersScreen())
             CusNavLink(doNavigate: $navigationState.navigateTips, destination: TipsScreen())
             CusNavLink(doNavigate: $navigationState.navigateToWallet, destination: WalletPayoutView())

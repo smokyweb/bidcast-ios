@@ -49,6 +49,7 @@ struct ProductWeightScreen: View {
     @Binding var fromPrepare : Bool
     @Binding var backToCreateProduct : Bool
     @Binding var productId : String
+    @State var productData = [ProductDataModel1]()
     
     var didTapBack : ((Bool) -> Void)?
     var didTapEdit : ((ProductDataModel1) -> Void)?
@@ -221,6 +222,7 @@ struct ProductWeightScreen: View {
                 destination: AddProductsScreen(
                     request:$storeScheduleRequest,
                     thumbNail: $thumbNail,
+                    productData: $productData,
                     fromPrepare: .constant(false),
                     backToPrepare: $backToPrepare, NavFromProductLibrary: .constant(false),
                     backToCreateProduct: $backToCreateProduct,
@@ -236,6 +238,7 @@ struct ProductWeightScreen: View {
                 destination: AddProductsScreen(
                     request:$storeScheduleRequest,
                     thumbNail: $thumbNail,
+                    productData: .constant([ProductDataModel1]()),
                     fromPrepare: $fromPrepare,
                     backToPrepare: $backToPrepare,
                     NavFromProductLibrary: .constant(false),
@@ -572,6 +575,8 @@ struct ProductWeightScreen: View {
         videoUrls = []
         
         if response?.status == "success"{
+            productData.removeAll()
+            productData.append(response?.data ?? ProductDataModel1())
             alertType = .sheetType(
                 icon: .success,
                 title: response?.status?.capitalized ?? "",

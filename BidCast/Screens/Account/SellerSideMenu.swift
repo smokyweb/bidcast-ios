@@ -252,7 +252,7 @@ struct SellerMenuScreen: View {
     // MARK: - Navigation Links
     private var navigationLinks: some View {
         Group {
-            CusNavLink(doNavigate: $navigateToInventory, destination: InventoryScreen(selectedProductIDs: .constant([]), selectedProductData: .constant([])))
+            CusNavLink(doNavigate: $navigateToInventory, destination: InventoryScreen())
             CusNavLink(doNavigate: $navigateToShows, destination: ShowsScreen())
             CusNavLink(doNavigate: $navigateToPayouts, destination: WalletPayoutView())
             CusNavLink(doNavigate: $navigateToFulfillment, destination: MyOrdersScreen())

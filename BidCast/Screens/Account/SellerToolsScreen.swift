@@ -252,7 +252,7 @@ struct SellerToolsScreen: View {
             
             CusNavLink(doNavigate: $navigationState.navigateToSellerVerification, destination: SellerVerificationScreen())
             CusNavLink(doNavigate: $navigationState.navigateToIdentityVerification, destination: IdentityVerificationScreen())
-            CusNavLink(doNavigate: $navigationState.navigateToInventory, destination: InventoryScreen(selectedProductIDs: .constant([]), selectedProductData: .constant([])))
+            CusNavLink(doNavigate: $navigationState.navigateToInventory, destination: InventoryScreen())
             CusNavLink(doNavigate: $navigationState.navigateToShows, destination: ShowsScreen())
             CusNavLink(doNavigate: $navigationState.navigateToOrders, destination: MyOrdersScreen())
             CusNavLink(doNavigate: $navigationState.navigateToWallet, destination: WalletPayoutView())

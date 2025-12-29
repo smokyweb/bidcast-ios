@@ -12,7 +12,7 @@ import StoreKit
 final class ListProductViewModel: ObservableObject {
     
     @Published var categoryResponse: ResponseModal<[CategoryDataModel]>?
-    @Published var storeProductResponse: ResponseModal<StoreProductModel>?
+    @Published var storeProductResponse: ResponseModal<ProductDataModel1>?
     @Published var mailClassResponse: ResponseModal<MailClassesData>?
     @Published var storeImageResponse: ResponseModal<ImageModel>?
     @Published var errorMessage: String?
@@ -66,10 +66,10 @@ final class ListProductViewModel: ObservableObject {
         
         do {
             
-            if let response: ResponseModal<StoreProductModel> = try await APIManager.shared.requestWithJSONBody(
+            if let response: ResponseModal<ProductDataModel1> = try await APIManager.shared.requestWithJSONBody(
                 type: APIEndPoint.storeProduct(productId: productId, param: param),
                 parameters: param,
-                modalType: ResponseModal<StoreProductModel>?.self,
+                modalType: ResponseModal<ProductDataModel1>?.self,
                 header: true){
                 self.storeProductResponse = response
             }
