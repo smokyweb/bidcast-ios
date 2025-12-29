@@ -80,6 +80,7 @@ struct CreateProductScreen: View {
     var delegate: ShowStepDelegate?
     
     var isComeFrom: CreateProductNavigation = .other
+    @State var editProductData: ProductDataModel1? = nil
     @State var openShippingSheet = false
     @State var config: BottomSheetConfig = BottomSheetConfig(
         icon: "checkmark.seal.fill",
@@ -89,6 +90,8 @@ struct CreateProductScreen: View {
         secondaryButtonTitle: nil,
         showButtons: true
     )
+    
+    @State var productId = ""
     var body: some View {
         
         ZStack(alignment: .bottom) {
@@ -448,23 +451,36 @@ struct CreateProductScreen: View {
             
             CusNavLink(doNavigate: $navigateToAddProduct, destination: AddProductsScreen(request:$requests,thumbNail: $thumbNail,fromPrepare: .constant(false),backToPrepare: $backToPrepare, NavFromProductLibrary: .constant(false), backToCreateProduct:$navigateToAddProduct,didTapBack:{ value in
                 comeFromProductLibrary = value
+            },didTapEdit:{ product in
+                comeFromProductLibrary = true
+                editProductData = product
+                populateProductData(product)
             } ))
             
             //from prepare
             CusNavLink(doNavigate: $navigateToProuct, destination: AddProductsScreen(request:$requests,thumbNail: $thumbNail,fromPrepare: $fromPrepare,backToPrepare: $backToPrepare, NavFromProductLibrary: .constant(false), backToCreateProduct: .constant(false), delegate: delegate))
             
-            CusNavLink(doNavigate: $navigateToSalesFormat, destination: SalesFormatScreen(request: $request,
-                                                                                          storeScheduleRequest: $requests,
-                                                                                          imageUrls : $imageUrls,
-                                                                                          videoUrls: $videoUrls,
-                                                                                          thumbNail: $thumbNail,
-                                                                                          backToPrepare: $backToPrepare,
-                                                                                          fromPrepare: $fromPrepare,
-                                                                                          backToCreateProduct:$navigateToSalesFormat,
-                                                                                          didTapBack:{ value in
+            CusNavLink(doNavigate: $navigateToSalesFormat,
+                       destination: SalesFormatScreen(request: $request,
+                                                      storeScheduleRequest: $requests,
+                                                      imageUrls : $imageUrls,
+                                                      videoUrls: $videoUrls,
+                                                      thumbNail: $thumbNail,
+                                                      backToPrepare: $backToPrepare,
+                                                      fromPrepare: $fromPrepare,
+                                                      backToCreateProduct:$navigateToSalesFormat,
+                                                      productId: $productId,
+                                                      didTapBack:{ value in
                 comeFromProductLibrary = value
-            },
-                                                                                          delegate: delegate))
+                imageUrls.removeAll()
+                videoUrls.removeAll()
+                selectedShippingProfileName.removeAll()
+            },didTapEdit  : { product in
+                editProductData = product
+                populateProductData(product)
+                comeFromProductLibrary = true
+            },delegate: delegate))
+            
             CusNavLink(doNavigate: $navigateToShippingProfiles, destination: ShippingSettingsScreen())
         }
         .ignoresSafeArea(edges: .bottom)
@@ -579,9 +595,11 @@ struct CreateProductScreen: View {
         .onAppear {
             //assign categoryId
             request.category_id = "\(requests.category_id)"
-            imageUrls.removeAll()
-            videoUrls.removeAll()
-            selectedShippingProfileName.removeAll()
+//            if comeFromProductLibrary{
+//                imageUrls.removeAll()
+//                videoUrls.removeAll()
+//                selectedShippingProfileName.removeAll()
+//            }
         }
         .onTapGesture {
             hideKeyboard()
@@ -650,7 +668,104 @@ struct CreateProductScreen: View {
             )
         }
     }
-    
+    private func populateProductData(_ product: ProductDataModel1) {
+           // Basic Info
+           request.title = product.title ?? ""
+           request.description = product.description ?? ""
+           request.quantity = "\(product.quantity ?? "1")"
+        self.productId = "\(product.id ?? 0)"
+           // Dimensions
+        request.width = "\(product.width ?? 0.0)"
+           request.height = "\(product.height ?? 0.0)"
+           request.length = "\(product.length ?? 0.0)"
+           request.weight = "\(product.weight ?? 0.0)"
+           
+           // Mail & Processing
+//        request.mail_class = product.mailClass ?? ""
+//        request.processing_category = product.processingCategory ?? ""
+//        request.product_condition = product.productCondition ?? ""
+           
+           // Category
+        if let categoryId = product.category?.id {
+               request.category_id = "\(categoryId)"
+               selectedCategory = categoryList.first(where: { $0.id == categoryId })?.name ?? ""
+           }
+           
+           // Sub Category
+           if let subCategoryId = product.subCategoryId {
+               request.sub_category_id = "\(subCategoryId)"
+           }
+           
+           // Shipping Profile
+           if let shippingProfileId = product.shippingProfileId {
+               request.shipping_profile_id = "\(shippingProfileId)"
+               selectedShippingProfileName = profiles.first(where: { $0.id == shippingProfileId })?.name ?? ""
+           }
+        
+        if let mailClass = product.mailClass, !mailClass.isEmpty {
+            if self.mailClassList.contains(mailClass) {
+                self.request.mail_class = mailClass
+            }
+        }
+        
+        // Set Processing Category - match with loaded options
+        if let processingCategory = product.processingCategory, !processingCategory.isEmpty {
+            if self.processingListArr.contains(processingCategory) {
+                self.request.processing_category = processingCategory
+            }
+        }
+        
+        // Set Product Condition - match with loaded options
+        if let condition = product.productCondition, !condition.isEmpty {
+            if self.conditionListArr.contains(condition) {
+                self.request.product_condition = condition
+            }
+        }
+        
+           // Images and Videos
+           if let images = product.images {
+               imageUrls = images.compactMap { $0.self }
+           }
+           
+           if let videos = product.videos {
+               videoUrls = videos.compactMap { $0.self }
+           }
+           // Sales Options
+           request.pricing = product.pricing ?? ""
+           request.flash_sale = product.flashSale == true ? "1" : "0"
+           request.accept_offers = product.acceptOffers == true ? "1" : "0"
+           request.reserve_for_live = product.reserveForLive == true ? "1" : "0"
+           request.status = product.status ?? ""
+       }
+       
+       /// Reset form to initial state
+       private func resetForm() {
+           request = StoreProductParam(
+               category_id: "",
+               title: "",
+               description: "",
+               quantity: "1",
+               pricing: "",
+               flash_sale: "0",
+               accept_offers: "0",
+               reserve_for_live: "0",
+               shipping_profile_id: "",
+               status: "",
+               sub_category_id: "",
+               width: "",
+               length: "",
+               weight: "",
+               height:"",
+               mail_class:"",
+               processing_category:"",
+               product_condition: ""
+           )
+           imageUrls.removeAll()
+           videoUrls.removeAll()
+           selectedShippingProfileName.removeAll()
+           selectedCategory = ""
+           editProductData = nil
+       }
 }
 
 extension View {

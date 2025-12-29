@@ -190,6 +190,47 @@ struct ProductDataModel1: Codable, Identifiable {
 
     var category: ProductCategory?
     var user: ProductUser?
+    
+    
+//    enum CodingKeys: String, CodingKey {
+//        case id
+//        case title
+//        case description
+//        case pricing
+//        case quantity
+//        case purchasedQuantity = "purchased_quantity"
+//        case sku
+//        case bidCount = "bid_count"
+//        case status
+//        case type
+//        case variant
+//        case productCondition = "product_condition"
+//        case productShow = "product_show"
+//        case acceptOffers = "accept_offers"
+//        case auction
+//        case flashSale = "flash_sale"
+//        case reserveForLive = "reserve_for_live"
+//        case hazardousMaterial = "hazardous_material"
+//        case height
+//        case length
+//        case width
+//        case weight
+//        case mailClass = "mail_class"
+//        case processingCategory = "processing_category"
+//        case shippingProfileId = "shipping_profile_id"
+//        case subCategoryId = "sub_category_id"
+//        case userId = "user_id"
+//        case images
+//        case thumbnail
+//        case videos
+//        case createdAt = "created_at"
+//        case category
+//        case user
+//    }
+}
+
+extension ProductDataModel1 {
+
 }
 
 extension ProductDataModel1 {
@@ -267,44 +308,7 @@ struct ProductCategory: Codable, Identifiable {
     var color: String?
 }
 
-extension ProductDataModel1 {
 
-    enum CodingKeys: String, CodingKey {
-        case id
-        case title
-        case description
-        case pricing
-        case quantity
-        case purchasedQuantity = "purchased_quantity"
-        case sku
-        case bidCount = "bid_count"
-        case status
-        case type
-        case variant
-        case productCondition = "product_condition"
-        case productShow = "product_show"
-        case acceptOffers = "accept_offers"
-        case auction
-        case flashSale = "flash_sale"
-        case reserveForLive = "reserve_for_live"
-        case hazardousMaterial = "hazardous_material"
-        case height
-        case length
-        case width
-        case weight
-        case mailClass = "mail_class"
-        case processingCategory = "processing_category"
-        case shippingProfileId = "shipping_profile_id"
-        case subCategoryId = "sub_category_id"
-        case userId = "user_id"
-        case images
-        case thumbnail
-        case videos
-        case createdAt = "created_at"
-        case category
-        case user
-    }
-}
 
 
 

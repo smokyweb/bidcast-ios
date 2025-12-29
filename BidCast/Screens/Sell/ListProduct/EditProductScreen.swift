@@ -772,6 +772,35 @@ struct EditProductScreen: View {
                     uploadedVideoUrls.append(["videos": item])
                 }
                 
+                
+                let finalImageUrls: [[String: String]]
+                if !uploadedImagesUrls.isEmpty {
+                    // New images were uploaded
+                    finalImageUrls = uploadedImagesUrls
+                } else if !imageUrls.isEmpty {
+                    // No new uploads, use existing image URLs (edit mode)
+                    finalImageUrls = imageUrls.map { url in
+                        return ["image": url, "thumbnail": url]
+                    }
+                } else {
+                    // No images at all
+                    finalImageUrls = []
+                }
+
+                let finalVideoUrls: [[String: String]]
+                if !uploadedVideoUrls.isEmpty {
+                    // New videos were uploaded
+                    finalVideoUrls = uploadedVideoUrls
+                } else if !videoUrls.isEmpty {
+                    // No new uploads, use existing video URLs (edit mode)
+                    finalVideoUrls = videoUrls.map { url in
+                        return ["videos": url]
+                    }
+                } else {
+                    // No videos at all
+                    finalVideoUrls = []
+                }
+                
                 // 🔹 Build extra fields
                 let variantArray = buildVariantArray(extraFields: extraFields,
                                                      extraFieldValues: extraFieldValues,
@@ -796,8 +825,8 @@ struct EditProductScreen: View {
                     "mail_class": request.mail_class,
                     "processing_category": request.processing_category,
                     "product_condition": request.product_condition,
-                    "images": uploadedImagesUrls,
-                    "videos": uploadedVideoUrls,
+                    "images": finalImageUrls,
+                    "videos": finalVideoUrls,
                     "status": request.status,
                     "hazardous_material": isHazardousMaterial
                 ]

@@ -48,8 +48,10 @@ struct ProductWeightScreen: View {
     @State var navigateToProuct = false
     @Binding var fromPrepare : Bool
     @Binding var backToCreateProduct : Bool
+    @Binding var productId : String
     
     var didTapBack : ((Bool) -> Void)?
+    var didTapEdit : ((ProductDataModel1) -> Void)?
     
     var delegate: ShowStepDelegate?
     
@@ -201,7 +203,7 @@ struct ProductWeightScreen: View {
                     Button(action: {
                         submitProduct()
                     }) {
-                        Text("Continue")
+                        Text(productId.isEmpty ? "Continue" : "Update")
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding()
@@ -224,6 +226,9 @@ struct ProductWeightScreen: View {
                     backToCreateProduct: $backToCreateProduct,
                     didTapBack:{ value in
                         didTapBack?(value)
+                    },didTapEdit: { product in 
+                       didTapEdit?(product)
+                      
                     })
             )
             CusNavLink(
@@ -412,6 +417,34 @@ struct ProductWeightScreen: View {
                     return ["videos": $0.videos ?? ""]
                 } ?? []
                 
+                let finalImageUrls: [[String: String]]
+                if !uploadedImagesUrls.isEmpty {
+                    // New images were uploaded
+                    finalImageUrls = uploadedImagesUrls
+                } else if !imageUrls.isEmpty {
+                    // No new uploads, use existing image URLs (edit mode)
+                    finalImageUrls = imageUrls.map { url in
+                        return ["image": url, "thumbnail": url]
+                    }
+                } else {
+                    // No images at all
+                    finalImageUrls = []
+                }
+
+                let finalVideoUrls: [[String: String]]
+                if !uploadedVideoUrls.isEmpty {
+                    // New videos were uploaded
+                    finalVideoUrls = uploadedVideoUrls
+                } else if !videoUrls.isEmpty {
+                    // No new uploads, use existing video URLs (edit mode)
+                    finalVideoUrls = videoUrls.map { url in
+                        return ["videos": url]
+                    }
+                } else {
+                    // No videos at all
+                    finalVideoUrls = []
+                }
+                
                 var variantArray: [[String: Any]] = []
                 //TODO: eed to manage varient
                 
@@ -438,8 +471,8 @@ struct ProductWeightScreen: View {
                     "processing_category": request.processing_category,
                     
                     // ✅ Images array (already present)
-                    "images": uploadedImagesUrls,
-                    "videos": uploadedVideoUrls,
+                    "images": finalImageUrls,
+                    "videos": finalVideoUrls,
                     "status": request.status,
                     //                    "type": "live"
                     "hazardous_material": isHazardousMaterial
@@ -450,7 +483,7 @@ struct ProductWeightScreen: View {
                     productRequest["variant"] = variantArray
                 }
                 
-                try await viewModel.storeProduct(param: productRequest)
+                try await viewModel.storeProduct(productId: !productId.isEmpty ? Int(productId) : nil ,param: productRequest)
                 storeSuccess()
             }
         }

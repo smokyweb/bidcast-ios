@@ -62,6 +62,7 @@ struct AddProductsScreen: View {
     @State var navigateToEditProduct  = false
     @Binding var backToCreateProduct : Bool
     var didTapBack : ((Bool) -> Void)?
+    var didTapEdit : ((ProductDataModel1) -> Void)?
     var delegate: ShowStepDelegate?
     
     @State var config: BottomSheetConfig = BottomSheetConfig(
@@ -171,6 +172,8 @@ struct AddProductsScreen: View {
                                         },
                                         onTapEdit: {
 //                                            navigateToEditProduct = true
+                                            backToCreateProduct = false
+                                            didTapEdit?(data)
                                         },
                                         onTapDelete: {
                                             deletedIndex = index

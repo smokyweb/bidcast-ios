@@ -40,7 +40,9 @@ struct SalesFormatScreen: View {
     
     @Binding var fromPrepare : Bool
     @Binding var backToCreateProduct : Bool
+    @Binding var productId : String
     var didTapBack : ((Bool) -> Void)?
+    var didTapEdit : ((ProductDataModel1) -> Void)?
     var delegate: ShowStepDelegate?
     
     var body: some View {
@@ -204,8 +206,11 @@ struct SalesFormatScreen: View {
                 backToPrepare: $backToPrepare,
                 fromPrepare:$fromPrepare,
                 backToCreateProduct: $backToCreateProduct,
+                productId: $productId,
                 didTapBack:{ value in
                     didTapBack?(value)
+                },didTapEdit:{ product in
+                    didTapEdit?(product)
                 },
                 delegate:delegate,
                 onContinue: {

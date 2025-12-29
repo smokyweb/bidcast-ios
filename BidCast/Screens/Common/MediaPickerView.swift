@@ -19,7 +19,7 @@ struct MediaItem: Identifiable, Equatable {
     let videoURL: URL?
     let thumbnailImage: UIImage?
     let urlString: String
-    
+    var isLoading: Bool = false
     enum MediaType {
         case image
         case video
@@ -188,17 +188,32 @@ struct MediaPickerView: View {
         
         // Load images
         for urlString in uploadedImageUrls {
+            // Add placeholder with loading state
+            var loadingItem = MediaItem(
+                type: .image,
+                image: nil,
+                videoURL: nil,
+                thumbnailImage: nil,
+                urlString: urlString,
+                isLoading: true
+            )
+            
+            let itemId = loadingItem.id
+            selectedMedia.append(loadingItem)
             DownloadManager.shared.downloadImage(from: urlString) { image in
-                if let img = image {
-                    let item = MediaItem(
-                        type: .image,
-                        image: img,
-                        videoURL: nil,
-                        thumbnailImage: nil,
-                        urlString: urlString
-                    )
-                    DispatchQueue.main.async {
-                        selectedMedia.append(item)
+                if let index = self.selectedMedia.firstIndex(where: { $0.id == itemId }) {
+                    if let img = image {
+                        self.selectedMedia[index] = MediaItem(
+                            type: .image,
+                            image: img,
+                            videoURL: nil,
+                            thumbnailImage: nil,
+                            urlString: urlString,
+                            isLoading: false
+                        )
+                    } else {
+                        // Failed to load - remove the item
+                        self.selectedMedia.remove(at: index)
                     }
                 }
             }
@@ -207,16 +222,35 @@ struct MediaPickerView: View {
         // Load videos
         for urlString in uploadedVideoUrls {
             if let url = URL(string: urlString) {
-                let thumbnail = generateThumbnail(from: url)
-                let item = MediaItem(
+                // Add placeholder with loading state
+                var loadingItem = MediaItem(
                     type: .video,
                     image: nil,
                     videoURL: url,
-                    thumbnailImage: thumbnail,
-                    urlString: urlString
+                    thumbnailImage: nil,
+                    urlString: urlString,
+                    isLoading: true
                 )
-                DispatchQueue.main.async {
-                    selectedMedia.append(item)
+                
+                let itemId = loadingItem.id
+                selectedMedia.append(loadingItem)
+                
+                // Generate thumbnail in background
+                DispatchQueue.global(qos: .userInitiated).async {
+                    let thumbnail = self.generateThumbnail(from: url)
+                    
+                    DispatchQueue.main.async {
+                        if let index = self.selectedMedia.firstIndex(where: { $0.id == itemId }) {
+                            self.selectedMedia[index] = MediaItem(
+                                type: .video,
+                                image: nil,
+                                videoURL: url,
+                                thumbnailImage: thumbnail,
+                                urlString: urlString,
+                                isLoading: false
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -314,7 +348,12 @@ struct MediaThumbnailView: View {
     
     var body: some View {
         ZStack(alignment: .topTrailing) {
-            if item.type == .image {
+            if item.isLoading {
+                // Show loading indicator
+                ShimmerView()
+                    .frame(width: 80, height: 80)
+                    .cornerRadius(8)
+            } else if item.type == .image {
                 // Image Thumbnail
                 if let image = item.image {
                     Image(uiImage: image)
@@ -324,9 +363,14 @@ struct MediaThumbnailView: View {
                         .clipped()
                         .cornerRadius(8)
                 } else {
-                    ShimmerView()
-                        .frame(width: 80, height: 80)
-                        .cornerRadius(8)
+                    // Fallback if image failed to load
+                    ZStack {
+                        Color.gray.opacity(0.3)
+                        Image(systemName: "exclamationmark.triangle")
+                            .foregroundColor(.red)
+                    }
+                    .frame(width: 80, height: 80)
+                    .cornerRadius(8)
                 }
             } else {
                 // Video Thumbnail
@@ -362,16 +406,18 @@ struct MediaThumbnailView: View {
             }
             
             // Delete Button
-            Button(action: onDelete) {
-                Image(systemName: "xmark.circle.fill")
-                    .resizable()
-                    .foregroundColor(.white)
-                    .background(Color.black.opacity(0.6))
-                    .clipShape(Circle())
-                    .frame(width: 28, height: 28)
+            if !item.isLoading {
+                Button(action: onDelete) {
+                    Image(systemName: "xmark.circle.fill")
+                        .resizable()
+                        .foregroundColor(.white)
+                        .background(Color.black.opacity(0.6))
+                        .clipShape(Circle())
+                        .frame(width: 28, height: 28)
+                }
+                .offset(x: 6, y: -6)
+                .buttonStyle(PlainButtonStyle())
             }
-            .offset(x: 6, y: -6)
-            .buttonStyle(PlainButtonStyle())
         }
     }
 }
