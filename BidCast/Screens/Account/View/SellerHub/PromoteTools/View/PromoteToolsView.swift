@@ -8,6 +8,7 @@
 
 import SwiftUI
 import SVProgressHUD
+import AlertToast
 
 // MARK: - Inventory Segment Enum
 enum PromoteToolsSegment: String, CaseIterable, CustomStringConvertible {
@@ -82,187 +83,190 @@ struct PromoteToolsView: View {
                     .padding(.vertical, 16)
                     .background(Color.white)
                     ScrollView {
-                        GenericTabView(selectedTab: $segment) {
+                        GenericTabView(selectedTab: $segment) {}
+                        if segment == .promotedShows {
+                            PromoteShowsScreen()
                         }
-                        
-                        VStack(spacing: 12) {
-                            InfoCard(
-                                title: "Promote Tools",
-                                description: "Promote your livestreams to reach a wider audience on Bidcast."
-                            )
-                            PillsSelectorView(
-                                titles: options,
-                                selectedIndex: $selectedIndex,
-                                backgroundStyle: .roundedRect,
-                                underlineEnabled: false,
-                                showFilterButton: false,
-                                showSortDropdown: false,
-                                onSelectionChanged: { index, title in
-                                    // Show sort sheet when "Sort" is tapped
-                                    if index == 0 {
-                                        
-                                    }
-                                    else if index == 1 {
-                                        
-                                    }
-                                    else if index == 2 {
-                                        
-                                    }
-                                })
-                            
-                            VStack(spacing: 0) {
-                                // One Promotion, Two Benefits Card
-                                BenefitsCard()
+                        else  {
+                            VStack(spacing: 12) {
+                                InfoCard(
+                                    title: "Promote Tools",
+                                    description: "Promote your livestreams to reach a wider audience on Bidcast."
+                                )
+                                PillsSelectorView(
+                                    titles: options,
+                                    selectedIndex: $selectedIndex,
+                                    backgroundStyle: .roundedRect,
+                                    underlineEnabled: false,
+                                    showFilterButton: false,
+                                    showSortDropdown: false,
+                                    onSelectionChanged: { index, title in
+                                        // Show sort sheet when "Sort" is tapped
+                                        if index == 0 {
+                                            
+                                        }
+                                        else if index == 1 {
+                                            
+                                        }
+                                        else if index == 2 {
+                                            
+                                        }
+                                    })
+                                
+                                VStack(spacing: 0) {
+                                    // One Promotion, Two Benefits Card
+                                    BenefitsCard()
+                                }
+                                .padding(.horizontal, 12)
+                                
                             }
-                            .padding(.horizontal, 12)
                             
+                            // Audience Reached
+                            VStack(spacing: 12) {
+                                
+                                SectionHeaderView(title: "Audience Reached")
+                                MetricCardLarge(
+                                    title: "Number of Show Boosts",
+                                    value: "\(promoteToolDetail.number_of_boost ?? 0)",
+                                    description: "Run a few more promotions to start seeing results for this metric!"
+                                )
+                                
+                                MetricCardLarge(
+                                    title: "Number of Show Promotions",
+                                    value: "\(promoteToolDetail.number_of_show_promote ?? 0)",
+                                    description: "Run a few more promotions to start seeing results for this metric!"
+                                )
+                                
+                                MetricCardLarge(
+                                    title: "Community Boosts",
+                                    value: "\(promoteToolDetail.community_boost ?? 0)",
+                                    description: "The total number of Community Boosts buyers unlocked during your shows."
+                                )
+                                
+                                MetricCardLarge(
+                                    title: "Impressions",
+                                    value: "\(promoteToolDetail.impressions ?? 0)",
+                                    description: "The total number of times a Whatnot user saw your livestreams in their feeds due to a promotion."
+                                )
+                                
+                                MetricCardLarge(
+                                    title: "Number of promoted hours",
+                                    value: promoteToolDetail.promote_hours ?? "",
+                                    description: "Run a few more promotions to start seeing results for this metric!"
+                                )
+                                
+                                MetricCardLarge(
+                                    title: "Promoted impressions per hour",
+                                    value: "\(promoteToolDetail.impression_per_hours ?? 0)",
+                                    description: "Run a few more promotions to start seeing results for this metric!"
+                                )
+                                // Pro Tips
+                                ProTipCard(
+                                    text: "Pro Tip: Running longer promotions through Show Promote is more cost-efficient and offers the most sustained increase in discoverability."
+                                )
+                                
+                                SectionHeaderView(title: "Discovery Impact")
+                                
+                                MetricCardLarge(
+                                    title: "Total Taps and Clicks",
+                                    value: "214",
+                                    description: "Number of users that tapped into your livestream to view your show as a result of your promotions"
+                                )
+                                
+                                MetricCardLarge(
+                                    title: "CTR (Click Through Rate)",
+                                    value: "12.9%",
+                                    description: "Percentage of time your promotions in feeds resulted in a buyer entering your show (taps and clicks)"
+                                )
+                                
+                                MetricCardLarge(
+                                    title: "Sustained Watches",
+                                    value: "34",
+                                    description: "Number of users that clicked into your stream and stayed to watch your show for longer than 30 seconds"
+                                )
+                                
+                                MetricCardLarge(
+                                    title: "Sustained Watch Rate",
+                                    value: "11.49%",
+                                    description: "The percentage of visitors from promotions that converted into sustained viewers"
+                                )
+                                
+                                MetricCardLarge(
+                                    title: "Follows from Promotion",
+                                    value: "\(promoteToolDetail.follows_from_promotion ?? 0)",
+                                    description: "Number of buyers that followed your account by finding you via promotions"
+                                )
+                                
+                                
+                                ProTipCard(
+                                    text: "Pro Tip: Improve your promotion CTR by experimenting with different titles and thumbnails to make your livestream tile more compelling to browsers.")
+                                
+                                ProTipCard(
+                                    text: "Pro Tip: Increase Sustained Watches: Keep the potential buyers in the room once they enter. Consider always having an item or auction pinned, or engaging more with your audience.")
+                                
+                                ProTipCard(
+                                    text: "Pro Tip: Follow Rate: Remember to remind your viewers to follow you while you are selling. Use the opportunity to tell them what to expect from future shows.")
+                                
+                            }
+                            .padding(12)
+                            .background(Color(UIColor.systemBackground))
+                            
+                            //                    // Content
+                            //                    VStack(spacing: 12) {
+                            //
+                            //                    }
+                            //                    .padding(12)
+                            //                    .background(Color(UIColor.systemBackground))
+                            //
+                            // Audience Reached
+                            VStack(spacing: 12) {
+                                SectionHeaderView(title: "Buyers Converted")
+                                
+                                MetricCardLarge(
+                                    title: "First Time Buyers from Promotion",
+                                    value: "N/A",
+                                    description: "Run a few more promotions to start seeing results for this metric!"
+                                )
+                                
+                                MetricCardLarge(
+                                    title: "Direct Sales from Promotion",
+                                    value: promoteToolDetail.direct_sales_form_promotion ?? "",
+                                    description: "Run a few more promotions to start seeing results for this metric!"
+                                )
+                                
+                                MetricCardLarge(
+                                    title: "Spend",
+                                    value: "N/A",
+                                    description: "Run a few more promotions to start seeing results for this metric!"
+                                )
+                                
+                                MetricCardLarge(
+                                    title: "Immediate Return on Spend",
+                                    value: "N/A",
+                                    description: "Run a few more promotions to start seeing results for this metric!"
+                                )
+                                
+                                MetricCardLarge(
+                                    title: "7-Day Return on Spend",
+                                    value: "N/A",
+                                    description: "Run a few more promotions to start seeing results for this metric!"
+                                )
+                                
+                                MetricCardLarge(
+                                    title: "Bids from Promotion",
+                                    value: "3",
+                                    description: "The number of bids from buyers who found your show via promotion"
+                                )
+                                
+                                ProTipCard(
+                                    text: "Pro Tip: A buyer who makes a purchase in your show is more likely to be recommended your show in the future by our discovery algorithm. Consider using tools like Rewards Club to keep them engaged.")
+                                
+                                ProTipCard(
+                                    text: "Pro Tip: Extra bidders in the room are valuable (even if they don't directly generate sales), as they provide engagement, boost the order value, and also benefit your discoverability.")
+                            }
+                            .padding(12)
+                            .background(Color(UIColor.systemBackground))
                         }
-                        
-                        // Audience Reached
-                        VStack(spacing: 12) {
-                            
-                            SectionHeaderView(title: "Audience Reached")
-                            MetricCardLarge(
-                                title: "Number of Show Boosts",
-                                value: "\(promoteToolDetail.number_of_boost ?? 0)",
-                                description: "Run a few more promotions to start seeing results for this metric!"
-                            )
-                            
-                            MetricCardLarge(
-                                title: "Number of Show Promotions",
-                                value: "\(promoteToolDetail.number_of_show_promote ?? 0)",
-                                description: "Run a few more promotions to start seeing results for this metric!"
-                            )
-                            
-                            MetricCardLarge(
-                                title: "Community Boosts",
-                                value: "\(promoteToolDetail.community_boost ?? 0)",
-                                description: "The total number of Community Boosts buyers unlocked during your shows."
-                            )
-                            
-                            MetricCardLarge(
-                                title: "Impressions",
-                                value: "\(promoteToolDetail.impressions ?? 0)",
-                                description: "The total number of times a Whatnot user saw your livestreams in their feeds due to a promotion."
-                            )
-                            
-                            MetricCardLarge(
-                                title: "Number of promoted hours",
-                                value: promoteToolDetail.promote_hours ?? "",
-                                description: "Run a few more promotions to start seeing results for this metric!"
-                            )
-                            
-                            MetricCardLarge(
-                                title: "Promoted impressions per hour",
-                                value: "\(promoteToolDetail.impression_per_hours ?? 0)",
-                                description: "Run a few more promotions to start seeing results for this metric!"
-                            )
-                            // Pro Tips
-                            ProTipCard(
-                                text: "Pro Tip: Running longer promotions through Show Promote is more cost-efficient and offers the most sustained increase in discoverability."
-                            )
-                            
-                            SectionHeaderView(title: "Discovery Impact")
-                            
-                            MetricCardLarge(
-                                title: "Total Taps and Clicks",
-                                value: "214",
-                                description: "Number of users that tapped into your livestream to view your show as a result of your promotions"
-                            )
-                            
-                            MetricCardLarge(
-                                title: "CTR (Click Through Rate)",
-                                value: "12.9%",
-                                description: "Percentage of time your promotions in feeds resulted in a buyer entering your show (taps and clicks)"
-                            )
-                            
-                            MetricCardLarge(
-                                title: "Sustained Watches",
-                                value: "34",
-                                description: "Number of users that clicked into your stream and stayed to watch your show for longer than 30 seconds"
-                            )
-                            
-                            MetricCardLarge(
-                                title: "Sustained Watch Rate",
-                                value: "11.49%",
-                                description: "The percentage of visitors from promotions that converted into sustained viewers"
-                            )
-                            
-                            MetricCardLarge(
-                                title: "Follows from Promotion",
-                                value: "\(promoteToolDetail.follows_from_promotion ?? 0)",
-                                description: "Number of buyers that followed your account by finding you via promotions"
-                            )
-                            
-                            
-                            ProTipCard(
-                                text: "Pro Tip: Improve your promotion CTR by experimenting with different titles and thumbnails to make your livestream tile more compelling to browsers.")
-                            
-                            ProTipCard(
-                                text: "Pro Tip: Increase Sustained Watches: Keep the potential buyers in the room once they enter. Consider always having an item or auction pinned, or engaging more with your audience.")
-                            
-                            ProTipCard(
-                                text: "Pro Tip: Follow Rate: Remember to remind your viewers to follow you while you are selling. Use the opportunity to tell them what to expect from future shows.")
-                            
-                        }
-                        .padding(12)
-                        .background(Color(UIColor.systemBackground))
-                        
-                        //                    // Content
-                        //                    VStack(spacing: 12) {
-                        //
-                        //                    }
-                        //                    .padding(12)
-                        //                    .background(Color(UIColor.systemBackground))
-                        //
-                        // Audience Reached
-                        VStack(spacing: 12) {
-                            SectionHeaderView(title: "Buyers Converted")
-                            
-                            MetricCardLarge(
-                                title: "First Time Buyers from Promotion",
-                                value: "N/A",
-                                description: "Run a few more promotions to start seeing results for this metric!"
-                            )
-                            
-                            MetricCardLarge(
-                                title: "Direct Sales from Promotion",
-                                value: promoteToolDetail.direct_sales_form_promotion ?? "",
-                                description: "Run a few more promotions to start seeing results for this metric!"
-                            )
-                            
-                            MetricCardLarge(
-                                title: "Spend",
-                                value: "N/A",
-                                description: "Run a few more promotions to start seeing results for this metric!"
-                            )
-                            
-                            MetricCardLarge(
-                                title: "Immediate Return on Spend",
-                                value: "N/A",
-                                description: "Run a few more promotions to start seeing results for this metric!"
-                            )
-                            
-                            MetricCardLarge(
-                                title: "7-Day Return on Spend",
-                                value: "N/A",
-                                description: "Run a few more promotions to start seeing results for this metric!"
-                            )
-                            
-                            MetricCardLarge(
-                                title: "Bids from Promotion",
-                                value: "3",
-                                description: "The number of bids from buyers who found your show via promotion"
-                            )
-                            
-                            ProTipCard(
-                                text: "Pro Tip: A buyer who makes a purchase in your show is more likely to be recommended your show in the future by our discovery algorithm. Consider using tools like Rewards Club to keep them engaged.")
-                            
-                            ProTipCard(
-                                text: "Pro Tip: Extra bidders in the room are valuable (even if they don't directly generate sales), as they provide engagement, boost the order value, and also benefit your discoverability.")
-                        }
-                        .padding(12)
-                        .background(Color(UIColor.systemBackground))
                         
                     }
             }
@@ -675,3 +679,245 @@ struct GenericTabView<T>: View where T: CaseIterable & Hashable & RawRepresentab
 //        }
 //    }
 //}
+
+// MARK: - Shows Screen View
+struct PromoteShowsScreen: View {
+    
+    @State private var showError: Bool = false
+    @State private var isLoading: Bool = false
+    @State private var showhud: Bool = false
+    @State private var hudMsg: String = ""
+    @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+    @State var isLive = false
+    @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject private var appRootManager: AppRootManager
+    @EnvironmentObject var networkMonitor: NetworkMonitor
+    
+    @State var navigateToReherseal = false
+    @State var navigateToShowAnalytics = false
+    @State private var isActiveOnShowsScreen = false
+    
+    @State var viewModel = ProfileViewModel()
+    @State var showsData = [GetMyScheduleShowModel]()
+    
+    @State private var selectedProductIds: [String] = []
+    @State var selectedShowsData = HomeModel()
+    @State var showID = ""
+    @State var SHowId = 0
+    @State var navigateToshowTitle = false
+    
+    @State private var scheduleRequest = StoreScheduleShowRequest(
+        title: "",
+        date: "",
+        time: "",
+        category_id: "",
+        auction_type_id: "",
+        product_ids: "",
+        is_explicit: false,
+        show_discoverability: "",
+        repeat_value: "",
+        is_repeat: false,
+        language: "english"
+    )
+
+    // Sample data
+//    let shows = [
+//        Show(title: "MTG Cards Sale", date: "Feb 15, 2025", time: "8:00 PM EST", rsvps: 156),
+//        Show(title: "Show Name", date: "Feb 15, 2025", time: "8:00 PM EST", rsvps: 156)
+//    ]
+
+    var body: some View {
+        VStack(spacing: 0) {
+            
+            // MARK: - Scrollable Content
+            ScrollView {
+                VStack(spacing: 10) {
+                    if showsData.isEmpty {
+                        NoDataView(message: "No Promote Shows found")
+                    } else {
+                        ForEach(showsData.indices,id: \.self) { index in
+                            let data = showsData[index]
+                            ShowPromotedShowCardView(show: data)
+                        }
+                    }
+                    Spacer().frame(height: 80)
+                }
+                .padding(.top)
+            }
+//            CusNavLink(doNavigate: $navigateToReherseal,
+//                       destination: RehearsalScreen(showUd: $showID,
+//                                                    productListData: .constant([]),
+//                                                    isLive: isLive,
+//                                                    backToTabBar: .constant(true),
+//                                                    showsData: $selectedShowsData))
+//            CusNavLink(doNavigate: $navigateToShowAnalytics,
+//                       destination:  MyShowsAnalyticsScreen(showId: $showID))
+//            
+//            CusNavLink(doNavigate: $navigateToshowTitle, destination:
+//                        ShowTitleTips(request : $scheduleRequest,
+//                                      fromPrepare:.constant(false),
+//                                      backToPrepare: $navigateToshowTitle,
+//                                      showId: $SHowId))
+           
+        }
+        .navigationBarHidden(true)
+        .toolbar(.hidden,for: .tabBar)
+        .background(.clear)
+        .toast(isPresenting: $showhud) {
+            AlertToast(type: .regular, title: hudMsg)
+        }
+        .onAppear{
+            Task {
+                guard Reachability.isConnectedToNetwork() else {
+                    hudMsg = "No Internet Connection"
+                    showhud = true
+                    return
+                }
+                SVProgressHUD.show()
+                await self.viewModel.getMyScheduleShow(parameters: GetMyScheduleShowRequest(type: "promoted", page : 1))
+                await SVProgressHUD.dismiss()
+                scheduleShowSuccess()
+            }
+        }
+    }
+    
+    //MARK: scheduleShowSuccess.
+    func scheduleShowSuccess(){
+        SVProgressHUD.dismiss()
+        let response = viewModel.getMyScheduleShowResponseDict
+        if response?.status == "success" {
+            showsData = response?.data ?? []
+            
+        } else {
+            alertType = .sheetType(icon: .alert, title: response?.status?.capitalized ?? "", message: response?.message?.capitalized ?? "", primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .defaultTheme)
+            withAnimation(.snappy) { showError = true }
+        }
+    }
+    
+}
+
+
+// MARK: - Show Promoted Show Card View
+struct ShowPromotedShowCardView: View {
+    let show: GetMyScheduleShowModel?
+    var onTap: () -> Void
+    var onTapMenu: () -> Void
+    
+    // Initialize with default empty closures
+    init(
+        show: GetMyScheduleShowModel?,
+        onTap: @escaping () -> Void = {},
+        onTapMenu: @escaping () -> Void = {}
+    ) {
+        self.show = show
+        self.onTap = onTap
+        self.onTapMenu = onTapMenu
+    }
+    
+    var body: some View {
+        HStack(alignment: .top, spacing: 12) {
+            // Thumbnail Image
+            thumbnailView
+            
+            // Content
+            contentView
+            
+            Spacer()
+        }
+        .padding(16)
+        .background(Color(.systemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 2)
+        .padding(.horizontal, 16)
+        .onTapGesture {
+            onTap()
+        }
+    }
+    
+    // MARK: - Thumbnail View
+    private var thumbnailView: some View {
+        CustomProfileImage(
+            url: show?.imgThumbnail?.first ?? "",
+            isCircular: false,
+            size: 70
+        )
+        .frame(width: 70, height: 70)
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+    }
+    
+    // MARK: - Content View
+    private var contentView: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            // Title
+            titleView
+            
+            // Category
+            categoryView
+            
+            // Sales and Orders
+            salesOrdersView
+            
+            // Date and Time
+            dateTimeView
+        }
+    }
+    
+    // MARK: - Title View
+    private var titleView: some View {
+        Text(show?.title?.capitalizingFirstLetter() ?? "")
+            .font(.custom(poppinsBold, size: 14))
+            .foregroundColor(.primary)
+            .lineLimit(2)
+    }
+    
+    // MARK: - Category View
+    private var categoryView: some View {
+        Text(show?.category?.name ?? "")
+            .font(.custom(poppinsSemiBold, size: 13))
+            .foregroundColor(.secondary)
+    }
+    
+    // MARK: - Sales and Orders View
+    private var salesOrdersView: some View {
+        HStack(spacing: 12) {
+            // Sales
+            HStack(spacing: 4) {
+                Text("\(formatCurrency(show?.totalSalesAmount ?? 0)) Sales")
+                    .font(.custom(poppinsRegular, size: 13))
+                    .foregroundColor(.secondary)
+                Text("•")
+                    .font(.custom(poppinsRegular, size: 13))
+                    .foregroundColor(.secondary)
+                Text("\(show?.totalOrders ?? 0) Orders")
+                    .font(.custom(poppinsRegular, size: 13))
+                    .foregroundColor(.secondary)
+            }
+        }
+    }
+    
+    // MARK: - Date and Time View
+    private var dateTimeView: some View {
+        HStack(spacing: 12) {
+            // Date
+            HStack(spacing: 4) {
+                Text(show?.date ?? "")
+                    .font(.custom(poppinsRegular, size: 13))
+                    .foregroundColor(.secondary)
+                Text("•")
+                    .font(.custom(poppinsRegular, size: 13))
+                    .foregroundColor(.secondary)
+                Text(formatTo12HourTime(show?.time ?? ""))
+                    .font(.custom(poppinsRegular, size: 13))
+                    .foregroundColor(.secondary)
+            }
+        }
+    }
+    
+    // MARK: - Helper Functions
+    private func formatCurrency(_ amount: Int) -> String {
+        let num = Double(amount)
+        let formatter = NumberFormatter()
+        formatter.maximumFractionDigits = 2
+        return "$\(formatter.string(from: NSNumber(value: num)) ?? "0.00")"
+    }
+}

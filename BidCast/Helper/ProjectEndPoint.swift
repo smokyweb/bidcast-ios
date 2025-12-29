@@ -359,7 +359,7 @@ extension APIEndPoint: EndPointType {
         case .getNotificationListing(param:let param):
             return "notification/listing?page=\(param.page)"
         case .getMyScheduleShow(param:let param):
-            return "get-my-schedule-show?=\(param.type)&user_id=\(param.user_id)&page=\(param.page)"
+            return "get-my-schedule-show?=\(param.type)&page=\(param.page)"
         case .productOrderListing:
             return "get-my-orders"
         case .productPurchaseDetail:

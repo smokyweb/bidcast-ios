@@ -154,7 +154,7 @@ struct ProfileScreen: View {
                                         return
                                     }
                                     SVProgressHUD.show()
-                                    await self.viewModel.getMyScheduleShow(parameters: GetMyScheduleShowRequest(type: "upcoming", user_id: Int(id),page : currentPage))
+                                    await self.viewModel.getMyScheduleShow(parameters: GetMyScheduleShowRequest(type: "upcoming",page : currentPage))
                                     await SVProgressHUD.dismiss()
                                     scheduleShowSuccess()
                                 case "Reviews":
@@ -428,7 +428,7 @@ struct ProfileScreen: View {
                 profileSuccess()
                 if isComeFrom == "Home"{
                     selectedTab = "Shows"
-                    await self.viewModel.getMyScheduleShow(parameters: GetMyScheduleShowRequest(type: "upcoming", user_id: Int(id), page: currentPage))
+                    await self.viewModel.getMyScheduleShow(parameters: GetMyScheduleShowRequest(type: "upcoming", page: currentPage))
                     await SVProgressHUD.dismiss()
                     scheduleShowSuccess()
                 }else{
@@ -601,7 +601,7 @@ struct ProfileScreen: View {
             
             if isLast && scheduleShowArr.count < total {
                 SVProgressHUD.show()
-                await viewModel.getMyScheduleShow(parameters: GetMyScheduleShowRequest(type: "upcoming", user_id: Int(id) ?? 0, page: currentPage))
+                await viewModel.getMyScheduleShow(parameters: GetMyScheduleShowRequest(type: "upcoming", page: currentPage))
                 await SVProgressHUD.dismiss()
                 if viewModel.getMyScheduleShowResponseDict?.status == "success" {
                     currentPage = currentPage

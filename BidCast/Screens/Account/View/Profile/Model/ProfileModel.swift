@@ -74,7 +74,7 @@ struct FolloweModel : Codable{
 }
 
 // MARK: - GetMyScheduleShow
-struct GetMyScheduleShowModel : Codable {
+struct GetMyScheduleShowModel1 : Codable {
     var id: Int?
     var title, date, time: String?
     var userID, categoryID: Int?
@@ -98,6 +98,71 @@ struct GetMyScheduleShowModel : Codable {
         case isLive = "is_live"
         case viewerCount = "viewer_count"
         case latestViewerCount = "latest_viewer_count"
+        case category, user
+    }
+}
+
+
+// MARK: - Datum
+struct GetMyScheduleShowModel: Codable {
+    var id: Int?
+    var title, date, time: String?
+    var language, repeatValue: String?
+    var isRepeat, isExplicit: Bool?
+    var userID: Int?
+    var showDiscoverability: String?
+    var categoryID: Int?
+    var productIDS: [String]?
+    var auctionTypeID: Int?
+    var thumbnail: [String]?
+    var imgThumbnail: [String]?
+    var isLive: Bool?
+    var promoteShowID: Int?
+    var viewerCount, latestViewerCount: Int?
+    var promotedAt: String?
+    var isPromote: String?
+    var rtcToken, recordingResourceID, recordingSid: String?
+    var shareCount: Int?
+    var startedAt: String?
+    var promotionStartAt, promotionEndAt: String?
+    var isPromoted: Bool?
+    var products: [ProductDataModel1]?
+    var totalOrders, totalSalesAmount, totalPromotedMinutes: Int?
+    var lastPromotedAt: String?
+    var category: Category?
+    var user: User?
+
+    enum CodingKeys: String, CodingKey {
+        case id, title, date, time, language
+        case repeatValue = "repeat_value"
+        case isRepeat = "is_repeat"
+        case isExplicit = "is_explicit"
+        case userID = "user_id"
+        case showDiscoverability = "show_discoverability"
+        case categoryID = "category_id"
+        case productIDS = "product_ids"
+        case auctionTypeID = "auction_type_id"
+        case thumbnail
+        case imgThumbnail = "img_thumbnail"
+        case isLive = "is_live"
+        case promoteShowID = "promote_show_id"
+        case viewerCount = "viewer_count"
+        case latestViewerCount = "latest_viewer_count"
+        case promotedAt = "promoted_at"
+        case isPromote = "is_promote"
+        case rtcToken = "rtc_token"
+        case recordingResourceID = "recording_resource_id"
+        case recordingSid = "recording_sid"
+        case shareCount = "share_count"
+        case startedAt = "started_at"
+        case promotionStartAt = "promotion_start_at"
+        case promotionEndAt = "promotion_end_at"
+        case isPromoted = "is_promoted"
+        case products
+        case totalOrders = "total_orders"
+        case totalSalesAmount = "total_sales_amount"
+        case totalPromotedMinutes = "total_promoted_minutes"
+        case lastPromotedAt = "last_promoted_at"
         case category, user
     }
 }

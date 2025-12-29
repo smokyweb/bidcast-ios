@@ -554,7 +554,7 @@ struct DeleteNotificationRequest : Encodable{
 
 struct GetMyScheduleShowRequest : Encodable{
     var type : String?
-    var user_id : Int?
+//    var user_id : Int?
     var page : Int
 }
 
