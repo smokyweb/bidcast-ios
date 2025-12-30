@@ -15,6 +15,7 @@ struct BidCastApp: App {
     @StateObject var networkMonitor = NetworkMonitor.shared
     @State private var accountNavigationPath = NavigationPath()
     @StateObject var deepLink = DeepLinkManager()
+    @StateObject var productManager = ProductManager()
     
     @StateObject private var tabBarRouter = TabBarRouter()
     
@@ -63,6 +64,7 @@ struct BidCastApp: App {
                     NavigationContainer(navigationPath: $accountNavigationPath){
                         TabbarScreen()
                             .environmentObject(tabBarRouter)
+                            .environmentObject(productManager)
                     }
                     .id(appRootManager.currentRoot.hashValue)
                 }

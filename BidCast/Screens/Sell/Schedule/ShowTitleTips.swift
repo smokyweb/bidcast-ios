@@ -12,7 +12,7 @@ import SVProgressHUD
 import AlertToast
 
 struct ShowTitleTips: View {
-    
+    @EnvironmentObject var productManager: ProductManager
     @Environment(\.presentationMode) var presentationMode
     @Binding var request : StoreScheduleShowRequest
     @EnvironmentObject var networkMonitor: NetworkMonitor
@@ -75,12 +75,13 @@ struct ShowTitleTips: View {
                     .padding(.trailing, 16)
                     .padding(.top, -10)
                    
-                    Text("Tips for a Great Title")
-                        .font(.custom(poppinsBold, size: 16.0))
+                   
                     VStack(alignment:.leading,spacing: 24){
                         let tipsData = tip.tips ?? [TipsData]()
                         let example = tip.example ?? [String]()
                         VStack{
+                            Text("Tips for a Great Title")
+                                .font(.custom(poppinsBold, size: 16.0))
                             ForEach(tipsData.indices, id: \.self) { tip in
                                 let tips = tipsData[tip]
                                 TipsCardView(image:tips.icon ?? "" ,title: tips.title ?? "", description: tips.description ?? "")
@@ -148,7 +149,14 @@ struct ShowTitleTips: View {
                 navigateToSelectCategory = true
             },cornerRadius: 32, btnTextColor: .white)
             
-            CusNavLink(doNavigate: $navigateToSelectCategory, destination: SelectCategoryScreen(request:$request,title: $title,fromPrepare: $fromPrepare,backToPrepare: $backToPrepare, delegate: delegate))
+            CusNavLink(doNavigate: $navigateToSelectCategory, destination:
+                        SelectCategoryScreen(request:$request,
+                                             title: $title,
+                                             fromPrepare: $fromPrepare,
+                                             backToPrepare: $backToPrepare,
+                                             delegate: delegate)
+                            .environmentObject(productManager)
+            )
            
         }
         .toast(isPresenting: $showhud) {
@@ -170,7 +178,7 @@ struct ShowTitleTips: View {
                 showhud = true
                 return
             }
-            
+            viewModel.errorMessage?.removeAll()
             SVProgressHUD.show()
             await viewModel.getTitleTips(param: TipParam(type: "title"))
             await SVProgressHUD.dismiss()
@@ -227,6 +235,8 @@ struct ShowTitleTips: View {
 //            request.isExplicitContent = showData.is_explicit ?? false
 //            request.repeats = showData.repeat_value ?? ""
 //            request.discoverablitity = showData.show_discoverability ?? ""
+            let products = showData.products ?? []
+            productManager.addProducts(products)
             print(request)
             
         } else {

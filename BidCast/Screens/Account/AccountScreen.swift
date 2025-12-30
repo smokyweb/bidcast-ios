@@ -58,7 +58,7 @@ struct AccountScreen: View {
             VStack(spacing: 0) {
                 headerView
                 
-                ScrollView(showsIndicators: false) {
+                
                     VStack(alignment: .leading, spacing: 4) {
                         VStack {
                             profileCell
@@ -66,7 +66,9 @@ struct AccountScreen: View {
                         }
                         .padding(12)
                         .background(.white)
-                        
+                    }
+                    .frame(maxWidth: .infinity)
+                ScrollView(showsIndicators: false) {
                         VStack {
                             if segment == .sellerHub {
                                 sellerHubSection
@@ -75,8 +77,7 @@ struct AccountScreen: View {
                             }
                         }
                         .padding(.horizontal, 8)
-                    }
-                    .frame(maxWidth: .infinity)
+                   
                 }
                 
                 navigationLinks
@@ -568,7 +569,7 @@ struct SellerHubSection: View {
                             .fill(.defaultTheme)
                             
                     )
-                    .shadow(color: .defaultThemeLight, radius: 1, x: 0, y: 2)
+//                    .shadow(color: .defaultThemeLight, radius: 1, x: 0, y: 2)
             }
             
             // Create Product Button

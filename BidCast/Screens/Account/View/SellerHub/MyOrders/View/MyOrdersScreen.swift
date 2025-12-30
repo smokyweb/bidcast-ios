@@ -95,53 +95,19 @@ struct MyOrdersScreen: View {
     
     @State private var selected: Segment = .all
     @State private var selectedTabIndex: Int = Segment.all.index
-    
-//    var filteredOrder: [MyOrderModel] {
-//        if searchText.isEmpty {
-//            return myOrderListArr
-//        } else {
-//            return myOrderListArr.filter {
-//                $0.product?.title?.localizedCaseInsensitiveContains(searchText) ?? false
-//            }
-//        }
-//    }
-//    
+      
     @State var selectedOrderDetails: MyOrderModel?
     
     var body: some View {
-        ZStack(alignment: .bottom) {
-            VStack(spacing: 4) {
+        VStack {
+           
                 VStack{
-                    // MARK: - Top Header (fixed)
-//                    PrimaryHeader(
-//                        title: AppString.MyOrders,
-//                        isForBoth: false,
-//                        leadingImgArr: [.icBack,.appName],
-//                        trailingImgArr: [.icSetting],
-//                        onClickLeading: { _ in
-//                            self.presentationMode.wrappedValue.dismiss()
-//                        },
-//                        count: .constant(0)
-//                    )
                     TopHeaderView(backBtnTapped: {
                         self.presentationMode.wrappedValue.dismiss()
                     }, title: AppString.MyOrders)
                 }
                 VStack(spacing: 16) {
-                    //                    TwoVerticalLabelCell(
-                    //                        dataModel: MyOrderValue.allCases,
-                    //                        topLabel: { order in
-                    //                            offerCount(for: order)
-                    //                        },
-                    //                        bottomLabel: { $0.description.localized },
-                    //                        selection: $selectedOrderType
-                    //                    )
-                    //                    .onChange(of: selectedOrderType ?? .newOrders) { newType in
-                    //                        searchText = ""
-                    ////                        fetchOrders(for: newType)
-                    //                    }
                     SearchBarView(placeholder: "What are you looking for?") { debouncedText in
-//                        if debouncedText == "" { return }
                         currentPage = 1
                         searchText = debouncedText
                         fetchOrders(for: selected ?? .newOrder)
@@ -169,7 +135,7 @@ struct MyOrdersScreen: View {
                 
                 // MARK: - Scrollable Order List
                 ScrollView {
-                    LazyVStack(spacing: 16) {
+                    VStack(spacing: 12) {
                         if !myOrderListArr.isEmpty {
                             ForEach(Array(myOrderListArr.enumerated()), id: \.element.id) { index, order in
                                 OrderCardView(order: order,
@@ -183,11 +149,14 @@ struct MyOrdersScreen: View {
                                     navigateToProfile = true
                                 })
                                 .padding([.leading , .trailing] , 0)
+                                .padding(.bottom,4)
                                 .onAppear {
                                     checkAndLoadMore(currentIndex: index)
                                 }
                             }
-                            Spacer(minLength: 80)
+//                            Color.clear
+//                                .frame(height: 1)
+//                                .padding(.bottom, 80)
                         }
                         else  {
                             NoDataView(message: "No Orders found")
@@ -197,14 +166,17 @@ struct MyOrdersScreen: View {
                     .padding(.horizontal)
                     .padding(.top, 0)
                 }
-                
                 if isFetchingMore {
                     ProgressView()
                         .padding(.vertical, 16)
+                        .padding(.bottom, 30)
                 }
                 
-            }
+            
+            
         }
+        .edgesIgnoringSafeArea(.bottom)
+        .padding(.bottom,-20)
         .background(.backGround)
         
         .onAppear {
@@ -220,12 +192,7 @@ struct MyOrdersScreen: View {
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }
-        .bottomSheet(
-            isPresented: $showError,
-            height: screenHeight / 2.3,
-            topBarCornerRadius: 25,
-            showTopIndicator: false
-        ) {
+        .sheet(isPresented: $showError) {
             CommonBottomSheet(
                 sheetType: $alertType,
                 onPrimaryClick: {
@@ -234,7 +201,9 @@ struct MyOrdersScreen: View {
                 onSecondaryClick: {
                     withAnimation { showError = false }
                 }
-            )
+            ) .presentationDetents([.fraction(0.40)])
+                .presentationCornerRadius(25)
+                .presentationDragIndicator(.hidden)
         }
         if let order = selectedOrderDetails {
             CusNavLink(doNavigate: $navigateToOrderDetails, destination: OrderStatusScreen(

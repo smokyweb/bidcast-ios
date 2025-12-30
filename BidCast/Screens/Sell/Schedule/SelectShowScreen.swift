@@ -14,6 +14,7 @@ import SVProgressHUD
 struct SelectShowScreen: View {
     
     @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var productManager: ProductManager
     @State private var currentIndex = 0
     @State var tip =  TitleTipsModel()
     @State var isLoading  = false
@@ -150,7 +151,13 @@ struct SelectShowScreen: View {
             
             
             
-            CusNavLink(doNavigate: $navigateToAddProduct, destination: CreateProductScreen(requests: $request, thumbNail: $thumbNail,backToPrepare: $backToPrepare,fromPrepare: .constant(false)))
+            CusNavLink(doNavigate: $navigateToAddProduct, destination:
+                        CreateProductScreen(requests: $request,
+                                            thumbNail: $thumbNail,
+                                            backToPrepare: $backToPrepare,
+                                            fromPrepare: .constant(false))
+                            .environmentObject(productManager)
+            )
 //            CusNavLink(doNavigate: $navigateToAddProduct, destination: AddProductsScreen(request:$request,thumbNail: $thumbNail,fromPrepare: .constant(false),backToPrepare: $backToPrepare))
            
         }

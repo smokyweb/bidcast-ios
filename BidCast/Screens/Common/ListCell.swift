@@ -111,7 +111,7 @@ struct ListCell: View {
         .cornerRadius(8.0)
         .padding([.leading,.trailing], 2)
         .edgesIgnoringSafeArea(.all)
-        .shadow(color: .squirrelGrey.opacity(0.5), radius: 2, x: 0, y: 0)
+        .shadow(color: .squirrelGrey.opacity(0.8), radius: 1, x: 0, y: 0)
         .onTapGesture {
             self.onTapMenuCell?()
         }

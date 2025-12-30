@@ -41,10 +41,10 @@ struct SalesFormatScreen: View {
     @Binding var fromPrepare : Bool
     @Binding var backToCreateProduct : Bool
     @Binding var productId : String
-    var didTapBack : ((Bool) -> Void)?
+    var didTapBack : ((Bool,ProductManager) -> Void)?
     var didTapEdit : ((ProductDataModel1) -> Void)?
     var delegate: ShowStepDelegate?
-    
+    @EnvironmentObject var productManager: ProductManager
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             
@@ -207,8 +207,8 @@ struct SalesFormatScreen: View {
                 fromPrepare:$fromPrepare,
                 backToCreateProduct: $backToCreateProduct,
                 productId: $productId,
-                didTapBack:{ value in
-                    didTapBack?(value)
+                didTapBack:{ value,manager in
+                    didTapBack?(value,manager)
                 },didTapEdit:{ product in
                     didTapEdit?(product)
                 },

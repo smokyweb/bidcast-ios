@@ -91,6 +91,7 @@ struct CreateProductScreen: View {
         showButtons: true
     )
     
+    @EnvironmentObject var productManager: ProductManager
     @State var productId = ""
     var body: some View {
         
@@ -449,8 +450,9 @@ struct CreateProductScreen: View {
             
 
             
-            CusNavLink(doNavigate: $navigateToAddProduct, destination: AddProductsScreen(request:$requests,thumbNail: $thumbNail,productData: .constant([ProductDataModel1]()), fromPrepare: .constant(false),backToPrepare: $backToPrepare, NavFromProductLibrary: .constant(false), backToCreateProduct:$navigateToAddProduct,didTapBack:{ value in
+            CusNavLink(doNavigate: $navigateToAddProduct, destination: AddProductsScreen(request:$requests,thumbNail: $thumbNail,fromPrepare: .constant(false),backToPrepare: $backToPrepare, NavFromProductLibrary: .constant(false), backToCreateProduct:$navigateToAddProduct,didTapBack:{ value,manager in
                 comeFromProductLibrary = value
+//                productManager  = manager
             },didTapEdit:{ product in
                 comeFromProductLibrary = true
                 editProductData = product
@@ -458,7 +460,7 @@ struct CreateProductScreen: View {
             } ))
             
             //from prepare
-            CusNavLink(doNavigate: $navigateToProuct, destination: AddProductsScreen(request:$requests,thumbNail: $thumbNail,productData: .constant([ProductDataModel1]()),fromPrepare: $fromPrepare,backToPrepare: $backToPrepare, NavFromProductLibrary: .constant(false), backToCreateProduct: .constant(false), delegate: delegate))
+            CusNavLink(doNavigate: $navigateToProuct, destination: AddProductsScreen(request:$requests,thumbNail: $thumbNail,fromPrepare: $fromPrepare,backToPrepare: $backToPrepare, NavFromProductLibrary: .constant(false), backToCreateProduct: .constant(false), delegate: delegate))
             
             CusNavLink(doNavigate: $navigateToSalesFormat,
                        destination: SalesFormatScreen(request: $request,
@@ -470,16 +472,19 @@ struct CreateProductScreen: View {
                                                       fromPrepare: $fromPrepare,
                                                       backToCreateProduct:$navigateToSalesFormat,
                                                       productId: $productId,
-                                                      didTapBack:{ value in
+                                                      didTapBack:{ value, manager in
                 comeFromProductLibrary = value
                 imageUrls.removeAll()
                 videoUrls.removeAll()
                 selectedShippingProfileName.removeAll()
+//                productManager = manager
+                
             },didTapEdit  : { product in
                 editProductData = product
                 populateProductData(product)
                 comeFromProductLibrary = true
-            },delegate: delegate))
+            },delegate: delegate)
+            )
             
             CusNavLink(doNavigate: $navigateToShippingProfiles, destination: ShippingSettingsScreen())
         }

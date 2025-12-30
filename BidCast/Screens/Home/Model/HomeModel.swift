@@ -22,7 +22,7 @@ struct HomeModel: Codable, Identifiable {
     var product_ids: [String]?
     var auction_type_id: Int?
     var thumbnail: [String]?
-//    var products : [ProductDataModel]?
+    var products : [ProductDataModel1]?
     var img_thumbnail: [String]?
     var is_live: Bool?
     var viewer_count: Int?
