@@ -38,7 +38,7 @@ struct MultiSelectionSubCategoryScreen: View {
         VStack(spacing: 0) {
             
             HeaderWithTitle(
-                title: "Select Your Favourite Sub Category".localized,
+                title: "Select Your Favorite Sub Category".localized,
                 leadingImgArr: ["chevron.left"],
                 onClickLeading: { _ in
                     self.presentationMode.wrappedValue.dismiss()

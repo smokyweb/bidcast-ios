@@ -25,7 +25,7 @@ struct AboutUsScreen: View {
             // Header
             VStack{
                 PrimaryHeader(
-                    title: "Select Your Favourite Category".localized,
+                    title: "Select Your Favorite Category".localized,
                     isForLogo: false,
                     leadingImgArr: ["chevron.left"],
                     trailingImgArr: [],

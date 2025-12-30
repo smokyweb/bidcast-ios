@@ -1082,7 +1082,7 @@ enum AccountTabSection: String, CaseIterable, CustomStringConvertible {
     case buyer = "Trusted Buyer"
     case notifications = "Notifications"
     case preference = "Preference"
-    case favCategory = "Favourite"
+    case favCategory = "Favorite"
     
     var description: String {
         NSLocalizedString(rawValue, comment: "")
