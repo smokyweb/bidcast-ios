@@ -289,7 +289,7 @@ struct ShippingMethodCard: View {
                     
                     Image(systemName: icon)
                         .font(.system(size: 24, weight: .semibold))
-                        .foregroundColor(.blue)
+                        .foregroundColor(.defaultTheme)
                 }
                 
                 // Content

@@ -57,7 +57,11 @@ struct AffiliateProgramScreen: View {
                     }
                     .padding(.horizontal)
 
-                    ReferralCodeCardView(code: referralCode, onShare: onShare)
+                    ReferralCodeCardView(code: referralCode, onShare: {
+                        let message = "Join with my referral code: \(referralCode)".localized
+                        let activityVC = UIActivityViewController(activityItems: [message], applicationActivities: nil)
+                        UIApplication.shared.windows.first?.rootViewController?.present(activityVC, animated: true, completion: nil)
+                    })
 
                     // 🔥 Share + Copy Buttons
                     HStack(spacing: 16) {
@@ -76,7 +80,7 @@ struct AffiliateProgramScreen: View {
                             .padding(.horizontal, 12)
                             .padding(.vertical, 10)
                             .background(Color.defaultThemeLight)
-                            .cornerRadius(10)
+                            .cornerRadius(32)
                         }
 
                         Button(action: {
@@ -104,7 +108,8 @@ struct AffiliateProgramScreen: View {
                 .padding()
             }
         }
-        .background(Color(.systemGroupedBackground).ignoresSafeArea())
+        .background(.backGround)
+        .ignoresSafeArea()
         .onAppear {
             UIScrollView.appearance().bounces = false
         }

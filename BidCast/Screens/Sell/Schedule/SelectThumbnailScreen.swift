@@ -60,12 +60,12 @@ struct SelectThumbnailScreen: View {
                         showPickerOptions = true
                     }, image: selectedMedia, thumbnailURL: thumbnailURL, isLoadingThumbnail: isLoadingThumbnail  )
                     
-                    Text("Tips for a Great Thumbnail")
-                        .font(.custom(poppinsBold, size: 16.0))
+                    
                     VStack(alignment:.leading,spacing: 24){
                         let tipsData = tip.tips ?? [TipsData]()
                         let example = tip.example ?? [String]()
-                        
+                        Text("Tips for a Great Thumbnail")
+                            .font(.custom(poppinsBold, size: 16.0))
                         ForEach(tipsData.indices, id: \.self) { tip in
                             let tips = tipsData[tip]
                             VStack(spacing:12){
@@ -149,7 +149,7 @@ struct SelectThumbnailScreen: View {
             CusNavLink(doNavigate: $navigateToProuct, destination: CreateProductScreen(requests: $request, thumbNail: $thumbNail,backToPrepare: $backToPrepare,fromPrepare: $fromPrepare,delegate: delegate))
         }
         .edgesIgnoringSafeArea(.bottom)
-        .background(.bg.opacity(0.5))
+        .background(.backGround)
         .toolbar(.hidden,for: .tabBar)
         .confirmationDialog("Select Media Source", isPresented: $showPickerOptions) {
             Button("Camera") {

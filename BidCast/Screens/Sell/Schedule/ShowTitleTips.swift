@@ -79,7 +79,7 @@ struct ShowTitleTips: View {
                     VStack(alignment:.leading,spacing: 24){
                         let tipsData = tip.tips ?? [TipsData]()
                         let example = tip.example ?? [String]()
-                        VStack{
+                        VStack(alignment:.leading){
                             Text("Tips for a Great Title")
                                 .font(.custom(poppinsBold, size: 16.0))
                             ForEach(tipsData.indices, id: \.self) { tip in
@@ -89,7 +89,7 @@ struct ShowTitleTips: View {
                             
                         }
                         .padding(.all,Leading/2)
-                        .background(.lightBlue)
+                        .background(.defaultThemeLight)
                         .cornerRadius(10)
                         
                         Text("Good Example")
