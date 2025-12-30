@@ -239,7 +239,8 @@ extension APIEndPoint: EndPointType {
                 .productOrderDetails,
                 .getPurchasedOrderDetails,
                 .getMyPurchasedOrder,
-                .fetchProduct:
+                .fetchProduct,
+                .getScheduleShow:
             return URL(string: "\(baseURL1)\(path)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)
         default :
             return URL(string: "\(baseURL)\(path)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)

@@ -51,7 +51,9 @@ struct ProductWeightScreen: View {
     @Binding var productId : String
     @State var productData = [ProductDataModel1]()
     
-    var didTapBack : ((Bool) -> Void)?
+    @EnvironmentObject var productManager: ProductManager
+    
+    var didTapBack : ((Bool,ProductManager) -> Void)?
     var didTapEdit : ((ProductDataModel1) -> Void)?
     
     var delegate: ShowStepDelegate?
@@ -222,29 +224,29 @@ struct ProductWeightScreen: View {
                 destination: AddProductsScreen(
                     request:$storeScheduleRequest,
                     thumbNail: $thumbNail,
-                    productData: $productData,
                     fromPrepare: .constant(false),
                     backToPrepare: $backToPrepare, NavFromProductLibrary: .constant(false),
                     backToCreateProduct: $backToCreateProduct,
-                    didTapBack:{ value in
-                        didTapBack?(value)
-                    },didTapEdit: { product in 
+                    didTapBack:{ value,maanger in
+                        didTapBack?(value,maanger)
+                    },didTapEdit: { product in
                        didTapEdit?(product)
                       
-                    })
+                    }
+                )
             )
             CusNavLink(
                 doNavigate: $navigateToProuct,
                 destination: AddProductsScreen(
                     request:$storeScheduleRequest,
                     thumbNail: $thumbNail,
-                    productData: .constant([ProductDataModel1]()),
+                   
                     fromPrepare: $fromPrepare,
                     backToPrepare: $backToPrepare,
                     NavFromProductLibrary: .constant(false),
                     backToCreateProduct: $backToCreateProduct,
                     delegate: delegate
-                )
+                ).environmentObject(productManager)
             )
         }
         .background(.backGround)
@@ -472,6 +474,7 @@ struct ProductWeightScreen: View {
                     "height": request.height,
                     "mail_class": request.mail_class,
                     "processing_category": request.processing_category,
+                    "product_condition":request.product_condition,
                     
                     // ✅ Images array (already present)
                     "images": finalImageUrls,
@@ -575,8 +578,11 @@ struct ProductWeightScreen: View {
         videoUrls = []
         
         if response?.status == "success"{
-            productData.removeAll()
-            productData.append(response?.data ?? ProductDataModel1())
+           
+            if let newProduct = response?.data {
+                productManager.addProduct(newProduct)
+            }
+            
             alertType = .sheetType(
                 icon: .success,
                 title: response?.status?.capitalized ?? "",

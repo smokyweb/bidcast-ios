@@ -37,8 +37,8 @@ struct AddProductsScreen: View {
     @Binding var thumbNail : String
     
     // ⭐ CHANGED: Static product list that persists across navigation
-    @Binding var productData: [ProductDataModel1]
-    @State var inventoryProductData: [ProductDataModel1] = []
+    
+    @EnvironmentObject var productManager: ProductManager
     
     @State var viewModel = ScheduleViewModel()
     @State var productViewModel = ProductViewModel()
@@ -65,7 +65,7 @@ struct AddProductsScreen: View {
     @State var navigateToAddProduct  = false
     @State var navigateToEditProduct  = false
     @Binding var backToCreateProduct : Bool
-    var didTapBack : ((Bool) -> Void)?
+    var didTapBack : ((Bool,ProductManager) -> Void)?
     var didTapEdit : ((ProductDataModel1) -> Void)?
     var delegate: ShowStepDelegate?
     
@@ -77,35 +77,38 @@ struct AddProductsScreen: View {
         secondaryButtonTitle: nil,
         showButtons: true
     )
+//    init(
+//            request: Binding<StoreScheduleShowRequest>,
+//            thumbNail: Binding<String>,
+//            productManager: ProductManager = ProductManager(), // ⭐ Default value
+//            fromPrepare: Binding<Bool> = .constant(false),
+//            backToPrepare: Binding<Bool> = .constant(false),
+//            NavFromProductLibrary: Binding<Bool> = .constant(false),
+//            backToCreateProduct: Binding<Bool> = .constant(false),
+//            didTapBack: ((Bool,ProductManager) -> Void)? = nil,
+//            didTapEdit: ((ProductDataModel1) -> Void)? = nil,
+//            delegate: ShowStepDelegate? = nil
+//        ) {
+//            // ⭐ Use underscore for @Binding properties
+//            self._request = request
+//            self._thumbNail = thumbNail
+//            self.productManager = productManager
+//            self._fromPrepare = fromPrepare
+//            self._backToPrepare = backToPrepare
+//            self._NavFromProductLibrary = NavFromProductLibrary
+//            self._backToCreateProduct = backToCreateProduct
+//            self.didTapBack = didTapBack
+//            self.didTapEdit = didTapEdit
+//            self.delegate = delegate
+//        }
     
-    // ⭐ NEW: Function to add product to list
-    func addProduct(_ product: ProductDataModel1) {
-        // Check if product already exists (by ID)
-        let productIdStr = "\(product.id ?? -1)"
-        
-        if !productData.contains(where: { "\($0.id ?? -1)" == productIdStr }) {
-            productData.append(product)
-            selectedProductIDs.insert(productIdStr)
-            request.product_ids = selectedProductIDs.joined(separator: ",")
-            
-            print("✅ Added product: \(product.title ?? "Unknown") (ID: \(productIdStr))")
-            print("   Total products: \(productData.count)")
-        } else {
-            print("⚠️ Product already exists in list")
-        }
-    }
+  
     
-    // ⭐ NEW: Function to add multiple products (from inventory)
-    func addProducts(_ products: [ProductDataModel1]) {
-        for product in products {
-            addProduct(product)
-        }
-    }
-    
-    // ⭐ NEW: Clear all products (called after successful submit)
     func clearProducts() {
-        productData.removeAll()
+//        productData.removeAll()
+//        productDataList.removeAll()
         selectedProductIDs.removeAll()
+        productManager.selectedProductIDs.removeAll()
         request.product_ids = ""
         print("🗑️ Cleared all products")
     }
@@ -120,7 +123,7 @@ struct AddProductsScreen: View {
                     leadingImgArr:["chevron.left"],
                     onClickLeading: { _ in
                         if backToCreateProduct{
-                            didTapBack?(true)
+                            didTapBack?(true,productManager)
                             backToCreateProduct = false
                         }else{
                             self.presentationMode.wrappedValue.dismiss()
@@ -139,7 +142,7 @@ struct AddProductsScreen: View {
                                     .font(.custom(poppinsSemiBold, size: 16))
                                     .foregroundColor(.primary)
                                 Spacer()
-                                Text("\(productData.count)/100")
+                                Text("\(productManager.products.count)/100")
                                     .font(.custom(poppinsMedium, size: 14))
                                     .foregroundColor(.secondary)
                             }
@@ -147,10 +150,10 @@ struct AddProductsScreen: View {
                             HStack(spacing: 12) {
                                 addProductOption(text: "Add another product") {
                                     if NavFromProductLibrary{
-                                        didTapBack?(true)
+                                        didTapBack?(true,productManager)
                                         presentationMode.wrappedValue.dismiss()
                                     }else{
-                                        didTapBack?(true)
+                                        didTapBack?(true,productManager)
                                         backToCreateProduct = false
                                     }
                                 }
@@ -169,7 +172,7 @@ struct AddProductsScreen: View {
                                 .font(.custom(poppinsSemiBold, size: 16))
                                 .foregroundColor(.primary)
                             
-                            if productData.isEmpty {
+                            if productManager.products.isEmpty {
                                 VStack(spacing: 16) {
                                     Image(systemName: "cube.box")
                                         .font(.system(size: 50))
@@ -187,22 +190,26 @@ struct AddProductsScreen: View {
                                 .padding(.vertical, 60)
                                 
                             } else {
-                                ForEach(productData.indices, id: \.self) { index in
-                                    let data = productData[index]
+                                ForEach(productManager.products.indices, id: \.self) { index in
+                                    let data = productManager.products[index]
                                     let idStr = "\(data.id ?? -1)"
-                                    let isSelected = selectedProductIDs.contains(idStr)
+                                    let isSelected = productManager.selectedProductIDs.contains(idStr)
                                     
                                     ProductItemCard(
                                         product: data,
                                         isSelected: isSelected,
                                         onTapCard: {
+//                                            withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+//                                                if isSelected {
+//                                                    selectedProductIDs.remove(idStr)
+//                                                } else {
+//                                                    selectedProductIDs.insert(idStr)
+//                                                }
+//                                                request.product_ids = selectedProductIDs.joined(separator: ",")
+//                                            }
                                             withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
-                                                if isSelected {
-                                                    selectedProductIDs.remove(idStr)
-                                                } else {
-                                                    selectedProductIDs.insert(idStr)
-                                                }
-                                                request.product_ids = selectedProductIDs.joined(separator: ",")
+                                                productManager.toggleSelection(for: idStr)
+                                                request.product_ids = productManager.getProductIDsString()
                                             }
                                         },
                                         onTapEdit: {
@@ -263,9 +270,11 @@ struct AddProductsScreen: View {
             // ⭐ REMOVED: API call on appear
             showError = false
             showDeleteProduct = false
+            request.product_ids = productManager.getProductIDsString()
             
             print("📱 AddProductsScreen appeared")
-            print("   Current products in list: \(productData.count)")
+            print("   Current products in list: \(productManager.products.count)")
+            print("   Selected IDs: \(Array(productManager.selectedProductIDs).joined(separator: ", "))")
         }
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
@@ -280,7 +289,7 @@ struct AddProductsScreen: View {
                         if viewModel.errorMessage == "" || viewModel.errorMessage == nil {
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                                 // ⭐ CHANGED: Clear products after successful submit
-                                clearProducts()
+                                productManager.clearAll()
                                 navigateToTab = true
                             }
                         }
@@ -303,19 +312,29 @@ struct AddProductsScreen: View {
                     }
                     
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+//                        if let index = deletedIndex {
+//                            withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+//                                // ⭐ CHANGED: Only remove from local list
+//                                productData.remove(at: index)
+//                                if let productId = deletedProductId {
+//                                    selectedProductIDs.remove(productId)
+//                                    request.product_ids = selectedProductIDs.joined(separator: ",")
+//                                }
+//                                deletedIndex = nil
+//                                deletedProductId = nil
+//                                
+//                                print("🗑️ Removed product from list")
+//                                print("   Remaining products: \(productData.count)")
+//                            }
+//                        }
                         if let index = deletedIndex {
                             withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
-                                // ⭐ CHANGED: Only remove from local list
-                                productData.remove(at: index)
-                                if let productId = deletedProductId {
-                                    selectedProductIDs.remove(productId)
-                                    request.product_ids = selectedProductIDs.joined(separator: ",")
-                                }
+                                // ⭐ Remove using manager
+                                productManager.removeProduct(at: index)
+                                request.product_ids = productManager.getProductIDsString()
+                                
                                 deletedIndex = nil
                                 deletedProductId = nil
-                                
-                                print("🗑️ Removed product from list")
-                                print("   Remaining products: \(productData.count)")
                             }
                         }
                     }
@@ -333,19 +352,21 @@ struct AddProductsScreen: View {
                 .environmentObject(TabBarRouter())
         )
         CusNavLink(doNavigate: $navigateToAddProduct, destination: CreateProductScreen(requests: $request, thumbNail: $thumbNail, backToPrepare: $backToPrepare, fromPrepare: .constant(false)))
-        CusNavLink(doNavigate: $navigateToEditProduct, destination: CreateProductScreen(requests: $request, thumbNail: $thumbNail, backToPrepare: $backToPrepare, fromPrepare: .constant(false)))
+        CusNavLink(doNavigate: $navigateToEditProduct, destination: CreateProductScreen(requests: $request, thumbNail: $thumbNail, backToPrepare: $backToPrepare, fromPrepare: .constant(false))
+            .environmentObject(productManager))
         
         // ⭐ CHANGED: Pass callback to receive products from inventory
         CusNavLink(doNavigate: $navigateToInventry,
-                   destination: InventoryScreen(preSelectedProducts:inventoryProductData,
+                   destination: InventoryScreen(
+                    preSelectedProducts:productManager.products,
                     selectedCategoryId: [Int(request.category_id) ?? 0],
                     navigatedFrom: .addProduct,
                     onProductsSelected: { products in
-                        // This callback receives products from inventory screen
-            inventoryProductData = products
-                        addProducts(products)
+                        
+                        productManager.addProducts(products)
+                        request.product_ids = productManager.getProductIDsString()
                     }
-                   ))
+                   ).environmentObject(productManager))
     }
     
     // MARK: - Add Product Tile
@@ -391,8 +412,8 @@ extension AddProductsScreen {
     // ⭐ REMOVED: All fetch functions since we're not calling API on load
     
     func handleFinishTapped() {
-        print("🚀 Submitting with products: \(productData.count)")
-        print("   Selected IDs: \(Array(selectedProductIDs).joined(separator: ", "))")
+        print("🚀 Submitting with products: \(productManager.products.count)")
+        print("   Selected IDs: \(Array(productManager.selectedProductIDs).joined(separator: ", "))")
 
         if let error = validateRequest() {
             hudMsg = error
@@ -422,7 +443,7 @@ extension AddProductsScreen {
         if thumbNail.isEmpty { return "Please select thumbnail image" }
         if request.date.isEmpty { return "Please enter date" }
         if request.time.isEmpty { return "Please select time" }
-        if selectedProductIDs.isEmpty { return "Please select product" }
+        if productManager.selectedProductIDs.isEmpty { return "Please select product" }
 
         return nil
     }
@@ -480,7 +501,7 @@ extension AddProductsScreen {
             }
 
             // Convert product IDs
-            let prodIds = Array(selectedProductIDs)
+            let prodIds = Array(productManager.selectedProductIDs)
             for (index, product) in prodIds.enumerated() {
                 params["product_ids[\(index)]"] = product
             }
@@ -547,7 +568,7 @@ extension AddProductsScreen {
             }
 
             // Convert product IDs
-            let prodIds = Array(selectedProductIDs)
+            let prodIds = Array(productManager.selectedProductIDs)
             for (index, product) in prodIds.enumerated() {
                 params["product_ids[\(index)]"] = product
             }

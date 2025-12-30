@@ -161,7 +161,7 @@ struct SelectCategoryScreen: View {
                                     .fixedSize(horizontal: false, vertical: true)
                             }
                         }
-                        .toggleStyle(SwitchToggleStyle(tint: .blue))
+                        .toggleStyle(SwitchToggleStyle(tint: .defaultTheme))
                         .padding(20)
                         .background(
                             RoundedRectangle(cornerRadius: 16)
@@ -285,7 +285,7 @@ struct SelectCategoryScreen: View {
             CusNavLink(doNavigate: $navigateToThumbnail, destination: SelectThumbnailScreen(request:$request,fromPrepare: $fromPrepare,backToPrepare: $backToPrepare,delegate: delegate))
         }
         .edgesIgnoringSafeArea(.bottom)
-        .background(Color.bg.opacity(0.5))
+        .background(.backGround)
         
         .onFirstAppear {
 //            request.show_discoverability = "public"

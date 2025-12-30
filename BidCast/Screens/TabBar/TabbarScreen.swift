@@ -13,7 +13,7 @@ final class TabBarRouter: ObservableObject {
 }
 
 struct TabbarScreen: View {
-    
+    @EnvironmentObject var productManager: ProductManager
     @EnvironmentObject var tabBarRouter: TabBarRouter
     @State private var previousTab = 0
     @State private var showSellSheet = false
@@ -150,6 +150,7 @@ struct TabbarScreen: View {
                                 backToPrepare: $navigateToTitle,
                                 showId: .constant(0)
                             )
+                            .environmentObject(productManager)
                             .navigationBarHidden(true)
                             .toolbar(.hidden, for: .navigationBar)
                         }
