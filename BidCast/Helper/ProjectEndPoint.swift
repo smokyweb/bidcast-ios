@@ -85,9 +85,11 @@ enum APIEndPoint{
 //    case storeScheduleShow(param : StoreScheduleShowRequest)
     case storeScheduleShow
     case updateScheduleShow
-    case AddCard(param:AddCardRequest)
+    case addCard(param:AddCardRequest)
     case deleteCard(param:DeleteCardRequest)
+    case setDefaultCard(param:DeleteCardRequest)
     case getCard
+    case updateCard(param: UpdateCardRequest)
     case getTransactionList(param : TransactionRequest)
 
     case getScheduledShow(param:GetLiveShowsRequest)
@@ -105,7 +107,7 @@ enum APIEndPoint{
     case updateProfile(param:UpdateProfileRequest)
     case storeBid(param:StoreBidRequest)
     case sellerStatus
-    case setDefaultCard(param:CardDefaultRequest)
+//    case setDefaultCard(param:CardDefaultRequest)
     case getState
     case uploadProductImage
     case deleteProduct(param : DeleteProduct)
@@ -382,12 +384,16 @@ extension APIEndPoint: EndPointType {
             return "referral-code/fetch"
         case .getPurchasedOrderDetails:
             return "get-order-details"
-        case .AddCard:
-            return "add-card-net"
+        case .addCard:
+            return "add-card"
+        case .updateCard:
+            return "update-card"
         case .deleteCard:
-            return "delete-card-net"
+            return "delete-card"
+        case .setDefaultCard:
+            return "set-default-card"
         case .getCard:
-            return "get-card-net"
+            return "get-card"
         case .getTransactionList:
             return "transaction-history/listing"
         case .storeScheduleShow:
@@ -411,8 +417,8 @@ extension APIEndPoint: EndPointType {
             return "bid/store"
         case .sellerStatus:
             return "seller-status"
-        case .setDefaultCard:
-            return "set-default-card"
+//        case .setDefaultCard:
+//            return "set-default-card"
         case .getState:
             return "get-states"
         case .uploadProductImage:
@@ -799,10 +805,14 @@ extension APIEndPoint: EndPointType {
             return .get
         case .getPurchasedOrderDetails:
             return .post
-        case .AddCard:
+        case .addCard:
+            return .post
+        case .updateCard:
             return .post
         case .deleteCard:
             return .post
+//        case .setDefaultCard:
+//            return .post
         case .getCard:
             return .get
         case .getTransactionList:
@@ -1194,9 +1204,13 @@ extension APIEndPoint: EndPointType {
             return nil
         case .getPurchasedOrderDetails(param: let param):
             return param
-        case .AddCard(param: let param):
+        case .addCard(param: let param):
+            return param
+        case .updateCard(param: let param):
             return param
         case .deleteCard(param: let param):
+            return param
+        case .setDefaultCard(param: let param):
             return param
         case .getCard:
             return nil
@@ -1226,8 +1240,8 @@ extension APIEndPoint: EndPointType {
             return param
         case .sellerStatus:
             return nil
-        case .setDefaultCard(param: let param):
-            return param
+//        case .setDefaultCard(param: let param):
+//            return param
         case .getState:
             return nil
         case .uploadProductImage:
@@ -1591,9 +1605,13 @@ extension APIEndPoint: EndPointType {
             return nil
         case .updateScheduleShow:
             return nil
-        case .AddCard(param: let param):
+        case .addCard:
             return nil
-        case .deleteCard(param: let param):
+        case .updateCard:
+            return nil
+        case .deleteCard:
+            return nil
+        case .setDefaultCard:
             return nil
         case .getCard:
             return nil
@@ -1629,8 +1647,8 @@ extension APIEndPoint: EndPointType {
             return nil
         case .sellerStatus:
             return nil
-        case .setDefaultCard:
-            return nil
+//        case .setDefaultCard:
+//            return nil
         case .getState:
             return nil
         case .uploadProductImage:

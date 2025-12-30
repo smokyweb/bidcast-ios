@@ -16,6 +16,7 @@ struct ShowTitleTips: View {
     @Environment(\.presentationMode) var presentationMode
     @Binding var request : StoreScheduleShowRequest
     @EnvironmentObject var networkMonitor: NetworkMonitor
+    
     @State private var currentIndex = 0
     @State var tip =  TitleTipsModel()
     @State var isLoading  = false

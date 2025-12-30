@@ -11,6 +11,7 @@ struct CardCell: View {
     var cardNo = ""
     var expires = ""
     var onTapDefault : () -> () = { }
+    var onTapEdit : () -> () = { }
     var onTapDelete : () -> () = { }
     var onTapCard : () -> () = { }
     @State var forSelect : Bool = false
@@ -50,6 +51,13 @@ struct CardCell: View {
                         onTapDefault()
                     }){
                         Text("Set as default")
+                            .font(.custom(poppinsSemiBold, size: 11))
+                    }
+                    
+                    Button(action: {
+                        onTapEdit()
+                    }){
+                        Text("Edit Card")
                             .font(.custom(poppinsSemiBold, size: 11))
                     }
                     

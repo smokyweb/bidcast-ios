@@ -14,7 +14,9 @@ struct PaymentAndShipping_Screen: View {
     
     @State var navigateToCreateAddress = false
     @State var navigateToAddCard = false
+    @State private var navigateToEditCard = false
     @State var viewModel = PaymentViewModel()
+    @StateObject private var cardviewModel = StripeCardViewModel()
     
     @State var showError: Bool = false
     @State var isLoading: Bool = false
@@ -22,7 +24,7 @@ struct PaymentAndShipping_Screen: View {
     @State var hudMsg: String = ""
     
     @State var sampleAddresses = [AddressModel]()
-    @State var cardArr = [PaymentProfile]()
+    @State private var cardArr:[CardDataModel] = []
     
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     
@@ -57,33 +59,22 @@ struct PaymentAndShipping_Screen: View {
                                 Spacer()
                             }
                         } else {
-                            ForEach(0 ..< cardArr.count, id: \.self) { index in
-                                let data = cardArr[index]
-                                let card = data.payment?.creditCard
+                            ForEach(cardArr, id: \.cardID) { cardVal in
+                                let card = cardVal
                                 CardCell(
                                     image: "creditcard.fill",
-                                    cardNo: card?.cardNumber ?? "",
-                                    expires: "\(card?.expirationDate ?? "")/\(card?.expirationDate ?? "")",
+                                    cardNo: card.last4 ?? "",
+                                    expires: "\(card.expMonth ?? 00)/\(card.expYear ?? 0000)",
                                     onTapDefault: {
-                                        Task {
-                                            SVProgressHUD.show()
-                                            await self.viewModel.setDefaultCard(parameters: CardDefaultRequest(card_id: data.customerPaymentProfileId ?? ""))
-                                            await SVProgressHUD.dismiss()
-                                            defaultSuccess()
-                                        }
+                                       setDefaultCard(with: cardVal.cardID ?? "")
+                                    },
+                                    onTapEdit:  {
+                                        navigateToEditCard = true
+                                        cardviewModel.selectCard(cardVal)
                                     },
                                     onTapDelete: {
-                                        Task {
-                                            SVProgressHUD.show()
-                                            await self.viewModel.deleteCard(parameters: DeleteCardRequest(payment_profile_id: data.customerPaymentProfileId ?? ""))
-                                            self.cardArr.removeAll()
-                                            await self.viewModel.getCard()
-                                            await self.viewModel.getAddresses()
-                                            await SVProgressHUD.dismiss()
-                                            AddressSuccess()
-                                            cardSuccess()
-                                        }
-                                    }, isDefault: data.is_default ?? false
+                                        deleteCard(with: cardVal.cardID ?? "")
+                                    }, isDefault: card.isDefault ?? false
                                 )
                             }
                         }
@@ -179,15 +170,33 @@ struct PaymentAndShipping_Screen: View {
 
             CusNavLink(doNavigate: $navigateToCreateAddress, destination: CreateAddress())
             CusNavLink(doNavigate: $navigateToAddCard, destination: AddCardScreen())
+            CusNavLink(doNavigate: $navigateToEditCard, destination: AddCardScreen(viewModel: cardviewModel))
         }
         .onAppear{
-            Task{
-                SVProgressHUD.show()
-                await self.viewModel.getCard()
-                await cardSuccess()
-                await self.viewModel.getAddresses()
-                await SVProgressHUD.dismiss()
-                await AddressSuccess()
+            Task {
+                await performAPICalls(
+                    isConcurrent: true,
+                    onError: { error in
+                        alertType = .sheetType(
+                            icon: .alert,
+                            title: "Error",
+                            message: errorDesc(error: error, message: viewModel.errorMessage ?? cardviewModel .errorMessage),
+                            primaryBtnText: "",
+                            secondaryBtnText: AppString.ok.localized
+                        )
+                        showError = true
+                    }, onSuccess: {
+                        // On success
+                        cardSuccess()
+                        AddressSuccess()
+                    }
+                    
+                ) {
+                    async let t1: () = self.cardviewModel.getCards()
+                    async let t2: () = self.viewModel.getAddresses()
+                    
+                    _ = try await (t1, t2)
+                }
             }
         }
         .bottomSheet(
@@ -211,22 +220,77 @@ struct PaymentAndShipping_Screen: View {
         }
     }
     
+    func deleteCard(with cardId: String) {
+        Task {
+            await performAPICalls(
+                isConcurrent: true,
+                onError: { error in
+                    alertType = .sheetType(
+                        icon: .alert,
+                        title: "Error",
+                        message: errorDesc(error: error, message: cardviewModel.errorMessage),
+                        primaryBtnText: "",
+                        secondaryBtnText: AppString.ok.localized
+                    )
+                    showError = true
+                }, onSuccess: {
+                    // On success
+                    Task {
+                        self.cardArr.removeAll()
+                        SVProgressHUD.show()
+                        try await self.cardviewModel.getCards()
+                        cardSuccess()
+                    }
+                }
+            ) {
+                try await self.cardviewModel.deleteCard(request: DeleteCardRequest(card_id: cardId))
+            }
+        }
+    }
+    
+    func setDefaultCard(with cardId: String) {
+        Task {
+            await performAPICalls(
+                isConcurrent: true,
+                onError: { error in
+                    alertType = .sheetType(
+                        icon: .alert,
+                        title: "Error",
+                        message: errorDesc(error: error, message: cardviewModel.errorMessage),
+                        primaryBtnText: "",
+                        secondaryBtnText: AppString.ok.localized
+                    )
+                    showError = true
+                }, onSuccess: {
+                    // On success
+                    Task {
+                        self.cardArr.removeAll()
+                        SVProgressHUD.show()
+                        try await self.cardviewModel.getCards()
+                        cardSuccess()
+                    }
+                }
+            ) {
+                try await self.cardviewModel.setDefaultCard(request: DeleteCardRequest(card_id: cardId))
+            }
+        }
+    }
+    
     
     func cardSuccess() {
         SVProgressHUD.dismiss()
-        let response = viewModel.cardDict
-        if response.status == "success" {
-            cardArr = viewModel.cardDict.data?.paymentProfiles ?? [PaymentProfile]()
-            
+        let response = cardviewModel.cards
+        if response?.status == "success" {
+            cardArr = response?.data ?? []
         } else {
-            showError = true
             alertType = .sheetType(
                 icon: .alert,
-                title: response.error_type?.capitalized ?? "",
-                message: response.message?.capitalized ?? "",
+                title: "Error",
+                message: cardviewModel.errorMessage ?? "",
                 primaryBtnText: "",
-                secondaryBtnText: AppString.ok.localized
+                secondaryBtnText:  AppString.ok.localized
             )
+            showError = true
         }
     }
     

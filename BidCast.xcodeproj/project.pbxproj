@@ -546,6 +546,7 @@
 		D66531752E9E79F400F19B94 /* FileDownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D66531742E9E79F400F19B94 /* FileDownloadManager.swift */; };
 		D66B575E2EC319DD00A334AA /* EditProductScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D66B575D2EC319DD00A334AA /* EditProductScreen.swift */; };
 		D66B57602EC3424B00A334AA /* DownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D66B575F2EC3424B00A334AA /* DownloadManager.swift */; };
+		D66FF2A62F03A85000A65C1E /* StripeCardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D66FF2A52F03A85000A65C1E /* StripeCardViewModel.swift */; };
 		D678E3482EC86E50005283BF /* HeaderMenuIconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D678E3472EC86E50005283BF /* HeaderMenuIconView.swift */; };
 		D678E34A2EC86E78005283BF /* SearchBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D678E3492EC86E78005283BF /* SearchBarView.swift */; };
 		D678E34C2EC86ED5005283BF /* PillSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D678E34B2EC86ED5005283BF /* PillSelectorView.swift */; };
@@ -1133,6 +1134,7 @@
 		D66531742E9E79F400F19B94 /* FileDownloadManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileDownloadManager.swift; sourceTree = "<group>"; };
 		D66B575D2EC319DD00A334AA /* EditProductScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProductScreen.swift; sourceTree = "<group>"; };
 		D66B575F2EC3424B00A334AA /* DownloadManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadManager.swift; sourceTree = "<group>"; };
+		D66FF2A52F03A85000A65C1E /* StripeCardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StripeCardViewModel.swift; sourceTree = "<group>"; };
 		D678E3472EC86E50005283BF /* HeaderMenuIconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderMenuIconView.swift; sourceTree = "<group>"; };
 		D678E3492EC86E78005283BF /* SearchBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBarView.swift; sourceTree = "<group>"; };
 		D678E34B2EC86ED5005283BF /* PillSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PillSelectorView.swift; sourceTree = "<group>"; };
@@ -1652,6 +1654,7 @@
 			isa = PBXGroup;
 			children = (
 				35C202562DEF127900492F2D /* AddCardViewModel.swift */,
+				D66FF2A52F03A85000A65C1E /* StripeCardViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -4736,6 +4739,7 @@
 				D67F64F92EA2316900C3017C /* SendTipView.swift in Sources */,
 				99C909E52DC8CDDC0054620B /* UserJobModal.swift in Sources */,
 				D6C27BDE2ED466A600A2B724 /* ProductShopListScreen.swift in Sources */,
+				D66FF2A62F03A85000A65C1E /* StripeCardViewModel.swift in Sources */,
 				D4DAD3182E24E34A00738549 /* RateSellerView.swift in Sources */,
 				99C909E62DC8CDDC0054620B /* CreateCompanyRequest.swift in Sources */,
 				D4CAEC6E2DE6F74A00705CD7 /* AnalyticsModel.swift in Sources */,

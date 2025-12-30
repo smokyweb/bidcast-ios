@@ -90,7 +90,7 @@ struct ShippingSettingsScreen: View {
                             title: "Shipping Profiles",
                             badge: nil,
                             subtitle: nil,
-                            status: "Customize sipping Profile") {
+                            status: "Custom shipping profiles") {
                                 navigateToProfiles = true
                             }
                     }
@@ -98,9 +98,10 @@ struct ShippingSettingsScreen: View {
                 }
                 .background(.backGround)
                 // MARK: - Navigation Links
-                NavigationLink(destination: FreePickupScreen(changeFreeToggle: { status in
+                NavigationLink(
+                    destination: FreePickupScreen(changeFreeToggle: { status in
                     isFreePickupEnabled = status
-                })) {
+                }), isActive: $navigateToFreePickup) {
                     EmptyView()
                 }
                 .hidden()
@@ -143,14 +144,14 @@ struct ShippingOptionCard: View {
             // Header with Icon and Title
             HStack(spacing: 12) {
                 ZStack {
-                    RoundedRectangle(cornerRadius: 10)
+                    RoundedRectangle(cornerRadius: 22)
                         .fill(iconColor.opacity(0.12))
                         .frame(width: 44, height: 44)
                     
                     Image(icon)
                         .font(.custom(poppinsSemiBold, size: 20))
                         .font(.system(size: 20, weight: .semibold))
-                        .foregroundColor(iconColor)
+                        .foregroundColor(.blue)
                 }
                 
                 Text(title)

@@ -8,6 +8,7 @@
 import SwiftUI
 import SVProgressHUD
 import AlertToast
+import Stripe
 
 struct AddCardScreen: View {
     @State private var cardHolderName = ""
@@ -15,10 +16,14 @@ struct AddCardScreen: View {
     @State private var cvv = ""
     @State private var expiryDate = ""
     var isNavFrom: String = ""
-    @State var viewModel = AddCardViewModel()
+//    @State var viewModel = AddCardViewModel()
     var onSuccess: ((String) async -> Void)?
     @Environment(\.presentationMode) var presentationMode
-    @ObservedObject var stpCard = StripeCardViewModel()
+    
+    @ObservedObject var viewModel = StripeCardViewModel()
+
+    @State private var cardId: String = ""
+    @State private var isEditMode: Bool = false
     
     @State var showError: Bool = false
     @State var isLoading: Bool = false
@@ -31,7 +36,7 @@ struct AddCardScreen: View {
         VStack(alignment: .leading, spacing: 20) {
             VStack{
                 PrimaryHeader(
-                    title: "Add Payment Card".localized,
+                    title: isEditMode ? "Update Payment Card" : "Add Payment Card".localized,
                     isForLogo: false,
                     leadingImgArr: ["chevron.left"], // logo on left
                     trailingImgArr: [],
@@ -51,16 +56,16 @@ struct AddCardScreen: View {
                     .frame(height: 200)
                 
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("BANK NAME")
-                        .font(.custom(poppinsMedium, size: 13.0))
-                        .foregroundColor(.gray)
+//                    Text("BANK NAME")
+//                        .font(.custom(poppinsMedium, size: 13.0))
+//                        .foregroundColor(.gray)
                     Text(cardNumber.isEmpty ? "XXXX-XXXX-XXXX-XXXX" : cardNumber)
                         .font(.custom(poppinsMedium, size: 13.0))
                         .foregroundColor(.white)
                         .font(.headline)
                     
                     TextField("Enter Name", text: $cardHolderName)
-                        .foregroundColor(.white)
+                        .foregroundColor(.gray)
                         .font(.custom(poppinsMedium, size: 13.0))
                         .textFieldStyle(PlainTextFieldStyle())
                         .padding(.bottom, 10)
@@ -106,6 +111,7 @@ struct AddCardScreen: View {
                     }
                 )
                 .keyboardType(.numberPad)
+                .disabled(isEditMode)
                 //                .textContentType(.name)
                 
                 HStack {
@@ -121,6 +127,7 @@ struct AddCardScreen: View {
                         }
                     )
                     .keyboardType(.numberPad)
+                    .disabled(isEditMode)
                     //                    .textContentType(.name)
                     AuthTextField(
                         floatingLabel: "Expiry Date",
@@ -141,60 +148,80 @@ struct AddCardScreen: View {
             
             Spacer()
             
-            PrimaryButton(
-                title: "Submit",
-                isOutLine: true,
-                onButtonClick: {
-                    guard !cardNumber.isEmpty else{
-                        hudMsg = "Please Enter card number"
-                        showhud = true
-                        return
+            // Add Button
+            Button(action: addCard) {
+                HStack {
+                    if viewModel.isLoading {
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                    } else {
+                        Text(isEditMode ? "Update Card" : "Add Card")
+                            .font(.custom(poppinsSemiBold, size: 16))
                     }
-                    guard !expiryDate.isEmpty else{
-                        hudMsg = "Please Enter expiry date"
-                        showhud = true
-                        return
-                    }
-                    guard !cvv.isEmpty else{
-                        hudMsg = "Please Enter cvv detials"
-                        showhud = true
-                        return
-                    }
-                    
-                    
-                    UIApplication.shared.endEditing()
-                    //                    isNavFrom = "SellerVerification"
-                    
-                    Task{
-                        SVProgressHUD.show()
-                        self.viewModel.errorMessage = ""
-                        let param = AddCardRequest(card_number: getUnformattedCardNumber(cardNumber),
-                                                   expiration_date: expiryDate,
-                                                   cvv: cvv)
-                        await viewModel.addCard(parameters: param)
-                        await SVProgressHUD.dismiss()
-                        
-                        if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
-                            handleResponse()
-                        }else{
-                            alertType = .sheetType(
-                                icon: .alert,
-                                title: "Failed",
-                                message: self.viewModel.errorMessage ?? "",
-                                primaryBtnText: "",
-                                secondaryBtnText: "OK"
-                            )
-                            showError = true
-                        }
-                    }
-                    
-                },
-                width: screenWidth - 40,
-                cornerRadius: 12.0, imageName: "",
-                btnTextColor : .defaultTheme, btnColor: .defaultTheme
-            )
-            .padding(.vertical, 10)
-            .background(Color.white)
+                }
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 16)
+                .background(Color.blue)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+            }
+            .disabled(!isFormValid)
+            .padding(.horizontal, 20)
+            
+//            PrimaryButton(
+//                title: "Submit",
+//                isOutLine: true,
+//                onButtonClick: {
+//                    guard !cardNumber.isEmpty else{
+//                        hudMsg = "Please Enter card number"
+//                        showhud = true
+//                        return
+//                    }
+//                    guard !expiryDate.isEmpty else{
+//                        hudMsg = "Please Enter expiry date"
+//                        showhud = true
+//                        return
+//                    }
+//                    guard !cvv.isEmpty else{
+//                        hudMsg = "Please Enter cvv detials"
+//                        showhud = true
+//                        return
+//                    }
+//                    
+//                    
+//                    UIApplication.shared.endEditing()
+//                    //                    isNavFrom = "SellerVerification"
+//                    
+//                    Task{
+//                        SVProgressHUD.show()
+//                        self.viewModel.errorMessage = ""
+//                        let param = AddCardRequest(card_number: getUnformattedCardNumber(cardNumber),
+//                                                   expiration_date: expiryDate,
+//                                                   cvv: cvv)
+//                        await viewModel.addCard(parameters: param)
+//                        await SVProgressHUD.dismiss()
+//                        
+//                        if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
+//                            handleResponse()
+//                        }else{
+//                            alertType = .sheetType(
+//                                icon: .alert,
+//                                title: "Failed",
+//                                message: self.viewModel.errorMessage ?? "",
+//                                primaryBtnText: "",
+//                                secondaryBtnText: "OK"
+//                            )
+//                            showError = true
+//                        }
+//                    }
+//                    
+//                },
+//                width: screenWidth - 40,
+//                cornerRadius: 12.0, imageName: "",
+//                btnTextColor : .defaultTheme, btnColor: .defaultTheme
+//            )
+//            .padding(.vertical, 10)
+//            .background(Color.white)
         }
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
@@ -206,10 +233,10 @@ struct AddCardScreen: View {
                 sheetType: $alertType,
                 onPrimaryClick: {
                     withAnimation { showError = false }
-                    if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
-                        self.presentationMode.wrappedValue.dismiss()
+                    if let msg = self.viewModel.errorMessage, msg != ""{
                         withAnimation { showError = false }
                     }else{
+                        self.presentationMode.wrappedValue.dismiss()
                         withAnimation { showError = false }
                     }
                 },
@@ -218,31 +245,80 @@ struct AddCardScreen: View {
                 }
             )
         }
+        
+        .onAppear {
+            if let selectedCard = viewModel.selectedCard {
+                self.cardId = selectedCard.cardID ?? ""
+                isEditMode = true
+                cardHolderName = selectedCard.cardHolderName ?? ""
+                expiryDate = "\(selectedCard.expYear ?? 0)-\(selectedCard.expMonth ?? 0)"
+            }
+        }
     }
     
+    private var isFormValid: Bool {
+        if isEditMode {
+            return !cardHolderName.isEmpty &&
+            !expiryDate.isEmpty
+        }
+        else  {
+            return !cardHolderName.isEmpty &&
+            !cardNumber.isEmpty &&
+            !expiryDate.isEmpty &&
+            !cvv.isEmpty
+        }
+    }
     
-    func handleResponse() {
-        let response = viewModel.addCardDict
-        if response.status == "success" {
-            alertType = .sheetType(
-                icon: .success,
-                title: response.error_type?.capitalized ?? "Success",
-                message: response.message?.capitalized ?? "Card added successfully.",
-                primaryBtnText: "OK",
-                secondaryBtnText: ""
-            )
-            showError = true
-            
-            handleSellerCardResponse(cardId: self.viewModel.addCardDict.data?.first?.customerProfileId ?? "")
-        } else {
-            alertType = .sheetType(
-                icon: .alert,
-                title: response.error_type?.capitalized ?? "Error",
-                message: response.message?.capitalized ?? "Something went wrong.",
-                primaryBtnText: "",
-                secondaryBtnText: "OK"
-            )
-            showError = true
+    private func addCard() {
+        
+        Task {
+            await performAPICalls(
+                isConcurrent: false,
+                onError: { error in
+                    alertType = .sheetType(
+                        icon: .alert,
+                        title: "Error",
+                        message: errorDesc(error: error, message: viewModel.errorMessage),
+                        primaryBtnText: "",
+                        secondaryBtnText: "OK"
+                    )
+                    showError = true
+                },
+                onSuccess: {
+                    alertType = .sheetType(
+                        icon: .success,
+                        title: "Success",
+                        message: isEditMode ? "Card Added Successfully." : "Card Updated Successfully.",
+                        primaryBtnText: "OK",
+                        secondaryBtnText: ""
+                    )
+                    showError = true
+                }
+            ) {
+                // Create mock card text field
+                let date = expiryDate.split(separator: "-")
+                let month = date[1]
+                let year = date[0]
+                
+                if !isEditMode {
+                    var cardTextField = StripeRequest(cardHolderName: cardHolderName,
+                                                      cardNumber: getUnformattedCardNumber(cardNumber),
+                                                      expirationMonth: UInt(month) ?? 0,
+                                                      expirationYear: UInt(year) ?? 0,
+                                                      cvc: cvv)
+                    
+                    // Get token
+                    let token = try await viewModel.getStripeToken(from: cardTextField)
+                    
+                    // Add card
+                    try await viewModel.addCard(request: AddCardRequest(card_token: token.tokenId))
+                }
+                else  {
+                    try await viewModel.updateCard(request: UpdateCardRequest(card_id: cardId, name: cardHolderName, exp_month: "\(month)", exp_year: "\(year)"
+                                                                            ))
+                }
+                
+            }
         }
     }
     
