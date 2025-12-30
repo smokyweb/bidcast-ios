@@ -300,7 +300,8 @@ struct ProfileScreen: View {
                 
             }
         }
-        .background(Color(UIColor.systemGroupedBackground))
+        .background(.backGround)
+        .edgesIgnoringSafeArea(.bottom)
         .bottomSheet(isPresented: $showSellSheet, height: screenHeight * 0.95) {
             ProductDetailSheet(
                 onDismiss : {
@@ -356,17 +357,8 @@ struct ProfileScreen: View {
         //            )
         //        )
         
-        .bottomSheet(
-            isPresented: $isTipAmountButtoClicked,
-            height: screenHeight * 0.55,
-            topBarCornerRadius: 20,
-            contentBackgroundColor: Color(.systemBackground),
-            topBarBackgroundColor: Color(.systemBackground),
-            showTopIndicator: false,
-            onDismiss: {
-                isTipAmountButtoClicked = false
-            },
-            content: {
+        .sheet(
+            isPresented: $isTipAmountButtoClicked){
                 SendTipView(
                     sellerId: "\(profileData.id ?? -1)" ?? "",
                     onClose: {
@@ -376,8 +368,11 @@ struct ProfileScreen: View {
                         print("Sent tip")
                         isTipAmountButtoClicked = false
                     })
+                .presentationDetents([.fraction(0.55)])   // ✅ Bottom-sheet height
+                .presentationCornerRadius(25)              // ✅ Rounded top corners
+                .presentationDragIndicator(.hidden)
+                
             }
-        )
         
         .bottomSheet(isPresented: $showReportSheet,
                      height: screenHeight * 0.50,
@@ -396,23 +391,17 @@ struct ProfileScreen: View {
             .keyboardAwarePadding()
         }
         
-        .bottomSheet(
-            isPresented: $showSortSheet,
-            height: screenHeight * 0.6,
-            topBarCornerRadius: 20,
-            contentBackgroundColor: Color(.systemBackground),
-            topBarBackgroundColor: Color(.systemBackground),
-            showTopIndicator: false,
-            onDismiss: {
-                showSortSheet = false
-            },
-            content: {
-                SortByBottomSheet(
-                    isPresented: $showSortSheet,
-                    selectedSort: $selectedSort
-                )
-            }
-        )
+        .sheet(isPresented: $showSortSheet){
+            
+            SortByBottomSheet(
+                isPresented: $showSortSheet,
+                selectedSort: $selectedSort
+            )
+            .presentationDetents([.fraction(0.55)])   // ✅ Bottom-sheet height
+            .presentationCornerRadius(25)              // ✅ Rounded top corners
+            .presentationDragIndicator(.hidden)
+            
+        }
         .onAppear{
             
             let param = ProfileParamRequest(id: id)

@@ -91,6 +91,9 @@ struct CreateProductScreen: View {
         showButtons: true
     )
     
+    @State private var navFromPrepare = false
+    @State private var navFromProductLibrary = false
+    
     @EnvironmentObject var productManager: ProductManager
     @State var productId = ""
     var body: some View {
@@ -450,7 +453,7 @@ struct CreateProductScreen: View {
             
 
             
-            CusNavLink(doNavigate: $navigateToAddProduct, destination: AddProductsScreen(request:$requests,thumbNail: $thumbNail,fromPrepare: .constant(false),backToPrepare: $backToPrepare, NavFromProductLibrary: .constant(false), backToCreateProduct:$navigateToAddProduct,didTapBack:{ value,manager in
+            CusNavLink(doNavigate: $navigateToAddProduct, destination: AddProductsScreen(request:$requests,thumbNail: $thumbNail,fromPrepare: $navFromPrepare,backToPrepare: $backToPrepare, NavFromProductLibrary: $navigateToAddProduct, backToCreateProduct:$navigateToAddProduct,didTapBack:{ value,manager in
                 comeFromProductLibrary = value
 //                productManager  = manager
             },didTapEdit:{ product in

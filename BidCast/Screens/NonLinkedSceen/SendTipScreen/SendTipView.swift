@@ -660,12 +660,12 @@ struct ElegantPaymentOptionRow: View {
 }
 
 // MARK: - Preview
-struct SendTipView_Previews: PreviewProvider {
-    static var previews: some View {
-        SendTipView(
-            sellerId: "123",
-            onClose: { print("Close") },
-            onSendTip: { print("Tip sent") }
-        )
-    }
-}
+//struct SendTipView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        SendTipView(
+//            sellerId: "123",
+//            onClose: { print("Close") },
+//            onSendTip: { print("Tip sent") }
+//        )
+//    }
+//}

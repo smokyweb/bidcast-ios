@@ -54,6 +54,7 @@ struct AddProductsScreen: View {
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
     @State var showError: Bool = false
+    @State var showCancelSheet: Bool = false
     @State var showDeleteProduct: Bool = false
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     
@@ -123,9 +124,10 @@ struct AddProductsScreen: View {
                     leadingImgArr:["chevron.left"],
                     onClickLeading: { _ in
                         if backToCreateProduct{
-                            didTapBack?(true,productManager)
+                            didTapBack?(false,productManager)
                             backToCreateProduct = false
                         }else{
+                            didTapBack?(false,productManager)
                             self.presentationMode.wrappedValue.dismiss()
                         }
                     },
@@ -154,7 +156,9 @@ struct AddProductsScreen: View {
                                         presentationMode.wrappedValue.dismiss()
                                     }else{
                                         didTapBack?(true,productManager)
-                                        backToCreateProduct = false
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                                            backToCreateProduct = false
+                                        }
                                     }
                                 }
                                 
@@ -213,8 +217,12 @@ struct AddProductsScreen: View {
                                             }
                                         },
                                         onTapEdit: {
-                                            backToCreateProduct = false
+                                            
                                             didTapEdit?(data)
+                                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                                                backToCreateProduct = false
+                                            }
+                                           
                                         },
                                         onTapDelete: {
                                             deletedIndex = index

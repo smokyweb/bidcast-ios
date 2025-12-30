@@ -20,7 +20,7 @@ struct AuctionSettingsSheet: View {
     @State private var showTimeDropdown: Bool = false
     
     let requiredTimeOptions = [15, 30, 45, 60, 90, 120]
-    let counterBidTimeOptions = [5, 7, 10]
+    let counterBidTimeOptions = [5, 10]
     var onTapCancel : () -> () = { }
     var onStartAuction: ((String, Int, Int, Bool) -> Void)?
     var onShowToast: ((String) -> Void)?

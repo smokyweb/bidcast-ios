@@ -59,8 +59,8 @@ struct SortByBottomSheet: View {
                         .frame(width: 32, height: 32)
                 }
             }
-            .padding(.horizontal, 20)
-            .padding(.bottom, 24)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
             
             // MARK: - Sort Options
             VStack(spacing: 0) {

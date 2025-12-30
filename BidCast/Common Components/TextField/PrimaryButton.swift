@@ -41,7 +41,7 @@ struct PrimaryButton: View {
 //                            .bold()
                             .foregroundColor(.white)
                     }
-                    .clipShape(RoundedRectangle(cornerRadius: 8.0))
+                    .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
 //                    .shadow(color: .gray, radius: 2, x: 0, y: 0)
             }else{
                 RoundedRectangle(cornerRadius: cornerRadius)

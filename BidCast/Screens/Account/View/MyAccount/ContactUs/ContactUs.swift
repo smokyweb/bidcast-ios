@@ -51,7 +51,7 @@ struct ContactUs: View {
                                 .font(.custom(poppinsSemiBold, fixedSize: 13))
                         }
                         .padding()
-                        .background(Color.platinum)
+                        .background(Color.defaultThemeLight)
                         .cornerRadius(12)
 //                        .padding(.horizontal, 16)
                         .padding(.top, 16)
@@ -120,13 +120,13 @@ struct ContactUs: View {
                         
                         EmailSupportView()
                             .padding(.horizontal, 16)
-                            .shadow(color: .black.opacity(0.4), radius: 3, x: 0, y: 0)
+//                            .shadow(color: .black.opacity(0.4), radius: 3, x: 0, y: 0)
 
                         Spacer().frame(height: 80) // Space for button
                     }
                 }
                 .padding()
-                .background(Color.pearl)
+                .background(.backGround)
             }
 
             // Bottom Fixed Button
@@ -169,8 +169,9 @@ struct ContactUs: View {
                     }
                 },cornerRadius : 12.0, btnTextColor: .white)
             }
-            .padding()
-            .background(Color.white)
+            .padding(.horizontal,16)
+            .padding(.bottom,8)
+            .background(.backGround)
             .shadow(radius: 3)
            
         }

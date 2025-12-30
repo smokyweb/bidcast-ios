@@ -50,6 +50,7 @@ struct SellingTips: View {
                 )
                 
             }
+            .background(.white)
             ScrollView(showsIndicators:false){
                 if !lessons.isEmpty{
                     let lesson = lessons[currentIndex]
@@ -124,13 +125,11 @@ struct SellingTips: View {
                 
             }
             .padding(.horizontal,16)
-            
+            CusNavLink(doNavigate: $navigateToPrepare, destination: LetsPrepare(backToTabBar:$backToTabBar))
         }
-        
-        CusNavLink(doNavigate: $navigateToPrepare, destination: LetsPrepare(backToTabBar:$backToTabBar))
-            .edgesIgnoringSafeArea(.bottom)
+        .edgesIgnoringSafeArea(.bottom)
             .toolbar(.hidden,for: .tabBar)
-            .background(.bg.opacity(0.4))
+            .background(.backGround)
             .onAppear {
                 Task{
                     if staticAPI.sellingLessons.isEmpty {

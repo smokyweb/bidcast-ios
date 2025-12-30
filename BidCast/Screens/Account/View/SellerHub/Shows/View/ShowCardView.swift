@@ -44,15 +44,13 @@ struct ShowCardView: View {
 
             } label: {
                 Image(systemName: "ellipsis")
-                    .resizable()
-                    .scaledToFit()
-                    .foregroundColor(.black)
-                    .padding(.vertical,12)
-                    .padding(.trailing,4)
-                    .frame(width: 50, height: 32)
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(.gray)
+                    .padding(.top, 20)
+                    .frame(width: 32, height: 32)
+                    .background(Color(.systemBackground))
+                    .clipShape(Circle())
                     .rotationEffect(.degrees(90))
-                    .font(.custom(poppinsSemiBold, size: 32))
-                    .fontWeight(.semibold)
             }
         }
         .padding()
