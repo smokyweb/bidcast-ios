@@ -575,6 +575,7 @@
 		D683F6A92EF6B39B002E4949 /* Randomizer1.swift in Sources */ = {isa = PBXBuildFile; fileRef = D683F6A82EF6B39B002E4949 /* Randomizer1.swift */; };
 		D68441352EF2D83800D4F587 /* CSVManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68441342EF2D83800D4F587 /* CSVManager.swift */; };
 		D68441372EF2EBD200D4F587 /* AccountHealthScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68441362EF2EBD200D4F587 /* AccountHealthScreen.swift */; };
+		D687BFC12F052362003D7511 /* ReusableMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = D687BFC02F052362003D7511 /* ReusableMenu.swift */; };
 		D6888BDF2EDD7F3400202E89 /* VideoPlayerScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6888BDE2EDD7F3400202E89 /* VideoPlayerScreen.swift */; };
 		D68C53A32EA0B2DA008E175D /* KeyChainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68C53A22EA0B2DA008E175D /* KeyChainManager.swift */; };
 		D68DFD092EBDD9750013229C /* UIImage+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68DFD082EBDD9750013229C /* UIImage+Extension.swift */; };
@@ -1165,6 +1166,7 @@
 		D683F6A82EF6B39B002E4949 /* Randomizer1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Randomizer1.swift; sourceTree = "<group>"; };
 		D68441342EF2D83800D4F587 /* CSVManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVManager.swift; sourceTree = "<group>"; };
 		D68441362EF2EBD200D4F587 /* AccountHealthScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountHealthScreen.swift; sourceTree = "<group>"; };
+		D687BFC02F052362003D7511 /* ReusableMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReusableMenu.swift; sourceTree = "<group>"; };
 		D6888BDE2EDD7F3400202E89 /* VideoPlayerScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerScreen.swift; sourceTree = "<group>"; };
 		D68C53A22EA0B2DA008E175D /* KeyChainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyChainManager.swift; sourceTree = "<group>"; };
 		D68DFD082EBDD9750013229C /* UIImage+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extension.swift"; sourceTree = "<group>"; };
@@ -2461,6 +2463,7 @@
 				D613DBB52EB0F22000521D42 /* ImageCacheManager.swift */,
 				D683999F2EB1F41C00F3BDA7 /* DeepLinkManager.swift */,
 				D65F96BB2EBC682B00EAAD49 /* View+Extension.swift */,
+				D687BFC02F052362003D7511 /* ReusableMenu.swift */,
 			);
 			path = Helper;
 			sourceTree = "<group>";
@@ -4751,6 +4754,7 @@
 				99C909E62DC8CDDC0054620B /* CreateCompanyRequest.swift in Sources */,
 				D4CAEC6E2DE6F74A00705CD7 /* AnalyticsModel.swift in Sources */,
 				D4B615F22DE8374E00924A3D /* ProductDetailsModel.swift in Sources */,
+				D687BFC12F052362003D7511 /* ReusableMenu.swift in Sources */,
 				35BA4A452DE870DB00EEC92A /* CreateProductScreen.swift in Sources */,
 				D6A8129C2E9F663400BE22AB /* CustomSearchBar.swift in Sources */,
 				99C909E72DC8CDDC0054620B /* LoginResponseModel.swift in Sources */,

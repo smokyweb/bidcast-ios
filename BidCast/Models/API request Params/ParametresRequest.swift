@@ -770,12 +770,18 @@ struct CategoryRequest  : Encodable {
     var get_count: Bool = true
 }
 
+struct DeleteShippingProfileRequest  : Encodable {
+    var shipping_profile_id: Int
+}
+
+
 struct StoreShippingRequest  : Encodable {
     var name: String
     var size: String
     var weight: String
     var maxItems: Bool
     var additionalWeight: Bool
+    var shipping_profile_id: Int?
 }
 
 struct ShowOverviewRequest  : Encodable {

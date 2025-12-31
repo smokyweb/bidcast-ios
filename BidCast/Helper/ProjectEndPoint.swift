@@ -206,6 +206,7 @@ enum APIEndPoint{
     case getVisitorsAnalytic(param: VisitorsAnalyticsRequest)
     case storePromoteShow(param: StorePromoteShowRequest)
     case storeShipping(param: StoreShippingRequest)
+    case deleteShippingProfile(param: DeleteShippingProfileRequest)
     case getShippinProfiles
     case getShowOverview(param: ShowOverviewRequest)
     case updateProductStatus(param: UpdateProductStatusRequest)
@@ -652,6 +653,8 @@ extension APIEndPoint: EndPointType {
             return "report-seller"
         case .storeShipping:
             return "store-shipping-profile"
+        case .deleteShippingProfile(param: let param):
+            return "delete-shipping-profile/\(param.shipping_profile_id)"
         case .getShippinProfiles:
             return "get-shipping-profile"
         case .getShowOverview(param: let param):
@@ -1043,6 +1046,8 @@ extension APIEndPoint: EndPointType {
         case .getSellerInfo:
             return .get
         case .storeShipping:
+            return .post
+        case .deleteShippingProfile:
             return .post
         case .getShippinProfiles:
             return .get
@@ -1448,6 +1453,8 @@ extension APIEndPoint: EndPointType {
             return param
         case .storeShipping(param: let param):
             return param
+        case .deleteShippingProfile:
+            return nil
         case .getShippinProfiles:
             return nil
         case .getShowOverview:
@@ -1827,6 +1834,8 @@ extension APIEndPoint: EndPointType {
         case .reportSeller:
             return nil
         case .storeShipping:
+            return nil
+        case .deleteShippingProfile:
             return nil
         case .getShippinProfiles:
             return nil

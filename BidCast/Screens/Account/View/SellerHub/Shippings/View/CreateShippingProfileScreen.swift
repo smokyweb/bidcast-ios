@@ -17,6 +17,14 @@ struct CreateShippingProfileScreen: View {
     @State private var additionalWeightEnabled: Bool = false
     @State private var showScaleOptions: Bool = false
     
+    var nameVal, sizeVal: String?
+    var weightVal: String?
+    var shippingId: Int?
+    var additionalWeight: Bool?
+    var maxItems: Bool?
+    
+    @State private var isEditMode: Bool = false
+    
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
     @State var showError = false
@@ -49,7 +57,7 @@ struct CreateShippingProfileScreen: View {
                     
                     Spacer()
                     
-                    Text("Create Shipping Profile")
+                    Text(isEditMode ? "Edit Shipping Profile" : "Create Shipping Profile")
                         .font(.system(size: 20, weight: .bold))
                         .foregroundColor(.primary)
                     
@@ -248,7 +256,8 @@ struct CreateShippingProfileScreen: View {
                                     weight: Double(weight) ?? 0,
                                     scale: selectedScale,
                                     maxItems: maxItemsEnabled,
-                                    additionalWeight: additionalWeightEnabled
+                                    additionalWeight: additionalWeightEnabled,
+                                    shippingId: isEditMode ? shippingId : nil
                                 )
                                 
                                 
@@ -265,7 +274,7 @@ struct CreateShippingProfileScreen: View {
                             }
                         }
                     }) {
-                        Text("Save Profile")
+                        Text(isEditMode ? "Update Profile" : "Save Profile")
                             .font(.system(size: 17, weight: .semibold))
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
@@ -286,6 +295,14 @@ struct CreateShippingProfileScreen: View {
                 .background(Color(.systemBackground))
             }
             .navigationBarHidden(true)
+            .onAppear {
+                isEditMode = shippingId != nil
+                name = nameVal ?? ""
+                weight = weightVal ?? ""
+                selectedScale = sizeVal ?? ""
+                maxItemsEnabled = maxItems ?? false
+                additionalWeightEnabled = additionalWeight ?? false
+            }
         }
         .toolbar(.hidden,for: .tabBar)
         .overlay(
@@ -359,8 +376,10 @@ extension CreateShippingProfileScreen {
         weight: Double,
         scale: String,
         maxItems: Bool,
-        additionalWeight: Bool
+        additionalWeight: Bool,
+        shippingId: Int? = nil
     ) async throws {
+        var defaultSuccessMessage = isEditMode ? "Shipping profile Updated successfully." : "Shipping profile created successfully."
         await performAPICalls(
             isConcurrent: false,
             showLoader: true,
@@ -378,7 +397,7 @@ extension CreateShippingProfileScreen {
                 config = BottomSheetConfig(
                     icon: "checkmark.circle.fill",
                     title: "Success",
-                    message: shippingViewModel.storeShippingResponse?.message ?? "Shipping profile created successfully.",
+                    message: shippingViewModel.storeShippingResponse?.message ?? defaultSuccessMessage,
                     primaryButtonTitle: AppString.ok.localized,
                     secondaryButtonTitle: nil,
                     bottomPadding: -80,
@@ -392,7 +411,8 @@ extension CreateShippingProfileScreen {
                 size: scale,
                 weight: weight.formattedString(decimalPlaces: 2),
                 maxItems: maxItems,
-                additionalWeight: additionalWeight
+                additionalWeight: additionalWeight,
+                shipping_profile_id: isEditMode ? shippingId : nil
             )
             try await shippingViewModel.storeShippingProfile(request: request)
         }

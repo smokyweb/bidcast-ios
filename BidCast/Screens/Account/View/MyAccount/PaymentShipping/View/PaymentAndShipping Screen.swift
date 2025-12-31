@@ -86,8 +86,8 @@ struct PaymentAndShipping_Screen: View {
                                     onTapDelete: {
                                         config = BottomSheetConfig(
                                             icon: "trash.circle.fill",
-                                            title: "Delete Product?",
-                                            message:  "Are you sure you want to remove this product?",
+                                            title: "Delete Card?",
+                                            message:  "Are you sure you want to remove this card?",
                                             primaryButtonTitle: "Delete",
                                             secondaryButtonTitle: "Cancel",
                                             bottomPadding: -80

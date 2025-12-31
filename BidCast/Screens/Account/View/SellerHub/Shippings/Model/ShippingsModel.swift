@@ -22,3 +22,6 @@ struct StoreShippingModel: Codable {
         case additionalWeight, maxItems
     }
 }
+
+struct DeleteShippingModel: Codable {
+}

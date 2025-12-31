@@ -25,15 +25,25 @@ struct ShippingProfilesListScreen: View {
     @Environment(\.presentationMode) var presentationMode
     
     @State private var showCreateProfile = false
+    @State private var showEditProfile = false
     
     @State private var profiles: [StoreShippingModel] = []
+    @State private var selectedProfile:StoreShippingModel?
+    
     @StateObject private var shippingViewModel = ShippingViewModel()
 
     @State var isLoading: Bool = true
+
+    @State private var showDeleteProduct: Bool = false
+    
+    @State private var shippingId: Int = -1
+    
+    
     
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
-    @State var showError = false
+    @State private var showError = false
+    
     @State var config: BottomSheetConfig = BottomSheetConfig(
         icon: "checkmark.seal.fill",
         title: "",
@@ -42,8 +52,7 @@ struct ShippingProfilesListScreen: View {
         secondaryButtonTitle: nil,
         showButtons: true
     )
-    
-    
+
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
@@ -89,7 +98,26 @@ struct ShippingProfilesListScreen: View {
                         }
                         else {
                             ForEach(profiles, id: \.id) { profile in
-                                ShippingProfileCard(profile: profile)
+                                ShippingProfileCard(profile: profile) {
+                                    //on tap edit
+                                    selectedProfile = profile
+                                    shippingId = profile.id ?? -1
+                                    editShippingProfile()
+                                } onTapDelete: {
+                                    //on tap delete
+                                    selectedProfile = profile
+                                    shippingId = profile.id ?? -1
+                                    config = BottomSheetConfig(
+                                        icon: "trash.circle.fill",
+                                        title: "Delete Shipping Profile?",
+                                        message:  "Are you sure you want to remove this Profile?",
+                                        primaryButtonTitle: "Delete",
+                                        secondaryButtonTitle: "Cancel",
+                                        bottomPadding: -80
+                                    )
+                                    showDeleteProduct = true
+                                }
+
                             }
                         }
                     }
@@ -130,9 +158,87 @@ struct ShippingProfilesListScreen: View {
                     EmptyView()
                 }
                 .hidden()
+                NavigationLink(
+                    destination: CreateShippingProfileScreen(nameVal: selectedProfile?.name,
+                                                             sizeVal: selectedProfile?.size,
+                                                             weightVal: selectedProfile?.weight,
+                                                             shippingId: shippingId,
+                                                             additionalWeight: selectedProfile?.additionalWeight,
+                                                             maxItems: selectedProfile?.maxItems,
+                                                            )
+                                    .navigationBarBackButtonHidden(true),
+                    isActive: $showEditProfile) {
+                    EmptyView()
+                }
+                .hidden()
             }
             .navigationBarHidden(true)
             .toolbar(.hidden,for: .tabBar)
+            .overlay(
+                CustomBottomSheetView(
+                    isPresented: $showDeleteProduct,
+                    config: config,
+                    primaryAction: {
+                        withAnimation {
+                            showDeleteProduct = false
+                            deleteShippingProfile(with: shippingId)
+                        }
+                    },
+                    secondaryAction: {
+                        withAnimation {
+                            showDeleteProduct = false
+                        }
+                    }
+                )
+            )
+            
+            .overlay(
+                CustomBottomSheetView(
+                    isPresented: $showError,
+                    config: config,
+                    primaryAction: {
+                        withAnimation {
+                            showError = false
+                        }
+                    },
+                    secondaryAction: {
+                        withAnimation {
+                            showError = false
+                        }
+                    }
+                )
+            )
+        }
+    }
+    
+    private func editShippingProfile(){
+        showEditProfile = true
+    }
+    
+    private func deleteShippingProfile(with shippingId: Int?){
+        guard let id = shippingId else {
+             return
+        }
+        Task {
+            await performAPICalls(
+                isConcurrent: false,
+                onError: { error in
+                    config = BottomSheetConfig(
+                        icon: "exclamationmark.circle",
+                        title: "Error",
+                        message: errorDesc(error: error, message: shippingViewModel.errorMessage),
+                        primaryButtonTitle: AppString.ok.localized,
+                        secondaryButtonTitle: nil
+                    )
+                    showError = true
+                },
+                onSuccess: {
+                    getShippingProfiles()
+                }
+            ) {
+                let request =  DeleteShippingProfileRequest(shipping_profile_id: id)
+                try await shippingViewModel.deleteShippingProfile(request: request)
+            }
         }
     }
 }
@@ -172,6 +278,28 @@ struct ShippingProfileCard: View {
     let profile: StoreShippingModel
     @State private var isPressed = false
     
+    var onTapEdit: () -> Void
+    var onTapDelete: () -> Void
+    
+    private var menuOptions: [MenuOption] {
+        var options: [MenuOption] = []
+        options.append(MenuOption(
+            icon: "pencil",
+            title: "Edit",
+            iconColor: .blue,
+            action: onTapEdit))
+        
+        options.append(
+            MenuOption(
+                icon: "trash",
+                title: "Delete",
+                iconColor: .red,
+                role: .destructive,
+                action: onTapDelete))
+        
+        return options
+    }
+    
     var body: some View {
         Button(action: {
             withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
@@ -184,10 +312,16 @@ struct ShippingProfileCard: View {
             }
         }) {
             VStack(alignment: .leading, spacing: 12) {
-                Text(profile.name?.capitalizingFirstLetter() ?? "Name")
-                    .font(.custom(poppinsSemiBold, size: 18))
-                    .foregroundColor(.primary)
-                
+                HStack {
+                    Text(profile.name?.capitalizingFirstLetter() ?? "Name")
+                        .font(.custom(poppinsSemiBold, size: 18))
+                        .foregroundColor(.primary)
+                    Spacer()
+                    ReusableMenu(
+                        options: menuOptions,
+                        style: .dotsVertical
+                    )
+                }
                 HStack {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Weight:")
