@@ -26,9 +26,10 @@ struct CreateClipBottomSheetView: View {
                 }
                 Text("Create Clip")
                     .font(.custom(poppinsBold, size: 15.0))
+                    .foregroundColor(.black)
                 Spacer()
             }
-            .padding(.top,-12)
+            .padding(.top,-42)
             .padding(.horizontal)
 
             // Video Player
@@ -51,6 +52,8 @@ struct CreateClipBottomSheetView: View {
                 VStack(alignment: .leading) {
                     Text("Trim Clip")
                         .font(.custom(poppinsSemiBold, size: 13.0))
+                        .foregroundColor(.black)
+                    
                     Text("Last 30 seconds")
                         .font(.custom(poppinsSemiBold, size: 13.0))
                         .foregroundColor(.gray)
@@ -79,13 +82,13 @@ struct CreateClipBottomSheetView: View {
                     .frame(maxWidth: .infinity)
                     .padding()
                     .background(Color.defaultTheme)
-                    .cornerRadius(20)
+                    .cornerRadius(32)
             }
 
         }
         .edgesIgnoringSafeArea(.top)
-        .padding()
-        .background(Color.white)
+//        .padding()
+        .background(.backGround)
         .clipShape(RoundedRectangle(cornerRadius: 20))
         .onAppear {
             player = AVPlayer(url: videoURL)

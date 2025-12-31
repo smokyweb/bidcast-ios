@@ -86,7 +86,7 @@ struct SortByBottomSheet: View {
             Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .background(Color(.systemBackground))
+        .background(Color.backGround)
     }
 }
 

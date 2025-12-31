@@ -85,7 +85,7 @@ struct LivePollHostView: View {
                 }
                 .padding(.horizontal, 22)
                 .padding(.vertical)
-                .background(Color.defaultTheme.opacity(0.10))
+                .background(Color.defaultThemeLight)
                 .cornerRadius(14)
                 //            .padding(.horizontal)
                 
@@ -110,7 +110,7 @@ struct LivePollHostView: View {
                         Image(systemName: "list.bullet")
                             .foregroundColor(.blue)
                             .padding(6)
-                            .background(Color.defaultTheme.opacity(0.12))
+                            .background(Color.defaultThemeLight)
                             .cornerRadius(10)
                         Text("\(poll.totalVotes) total votes")
                             .font(.custom(poppinsMedium, size: 14))
@@ -169,16 +169,17 @@ struct LivePollHostView: View {
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(Color.defaultTheme)
-                        .cornerRadius(10)
+                        .cornerRadius(32)
                         .padding(.horizontal)
                 }
                 .disabled(!poll.isActive)
                 .opacity(poll.isActive ? 1 : 0.6)
                 .padding(.bottom, 30)
             }
-            .background(Color(.white))
+            .background(Color.backGround)
             .cornerRadius(18)
         }
+        .background(.backGround)
         .onAppear {
             startTimer()
         }
@@ -270,7 +271,7 @@ struct OptionRowView: View {
             .frame(height: 18)
         }
         .padding()
-        .background(.backGround)
+        .background(.white)
         .cornerRadius(10)
         .shadow(color: Color.black.opacity(0.04), radius: 8, x: 0, y: 4)
     }

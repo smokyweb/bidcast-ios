@@ -19,10 +19,10 @@ struct PollPreviewCardView: View {
             // MARK: - Poll Icon
             ZStack {
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(Color.defaultTheme.opacity(0.12))
+                    .fill(Color.defaultThemeLight)
                 
                 Image(systemName: "chart.bar.fill")
-                    .foregroundColor(.blue)
+                    .foregroundColor(.defaultTheme)
                     .font(.system(size: 22, weight: .semibold))
             }
             .frame(width: 48, height: 48)
@@ -31,9 +31,9 @@ struct PollPreviewCardView: View {
             VStack(alignment: .leading, spacing: 6) {
                 
                 // Poll Question
-                Text(poll.question)
+                Text(poll.question.capitalizingFirstLetter())
                     .font(.custom(poppinsMedium, size: 15))
-                    .foregroundColor(.primary)
+                    .foregroundColor(.black)
                     .lineLimit(2)
                 
                 HStack(spacing: 12) {
@@ -67,14 +67,14 @@ struct PollPreviewCardView: View {
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(Color(UIColor.systemGray6))
+                .fill(.backGround)
                 .overlay(
                     RoundedRectangle(cornerRadius: 18)
-                        .stroke(Color.gray.opacity(0.10), lineWidth: 0.6)
+                        .stroke(.backGround, lineWidth: 0.6)
                 )
-                .shadow(color: Color.gray.opacity(0.10), radius: 6, x: 0, y: 3)
+                .shadow(color: .backGround, radius: 1, x: 0, y: 3)
         )
-        .padding(.horizontal)
+        .padding(.horizontal,12)
         .padding(.vertical, 12)
         .onTapGesture {
             onPollCardTapped?()

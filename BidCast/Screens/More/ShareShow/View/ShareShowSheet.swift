@@ -39,7 +39,7 @@ struct DynamicShareBottomSheetView: View {
                     }
                 }
             }
-            .background(Color.white)
+            .background(.backGround)
             .disabled(showFloatingChat)
             .opacity(showFloatingChat ? 0.3 : 1)
 
@@ -68,6 +68,7 @@ struct DynamicShareBottomSheetView: View {
             Text("Send to")
                 .font(.headline)
                 .padding(.horizontal)
+                .foregroundColor(.black)
 
             if messageList?.isEmpty == true {
                 Text("No recent chats")
@@ -116,6 +117,7 @@ struct DynamicShareBottomSheetView: View {
                     .font(.caption)
                     .lineLimit(1)
                     .frame(width: 70)
+                    .foregroundColor(.black)
             }
             .contentShape(Rectangle())
         }
@@ -172,7 +174,7 @@ struct DynamicShareBottomSheetView: View {
                     if isLive {
                         Text("LIVE")
                             .font(.caption.bold())
-                            .foregroundColor(.white)
+                            .foregroundColor(.black)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
                             .background(Color.red)
@@ -185,6 +187,7 @@ struct DynamicShareBottomSheetView: View {
             VStack(alignment: .leading, spacing: 6) {
                 Text(title)
                     .font(.custom(poppinsBold, size: 16.0))
+                    .foregroundColor(.black)
 
                 Text(message)
                     .font(.custom(poppinsSemiBold, size: 13.0))
@@ -192,7 +195,7 @@ struct DynamicShareBottomSheetView: View {
             }
             .padding()
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Color(.systemGray6))
+            .background(Color.backGround)
         }
         .cornerRadius(16)
         .padding(.horizontal)
@@ -211,22 +214,27 @@ struct DynamicShareBottomSheetView: View {
 
             Text(username.uppercased())
                 .font(.headline)
+                .foregroundColor(.black)
 
             HStack(spacing: 32) {
                 VStack {
                     Text("\(followers)").bold()
+                        .foregroundColor(.black)
                     Text("Followers").font(.caption)
+                        .foregroundColor(.black)
                 }
 
                 VStack {
                     Text("\(ratings)").bold()
+                        .foregroundColor(.black)
                     Text("Ratings").font(.caption)
+                        .foregroundColor(.black)
                 }
             }
         }
         .padding()
         .frame(maxWidth: .infinity)
-        .background(Color(.systemGray6))
+        .background(Color.backGround)
         .cornerRadius(16)
         .padding(.horizontal)
     }
@@ -250,14 +258,16 @@ struct DynamicShareBottomSheetView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(sellerUsername.uppercased())
                         .font(.caption.bold())
+                        .foregroundColor(.black)
                     Text(title)
                         .font(.caption)
+                        .foregroundColor(.black)
                 }
 
                 Spacer()
             }
             .padding()
-            .background(Color(.systemGray6))
+            .background(.backGround)
         }
         .cornerRadius(16)
         .padding(.horizontal)
@@ -270,6 +280,7 @@ struct DynamicShareBottomSheetView: View {
             Text("Share to")
                 .font(.headline)
                 .padding(.horizontal)
+                .foregroundColor(.black)
 
             LazyVGrid(
                 columns: Array(repeating: GridItem(.flexible(), spacing: 16), count: 4),
@@ -323,7 +334,7 @@ struct DynamicShareBottomSheetView: View {
 
                 Text(title)
                     .font(.caption)
-                    .foregroundColor(.primary)
+                    .foregroundColor(.black)
             }
             .frame(maxWidth: .infinity)
         }

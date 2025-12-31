@@ -58,7 +58,7 @@ struct SendTipView: View {
                     // MARK: - Subtitle
                     Text("Support your seller during the live show")
                         .font(.custom(poppinsRegular, size: 15))
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.gray)
                         .padding(.horizontal, 24)
                         .padding(.top, -16)
                     
@@ -66,7 +66,7 @@ struct SendTipView: View {
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Quick Amount")
                             .font(.custom(poppinsSemiBold, size: 14))
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.gray)
                             .padding(.horizontal, 24)
                         
                         HStack(spacing: 12) {
@@ -90,7 +90,7 @@ struct SendTipView: View {
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Custom Amount")
                             .font(.custom(poppinsSemiBold, size: 14))
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.gray)
                         
                         HStack(spacing: 12) {
                             Text("$")
@@ -121,7 +121,7 @@ struct SendTipView: View {
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Payment Method")
                             .font(.custom(poppinsSemiBold, size: 14))
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.gray)
                             .padding(.horizontal, 24)
                         
                         if !cardResponse.isEmpty {
@@ -151,7 +151,7 @@ struct SendTipView: View {
                                 
                                 Text("No saved cards found")
                                     .font(.custom(poppinsRegular, size: 15))
-                                    .foregroundColor(.secondary)
+                                    .foregroundColor(.gray)
                             }
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 32)
@@ -409,7 +409,7 @@ private extension ElegantPaymentOptionRow {
 
             Text("Exp: \(expiryText)")
                 .font(.custom(poppinsRegular, size: 13))
-                .foregroundColor(.secondary)
+                .foregroundColor(.gray)
         }
     }
 

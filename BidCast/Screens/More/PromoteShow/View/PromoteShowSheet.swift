@@ -110,7 +110,7 @@ struct PromoteShowSheet: View {
                 HStack {
                     Text("Promote Show")
                         .font(.custom(poppinsBold, size: 18))
-                        .foregroundColor(.primary)
+                        .foregroundColor(.black)
                     
                     Spacer()
                     
@@ -119,11 +119,11 @@ struct PromoteShowSheet: View {
                     }) {
                         Image(systemName: "xmark")
                             .font(.system(size: 16, weight: .bold))
-                            .foregroundColor(.primary)
+                            .foregroundColor(.black)
                             .frame(width: 32, height: 32)
                             .background(
                                 Circle()
-                                    .fill(Color(.systemGray6))
+                                    .fill(Color(.white))
                             )
                     }
                 }
@@ -158,7 +158,7 @@ struct PromoteShowSheet: View {
 //                    .background(Color(.systemGray6).opacity(0.3))
             }
         }
-        .background(Color(.systemBackground))
+        .background(.backGround)
     }
 }
 
@@ -261,8 +261,17 @@ struct PromotionCard: View {
         .padding(16)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemBackground))
-                .shadow(color: Color.black.opacity(0.06), radius: 12, x: 0, y: 4)
+                .fill(
+                    LinearGradient(
+                        gradient: Gradient(colors: [
+                            Color.white,
+                            Color.white.opacity(0.75)
+                        ]),
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 16)

@@ -160,7 +160,7 @@ struct MoreOptionsScreen: View {
                 HStack {
                     Text("More Options")
                         .font(.custom(poppinsBold, size: 18))
-                        .foregroundColor(.primary)
+                        .foregroundColor(.black)
                     
                     Spacer()
                     
@@ -176,7 +176,7 @@ struct MoreOptionsScreen: View {
                             
                             Image(systemName: "xmark")
                                 .font(.system(size: 14, weight: .semibold))
-                                .foregroundColor(.primary)
+                                .foregroundColor(.black)
                         }
                     }
                 }
@@ -216,7 +216,7 @@ struct MoreOptionsScreen: View {
                                         HStack(spacing: 6) {
                                             Text("Verified Buyers")
                                                 .font(.custom(poppinsSemiBold, size: 14))
-                                                .foregroundColor(.primary)
+                                                .foregroundColor(.black)
                                             
                                             Image(systemName: "questionmark.circle.fill")
                                                 .font(.system(size: 14))
@@ -225,7 +225,7 @@ struct MoreOptionsScreen: View {
                                         
                                         Text("Allows bids from verified buyers only")
                                             .font(.custom(poppinsRegular, size: 12))
-                                            .foregroundColor(.secondary)
+                                            .foregroundColor(.gray)
                                             .lineLimit(2)
                                     }
                                 }
@@ -235,7 +235,7 @@ struct MoreOptionsScreen: View {
                         }
                         .background(
                             RoundedRectangle(cornerRadius: 16)
-                                .fill(Color(.systemBackground))
+                                .fill(Color.white)
                                 .shadow(color: Color.black.opacity(0.06), radius: 10, x: 0, y: 3)
                         )
                         .overlay(
@@ -255,7 +255,7 @@ struct MoreOptionsScreen: View {
                                 
                                 Text("Quick Actions")
                                     .font(.custom(poppinsSemiBold, size: 15))
-                                    .foregroundColor(.primary)
+                                    .foregroundColor(.black)
                                 
                                 Spacer()
                             }
@@ -301,7 +301,7 @@ struct MoreOptionsScreen: View {
                         }
                         .background(
                             RoundedRectangle(cornerRadius: 16)
-                                .fill(Color(.systemBackground))
+                                .fill(Color.white)
                                 .shadow(color: Color.black.opacity(0.06), radius: 10, x: 0, y: 3)
                         )
                         .padding(.horizontal, 20)
@@ -315,7 +315,7 @@ struct MoreOptionsScreen: View {
                                 
                                 Text("Broadcasting Options")
                                     .font(.custom(poppinsSemiBold, size: 15))
-                                    .foregroundColor(.primary)
+                                    .foregroundColor(.black)
                                 
                                 Spacer()
                             }
@@ -330,11 +330,7 @@ struct MoreOptionsScreen: View {
                             .padding(.horizontal, 16)
                             .padding(.bottom, 16)
                         }
-                        .background(.clear
-//                            RoundedRectangle(cornerRadius: 16)
-//                                .fill(Color(.systemBackground))
-//                                .shadow(color: Color.black.opacity(0.06), radius: 10, x: 0, y: 3)
-                        )
+                        .background(.clear)
                         .padding(.horizontal, 20)
                     }
                 }
@@ -345,7 +341,7 @@ struct MoreOptionsScreen: View {
         }
         .background(
             RoundedRectangle(cornerRadius: 24)
-                .fill(Color(.systemGroupedBackground))
+                .fill(Color.backGround)
                 .shadow(color: Color.black.opacity(0.15), radius: 20, x: 0, y: -5)
         )
         .edgesIgnoringSafeArea(.top)
@@ -382,12 +378,12 @@ struct OptionGridButtonView: View {
                     
                     Image(systemName: icon)
                         .font(.system(size: 22))
-                        .foregroundColor(isSelected ? .blue : .primary)
+                        .foregroundColor(isSelected ? .blue : .black)
                 }
                 
                 Text(label)
                     .font(.custom(poppinsRegular, size: 12))
-                    .foregroundColor(.primary)
+                    .foregroundColor(.black)
                     .multilineTextAlignment(.center)
                     .lineLimit(2)
                     .fixedSize(horizontal: false, vertical: true)
@@ -396,7 +392,7 @@ struct OptionGridButtonView: View {
             .padding(.vertical, 12)
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(Color(.systemBackground))
+                    .fill(Color.white)
                     .shadow(color: Color.black.opacity(0.04), radius: 6, x: 0, y: 2)
             )
             .overlay(
@@ -437,18 +433,18 @@ struct OptionButtonView: View {
                     
                     Image(systemName: icon)
                         .font(.system(size: 20))
-                        .foregroundColor(isActive ? .blue : .primary)
+                        .foregroundColor(isActive ? .blue : .black)
                 }
                 
                 Text(label)
                     .font(.custom(poppinsRegular, size: 11))
-                    .foregroundColor(.primary)
+                    .foregroundColor(.black)
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 8)
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(Color(.systemBackground))
+                    .fill(Color.white)
                     .shadow(color: Color.black.opacity(0.04), radius: 6, x: 0, y: 2)
             )
             .overlay(

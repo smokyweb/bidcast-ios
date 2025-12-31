@@ -86,6 +86,7 @@ struct CreatePollScreen: View {
                         Button(action: {
                             let text = TextModel(text: "", vote_count: 0, percentage: 0.0)
                             options.append(text)
+                            hideKeyboard()
                         }) {
                             Text("+ Add")
                                 .font(.custom(poppinsSemiBold, size: 14))
@@ -145,7 +146,7 @@ struct CreatePollScreen: View {
                     .frame(maxWidth: .infinity)
                     .padding()
                     .background(Color.defaultTheme)
-                    .cornerRadius(12)
+                    .cornerRadius(32)
             }
             .padding(.horizontal)
             .padding(.bottom, 20)

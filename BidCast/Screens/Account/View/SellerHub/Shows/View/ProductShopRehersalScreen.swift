@@ -100,7 +100,7 @@ struct ProductShopRehersalScreen: View {
                 }) {
                     Image(systemName: "xmark")
                         .font(.custom("Poppins-SemiBold", size: 14))
-                        .foregroundColor(.gray)
+                        .foregroundColor(.black)
                 }
                 .padding(12)
             }
@@ -156,7 +156,7 @@ struct ProductShopRehersalScreen: View {
             Spacer(minLength: 0)
         }
         .frame(maxHeight: .infinity, alignment: .top)
-        .background(.clear)
+        .background(.backGround)
         .onAppear {
             setupSocketListeners()
             

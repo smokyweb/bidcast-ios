@@ -743,7 +743,7 @@ struct RehearsalScreen: View {
                     showhudAlert = true
                 }
             )
-            .presentationDetents([.fraction(0.60)])   // ✅ Bottom-sheet height
+            .presentationDetents([.fraction(0.70)])   // ✅ Bottom-sheet height
             .presentationCornerRadius(25)              // ✅ Rounded top corners
             .presentationDragIndicator(.hidden)        // optional
         }
@@ -807,8 +807,8 @@ struct RehearsalScreen: View {
             isPresented: $showShopSheet,
             height: screenHeight * 0.85,
             topBarCornerRadius: 20,
-            contentBackgroundColor: Color(.systemGroupedBackground),
-            topBarBackgroundColor: Color(.systemGroupedBackground),
+            contentBackgroundColor: .backGround,
+            topBarBackgroundColor: .backGround,
             showTopIndicator: false,
             onDismiss: {
                 showShopSheet = false
@@ -901,8 +901,8 @@ struct RehearsalScreen: View {
             isPresented: $showSellSheet,
             height: sheetHeight, // Adjust as needed
             topBarCornerRadius: 20,
-            contentBackgroundColor: Color(.systemGroupedBackground),
-            topBarBackgroundColor: Color(.systemGroupedBackground),
+            contentBackgroundColor: .backGround,
+            topBarBackgroundColor: .backGround,
             showTopIndicator: false,
             onDismiss: {
                 showSellSheet = false
@@ -949,8 +949,8 @@ struct RehearsalScreen: View {
                         },
                         onCreatePoll: {
                             print("Create Poll")
-//                            showPollSheet = true
-//                            showSellSheet = false
+                            showPollSheet = true
+                            showSellSheet = false
                         },
                         
                         onZoomOut: {

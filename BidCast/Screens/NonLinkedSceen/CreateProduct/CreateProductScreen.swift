@@ -447,7 +447,7 @@ struct CreateProductScreen: View {
                             navigateToAddProduct = true
                         }
                         
-                    })
+                    },firstBtnTitleColor:.defaultTheme, firstBtnBgColor: .defaultThemeLight,secBtnTitleColor:.white, secBtnBgColor: .defaultTheme)
 //                    .padding(.horizontal,12)
                     .padding(.bottom, 16)
                 }

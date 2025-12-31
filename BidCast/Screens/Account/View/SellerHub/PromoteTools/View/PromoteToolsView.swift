@@ -514,11 +514,11 @@ struct GenericTabView<T>: View where T: CaseIterable & Hashable & RawRepresentab
             }
             .padding(.horizontal, 20)
             .padding(.top, 8)
-            .background(Color(.systemBackground))
+            .background(.backGround)
 
             Divider()
         }
-        .background(Color(.systemBackground))
+        .background(.backGround)
     }
 }
 

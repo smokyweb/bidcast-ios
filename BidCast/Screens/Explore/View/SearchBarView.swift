@@ -54,7 +54,7 @@ struct SearchBarView: View {
         }
         .padding(.vertical, 8)
         .padding(.horizontal, 8)
-        .background(Color(.systemBackground))
+        .background(Color.backGround)
         .overlay(
             RoundedRectangle(cornerRadius: cornerRadius)
                 .stroke(borderColor, lineWidth: borderWidth)
