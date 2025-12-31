@@ -34,6 +34,36 @@
             endingLineNumber = "332"
             landmarkName = "body"
             landmarkType = "24">
+            <Locations>
+               <Location
+                  uuid = "28A42612-1B56-4864-9031-7AE5C86D6EA4 - a142db1dc3a560a6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "BidCast.HomeViewScreen.body.getter : some"
+                  moduleName = "BidCast.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/gadgetzone/Documents/bidcast/BidCast/Screens/Home/View/HomeViewScreen.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "332"
+                  endingLineNumber = "332">
+               </Location>
+               <Location
+                  uuid = "28A42612-1B56-4864-9031-7AE5C86D6EA4 - 846263f7e01a398d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #7 (Swift.Optional&lt;Swift.String&gt;) -&gt; () in BidCast.HomeViewScreen.body.getter : some"
+                  moduleName = "BidCast.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/gadgetzone/Documents/bidcast/BidCast/Screens/Home/View/HomeViewScreen.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "332"
+                  endingLineNumber = "332">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
