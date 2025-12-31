@@ -11,11 +11,33 @@ struct ShowDetailsScreen: View {
     @Environment(\.presentationMode) var presentationMode
     
     // Show Data
-    @State var show: ShowModel
+    @Binding var showId : String
+    @State var show = HomeModel()
     @State var products: [ProductDataModel1] = []
+    @StateObject var viewModel = ShowsViewModel()
     
+    @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+    @State var showError = false
     // States
-    @State private var isLoading = false
+    
+    @State var navigateToReherseal = false
+    @State private var selectedProductIds: [String] = []
+    @State var isLive = false
+    @State var navigateToshowTitle = false
+    @State var showID = 0
+    @State private var scheduleRequest = StoreScheduleShowRequest(
+        title: "",
+        date: "",
+        time: "",
+        category_id: "",
+        auction_type_id: "",
+        product_ids: "",
+        is_explicit: false,
+        show_discoverability: "",
+        repeat_value: "",
+        is_repeat: false,
+        language: "english"
+    )
     
     var body: some View {
         VStack(spacing: 0) {
@@ -39,19 +61,74 @@ struct ShowDetailsScreen: View {
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 16)
-                .padding(.bottom, 100)
+                .padding(.bottom, 40)
             }
-            .background(Color(.systemGroupedBackground))
+            .background(.backGround)
             
             // Bottom Action Buttons
             bottomActionButtons
+            
+            CusNavLink(doNavigate: $navigateToReherseal,
+                       destination: RehearsalScreen(showUd: $showId,
+                                                    productListData: .constant([]),
+                                                    isLive: isLive,
+                                                    backToTabBar: .constant(true),
+                                                    showsData: $show))
+            
+            CusNavLink(doNavigate: $navigateToshowTitle, destination:
+                        ShowTitleTips(request : $scheduleRequest,
+                                      fromPrepare:.constant(false),
+                                      backToPrepare: $navigateToshowTitle,
+                                      showId: $showID))
         }
-        .background(Color(.systemGroupedBackground))
+        .background(Color.backGround)
+        .edgesIgnoringSafeArea(.bottom)
         .navigationBarHidden(true)
-        .onAppear {
-            self.products = ProductDataModel1.sampleProducts
+        .onFirstAppear {
+            Task {
+                await performAPICalls(
+                    isConcurrent: true,
+                    onError: { error in
+                        alertType = .sheetType(
+                            icon: .alert,
+                            title: "Error",
+                            message: errorDesc(error: error, message: viewModel.errorMessage),
+                            primaryBtnText: "",
+                            secondaryBtnText: AppString.ok.localized
+                        )
+                        showError = true
+                    }, onSuccess: {
+                        // On success
+                        successShowData()
+                    }
+                    
+                ) {
+                    // 👇 These run in parallel
+                    await viewModel.getScheduleShowData(param: getShowRequest(show_id: Int(showId) ?? 0))
+                   
+                    
+                }
+            }
+        }
+      
+    }
+    func successShowData(){
+        let response = viewModel.scheduledShowData
+        if response?.status == "success" {
+            show = response?.data ?? HomeModel()
+            self.products = show.products ?? []
+        } else {
+            alertType = .sheetType(
+                icon: .alert,
+                title: "Error",
+                message: viewModel.errorMessage ?? "",
+                primaryBtnText: AppString.ok.localized,
+                secondaryBtnText:""
+            )
+            showError = true
         }
     }
+   
     
     // MARK: - Header
     private var headerView: some View {
@@ -60,14 +137,14 @@ struct ShowDetailsScreen: View {
                 presentationMode.wrappedValue.dismiss()
             }) {
                 Image(systemName: "chevron.left")
-                    .font(.system(size: 20, weight: .semibold))
+                    .font(.system(size: 18, weight: .semibold))
                     .foregroundColor(.primary)
             }
             
             Spacer()
             
             Text("Show Details")
-                .font(.custom(poppinsBold, size: 20))
+                .font(.custom(poppinsSemiBold, size: 18))
                 .foregroundColor(.primary)
             
             Spacer()
@@ -85,7 +162,7 @@ struct ShowDetailsScreen: View {
     private var showHeaderCard: some View {
         HStack(spacing: 16) {
             // Show Thumbnail
-            if let thumbnail = show.thumbnail {
+            if let thumbnail = show.thumbnail?.first {
                 CustomProfileImage(url: thumbnail, isCircular: false, size: 100)
                     .frame(width: 100, height: 100)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
@@ -102,7 +179,7 @@ struct ShowDetailsScreen: View {
             
             // Show Info
             VStack(alignment: .leading, spacing: 6) {
-                Text(show.title ?? "Show Title")
+                Text(show.title?.capitalizingFirstLetter() ?? "Show Title")
                     .font(.custom(poppinsBold, size: 16))
                     .foregroundColor(.primary)
                     .lineLimit(2)
@@ -153,18 +230,18 @@ struct ShowDetailsScreen: View {
             VStack(spacing: 8) {
                 InfoRowView(
                     label: "Auction Type",
-                    value: show.auctionType?.name ?? "Live Auction"
+                    value: show.auction?.name?.capitalizingFirstLetter()  ?? "Live Auction"
                 )
                 
                 InfoRowView(
                     label: "Repeat Mode",
-                    value: show.isRepeat == true ? show.repeatValue ?? "None" : "None"
+                    value: show.is_repeat == true ? show.repeat_value?.capitalizingFirstLetter() ?? "None" : "None"
                 )
 
                 
                 InfoRowView(
                     label: "Discoverability",
-                    value: show.showDiscoverability?.capitalized ?? "Public"
+                    value: show.show_discoverability?.capitalizingFirstLetter() ?? "Public"
                 )
             }
         }
@@ -186,12 +263,12 @@ struct ShowDetailsScreen: View {
             VStack(spacing: 8) {
                 InfoRowView(
                     label: "Explicit Content",
-                    value: show.isExplicit == true ? "Yes" : "No"
+                    value: show.is_explicit == true ? "Yes" : "No"
                 )
                 
                 InfoRowView(
                     label: "Primary Language",
-                    value: show.language?.capitalized ?? "English"
+                    value: show.language?.capitalizingFirstLetter() ?? "English"
                 )
             }
         }
@@ -270,7 +347,8 @@ struct ShowDetailsScreen: View {
             HStack(spacing: 12) {
                 // Edit Show Button
                 Button(action: {
-                    // Handle edit show
+                    showID = show.id ?? 0
+                    navigateToshowTitle = true
                 }) {
                     Text("Edit Show")
                         .font(.custom(poppinsSemiBold, size: 16))
@@ -278,18 +356,22 @@ struct ShowDetailsScreen: View {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
                         .background(
-                            RoundedRectangle(cornerRadius: 34)
-                                .fill(Color.defaultTheme.opacity(0.1))
+                            RoundedRectangle(cornerRadius: 32)
+                                .fill(Color.defaultThemeLight)
                         )
                         .overlay(
-                            RoundedRectangle(cornerRadius: 34)
+                            RoundedRectangle(cornerRadius: 32)
                                 .stroke(Color.defaultTheme, lineWidth: 1.5)
                         )
                 }
                 
                 // Start Show Button
                 Button(action: {
-                    // Handle start show
+                   
+                    
+                    isLive = show.is_live ?? false
+                    selectedProductIds = show.product_ids ?? []
+                    navigateToReherseal = true
                 }) {
                     Text("Start Show")
                         .font(.custom(poppinsSemiBold, size: 16))
@@ -297,21 +379,17 @@ struct ShowDetailsScreen: View {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
                         .background(
-                            RoundedRectangle(cornerRadius: 34)
+                            RoundedRectangle(cornerRadius: 32)
                                 .fill(
-                                    LinearGradient(
-                                        colors: [Color.defaultTheme, Color.defaultTheme.opacity(0.8)],
-                                        startPoint: .leading,
-                                        endPoint: .trailing
-                                    )
+                                    .defaultTheme
                                 )
                         )
-                        .shadow(color: Color.defaultTheme.opacity(0.3), radius: 8, x: 0, y: 4)
+                        .shadow(color: Color.defaultTheme.opacity(0.1), radius: 2, x: 0, y: 4)
                 }
             }
             .padding(.horizontal, 16)
-            .padding(.vertical, 16)
-            .background(Color(.systemBackground))
+            .padding(.vertical, 8)
+            .background(.backGround)
         }
     }
     
@@ -374,7 +452,7 @@ struct ProductRowItem: View {
             
             // Product Info
             VStack(alignment: .leading, spacing: 6) {
-                Text(product.title ?? "")
+                Text(product.title?.capitalizingFirstLetter() ?? "")
                     .font(.custom(poppinsSemiBold, size: 16))
                     .foregroundColor(.primary)
                     .lineLimit(2)
@@ -393,7 +471,7 @@ struct ProductRowItem: View {
                 }
                 
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("$\(product.pricing ?? "0.00")")
+                    Text("\(formatCurrencyCompact(Double(product.pricing ?? "0.0") ?? 0.0))")
                         .font(.custom(poppinsBold, size: 16))
                         .foregroundColor(.primary)
                     
@@ -415,6 +493,25 @@ struct ProductRowItem: View {
         }
         .padding(.vertical, 8)
     }
+    private func formatCurrencyCompact(_ value: Double) -> String {
+            let absValue = abs(value)
+            let sign = value < 0 ? "-" : ""
+            
+            switch absValue {
+            case 1_000_000_000...:
+                // Billions
+                return String(format: "%@$%.2fB", sign, absValue / 1_000_000_000)
+            case 1_000_000...:
+                // Millions
+                return String(format: "%@$%.2fM", sign, absValue / 1_000_000)
+            case 1_000...:
+                // Thousands
+                return String(format: "%@$%.1fK", sign, absValue / 1_000)
+            default:
+                // Less than 1000 - show full amount
+                return String(format: "%@$%.2f", sign, absValue)
+            }
+        }
 }
 
 // MARK: - Show Model (Example - Adjust to your actual model)
@@ -507,6 +604,6 @@ struct ShowDetailsShimmer: View {
 }
 
 
-#Preview {
-    ShowDetailsScreen(show: ShowModel())
-}
+//#Preview {
+//    ShowDetailsScreen(show: ShowModel())
+//}

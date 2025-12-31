@@ -34,6 +34,7 @@ struct ShowsScreen: View {
     
     @State var navigateToReherseal = false
     @State var navigateToShowAnalytics = false
+    @State var navigateToShowDetails = false
     @State private var isActiveOnShowsScreen = false
     @State var viewModel = ShowsViewModel()
     @State var showsData = [HomeModel]()
@@ -117,11 +118,9 @@ struct ShowsScreen: View {
                                     navigateToShowAnalytics = true
                                 }
                                 else {
+                                    navigateToShowDetails = true
                                     showID = "\(data.id ?? 0)"
-                                    isLive = data.is_live ?? false
-                                    selectedProductIds = data.product_ids ?? []
                                     selectedShowsData = data
-                                    navigateToReherseal = true
                                 }
                             },onTapMenu: {
                                 SHowId = data.id ?? 0
@@ -147,20 +146,23 @@ struct ShowsScreen: View {
 ////                .padding(.vertical, 0)
 ////                .background(Color(UIColor.systemGroupedBackground))
 //            }
-            CusNavLink(doNavigate: $navigateToReherseal,
-                       destination: RehearsalScreen(showUd: $showID,
-                                                    productListData: .constant([]),
-                                                    isLive: isLive,
-                                                    backToTabBar: .constant(true),
-                                                    showsData: $selectedShowsData))
+//            CusNavLink(doNavigate: $navigateToReherseal,
+//                       destination: RehearsalScreen(showUd: $showID,
+//                                                    productListData: .constant([]),
+//                                                    isLive: isLive,
+//                                                    backToTabBar: .constant(true),
+//                                                    showsData: $selectedShowsData))
             CusNavLink(doNavigate: $navigateToShowAnalytics,
                        destination:  MyShowsAnalyticsScreen(showId: $showID))
             
-            CusNavLink(doNavigate: $navigateToshowTitle, destination:
-                        ShowTitleTips(request : $scheduleRequest,
-                                      fromPrepare:.constant(false),
-                                      backToPrepare: $navigateToshowTitle,
-                                      showId: $SHowId))
+            CusNavLink(doNavigate: $navigateToShowDetails,
+                       destination:  ShowDetailsScreen(showId: $showID))
+            
+//            CusNavLink(doNavigate: $navigateToshowTitle, destination:
+//                        ShowTitleTips(request : $scheduleRequest,
+//                                      fromPrepare:.constant(false),
+//                                      backToPrepare: $navigateToshowTitle,
+//                                      showId: $SHowId))
            
         }
         .navigationBarHidden(true)

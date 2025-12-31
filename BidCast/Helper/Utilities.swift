@@ -196,6 +196,8 @@ extension Collection {
         return indices.contains(index) ? self[index] : nil
     }
 }
+    
+
 
 //MARK: compressAndSaveImage.
 func compressAndSaveImage(data: Data, maxFileSizeKB: Int = 2048) -> URL? {

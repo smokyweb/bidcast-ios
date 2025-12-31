@@ -16,6 +16,7 @@ final class ShowsViewModel: ObservableObject {
     @Published var getShowOverviewModel : ResponseModel<GetShowOverviewModel>?
     @Published var sellerResponse : ResponseModelPaginate<[SellerUserModel]>?
     @Published var promoteShow: ResponseModelPaginate<[BoostModel]>?
+    @Published var scheduledShowData: ResponseModelPaginate<HomeModel>?
     @Published var errorMessage: String? = nil
     @Published var countResponse = countModel()
     @Published var requestType: String = ""
@@ -120,6 +121,22 @@ final class ShowsViewModel: ObservableObject {
                 self.errorMessage = error.localizedDescription
             }
             throw error
+        }
+    }
+    @MainActor
+    func getScheduleShowData(param: getShowRequest) async {
+//        guard !hasLoadedTitleTips else { return }
+//        hasLoadedTitleTips = true
+        requestType = "show"
+        
+        do {
+            let response: ResponseModelPaginate<HomeModel> = try await APIManager.shared.request(
+                type: APIEndPoint.getScheduleShow(param: param),
+                header: true
+            )
+            scheduledShowData = response
+        } catch {
+            handle(error: error)
         }
     }
     

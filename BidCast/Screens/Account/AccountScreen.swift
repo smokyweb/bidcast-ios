@@ -465,6 +465,7 @@ struct SellerHubSection: View {
     @State var selectedShowsData = HomeModel()
     @State var navigateToReherseal = false
     @State var navigateToshowTitle = false
+    @State var navigateToShowDetails = false
     @State private var scheduleRequest = StoreScheduleShowRequest(
         title: "",
         date: "",
@@ -504,12 +505,15 @@ struct SellerHubSection: View {
             // Vacation Mode
             vacationModeCard
                 .padding(.bottom, 40)
-            CusNavLink(doNavigate: $navigateToReherseal,
-                       destination: RehearsalScreen(showUd: $showID,
-                                                    productListData: .constant([]),
-                                                    isLive: isLive,
-                                                    backToTabBar: .constant(true),
-                                                    showsData: $selectedShowsData))
+//            CusNavLink(doNavigate: $navigateToReherseal,
+//                       destination: RehearsalScreen(showUd: $showID,
+//                                                    productListData: .constant([]),
+//                                                    isLive: isLive,
+//                                                    backToTabBar: .constant(true),
+//                                                    showsData: $selectedShowsData))
+            CusNavLink(doNavigate: $navigateToShowDetails,
+                       destination:  ShowDetailsScreen(showId: $showID))
+            
             CusNavLink(doNavigate: $navigateToshowTitle, destination:
                         ShowTitleTips(request : $scheduleRequest,
                                       fromPrepare:.constant(false),
@@ -624,7 +628,10 @@ struct SellerHubSection: View {
                         isLive = showData.is_live ?? false
 //                        selectedProductData = showData.products ?? []
                         selectedShowsData = showData
-                        navigateToReherseal = true
+//                        navigateToReherseal = true
+                        
+                        navigateToShowDetails = true
+                       
                     },onTapMenu:{
                         SHowId = showData.id ?? 0
                         navigateToshowTitle = true

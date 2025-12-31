@@ -37,6 +37,10 @@ struct HomeModel: Codable, Identifiable {
     var room_id: String?
     var category: Category?
     var user: User?
+    var auction : AuctionData?
 }
 
-
+struct AuctionData : Codable {
+    var id : Int?
+    var name : String?
+}
