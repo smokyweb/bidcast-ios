@@ -18,8 +18,9 @@ struct SendTipView: View {
     @Environment(\.presentationMode) var presentationMode
     
     @StateObject var viewModel: PaymentViewModel = PaymentViewModel()
+    @StateObject var cardViewModel: StripeCardViewModel = StripeCardViewModel()
     @StateObject private var tipsViewModel = TipsViewModel()
-    @State var cardResponse: CardModel?
+    @State private var cardResponse: [CardDataModel] = []
     
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
@@ -123,11 +124,11 @@ struct SendTipView: View {
                             .foregroundColor(.secondary)
                             .padding(.horizontal, 24)
                         
-                        if let cards = cardResponse?.paymentProfiles, !cards.isEmpty {
+                        if !cardResponse.isEmpty {
                             VStack(spacing: 12) {
-                                ForEach(0 ..< cards.count, id: \.self) { i in
-                                    let card = cards[i]
-                                    let cardNum = card.payment?.creditCard?.cardNumber ?? ""
+                                ForEach(0 ..< cardResponse.count, id: \.self) { i in
+                                    let card = cardResponse[i]
+                                    let cardNum = card.last4 ?? ""
                                     let lastFourDigit = String(cardNum.suffix(4))
                                     
                                     ElegantPaymentOptionRow(
@@ -206,10 +207,25 @@ struct SendTipView: View {
         .background(Color(.systemBackground))
         .onAppear {
             Task {
-                SVProgressHUD.show()
-                await viewModel.getCard()
-                await SVProgressHUD.dismiss()
-                successGetCardList()
+                await performAPICalls(
+                    isConcurrent: true,
+                    onError: { error in
+                        alertType = .sheetType(
+                            icon: .alert,
+                            title: "Error",
+                            message: errorDesc(error: error, message: cardViewModel.errorMessage),
+                            primaryBtnText: "",
+                            secondaryBtnText: AppString.ok.localized
+                        )
+                        showError = true
+                    }, onSuccess: {
+                        // On success
+                        successGetCardList()
+                    }
+                    
+                ) {
+                    try await cardViewModel.getCards()
+                }
             }
         }
         .bottomSheet(
@@ -232,14 +248,14 @@ struct SendTipView: View {
     
     @MainActor
     private func successGetCardList() {
-        let response = viewModel.cardDict
-        if response.status == "success" {
-            cardResponse = response.data
+        let response = cardViewModel.cards
+        if response?.status == "success" {
+            cardResponse = response?.data ?? []
         } else {
             alertType = .sheetType(
                 icon: .alert,
-                title: response.error_type?.capitalized ?? "",
-                message: response.message?.capitalized ?? "",
+                title: "Error",
+                message: cardViewModel.errorMessage ?? "",
                 primaryBtnText: "",
                 secondaryBtnText: AppString.ok.localized
             )
@@ -314,81 +330,133 @@ struct TipOptionButton: View {
 
 // MARK: - Elegant Payment Option Row
 struct ElegantPaymentOptionRow: View {
-    var cardDetails: PaymentProfile?
+
+    // MARK: - Inputs
+    let cardDetails: CardDataModel?
     let isSelected: Bool
     let onSelect: () -> Void
-    
+
+    // MARK: - Computed Properties
+    private var maskedNumber: String {
+        let last4 = cardDetails?.last4?.suffix(4) ?? "****"
+        return "•••• •••• •••• \(last4)"
+    }
+
+    private var expiryText: String {
+        "\(cardDetails?.expMonth)/\(cardDetails?.expYear)" ?? "MM/YY"
+    }
+
+    // MARK: - Body
     var body: some View {
         Button(action: onSelect) {
             HStack(spacing: 16) {
-                // Card Icon
-                ZStack {
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(
-                            LinearGradient(
-                                gradient: Gradient(colors: [
-                                    Color.defaultTheme.opacity(0.8),
-                                    Color.defaultTheme
-                                ]),
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                        .frame(width: 48, height: 48)
-                    
-                    Image(systemName: "creditcard.fill")
-                        .font(.system(size: 20))
-                        .foregroundColor(.white)
-                }
-                
-                // Card Details
-                VStack(alignment: .leading, spacing: 4) {
-                    let maskedNumber = "•••• •••• •••• " + (cardDetails?.payment?.creditCard?.cardNumber?.suffix(4) ?? "****")
-                    let expiry = cardDetails?.payment?.creditCard?.expirationDate ?? "MM/YY"
-                    
-                    Text(maskedNumber)
-                        .font(.custom(poppinsSemiBold, size: 16))
-                        .foregroundColor(.primary)
-                    
-                    Text("Exp: \(expiry)")
-                        .font(.custom(poppinsRegular, size: 13))
-                        .foregroundColor(.secondary)
-                }
-                
+
+                cardIconView
+
+                cardDetailsView
+
                 Spacer()
-                
-                // Selection Indicator
-                ZStack {
-                    Circle()
-                        .stroke(isSelected ? Color.defaultTheme : Color.gray.opacity(0.3), lineWidth: 2)
-                        .frame(width: 24, height: 24)
-                    
-                    if isSelected {
-                        Circle()
-                            .fill(Color.defaultTheme)
-                            .frame(width: 12, height: 12)
-                            .transition(.scale.combined(with: .opacity))
-                    }
-                }
-                .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isSelected)
+
+                selectionIndicatorView
             }
             .padding(16)
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(isSelected ? Color.defaultTheme.opacity(0.06) : Color(.systemGray6))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(isSelected ? Color.defaultTheme.opacity(0.4) : Color.clear, lineWidth: 1.5)
-            )
+            .background(backgroundView)
+            .overlay(borderView)
             .shadow(
-                color: isSelected ? Color.defaultTheme.opacity(0.15) : Color.black.opacity(0.03),
+                color: isSelected
+                    ? Color.defaultTheme.opacity(0.15)
+                    : Color.black.opacity(0.03),
                 radius: isSelected ? 8 : 4,
                 x: 0,
                 y: isSelected ? 4 : 2
             )
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(.plain)
+    }
+}
+
+// MARK: - Subviews
+private extension ElegantPaymentOptionRow {
+
+    // Card Icon
+    var cardIconView: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 10)
+                .fill(
+                    LinearGradient(
+                        gradient: Gradient(colors: [
+                            Color.defaultTheme.opacity(0.8),
+                            Color.defaultTheme
+                        ]),
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .frame(width: 48, height: 48)
+
+            Image(systemName: "creditcard.fill")
+                .font(.system(size: 20))
+                .foregroundColor(.white)
+        }
+    }
+
+    // Card Details
+    var cardDetailsView: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(maskedNumber)
+                .font(.custom(poppinsSemiBold, size: 16))
+                .foregroundColor(.primary)
+
+            Text("Exp: \(expiryText)")
+                .font(.custom(poppinsRegular, size: 13))
+                .foregroundColor(.secondary)
+        }
+    }
+
+    // Selection Indicator
+    var selectionIndicatorView: some View {
+        ZStack {
+            Circle()
+                .stroke(
+                    isSelected
+                        ? Color.defaultTheme
+                        : Color.gray.opacity(0.3),
+                    lineWidth: 2
+                )
+                .frame(width: 24, height: 24)
+
+            if isSelected {
+                Circle()
+                    .fill(Color.defaultTheme)
+                    .frame(width: 12, height: 12)
+                    .transition(.scale.combined(with: .opacity))
+            }
+        }
+        .animation(
+            .spring(response: 0.3, dampingFraction: 0.6),
+            value: isSelected
+        )
+    }
+
+    // Background
+    var backgroundView: some View {
+        RoundedRectangle(cornerRadius: 16)
+            .fill(
+                isSelected
+                    ? Color.defaultTheme.opacity(0.06)
+                    : Color(.systemGray6)
+            )
+    }
+
+    // Border
+    var borderView: some View {
+        RoundedRectangle(cornerRadius: 16)
+            .stroke(
+                isSelected
+                    ? Color.defaultTheme.opacity(0.4)
+                    : Color.clear,
+                lineWidth: 1.5
+            )
     }
 }
 

@@ -12,8 +12,8 @@ import AlertToast
 struct BuyNowBottomSheetView: View {
     @Environment(\.presentationMode) var presentationMode
     @StateObject var viewModel = BuyNowViewModel()
-    @State var cardViewModel = PaymentViewModel()
-    @State var cardArr : [PaymentProfile] = []
+    @State var cardViewModel = StripeCardViewModel()
+    @State var cardArr : [CardDataModel] = []
     @State var selectedCardIndex: Int = 0
     @State var orderDetails : MyOrderModel?
     @State private var isLoading = false
@@ -52,7 +52,7 @@ struct BuyNowBottomSheetView: View {
     }
     
     var selectedCardID: String {
-        cardArr.indices.contains(selectedCardIndex) ? (cardArr[selectedCardIndex].customerPaymentProfileId ?? "") : ""
+        cardArr.indices.contains(selectedCardIndex) ? (cardArr[selectedCardIndex].cardID ?? "") : ""
     }
 
     
@@ -116,7 +116,7 @@ struct BuyNowBottomSheetView: View {
                             Image("visa") // Replace with actual asset if needed
                                 .resizable()
                                 .frame(width: 32, height: 20)
-                            Text("•••• \(cardArr[safe: selectedCardIndex]?.payment?.creditCard?.cardNumber ?? "0000")")
+                            Text("•••• \(cardArr[safe: selectedCardIndex]?.last4 ?? "0000")")
                                 .font(.custom(poppinsSemiBold, size: 13.0))
 
                         }
@@ -247,34 +247,42 @@ struct BuyNowBottomSheetView: View {
     //MARK: getCard.
     func getCard(){
         Task {
-           guard Reachability.isConnectedToNetwork() else {
-                hudMsg = "No Internet Connection"
-                showhud = true
-                return
+            await performAPICalls(
+                isConcurrent: true,
+                onError: { error in
+                    alertType = .sheetType(
+                        icon: .alert,
+                        title: "Error",
+                        message: errorDesc(error: error, message: cardViewModel.errorMessage),
+                        primaryBtnText: "",
+                        secondaryBtnText: AppString.ok.localized
+                    )
+                    showError = true
+                }, onSuccess: {
+                    // On success
+                    cardSuccess()
+                }
+                
+            ) {
+                try await cardViewModel.getCards()
             }
-            SVProgressHUD.show()
-            await self.cardViewModel.getCard()
-            await SVProgressHUD.dismiss()
-            cardSuccess()
         }
     }
     
     //MARK: cardSuccess.
     func cardSuccess() {
-        SVProgressHUD.dismiss()
-        let response = cardViewModel.cardDict
-        if response.status == "success" {
-            cardArr = cardViewModel.cardDict.data?.paymentProfiles ?? [PaymentProfile]()
-           
+        let response = cardViewModel.cards
+        if response?.status == "success" {
+            cardArr = response?.data ?? []
         } else {
-            showError = true
             alertType = .sheetType(
                 icon: .alert,
-                title: response.error_type?.capitalized ?? "",
-                message: response.message?.capitalized ?? "",
+                title: "Error",
+                message: cardViewModel.errorMessage ?? "",
                 primaryBtnText: "",
                 secondaryBtnText: AppString.ok.localized
             )
+            showError = true
         }
     }
     
@@ -283,7 +291,7 @@ struct BuyNowBottomSheetView: View {
         Task {
           
             guard cardArr.indices.contains(selectedCardIndex),
-                  let selectedCardID = cardArr[selectedCardIndex].customerPaymentProfileId else {
+                  let selectedCardID = cardArr[selectedCardIndex].cardID else {
                 hudMsg = "No valid card selected"
                 showhud = true
                 return
