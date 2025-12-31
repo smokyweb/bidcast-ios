@@ -29,88 +29,88 @@ class FirebaseManager {
     
     private init() {}
     
-    //MARK: Create live session
-    func createLiveSession(showId: String,
-                           userId: String,
-                           product: [ProductData],
-                           seller: SellerModel,
-                           thumbnail: String,
-                           time: String,
-                           date : String,
-                           allowBidForAll : Bool,
-                           completion: ((Bool) -> Void)? = nil) {
-        
-        let roomId = "live_room_\(userId)_\(showId)"
-        //        let timestamp = convertDateAndTimeToTimestamp(date: date, time: time)
-        let timestamp = getCurrentTimestamp()
-        print("📅 Timestamp: \(timestamp)")
-        
-        let sessionData: [String: Any] = [
-            //            "highestBid": "",
-            "isLive": true,
-            "products": product.map { $0.toDictionary() },
-            "roomId": roomId,
-            "seller": seller.toDictionary(),
-            "showDetail": "",
-            "showId": showId,
-            "thumbnail": thumbnail,
-            "time": timestamp,
-            "viewerCount": "",
-            "allowBidForAll" : allowBidForAll
-        ]
-        
-        print(sessionData)
-        
-        databaseRef.child("live_sessions").child(roomId).setValue(sessionData) { error, _ in
-            
-            if let error = error {
-                print("❌ Failed to write live session: \(error.localizedDescription)")
-                completion?(false)
-            } else {
-                print("✅ Live session created successfully in Firebase for room: \(roomId)")
-                let ref = self.databaseRef.child("live_sessions").child(roomId)
-                ref.onDisconnectRemoveValue()
-                completion?(true)
-            }
-        }
-    }
-    
-    
-    //MARK: Delete node after end of live stream
-    func checkAndDeleteLiveSession(roomId: String, completion: ((Bool) -> Void)? = nil) {
-        let ref = databaseRef.child("live_sessions").child(roomId)
-        ref.observeSingleEvent(of: .value) { snapshot in
-            if snapshot.exists() {
-                // 🔥 Exists → delete
-                ref.removeValue { error, _ in
-                    if let error = error {
-                        print("❌ Failed to delete: \(error.localizedDescription)")
-                        completion?(false)
-                    } else {
-                        print("🗑️ Live session deleted: \(roomId)")
-                        completion?(true)
-                    }
-                }
-            } else {
-                print("ℹ️ No session exists for room: \(roomId)")
-                completion?(false)
-            }
-        }
-    }
-    
-    //MARK: TimeStamp to string
-    func convertDateAndTimeToTimestamp(date: String, time: String) -> Int? {
-        let dateTimeString = "\(date) \(time)" // "2025-08-26 16:00:00"
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        formatter.timeZone = .current  // or .utc if needed
-        
-        if let combinedDate = formatter.date(from: dateTimeString) {
-            return Int(combinedDate.timeIntervalSince1970)
-        } else {
-            return nil
-        }
-    }
+//    //MARK: Create live session
+//    func createLiveSession(showId: String,
+//                           userId: String,
+//                           product: [ProductData],
+//                           seller: SellerModel,
+//                           thumbnail: String,
+//                           time: String,
+//                           date : String,
+//                           allowBidForAll : Bool,
+//                           completion: ((Bool) -> Void)? = nil) {
+//        
+//        let roomId = "live_room_\(userId)_\(showId)"
+//        //        let timestamp = convertDateAndTimeToTimestamp(date: date, time: time)
+//        let timestamp = getCurrentTimestamp()
+//        print("📅 Timestamp: \(timestamp)")
+//        
+//        let sessionData: [String: Any] = [
+//            //            "highestBid": "",
+//            "isLive": true,
+//            "products": product.map { $0.toDictionary() },
+//            "roomId": roomId,
+//            "seller": seller.toDictionary(),
+//            "showDetail": "",
+//            "showId": showId,
+//            "thumbnail": thumbnail,
+//            "time": timestamp,
+//            "viewerCount": "",
+//            "allowBidForAll" : allowBidForAll
+//        ]
+//        
+//        print(sessionData)
+//        
+//        databaseRef.child("live_sessions").child(roomId).setValue(sessionData) { error, _ in
+//            
+//            if let error = error {
+//                print("❌ Failed to write live session: \(error.localizedDescription)")
+//                completion?(false)
+//            } else {
+//                print("✅ Live session created successfully in Firebase for room: \(roomId)")
+//                let ref = self.databaseRef.child("live_sessions").child(roomId)
+//                ref.onDisconnectRemoveValue()
+//                completion?(true)
+//            }
+//        }
+//    }
+//    
+//    
+//    //MARK: Delete node after end of live stream
+//    func checkAndDeleteLiveSession(roomId: String, completion: ((Bool) -> Void)? = nil) {
+//        let ref = databaseRef.child("live_sessions").child(roomId)
+//        ref.observeSingleEvent(of: .value) { snapshot in
+//            if snapshot.exists() {
+//                // 🔥 Exists → delete
+//                ref.removeValue { error, _ in
+//                    if let error = error {
+//                        print("❌ Failed to delete: \(error.localizedDescription)")
+//                        completion?(false)
+//                    } else {
+//                        print("🗑️ Live session deleted: \(roomId)")
+//                        completion?(true)
+//                    }
+//                }
+//            } else {
+//                print("ℹ️ No session exists for room: \(roomId)")
+//                completion?(false)
+//            }
+//        }
+//    }
+//    
+//    //MARK: TimeStamp to string
+//    func convertDateAndTimeToTimestamp(date: String, time: String) -> Int? {
+//        let dateTimeString = "\(date) \(time)" // "2025-08-26 16:00:00"
+//        let formatter = DateFormatter()
+//        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+//        formatter.timeZone = .current  // or .utc if needed
+//        
+//        if let combinedDate = formatter.date(from: dateTimeString) {
+//            return Int(combinedDate.timeIntervalSince1970)
+//        } else {
+//            return nil
+//        }
+//    }
     
     //MARK: Current Timestamp
     func getCurrentTimestamp() -> String {
@@ -118,326 +118,326 @@ class FirebaseManager {
         return String(Int(now.timeIntervalSince1970))
     }
     
-    //MARK: Live session dATA
-    func getLiveSessionData(roomId: String, completion: @escaping (_ data: [String: Any]?) -> Void) {
-        let ref = databaseRef.child("live_sessions").child(roomId)
-        ref.observeSingleEvent(of: .value) { snapshot in
-            if snapshot.exists(), let data = snapshot.value as? [String: Any] {
-                print("✅ Live session data fetched for room: \(roomId)")
-                completion(data)
-            } else {
-                print("ℹ️ No live session data found for room: \(roomId)")
-                completion(nil)
-            }
-        }
-    }
-    
-    //MARK: All Live sessions
-    func fetchAllLiveSessions(completion: @escaping (_ sessions: [String]) -> Void) {
-        let ref = databaseRef.child("live_sessions")
-        ref.observeSingleEvent(of: .value) { snapshot in
-            guard let value = snapshot.value as? [String: Any] else {
-                print("ℹ️ No live sessions found in Firebase.")
-                completion([])
-                return
-            }
-            
-            // ✅ Extract all room IDs
-            let roomIds = Array(value.keys)
-            print("✅ Firebase room IDs: \(roomIds)")
-            completion(roomIds)
-        }
-    }
-    
-    //MARK: Live session ended
-    func observeLiveSessionRemoval(roomId: String, onRemoved: @escaping () -> Void) {
-        let ref = databaseRef.child("live_sessions").child(roomId)
-        
-        
-        ref.observe(.value) { snapshot in
-            if !snapshot.exists() {
-                print("🔥 Live session no longer exists: \(roomId)")
-                onRemoved()
-                return
-            }
-            
-            if let value = snapshot.value as? [String: Any],
-               let isLive = value["isLive"] as? Bool,
-               isLive == false {
-                print("🔥 Live session isLive is false: \(roomId)")
-                onRemoved()
-            }
-        }
-        
-    }
-    //MARK: Get New Live stream shows
-    func observeNewLiveSessionNodes(onNewSession: @escaping () -> Void) {
-        let parentRef = databaseRef.child("live_sessions")
-        
-        
-        parentRef.observe(.childAdded) { snapshot in
-            let childKey = snapshot.key
-            
-            print("🆕 Detected new node: \(childKey) — Checking for full data...")
-            
-            
-            guard let data = snapshot.value as? [String: Any] else {
-                print("⚠️ Invalid data in new node: \(childKey)")
-                return
-            }
-            
-            guard
-                let roomId = data["roomId"] as? String,
-                let isLive = data["isLive"] as? Bool,
-                let showId = data["showId"] as? String,
-                let thumbnail = data["thumbnail"] as? String,
-                isLive == true,
-                !roomId.isEmpty,
-                !showId.isEmpty,
-                !thumbnail.isEmpty
-            else {
-                print("⏳ Incomplete or not live — Ignoring: \(childKey)")
-                return
-            }
-            
-            print("✅ Valid new live session detected in node: \(childKey)")
-            onNewSession()
-        }
-    }
-    
-    
-    
-    // MARK: - updateHighestBid
-    func updateHighestBid(
-        roomId: String,
-        bidAmount: String,
-        bidderId: String,
-        bidderName: String,
-        bidderProfileImage: String,
-        status: String = "process",
-        onSold: @escaping (_ bidData: [String: Any]?) -> Void
-    ) {
-        let bidData: [String: Any] = [
-            "bidAmount": bidAmount,
-            "userId": bidderId,
-            "userName": bidderName,
-            "userImage": bidderProfileImage,
-            "productStatus": status
-        ]
-        
-        let bidPath = databaseRef.child("live_sessions").child(roomId).child("highestBid")
+//    //MARK: Live session dATA
+//    func getLiveSessionData(roomId: String, completion: @escaping (_ data: [String: Any]?) -> Void) {
+//        let ref = databaseRef.child("live_sessions").child(roomId)
+//        ref.observeSingleEvent(of: .value) { snapshot in
+//            if snapshot.exists(), let data = snapshot.value as? [String: Any] {
+//                print("✅ Live session data fetched for room: \(roomId)")
+//                completion(data)
+//            } else {
+//                print("ℹ️ No live session data found for room: \(roomId)")
+//                completion(nil)
+//            }
+//        }
+//    }
+//    
+//    //MARK: All Live sessions
+//    func fetchAllLiveSessions(completion: @escaping (_ sessions: [String]) -> Void) {
+//        let ref = databaseRef.child("live_sessions")
+//        ref.observeSingleEvent(of: .value) { snapshot in
+//            guard let value = snapshot.value as? [String: Any] else {
+//                print("ℹ️ No live sessions found in Firebase.")
+//                completion([])
+//                return
+//            }
+//            
+//            // ✅ Extract all room IDs
+//            let roomIds = Array(value.keys)
+//            print("✅ Firebase room IDs: \(roomIds)")
+//            completion(roomIds)
+//        }
+//    }
+//    
+//    //MARK: Live session ended
+//    func observeLiveSessionRemoval(roomId: String, onRemoved: @escaping () -> Void) {
+//        let ref = databaseRef.child("live_sessions").child(roomId)
+//        
+//        
+//        ref.observe(.value) { snapshot in
+//            if !snapshot.exists() {
+//                print("🔥 Live session no longer exists: \(roomId)")
+//                onRemoved()
+//                return
+//            }
+//            
+//            if let value = snapshot.value as? [String: Any],
+//               let isLive = value["isLive"] as? Bool,
+//               isLive == false {
+//                print("🔥 Live session isLive is false: \(roomId)")
+//                onRemoved()
+//            }
+//        }
+//        
+//    }
+//    //MARK: Get New Live stream shows
+//    func observeNewLiveSessionNodes(onNewSession: @escaping () -> Void) {
+//        let parentRef = databaseRef.child("live_sessions")
+//        
+//        
+//        parentRef.observe(.childAdded) { snapshot in
+//            let childKey = snapshot.key
+//            
+//            print("🆕 Detected new node: \(childKey) — Checking for full data...")
+//            
+//            
+//            guard let data = snapshot.value as? [String: Any] else {
+//                print("⚠️ Invalid data in new node: \(childKey)")
+//                return
+//            }
+//            
+//            guard
+//                let roomId = data["roomId"] as? String,
+//                let isLive = data["isLive"] as? Bool,
+//                let showId = data["showId"] as? String,
+//                let thumbnail = data["thumbnail"] as? String,
+//                isLive == true,
+//                !roomId.isEmpty,
+//                !showId.isEmpty,
+//                !thumbnail.isEmpty
+//            else {
+//                print("⏳ Incomplete or not live — Ignoring: \(childKey)")
+//                return
+//            }
+//            
+//            print("✅ Valid new live session detected in node: \(childKey)")
+//            onNewSession()
+//        }
+//    }
+//    
+//    
+//    
+//    // MARK: - updateHighestBid
+//    func updateHighestBid(
+//        roomId: String,
+//        bidAmount: String,
+//        bidderId: String,
+//        bidderName: String,
+//        bidderProfileImage: String,
+//        status: String = "process",
+//        onSold: @escaping (_ bidData: [String: Any]?) -> Void
+//    ) {
+//        let bidData: [String: Any] = [
+//            "bidAmount": bidAmount,
+//            "userId": bidderId,
+//            "userName": bidderName,
+//            "userImage": bidderProfileImage,
+//            "productStatus": status
+//        ]
+//        
+//        let bidPath = databaseRef.child("live_sessions").child(roomId).child("highestBid")
+////        let countdownRef = databaseRef.child("live_sessions").child(roomId).child("bidCountDown")
+//        
+//        bidPath.setValue(bidData) { error, _ in
+//            if let error = error {
+//                print("❌ Failed to update highest bid: \(error.localizedDescription)")
+//            } else {
+//                print("✅ Highest bid updated")
+//            }
+//        }
+//    }
+//    
+//    
+//    // MARK: - resetAndStartCountdown
+//    func resetAndStartCountdown(for roomId: String, onSold: @escaping (_ bidData: [String: Any]?) -> Void) {
+//        let timerKey = roomId
 //        let countdownRef = databaseRef.child("live_sessions").child(roomId).child("bidCountDown")
-        
-        bidPath.setValue(bidData) { error, _ in
-            if let error = error {
-                print("❌ Failed to update highest bid: \(error.localizedDescription)")
-            } else {
-                print("✅ Highest bid updated")
-            }
-        }
-    }
+//        let highestBidRef = databaseRef.child("live_sessions").child(roomId).child("highestBid")
+//        
+//        DispatchQueue.main.async {
+//            print("[resetAndStartCountdown] Current timers: \(self.bidTimers.keys)")
+//            
+//            // Stop existing timer if present
+//            if let existingTimer = self.bidTimers[timerKey] {
+//                print("[resetAndStartCountdown] Invalidating timer for \(timerKey)")
+//                existingTimer.invalidate()
+//                self.bidTimers.removeValue(forKey: timerKey)
+//            } else {
+//                print("[resetAndStartCountdown] No existing timer for \(timerKey)")
+//            }
+//            
+//            // Reset to 30s in Firebase
+//            self.remainingSeconds[timerKey] = 30
+//            countdownRef.setValue("30")
+//            
+//            let newTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
+//                guard let secondsLeft = self.remainingSeconds[timerKey] else { return }
+//                
+//                if secondsLeft <= 1 {
+//                    timer.invalidate()
+//                    self.bidTimers.removeValue(forKey: timerKey)
+//                    self.remainingSeconds.removeValue(forKey: timerKey)
+//                    countdownRef.removeValue()
+//                    print("[Timer] Countdown finished for \(timerKey)")
+//                    
+//                    // ✅ Only call onSold if there is actually a highestBid
+//                    highestBidRef.getData { error, snapshot in
+//                        if let bidData = snapshot?.value as? [String: Any] {
+//                            print("[Winner] Highest bid at countdown end: \(bidData)")
+//                            onSold(bidData) // will call updateSoldStatus() in loginRoom
+//                        } else {
+//                            print("[Winner] No highest bid found at countdown end — no sale.")
+//                        }
+//                    }
+//                } else {
+//                    let newSeconds = secondsLeft - 1
+//                    self.remainingSeconds[timerKey] = newSeconds
+//                    countdownRef.setValue(String(newSeconds))
+//                    print("[Timer] \(newSeconds)s left for room \(timerKey)")
+//                }
+//            }
+//            
+//            self.bidTimers[timerKey] = newTimer
+//            print("[resetAndStartCountdown] New timer started for \(timerKey), timers now: \(self.bidTimers.keys)")
+//        }
+//    }
+//    
+//    
+//    func observeHighestBidChanges(roomId: String, onSold: @escaping (_ bidData: [String: Any]?) -> Void) {
+//        let highestBidRef = databaseRef.child("live_sessions").child(roomId).child("highestBid")
+//        let countdownRef = databaseRef.child("live_sessions").child(roomId).child("bidCountDown")
+//        
+//        var previousBidData: [String: Any]? = nil
+//        
+//        highestBidRef.observe(.value) { snapshot in
+//            if let newBidData = snapshot.value as? [String: Any] {
+//                       
+//                       if previousBidData == nil {
+//                           // 🚀 First bid → start countdown
+//                           print("🟢 First bid received, starting countdown at 30s.")
+//                           self.resetAndStartCountdown(for: roomId, onSold: onSold)
+//                       } else if !NSDictionary(dictionary: newBidData).isEqual(to: previousBidData ?? [:]) {
+//                           // 🔔 New bid, but countdown already running → don't reset
+//                           print("🔔 New bid placed, countdown continues (no reset).")
+//                       }
+//                       
+//                       previousBidData = newBidData
+//            } else {
+//                // highestBid removed — remove countdown too
+//                print("⚠️ highestBid removed, removing countdown too.")
+//                previousBidData = nil
+//                
+//                // Stop local timer
+//                if let existingTimer = self.bidTimers[roomId] {
+//                    existingTimer.invalidate()
+//                    self.bidTimers.removeValue(forKey: roomId)
+//                }
+//                self.remainingSeconds.removeValue(forKey: roomId)
+//                
+//                // Remove countdown node in Firebase
+//                countdownRef.removeValue()
+//                highestBidRef.removeValue()
+//            }
+//        }
+//    }
     
     
-    // MARK: - resetAndStartCountdown
-    func resetAndStartCountdown(for roomId: String, onSold: @escaping (_ bidData: [String: Any]?) -> Void) {
-        let timerKey = roomId
-        let countdownRef = databaseRef.child("live_sessions").child(roomId).child("bidCountDown")
-        let highestBidRef = databaseRef.child("live_sessions").child(roomId).child("highestBid")
-        
-        DispatchQueue.main.async {
-            print("[resetAndStartCountdown] Current timers: \(self.bidTimers.keys)")
-            
-            // Stop existing timer if present
-            if let existingTimer = self.bidTimers[timerKey] {
-                print("[resetAndStartCountdown] Invalidating timer for \(timerKey)")
-                existingTimer.invalidate()
-                self.bidTimers.removeValue(forKey: timerKey)
-            } else {
-                print("[resetAndStartCountdown] No existing timer for \(timerKey)")
-            }
-            
-            // Reset to 30s in Firebase
-            self.remainingSeconds[timerKey] = 30
-            countdownRef.setValue("30")
-            
-            let newTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
-                guard let secondsLeft = self.remainingSeconds[timerKey] else { return }
-                
-                if secondsLeft <= 1 {
-                    timer.invalidate()
-                    self.bidTimers.removeValue(forKey: timerKey)
-                    self.remainingSeconds.removeValue(forKey: timerKey)
-                    countdownRef.removeValue()
-                    print("[Timer] Countdown finished for \(timerKey)")
-                    
-                    // ✅ Only call onSold if there is actually a highestBid
-                    highestBidRef.getData { error, snapshot in
-                        if let bidData = snapshot?.value as? [String: Any] {
-                            print("[Winner] Highest bid at countdown end: \(bidData)")
-                            onSold(bidData) // will call updateSoldStatus() in loginRoom
-                        } else {
-                            print("[Winner] No highest bid found at countdown end — no sale.")
-                        }
-                    }
-                } else {
-                    let newSeconds = secondsLeft - 1
-                    self.remainingSeconds[timerKey] = newSeconds
-                    countdownRef.setValue(String(newSeconds))
-                    print("[Timer] \(newSeconds)s left for room \(timerKey)")
-                }
-            }
-            
-            self.bidTimers[timerKey] = newTimer
-            print("[resetAndStartCountdown] New timer started for \(timerKey), timers now: \(self.bidTimers.keys)")
-        }
-    }
-    
-    
-    func observeHighestBidChanges(roomId: String, onSold: @escaping (_ bidData: [String: Any]?) -> Void) {
-        let highestBidRef = databaseRef.child("live_sessions").child(roomId).child("highestBid")
-        let countdownRef = databaseRef.child("live_sessions").child(roomId).child("bidCountDown")
-        
-        var previousBidData: [String: Any]? = nil
-        
-        highestBidRef.observe(.value) { snapshot in
-            if let newBidData = snapshot.value as? [String: Any] {
-                       
-                       if previousBidData == nil {
-                           // 🚀 First bid → start countdown
-                           print("🟢 First bid received, starting countdown at 30s.")
-                           self.resetAndStartCountdown(for: roomId, onSold: onSold)
-                       } else if !NSDictionary(dictionary: newBidData).isEqual(to: previousBidData ?? [:]) {
-                           // 🔔 New bid, but countdown already running → don't reset
-                           print("🔔 New bid placed, countdown continues (no reset).")
-                       }
-                       
-                       previousBidData = newBidData
-            } else {
-                // highestBid removed — remove countdown too
-                print("⚠️ highestBid removed, removing countdown too.")
-                previousBidData = nil
-                
-                // Stop local timer
-                if let existingTimer = self.bidTimers[roomId] {
-                    existingTimer.invalidate()
-                    self.bidTimers.removeValue(forKey: roomId)
-                }
-                self.remainingSeconds.removeValue(forKey: roomId)
-                
-                // Remove countdown node in Firebase
-                countdownRef.removeValue()
-                highestBidRef.removeValue()
-            }
-        }
-    }
-    
-    
-    func observeCountdown(for roomId: String, onUpdate: @escaping (Int) -> Void) {
-        let countdownRef = databaseRef.child("live_sessions").child(roomId).child("bidCountDown")
-        countdownRef.removeAllObservers()
-        countdownRef.observe(.value) { snapshot in
-            if let secondsString = snapshot.value as? String,
-               let seconds = Int(secondsString) {
-                print("Countdown updated: \(seconds)")
-                onUpdate(seconds)
-                
-                if seconds == 0 {
-                    print("Countdown reached zero, removing highestBid and bidCountDown")
-                    let sessionRef = self.databaseRef.child("live_sessions").child(roomId)
-                    
-                    // Remove bidCountDown first
-                    sessionRef.child("bidCountDown").removeValue { error, _ in
-                        if let error = error {
-                            print("Failed to remove bidCountDown: \(error)")
-                        } else {
-                            print("Removed bidCountDown successfully")
-                            
-                            // Now remove highestBid only after bidCountDown removed successfully
-                            sessionRef.child("highestBid").removeValue { error, _ in
-                                if let error = error {
-                                    print("Failed to remove highestBid: \(error)")
-                                } else {
-                                    print("Removed highestBid successfully")
-                                }
-                            }
-                        }
-                    }
-                }
-                
-            } else {
-                print("Countdown removed or invalid")
-                onUpdate(0)
-            }
-        }
-    }
-    
-    
-    func stopObservingCountdown(for roomId: String) {
-        let countdownRef = databaseRef.child("live_sessions").child(roomId).child("bidCountDown")
-        countdownRef.removeAllObservers()
-    }
-    
-  
-    func finalizeWinningBid(roomId: String, onSold: @escaping (_ bidData: [String: Any]?) -> Void) {
-        let winnerRef = databaseRef.child("live_sessions").child(roomId).child("highestBid")
-        
-        winnerRef.observeSingleEvent(of: .value) { snapshot in
-            guard var bidData = snapshot.value as? [String: Any] else {
-                onSold(nil)
-                return
-            }
-            
-            // 1️⃣ Mark productStatus = sold
-            bidData["productStatus"] = "sold"
-            winnerRef.setValue(bidData)
-            
-            // 2️⃣ Remove the first product
-            let productRef = self.databaseRef.child("live_sessions").child(roomId).child("product")
-            productRef.observeSingleEvent(of: .value) { snapshot in
-                var productArray = snapshot.value as? [[String: Any]] ?? []
-                
-                if !productArray.isEmpty {
-                    productArray.removeFirst()
-                    productRef.setValue(productArray)
-                }
-                
-                // 3️⃣ Callback with final bid info
-                onSold(bidData)
-                
-                // 4️⃣ Remove the bid
-                winnerRef.removeValue()
-            }
-        }
-    }
-    
-    
-    
-    
-    
-    //MARK: -  Viewwer count
-    func observeViewerCount(
-        roomId: String,
-        onChange: @escaping (Int) -> Void
-    ) {
-        let ref = databaseRef.child("live_sessions").child(roomId).child("viewerCount")
-        ref.observe(.value) { snapshot in
-            if let countString = snapshot.value as? String, let count = Int(countString) {
-                onChange(count)
-            } else if let count = snapshot.value as? Int {
-                onChange(count)
-            } else {
-                onChange(0) // Default if missing or malformed
-            }
-        }
-    }
-    func removeNewSessionObserver() {
-        if let handle = newSessionHandle {
-            databaseRef.child("live_sessions").removeObserver(withHandle: handle)
-            newSessionHandle = nil
-            print("✅ Removed new session observer")
-        }
-    }
-    
+//    func observeCountdown(for roomId: String, onUpdate: @escaping (Int) -> Void) {
+//        let countdownRef = databaseRef.child("live_sessions").child(roomId).child("bidCountDown")
+//        countdownRef.removeAllObservers()
+//        countdownRef.observe(.value) { snapshot in
+//            if let secondsString = snapshot.value as? String,
+//               let seconds = Int(secondsString) {
+//                print("Countdown updated: \(seconds)")
+//                onUpdate(seconds)
+//                
+//                if seconds == 0 {
+//                    print("Countdown reached zero, removing highestBid and bidCountDown")
+//                    let sessionRef = self.databaseRef.child("live_sessions").child(roomId)
+//                    
+//                    // Remove bidCountDown first
+//                    sessionRef.child("bidCountDown").removeValue { error, _ in
+//                        if let error = error {
+//                            print("Failed to remove bidCountDown: \(error)")
+//                        } else {
+//                            print("Removed bidCountDown successfully")
+//                            
+//                            // Now remove highestBid only after bidCountDown removed successfully
+//                            sessionRef.child("highestBid").removeValue { error, _ in
+//                                if let error = error {
+//                                    print("Failed to remove highestBid: \(error)")
+//                                } else {
+//                                    print("Removed highestBid successfully")
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//                
+//            } else {
+//                print("Countdown removed or invalid")
+//                onUpdate(0)
+//            }
+//        }
+//    }
+//    
+//    
+//    func stopObservingCountdown(for roomId: String) {
+//        let countdownRef = databaseRef.child("live_sessions").child(roomId).child("bidCountDown")
+//        countdownRef.removeAllObservers()
+//    }
+//    
+//  
+//    func finalizeWinningBid(roomId: String, onSold: @escaping (_ bidData: [String: Any]?) -> Void) {
+//        let winnerRef = databaseRef.child("live_sessions").child(roomId).child("highestBid")
+//        
+//        winnerRef.observeSingleEvent(of: .value) { snapshot in
+//            guard var bidData = snapshot.value as? [String: Any] else {
+//                onSold(nil)
+//                return
+//            }
+//            
+//            // 1️⃣ Mark productStatus = sold
+//            bidData["productStatus"] = "sold"
+//            winnerRef.setValue(bidData)
+//            
+//            // 2️⃣ Remove the first product
+//            let productRef = self.databaseRef.child("live_sessions").child(roomId).child("product")
+//            productRef.observeSingleEvent(of: .value) { snapshot in
+//                var productArray = snapshot.value as? [[String: Any]] ?? []
+//                
+//                if !productArray.isEmpty {
+//                    productArray.removeFirst()
+//                    productRef.setValue(productArray)
+//                }
+//                
+//                // 3️⃣ Callback with final bid info
+//                onSold(bidData)
+//                
+//                // 4️⃣ Remove the bid
+//                winnerRef.removeValue()
+//            }
+//        }
+//    }
+//    
+//    
+//    
+//    
+//    
+//    //MARK: -  Viewwer count
+//    func observeViewerCount(
+//        roomId: String,
+//        onChange: @escaping (Int) -> Void
+//    ) {
+//        let ref = databaseRef.child("live_sessions").child(roomId).child("viewerCount")
+//        ref.observe(.value) { snapshot in
+//            if let countString = snapshot.value as? String, let count = Int(countString) {
+//                onChange(count)
+//            } else if let count = snapshot.value as? Int {
+//                onChange(count)
+//            } else {
+//                onChange(0) // Default if missing or malformed
+//            }
+//        }
+//    }
+//    func removeNewSessionObserver() {
+//        if let handle = newSessionHandle {
+//            databaseRef.child("live_sessions").removeObserver(withHandle: handle)
+//            newSessionHandle = nil
+//            print("✅ Removed new session observer")
+//        }
+//    }
+//    
     //MARK: -  Chat MSG
     
     func fetchMessageList(forUserId userId: String, completion: @escaping ([ChatMessage]) -> Void) {
@@ -482,52 +482,52 @@ class FirebaseManager {
     }
     
     
-    //MARK: -  Observing time
-    //MARK: prevent show from goest is lIve to false
-    func startObservingSessionTimer(roomId: String, onIntervalReached: @escaping () -> Void) {
-        let ref = databaseRef.child("live_sessions").child(roomId).child("time")
-        
-        // Remove previous observer if any
-        if let handle = valueHandle {
-            ref.removeObserver(withHandle: handle)
-        }
-        
-        self.valueHandle = ref.observe(.value, with: { snapshot in
-            guard let timestampString = snapshot.value as? String,
-                  let timestamp = TimeInterval(timestampString) else {
-                print("⛔️ Invalid or missing timestamp string")
-                return
-            }
-            
-            self.timer?.invalidate()
-            
-            let currentTime = Date().timeIntervalSince1970
-            let elapsed = currentTime - timestamp
-            let remaining = self.interval - elapsed
-            
-            print("⏱️ Elapsed: \(elapsed), Remaining: \(remaining)")
-            
-            if remaining <= 0 {
-                print("🚀 Time already passed, firing immediately...")
-                self.fireAction(roomId: roomId, onIntervalReached: onIntervalReached)
-            } else {
-                self.timer = Timer.scheduledTimer(withTimeInterval: remaining, repeats: false) { _ in
-                    self.fireAction(roomId: roomId, onIntervalReached: onIntervalReached)
-                }
-            }
-        })
-    }
+//    //MARK: -  Observing time
+//    //MARK: prevent show from goest is lIve to false
+//    func startObservingSessionTimer(roomId: String, onIntervalReached: @escaping () -> Void) {
+//        let ref = databaseRef.child("live_sessions").child(roomId).child("time")
+//        
+//        // Remove previous observer if any
+//        if let handle = valueHandle {
+//            ref.removeObserver(withHandle: handle)
+//        }
+//        
+//        self.valueHandle = ref.observe(.value, with: { snapshot in
+//            guard let timestampString = snapshot.value as? String,
+//                  let timestamp = TimeInterval(timestampString) else {
+//                print("⛔️ Invalid or missing timestamp string")
+//                return
+//            }
+//            
+//            self.timer?.invalidate()
+//            
+//            let currentTime = Date().timeIntervalSince1970
+//            let elapsed = currentTime - timestamp
+//            let remaining = self.interval - elapsed
+//            
+//            print("⏱️ Elapsed: \(elapsed), Remaining: \(remaining)")
+//            
+//            if remaining <= 0 {
+//                print("🚀 Time already passed, firing immediately...")
+//                self.fireAction(roomId: roomId, onIntervalReached: onIntervalReached)
+//            } else {
+//                self.timer = Timer.scheduledTimer(withTimeInterval: remaining, repeats: false) { _ in
+//                    self.fireAction(roomId: roomId, onIntervalReached: onIntervalReached)
+//                }
+//            }
+//        })
+//    }
     
     
-    func fireAction(roomId: String, onIntervalReached: @escaping () -> Void) {
-        //        onIntervalReached()
-        
-        let newTimestamp =  getCurrentTimestamp()
-        let timestampRef = databaseRef.child("live_sessions").child(roomId).child("time")
-        print(timestampRef)
-        timestampRef.setValue(newTimestamp)
-        print("✅ Timestamp updated to: \(newTimestamp)")
-    }
+//    func fireAction(roomId: String, onIntervalReached: @escaping () -> Void) {
+//        //        onIntervalReached()
+//        
+//        let newTimestamp =  getCurrentTimestamp()
+//        let timestampRef = databaseRef.child("live_sessions").child(roomId).child("time")
+//        print(timestampRef)
+//        timestampRef.setValue(newTimestamp)
+//        print("✅ Timestamp updated to: \(newTimestamp)")
+//    }
     
     func stopObserving() {
         timer?.invalidate()
@@ -540,188 +540,188 @@ class FirebaseManager {
     }
     
     
-    enum SetProductError: Error {
-        case productNotFound
-        case alreadyCurrent
-        case firebaseError(String)
-    }
-    
-    func setProductAsCurrent(roomId: String, selectedID: String, completion: @escaping (Result<Void, SetProductError>) -> Void) {
-        let ref = Database.database().reference()
-        let productsRef = ref.child("live_sessions").child(roomId).child("products")
-        
-        productsRef.observeSingleEvent(of: .value) { snapshot in
-            guard var products = snapshot.value as? [[String: Any]] else {
-                completion(.failure(.productNotFound))
-                return
-            }
-            
-            var productFound = false
-            var isAlreadyCurrent = false
-            
-            for (index, var product) in products.enumerated() {
-                guard let productId = product["id"] as? String else { continue }
-                
-                if productId == selectedID {
-                    productFound = true
-                    if product["isCurrent"] as? Bool == true {
-                        isAlreadyCurrent = true
-                        break
-                    }
-                }
-            }
-            
-            if !productFound {
-                completion(.failure(.productNotFound))
-                return
-            }
-            
-            if isAlreadyCurrent {
-                completion(.failure(.alreadyCurrent))
-                return
-            }
-            
-            // Update isCurrent flags
-            for (index, var product) in products.enumerated() {
-                if let productId = product["id"] as? String {
-                    product["isCurrent"] = (productId == selectedID)
-                    products[index] = product
-                }
-            }
-            
-            // Save updated list
-            productsRef.setValue(products) { error, _ in
-                if let error = error {
-                    completion(.failure(.firebaseError(error.localizedDescription)))
-                } else {
-                    completion(.success(()))
-                }
-            }
-        }
-    }
-    
-    
-    func markProductAsSold(roomId: String, productId: String, completion: ((Error?) -> Void)? = nil) {
-        let productsRef = Database.database().reference()
-            .child("live_sessions")
-            .child(roomId)
-            .child("products")
-        
-        // Get product list and update the one with matching ID
-        productsRef.observeSingleEvent(of: .value) { snapshot in
-            guard var products = snapshot.value as? [[String: Any]] else {
-                completion?(NSError(domain: "", code: 404, userInfo: [NSLocalizedDescriptionKey: "Products not found"]))
-                return
-            }
-            
-            var didUpdate = false
-            
-            for (index, var product) in products.enumerated() {
-                if let pid = product["id"] as? String, pid == productId {
-                    product["status"] = "sold"
-                    product["isCurrent"] = false   // 🔹 also set isCurrent to false
-                    products[index] = product
-                    didUpdate = true
-                    break
-                }
-            }
-            
-            if didUpdate {
-                productsRef.setValue(products) { error, _ in
-                    completion?(error)
-                }
-            } else {
-                completion?(NSError(domain: "", code: 404, userInfo: [NSLocalizedDescriptionKey: "Product not found"]))
-            }
-        }
-    }
-
-    
-    
-    
-    
-    func listenToLiveProducts(roomId: String, completion: @escaping ([ProductData]) -> Void) {
-        guard !roomId.isEmpty else {
-            print("⚠️ listenToLiveProducts called with empty roomId")
-            completion([])
-            return
-        }
-        
-        let ref = Database.database().reference()
-            .child("live_sessions")
-            .child(roomId)
-            .child("products")
-        
-        ref.observe(.value) { snapshot in
-            var products: [ProductData] = []
-            for child in snapshot.children {
-                if let snap = child as? DataSnapshot,
-                   let dict = snap.value as? [String: Any] {
-                    do {
-                        let data = try JSONSerialization.data(withJSONObject: dict)
-                        let product = try JSONDecoder().decode(ProductData.self, from: data)
-                        products.append(product)
-                    } catch {
-                        print("❌ Error decoding product: \(error.localizedDescription)")
-                    }
-                }
-            }
-            completion(products)
-        }
-    }
-
-    
-    func observeProductChanges(roomId: String, completion: @escaping ([ProductData]) -> Void) {
-        let productsRef = databaseRef.child("live_sessions").child(roomId).child("products")
-        productsRef.observe(.value) { snapshot in
-            var products = [ProductData]()
-            for child in snapshot.children {
-                if let childSnap = child as? DataSnapshot,
-                   let dict = childSnap.value as? [String: Any] {
-                    do {
-                        let data = try JSONSerialization.data(withJSONObject: dict)
-                        let product = try JSONDecoder().decode(ProductData.self, from: data)
-                        products.append(product)
-                    } catch {
-                        print("Decoding error: \(error)")
-                    }
-                }
-            }
-            completion(products)
-        }
-    }
-    
-    func observeHighestBid(roomId: String, completion: @escaping ([String: Any]) -> Void) {
-        databaseRef
-            .child("live_sessions")
-            .child(roomId)
-            .child("highestBid")
-            .observe(.value) { snapshot in
-                if let value = snapshot.value as? [String: Any] {
-                    completion(value)
-                }
-            }
-    }
-    
-    func observeLiveSessionRemovals(onRemove: @escaping (_ removedRoomId: String) -> Void) {
-        let ref = Database.database().reference().child("live_sessions")
-        ref.observe(.childRemoved) { snapshot in
-            let removedRoomId = snapshot.key
-            onRemove(removedRoomId)
-        }
-    }
-    
-    // MARK: - Observe allowBidForAll for a live room
-    func observeAllowBidForAll(for roomId: String) {
-        guard !roomId.isEmpty else { return }
-        
-        let ref = FirebaseManager.shared.databaseRef.child("live_sessions").child(roomId).child("allowBidForAll")
-        
-        ref.observe(.value) { snapshot in
-            if let allowBid = snapshot.value as? Bool {
-                UserDefaults.allowBidForAllUser = allowBid
-                print("🔔 allowBidForAll updated to \(allowBid) for room: \(roomId)")
-            }
-        }
-    }
+//    enum SetProductError: Error {
+//        case productNotFound
+//        case alreadyCurrent
+//        case firebaseError(String)
+//    }
+//    
+//    func setProductAsCurrent(roomId: String, selectedID: String, completion: @escaping (Result<Void, SetProductError>) -> Void) {
+//        let ref = Database.database().reference()
+//        let productsRef = ref.child("live_sessions").child(roomId).child("products")
+//        
+//        productsRef.observeSingleEvent(of: .value) { snapshot in
+//            guard var products = snapshot.value as? [[String: Any]] else {
+//                completion(.failure(.productNotFound))
+//                return
+//            }
+//            
+//            var productFound = false
+//            var isAlreadyCurrent = false
+//            
+//            for (index, var product) in products.enumerated() {
+//                guard let productId = product["id"] as? String else { continue }
+//                
+//                if productId == selectedID {
+//                    productFound = true
+//                    if product["isCurrent"] as? Bool == true {
+//                        isAlreadyCurrent = true
+//                        break
+//                    }
+//                }
+//            }
+//            
+//            if !productFound {
+//                completion(.failure(.productNotFound))
+//                return
+//            }
+//            
+//            if isAlreadyCurrent {
+//                completion(.failure(.alreadyCurrent))
+//                return
+//            }
+//            
+//            // Update isCurrent flags
+//            for (index, var product) in products.enumerated() {
+//                if let productId = product["id"] as? String {
+//                    product["isCurrent"] = (productId == selectedID)
+//                    products[index] = product
+//                }
+//            }
+//            
+//            // Save updated list
+//            productsRef.setValue(products) { error, _ in
+//                if let error = error {
+//                    completion(.failure(.firebaseError(error.localizedDescription)))
+//                } else {
+//                    completion(.success(()))
+//                }
+//            }
+//        }
+//    }
+//    
+//    
+//    func markProductAsSold(roomId: String, productId: String, completion: ((Error?) -> Void)? = nil) {
+//        let productsRef = Database.database().reference()
+//            .child("live_sessions")
+//            .child(roomId)
+//            .child("products")
+//        
+//        // Get product list and update the one with matching ID
+//        productsRef.observeSingleEvent(of: .value) { snapshot in
+//            guard var products = snapshot.value as? [[String: Any]] else {
+//                completion?(NSError(domain: "", code: 404, userInfo: [NSLocalizedDescriptionKey: "Products not found"]))
+//                return
+//            }
+//            
+//            var didUpdate = false
+//            
+//            for (index, var product) in products.enumerated() {
+//                if let pid = product["id"] as? String, pid == productId {
+//                    product["status"] = "sold"
+//                    product["isCurrent"] = false   // 🔹 also set isCurrent to false
+//                    products[index] = product
+//                    didUpdate = true
+//                    break
+//                }
+//            }
+//            
+//            if didUpdate {
+//                productsRef.setValue(products) { error, _ in
+//                    completion?(error)
+//                }
+//            } else {
+//                completion?(NSError(domain: "", code: 404, userInfo: [NSLocalizedDescriptionKey: "Product not found"]))
+//            }
+//        }
+//    }
+//
+//    
+//    
+//    
+//    
+//    func listenToLiveProducts(roomId: String, completion: @escaping ([ProductData]) -> Void) {
+//        guard !roomId.isEmpty else {
+//            print("⚠️ listenToLiveProducts called with empty roomId")
+//            completion([])
+//            return
+//        }
+//        
+//        let ref = Database.database().reference()
+//            .child("live_sessions")
+//            .child(roomId)
+//            .child("products")
+//        
+//        ref.observe(.value) { snapshot in
+//            var products: [ProductData] = []
+//            for child in snapshot.children {
+//                if let snap = child as? DataSnapshot,
+//                   let dict = snap.value as? [String: Any] {
+//                    do {
+//                        let data = try JSONSerialization.data(withJSONObject: dict)
+//                        let product = try JSONDecoder().decode(ProductData.self, from: data)
+//                        products.append(product)
+//                    } catch {
+//                        print("❌ Error decoding product: \(error.localizedDescription)")
+//                    }
+//                }
+//            }
+//            completion(products)
+//        }
+//    }
+//
+//    
+//    func observeProductChanges(roomId: String, completion: @escaping ([ProductData]) -> Void) {
+//        let productsRef = databaseRef.child("live_sessions").child(roomId).child("products")
+//        productsRef.observe(.value) { snapshot in
+//            var products = [ProductData]()
+//            for child in snapshot.children {
+//                if let childSnap = child as? DataSnapshot,
+//                   let dict = childSnap.value as? [String: Any] {
+//                    do {
+//                        let data = try JSONSerialization.data(withJSONObject: dict)
+//                        let product = try JSONDecoder().decode(ProductData.self, from: data)
+//                        products.append(product)
+//                    } catch {
+//                        print("Decoding error: \(error)")
+//                    }
+//                }
+//            }
+//            completion(products)
+//        }
+//    }
+//    
+//    func observeHighestBid(roomId: String, completion: @escaping ([String: Any]) -> Void) {
+//        databaseRef
+//            .child("live_sessions")
+//            .child(roomId)
+//            .child("highestBid")
+//            .observe(.value) { snapshot in
+//                if let value = snapshot.value as? [String: Any] {
+//                    completion(value)
+//                }
+//            }
+//    }
+//    
+//    func observeLiveSessionRemovals(onRemove: @escaping (_ removedRoomId: String) -> Void) {
+//        let ref = Database.database().reference().child("live_sessions")
+//        ref.observe(.childRemoved) { snapshot in
+//            let removedRoomId = snapshot.key
+//            onRemove(removedRoomId)
+//        }
+//    }
+//    
+//    // MARK: - Observe allowBidForAll for a live room
+//    func observeAllowBidForAll(for roomId: String) {
+//        guard !roomId.isEmpty else { return }
+//        
+//        let ref = FirebaseManager.shared.databaseRef.child("live_sessions").child(roomId).child("allowBidForAll")
+//        
+//        ref.observe(.value) { snapshot in
+//            if let allowBid = snapshot.value as? Bool {
+//                UserDefaults.allowBidForAllUser = allowBid
+//                print("🔔 allowBidForAll updated to \(allowBid) for room: \(roomId)")
+//            }
+//        }
+//    }
 }

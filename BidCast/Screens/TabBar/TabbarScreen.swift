@@ -15,6 +15,7 @@ final class TabBarRouter: ObservableObject {
 struct TabbarScreen: View {
     @EnvironmentObject var productManager: ProductManager
     @EnvironmentObject var tabBarRouter: TabBarRouter
+    @EnvironmentObject var deepLink: DeepLinkManager
     @State private var previousTab = 0
     @State private var showSellSheet = false
     @State private var selectedSellTab: SellTabOption? = nil
@@ -64,7 +65,7 @@ struct TabbarScreen: View {
             TabView(selection: $tabBarRouter.selectedTab) {
                 
                 NavigationContainer(navigationPath: $homeNavigationPath) {
-                    HomeViewScreen(showCategory: .constant(""), comeFromExploreScreen: .constant(false), isNavFrom: "Login")
+                    HomeViewScreen(deepLinkShowId:selectedShowId,showCategory: .constant(""), comeFromExploreScreen: .constant(false), isNavFrom: "Login")
                 }
                 .id(homeViewID)
                 .disabled(showSellSheet) // Disable interaction when sheet is open
@@ -137,6 +138,23 @@ struct TabbarScreen: View {
                     previousTab = newTab
                 }
             }
+            
+            .onReceive(deepLinkManager.$liveShowId) { showId in
+                guard let showId else { return }
+
+                // 1️⃣ Switch to Home tab
+                tabBarRouter.selectedTab = 0
+
+                // 2️⃣ Reset Home navigation stack
+                resetNavigation(for: 0)
+
+                // 3️⃣ Store show id & navigate
+                selectedShowId = showId
+//                navigateToShow = true
+
+                // 4️⃣ Reset deep link
+                deepLinkManager.reset()
+            }
             // Navigation destinations
             .navigationDestination(isPresented: $navigateTogetStarted) {
                             GetStartedScreen(backToTabBar: $navigateTogetStarted)
@@ -173,11 +191,7 @@ struct TabbarScreen: View {
                                 .navigationBarHidden(true)
                                 .toolbar(.hidden, for: .navigationBar)
                         }
-                        .navigationDestination(isPresented: $navigateToShow) {
-                            HomeViewScreen(showCategory: .constant(""), comeFromExploreScreen: .constant(false))
-                                .navigationBarHidden(true)
-                                .toolbar(.hidden, for: .navigationBar)
-                        }
+                      
         }
         .sheet(isPresented: $showSellSheet) {
             // On dismiss, wait a bit before processing any pending navigation

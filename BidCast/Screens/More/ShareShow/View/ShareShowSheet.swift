@@ -43,25 +43,7 @@ struct DynamicShareBottomSheetView: View {
             .disabled(showFloatingChat)
             .opacity(showFloatingChat ? 0.3 : 1)
 
-            // Floating Chat
-            if showFloatingChat,
-               let chat = selectedChat,
-               let roomId = selectedRoomId {
-
-                FloatingChatView(
-                    isPresented: $showFloatingChat,
-                    chat: chat,
-                    roomId: roomId,
-                    messages: chatMessages,
-                    isLoading: isLoadingMessages,
-                    contentType: contentType,
-                    onSend: { message in
-                        onSendToChat(chat, message)
-                        isPresented = false
-                    }
-                )
-                .transition(.move(edge: .bottom))
-            }
+           
         }
     }
     private var header: some View {
@@ -95,7 +77,11 @@ struct DynamicShareBottomSheetView: View {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 16) {
                         ForEach(messageList ?? [], id: \.id) { chat in
-                            chatButton(chat)
+                            chatButton(chat) { chat, text in
+                                onSendToChat(chat,text)
+                            }
+                               
+                                
                         }
                     }
                     .padding(.horizontal)
@@ -104,7 +90,10 @@ struct DynamicShareBottomSheetView: View {
         }
     }
 
-    private func chatButton(_ chat: ChatMessage) -> some View {
+    private func chatButton(
+        _ chat: ChatMessage,
+        onTap: @escaping (ChatMessage, String) -> Void
+    ) -> some View {
 
         let currentUserId = String(UserDefaults.userId)
         let isSender = chat.users.senderId == currentUserId
@@ -116,31 +105,25 @@ struct DynamicShareBottomSheetView: View {
         let displayImage = isSender ? chat.users.receiverImage : chat.users.senderImage
 
         return Button {
-            selectedChat = chat
-            selectedRoomId = roomId
-            isLoadingMessages = true
-            FirebaseManager.shared.fetchMessageList(forUserId: "\(UserDefaults.userId)") { messages in
-                DispatchQueue.main.async {
-                    self.chatMessages = messages
-                    self.isLoadingMessages = false
-                    self.showFloatingChat = true
-                    
-                }
-            }
-            
-
+            onTap(chat, roomId)
         } label: {
             VStack(spacing: 6) {
                 CustomProfileImage(url: displayImage, isCircular: true)
                     .frame(width: 64, height: 64)
+                    .allowsHitTesting(false)
 
                 Text(displayName)
                     .font(.caption)
                     .lineLimit(1)
                     .frame(width: 70)
             }
+            .contentShape(Rectangle())
         }
+        .buttonStyle(.plain)
     }
+
+
+    
     // MARK: - Content Preview Card
     @ViewBuilder
     private func contentPreviewCard() -> some View {
@@ -297,28 +280,28 @@ struct DynamicShareBottomSheetView: View {
                     title: "Copy Link",
                     icon: "link"
                 ) {
-                    copyShareLink()
+                    copyLink()
                 }
 
                 socialShareButton(
                     title: "Facebook",
                     icon: "facebook"
                 ) {
-                    shareViaWhatsApp()
+                    shareToFacebook()
                 }
 
                 socialShareButton(
                     title: "Instagram",
                     icon: "instagram"
                 ) {
-                    shareViaInstagram()
+                    shareToInstagramStory()
                 }
 
                 socialShareButton(
                     title: "LinkedIn",
                     icon: "linkedin"
                 ) {
-                    openSystemShareSheet()
+                    shareToLinkedIn()
                 }
             }
             .padding(.horizontal)
@@ -346,18 +329,30 @@ struct DynamicShareBottomSheetView: View {
         }
     }
 
-    private func copyShareLink() {
-        UIPasteboard.general.string = generateShareLink()
-    }
+    private func copyLink() {
+            UIPasteboard.general.string = generateShareLink()
+        }
 
-    private func shareViaWhatsApp() {
-        guard let url = URL(string: "whatsapp://send?text=\(generateShareLink())") else { return }
-        UIApplication.shared.open(url)
-    }
+        private func shareToFacebook() {
+            openWebShare(
+                "https://www.facebook.com/sharer/sharer.php?u="
+            )
+        }
 
-    private func shareViaInstagram() {
-        openSystemShareSheet()
-    }
+        private func shareToLinkedIn() {
+            openWebShare(
+                "https://www.linkedin.com/sharing/share-offsite/?url="
+            )
+        }
+
+        
+    private func openWebShare(_ base: String) {
+           let link = generateShareLink()
+           let encoded = link.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+
+           guard let url = URL(string: base + encoded) else { return }
+           UIApplication.shared.open(url)
+       }
 
     private func openSystemShareSheet() {
         let activityVC = UIActivityViewController(
@@ -370,116 +365,59 @@ struct DynamicShareBottomSheetView: View {
             root.present(activityVC, animated: true)
         }
     }
+    private func shareToInstagramStory() {
+        let link = generateShareLink()
+
+        guard let url = URL(string: "instagram-stories://share") else {
+            openSystemShareSheet()
+            return
+        }
+
+        if UIApplication.shared.canOpenURL(url) {
+
+            let pasteboardItems: [[String: Any]] = [
+                ["com.instagram.sharedSticker.backgroundText": link]
+            ]
+
+            UIPasteboard.general.setItems(
+                pasteboardItems,
+                options: [.expirationDate: Date().addingTimeInterval(300)]
+            )
+
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+
+        } else {
+            openSystemShareSheet()
+        }
+    }
+
 
     private func generateShareLink() -> String {
         switch contentType {
-        case .show(let title, _, _, _, _):
-            return "https://bidcast.app/show/\(title.replacingOccurrences(of: " ", with: "-"))"
+
+        case .show(_, let username, _, _, _):
+            // username is used as roomid
+            return "\(ShareConfig.baseURL)/live-show?roomid=\(username)"
 
         case .profile(let username, _, _, _):
-            return "https://bidcast.app/\(username)"
+            return "\(ShareConfig.baseURL)/profile?username=\(username)"
 
-        case .product(let title, _, _, _):
-            return "https://bidcast.app/product/\(title.replacingOccurrences(of: " ", with: "-"))"
+        case .product(let title, let sellerUsername, _, _):
+            let slug = slugify(title)
+            return "\(ShareConfig.baseURL)/product?title=\(slug)&seller=\(sellerUsername)"
         }
     }
-
+    private func slugify(_ text: String) -> String {
+        text
+            .lowercased()
+            .replacingOccurrences(of: " ", with: "-")
+            .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? text
+    }
 }
 
-
-
-// MARK: - Floating Chat View
-struct FloatingChatView: View {
-
-    @Binding var isPresented: Bool
-    let chat: ChatMessage
-    let roomId: String
-    let messages: [ChatMessage]
-    let isLoading: Bool
-    let contentType: ShareContentType
-    let onSend: (String) -> Void
-
-    @State private var messageText = ""
-
-    var body: some View {
-        VStack {
-            Spacer()
-
-            VStack(spacing: 0) {
-                header
-                messagesView
-                inputBar
-            }
-            .frame(height: 480)
-            .background(Color.white)
-            .cornerRadius(24)
-            .shadow(radius: 20)
-        }
-        .background(
-            Color.black.opacity(0.4)
-                .ignoresSafeArea()
-                .onTapGesture { isPresented = false }
-        )
-    }
-    private var header: some View {
-        HStack {
-            Text("Chat")
-                .font(.headline)
-
-            Spacer()
-
-            Button {
-                isPresented = false
-            } label: {
-                Image(systemName: "xmark.circle.fill")
-                    .font(.title2)
-            }
-        }
-        .padding()
-    }
-
-    private var messagesView: some View {
-        ScrollView {
-            VStack(spacing: 12) {
-                if isLoading {
-                    ProgressView()
-                        .padding()
-                } else if messages.isEmpty {
-                    Text("No messages yet")
-                        .foregroundColor(.gray)
-                        .padding()
-                } else {
-                    ForEach(messages.suffix(10)) { message in
-                        MessageBubble(
-                            message: message,
-                            currentUserId: String(UserDefaults.userId)
-                        )
-                    }
-                }
-            }
-            .padding()
-        }
-        .frame(height: 220)
-    }
-
-    private var inputBar: some View {
-        HStack(spacing: 12) {
-            TextField("Message", text: $messageText)
-                .textFieldStyle(.roundedBorder)
-
-            Button {
-                let final = messageText
-                messageText = ""
-                onSend(final)
-            } label: {
-                Image(systemName: "paperplane.fill")
-            }
-        }
-        .padding()
-    }
-
+struct ShareConfig {
+    static let baseURL = "https://www.backend.bidcast.betaplanets.com"
 }
-
 
 // MARK: - Message Bubble Component
 struct MessageBubble: View {

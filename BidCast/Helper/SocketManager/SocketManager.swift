@@ -1181,7 +1181,7 @@ extension SocketManagerService {
 
             guard let json = data.first as? [String: Any],
                   let roomId = json["room_id"] as? String,
-                  let productId = json["product_id"] as? String else {
+                  let productId = json["product_id"] as? Int else {
                 print("❌ Invalid product_unpinned payload:", data)
                 return
             }
@@ -1189,7 +1189,7 @@ extension SocketManagerService {
             let message = json["message"] as? String
 
             DispatchQueue.main.async {
-                completion(roomId, productId, message)
+                completion(roomId, "\(productId)", message)
             }
 
             self.logger.info(
@@ -1331,17 +1331,17 @@ extension SocketManagerService {
         socket.on("product_pinned") { data, _ in
             
             guard let json = data.first as? [String: Any],
-                  let roomId = json["room_id"] as? String,
-                  let productId = json["product_id"] as? String,
-                  let productIds = json["pinned_products"] as? [Int] else {
-                print("❌ Invalid product_unpinned payload:", data)
-                return
-            }
+                         let roomId = json["room_id"] as? String,
+                         let productId = json["product_id"] as? Int,
+                         let productIds = json["pinned_products"] as? [Int] else {
+                       print("❌ Invalid product pinned payload:", data)
+                       return
+                   }
             
             let message = json["message"] as? String
             
             DispatchQueue.main.async {
-                completion(roomId, productId, message,productIds)
+                completion(roomId, "\(productId)", message,productIds)
             }
             
             self.logger.info(

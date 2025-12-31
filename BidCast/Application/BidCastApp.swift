@@ -15,6 +15,7 @@ struct BidCastApp: App {
     @StateObject var networkMonitor = NetworkMonitor.shared
     @State private var accountNavigationPath = NavigationPath()
     @StateObject var deepLink = DeepLinkManager()
+//    @EnvironmentObject var deepLink: DeepLinkManager
     @StateObject var productManager = ProductManager()
     
     @StateObject private var tabBarRouter = TabBarRouter()
@@ -65,6 +66,7 @@ struct BidCastApp: App {
                         TabbarScreen()
                             .environmentObject(tabBarRouter)
                             .environmentObject(productManager)
+                            .environmentObject(deepLink)
                     }
                     .id(appRootManager.currentRoot.hashValue)
                 }
@@ -82,7 +84,8 @@ struct BidCastApp: App {
             .environmentObject(LanguageManager.shared)
             .environmentObject(networkMonitor)
             .environmentObject(staticAPI)
-            .environmentObject(scheduleRequestStore) 
+            .environmentObject(scheduleRequestStore)
+            .environmentObject(deepLink)
             .onOpenURL { url in
                 deepLink.handle(url: url)
             }

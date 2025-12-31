@@ -70,7 +70,7 @@ struct ShowDetailsScreen: View {
             
             CusNavLink(doNavigate: $navigateToReherseal,
                        destination: RehearsalScreen(showUd: $showId,
-                                                    productListData: .constant([]),
+                                                    productListData: $products,
                                                     isLive: isLive,
                                                     backToTabBar: .constant(true),
                                                     showsData: $show))

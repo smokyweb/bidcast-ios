@@ -41,7 +41,7 @@ struct ChatScreen: View {
 
             inputBar
         }
-        .background(Color(red: 248/255, green: 250/255, blue: 253/255))
+        .background(.backGround)
         .navigationBarHidden(true)
     }
 
@@ -176,12 +176,13 @@ struct ChatScreen: View {
 struct ChatBubble: View {
     let message: ChatMessageModel
     let isCurrentUser: Bool
+    @EnvironmentObject var deepLinkManager: DeepLinkManager
 
     var body: some View {
         HStack {
 
             VStack(alignment: isCurrentUser ? .trailing : .leading, spacing: 4) {
-                Text(message.message)
+                Text(attributedMessage(message.message))
                     .font(.custom(poppinsRegular, size: 13.0))
                     .padding(12)
                     .foregroundColor(isCurrentUser ? .white : .black)
@@ -214,15 +215,58 @@ struct ChatBubble: View {
                 .padding(.trailing, isCurrentUser ? 12 : 0)
 
             }
+            .environment(\.openURL, OpenURLAction { url in
+                handleChatLink(url)
+                return .handled   // 🚨 THIS STOPS SAFARI
+            })
         }
         .padding(.horizontal, 4)
     }
+    private func handleChatLink(_ url: URL) {
 
+        // Match only your live-show links
+        guard url.path == "/live-show" else { return }
+
+        // Extract query params
+        guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+              let roomId = components.queryItems?
+                .first(where: { $0.name == "roomid" })?
+                .value
+        else {
+            return
+        }
+
+        print("✅ Live room id:", roomId)
+
+        // Trigger app navigation (NOT Safari)
+        deepLinkManager.openLiveShow(id: roomId)
+    }
     private func formatTime(_ timestamp: TimeInterval) -> String {
         let date = Date(timeIntervalSince1970: timestamp)
         let formatter = DateFormatter()
         formatter.dateFormat = "hh:mm a"
         return formatter.string(from: date)
+    }
+    func attributedMessage(_ text: String) -> AttributedString {
+        var attributed = AttributedString(text)
+
+        if let detector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue) {
+            let matches = detector.matches(
+                in: text,
+                options: [],
+                range: NSRange(location: 0, length: text.utf16.count)
+            )
+
+            for match in matches {
+                guard let range = Range(match.range, in: attributed),
+                      let url = match.url else { continue }
+
+                attributed[range].link = url
+                attributed[range].foregroundColor = .blue
+                attributed[range].underlineStyle = .single
+            }
+        }
+        return attributed
     }
 }
 

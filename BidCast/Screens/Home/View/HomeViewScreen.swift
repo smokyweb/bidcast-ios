@@ -10,7 +10,7 @@ import SVProgressHUD
 import AlertToast
 
 struct HomeViewScreen: View {
-    
+    var deepLinkShowId: String?
     @State private var selectedButton: String = "For You"
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var networkMonitor: NetworkMonitor
@@ -264,64 +264,8 @@ struct HomeViewScreen: View {
             CusNavLink(doNavigate: $navigateToCategoryDetailScreen, destination: HomeViewScreen(showCategory:$category,comeFromExploreScreen : $navigateToCategoryDetailScreen))
         }
         .background(.backGround)
-//        .bottomSheet(
-//            isPresented: $navigateToNoti,
-//            height: screenHeight * 0.8,
-//            topBarCornerRadius: 20,
-//            contentBackgroundColor: Color(.systemBackground),
-//            topBarBackgroundColor: Color(.systemBackground),
-//            showTopIndicator: false,
-//            onDismiss: {
-//                navigateToNoti = false
-//            },
-//            content: {
-//                let poll = PollModel(
-//                            pollId: "12345",
-//                            roomId: "room_01",
-//                            question: "Do you like the product?",
-//                            options: [
-//                                PollOption(text: "yes", voteCount: 6, percentage: 60),
-//                                PollOption(text: "yes", voteCount: 6, percentage: 60),
-//                                PollOption(text: "yes", voteCount: 6, percentage: 60),
-//                                PollOption(text: "no", voteCount: 3, percentage: 30),
-//                                PollOption(text: "yes", voteCount: 6, percentage: 60),
-//                                PollOption(text: "not very much", voteCount: 1, percentage: 10)
-//                            ],
-//                            totalVotes: 10,
-//                            remainingTime: 128,
-//                            isActive: true
-//                        )
-//                LivePollHostView(poll: poll) { _, _ in
-//                    print("End Poll")
-//                }
-//            }
-//            content: {
-//                var poll = PollModel(
-//                    pollId: "12345",
-//                    roomId: "room_01",
-//                    question: "What's your favorite feature of this app?",
-//                    options: [
-//                        PollOption(text: "Live Streaming", voteCount: 45, percentage: 45),
-//                        PollOption(text: "Bidding System", voteCount: 35, percentage: 35),
-//                        PollOption(text: "Chat Feature", voteCount: 20, percentage: 20)
-//                    ],
-//                    totalVotes: 100,
-//                    remainingTime: 180,
-//                    isActive: true
-//                )
-//            
-//                
-//                LivePollViewerView(poll: poll, onVote: { pollId, roomId, opt in
-//                    print("Vote emitted:", opt)
-//                }, onRequestRefresh: {
-//                    print("request refresh")
-//                })                
-//            }
-//        )
-        .background(.bg.opacity(0.1))
         .edgesIgnoringSafeArea(.bottom)
-//                .padding(.bottom,4)
-                .padding(.bottom, -15)
+        .padding(.bottom, -15)
         .onAppear{
             isActiveOnHomeScreen = true
             SocketManagerService.shared.setupSocket()
@@ -366,31 +310,10 @@ struct HomeViewScreen: View {
                     
                 }
             }
-            
-            if isActiveOnHomeScreen && !comeFromExploreScreen {
-                FirebaseManager.shared.observeNewLiveSessionNodes {
-                    Task {
-                        // Check internet before fetching/adding new shows
-                        guard Reachability.isConnectedToNetwork() else {
-                            hudMsg = "No Internet Connection"
-                            showhud = true
-                            return
-                        }
-                        await fetchLiveShow()
-                    }
-                }
-            }
 
-            
-            FirebaseManager.shared.observeLiveSessionRemovals { removedRoomId in
-                DispatchQueue.main.async {
-                    liveShowsData.removeAll { $0.room_id == removedRoomId }
-                }
-            }
         }
         .onDisappear {
             isActiveOnHomeScreen = false
-            FirebaseManager.shared.removeNewSessionObserver()
         }
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
@@ -405,6 +328,19 @@ struct HomeViewScreen: View {
                     upCommingSheet = false
                 }
             )
+        }
+        .onChange(of: deepLinkShowId) { showId in
+            guard let showId else { return }
+            tabBarRouter.selectedTab = 0
+            if let show = viewModel.liveShowsResponse.data?.first(where: { $0.id == Int(showId) }) {
+                categoryName = show.category?.name ?? ""
+                navigateToLiveStream = true
+                self.currentRoomId = show.room_id ?? ""
+                self.agoraToken = show.rtc_token ?? ""
+                userId = "\(show.user?.id ?? 0)"
+                userImage = show.user?.profile_image ?? ""
+                userName = show.user?.username ?? ""
+            }
         }
     }
     

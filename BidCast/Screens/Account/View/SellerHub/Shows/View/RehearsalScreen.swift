@@ -31,7 +31,7 @@ struct RehearsalScreen: View {
     
     @State var BiddingDetail = BiddingModel()
     @State var productData = [ProductDataModel1]()
-    @Binding var productListData: [ProductDataModel]
+    @Binding var productListData: [ProductDataModel1]
     @State var comments: [CommentModel] = []
     @State  var  boosts = [BoostModel]()
     @State var sellers = [SellerUserModel]()
@@ -163,6 +163,9 @@ struct RehearsalScreen: View {
     @State var auctionedProductData = ProductDataModel1()
     @State var nextProductId = ""
     @State var showNotesEditorSheet = false
+    
+    @State private var showFloatingChat: Bool = false
+    @State private var selectedChatMessage: ChatMessage?
     
     
     var body: some View {
@@ -813,7 +816,7 @@ struct RehearsalScreen: View {
             content: {
                 ProductShopRehersalScreen(
                     roomId: self.roomId,
-                    productDataFromEvent: $productData,
+                    productDataFromEvent: $productListData,
                     categoryId: "\(showsData.category_id ?? 0)",
                     onTapCancel: {
                         showShopSheet = false
@@ -1022,8 +1025,8 @@ struct RehearsalScreen: View {
                             ),
                             messageList: messageList,
                             onSendToChat: { chat, message in
-                                // Prepare chat navigation
-//                                prepareChatNavigationAndSend(for: chat, message: message)
+                                // Handle chat opening
+                                handleOpenChat(with: chat)
                             }
                         )
                     //                          .presentationDetents([.height(500)])
@@ -1121,7 +1124,18 @@ struct RehearsalScreen: View {
             .presentationCornerRadius(25)              // ✅ Rounded top corners
             .presentationDragIndicator(.hidden)        // optional
         }
-        
+        .overlay(
+            Group {
+                if let selectedChat = selectedChatMessage {
+                    FloatingChatView(
+                        isPresented: $showFloatingChat,
+                        chat: selectedChat,
+                        showURL: generateShowURL()
+                    )
+                    .zIndex(1000)
+                }
+            }
+        )
       
         
         
@@ -1202,7 +1216,7 @@ struct RehearsalScreen: View {
                     quantity: productModel.quantity ?? ""
                 )
             }
-//            productData.append(contentsOf: mappedProducts)
+//            productData.append(mappedProducts)
             categoryName = showsData.category?.name ?? ""
             
             //get agora token -> did not call it on preview screen
@@ -1217,6 +1231,58 @@ struct RehearsalScreen: View {
         }
     }
     
+    private func handleOpenChat(with chat: ChatMessage) {
+        print("📱 Opening chat with: \(chat.users.receiverName)")
+        
+        // Close share sheet
+        showSellSheet = false
+        
+        // Set selected chat
+        selectedChatMessage = chat
+        
+        // Open floating chat with animation delay
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
+                showFloatingChat = true
+            }
+        }
+    }
+    private func sendURLDirectly(to chat: ChatMessage) {
+        // Determine other user details
+        let isReceiver = chat.users.receiverId != "\(UserDefaults.userId)"
+        let otherUserId = isReceiver ? chat.users.receiverId : chat.users.senderId
+        let otherUserName = isReceiver ? chat.users.receiverName : chat.users.senderName
+        let otherUserImage = isReceiver ? chat.users.receiverImage : chat.users.senderImage
+        
+        // Create temporary ChatViewModel
+        let chatViewModel = ChatViewModel(
+            currentUserId: "\(UserDefaults.userId)",
+            currentUserName: UserDefaults.userName,
+            currentUserImage: UserDefaults.profileURL,
+            otherUserId: otherUserId,
+            otherUserName: otherUserName,
+            otherUserImage: otherUserImage
+        )
+        
+        // Send URL
+        let showURL = generateShowURL()
+        chatViewModel.messageText = "Check out this live show: \(showURL)"
+        chatViewModel.sendMessage()
+        
+        // Show success
+        hudMsg = "Show link sent to \(otherUserName)"
+        showhudSuccess = true
+        
+        // Close sheet
+        showSellSheet = false
+    }
+    
+    private func generateShowURL() -> String {
+            let currentRoomID = self.roomId
+        let url = "https://www.backend.bidcast.betaplanets.com/live-show?roomid=\(currentRoomID)"
+       
+            return url
+        }
     func fetchLatestProductList(){
         
         print("DEBUG: fetchLatestProductList with roomId = \(self.roomId)")
@@ -1486,7 +1552,7 @@ struct RehearsalScreen: View {
         fetchProducts(for: roomId)
         currentBottomSheet = .shop
 //        showShopSheet = true
-        navigateToProductList = true
+//        navigateToProductList = true
         fetchLatestProductList()
         hasCountdownStarted = false
     }

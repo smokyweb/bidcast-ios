@@ -124,7 +124,7 @@ struct LetsPrepare: View,ShowStepDelegate {
             
             CusNavLink(doNavigate: $navigateToRehearsal,
                        destination: RehearsalScreen(showUd: .constant(""),
-                                                    productListData: .constant([ProductDataModel]()),
+                                                    productListData: .constant([ProductDataModel1]()),
                                                     comeFromPrepare: true,
                                                     backToTabBar: .constant(true),
                                                     showsData: .constant(HomeModel())
@@ -133,7 +133,7 @@ struct LetsPrepare: View,ShowStepDelegate {
             
             CusNavLink(doNavigate: $navigateForLive,
                        destination: RehearsalScreen(showUd: $showId,
-                                                    productListData: .constant([ProductDataModel]()),
+                                                    productListData: .constant([ProductDataModel1]()),
                                                     comeFromPrepare: true,
                                                     comeForLive: true,
                                                     backToTabBar: $backToTabBar,

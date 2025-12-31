@@ -272,6 +272,7 @@
 		D433DB0F2E4766F1001FA51D /* WinnerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D433DB0B2E4766F1001FA51D /* WinnerViewModel.swift */; };
 		D433DB102E4766F1001FA51D /* WinnerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D433DB092E4766F1001FA51D /* WinnerModel.swift */; };
 		D43F21312F0287EE00AA8950 /* AddProductScreen_1.swift in Sources */ = {isa = PBXBuildFile; fileRef = D43F21302F0287EE00AA8950 /* AddProductScreen_1.swift */; };
+		D44278612F050CB300BEF0CC /* ChatFloatingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D44278602F050CB300BEF0CC /* ChatFloatingView.swift */; };
 		D448C46C2E5C6AFA004106D4 /* BlockedUserSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D448C46B2E5C6AFA004106D4 /* BlockedUserSheet.swift */; };
 		D44B0BBA2EF128570084F58A /* AnalyticsScreen_2.swift in Sources */ = {isa = PBXBuildFile; fileRef = D44B0BB92EF128570084F58A /* AnalyticsScreen_2.swift */; };
 		D44B0BBC2EF133ED0084F58A /* priceCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D44B0BBB2EF133ED0084F58A /* priceCardView.swift */; };
@@ -861,6 +862,7 @@
 		D433DB092E4766F1001FA51D /* WinnerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WinnerModel.swift; sourceTree = "<group>"; };
 		D433DB0B2E4766F1001FA51D /* WinnerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WinnerViewModel.swift; sourceTree = "<group>"; };
 		D43F21302F0287EE00AA8950 /* AddProductScreen_1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddProductScreen_1.swift; sourceTree = "<group>"; };
+		D44278602F050CB300BEF0CC /* ChatFloatingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatFloatingView.swift; sourceTree = "<group>"; };
 		D448C46B2E5C6AFA004106D4 /* BlockedUserSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockedUserSheet.swift; sourceTree = "<group>"; };
 		D44B0BB92EF128570084F58A /* AnalyticsScreen_2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsScreen_2.swift; sourceTree = "<group>"; };
 		D44B0BBB2EF133ED0084F58A /* priceCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = priceCardView.swift; sourceTree = "<group>"; };
@@ -3230,6 +3232,7 @@
 				D6F4C7852EF269880082B45F /* TipSettingsSheet.swift */,
 				D6F4C7872EF2749C0082B45F /* ShowNotesSheet.swift */,
 				D44BE76B2EF5294D004CC4CD /* RichTextEditorSheet.swift */,
+				D44278602F050CB300BEF0CC /* ChatFloatingView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -4648,6 +4651,7 @@
 				3541638A2DDB178300026B34 /* ShowTips.swift in Sources */,
 				D4B615CE2DE8280200924A3D /* NotifyMeModel.swift in Sources */,
 				D4BB9A0B2DE5A99700C1BCBC /* MyOrdersScreen.swift in Sources */,
+				D44278612F050CB300BEF0CC /* ChatFloatingView.swift in Sources */,
 				D4BB9A112DE5C92100C1BCBC /* TransactionsTabView.swift in Sources */,
 				D4BA9C0B2DE4856900DFF6E6 /* ShowsViewModel.swift in Sources */,
 				3576EAD42DDDD96900177C7D /* SelectThumbnailScreen.swift in Sources */,
