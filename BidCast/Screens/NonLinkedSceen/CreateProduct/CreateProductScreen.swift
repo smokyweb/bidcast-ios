@@ -369,7 +369,9 @@ struct CreateProductScreen: View {
                     .padding(.horizontal, 12)
                     
                     
-                    TwoButton(titleOne: "Continue", titleTwo: "Use Product Library", onFirstButtonClick: {
+                    TwoButton(titleOne: "Continue",
+                              titleTwo: "Use Product Library",
+                              onFirstButtonClick: {
                         print(request)
                         print(imageUrls)
                         guard !(imageUrls.isEmpty && videoUrls.isEmpty) else {
@@ -433,7 +435,8 @@ struct CreateProductScreen: View {
                             return
                         }
                         navigateToSalesFormat = true
-                    }, onSecButtonClick: {
+                    },
+                              onSecButtonClick: {
                         request = StoreProductParam(category_id: "", title: "", description: "", quantity: "", pricing: "", flash_sale: "", accept_offers: "", reserve_for_live: "", shipping_profile_id: "", status: "", width: "", length: "", weight: "", height: "", mail_class: "", processing_category: "", product_condition: "")
                         imageUrls.removeAll()
                         videoUrls.removeAll()
@@ -444,7 +447,7 @@ struct CreateProductScreen: View {
                             navigateToAddProduct = true
                         }
                         
-                    }, height: 45, firstBtnTitleColor: .darkGray, secBtnTitleColor: .white, firstBtnBgColor: .white, secBtnBgColor:.darkBlue)
+                    })
 //                    .padding(.horizontal,12)
                     .padding(.bottom, 16)
                 }

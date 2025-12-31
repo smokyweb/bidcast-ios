@@ -18,60 +18,71 @@ struct TwoButton: View {
     var onSecButtonClick: (() -> Void)?
     
     var height: CGFloat = 50
-    var cornerRadius: CGFloat = 12.0
+    var cornerRadius: CGFloat = 34
     
-    var firstBtnTitleColor: ColorResource = .white
-    var secBtnTitleColor: ColorResource = .white
+    var firstBtnTitleColor: Color = .white
+    var firstBtnBgColor: Color = .defaultTheme
     
-    var firstBtnBgColor: Color = .red
-    var secBtnBgColor: Color = .success
+    var secBtnTitleColor: Color = .defaultTheme
+    var secBtnBgColor: Color = .defaultThemeLight
+  
+
     
     var isHidefirstBtn = false
     var isHideSecBtn = false
     
     var body: some View {
-        HStack(alignment: .center, spacing: 8) {
-            // Second Button
-            if !isHideSecBtn {
-                Button(action: {
-                    withAnimation {
-                        self.onSecButtonClick?()
+        VStack(spacing: 0) {
+            HStack(spacing: 12) {
+                //second button
+                if !isHideSecBtn {
+                    Button {
+                        withAnimation {
+                            self.onSecButtonClick?()
+                        }
+                    } label: {
+                        Text(titleTwo)
+                            .font(.custom(poppinsSemiBold, size: 16))
+                            .foregroundColor(secBtnTitleColor)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: height)
+                            .padding(.vertical, 4)
+                            .background(
+                                RoundedRectangle(cornerRadius: cornerRadius)
+                                    .fill(secBtnBgColor)
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: cornerRadius)
+                                    .stroke(Color.defaultTheme, lineWidth: 1.5)
+                            )
                     }
-                }) {
-                    Text(titleTwo)
-                        .font(.custom(robotoMedium, fixedSize: 18))
-                        .foregroundStyle(Color(secBtnTitleColor))
-                        .frame(maxWidth: .infinity)
-                        .frame(height: height)
-                        .background(secBtnBgColor)
-                        .cornerRadius(cornerRadius)
                 }
-                .shadow(color: .gray.opacity(0.3), radius: 2, x: 0, y: 1)
-                //            .overlay(
-                //                RoundedRectangle(cornerRadius: cornerRadius)
-                //                    .stroke(Color.defaultTheme, lineWidth: 1)
-                //            )
-//                .padding(.trailing, 16)
-            }
-            if !isHidefirstBtn{
                 // First Button
-                Button(action: {
-                    withAnimation {
-                        self.onFirstButtonClick?()
+                if !isHidefirstBtn{
+                    Button {
+                        withAnimation {
+                            self.onFirstButtonClick?()
+                        }
+                    } label: {
+                        Text(titleOne)
+                            .font(.custom(poppinsSemiBold, size: 16))
+                            .foregroundColor(firstBtnTitleColor)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: height)
+                            .padding(.vertical, 4)
+                            .background(
+                                RoundedRectangle(cornerRadius: cornerRadius)
+                                    .fill(firstBtnBgColor)
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: cornerRadius)
+                                    .stroke(firstBtnBgColor, lineWidth: 1.5)
+                            )
                     }
-                }) {
-                    Text(titleOne)
-                        .font(.custom(robotoMedium, fixedSize: 18))
-                    .foregroundStyle(Color(firstBtnTitleColor))
-                    .frame(maxWidth: .infinity)
-                    .frame(height: height)
-                    .background(firstBtnBgColor)
-                    .cornerRadius(cornerRadius)
+                }
             }
-                .shadow(color: .gray.opacity(0.3), radius: 2, x: 0, y: 1)
-//                .padding(.horizontal, 16)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 12)
         }
-        }
-        .padding(.horizontal, 16)
     }
 }

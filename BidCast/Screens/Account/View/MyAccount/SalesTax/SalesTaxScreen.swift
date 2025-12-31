@@ -112,7 +112,8 @@ struct SalesTaxScreen: View {
                  
               }
               .background(.bg.opacity(0.6))
-              TwoButton(titleOne: "Apply Now",titleTwo: "Learn More",firstBtnTitleColor: .white,secBtnTitleColor: .defaultTheme, firstBtnBgColor: .defaultTheme,secBtnBgColor: .white)
+              TwoButton(titleOne: "Apply Now",
+                        titleTwo: "Learn More")
 //                         .padding()
               CusNavLink(doNavigate: $navigateToCreateAddress, destination: CreateAddress())
           }

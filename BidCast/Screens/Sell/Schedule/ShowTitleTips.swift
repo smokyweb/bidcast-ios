@@ -138,17 +138,21 @@ struct ShowTitleTips: View {
             .padding(.top,10)
             .padding(.horizontal,Leading)
             //            .background(.green)
-            PrimaryButton(title: "Continue",isOutLine: false,onButtonClick: {
+            PrimaryButton(title: "Continue",
+                          isOutLine: false,
+                          onButtonClick: {
                 request.title = title.trimmingCharacters(in: .whitespacesAndNewlines)
                 guard !request.title.isEmpty else {
                     hudMsg = "Please enter title"
-                        showhud = true
-                        return
+                    showhud = true
+                    return
                 }
                 print(request)
                 
                 navigateToSelectCategory = true
-            },cornerRadius: 32, btnTextColor: .white)
+            },
+                          cornerRadius: 32,
+                          btnTextColor: .white)
             
             CusNavLink(doNavigate: $navigateToSelectCategory, destination:
                         SelectCategoryScreen(request:$request,

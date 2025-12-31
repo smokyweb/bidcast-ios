@@ -28,6 +28,17 @@ struct PaymentAndShipping_Screen: View {
     
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     
+    @State private var showDeleteProduct: Bool = false
+    
+    @State private var config: BottomSheetConfig = BottomSheetConfig(
+        icon: "checkmark.seal.fill",
+        title: "",
+        message: "",
+        primaryButtonTitle: "Okay",
+        secondaryButtonTitle: nil,
+        showButtons: true
+    )
+    
     var body: some View {
         VStack {
             VStack{
@@ -70,10 +81,19 @@ struct PaymentAndShipping_Screen: View {
                                     },
                                     onTapEdit:  {
                                         navigateToEditCard = true
-                                        cardviewModel.selectCard(cardVal)
+                                      
                                     },
                                     onTapDelete: {
-                                        deleteCard(with: cardVal.cardID ?? "")
+                                        config = BottomSheetConfig(
+                                            icon: "trash.circle.fill",
+                                            title: "Delete Product?",
+                                            message:  "Are you sure you want to remove this product?",
+                                            primaryButtonTitle: "Delete",
+                                            secondaryButtonTitle: "Cancel",
+                                            bottomPadding: -80
+                                        )
+                                        showDeleteProduct = true
+                                        cardviewModel.selectCard(cardVal)
                                     }, isDefault: card.isDefault ?? false
                                 )
                             }
@@ -172,6 +192,7 @@ struct PaymentAndShipping_Screen: View {
             CusNavLink(doNavigate: $navigateToAddCard, destination: AddCardScreen())
             CusNavLink(doNavigate: $navigateToEditCard, destination: AddCardScreen(viewModel: cardviewModel))
         }
+        .background(.backGround)
         .onAppear{
             Task {
                 await performAPICalls(
@@ -218,6 +239,24 @@ struct PaymentAndShipping_Screen: View {
                 }
             )
         }
+        
+        .overlay(
+            CustomBottomSheetView(
+                isPresented: $showDeleteProduct,
+                config: config,
+                primaryAction: {
+                    withAnimation {
+                        showDeleteProduct = false
+                        deleteCard(with: cardviewModel.selectedCard?.cardID ?? "")
+                    }
+                },
+                secondaryAction: {
+                    withAnimation {
+                        showDeleteProduct = false
+                    }
+                }
+            )
+        )
     }
     
     func deleteCard(with cardId: String) {
@@ -241,6 +280,7 @@ struct PaymentAndShipping_Screen: View {
                         try await self.cardviewModel.getCards()
                         cardSuccess()
                     }
+                    cardviewModel.clearSelection()
                 }
             ) {
                 try await self.cardviewModel.deleteCard(request: DeleteCardRequest(card_id: cardId))

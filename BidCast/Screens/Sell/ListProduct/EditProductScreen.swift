@@ -476,12 +476,7 @@ struct EditProductScreen: View {
                     onSecButtonClick: {
                         hideKeyboardPopup()
                         saveProductDetails(as: "draft")
-                    },
-                    height: 45,
-                    firstBtnTitleColor: .white,
-                    secBtnTitleColor: .defaultTheme,
-                    firstBtnBgColor: .defaultTheme,
-                    secBtnBgColor: .defaultThemeLight
+                    }
                 )
                 .padding(.bottom, 20)
             }

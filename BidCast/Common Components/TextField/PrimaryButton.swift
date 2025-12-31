@@ -20,7 +20,7 @@ struct PrimaryButton: View {
     
     var width: CGFloat = screenWidth - 30
     var height: CGFloat = 50
-    var cornerRadius : CGFloat = 32.0
+    var cornerRadius : CGFloat = 34.0
     var imageName : String = ""
     var btnTextColor : Color = .darkBlue
     var btnColor: ColorResource = .defaultTheme
@@ -42,7 +42,6 @@ struct PrimaryButton: View {
                             .foregroundColor(.white)
                     }
                     .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
-//                    .shadow(color: .gray, radius: 2, x: 0, y: 0)
             }else{
                 RoundedRectangle(cornerRadius: cornerRadius)
                     .fill(Color(btnColor))
@@ -66,7 +65,7 @@ struct PrimaryButton: View {
             }
         })
         .frame(width: width, height: height)
-        .padding([.bottom,.leading,.trailing],16)
+        .padding([.leading,.trailing],16)
     }
 }
 

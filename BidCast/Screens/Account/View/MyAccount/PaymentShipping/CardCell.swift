@@ -24,7 +24,7 @@ struct CardCell: View {
                 .frame(width: 40, height: 25)
                 .foregroundColor(Color.defaultTheme)
             VStack(alignment: .leading) {
-                Text("•••• \(cardNo)")
+                Text("•••• •••• •••• \(cardNo)")
                     .font(.custom(poppinsSemiBold, size: 12.0))
                 Text("Expires \(expires)")
                     .font(.custom(poppinsRegular, size: 12.0))
@@ -33,15 +33,15 @@ struct CardCell: View {
             if isDefault{
                 Text("Default")
                     .font(.custom(poppinsSemiBold, size: 13.0))
-                    .padding(.horizontal, 4)
-                    .padding(.vertical, 4)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: 12)
                             .stroke(Color.white, lineWidth: 1)
                     )
-                    .background(.lightBlue)
-                    .foregroundColor(.black)
-                    .cornerRadius(8)
+                    .background(.defaultThemeLight)
+                    .foregroundColor(.defaultTheme)
+                    .cornerRadius(12)
             }
             Spacer()
             if !forSelect{
@@ -88,8 +88,9 @@ struct CardCell: View {
             }
         }
         .padding()
-        .background(Color(.secondarySystemBackground))
+        .background(Color.white)
         .cornerRadius(12)
+        .shadow(color: Color.gray.opacity(0.3), radius: 4, x: 0, y: 2)
         .onTapGesture {
             self.onTapCard()
         }
