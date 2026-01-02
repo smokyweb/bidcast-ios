@@ -5,7 +5,8 @@ import UIKit
 import SwiftUI
 import AlertToast
 
-
+//MARK: - Height
+let failurePopupHeight = screenHeight/3.2
 
     // MARK: SCREENSIZES
 let screenSize: CGRect = UIScreen.main.bounds

@@ -10,6 +10,11 @@ import SVProgressHUD
 import AlertToast
 import Stripe
 
+enum FormValidationResult: Equatable{
+    case valid
+    case invalid(message: String)
+}
+
 struct AddCardScreen: View {
     @State private var cardHolderName = ""
     @State private var cardNumber = ""
@@ -149,24 +154,11 @@ struct AddCardScreen: View {
             Spacer()
             
             // Add Button
-            Button(action: addCard) {
-                HStack {
-                    if viewModel.isLoading {
-                        ProgressView()
-                            .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                    } else {
-                        Text(isEditMode ? "Update Card" : "Add Card")
-                            .font(.custom(poppinsSemiBold, size: 16))
-                    }
-                }
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 16)
-                .background(Color.blue)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-            }
-            .disabled(!isFormValid)
-            .padding(.horizontal, 20)
+            
+            PrimaryButton(title: isEditMode ? "Update Card" : "Add Card",
+                          isOutLine: false,
+                          onButtonClick: addCard)
+            .disabled(validationResult != .valid)
             
 //            PrimaryButton(
 //                title: "Submit",
@@ -256,6 +248,40 @@ struct AddCardScreen: View {
         }
     }
     
+    private var validationResult: FormValidationResult {
+
+        if cardHolderName.isEmpty {
+            return .invalid(message: "Please enter card holder name")
+        }
+
+        if !isEditMode && cardNumber.isEmpty {
+            return .invalid(message: "Please enter card number")
+        }
+
+        if expiryDate.isEmpty {
+            return .invalid(message: "Please enter expiry date")
+        }
+
+        if !isEditMode && cvv.isEmpty {
+            return .invalid(message: "Please enter CVV")
+        }
+
+        return .valid
+    }
+
+    
+    private func validateAndShowToast() -> Bool {
+        switch validationResult {
+        case .valid:
+            return true
+
+        case .invalid(let message):
+            hudMsg = message
+            showhud = true
+            return false
+        }
+    }
+
     private var isFormValid: Bool {
         if isEditMode {
             return !cardHolderName.isEmpty &&
@@ -268,9 +294,9 @@ struct AddCardScreen: View {
             !cvv.isEmpty
         }
     }
-    
-    private func addCard() {
         
+    private func addCard() {
+        guard validateAndShowToast() else { return }
         Task {
             await performAPICalls(
                 isConcurrent: false,

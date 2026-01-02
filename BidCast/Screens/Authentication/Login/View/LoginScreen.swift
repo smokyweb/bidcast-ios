@@ -199,18 +199,20 @@ struct LoginScreen: View {
             }
             
         }.id(languageManager.languageChanged)
-            .bottomSheet(isPresented: $showError, height: screenHeight/2.3, topBarCornerRadius: 25, showTopIndicator: false, content: {
+            .sheet(isPresented: $showError) {
                 CommonBottomSheet(
                     sheetType: $alertType,
                     onPrimaryClick: {
                         withAnimation { showError = false }
-                        if alertType.primaryBtnText == AppString.continueBtn.localized {
-                            navigateToLanguage = true
-                        }
-                    }, onSecondaryClick: {
+                    },
+                    onSecondaryClick: {
                         withAnimation { showError = false }
-                    })
-            })
+                    }
+                )
+                .presentationDetents([.fraction(0.3)])
+                .presentationDragIndicator(.visible)
+                
+            }
             .onAppear {
                 UIScrollView.appearance().bounces = false
             }

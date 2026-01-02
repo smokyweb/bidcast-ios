@@ -327,8 +327,7 @@ struct TabbarScreen: View {
                 message: "Before you interact with live shows.you need to become a verified seller.",
                 primaryBtnText: "OK",
                 secondaryBtnText: "",
-                buttonWidth: screenWidth - 32,
-                contentSize: 12.0
+                buttonWidth: screenWidth - 60
             )
         }
         

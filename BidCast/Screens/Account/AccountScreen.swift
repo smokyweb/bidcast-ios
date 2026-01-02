@@ -18,6 +18,8 @@ struct AccountScreen: View {
     // MARK: - State Objects
     @StateObject private var menuViewModel = MenuOptionsViewModel()
     
+    @EnvironmentObject var tabBarRouter: TabBarRouter
+    
     // MARK: - UI State
     @State private var segment: AccountSegment = .sellerHub
     @State private var showSideMenu = false
@@ -417,6 +419,18 @@ extension AccountScreen {
     private func performUserLogout() {
         DispatchQueue.main.async {
             // Clear user data
+            UserDefaults.userName.removeAll()
+            UserDefaults.fullName.removeAll()
+            UserDefaults.profileURL.removeAll()
+            //            SVProgressHUD.show()
+            
+            UserDefaultsManager.shared.setValue(false, forKey: .isLoggedIn)
+            
+            //            UserDefaultsManager.shared.setValue(dict.data?.role_id, forKey: .userRoleId)
+            //            UserDefaultsManager.shared.setValue(dict.data?.roles?.name ??  "", forKey: .userRole)
+            
+            tabBarRouter.selectedTab = 0
+            
             UserDefaults.accessToken.removeAll()
             UserDefaults.sellerVerafied.removeAll()
             UserDefaults.buyerVerafied.removeAll()

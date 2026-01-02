@@ -16,7 +16,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1371"
             endingLineNumber = "1371"
-            landmarkName = "setupLiveSocketListeners(for:)"
+            landmarkName = "makeProductList(from:selectedID:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -332,7 +332,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "314"
             endingLineNumber = "314"
-            landmarkName = "setDefaultCard(with:)"
+            landmarkName = "cardSuccess()"
             landmarkType = "7">
             <Locations>
                <Location
@@ -392,7 +392,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "306"
             endingLineNumber = "306"
-            landmarkName = "setDefaultCard(with:)"
+            landmarkName = "cardSuccess()"
             landmarkType = "7">
             <Locations>
                <Location
@@ -450,13 +450,27 @@
             filePath = "BidCast/Screens/Account/View/MyAccount/PaymentShipping/AddCard/View/AddCardScreen.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "240"
-            endingLineNumber = "240"
+            startingLineNumber = "232"
+            endingLineNumber = "232"
             landmarkName = "body"
             landmarkType = "24">
             <Locations>
                <Location
-                  uuid = "D8D5746F-43CE-4143-927C-0BF8C4CA3320 - cb82cae605827125"
+                  uuid = "D8D5746F-43CE-4143-927C-0BF8C4CA3320 - 4bb063fd469b8a2c"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 () -&gt; () in closure #4 () -&gt; BidCast.CommonBottomSheet in BidCast.AddCardScreen.body.getter : some"
+                  moduleName = "BidCast.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/admn/Documents/JamProject/bidcast/BidCast/Screens/Account/View/MyAccount/PaymentShipping/AddCard/View/AddCardScreen.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "232"
+                  endingLineNumber = "232">
+               </Location>
+               <Location
+                  uuid = "D8D5746F-43CE-4143-927C-0BF8C4CA3320 - cb82cae60582702d"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -466,11 +480,11 @@
                   urlString = "file:///Users/admn/Documents/JamProject/bidcast/BidCast/Screens/Account/View/MyAccount/PaymentShipping/AddCard/View/AddCardScreen.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "240"
-                  endingLineNumber = "240">
+                  startingLineNumber = "232"
+                  endingLineNumber = "232">
                </Location>
                <Location
-                  uuid = "D8D5746F-43CE-4143-927C-0BF8C4CA3320 - 7b25715c502263b2"
+                  uuid = "D8D5746F-43CE-4143-927C-0BF8C4CA3320 - 7b25715c502262ba"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -480,8 +494,8 @@
                   urlString = "file:///Users/admn/Documents/JamProject/bidcast/BidCast/Screens/Account/View/MyAccount/PaymentShipping/AddCard/View/AddCardScreen.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "240"
-                  endingLineNumber = "240">
+                  startingLineNumber = "232"
+                  endingLineNumber = "232">
                </Location>
             </Locations>
          </BreakpointContent>

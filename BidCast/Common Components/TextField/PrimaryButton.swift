@@ -18,13 +18,13 @@ struct PrimaryButton: View {
     //MARK: Properties
     var onButtonClick: (() -> Void)?
     
-    var width: CGFloat = screenWidth - 30
+    var width: CGFloat = screenWidth - 60
     var height: CGFloat = 50
     var cornerRadius : CGFloat = 34.0
     var imageName : String = ""
-    var btnTextColor : Color = .darkBlue
+    var btnTextColor : Color = .white
     var btnColor: ColorResource = .defaultTheme
-    var foregroundColor : Color = .black
+    var foregroundColor : Color = .white
    
     
     var body: some View {
