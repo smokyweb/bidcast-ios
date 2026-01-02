@@ -60,7 +60,7 @@ struct CreateProductScreen: View {
     //    @Binding var productData : InventoryDataModel
     @State var extraFields: [ExtraFieldModel] = []
     
-    @State var processingListArr = ["LETTERS","FLATS","MACHINABLE","NONSTANDARD","NON_MACHINABLE"]
+    @State var processingListArr = ["Letters","Flats","Machinaable","Nonstandard","Non Machinable"]
     
     @State var conditionListArr = ["New",
                      "Like New",

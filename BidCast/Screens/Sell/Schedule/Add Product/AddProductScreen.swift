@@ -268,7 +268,7 @@ struct AddProductsScreen: View {
                     .padding(.bottom, 16)
                 }
                 .background(Color.backGround)
-                .padding(.bottom, -106)
+                .padding(.bottom, -56)
             }
             .zIndex(0)
         }
