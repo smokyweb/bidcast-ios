@@ -158,7 +158,6 @@ struct AddCardScreen: View {
             PrimaryButton(title: isEditMode ? "Update Card" : "Add Card",
                           isOutLine: false,
                           onButtonClick: addCard)
-            .disabled(validationResult != .valid)
             
 //            PrimaryButton(
 //                title: "Submit",

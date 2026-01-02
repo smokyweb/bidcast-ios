@@ -49,11 +49,11 @@ struct PrimaryButton: View {
                     .overlay {
                         HStack{
                             if !imageName.isEmpty {
-                                Image(imageName)
+                                Image(systemName: imageName)
                                     .resizable()
                                     .scaledToFit()
                                     .foregroundColor(isOutLine ? Color(btnColor) : .white)
-                                    .frame(width: 24,height: 24)
+                                    .frame(width: 18,height: 18)
                             }
                             Text(title)
                                 .font(.custom(custFontName, fixedSize: custFontSize))

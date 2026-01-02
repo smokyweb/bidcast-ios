@@ -99,22 +99,40 @@ struct PaymentAndShipping_Screen: View {
                             }
                         }
                         
-                        Button(action: {
-                            navigateToAddCard = true
-                        }) {
-                            HStack {
-                                Image(systemName: "plus")
-                                Text("Add Payment Method")
-                                    .font(.custom(poppinsSemiBold, size: 15))
-                            }
-                            .foregroundColor(.blue)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color.defaultTheme, lineWidth: 1)
-                            )
-                        }
+//                        PrimaryButton(title: "Add Payment Method",
+//                                      isOutLine: false,
+//                                      onButtonClick: {
+//                                        navigateToAddCard = true
+//                                      },
+//                                      cornerRadius: 32,
+//                                      imageName: "plus",
+//                                      btnTextColor: .white)
+                        
+                        PrimaryButton(title: "Add Payment Method",
+                                      isOutLine: false,
+                                      onButtonClick: {
+                                            navigateToAddCard = true
+                                        },
+                                      imageName: "plus")
+                        .padding(.top , 10)
+                        
+//                        Button(action: {
+//                            navigateToAddCard = true
+//                        }) {
+//                            HStack {
+//                                Image(systemName: "plus")
+//                                Text("Add Payment Method")
+//                                    .font(.custom(poppinsSemiBold, size: 15))
+//                            }
+//                           
+//                            .frame(maxWidth: .infinity)
+//                            .padding()
+//                            .foregroundColor(.defaultTheme)
+//                            .overlay(
+//                                RoundedRectangle(cornerRadius: 12)
+//                                    .stroke(Color.defaultTheme, lineWidth: 1)
+//                            )
+//                        }
                     }
                     
                     // MARK: - Shipping Addresses
@@ -149,7 +167,6 @@ struct PaymentAndShipping_Screen: View {
                                                 self.sampleAddresses.removeAll()
                                                 AddressSuccess()
                                             } else {
-                                                showError = true
                                                 alertType = .sheetType(
                                                     icon: .alert,
                                                     title: "Failed",
@@ -158,6 +175,7 @@ struct PaymentAndShipping_Screen: View {
                                                     secondaryBtnText: AppString.ok.localized,
                                                     contentSize: 13.0
                                                 )
+                                                showError = true
                                             }
                                         }
                                     },
@@ -165,23 +183,12 @@ struct PaymentAndShipping_Screen: View {
                                 )
                             }
                         }
-                        
-                        Button(action: {
-                            navigateToCreateAddress = true
-                        }) {
-                            HStack {
-                                Image(systemName: "plus")
-                                Text("Add New Address")
-                                    .font(.custom(poppinsSemiBold, size: 15))
-                            }
-                            .foregroundColor(.blue)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color.defaultTheme, lineWidth: 1)
-                            )
-                        }
+                        PrimaryButton(title: "Add New Address",
+                                      onButtonClick: {
+                                            navigateToCreateAddress = true
+                                        },
+                                      imageName: "plus")
+                        .padding(.top , 10)
                     }
                 }
                 .padding()
@@ -220,12 +227,32 @@ struct PaymentAndShipping_Screen: View {
                 }
             }
         }
-        .bottomSheet(
+//        .bottomSheet(
+//            isPresented: $showError,
+//            height: screenHeight / 2.3,
+//            topBarCornerRadius: 25,
+//            showTopIndicator: false,
+//            onDismiss:{
+//                withAnimation { showError = false }
+//            }
+//        ) {
+//            CommonBottomSheet(
+//                sheetType: $alertType,
+//                onPrimaryClick: {
+//                    withAnimation { showError = false }
+//                },
+//                onSecondaryClick: {
+//                    withAnimation { showError = false }
+//                }
+//            )
+//        }
+        .bottomSheetView(
             isPresented: $showError,
-            height: screenHeight / 2.3,
-            topBarCornerRadius: 25,
+            height: screenHeight / 3.0,
+            cornerRadius: 25,
             showTopIndicator: false,
-            onDismiss:{
+            onDismiss: {
+                print("Sheet dismissed")
                 withAnimation { showError = false }
             }
         ) {
@@ -342,7 +369,6 @@ struct PaymentAndShipping_Screen: View {
             sampleAddresses = response.data ?? [AddressModel]()
             
         } else {
-            showError = true
             alertType = .sheetType(
                 icon: .alert,
                 title: response.error_type?.capitalized ?? "",
@@ -350,6 +376,7 @@ struct PaymentAndShipping_Screen: View {
                 primaryBtnText: "",
                 secondaryBtnText: AppString.ok.localized
             )
+            showError = true
         }
         
     }
@@ -365,7 +392,6 @@ struct PaymentAndShipping_Screen: View {
                     AddressSuccess()
                 }
             } else {
-                showError = true
                 alertType = .sheetType(
                     icon: .alert,
                     title: response.error_type?.capitalized ?? "",
@@ -373,6 +399,7 @@ struct PaymentAndShipping_Screen: View {
                     primaryBtnText: "",
                     secondaryBtnText: AppString.ok.localized
                 )
+                showError = true
             }
         
         

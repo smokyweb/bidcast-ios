@@ -686,8 +686,6 @@ struct ListProductScreen: View {
             openShippingSheet = false
             self.shippingProfileNames = profiles.map { $0.name ?? "" }
         }else{
-            
-          
             config = BottomSheetConfig(
                 icon: "exclamationmark.circle",
                 title: "Missing",

@@ -562,6 +562,7 @@
 		D67D3F332EBC9EB300F6E513 /* ScheduleRequestStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67D3F322EBC9EB300F6E513 /* ScheduleRequestStore.swift */; };
 		D67DA9642E9D0A4A00ED6556 /* CurrentProductView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67DA9632E9D0A4A00ED6556 /* CurrentProductView.swift */; };
 		D67F64F92EA2316900C3017C /* SendTipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67F64F82EA2316900C3017C /* SendTipView.swift */; };
+		D68127572F07A9C8000A4EF2 /* BottomSheetHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68127562F07A9C8000A4EF2 /* BottomSheetHelper.swift */; };
 		D68399A02EB1F41C00F3BDA7 /* DeepLinkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D683999F2EB1F41C00F3BDA7 /* DeepLinkManager.swift */; };
 		D68399A32EB207B600F3BDA7 /* BaseSocketManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68399A22EB207B600F3BDA7 /* BaseSocketManager.swift */; };
 		D68399A52EB2081A00F3BDA7 /* RoomSocketHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68399A42EB2081A00F3BDA7 /* RoomSocketHandler.swift */; };
@@ -1153,6 +1154,7 @@
 		D67D3F322EBC9EB300F6E513 /* ScheduleRequestStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleRequestStore.swift; sourceTree = "<group>"; };
 		D67DA9632E9D0A4A00ED6556 /* CurrentProductView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentProductView.swift; sourceTree = "<group>"; };
 		D67F64F82EA2316900C3017C /* SendTipView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTipView.swift; sourceTree = "<group>"; };
+		D68127562F07A9C8000A4EF2 /* BottomSheetHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomSheetHelper.swift; sourceTree = "<group>"; };
 		D683999F2EB1F41C00F3BDA7 /* DeepLinkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkManager.swift; sourceTree = "<group>"; };
 		D68399A22EB207B600F3BDA7 /* BaseSocketManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseSocketManager.swift; sourceTree = "<group>"; };
 		D68399A42EB2081A00F3BDA7 /* RoomSocketHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomSocketHandler.swift; sourceTree = "<group>"; };
@@ -2464,6 +2466,7 @@
 				D683999F2EB1F41C00F3BDA7 /* DeepLinkManager.swift */,
 				D65F96BB2EBC682B00EAAD49 /* View+Extension.swift */,
 				D687BFC02F052362003D7511 /* ReusableMenu.swift */,
+				D68127562F07A9C8000A4EF2 /* BottomSheetHelper.swift */,
 			);
 			path = Helper;
 			sourceTree = "<group>";
@@ -4758,6 +4761,7 @@
 				35BA4A452DE870DB00EEC92A /* CreateProductScreen.swift in Sources */,
 				D6A8129C2E9F663400BE22AB /* CustomSearchBar.swift in Sources */,
 				99C909E72DC8CDDC0054620B /* LoginResponseModel.swift in Sources */,
+				D68127572F07A9C8000A4EF2 /* BottomSheetHelper.swift in Sources */,
 				D4BB99EB2DE5890D00C1BCBC /* OffersScreen.swift in Sources */,
 				99C909E82DC8CDDC0054620B /* JobDetailResponse.swift in Sources */,
 				354262672E7BEF2B0023CA32 /* SocketManager.swift in Sources */,
