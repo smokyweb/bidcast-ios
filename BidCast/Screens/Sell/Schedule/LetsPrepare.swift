@@ -21,7 +21,7 @@ struct LetsPrepare: View,ShowStepDelegate {
     @State var showError: Bool = false
     @State var showsData = HomeModel()
     var viewModel = ScheduleViewModel()
-    @State var request : StoreScheduleShowRequest = StoreScheduleShowRequest(title: "", date: "", time: "", category_id: "", auction_type_id: "", product_ids: "", is_explicit: false, show_discoverability: "", repeat_value: "", is_repeat: false, language: "english")
+    @State var request : StoreScheduleShowRequest = StoreScheduleShowRequest(title: "", date: "", time: "", category_id: "", auction_type_id: "", product_ids: [], is_explicit: false, show_discoverability: "", repeat_value: "", is_repeat: false, language: "english")
     
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @EnvironmentObject var networkMonitor: NetworkMonitor
@@ -33,6 +33,8 @@ struct LetsPrepare: View,ShowStepDelegate {
     @State var didLoadPrepare = false
     @State var navigateToshowTitle = false
     @State var navigateToRehearsal = false
+    @State var rehearsalNavigation = false
+    @State var referScreenNavigation = false
     @State var navigateToReferScreen = false
     @State var navigateForLive = false
     @State var productIds: [String] = []
@@ -58,6 +60,7 @@ struct LetsPrepare: View,ShowStepDelegate {
                 )
                 
             }
+            .background(.white)
             
             ProgressView(value: currentProgress, total: 1)
                 .progressViewStyle(LinearProgressViewStyle())
@@ -81,6 +84,7 @@ struct LetsPrepare: View,ShowStepDelegate {
 //                                navigateToCreateScreen = true
                             }else if idx == 2{
                                 navigateToRehearsal = true
+                                rehearsalNavigation = true
                             }else if idx == 3{
                                 storeScheduleSHow()
                             }else if idx == 4{
@@ -114,7 +118,7 @@ struct LetsPrepare: View,ShowStepDelegate {
             
             .frame(height: 40)
             .foregroundColor(.gray)
-            .background(Color(.systemGray6))
+            .background(.backGround)
             .cornerRadius(12)
             .padding(.horizontal,16)
             
@@ -152,7 +156,7 @@ struct LetsPrepare: View,ShowStepDelegate {
         }
         .edgesIgnoringSafeArea(.bottom)
         .padding(.bottom,-200)
-        .background(.bg.opacity(0.5))
+        .background(.backGround)
         .toolbar(.hidden,for: .tabBar)
         .bottomSheet(isPresented: $showError, height: screenHeight/2.8, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: {
             if let error = viewModel.errorMessage, !error.isEmpty {
@@ -166,6 +170,7 @@ struct LetsPrepare: View,ShowStepDelegate {
                 onPrimaryClick: {
                     if viewModel.errorMessage == nil || viewModel.errorMessage == "" {
                         navigateToReferScreen = true
+                        referScreenNavigation = true
                         withAnimation { showError = false }
                         
                     }else{
@@ -192,7 +197,7 @@ struct LetsPrepare: View,ShowStepDelegate {
                     success()
                 }
             }else{
-                if navigateToRehearsal{
+                if rehearsalNavigation{
                     if prepare.indices.contains(currentIndex) {
                         prepare[currentIndex].isDone = true
                     }
@@ -205,9 +210,9 @@ struct LetsPrepare: View,ShowStepDelegate {
                     
                     currentIndex = nextIndex
                     print("🔓 Next unlocked: ", prepare)
-                    navigateToRehearsal = false
+                    rehearsalNavigation = false
                     
-                }else if navigateToReferScreen{
+                }else if referScreenNavigation{
                     if prepare.indices.contains(currentIndex) {
                         prepare[currentIndex].isDone = true
                     }
@@ -220,7 +225,7 @@ struct LetsPrepare: View,ShowStepDelegate {
                     
                     currentIndex = nextIndex
                     print("🔓 Next unlocked: ", prepare)
-                    navigateToReferScreen = false
+                    referScreenNavigation = false
                 }
             }
         }
@@ -302,9 +307,14 @@ struct LetsPrepare: View,ShowStepDelegate {
                     "category_id": request.category_id,
                     "auction_type_id": request.auction_type_id,
                 ]
-                let products = request.product_ids.toIntArray()
-                for (index, id) in productIds.enumerated() {
-                    param["product_ids[\(index)]"] = id
+//                let products = request.product_ids.toIntArray()
+//                for (index, id) in productIds.enumerated() {
+//                    param["product_ids[\(index)]"] = id
+//                }
+                
+                let prodIds = request.product_ids
+                for (index, product) in prodIds.enumerated() {
+                    param["product_ids[\(index)]"] = product
                 }
                 
                 try await viewModel.storeScheduleShow(param: param,images: [thumbNAil],key: "thumbnail[]")

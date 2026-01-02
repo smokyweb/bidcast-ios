@@ -110,7 +110,7 @@ struct AddProductsScreen: View {
 //        productDataList.removeAll()
         selectedProductIDs.removeAll()
         productManager.selectedProductIDs.removeAll()
-        request.product_ids = ""
+        request.product_ids.removeAll()
         print("🗑️ Cleared all products")
     }
     
@@ -213,7 +213,7 @@ struct AddProductsScreen: View {
 //                                            }
                                             withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
                                                 productManager.toggleSelection(for: idStr)
-                                                request.product_ids = productManager.getProductIDsString()
+                                                request.product_ids =  Array(productManager.selectedProductIDs)
                                             }
                                         },
                                         onTapEdit: {
@@ -278,7 +278,7 @@ struct AddProductsScreen: View {
             // ⭐ REMOVED: API call on appear
             showError = false
             showDeleteProduct = false
-            request.product_ids = productManager.getProductIDsString()
+            request.product_ids = Array(productManager.selectedProductIDs)
             
             print("📱 AddProductsScreen appeared")
             print("   Current products in list: \(productManager.products.count)")
@@ -339,7 +339,7 @@ struct AddProductsScreen: View {
                             withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
                                 // ⭐ Remove using manager
                                 productManager.removeProduct(at: index)
-                                request.product_ids = productManager.getProductIDsString()
+                                request.product_ids = Array(productManager.selectedProductIDs)
                                 
                                 deletedIndex = nil
                                 deletedProductId = nil
@@ -372,7 +372,7 @@ struct AddProductsScreen: View {
                     onProductsSelected: { products in
                         
                         productManager.addProducts(products)
-                        request.product_ids = productManager.getProductIDsString()
+                        request.product_ids = Array(productManager.selectedProductIDs)
                     }
                    ).environmentObject(productManager))
     }

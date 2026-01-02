@@ -50,7 +50,7 @@ struct ShowsScreen: View {
         time: "",
         category_id: "",
         auction_type_id: "",
-        product_ids: "",
+        product_ids: [],
         is_explicit: false,
         show_discoverability: "",
         repeat_value: "",

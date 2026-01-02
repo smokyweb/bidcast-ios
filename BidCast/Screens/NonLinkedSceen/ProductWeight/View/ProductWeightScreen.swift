@@ -100,6 +100,7 @@ struct ProductWeightScreen: View {
                         
                         HStack(spacing: 10) {
                             TextField("0.00", text: $weight)
+                                .font(.custom(poppinsSemiBold, size: 13.0))
                                 .keyboardType(.decimalPad)
                                 .padding()
                                 .foregroundStyle(.text)
@@ -207,11 +208,12 @@ struct ProductWeightScreen: View {
                         submitProduct()
                     }) {
                         Text(productId.isEmpty ? "Continue" : "Update")
+                            .font(.custom(poppinsSemiBold, size: 18.0))
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding()
                             .background(.defaultTheme)
-                            .cornerRadius(10)
+                            .cornerRadius(32)
                     }
                     .padding(.horizontal)
                     .padding(.bottom)
@@ -225,7 +227,8 @@ struct ProductWeightScreen: View {
                     request:$storeScheduleRequest,
                     thumbNail: $thumbNail,
                     fromPrepare: .constant(false),
-                    backToPrepare: $backToPrepare, NavFromProductLibrary: .constant(false),
+                    backToPrepare: $backToPrepare,
+                    NavFromProductLibrary: .constant(false),
                     backToCreateProduct: $backToCreateProduct,
                     didTapBack:{ value,maanger in
                         didTapBack?(value,maanger)
@@ -245,6 +248,12 @@ struct ProductWeightScreen: View {
                     backToPrepare: $backToPrepare,
                     NavFromProductLibrary: .constant(false),
                     backToCreateProduct: $backToCreateProduct,
+                    didTapBack:{ value,maanger in
+                        didTapBack?(value,maanger)
+                    },didTapEdit: { product in
+                       didTapEdit?(product)
+                      
+                    },
                     delegate: delegate
                 ).environmentObject(productManager)
             )

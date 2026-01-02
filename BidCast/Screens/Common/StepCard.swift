@@ -58,7 +58,9 @@ struct StepCard: View {
             if isCurrent && !prepare.isLocked {
                 PrimaryButton(title: "Continue",isOutLine: false,onButtonClick: {
                     action()
-                },cornerRadius: 12,btnTextColor: .white)
+                },cornerRadius: 32,btnTextColor: .white)
+                .padding(.horizontal,8)
+                .padding(.bottom,8)
 //                .padding(.horizontal,12)
             }
         }

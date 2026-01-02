@@ -339,7 +339,7 @@ struct InventoryScreen: View {
             CusNavLink(doNavigate: $navigateToEditProduct, destination: EditProductScreen(productData: $productToEdit)) // for edit
             CusNavLink(doNavigate: $navigateToCreateProduct, destination: ListProductScreen())
             CusNavLink(doNavigate: $navigateToCreateNewProduct,
-                       destination: CreateProductScreen(requests: .constant(StoreScheduleShowRequest(title: "", date: "", time: "", category_id: "", auction_type_id: "", product_ids: "", is_explicit: false, show_discoverability: "", repeat_value: "", is_repeat: false, language: "english")),
+                       destination: CreateProductScreen(requests: .constant(StoreScheduleShowRequest(title: "", date: "", time: "", category_id: "", auction_type_id: "", product_ids: [], is_explicit: false, show_discoverability: "", repeat_value: "", is_repeat: false, language: "english")),
                                                         thumbNail: .constant(""),
                                                         backToPrepare: .constant(false),
                                                         fromPrepare: .constant(false),

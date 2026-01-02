@@ -113,7 +113,7 @@ struct ReferEarnScreen: View {
                     .frame(height: 50)
                     .background(Color.defaultTheme)
                     .foregroundColor(.white)
-                    .cornerRadius(12)
+                    .cornerRadius(32)
             }
             .padding([.horizontal, .bottom])
         }

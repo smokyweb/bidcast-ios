@@ -177,12 +177,12 @@ struct SalesFormatScreen: View {
                 navigateToProductWeight = true
             }) {
                 Text("Continue")
-                    .font(.headline)
+                    .font(.custom(poppinsSemiBold, size: 18.0))
                     .frame(maxWidth: .infinity)
                     .frame(height: 50)
                     .background(Color.defaultTheme)
                     .foregroundColor(.white)
-                    .cornerRadius(12)
+                    .cornerRadius(32)
             }
             .padding([.horizontal, .bottom])
             .toast(isPresenting: $showhud) {

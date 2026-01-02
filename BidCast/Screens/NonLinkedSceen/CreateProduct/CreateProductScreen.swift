@@ -112,6 +112,7 @@ struct CreateProductScreen: View {
                                
                                 self.presentationMode.wrappedValue.dismiss()
                             }
+                            productId.removeAll()
                         },
                         count: .constant(0)
                     )
@@ -466,7 +467,7 @@ struct CreateProductScreen: View {
             } ))
             
             //from prepare
-            CusNavLink(doNavigate: $navigateToProuct, destination: AddProductsScreen(request:$requests,thumbNail: $thumbNail,fromPrepare: $fromPrepare,backToPrepare: $backToPrepare, NavFromProductLibrary: .constant(false), backToCreateProduct: .constant(false), delegate: delegate))
+            CusNavLink(doNavigate: $navigateToProuct, destination: AddProductsScreen(request:$requests,thumbNail: $thumbNail,fromPrepare: $fromPrepare,backToPrepare: $backToPrepare, NavFromProductLibrary: .constant(false), backToCreateProduct: $navigateToProuct, delegate: delegate))
             
             CusNavLink(doNavigate: $navigateToSalesFormat,
                        destination: SalesFormatScreen(request: $request,
@@ -672,10 +673,10 @@ struct CreateProductScreen: View {
           
             config = BottomSheetConfig(
                 icon: "exclamationmark.circle",
-                title: "Error",
+                title: "Missing",
                 message: "Please add Shipping profile first for the successful product creation.",
                 primaryButtonTitle: "Add Shipping Profile",
-                secondaryButtonTitle: nil
+                secondaryButtonTitle: nil,bottomPadding: -70
             )
         }
     }

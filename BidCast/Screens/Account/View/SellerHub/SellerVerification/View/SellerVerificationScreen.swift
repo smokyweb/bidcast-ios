@@ -667,8 +667,8 @@ struct FinalIDVerificationCard: View {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
                         .background(
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(Color.green)
+                            RoundedRectangle(cornerRadius: 32)
+                                .fill(Color.defaultTheme)
                         )
                 }
             }

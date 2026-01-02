@@ -654,7 +654,7 @@ struct StoreScheduleShowRequest: Encodable {
     var time: String
     var category_id: String
     var auction_type_id: String
-    var product_ids: String
+    var product_ids: [String]
 //    var thumbnail : String
 //    var isHazardiousMaterial: Bool
     var is_explicit: Bool
