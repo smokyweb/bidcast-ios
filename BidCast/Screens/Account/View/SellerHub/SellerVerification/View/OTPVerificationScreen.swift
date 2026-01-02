@@ -35,7 +35,7 @@ struct OTPVerificationScreen: View {
                 )
             }
             ScrollView(showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 25) {
+                VStack(spacing: 25) {
                     Color.clear.frame(height: 5)
                     TitleWithLine(title: "Verify OTP", lineLength: sepratorLine)
                     AuthTextField(
@@ -54,17 +54,19 @@ struct OTPVerificationScreen: View {
                     }
                     
                     if !otpSent {
-                        PrimaryButton(
-                            title: "Send OTP",
-                            isOutLine: false,
-                            onButtonClick: {
-                                UIApplication.shared.endEditing()
-                                Task {
-                                    await sendOTP()
+                        HStack(alignment: .center) {
+                            PrimaryButton(
+                                title: "Send OTP",
+                                isOutLine: false,
+                                onButtonClick: {
+                                    UIApplication.shared.endEditing()
+                                    Task {
+                                        await sendOTP()
+                                    }
                                 }
-                            },
-                            btnTextColor: .white
-                        )
+                            )
+                        }
+                       
                     }
                     
                     if otpSent {
@@ -73,15 +75,16 @@ struct OTPVerificationScreen: View {
                                 .font(.subheadline)
                                 .foregroundColor(.gray)
                             otpBoxView()
-                            PrimaryButton(
-                                title: "Verify OTP",
-                                isOutLine: false,
-                                onButtonClick: {
-                                    UIApplication.shared.endEditing()
-                                    Task { await verifyOTP() }
-                                },
-                                btnTextColor: .white
-                            )
+                            HStack(alignment: .center) {
+                                PrimaryButton(
+                                    title: "Verify OTP",
+                                    isOutLine: false,
+                                    onButtonClick: {
+                                        UIApplication.shared.endEditing()
+                                        Task { await verifyOTP() }
+                                    }
+                                )
+                            }
                         }
                     }
                 }
