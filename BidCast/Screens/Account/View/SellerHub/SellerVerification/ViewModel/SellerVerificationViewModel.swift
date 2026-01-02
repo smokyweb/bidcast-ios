@@ -19,7 +19,7 @@ final class SellerVerificationViewModel: ObservableObject {
     @Published var sellerVerificationDict: ResponseModel<SellerVerificationModel>?
     @Published var errorMessage: String?
     @Published var requestType: String = ""
-    @Published var cardDict = ResponseModel<CardModel>()
+    @Published var cardDict = ResponseModel<[CardModel]>()
 //MARK: storeIDCard.
     func storeIDCard(
         parameters: [String: Any],
@@ -47,7 +47,7 @@ final class SellerVerificationViewModel: ObservableObject {
     // MARK: - Get Cards
     func getCard() async {
         do {
-        let response: ResponseModel<CardModel> = try await APIManager.shared.request(
+        let response: ResponseModel<[CardModel]> = try await APIManager.shared.request(
                 type: APIEndPoint.getCard,
                 header: true
             )

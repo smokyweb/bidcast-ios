@@ -17,13 +17,14 @@
 //}
 
 struct CardModel : Codable {
-    var merchantCustomerId: String?
-      var description: String?
-      var email: String?
-      var customerProfileId: String?
-      var paymentProfiles: [PaymentProfile]?
-      var profileType: String?
-    var payment_profile_id : String?
+    var card_holder_name: String?
+    var exp_month: Int?
+    var is_default: Bool?
+    var fingerprint: String?
+    var card_id: String?
+    var last4 : String?
+    var exp_year : Int?
+    
 }
 
 struct PaymentProfile: Codable {

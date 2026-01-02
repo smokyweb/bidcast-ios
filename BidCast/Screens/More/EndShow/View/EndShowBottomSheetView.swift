@@ -69,7 +69,7 @@ struct EndShowBottomSheetView: View {
                     .frame(maxWidth: .infinity)
                     .padding()
                     .background(Color.defaultTheme)
-                    .cornerRadius(16)
+                    .cornerRadius(32)
             }
 
             Spacer()

@@ -47,7 +47,7 @@ struct SellerVerificationScreen: View {
     @State private var showSelfieCamera: Bool = false
     @State private var showIDCardPicker: Bool = false
     @State var cardId: String = ""
-    @State var cardArr = [PaymentProfile]()
+    @State var cardArr = [CardModel]()
     @State private var selectedCardIndex: Int? = nil
     
     @State var config: BottomSheetConfig = BottomSheetConfig(
@@ -142,7 +142,7 @@ struct SellerVerificationScreen: View {
                                 },
                                 onSelectCard: { index in
                                     selectedCardIndex = index
-                                    self.cardId = self.cardArr[index].customerPaymentProfileId ?? ""
+                                    self.cardId = self.cardArr[index].card_id ?? ""
                                 }
                             )
                             .disabled(!(UserDefaults.sellerVerafied.isEmpty || UserDefaults.sellerVerafied == "rejected"))
@@ -157,16 +157,42 @@ struct SellerVerificationScreen: View {
                                 textColor: UserDefaults.sellerVerafied == "verified" ? Color.green : Color.gray,
                                 isCompleted: UserDefaults.sellerVerafied == "verified"
                             )
+                           
+                            if UserDefaults.sellerVerafied.isEmpty || UserDefaults.sellerVerafied == "rejected"{
+                                Button(action: {
+                                    guard UserDefaults.sellerVerafied.isEmpty || UserDefaults.sellerVerafied == "rejected" else {
+                                        return
+                                    }
+                                    Task{
+                                        await handleFinalUpload()
+                                    }
+                                    
+                                }) {
+                                    Text("Complete Verification")
+                                        .font(.custom(poppinsSemiBold, size: 16.0))
+                                        .foregroundColor(.white)
+                                        .frame(maxWidth: .infinity)
+                                        .padding()
+                                        .background(manualVerificationComplete ? Color.defaultTheme : Color.gray)
+                                        .cornerRadius(16)
+                                }
+                                .padding()
+                                .disabled(UserDefaults.sellerVerafied == "verified" ? true : false)
+                            }
+                            
                         }
                     }
                     .padding(.top, 20)
                     .padding(.bottom, 30)
                     .padding(.horizontal, 16)
                 }
+                .background(Color.backGround)
+                .edgesIgnoringSafeArea(.bottom)
 //            }
         }
-        .background(Color(.backGround))
+        .background(Color.backGround)
 //        .padding(.horizontal, 16)
+        .edgesIgnoringSafeArea(.bottom)
         .navigationBarHidden(true)
         .onFirstAppear {
             fetchSellerStatus()
@@ -208,20 +234,6 @@ struct SellerVerificationScreen: View {
                 }
             )
         )
-//        .bottomSheet(isPresented: $showError, height: screenHeight * 0.4, topBarCornerRadius: 25, showTopIndicator: false) {
-//            CommonBottomSheet(
-//                sheetType: $alertType,
-//                onPrimaryClick: {
-//                    withAnimation { showError = false }
-//                    if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil {
-//                        self.presentationMode.wrappedValue.dismiss()
-//                    }
-//                },
-//                onSecondaryClick: {
-//                    withAnimation { showError = false }
-//                }
-//            )
-//        }
         
         // Navigation Links
         CusNavLink(doNavigate: $navigateToOTP, destination: OTPVerificationScreen(viewModel: viewModel, onSuccess: {
@@ -278,7 +290,7 @@ struct SellerVerificationScreen: View {
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 16)
-        .background(Color(.systemBackground))
+        .background(Color.white)
         .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
     }
     
@@ -300,56 +312,12 @@ struct SellerVerificationScreen: View {
             ProgressView(value: Double(UserDefaults.sellerVerafied == "verified" ? Int(totalSteps) : currentStep), total: totalSteps)
                 .accentColor(.green)
                 .animation(.spring(response: 0.5, dampingFraction: 0.7), value: currentStep)
-            
-            // Progress Bar (Simple, no card background)
-//            ZStack(alignment: .leading) {
-//                RoundedRectangle(cornerRadius: 8)
-//                    .fill(Color.gray.opacity(0.15))
-//                    .frame(height: 8)
-//                
-//                RoundedRectangle(cornerRadius: 8)
-//                    .fill(Color.green)
-//                    .frame(
-//                        width: (UIScreen.main.bounds.width - 32) * CGFloat(Double(UserDefaults.sellerVerafied == "verified" ? Int(totalSteps) : currentStep) / totalSteps),
-//                        height: 8
-//                    )
-//              
-//            }
+
         }
         .padding(.horizontal, 16)
     }
     
-    // MARK: - Shimmer View
-//    private var shimmerView: some View {
-//        ScrollView(showsIndicators: false) {
-//            VStack(spacing: 20) {
-//                // Progress Shimmer
-//                VStack(spacing: 12) {
-//                    HStack {
-//                        ShimmerView()
-//                            .frame(width: 150, height: 16)
-//                            .clipShape(RoundedRectangle(cornerRadius: 4))
-//                        Spacer()
-//                        ShimmerView()
-//                            .frame(width: 50, height: 16)
-//                            .clipShape(RoundedRectangle(cornerRadius: 4))
-//                    }
-//                    
-//                    ShimmerView()
-//                        .frame(height: 8)
-//                        .clipShape(RoundedRectangle(cornerRadius: 8))
-//                }
-//                .padding(.horizontal, 16)
-//                
-//                // Cards Shimmer
-//                ForEach(0..<4) { _ in
-//                    VerificationCardShimmer()
-//                }
-//            }
-//            .padding(.horizontal, 16)
-//            .padding(.top, 20)
-//        }
-//    }
+
     
     // MARK: - API Functions
     func fetchSellerStatus() {
@@ -416,7 +384,7 @@ struct SellerVerificationScreen: View {
         SVProgressHUD.show()
         
         let params: [String: Any] = [
-            "customerPaymentProfileId": cardId,
+            "card_id": cardId,
             "phone_verification": phoneVerificationComplete == true ? 1 : 0
         ]
         
@@ -440,7 +408,7 @@ struct SellerVerificationScreen: View {
         SVProgressHUD.dismiss()
         let response = viewModel.cardDict
         if response.status == "success" {
-            cardArr = viewModel.cardDict.data?.paymentProfiles ?? [PaymentProfile]()
+            cardArr = viewModel.cardDict.data ?? [CardModel]()
             getCard = cardArr.isEmpty
         } else {
             config = BottomSheetConfig(
@@ -849,7 +817,7 @@ struct FinalVerificationCard: View {
                         .padding(.vertical, 8)
                         .background(
                             RoundedRectangle(cornerRadius: 8)
-                                .fill(Color.blue)
+                                .fill(Color.defaultTheme)
                         )
                 }
             }
@@ -866,7 +834,7 @@ struct FinalVerificationCard: View {
 // MARK: - Final Payment Method Card
 struct FinalPaymentMethodCard: View {
     let isCompleted: Bool
-    let cardArr: [PaymentProfile]
+    let cardArr: [CardModel]
     @Binding var selectedCardIndex: Int?
     let isActionEnabled: Bool
     let onAddCard: () -> Void
@@ -891,7 +859,7 @@ struct FinalPaymentMethodCard: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Payment Method")
                         .font(.custom(poppinsSemiBold, size: 16))
-                        .foregroundColor(.primary)
+                        .foregroundColor(.black)
                     
                     Text("Add your payment details")
                         .font(.custom(poppinsRegular, size: 13))
@@ -916,7 +884,7 @@ struct FinalPaymentMethodCard: View {
                             .padding(.vertical, 8)
                             .background(
                                 RoundedRectangle(cornerRadius: 8)
-                                    .fill(Color.blue)
+                                    .fill(Color.defaultTheme)
                             )
                     }
                 }
@@ -925,10 +893,10 @@ struct FinalPaymentMethodCard: View {
             // Card List
             if !cardArr.isEmpty {
                 VStack(spacing: 12) {
-                    ForEach(Array(cardArr.enumerated()), id: \.offset) { index, profile in
-                        let card = profile.payment?.creditCard
+                    ForEach(Array(cardArr.enumerated()), id: \.offset) { index, card in
+//                        let card = profile
                         FinalPaymentMethodRow(
-                            cardNumber: card?.cardNumber ?? "****",
+                            cardNumber: "**** **** **** \(card.last4 ?? "****")",
                             isSelected: selectedCardIndex == index,
                             onTap: {
                                 onSelectCard(index)
@@ -978,12 +946,12 @@ struct FinalPaymentMethodRow: View {
                 // Radio Button
                 ZStack {
                     Circle()
-                        .stroke(isSelected ? Color.blue : Color.gray.opacity(0.3), lineWidth: 2)
+                        .stroke(isSelected ? Color.defaultTheme : Color.gray.opacity(0.3), lineWidth: 2)
                         .frame(width: 24, height: 24)
                     
                     if isSelected {
                         Circle()
-                            .fill(Color.blue)
+                            .fill(Color.defaultTheme)
                             .frame(width: 14, height: 14)
                     }
                 }

@@ -310,6 +310,7 @@ struct AddCardScreen: View {
                     showError = true
                 },
                 onSuccess: {
+                    handleSellerCardResponse(cardId: "success")
                     alertType = .sheetType(
                         icon: .success,
                         title: "Success",
