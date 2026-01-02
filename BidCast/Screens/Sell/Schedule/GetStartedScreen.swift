@@ -27,6 +27,7 @@ struct GetStartedScreen: View {
                     count: .constant(0)
                 )
             }
+            .background(.white)
             
             ScrollView(showsIndicators:false) {
                 VStack(alignment: .leading, spacing: 8) {
@@ -69,6 +70,7 @@ struct GetStartedScreen: View {
                     
                 }
             }
+            .background(.backGround)
             .padding(.horizontal,12)
             VStack(alignment: .leading,spacing: 8){
                 Toggle(isOn: $agreedToGuidelines) {
@@ -86,7 +88,7 @@ struct GetStartedScreen: View {
                         .padding()
                         .background(agreedToGuidelines ? Color.defaultTheme : Color.gray)
                         .foregroundColor(.white)
-                        .cornerRadius(10)
+                        .cornerRadius(32)
                 }
                 
                 .disabled(!agreedToGuidelines)

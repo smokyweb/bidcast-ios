@@ -107,7 +107,11 @@ struct CreateProductScreen: View {
                         trailingImgArr: [],
                         onClickLeading: { _ in
                             if comeFromProductLibrary{
-                                navigateToAddProduct = true
+                                if fromPrepare{
+                                    navigateToProuct = true
+                                }else{
+                                    navigateToAddProduct = true
+                                }
                             }else{
                                
                                 self.presentationMode.wrappedValue.dismiss()
@@ -467,7 +471,14 @@ struct CreateProductScreen: View {
             } ))
             
             //from prepare
-            CusNavLink(doNavigate: $navigateToProuct, destination: AddProductsScreen(request:$requests,thumbNail: $thumbNail,fromPrepare: $fromPrepare,backToPrepare: $backToPrepare, NavFromProductLibrary: .constant(false), backToCreateProduct: $navigateToProuct, delegate: delegate))
+            CusNavLink(doNavigate: $navigateToProuct, destination: AddProductsScreen(request:$requests,thumbNail: $thumbNail,fromPrepare: $fromPrepare,backToPrepare: $backToPrepare, NavFromProductLibrary: .constant(false), backToCreateProduct: $navigateToProuct ,didTapBack:{ value,manager in
+                comeFromProductLibrary = value
+//                productManager  = manager
+            },didTapEdit:{ product in
+                comeFromProductLibrary = true
+                editProductData = product
+                populateProductData(product)
+            },delegate: delegate))
             
             CusNavLink(doNavigate: $navigateToSalesFormat,
                        destination: SalesFormatScreen(request: $request,

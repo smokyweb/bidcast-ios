@@ -60,6 +60,7 @@ struct InventoryScreen: View {
     @State var navigateToCreateProduct = false
     @State var navigateToEditProduct = false
     @State var searchText: String = ""
+    @EnvironmentObject var productManager: ProductManager
     
     @State var config: BottomSheetConfig = BottomSheetConfig(
         icon: "checkmark.seal.fill",
@@ -505,8 +506,8 @@ struct InventoryScreen: View {
         }
     private func initializeSelectedProducts() {
             // Set selected product IDs from pre-selected products
-        selectedProductIDs = Set(preSelectedProducts?.compactMap { $0.id } ?? [])
-        selectedProducts = preSelectedProducts ?? []
+        selectedProductIDs = Set(productManager.products.compactMap { $0.id })
+        selectedProducts = productManager.products
             
             print("🔵 Initialized with \(selectedProducts.count) pre-selected products")
             print("🔵 Selected IDs: \(selectedProductIDs)")

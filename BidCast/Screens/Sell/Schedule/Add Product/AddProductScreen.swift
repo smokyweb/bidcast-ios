@@ -276,6 +276,9 @@ struct AddProductsScreen: View {
         .background(.backGround)
         .onAppear {
             // ⭐ REMOVED: API call on appear
+//            if backToPrepare{
+//                fromPrepare = true
+//            }
             showError = false
             showDeleteProduct = false
             request.product_ids = Array(productManager.selectedProductIDs)
@@ -359,9 +362,9 @@ struct AddProductsScreen: View {
             TabbarScreen()
                 .environmentObject(TabBarRouter())
         )
-        CusNavLink(doNavigate: $navigateToAddProduct, destination: CreateProductScreen(requests: $request, thumbNail: $thumbNail, backToPrepare: $backToPrepare, fromPrepare: .constant(false)))
-        CusNavLink(doNavigate: $navigateToEditProduct, destination: CreateProductScreen(requests: $request, thumbNail: $thumbNail, backToPrepare: $backToPrepare, fromPrepare: .constant(false))
-            .environmentObject(productManager))
+//        CusNavLink(doNavigate: $navigateToAddProduct, destination: CreateProductScreen(requests: $request, thumbNail: $thumbNail, backToPrepare: $backToPrepare, fromPrepare: .constant(false)))
+//        CusNavLink(doNavigate: $navigateToEditProduct, destination: CreateProductScreen(requests: $request, thumbNail: $thumbNail, backToPrepare: $backToPrepare, fromPrepare: .constant(false))
+//            .environmentObject(productManager))
         
         // ⭐ CHANGED: Pass callback to receive products from inventory
         CusNavLink(doNavigate: $navigateToInventry,
@@ -370,7 +373,8 @@ struct AddProductsScreen: View {
                     selectedCategoryId: [Int(request.category_id) ?? 0],
                     navigatedFrom: .addProduct,
                     onProductsSelected: { products in
-                        
+                        productManager.products.removeAll()
+                        productManager.selectedProductIDs.removeAll()
                         productManager.addProducts(products)
                         request.product_ids = Array(productManager.selectedProductIDs)
                     }
