@@ -1394,7 +1394,7 @@ extension ProductCardView {
 extension ProductCardView {
     var priceSectionView: some View {
         VStack(spacing: 8) {
-            Text("$\(product.pricing ?? "$0.00")")
+            Text("\(formatCurrencyCompact(Double(product.pricing ?? "0.0") ?? 0.0))")
                 .font(.custom(poppinsSemiBold, size: 16))
                 .foregroundColor(.primary)
             
@@ -1403,6 +1403,25 @@ extension ProductCardView {
                 .foregroundColor(.secondary)
         }
     }
+    private func formatCurrencyCompact(_ value: Double) -> String {
+            let absValue = abs(value)
+            let sign = value < 0 ? "-" : ""
+            
+            switch absValue {
+            case 1_000_000_000...:
+                // Billions
+                return String(format: "%@$%.2fB", sign, absValue / 1_000_000_000)
+            case 1_000_000...:
+                // Millions
+                return String(format: "%@$%.2fM", sign, absValue / 1_000_000)
+            case 1_000...:
+                // Thousands
+                return String(format: "%@$%.1fK", sign, absValue / 1_000)
+            default:
+                // Less than 1000 - show full amount
+                return String(format: "%@$%.2f", sign, absValue)
+            }
+        }
 }
 
 // MARK: - Animation Extension

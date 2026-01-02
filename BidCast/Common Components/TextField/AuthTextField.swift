@@ -130,7 +130,23 @@ struct AuthTextField: View {
                                     .accentColor(.text)
                                     .focused($isFocused)
                                     .frame(height: height)
+                                    .onAppear {
+                                            // Format initial value
+                                            if isForPrice && !text.isEmpty && !text.contains(".") {
+                                                text = text + ".00"
+                                                self.enteredText?(text)
+                                            }
+                                        }
                                     .onChange(of: text, perform: { value in
+                                        if isForPrice && !value.isEmpty && !value.contains(".") {
+                                                   // Check if this looks like a plain number (not user typing)
+                                                   let filtered = value.filter { $0.isNumber }
+                                                   if filtered == value && value.count >= 1 {
+                                                       text = value + ".00"
+                                                       self.enteredText?(text)
+                                                       return
+                                                   }
+                                               }
                                         var filtered = value.filter { $0.isNumber }
                                         if isForCVV {
                                             filtered = String(filtered.prefix(3))
@@ -160,29 +176,28 @@ struct AuthTextField: View {
                                             text = filtered
                                             self.enteredText?(text)
                                         } else if isForPrice {
-                                            let trimmed = value.trimmingCharacters(in: .whitespaces)
-                                                var filtered = ""
-
-                                                var dotAdded = false
-                                                for char in trimmed {
-                                                    if char.isNumber {
-                                                        filtered.append(char)
-                                                    } else if char == "." && !dotAdded {
-                                                        filtered.append(char)
-                                                        dotAdded = true
-                                                    }
-                                                    // ignore extra dots
+                                            var filtered = value.filter { $0.isNumber }
+                                                
+                                                // Remove leading zeros except if the number is just "0" or "00"
+                                                while filtered.count > 1 && filtered.first == "0" {
+                                                    filtered.removeFirst()
                                                 }
-
-                                                // Limit to 2 decimals if dot exists
-                                                if let dotIndex = filtered.firstIndex(of: ".") {
-                                                    let decimals = filtered.suffix(from: filtered.index(after: dotIndex))
-                                                    if decimals.count > 2 {
-                                                        filtered = String(filtered.prefix(filtered.distance(from: filtered.startIndex, to: dotIndex) + 3))
-                                                    }
+                                                
+                                                // Format with decimal point
+                                                if filtered.isEmpty {
+                                                    text = ""
+                                                } else if filtered.count == 1 {
+                                                    text = "0.0\(filtered)"
+                                                } else if filtered.count == 2 {
+                                                    text = "0.\(filtered)"
+                                                } else {
+                                                    // Insert decimal point 2 places from the end
+                                                    let index = filtered.index(filtered.endIndex, offsetBy: -2)
+                                                    let beforeDecimal = filtered[..<index]
+                                                    let afterDecimal = filtered[index...]
+                                                    text = "\(beforeDecimal).\(afterDecimal)"
                                                 }
-
-                                                text = filtered
+                                                
                                                 self.enteredText?(text)
                                         }else{
                                             filtered = String(filtered.prefix(maxDigits))
