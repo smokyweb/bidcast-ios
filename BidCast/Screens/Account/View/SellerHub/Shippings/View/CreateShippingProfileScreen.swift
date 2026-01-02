@@ -77,35 +77,36 @@ struct CreateShippingProfileScreen: View {
                             Text("Details")
                                 .font(.system(size: 22, weight: .bold))
                                 .foregroundColor(.primary)
+                                .padding(.horizontal, 16)
                             
                             // Name Field
                             VStack(spacing: 8) {
-                                TextField("Name", text: $name)
-                                    .font(.system(size: 16))
-                                    .padding()
-                                    .background(Color(.systemBackground))
-                                    .cornerRadius(12)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 12)
-                                            .stroke(name.isEmpty ? Color.gray.opacity(0.2) : Color.defaultTheme.opacity(0.5), lineWidth: name.isEmpty ? 1 : 2)
-                                    )
-                                    .shadow(color: Color.black.opacity(0.04), radius: 8, x: 0, y: 2)
+                                AuthTextField(floatingLabel: "",
+                                              placeholder: "Enter Name",
+                                              icon: .addresses,
+                                              text: $name ,
+                                              isIconDisplay : false,
+                                              custFontName : poppinsMedium,
+                                              custFontSize : 14.0,
+                                              enteredText:  { val in
+                                    name = val
+                                })
                             }
                             
                             HStack(spacing: 12) {
                                 // Weight Field
                                 VStack(spacing: 8) {
-                                    TextField("Weight", text: $weight)
-                                        .keyboardType(.decimalPad)
-                                        .font(.system(size: 16))
-                                        .padding()
-                                        .background(Color(.systemBackground))
-                                        .cornerRadius(12)
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 12)
-                                                .stroke(weight.isEmpty ? Color.gray.opacity(0.2) : Color.defaultTheme.opacity(0.5), lineWidth: weight.isEmpty ? 1 : 2)
-                                        )
-                                        .shadow(color: Color.black.opacity(0.04), radius: 8, x: 0, y: 2)
+                                    AuthTextField(floatingLabel: "",
+                                                  placeholder: "Weight",
+                                                  icon: .addresses,
+                                                  text: $weight ,
+                                                  isIconDisplay : false,
+                                                  custFontName : poppinsMedium,
+                                                  custFontSize : 14.0,
+                                                  enteredText:  { val in
+                                        weight = val
+                                    })
+                                    .keyboardType(.decimalPad)
                                 }
                                 
                                 // Scale Selector
@@ -126,13 +127,14 @@ struct CreateShippingProfileScreen: View {
                                     }
                                     .padding()
                                     .background(Color(.systemBackground))
-                                    .cornerRadius(12)
+                                    .cornerRadius(32)
                                     .overlay(
-                                        RoundedRectangle(cornerRadius: 12)
+                                        RoundedRectangle(cornerRadius: 32)
                                             .stroke(Color.gray.opacity(0.2), lineWidth: 1)
                                     )
                                     .shadow(color: Color.black.opacity(0.04), radius: 8, x: 0, y: 2)
                                 }
+                                .padding(.trailing, 16)
                             }
                             
                             // Info Box
@@ -144,9 +146,10 @@ struct CreateShippingProfileScreen: View {
                                 Text("Please enter the weight of this item and packaging")
                                     .font(.system(size: 14, weight: .regular))
                                     .foregroundColor(.secondary)
-                                    .fixedSize(horizontal: false, vertical: true)
+//                                    .fixedSize(horizontal: false, vertical: true)
                             }
-                            .padding(14)
+                            .padding(.horizontal,16)
+                            .padding(.vertical, 14)
                             .background(
                                 RoundedRectangle(cornerRadius: 12)
                                     .fill(Color.defaultTheme.opacity(0.05))
@@ -156,7 +159,7 @@ struct CreateShippingProfileScreen: View {
                                     .stroke(Color.defaultThemeLight, lineWidth: 1)
                             )
                         }
-                        .padding(.horizontal, 20)
+//                        .padding(.horizontal, 20)
                         .padding(.top, 20)
                         
                         // Bundling Options Section
@@ -165,14 +168,7 @@ struct CreateShippingProfileScreen: View {
                                 Text("Bundling Options")
                                     .font(.system(size: 22, weight: .bold))
                                     .foregroundColor(.primary)
-                                
-                                Spacer()
-                                
-                                Button(action: {}) {
-                                    Text("Learn More")
-                                        .font(.system(size: 15, weight: .semibold))
-                                        .foregroundColor(.blue)
-                                }
+                            
                             }
                             
                             // Max Items Toggle
@@ -239,8 +235,9 @@ struct CreateShippingProfileScreen: View {
                 
                 // Bottom Button
                 VStack(spacing: 0) {
-                    Divider()
-                    Button(action: {
+                    PrimaryButton(title: isEditMode ? "Update Profile" : "Save Profile",
+                                  isOutLine: false,
+                                  onButtonClick: {
                         UIApplication.shared.dismissKeyboard()
                         if let errorMsg = validateShippingProfile() {
                             // show message
@@ -273,24 +270,8 @@ struct CreateShippingProfileScreen: View {
                                 showError = true
                             }
                         }
-                    }) {
-                        Text(isEditMode ? "Update Profile" : "Save Profile")
-                            .font(.system(size: 17, weight: .semibold))
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 16)
-                            .background(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [Color.defaultTheme, Color.defaultTheme.opacity(0.8)]),
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-                            .cornerRadius(14)
-                            .shadow(color: Color.defaultTheme.opacity(0.4), radius: 12, x: 0, y: 6)
-                    }
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 16)
+                    })
+                    .padding(.vertical, 12)
                 }
                 .background(Color(.systemBackground))
             }
@@ -299,7 +280,9 @@ struct CreateShippingProfileScreen: View {
                 isEditMode = shippingId != nil
                 name = nameVal ?? ""
                 weight = weightVal ?? ""
-                selectedScale = sizeVal ?? ""
+                if let size = sizeVal {
+                    selectedScale = size
+                }
                 maxItemsEnabled = maxItems ?? false
                 additionalWeightEnabled = additionalWeight ?? false
             }
@@ -400,7 +383,7 @@ extension CreateShippingProfileScreen {
                     message: shippingViewModel.storeShippingResponse?.message ?? defaultSuccessMessage,
                     primaryButtonTitle: AppString.ok.localized,
                     secondaryButtonTitle: nil,
-                    bottomPadding: -80,
+                    bottomPadding: -60,
                     backgroundDismissal: true
                 )
                 showSuccess = true

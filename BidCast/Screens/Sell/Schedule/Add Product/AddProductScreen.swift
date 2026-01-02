@@ -640,13 +640,13 @@ struct CustomBottomSheetView: View {
                         }
                         
                         Text(config.title)
-                            .font(.custom(poppinsBold, size: 24.0))
+                            .font(.custom(poppinsBold, size: 20.0))
                             .fontWeight(.semibold)
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 16)
                         
                         Text(config.message)
-                            .font(.custom(poppinsMedium, size: 18.0))
+                            .font(.custom(poppinsRegular, size: 15.0))
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 16)
                         
@@ -694,7 +694,7 @@ struct CustomBottomSheetView: View {
                     .frame(maxWidth: .infinity)
                     .background(Color.white)
                     .cornerRadius(25, corners: [.topLeft, .topRight])
-//                    .ignoresSafeArea(edges: .bottom)
+                    .ignoresSafeArea(edges: .bottom)
                     .padding(.bottom, config.bottomPadding)
 //                    .transition(.move(edge: .bottom))
                     .animation(.easeInOut(duration: 0.25), value: isPresented)

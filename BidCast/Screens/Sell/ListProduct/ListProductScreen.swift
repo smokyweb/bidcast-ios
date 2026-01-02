@@ -691,7 +691,8 @@ struct ListProductScreen: View {
                 title: "Missing",
                 message: "Please add Shipping profile first for the successful product creation.",
                 primaryButtonTitle: "Add Shipping Profile",
-                secondaryButtonTitle: nil
+                secondaryButtonTitle: nil,
+                bottomPadding: -60
             )
             openShippingSheet = true
         }

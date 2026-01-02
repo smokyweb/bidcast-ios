@@ -333,7 +333,7 @@ struct RehearsalScreen: View {
                                     message: "Before you interact with live shows.you need to become a verified seller.",
                                     primaryBtnText: "OK",
                                     secondaryBtnText: "",
-                                    buttonWidth:screenWidth - 60,
+                                    buttonWidth: screenWidth - 60,
                                     contentSize: 12.0
                                 )
                                 withAnimation(.snappy){

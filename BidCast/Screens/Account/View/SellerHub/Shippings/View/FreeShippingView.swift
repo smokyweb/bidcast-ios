@@ -94,28 +94,12 @@ struct FreePickupScreen: View {
             
             // Save Button
             VStack(spacing: 0) {
-                Divider()
-                
-                Button(action: {
-                   updateFreePickup()
-                }) {
-                    Text("Save")
-                        .font(.system(size: 17, weight: .semibold))
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .background(
-                            LinearGradient(
-                                gradient: Gradient(colors: [Color.defaultTheme, Color.defaultTheme.opacity(0.8)]),
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-                        )
-                        .cornerRadius(14)
-                        .shadow(color: Color.defaultTheme.opacity(0.4), radius: 12, x: 0, y: 6)
-                }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 16)
+                PrimaryButton(title: "Save",
+                              isOutLine: false,
+                              onButtonClick: {
+                    updateFreePickup()
+                })
+                .padding(.vertical, 12)
             }
             .background(Color(.systemBackground))
         }

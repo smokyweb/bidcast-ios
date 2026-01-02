@@ -34,7 +34,7 @@ struct DropDownTextField: View {
     
     //MARK: - Static Variable Initializer
     var maxWidth: CGFloat = screenWidth - 30
-    var cornerRadius: CGFloat = 12
+    var cornerRadius: CGFloat = 32
     var anchor: Anchor = .bottom
     
     @State var filterOptions: [String] = []

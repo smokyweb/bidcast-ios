@@ -128,27 +128,11 @@ struct ShippingProfilesListScreen: View {
                 // Bottom Button
                 VStack(spacing: 0) {
                     Divider()
-                    
-                    Button(action: {
-                        showCreateProfile = true
-                    }) {
-                        Text("Create Shipping Profile")
-                            .font(.custom(poppinsSemiBold, size: 16))
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 16)
-                            .background(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [Color.defaultTheme, Color.defaultTheme.opacity(0.8)]),
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-                            .cornerRadius(14)
-                            .shadow(color: Color.defaultTheme.opacity(0.4), radius: 12, x: 0, y: 6)
-                    }
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 16)
+                    PrimaryButton(title: "Create Shipping Profile",
+                                  isOutLine: false,
+                                  onButtonClick: { showCreateProfile = true }
+                    )
+                    .padding(.vertical, 12)
                 }
                 .onAppear {
                     getShippingProfiles()

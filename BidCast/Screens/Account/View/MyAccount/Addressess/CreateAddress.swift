@@ -229,11 +229,8 @@ struct CreateAddress: View {
                         }
                     }
                 },
-                width: screenWidth - 45,
-                cornerRadius: 12.0, imageName: "",
-                btnTextColor : .black, btnColor: .white
             )
-            .padding(.vertical, 10)
+            .padding(.vertical, 12)
             .background(Color.white)
 //            .padding(.all)
         }

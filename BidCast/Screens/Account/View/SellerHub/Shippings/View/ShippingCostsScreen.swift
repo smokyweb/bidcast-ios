@@ -142,30 +142,16 @@ struct ShippingCostsScreen: View {
                     }
                 }
                 .padding(.horizontal, 20)
-                
-                // Save Button
-                Button(action: {
-                    presentationMode.wrappedValue.dismiss()
-                }) {
-                    Text("Save")
-                        .font(.system(size: 17, weight: .semibold))
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .background(
-                            LinearGradient(
-                                gradient: Gradient(colors: [Color.defaultTheme, Color.defaultTheme.opacity(0.8)]),
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-                        )
-                        .cornerRadius(14)
-                        .shadow(color: Color.defaultTheme.opacity(0.4), radius: 12, x: 0, y: 6)
+                VStack(spacing: 0) {
+                    PrimaryButton(title: "Save",
+                                  isOutLine: false,
+                                  onButtonClick: {
+                        presentationMode.wrappedValue.dismiss()
+                    })
+                    .padding(.vertical, 12)
                 }
-                .padding(.horizontal, 20)
-                .padding(.bottom, 16)
+                .background(Color(.systemBackground))
             }
-            .background(Color(.systemBackground))
         }
         .navigationBarHidden(true)
         .toolbar(.hidden,for: .tabBar)
