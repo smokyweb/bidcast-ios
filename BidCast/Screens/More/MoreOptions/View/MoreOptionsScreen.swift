@@ -291,8 +291,8 @@ struct MoreOptionsScreen: View {
                                     selectedOption = "Create Poll"
                                     onCreatePoll()
                                 })
-                                OptionGridButtonView(label: "Randomizer", icon: "tag", isSelected: selectedOption == "Randomizer", action: {
-                                    selectedOption = "Randomizer"
+                                OptionGridButtonView(label: "Freebie", icon: "tag", isSelected: selectedOption == "Freebie", action: {
+                                    selectedOption = "Freebie"
                                     onClickRandomizer()
                                 })
                             }
