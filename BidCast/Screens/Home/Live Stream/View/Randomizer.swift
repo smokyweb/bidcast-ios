@@ -1,5 +1,4 @@
 import SwiftUI
-//import FortuneWhee
 
 // MARK: - Main Randomizer View
 struct RandomizerView: View {
@@ -11,74 +10,122 @@ struct RandomizerView: View {
     @State private var isSpinning = false
     @State private var selectedWinner: String?
     @State private var showWinnerAnimation = false
-    @State private var wheelKey = UUID() // Key to force wheel recreation
+    @State private var wheelKey = UUID()
+    @State private var offset: CGFloat = UIScreen.main.bounds.height
+    var didTapSpin : (Bool) -> () = {_ in}
+    var onWinnerSelected: (String) -> () = {_ in}
     
     var body: some View {
         ZStack {
             // Background dimmed view
-            Color.clear
+            Color.black.opacity(0.01)
                 .edgesIgnoringSafeArea(.all)
-                .onTapGesture {
-                    if !isSpinning {
-                        presentationMode.wrappedValue.dismiss()
-                    }
-                }
+//                .onTapGesture {
+//                    if !isSpinning {
+//                    if !isSpinning {
+////                        dismissView()
+//                    }
+//                }
             
             VStack(spacing: 0) {
                 Spacer()
                 
-                // Spinwheel overlay (conditionally shown)
-                if showSpinwheel {
-                    FortuneWheel(
-                        titles: viewModel.options,
-                        size: 320,
-                        onSpinEnd: onSpinEnd,
-                        getWheelItemIndex: getWheelItemIndex
-                    )
-                    .id(wheelKey) // This allows us to recreate the wheel
-                    .transition(.scale.combined(with: .opacity))
-                    .zIndex(10)
+                VStack(spacing: 0) {
+                    // Spinwheel overlay (conditionally shown)
+                    if showSpinwheel {
+                        FortuneWheel(
+                            titles: viewModel.options,
+                            size: screenWidth/1.5,
+                            onSpinEnd: onSpinEnd,
+                            getWheelItemIndex: getWheelItemIndex
+                        )
+                        .background(.clear)
+                        .id(wheelKey)
+                        .transition(.scale.combined(with: .opacity))
+                        .zIndex(10)
+                        .padding()
+                    }
+                    
+                    ScrollView {
+                        // Bottom control panel
+                        RandomizerControlPanel(
+                            viewModel: viewModel,
+                            showSpinwheel: $showSpinwheel,
+                            isSpinning: $isSpinning,
+                            selectedWinner: $selectedWinner,
+                            showWinnerAnimation: $showWinnerAnimation,
+                            spinWheelTapped: spinWheel,didTapSpin: { value in
+                                didTapSpin(value)
+                            }
+                        )
+                    }
+                    .background(Color.backGround)
                 }
-                
-                Spacer()
-                
-                // Bottom control panel
-                RandomizerControlPanel(
-                    viewModel: viewModel,
-                    showSpinwheel: $showSpinwheel,
-                    isSpinning: $isSpinning,
-                    selectedWinner: $selectedWinner,
-                    showWinnerAnimation: $showWinnerAnimation,
-                    spinWheelTapped: spinWheel
+                .background(
+                    RoundedRectangle(cornerRadius: 24)
+                        .fill(Color.clear)
+                        .shadow(color: .black.opacity(0.3), radius: 20, x: 0, y: -10)
+                )
+                .cornerRadius(24, corners: [.topLeft, .topRight])
+                .offset(y: offset)
+                .gesture(
+                    DragGesture()
+                        .onChanged { gesture in
+                            if gesture.translation.height > 0 {
+                                offset = gesture.translation.height
+                            }
+                        }
+                        .onEnded { gesture in
+                            if gesture.translation.height > 100 {
+                                dismissView()
+                            } else {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                    offset = 0
+                                }
+                            }
+                        }
                 )
             }
+            .edgesIgnoringSafeArea(.bottom)
             
             // Winner announcement overlay
-            if showWinnerAnimation, let winner = selectedWinner {
-                WinnerAnnouncementView(winner: winner, isShowing: $showWinnerAnimation)
-                    .transition(.scale.combined(with: .opacity))
-                    .zIndex(20)
+//            if showWinnerAnimation, let winner = selectedWinner {
+//                WinnerAnnouncementView(winner: winner, isShowing: $showWinnerAnimation)
+//                    .transition(.scale.combined(with: .opacity))
+//                    .zIndex(20)
+//            }
+        }
+        .onAppear {
+            withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                offset = 0
             }
         }
         .animation(.spring(response: 0.4, dampingFraction: 0.8), value: showSpinwheel)
         .animation(.spring(response: 0.4, dampingFraction: 0.8), value: showWinnerAnimation)
     }
     
+    private func dismissView() {
+        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+            offset = UIScreen.main.bounds.height
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            presentationMode.wrappedValue.dismiss()
+        }
+    }
+    
     private func onSpinEnd(index: Int) {
-        // This is called when the wheel stops spinning
         guard index >= 0 && index < viewModel.options.count else { return }
         
         let winner = viewModel.options[index]
         selectedWinner = winner
         isSpinning = false
         
-        // Show winner announcement after a brief delay
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             withAnimation {
                 showWinnerAnimation = true
+                onWinnerSelected(winner)
             }
             
-            // Auto-hide after 3 seconds
             DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
                 withAnimation {
                     showWinnerAnimation = false
@@ -88,8 +135,6 @@ struct RandomizerView: View {
     }
     
     private func getWheelItemIndex() -> Int {
-        // Return random index - the wheel will land on this option
-        // You can modify this to return a specific index if needed
         return Int.random(in: 0..<viewModel.options.count)
     }
     
@@ -97,9 +142,6 @@ struct RandomizerView: View {
         guard !viewModel.options.isEmpty, !isSpinning else { return }
         
         isSpinning = true
-        
-        // Access the FortuneWheel's view model to trigger the spin
-        // We need to use a notification or callback approach
         NotificationCenter.default.post(name: NSNotification.Name("SpinWheel"), object: nil)
     }
 }
@@ -118,16 +160,24 @@ struct RandomizerControlPanel: View {
     @FocusState private var isInputFocused: Bool
     
     var spinWheelTapped: (() -> Void)?
+    var didTapSpin: ((Bool) -> Void)?
     
     var body: some View {
         VStack(spacing: 0) {
+            // Drag indicator
+//            RoundedRectangle(cornerRadius: 3)
+//                .fill(Color.gray.opacity(0.4))
+//                .frame(width: 40, height: 5)
+//                .padding(.top, 12)
+//                .padding(.bottom, 8)
+            
             VStack(spacing: 20) {
                 // Title
-                Text("Randomizer")
+                Text("Freebie")
                     .font(.custom(poppinsBold, size: 24))
                     .foregroundColor(.black)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.top, 20)
+                    .padding(.top, 12)
                 
                 // Action buttons
                 if showSpinwheel {
@@ -138,6 +188,7 @@ struct RandomizerControlPanel: View {
                             action: {
                                 withAnimation {
                                     showSpinwheel = false
+                                    didTapSpin?(showSpinwheel)
                                 }
                             }
                         )
@@ -168,6 +219,7 @@ struct RandomizerControlPanel: View {
                         action: {
                             withAnimation {
                                 showSpinwheel = true
+                                didTapSpin?(showSpinwheel)
                             }
                         },
                         isFullWidth: true,
@@ -322,14 +374,7 @@ struct RandomizerControlPanel: View {
             }
             .padding(.horizontal, 20)
             .padding(.bottom, 30)
-            .background(.clear)
         }
-        .background(
-            RoundedRectangle(cornerRadius: 24)
-                .fill(Color(UIColor.systemBackground))
-                .shadow(color: .black.opacity(0.3), radius: 20, x: 0, y: -10)
-        )
-        .edgesIgnoringSafeArea(.bottom)
     }
     
     private func addOption() {
@@ -364,128 +409,236 @@ struct RandomizerButton: View {
             .padding(.vertical, 14)
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(isDisabled ? Color.gray.opacity(0.3) : Color.defaultTheme.opacity(0.2))
+                    .fill(isDisabled ? Color.gray.opacity(0.3) : Color.defaultThemeLight)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
-                    .stroke(Color.defaultTheme.opacity(isDisabled ? 0.1 : 0.3), lineWidth: 1)
+                    .stroke(Color.defaultThemeLight.opacity(isDisabled ? 0.1 : 1.0), lineWidth: 1)
             )
         }
         .disabled(isDisabled)
     }
 }
 
-// MARK: - Winner Announcement View
-struct WinnerAnnouncementView: View {
+struct TikTokStyleWinnerView: View {
     let winner: String
+    let winnerImage: String
     @Binding var isShowing: Bool
-    
+
+    @State private var confettiPieces: [ConfettiPiece] = []
     @State private var scale: CGFloat = 0.5
     @State private var opacity: Double = 0
-    
+
     var body: some View {
         ZStack {
-            // Semi-transparent background
-            Color.black.opacity(0.7)
-                .edgesIgnoringSafeArea(.all)
-                .onTapGesture {
-                    withAnimation {
-                        isShowing = false
-                    }
-                }
-            
-            // Winner card
-            VStack(spacing: 24) {
-                // Trophy icon
-                ZStack {
-                    Circle()
-                        .fill(
-                            LinearGradient(
-                                colors: [Color.yellow, Color.orange],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                        .frame(width: 100, height: 100)
-                        .shadow(color: .yellow.opacity(0.5), radius: 20, x: 0, y: 10)
-                    
-                    Image(systemName: "trophy.fill")
-                        .font(.system(size: 50))
-                        .foregroundColor(.white)
-                }
-                
-                // Winner text
-                VStack(spacing: 12) {
-                    Text("🎉 Winner! 🎉")
-                        .font(.custom(poppinsBold, size: 28))
-                        .foregroundColor(.white)
-                    
-                    Text(winner)
-                        .font(.custom(poppinsSemiBold, size: 24))
-                        .foregroundColor(.yellow)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 20)
-                }
-                
-                // Confetti animation
-                ConfettiView()
-            }
-            .padding(40)
-            .background(
-                RoundedRectangle(cornerRadius: 24)
-                    .fill(
-                        LinearGradient(
-                            colors: [Color.purple.opacity(0.9), Color.blue.opacity(0.9)],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
-                    .shadow(color: .black.opacity(0.4), radius: 30, x: 0, y: 15)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 24)
-                    .stroke(Color.white.opacity(0.3), lineWidth: 2)
-            )
-            .scaleEffect(scale)
-            .opacity(opacity)
-            .onAppear {
-                withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
-                    scale = 1.0
-                    opacity = 1.0
-                }
+            if isShowing {
+                content
+                    .transition(.opacity)
             }
         }
+        .animation(.easeInOut, value: isShowing)
     }
-}
 
-// MARK: - Confetti View
-struct ConfettiView: View {
-    @State private var animate = false
-    
-    var body: some View {
+    // MARK: - Main Content
+    private var content: some View {
         ZStack {
-            ForEach(0..<20) { i in
-                Circle()
-                    .fill(Color.random)
-                    .frame(width: CGFloat.random(in: 4...8), height: CGFloat.random(in: 4...8))
-                    .offset(
-                        x: animate ? CGFloat.random(in: -150...150) : 0,
-                        y: animate ? CGFloat.random(in: -150...150) : 0
-                    )
-                    .opacity(animate ? 0 : 1)
-            }
+            Color.black.opacity(0.5)
+                .ignoresSafeArea()
+                .onTapGesture {
+                    dismiss()
+                }
+
+            confettiLayer
+
+            winnerContent
         }
         .onAppear {
-            withAnimation(.easeOut(duration: 1.5)) {
-                animate = true
+            startAnimations()
+            autoDismiss()
+        }
+    }
+
+    // MARK: - Subviews
+    private var confettiLayer: some View {
+        ZStack {
+            ForEach(confettiPieces) { piece in
+                ConfettiShape(shape: piece.shape)
+                    .fill(piece.color)
+                    .frame(width: piece.size.width, height: piece.size.height)
+                    .rotationEffect(.degrees(piece.rotation))
+                    .position(piece.position)
+                    .opacity(piece.opacity)
+            }
+        }
+    }
+
+    private var winnerContent: some View {
+        VStack(spacing: 20) {
+            AsyncImage(url: URL(string: winnerImage)) { image in
+                image.resizable().scaledToFill()
+            } placeholder: {
+                Image(systemName: "person.circle.fill")
+                    .resizable()
+                    .foregroundColor(.gray)
+            }
+            .frame(width: 120, height: 120)
+            .clipShape(Circle())
+            .overlay(
+                Circle().stroke(
+                    LinearGradient(
+                        colors: [.pink, .purple, .blue],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 4
+                )
+            )
+
+            VStack(spacing: 8) {
+                Text("You")
+                    .font(.custom(poppinsBold, size: 32))
+                    .foregroundColor(.white)
+
+                Text("won the auction!")
+                    .font(.custom(poppinsSemiBold, size: 24))
+                    .foregroundColor(.white)
+            }
+        }
+        .scaleEffect(scale)
+        .opacity(opacity)
+    }
+
+    // MARK: - Logic
+    private func startAnimations() {
+        generateConfetti()
+        animateConfetti()
+
+        withAnimation(.spring(response: 0.6, dampingFraction: 0.7)) {
+            scale = 1
+            opacity = 1
+        }
+    }
+
+    private func autoDismiss() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            if isShowing {
+                dismiss()
+            }
+        }
+    }
+
+    private func dismiss() {
+        withAnimation(.easeOut(duration: 0.3)) {
+            scale = 0.8
+            opacity = 0
+            isShowing = false
+        }
+    }
+
+
+    
+    private func generateConfetti() {
+        let shapes: [ConfettiShapeType] = [.circle, .square, .triangle, .rectangle]
+        let colors: [Color] = [.red, .pink, .yellow, .orange, .purple, .blue, .green]
+        
+        for _ in 0..<60 {
+            let randomX = CGFloat.random(in: 0...UIScreen.main.bounds.width)
+            let randomY = CGFloat.random(in: -100...UIScreen.main.bounds.height)
+            
+            let piece = ConfettiPiece(
+                shape: shapes.randomElement()!,
+                color: colors.randomElement()!,
+                size: CGSize(
+                    width: CGFloat.random(in: 8...15),
+                    height: CGFloat.random(in: 8...15)
+                ),
+                position: CGPoint(x: randomX, y: randomY),
+                rotation: Double.random(in: 0...360),
+                opacity: 1.0
+            )
+            
+            confettiPieces.append(piece)
+        }
+    }
+    
+    private func animateConfetti() {
+        for index in confettiPieces.indices {
+            let delay = Double.random(in: 0...0.5)
+            let duration = Double.random(in: 2.0...4.0)
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                withAnimation(.easeOut(duration: duration)) {
+                    // Move down and fade out
+                    confettiPieces[index].position.y += UIScreen.main.bounds.height + 200
+                    confettiPieces[index].opacity = 0
+                    confettiPieces[index].rotation += Double.random(in: 360...720)
+                }
             }
         }
     }
 }
 
+// MARK: - Confetti Models
+struct ConfettiPiece: Identifiable {
+    let id = UUID()
+    let shape: ConfettiShapeType
+    let color: Color
+    let size: CGSize
+    var position: CGPoint
+    var rotation: Double
+    var opacity: Double
+}
+
+enum ConfettiShapeType {
+    case circle, square, triangle, rectangle
+}
+
+struct ConfettiShape: Shape {
+    let shape: ConfettiShapeType
+    
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        
+        switch shape {
+        case .circle:
+            path.addEllipse(in: rect)
+            
+        case .square:
+            path.addRect(rect)
+            
+        case .triangle:
+            path.move(to: CGPoint(x: rect.midX, y: rect.minY))
+            path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+            path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
+            path.closeSubpath()
+            
+        case .rectangle:
+            let narrowRect = CGRect(
+                x: rect.minX,
+                y: rect.minY,
+                width: rect.width,
+                height: rect.height * 0.6
+            )
+            path.addRect(narrowRect)
+        }
+        
+        return path
+    }
+}
+
+// MARK: - Preview
+//struct TikTokStyleWinnerView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        TikTokStyleWinnerView(
+//            winner: "John Test",
+//            winnerImage: "https://example.com/profile.jpg",
+//            isShowing: .constant(true)
+//        )
+//    }
+//}
 // MARK: - View Model
 class RandomizerViewModel: ObservableObject {
-    @Published var options: [String] = []
+    @Published var options: [String] = ["alph","hggchg"]
     
     func addOption(_ option: String) {
         options.append(option)
@@ -516,13 +669,126 @@ extension Color {
     }
 }
 
-//// MARK: - Preview
+//extension View {
+//    func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
+//        clipShape(RoundedCorner(radius: radius, corners: corners))
+//    }
+//}
+//
+//struct RoundedCorner: Shape {
+//    var radius: CGFloat = .infinity
+//    var corners: UIRectCorner = .allCorners
+//
+//    func path(in rect: CGRect) -> Path {
+//        let path = UIBezierPath(
+//            roundedRect: rect,
+//            byRoundingCorners: corners,
+//            cornerRadii: CGSize(width: radius, height: radius)
+//        )
+//        return Path(path.cgPath)
+//    }
+//}
+
 struct RandomizerView_Previews: PreviewProvider {
     static var previews: some View {
         ZStack {
-            Color.clear
+//            Color.gray.opacity(0.3)
             RandomizerView()
         }
     }
 }
 
+
+import SwiftUI
+
+struct RandomizerLiveView: View {
+
+    @StateObject private var viewModel = RandomizerViewModel()
+    @State private var isSpinning = false
+    @State private var selectedWinner: String?
+
+    var onWinnerSelected: (String) -> Void = { _ in }
+
+    var body: some View {
+        VStack(spacing: 24) {
+
+            // 🎡 Fortune Wheel
+            FortuneWheel(
+                titles: viewModel.options,
+                size: UIScreen.main.bounds.width * 0.7,
+                onSpinEnd: onSpinEnd,
+                getWheelItemIndex: {
+                    Int.random(in: 0..<viewModel.options.count)
+                }
+            )
+            .padding(.top, 30)
+
+            // 📋 User Listing
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Participants")
+                    .font(.custom(poppinsBold, size: 18))
+
+                if viewModel.options.isEmpty {
+                    Text("No users added")
+                        .foregroundColor(.gray)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .padding(.vertical, 40)
+                } else {
+                    ScrollView {
+                        VStack(spacing: 0) {
+                            ForEach(viewModel.options, id: \.self) { option in
+                                HStack {
+                                    Text(option)
+                                        .font(.custom(poppinsRegular, size: 15))
+
+                                    Spacer()
+                                }
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 12)
+
+                                Divider()
+                            }
+                        }
+                    }
+                    .frame(maxHeight: 200)
+                }
+            }
+            .padding(.horizontal, 20)
+
+            // ✅ Submit / Spin Button
+            Button(action: spinWheel) {
+                Text("Submit")
+                    .font(.custom(poppinsSemiBold, size: 16))
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 52)
+                    .background(
+                        RoundedRectangle(cornerRadius: 32)
+                            .fill(isSpinning || viewModel.options.isEmpty
+                                  ? Color.gray
+                                  : Color.defaultTheme)
+                    )
+            }
+            .disabled(isSpinning || viewModel.options.isEmpty)
+            .padding(.horizontal, 20)
+            .padding(.bottom, 30)
+
+        }
+        .background(Color.backGround.ignoresSafeArea())
+    }
+
+    // MARK: - Actions
+    private func spinWheel() {
+//        guard !viewModel.options.isEmpty else { return }
+//        isSpinning = true
+//        NotificationCenter.default.post(name: NSNotification.Name("SpinWheel"), object: nil)
+    }
+
+    private func onSpinEnd(index: Int) {
+        guard index < viewModel.options.count else { return }
+        let winner = viewModel.options[index]
+        selectedWinner = winner
+        isSpinning = false
+        onWinnerSelected(winner)
+    }
+}

@@ -4,38 +4,54 @@ import SwiftUI
 @available(iOS 14.0, *)
 public struct FortuneWheel: View {
 
-    private var titles: [String], size: CGFloat, onSpinEnd: ((Int) -> ())?, strokeWidth: CGFloat, strokeColor: Color = .defaultTheme.opacity(0.7)
-    private var colors: [Color] = Color.spin_wheel_color, pointerColor: Color = Color(hex: "DA4533")
+    private var titles: [String], size: CGFloat, onSpinEnd: ((Int) -> ())?, strokeWidth: CGFloat, strokeColor: Color = .defaultThemeLight
+    private var colors: [Color], pointerColor: Color = Color(hex: "DA4533")
     @StateObject var viewModel: FortuneWheelViewModel
     
     public init(
-        titles: [String], size: CGFloat, onSpinEnd: ((Int) -> ())?,
-        colors: [Color]? = nil, pointerColor: Color? = nil,
-        strokeWidth: CGFloat = 8, strokeColor: Color? = nil,
-        animDuration: Double = Double(2),
-        animation: Animation? = nil,
-        getWheelItemIndex: (() -> (Int))? = nil
-    ) {
-        self.titles = titles
-        self.size = size
-        self.strokeWidth = strokeWidth
-        
-        if let colors = colors { self.colors = colors }
-        if let pointerColor = pointerColor { self.pointerColor = pointerColor }
-        if let strokeColor = strokeColor { self.strokeColor = strokeColor }
-        
-        let timeCurveAnimation = Animation.timingCurve(0.51, 0.97, 0.56, 0.99, duration: animDuration)
-        _viewModel = StateObject(wrappedValue: FortuneWheelViewModel(
-            titles: titles,
-            animDuration: animDuration,
-            animation: animation ?? timeCurveAnimation,
-            onSpinEnd: onSpinEnd,
-            getWheelItemIndex: getWheelItemIndex
-        ))
-    }
+            titles: [String], size: CGFloat, onSpinEnd: ((Int) -> ())?,
+            colors: [Color]? = nil, pointerColor: Color? = nil,
+            strokeWidth: CGFloat = 8, strokeColor: Color? = nil,
+            animDuration: Double = Double(2),
+            animation: Animation? = nil,
+            getWheelItemIndex: (() -> (Int))? = nil
+        ) {
+            self.titles = titles
+            self.size = size
+            self.strokeWidth = strokeWidth
+            
+            // Keep colors consistent - NO shuffling
+            if let colors = colors {
+                self.colors = colors
+            } else {
+                let baseColors = Color.spin_wheel_color // Don't shuffle
+                var allColors: [Color] = []
+                
+                // Keep adding colors in the same order until we have enough
+                while allColors.count < titles.count {
+                    allColors.append(contentsOf: baseColors)
+                }
+                
+                // Take exactly the number we need
+                self.colors = Array(allColors.prefix(titles.count))
+            }
+            
+            if let pointerColor = pointerColor { self.pointerColor = pointerColor }
+            if let strokeColor = strokeColor { self.strokeColor = strokeColor }
+            
+            let timeCurveAnimation = Animation.timingCurve(0.51, 0.97, 0.56, 0.99, duration: animDuration)
+            _viewModel = StateObject(wrappedValue: FortuneWheelViewModel(
+                titles: titles,
+                animDuration: animDuration,
+                animation: animation ?? timeCurveAnimation,
+                onSpinEnd: onSpinEnd,
+                getWheelItemIndex: getWheelItemIndex
+            ))
+        }
     
     public var body: some View {
         ZStack(alignment: .top) {
+            
             ZStack(alignment: .center) {
                 SpinWheelView(data: (0..<titles.count).map { _ in Double(100/titles.count) },
                               labels: titles, colors: colors)
@@ -47,7 +63,7 @@ public struct FortuneWheel: View {
                     .rotationEffect(.degrees(viewModel.degree))
                 SpinWheelBolt()
             }
-            SpinWheelPointer(pointerColor: pointerColor).offset(x: 0, y: -25)
+            SpinWheelPointer(pointerColor: pointerColor).offset(x: 0, y: 0)
         }
         .onAppear {
             viewModel.setupNotificationObserver()
@@ -62,16 +78,49 @@ public struct FortuneWheel: View {
 @available(iOS 13.0, *)
 extension Color {
     static let spin_wheel_color: [Color] = [
-        Color(hex: "FBE488"),
-        Color(hex: "75AB53"),
-        Color(hex: "D1DC59"),
-        Color(hex: "EC9D42"),
-        Color(hex: "DE6037"),
-        Color(hex: "DA4533"),
-        Color(hex: "992C4D"),
-        Color(hex: "433589"),
-        Color(hex: "4660A8"),
-        Color(hex: "4291C8")
+        Color(hex: "FBE488"),  // Yellow
+        Color(hex: "75AB53"),  // Green
+        Color(hex: "D1DC59"),  // Lime
+        Color(hex: "EC9D42"),  // Orange
+        Color(hex: "DE6037"),  // Dark Orange
+        Color(hex: "DA4533"),  // Red
+        Color(hex: "992C4D"),  // Maroon
+        Color(hex: "433589"),  // Purple
+        Color(hex: "4660A8"),  // Blue
+        Color(hex: "4291C8"),  // Light Blue
+        
+        Color(hex: "FF6B9D"),  // Pink
+        Color(hex: "C44569"),  // Rose
+        Color(hex: "F8B500"),  // Amber
+        Color(hex: "00D2FF"),  // Cyan
+        Color(hex: "3742FA"),  // Indigo
+        Color(hex: "2ED573"),  // Mint
+        Color(hex: "FF4757"),  // Coral
+        Color(hex: "5F27CD"),  // Violet
+        Color(hex: "00D8D6"),  // Turquoise
+        Color(hex: "FF6348"),  // Tomato
+        
+        Color(hex: "A29BFE"),  // Lavender
+        Color(hex: "FD79A8"),  // Carnation
+        Color(hex: "FDCB6E"),  // Mustard
+        Color(hex: "6C5CE7"),  // Wisteria
+        Color(hex: "00B894"),  // Emerald
+        Color(hex: "E17055"),  // Terracotta
+        Color(hex: "0984E3"),  // Sky Blue
+        Color(hex: "D63031"),  // Crimson
+        Color(hex: "FDCB6E"),  // Gold
+        Color(hex: "55EFC4"),  // Aqua
+        
+        Color(hex: "A55EEA"),  // Orchid
+        Color(hex: "F8A5C2"),  // Blush
+        Color(hex: "63CDDA"),  // Ocean
+        Color(hex: "EA8685"),  // Salmon
+        Color(hex: "78E08F"),  // Jade
+        Color(hex: "F19066"),  // Peach
+        Color(hex: "546DE5"),  // Royal Blue
+        Color(hex: "E15F41"),  // Brick
+        Color(hex: "C44569"),  // Berry
+        Color(hex: "574B90"),  // Eggplant
     ]
     
     init(hex: String, alpha: Double = 1) {
@@ -231,12 +280,61 @@ struct SpinWheelView: View {
                 ForEach(0..<data.count, id: \.self) { index in
                     SpinWheelCell(startAngle: startAngle(for: index), endAngle: endAngle(for: index))
                         .fill(colors[index % colors.count])
-                    Text(labels[index]).foregroundColor(Color.white).fontWeight(.bold)
-                        .offset(viewOffset(for: index, in: geo.size)).zIndex(1)
+                    
+                    Text(labels[index])
+                        .foregroundColor(Color.white)
+                        .fontWeight(.bold)
+                        .font(.custom(poppinsRegular, size: calculateFontSize(for: geo.size, labelCount: labels.count, text: labels[index])))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.5)
+                        .multilineTextAlignment(.center)
+                        .frame(width: calculateLabelWidth(for: geo.size))
+                        .offset(viewOffset(for: index, in: geo.size))
+                        .zIndex(1)
+                    
                     
                 }
             }
         }
+        .background(Color.clear)
+    }
+    private func calculateFontSize(for size: CGSize, labelCount: Int, text: String) -> CGFloat {
+        let wheelSize = min(size.width, size.height)
+        let baseSize: CGFloat
+        
+        // Adjust base size according to number of items
+        switch labelCount {
+        case 1...3:
+            baseSize = wheelSize * 0.08  // Larger font for few items
+        case 4...6:
+            baseSize = wheelSize * 0.06  // Medium font
+        case 7...10:
+            baseSize = wheelSize * 0.05  // Smaller font
+        default:
+            baseSize = wheelSize * 0.04  // Very small for many items
+        }
+        
+        // Further adjust based on text length
+        let textLength = CGFloat(text.count)
+        if textLength > 15 {
+            return baseSize * 0.7
+        } else if textLength > 10 {
+            return baseSize * 0.85
+        }
+        
+        return baseSize
+    }
+    
+    // Calculate available width for label based on wheel segment
+    private func calculateLabelWidth(for size: CGSize) -> CGFloat {
+        let wheelSize = min(size.width, size.height)
+        let radius = wheelSize / 3
+        
+        // Width is proportional to the radius and number of segments
+        let segmentAngle = 2 * .pi / Double(labels.count)
+        let availableWidth = radius * CGFloat(sin(segmentAngle / 2)) * 1.5
+        
+        return max(availableWidth, 40) // Minimum width of 40
     }
     
     private func startAngle(for index: Int) -> Double {
@@ -258,11 +356,16 @@ struct SpinWheelView: View {
     }
     
     private func viewOffset(for index: Int, in size: CGSize) -> CGSize {
-        let radius = min(size.width, size.height) / 3
+        let wheelRadius = min(size.width, size.height) / 2
+        let textRadius = wheelRadius * 0.65 // Position text at 65% of wheel radius
+        
         let dataRatio = (2 * data[..<index].reduce(0, +) + data[index]) / (2 * data.reduce(0, +))
         let angle = CGFloat(sliceOffset + 2 * .pi * dataRatio)
-        return CGSize(width: radius * cos(angle), height: radius * sin(angle))
+        
+        return CGSize(width: textRadius * cos(angle), height: textRadius * sin(angle))
     }
+    
+    
 }
 
 @available(macOS 10.15, *)

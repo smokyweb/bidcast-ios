@@ -95,6 +95,7 @@ struct RehearsalScreen: View {
     
     
     @State var navigateToSeller = false
+    @State var showSpin = false
     
     @State private var showLivePollScreen: Bool = false
     
@@ -167,6 +168,9 @@ struct RehearsalScreen: View {
     @State private var showFloatingChat: Bool = false
     @State private var selectedChatMessage: ChatMessage?
     
+    @State private var showWinnerOnParent = false
+    @State private var randomWinner: String = ""
+    @State private var randomWinnerImage: String = ""
     
     var body: some View {
         GeometryReader { geometry in
@@ -242,12 +246,12 @@ struct RehearsalScreen: View {
                         .padding(.bottom, 20)
                         HStack {
                             Button(action: {
-                                if showNotes.isEmpty {
-                                    showNotesEditorSheet = true  // Open editor if empty
-                                } else {
+//                                if showNotes.isEmpty {
+//                                    showNotesEditorSheet = true  // Open editor if empty
+//                                } else {
                                     showNotesSheet = true  // Show existing notes
                                     isEditingNotes = false
-                                }
+//                                }
                                 
                             }) {
                                 Text("Show\nNotes")
@@ -722,11 +726,20 @@ struct RehearsalScreen: View {
 //            }
 //        )
         .sheet(isPresented: $navigateToRandomizer) {
-            RandomizerView()
-                .presentationDetents([.fraction(0.90)])
-                .presentationCornerRadius(25)             
+            RandomizerView(didTapSpin : { value in
+                showSpin = value
+            },onWinnerSelected: { winner in
+                randomWinner = winner
+                randomWinnerImage = "user"
+                navigateToRandomizer = false
+                showWinnerOnParent = true
+                showSpin = false
+            })
+            .presentationDetents([.fraction(showSpin ? 0.90 : 0.55)])
+                .presentationCornerRadius(25)
                 .presentationDragIndicator(.hidden)
-                .interactiveDismissDisabled(true)
+                .presentationBackground(Color.black.opacity(0.1))
+//                .interactiveDismissDisabled()
         }
        
  
@@ -783,15 +796,10 @@ struct RehearsalScreen: View {
                 .presentationDragIndicator(.hidden)
             }
         
-        .bottomSheet(isPresented: $showNotesSheet,
-                     height: screenHeight * 0.80,
-                     topBarCornerRadius: 25,
-                     showTopIndicator: false,
-                     onDismiss: {
-            showNotesSheet = false
-        }) {
+        .sheet(isPresented: $showNotesSheet) {
             ShowNotesSheet(
-                noteText: $showNotes,
+                noteText:$showNotes ,
+                forHost : .constant(true),
                 onPost: { note in
                     showNotes += note
                     print("Posted note: \(note)")
@@ -802,6 +810,9 @@ struct RehearsalScreen: View {
                     showNotesSheet = false
                 }
             )
+            .presentationDetents([.fraction(0.80)])
+            .presentationCornerRadius(25)
+            .presentationDragIndicator(.hidden)
         }
         .bottomSheet(
             isPresented: $showShopSheet,
@@ -858,44 +869,6 @@ struct RehearsalScreen: View {
             .presentationCornerRadius(25)              // ✅ Rounded top corners
             .presentationDragIndicator(.hidden)        // optional
         }
-//        .bottomSheet(
-//            isPresented: $showShopSheet,
-//            height: sheetHeight, // Adjust as needed
-//            topBarCornerRadius: 20,
-//            contentBackgroundColor: Color(.systemGroupedBackground),
-//            topBarBackgroundColor: Color(.systemGroupedBackground),
-//            showTopIndicator: false,
-//            onDismiss: {
-//                showShopSheet = false
-//            },
-//            content: {
-//                if isLive{
-//                    ShopBottomSheetView(
-//                        isPresented: $showShopSheet,
-//                        productData: $productData,
-//                        productShowType: .shop,
-//                        onAddProduct: { selectedID in
-////                            showShopSheet = false
-////                            if !selectedID.isEmpty {
-////                                print("product ID is :\(selectedID)")
-////                                print("Live Room ID is :\(self.roomId)")
-////                                setProductAsCurrent(selectedID: selectedID)
-////                                fetchLatestProductList()
-////                            }
-//                        },
-//                        initialSelectedProductId: initialSelectedProductId
-//                    )
-//                    .onAppear {
-//                        fetchLatestProductList()
-//                    }
-//                }else{
-//                    ShopBottomSheetView(
-//                        isPresented: $showShopSheet,
-//                        productData: $productData,
-//                        productShowType: .shop
-//                    )
-//                }
-//            })
         
         .bottomSheet(
             isPresented: $showSellSheet,
@@ -1136,6 +1109,9 @@ struct RehearsalScreen: View {
                 }
             }
         )
+        .overlay(
+            winnerOverlay
+        )
       
         
         
@@ -1231,6 +1207,19 @@ struct RehearsalScreen: View {
         }
     }
     
+    @ViewBuilder
+    private var winnerOverlay: some View {
+        if showWinnerOnParent {
+            TikTokStyleWinnerView(
+                winner: randomWinner,
+                winnerImage: randomWinnerImage,
+                isShowing: $showWinnerOnParent
+            )
+            .transition(.opacity)
+            .zIndex(1000)
+        }
+    }
+
     private func handleOpenChat(with chat: ChatMessage) {
         print("📱 Opening chat with: \(chat.users.receiverName)")
         

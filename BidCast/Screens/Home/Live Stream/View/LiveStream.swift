@@ -219,6 +219,14 @@ struct LiveStream: View {
     
     @State var showItemDetailSheet = false
     
+    @State var showNotes: String = ""
+    @State var showNotesSheet = false
+    
+    @State private var showWinnerOnParent = false
+    @State private var randomWinner: String = ""
+    @State private var randomWinnerImage: String = ""
+    @State private var navigateToRandomizer : Bool = false
+    
     @State private var auctionStartedRooms: Set<String> = []
     var isAuctionStartedForCurrentRoom: Bool {
         auctionStartedRooms.contains(currentRoomID)
@@ -347,6 +355,7 @@ struct LiveStream: View {
             
             VStack(alignment: .leading) {
                 headerView
+                notesAndFreebieOverlay
                 Spacer()
                 bottomContentStack
             }
@@ -354,7 +363,59 @@ struct LiveStream: View {
             sideMenuView(geometry: geometry)
         }
     }
-    
+    @ViewBuilder
+    private var notesAndFreebieOverlay: some View {
+        HStack(alignment: .top) {
+            
+            // MARK: - Show Notes (Leading)
+            Button(action: {
+                showNotesSheet = true
+//                isEditingNotes = false
+            }) {
+                Text("Show\nNotes")
+                    .font(.custom(poppinsSemiBold, size: 13))
+                    .foregroundColor(.black)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 10)
+                    .background(Color.white)
+                    .cornerRadius(10)
+                    .shadow(color: .black.opacity(0.15), radius: 4, x: 0, y: 2)
+            }
+            
+            Spacer()
+            
+            // MARK: - Freebie (Trailing)
+            Button(action: {
+               navigateToRandomizer = true
+            }) {
+                HStack(spacing: 10) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Freebie")
+                            .font(.custom(poppinsSemiBold, size: 13))
+                            .foregroundColor(.white)
+                        
+                        HStack(spacing: 4) {
+                            Image(systemName: "gift.fill")
+                                .font(.system(size: 12))
+                            Text("0 Entries")
+                                .font(.custom(poppinsRegular, size: 11))
+                        }
+                        .foregroundColor(.white.opacity(0.85))
+                    }
+                }
+                .padding(.horizontal, 14)
+                .padding(.vertical, 10)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(Color.black.opacity(0.6))
+                )
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.top, 10)
+    }
+
     // MARK: - Video Player View
     @ViewBuilder
     private var videoPlayerView: some View {
@@ -1206,9 +1267,61 @@ struct LiveStream: View {
             ) {
                 mainSheetContent
             }
+            .sheet(isPresented: $showNotesSheet) {
+                showNotesSheetContent
+                    .presentationDetents([.fraction(0.80)])
+                    .presentationCornerRadius(25)
+                    .presentationDragIndicator(.hidden)
+            }
+            .sheet(isPresented: $navigateToRandomizer) {
+                RandomizerSheet
+               
+                .presentationDetents([.fraction(0.55)])
+                    .presentationCornerRadius(25)
+                    .presentationDragIndicator(.hidden)
+                    .presentationBackground(Color.black.opacity(0.1))
+    //                .interactiveDismissDisabled()
+            }
+            .overlay(
+                winnerOverlay
+            )
     }
     
     // MARK: - Sheet Content Views
+    
+    @ViewBuilder
+    private var showNotesSheetContent: some View {
+        ShowNotesSheet(
+            noteText: $showNotes,
+            forHost : .constant(false),
+            onPost: { note in
+//                showNotes += note
+                showNotesSheet = false
+            },
+            didTapCancel: {
+                showNotesSheet = false
+            }
+        )
+    }
+    
+    
+    @ViewBuilder
+    private var RandomizerSheet: some View {
+        RandomizerLiveView()
+            .presentationBackground(Color.black.opacity(0.1))
+    }
+    @ViewBuilder
+    private var winnerOverlay: some View {
+        if showWinnerOnParent {
+            TikTokStyleWinnerView(
+                winner: randomWinner,
+                winnerImage: randomWinnerImage,
+                isShowing: $showWinnerOnParent
+            )
+            .transition(.opacity)
+            .zIndex(1000)
+        }
+    }
     
     @ViewBuilder
     private var errorSheetContent: some View {

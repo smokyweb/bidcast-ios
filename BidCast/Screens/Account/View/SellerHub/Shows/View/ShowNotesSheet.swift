@@ -13,6 +13,17 @@ struct ShowNotesSheet: View {
     @Binding var noteText: String 
     @FocusState private var isTextEditorFocused: Bool
     
+    @State var attributedText = NSAttributedString(string: "")
+    @State private var isBold = false
+    @State private var isItalic = false
+    @State private var isUnderline = false
+    @State private var isStrikethrough = false
+    @State private var isBullet = false
+    @State private var isNumbered = false
+    
+    @Binding var forHost : Bool
+    
+    @State private var textViewRef: UITextView?
     var onPost: ((String) -> Void)?
     var didTapCancel : () -> () = { }
     var body: some View {
@@ -45,66 +56,139 @@ struct ShowNotesSheet: View {
             Divider()
             
             // Text Editor
-            TextEditor(text: $noteText)
-                .font(.custom(poppinsRegular, size: 15))
-                .foregroundColor(.primary)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 12)
-                .focused($isTextEditorFocused)
-                .scrollContentBackground(.hidden)
-                .background(Color(.systemBackground))
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 12) {
+                    formattingButton("B", isBold) {
+                        isBold.toggle()
+                        textViewRef?.applyCurrentStylesImmediately()
+                    }
+                    .bold()
+                    formattingButton("I", isItalic) {
+                        isItalic.toggle()
+                        textViewRef?.applyCurrentStylesImmediately()
+                    }
+                    .italic()
+                    formattingButton("U", isUnderline) {
+                        isUnderline.toggle()
+                        textViewRef?.applyCurrentStylesImmediately()
+                    }
+                    formattingButton("S", isStrikethrough) {
+                        isStrikethrough.toggle()
+                        textViewRef?.applyCurrentStylesImmediately()
+                    }
+                    
+                    Divider().frame(height: 30)
+                    
+                    formattingButton("•", isBullet) {
+                        toggleBullet()
+                        textViewRef?.applyCurrentStylesImmediately()
+                    }
+                    formattingButton("1.", isNumbered) {
+                        toggleNumbered()
+                        textViewRef?.applyCurrentStylesImmediately()
+                    }
+                }
+                .padding(.horizontal)
+                .padding(.vertical, 6)
+                .background(Color(.systemGray6))
+                .cornerRadius(10)
+                .padding(.horizontal)
+            }
+            .frame(height: 50)
+            
+            Divider()
+            
+            // Editor
+            RichTextView(
+                attributedText: $attributedText,
+                isBold: $isBold,
+                isItalic: $isItalic,
+                isUnderline: $isUnderline,
+                isStrikethrough: $isStrikethrough,
+                isBullet: $isBullet,
+                isNumbered: $isNumbered,
+                textViewRef: $textViewRef
+            )
+            .padding()
+            .background(Color.white)
             
             Spacer()
             
             // Post Button
-            Button(action: {
-                if !noteText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                    onPost?(noteText)
-                }
-            }) {
-                Text("Post")
-                    .font(.custom(poppinsSemiBold, size: 16))
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 56)
-                    .background(
-                        RoundedRectangle(cornerRadius: 28)
-                            .fill(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [
-                                        noteText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            if forHost{
+                Button(role: nil, action: {
+                    onPost?(attributedText.string.trimmingCharacters(in: .whitespacesAndNewlines))
+                }) {
+                    Text("Post")
+                        .font(.custom(poppinsSemiBold, size: 16))
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 56)
+                        .background(
+                            RoundedRectangle(cornerRadius: 28)
+                                .fill(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [
+                                            attributedText.plainTextTrimmed.isEmpty
                                             ? Color.gray
                                             : Color.defaultTheme,
-                                        noteText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                                            attributedText.plainTextTrimmed.isEmpty
                                             ? Color.gray.opacity(0.8)
-                                            : Color.defaultTheme.opacity(0.85)
-                                    ]),
-                                    startPoint: .leading,
-                                    endPoint: .trailing
+                                            : Color.defaultThemeLight
+                                        ]),
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
                                 )
-                            )
-                    )
-                    .shadow(
-                        color: noteText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                        )
+                        .shadow(
+                            color: attributedText.plainTextTrimmed.isEmpty
                             ? Color.clear
-                            : Color.defaultTheme.opacity(0.3),
-                        radius: 12,
-                        x: 0,
-                        y: 4
-                    )
+                            : Color.defaultThemeLight,
+                            radius: 12,
+                            x: 0,
+                            y: 4
+                        )
+                }
+                .disabled(attributedText.plainTextTrimmed.isEmpty)
+                .padding(.horizontal, 20)
+                .padding(.bottom, 32)
+                .padding(.top, 16)
             }
-            .disabled(noteText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-            .padding(.horizontal, 20)
-            .padding(.bottom, 32)
-            .padding(.top, 16)
         }
         .background(Color(.systemBackground))
         .onAppear {
             // Auto-focus text editor when sheet appears
+            attributedText = NSAttributedString(string: noteText)
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 isTextEditorFocused = false
             }
         }
+    }
+    private func formattingButton(_ title: String, _ active: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Text(title)
+                .frame(width: 36, height: 36)
+                .background(active ? Color.defaultTheme : Color.clear)
+                .foregroundColor(active ? .white : .black)
+                .cornerRadius(6)
+                .animation(.easeInOut, value: active)
+        }
+    }
+
+    private func toggleBullet() {
+        isBullet.toggle()
+        if isBullet { isNumbered = false }
+    }
+
+    private func toggleNumbered() {
+        isNumbered.toggle()
+        if isNumbered { isBullet = false }
+    }
+}
+extension NSAttributedString {
+    var plainTextTrimmed: String {
+        string.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }
 
