@@ -6,6 +6,7 @@ public struct FortuneWheel: View {
 
     private var titles: [String], size: CGFloat, onSpinEnd: ((Int) -> ())?, strokeWidth: CGFloat, strokeColor: Color = .defaultThemeLight
     private var colors: [Color], pointerColor: Color = Color(hex: "DA4533")
+    private var wheelId: String // 🆕 Add wheelId property
     @StateObject var viewModel: FortuneWheelViewModel
     
     public init(
@@ -14,11 +15,13 @@ public struct FortuneWheel: View {
             strokeWidth: CGFloat = 8, strokeColor: Color? = nil,
             animDuration: Double = Double(2),
             animation: Animation? = nil,
-            getWheelItemIndex: (() -> (Int))? = nil
+            getWheelItemIndex: (() -> (Int))? = nil,
+            wheelId: String = "defaultWheel" // 🆕 Add wheelId parameter with default
         ) {
             self.titles = titles
             self.size = size
             self.strokeWidth = strokeWidth
+            self.wheelId = wheelId // 🆕 Store wheelId
             
             // Keep colors consistent - NO shuffling
             if let colors = colors {
@@ -45,7 +48,8 @@ public struct FortuneWheel: View {
                 animDuration: animDuration,
                 animation: animation ?? timeCurveAnimation,
                 onSpinEnd: onSpinEnd,
-                getWheelItemIndex: getWheelItemIndex
+                getWheelItemIndex: getWheelItemIndex,
+                wheelId: wheelId // 🆕 Pass wheelId to ViewModel
             ))
         }
     
@@ -143,6 +147,7 @@ extension Color {
 class FortuneWheelViewModel: ObservableObject {
     
     private var titles: [String]
+    private var wheelId: String // 🆕 Store wheelId
     
     @Published var degree = 0.0
     private let animDuration: Double
@@ -154,13 +159,15 @@ class FortuneWheelViewModel: ObservableObject {
     
     init(
         titles: [String], animDuration: Double, animation: Animation,
-        onSpinEnd: ((Int) -> ())?, getWheelItemIndex: (() -> (Int))?
+        onSpinEnd: ((Int) -> ())?, getWheelItemIndex: (() -> (Int))?,
+        wheelId: String = "defaultWheel" // 🆕 Add wheelId parameter
     ) {
         self.titles = titles
         self.animDuration = animDuration
         self.animation = animation
         self.onSpinEnd = onSpinEnd
         self.getWheelItemIndex = getWheelItemIndex
+        self.wheelId = wheelId // 🆕 Store wheelId
     }
     
     func setupNotificationObserver() {
@@ -168,8 +175,16 @@ class FortuneWheelViewModel: ObservableObject {
             forName: NSNotification.Name("SpinWheel"),
             object: nil,
             queue: .main
-        ) { [weak self] _ in
-            self?.spinWheel()
+        ) { [weak self] notification in
+            // 🆕 Check if notification is for this specific wheel
+            if let notificationWheelId = notification.userInfo?["wheelId"] as? String,
+               let selfWheelId = self?.wheelId,
+               notificationWheelId == selfWheelId {
+                print("🎡 Spinning wheel: \(selfWheelId)")
+                self?.spinWheel()
+            } else {
+                print("🚫 Ignoring spin for wheel: \(self?.wheelId ?? "unknown")")
+            }
         }
     }
     
@@ -372,7 +387,7 @@ struct SpinWheelView: View {
 @available(iOS 13.0, *)
 struct SpinWheelCell: Shape {
     
-    let startAngle: Double, endAngle: Double    
+    let startAngle: Double, endAngle: Double
     
     func path(in rect: CGRect) -> Path {
         var path = Path()

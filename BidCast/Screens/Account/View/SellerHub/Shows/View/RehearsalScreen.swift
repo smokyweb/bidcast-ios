@@ -98,7 +98,7 @@ struct RehearsalScreen: View {
     @State var showSpin = false
     
     @State private var showLivePollScreen: Bool = false
-    
+    @State var wheelTitles = [FreebieUser]()
     @State var hasWon = false
     
     @State var viewwerCount = 0
@@ -172,504 +172,516 @@ struct RehearsalScreen: View {
     @State private var randomWinner: String = ""
     @State private var randomWinnerImage: String = ""
     
+    @State private var showFreeBie : Bool = false
+    
+    @State private var selectedFreebie = ProductDataModel1()
+    
+    @StateObject private var viewModelFreebie = RandomizerViewModel()
     var body: some View {
         GeometryReader { geometry in
             ZStack {
                 
-                if let _ = agoraManager.remoteUserId {
-                    VideoContainerView(uiView: agoraManager.remoteVideoView)
-                        .frame(width: geometry.size.width, height: geometry.size.height)
-                        .ignoresSafeArea()
-                        .background(Color.black)
-                } else {
-                    VideoContainerView(uiView: agoraManager.localVideoView)
-                        .frame(width: geometry.size.width, height: geometry.size.height)
-                        .ignoresSafeArea()
-                        .background(Color.black)
-                }
+//                if let _ = agoraManager.remoteUserId {
+//                    VideoContainerView(uiView: agoraManager.remoteVideoView)
+//                        .frame(width: geometry.size.width, height: geometry.size.height)
+//                        .ignoresSafeArea()
+//                        .background(Color.black)
+//                } else {
+//                    VideoContainerView(uiView: agoraManager.localVideoView)
+//                        .frame(width: geometry.size.width, height: geometry.size.height)
+//                        .ignoresSafeArea()
+//                        .background(Color.black)
+//                }
                 
-                //                MCVideoSwiftUIView(renderer: .accelerated(castManager.renderer as! MCAcceleratedVideoRenderer),scalingMode: .resize,mirror: castManager.isFrontCamera)
-                //                    .frame(width: geometry.size.width, height: geometry.size.height)
-                //                    .ignoresSafeArea()
-                //                    .background(Color.black)
+                videoLayer(geometry)
+                topHeader
+                readyAndWelcomeOverlays
+                sideControls(geometry)
+                chatAndBottomControls
+                navigationLinks
+                floatingOverlays
                 
-                VStack {
-                    VStack {
-                        HStack(spacing: 8) {
-                            CustomProfileImage(url: UserDefaults.profileURL,isCircular: true)
-                            
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(UserDefaults.userName.capitalizingFirstLetter())
-                                    .foregroundColor(.white)
-                                    .font(.custom(poppinsSemiBold, size: 14.0))
-                                
-                                Text("Show Time \(socketManager.showTime)")
-                                    .foregroundColor(.white)
-                                    .font(.custom(poppinsRegular, size: 11.0))
-                            }
-                            
-                            Spacer()
-                            HStack(spacing: 4) {
-                                Image(systemName: "eye.fill")
-                                    .foregroundColor(.black)
-                                Text("\(socketManager.viewerCount)")
-                                    .foregroundColor(.black)
-                                    .font(.custom(poppinsSemiBold, size: 13.0))
-                            }
-                            Text(isLive ? "Live" : "Rehearsal")
-                                .font(.custom(poppinsRegular, size: 12.0))
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 4)
-                                .background(Color.defaultTheme)
-                                .cornerRadius(4)
-                                .foregroundColor(.white)
-                            
-                            
-                            Button(action: {
-                                if !isLive{
-                                    self.presentationMode.wrappedValue.dismiss()
-                                }else{
-                                    currentBottomSheet = .endShow
-                                    self.showSellSheet = true
-                                }
-                                //
-                                
-                            }) {
-                                Image(.cancel)
-                                    .resizable()
-                                    .renderingMode(.template)
-                                    .foregroundColor(.danger)
-                                    .frame(width: 32,height: 32)
-                            }
-                        }
-                        .padding(.horizontal)
-                        .padding(.bottom, 20)
-                        HStack {
-                            Button(action: {
-//                                if showNotes.isEmpty {
-//                                    showNotesEditorSheet = true  // Open editor if empty
-//                                } else {
-                                    showNotesSheet = true  // Show existing notes
-                                    isEditingNotes = false
+//                readyAndWelcomeOverlays
+//                sideControls(geometry)
+//
+                
+//                VStack {
+//                    VStack {
+//                        HStack(spacing: 8) {
+//                            CustomProfileImage(url: UserDefaults.profileURL,isCircular: true)
+//                            
+//                            VStack(alignment: .leading, spacing: 2) {
+//                                Text(UserDefaults.userName.capitalizingFirstLetter())
+//                                    .foregroundColor(.white)
+//                                    .font(.custom(poppinsSemiBold, size: 14.0))
+//                                
+//                                Text("Show Time \(socketManager.showTime)")
+//                                    .foregroundColor(.white)
+//                                    .font(.custom(poppinsRegular, size: 11.0))
+//                            }
+//                            
+//                            Spacer()
+//                            HStack(spacing: 4) {
+//                                Image(systemName: "eye.fill")
+//                                    .foregroundColor(.black)
+//                                Text("\(socketManager.viewerCount)")
+//                                    .foregroundColor(.black)
+//                                    .font(.custom(poppinsSemiBold, size: 13.0))
+//                            }
+//                            Text(isLive ? "Live" : "Rehearsal")
+//                                .font(.custom(poppinsRegular, size: 12.0))
+//                                .padding(.horizontal, 8)
+//                                .padding(.vertical, 4)
+//                                .background(Color.defaultTheme)
+//                                .cornerRadius(4)
+//                                .foregroundColor(.white)
+//                            
+//                            
+//                            Button(action: {
+//                                if !isLive{
+//                                    self.presentationMode.wrappedValue.dismiss()
+//                                }else{
+//                                    currentBottomSheet = .endShow
+//                                    self.showSellSheet = true
 //                                }
-                                
-                            }) {
-                                Text("Show\nNotes")
-                                    .foregroundColor(.black)
-                                    .font(.custom(poppinsSemiBold, size: 13.0))
-                                    .multilineTextAlignment(.center)
-                                    .padding(.horizontal, 20)
-                                    .padding(.vertical, 12)
-                                    .background(Color.white)
-                                    .cornerRadius(8)
-                            }
-                            .padding(16)
-                            
-                            Spacer()
-                        }
-                                        .padding(.top, 8)
-                                        
-                                        Spacer()
-                    }
-                    .padding(.top, 40)
-                    
-                    Spacer()
-                }
+//                                //
+//                                
+//                            }) {
+//                                Image(.cancel)
+//                                    .resizable()
+//                                    .renderingMode(.template)
+//                                    .foregroundColor(.danger)
+//                                    .frame(width: 32,height: 32)
+//                            }
+//                        }
+//                        .padding(.horizontal)
+//                        .padding(.bottom, 20)
+//                        HStack {
+//                            Button(action: {
+////                                if showNotes.isEmpty {
+////                                    showNotesEditorSheet = true  // Open editor if empty
+////                                } else {
+//                                    showNotesSheet = true  // Show existing notes
+//                                    isEditingNotes = false
+////                                }
+//                                
+//                            }) {
+//                                Text("Show\nNotes")
+//                                    .foregroundColor(.black)
+//                                    .font(.custom(poppinsSemiBold, size: 13.0))
+//                                    .multilineTextAlignment(.center)
+//                                    .padding(.horizontal, 20)
+//                                    .padding(.vertical, 12)
+//                                    .background(Color.white)
+//                                    .cornerRadius(8)
+//                            }
+//                            .padding(16)
+//                            
+//                            Spacer()
+//                        }
+//                                        .padding(.top, 8)
+//                                        
+//                                        Spacer()
+//                    }
+//                    .padding(.top, 40)
+//                    
+//                    Spacer()
+//                }
                 
                 // 🔳 Ready Modal
-                if showReadyModal {
-                    Color.black.opacity(0.4).edgesIgnoringSafeArea(.all)
-                    VStack(spacing: 12) {
-                        Text("Show Starts at 4:00 PM")
-                            .foregroundColor(.white)
-                            .font(.caption)
-                        
-                        Text("Ready to Begin?")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                        
-                        Button(action: {
-                            showReadyModal = false
-                            showWelcomeDialog = true
-                        }) {
-                            Text("Share Show")
-                                .foregroundColor(.white)
-                                .padding()
-                                .frame(maxWidth: .infinity)
-                                .background(Color.defaultTheme)
-                                .cornerRadius(8)
-                        }
-                        .padding(.horizontal)
-                    }
-                    .padding()
-                    .background(Color.gray.opacity(0.95))
-                    .cornerRadius(12)
-                    .frame(width: 300)
-                }
+//                if showReadyModal {
+//                    Color.black.opacity(0.4).edgesIgnoringSafeArea(.all)
+//                    VStack(spacing: 12) {
+//                        Text("Show Starts at 4:00 PM")
+//                            .foregroundColor(.white)
+//                            .font(.caption)
+//                        
+//                        Text("Ready to Begin?")
+//                            .font(.headline)
+//                            .foregroundColor(.white)
+//                        
+//                        Button(action: {
+//                            showReadyModal = false
+//                            showWelcomeDialog = true
+//                        }) {
+//                            Text("Share Show")
+//                                .foregroundColor(.white)
+//                                .padding()
+//                                .frame(maxWidth: .infinity)
+//                                .background(Color.defaultTheme)
+//                                .cornerRadius(8)
+//                        }
+//                        .padding(.horizontal)
+//                    }
+//                    .padding()
+//                    .background(Color.gray.opacity(0.95))
+//                    .cornerRadius(12)
+//                    .frame(width: 300)
+//                }
                 
                 // ✅ Welcome Dialog
-                if showWelcomeDialog {
-                    Color.black.opacity(0.4).edgesIgnoringSafeArea(.all)
-                    VStack(spacing: 16) {
-                        Image(systemName: "checkmark.circle.fill")
-                            .resizable()
-                            .frame(width: 50, height: 50)
-                            .foregroundColor(.white)
-                        
-                        Text("Welcome to your Auction")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                        
-                        Text("You may edit and begin your auction from here")
-                            .font(.subheadline)
-                            .foregroundColor(.white)
-                            .multilineTextAlignment(.center)
-                        
-                        Button(action: {
-                            showWelcomeDialog = false
-                            if UserDefaults.sellerVerafied == "verified"{
-                                showButton = true
-                                showPreLiveControls = true
-                            }else{
-                                alertType = .sheetType(
-                                    icon: .info,
-                                    title: "Become a Verified Seller!",
-                                    message: "Before you interact with live shows.you need to become a verified seller.",
-                                    primaryBtnText: "OK",
-                                    secondaryBtnText: "",
-                                    buttonWidth: screenWidth - 60,
-                                    contentSize: 12.0
-                                )
-                                withAnimation(.snappy){
-                                    showSellerSheet = true
-                                }
-                            }
-                        }) {
-                            Text("Ok")
-                                .foregroundColor(.white)
-                                .padding()
-                                .frame(maxWidth: .infinity)
-                                .background(Color.defaultTheme)
-                                .cornerRadius(8)
-                        }
-                        .padding(.horizontal)
-                    }
-                    .padding()
-                    .background(Color.gray.opacity(0.95))
-                    .cornerRadius(12)
-                }
+//                if showWelcomeDialog {
+//                    Color.black.opacity(0.4).edgesIgnoringSafeArea(.all)
+//                    VStack(spacing: 16) {
+//                        Image(systemName: "checkmark.circle.fill")
+//                            .resizable()
+//                            .frame(width: 50, height: 50)
+//                            .foregroundColor(.white)
+//                        
+//                        Text("Welcome to your Auction")
+//                            .font(.headline)
+//                            .foregroundColor(.white)
+//                        
+//                        Text("You may edit and begin your auction from here")
+//                            .font(.subheadline)
+//                            .foregroundColor(.white)
+//                            .multilineTextAlignment(.center)
+//                        
+//                        Button(action: {
+//                            showWelcomeDialog = false
+//                            if UserDefaults.sellerVerafied == "verified"{
+//                                showButton = true
+//                                showPreLiveControls = true
+//                            }else{
+//                                alertType = .sheetType(
+//                                    icon: .info,
+//                                    title: "Become a Verified Seller!",
+//                                    message: "Before you interact with live shows.you need to become a verified seller.",
+//                                    primaryBtnText: "OK",
+//                                    secondaryBtnText: "",
+//                                    buttonWidth: screenWidth - 60,
+//                                    contentSize: 12.0
+//                                )
+//                                withAnimation(.snappy){
+//                                    showSellerSheet = true
+//                                }
+//                            }
+//                        }) {
+//                            Text("Ok")
+//                                .foregroundColor(.white)
+//                                .padding()
+//                                .frame(maxWidth: .infinity)
+//                                .background(Color.defaultTheme)
+//                                .cornerRadius(8)
+//                        }
+//                        .padding(.horizontal)
+//                    }
+//                    .padding()
+//                    .background(Color.gray.opacity(0.95))
+//                    .cornerRadius(12)
+//                }
                 // 🎛️ Dynamic Side Controls
-                VStack {
-                    Spacer()
-                    VStack(spacing: 4) {
-                        if showLiveControls {
-                            SideButton(label: "More", icon: .more,action: .more)
-                            SideButton(label: "Promote", icon: .rPromote ,action: .promote)
-                            SideButton(label: "Clip", icon: .clip,action: .clip)
-                            SideButton(label: "Share", icon: .sharee,action: .share)
-                            SideButton(label: "Switch", icon: .camera,action: .switchView)
-                            VStack {
-                                if hasAuctionStarted{
-                                    if let product = currentProduct,
-                                       let img = product.images?.first {
-                                        StackedImageView(imageURL: img, totalCount: productData.count) {
-                                            print("productStackTapped")
-                                            showShopSheet = true
-                                            //                                        navigateToProductList = true
-                                        }
-                                    }
-                                }else{
-                                    StackedImageView(imageURL: productData.first?.images?.first ?? "", totalCount: productData.count) {
-                                        print("productStackTapped")
-                                        showShopSheet = true
-                                    }
-                                }
-                            }
-                        }
-                        
-                        if showPreLiveControls {
-                            Spacer()
-                            Button(action: {
-                                isMicOn.toggle()
-                                agoraManager.toggleAudioMute()
-                            }) {
-                                VStack {
-                                    Image(systemName: isMicOn ? "mic.fill" : "mic.slash.fill")
-                                        .renderingMode(.template)
-                                        .resizable()
-                                        .scaledToFit()
-                                        .fontWeight(.heavy)
-                                        .font(.custom(poppinsExtraBold, size: 22.0))
-                                        .frame(width: 25, height: 24)
-                                        .foregroundColor(.white)
-                                    Text(isMicOn ? "Mic On" : "Mic Off")
-                                        .font(.custom(poppinsRegular, size: 8.0))
-                                        .foregroundColor(.white)
-                                }
-                                .padding()
-                                
-                                
-                            }
-                            
-                            Button(action: {
-                                isUsingFrontCamera.toggle()
-                                agoraManager.switchCamera()
-                            }) {
-                                VStack {
-                                    Image(.camera)
-                                        .renderingMode(.template)
-                                        .resizable()
-                                        .scaledToFit()
-                                        .fontWeight(.heavy)
-                                        .font(.custom(poppinsExtraBold, size: 22.0))
-                                        .frame(width: 25, height: 24)
-                                        .foregroundColor(.white)
-                                    Text("Switch")
-                                        .font(.custom(poppinsRegular, size: 8.0))
-                                        .foregroundColor(.white)
-                                }
-                                .padding()
-                               
-                            }
-                            VStack {
-                                if let product = currentProduct,
-                                   let img = product.images?.first {
-                                    StackedImageView(imageURL: img, totalCount: productData.count) {
-                                        print("productStackTapped")
+//                VStack {
+//                    Spacer()
+//                    VStack(spacing: 4) {
+//                        if showLiveControls {
+//                            SideButton(label: "More", icon: .more,action: .more)
+//                            SideButton(label: "Promote", icon: .rPromote ,action: .promote)
+//                            SideButton(label: "Clip", icon: .clip,action: .clip)
+//                            SideButton(label: "Share", icon: .sharee,action: .share)
+//                            SideButton(label: "Switch", icon: .camera,action: .switchView)
+//                            VStack {
+//                                if hasAuctionStarted{
+//                                    if let product = currentProduct,
+//                                       let img = product.images?.first {
+//                                        StackedImageView(imageURL: img, totalCount: productData.count) {
+//                                            print("productStackTapped")
+//                                            showShopSheet = true
+//                                            //                                        navigateToProductList = true
+//                                        }
+//                                    }
+//                                }else{
+//                                    StackedImageView(imageURL: productData.first?.images?.first ?? "", totalCount: productData.count) {
+//                                        print("productStackTapped")
 //                                        showShopSheet = true
-                                    }
-                                }
-                            }
-                            Spacer()
-                        }
-                    }
-                  
-                    .position(
-                        x: geometry.size.width - 40,
-                        y: geometry.size.height / 2
-                    )
-                }.zIndex(2)
+//                                    }
+//                                }
+//                            }
+//                        }
+//                        
+//                        if showPreLiveControls {
+//                            Spacer()
+//                            Button(action: {
+//                                isMicOn.toggle()
+//                                agoraManager.toggleAudioMute()
+//                            }) {
+//                                VStack {
+//                                    Image(systemName: isMicOn ? "mic.fill" : "mic.slash.fill")
+//                                        .renderingMode(.template)
+//                                        .resizable()
+//                                        .scaledToFit()
+//                                        .fontWeight(.heavy)
+//                                        .font(.custom(poppinsExtraBold, size: 22.0))
+//                                        .frame(width: 25, height: 24)
+//                                        .foregroundColor(.white)
+//                                    Text(isMicOn ? "Mic On" : "Mic Off")
+//                                        .font(.custom(poppinsRegular, size: 8.0))
+//                                        .foregroundColor(.white)
+//                                }
+//                                .padding()
+//                                
+//                                
+//                            }
+//                            
+//                            Button(action: {
+//                                isUsingFrontCamera.toggle()
+//                                agoraManager.switchCamera()
+//                            }) {
+//                                VStack {
+//                                    Image(.camera)
+//                                        .renderingMode(.template)
+//                                        .resizable()
+//                                        .scaledToFit()
+//                                        .fontWeight(.heavy)
+//                                        .font(.custom(poppinsExtraBold, size: 22.0))
+//                                        .frame(width: 25, height: 24)
+//                                        .foregroundColor(.white)
+//                                    Text("Switch")
+//                                        .font(.custom(poppinsRegular, size: 8.0))
+//                                        .foregroundColor(.white)
+//                                }
+//                                .padding()
+//                               
+//                            }
+//                            VStack {
+//                                if let product = currentProduct,
+//                                   let img = product.images?.first {
+//                                    StackedImageView(imageURL: img, totalCount: productData.count) {
+//                                        print("productStackTapped")
+////                                        showShopSheet = true
+//                                    }
+//                                }
+//                            }
+//                            Spacer()
+//                        }
+//                    }
+//                  
+//                    .position(
+//                        x: geometry.size.width - 40,
+//                        y: geometry.size.height / 2
+//                    )
+//                }.zIndex(2)
                 
                 // 💬 bottom Chat & Start Button
-                VStack(alignment: .leading, spacing: 8) {
-                    Spacer()
-                    if socketManager.chats.count > 0 {
-                        HStack{
-                            ScrollViewReader { proxy in
-                                ScrollView(.vertical, showsIndicators: false) {
-
-                                    VStack {
-                                        Spacer(minLength: 0)  // bottom alignment
-
-                                        LazyVStack(alignment: .leading, spacing: 6) {
-
-                                            ForEach(socketManager.chats) { comment in
-//                                                let data = liveShowsData[currentIndex]
-                                                let isHost = comment.userId == "\(UserDefaults.userId)"
-                                                let isMod = !isHost
-
-                                                ChatMessageBubble(comment: comment, isHost: isHost)
-                                                    .background(
-                                                        GeometryReader { geo in
-                                                            Color.clear.onAppear {
-                                                                // Capture height of ONE message (only once)
-                                                                if messageHeight == 40 {
-                                                                    messageHeight = geo.size.height + 10
-                                                                }
-                                                            }
-                                                        }
-                                                    )
-                                                    .id(comment.id)
-                                            }
-                                        }
-                                    }
-                                    .padding(.horizontal, 8)
-                                    .padding(.vertical, 4)
-                                }
-                                .frame(width:screenWidth - 54
-                                    ,height: socketManager.chats.count == 0
-                                        ? 0
-                                        : min(CGFloat(socketManager.chats.count), CGFloat(maxVisibleMessages)) * messageHeight
-                                )
-                                .animation(.easeOut(duration: 0.2), value: socketManager.chats.count)
-                                .onChange(of: socketManager.chats) { _ in
-                                    if let lastID = socketManager.chats.last?.id {
-                                        withAnimation(.easeOut(duration: 0.25)) {
-                                            proxy.scrollTo(lastID, anchor: .bottom)
-                                        }
-                                    }
-                                }
-                            }
-
-                        }
-                        
-                    }
-                  
-                    if showButton{
-                        if showLiveControls{
-                            VStack(alignment: .leading, spacing: 12){
-                                HStack {
-                                    ZStack(alignment: .trailing) {
-                                        TextField(
-                                            "",
-                                            text: $commentText,
-                                            prompt: Text("Say something...")
-                                                .foregroundColor(.gray)    // placeholder color
-                                                .font(.custom(poppinsRegular, size: 13))
-                                        )
-                                        .foregroundColor(.white)            // typed text color
-                                        .font(.custom(poppinsRegular, size: 13))
-                                        
-                                        .padding(.horizontal, 8)
-                                        .padding(.trailing, commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? 14 : 40)
-                                        
-                                        .frame(height: 40)
-                                        .frame(width:BiddingDetail.products != nil ? screenWidth-45 : screenWidth-90 )
-                                        .font(.custom(poppinsSemiBold, size: 13))
-                                        .foregroundColor(.white)
-                                        .cornerRadius(8)
-                                        .background(
-                                            Capsule()
-                                                .fill(Color.black.opacity(0.35))     // translucent fill
-                                        )
-                                        .overlay(
-                                            Capsule()
-                                                .stroke(Color.white, lineWidth: 1)   // border
-                                        )
-                                        
-                                        
-                                       
-                                        Button(action: {
-                                            hideKeyboard()
-                                            if !commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                                                let roomId = self.roomId
-                                                //                                            ZIMChatManager.shared.sendMessage(message: commentText,roomId: roomId,image: UserDefaults.profileURL,name: UserDefaults.fullName)
-                                                let userId = UserDefaults.userId
-                                                let userName = UserDefaults.userName
-                                                let userImage = UserDefaults.profileURL
-                                                SocketManagerService.shared.sendChat(roomId: roomId, message: commentText, userId: userId, userName: userName, userImage: userImage)
-                                                commentText = ""
-                                            }
-                                        }) {
-                                            Image(systemName: "chevron.right")
-                                                .resizable()
-                                                .frame(width: 12, height: 12)
-                                                .foregroundColor(.white)
-                                                .padding(10)
-                                        }
-                                        .transition(.opacity)
-                                        .animation(.easeInOut(duration: 0.2), value: commentText)
-                                        
-                                    }
-                                    
-                                }
-                                .padding(.leading,16)
-                                .padding(.trailing, productData != nil ? 54 : 16)
-                                
-                                .animation(.easeOut(duration: 0.25), value: keyboardResponder.currentHeight)
-
-                                VStack(alignment: .leading,spacing: 12) {
-                                    
-                                    if showPollCard {
-                                        if let poll = currentPollModel {
-                                            PollPreviewCardView(
-                                                poll: poll,
-                                                remainingTime: remainingTimer ?? 0,
-                                                onPollCardTapped: {
-                                                    print("PollCard clicked")
-                                                    showLivePollScreen = true
-                                                }
-                                            )
-                                            .preferredColorScheme(.dark)
-                                            .padding()
-                                        }
-                                    }
-                                    
-                                    //MARK: -  Product Details -
-                                    
-//                                    let currentProducts = productData.filter { $0.isCurrent }
-                                    if hasAuctionStarted{
-                                        let currentProducts = auctionedProductData
-                                        let product = currentProducts
-                                        if product != nil{
-                                            CurrentProductView(product: product,
-                                                               currentPrice: $currentPrice,
-                                                               bidTime: $socketManager.bidTime,
-                                                               userName: $winnerName,
-                                                               userImage: $winnerProfileImage,
-                                                               categoryName: $categoryName,
-                                                               hasWon: $socketManager.hasWon,onTap: {
-                                                showItemDetailSheet = true
-                                            },onTapRunNext: {
-//                                                if isProductPinned{
-//                                                    showAuctionSheet = true
-//                                                }else{
-//                                                    showShopSheet = true
+//                VStack(alignment: .leading, spacing: 8) {
+//                    Spacer()
+//                    if socketManager.chats.count > 0 {
+//                        HStack{
+//                            ScrollViewReader { proxy in
+//                                ScrollView(.vertical, showsIndicators: false) {
+//
+//                                    VStack {
+//                                        Spacer(minLength: 0)  // bottom alignment
+//
+//                                        LazyVStack(alignment: .leading, spacing: 6) {
+//
+//                                            ForEach(socketManager.chats) { comment in
+////                                                let data = liveShowsData[currentIndex]
+//                                                let isHost = comment.userId == "\(UserDefaults.userId)"
+//                                                let isMod = !isHost
+//
+//                                                ChatMessageBubble(comment: comment, isHost: isHost)
+//                                                    .background(
+//                                                        GeometryReader { geo in
+//                                                            Color.clear.onAppear {
+//                                                                // Capture height of ONE message (only once)
+//                                                                if messageHeight == 40 {
+//                                                                    messageHeight = geo.size.height + 10
+//                                                                }
+//                                                            }
+//                                                        }
+//                                                    )
+//                                                    .id(comment.id)
+//                                            }
+//                                        }
+//                                    }
+//                                    .padding(.horizontal, 8)
+//                                    .padding(.vertical, 4)
+//                                }
+//                                .frame(width:screenWidth - 54
+//                                    ,height: socketManager.chats.count == 0
+//                                        ? 0
+//                                        : min(CGFloat(socketManager.chats.count), CGFloat(maxVisibleMessages)) * messageHeight
+//                                )
+//                                .animation(.easeOut(duration: 0.2), value: socketManager.chats.count)
+//                                .onChange(of: socketManager.chats) { _ in
+//                                    if let lastID = socketManager.chats.last?.id {
+//                                        withAnimation(.easeOut(duration: 0.25)) {
+//                                            proxy.scrollTo(lastID, anchor: .bottom)
+//                                        }
+//                                    }
+//                                }
+//                            }
+//
+//                        }
+//                        
+//                    }
+//                  
+//                    if showButton{
+//                        if showLiveControls{
+//                            VStack(alignment: .leading, spacing: 12){
+//                                HStack {
+//                                    ZStack(alignment: .trailing) {
+//                                        TextField(
+//                                            "",
+//                                            text: $commentText,
+//                                            prompt: Text("Say something...")
+//                                                .foregroundColor(.gray)    // placeholder color
+//                                                .font(.custom(poppinsRegular, size: 13))
+//                                        )
+//                                        .foregroundColor(.white)            // typed text color
+//                                        .font(.custom(poppinsRegular, size: 13))
+//                                        
+//                                        .padding(.horizontal, 8)
+//                                        .padding(.trailing, commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? 14 : 40)
+//                                        
+//                                        .frame(height: 40)
+//                                        .frame(width:BiddingDetail.products != nil ? screenWidth-45 : screenWidth-90 )
+//                                        .font(.custom(poppinsSemiBold, size: 13))
+//                                        .foregroundColor(.white)
+//                                        .cornerRadius(8)
+//                                        .background(
+//                                            Capsule()
+//                                                .fill(Color.black.opacity(0.35))     // translucent fill
+//                                        )
+//                                        .overlay(
+//                                            Capsule()
+//                                                .stroke(Color.white, lineWidth: 1)   // border
+//                                        )
+//                                        
+//                                        
+//                                       
+//                                        Button(action: {
+//                                            hideKeyboard()
+//                                            if !commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+//                                                let roomId = self.roomId
+//                                                //                                            ZIMChatManager.shared.sendMessage(message: commentText,roomId: roomId,image: UserDefaults.profileURL,name: UserDefaults.fullName)
+//                                                let userId = UserDefaults.userId
+//                                                let userName = UserDefaults.userName
+//                                                let userImage = UserDefaults.profileURL
+//                                                SocketManagerService.shared.sendChat(roomId: roomId, message: commentText, userId: userId, userName: userName, userImage: userImage)
+//                                                commentText = ""
+//                                            }
+//                                        }) {
+//                                            Image(systemName: "chevron.right")
+//                                                .resizable()
+//                                                .frame(width: 12, height: 12)
+//                                                .foregroundColor(.white)
+//                                                .padding(10)
+//                                        }
+//                                        .transition(.opacity)
+//                                        .animation(.easeInOut(duration: 0.2), value: commentText)
+//                                        
+//                                    }
+//                                    
+//                                }
+//                                .padding(.leading,16)
+//                                .padding(.trailing, productData != nil ? 54 : 16)
+//                                
+//                                .animation(.easeOut(duration: 0.25), value: keyboardResponder.currentHeight)
+//
+//                                VStack(alignment: .leading,spacing: 12) {
+//                                    
+//                                    if showPollCard {
+//                                        if let poll = currentPollModel {
+//                                            PollPreviewCardView(
+//                                                poll: poll,
+//                                                remainingTime: remainingTimer ?? 0,
+//                                                onPollCardTapped: {
+//                                                    print("PollCard clicked")
+//                                                    showLivePollScreen = true
 //                                                }
-                                                socketManager.runNextProduct(roomId: self.roomId)
-//                                                runNextProduct
-                                            })
-                                            .frame(maxWidth: .infinity)
-                                            
-                                            .background(Color.black.opacity(0.3))
-                                            .cornerRadius(10)
-                                            .padding(.horizontal,16)
-                                        }
-                                    }else {
-                                        Text("Waiting for product...")
-                                            .font(.custom(poppinsSemiBold, size: 14.0))
-                                            .foregroundColor(.white)
-                                            .padding(.horizontal)
-                                            .padding(.leading,16)
-                                            .padding(.trailing, 16)
-                                    }
-                                }
-                                //                            .padding(.horizontal,16)
-                                .padding(.bottom, keyboardResponder.currentHeight == 0 ? (tabBarHeight + 20) : 10)
-                            }
-                        }
-                        if !isLive{
-                            Button(action: {
-                                if UserDefaults.sellerVerafied == "verified"{
-                                    if !isLive{
-                                        Task {
-//                                            showProductSheet = true
-                                            UpdateStatus(status: false)
-                                        }
-                                    }
-                                }else{
-                                    showSellerSheet = true
-                                }
-                            }) {
-                                Text("Start Show")
-                                    .font(.custom(poppinsBold, size: 13.0))
-                                    .frame(maxWidth: .infinity)
-                                    .padding()
-                                    .background(Color.defaultTheme)
-                                    .foregroundColor(.white)
-                                    .cornerRadius(12)
-                            }
-                            .padding(.horizontal)
-                            .padding(.bottom, 20)
-                        }
-                    }
-                    if comeFromPrepare && !comeForLive{
-                        Button(action: {
-                            self.presentationMode.wrappedValue.dismiss()
-                        }) {
-                            Text("Continue")
-                                .font(.custom(poppinsBold, size: 13.0))
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .background(Color.defaultTheme)
-                                .foregroundColor(.white)
-                                .cornerRadius(12)
-                        }
-                        .padding(.horizontal)
-                        .padding(.bottom, 20)
-                    }
-                }.zIndex(1)
-                CusNavLink(doNavigate: $navigateToSeller, destination: SellerVerificationScreen())
+//                                            )
+//                                            .preferredColorScheme(.dark)
+//                                            .padding()
+//                                        }
+//                                    }
+//                                    
+//                                    //MARK: -  Product Details -
+//                                    
+////                                    let currentProducts = productData.filter { $0.isCurrent }
+//                                    if hasAuctionStarted{
+//                                        let currentProducts = auctionedProductData
+//                                        let product = currentProducts
+//                                        if product != nil{
+//                                            CurrentProductView(product: product,
+//                                                               currentPrice: $currentPrice,
+//                                                               bidTime: $socketManager.bidTime,
+//                                                               userName: $winnerName,
+//                                                               userImage: $winnerProfileImage,
+//                                                               categoryName: $categoryName,
+//                                                               hasWon: $socketManager.hasWon,onTap: {
+//                                                showItemDetailSheet = true
+//                                            },onTapRunNext: {
+////                                                if isProductPinned{
+////                                                    showAuctionSheet = true
+////                                                }else{
+////                                                    showShopSheet = true
+////                                                }
+//                                                socketManager.runNextProduct(roomId: self.roomId)
+////                                                runNextProduct
+//                                            })
+//                                            .frame(maxWidth: .infinity)
+//                                            
+//                                            .background(Color.black.opacity(0.3))
+//                                            .cornerRadius(10)
+//                                            .padding(.horizontal,16)
+//                                        }
+//                                    }else {
+//                                        Text("Waiting for product...")
+//                                            .font(.custom(poppinsSemiBold, size: 14.0))
+//                                            .foregroundColor(.white)
+//                                            .padding(.horizontal)
+//                                            .padding(.leading,16)
+//                                            .padding(.trailing, 16)
+//                                    }
+//                                }
+//                                //                            .padding(.horizontal,16)
+//                                .padding(.bottom, keyboardResponder.currentHeight == 0 ? (tabBarHeight + 20) : 10)
+//                            }
+//                        }
+//                        if !isLive{
+//                            Button(action: {
+//                                if UserDefaults.sellerVerafied == "verified"{
+//                                    if !isLive{
+//                                        Task {
+////                                            showProductSheet = true
+//                                            UpdateStatus(status: false)
+//                                        }
+//                                    }
+//                                }else{
+//                                    showSellerSheet = true
+//                                }
+//                            }) {
+//                                Text("Start Show")
+//                                    .font(.custom(poppinsBold, size: 13.0))
+//                                    .frame(maxWidth: .infinity)
+//                                    .padding()
+//                                    .background(Color.defaultTheme)
+//                                    .foregroundColor(.white)
+//                                    .cornerRadius(12)
+//                            }
+//                            .padding(.horizontal)
+//                            .padding(.bottom, 20)
+//                        }
+//                    }
+//                    if comeFromPrepare && !comeForLive{
+//                        Button(action: {
+//                            self.presentationMode.wrappedValue.dismiss()
+//                        }) {
+//                            Text("Continue")
+//                                .font(.custom(poppinsBold, size: 13.0))
+//                                .frame(maxWidth: .infinity)
+//                                .padding()
+//                                .background(Color.defaultTheme)
+//                                .foregroundColor(.white)
+//                                .cornerRadius(12)
+//                        }
+//                        .padding(.horizontal)
+//                        .padding(.bottom, 20)
+//                    }
+//                }.zIndex(1)
+//                CusNavLink(doNavigate: $navigateToSeller, destination: SellerVerificationScreen())
 //                CusNavLink(doNavigate: $navigateToRandomizer, destination: RandomizerView())
 //                CusNavLink(doNavigate: $navigateToProductList,
 //                           destination: ProductShopRehersalScreen(productData: .constant([ProductDataModel1]()), sellerId: "\(showsData.user?.id ?? 0)")
@@ -711,30 +723,21 @@ struct RehearsalScreen: View {
             }
         )
         
-//        .bottomSheet(
-//            isPresented: $navigateToRandomizer,
-//            height: screenHeight * 0.95,
-//            topBarCornerRadius: 20,
-//            contentBackgroundColor: Color(.clear),
-//            topBarBackgroundColor: Color(.clear),
-//            showTopIndicator: false,
-//            onDismiss: {
-//                navigateToRandomizer = false
-//            },
-//            content: {
-//                RandomizerView()
-//            }
-//        )
         .sheet(isPresented: $navigateToRandomizer) {
-            RandomizerView(didTapSpin : { value in
+            RandomizerView(showid:$showUd,didTapSpin : { value in
                 showSpin = value
+               
+            },didSpinWheel:{
+                socketManager.finalizeFreebie(showId: showUd)
             },onWinnerSelected: { winner in
-                randomWinner = winner
-                randomWinnerImage = "user"
+                randomWinner = winner.name ?? ""
+                
+                
+                randomWinnerImage = winner.profile_image ?? ""
                 navigateToRandomizer = false
                 showWinnerOnParent = true
                 showSpin = false
-            })
+            }, usersName: $viewModelFreebie.options)
             .presentationDetents([.fraction(showSpin ? 0.90 : 0.55)])
                 .presentationCornerRadius(25)
                 .presentationDragIndicator(.hidden)
@@ -825,21 +828,16 @@ struct RehearsalScreen: View {
                 showShopSheet = false
             },
             content: {
-                ProductShopRehersalScreen(
-                    roomId: self.roomId,
-                    productDataFromEvent: $productListData,
-                    categoryId: "\(showsData.category_id ?? 0)",
-                    onTapCancel: {
-                        showShopSheet = false
-                    },onAuctionTapped: { product in
-                        auctionedProductData = product
-                        nextProductId = "\(auctionedProductData.id ?? 0)"
-                        showAuctionSheet = true
-                      
-                    }
-                )
+                shopSheetContent
                 
             })
+        .sheet(isPresented: $showFreeBie){
+            freeBieSheetContent
+                .presentationDetents([.fraction(0.70)])   // ✅ Bottom-sheet height
+                .presentationCornerRadius(25)              // ✅ Rounded top corners
+                .presentationDragIndicator(.hidden)
+            
+        }
 
         .sheet(isPresented: $showAuctionSheet) {
             AuctionSettingsSheet(
@@ -950,9 +948,6 @@ struct RehearsalScreen: View {
                         onVerifiedBuyerToggle: { isOn in
                             let allowBidForAll = !isOn
                             if !roomId.isEmpty   {
-                                //                                FirebaseManager.shared.databaseRef.child("live_sessions")
-                                //                                    .child(liveRoomId)
-                                //                                    .updateChildValues(["allowBidForAll": allowBidForAll])
                                 socketManager.AllowBidForAll(roomId: roomId, allow_bid_for_all: allowBidForAll)
                                 print("✅ allowBidForAll updated to \(allowBidForAll) for room: \(liveRoomId)")
                             }
@@ -1016,21 +1011,7 @@ struct RehearsalScreen: View {
                             getLiveSeller()
                         },
                         onEndShow: {
-                            //                            Task {
-                            //                                            if !castManager.isPublishing {
-                            //                                    try await castManager.publish()
-                            //                                            } else {
-                            //                                                try await castManager.unpublish()
-                            //                                self.presentationMode.wrappedValue.dismiss()
-                            //                                            }
-                            //                            }
-                            //                            Task {
-                            //                                SVProgressHUD.show()
-                            //                                let is_Live = "false"
-                            //                                await viewModel.UpdateLiveShows(param: LiveShowUpdateRequest(schedule_show_id: showUd, is_live: is_Live))
-                            //                                await SVProgressHUD.dismiss()
-                            //                                success()
-                            //                            }
+                            
                             self.endShow()
                             
                             self.isLive = false
@@ -1219,6 +1200,628 @@ struct RehearsalScreen: View {
             .zIndex(1000)
         }
     }
+    
+    @ViewBuilder
+    private func videoLayer(_ geometry: GeometryProxy) -> some View {
+        ZStack {
+            if agoraManager.remoteUserId != nil {
+                VideoContainerView(uiView: agoraManager.remoteVideoView)
+            } else {
+                VideoContainerView(uiView: agoraManager.localVideoView)
+            }
+        }
+        .frame(width: geometry.size.width, height: geometry.size.height)
+        .background(Color.black)
+        .ignoresSafeArea()
+    }
+
+    
+    @ViewBuilder
+    private var shopSheetContent: some View {
+        ProductShopRehersalScreen(
+            mode: .auction,
+            roomId: roomId,
+            productDataFromEvent: $productListData,
+            categoryId: "\(showsData.category_id ?? 0)",
+            onTapCancel: {
+                showShopSheet = false
+            },
+            onProductSelected: { product in
+                auctionedProductData = product
+                nextProductId = "\(product.id ?? 0)"
+                showAuctionSheet = true
+            }
+        )
+    }
+    
+    @ViewBuilder
+    private var freeBieSheetContent: some View {
+        ProductShopRehersalScreen(
+            mode: .freebie,
+            roomId: roomId,
+            productDataFromEvent: $productListData,
+            categoryId: "\(showsData.category_id ?? 0)",
+            onTapCancel: {
+                showShopSheet = false
+            },
+            onProductSelected: { product in
+                selectedFreebie = product
+                socketManager.createFreebie(showId: self.showUd, productId: "\(product.id ?? 0)", time: 100)
+                showFreeBie = false
+                navigateToRandomizer = true
+            }
+        )
+    }
+    
+    @ViewBuilder
+    private var topHeader: some View {
+        VStack {
+            HStack(spacing: 8) {
+                CustomProfileImage(
+                    url: UserDefaults.profileURL,
+                    isCircular: true
+                )
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(UserDefaults.userName.capitalizingFirstLetter())
+                        .font(.custom(poppinsSemiBold, size: 14))
+                        .foregroundColor(.white)
+
+                    Text("Show Time \(socketManager.showTime)")
+                        .font(.custom(poppinsRegular, size: 11))
+                        .foregroundColor(.white)
+                }
+
+                Spacer()
+
+                viewerCountView
+                liveBadge
+                closeButton
+            }
+            .padding(.horizontal)
+            .padding(.bottom, 20)
+            if showButton{
+                showNotesButton
+            }
+            Spacer()
+        }
+        .padding(.top, 40)
+    }
+    
+    private var viewerCountView: some View {
+        HStack(spacing: 4) {
+            Image(systemName: "eye.fill")
+            Text("\(socketManager.viewerCount)")
+                .font(.custom(poppinsSemiBold, size: 13))
+        }
+        .foregroundColor(.black)
+    }
+
+    private var liveBadge: some View {
+        Text(isLive ? "Live" : "Rehearsal")
+            .font(.custom(poppinsRegular, size: 12))
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .background(Color.defaultTheme)
+            .cornerRadius(4)
+            .foregroundColor(.white)
+    }
+
+    private var closeButton: some View {
+        Button {
+            if isLive {
+                currentBottomSheet = .endShow
+                showSellSheet = true
+            } else {
+                presentationMode.wrappedValue.dismiss()
+            }
+        } label: {
+            Image(.cancel)
+                .resizable()
+                .renderingMode(.template)
+                .foregroundColor(.danger)
+                .frame(width: 32, height: 32)
+        }
+    }
+
+//    private var showNotesButton: some View {
+//        HStack {
+//            Button {
+//                showNotesSheet = true
+//                isEditingNotes = false
+//            } label: {
+//                Text("Show\nNotes")
+//                    .font(.custom(poppinsSemiBold, size: 13))
+//                    .multilineTextAlignment(.center)
+//                    .foregroundColor(.black)
+//                    .padding(.horizontal, 20)
+//                    .padding(.vertical, 12)
+//                    .background(Color.white)
+//                    .cornerRadius(8)
+//            }
+//            .padding(16)
+//
+//            Spacer()
+//        }
+//    }
+    @ViewBuilder
+    private var showNotesButton: some View {
+        if isLive{
+            HStack(alignment: .top) {
+                
+                // MARK: - Show Notes (Leading)
+                Button(action: {
+                    showNotesSheet = true
+                    isEditingNotes = false
+                }) {
+                    Text("Show\nNotes")
+                        .font(.custom(poppinsSemiBold, size: 13))
+                        .foregroundColor(.black)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 10)
+                        .background(
+                            UnevenRoundedRectangle(
+                                topLeadingRadius: 0,
+                                bottomLeadingRadius: 0,
+                                bottomTrailingRadius: 12,
+                                topTrailingRadius: 12
+                            )
+                            .fill(Color.white)
+                        )
+                    //                    .cornerRadius(10)
+                        .shadow(color: .black.opacity(0.15), radius: 4, x: 0, y: 2)
+                }
+                
+                Spacer()
+                
+                // MARK: - Freebie (Trailing)
+                Button(action: {
+                    showFreeBie = true
+                }) {
+                    HStack(spacing: 10) {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Freebie")
+                                .font(.custom(poppinsSemiBold, size: 13))
+                                .foregroundColor(.white)
+                            
+                            HStack(spacing: 4) {
+                                Image(systemName: "gift.fill")
+                                    .font(.system(size: 12))
+                                Text("0 Entries")
+                                    .font(.custom(poppinsRegular, size: 11))
+                                    .foregroundColor(.white)
+                            }
+                            .foregroundColor(.white.opacity(0.85))
+                        }
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 10)
+                    .background(
+                        UnevenRoundedRectangle(
+                            topLeadingRadius: 12,
+                            bottomLeadingRadius: 12,
+                            bottomTrailingRadius: 0,
+                            topTrailingRadius: 0
+                        )
+                        .fill(Color.black.opacity(0.4))
+                    )
+                }
+            }
+            .padding(.horizontal, 0)
+            .padding(.top, 10)
+        }
+    }
+
+    @ViewBuilder
+    private var readyAndWelcomeOverlays: some View {
+        if showReadyModal {
+            readyModal
+        }
+
+        if showWelcomeDialog {
+            welcomeModal
+        }
+    }
+
+    @ViewBuilder
+    private func sideControls(_ geometry: GeometryProxy) -> some View {
+        VStack {
+            Spacer()
+            VStack(spacing: 4) {
+                if showLiveControls {
+                    liveSideButtons
+                }
+
+                if showPreLiveControls {
+                    preLiveSideButtons
+                }
+            }
+            .position(
+                x: geometry.size.width - 40,
+                y: geometry.size.height / 2
+            )
+        }
+        .zIndex(2)
+    }
+
+    @ViewBuilder
+    private var chatAndBottomControls: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Spacer()
+
+            chatMessages
+            messageInputAndProductView
+            startOrContinueButtons
+        }
+        .zIndex(1)
+    }
+    @ViewBuilder
+    private var messageInputAndProductView: some View {
+        if showButton {
+            if showLiveControls {
+                VStack(alignment: .leading, spacing: 12) {
+                    
+                    // MARK: - Text Input & Send Button
+                    HStack {
+                        ZStack(alignment: .trailing) {
+                            TextField(
+                                "",
+                                text: $commentText,
+                                prompt: Text("Say something...")
+                                    .foregroundColor(.gray)
+                                    .font(.custom(poppinsRegular, size: 13))
+                            )
+                            .foregroundColor(.white)
+                            .font(.custom(poppinsRegular, size: 13))
+                            .padding(.horizontal, 8)
+                            .padding(.trailing, commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? 14 : 40)
+                            .frame(height: 40)
+                            .frame(width: BiddingDetail.products != nil ? screenWidth-45 : screenWidth-90)
+                            .cornerRadius(8)
+                            .background(
+                                Capsule().fill(Color.black.opacity(0.35))
+                            )
+                            .overlay(
+                                Capsule().stroke(Color.white, lineWidth: 1)
+                            )
+                            
+                            Button(action: {
+                                hideKeyboard()
+                                if !commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                                    let userId = UserDefaults.userId
+                                    let userName = UserDefaults.userName
+                                    let userImage = UserDefaults.profileURL
+                                    SocketManagerService.shared.sendChat(roomId: roomId, message: commentText, userId: userId, userName: userName, userImage: userImage)
+                                    commentText = ""
+                                }
+                            }) {
+                                Image(systemName: "chevron.right")
+                                    .resizable()
+                                    .frame(width: 12, height: 12)
+                                    .foregroundColor(.white)
+                                    .padding(10)
+                            }
+                            .transition(.opacity)
+                            .animation(.easeInOut(duration: 0.2), value: commentText)
+                        }
+                    }
+                    .padding(.leading,16)
+                    .padding(.trailing, productData != nil ? 54 : 16)
+                    .animation(.easeOut(duration: 0.25), value: keyboardResponder.currentHeight)
+                    
+                    // MARK: - Poll Card
+                    if showPollCard, let poll = currentPollModel {
+                        PollPreviewCardView(
+                            poll: poll,
+                            remainingTime: remainingTimer ?? 0,
+                            onPollCardTapped: { showLivePollScreen = true }
+                        )
+                        .preferredColorScheme(.dark)
+                        .padding()
+                    }
+                    
+                    // MARK: - Product Details
+                    if hasAuctionStarted {
+                        if auctionedProductData != nil {
+                            CurrentProductView(
+                                product: auctionedProductData,
+                                currentPrice: $currentPrice,
+                                bidTime: $socketManager.bidTime,
+                                userName: $winnerName,
+                                userImage: $winnerProfileImage,
+                                categoryName: $categoryName,
+                                hasWon: $socketManager.hasWon,
+                                onTap: { showItemDetailSheet = true },
+                                onTapRunNext: { socketManager.runNextProduct(roomId: roomId) }
+                            )
+                            .frame(maxWidth: .infinity)
+                            .background(Color.black.opacity(0.3))
+                            .cornerRadius(10)
+                            .padding(.horizontal,16)
+                        }
+                    } else {
+                        Text("Waiting for product...")
+                            .font(.custom(poppinsSemiBold, size: 14))
+                            .foregroundColor(.white)
+                            .padding(.horizontal)
+                            .padding(.leading,16)
+                            .padding(.trailing,16)
+                    }
+                }
+                .padding(.bottom, keyboardResponder.currentHeight == 0 ? (tabBarHeight + 20) : 10)
+            }
+        }
+    }
+    @ViewBuilder
+    private var startOrContinueButtons: some View {
+        VStack {
+            if showButton {
+                if !isLive {
+                    Button(action: {
+                        if UserDefaults.sellerVerafied == "verified" {
+                            Task { UpdateStatus(status: false) }
+                        } else {
+                            showSellerSheet = true
+                        }
+                    }) {
+                        Text("Start Show")
+                            .font(.custom(poppinsBold, size: 13))
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.defaultTheme)
+                            .foregroundColor(.white)
+                            .cornerRadius(32)
+                    }
+                    .padding(.horizontal)
+                    .padding(.bottom, 20)
+                }
+                
+                
+                if comeFromPrepare && !comeForLive {
+                    Button(action: { presentationMode.wrappedValue.dismiss() }) {
+                        Text("Continue")
+                            .font(.custom(poppinsBold, size: 13))
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.defaultTheme)
+                            .foregroundColor(.white)
+                            .cornerRadius(32)
+                    }
+                    .padding(.horizontal)
+                    .padding(.bottom, 20)
+                }
+            }
+        }
+    }
+
+
+    private var navigationLinks: some View {
+        Group {
+            CusNavLink(
+                doNavigate: $navigateToSeller,
+                destination: SellerVerificationScreen()
+            )
+        }
+    }
+
+    private var floatingOverlays: some View {
+        Group {
+            if let selectedChat = selectedChatMessage {
+                FloatingChatView(
+                    isPresented: $showFloatingChat,
+                    chat: selectedChat,
+                    showURL: generateShowURL()
+                )
+                .zIndex(1000)
+            }
+
+            winnerOverlay
+        }
+    }
+    @ViewBuilder
+    private var readyModal: some View {
+        Color.black.opacity(0.4).edgesIgnoringSafeArea(.all)
+        VStack(spacing: 12) {
+            Text("Show Starts at 4:00 PM")
+                .foregroundColor(.white)
+                .font(.caption)
+            
+            Text("Ready to Begin?")
+                .font(.headline)
+                .foregroundColor(.white)
+            
+            Button(action: {
+                showReadyModal = false
+                showWelcomeDialog = true
+            }) {
+                Text("Share Show")
+                    .foregroundColor(.white)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.defaultTheme)
+                    .cornerRadius(8)
+            }
+            .padding(.horizontal)
+        }
+        .padding()
+        .background(Color.gray.opacity(0.95))
+        .cornerRadius(12)
+        .frame(width: 300)
+    }
+
+    
+    @ViewBuilder
+    private var welcomeModal: some View {
+        Color.black.opacity(0.4).edgesIgnoringSafeArea(.all)
+        VStack(spacing: 16) {
+            Image(systemName: "checkmark.circle.fill")
+                .resizable()
+                .frame(width: 50, height: 50)
+                .foregroundColor(.white)
+            
+            Text("Welcome to your Auction")
+                .font(.headline)
+                .foregroundColor(.white)
+            
+            Text("You may edit and begin your auction from here")
+                .font(.subheadline)
+                .foregroundColor(.white)
+                .multilineTextAlignment(.center)
+            
+            Button(action: {
+                showWelcomeDialog = false
+                if UserDefaults.sellerVerafied == "verified" {
+                    showButton = true
+                    showPreLiveControls = true
+                } else {
+                    alertType = .sheetType(
+                        icon: .info,
+                        title: "Become a Verified Seller!",
+                        message: "Before you interact with live shows.you need to become a verified seller.",
+                        primaryBtnText: "OK",
+                        secondaryBtnText: "",
+                        buttonWidth: screenWidth - 60,
+                        contentSize: 12.0
+                    )
+                    withAnimation(.snappy){
+                        showSellerSheet = true
+                    }
+                }
+            }) {
+                Text("Ok")
+                    .foregroundColor(.white)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.defaultTheme)
+                    .cornerRadius(8)
+            }
+            .padding(.horizontal)
+        }
+        .padding()
+        .background(Color.gray.opacity(0.95))
+        .cornerRadius(12)
+    }
+
+    @ViewBuilder
+    private var liveSideButtons: some View {
+        VStack(spacing: 4) {
+            SideButton(label: "More", icon: .more, action: .more)
+            SideButton(label: "Promote", icon: .rPromote , action: .promote)
+            SideButton(label: "Clip", icon: .clip, action: .clip)
+            SideButton(label: "Share", icon: .sharee, action: .share)
+            SideButton(label: "Switch", icon: .camera, action: .switchView)
+            
+            VStack {
+                if hasAuctionStarted, let product = currentProduct, let img = product.images?.first {
+                    StackedImageView(imageURL: img, totalCount: productData.count) {
+                        showShopSheet = true
+                    }
+                } else {
+                    StackedImageView(imageURL: productData.first?.images?.first ?? "", totalCount: productData.count) {
+                        showShopSheet = true
+                    }
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var preLiveSideButtons: some View {
+        VStack {
+            Spacer()
+            Button(action: {
+                isMicOn.toggle()
+                agoraManager.toggleAudioMute()
+            }) {
+                VStack {
+                    Image(systemName: isMicOn ? "mic.fill" : "mic.slash.fill")
+                        .renderingMode(.template)
+                        .resizable()
+                        .scaledToFit()
+                        .fontWeight(.heavy)
+                        .font(.custom(poppinsExtraBold, size: 22.0))
+                        .frame(width: 25, height: 24)
+                        .foregroundColor(.white)
+                    Text(isMicOn ? "Mic On" : "Mic Off")
+                        .font(.custom(poppinsRegular, size: 8))
+                        .foregroundColor(.white)
+                }
+                .padding()
+            }
+            
+            Button(action: {
+                isUsingFrontCamera.toggle()
+                agoraManager.switchCamera()
+            }) {
+                VStack {
+                    Image(.camera)
+                        .resizable()
+                        .frame(width: 25, height: 24)
+                        .foregroundColor(.white)
+                    Text("Switch")
+                        .font(.custom(poppinsRegular, size: 8))
+                        .foregroundColor(.white)
+                }
+                .padding()
+            }
+            
+            VStack {
+                if let product = currentProduct, let img = product.images?.first {
+                    StackedImageView(imageURL: img, totalCount: productData.count) {}
+                }
+            }
+            Spacer()
+        }
+    }
+    @ViewBuilder
+    private var chatMessages: some View {
+        if socketManager.chats.count > 0 {
+            HStack {
+                ScrollViewReader { proxy in
+                    ScrollView(.vertical, showsIndicators: false) {
+                        VStack {
+                            Spacer(minLength: 0)
+                            LazyVStack(alignment: .leading, spacing: 6) {
+                                ForEach(socketManager.chats) { comment in
+                                    let isHost = comment.userId == "\(UserDefaults.userId)"
+                                    ChatMessageBubble(comment: comment, isHost: isHost)
+                                        .background(
+                                            GeometryReader { geo in
+                                                Color.clear.onAppear {
+                                                    if messageHeight == 40 {
+                                                        messageHeight = geo.size.height + 10
+                                                    }
+                                                }
+                                            }
+                                        )
+                                        .id(comment.id)
+                                }
+                            }
+                        }
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                    }
+                    .frame(
+                        width: screenWidth - 54,
+                        height: socketManager.chats.count == 0
+                            ? 0
+                            : min(CGFloat(socketManager.chats.count), CGFloat(maxVisibleMessages)) * messageHeight
+                    )
+                    .animation(.easeOut(duration: 0.2), value: socketManager.chats.count)
+                    .onChange(of: socketManager.chats) { _ in
+                        if let lastID = socketManager.chats.last?.id {
+                            withAnimation(.easeOut(duration: 0.25)) {
+                                proxy.scrollTo(lastID, anchor: .bottom)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
 
     private func handleOpenChat(with chat: ChatMessage) {
         print("📱 Opening chat with: \(chat.users.receiverName)")
@@ -1336,7 +1939,7 @@ struct RehearsalScreen: View {
             )
             
             // STEP 6: Socket setup in background
-            self.setupLiveSocketListeners(for: roomId)
+            self.setupLiveSocketListeners(for: roomId,showId: showId)
             
             // STEP 7: Update UI & start scheduler on main thread
             DispatchQueue.main.async {
@@ -1386,7 +1989,7 @@ struct RehearsalScreen: View {
         }
     }
     //MARK: - Socket listener -
-    private func setupLiveSocketListeners(for roomId: String) {
+    private func setupLiveSocketListeners(for roomId: String,showId: Int = 0) {
         print("🔌 Setting up socket listeners for \(roomId)")
         
         SocketManagerService.shared.observeRoomUpdates { newRoom in
@@ -1422,6 +2025,22 @@ struct RehearsalScreen: View {
             self.showNotes = notes
         }
         
+        socketManager.listenForFreebieWinner{ userId in
+            
+        }
+        
+        socketManager.listenForFreebie{ freebie,user in
+            let showID = Int(freebie.show_id ?? "")
+            guard showId == showID else{
+                return
+            }
+            self.wheelTitles = user
+            let title = user.map { $0.name ?? ""}
+            self.viewModelFreebie.options.removeAll()
+            viewModelFreebie.options.append(contentsOf: title)
+            print("Freebie user data \(wheelTitles) for showId : \(showId)")
+        }
+       
         socketManager.listenForBidTimer(roomId: roomId)
         socketManager.listenForChat(roomId: roomId)
         socketManager.listenForViewerCount()

@@ -1326,8 +1326,8 @@ struct LiveStream: View {
     
     @ViewBuilder
     private var RandomizerSheet: some View {
-        RandomizerLiveView(isPresented: $navigateToRandomizer,didEnterFreBie: {
-            
+        RandomizerLiveView(isPresented: $navigateToRandomizer, showid: $showId,didEnterFreBie: {
+            socketManagerChat.enterInFreebie(showId: showId, userId: UserDefaults.userId)
         })
             .presentationBackground(Color.black.opacity(0.1))
     }
