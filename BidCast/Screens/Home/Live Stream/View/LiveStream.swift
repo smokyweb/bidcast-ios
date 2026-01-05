@@ -378,8 +378,16 @@ struct LiveStream: View {
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 14)
                     .padding(.vertical, 10)
-                    .background(Color.white)
-                    .cornerRadius(10)
+                    .background(
+                        UnevenRoundedRectangle(
+                            topLeadingRadius: 0,
+                            bottomLeadingRadius: 0,
+                            bottomTrailingRadius: 12,
+                            topTrailingRadius: 12
+                        )
+                        .fill(Color.white)
+                    )
+//                    .cornerRadius(10)
                     .shadow(color: .black.opacity(0.15), radius: 4, x: 0, y: 2)
             }
             
@@ -400,19 +408,25 @@ struct LiveStream: View {
                                 .font(.system(size: 12))
                             Text("0 Entries")
                                 .font(.custom(poppinsRegular, size: 11))
+                                .foregroundColor(.white)
                         }
                         .foregroundColor(.white.opacity(0.85))
                     }
                 }
-                .padding(.horizontal, 14)
+                .padding(.horizontal, 12)
                 .padding(.vertical, 10)
                 .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(Color.black.opacity(0.6))
+                    UnevenRoundedRectangle(
+                        topLeadingRadius: 12,
+                        bottomLeadingRadius: 12,
+                        bottomTrailingRadius: 0,
+                        topTrailingRadius: 0
+                    )
+                    .fill(Color.black.opacity(0.4))
                 )
             }
         }
-        .padding(.horizontal, 16)
+        .padding(.horizontal, 0)
         .padding(.top, 10)
     }
 
@@ -1273,18 +1287,23 @@ struct LiveStream: View {
                     .presentationCornerRadius(25)
                     .presentationDragIndicator(.hidden)
             }
-            .sheet(isPresented: $navigateToRandomizer) {
-                RandomizerSheet
-               
-                .presentationDetents([.fraction(0.55)])
-                    .presentationCornerRadius(25)
-                    .presentationDragIndicator(.hidden)
-                    .presentationBackground(Color.black.opacity(0.1))
-    //                .interactiveDismissDisabled()
-            }
+//            .sheet(isPresented: $navigateToRandomizer) {
+//                RandomizerSheet
+//               
+//                .presentationDetents([.fraction(0.55)])
+//                    .presentationCornerRadius(25)
+//                    .presentationDragIndicator(.hidden)
+//                    .presentationBackground(Color.black.opacity(0.1))
+//    //                .interactiveDismissDisabled()
+//            }
             .overlay(
-                winnerOverlay
+                Group{
+                    if navigateToRandomizer{
+                        RandomizerSheet
+                    }
+                }
             )
+            
     }
     
     // MARK: - Sheet Content Views
@@ -1307,7 +1326,9 @@ struct LiveStream: View {
     
     @ViewBuilder
     private var RandomizerSheet: some View {
-        RandomizerLiveView()
+        RandomizerLiveView(isPresented: $navigateToRandomizer,didEnterFreBie: {
+            
+        })
             .presentationBackground(Color.black.opacity(0.1))
     }
     @ViewBuilder
@@ -2016,7 +2037,7 @@ extension LiveStream {
                 message: "Your verification is currently pending approval by the admin. You will be notified once the process is complete.",
                 primaryBtnText: "OK",
                 secondaryBtnText: "",
-                buttonWidth: screenWidth - 40,
+                buttonWidth: screenWidth - 60,
                 contentSize: 12.0
             )
             withAnimation(.snappy) { showVerificationSheet = true }
@@ -2037,7 +2058,7 @@ extension LiveStream {
                 message: "Before you interact with live shows, you need to become a verified buyer.",
                 primaryBtnText: "OK",
                 secondaryBtnText: "",
-                buttonWidth: screenWidth - 40,
+                buttonWidth: screenWidth - 60,
                 contentSize: 12.0
             )
             withAnimation(.snappy) { showVerificationSheet = true }

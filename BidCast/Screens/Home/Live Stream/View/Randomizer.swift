@@ -261,7 +261,7 @@ struct RandomizerControlPanel: View {
                                             }) {
                                                 Image(systemName: "xmark.circle.fill")
                                                     .font(.system(size: 18))
-                                                    .foregroundColor(.gray)
+                                                    .foregroundColor(.black)
                                             }
                                         }
                                         .padding(.horizontal, 16)
@@ -339,7 +339,7 @@ struct RandomizerControlPanel: View {
                             )
                             .overlay(
                                 RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color.defaultTheme.opacity(0.3), lineWidth: 1)
+                                    .stroke(Color.defaultTheme, lineWidth: 1)
                             )
                         }
                         
@@ -401,8 +401,9 @@ struct RandomizerButton: View {
             HStack(spacing: 8) {
                 Text(title)
                     .font(.custom(poppinsMedium, size: 12))
+                    .foregroundStyle(.defaultTheme)
             }
-            .foregroundColor(isDisabled ? .darkGray : .black)
+            .foregroundColor(isDisabled ? .darkGray : .defaultTheme)
             .frame(maxWidth: .infinity)
             .frame(height: 50)
             .padding(.horizontal, 20)
@@ -413,7 +414,7 @@ struct RandomizerButton: View {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
-                    .stroke(Color.defaultThemeLight.opacity(isDisabled ? 0.1 : 1.0), lineWidth: 1)
+                    .stroke(Color.defaultTheme.opacity(isDisabled ? 0.1 : 1.0), lineWidth: 1)
             )
         }
         .disabled(isDisabled)
@@ -700,95 +701,133 @@ struct RandomizerView_Previews: PreviewProvider {
 
 
 import SwiftUI
-
 struct RandomizerLiveView: View {
+
+    @Binding var isPresented: Bool   // 👈 controls dismiss
 
     @StateObject private var viewModel = RandomizerViewModel()
     @State private var isSpinning = false
     @State private var selectedWinner: String?
 
     var onWinnerSelected: (String) -> Void = { _ in }
+    var didEnterFreBie : () -> () = { }
 
     var body: some View {
-        VStack(spacing: 24) {
+        ZStack {
 
-            // 🎡 Fortune Wheel
-            FortuneWheel(
-                titles: viewModel.options,
-                size: UIScreen.main.bounds.width * 0.7,
-                onSpinEnd: onSpinEnd,
-                getWheelItemIndex: {
-                    Int.random(in: 0..<viewModel.options.count)
+            // 🔹 Background tap to dismiss
+            Color.black.opacity(0.3)
+                .ignoresSafeArea()
+                .onTapGesture {
+                    dismiss()
                 }
-            )
-            .padding(.top, 30)
 
-            // 📋 User Listing
-            VStack(alignment: .leading, spacing: 12) {
-                Text("Participants")
-                    .font(.custom(poppinsBold, size: 18))
+            VStack(spacing: 24) {
 
-                if viewModel.options.isEmpty {
-                    Text("No users added")
-                        .foregroundColor(.gray)
-                        .frame(maxWidth: .infinity, alignment: .center)
-                        .padding(.vertical, 40)
-                } else {
-                    ScrollView {
-                        VStack(spacing: 0) {
-                            ForEach(viewModel.options, id: \.self) { option in
-                                HStack {
-                                    Text(option)
-                                        .font(.custom(poppinsRegular, size: 15))
+                // ❌ Close Button
+                HStack {
+                    Spacer()
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 26))
+                            .foregroundColor(.black)
+                    }
+                }
+                .padding(.horizontal)
+                .padding(.top, 12)
 
-                                    Spacer()
+                // 🎡 Fortune Wheel
+                FortuneWheel(
+                    titles: viewModel.options,
+                    size: screenWidth / 1.5,
+                    onSpinEnd: onSpinEnd,
+                    getWheelItemIndex: {
+                        Int.random(in: 0..<viewModel.options.count)
+                    }
+                )
+                .padding(.top, 10)
+
+                // 📋 Participants
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Participants")
+                        .font(.custom(poppinsBold, size: 18))
+
+                    if viewModel.options.isEmpty {
+                        Text("No users added")
+                            .foregroundColor(.gray)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .padding(.vertical, 40)
+                    } else {
+                        ScrollView {
+                            VStack(spacing: 0) {
+                                ForEach(viewModel.options, id: \.self) { option in
+                                    HStack {
+                                        Text(option.capitalizingFirstLetter())
+                                            .font(.custom(poppinsRegular, size: 15))
+                                        Spacer()
+                                    }
+                                    .padding(.horizontal, 16)
+                                    .padding(.vertical, 12)
+                                    Divider()
                                 }
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 12)
-
-                                Divider()
                             }
                         }
+                        .frame(maxHeight: 140)
                     }
-                    .frame(maxHeight: 200)
+
+                    Button(action: {
+                        didEnterFreBie()
+                    }) {
+                        Text("Enter")
+                            .font(.custom(poppinsSemiBold, size: 16))
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 52)
+                            .background(
+                                RoundedRectangle(cornerRadius: 32)
+                                    .fill(Color.defaultTheme)
+                            )
+                    }
+                    
                 }
+                .padding()
+                .background(.backGround)
+                .cornerRadius(24)
+                .padding(.horizontal)
+                .padding(.bottom, 30)
             }
-            .padding(.horizontal, 20)
-
-            // ✅ Submit / Spin Button
-            Button(action: spinWheel) {
-                Text("Submit")
-                    .font(.custom(poppinsSemiBold, size: 16))
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 52)
-                    .background(
-                        RoundedRectangle(cornerRadius: 32)
-                            .fill(isSpinning || viewModel.options.isEmpty
-                                  ? Color.gray
-                                  : Color.defaultTheme)
-                    )
-            }
-            .disabled(isSpinning || viewModel.options.isEmpty)
-            .padding(.horizontal, 20)
-            .padding(.bottom, 30)
-
         }
-        .background(Color.backGround.ignoresSafeArea())
     }
 
     // MARK: - Actions
+    private func dismiss() {
+        withAnimation {
+            isPresented = false
+        }
+    }
+
     private func spinWheel() {
-//        guard !viewModel.options.isEmpty else { return }
 //        isSpinning = true
-//        NotificationCenter.default.post(name: NSNotification.Name("SpinWheel"), object: nil)
+//        NotificationCenter.default.post(
+//            name: NSNotification.Name("SpinWheel"),
+//            object: nil
+//        )
     }
 
     private func onSpinEnd(index: Int) {
-        guard index < viewModel.options.count else { return }
-        let winner = viewModel.options[index]
-        selectedWinner = winner
-        isSpinning = false
-        onWinnerSelected(winner)
+//        guard index < viewModel.options.count else { return }
+//        let winner = viewModel.options[index]
+//        selectedWinner = winner
+//        isSpinning = false
+//        onWinnerSelected(winner)
+//
+//        // Auto dismiss after winner
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+//            dismiss()
+//        }
     }
 }
+
+
