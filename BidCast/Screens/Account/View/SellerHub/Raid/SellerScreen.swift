@@ -32,10 +32,8 @@ struct SellerScreen: View {
                 }) {
                     
                     Image(systemName: "xmark.circle.fill")
-                        .resizable()
-                        .frame(width: 15, height: 15)
-                        .font(.title)
-                        .foregroundStyle(.defaultTheme)
+                        .font(.custom(poppinsSemiBold, size: 28.0))
+                        .foregroundColor(.defaultTheme)
                         .padding(.trailing, 25)
                         
                 }
@@ -48,7 +46,7 @@ struct SellerScreen: View {
                         
                         CustomProfileImage(url: seller.profile_image, isCircular: true, size: 40)
                             .padding()
-                        Text(seller.name ?? "")
+                        Text(seller.name?.capitalizingFirstLetter() ?? "")
                             .font(.custom(poppinsSemiBold, size: 13.0))
                         Spacer()
                         
@@ -88,7 +86,7 @@ struct SellerScreen: View {
                     .padding()
                     .foregroundColor(.white)
                     .background(selectedSellerID == nil ? Color.gray : .defaultTheme)
-                    .cornerRadius(10)
+                    .cornerRadius(32)
             }
             .disabled(selectedSellerID == nil || isRaidCreating)
             .padding()

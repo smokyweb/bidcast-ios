@@ -3,25 +3,27 @@ import SwiftUI
 @available(macOS 11.0, *)
 @available(iOS 14.0, *)
 public struct FortuneWheel: View {
-
-    private var titles: [String], size: CGFloat, onSpinEnd: ((Int) -> ())?, strokeWidth: CGFloat, strokeColor: Color = .defaultThemeLight
+    @Binding private var titles: [String]
+    @Binding var spinTrigger: Bool
+    private var size: CGFloat, onSpinEnd: ((Int) -> ())?, strokeWidth: CGFloat, strokeColor: Color = .defaultThemeLight
     private var colors: [Color], pointerColor: Color = Color(hex: "DA4533")
-    private var wheelId: String // 🆕 Add wheelId property
+    
     @StateObject var viewModel: FortuneWheelViewModel
     
     public init(
-            titles: [String], size: CGFloat, onSpinEnd: ((Int) -> ())?,
+        titles: Binding<[String]>, spinTrigger : Binding<Bool>,size: CGFloat, onSpinEnd: ((Int) -> ())?,
             colors: [Color]? = nil, pointerColor: Color? = nil,
             strokeWidth: CGFloat = 8, strokeColor: Color? = nil,
             animDuration: Double = Double(2),
             animation: Animation? = nil,
             getWheelItemIndex: (() -> (Int))? = nil,
-            wheelId: String = "defaultWheel" // 🆕 Add wheelId parameter with default
+            
         ) {
-            self.titles = titles
+            self._titles = titles
+            self._spinTrigger = spinTrigger
             self.size = size
             self.strokeWidth = strokeWidth
-            self.wheelId = wheelId // 🆕 Store wheelId
+           
             
             // Keep colors consistent - NO shuffling
             if let colors = colors {
@@ -44,12 +46,11 @@ public struct FortuneWheel: View {
             
             let timeCurveAnimation = Animation.timingCurve(0.51, 0.97, 0.56, 0.99, duration: animDuration)
             _viewModel = StateObject(wrappedValue: FortuneWheelViewModel(
-                titles: titles,
                 animDuration: animDuration,
                 animation: animation ?? timeCurveAnimation,
                 onSpinEnd: onSpinEnd,
                 getWheelItemIndex: getWheelItemIndex,
-                wheelId: wheelId // 🆕 Pass wheelId to ViewModel
+               
             ))
         }
     
@@ -69,11 +70,32 @@ public struct FortuneWheel: View {
             }
             SpinWheelPointer(pointerColor: pointerColor).offset(x: 0, y: 0)
         }
+//        .onAppear {
+//            viewModel.setupNotificationObserver()
+//        }
+//        .onDisappear {
+//            viewModel.removeNotificationObserver()
+//        }
         .onAppear {
-            viewModel.setupNotificationObserver()
+            viewModel.updateTitles(titles)
         }
-        .onDisappear {
-            viewModel.removeNotificationObserver()
+        .onChange(of: titles) { newTitles in
+            viewModel.updateTitles(newTitles)
+        }
+        .onChange(of: spinTrigger) { newValue in
+            guard newValue else { return }
+
+            guard !titles.isEmpty else {
+                print("❌ Spin ignored: titles not ready")
+                spinTrigger = false
+                return
+            }
+
+            viewModel.spinWheel {
+                    print("✅ Spin completed — resetting trigger")
+                    spinTrigger = false
+                }
+            
         }
     }
 }
@@ -146,8 +168,8 @@ extension Color {
 @available(iOS 13.0, *)
 class FortuneWheelViewModel: ObservableObject {
     
-    private var titles: [String]
-    private var wheelId: String // 🆕 Store wheelId
+    private var titles: [String] = []
+   
     
     @Published var degree = 0.0
     private let animDuration: Double
@@ -158,35 +180,33 @@ class FortuneWheelViewModel: ObservableObject {
     private var onSpinEnd: ((Int) -> ())?, getWheelItemIndex: (() -> (Int))?
     
     init(
-        titles: [String], animDuration: Double, animation: Animation,
+        animDuration: Double, animation: Animation,
         onSpinEnd: ((Int) -> ())?, getWheelItemIndex: (() -> (Int))?,
-        wheelId: String = "defaultWheel" // 🆕 Add wheelId parameter
+       
     ) {
-        self.titles = titles
+       
         self.animDuration = animDuration
         self.animation = animation
         self.onSpinEnd = onSpinEnd
         self.getWheelItemIndex = getWheelItemIndex
-        self.wheelId = wheelId // 🆕 Store wheelId
+      
     }
     
     func setupNotificationObserver() {
+        print("🔔 Setting up notification observer for SpinWheel")
         notificationObserver = NotificationCenter.default.addObserver(
             forName: NSNotification.Name("SpinWheel"),
             object: nil,
             queue: .main
-        ) { [weak self] notification in
-            // 🆕 Check if notification is for this specific wheel
-            if let notificationWheelId = notification.userInfo?["wheelId"] as? String,
-               let selfWheelId = self?.wheelId,
-               notificationWheelId == selfWheelId {
-                print("🎡 Spinning wheel: \(selfWheelId)")
-                self?.spinWheel()
-            } else {
-                print("🚫 Ignoring spin for wheel: \(self?.wheelId ?? "unknown")")
-            }
+        ) { [weak self] _ in
+            print("📬 Received SpinWheel notification!")
+            self?.spinWheel()
         }
     }
+    func updateTitles(_ newTitles: [String]) {
+           print("📝 Updating titles in ViewModel: \(newTitles)")
+           self.titles = newTitles
+       }
     
     func removeNotificationObserver() {
         if let observer = notificationObserver {
@@ -196,42 +216,122 @@ class FortuneWheelViewModel: ObservableObject {
     }
 
     private func getWheelStopDegree() -> Double {
-        var index = -1
-        if let method = getWheelItemIndex { index = method() }
-        if index < 0 || index >= titles.count { index = Int.random(in: 0..<titles.count) }
-        index = titles.count - index - 1
+//        var index = -1
+//        if let method = getWheelItemIndex { index = method() }
+//        if index < 0 || index >= titles.count { index = Int.random(in: 0..<titles.count) }
+//        index = titles.count - index - 1
+//        
+//        let itemRange = 360 / titles.count
+//        let indexDegree = itemRange * index
+//        let freeRange = Int.random(in: 0...itemRange)
+//        let freeSpins = (2...20).map({ return $0 * 360 }).randomElement()!
+//        let finalDegree = freeSpins + indexDegree + freeRange
+//        return Double(finalDegree)
+        guard titles.count > 0 else {
+                print("⚠️ Spin aborted: No titles")
+                return 0
+            }
+
+            let safeItemRange = max(1, 360 / titles.count)
+
+            var index = -1
+            if let method = getWheelItemIndex {
+                index = method()
+            }
+
+//            if index < 0 || index >= titles.count {
+//                index = Int.random(in: 0..<titles.count)
+//            }
+
+        guard index >= 0 && index < titles.count else {
+            print("❌ Invalid target index")
+            return 0
+        }
         
-        let itemRange = 360 / titles.count
-        let indexDegree = itemRange * index
-        let freeRange = Int.random(in: 0...itemRange)
-        let freeSpins = (2...20).map({ return $0 * 360 }).randomElement()!
-        let finalDegree = freeSpins + indexDegree + freeRange
-        return Double(finalDegree)
+            index = titles.count - index - 1
+
+            let indexDegree = safeItemRange * index
+            let freeRange = Int.random(in: 0..<safeItemRange)
+            let freeSpins = Int.random(in: 2...6) * 360
+
+            return Double(freeSpins + indexDegree + freeRange)
     }
     
-    func spinWheel() {
+//    func spinWheel() {
+//        withAnimation(animation) {
+//            self.degree = Double(360 * Int(self.degree / 360)) + getWheelStopDegree()
+//        }
+//        
+//        // Cancel the currently pending item
+//        pendingRequestWorkItem?.cancel()
+//        
+//        // Wrap our request in a work item
+//        let requestWorkItem = DispatchWorkItem { [weak self] in
+//            if let count = self?.titles.count,
+//               let distance = self?.degree.truncatingRemainder(dividingBy: 360) {
+//                let pointer = floor(distance/(360/Double(count)))
+//                if let onSpinEnd = self?.onSpinEnd {
+//                    onSpinEnd(count - Int(pointer) - 1)
+//                }
+//            }
+//        }
+//        
+//        // Save the new work item and execute it after duration
+//        pendingRequestWorkItem = requestWorkItem
+//        DispatchQueue.main.asyncAfter(deadline: .now() + animDuration + 1, execute: requestWorkItem)
+//    }
+    func spinWheel(onCompleted: (() -> Void)? = nil) {
+        print("🎰 spinWheel() called in FortuneWheelViewModel")
+        print("   Titles count:", titles.count)
+
+        // 🚫 HARD STOP CONDITIONS
+        guard !titles.isEmpty else {
+            print("❌ Spin blocked: titles empty")
+            onCompleted?()   // ✅ safely complete
+            return
+        }
+
+        guard let index = getWheelItemIndex?(),
+              index >= 0,
+              index < titles.count else {
+            print("❌ Spin blocked: invalid winner index")
+            onCompleted?()   // ✅ safely complete
+            return
+        }
+
+        let stopDegree = getWheelStopDegree()
+
         withAnimation(animation) {
-            self.degree = Double(360 * Int(self.degree / 360)) + getWheelStopDegree()
+            degree = Double(360 * Int(degree / 360)) + stopDegree
         }
-        
-        // Cancel the currently pending item
+
         pendingRequestWorkItem?.cancel()
-        
-        // Wrap our request in a work item
+
         let requestWorkItem = DispatchWorkItem { [weak self] in
-            if let count = self?.titles.count,
-               let distance = self?.degree.truncatingRemainder(dividingBy: 360) {
-                let pointer = floor(distance/(360/Double(count)))
-                if let onSpinEnd = self?.onSpinEnd {
-                    onSpinEnd(count - Int(pointer) - 1)
-                }
+            guard let self = self else { return }
+
+            let count = self.titles.count
+            let distance = self.degree.truncatingRemainder(dividingBy: 360)
+            let pointer = floor(distance / (360 / Double(count)))
+            let finalIndex = count - Int(pointer) - 1
+
+            guard finalIndex >= 0 && finalIndex < count else {
+                print("❌ Final index invalid:", finalIndex)
+                onCompleted?()
+                return
             }
+
+            print("🎯 Wheel stopped at index:", finalIndex)
+            self.onSpinEnd?(finalIndex)
+
+            onCompleted?()   // ✅ COMPLETE HERE
         }
-        
-        // Save the new work item and execute it after duration
+
         pendingRequestWorkItem = requestWorkItem
         DispatchQueue.main.asyncAfter(deadline: .now() + animDuration + 1, execute: requestWorkItem)
     }
+
+
 }
 
 @available(macOS 10.15, *)

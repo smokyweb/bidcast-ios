@@ -45,8 +45,8 @@ struct SearchBarView: View {
             if !viewModel.searchText.isEmpty {
                 Button(action: { viewModel.searchText = "" }) {
                     Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(.gray)
-                        .frame(width: 20, height: 20)
+                        .font(.custom(poppinsSemiBold, size: 28.0))
+                        .foregroundStyle(.black)
                 }
                 .padding(4)
                 .accessibilityLabel("Clear search text")

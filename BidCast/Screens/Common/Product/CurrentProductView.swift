@@ -108,7 +108,7 @@ struct CurrentProductView: View {
                             .font(.custom(poppinsBold, size: 13))
                             .foregroundColor(.white)
                         if hasWon{
-                            Text("sold")
+                            Text("Sold")
                                 .font(.custom(poppinsBold, size: 13))
                                 .foregroundColor(.danger)
                         }else{
@@ -148,7 +148,7 @@ struct CurrentProductView: View {
                     .frame(maxWidth: .infinity)
                 }
                 .background(.defaultTheme)
-                .cornerRadius(8)
+                .cornerRadius(32)
                 .padding(.horizontal,0)
             }
         }

@@ -29,7 +29,8 @@ struct CustomSearchBar: View {
                     searchText = ""
                 }) {
                     Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(.gray)
+                        .font(.custom(poppinsSemiBold, size: 28.0))
+                        .foregroundStyle(.black)
                 }
                 .padding([.trailing] , 8)
             }

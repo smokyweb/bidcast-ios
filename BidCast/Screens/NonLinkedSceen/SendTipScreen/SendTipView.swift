@@ -49,8 +49,8 @@ struct SendTipView: View {
                         
                         Button(action: onClose) {
                             Image(systemName: "xmark.circle.fill")
-                                .font(.system(size: 28))
-                                .foregroundColor(.gray.opacity(0.3))
+                                .font(.custom(poppinsSemiBold, size: 28.0))
+                                .foregroundStyle(.black)
                         }
                     }
                     .padding(.horizontal, 24)

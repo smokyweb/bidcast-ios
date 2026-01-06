@@ -724,11 +724,11 @@ struct RehearsalScreen: View {
         )
         
         .sheet(isPresented: $navigateToRandomizer) {
-            RandomizerView(showid:$showUd,didTapSpin : { value in
+            RandomizerView(roomId : $roomId ,didTapSpin : { value in
                 showSpin = value
                
             },didSpinWheel:{
-                socketManager.finalizeFreebie(showId: showUd)
+                socketManager.finalizeFreebie(room_id: self.roomId)
             },onWinnerSelected: { winner in
                 randomWinner = winner.name ?? ""
                 
@@ -1246,7 +1246,7 @@ struct RehearsalScreen: View {
             },
             onProductSelected: { product in
                 selectedFreebie = product
-                socketManager.createFreebie(showId: self.showUd, productId: "\(product.id ?? 0)", time: 100)
+                socketManager.createFreebie(room_id: self.roomId, productId: "\(product.id ?? 0)", time: 100)
                 showFreeBie = false
                 navigateToRandomizer = true
             }
@@ -1640,7 +1640,7 @@ struct RehearsalScreen: View {
                     .padding()
                     .frame(maxWidth: .infinity)
                     .background(Color.defaultTheme)
-                    .cornerRadius(8)
+                    .cornerRadius(32)
             }
             .padding(.horizontal)
         }
@@ -1689,12 +1689,12 @@ struct RehearsalScreen: View {
                     }
                 }
             }) {
-                Text("Ok")
+                Text("Okay")
                     .foregroundColor(.white)
                     .padding()
                     .frame(maxWidth: .infinity)
                     .background(Color.defaultTheme)
-                    .cornerRadius(8)
+                    .cornerRadius(32)
             }
             .padding(.horizontal)
         }
@@ -1756,7 +1756,11 @@ struct RehearsalScreen: View {
             }) {
                 VStack {
                     Image(.camera)
+                        .renderingMode(.template)
                         .resizable()
+                        .scaledToFit()
+                        .fontWeight(.heavy)
+                        .font(.custom(poppinsExtraBold, size: 22.0))
                         .frame(width: 25, height: 24)
                         .foregroundColor(.white)
                     Text("Switch")
@@ -2030,8 +2034,8 @@ struct RehearsalScreen: View {
         }
         
         socketManager.listenForFreebie{ freebie,user in
-            let showID = Int(freebie.show_id ?? "")
-            guard showId == showID else{
+            let roomID = freebie.room_id ?? ""
+            guard self.roomId == roomID else{
                 return
             }
             self.wheelTitles = user
@@ -2791,7 +2795,7 @@ extension RehearsalScreen {
     private func successPromoteShow() {
         let response = viewModel.storePromoteShowModel
         if response?.status == "success" {
-            hudMsg = "show promoted successfully."
+            hudMsg = "Show promoted successfully."
             showhudSuccess = true
             socketManager.sendPromotionEvent(userId: "\(response?.data?.userID ?? 0)", showId: "\(response?.data?.id ?? 0)", promoteShowId: "\(response?.data?.promoteShowID ?? 0)")
         } else {

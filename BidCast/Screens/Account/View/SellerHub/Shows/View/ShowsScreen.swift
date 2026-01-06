@@ -158,11 +158,11 @@ struct ShowsScreen: View {
             CusNavLink(doNavigate: $navigateToShowDetails,
                        destination:  ShowDetailsScreen(showId: $showID))
             
-//            CusNavLink(doNavigate: $navigateToshowTitle, destination:
-//                        ShowTitleTips(request : $scheduleRequest,
-//                                      fromPrepare:.constant(false),
-//                                      backToPrepare: $navigateToshowTitle,
-//                                      showId: $SHowId))
+            CusNavLink(doNavigate: $navigateToshowTitle, destination:
+                        ShowTitleTips(request : $scheduleRequest,
+                                      fromPrepare:.constant(false),
+                                      backToPrepare: $navigateToshowTitle,
+                                      showId: $SHowId))
            
         }
         .navigationBarHidden(true)

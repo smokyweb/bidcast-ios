@@ -11,6 +11,7 @@ struct FreebieModel: Codable, Identifiable {
     var show_id: String?
     var product_id: String?
     var duration: String?
+    var room_id : String?
     
 }
 struct FreebieSocketPayload: Codable {
@@ -19,6 +20,7 @@ struct FreebieSocketPayload: Codable {
 }
 struct FreebieWinnerPayload: Codable {
     var show_id: String?
+    var room_id : String?
     var user: FreebieUser?
 }
 
@@ -502,10 +504,10 @@ extension SocketManagerService {
     
     // MARK: - 1. Create Poll (Emit)
     
-    func joinShowForPromotionalData(showId:String,UserId : String) {
+    func joinShowForPromotionalData(room_id:String,UserId : String) {
         performIfConnected {
             let payload: [String: Any] = [
-                "show_id": showId,
+                "room_id": room_id,
                 "user_id": UserId,
             ]
             
@@ -515,7 +517,7 @@ extension SocketManagerService {
             
             // Create new delayed task
             let workItem = DispatchWorkItem { [weak self] in
-                self?.sustainedWatchesForPromotionalData(showId: showId, UserId: UserId)
+                self?.sustainedWatchesForPromotionalData(room_id: room_id, UserId: UserId)
             }
             
             sustainedWatchWorkItem = workItem
@@ -526,14 +528,25 @@ extension SocketManagerService {
         }
     }
 
-    func sustainedWatchesForPromotionalData(showId:String,UserId : String) {
+    func sustainedWatchesForPromotionalData(room_id:String,UserId : String) {
+        performIfConnected {
+            let payload: [String: Any] = [
+                "room_id": room_id,
+                "user_id": UserId,
+            ]
+
+            socket.emit("sustained_watches", payload)
+            print("📊 Sent sustained_watches :", payload)
+        }
+    }
+    func leaveShow(showId:String,UserId : String) {
         performIfConnected {
             let payload: [String: Any] = [
                 "show_id": showId,
                 "user_id": UserId,
             ]
 
-            socket.emit("sustained_watches", payload)
+            socket.emit("leave_show", payload)
             print("📊 Sent sustained_watches :", payload)
         }
     }
@@ -1210,10 +1223,10 @@ extension SocketManagerService {
 // MARK: - 🎁 Freebie Events
 extension SocketManagerService {
 
-    func createFreebie(showId: String, productId: String, time: Int) {
+    func createFreebie(room_id: String, productId: String, time: Int) {
         performIfConnected {
             let payload: [String: Any] = [
-                "show_id": showId,
+                "room_id": room_id,
                 "product_id": productId,
                 "time": time
             ]
@@ -1253,10 +1266,10 @@ extension SocketManagerService {
     }
 
 
-    func enterInFreebie(showId: String, userId: Int) {
+    func enterInFreebie(room_id: String, userId: Int) {
         performIfConnected {
             let payload: [String: Any] = [
-                "show_id": showId,
+                "room_id": room_id,
                 "user_id": "\(userId)"
             ]
             
@@ -1265,14 +1278,14 @@ extension SocketManagerService {
         }
     }
     
-    func finalizeFreebie(showId: String) {
+    func finalizeFreebie(room_id: String) {
         let payload: [String: Any] = [
-            "show_id": showId
+            "room_id": room_id
         ]
 
         socket.emit("finalize-freebie", payload)
 
-        logger.info("🎯 finalize-freebie emitted | showId=\(showId)")
+        logger.info("🎯 finalize-freebie emitted | showId=\(room_id)")
     }
     func listenForFreebieWinner(
         completion: @escaping (_ winner: FreebieUser) -> Void

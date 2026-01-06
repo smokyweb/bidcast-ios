@@ -5,7 +5,7 @@ struct RandomizerView: View {
     
     @Environment(\.presentationMode) var presentationMode
     @StateObject private var viewModel = RandomizerViewModel()
-    @Binding var showid : String
+    @Binding var roomId : String
     @State private var showSpinwheel = false
     @State private var isSpinning = false
     @State private var selectedWinner: FreebieUser?
@@ -23,7 +23,8 @@ struct RandomizerView: View {
     @State var usersData : [FreebieUser] = []
     
     @StateObject var socketManager = SocketManagerService.shared
-    
+    @State private var hasReceivedWinner = false
+    @State var spinTrigger : Bool = false
     var body: some View {
         ZStack {
             Color.black.opacity(0.01)
@@ -35,11 +36,19 @@ struct RandomizerView: View {
                 VStack(spacing: 0) {
                     if showSpinwheel {
                         FortuneWheel(
-                            titles: viewModel.options,
+                            titles: $viewModel.options, spinTrigger: $spinTrigger,
                             size: screenWidth/1.5,
                             onSpinEnd: onSpinEnd,
-                            getWheelItemIndex: getWheelItemIndex,
-                            wheelId: "mainWheel" // 🆕 Add unique identifier
+                            getWheelItemIndex: {
+                                // ✅ If we have a winner, return their index
+                                if let targetIndex = targetWinnerIndex {
+                                    print("🎯 Returning winner index: \(targetIndex) for \(viewModel.options[targetIndex])")
+                                    return targetIndex
+                                }
+                                // Otherwise random
+                                print("🎲 No winner set, returning random")
+                                return Int.random(in: 0..<max(1, viewModel.options.count))
+                            }
                         )
                         .background(.clear)
                         .id(wheelKey)
@@ -93,99 +102,137 @@ struct RandomizerView: View {
             withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
                 offset = 0
             }
-            if usersName.count != 0{
-                viewModel.options = usersName
-            }
-            
-            socketManager.listenForFreebie { freebie, users in
-                let showID = freebie.show_id ?? ""
-                guard showid == showID else { return }
-                
-                usersData = users
-                let titles = users.map { $0.name ?? ""}
-                viewModel.options = titles
-                usersName = viewModel.options
-                print("Freebie data \(freebie) for showId : \(showid)")
-            }
-            
-            // 🆕 Listen for winner and set target index BEFORE spinning
-            socketManager.listenForFreebieWinner { user in
-                if let winnerIndex = usersData.firstIndex(where: { $0.id == user.id }) {
-                    selectedWinner = usersData[winnerIndex]
-                    targetWinnerIndex = winnerIndex // Store the index
-                    print("✅ Winner received: \(user.name ?? ""), index: \(winnerIndex)")
-                    
-                    // 🆕 Trigger the wheel spin after receiving winner
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                        NotificationCenter.default.post(
-                            name: NSNotification.Name("SpinWheel"),
-                            object: nil,
-                            userInfo: ["wheelId": wheelIdMain]
-                        )
-                    }
-                } else {
-                    print("⚠️ Winner user not found for id:", user.id ?? "")
-                }
-            }
+            setupSocketListeners()
         }
         .animation(.spring(response: 0.4, dampingFraction: 0.8), value: showSpinwheel)
         .animation(.spring(response: 0.4, dampingFraction: 0.8), value: showWinnerAnimation)
     }
     
-    private func dismissView() {
-        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-            offset = UIScreen.main.bounds.height
+    private func setupSocketListeners() {
+            // Initialize with existing users
+            if usersName.count != 0 {
+                viewModel.options = usersName
+                print("📋 Initialized with \(usersName.count) users")
+            }
+            
+            // Listen for freebie updates (users joining)
+            socketManager.listenForFreebie { freebie, users in
+                let room_id = freebie.room_id ?? ""
+                guard roomId == room_id else {
+                    print("⏭️ Ignoring freebie for different room")
+                    return
+                }
+                
+                usersData = users
+                let titles = users.map { $0.name ?? "" }
+                viewModel.options = titles
+                usersName = viewModel.options
+                
+                print("📋 Updated participants: \(titles.joined(separator: ", "))")
+            }
+            
+            // ✅ Listen for winner - DON'T spin automatically, just store the winner
+            socketManager.listenForFreebieWinner { user in
+                print("🏆 ===== WINNER RECEIVED =====")
+                print("   Winner Name: \(user.name ?? "unknown")")
+                print("   Winner ID: \(user.id ?? 0)")
+                
+                if let winnerIndex = usersData.firstIndex(where: { $0.id == user.id }) {
+                    print("✅ Winner found at index: \(winnerIndex)")
+                    
+                    selectedWinner = usersData[winnerIndex]
+                    targetWinnerIndex = winnerIndex
+                    hasReceivedWinner = true
+                    isSpinning = true
+                    spinTrigger = true
+                    print("🎡 POSTING SPIN NOTIFICATION")
+                    
+                    // Post notification to trigger wheel spin
+//                    NotificationCenter.default.post(
+//                        name: NSNotification.Name("SpinWheel"),
+//                        object: nil
+//                    )
+                    
+                    print("   Winner stored. Ready to spin when button is pressed.")
+                } else {
+                    print("❌ Winner not found in usersData")
+                }
+            }
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            presentationMode.wrappedValue.dismiss()
-        }
-    }
-    
-    private func onSpinEnd(index: Int) {
-        guard index >= 0 && index < viewModel.options.count else { return }
         
-        // Use the winner we already know
-        if let winner = selectedWinner {
+        private func dismissView() {
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                offset = UIScreen.main.bounds.height
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                presentationMode.wrappedValue.dismiss()
+            }
+        }
+
+        // ✅ Called when wheel finishes spinning
+        private func onSpinEnd(index: Int) {
+            print("\n🎡 ===== WHEEL STOPPED =====")
+            print("   Stopped at index: \(index)")
+            
+            guard index >= 0 && index < viewModel.options.count else {
+                print("❌ Invalid index!")
+                isSpinning = false
+                return
+            }
+            
+            print("   Name at index: \(viewModel.options[index])")
+            
+            // ✅ Use the winner from socket if available, otherwise use the index
+            let winner: FreebieUser
+            if let selectedWinner = selectedWinner {
+                winner = selectedWinner
+                print("✅ Using winner from socket: \(winner.name ?? "unknown")")
+            } else {
+                // Fallback: create winner from the index (shouldn't happen normally)
+                winner = usersData[index]
+                print("⚠️ Using winner from wheel index: \(winner.name ?? "unknown")")
+            }
+            
             isSpinning = false
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            
+            // Show winner animation
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 withAnimation {
                     showWinnerAnimation = true
                     onWinnerSelected(winner)
                 }
                 
+                // Hide after 3 seconds
                 DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
                     withAnimation {
                         showWinnerAnimation = false
+                        // Reset for next spin
+                        selectedWinner = nil
+                        targetWinnerIndex = nil
+                        hasReceivedWinner = false
                     }
                 }
             }
-        } else {
-            print("⚠️ Winner not set when spin ended")
         }
-    }
-    
-    // 🆕 Return the target winner index
-    private func getWheelItemIndex() -> Int {
-        if let targetIndex = targetWinnerIndex {
-            print("🎯 Targeting winner at index: \(targetIndex)")
-            return targetIndex
-        }
-        // Fallback to random if no winner set yet
-        return Int.random(in: 0..<viewModel.options.count)
-    }
-    
-    private func spinWheel() {
-        guard !viewModel.options.isEmpty, !isSpinning else { return }
-        didSpinWheel()
-        isSpinning = true
         
-        // 🆕 Post notification with wheel ID
-//        NotificationCenter.default.post(
-//            name: NSNotification.Name("SpinWheel"),
-//            object: nil,
-//            userInfo: ["wheelId": "mainWheel"]
-//        )
-    }
+        // ✅ Trigger the wheel spin (called by button)
+        private func spinWheel() {
+            guard !viewModel.options.isEmpty, !isSpinning else {
+                print("❌ Cannot spin:")
+                print("   Options empty: \(viewModel.options.isEmpty)")
+                print("   Already spinning: \(isSpinning)")
+                return
+            }
+            didSpinWheel()
+            // ✅ Check if we have a winner from socket
+            if !hasReceivedWinner {
+                print("⚠️ Warning: No winner received from socket yet. Spinning with random result.")
+            } else {
+                print("✅ Winner available. Spinning to winner: \(viewModel.options[targetWinnerIndex!])")
+            }
+            
+           
+        }
 }
 
 // MARK: - Control Panel
@@ -290,8 +337,8 @@ struct RandomizerControlPanel: View {
                                                 viewModel.removeOption(at: index)
                                             }) {
                                                 Image(systemName: "xmark.circle.fill")
-                                                    .font(.system(size: 18))
-                                                    .foregroundColor(.black)
+                                                    .font(.custom(poppinsSemiBold, size: 28.0))
+                                                    .foregroundStyle(.black)
                                             }
                                         }
                                         .padding(.horizontal, 16)
@@ -418,20 +465,22 @@ struct RandomizerControlPanel: View {
 
 // MARK: - Randomizer Live View
 struct RandomizerLiveView: View {
-
+    @Binding var usersName : [String]
     @Binding var isPresented: Bool
-    @Binding var showid : String
+    @Binding var roomId : String
     @StateObject private var viewModel = FreebieViewModel()
     @State private var isSpinning = false
-    @State private var selectedWinner: String?
-
-    var onWinnerSelected: (String) -> Void = { _ in }
+    @State private var selectedWinner: FreebieUser?
+    @State private var showWinnerAnimation = false
+    var onWinnerSelected: (FreebieUser) -> Void = { _ in }
     var didEnterFreBie : () -> () = { }
-
+    
     @StateObject var socketManager = SocketManagerService.shared
-    @State private var wheelIdLive = "liveWheel" // 🆕 Different ID from main wheel
-      @State private var usersData: [FreebieUser] = [] // 🆕 Store full user data
-      @State private var targetWinnerIndex: Int? = nil
+    @State private var isWheelReady = false
+    @State private var usersData: [FreebieUser] = []
+    @State private var targetWinnerIndex: Int? = nil
+    
+    @State var spinTrigger : Bool = false
     
     var body: some View {
         ZStack {
@@ -440,7 +489,7 @@ struct RandomizerLiveView: View {
                 .onTapGesture {
                     dismiss()
                 }
-
+            
             VStack(spacing: 24) {
                 HStack {
                     Spacer()
@@ -448,29 +497,42 @@ struct RandomizerLiveView: View {
                         dismiss()
                     } label: {
                         Image(systemName: "xmark.circle.fill")
-                            .font(.system(size: 26))
-                            .foregroundColor(.black)
+                            .font(.custom(poppinsSemiBold, size: 28.0))
+                            .foregroundStyle(.black)
                     }
                 }
                 .padding(.horizontal)
                 .padding(.top, 12)
-
+                
                 // 🆕 Add wheelId parameter
                 FortuneWheel(
-                    titles: viewModel.options,
+                    titles: $viewModel.options, spinTrigger: $spinTrigger,
                     size: screenWidth / 1.5,
                     onSpinEnd: onSpinEnd,
                     getWheelItemIndex: {
-                        Int.random(in: 0..<viewModel.options.count)
+                        guard let targetIndex = targetWinnerIndex else {
+                            print("⏳ Winner index not ready yet")
+                            return 0
+                        }
+                        return targetIndex
                     },
-                    wheelId: "liveWheel" // 🆕 Different ID
+                    
                 )
                 .padding(.top, 10)
-
+                .onAppear {
+                    // ✅ Mark wheel as ready after it appears
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        isWheelReady = true
+                        print("✅ Wheel is now ready to spin")
+                        // Check if winner already arrived before wheel was ready
+                        trySpinWheelIfReady()
+                    }
+                }
+                
                 VStack(alignment: .leading, spacing: 12) {
                     Text("Participants")
                         .font(.custom(poppinsBold, size: 18))
-
+                    
                     if viewModel.options.isEmpty {
                         Text("No users added")
                             .foregroundColor(.gray)
@@ -493,7 +555,7 @@ struct RandomizerLiveView: View {
                         }
                         .frame(maxHeight: 140)
                     }
-
+                    
                     Button(action: {
                         didEnterFreBie()
                     }) {
@@ -516,46 +578,159 @@ struct RandomizerLiveView: View {
             }
         }
         .onAppear {
-            socketManager.listenForFreebie { freebie, users in
-                let showID = freebie.show_id ?? ""
-                guard showid == showID else { return }
-                
-                usersData = users // 🆕 Store full user data
-                let titles = users.map { $0.name ?? ""}
-                viewModel.options = titles
-                print("Freebie data \(freebie) for showId : \(showid)")
+            setupSocketListeners()
+        }
+    }
+
+    private func setupSocketListeners() {
+            // Initialize with existing users if any
+            if usersName.count != 0 {
+                viewModel.options = usersName
+                print("📋 Initialized with \(usersName.count) users")
             }
             
-            // 🆕 Listen for winner and trigger spin
+            // Listen for freebie updates (new users joining)
+            socketManager.listenForFreebie { freebie, users in
+                let room_id = freebie.room_id ?? ""
+                guard roomId == room_id else {
+                    print("⏭️ Ignoring freebie for different room: \(room_id)")
+                    return
+                }
+                
+                // Update users data
+                usersData = users
+                let titles = users.map { $0.name ?? "" }
+                viewModel.options = titles
+                usersName = viewModel.options
+                
+                print("📋 Updated participants: \(titles.joined(separator: ", "))")
+                print("   Total users: \(users.count)")
+            }
+            
+            // ✅ Listen for winner announcement - THIS TRIGGERS THE SPIN
             socketManager.listenForFreebieWinner { user in
+                print("🏆 ===== WINNER RECEIVED =====")
+                print("   Winner Name: \(user.name ?? "unknown")")
+                print("   Winner ID: \(user.id ?? 0)")
+                print("   Current participants: \(usersData.count)")
+                
+                // Find winner's index in the users array
                 if let winnerIndex = usersData.firstIndex(where: { $0.id == user.id }) {
-                    targetWinnerIndex = winnerIndex
-                    print("✅ Live view - Winner received: \(user.name ?? ""), index: \(winnerIndex)")
+                    print("✅ Winner found at index: \(winnerIndex)")
+                    print("   Winner name from array: \(usersData[winnerIndex].name ?? "unknown")")
                     
-                    // 🆕 Trigger wheel spin
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                        NotificationCenter.default.post(
-                            name: NSNotification.Name("SpinWheel"),
-                            object: nil,
-                            userInfo: ["wheelId": wheelIdLive]
-                        )
-                    }
+                    selectedWinner = usersData[winnerIndex]
+                    targetWinnerIndex = winnerIndex
+                    
+                    // Try to spin the wheel
+                    trySpinWheelIfReady()
                 } else {
-                    print("⚠️ Live view - Winner user not found for id:", user.id ?? "")
+                    print("❌ ERROR: Winner not found in usersData!")
+                    print("   Looking for ID: \(user.id ?? 0)")
+                    print("   Available IDs: \(usersData.map { $0.id ?? 0 })")
                 }
             }
         }
-    }
+            
+    private func trySpinWheelIfReady() {
+           print("\n🔍 ===== CHECKING SPIN READINESS =====")
+           print("   Wheel ready: \(isWheelReady)")
+           print("   Options count: \(viewModel.options.count)")
+           print("   Target winner index: \(targetWinnerIndex?.description ?? "nil")")
+           print("   Is currently spinning: \(isSpinning)")
+           print("   Selected winner: \(selectedWinner?.name ?? "nil")")
+           
+           // Check all conditions
+           guard isWheelReady else {
+               print("⏳ Waiting for wheel to be ready...")
+               return
+           }
+           
+           guard !viewModel.options.isEmpty else {
+               print("⏳ Waiting for participants list...")
+               return
+           }
+           
+           guard targetWinnerIndex != nil else {
+               print("⏳ Waiting for winner index...")
+               return
+           }
+           
+           guard !isSpinning else {
+               print("⏳ Wheel is already spinning...")
+               return
+           }
+           
+           // All conditions met - spin!
+           print("✅ ALL CONDITIONS MET - STARTING SPIN!")
+           print("   Will land on: \(viewModel.options[targetWinnerIndex!])")
+           
+           // Small delay for smooth animation
+           DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+               spinWheel()
+           }
+       }
+       
+       private func dismiss() {
+           withAnimation {
+               isPresented = false
+           }
+       }
 
-    private func dismiss() {
-        withAnimation {
-            isPresented = false
-        }
-    }
-
-    private func onSpinEnd(index: Int) {
-        // This wheel doesn't need to do anything on spin end
-    }
+       // ✅ Called when wheel finishes spinning
+       private func onSpinEnd(index: Int) {
+           print("\n🎡 ===== WHEEL STOPPED =====")
+           print("   Stopped at index: \(index)")
+           
+           guard index >= 0 && index < viewModel.options.count else {
+               print("❌ Invalid index!")
+               return
+           }
+           
+           print("   Name at index: \(viewModel.options[index])")
+           
+           if let winner = selectedWinner {
+               print("✅ Showing winner: \(winner.name ?? "unknown")")
+               isSpinning = false
+               
+               // Show winner animation after a brief delay
+               DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                   withAnimation {
+                       showWinnerAnimation = true
+                       onWinnerSelected(winner)
+                   }
+                   
+                   // Hide winner animation after 3 seconds
+                   DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                       withAnimation {
+                           showWinnerAnimation = false
+                       }
+                   }
+               }
+           } else {
+               print("⚠️ WARNING: Winner not set when spin ended!")
+           }
+       }
+       
+       // ✅ Trigger the wheel spin
+       private func spinWheel() {
+           guard !viewModel.options.isEmpty, !isSpinning else {
+               print("❌ Cannot spin:")
+               print("   Options empty: \(viewModel.options.isEmpty)")
+               print("   Already spinning: \(isSpinning)")
+               return
+           }
+           
+           isSpinning = true
+           spinTrigger = true
+           print("🎡 POSTING SPIN NOTIFICATION")
+           
+           // Post notification to trigger wheel spin
+//           NotificationCenter.default.post(
+//               name: NSNotification.Name("SpinWheel"),
+//               object: nil
+//           )
+       }
 }
 
 // MARK: - Supporting Views & Models

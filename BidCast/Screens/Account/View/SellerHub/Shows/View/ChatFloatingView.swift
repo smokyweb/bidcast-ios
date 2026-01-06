@@ -133,8 +133,8 @@ struct FloatingChatView: View {
                 }
             }) {
                 Image(systemName: "xmark.circle.fill")
-                    .font(.system(size: 24))
-                    .foregroundColor(.gray)
+                    .font(.custom(poppinsSemiBold, size: 28.0))
+                    .foregroundStyle(.black)
             }
         }
         .padding()

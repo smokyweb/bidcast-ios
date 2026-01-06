@@ -233,6 +233,8 @@ struct LiveStream: View {
     }
     @State var auctionedProductData: ProductDataModel1? = nil
     @State  var  boosts = [BoostModel]()
+    @StateObject private var viewModelFreebie = FreebieViewModel()
+    @State var wheelTitles = [FreebieUser]()
     
     var body: some View {
         ZStack {
@@ -1303,6 +1305,13 @@ struct LiveStream: View {
                     }
                 }
             )
+            .overlay(
+                Group{
+                    if showWinnerOnParent{
+                        winnerOverlay
+                    }
+                }
+            )
             
     }
     
@@ -1326,8 +1335,14 @@ struct LiveStream: View {
     
     @ViewBuilder
     private var RandomizerSheet: some View {
-        RandomizerLiveView(isPresented: $navigateToRandomizer, showid: $showId,didEnterFreBie: {
-            socketManagerChat.enterInFreebie(showId: showId, userId: UserDefaults.userId)
+        RandomizerLiveView(usersName: $viewModelFreebie.options, isPresented: $navigateToRandomizer, roomId: $currentRoomID,onWinnerSelected: { winner in
+            randomWinner = winner.name ?? ""
+            randomWinnerImage = winner.profile_image ?? ""
+            navigateToRandomizer = false
+            showWinnerOnParent = true
+//            showSpin = false
+        },didEnterFreBie: {
+            socketManagerChat.enterInFreebie(room_id : currentRoomID, userId: UserDefaults.userId)
         })
             .presentationBackground(Color.black.opacity(0.1))
     }
@@ -1968,6 +1983,22 @@ extension LiveStream {
             
         }
         
+        socketManagerChat.listenForFreebieWinner{ userId in
+            
+        }
+        
+        socketManagerChat.listenForFreebie{ freebie,user in
+            let roomID = freebie.room_id ?? ""
+            guard self.currentRoomID == roomID else{
+                return
+            }
+            self.wheelTitles = user
+            let title = user.map { $0.name ?? ""}
+            self.viewModelFreebie.options.removeAll()
+            viewModelFreebie.options.append(contentsOf: title)
+            print("Freebie user data \(wheelTitles) for showId : \(showId)")
+        }
+        
     }
     
     @MainActor
@@ -2104,7 +2135,7 @@ extension LiveStream {
         }
         
         print("🎬 Joining stream: \(roomId)")
-        socketManagerChat.joinShowForPromotionalData(showId: showId, UserId: "\(UserDefaults.userId)")
+        socketManagerChat.joinShowForPromotionalData(room_id: currentRoomID, UserId: "\(UserDefaults.userId)")
         socketManagerChat.listenForUserFollowStatus()
         SocketManagerService.shared.removeAllListeners()
         
@@ -2225,6 +2256,7 @@ extension LiveStream {
             productId = 0
             self.currentPrice = 0.0
             self.currentProductIndex = -1
+        socketManagerChat.leaveShow(showId: showId, UserId: "\(UserDefaults.userId)")
         }
 
         func incrementPrice() {
