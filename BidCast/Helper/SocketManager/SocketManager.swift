@@ -22,6 +22,13 @@ struct FreebieWinnerPayload: Codable {
     var show_id: String?
     var room_id : String?
     var user: FreebieUser?
+    var total: Int?
+}
+struct FreebieLiveUser: Codable {
+    var show_id: String?
+    var room_id : String?
+    var users: [FreebieUser]?
+    var total: Int?
 }
 
 struct FreebieUser: Codable, Identifiable {
@@ -1259,6 +1266,33 @@ extension SocketManagerService {
                     "🎁 get-freebie received | showId=\(payload.freebie.show_id ?? ""), users=\(payload.users_list?.count ?? 0)"
                 )
 
+            } catch {
+                self.logger.error("❌ get-freebie decode error: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    func listenForUserJoinedShows(
+        completion: ((_ freebie: FreebieLiveUser, _ users: [FreebieUser]) -> Void)? = nil
+    ) {
+        socket.on("active_show_users") { [weak self] data, _ in
+            guard let self else { return }
+            guard let json = data.first as? [String: Any] else {
+                self.logger.warning("⚠️ Invalid active_show_users payload: \(data)")
+                return
+            }
+
+            do {
+                let rawData = try JSONSerialization.data(withJSONObject: json)
+                let payload = try JSONDecoder().decode(FreebieLiveUser.self, from: rawData)
+
+                DispatchQueue.main.async {
+                    completion?(payload,payload.users ?? [])
+                }
+
+                self.logger.info(
+                    "🏆 Freebie users | showId=\(payload.show_id ?? "") "
+                )
             } catch {
                 self.logger.error("❌ get-freebie decode error: \(error.localizedDescription)")
             }

@@ -46,8 +46,8 @@
             filePath = "BidCast/Screens/Home/Live Stream/View/Randomizer.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "151"
-            endingLineNumber = "151"
+            startingLineNumber = "159"
+            endingLineNumber = "159"
             landmarkName = "setupSocketListeners()"
             landmarkType = "7">
          </BreakpointContent>
@@ -87,16 +87,32 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "619CB0C0-DEF9-4259-876B-271B2ABAE95C"
+            uuid = "39134023-450D-4E4D-844B-33E1D964BB26"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "BidCast/Screens/Home/Live Stream/View/Randomizer.swift"
+            filePath = "BidCast/Screens/Account/View/SellerHub/Shows/View/RehearsalScreen.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "202"
-            endingLineNumber = "202"
-            landmarkName = "onSpinEnd(index:)"
+            startingLineNumber = "2130"
+            endingLineNumber = "2130"
+            landmarkName = "setupLiveSocketListeners(for:showId:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "7E946548-D9CD-4A27-887C-9AAD020E2037"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BidCast/Helper/SocketManager/SocketManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1290"
+            endingLineNumber = "1290"
+            landmarkName = "listenForUserJoinedShows(completion:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

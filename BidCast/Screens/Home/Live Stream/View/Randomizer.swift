@@ -18,7 +18,9 @@ struct RandomizerView: View {
     var didTapSpin : (Bool) -> () = {_ in}
     var didSpinWheel : () -> () = {}
     var onWinnerSelected: (FreebieUser) -> () = {_ in}
+    var didTapAddManual : () -> () = { }
     @Binding var usersName : [String]
+    @Binding var userList : [FreebieUser]
     
     @State var usersData : [FreebieUser] = []
     
@@ -66,6 +68,8 @@ struct RandomizerView: View {
                             spinWheelTapped: spinWheel,
                             didTapSpin: { value in
                                 didTapSpin(value)
+                            },didTapAddManual: {
+                                didTapAddManual()
                             }
                         )
                     }
@@ -114,6 +118,9 @@ struct RandomizerView: View {
                 viewModel.options = usersName
                 print("📋 Initialized with \(usersName.count) users")
             }
+        if userList.count != 0{
+            usersData = userList
+        }
             
             // Listen for freebie updates (users joining)
             socketManager.listenForFreebie { freebie, users in
@@ -124,6 +131,7 @@ struct RandomizerView: View {
                 }
                 
                 usersData = users
+                userList = users
                 let titles = users.map { $0.name ?? "" }
                 viewModel.options = titles
                 usersName = viewModel.options
@@ -249,6 +257,7 @@ struct RandomizerControlPanel: View {
     
     var spinWheelTapped: (() -> Void)?
     var didTapSpin: ((Bool) -> Void)?
+    var didTapAddManual : () -> () = { }
     
     var body: some View {
         VStack(spacing: 0) {
@@ -392,10 +401,11 @@ struct RandomizerControlPanel: View {
                     HStack(spacing: 12) {
                         Button(action: {
                             withAnimation {
-                                showManualEntry.toggle()
-                                if showManualEntry {
-                                    isInputFocused = true
-                                }
+                                showManualEntry = false
+//                                if showManualEntry {
+//                                    isInputFocused = true
+//                                }
+                                didTapAddManual()
                             }
                         }) {
                             HStack(spacing: 8) {

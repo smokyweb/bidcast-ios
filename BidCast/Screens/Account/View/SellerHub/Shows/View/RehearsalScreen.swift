@@ -90,6 +90,7 @@ struct RehearsalScreen: View {
     
     @State var showSellerSheet = false
     @State var showRaidSheet = false
+    @State var showUserSheet = false
     
     @State private var selectedSellers: Int?
     
@@ -175,6 +176,8 @@ struct RehearsalScreen: View {
     @State private var showFreeBie : Bool = false
     
     @State private var selectedFreebie = ProductDataModel1()
+    @State private var UsersList: [FreebieUser] = []
+    @State private var selectedUsersId: [Int] = []
     
     @StateObject private var viewModelFreebie = RandomizerViewModel()
     var body: some View {
@@ -737,7 +740,10 @@ struct RehearsalScreen: View {
                 navigateToRandomizer = false
                 showWinnerOnParent = true
                 showSpin = false
-            }, usersName: $viewModelFreebie.options)
+            }, didTapAddManual: {
+                navigateToRandomizer = false
+                showUserSheet = true
+            },usersName: $viewModelFreebie.options, userList:$wheelTitles)
             .presentationDetents([.fraction(showSpin ? 0.90 : 0.55)])
                 .presentationCornerRadius(25)
                 .presentationDragIndicator(.hidden)
@@ -1040,6 +1046,18 @@ struct RehearsalScreen: View {
                 }
             )
         }
+        .bottomSheet(isPresented: $showUserSheet, height: screenHeight / 2.5, topBarCornerRadius: 25, showTopIndicator: false,onDismiss: {
+            showUserSheet = false
+        }) {
+            UserScreenFreeBie(users: $UsersList, selectedSellerID: $selectedUsersId, onSelected: { user in
+                let id = user?.id ?? 0
+                selectedUsersId.append(id)
+                socketManager.enterInFreebie(room_id: self.roomId, userId: id)
+            }, onCancel: {
+                showUserSheet = false
+            })
+        }
+        
 //        .bottomSheet(isPresented: $showTipSetting, height: screenHeight * 0.75, topBarCornerRadius: 25, showTopIndicator: false,onDismiss: {
 //            showTipSetting = false
 //            showSellSheet = false
@@ -2106,6 +2124,11 @@ struct RehearsalScreen: View {
                 return
             }
             showShopSheet = true
+        }
+        
+        socketManager.listenForUserJoinedShows{ data , users in
+            self.UsersList = users
+            
         }
         FirebaseManager.shared.fetchMessageList(forUserId: "\(UserDefaults.userId)") { messages in
             DispatchQueue.main.async {
