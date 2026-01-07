@@ -114,7 +114,7 @@ struct LiveAuctionCardView: View {
                     onTapProfile?()
                 }
                 
-                Text( auction.user?.username ?? auction.user?.name ?? "Unknown")
+                Text( auction.user?.username?.capitalizingFirstLetter() ?? auction.user?.name?.capitalizingFirstLetter() ?? "Unknown")
                     .font(.custom(poppinsSemiBold, size: 12))
                     .foregroundColor(.black)
                     .lineLimit(1)

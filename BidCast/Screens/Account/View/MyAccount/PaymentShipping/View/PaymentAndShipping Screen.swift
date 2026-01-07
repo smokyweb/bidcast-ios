@@ -408,7 +408,7 @@ struct PaymentAndShipping_Screen: View {
     
 }
 
-#Preview {
-    PaymentAndShipping_Screen()
-}
+//#Preview {
+//    PaymentAndShipping_Screen()
+//}
 

@@ -42,6 +42,7 @@ struct Tip: Codable {
 // MARK: - User
 struct UserModel: Codable {
     var id: Int?
+    var username: String?
     var name, email: String?
     var profileImage: String?
 

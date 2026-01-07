@@ -75,6 +75,8 @@ struct ProfileScreen: View {
     @State var productData: [ProductDataModel1] = []
     @State var searchText: String = ""
     
+    @State var sellerInfo : SellerInfoResponse? = nil
+    
     @State var reviewList: [ReviewModel] = [
         ReviewModel(username: "Alice", profileImageName: "user1", rating: 4.5),
         ReviewModel(username: "Bob", profileImageName: "user1", rating: 3.0),
@@ -85,6 +87,7 @@ struct ProfileScreen: View {
     let columns = Array(repeating: GridItem(.flexible(), spacing: 6), count: 2)
     
     @State private var selectedTab = ""
+    @State var navigateToDetail = false
     //Review Variab
     
     
@@ -221,7 +224,12 @@ struct ProfileScreen: View {
                                         NoDataView(message: "No Product Found")
                                     } else {
                                         ForEach(productData.indices, id: \.self) { index in
-                                            ProductListItem(product: $productData[index])
+                                            var product = productData[index]
+                                            ProductListItem(product: $productData[index],didSelectproduct: {
+                                                navigateToDetail = true
+                                                productId = product.id ?? 0
+                                                
+                                            })
                                                 .padding(.vertical, 4)
                                                 .onAppear {
                                                     handlePagination(index: index)
@@ -427,6 +435,7 @@ struct ProfileScreen: View {
                 }
             }
         }
+        CusNavLink(doNavigate: $navigateToDetail, destination: ProductDetailView(productID: $productId, sellerInfo: $sellerInfo))
         CusNavLink(
             doNavigate: $navigateToChat,
             destination: ChatScreen(

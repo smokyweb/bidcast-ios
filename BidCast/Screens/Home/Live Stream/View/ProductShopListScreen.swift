@@ -4,20 +4,23 @@
 //
 //  Created by JamTech on 24/11/25.
 //
+
 import SwiftUI
 import SVProgressHUD
 
 // MARK: - Image Loader
 final class LocalImageLoader: ObservableObject {
     @Published var image: UIImage?
-    
+
     func load(fromFilePath path: String?, defaultName: String = "default_product") {
         guard let path = path else {
             image = UIImage(named: defaultName)
             return
         }
+
         let url = URL(fileURLWithPath: path)
-        if let data = try? Data(contentsOf: url), let ui = UIImage(data: data) {
+        if let data = try? Data(contentsOf: url),
+           let ui = UIImage(data: data) {
             image = ui
         } else {
             image = UIImage(named: defaultName)
@@ -29,13 +32,13 @@ final class LocalImageLoader: ObservableObject {
 struct Shimmer: ViewModifier {
     @State private var phase: CGFloat = 0
     var isActive: Bool
-    
+
     func body(content: Content) -> some View {
         if isActive {
             content
-                .overlay(
+                .overlay {
                     GeometryReader { proxy in
-                        let gradient = LinearGradient(
+                        LinearGradient(
                             gradient: Gradient(colors: [
                                 Color.white.opacity(0.25),
                                 Color.white.opacity(0.7),
@@ -44,13 +47,10 @@ struct Shimmer: ViewModifier {
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
-                        Rectangle()
-                            .fill(gradient)
-                            .rotationEffect(.degrees(0))
-                            .offset(x: -proxy.size.width * 1.5 + phase * proxy.size.width * 3)
+                        .frame(width: proxy.size.width, height: proxy.size.height)
+                        .offset(x: -proxy.size.width * 1.5 + phase * proxy.size.width * 3)
                     }
-                    .clipped()
-                )
+                }
                 .mask(content)
                 .onAppear {
                     withAnimation(.linear(duration: 1.2).repeatForever(autoreverses: false)) {
@@ -72,12 +72,12 @@ extension View {
 // MARK: - Product List Item
 struct ProductListItem: View {
     @Binding var product: ProductDataModel1
-    @State private var showBadge = true
-    
+    var didSelectproduct: () -> Void = {}
+
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
-            
-            // MARK: - Product Image
+
+            // Image
             ZStack(alignment: .topTrailing) {
                 CustomProfileImage(
                     url: product.images?.first ?? "",
@@ -87,333 +87,262 @@ struct ProductListItem: View {
                     height: 100,
                     defaultImage: "photo"
                 ) {}
-                .frame(width: 100, height: 100)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color.black.opacity(0.1), lineWidth: 1)
-                )
-                .shadow(color: Color.black.opacity(0.1), radius: 6, x: 0, y: 2)
-                
-                // Bell badge
-                if showBadge {
-                    Image(systemName: "bell.fill")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundColor(.black.opacity(0.85))
-                        .padding(.vertical, 6)
-                        .padding(.horizontal, 10)
-                        .background(Color.white)
-                        .clipShape(Capsule())
-                        .overlay(Capsule().stroke(Color.gray.opacity(0.3), lineWidth: 0.6))
-                        .padding(.trailing, 6)
-                        .padding(.top, 6)
-                }
+
+                Image(systemName: "bell.fill")
+                    .font(.system(size: 14, weight: .semibold))
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
+                    .background(Color.white)
+                    .clipShape(Capsule())
+                    .overlay(Capsule().stroke(Color.gray.opacity(0.3), lineWidth: 0.6))
+                    .padding(6)
             }
-            
-            // MARK: - Right Content
+
+            // Details
             VStack(alignment: .leading, spacing: 6) {
                 Text(product.title ?? "Product")
                     .font(.custom("Poppins-SemiBold", size: 16))
-                    .foregroundColor(.black)
                     .lineLimit(2)
 
-                HStack(spacing: 6) {
-                    Text("Quantity: \(product.quantity ?? "0")")
-                        .font(.custom("Poppins-Regular", size: 13))
-                        .foregroundColor(.gray)
+                Text("Quantity: \(product.quantity ?? "0")")
+                    .font(.custom(poppinsSemiBold, size: 13))
+                    .foregroundColor(.gray)
 
-                    Text("New")
-                        .font(.custom("Poppins-SemiBold", size: 10))
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
-                        .foregroundColor(.gray)
-                        .clipShape(Capsule())
-                }
-
-                HStack(spacing: 4) {
-                    Text("$\(product.pricing ?? "0.0")")
-                        .font(.custom("Poppins-Bold", size: 18))
-                        .foregroundColor(.black)
-
-                    Text("• Ships from United States")
-                        .font(.custom("Poppins-Regular", size: 12))
-                        .foregroundColor(.gray)
-                }
-
-//                // Buy Now button
-//                Button(action: {}) {
-//                    Text("Buy Now")
-//                        .font(.custom("Poppins-SemiBold", size: 15))
-//                        .frame(maxWidth: .infinity)
-//                        .padding(.vertical, 10)
-//                        .background(Color(.sRGB, red: 0.98, green: 0.96, blue: 0.95))
-//                        .clipShape(RoundedRectangle(cornerRadius: 22))
-//                }
-//                .foregroundColor(.black.opacity(0.85))
+                Text(Double(product.pricing ?? "0")?.compactCurrency() ?? "")
+                    .font(.custom(poppinsBold, size: 18))
             }
+
+            Spacer()
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
         .padding(12)
         .background(Color.white)
         .cornerRadius(12)
-        .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 2)
-        .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(Color.black.opacity(0.08), lineWidth: 1)
-        )
+        .shadow(color: .black.opacity(0.08), radius: 8, x: 0, y: 2)
         .padding(.horizontal, 12)
         .padding(.vertical, 6)
+        .onTapGesture { didSelectproduct() }
     }
 }
 
-// MARK: - Product List Heading
+// MARK: - Heading
 struct ProductListHeading: View {
     let count: Int
-    
+
     var body: some View {
         Text("Products (\(count))")
             .font(.custom("Poppins-Bold", size: 20))
-            .foregroundColor(.black)
-            .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.leading, 12)
+            .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
 // MARK: - Main Screen
 struct ProductShopListScreen: View {
-    @State var searchText: String = ""
+
+    // MARK: - State
     @Environment(\.presentationMode) var presentationMode
-    @State private var selectedIndex: Int = 0
-    @State private var isLoading: Bool = false
-    
+
+    @State private var searchText = ""
+    @State private var selectedIndex = 0
+    @State private var selectedSort = "newest"
+    @State private var selectedOptions = ""
+
+    @State private var isLoading = false
     @State private var isFetchingMore = false
     @State private var canLoadMore = true
-    
-    @State var showhud: Bool = false
-    @State var hudMsg: String = ""
-    @State var showError: Bool = false
-    @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
-    
-     @State private var showSortSheet = false
-     @State private var selectedSort: String = "newest"
-    
-    @State private var selectedOptions: String = ""
-    
-    @State private var viewModel = ScheduleViewModel()
-    @State var productViewModel = ProductViewModel()
-    
+
+    @State private var currentPage = 1
     @State private var totalCount = 0
-    
-    @State var productData: [ProductDataModel1] = []
-//    @State var categoryId: String = "-1"
+
+    @State private var showSortSheet = false
+
+    @State private var productData: [ProductDataModel1] = []
+
+    @State private var viewModel = ScheduleViewModel()
+    @State private var productViewModel = ProductViewModel()
+
     @Binding var sellerId: String
-    @State var currentPage: Int = 1
-    @Binding var categoryIds : Int
-    
-    var options:[String] = ["Sort", "Auction", "Buy Now"]
-    
+    @Binding var categoryIds: Int
+
+    private let options = ["Sort", "Auction", "Buy Now"]
+
+    // MARK: - Body
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            
-            // MARK: - Search Bar + Close Button
-            HStack {
-                SearchBarView(placeholder: "Search shop...") { text in
-//                    if text == "" { return }
-                    resetData()
-                    self.searchText = text
-                    fetchProduct()
-                }
-                .padding(.leading, 12)
-                
-                Button(action: {
-                    presentationMode.wrappedValue.dismiss()
-                }) {
-                    Image(systemName: "xmark")
-                        .font(.custom("Poppins-SemiBold", size: 14))
-                        .foregroundColor(.gray)
-                }
-                .padding(12)
-            }
-            
-            // MARK: - Pills Selector
-            PillsSelectorView(
-                titles: options,
-                selectedIndex: $selectedIndex,
-                backgroundStyle: .roundedRect,
-                underlineEnabled: false,
-                showFilterButton: false,
-                showSortDropdown: true,
-                onSelectionChanged: { index, title in
-                    // Show sort sheet when "Sort" is tapped
-                    if index == 0 {
-                        showSortSheet = true
-                        selectedOptions = "newest"
-                    }
-                    else if index == 1 {
-                        resetData()
-                        selectedOptions = "auction"
-                        fetchProduct()
-                    }
-                    else if index == 2 {
-                        resetData()
-                        selectedOptions = "accept_offers"
-                        fetchProduct()
-                    }
-                }
-            )
-            
-            // MARK: - Heading
+        VStack(spacing: 12) {
+
+            searchBarSection
+
+            pillsSection
+
             ProductListHeading(count: productData.count)
-            
-            ScrollView(showsIndicators: false) {
-                LazyVStack(spacing: 0) {
 
-                    if isLoading {
-                        ForEach(0..<8) { _ in
-                            PurchasesViewShimmerView()
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 4)
-                        }
-                    } else if productData.isEmpty {
-                        NoDataView(message: "No Product Found")
-                    } else {
-                        ForEach(productData.indices, id: \.self) { index in
-                            ProductListItem(product: $productData[index])
-                                .padding(.vertical, 4)
-                                .onAppear {
-                                    handlePagination(index: index)
-                                }
-                        }
-                    }
+            productListSection
 
-                    // Loader at bottom
-                    if isFetchingMore {
-                        ProgressView()
-                            .padding(.vertical, 16)
-                    }
-                }
-            }
-
-            
             Spacer(minLength: 0)
         }
-        .frame(maxHeight: .infinity, alignment: .top)
         .background(Color(.systemBackground))
-        .onAppear {
-            DispatchQueue.main.async {
-                fetchProduct()
-            }
-        }
-        .onDisappear {
-            resetData()
-        }
+        .onAppear { fetchProduct() }
+        .onDisappear { resetData() }
         .onChange(of: selectedSort) { _ in
             resetData()
             fetchProduct()
         }
-
         .bottomSheet(
-                   isPresented: $showSortSheet,
-                   height: screenHeight * 0.6,
-                   topBarCornerRadius: 20,
-                   contentBackgroundColor: Color(.systemBackground),
-                   topBarBackgroundColor: Color(.systemBackground),
-                   showTopIndicator: false,
-                   onDismiss: {
-                       showSortSheet = false
-                   },
-                   content: {
-                       SortByBottomSheet(
-                           isPresented: $showSortSheet,
-                           selectedSort: $selectedSort
-                       )
-                   }
-               )
+            isPresented: $showSortSheet,
+            height: screenHeight * 0.6,
+            topBarCornerRadius: 20,
+            contentBackgroundColor: Color(.systemBackground),
+            showTopIndicator: false
+        ) {
+            SortByBottomSheet(
+                isPresented: $showSortSheet,
+                selectedSort: $selectedSort
+            )
+        }
     }
 }
 
+// MARK: - Subviews
 extension ProductShopListScreen {
-    
+
+    private var searchBarSection: some View {
+        HStack {
+            SearchBarView(placeholder: "Search shop...") { text in
+                resetData()
+                searchText = text
+                fetchProduct()
+            }
+
+            Button {
+                presentationMode.wrappedValue.dismiss()
+            } label: {
+                Image(systemName: "xmark")
+                    .foregroundColor(.gray)
+            }
+            .padding()
+        }
+        .padding(.horizontal, 12)
+    }
+
+    private var pillsSection: some View {
+        PillsSelectorView(
+            titles: options,
+            selectedIndex: $selectedIndex,
+            backgroundStyle: .roundedRect,
+            underlineEnabled: false,
+            showFilterButton: false,
+            showSortDropdown: true
+        ) { index, _ in
+            switch index {
+            case 0:
+                showSortSheet = true
+                selectedOptions = "newest"
+            case 1:
+                resetData()
+                selectedOptions = "auction"
+                fetchProduct()
+            case 2:
+                resetData()
+                selectedOptions = "accept_offers"
+                fetchProduct()
+            default:
+                break
+            }
+        }
+    }
+
+    private var productListSection: some View {
+        ScrollView {
+            LazyVStack {
+                if isLoading {
+                    shimmerList
+                } else if productData.isEmpty {
+                    NoDataView(message: "No Product Found")
+                } else {
+                    productItems
+                }
+
+                if isFetchingMore {
+                    ProgressView().padding()
+                }
+            }
+        }
+    }
+
+    private var shimmerList: some View {
+        ForEach(0..<8, id: \.self) { _ in
+            PurchasesViewShimmerView()
+                .padding(.horizontal)
+        }
+    }
+
+    private var productItems: some View {
+        ForEach(productData.indices, id: \.self) { index in
+            ProductListItem(product: $productData[index])
+                .onAppear { handlePagination(index: index) }
+        }
+    }
+}
+
+// MARK: - API & Pagination
+extension ProductShopListScreen {
+
     private func resetData() {
-        productData = []
+        productData.removeAll()
         currentPage = 1
         canLoadMore = true
         isFetchingMore = false
     }
 
-    
-    func fetchProduct(isLoaderShown: Bool = true) {
-        guard sellerId != "-1" else  {
-            print("Category id and user id is not present")
-            isFetchingMore = false
-            return
-        }
-        
-        Task{
+    private func fetchProduct(isLoaderShown: Bool = true) {
+        guard sellerId != "-1" else { return }
+
+        Task {
             await performAPICalls(
                 isConcurrent: false,
                 showLoader: isLoaderShown,
-                onError: { error in
+                onError: { _ in
                     canLoadMore = false
                     isFetchingMore = false
-                    alertType = .sheetType(
-                        icon: .alert,
-                        title: "Error",
-                        message: viewModel.errorMessage ?? "",
-                        primaryBtnText: AppString.ok.localized,
-                        secondaryBtnText:""
-                    )
-                    showError = true
                 },
                 onSuccess: {
                     productSuccess()
                 }
             ) {
-                let request = ProductRequest(user_id: sellerId,
-                                             search: searchText,
-                                             category_ids:"\(categoryIds)",
-                                             page: currentPage,
-                                             sale_type: selectedOptions,
-                                             sort_by: selectedSort
+                let request = ProductRequest(
+                    user_id: sellerId,
+                    search: searchText,
+                    category_ids: "\(categoryIds)",
+                    page: currentPage,
+                    sale_type: selectedOptions,
+                    sort_by: selectedSort
                 )
                 try await productViewModel.getProductsData1(parameters: request)
             }
         }
     }
-    
-    func handlePagination(index: Int) {
+
+    private func handlePagination(index: Int) {
         guard canLoadMore, !isFetchingMore else { return }
-        guard totalCount > (index + 1) else { return }
-        let thresholdIndex = productData.count - 1
-        if index == thresholdIndex {
-            isFetchingMore = true
-            currentPage += 1
-            fetchProduct(isLoaderShown: false)
-        }
+        guard index == productData.count - 1 else { return }
+
+        isFetchingMore = true
+        currentPage += 1
+        fetchProduct(isLoaderShown: false)
     }
-    
-    //MARK: productSuccess.
-    func productSuccess(){
+
+    private func productSuccess() {
         let response = productViewModel.productsResponse1
-        if response?.status == "success"{
-            let newItems = response?.data ?? []
-            totalCount = response?.total ?? 0
-            if newItems.isEmpty {
-                canLoadMore = false
-            } else {
-                productData.append(contentsOf: newItems)
-            }
-        
-        }else{
+        let newItems = response?.data ?? []
+
+        totalCount = response?.total ?? 0
+
+        if newItems.isEmpty {
             canLoadMore = false
-            alertType = .sheetType(
-                icon: .alert,
-                title: "Error",
-                message: viewModel.errorMessage ?? "",
-                primaryBtnText: AppString.ok.localized,
-                secondaryBtnText:""
-            )
-            showError = true
+        } else {
+            productData.append(contentsOf: newItems)
         }
+
         isFetchingMore = false
     }
 }

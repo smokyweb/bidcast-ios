@@ -186,27 +186,27 @@ struct ProductDetailSheet: View {
         }
         .presentationDetents([.large])
         
-        .bottomSheet(isPresented: $showBuyNowSheet, height: screenHeight * 0.98) {
-            BuyNowBottomSheetView(
-                isPresented: $showBuyNowSheet,
-                productImage: productImages.first ?? "",
-                productTitle: productTitle,
-                productColor: productDescription,
-                shippingAddress: shippingAddress,
-                subtotal: productPrice,
-                shipping: 9.99,
-                tax: 24.00,
-                shippingID: shippingID,
-                productID: productID,
-                shippingCharges: shippingCharges,
-                taxAmount: taxAmount,
-                onConfirmPurchase: {
-                    print("Purchase confirmed!")
-                    showBuyNowSheet = false
-                }
-            )
-            .presentationDetents([.medium, .large])
-        }
+//        .bottomSheet(isPresented: $showBuyNowSheet, height: screenHeight * 0.98) {
+//            BuyNowBottomSheetView(
+//                isPresented: $showBuyNowSheet,
+//                productImage: productImages.first ?? "",
+//                productTitle: productTitle,
+//                productColor: productDescription,
+//                shippingAddress: shippingAddress,
+//                subtotal: productPrice,
+//                shipping: 9.99,
+//                tax: 24.00,
+//                shippingID: shippingID,
+//                productID: productID,
+//                shippingCharges: shippingCharges,
+//                taxAmount: taxAmount,
+//                onConfirmPurchase: {
+//                    print("Purchase confirmed!")
+//                    showBuyNowSheet = false
+//                }
+//            )
+//            .presentationDetents([.medium, .large])
+//        }
 
         .onAppear {
             UIScrollView.appearance().bounces = false

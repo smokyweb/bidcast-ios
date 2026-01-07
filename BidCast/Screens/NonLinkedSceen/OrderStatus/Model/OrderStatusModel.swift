@@ -10,18 +10,14 @@ import Foundation
 
 // MARK: - ProductPurchaseModel
 struct ProductPurchaseModel: Codable {
-    var shippingCharges, taxPercent, taxAmount, subTotal: String?
-    var total: String?
-    var product: ProductPurchaseDetail?
+    var product: ProductDataModel1?
     var shippingAddress: ShippingAddress?
-
-    enum CodingKeys: String, CodingKey {
-        case shippingCharges = "shipping_charges"
-        case taxPercent = "tax_percent"
-        case taxAmount = "tax_amount"
-        case subTotal = "sub_total"
-        case total, product, shippingAddress
-    }
+    var price: String?
+    var tax_amount: String?
+    var shipping_charges: String?
+    var total: String?
+    var tax_percent: String?
+    var sub_total: String?
 }
 
 // MARK: - ProductPurchaseDetail

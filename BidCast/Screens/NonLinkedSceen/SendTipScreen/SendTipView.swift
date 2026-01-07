@@ -49,7 +49,7 @@ struct SendTipView: View {
                         
                         Button(action: onClose) {
                             Image(systemName: "xmark.circle.fill")
-                                .font(.custom(poppinsSemiBold, size: 28.0))
+                                .font(.custom(poppinsSemiBold, size: 24.0))
                                 .foregroundStyle(.black)
                         }
                     }
@@ -187,7 +187,7 @@ struct SendTipView: View {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 18)
                         .background(.defaultTheme )
-                        .cornerRadius(16)
+                        .cornerRadius(32)
                         .shadow(color: Color.defaultThemeLight, radius: 12, x: 0, y: 6)
                     }
                     .disabled(

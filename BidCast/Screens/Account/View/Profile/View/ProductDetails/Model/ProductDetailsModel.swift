@@ -11,7 +11,7 @@ import Foundation
 struct ProductDetailsModel: Codable {
     var id, userID, categoryID, subCategoryID: Int?
     var title: String?
-    var variant: String? //toDo: not clear about its type
+    var variant: [ProductVariant]?
     var width, length, weight, height: Double?
     var mailClass, processingCategory: String?
     var description, quantity, purchasedQuantity, pricing: String?

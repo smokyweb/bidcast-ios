@@ -139,6 +139,7 @@ class StripeCardViewModel: ObservableObject {
     @Published var addedCardDict = ResponseModel<[String?]>()
     @Published var deletedCardDict = ResponseModel<Int>()
     @Published var setDefaultCardDict = ResponseModel<[Int?]>()
+    @Published var getAddressDict = ResponseModel<[AddressModel]>()
   
     @Published var updatedCardDict = ResponseModel<UpdatedDataModel>()
     
@@ -320,6 +321,31 @@ class StripeCardViewModel: ObservableObject {
             throw error
         }
     }
+    // MARK: - Get Addresses
+    func getAddresses() async throws {
+        setLoading(true)
+        defer { setLoading(false) }
+
+        do {
+            if let response: ResponseModel<[AddressModel]> = try await APIManager.shared.request(
+                type: APIEndPoint.getAddress,
+                header: true) {
+                self.getAddressDict = response
+                handleSuccess("Cards loaded successfully")
+            }
+        }catch(let error) {
+            if let dataError = error as? DataError {
+                self.errorMessage = dataError.getErrorMessage()
+            }
+            else {
+                self.errorMessage = error.localizedDescription
+            }
+            throw error
+        }
+        
+    }
+    
+   
     
     // MARK: - Refresh Cards
     func refreshCards() async {

@@ -11,6 +11,7 @@ import AlertToast
 
 struct OrderStatusScreen: View {
     @Environment(\.presentationMode) var presentationMode
+    @State var navigateToTab = false
     @StateObject var viewModel = OrderStatusViewModel()
     @Binding var productDetail : MyOrderModel?
     @EnvironmentObject var networkMonitor: NetworkMonitor
@@ -107,18 +108,23 @@ struct OrderStatusScreen: View {
             if comeFrom == "buyNow" {
                 // 🔙 Home Button
                 Button(action: {
-                    presentationMode.wrappedValue.dismiss()
+//                    presentationMode.wrappedValue.dismiss()
+                    navigateToTab = true
                 }) {
                     Text("Home")
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(Color.defaultTheme)
-                        .cornerRadius(16)
+                        .cornerRadius(32)
                         .padding(.horizontal)
                         .padding(.bottom, 8)
                 }
             }
+            CusNavLink(doNavigate: $navigateToTab, destination:
+                TabbarScreen()
+                    .environmentObject(TabBarRouter())
+            )
         }
         .background(Color(red: 240/255, green: 247/255, blue: 255/255).ignoresSafeArea())
         .onDisappear {
@@ -160,6 +166,21 @@ struct OrderStatusScreen: View {
 //            await viewModel.getPurchaseDetail(parameters: param)
 //            await SVProgressHUD.dismiss()
 //            getPurchaseSuccess()
+//        }
+//    }
+    
+//    func fetchOrderDetail(){
+//        Task {
+//           guard Reachability.isConnectedToNetwork() else {
+//                hudMsg = "No Internet Connection"
+//                showhud = true
+//                return
+//            }
+//            SVProgressHUD.show()
+//            let param = ProductOrderDetailRequest(order_id: orderID)
+//            await viewModel.getMyOrderList(parameters: param)
+//            await SVProgressHUD.dismiss()
+//            orderSuccess()
 //        }
 //    }
     

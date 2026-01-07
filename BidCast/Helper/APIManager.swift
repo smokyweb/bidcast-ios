@@ -109,7 +109,7 @@ final class APIManager {
         
 //        print(response)
         print("API Response >>> \n\(data.prettyPrintedJSONString ?? "")")
-        print(response)
+//        print(response)
         guard let response = response as? HTTPURLResponse,
               200 == response.statusCode || 201 == response.statusCode else {
             

@@ -47,6 +47,7 @@ struct ProductDetailView: View {
     @State  var promoCode : String = ""
     @State  var shippingCharges : Int = 0
     @State  var taxAmount : Int = 0
+    @State var showBuyNowSheet = false
     
     @Binding var sellerInfo: SellerInfoResponse?
     
@@ -90,7 +91,7 @@ struct ProductDetailView: View {
                 // MARK: - Send Button
                 if sellerInfo?.seller_details?.id != UserDefaults.userId{
                 Button(action: {
-                    
+                    showBuyNowSheet = true
                 }) {
                     HStack(spacing: 12) {
                         Text("Buy Now")
@@ -98,6 +99,7 @@ struct ProductDetailView: View {
                     }
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
+                   
                     .padding(.vertical, 18)
                     .background(
                         LinearGradient(
@@ -115,12 +117,35 @@ struct ProductDetailView: View {
                 .padding(.horizontal, 24)
                 .padding(.top, 8)
                 .padding(.bottom, 32)
+               
             }
             }
+            CusNavLink(doNavigate: $showBuyNowSheet, destination:BuyNowBottomSheetView(productId: $productID) )
         }
         .edgesIgnoringSafeArea(.all)
         .background(.backGround)
         .frame(maxWidth: .infinity, alignment: .topLeading)
+//        .sheet(isPresented: $showBuyNowSheet) {
+//            BuyNowBottomSheetView(
+//                isPresented: $showBuyNowSheet,
+//                productImage: productImages.first ?? "",
+//                productTitle: productTitle,
+//                productColor: productDescription,
+//                shippingAddress: shippingAddress,
+//                subtotal: productPrice,
+//                shipping: 9.99,
+//                tax: 24.00,
+//                shippingID: shippingID,
+//                productID: productID,
+//                shippingCharges: shippingCharges,
+//                taxAmount: taxAmount,
+//                onConfirmPurchase: {
+//                    print("Purchase confirmed!")
+//                    showBuyNowSheet = false
+//                }
+//            )
+//            .presentationDetents([.medium, .large])
+//        }
         .onAppear {
             loadData()
         }
@@ -571,27 +596,27 @@ struct ProductDetailSheet1: View {
         }
         .presentationDetents([.large])
         
-        .bottomSheet(isPresented: $showBuyNowSheet, height: screenHeight * 0.98) {
-            BuyNowBottomSheetView(
-                isPresented: $showBuyNowSheet,
-                productImage: productImages.first ?? "",
-                productTitle: productTitle,
-                productColor: productDescription,
-                shippingAddress: shippingAddress,
-                subtotal: productPrice,
-                shipping: 9.99,
-                tax: 24.00,
-                shippingID: shippingID,
-                productID: productID,
-                shippingCharges: shippingCharges,
-                taxAmount: taxAmount,
-                onConfirmPurchase: {
-                    print("Purchase confirmed!")
-                    showBuyNowSheet = false
-                }
-            )
-            .presentationDetents([.medium, .large])
-        }
+//        .bottomSheet(isPresented: $showBuyNowSheet, height: screenHeight * 0.98) {
+//            BuyNowBottomSheetView(
+//                isPresented: $showBuyNowSheet,
+//                productImage: productImages.first ?? "",
+//                productTitle: productTitle,
+//                productColor: productDescription,
+//                shippingAddress: shippingAddress,
+//                subtotal: productPrice,
+//                shipping: 9.99,
+//                tax: 24.00,
+//                shippingID: shippingID,
+//                productID: productID,
+//                shippingCharges: shippingCharges,
+//                taxAmount: taxAmount,
+//                onConfirmPurchase: {
+//                    print("Purchase confirmed!")
+//                    showBuyNowSheet = false
+//                }
+//            )
+//            .presentationDetents([.medium, .large])
+//        }
 
         .onAppear {
             UIScrollView.appearance().bounces = false

@@ -294,6 +294,8 @@
 		D49A956A2DD70952006044A7 /* FAQCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D49A95692DD70952006044A7 /* FAQCell.swift */; };
 		D49A956E2DD71E3E006044A7 /* ContactUs.swift in Sources */ = {isa = PBXBuildFile; fileRef = D49A956B2DD71E3E006044A7 /* ContactUs.swift */; };
 		D49A95732DD75EAF006044A7 /* FAQViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D49A95722DD75EAE006044A7 /* FAQViewModel.swift */; };
+		D49C5B1A2F0E8CC100425901 /* ShippingAddressSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = D49C5B192F0E8CC100425901 /* ShippingAddressSelection.swift */; };
+		D49C5B1C2F0E8CD100425901 /* CardSelectionSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D49C5B1B2F0E8CD100425901 /* CardSelectionSheet.swift */; };
 		D4A500E12DFAA74D008799B1 /* StepCircle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A500E02DFAA74D008799B1 /* StepCircle.swift */; };
 		D4A500E32DFAC474008799B1 /* OTPVerificationScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A500E22DFAC474008799B1 /* OTPVerificationScreen.swift */; };
 		D4A500E52DFAFC9B008799B1 /* CardDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A500E42DFAFC9B008799B1 /* CardDetailsView.swift */; };
@@ -881,6 +883,8 @@
 		D49A95692DD70952006044A7 /* FAQCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FAQCell.swift; sourceTree = "<group>"; };
 		D49A956B2DD71E3E006044A7 /* ContactUs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactUs.swift; sourceTree = "<group>"; };
 		D49A95722DD75EAE006044A7 /* FAQViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FAQViewModel.swift; sourceTree = "<group>"; };
+		D49C5B192F0E8CC100425901 /* ShippingAddressSelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShippingAddressSelection.swift; sourceTree = "<group>"; };
+		D49C5B1B2F0E8CD100425901 /* CardSelectionSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardSelectionSheet.swift; sourceTree = "<group>"; };
 		D4A500E02DFAA74D008799B1 /* StepCircle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepCircle.swift; sourceTree = "<group>"; };
 		D4A500E22DFAC474008799B1 /* OTPVerificationScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OTPVerificationScreen.swift; sourceTree = "<group>"; };
 		D4A500E42DFAFC9B008799B1 /* CardDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardDetailsView.swift; sourceTree = "<group>"; };
@@ -1789,6 +1793,8 @@
 				D4B615F12DE8374E00924A3D /* ProductDetails */,
 				35BA4A3E2DE8641200EEC92A /* ProfileScreen.swift */,
 				D67BAE5B2ED82598002E9A6F /* OrderTrackingView.swift */,
+				D49C5B192F0E8CC100425901 /* ShippingAddressSelection.swift */,
+				D49C5B1B2F0E8CD100425901 /* CardSelectionSheet.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -4771,6 +4777,7 @@
 				D615BD1F2EBB2A9200EB55C2 /* GetAllStaticAPICall.swift in Sources */,
 				D4CAEC922DE7200300705CD7 /* BoostCardView.swift in Sources */,
 				D4BB9A152DE5C9ED00C1BCBC /* WalletTabView.swift in Sources */,
+				D49C5B1C2F0E8CD100425901 /* CardSelectionSheet.swift in Sources */,
 				99C909E92DC8CDDC0054620B /* EmployerProfileJobsModal.swift in Sources */,
 				D66531752E9E79F400F19B94 /* FileDownloadManager.swift in Sources */,
 				99C909EA2DC8CDDC0054620B /* QualificationResponse.swift in Sources */,
@@ -4829,6 +4836,7 @@
 				D4C4D79C2DD32F3D00274E51 /* TwoButton.swift in Sources */,
 				D4BA9C292DE4A4E700DFF6E6 /* TipsModel.swift in Sources */,
 				D4CAEC822DE7135B00705CD7 /* OptionGridButtonView.swift in Sources */,
+				D49C5B1A2F0E8CC100425901 /* ShippingAddressSelection.swift in Sources */,
 				D68441372EF2EBD200D4F587 /* AccountHealthScreen.swift in Sources */,
 				D6D0DACA2E9100F600390946 /* BalanceSummaryView.swift in Sources */,
 				35CCE0112DD876C500760CEE /* GetStartedScreen.swift in Sources */,
