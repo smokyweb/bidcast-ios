@@ -93,7 +93,7 @@ extension ProductDetailsModel {
 
 struct SellerUser: Codable {
     var id: Int?
-    var name, username: String?
+    var name, username,email: String?
     var profileImage: String?
     var sellerVerification: Bool?
 

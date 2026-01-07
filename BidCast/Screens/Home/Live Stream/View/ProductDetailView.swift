@@ -55,17 +55,21 @@ struct ProductDetailView: View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack {
                 // MARK: - Product Images Carousel (Clean theme)
-                ZStack(alignment: .topTrailing) {
+                ZStack(alignment: .topLeading) {
                     productImageCarousel
+                    
                     Button(action: {
                         presentationMode.wrappedValue.dismiss()
                     }) {
-                        Image(systemName: "xmark")
-                            .font(.custom("Poppins-SemiBold", size: 14))
-                            .foregroundColor(.gray)
-                            .frame(width: 22, height: 22)
+                        Image(systemName: "chevron.left")
+                            .font(.custom(poppinsBold, size: 16))
+                            .foregroundColor(.primary)
+                            .frame(width: 36, height: 36)
                     }
                     .padding(12)
+                    .padding(.top,24)
+                    .padding(.leading,8)
+                    Spacer()
                 }
                 
                 VStack(alignment: .leading, spacing: 20) {
@@ -84,8 +88,9 @@ struct ProductDetailView: View {
                 .padding(.top, 6)
                 
                 // MARK: - Send Button
+                if sellerInfo?.seller_details?.id != UserDefaults.userId{
                 Button(action: {
-                   
+                    
                 }) {
                     HStack(spacing: 12) {
                         Text("Buy Now")
@@ -104,16 +109,21 @@ struct ProductDetailView: View {
                             endPoint: .trailing
                         )
                     )
-                    .cornerRadius(16)
-                    .shadow(color: Color.defaultTheme.opacity(0.4), radius: 12, x: 0, y: 6)
+                    .cornerRadius(32)
+                    .shadow(color: Color.defaultThemeLight, radius: 12, x: 0, y: 6)
                 }
                 .padding(.horizontal, 24)
                 .padding(.top, 8)
                 .padding(.bottom, 32)
             }
+            }
         }
+        .edgesIgnoringSafeArea(.all)
+        .background(.backGround)
         .frame(maxWidth: .infinity, alignment: .topLeading)
-        .onAppear { loadData() }
+        .onAppear {
+            loadData()
+        }
     }
     
     
@@ -135,7 +145,11 @@ struct ProductDetailView: View {
             sellerStatus = data?.user?.sellerVerification == false ? "Non Verified Seller" : "Verified Seller"
             shippingAddress = data?.shippingAdress?.streetAddress ?? ""
             shippingID = data?.shippingAdress?.id ?? 0
+//            sellerInfo = data?.user ?? SellerUser()
             offerArr.removeAll()
+            Task{
+                await fetchSellerIfAvailable(id:"\(data?.user?.id ?? 0)")
+            }
             if let price = data?.pricing {
                 let percentages: [Double] = [0.05, 0.10, 0.15, 0.20]
                 for percent in percentages {
@@ -150,7 +164,31 @@ struct ProductDetailView: View {
             withAnimation(.snappy) { showError = true }
         }
     }
-
+    private func fetchSellerIfAvailable(id:String) async {
+        Task{
+            viewModel.errorMessage?.removeAll()
+            await viewModel.getSellerInfo(sellerID: id)
+            
+            let response = viewModel.sellerInfo
+            print("Seller info: \(String(describing: response))")
+             await SVProgressHUD.dismiss()
+            if response?.status == "success" {
+                self.sellerInfo = response?.data ?? SellerInfoResponse()
+            } else {
+                alertType = .sheetType(
+                    icon: .alert,
+                    title: "Error",
+                    message: viewModel.errorMessage ?? "",
+                    primaryBtnText: "",
+                    secondaryBtnText: AppString.ok.localized
+                )
+                showError = true
+            }
+         
+           
+            
+        }
+    }
 }
 
 // MARK: - SELLER HEADER
@@ -166,7 +204,7 @@ extension ProductDetailView {
                 )
                 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(sellerInfo?.seller_details?.name ?? "Seller Name")
+                    Text(sellerInfo?.seller_details?.name?.capitalizingFirstLetter() ?? "Seller Name")
                         .font(.custom(poppinsSemiBold, size: 16))
                 }
                 
@@ -181,7 +219,7 @@ extension ProductDetailView {
                     }
                     .padding(.vertical, 6)
                     .padding(.horizontal, 14)
-                    .background(Color.black)
+                    .background(Color.defaultTheme)
                     .foregroundColor(.white)
                     .clipShape(Circle())
                 }
@@ -228,12 +266,12 @@ extension ProductDetailView {
             HStack(spacing: 6) {
                 Text("\(productDetail?.quantity ?? "0") Available")
                     .font(.custom(poppinsRegular, size: 13))
-                    .foregroundColor(.gray)
+                    .foregroundColor(.darkGray)
             }
             
-            Text("Starting at $\(productPrice ?? 0.0) + Shipping + taxes")
+            Text("Starting at \(productPrice.compactCurrency()) + Shipping + taxes")
                 .font(.custom(poppinsRegular, size: 13))
-                .foregroundColor(.gray)
+                .foregroundColor(.darkGray)
         }
     }
 }
@@ -253,14 +291,13 @@ extension ProductDetailView {
                         .font(.system(size: 18))
                     Text("Save")
                         .font(.custom(poppinsSemiBold, size: 15))
+                        .foregroundStyle(.defaultTheme)
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 12)
                 .foregroundColor(.defaultTheme)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color.defaultTheme.opacity(0.8), lineWidth: 2)
-                )
+                .background(.defaultThemeLight)
+                .cornerRadius(32)
             }
             
             // SHARE
@@ -272,14 +309,17 @@ extension ProductDetailView {
                         .font(.system(size: 18))
                     Text("Share")
                         .font(.custom(poppinsSemiBold, size: 15))
+                        .foregroundStyle(.defaultTheme)
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 12)
                 .foregroundColor(.defaultTheme)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color.defaultTheme.opacity(0.8), lineWidth: 2)
-                )
+                .background(.defaultThemeLight)
+                .cornerRadius(32)
+//                .overlay(
+//                    RoundedRectangle(cornerRadius: 32)
+//                        .fill(Color.defaultThemeLight)
+//                )
             }
         }
     }
@@ -339,10 +379,14 @@ extension ProductDetailView {
             await SVProgressHUD.dismiss()
             handleSuccess()
         }
+        
+        
+        
+        
     }
 }
 //#Preview {
-//    ProductDetailView()
+//    ProductDetailView(productID: .constant(1), sellerInfo: .constant(SellerUser()))
 //}
 
 
@@ -645,3 +689,27 @@ struct ProductDetailSheet1: View {
 }
 
 
+import Foundation
+
+extension Double {
+
+    /// Returns a compact currency string (e.g. $1.2K, $3.45M, $2.00B)
+    func compactCurrency() -> String {
+        let absValue = abs(self)
+        let sign = self < 0 ? "-" : ""
+
+        switch absValue {
+        case 1_000_000_000...:
+            return String(format: "%@$%.2fB", sign, absValue / 1_000_000_000)
+
+        case 1_000_000...:
+            return String(format: "%@$%.2fM", sign, absValue / 1_000_000)
+
+        case 1_000...:
+            return String(format: "%@$%.1fK", sign, absValue / 1_000)
+
+        default:
+            return String(format: "%@$%.2f", sign, absValue)
+        }
+    }
+}

@@ -142,6 +142,7 @@ struct SellerInfoResponse: Codable {
     var is_following: Bool?
 }
 
+
 struct SellerDetails: Codable {
     var id: Int
     var role_id: Int?

@@ -88,7 +88,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "39134023-450D-4E4D-844B-33E1D964BB26"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BidCast/Screens/Account/View/SellerHub/Shows/View/RehearsalScreen.swift"
@@ -103,16 +103,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "7E946548-D9CD-4A27-887C-9AAD020E2037"
-            shouldBeEnabled = "Yes"
+            uuid = "1332A492-161D-49BF-ABC6-C892ED1B0F87"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "BidCast/Helper/SocketManager/SocketManager.swift"
+            filePath = "BidCast/Screens/Home/Live Stream/View/ProductDetailView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1290"
-            endingLineNumber = "1290"
-            landmarkName = "listenForUserJoinedShows(completion:)"
+            startingLineNumber = "151"
+            endingLineNumber = "151"
+            landmarkName = "handleSuccess()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

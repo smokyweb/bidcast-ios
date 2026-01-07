@@ -61,6 +61,7 @@ struct InventoryScreen: View {
     @State var navigateToEditProduct = false
     @State var searchText: String = ""
     @EnvironmentObject var productManager: ProductManager
+    @State var sellerInfo : SellerInfoResponse? = nil
     
     @State var config: BottomSheetConfig = BottomSheetConfig(
         icon: "checkmark.seal.fill",
@@ -90,6 +91,7 @@ struct InventoryScreen: View {
     @State var selectedProductIDs: Set<Int> = []
     @State var selectedProducts: [ProductDataModel1] = []
     var onProductsSelected: (([ProductDataModel1]) -> Void)?
+    @State var navigateToDetail = false
     
     var body: some View {
         VStack(spacing: 0) {
@@ -183,49 +185,7 @@ struct InventoryScreen: View {
                     }
                 }
                 .padding(.horizontal)
-            // MARK: - Pills Selector
-            //            HStack(spacing: 0) {
-            ////                PillsSelectorView(
-            ////                    titles: [],
-            ////                    selectedIndex: $selectedIndex,
-            ////                    backgroundStyle: .roundedRect,
-            ////                    underlineEnabled: false,
-            ////                    showFilterButton: true,
-            ////                    showSortDropdown: false,
-            ////                    onSelectionChanged: { index, title in },
-            ////                    onFilterTapped: { showFilterSheet = true }
-            ////                )
-            ////                .fixedSize(horizontal: true, vertical: false)   // 👈 THE FIX
-            //
-            //                PillItemView(title: "MarketPlace", isSelected: $marketPlaceSelected) { newValue in
-            //                    Task {
-            //                        await performAPICalls(
-            //                            isConcurrent: true,
-            //                            showLoader: false,
-            //                            onError: { error in
-            //                                alertType = .sheetType(
-            //                                    icon: .alert,
-            //                                    title: "Error",
-            //                                    message: errorDesc(error: error, message: productViewModel.errorMessage),
-            //                                    primaryBtnText: "",
-            //                                    secondaryBtnText: AppString.ok.localized
-            //                                )
-            //                                showError = true
-            //                                canLoadMore = false
-            //                                isFetchingMore = false
-            //                            },
-            //                            onSuccess: { handleDataLoad() }
-            //                        ) {
-            //                            clearFilter()
-            //                            try await fetchInventory(for: segment, page: 1)
-            //                        }
-            //                    }
-            //                }
-            //            }
-            //            .frame(maxWidth: .infinity, alignment: .leading)
-            //            .padding(.horizontal, 12)
-            
-            
+     
             // MARK: - Inventory List
             ScrollView {
                 LazyVStack(spacing: 12) {
@@ -248,7 +208,14 @@ struct InventoryScreen: View {
                                             isSelectionMode: navigatedFrom == .addProduct,
                                             isSelected: selectedProductIDs.contains(inventory.id ?? 0),
                                             onSelect: { product in
-                                toggleProductSelection(product)
+                                switch navigatedFrom {
+                                case .account:
+                                    productId = product.id ?? 0
+                                    navigateToDetail = true
+                                case .addProduct:
+                                    toggleProductSelection(product)
+                                }
+                              
                             },
                                             onEdit: { product in
                                 productToEdit = product
@@ -337,6 +304,7 @@ struct InventoryScreen: View {
                 .padding(.vertical, 16)
             }
             
+            CusNavLink(doNavigate: $navigateToDetail, destination: ProductDetailView(productID: $productId, sellerInfo: $sellerInfo))
             CusNavLink(doNavigate: $navigateToEditProduct, destination: EditProductScreen(productData: $productToEdit)) // for edit
             CusNavLink(doNavigate: $navigateToCreateProduct, destination: ListProductScreen())
             CusNavLink(doNavigate: $navigateToCreateNewProduct,
@@ -1111,9 +1079,9 @@ struct ProductCardView: View {
         .background(cardBackground)
         .overlay(cardBorder)
         .onTapGesture {
-            if isSelectionMode {
+//            if isSelectionMode {
                 onSelect?(product)
-            }
+//            }
         }
     }
     
