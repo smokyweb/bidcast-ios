@@ -1201,7 +1201,7 @@ struct ProductCardView: View {
         Image(systemName: "ellipsis")
             .font(.system(size: 18, weight: .semibold))
             .foregroundColor(.gray)
-            .padding(.top, 20)
+            .padding(.top, 12)
             .frame(width: 32, height: 32)
             .background(Color(.systemBackground))
             .clipShape(Circle())
@@ -1264,11 +1264,12 @@ struct ProductCardView: View {
 // MARK: - Card Content Extension
 extension ProductCardView {
     var cardContent: some View {
-        HStack(spacing: 16) {
+        HStack(spacing: 8) {
             productImageView
             productDetailsView
         }
-        .padding(.horizontal, 8)
+        .padding(.leading,12)
+        .padding(.trailing, 6)
         .padding(.vertical, 16)
         .scaleEffect(scaleAmount)
         .opacity(opacityAmount)
@@ -1310,15 +1311,15 @@ extension ProductCardView {
     private var productTitle: some View {
         Text(product.title?.capitalizingFirstLetter() ?? "")
             .font(.custom(poppinsSemiBold, size: 16))
-            .foregroundColor(.primary)
+            .foregroundColor(.black)
             .lineLimit(2)
     }
     
     private var productMetadata: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: 6) {
             Text(product.productCondition ?? "New")
                 .font(.custom(poppinsRegular, size: 13))
-                .foregroundColor(.secondary)
+                .foregroundColor(.darkGray)
             
             Circle()
                 .fill(Color.secondary)
@@ -1326,14 +1327,14 @@ extension ProductCardView {
             
             Text(product.category?.name ?? "Category")
                 .font(.custom(poppinsRegular, size: 13))
-                .foregroundColor(.secondary)
+                .foregroundColor(.darkGray)
         }
     }
     
     private var productQuantity: some View {
         Text("Quantity: \(product.quantity ?? "0")")
             .font(.custom(poppinsRegular, size: 13))
-            .foregroundColor(.secondary)
+            .foregroundColor(.darkGray)
     }
 }
 

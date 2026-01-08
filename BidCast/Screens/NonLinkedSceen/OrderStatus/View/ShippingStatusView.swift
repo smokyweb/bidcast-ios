@@ -19,7 +19,9 @@ struct ShippingStatusView: View {
                     .frame(width: 30, height: 30)
                     .foregroundColor(.defaultTheme)
                 Text("Shipping Updates")
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(.custom(poppinsSemiBold, size: 16.0))
+                    .foregroundColor(.black)
+                
             }
 
             VStack(alignment: .leading, spacing: 24) {
@@ -29,7 +31,7 @@ struct ShippingStatusView: View {
                             icon: "checkmark.circle.fill",
                             title: track.title?.capitalizingFirstLetter() ?? "",
                             subtitle: track.createdAt?.formattedDate(toFormat: "MMM dd, yyyy") ?? "N/A",
-                            iconColor: .red
+                            iconColor: .defaultTheme
                         )
                     }
                 }

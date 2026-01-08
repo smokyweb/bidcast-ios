@@ -70,7 +70,7 @@ struct MyOrdersScreen: View {
     @State private var showError = false
     @State private var selectedOrderType: MyOrderValue? = .newOrders
     @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
-    
+    @State private var isInitialLoad: Bool = true
     @State private var debounceCancellable: AnyCancellable?
     @State var searchText: String = ""
     
@@ -82,7 +82,7 @@ struct MyOrdersScreen: View {
     @State private var userId: String = ""
     @State private var userImage: String = ""
     @State private var userName: String = ""
-    
+    @State var orderId : Int = 0
     @State private var showhud = false
     @State private var hudMsg = ""
     @State var newOrder = ""
@@ -106,6 +106,7 @@ struct MyOrdersScreen: View {
                         self.presentationMode.wrappedValue.dismiss()
                     }, title: AppString.MyOrders)
                 }
+                .background(.white)
                 VStack(spacing: 16) {
                     SearchBarView(placeholder: "What are you looking for?") { debouncedText in
                         currentPage = 1
@@ -126,10 +127,14 @@ struct MyOrdersScreen: View {
                         }
                     )
                     .padding(.bottom, 12)
-                    .onChange(of: selected) { newSegment in
-                        fetchOrders(for: selected ?? .newOrder)
+                    .onChange(of: selected) { _ in
+                        resetAndFetch()
                     }
+//                    .onChange(of: selected) { newSegment in
+//                        fetchOrders(for: selected ?? .newOrder)
+//                    }
                 }
+                .background(.backGround)
 //                .padding(.horizontal)
                 
                 
@@ -141,6 +146,7 @@ struct MyOrdersScreen: View {
                                 OrderCardView(order: order,
                                               onTapCardView: {
                                     selectedOrderDetails = order
+                                    orderId = selectedOrderDetails?.id ?? 0
                                     navigateToOrderDetails = true
                                 }, onTapBuyerView: {
                                     userId = "\(order.user?.id ?? 0)"
@@ -166,6 +172,7 @@ struct MyOrdersScreen: View {
                     .padding(.horizontal)
                     .padding(.top, 0)
                 }
+                .background(.backGround)
                 if isFetchingMore {
                     ProgressView()
                         .padding(.vertical, 16)
@@ -208,7 +215,7 @@ struct MyOrdersScreen: View {
         if let order = selectedOrderDetails {
             CusNavLink(doNavigate: $navigateToOrderDetails, destination: OrderStatusScreen(
                 productDetail: $selectedOrderDetails,
-                comeFrom: "myOrder"
+                comeFrom: "myOrder", orderId: $orderId
             ))
         }
         CusNavLink(doNavigate: $navigateToProfile,
@@ -219,186 +226,191 @@ struct MyOrdersScreen: View {
     }
 }
 
-////MARK: API Call Passing Param.
-//extension MyOrderValue {
-//    var apiValue: String {
-//        switch self {
-//        case .newOrders: return "new_order"
-//        case .processing: return "processing"
-//        case .completed: return "completed"
-//        }
-//    }
-//}
+
 
 //MARK: API CALL LOGIC.
 extension MyOrdersScreen{
+    private func resetAndFetch() {
+        currentPage = 1
+        canLoadMore = true
+        isFetchingMore = false
+        isInitialLoad = true
+        myOrderListArr.removeAll()
+        fetchOrders(for: selected)
+    }
     //MARK: fetchOrders.
     func fetchOrders(for type: Segment) {
         Task {
-           guard Reachability.isConnectedToNetwork() else {
+            guard Reachability.isConnectedToNetwork() else {
                 hudMsg = "No Internet Connection"
                 showhud = true
                 return
             }
-            SVProgressHUD.show()
-            let param = ProductOrderListingRequest(type: type.apiValue, page: currentPage, search: searchText)
+
+            if isInitialLoad {
+                SVProgressHUD.show()
+            }
+
+            let param = ProductOrderListingRequest(
+                type: type.apiValue,
+                page: currentPage,
+                search: searchText
+            )
+
             await viewModel.getMyOrderList(parameters: param)
+
             await SVProgressHUD.dismiss()
             isFetchingMore = false
-            if self.viewModel.errorMessage == "" || viewModel.errorMessage == nil{
-                getOrderSuccess()
-            }else{
-                alertType = .sheetType(
-                    icon: .alert,
-                    title: "Error",
-                    message: viewModel.errorMessage?.capitalizingFirstLetter() ?? "",
-                    primaryBtnText: "",
-                    secondaryBtnText: AppString.ok.localized
-                )
+
+            if viewModel.errorMessage?.isEmpty ?? true {
+                handleSuccess(isPagination: !isInitialLoad)
+            } else {
+                showError = true
             }
         }
     }
-    
-    //MARK: getOrderSuccess.
-    func getOrderSuccess() {
-        SVProgressHUD.dismiss()
+
+    private func handleSuccess(isPagination: Bool) {
         let response = viewModel.myOrderResponse
-        if response.status == "success" {
-            myOrderListArr = response.data ?? []
-            newOrder = "\(response.new_order_count ?? 0)"
-            completedOrder = "\(response.completed_order_count ?? 0)"
-            ProcessingOrder = "\(response.processing_order_count ?? 0)"
+        guard response.status == "success" else { return }
+
+        let newData = response.data ?? []
+
+        if isPagination {
+            myOrderListArr.append(contentsOf: newData)
         } else {
-            showError = true
-            alertType = .sheetType(
-                icon: .alert,
-                title: response.error_type?.capitalized ?? "",
-                message: response.message?.capitalized ?? "",
-                primaryBtnText: "",
-                secondaryBtnText: AppString.ok.localized
-            )
+            myOrderListArr = newData
         }
+
+        newOrder = "\(response.new_order_count ?? 0)"
+        completedOrder = "\(response.completed_order_count ?? 0)"
+        ProcessingOrder = "\(response.processing_order_count ?? 0)"
+
+        let total = response.total ?? 0
+        canLoadMore = myOrderListArr.count < total
+
+        isInitialLoad = false
     }
     
-//    //MARK: fetchMoreOrder.
-//    func fetchMoreOrder() {
-//        currentPage += 1
-//        isFetchingMore = true
-//        fetchOrders(for: selected ?? .newOrder)
-//    }
-//    
-//    //MARK: handlePagination
-//    func handlePagination(index: Int) {
-//        let isLastItem = index == myOrderListArr.count - 1
-//        let canFetchMore = (viewModel.myOrderResponse.total ?? 0) > myOrderListArr.count
-//        
-//        if isLastItem && canFetchMore {
-//            fetchMoreOrder()
+    private func loadMoreData() {
+        guard !isFetchingMore, canLoadMore else { return }
+
+        isFetchingMore = true
+        currentPage += 1
+        isInitialLoad = false
+
+        fetchOrders(for: selected)
+    }
+
+    //MARK: getOrderSuccess.
+//    func getOrderSuccess() {
+//        SVProgressHUD.dismiss()
+//        let response = viewModel.myOrderResponse
+//        if response.status == "success" {
+//            myOrderListArr = response.data ?? []
+//            newOrder = "\(response.new_order_count ?? 0)"
+//            completedOrder = "\(response.completed_order_count ?? 0)"
+//            ProcessingOrder = "\(response.processing_order_count ?? 0)"
+//        } else {
+//            showError = true
+//            alertType = .sheetType(
+//                icon: .alert,
+//                title: response.error_type?.capitalized ?? "",
+//                message: response.message?.capitalized ?? "",
+//                primaryBtnText: "",
+//                secondaryBtnText: AppString.ok.localized
+//            )
 //        }
 //    }
-    /// Checks if we should load more data when a specific item appears
+    
+
     private func checkAndLoadMore(currentIndex: Int) {
-        // Don't load if:
-        // 1. Already fetching
-        // 2. Can't load more (reached end)
-        // 3. Still loading initial data
-        guard !isFetchingMore, canLoadMore else {
-            return
-        }
-        
-        // Calculate threshold (load more when user is 3 items from the end)
-        let thresholdIndex = myOrderListArr.count - 3
-        
-        // Trigger load more when user scrolls near the end
+        let thresholdIndex = myOrderListArr.count - 2
         if currentIndex >= thresholdIndex {
             loadMoreData()
         }
     }
     
     /// Loads the next page of data
-    private func loadMoreData() {
-        // Prevent multiple simultaneous calls
-        guard !isFetchingMore else { return }
-        
-        // Check if there's more data to load
-        let totalItems = viewModel.myOrderResponse.total ?? 0
-        let currentItemCount = myOrderListArr.count
-        
-        guard currentItemCount < totalItems else {
-            // We've loaded all items
-            canLoadMore = false
-            return
-        }
-        
-        // Set fetching flag
-        isFetchingMore = true
-        
-        // Increment page and fetch
-        currentPage += 1
-        
-        Task {
-            await performAPICalls(
-                isConcurrent: false,
-                showLoader: false,
-                onError: { error in
-                    // ✅ Reset pagination state on error
-                    isFetchingMore = false
-                    currentPage -= 1 // Rollback page increment
-                    
-                    alertType = .sheetType(
-                     icon: .alert,
-                     title: "Error",
-                     message: errorDesc(error: error, message: viewModel.errorMessage),
-                     primaryBtnText: "",
-                     secondaryBtnText: AppString.ok.localized
-                    )
-                    showError = true
-                },
-                onSuccess: {
-                    // ✅ Handle successful data load
-                    
-                    handlePaginationSuccess()
-                    
-                }
-            ) {
-                let param = ProductOrderListingRequest(type: selected.apiValue, page: currentPage, search: searchText)
-                await viewModel.getMyOrderList(parameters: param)
-                isFetchingMore = false
-                if self.viewModel.errorMessage == "" || viewModel.errorMessage == nil{
-                    getOrderSuccess()
-                }else{
-                    alertType = .sheetType(
-                        icon: .alert,
-                        title: "Error",
-                        message: viewModel.errorMessage?.capitalizingFirstLetter() ?? "",
-                        primaryBtnText: "",
-                        secondaryBtnText: AppString.ok.localized
-                    )
-                }
-            }
-        }
-    }
+//    private func loadMoreData() {
+//        // Prevent multiple simultaneous calls
+//        guard !isFetchingMore else { return }
+//        
+//        // Check if there's more data to load
+//        let totalItems = viewModel.myOrderResponse.total ?? 0
+//        let currentItemCount = myOrderListArr.count
+//        
+//        guard currentItemCount < totalItems else {
+//            // We've loaded all items
+//            canLoadMore = false
+//            return
+//        }
+//        
+//        // Set fetching flag
+//        isFetchingMore = true
+//        
+//        // Increment page and fetch
+//        currentPage += 1
+//        
+//        Task {
+//            await performAPICalls(
+//                isConcurrent: false,
+//                showLoader: false,
+//                onError: { error in
+//                    // ✅ Reset pagination state on error
+//                    isFetchingMore = false
+//                    currentPage -= 1 // Rollback page increment
+//                    
+//                    alertType = .sheetType(
+//                     icon: .alert,
+//                     title: "Error",
+//                     message: errorDesc(error: error, message: viewModel.errorMessage),
+//                     primaryBtnText: "",
+//                     secondaryBtnText: AppString.ok.localized
+//                    )
+//                    showError = true
+//                },
+//                onSuccess: {
+//                    // ✅ Handle successful data load
+//                    
+//                    handlePaginationSuccess()
+//                    
+//                }
+//            ) {
+//                let param = ProductOrderListingRequest(type: selected.apiValue, page: currentPage, search: searchText)
+//                await viewModel.getMyOrderList(parameters: param)
+//                isFetchingMore = false
+//                if self.viewModel.errorMessage == "" || viewModel.errorMessage == nil{
+//                    getOrderSuccess()
+//                }else{
+//                    alertType = .sheetType(
+//                        icon: .alert,
+//                        title: "Error",
+//                        message: viewModel.errorMessage?.capitalizingFirstLetter() ?? "",
+//                        primaryBtnText: "",
+//                        secondaryBtnText: AppString.ok.localized
+//                    )
+//                }
+//            }
+//        }
+//    }
     
     /// Handles successful pagination response
     private func handlePaginationSuccess() {
         let response = viewModel.myOrderResponse
         
         guard response.status == "success" else {
-            // Handle error case
             isFetchingMore = false
-            currentPage -= 1 // Rollback
+            currentPage -= 1
             return
         }
         
-        // Append new data
         let newData = response.data ?? []
         myOrderListArr.append(contentsOf: newData)
         
-        // Update pagination state
         let totalItems = response.total ?? 0
         let currentItemCount = myOrderListArr.count
         
-        // Check if we can load more
         canLoadMore = currentItemCount < totalItems
         isFetchingMore = false
         

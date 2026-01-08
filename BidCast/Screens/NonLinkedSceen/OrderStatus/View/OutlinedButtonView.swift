@@ -17,13 +17,15 @@ struct OutlinedButtonView: View {
             onTap()
         }) {
             Text(title)
+                .font(.custom(poppinsSemiBold, size: 13.0))
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 12)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(Color.defaultTheme, lineWidth: 1)
-                )
                 .foregroundColor(Color.defaultTheme)
+                .padding(.vertical, 12)
+                .background(
+                    RoundedRectangle(cornerRadius: 32)
+                        .fill(Color.defaultThemeLight)
+                )
+                
         }
     }
 }

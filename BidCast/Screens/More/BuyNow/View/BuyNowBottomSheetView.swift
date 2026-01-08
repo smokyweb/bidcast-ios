@@ -46,6 +46,7 @@ struct BuyNowBottomSheetView: View {
     @State private var sendAsGift : Int = 0
     @State private var giftUserID : Int = 0
     @State private var giftMsg : String = ""
+    @State var orderId : Int = 0
     
     @State private var showAddressSheet = false
     @State private var showCardSheet = false
@@ -206,7 +207,7 @@ struct BuyNowBottomSheetView: View {
 //                if let order = orderDetails {
                     CusNavLink(doNavigate: $navigateToOrderStatus, destination: OrderStatusScreen(
                         productDetail: $orderDetails,
-                        comeFrom: "buyNow"
+                        comeFrom: "buyNow", orderId: $orderId
                     ))
 //                }
             }
@@ -261,22 +262,7 @@ struct BuyNowBottomSheetView: View {
         
     }
     
-    //MARK: fetchOrderDetail.
-    func fetchOrderDetail(){
-        Task {
-           guard Reachability.isConnectedToNetwork() else {
-                hudMsg = "No Internet Connection"
-                showhud = true
-                return
-            }
-            SVProgressHUD.show()
-            let param = ProductOrderDetailRequest(order_id: orderID)
-            await viewModel.getMyOrderList(parameters: param)
-            await SVProgressHUD.dismiss()
-            orderSuccess()
-        }
-    }
-    
+  
     //MARK: getCard.
     func getCard(){
         Task {
@@ -417,17 +403,7 @@ struct BuyNowBottomSheetView: View {
         }
     }
 
-    //MARK: orderSuccess.
-    func orderSuccess() {
-        SVProgressHUD.dismiss()
-        let response = viewModel.buyNowResponse
-        if response.status == "success" {
-            orderDetails = response.data
-        } else {
-            
-        }
-    }
-    
+   
 
     
     //MARK: BuyProductSuccess.
@@ -438,6 +414,7 @@ struct BuyNowBottomSheetView: View {
 //            navigateToOrderStatus = response.data
             navigateToOrderStatus = true
             
+            orderId = response.data?.id ?? 0
         } else {
             
         }

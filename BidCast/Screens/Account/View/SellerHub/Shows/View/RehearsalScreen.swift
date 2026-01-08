@@ -810,6 +810,7 @@ struct RehearsalScreen: View {
                 noteText:$showNotes ,
                 forHost : .constant(true),
                 onPost: { note in
+                    showNotes.removeAll()
                     showNotes += note
                     print("Posted note: \(note)")
                     showNotesSheet = false

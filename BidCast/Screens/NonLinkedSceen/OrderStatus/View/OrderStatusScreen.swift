@@ -22,6 +22,7 @@ struct OrderStatusScreen: View {
     @State private var showhud = false
     @State private var hudMsg = ""
     var comeFrom: String = ""
+    @Binding var orderId : Int
     
     
     var body: some View {
@@ -51,10 +52,11 @@ struct OrderStatusScreen: View {
                             .foregroundColor(.defaultTheme)
                         
                         Text("Preparing Your Order")
-                            .font(.title3).bold()
+                            .font(.custom(poppinsBold, size: 18.0))
+                            .foregroundColor(.black)
                         
                         Text("Send this purchase as a gift to someone special")
-                            .font(.subheadline)
+                            .font(.custom(poppinsMedium, size: 13.0))
                             .foregroundColor(.gray)
                             .multilineTextAlignment(.center)
                     }
@@ -94,17 +96,7 @@ struct OrderStatusScreen: View {
                 }
                 .padding()
             }
-            /*
-            @State ->
-             a property wrapper type that can read and write values managed by swiftUI
-             you can not modify properity of struct directly because struct is value type
-             when you declared  a property as @state the  its value is stored and managed by swiftUI outside of struct to make it modify the value
-             when ever state property valuue changes, the view invalidates its current state and re-renders the body property to reflect the updated state
-             @Binding ->
-                a property wrapper type that can read and write a value owned by a source of truth outside of the current view
-             @ObserableObject ->
-             
-            */
+            
             if comeFrom == "buyNow" {
                 // 🔙 Home Button
                 Button(action: {
@@ -112,6 +104,7 @@ struct OrderStatusScreen: View {
                     navigateToTab = true
                 }) {
                     Text("Home")
+                        .font(.custom(poppinsSemiBold, size: 16.0))
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding()
@@ -126,12 +119,12 @@ struct OrderStatusScreen: View {
                     .environmentObject(TabBarRouter())
             )
         }
-        .background(Color(red: 240/255, green: 247/255, blue: 255/255).ignoresSafeArea())
+        .background(Color.backGround.ignoresSafeArea())
         .onDisappear {
             UIScrollView.appearance().bounces = true
         }
         .onFirstAppear {
-//            fetchPurchaseDetail()
+            fetchOrderDetail()
         }
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
@@ -154,35 +147,49 @@ struct OrderStatusScreen: View {
         }
     }
     
-//    func fetchPurchaseDetail(){
-//        Task {
-//           guard Reachability.isConnectedToNetwork() else {
-//                hudMsg = "No Internet Connection"
-//                showhud = true
-//                return
-//            }
-//            SVProgressHUD.show()
-//            let param = ProductPurchaseDetailRequest(shipping_id: shippingID,product_id: productID)
-//            await viewModel.getPurchaseDetail(parameters: param)
-//            await SVProgressHUD.dismiss()
-//            getPurchaseSuccess()
-//        }
-//    }
+
     
-//    func fetchOrderDetail(){
-//        Task {
-//           guard Reachability.isConnectedToNetwork() else {
-//                hudMsg = "No Internet Connection"
-//                showhud = true
-//                return
-//            }
-//            SVProgressHUD.show()
-//            let param = ProductOrderDetailRequest(order_id: orderID)
-//            await viewModel.getMyOrderList(parameters: param)
-//            await SVProgressHUD.dismiss()
-//            orderSuccess()
-//        }
-//    }
+    func fetchOrderDetail(){
+        Task {
+           guard Reachability.isConnectedToNetwork() else {
+                hudMsg = "No Internet Connection"
+                showhud = true
+                return
+            }
+            SVProgressHUD.show()
+            let param = ProductOrderDetailRequest(order_id: orderId)
+            await viewModel.getMyOrderList(parameters: param)
+            await SVProgressHUD.dismiss()
+            if let errorMsg = viewModel.errorMessage{
+                alertType = .sheetType(
+                    icon: .alert,
+                    title: "Error",
+                    message: errorMsg ,
+                    primaryBtnText: "Ok",
+                    secondaryBtnText: ""
+                   
+                )
+                showError = true
+            }
+            orderSuccess()
+        }
+    }
+    func orderSuccess(){
+        let response = viewModel.myOrderResponse
+        if response.status == "success"{
+            productDetail = response.data
+        }else{
+            alertType = .sheetType(
+                icon: .alert,
+                title: "Error",
+                message: response.message ?? "" ,
+                primaryBtnText: "Ok",
+                secondaryBtnText: ""
+               
+            )
+            showError = true
+        }
+    }
     
     func fetchReciept(){
         Task {
@@ -196,11 +203,11 @@ struct OrderStatusScreen: View {
                 showhud = true
                 return
             }
-//            SVProgressHUD.show()
-//            let param = OrderRecieptRequest(order_id: orderID)
-//            await viewModel.getReceipt(parameters: param)
-//            await SVProgressHUD.dismiss()
-//            getRecieptSuccess()
+            SVProgressHUD.show()
+            let param = getOrderReceiptRequest(order_id: orderId)
+            await viewModel.getReceipt(parameters: param)
+            await SVProgressHUD.dismiss()
+            getRecieptSuccess()
         }
     }
     
@@ -255,7 +262,24 @@ struct OrderStatusScreen: View {
             print("Invalid URL String")
             return
         }
-        FileDownloader.shared.startDownload(from: url)
+        let timeStamp = getCurrentTimestamp()
+        FileDownloader.shared.download(
+            from: url,
+            fileName: "receipt\(timeStamp).pdf"
+        ) { result in
+            switch result {
+            case .success(let url):
+                print("Saved in Files at:", url)
+            case .failure(let error):
+                print("Download failed:", error)
+            }
+        }
+
+//        FileDownloader.shared.startDownload(from: url)
+    }
+    func getCurrentTimestamp() -> String {
+        let now = Date()
+        return String(Int(now.timeIntervalSince1970))
     }
 }
 

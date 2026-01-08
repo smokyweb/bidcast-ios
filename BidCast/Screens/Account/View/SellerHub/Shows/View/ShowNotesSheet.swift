@@ -117,7 +117,10 @@ struct ShowNotesSheet: View {
             // Post Button
             if forHost{
                 Button(role: nil, action: {
-                    onPost?(attributedText.string.trimmingCharacters(in: .whitespacesAndNewlines))
+//                    onPost?(attributedText.string.trimmingCharacters(in: .whitespacesAndNewlines))
+                    if let html = attributedText.toHTML() {
+                            onPost?(html)   // 👈 send HTML to socket
+                        }
                 }) {
                     Text("Post")
                         .font(.custom(poppinsSemiBold, size: 16))
@@ -131,10 +134,7 @@ struct ShowNotesSheet: View {
                                         gradient: Gradient(colors: [
                                             attributedText.plainTextTrimmed.isEmpty
                                             ? Color.gray
-                                            : Color.defaultTheme,
-                                            attributedText.plainTextTrimmed.isEmpty
-                                            ? Color.gray.opacity(0.8)
-                                            : Color.defaultThemeLight
+                                            :Color.defaultTheme
                                         ]),
                                         startPoint: .leading,
                                         endPoint: .trailing
@@ -159,7 +159,9 @@ struct ShowNotesSheet: View {
         .background(Color(.systemBackground))
         .onAppear {
             // Auto-focus text editor when sheet appears
-            attributedText = NSAttributedString(string: noteText)
+            let attributedNote = NSAttributedString.fromHTML(noteText)
+            attributedText = attributedNote
+//            attributedText = NSAttributedString(string: noteText)
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 isTextEditorFocused = false
             }
@@ -191,43 +193,33 @@ extension NSAttributedString {
         string.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }
+extension NSAttributedString {
+    func toHTML() -> String? {
+        let range = NSRange(location: 0, length: length)
+        let options: [DocumentAttributeKey: Any] = [
+            .documentType: DocumentType.html,
+            .characterEncoding: String.Encoding.utf8.rawValue
+        ]
+        
+        guard let data = try? data(from: range, documentAttributes: options) else {
+            return nil
+        }
+        return String(data: data, encoding: .utf8)
+    }
+}
 
-//// MARK: - Usage Example
-//struct ContentView_ShowNotes: View {
-//    @State private var showNotesSheet = false
-//    @State private var savedNotes: [String] = []
-//    
-//    var body: some View {
-//        NavigationView {
-//            VStack(spacing: 16) {
-//                Button("Add Show Note") {
-//                    showNotesSheet = true
-//                }
-//                .buttonStyle(.borderedProminent)
-//                
-//                List(savedNotes, id: \.self) { note in
-//                    Text(note)
-//                        .font(.custom(poppinsRegular, size: 14))
-//                }
-//            }
-//            .navigationTitle("Show Notes")
-//        }
-//        .sheet(isPresented: $showNotesSheet) {
-//            ShowNotesSheet(
-//                onPost: { note in
-//                    savedNotes.append(note)
-//                    print("Posted note: \(note)")
-//                }
-//            )
-//            .presentationDetents([.large])
-//            .presentationDragIndicator(.visible)
-//        }
-//    }
-//}
-//#Preview {
-//    ShowNotesSheet(
-//        onPost: { note in
-//            print("Posted note: \(note)")
-//        }
-//    )
-//}
+extension NSAttributedString {
+    static func fromHTML(_ html: String) -> NSAttributedString {
+        let data = Data(html.utf8)
+        let options: [DocumentReadingOptionKey: Any] = [
+            .documentType: DocumentType.html,
+            .characterEncoding: String.Encoding.utf8.rawValue
+        ]
+        
+        return (try? NSAttributedString(
+            data: data,
+            options: options,
+            documentAttributes: nil
+        )) ?? NSAttributedString(string: "")
+    }
+}

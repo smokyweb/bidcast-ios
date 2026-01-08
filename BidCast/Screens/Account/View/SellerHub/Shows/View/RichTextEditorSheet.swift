@@ -211,12 +211,14 @@ struct RichTextEditorSheet: View {
                     Divider().frame(height: 30)
 
                     formattingButton("•", isBullet) {
-                        toggleBullet()
-                        textViewRef?.applyCurrentStylesImmediately()
+                        isBullet.toggle()
+                        isNumbered = false
+                        textViewRef?.applyBulletList()
                     }
                     formattingButton("1.", isNumbered) {
-                        toggleNumbered()
-                        textViewRef?.applyCurrentStylesImmediately()
+                        isNumbered.toggle()
+                        isBullet = false
+                        textViewRef?.applyNumberedList()
                     }
                 }
                 .padding(.horizontal)
@@ -307,5 +309,55 @@ extension UITextView {
             count = end + 1 // +1 for \n
         }
         return nil
+    }
+}
+extension UITextView {
+
+    func applyBulletList() {
+        let range = selectedRange
+
+        let textList = NSTextList(
+            markerFormat: .disc,
+            options: 0
+        )
+
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.textLists = [textList]
+        paragraphStyle.headIndent = 20
+        paragraphStyle.firstLineHeadIndent = 0
+        paragraphStyle.paragraphSpacing = 6
+
+        textStorage.addAttribute(
+            .paragraphStyle,
+            value: paragraphStyle,
+            range: range.length == 0
+                ? NSRange(location: range.location, length: 1)
+                : range
+        )
+    }
+}
+extension UITextView {
+
+    func applyNumberedList() {
+        let range = selectedRange
+
+        let textList = NSTextList(
+            markerFormat: .decimal,
+            options: 0
+        )
+
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.textLists = [textList]
+        paragraphStyle.headIndent = 20
+        paragraphStyle.firstLineHeadIndent = 0
+        paragraphStyle.paragraphSpacing = 6
+
+        textStorage.addAttribute(
+            .paragraphStyle,
+            value: paragraphStyle,
+            range: range.length == 0
+                ? NSRange(location: range.location, length: 1)
+                : range
+        )
     }
 }

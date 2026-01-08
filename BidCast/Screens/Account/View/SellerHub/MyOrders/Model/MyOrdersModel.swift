@@ -11,20 +11,28 @@ import Foundation
 struct MyOrderModel: Codable {
     var id: Int?
     var orderID: String?
-    var userID, productID: Int?
+    var orderSource: String?
+    var userID: Int?
+    var productID: Int?
     var shippingAddress: String?
-    var cardID, customerPaymentProfileID, promoCode: String?
+    var cardID: Int?
+    var customerPaymentProfileID: Int?
+    var promoCode: String?
     var sendAsGift: Bool?
     var giftUserID: Int?
     var giftMsg: String?
-    var status, createdAt: String?
+    var status: String?
+    var paymentStatus: String?
+    var createdAt: String?
+
     var product: ProductDetails?
     var shippingTracking: [ShippingTrackingModel]?
     var user: UserShortModel?
-    
+
     enum CodingKeys: String, CodingKey {
         case id
         case orderID = "order_id"
+        case orderSource = "order_source"
         case userID = "user_id"
         case productID = "product_id"
         case shippingAddress = "shipping_address"
@@ -35,12 +43,14 @@ struct MyOrderModel: Codable {
         case giftUserID = "gift_user_id"
         case giftMsg = "gift_msg"
         case status
+        case paymentStatus = "payment_status"
         case createdAt = "created_at"
         case product
         case shippingTracking = "shipping_tracking"
         case user
     }
 }
+
 
 extension MyOrderModel {
     static func convertToMyOrderModel(from details: OrderDetailsModel?) -> MyOrderModel {
@@ -74,8 +84,8 @@ extension MyOrderModel {
             userID: order.userID,
             productID: order.productID,
             shippingAddress: order.shippingAddress,
-            cardID: order.cardID,
-            customerPaymentProfileID: order.customerPaymentProfileID,
+            cardID: Int(order.cardID ?? ""),
+            customerPaymentProfileID: Int(order.customerPaymentProfileID ?? ""),
             promoCode: order.promoCode,
             sendAsGift: order.sendAsGift,
             giftUserID: Int(order.giftUserID ?? "0") ?? 0,
@@ -163,7 +173,7 @@ extension MyOrderModel {
 struct ProductDetails: Codable {
     var id, userID, categoryID, subCategoryID: Int?
     var title: String?
-    var variant: String?
+    var variant: [ProductVariant]?
     var width, length, weight,height: Int?
     var  mailClass, processingCategory: String?
     var description: String?

@@ -199,6 +199,13 @@ extension AppDelegate {
         print("Did Receive User Info: \(userInfo)")
 
         guard let type = userInfo["type"] as? String else { return }
+        if let filePath = userInfo["filePath"] as? String {
+            let fileURL = URL(fileURLWithPath: filePath)
+
+            DispatchQueue.main.async {
+                UIApplication.shared.open(fileURL)
+            }
+        }
 
         switch type {
         case "message":
@@ -231,4 +238,5 @@ extension AppDelegate {
         }
     }
 }
+
 

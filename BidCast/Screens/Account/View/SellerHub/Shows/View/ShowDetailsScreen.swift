@@ -181,12 +181,12 @@ struct ShowDetailsScreen: View {
             VStack(alignment: .leading, spacing: 6) {
                 Text(show.title?.capitalizingFirstLetter() ?? "Show Title")
                     .font(.custom(poppinsBold, size: 16))
-                    .foregroundColor(.primary)
+                    .foregroundColor(.black)
                     .lineLimit(2)
                 
                 Text(show.category?.name ?? "Category")
                     .font(.custom(poppinsRegular, size: 14))
-                    .foregroundColor(.secondary)
+                    .foregroundColor(.darkGray)
                 
                 HStack(spacing: 4) {
 //                    Image(systemName: "calendar")
@@ -195,18 +195,18 @@ struct ShowDetailsScreen: View {
                     
                     Text(formatDate(show.date?.formattedDate() ?? "12-22-2025"))
                         .font(.custom(poppinsRegular, size: 13))
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.darkGray)
                     
                     Text("•")
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.darkGray)
                     
 //                    Image(systemName: "clock")
 //                        .font(.system(size: 12))
 //                        .foregroundColor(.secondary)
                     
-                    Text(show.time ?? "12:00 AM")
+                    Text(formatTo12HourTime(show.time ?? "---"))
                         .font(.custom(poppinsRegular, size: 13))
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.darkGray)
                 }
             }
             
@@ -405,6 +405,15 @@ struct ShowDetailsScreen: View {
         let year = components[2]
         
         return "\(month)-\(day)-\(year)"
+    }
+    func formatTo12HourTime(_ timeString: String) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "HH:mm:ss"  // input format
+        if let date = dateFormatter.date(from: timeString) {
+            dateFormatter.dateFormat = "h:mm a" // output format
+            return dateFormatter.string(from: date)
+        }
+        return timeString // fallback
     }
 }
 

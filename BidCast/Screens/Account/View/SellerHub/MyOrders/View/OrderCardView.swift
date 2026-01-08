@@ -227,7 +227,7 @@ struct OrderCardView: View {
         HStack(spacing: 4) {
             Image(systemName: "person.circle.fill")
                 .font(.system(size: 11, weight: .medium))
-                .foregroundColor(.blue)
+                .foregroundColor(.defaultTheme)
             
             Text("Buyer:")
                 .font(.custom(poppinsRegular, size: 13))
@@ -235,7 +235,7 @@ struct OrderCardView: View {
             
             Text(order.user?.name ?? "Unknown")
                 .font(.custom(poppinsMedium, size: 13))
-                .foregroundColor(.blue)
+                .foregroundColor(.defaultTheme)
                 .lineLimit(1)
         }
     }
@@ -289,7 +289,7 @@ struct OrderCardView: View {
         case "cancelled", "refunded":
             return .red
         case "pending", "new_order":
-            return .blue
+            return .defaultTheme
         default:
             return .gray
         }

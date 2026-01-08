@@ -26,7 +26,7 @@ struct OrderTrackingView: View {
     
     @Binding var orderId: String
     @Binding var productId: String
-    
+//    @State var orderId : Int = 0
     @Environment(\.presentationMode) var presentationMode
     
     @StateObject private var viewModel =  OffersViewModel()
@@ -99,7 +99,7 @@ struct OrderTrackingView: View {
                 
                 CusNavLink(doNavigate: $navigateToOrderDetails, destination: OrderStatusScreen(
                     productDetail: $selectedOrderDetails,
-                    comeFrom: "myOrder"
+                    comeFrom: "myOrder", orderId:.constant(0)
                 ))
                 CusNavLink(doNavigate: $navigateToVideoReceipt, destination: VideoPlayerScreen(videoURL: $videoURL))
             }

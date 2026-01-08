@@ -13,6 +13,7 @@ struct SendGiftScreen: View {
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var networkMonitor: NetworkMonitor
     @StateObject var viewModel = BuyNowViewModel()
+    @State var orderId : Int = 0
 
     @State private var isLoading = false
     @State private var showError = false
@@ -24,6 +25,7 @@ struct SendGiftScreen: View {
     @State private var isGift = false
     @State var navigateToOrderStatus: Bool = false
     @State var navigateToGiftScreen: Bool = false
+    @State var  productDetail : MyOrderModel? = nil
 
     @Binding var request: ProductOrderRequest
 
@@ -65,8 +67,8 @@ struct SendGiftScreen: View {
                 continueButton
             }
             CusNavLink(doNavigate: $navigateToOrderStatus, destination: OrderStatusScreen(
-                productDetail: .constant(MyOrderModel()),
-                comeFrom: "buyNow"
+                productDetail: $productDetail,
+                comeFrom: "buyNow", orderId: $orderId
             ))
         }
         .background(Color(.backGround).ignoresSafeArea())
@@ -228,6 +230,7 @@ struct SendGiftScreen: View {
         let response = viewModel.productOrderResponse
         if response.status == "success" {
             navigateToOrderStatus = true
+            orderId = response.data?.id ?? 0
         }
     }
 

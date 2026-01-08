@@ -24,11 +24,12 @@ struct OrderProductCardView: View {
 //
                 CustomProfileImage(url: order?.product?.images?.first ?? "", isCircular: false, size: 70)
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(order?.product?.title ?? "")
-                        .font(.headline)
-                    Text(order?.product?.description ?? "")
-                        .foregroundColor(.gray)
-                        .font(.subheadline)
+                    Text(order?.product?.title?.capitalizingFirstLetter() ?? "")
+                        .font(.custom(poppinsSemiBold, size: 16.0))
+                        .foregroundColor(.black)
+                    Text(order?.product?.description?.capitalizingFirstLetter() ?? "")
+                        .font(.custom(poppinsRegular, size: 13.0))
+                        .foregroundColor(.darkGray)
                 }
             }
 
@@ -41,7 +42,7 @@ struct OrderProductCardView: View {
                 InfoRow(label: "Quantity", value: "\(order?.product?.purchasedQuantity ?? "0")")
                 InfoRow(label: "Category", value: "\(order?.product?.category?.name ?? "")")
             }
-            .font(.subheadline)
+//            .font(.subheadline)
             .foregroundColor(.gray)
         }
         .padding()
@@ -56,8 +57,12 @@ struct OrderProductCardView: View {
         var body: some View {
             HStack {
                 Text(label)
+                    .font(.custom(poppinsSemiBold, size: 13.0))
+                    .foregroundColor(.darkGray)
                 Spacer()
-                Text(value).bold()
+                Text(value)
+                    .font(.custom(poppinsBold, size: 13.0))
+                    .foregroundColor(.black)
             }
         }
     }

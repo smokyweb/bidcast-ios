@@ -146,7 +146,8 @@ struct Order: Codable {
 // MARK: - Product
 struct ProductDetailModel: Codable {
     var id, userID, categoryID, subCategoryID: Int?
-    var title, variant: String?
+    var title: String?
+    var variant: [ProductVariant]?
     var width, length, weight, height: Int?
     var mailClass, processingCategory, description, quantity: String?
     var purchasedQuantity, pricing: String?

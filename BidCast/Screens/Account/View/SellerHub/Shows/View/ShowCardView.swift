@@ -46,7 +46,7 @@ struct ShowCardView: View {
                 Image(systemName: "ellipsis")
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundColor(.gray)
-                    .padding(.top, 20)
+                    .padding(.top, 8)
                     .frame(width: 32, height: 32)
                     .background(Color(.systemBackground))
                     .clipShape(Circle())

@@ -716,6 +716,9 @@ struct FundTransferRequest : Encodable {
 struct getShowRequest : Encodable {
     var show_id : Int
 }
+struct getOrderReceiptRequest : Encodable {
+    var order_id : Int
+}
 
 
 struct UpdateProfileRequest : Encodable {
