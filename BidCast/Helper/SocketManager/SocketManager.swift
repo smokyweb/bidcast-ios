@@ -1321,6 +1321,16 @@ extension SocketManagerService {
 
         logger.info("🎯 finalize-freebie emitted | showId=\(room_id)")
     }
+    func removeFreebieuser(room_id: String,user_id:String) {
+        let payload: [String: Any] = [
+            "room_id": room_id,
+            "user_id":user_id
+        ]
+
+        socket.emit(" remove-freebie-user", payload)
+
+        logger.info("🎯 remove-freebie emitted | paload=\(payload)")
+    }
     func listenForFreebieWinner(
         completion: @escaping (_ winner: FreebieUser) -> Void
     ) {
@@ -1348,7 +1358,7 @@ extension SocketManagerService {
             }
         }
     }
-
+   
 
 }
 

@@ -396,8 +396,13 @@ struct BuyNowBottomSheetView: View {
             }else{
                 SVProgressHUD.show()
                 request = param
+                viewModel.errorMessage?.removeAll()
                 await viewModel.BuyProductRequest(parameters: param)
                 await SVProgressHUD.dismiss()
+                if let error = viewModel.errorMessage{
+                    hudMsg = error
+                    showhud = true
+                }
                 BuyProductSuccess()
             }
         }
@@ -416,6 +421,9 @@ struct BuyNowBottomSheetView: View {
             
             orderId = response.data?.id ?? 0
         } else {
+            
+            hudMsg = response.message ?? ""
+                showhud = true
             
         }
     }

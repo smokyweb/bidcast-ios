@@ -200,7 +200,7 @@ struct OrderCardView: View {
                 .font(.custom(poppinsRegular, size: 13))
                 .foregroundColor(.secondary)
             
-            Text("$\(order.product?.pricing ?? "0")")
+            Text(Double(order.product?.pricing ?? "0")?.compactCurrency() ?? "0.0")
                 .font(.custom(poppinsSemiBold, size: 15))
                 .foregroundColor(.primary)
         }
@@ -233,7 +233,7 @@ struct OrderCardView: View {
                 .font(.custom(poppinsRegular, size: 13))
                 .foregroundColor(.secondary)
             
-            Text(order.user?.name ?? "Unknown")
+            Text(order.user?.name?.capitalizingFirstLetter() ?? "Unknown")
                 .font(.custom(poppinsMedium, size: 13))
                 .foregroundColor(.defaultTheme)
                 .lineLimit(1)

@@ -19,6 +19,7 @@ struct RandomizerView: View {
     var didSpinWheel : () -> () = {}
     var onWinnerSelected: (FreebieUser) -> () = {_ in}
     var didTapAddManual : () -> () = { }
+    var didTapRemove : (Int) -> () = {_ in }
     @Binding var usersName : [String]
     @Binding var userList : [FreebieUser]
     
@@ -66,7 +67,9 @@ struct RandomizerView: View {
                             isSpinning: $isSpinning,
                             showWinnerAnimation: $showWinnerAnimation,
                             spinWheelTapped: spinWheel,
-                            didTapSpin: { value in
+                            didTApRemove: { index in
+                                didTapRemove(index)
+                            }, didTapSpin: { value in
                                 didTapSpin(value)
                             },didTapAddManual: {
                                 didTapAddManual()
@@ -113,60 +116,59 @@ struct RandomizerView: View {
     }
     
     private func setupSocketListeners() {
-            // Initialize with existing users
-            if usersName.count != 0 {
-                viewModel.options = usersName
-                print("📋 Initialized with \(usersName.count) users")
-            }
+        // Initialize with existing users
+        if usersName.count != 0 {
+            viewModel.options = usersName
+            print("📋 Initialized with \(usersName.count) users")
+        }
         if userList.count != 0{
             usersData = userList
         }
-            
-            // Listen for freebie updates (users joining)
-            socketManager.listenForFreebie { freebie, users in
-                let room_id = freebie.room_id ?? ""
-                guard roomId == room_id else {
-                    print("⏭️ Ignoring freebie for different room")
-                    return
-                }
-                
-                usersData = users
-                userList = users
-                let titles = users.map { $0.name ?? "" }
-                viewModel.options = titles
-                usersName = viewModel.options
-                
-                print("📋 Updated participants: \(titles.joined(separator: ", "))")
+        
+        // Listen for freebie updates (users joining)
+        socketManager.listenForFreebie { freebie, users in
+            let room_id = freebie.room_id ?? ""
+            guard roomId == room_id else {
+                print("⏭️ Ignoring freebie for different room")
+                return
             }
             
-            // ✅ Listen for winner - DON'T spin automatically, just store the winner
-            socketManager.listenForFreebieWinner { user in
-                print("🏆 ===== WINNER RECEIVED =====")
-                print("   Winner Name: \(user.name ?? "unknown")")
-                print("   Winner ID: \(user.id ?? 0)")
+            usersData = users
+            userList = users
+            let titles = users.map { $0.name ?? "" }
+            viewModel.options = titles
+            usersName = viewModel.options
+            
+            print("📋 Updated participants: \(titles.joined(separator: ", "))")
+        }
+        
+        socketManager.listenForFreebieWinner { user in
+            print("🏆 ===== WINNER RECEIVED =====")
+            print("   Winner Name: \(user.name ?? "unknown")")
+            print("   Winner ID: \(user.id ?? 0)")
+            
+            if let winnerIndex = usersData.firstIndex(where: { $0.id == user.id }) {
+                print("✅ Winner found at index: \(winnerIndex)")
                 
-                if let winnerIndex = usersData.firstIndex(where: { $0.id == user.id }) {
-                    print("✅ Winner found at index: \(winnerIndex)")
-                    
-                    selectedWinner = usersData[winnerIndex]
-                    targetWinnerIndex = winnerIndex
-                    hasReceivedWinner = true
-                    isSpinning = true
-                    spinTrigger = true
-                    print("🎡 POSTING SPIN NOTIFICATION")
-                    
-                    // Post notification to trigger wheel spin
-//                    NotificationCenter.default.post(
-//                        name: NSNotification.Name("SpinWheel"),
-//                        object: nil
-//                    )
-                    
-                    print("   Winner stored. Ready to spin when button is pressed.")
-                } else {
-                    print("❌ Winner not found in usersData")
-                }
+                selectedWinner = usersData[winnerIndex]
+                targetWinnerIndex = winnerIndex
+                hasReceivedWinner = true
+                isSpinning = true
+                spinTrigger = true
+                print("🎡 POSTING SPIN NOTIFICATION")
+                
+                // Post notification to trigger wheel spin
+                //                    NotificationCenter.default.post(
+                //                        name: NSNotification.Name("SpinWheel"),
+                //                        object: nil
+                //                    )
+                
+                print("   Winner stored. Ready to spin when button is pressed.")
+            } else {
+                print("❌ Winner not found in usersData")
             }
         }
+    }
         
         private func dismissView() {
             withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
@@ -256,6 +258,7 @@ struct RandomizerControlPanel: View {
     @FocusState private var isInputFocused: Bool
     
     var spinWheelTapped: (() -> Void)?
+    var didTApRemove: ((Int) -> Void)?
     var didTapSpin: ((Bool) -> Void)?
     var didTapAddManual : () -> () = { }
     
@@ -344,6 +347,7 @@ struct RandomizerControlPanel: View {
                                             
                                             Button(action: {
                                                 viewModel.removeOption(at: index)
+                                                didTApRemove?(index)
                                             }) {
                                                 Image(systemName: "xmark.circle.fill")
                                                     .font(.custom(poppinsSemiBold, size: 28.0))

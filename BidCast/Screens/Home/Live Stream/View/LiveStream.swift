@@ -866,14 +866,13 @@ struct LiveStream: View {
     }
     //MARK: Cusotm bid section action
     private func handleCustomBidTap() {
-        if UserDefaults.allowBidForAllUser {
-            self.maxBidAmountSheet = true
-        } else {
-            if UserDefaults.buyerVerafied != "verified" {
-                showVerificationSheet = true
-            } else {
+        if handleBidding(){
+//            if UserDefaults.allowBidForAllUser {
+//                self.maxBidAmountSheet = true
+//            } else {
                 self.maxBidAmountSheet = true
-            }
+                
+//            }
         }
     }
     
@@ -943,7 +942,8 @@ struct LiveStream: View {
                 }
             }
             .onEnded { value in
-                handleBidDragEnd(value: value)
+               handleBidDragEnd(value: value)
+                
             }
     }
     
@@ -955,9 +955,7 @@ struct LiveStream: View {
                 swipeConfirmed = true
                 incrementPrice()
             } else {
-                if UserDefaults.buyerVerafied != "verified" {
-                    showVerificationSheet = true
-                } else {
+                if handleBidding(){
                     swipeConfirmed = true
                     incrementPrice()
                 }
@@ -970,9 +968,7 @@ struct LiveStream: View {
     
     private func setupBiddingIfNeeded() {
         if !isBiddingActive {
-            if UserDefaults.buyerVerafied != "verified" {
-                showVerificationSheet = true
-            } else {
+            if handleBidding(){
                 isBiddingActive = true
             }
         }
@@ -1047,6 +1043,24 @@ struct LiveStream: View {
             } else {
                 currentBottomSheet = .wallet
                 showSheet = true
+            }
+        }
+    }
+    private func handleBidding() -> Bool {
+        if UserDefaults.buyerVerafied != "verified" {
+            showVerificationSheet = true
+            return false
+        } else {
+            if UserDefaults.sellerAddress == false {
+                showPaymentShipping = true
+                titleText = "Add Address"
+                return false
+            } else if UserDefaults.hasCardAdded == false {
+                showPaymentShipping = true
+                titleText = "Add Card"
+                return false
+            } else {
+                return true
             }
         }
     }

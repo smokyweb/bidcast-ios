@@ -37,8 +37,8 @@ struct OrderProductCardView: View {
 
             VStack(spacing: 6) {
                 InfoRow(label: "Order ID", value: "\(order?.orderID ?? "")")
-                InfoRow(label: "Order Date", value: order?.product?.createdAt?.formattedDateAndTimeString() ?? "N/A")
-                InfoRow(label: "Sold By", value: "\(order?.user?.name ?? "")")
+                InfoRow(label: "Order Date", value: order?.createdAt?.formattedDate() ?? "N/A")
+                InfoRow(label: "Buyer", value: "\(order?.user?.name ?? "")")
                 InfoRow(label: "Quantity", value: "\(order?.product?.purchasedQuantity ?? "0")")
                 InfoRow(label: "Category", value: "\(order?.product?.category?.name ?? "")")
             }

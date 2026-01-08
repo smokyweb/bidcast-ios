@@ -273,6 +273,20 @@ extension String {
 
         return outputFormatter.string(from: date)
     }
+    func formattedDate() -> String {
+            let isoFormatter = ISO8601DateFormatter()
+            isoFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+
+            guard let date = isoFormatter.date(from: self) else {
+                return "Invalid date"
+            }
+
+            let outputFormatter = DateFormatter()
+            outputFormatter.dateFormat = "MMM dd yyyy, HH:mm"
+            outputFormatter.timeZone = .current
+
+            return outputFormatter.string(from: date)
+        }
 }
 
 extension String {

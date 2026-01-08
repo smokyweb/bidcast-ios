@@ -743,6 +743,9 @@ struct RehearsalScreen: View {
             }, didTapAddManual: {
                 navigateToRandomizer = false
                 showUserSheet = true
+            },didTapRemove:{ index in
+                socketManager.removeFreebieuser(room_id: roomId, user_id : "\(wheelTitles[index].id ?? 0)")
+                wheelTitles.remove(at: index)
             },usersName: $viewModelFreebie.options, userList:$wheelTitles)
             .presentationDetents([.fraction(showSpin ? 0.90 : 0.55)])
                 .presentationCornerRadius(25)
