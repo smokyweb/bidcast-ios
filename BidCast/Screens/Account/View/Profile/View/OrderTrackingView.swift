@@ -77,10 +77,11 @@ struct OrderTrackingView: View {
                     sellerInfoCard
                 }
                 .padding(.horizontal, 12)
-                .padding(.top,12)
-                .padding(.bottom, 0)
+                .padding(.vertical,12)
+                
             }
             .edgesIgnoringSafeArea(.bottom)
+            .padding(.bottom, -50)
             .background(.backGround)
             
             CusNavLink(doNavigate: $navigateToProfile,
@@ -235,23 +236,24 @@ struct OrderTrackingView: View {
             .frame(height: 8)
             
             Text("The seller is preparing your package to ship. They typically ship in 1 day. Once the package is scanned, you'll receive tracking updates to follow its journey to you.")
-                .font(.custom("Poppins-Regular", size: 12))
-                .foregroundColor(.secondary)
+                .font(.custom(poppinsRegular, size: 11))
+                .foregroundColor(.darkGray)
                 .lineSpacing(2)
             
             Button(action: {}) {
                 HStack {
                     Text("Bundled with 5 other items")
-                        .font(.custom("Poppins-SemiBold", size: 12))
+                        .font(.custom(poppinsSemiBold, size: 12))
+                        .foregroundColor(.defaultTheme)
                     Image(systemName: "chevron.down")
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(.custom(poppinsSemiBold, size: 12))
                 }
                 .foregroundColor(.blue)
             }
             
             Text("Order placed \(formattedDate(orderResponse?.order?.createdAt))") // dynamic update
                 .font(.custom("Poppins-Regular", size: 12))
-                .foregroundColor(.secondary)
+                .foregroundColor(.darkGray)
             
             // Action Buttons
             VStack(spacing: 12) {
@@ -449,6 +451,7 @@ struct OrderTrackingView: View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Buyer Protections")
                 .font(.custom("Poppins-Bold", size: 18))
+                .foregroundColor(.black)
             
             HStack(spacing: 12) {
                 ZStack {
@@ -458,16 +461,17 @@ struct OrderTrackingView: View {
                     
                     Image(systemName: "shield.checkered")
                         .font(.system(size: 20, weight: .semibold))
-                        .foregroundColor(.blue)
+                        .foregroundColor(.defaultTheme)
                 }
                 
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Whatnot Buyer Guarantee")
                         .font(.custom("Poppins-SemiBold", size: 14))
+                        .foregroundColor(.black)
                     
                     Text("Receive your purchase on time and as described or we'll make it right.")
                         .font(.custom("Poppins-Regular", size: 12))
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.darkGray)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 
@@ -478,7 +482,7 @@ struct OrderTrackingView: View {
                 //                    .foregroundColor(.gray)
             }
             .padding(12)
-            .background(Color.gray.opacity(0.05))
+            .background(Color.gray.opacity(0.3))
             .cornerRadius(12)
         }
         .padding(24)
@@ -571,7 +575,7 @@ struct OrderTrackingView: View {
                     )
                 }
                 .padding(12)
-                .background(Color.gray.opacity(0.08))
+                .background(Color.gray.opacity(0.3))
                 .cornerRadius(12)
                 .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: 2)
                 
@@ -590,10 +594,10 @@ struct OrderTrackingView: View {
                 }) {
                     Text("View Profile")
                         .font(.custom("Poppins-SemiBold", size: 16))
-                        .foregroundColor(.primary)
+                        .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
-                        .background(Color.gray.opacity(0.1))
+                        .background(.defaultTheme)
                         .cornerRadius(12)
                 }
                 .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: 2)
@@ -628,24 +632,24 @@ struct ActionButtonView: View {
             HStack(spacing: 12) {
                 ZStack {
                     Circle()
-                        .fill(Color.gray.opacity(0.1))
+                        .fill(Color.defaultThemeLight)
                         .frame(width: 48, height: 48)
                     
                     Image(systemName: icon)
-                        .font(.system(size: 20, weight: .regular))
-                        .foregroundColor(.primary)
+                        .font(.custom(poppinsRegular, size: 20.0))
+                        .foregroundColor(.defaultTheme)
                 }
                 .scaleEffect(isPressed ? 1.1 : 1.0)
                 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title)
-                        .font(.custom("Poppins-SemiBold", size: 14))
-                        .foregroundColor(.primary)
+                        .font(.custom(poppinsSemiBold, size: 14.0))
+                        .foregroundColor(.black)
                     
                     if let subtitle = subtitle {
                         Text(subtitle)
-                            .font(.custom("Poppins-Regular", size: 12))
-                            .foregroundColor(.secondary)
+                            .font(.custom(poppinsRegular, size: 12.0))
+                            .foregroundColor(.darkGray)
                             .fixedSize(horizontal: false, vertical: true)
                     }
                 }
@@ -653,11 +657,11 @@ struct ActionButtonView: View {
                 Spacer()
                 
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundColor(.gray)
+                    .font(.custom(poppinsSemiBold, size: 14.0))
+                    .foregroundColor(.darkGray)
             }
             .padding(12)
-            .background(Color.gray.opacity(0.05))
+            .background(Color.gray.opacity(0.2))
             .cornerRadius(12)
         }
         .buttonStyle(PlainButtonStyle())
@@ -687,15 +691,15 @@ struct DetailRowView: View {
         if showDivider {
             HStack {
                 Text(label)
-                    .font(.custom("Poppins-Medium", size: 14))
-                    .foregroundColor(.primary)
+                    .font(.custom(poppinsRegular, size: 13))
+                    .foregroundColor(.darkGray)
                 
                 Spacer()
                 
                 HStack(spacing: 8) {
                     Text(value)
-                        .font(.custom("Poppins-SemiBold", size: 14))
-                        .foregroundColor(isLink ? .blue : .primary)
+                        .font(.custom(poppinsSemiBold, size: 13))
+                        .foregroundColor(isLink ? .defaultTheme : .black)
                     
                     if isCopyable {
                         Button(action: {
@@ -736,15 +740,15 @@ struct DetailRowView: View {
         else {
             HStack {
                 Text(label)
-                    .font(.custom("Poppins-Medium", size: 14))
-                    .foregroundColor(.primary)
+                    .font(.custom(poppinsRegular, size: 13))
+                    .foregroundColor(.darkGray)
                 
                 Spacer()
                 
                 HStack(spacing: 8) {
                     Text(value)
-                        .font(.custom("Poppins-SemiBold", size: 14))
-                        .foregroundColor(isLink ? .blue : .primary)
+                        .font(.custom(poppinsSemiBold, size: 13))
+                        .foregroundColor(isLink ? .defaultTheme : .black)
                     
                     if isCopyable {
                         Button(action: {
@@ -757,7 +761,7 @@ struct DetailRowView: View {
                             ZStack {
                                 Image(systemName: "doc.on.doc")
                                     .font(.system(size: 14, weight: .regular))
-                                    .foregroundColor(.blue)
+                                    .foregroundColor(.defaultTheme)
                                 
                                 if showCopied {
                                     Text("Copied!")
@@ -792,23 +796,23 @@ struct CompactActionButton: View {
             HStack(spacing: 12) {
                 ZStack {
                     Circle()
-                        .fill(Color.gray.opacity(0.1))
+                        .fill(Color.defaultThemeLight)
                         .frame(width: 40, height: 40)
                     
                     Image(systemName: icon)
                         .font(.system(size: 18, weight: .regular))
-                        .foregroundColor(.primary)
+                        .foregroundColor(.defaultTheme)
                 }
                 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
                         .font(.custom("Poppins-SemiBold", size: 14))
-                        .foregroundColor(.primary)
+                        .foregroundColor(.black)
                     
                     if let subtitle = subtitle {
                         Text(subtitle)
                             .font(.custom("Poppins-Regular", size: 12))
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.darkGray)
                     }
                 }
                 

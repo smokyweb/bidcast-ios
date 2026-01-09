@@ -284,6 +284,8 @@ struct ActivityScreen: View {
                 }
             }
             .padding(.top,4)
+            .edgesIgnoringSafeArea(.bottom)
+            .padding(.bottom,-40)
             .padding(.horizontal, 8)
             
             if let chatVM = chatVM {
