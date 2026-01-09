@@ -223,3 +223,7 @@ struct ShowOverviewModel: Codable {
         case totalBids
     }
 }
+
+struct SavedModel : Codable{
+    var is_saved : Bool?
+}

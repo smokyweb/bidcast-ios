@@ -257,9 +257,9 @@ extension String {
         return outputFormatter.string(from: date)
     }
     
-    func formattedDateAndTimeString() -> String {
+    func formattedDateAndTimeString(input : String = "dd-MM-yyyy HH:mm:ss" ,output : String = "MMM dd yyyy, HH:mm") -> String {
         let inputFormatter = DateFormatter()
-        inputFormatter.dateFormat = "dd-MM-yyyy HH:mm:ss"
+        inputFormatter.dateFormat = input
         inputFormatter.timeZone = TimeZone(secondsFromGMT: 0)
         inputFormatter.locale = Locale(identifier: "en_US_POSIX")
 
@@ -268,7 +268,7 @@ extension String {
         }
 
         let outputFormatter = DateFormatter()
-        outputFormatter.dateFormat = "MMM dd yyyy, HH:mm"
+        outputFormatter.dateFormat = output
         outputFormatter.timeZone = TimeZone.current
 
         return outputFormatter.string(from: date)
@@ -287,6 +287,13 @@ extension String {
 
             return outputFormatter.string(from: date)
         }
+    func toDateFromBackend() -> Date? {
+           let formatter = DateFormatter()
+           formatter.dateFormat = "dd-MM-yyyy HH:mm:ss"
+           formatter.locale = Locale(identifier: "en_US_POSIX")
+           formatter.timeZone = .current
+           return formatter.date(from: self)
+       }
 }
 
 extension String {

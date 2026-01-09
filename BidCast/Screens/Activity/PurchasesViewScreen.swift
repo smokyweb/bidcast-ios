@@ -28,7 +28,8 @@ struct PurchasesViewScreen: View {
                             .strokeBorder(Color.black.opacity(0.1), lineWidth: 1)
                     )
 //                    .padding(.horizontal, 6)
-                    .padding(.trailing, 4)
+                    .padding(.leading, 12)
+                    .padding(.trailing,4)
                     .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 2)
             }
             
@@ -55,8 +56,8 @@ struct PurchasesViewScreen: View {
                     Text("Price:")
                         .font(.custom(poppinsBold, size: 12.0))
                         .foregroundColor(.gray)
-                    if let price = purchaseList?.product?.pricing {
-                        Text(price.formattedPrice())
+                    if let price = purchaseList?.product?.pricing?.toDouble?.compactCurrency() {
+                        Text(price)
                             .font(.custom(poppinsBold, size: 12.0))
                             .foregroundColor(.black)
                     }
@@ -68,7 +69,7 @@ struct PurchasesViewScreen: View {
                         .font(.custom(poppinsMedium, size: 12.0))
                         .foregroundColor(.gray)
                     
-                    Text(purchaseList?.createdAt?.toDateString() ?? "N/A")
+                    Text(purchaseList?.createdAt?.formattedDateAndTimeString(input:"yyyy-MM-dd HH:mm:ss",output: " dd MMM yyyy") ?? "N/A")
                         .font(.custom(poppinsMedium, size: 12.0))
                         .foregroundColor(.black)
                 }
@@ -79,12 +80,12 @@ struct PurchasesViewScreen: View {
                         .font(.custom(poppinsMedium, size: 12.0))
                         .foregroundColor(.gray)
                     Button {
-                        userId = "\(purchaseList?.user?.id ?? 0)"
-                        userImage = purchaseList?.user?.profileImage ?? ""
-                        userName = purchaseList?.user?.name ?? ""
+                        userId = "\(purchaseList?.product?.user?.id ?? 0)"
+                        userImage = purchaseList?.product?.user?.profileImage ?? ""
+                        userName = purchaseList?.product?.user?.name ?? ""
                         onTapUserProfile?(userId, userImage, userName)
                     } label: {
-                        Text(purchaseList?.user?.name ?? "")
+                        Text(purchaseList?.product?.user?.name?.capitalizingFirstLetter() ?? "")
                             .font(.custom(poppinsMedium, size: 12.0))
                             .foregroundColor(.blue)
                     }

@@ -15,7 +15,7 @@ struct ActivityCell: View {
     var status : String
     
     var body: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 4) {
             // ── First row ─────────────────────────────
             if isFor == "Message" || isFor == "Bids" || isFor == "Offers" || isFor == "OffersScreen" {
                 
@@ -32,32 +32,32 @@ struct ActivityCell: View {
                             title: offerListing?.user?.name?.capitalizingFirstLetter() ?? "Unknown",
                             lineLength: 0,
                             textColor: .black,
-                            fontName: robotoMedium,
+                            fontName: poppinsSemiBold,
                             fontValue: 16,
                             divderHeight: 0
                         )
                         
                         if let dateString = offerListing?.created_at,
-                           let date = parseISO8601Date(dateString) {
+                           let date = dateString.toDateFromBackend() {
                             let timeAgo = timeAgoSinceDate(date)
                             
                             TitleWithLine(title: "Placed an Offer • \(timeAgo)".localized,
                                           lineLength: 0,
-                                          textColor: .lightGray,
-                                          fontName: robotoRegular,
-                                          fontValue: 14,
+                                          textColor: .darkGray,
+                                          fontName: poppinsRegular,
+                                          fontValue: 11,
                                           divderHeight: 0)
                         }
                     }
                     
                     if isFor != "OffersScreen" {
                         Spacer()
-                        let bidPrice = "\(offerListing?.product?.pricing ?? "0.0")"
-                        let amt =  "\(offerListing?.product?.pricing ?? "0.0")"
-                        Text("$\(isFor == "Bids" ? bidPrice : amt)")
+                        let bidPrice = Double(offerListing?.product?.pricing ?? "0.0")?.compactCurrency() ?? ""
+                        let amt =  Double(offerListing?.product?.pricing ?? "0.0")?.compactCurrency() ?? ""
+                        Text(isFor == "Bids" ? bidPrice : amt)
                             .font(.custom(poppinsSemiBold, fixedSize: 12.0))
-                            .foregroundStyle(.text)
-                            .foregroundColor(.black)
+//                            .foregroundStyle(.text)
+                            .foregroundColor(.green)
                             .padding(.trailing, 12)
                     }
                 }
@@ -83,17 +83,17 @@ struct ActivityCell: View {
                             title: offerListing?.product?.title?.capitalizingFirstLetter() ?? "Product",
                             lineLength: 0,
                             textColor: .black,
-                            fontName: robotoMedium,
-                            fontValue: 16,
+                            fontName: poppinsSemiBold,
+                            fontValue: 14,
                             divderHeight: 0
                         )
                         
                         TitleWithLine(
                             title: isFor == "Bids" ? "Asking Price : $\(offerListing?.product?.pricing ?? "0")".localized : "Price : $\(offerListing?.product?.pricing ?? "0")".localized,
                             lineLength: 0,
-                            textColor: .lightGray,
-                            fontName: robotoRegular,
-                            fontValue: 14,
+                            textColor: .darkGray,
+                            fontName: poppinsRegular,
+                            fontValue: 11,
                             divderHeight: 0
                         )
                         
@@ -168,7 +168,7 @@ struct ActivityCell: View {
         .background(.white)
         .cornerRadius(12)
         .padding(5)
-        .shadow(color: Color(.squirrelGrey).opacity(0.5), radius: 2, x: 0, y: 0)
+//        .shadow(color: Color(.squirrelGrey).opacity(0.5), radius: 2, x: 0, y: 0)
     }
     
     func formattedDate(_ isoDate: String?) -> String {

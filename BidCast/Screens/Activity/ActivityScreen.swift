@@ -116,7 +116,7 @@ struct ActivityScreen: View {
             .background(.white)
             
             ScrollView(showsIndicators: false){
-                VStack(spacing: 0) {
+                VStack(spacing: 8) {
                     
                     switch selected {
                     case .message:
@@ -290,7 +290,7 @@ struct ActivityScreen: View {
             )
             
         }
-        .background(Color(.systemGroupedBackground))
+        .background(Color.backGround)
         .toast(isPresenting: $showhud) {
             AlertToast(type: .regular, title: hudMsg)
         }
@@ -324,9 +324,9 @@ struct ActivityScreen: View {
         .onDisappear {
             UIScrollView.appearance().bounces = true
         }
-        .onChange(of: selected) { newSegment in
+        .onChange(of: selected) { oldValue, newValue in
             Task {
-                await fetchData(for: newSegment)
+                await fetchData(for: newValue)
             }
         }
     }
@@ -335,21 +335,18 @@ struct ActivityScreen: View {
         let currentUserId = String(UserDefaults.userId)
         let isCurrentUserSender = chat.users.senderId == currentUserId
         
-        // Assign the correct user ID and names
         selectedUserId = isCurrentUserSender ? chat.users.receiverId : chat.users.senderId
         selectedUserName = isCurrentUserSender ? chat.users.receiverName : chat.users.senderName
         selectedUserImage = isCurrentUserSender ? chat.users.receiverImage : chat.users.senderImage
         
-        // Log to ensure correct IDs are being passed
         print("currentUserId: \(currentUserId), selectedUserId: \(selectedUserId ?? "")")
         
-        // Compute the sorted chat ID to ensure correct Firebase path
         selectedRoomId = computeRoomId(senderId: currentUserId, receiverId: selectedUserId ?? "")
-        print("Computed Room ID: \(selectedRoomId ?? "")")
+        print("Computed Room ID: \(selectedRoomId)")
+        
         chatPath = "chats/\(selectedRoomId)"
         print("Computed Chat Path: \(chatPath)")
         
-        // Reinitialize the ChatViewModel with the correct user information
         chatVM = ChatModel(
             currentUserId: currentUserId,
             currentUserName: UserDefaults.fullName,

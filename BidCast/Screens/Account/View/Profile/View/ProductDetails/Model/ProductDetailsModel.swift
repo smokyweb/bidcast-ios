@@ -24,6 +24,7 @@ struct ProductDetailsModel: Codable {
     var offer: Offer?
     var user: SellerUser?
     var shippingAdress: ShippingAdress?
+    var product_save_status : Bool?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -46,6 +47,7 @@ struct ProductDetailsModel: Codable {
         case createdAt = "created_at"
         case offer, user
         case shippingAdress = "shipping_adress"
+        case product_save_status
     }
 }
 
