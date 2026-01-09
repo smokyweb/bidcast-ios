@@ -55,7 +55,8 @@ struct RoomModel: Codable {
     let allow_bid_for_all: Bool?
     let bid_count_down: String?
     let show_timer: String?
-    
+    var is_room_created : Bool?
+    var productCount : Int?
     var id: String { room_id ?? "" }
 }
 

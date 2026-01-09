@@ -166,6 +166,8 @@ struct LiveStream: View {
     @State var sellerId = ""
     @State var showId = ""
     
+    @State var productCount = 0
+    
     var filteredActions: [MenuAction] {
         if let userId = viewModel.liveShowsResponse.data?.first?.user?.id,
            UserDefaults.userId != userId {
@@ -1074,14 +1076,14 @@ struct LiveStream: View {
                 if product != nil{
                  
                     if let img = product.images?.first {
-                        StackedImageView(imageURL: img, totalCount: productData.count) {
+                        StackedImageView(imageURL: img, totalCount: productCount) {
                             print("productStackTapped")
                             navigateToProductList = true
                         }
                     }
                 }
             }else{
-                StackedImageView(imageURL: "", totalCount: 0) {
+                StackedImageView(imageURL: "", totalCount: productCount) {
                     print("productStackTapped")
                     navigateToProductList = true
                 }
@@ -1814,9 +1816,12 @@ extension LiveStream {
 
     @MainActor
     private func fetchSellerIfAvailable() async {
-        guard let product = liveShowsData[currentIndex].products?.first,
-                let sellerId = product.user?.id else {
-            print("⚠️ Seller ID not available")
+//        guard let product = liveShowsData[currentIndex].products?.first else {
+//            print("⚠️ product not available")
+//            return
+//        }
+        guard let sellerId = liveShowsData[currentIndex].seller?.id else {
+            print("⚠️ product not available")
             return
         }
         
@@ -2142,6 +2147,7 @@ extension LiveStream {
         self.streamID = self.roomID
         let showId = socketRooms[matchingRoomIndex].show_id ?? ""
         self.showId = showId
+        productCount = socketRooms[matchingRoomIndex].productCount ?? 0
         if switchStreamType == .none {
             self.liveShowsData = socketRooms
             self.currentRoomID = roomId
@@ -2488,7 +2494,7 @@ extension LiveStream {
     }
     private func getProfileData() async {
         guard !liveShowsData.isEmpty else { return }
-        let sellerId = liveShowsData[currentIndex].products?.first?.user?.id ?? 0
+        let sellerId = Int(liveShowsData[currentIndex].seller?.id ?? "") ?? 0
         guard sellerId != 0 else {
             print("⚠️ Seller ID not available")
             return
