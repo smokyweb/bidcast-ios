@@ -200,3 +200,155 @@ extension String {
         return formatter.string(from: NSNumber(value: value)) ?? "$0.00"
     }
 }
+
+
+struct SavedViewScreen: View {
+    var purchaseList: PurchasedOrderModel?
+    @State private var userId: String = ""
+    @State private var userImage: String = ""
+    @State private var userName: String = ""
+    
+    var onTapOrderTracking: ((PurchasedOrderModel?) -> Void)?
+    var onTapUserProfile: ((String, String, String) -> Void)?
+    
+    var body: some View {
+        HStack(alignment: .center, spacing: 12) {
+            // MARK: - Product Image
+            if let imageURL = purchaseList?.product?.images?.first, !imageURL.isEmpty {
+                URLImageView(url: imageURL, cornerRadius: 10, height: 80,)
+                    .frame(width: 80, height: 80, alignment: .center)
+                    .cornerRadius(10)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .strokeBorder(Color.black.opacity(0.1), lineWidth: 1)
+                    )
+//                    .padding(.horizontal, 6)
+                    .padding(.leading, 12)
+                    .padding(.trailing,4)
+                    .padding(.vertical,8)
+                    .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 2)
+            }
+            
+            // MARK: - Order Details
+            VStack(alignment: .leading, spacing: 2) {
+                // Status Badge
+//                Text(purchaseList?.status?.capitalizingFirstLetter() ?? "")
+//                    .font(.custom(poppinsSemiBold, size: 12.0))
+//                    .foregroundColor(.green)
+////                    .padding(.bottom, 2)
+//                    .padding(.horizontal, 10)
+//                    .background(.green.opacity(0.2))
+////                    .padding(.vertical, 2)
+//                    .clipShape(Capsule())
+//                
+                // Product Name
+                Text(purchaseList?.product?.title?.capitalizingFirstLetter() ?? "")
+                    .font(.custom(poppinsBold, size: 14.0))
+                    .foregroundColor(.black)
+                    .lineLimit(2)
+                Text(purchaseList?.product?.category?.name?.capitalizingFirstLetter() ?? "")
+                    .font(.custom(poppinsRegular, size: 11.0))
+                    .foregroundColor(.darkGray)
+                    .lineLimit(2)
+                
+                // Price
+                HStack(spacing: 4) {
+                    Text("Price:")
+                        .font(.custom(poppinsBold, size: 12.0))
+                        .foregroundColor(.gray)
+                    if let price = purchaseList?.product?.pricing?.toDouble?.compactCurrency() {
+                        Text(price)
+                            .font(.custom(poppinsBold, size: 12.0))
+                            .foregroundColor(.black)
+                    }
+                }
+                
+                // Purchase Date
+//                HStack(spacing: 4) {
+//                    Text("Purchased:")
+//                        .font(.custom(poppinsMedium, size: 12.0))
+//                        .foregroundColor(.gray)
+//                    
+//                    Text(purchaseList?.createdAt?.formattedDateAndTimeString(input:"yyyy-MM-dd HH:mm:ss",output: " dd MMM yyyy") ?? "N/A")
+//                        .font(.custom(poppinsMedium, size: 12.0))
+//                        .foregroundColor(.black)
+//                }
+                
+                // Seller
+//                HStack(spacing: 4) {
+//                    Text("From:")
+//                        .font(.custom(poppinsMedium, size: 12.0))
+//                        .foregroundColor(.gray)
+//                    Button {
+//                        userId = "\(purchaseList?.product?.user?.id ?? 0)"
+//                        userImage = purchaseList?.product?.user?.profileImage ?? ""
+//                        userName = purchaseList?.product?.user?.name ?? ""
+//                        onTapUserProfile?(userId, userImage, userName)
+//                    } label: {
+//                        Text(purchaseList?.product?.user?.name?.capitalizingFirstLetter() ?? "")
+//                            .font(.custom(poppinsMedium, size: 12.0))
+//                            .foregroundColor(.blue)
+//                    }
+//
+//                   
+//                }
+            }
+    
+            Spacer()
+        }
+        .onTapGesture {
+            withAnimation(.easeInOut(duration: 0.28)) {
+                onTapOrderTracking?(purchaseList)
+            }
+        }
+        
+        .padding(4)
+        .background(Color.white)
+        .cornerRadius(12)
+        .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 2)
+    }
+    
+   
+}
+
+
+
+struct SavedShimmerView: View {
+    var body: some View {
+        HStack(alignment: .center, spacing: 12) {
+            
+            // Image shimmer
+            PulseShimmerView()
+                .frame(width: 80, height: 80)
+                .cornerRadius(14)
+                .padding(.horizontal, 6)
+                .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 2)
+            
+            VStack(alignment: .leading, spacing: 8) {
+                
+                
+                
+                // Product Name shimmer
+                PulseShimmerView()
+                    .frame(width: 140, height: 14)
+                    .cornerRadius(6)
+                PulseShimmerView()
+                    .frame(width: 140, height: 14)
+                    .cornerRadius(6)
+                
+                // Price shimmer
+                PulseShimmerView()
+                    .frame(width: 100, height: 12)
+                    .cornerRadius(6)
+                
+               
+            }
+            
+            Spacer()
+        }
+        .padding(6)
+        .background(Color.white)
+        .cornerRadius(12)
+        .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 2)
+    }
+}

@@ -73,10 +73,10 @@ struct ProductDetailView: View {
                     Button(action: {
                         presentationMode.wrappedValue.dismiss()
                     }) {
-                        Image(systemName: "chevron.left")
-                            .font(.custom(poppinsBold, size: 16))
+                        Image(systemName: "chevron.left.circle.fill")
+                            .font(.custom(poppinsBold, size: 24))
                             .foregroundColor(.primary)
-                            .frame(width: 36, height: 36)
+                            .frame(width: 48, height: 48)
                     }
                     .padding(12)
                     .padding(.top,24)

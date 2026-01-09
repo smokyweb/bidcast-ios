@@ -26,7 +26,7 @@ struct OrderTrackingView: View {
     
     @Binding var orderId: String
     @Binding var productId: String
-//    @State var orderId : Int = 0
+    //    @State var orderId : Int = 0
     @Environment(\.presentationMode) var presentationMode
     
     @StateObject private var viewModel =  OffersViewModel()
@@ -48,106 +48,118 @@ struct OrderTrackingView: View {
     @State private var userName: String = ""
     
     var body: some View {
-        NavigationView {
-            ZStack {
-                Color(UIColor.systemGroupedBackground)
-                    .ignoresSafeArea()
-                
-                ScrollView {
-                    VStack(spacing: 16) {
-                        // Main Status Card
-                        mainStatusCard
-                        
-                        // Product Image Card
-                        productImageCard
-                        
-                        // Order Details Card
-                        orderDetailsCard
-                        
-                        // Buyer Protections Card
-                        buyerProtectionsCard
-                        
-                        // Seller Info Card
-                        sellerInfoCard
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 100)
+        VStack {
+            VStack{
+                PrimaryHeader(title: orderResponse?.order?.product?.title?.capitalizingFirstLetter() ?? "" ,
+                              leadingImgArr: ["chevron.left"],
+                              onClickLeading: {_ in
+                    self.presentationMode.wrappedValue.dismiss()
+                }, count: .constant(0))
+            }
+            .background(.white)
+            .frame(height:50)
+            
+            ScrollView {
+                VStack(spacing: 16) {
+                    // Main Status Card
+                    mainStatusCard
+                    
+                    // Product Image Card
+                    productImageCard
+                    
+                    // Order Details Card
+                    orderDetailsCard
+                    
+                    // Buyer Protections Card
+                    buyerProtectionsCard
+                    
+                    // Seller Info Card
+                    sellerInfoCard
                 }
-                
-                CusNavLink(doNavigate: $navigateToProfile,
-                           destination: ProfileScreen(id:$userId,
-                                                      isComeFrom: .constant(""),
-                                                      userName: $userName,
-                                                      userImage: $userImage))
-                CusNavLink(
-                    doNavigate: $navigateToChat,
-                    destination: ChatScreen(
-                        viewModel: ChatModel(
-                            currentUserId: "\(UserDefaults.userId)",
-                            currentUserName: UserDefaults.fullName,
-                            currentUserImage: UserDefaults.profileURL,
-                            otherUserId: userId,
-                            otherUserName: userName,
-                            otherUserImage: userImage
-                        )
+                .padding(.horizontal, 12)
+                .padding(.top,12)
+                .padding(.bottom, 0)
+            }
+            .edgesIgnoringSafeArea(.bottom)
+            .background(.backGround)
+            
+            CusNavLink(doNavigate: $navigateToProfile,
+                       destination: ProfileScreen(id:$userId,
+                                                  isComeFrom: .constant(""),
+                                                  userName: $userName,
+                                                  userImage: $userImage))
+            CusNavLink(
+                doNavigate: $navigateToChat,
+                destination: ChatScreen(
+                    viewModel: ChatModel(
+                        currentUserId: "\(UserDefaults.userId)",
+                        currentUserName: UserDefaults.fullName,
+                        currentUserImage: UserDefaults.profileURL,
+                        otherUserId: userId,
+                        otherUserName: userName,
+                        otherUserImage: userImage
                     )
                 )
-                
-                CusNavLink(doNavigate: $navigateToContact, destination: ContactUs())
-                
-                CusNavLink(doNavigate: $navigateToReferScreen, destination: ReferEarnScreen())
-                
-                CusNavLink(doNavigate: $navigateToOrderDetails, destination: OrderStatusScreen(
-                    productDetail: $selectedOrderDetails,
-                    comeFrom: "myOrder", orderId:.constant(0)
-                ))
-                CusNavLink(doNavigate: $navigateToVideoReceipt, destination: VideoPlayerScreen(videoURL: $videoURL))
-            }
-            .overlay(
-                CustomBottomSheetView(
-                    isPresented: $showError,
-                    config: config,
-                    primaryAction: {
-                        withAnimation {
-                            showError = false
-                        }
-                    },
-                    secondaryAction: {
-                        withAnimation {
-                            showError = false
-                        }
-                    }
-                )
             )
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .principal) {
-                    HStack(spacing: 12) {
-                        // Back Button
-                        Button {
-                            presentationMode.wrappedValue.dismiss()
-                        } label: {
-                            Image(systemName: "chevron.backward")
-                                .font(.custom("Poppins-Medium", size: 16))
-                                .foregroundColor(.gray)
-                                .padding(.leading, 4)
-                        }
-                        
-                        Spacer()
-                        
-                        // Title
-                        Text(orderResponse?.order?.product?.title?.capitalizingFirstLetter() ?? "Single #212")
-                            .font(.custom("Poppins-SemiBold", size: 18))
-                            .foregroundColor(.black)
-                            .lineLimit(1)
-                        
-                        Spacer()
-                    }
-                    .frame(maxWidth: .infinity)
-                }
-            }
-
+            
+            CusNavLink(doNavigate: $navigateToContact, destination: ContactUs())
+            
+            CusNavLink(doNavigate: $navigateToReferScreen, destination: ReferEarnScreen())
+            
+            CusNavLink(doNavigate: $navigateToOrderDetails, destination: OrderStatusScreen(
+                productDetail: $selectedOrderDetails,
+                comeFrom: "myOrder", orderId:.constant(0)
+            ))
+            CusNavLink(doNavigate: $navigateToVideoReceipt, destination: VideoPlayerScreen(videoURL: $videoURL))
         }
+        .overlay(
+            CustomBottomSheetView(
+                isPresented: $showError,
+                config: config,
+                primaryAction: {
+                    withAnimation {
+                        showError = false
+                    }
+                },
+                secondaryAction: {
+                    withAnimation {
+                        showError = false
+                    }
+                }
+            )
+        )
+        //            .navigationBarTitleDisplayMode(.inline)
+        //            .toolbar {
+        //                ToolbarItem(placement: .principal) {
+        //                    HStack(spacing: 12) {
+        //                        // Back Button
+        //                        Button {
+        //                            presentationMode.wrappedValue.dismiss()
+        //                        } label: {
+        //                            Image(systemName: "chevron.left")
+        //                                .font(.custom(poppinsSemiBold, size: 16))
+        //                                .foregroundColor(.black)
+        //                                .padding(.leading, 4)
+        //                        }
+        //
+        //                        Spacer()
+        //
+        //                        // Title
+        //                        Text(orderResponse?.order?.product?.title?.capitalizingFirstLetter() ?? "Single #212")
+        //                            .font(.custom("Poppins-SemiBold", size: 18))
+        //                            .foregroundColor(.black)
+        //                            .lineLimit(1)
+        //
+        //                        Spacer()
+        //                    }
+        //                    .background(.white)
+        //                    .frame(maxWidth: .infinity)
+        ////                    .background(.white)
+        //                }
+        //
+        //            }
+        .edgesIgnoringSafeArea(.bottom)
+        .background(.backGround)
         .onAppear {
             withAnimation(.easeOut(duration: 1.0).delay(0.3)) {
                 progress = 0.25
@@ -197,11 +209,12 @@ struct OrderTrackingView: View {
     var mainStatusCard: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Preparing Package")
-                .font(.custom("Poppins-Bold", size: 22))
+                .font(.custom(poppinsBold, size: 22))
+                .foregroundColor(.black)
             
             Text("Typically ships in 1 day")
-                .font(.custom("Poppins-Medium", size: 14))
-                .foregroundColor(.primary)
+                .font(.custom(poppinsRegular, size: 14))
+                .foregroundColor(.black)
             
             // Progress Bar
             GeometryReader { geometry in

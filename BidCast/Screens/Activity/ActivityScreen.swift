@@ -38,7 +38,7 @@ struct ActivityScreen: View {
     @State var toastMessage = ""
     @State var blockUserName = ""
     @State var blockUserImage = ""
-
+    @State var productId : Int = 0
     @State var productViewModel = ProductViewModel()
     
     @State private var navigateToUserProfile: Bool = false
@@ -58,9 +58,13 @@ struct ActivityScreen: View {
     @State private var selected: Segment = .message
     @State private var selectedTabIndex: Int = Segment.message.index
     @State private var selectedFilterIdex: Int = 0
+    @State var navigateToDetail = false
     
     @State var navigateToNotification = false
     @Environment(\.presentationMode) var presentationMode
+    
+    
+    @State var sellerInfo : SellerInfoResponse? = nil
     
     var body: some View {
         VStack(spacing: 0) {
@@ -210,7 +214,7 @@ struct ActivityScreen: View {
                             }
                         }
                         
-                    case .purchases, .savedItems:
+                    case .purchases:
                         if isLoading {
                             ForEach(0..<8) { _ in
                                 PurchasesViewShimmerView()
@@ -244,25 +248,38 @@ struct ActivityScreen: View {
                             }
                         }
                         
-//                    case .savedItems:
-//                        if purchaseOrderList.isEmpty {
-//                            NoDataView(message: "No List Found")
-//                        } else {
-//                            ForEach(purchaseOrderList.indices, id: \.self) { i in
-//                                let offer = purchaseOrderList[i]
-//                                ActivityCell(
-//                                    offerListing: offer,
-//                                    isFor: "Saved Items",
-//                                    status: offer.status ?? ""
-//                                )
-//                                .onAppear {
-//                                    Task {
-//                                        await handlePagination(index: i)
-//                                    }
-//                                }
-//                            }
-//                        }
-//                        
+                    case .savedItems:
+                        if isLoading {
+                            ForEach(0..<8) { _ in
+                                PurchasesViewShimmerView()
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 4)
+                            }
+                        }
+                        else if purchaseOrderList.isEmpty {
+                            NoDataView(message: "No List Found")
+                        }
+                        else {
+                            ForEach(Array(purchaseOrderList.enumerated()), id: \.element.id) { i, txn in
+                                let offer = purchaseOrderList[i]
+                                SavedViewScreen(
+                                    purchaseList: offer,
+                                    onTapOrderTracking: { order in
+                                        productId = order?.product?.id ?? 0
+                                        navigateToDetail = true
+                                    },onTapUserProfile: { userId, userImage, userName in
+//                                        self.userId = userId
+//                                        self.userImage = userImage
+//                                        self.userName = userName
+//                                        navigateToUserProfile = true
+                                    }
+                                )
+                                .padding(.horizontal,8)
+                                .padding(.vertical, 8)
+//                                .background(Color.gray.opacity(0.1))
+                            }
+                        }
+//
                     }
                 }
             }
@@ -275,7 +292,7 @@ struct ActivityScreen: View {
                     destination: ChatScreen(viewModel: chatVM)
                 )
             }
-            
+            CusNavLink(doNavigate: $navigateToDetail, destination: ProductDetailView(productID: $productId, sellerInfo: $sellerInfo))
             CusNavLink(doNavigate: $navigateToNotification, destination: NotificationScreen())
             CusNavLink(doNavigate: $navigateToBlockedList, destination: BlockedUserScreen())
             CusNavLink(doNavigate: $navigateToUserProfile,

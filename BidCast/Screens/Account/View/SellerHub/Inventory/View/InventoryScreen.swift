@@ -93,6 +93,7 @@ struct InventoryScreen: View {
     var onProductsSelected: (([ProductDataModel1]) -> Void)?
     @State var navigateToDetail = false
     
+    
     var body: some View {
         VStack(spacing: 0) {
             // MARK: - Header
