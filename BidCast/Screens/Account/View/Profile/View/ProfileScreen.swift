@@ -304,113 +304,117 @@ struct ProfileScreen: View {
                 }
                 
                 .edgesIgnoringSafeArea(.all)
-                
-                
-            }
-        }
-        .background(.backGround)
-        .edgesIgnoringSafeArea(.bottom)
-        .bottomSheet(isPresented: $showSellSheet, height: screenHeight * 0.95) {
-            ProductDetailSheet(
-                onDismiss : {
-                    self.showSellSheet = false
-                    productId = 0
-                },
-                productID: $productId,showoption: false
-                
-            )
-        }
-        .toast(isPresenting: $showToast) {
-            AlertToast(displayMode: .alert, type: .regular, title: toastMessage)
-        }
-        .bottomSheet(isPresented: $showNotify,height: screenHeight * 0.45) {
-            NotifyMeBottomSheet(
-                userId: $profileId, profileImage: profileData.profile_image ?? "" ,
-                username: profileData.username ?? "",
-                showParentToast: $showToast,
-                parentToastMessage: $toastMessage,
-                onDismiss: {
-                    self.showNotify = false
-                }
-            )
-        }
-        .bottomSheet(isPresented: $showError,
-                     height: screenHeight * 0.35,
-                     topBarCornerRadius: 25,
-                     contentBackgroundColor: Color(.systemBackground),
-                     topBarBackgroundColor: Color(.systemBackground),
-                     showTopIndicator: false,
-                     onDismiss: {
-                showError = false
-        }, content: {
-            CommonBottomSheet(
-                sheetType: $alertType,
-                onPrimaryClick: {
-                    withAnimation { showError = false }
-                }, onSecondaryClick: {
-                    withAnimation { showError = false }
-                })
-            .background(Color(.systemBackground))
-            .cornerRadius(25, corners: [.topLeft, .topRight])
-        })
-        //        .overlay(
-        //            NotifyMeBottomSheet(
-        //                userId: $profileId, profileImage: profileData.profile_image ?? "" ,
-        //                username: profileData.username ?? "",
-        //                showParentToast: $showToast,
-        //                parentToastMessage: $toastMessage,
-        //                onDismiss: {
-        //                    self.showNotify = false
-        //                }
-        //            )
-        //        )
-        
-        .sheet(
-            isPresented: $isTipAmountButtoClicked){
-                SendTipView(
-                    sellerId: "\(profileData.id ?? -1)" ?? "",
-                    onClose: {
-                        isTipAmountButtoClicked = false
+            }.bottomSheet(isPresented: $showSellSheet, height: screenHeight * 0.95) {
+                ProductDetailSheet(
+                    onDismiss : {
+                        self.showSellSheet = false
+                        productId = 0
                     },
-                    onSendTip: {
-                        print("Sent tip")
-                        isTipAmountButtoClicked = false
+                    productID: $productId,showoption: false
+                    
+                )
+            }
+            .toast(isPresenting: $showToast) {
+                AlertToast(displayMode: .alert, type: .regular, title: toastMessage)
+            }
+            .bottomSheet(isPresented: $showNotify,height: screenHeight * 0.45) {
+                NotifyMeBottomSheet(
+                    userId: $profileId, profileImage: profileData.profile_image ?? "" ,
+                    username: profileData.username ?? "",
+                    showParentToast: $showToast,
+                    parentToastMessage: $toastMessage,
+                    onDismiss: {
+                        self.showNotify = false
+                    }
+                )
+            }
+            .bottomSheet(isPresented: $showError,
+                         height: screenHeight * 0.35,
+                         topBarCornerRadius: 25,
+                         contentBackgroundColor: Color(.systemBackground),
+                         topBarBackgroundColor: Color(.systemBackground),
+                         showTopIndicator: false,
+                         onDismiss: {
+                    showError = false
+            }, content: {
+                CommonBottomSheet(
+                    sheetType: $alertType,
+                    onPrimaryClick: {
+                        withAnimation { showError = false }
+                    }, onSecondaryClick: {
+                        withAnimation { showError = false }
                     })
+                .background(Color(.systemBackground))
+                .cornerRadius(25, corners: [.topLeft, .topRight])
+            })
+            .sheet(
+                isPresented: $isTipAmountButtoClicked){
+                    SendTipView(
+                        sellerId: "\(profileData.id ?? -1)" ?? "",
+                        onClose: {
+                            isTipAmountButtoClicked = false
+                        },
+                        onSendTip: {
+                            print("Sent tip")
+                            isTipAmountButtoClicked = false
+                        })
+                    .presentationDetents([.fraction(0.55)])   // ✅ Bottom-sheet height
+                    .presentationCornerRadius(25)              // ✅ Rounded top corners
+                    .presentationDragIndicator(.hidden)
+                    
+                }
+            
+            .bottomSheet(isPresented: $showReportSheet,
+                         height: screenHeight * 0.50,
+                         topBarCornerRadius: 25,
+                         contentBackgroundColor: Color(.white),
+                         topBarBackgroundColor: Color(.white),
+                         showTopIndicator: false,
+                         onDismiss: {
+                showReportSheet = false
+            }) {
+                ReportSellerView(onReportSellerClicked: { categoryId, message in
+                    Task {
+                        await reportSeller(categoryId: categoryId, message: message)
+                    }
+                })
+                .keyboardAwarePadding()
+            }
+            
+            .sheet(isPresented: $showSortSheet){
+                
+                SortByBottomSheet(
+                    isPresented: $showSortSheet,
+                    selectedSort: $selectedSort
+                )
                 .presentationDetents([.fraction(0.55)])   // ✅ Bottom-sheet height
                 .presentationCornerRadius(25)              // ✅ Rounded top corners
                 .presentationDragIndicator(.hidden)
                 
             }
-        
-        .bottomSheet(isPresented: $showReportSheet,
-                     height: screenHeight * 0.50,
-                     topBarCornerRadius: 25,
-                     contentBackgroundColor: Color(.white),
-                     topBarBackgroundColor: Color(.white),
-                     showTopIndicator: false,
-                     onDismiss: {
-            showReportSheet = false
-        }) {
-            ReportSellerView(onReportSellerClicked: { categoryId, message in
-                Task {
-                    await reportSeller(categoryId: categoryId, message: message)
-                }
-            })
-            .keyboardAwarePadding()
-        }
-        
-        .sheet(isPresented: $showSortSheet){
             
-            SortByBottomSheet(
-                isPresented: $showSortSheet,
-                selectedSort: $selectedSort
+            CusNavLink(doNavigate: $navigateToDetail, destination: ProductDetailView(productID: $productId, sellerInfo: $sellerInfo))
+            CusNavLink(
+                doNavigate: $navigateToChat,
+                destination: ChatScreen(
+                    viewModel: ChatModel(
+                        currentUserId: "\(UserDefaults.userId)",
+                        currentUserName: UserDefaults.fullName,
+                        currentUserImage: UserDefaults.profileURL,
+                        otherUserId: id,
+                        otherUserName: userName,
+                        otherUserImage: userImage
+                    )
+                )
             )
-            .presentationDetents([.fraction(0.55)])   // ✅ Bottom-sheet height
-            .presentationCornerRadius(25)              // ✅ Rounded top corners
-            .presentationDragIndicator(.hidden)
-            
         }
-        .onAppear{
+        
+       
+        .padding(.bottom,12)
+        .background(.backGround)
+        .edgesIgnoringSafeArea(.bottom)
+        
+        .onFirstAppear{
             
             let param = ProfileParamRequest(id: id)
             print(param)
@@ -425,7 +429,7 @@ struct ProfileScreen: View {
                 profileSuccess()
                 if isComeFrom == "Home"{
                     selectedTab = "Shows"
-                    await self.viewModel.getMyScheduleShow(parameters: GetMyScheduleShowRequest(type: "upcoming", page: currentPage))
+                    await self.viewModel.getMyScheduleShow(parameters: GetMyScheduleShowRequest(type: "upcoming", seller_id: profileData.id ?? 0,page: currentPage))
                     await SVProgressHUD.dismiss()
                     scheduleShowSuccess()
                 }else{
@@ -435,24 +439,8 @@ struct ProfileScreen: View {
                 }
             }
         }
-        CusNavLink(doNavigate: $navigateToDetail, destination: ProductDetailView(productID: $productId, sellerInfo: $sellerInfo))
-        CusNavLink(
-            doNavigate: $navigateToChat,
-            destination: ChatScreen(
-                viewModel: ChatModel(
-                    currentUserId: "\(UserDefaults.userId)",
-                    currentUserName: UserDefaults.fullName,
-                    currentUserImage: UserDefaults.profileURL,
-                    otherUserId: id,
-                    otherUserName: userName,
-                    otherUserImage: userImage
-                )
-            )
-        )
-        //        CusNavLink(
-        //            doNavigate: $isTipAmountButtoClicked,
-        //            destination: PayoutView(sellerID: id)
-        //        )
+      
+       
     }
     
     func computeRoomId(senderId: String, receiverId: String) -> String {

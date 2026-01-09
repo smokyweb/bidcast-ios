@@ -49,6 +49,7 @@ struct CompleteProfileScreen: View {
                     count: .constant(0)
                 )
             }
+            .background(.white)
             
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 20) {
@@ -282,6 +283,7 @@ struct CompleteProfileScreen: View {
                 }
                 .padding()
             }
+            .background(.backGround)
             .onAppear{
                 Task{
                    guard Reachability.isConnectedToNetwork() else {
