@@ -1396,6 +1396,8 @@
 				35CCE00F2DD876AC00760CEE /* Schedule */,
 				35B44F222DD7418A00FBCBC4 /* ListProduct */,
 				355AE97D2DD1FC4900CD3D17 /* SellScreen.swift */,
+				35BA4A432DE870C500EEC92A /* CreateProduct */,
+				D4B616222DE8796F00924A3D /* ProductWeight */,
 			);
 			path = Sell;
 			sourceTree = "<group>";
@@ -1406,6 +1408,7 @@
 				D45D7A332E389A79003A3842 /* Chat */,
 				355AE97F2DD1FC5600CD3D17 /* ActivityScreen.swift */,
 				D6447E972ECC9C4700C77BFC /* PurchasesViewScreen.swift */,
+				35BA4A4C2DE8805800EEC92A /* ReferAndEarn */,
 			);
 			path = Activity;
 			sourceTree = "<group>";
@@ -2768,6 +2771,7 @@
 				D4CAEC352DE6D79600705CD7 /* PremierShop */,
 				D4CAEC552DE6F11F00705CD7 /* AffiliateProgramView */,
 				D4CAEC692DE6F74A00705CD7 /* Analytics */,
+				35BA4A462DE878E300EEC92A /* SalesFormat */,
 			);
 			path = SellerHub;
 			sourceTree = "<group>";
@@ -2786,6 +2790,7 @@
 				D4D453D82E4CBC13005A2F63 /* BlockedUserList */,
 				D49A95662DD704BF006044A7 /* FAQ */,
 				D4A7F8F92DDD9A42001FC705 /* Addressess */,
+				D4B616172DE86C9700924A3D /* OrderStatus */,
 			);
 			path = MyAccount;
 			sourceTree = "<group>";
@@ -3019,15 +3024,9 @@
 		D4B6160D2DE8622100924A3D /* NonLinkedSceen */ = {
 			isa = PBXGroup;
 			children = (
-				D67F64F72EA2314F00C3017C /* SendTipScreen */,
-				35BA4A4C2DE8805800EEC92A /* ReferAndEarn */,
-				35BA4A462DE878E300EEC92A /* SalesFormat */,
-				35BA4A432DE870C500EEC92A /* CreateProduct */,
 				35BA4A402DE86E7100EEC92A /* SendGift */,
-				D4B616172DE86C9700924A3D /* OrderStatus */,
 				D4B6163B2DE87F1100924A3D /* OBSSetup */,
 				D4B6164A2DE880D600924A3D /* LiveShowTips */,
-				D4B616222DE8796F00924A3D /* ProductWeight */,
 			);
 			path = NonLinkedSceen;
 			sourceTree = "<group>";
@@ -3248,6 +3247,7 @@
 				D6F4C7872EF2749C0082B45F /* ShowNotesSheet.swift */,
 				D44BE76B2EF5294D004CC4CD /* RichTextEditorSheet.swift */,
 				D44278602F050CB300BEF0CC /* ChatFloatingView.swift */,
+				D67F64F82EA2316900C3017C /* SendTipView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -4308,14 +4308,6 @@
 				D67DA9632E9D0A4A00ED6556 /* CurrentProductView.swift */,
 			);
 			path = Product;
-			sourceTree = "<group>";
-		};
-		D67F64F72EA2314F00C3017C /* SendTipScreen */ = {
-			isa = PBXGroup;
-			children = (
-				D67F64F82EA2316900C3017C /* SendTipView.swift */,
-			);
-			path = SendTipScreen;
 			sourceTree = "<group>";
 		};
 		D68399A12EB2079100F3BDA7 /* SocketManager */ = {
