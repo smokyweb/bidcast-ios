@@ -4,17 +4,16 @@
 //
 //  Created by Ankit - JAM - E - 294 on 29/01/24.
 //
-
 import SwiftUI
 
 struct DropDownTextField: View {
-    
+
     //MARK: Variables Initialized
     var hint: String = ""
     var floatingLabel: String = ""
     @Binding var text: String
     @Binding var options: [String]
-    
+
     @State var selected: String = ""
     @State var showOption: Bool = false
     @State var isRequired: Bool = false
@@ -24,257 +23,268 @@ struct DropDownTextField: View {
     @State var showLeadingIcon: Bool = false
     @State var showTrailingIcon: Bool = true
     @State var showDropDownIcon: Bool = false
-    
+
     @FocusState var isFocused: Bool
-    
+
     //MARK: - Callback Initializer's
     var onOptionSelected: ((String) -> Void)?
     var onCancelClicked: ((String) -> Void)?
     var isRequiredValues: ((Int) -> Void)?
-    
+
     //MARK: - Static Variable Initializer
     var maxWidth: CGFloat = screenWidth - 30
     var cornerRadius: CGFloat = 32
     var anchor: Anchor = .bottom
-    
+
     @State var filterOptions: [String] = []
     
+    // Animate height like DropDownSelection
+    @State private var dropdownHeight: CGFloat = 0
+
     @Environment(\.colorScheme) private var scheme
     @SceneStorage("drop_down_zindex") private var index = 1000.0
     @State var zIndex = 1200.0
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
             Text(floatingLabel)
                 .font(.custom(poppinsBold, fixedSize: 13))
                 .bold()
                 .foregroundStyle(.text)
-            
-            GeometryReader {
-                let size = $0.size
-                VStack(spacing: 0, content: {
-                    
-                    //MARK: - DropDown (top)
-                    if isFocused && anchor == .top {
-                        optionView()
-                            .background(.white)
-                             .zIndex(2000)
+
+            ZStack(alignment: anchor == .top ? .bottom : .top) {
+                
+                // MARK: - Main TextField
+                HStack(spacing: 0, content: {
+
+                    if showLeadingIcon {
+                        Image(leadingIcon)
+                            .renderingMode(.template)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 20, height: 20)
+                            .foregroundStyle(.text.opacity(0.45))
+                            .padding(.all, 10)
+                            .background(.text.opacity(0.1))
+                            .clipShape(Circle())
+                            .padding(.trailing, 10)
                     }
+
+                    //MARK: - Text Input field
+                    TextField(hint, text: $text)
+                        .font(.custom(poppinsSemiBold, fixedSize: 13))
+                        .foregroundStyle(.text)
+                        .autocorrectionDisabled(true)
+                        .autocapitalization(.none)
+                        .submitLabel(.next)
+                        .keyboardType(.emailAddress)
+                        .ignoresSafeArea(.keyboard, edges: .bottom)
+                        .accentColor(.text)
+                        .focused($isFocused)
+                        .onChange(of: text, perform: { value in
+                            filterOptionsAndUpdate(value)
+                            self.onOptionSelected?(value)
+                        })
+                        .onSubmit {
+                            self.onOptionSelected?(text)
+                        }
+                        .onChange(of: isFocused) { focused in
+                            if focused {
+                                index += 1
+                                zIndex = index
+                                
+                                // Open dropdown when focused
+                                if !text.isEmpty || showDropDownIcon {
+                                    withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                                        showOption = true
+                                        dropdownHeight = calculateHeight()
+                                    }
+                                }
+                            }
+                        }
                     
-                    HStack(spacing: 0, content: {
-                        
-                        if showLeadingIcon {
-                            Image(leadingIcon)
+                    Spacer()
+
+                    //MARK: - Cancel Button
+                    if showCancel && showTrailingIcon {
+                        Button(action: {
+                            self.onCancelClicked?(text)
+                        }, label: {
+                            Image(systemName: "minus.circle.fill")
+                                .renderingMode(.template)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 20, height: 20)
+                                .foregroundStyle(.red)
+                        })
+                    }
+
+                    if showDropDownIcon {
+                        Button(action: {
+                            index += 1
+                            zIndex = index
+                            withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                                showOption.toggle()
+                                dropdownHeight = showOption ? calculateHeight() : 0
+                            }
+                            if showOption {
+                                isFocused = true
+                            }
+                        }) {
+                            Image(.arrowForward)
                                 .renderingMode(.template)
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: 20, height: 20)
-                                .foregroundStyle(.text.opacity(0.45))
-                                .padding(.all, 10)
-                                .background(.text.opacity(0.1))
-                                .clipShape(Circle())
+                                .frame(width: 16, height: 16)
+                                .foregroundStyle(.text)
+                                .rotationEffect(.degrees(showOption ? -180 : 0))
                                 .padding(.trailing, 10)
-                            
                         }
-                        
-                        //MARK: - Text Input field
-                        TextField(hint, text: $text)
-                            .font(.custom(poppinsSemiBold, fixedSize: 13))
-                            .foregroundStyle(.text)
-                            .keyboardShortcut(.cancelAction)
-                            .autocorrectionDisabled(true)
-                            .autocapitalization(.none)
-                            .foregroundStyle(.text)
-                            .submitLabel(.next)
-                            .keyboardType(.emailAddress)
-                            .ignoresSafeArea(.keyboard, edges: .bottom)
-                            .accentColor(.text)
-                            .focused($isFocused)
-                            .onChange(of: text, perform: { value in
-                                self.onOptionSelected?(value)
-                            })
-                            .onSubmit {
-                                self.onOptionSelected?(text)
-                            }
-                            // Bump zIndex when focus is gained so this dropdown floats above siblings
-                            .onChange(of: isFocused) { focused in
-                                if focused {
-                                    index += 1
-                                    zIndex = index
-                                }
-                            }
-                        Spacer()
-                        
-                        //MARK: - Cancel Button
-                        if showCancel && showTrailingIcon {
-                            Button(action: { self.onCancelClicked?(text) }, label: {
-                                Image(systemName: "minus.circle.fill")
-                                    .renderingMode(.template)
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 20, height: 20)
-                                    .foregroundStyle(.red)
-                            })
-                        }
-                        
-                        if showDropDownIcon {
-                            Button(action: {
-                                withAnimation {
-                                    let willOpen = !showOption
-                                    showOption.toggle()
-                                    isFocused.toggle()
-                                    // When opening, raise zIndex so this control is on top
-                                    if willOpen {
-                                        index += 1
-                                        zIndex = index
-                                    }
-                                }
-                            }) {
-                                Image(.arrowForward)
-                                    .renderingMode(.template)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 16, height: 16)
-                                    .tint(.black)
-                                    .rotationEffect(.degrees(showOption ? 180 : 0))
-                                    .padding(.trailing, 10)
-                            }
-                        }
-                    })
-                    .padding(.horizontal, 8)
-                    .frame(width: size.width, height: size.height)
-                    .background(scheme == .dark ? .black : .white)
-                    .contentShape(.rect)
-                    .zIndex(10)
-                    
-                    //MARK: - DropDown (bottom)
-                    if isFocused && anchor == .bottom {
-                        optionView()
-                            .background(.white)
-                            .zIndex(2000)
                     }
                 })
-                .clipped()
-                .background((scheme == .dark ? Color.black : Color.white))
+                .padding(.horizontal, 8)
+                .frame(height: 50)
+                .background(scheme == .dark ? .black : .white)
                 .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
-                .cornerRadius(cornerRadius)
                 .shadow(color: .gray, radius: 1, x: 0, y: 0)
-                .frame(height: size.height, alignment: anchor == .top ? .bottom : .top)
-                .onChange(of: text) { value in
-                    index += 1
-                    zIndex = index
-                    if text.isEmpty {
-                        withAnimation(.easeOut) {
-                            showCancel = false
-                            showOption = false
-                        }
-                    } else {
-                        if selected == text {
-                            withAnimation(.easeOut) { showOption = false }
-                        } else {
-                            withAnimation(.easeOut) { showCancel = true }
-                            if !options.contains(where: { $0 == text }) {
-                                withAnimation(.easeOut) { showOption = true }
-                            }
-                        }
-                    }
-                    withAnimation(.easeInOut(duration: 0.25)) {
-                        if (options.first(where: { $0 == text }) != nil) {
-                            filterOptions = options
-                        } else {
-                            filterOptions = text == "" ? options : options.filter({ $0.lowercased().contains(text.lowercased()) })
-                        }
-                    }
-                }
-                // Also ensure zIndex is raised when the dropdown menu itself opens
-                .onChange(of: showOption) { opened in
-                    if opened {
-                        index += 1
-                        zIndex = index
-                    }
+                .contentShape(.rect)
+
+                //MARK: - Dropdown with animated height
+                if showOption || dropdownHeight > 0 {
+                    optionView()
+                        .frame(height: dropdownHeight)
+                        .background(Color.white)
+                        .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
+                        .shadow(radius: 1)
+                        .padding(.top, anchor == .bottom ? 50 : 0)
+                        .padding(.bottom, anchor == .top ? 50 : 0)
+                        .zIndex(zIndex + 1)
+                        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: dropdownHeight)
+                        .transition(.scale(scale: 0.9, anchor: anchor == .top ? .bottom : .top).combined(with: .opacity))
                 }
             }
-            .frame(width: maxWidth, height: 50)
+            .frame(width: maxWidth)
             .zIndex(zIndex)
-            
-            if floatingLabel != "Select Location"{
-                if isMandatory{
-                    HStack{
-                        
+
+            if floatingLabel != "Select Location" {
+                if isMandatory {
+                    HStack {
                         Button(action: {
                             isRequired.toggle()
-                            if isRequired{
+                            if isRequired {
                                 self.isRequiredValues?(1)
-                            }else{
+                            } else {
                                 self.isRequiredValues?(0)
                             }
                         }, label: {
-                            Image(systemName: isRequired ? "checkmark.square.fill":"square")
+                            Image(systemName: isRequired ? "checkmark.square.fill" : "square")
                                 .renderingMode(.template)
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 20, height: 20)
                                 .foregroundStyle(.text)
-                            
+
                             Text("It's required")
                                 .font(.custom(nunitoRegular, fixedSize: 15))
                                 .foregroundStyle(.text)
                         })
-                        
+
                         Spacer()
-                        
                     }
-                    .padding(.top,1.5)
-                    .padding(.leading,-0.5)
+                    .padding(.top, 1.5)
+                    .padding(.leading, -0.5)
                 }
             }
-            
-        }.onAppear {
+
+        }
+        .onAppear {
             filterOptions = options
-        }.onChange(of: options) { newValue in
+        }
+        .onChange(of: options) { newValue in
             filterOptions = options
         }
     }
-    
+
     @ViewBuilder
     func optionView() -> some View {
-        VStack(spacing: 4) {
-            ScrollView(showsIndicators: false) {
-                ForEach(filterOptions, id: \.self) {
-                    ind in
-                    HStack(spacing: 0, content: {
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 2) {
+                ForEach(filterOptions, id: \.self) { ind in
+                    HStack {
                         Text(ind)
                             .lineLimit(1)
                             .font(.custom(poppinsSemiBold, fixedSize: 13))
                         Spacer()
                         Image(systemName: "checkmark")
                             .opacity(selected == ind ? 1 : 0)
-                    })
-                    .frame(height: 40)
-                    .foregroundStyle(selected == ind ? Color.primary : Color.gray)
-                    .animation(.easeIn, value: selected)
-                    .contentShape(.rect)
+                    }
+                    .frame(height: 30)
+                    .foregroundStyle(selected == ind ? Color.defaultTheme : Color.gray)
+                    .frame(maxWidth: .infinity)
+                    .contentShape(Rectangle())
+                    .background(Color.white)
                     .onTapGesture {
-                        withAnimation(.snappy) {
-                            selected = ind
+                        selected = ind
+                        text = selected
+                        self.onOptionSelected?(selected)
+                        
+                        // Animate collapse exactly like DropDownSelection
+                        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
                             showOption = false
-                            isFocused = false
-                            text = selected
-                            self.onOptionSelected?(selected)
+                            dropdownHeight = 0
                         }
+                        isFocused = false
+                    }
+                }
+            }
+            .padding(.horizontal)
+        }
+    }
+    
+    // MARK: - Helpers
+    private func filterOptionsAndUpdate(_ value: String) {
+        index += 1
+        zIndex = index
+        
+        // Update cancel button visibility
+        if text.isEmpty {
+            withAnimation(.easeOut) {
+                showCancel = false
+                showOption = false
+                dropdownHeight = 0
+            }
+        } else {
+            if selected == text {
+                withAnimation(.easeOut) {
+                    showOption = false
+                    dropdownHeight = 0
+                }
+            } else {
+                withAnimation(.easeOut) { showCancel = true }
+                if !options.contains(where: { $0 == text }) {
+                    withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                        showOption = true
+                        dropdownHeight = calculateHeight()
                     }
                 }
             }
         }
-        .frame(height: filterOptions.count > 3 ? 180 : CGFloat(filterOptions.count) * 42)
-        .padding(.horizontal)
-        .background(Color.white)
-               .cornerRadius(10)
-               .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 3)
-               .transition(.move(edge: anchor == .top ? .bottom : .top))
-               .zIndex(2000)
+        
+        // Filter options
+        withAnimation(.easeInOut(duration: 0.25)) {
+            if (options.first(where: { $0 == text }) != nil) {
+                filterOptions = options
+            } else {
+                filterOptions = text == "" ? options : options.filter({ $0.lowercased().contains(text.lowercased()) })
+            }
+            dropdownHeight = showOption ? calculateHeight() : 0
+        }
     }
     
+    private func calculateHeight() -> CGFloat {
+        return filterOptions.count > 5 ? 200 : CGFloat(filterOptions.count) * 35
+    }
+
     enum Anchor {
         case top
         case bottom
@@ -285,3 +295,284 @@ struct DropDownTextField: View {
     DropDownTextField(text: .constant(String()), options: .constant([]))
         .preferredColorScheme(.light)
 }
+//
+//import SwiftUI
+//
+//struct DropDownTextField: View {
+//
+//    //MARK: Variables Initialized
+//    var hint: String = ""
+//    var floatingLabel: String = ""
+//    @Binding var text: String
+//    @Binding var options: [String]
+//
+//    @State var selected: String = ""
+//    @State var showOption: Bool = false
+//    @State var isRequired: Bool = false
+//    @State var isMandatory: Bool = false
+//    @State var leadingIcon: ImageResource = .userDummy
+//    @State var showCancel: Bool = false
+//    @State var showLeadingIcon: Bool = false
+//    @State var showTrailingIcon: Bool = true
+//    @State var showDropDownIcon: Bool = false
+//
+//    @FocusState var isFocused: Bool
+//
+//    //MARK: - Callback Initializer's
+//    var onOptionSelected: ((String) -> Void)?
+//    var onCancelClicked: ((String) -> Void)?
+//    var isRequiredValues: ((Int) -> Void)?
+//
+//    //MARK: - Static Variable Initializer
+//    var maxWidth: CGFloat = screenWidth - 30
+//    var cornerRadius: CGFloat = 32
+//    var anchor: Anchor = .bottom
+//
+//    @State var filterOptions: [String] = []
+//
+//    @Environment(\.colorScheme) private var scheme
+//    @SceneStorage("drop_down_zindex") private var index = 1000.0
+//    @State var zIndex = 1200.0
+//
+//    var body: some View {
+//        VStack(alignment: .leading, spacing: 5) {
+//            Text(floatingLabel)
+//                .font(.custom(poppinsBold, fixedSize: 13))
+//                .bold()
+//                .foregroundStyle(.text)
+//
+//            GeometryReader {
+//                let size = $0.size
+//                VStack(spacing: 0, content: {
+//
+//                    //MARK: - DropDown (top)
+//                    if isFocused && anchor == .top {
+//                        optionView()
+//                            .background(.white)
+//                             .zIndex(2000)
+//                    }
+//
+//                    HStack(spacing: 0, content: {
+//
+//                        if showLeadingIcon {
+//                            Image(leadingIcon)
+//                                .renderingMode(.template)
+//                                .resizable()
+//                                .scaledToFit()
+//                                .frame(width: 20, height: 20)
+//                                .foregroundStyle(.text.opacity(0.45))
+//                                .padding(.all, 10)
+//                                .background(.text.opacity(0.1))
+//                                .clipShape(Circle())
+//                                .padding(.trailing, 10)
+//
+//                        }
+//
+//                        //MARK: - Text Input field
+//                        TextField(hint, text: $text)
+//                            .font(.custom(poppinsSemiBold, fixedSize: 13))
+//                            .foregroundStyle(.text)
+//                            .keyboardShortcut(.cancelAction)
+//                            .autocorrectionDisabled(true)
+//                            .autocapitalization(.none)
+//                            .foregroundStyle(.text)
+//                            .submitLabel(.next)
+//                            .keyboardType(.emailAddress)
+//                            .ignoresSafeArea(.keyboard, edges: .bottom)
+//                            .accentColor(.text)
+//                            .focused($isFocused)
+//                            .onChange(of: text, perform: { value in
+//                                self.onOptionSelected?(value)
+//                            })
+//                            .onSubmit {
+//                                self.onOptionSelected?(text)
+//                            }
+//                            // Bump zIndex when focus is gained so this dropdown floats above siblings
+//                            .onChange(of: isFocused) { focused in
+//                                if focused {
+//                                    index += 1
+//                                    zIndex = index
+//                                }
+//                            }
+//                        Spacer()
+//
+//                        //MARK: - Cancel Button
+//                        if showCancel && showTrailingIcon {
+//                            Button(action: { self.onCancelClicked?(text) }, label: {
+//                                Image(systemName: "minus.circle.fill")
+//                                    .renderingMode(.template)
+//                                    .resizable()
+//                                    .scaledToFill()
+//                                    .frame(width: 20, height: 20)
+//                                    .foregroundStyle(.red)
+//                            })
+//                        }
+//
+//                        if showDropDownIcon {
+//                            Button(action: {
+//                                withAnimation {
+//                                    let willOpen = !showOption
+//                                    showOption.toggle()
+//                                    isFocused.toggle()
+//                                    // When opening, raise zIndex so this control is on top
+//                                    if willOpen {
+//                                        index += 1
+//                                        zIndex = index
+//                                    }
+//                                }
+//                            }) {
+//                                Image(.arrowForward)
+//                                    .renderingMode(.template)
+//                                    .resizable()
+//                                    .scaledToFit()
+//                                    .frame(width: 16, height: 16)
+//                                    .tint(.black)
+//                                    .rotationEffect(.degrees(showOption ? 180 : 0))
+//                                    .padding(.trailing, 10)
+//                            }
+//                        }
+//                    })
+//                    .padding(.horizontal, 8)
+//                    .frame(width: size.width, height: size.height)
+//                    .background(scheme == .dark ? .black : .white)
+//                    .contentShape(.rect)
+//                    .zIndex(10)
+//
+//                    //MARK: - DropDown (bottom)
+//                    if isFocused && anchor == .bottom {
+//                        optionView()
+//                            .background(.white)
+//                            .zIndex(2000)
+//                    }
+//                })
+//                .clipped()
+//                .background((scheme == .dark ? Color.black : Color.white))
+//                .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
+//                .cornerRadius(cornerRadius)
+//                .shadow(color: .gray, radius: 1, x: 0, y: 0)
+//                .frame(height: size.height, alignment: anchor == .top ? .bottom : .top)
+//                .onChange(of: text) { value in
+//                    index += 1
+//                    zIndex = index
+//                    if text.isEmpty {
+//                        withAnimation(.easeOut) {
+//                            showCancel = false
+//                            showOption = false
+//                        }
+//                    } else {
+//                        if selected == text {
+//                            withAnimation(.easeOut) { showOption = false }
+//                        } else {
+//                            withAnimation(.easeOut) { showCancel = true }
+//                            if !options.contains(where: { $0 == text }) {
+//                                withAnimation(.easeOut) { showOption = true }
+//                            }
+//                        }
+//                    }
+//                    withAnimation(.easeInOut(duration: 0.25)) {
+//                        if (options.first(where: { $0 == text }) != nil) {
+//                            filterOptions = options
+//                        } else {
+//                            filterOptions = text == "" ? options : options.filter({ $0.lowercased().contains(text.lowercased()) })
+//                        }
+//                    }
+//                }
+//                // Also ensure zIndex is raised when the dropdown menu itself opens
+//                .onChange(of: showOption) { opened in
+//                    if opened {
+//                        index += 1
+//                        zIndex = index
+//                    }
+//                }
+//            }
+//            .frame(width: maxWidth, height: 50)
+//            .zIndex(zIndex)
+//
+//            if floatingLabel != "Select Location"{
+//                if isMandatory{
+//                    HStack{
+//
+//                        Button(action: {
+//                            isRequired.toggle()
+//                            if isRequired{
+//                                self.isRequiredValues?(1)
+//                            }else{
+//                                self.isRequiredValues?(0)
+//                            }
+//                        }, label: {
+//                            Image(systemName: isRequired ? "checkmark.square.fill":"square")
+//                                .renderingMode(.template)
+//                                .resizable()
+//                                .scaledToFit()
+//                                .frame(width: 20, height: 20)
+//                                .foregroundStyle(.text)
+//
+//                            Text("It's required")
+//                                .font(.custom(nunitoRegular, fixedSize: 15))
+//                                .foregroundStyle(.text)
+//                        })
+//
+//                        Spacer()
+//
+//                    }
+//                    .padding(.top,1.5)
+//                    .padding(.leading,-0.5)
+//                }
+//            }
+//
+//        }.onAppear {
+//            filterOptions = options
+//        }.onChange(of: options) { newValue in
+//            filterOptions = options
+//        }
+//    }
+//
+//    @ViewBuilder
+//    func optionView() -> some View {
+//        VStack(spacing: 4) {
+//            ScrollView(showsIndicators: false) {
+//                ForEach(filterOptions, id: \.self) {
+//                    ind in
+//                    HStack(spacing: 0, content: {
+//                        Text(ind)
+//                            .lineLimit(1)
+//                            .font(.custom(poppinsSemiBold, fixedSize: 13))
+//                        Spacer()
+//                        Image(systemName: "checkmark")
+//                            .opacity(selected == ind ? 1 : 0)
+//                    })
+//                    .frame(height: 40)
+//                    .foregroundStyle(selected == ind ? Color.primary : Color.gray)
+//                    .animation(.easeIn, value: selected)
+//                    .contentShape(.rect)
+//                    .onTapGesture {
+//                        withAnimation(.snappy) {
+//                            selected = ind
+//                            showOption = false
+//                            isFocused = false
+//                            text = selected
+//                            self.onOptionSelected?(selected)
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        .frame(height: filterOptions.count > 3 ? 180 : CGFloat(filterOptions.count) * 42)
+//        .padding(.horizontal)
+//        .background(Color.white)
+//               .cornerRadius(10)
+//               .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 3)
+//               .transition(.move(edge: anchor == .top ? .bottom : .top))
+//               .zIndex(2000)
+//    }
+//
+//    enum Anchor {
+//        case top
+//        case bottom
+//    }
+//}
+//
+//#Preview {
+//    DropDownTextField(text: .constant(String()), options: .constant([]))
+//        .preferredColorScheme(.light)
+//}

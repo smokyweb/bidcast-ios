@@ -669,11 +669,11 @@ struct CustomBottomSheetView: View {
                                             .frame(maxWidth: .infinity)
                                             .padding(.vertical, 8)
                                             .background(Color.defaultTheme)
-                                            .cornerRadius(12)
+                                            .cornerRadius(32)
                                             .foregroundColor(.white)
                                     }
                                     .frame(width: screenWidth/1.5, height: 40)
-                                    .padding(.bottom, 12)
+                                    .padding(.bottom, 20)
                                     .padding(.top, 20)
                                 }
                                 
@@ -686,7 +686,7 @@ struct CustomBottomSheetView: View {
                                             .frame(maxWidth: .infinity)
                                             .padding(.vertical, 8)
                                             .background(Color.gray.opacity(0.2))
-                                            .cornerRadius(12)
+                                            .cornerRadius(32)
                                             .foregroundColor(.black)
                                     }
                                     .frame(width: screenWidth/1.5, height: 40)
