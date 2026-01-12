@@ -8,7 +8,7 @@
 import SwiftUI
 import AlertToast
 import SVProgressHUD
-import ZegoExpressEngine
+//import ZegoExpressEngine
 
 // MARK: - Show Model
 struct Show: Identifiable {
@@ -63,6 +63,9 @@ struct ShowsScreen: View {
         Show(title: "MTG Cards Sale", date: "Feb 15, 2025", time: "8:00 PM EST", rsvps: 156),
         Show(title: "Show Name", date: "Feb 15, 2025", time: "8:00 PM EST", rsvps: 156)
     ]
+    @State private var currentPage: Int = 1
+    @State private var isLastPage: Bool = false
+    @State private var isPaginating: Bool = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -126,32 +129,22 @@ struct ShowsScreen: View {
                                 SHowId = data.id ?? 0
                                 navigateToshowTitle = true
                             })
+                            .onAppear {
+                                   // Trigger pagination when last cell appears
+                                   if index == showsData.count - 1 {
+                                       loadMoreShowsIfNeeded()
+                                   }
+                               }
+                        }
+                        if isPaginating {
+                            ProgressView()
+                                .padding(.vertical, 16)
                         }
                     }
-                    Spacer().frame(height: 80)
+                    Spacer().frame(height: 0)
                 }
                 .padding(.top)
             }
-//            .safeAreaInset(edge: .bottom) {
-//                // MARK: - Fixed Bottom Button
-////                PrimaryButton(
-////                    title: AppString.submit.localized,
-////                    isOutLine: false,
-////                    onButtonClick: {
-////                        // Action
-////                    },
-////                    btnTextColor: .white
-////                )
-////                .padding(.horizontal)
-////                .padding(.vertical, 0)
-////                .background(Color(UIColor.systemGroupedBackground))
-//            }
-//            CusNavLink(doNavigate: $navigateToReherseal,
-//                       destination: RehearsalScreen(showUd: $showID,
-//                                                    productListData: .constant([]),
-//                                                    isLive: isLive,
-//                                                    backToTabBar: .constant(true),
-//                                                    showsData: $selectedShowsData))
             CusNavLink(doNavigate: $navigateToShowAnalytics,
                        destination:  MyShowsAnalyticsScreen(showId: $showID))
             
@@ -167,42 +160,94 @@ struct ShowsScreen: View {
         }
         .navigationBarHidden(true)
         .toolbar(.hidden,for: .tabBar)
-        .background(Color(UIColor.systemGroupedBackground))
+        .background(.backGround)
         .toast(isPresenting: $showhud) {
             AlertToast(type: .regular, title: hudMsg)
         }
-        .onAppear{
-            Task{
-                SVProgressHUD.show()
-                if segment == .pastShows{
-                   guard Reachability.isConnectedToNetwork() else {
-                        hudMsg = "No Internet Connection"
-                        showhud = true
-                        return
-                    }
-                    await viewModel.getLiveSHows(param: GetLiveShowsRequest(type: "past", page: "1"))
-                }else{
-                   guard Reachability.isConnectedToNetwork() else {
-                        hudMsg = "No Internet Connection"
-                        showhud = true
-                        return
-                    }
-                    await viewModel.getLiveSHows(param: GetLiveShowsRequest(type: "upcoming", page: "1"))
+        .onAppear {
+            Task {
+                guard Reachability.isConnectedToNetwork() else {
+                    hudMsg = "No Internet Connection"
+                    showhud = true
+                    return
                 }
+
+                SVProgressHUD.show()
+
+                currentPage = 1
+                isLastPage = false
+                showsData.removeAll()
+
+                let type = segment == .pastShows ? "past" : "upcoming"
+                await viewModel.getLiveSHows(
+                    param: GetLiveShowsRequest(type: type, page: "\(currentPage)")
+                )
+
                 await SVProgressHUD.dismiss()
                 scheduleSuccess()
             }
         }
+        .onChange(of: segment) { _ in
+            Task {
+                guard Reachability.isConnectedToNetwork() else {
+                    hudMsg = "No Internet Connection"
+                    showhud = true
+                    return
+                }
+
+                SVProgressHUD.show()
+
+                // Reset pagination
+                currentPage = 1
+                isLastPage = false
+                showsData.removeAll()
+
+                let type = segment == .pastShows ? "past" : "upcoming"
+                await viewModel.getLiveSHows(
+                    param: GetLiveShowsRequest(type: type, page: "\(currentPage)")
+                )
+
+                await SVProgressHUD.dismiss()
+                scheduleSuccess(isPagination: false)
+            }
+        }
+
+
     }
-    func scheduleSuccess(){
-        let response = viewModel.scheduledShow
-        if response?.status == "success"{
-            showsData = response?.data ?? [HomeModel]()
-            SVProgressHUD.dismiss()
-        }else{
-            SVProgressHUD.dismiss()
+    func scheduleSuccess(isPagination: Bool = false) {
+        guard let response = viewModel.scheduledShow else { return }
+
+        if response.status == "success" {
+            let newData = response.data ?? []
+
+            if isPagination {
+                if newData.isEmpty {
+                    isLastPage = true
+                } else {
+                    showsData.append(contentsOf: newData)
+                }
+            } else {
+                showsData = newData
+            }
         }
     }
+
+    func loadMoreShowsIfNeeded() {
+        guard !isPaginating, !isLastPage else { return }
+
+        isPaginating = true
+        currentPage += 1
+
+        Task {
+            let type = segment == .pastShows ? "past" : "upcoming"
+            await viewModel.getLiveSHows(
+                param: GetLiveShowsRequest(type: type, page: "\(currentPage)")
+            )
+            scheduleSuccess(isPagination: true)
+            isPaginating = false
+        }
+    }
+
 }
 
 // MARK: - Segment Enum

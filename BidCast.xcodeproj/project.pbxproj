@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3504BCAA2DFFE3D70069182D /* ZegoExpressEngine in Frameworks */ = {isa = PBXBuildFile; productRef = 3504BCA92DFFE3D70069182D /* ZegoExpressEngine */; };
 		3504BCAC2E00040A0069182D /* RehearsalScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3504BCAB2E00040A0069182D /* RehearsalScreen.swift */; };
 		3504BCAF2E000A3D0069182D /* FirebaseAI in Frameworks */ = {isa = PBXBuildFile; productRef = 3504BCAE2E000A3D0069182D /* FirebaseAI */; };
 		3504BCB12E000A3D0069182D /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 3504BCB02E000A3D0069182D /* FirebaseAnalytics */; };
@@ -39,7 +38,6 @@
 		3504BCE52E000A610069182D /* FireBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3504BCE42E000A610069182D /* FireBase.swift */; };
 		3504BCE72E00418F0069182D /* ZegoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3504BCE62E00418F0069182D /* ZegoManager.swift */; };
 		35246EC42E7ABA10009D7513 /* SocketIO in Frameworks */ = {isa = PBXBuildFile; productRef = 35246EC32E7ABA10009D7513 /* SocketIO */; };
-		35246EC72E7ABA32009D7513 /* MillicastSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 35246EC62E7ABA32009D7513 /* MillicastSDK */; };
 		35246ECA2E7ABBFB009D7513 /* DolbyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35246EC92E7ABBFB009D7513 /* DolbyManager.swift */; };
 		354163882DDB16BC00026B34 /* StepCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 354163872DDB16BC00026B34 /* StepCard.swift */; };
 		3541638A2DDB178300026B34 /* ShowTips.swift in Sources */ = {isa = PBXBuildFile; fileRef = 354163892DDB178300026B34 /* ShowTips.swift */; };
@@ -86,7 +84,6 @@
 		35AC64782DD4A8AD00B5E13E /* ListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35AC64772DD4A7D700B5E13E /* ListCell.swift */; };
 		35B083F72E0AD36A00F5D48D /* NoDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B083F62E0AD35900F5D48D /* NoDataView.swift */; };
 		35B424A42E04327500626E02 /* ZegoChat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B424A32E04327500626E02 /* ZegoChat.swift */; };
-		35B424A72E043D0E00626E02 /* ZIM in Frameworks */ = {isa = PBXBuildFile; productRef = 35B424A62E043D0E00626E02 /* ZIM */; };
 		35B44F172DD7053B00FBCBC4 /* AboutUsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B44F162DD7053B00FBCBC4 /* AboutUsScreen.swift */; };
 		35B44F1C2DD705C200FBCBC4 /* ABoutUsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B44F1B2DD705C200FBCBC4 /* ABoutUsModel.swift */; };
 		35B44F1E2DD705E100FBCBC4 /* AboutUsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B44F1D2DD705E100FBCBC4 /* AboutUsViewModel.swift */; };
@@ -284,7 +281,6 @@
 		D45D7A382E389AAD003A3842 /* ChatScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D45D7A372E389AAD003A3842 /* ChatScreen.swift */; };
 		D45D7A3C2E389AE4003A3842 /* ChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D45D7A3B2E389AE4003A3842 /* ChatViewModel.swift */; };
 		D45D7A3E2E389B34003A3842 /* ChatModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D45D7A3D2E389B34003A3842 /* ChatModel.swift */; };
-		D4848BA32E97E6C900DC8B85 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = D4848BA22E97E6C900DC8B85 /* Kingfisher */; };
 		D4848BA62E97E8A100DC8B85 /* Stripe in Frameworks */ = {isa = PBXBuildFile; productRef = D4848BA52E97E8A100DC8B85 /* Stripe */; };
 		D4848BA82E97E8A100DC8B85 /* StripeApplePay in Frameworks */ = {isa = PBXBuildFile; productRef = D4848BA72E97E8A100DC8B85 /* StripeApplePay */; };
 		D4848BAA2E97E8A100DC8B85 /* StripeCardScan in Frameworks */ = {isa = PBXBuildFile; productRef = D4848BA92E97E8A100DC8B85 /* StripeCardScan */; };
@@ -1220,12 +1216,10 @@
 				D4848BAC2E97E8A100DC8B85 /* StripeConnect in Frameworks */,
 				35A0451C2DC8E19E0067C447 /* ActivityIndicatorView in Frameworks */,
 				3504BCAF2E000A3D0069182D /* FirebaseAI in Frameworks */,
-				D4848BA32E97E6C900DC8B85 /* Kingfisher in Frameworks */,
 				3504BCE32E000A3D0069182D /* FirebaseVertexAI in Frameworks */,
 				3504BCE12E000A3D0069182D /* FirebaseStorageCombine-Community in Frameworks */,
 				D613DBB42EB0A0D500521D42 /* VirtualBackground in Frameworks */,
 				3504BCC72E000A3D0069182D /* FirebaseDatabase in Frameworks */,
-				35246EC72E7ABA32009D7513 /* MillicastSDK in Frameworks */,
 				3504BCB72E000A3D0069182D /* FirebaseAnalyticsOnDeviceConversion in Frameworks */,
 				3504BCBD2E000A3D0069182D /* FirebaseAppDistribution-Beta in Frameworks */,
 				3504BCD32E000A3D0069182D /* FirebaseInAppMessaging-Beta in Frameworks */,
@@ -1240,7 +1234,6 @@
 				D4848BA62E97E8A100DC8B85 /* Stripe in Frameworks */,
 				D613DBB02EB0A0D500521D42 /* RtcBasic in Frameworks */,
 				3504BCC52E000A3D0069182D /* FirebaseCrashlytics in Frameworks */,
-				35B424A72E043D0E00626E02 /* ZIM in Frameworks */,
 				358B9D182DDF049600932250 /* FSCalendar in Frameworks */,
 				3504BCC32E000A3D0069182D /* FirebaseCore in Frameworks */,
 				3504BCBB2E000A3D0069182D /* FirebaseAppCheck in Frameworks */,
@@ -1259,7 +1252,6 @@
 				35246EC42E7ABA10009D7513 /* SocketIO in Frameworks */,
 				3504BCB92E000A3D0069182D /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
 				D4848BAE2E97E8A100DC8B85 /* StripeFinancialConnections in Frameworks */,
-				3504BCAA2DFFE3D70069182D /* ZegoExpressEngine in Frameworks */,
 				3504BCDF2E000A3D0069182D /* FirebaseStorage in Frameworks */,
 				355AE9682DD1D51A00CD3D17 /* IQKeyboardManagerSwift in Frameworks */,
 				3504BCD12E000A3D0069182D /* FirebaseFunctionsCombine-Community in Frameworks */,
@@ -4367,7 +4359,6 @@
 				35F63D672DDC5DF100D29878 /* SwiftfulLoadingIndicators */,
 				358B9D172DDF049600932250 /* FSCalendar */,
 				354652682DF2EE5900EB353F /* SVProgressHUD */,
-				3504BCA92DFFE3D70069182D /* ZegoExpressEngine */,
 				3504BCAE2E000A3D0069182D /* FirebaseAI */,
 				3504BCB02E000A3D0069182D /* FirebaseAnalytics */,
 				3504BCB22E000A3D0069182D /* FirebaseAnalyticsCore */,
@@ -4395,10 +4386,7 @@
 				3504BCDE2E000A3D0069182D /* FirebaseStorage */,
 				3504BCE02E000A3D0069182D /* FirebaseStorageCombine-Community */,
 				3504BCE22E000A3D0069182D /* FirebaseVertexAI */,
-				35B424A62E043D0E00626E02 /* ZIM */,
 				35246EC32E7ABA10009D7513 /* SocketIO */,
-				35246EC62E7ABA32009D7513 /* MillicastSDK */,
-				D4848BA22E97E6C900DC8B85 /* Kingfisher */,
 				D4848BA52E97E8A100DC8B85 /* Stripe */,
 				D4848BA72E97E8A100DC8B85 /* StripeApplePay */,
 				D4848BA92E97E8A100DC8B85 /* StripeCardScan */,
@@ -4498,12 +4486,8 @@
 				35F63D662DDC5DF100D29878 /* XCRemoteSwiftPackageReference "SwiftfulLoadingIndicators" */,
 				358B9D162DDF049600932250 /* XCRemoteSwiftPackageReference "FSCalendar" */,
 				354652672DF2EE5900EB353F /* XCRemoteSwiftPackageReference "SVProgressHUD" */,
-				3504BCA82DFFE3D70069182D /* XCRemoteSwiftPackageReference "express-video-ios" */,
 				3504BCAD2E000A3D0069182D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
-				35B424A52E043D0E00626E02 /* XCRemoteSwiftPackageReference "zim-ios" */,
 				35246EC22E7ABA10009D7513 /* XCRemoteSwiftPackageReference "socket" */,
-				35246EC52E7ABA32009D7513 /* XCRemoteSwiftPackageReference "millicast-sdk-swift-package" */,
-				D4848BA12E97E6C900DC8B85 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				D4848BA42E97E8A100DC8B85 /* XCRemoteSwiftPackageReference "stripe-ios" */,
 				D613DBAE2EB0A0D500521D42 /* XCRemoteSwiftPackageReference "AgoraRtcEngine_iOS" */,
 				D6F4C7912EF28FB90082B45F /* XCRemoteSwiftPackageReference "RichText" */,
@@ -5331,7 +5315,7 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = BidCast/ZegoBridgeHeader.h;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				XROS_DEPLOYMENT_TARGET = 2.4;
@@ -5385,7 +5369,7 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = BidCast/ZegoBridgeHeader.h;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				XROS_DEPLOYMENT_TARGET = 2.4;
@@ -5524,14 +5508,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		3504BCA82DFFE3D70069182D /* XCRemoteSwiftPackageReference "express-video-ios" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/zegolibrary/express-video-ios";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 3.21.0;
-			};
-		};
 		3504BCAD2E000A3D0069182D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
@@ -5546,14 +5522,6 @@
 			requirement = {
 				branch = master;
 				kind = branch;
-			};
-		};
-		35246EC52E7ABA32009D7513 /* XCRemoteSwiftPackageReference "millicast-sdk-swift-package" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/millicast/millicast-sdk-swift-package";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.5.1;
 			};
 		};
 		354652672DF2EE5900EB353F /* XCRemoteSwiftPackageReference "SVProgressHUD" */ = {
@@ -5604,28 +5572,12 @@
 				minimumVersion = 1.2.1;
 			};
 		};
-		35B424A52E043D0E00626E02 /* XCRemoteSwiftPackageReference "zim-ios" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/zegolibrary/zim-ios";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.20.0;
-			};
-		};
 		35F63D662DDC5DF100D29878 /* XCRemoteSwiftPackageReference "SwiftfulLoadingIndicators" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SwiftfulThinking/SwiftfulLoadingIndicators.git";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 0.0.4;
-			};
-		};
-		D4848BA12E97E6C900DC8B85 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 8.6.0;
 			};
 		};
 		D4848BA42E97E8A100DC8B85 /* XCRemoteSwiftPackageReference "stripe-ios" */ = {
@@ -5655,11 +5607,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		3504BCA92DFFE3D70069182D /* ZegoExpressEngine */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 3504BCA82DFFE3D70069182D /* XCRemoteSwiftPackageReference "express-video-ios" */;
-			productName = ZegoExpressEngine;
-		};
 		3504BCAE2E000A3D0069182D /* FirebaseAI */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 3504BCAD2E000A3D0069182D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
@@ -5800,11 +5747,6 @@
 			package = 35246EC22E7ABA10009D7513 /* XCRemoteSwiftPackageReference "socket" */;
 			productName = SocketIO;
 		};
-		35246EC62E7ABA32009D7513 /* MillicastSDK */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 35246EC52E7ABA32009D7513 /* XCRemoteSwiftPackageReference "millicast-sdk-swift-package" */;
-			productName = MillicastSDK;
-		};
 		354652682DF2EE5900EB353F /* SVProgressHUD */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 354652672DF2EE5900EB353F /* XCRemoteSwiftPackageReference "SVProgressHUD" */;
@@ -5835,20 +5777,10 @@
 			package = 35A0451A2DC8E19E0067C447 /* XCRemoteSwiftPackageReference "ActivityIndicatorView" */;
 			productName = ActivityIndicatorView;
 		};
-		35B424A62E043D0E00626E02 /* ZIM */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 35B424A52E043D0E00626E02 /* XCRemoteSwiftPackageReference "zim-ios" */;
-			productName = ZIM;
-		};
 		35F63D672DDC5DF100D29878 /* SwiftfulLoadingIndicators */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 35F63D662DDC5DF100D29878 /* XCRemoteSwiftPackageReference "SwiftfulLoadingIndicators" */;
 			productName = SwiftfulLoadingIndicators;
-		};
-		D4848BA22E97E6C900DC8B85 /* Kingfisher */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = D4848BA12E97E6C900DC8B85 /* XCRemoteSwiftPackageReference "Kingfisher" */;
-			productName = Kingfisher;
 		};
 		D4848BA52E97E8A100DC8B85 /* Stripe */ = {
 			isa = XCSwiftPackageProductDependency;

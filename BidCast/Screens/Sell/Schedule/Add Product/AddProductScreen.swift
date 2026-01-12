@@ -513,10 +513,13 @@ extension AddProductsScreen {
             }
 
             // Convert product IDs
-            let prodIds = Array(productManager.selectedProductIDs)
-            for (index, product) in prodIds.enumerated() {
-                params["product_ids[\(index)]"] = product
-            }
+//            let prodIds = Array(productManager.selectedProductIDs)
+//            for (index, product) in prodIds.enumerated() {
+//                params["product_ids[]"] = product
+//            }
+            let prodIds = productManager.selectedProductIDs.joined(separator: ",")
+            params["product_ids"] = prodIds
+
 
             viewModel.errorMessage = ""
 
@@ -578,12 +581,15 @@ extension AddProductsScreen {
             } else {
                 params["is_repeat"] = 0
             }
-
+//            let prodIds = productManager.selectedProductIDs.compactMap { Int($0) }
+//            params["product_ids"] = prodIds
             // Convert product IDs
-            let prodIds = Array(productManager.selectedProductIDs)
-            for (index, product) in prodIds.enumerated() {
-                params["product_ids[\(index)]"] = product
-            }
+//            let prodIds = Array(productManager.selectedProductIDs)
+//            for (index, product) in prodIds.enumerated() {
+//                params["product_ids[\(index)]"] = product
+//            }
+            let prodIds = productManager.selectedProductIDs.joined(separator: ",")
+            params["product_ids"] = prodIds
 
             viewModel.errorMessage = ""
 
@@ -594,6 +600,7 @@ extension AddProductsScreen {
             )
         }
     }
+    
     
     private func errorDesc(error: Error?, message: String?) -> String {
         guard let msg = message else {

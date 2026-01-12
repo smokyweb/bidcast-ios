@@ -7,9 +7,9 @@
 
 import SwiftUI
 import Foundation
-import ZegoExpressEngine
+//import ZegoExpressEngine
 import SVProgressHUD
-import MillicastSDK
+//import MillicastSDK
 import AlertToast
 
 enum ProductShowType {
@@ -114,7 +114,7 @@ struct RehearsalScreen: View {
     @State var hudMsg: String = ""
     @Binding var backToTabBar : Bool
     
-    @State private var renderer = MCAcceleratedVideoRenderer()
+//    @State private var renderer = MCAcceleratedVideoRenderer()
     
     @StateObject private var agoraManager = AgoraManager(asHost: true)
     @State private var isHost = true

@@ -8,9 +8,9 @@
 
 import SwiftUI
 import SVProgressHUD
-import ZegoExpressEngine
+//import ZegoExpressEngine
 import AlertToast
-import MillicastSDK
+//import MillicastSDK
 import SocketIO
 
 enum SwitchStreamType{
@@ -88,8 +88,8 @@ struct LiveStream: View {
     @Binding var userId : String
     @Environment(\.presentationMode) var presentationMode
     @State var titleText: String = ""
-    @ObservedObject var zegoManager = ZegoManager.shared
-    @ObservedObject var chatManager = ZIMChatManager.shared
+//    @ObservedObject var zegoManager = ZegoManager.shared
+//    @ObservedObject var chatManager = ZIMChatManager.shared
     @StateObject private var keyboardResponder = KeyboardResponder()
     var localUserID = "\(UserDefaults.userId)"
     @State private var previewResetTrigger = false
@@ -184,7 +184,7 @@ struct LiveStream: View {
     @State var winnerSheet: Bool = false
     @State var walletPaymentSheet: Bool = false
     @State var maxBidAmountSheet : Bool = false
-    @State private var renderer = MCAcceleratedVideoRenderer()
+//    @State private var renderer = MCAcceleratedVideoRenderer()
     @State var currentProductID: String? = nil
     @State var productId: Int = 0
     @State var categoryId : Int = 0

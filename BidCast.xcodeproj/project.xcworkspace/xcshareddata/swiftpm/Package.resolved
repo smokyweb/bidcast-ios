@@ -1,5 +1,5 @@
 {
-  "originHash" : "f8709853338c5f5cff79356c96d67ac1da932e618b901c6600843df486e0a966",
+  "originHash" : "c535e60d25aedffa4f64b536c57d13008dc39669ec5d2ab91bd548b5e96e9ac2",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -62,15 +62,6 @@
       "state" : {
         "revision" : "6b21007153365235418f3943a960a1f9546592e0",
         "version" : "1.0.12"
-      }
-    },
-    {
-      "identity" : "express-video-ios",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/zegolibrary/express-video-ios",
-      "state" : {
-        "revision" : "d27a43f5553933eeb53c84c77c9f7101ad3c5eaf",
-        "version" : "3.21.0"
       }
     },
     {
@@ -227,30 +218,12 @@
       }
     },
     {
-      "identity" : "kingfisher",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/onevcat/Kingfisher.git",
-      "state" : {
-        "revision" : "dd3c422ec3088404d6f7e8c905a8318b3de12d6f",
-        "version" : "8.6.0"
-      }
-    },
-    {
       "identity" : "leveldb",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/firebase/leveldb.git",
       "state" : {
         "revision" : "a0bc79961d7be727d258d33d5a6b2f1023270ba1",
         "version" : "1.22.5"
-      }
-    },
-    {
-      "identity" : "millicast-sdk-swift-package",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/millicast/millicast-sdk-swift-package",
-      "state" : {
-        "revision" : "ae03398b36cb7eebcfd2477cafe8ad838b07114f",
-        "version" : "2.5.2"
       }
     },
     {
@@ -332,15 +305,6 @@
       "state" : {
         "revision" : "85858c0246dcd781228301f9928519f75ce89758",
         "version" : "0.0.4"
-      }
-    },
-    {
-      "identity" : "zim-ios",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/zegolibrary/zim-ios",
-      "state" : {
-        "revision" : "d2a5293fad16af0a23838dba53064265d08d47a1",
-        "version" : "2.20.0"
       }
     }
   ],

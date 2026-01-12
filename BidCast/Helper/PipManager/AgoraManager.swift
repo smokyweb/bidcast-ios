@@ -7,6 +7,7 @@
 
 import Foundation
 import AgoraRtcKit
+import AVFoundation
 
 // MARK: - Agora Manager (for Live Streaming)
 class AgoraManager: NSObject, ObservableObject {

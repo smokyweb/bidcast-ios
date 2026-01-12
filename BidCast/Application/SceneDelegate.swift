@@ -4,7 +4,7 @@
 
 import Foundation
 import SwiftUI
-import ZegoExpressEngine
+//import ZegoExpressEngine
 
 
 class SceneDelegate: NSObject, UIWindowSceneDelegate {
@@ -38,7 +38,7 @@ class SceneDelegate: NSObject, UIWindowSceneDelegate {
     }
     
     func sceneDidDisconnect(_ scene: UIScene) {
-        ZegoExpressEngine.destroy(nil)
+//        ZegoExpressEngine.destroy(nil)
         
     }
     
