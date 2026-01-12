@@ -1102,22 +1102,23 @@ struct RehearsalScreen: View {
                     .padding(.horizontal)
                     .padding(.bottom, 20)
                 }
-                
-                
-                if comeFromPrepare && !comeForLive {
-                    Button(action: { presentationMode.wrappedValue.dismiss() }) {
-                        Text("Continue")
-                            .font(.custom(poppinsBold, size: 13))
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.defaultTheme)
-                            .foregroundColor(.white)
-                            .cornerRadius(32)
-                    }
-                    .padding(.horizontal)
-                    .padding(.bottom, 20)
-                }
             }
+            
+            
+            if comeFromPrepare && !comeForLive {
+                Button(action: { presentationMode.wrappedValue.dismiss() }) {
+                    Text("Continue")
+                        .font(.custom(poppinsBold, size: 13))
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.defaultTheme)
+                        .foregroundColor(.white)
+                        .cornerRadius(32)
+                }
+                .padding(.horizontal)
+                .padding(.bottom, 20)
+            }
+            
         }
     }
 

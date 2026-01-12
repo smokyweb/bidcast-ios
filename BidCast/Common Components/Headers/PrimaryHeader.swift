@@ -267,10 +267,10 @@ struct PrimaryHeader: View {
                 HStack(alignment: .center) {
                     Text(title)
                         .frame(maxWidth: .infinity)
-                        .font(.custom(robotoSemiBold, fixedSize: 18))
+                        .font(.custom(poppinsSemiBold, fixedSize: 18))
                         .foregroundColor(.black)
                     //                    .background(.red)
-                        .lineLimit(1)
+                        .lineLimit(2)
                 }
                 Spacer()
                 

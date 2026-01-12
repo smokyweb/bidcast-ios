@@ -51,7 +51,7 @@ struct LetsPrepare: View,ShowStepDelegate {
             VStack{
                 PrimaryHeader(
                     title: "Lets Prepare Your show".localized,
-                    isForLogo : false, leadingImgArr: ["chevron.left"],
+                    leadingImgArr: ["chevron.left"],
                     trailingImgArr: [],
                     onClickLeading: { _ in
                         self.presentationMode.wrappedValue.dismiss()
@@ -64,8 +64,8 @@ struct LetsPrepare: View,ShowStepDelegate {
             
             ProgressView(value: currentProgress, total: 1)
                 .progressViewStyle(LinearProgressViewStyle())
-                .tint(.blue)
-                .padding(.horizontal)
+                .tint(.defaultTheme)
+                .padding(.horizontal,16)
             
             ScrollView(showsIndicators: false) {
                 VStack(alignment:.leading,spacing: 16) {
@@ -101,8 +101,7 @@ struct LetsPrepare: View,ShowStepDelegate {
                     
                     
                 }
-                .padding(.all,18)
-                //                .background(.yellow)
+                .padding(.top,4)
             }
             .edgesIgnoringSafeArea(.bottom)
            
@@ -120,7 +119,7 @@ struct LetsPrepare: View,ShowStepDelegate {
             .foregroundColor(.gray)
             .background(.backGround)
             .cornerRadius(12)
-            .padding(.horizontal,16)
+//            .padding(.horizontal,16)
             
             
             
@@ -160,9 +159,9 @@ struct LetsPrepare: View,ShowStepDelegate {
         .toolbar(.hidden,for: .tabBar)
         .bottomSheet(isPresented: $showError, height: screenHeight/2.8, topBarCornerRadius: 25, showTopIndicator: false, onDismiss: {
             if let error = viewModel.errorMessage, !error.isEmpty {
-                showError = true
-            } else {
                 showError = false
+            } else {
+                showError = true
             }
         }, content: {
             CommonBottomSheet(
@@ -312,11 +311,14 @@ struct LetsPrepare: View,ShowStepDelegate {
 //                    param["product_ids[\(index)]"] = id
 //                }
                 
-                let prodIds = request.product_ids
-                for (index, product) in prodIds.enumerated() {
-                    param["product_ids[\(index)]"] = product
-                }
+//                let prodIds = request.product_ids
+//                for (index, product) in prodIds.enumerated() {
+//                    param["product_ids[\(index)]"] = product
+//                }
                 
+                let prodIds = request.product_ids.joined(separator: ",")
+                param["product_ids"] = prodIds
+                viewModel.errorMessage?.removeAll()
                 try await viewModel.storeScheduleShow(param: param,images: [thumbNAil],key: "thumbnail[]")
                 await SVProgressHUD.dismiss()
                 
@@ -378,8 +380,8 @@ struct LetsPrepare: View,ShowStepDelegate {
                 icon: .alert,
                 title: "Error",
                 message: viewModel.errorMessage ?? "",
-                primaryBtnText: "",
-                secondaryBtnText:AppString.ok.localized
+                primaryBtnText: AppString.ok.localized,
+                secondaryBtnText:""
             )
             showError = true
         }
