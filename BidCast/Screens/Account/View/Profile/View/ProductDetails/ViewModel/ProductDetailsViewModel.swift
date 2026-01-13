@@ -12,10 +12,11 @@ final class ProductDetailsViewModel: ObservableObject {
     
     @Published var productDetailsResponseDict: ResponseModal<ProductDetailsModel>?
     @Published var offerResponse: ResponseModal<Offer>?
+    @Published var couponDict: ResponseModal<[AssignedCoupon]>?
     @Published var savedResponse: ResponseModal<SavedModel>?
     @Published var sellerInfo: ResponseModel<SellerInfoResponse>?
     @Published var errorMessage: String? = nil
-
+    
     
     // MARK: - Get Product Details
     func getProductDetails(parameters: FetchProductRequest) async {
@@ -25,6 +26,18 @@ final class ProductDetailsViewModel: ObservableObject {
                 header: true
             )
             self.productDetailsResponseDict = response
+        } catch {
+            handle(error: error)
+        }
+    }
+    
+    func getCoupon() async {
+        do {
+            let response: ResponseModal<[AssignedCoupon]> = try await APIManager.shared.request(
+                type: APIEndPoint.getCoupon,
+                header: true
+            )
+            self.couponDict = response
         } catch {
             handle(error: error)
         }

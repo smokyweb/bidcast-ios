@@ -140,6 +140,7 @@ class StripeCardViewModel: ObservableObject {
     @Published var deletedCardDict = ResponseModel<Int>()
     @Published var setDefaultCardDict = ResponseModel<[Int?]>()
     @Published var getAddressDict = ResponseModel<[AddressModel]>()
+    @Published var couponDict = ResponseModel<[AssignedCoupon]>()
   
     @Published var updatedCardDict = ResponseModel<UpdatedDataModel>()
     
@@ -246,6 +247,27 @@ class StripeCardViewModel: ObservableObject {
                 handleSuccess("Cards loaded successfully")
             }
         }catch(let error) {
+            if let dataError = error as? DataError {
+                self.errorMessage = dataError.getErrorMessage()
+            }
+            else {
+                self.errorMessage = error.localizedDescription
+            }
+            throw error
+        }
+    }
+    
+    func getCoupon() async throws  {
+        setLoading(true)
+        defer { setLoading(false) }
+        do {
+            if let response: ResponseModel<[AssignedCoupon]> = try await APIManager.shared.request(
+                type: APIEndPoint.getCoupon,
+                header: true){
+                    
+                    self.couponDict = response
+                }
+        } catch {
             if let dataError = error as? DataError {
                 self.errorMessage = dataError.getErrorMessage()
             }

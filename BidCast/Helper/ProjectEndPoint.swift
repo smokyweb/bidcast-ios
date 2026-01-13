@@ -217,6 +217,7 @@ enum APIEndPoint{
     case getScheduleShow(param:getShowRequest)
     case orderReceipt(param:getOrderReceiptRequest)
     case saveProduct(param:MakeOfferListRequest)
+    case getCoupon
 //    case getUserProduct(param : UserProductRequest)
 //    case getItemList(param: ItemListRequest)
     
@@ -681,6 +682,8 @@ extension APIEndPoint: EndPointType {
             return "product/order-receipt"
         case .saveProduct:
             return "product/save"
+        case .getCoupon:
+            return "get-coupon"
         }
     }
     
@@ -1079,6 +1082,8 @@ extension APIEndPoint: EndPointType {
             return .post
         case .saveProduct:
             return .post
+        case .getCoupon:
+            return .get
         }
     }
     
@@ -1489,6 +1494,8 @@ extension APIEndPoint: EndPointType {
             return param
         case .saveProduct(param: let param):
             return param
+        case .getCoupon:
+            return nil
         }
     }
     
@@ -1873,6 +1880,8 @@ extension APIEndPoint: EndPointType {
         case .orderReceipt(param: let param):
             return nil
         case .saveProduct(param: let param):
+            return nil
+        case .getCoupon:
             return nil
         }
     }

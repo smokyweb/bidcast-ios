@@ -137,3 +137,27 @@ struct ShippingAdress: Codable {
         case isDefault = "is_default"
     }
 }
+
+struct AssignedCoupon: Codable {
+    var id: Int?
+    var coupon_id: Int?
+    var user_id: Int?
+    var assigned_count: Int?
+    var status: Int?
+    var coupon: Coupon?
+}
+
+struct Coupon: Codable {
+    var id: Int?
+    var name: String?
+    var type: String?
+    var value: Int?
+    var max_users: Int?
+    var used_count: Int?
+    var per_user_limit: Int?
+    var min_amount: Int?
+    var start_date: String?
+    var exp_date: String?
+    var status: Bool?
+    var description: String?
+}

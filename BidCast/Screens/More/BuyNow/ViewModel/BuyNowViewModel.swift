@@ -15,6 +15,7 @@ final class BuyNowViewModel: ObservableObject {
     @Published var purchaseDetailResponse = ResponseModel<ProductPurchaseModel>()
     @Published var recieptResponse = ResponseModel<String>()
     @Published var userList = ResponseModel<[UserModel]>()
+   
     @Published var errorMessage: String? = nil
 
     // MARK: - getMyOrderList.
@@ -42,6 +43,7 @@ final class BuyNowViewModel: ObservableObject {
             self.handle(error: error)
         }
     }
+    
     
     func getPurchaseDetail(parameters: ProductPurchaseDetailRequest) async {
         do {
