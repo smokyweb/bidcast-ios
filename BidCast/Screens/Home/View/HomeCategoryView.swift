@@ -63,7 +63,7 @@ struct HomeCategoryCardView: View {
                 // MARK: TITLE ONLY (When scrolling)
                 Text(title)
                     .font(.custom(poppinsSemiBold, size: 12))
-                    .foregroundColor(isSeeAll ? .white : .black)
+                    .foregroundColor(.black)
                     .multilineTextAlignment(.center)
                     .lineLimit(2)
                     .fixedSize(horizontal: false, vertical: true)
@@ -76,7 +76,7 @@ struct HomeCategoryCardView: View {
                     VStack(spacing: 0) {
                         Text(title)
                             .font(.custom(poppinsSemiBold, size: 12))
-                            .foregroundColor(.white)
+                            .foregroundColor(.black)
                             .multilineTextAlignment(.center)
                             .lineLimit(2)
                             .padding(.top, 10)
@@ -87,7 +87,7 @@ struct HomeCategoryCardView: View {
                             .resizable()
                             .scaledToFit()
                             .frame(width: 35, height: 35)
-                            .foregroundColor(.white)
+                            .foregroundColor(.defaultTheme)
                             .padding(.bottom, 24)
                     }
                 } else {

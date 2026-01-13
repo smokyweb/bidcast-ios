@@ -499,6 +499,7 @@ extension AddProductsScreen {
                 "show_discoverability": request.show_discoverability,
                 "repeat_value": request.repeat_value,
                 "language": request.language,
+                "sub_category_id":request.sub_category_id ?? ""
             ]
             if request.is_explicit {
                 params["is_explicit"] = 1
@@ -569,6 +570,7 @@ extension AddProductsScreen {
                 "show_discoverability": request.show_discoverability,
                 "repeat_value": request.repeat_value,
                 "language": request.language,
+                "sub_category_id":request.sub_category_id ?? ""
             ]
             if request.is_explicit {
                 params["is_explicit"] = 1
@@ -642,7 +644,7 @@ struct CustomBottomSheetView: View {
                         if let icon = config.icon {
                             Image(systemName: icon)
                                 .font(.system(size: 40))
-                                .foregroundColor(.blue)
+                                .foregroundColor(.defaultTheme)
                                 .padding(.top, 20)
                         }
                         
@@ -658,7 +660,7 @@ struct CustomBottomSheetView: View {
                             .padding(.horizontal, 16)
                         
                         if config.showButtons {
-                            VStack(spacing: 10) {
+                            VStack(spacing: 8) {
                                 
                                 if let title = config.primaryButtonTitle {
                                     Button {
@@ -672,9 +674,9 @@ struct CustomBottomSheetView: View {
                                             .cornerRadius(32)
                                             .foregroundColor(.white)
                                     }
-                                    .frame(width: screenWidth/1.5, height: 40)
-                                    .padding(.bottom, 20)
-                                    .padding(.top, 20)
+                                    .frame(width: screenWidth - 80, height: 44)
+                                    .padding(.bottom, 8)
+                                    .padding(.top, 8)
                                 }
                                 
                                 if let title = config.secondaryButtonTitle {
@@ -689,8 +691,9 @@ struct CustomBottomSheetView: View {
                                             .cornerRadius(32)
                                             .foregroundColor(.black)
                                     }
-                                    .frame(width: screenWidth/1.5, height: 40)
+                                    .frame(width: screenWidth - 80, height: 44)
                                     .padding(.bottom, 20)
+                                    .padding(.top, 4)
                                 }
                             }
                             .padding(.horizontal, 16)

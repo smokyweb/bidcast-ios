@@ -52,6 +52,14 @@ struct SelectCategoryScreen: View {
     @Binding var title : String
     @Binding var fromPrepare : Bool
     @Binding var backToPrepare : Bool
+    
+    @State var showSubCategorySheet = false
+    @State var selectedSubCategory = ""
+    @State var subCategoryList: [CategoryDataModel] = []
+    @State var subCategoryName : [String] = [""]
+    @State var extraFields: [ExtraFieldModel] = []
+    @State var selectedOption: Set<String> = []
+    
     var viewModel = SelectCategoryViewModel()
     var delegate: ShowStepDelegate?
     @EnvironmentObject var networkMonitor: NetworkMonitor
@@ -94,6 +102,36 @@ struct SelectCategoryScreen: View {
                                 
                             } else {
                                 request.category_id = ""
+                            }
+                            
+                            Task{
+                                
+                                await performAPICalls(
+                                    isConcurrent: false,
+                                    onError: { error in
+                                        showSubCategorySheet = false
+                                    },
+                                    onSuccess: {
+                                        self.subCategoryList.removeAll()
+                                        let response = self.viewModel.categoryResponse
+                                        if response != nil{
+                                            self.subCategoryList = response.data ?? []
+                                            self.subCategoryName = self.subCategoryList.map { $0.name ?? ""}
+                                        }
+                                        if subCategoryList.count != 0{
+                                            showSubCategorySheet = true
+                                        }
+                                    }
+                                ) {
+                                    extraFields = []
+                                    selectedSubCategory = ""
+                                    selectedOption = []
+                                    request.sub_category_id = ""
+                                    let request = CategoryRequest(category_id: request.category_id)
+                                    SVProgressHUD.show()
+                                    try await self.viewModel.getSubCategoryList(param: request)
+                                    await SVProgressHUD.dismiss()
+                                }
                             }
                         }
                     )
@@ -315,6 +353,38 @@ struct SelectCategoryScreen: View {
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }
+        .bottomSheet(
+            isPresented: $showSubCategorySheet,
+            height: selectedOption.count < 4 ? screenHeight * 0.4 : screenHeight/1.7,
+            topBarCornerRadius: 25,
+            showTopIndicator: false,
+            onDismiss: {
+                showSubCategorySheet = false
+            },
+            content: {
+                SelectionBottomSheet(
+                    title: "Select sub category",
+                    message: "Please select subcategory.",
+                    options: $subCategoryName,
+                    selectedOptions: $selectedOption,
+                    onSelectionDone: { selectedIndexes in
+                        if let index = selectedIndexes.first {
+                            let selectedValue = subCategoryList[index]
+                            selectedSubCategory = selectedValue.name ?? ""
+                            request.sub_category_id = "\(selectedValue.id ?? 0)"
+                            selectedCategory = "\(selectedCategory) (\(selectedValue.name ?? ""))"
+                            print("Selected SubCategory: \(selectedValue.name ?? "")")
+                            self.extraFields = selectedValue.extra_fields ?? []
+//                                    if let extraFields =  self.viewModel.categoryResponse?.data[index].extra_fields{
+//
+//                                    }
+                        }
+                        showSubCategorySheet = false
+                    }
+                )
+       
+            }
+        )
         .bottomSheet(isPresented: $showError, height: screenHeight / 2.5, topBarCornerRadius: 25, showTopIndicator: false) {
             CommonBottomSheet(
                 sheetType: $alertType,
@@ -367,11 +437,17 @@ struct SelectCategoryScreen: View {
     
     func populateExistingData() {
             // 1. Set Category
-            if !request.category_id.isEmpty,
-               let categoryId = Int(request.category_id),
-               let category = categoryList.first(where: { $0.id == categoryId }) {
-                selectedCategory = category.name ?? ""
-            }
+        if !request.category_id.isEmpty,
+              let categoryId = Int(request.category_id),
+              let category = categoryList.first(where: { $0.id == categoryId }) {
+
+               selectedCategory = category.name ?? ""
+
+               // 🔹 Fetch subcategories for existing category
+               Task {
+                   await fetchSubCategoryAndPopulate()
+               }
+           }
             
             // 2. Set Auction Type
             if !request.auction_type_id.isEmpty,
@@ -410,6 +486,48 @@ struct SelectCategoryScreen: View {
             print("- Language: \(selectedLanguageOptions)")
             print("- Discoverability: \(selectedDiscoverability?.rawValue ?? "none")")
         }
+    func fetchSubCategoryAndPopulate() async {
+
+        guard !request.category_id.isEmpty else { return }
+
+        SVProgressHUD.show()
+        defer { SVProgressHUD.dismiss() }
+
+        do {
+            let param = CategoryRequest(category_id: request.category_id)
+            try await viewModel.getSubCategoryList(param: param)
+
+            let response = viewModel.categoryResponse
+            guard response.status == "success",
+                  let list = response.data else { return }
+
+            // Populate list
+            self.subCategoryList = list
+            self.subCategoryName = list.map { $0.name ?? "" }
+
+            // Restore selected subcategory
+            if request.sub_category_id != ""{
+               let subId = Int(request.sub_category_id ?? "")
+                let index = list.firstIndex(where: { $0.id == subId }) ?? 0
+
+                let selected = list[index]
+                selectedSubCategory = selected.name ?? ""
+
+                // Append subcategory to category title
+                selectedCategory = "\(selectedCategory) (\(selectedSubCategory))"
+
+                // Restore bottom sheet selection
+                selectedOption = [selectedSubCategory]
+
+                // Restore extra fields
+                extraFields = selected.extra_fields ?? []
+            }
+
+        } catch {
+            print("❌ SubCategory fetch failed")
+        }
+    }
+
     
 }
 

@@ -36,18 +36,20 @@ struct MultiSelectionSubCategoryScreen: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            
-            HeaderWithTitle(
-                title: "Select Your Favorite Sub Category".localized,
-                leadingImgArr: ["chevron.left"],
-                onClickLeading: { _ in
-                    self.presentationMode.wrappedValue.dismiss()
-                },
-                count: .constant(0)
-            )
+            VStack{
+                HeaderWithTitle(
+                    title: "Select Your Favorite Sub Category".localized,
+                    leadingImgArr: ["chevron.left"],
+                    onClickLeading: { _ in
+                        self.presentationMode.wrappedValue.dismiss()
+                    },
+                    count: .constant(0)
+                )
+            }
+            .background(.backGround)
             
             Text("Select sub categories based on the categories you chose on the previous page")
-                .font(.headline)
+                .font(.custom(poppinsRegular, size: 13.0))
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 24)
                 .foregroundColor(.darkGray)
@@ -62,7 +64,8 @@ struct MultiSelectionSubCategoryScreen: View {
                             HStack {
                                 CustomProfileImage(url: category.image, isCircular: true, size: 36)
                                 Text(category.name ?? "")
-                                    .font(.headline)
+                                    .font(.custom(poppinsSemiBold, size: 13.0))
+                                    .foregroundColor(.black)
                                 Spacer()
                                 Image(systemName: expandedCategoryIDs.contains(category.id ?? -1) ? "chevron.up" : "chevron.down")
                                     .foregroundColor(.gray)
@@ -102,43 +105,37 @@ struct MultiSelectionSubCategoryScreen: View {
                                 .padding(.bottom, 12)
                             }
                         }
-                        .background(Color.white)
+                        
                         .cornerRadius(12)
                         .shadow(color: .squirrelGrey.opacity(0.5), radius: 2, x: 0, y: 0)
                     }
                 }
                 .padding(16)
             }
+            .background(.backGround)
             
             VStack {
-                Button(action: {
-//                    if selectedSubCategoryIDs.isEmpty {
-//                        hudMsg = "Please select at least one subcategory."
-//                        showhud = true
-//                    } else {
+                PrimaryButton(
+                    title: "Confirm",
+                    isOutLine: false,
+                    onButtonClick: {
                         Task {
                             await addFavCategories(
                                 selectedCategoryIDs: selectedCategoryIDs,
                                 selectedSubCategoryIDs: Array(selectedSubCategoryIDs)
                             )
                         }
-//                    }
-                }) {
-                    Text("Confirm")
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(/*selectedSubCategoryIDs.isEmpty ? Color.gray :*/ .defaultTheme)
-                        .cornerRadius(12)
-                }
-//                .disabled(selectedSubCategoryIDs.isEmpty)
+                    },
+                    cornerRadius: 32.0,
+                    btnTextColor: .white
+                )
             }
             .padding(16)
-//            .background(Color.white.shadow(radius: 3))
             
             CusNavLink(doNavigate: $navigateToAccount, destination: AccountScreen())
         }
-       
+        .background(.backGround)
+        .edgesIgnoringSafeArea(.bottom)
         .onAppear {
             loadSubCategories(selectedCategoryIDs: selectedCategoryIDs)
         }
@@ -192,7 +189,7 @@ struct MultiSelectionSubCategoryScreen: View {
             SVProgressHUD.show()
             let request = SubCategoryRequest(category_ids: selectedCategoryIDs)
             let parameters: [String: Any] = ["category_ids": request.category_ids]
-            await viewModel.getSubCategoryList(param: parameters)
+            await viewModel.getSubCategoryList1(param: parameters)
             await SVProgressHUD.dismiss()
             
             let response = viewModel.subCategoryResponse

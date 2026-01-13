@@ -64,7 +64,7 @@ struct ShippingsScreen: View {
                
             }
         }
-        .background(Color(UIColor.systemGroupedBackground))
+        .background(Color(.backGround))
         .toast(isPresenting: $showhud) {
             AlertToast(type: .regular, title: hudMsg)
         }

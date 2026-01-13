@@ -70,7 +70,7 @@ struct CreateAddress: View {
                                 request.name = $0
                             }
                         )
-                        .textContentType(.name)
+//                        .textContentType(.name)
 
                         AuthTextField(
                             floatingLabel: "Phone Number",
@@ -82,7 +82,7 @@ struct CreateAddress: View {
                                 request.phone_number = $0
                             }
                         )
-                        .textContentType(.telephoneNumber)
+//                        .textContentType(.telephoneNumber)
                         .keyboardType(.numberPad)
 
                         AuthTextField(

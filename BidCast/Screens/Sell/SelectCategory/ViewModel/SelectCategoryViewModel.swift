@@ -33,21 +33,24 @@ final class SelectCategoryViewModel: ObservableObject {
             self.handle(error: error)
         }
     }
-    
-    func getSubCategoryList(param: [String:Any]) async {
-        self.request = "SubCategory"
-        
+   
+    // MARK: - Get Category List
+    func getSubCategoryList(param:CategoryRequest) async throws{
+        request = "SubCategory"
         do {
-            
-            if let response: ResponseModal<[SubCategoryDataModel]> = try await APIManager.shared.requestWithJSONBody(type: APIEndPoint.getSubCategories(param: param), parameters: param, modalType: ResponseModal<[SubCategoryDataModel]>?.self, header: true){
-//                DispatchQueue.main.async {
-                    self.subCategoryResponse = response
-//                }
+            let response: ResponseModel<[CategoryDataModel]> = try await APIManager.shared.request(
+                type: APIEndPoint.category(param:param),
+                header: true
+            )
+            self.categoryResponse = response
+        } catch(let error) {
+            if let dataError = error as? DataError {
+                self.errorMessage = dataError.getErrorMessage()
             }
-        } catch {
-//            DispatchQueue.main.async {
+            else {
                 self.errorMessage = error.localizedDescription
-//            }
+            }
+            throw error
         }
     }
     
@@ -67,6 +70,22 @@ final class SelectCategoryViewModel: ObservableObject {
             }
         }
     }
+    func getSubCategoryList1(param: [String:Any]) async {
+        self.request = "SubCategory"
+        
+        do {
+            
+            if let response: ResponseModal<[SubCategoryDataModel]> = try await APIManager.shared.requestWithJSONBody(type: APIEndPoint.getSubCategories(param: param), parameters: param, modalType: ResponseModal<[SubCategoryDataModel]>?.self, header: true){
+//                DispatchQueue.main.async {
+                    self.subCategoryResponse = response
+//                }
+            }
+        } catch {
+//            DispatchQueue.main.async {
+                self.errorMessage = error.localizedDescription
+//            }
+        }
+    }
 
     // MARK: - Fetch Auctions
     func getAuctionList() async {
@@ -84,6 +103,24 @@ final class SelectCategoryViewModel: ObservableObject {
 
     // MARK: - Centralized Error Handler
     private func handle(error: Error) {
-        self.errorMessage = error.localizedDescription
+        if let dataError = error as? DataError {
+            switch dataError {
+            case .invalidCode(let message):
+                self.errorMessage = message ?? "Invalid code error"
+            case .invalidResponse(let data):
+                if let data = data,
+                   let json = try? JSONSerialization.jsonObject(with: data, options: []) {
+                    self.errorMessage = "Invalid response: \(json)"
+                } else {
+                    self.errorMessage = "Invalid response with no data"
+                }
+            default:
+                self.errorMessage = error.localizedDescription
+            }
+        } else {
+            self.errorMessage = error.localizedDescription
+        }
     }
+    
+
 }

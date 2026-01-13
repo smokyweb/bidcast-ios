@@ -63,14 +63,14 @@ struct ShippingProfilesListScreen: View {
                     }) {
                         Image(systemName: "chevron.left")
                             .font(.custom(poppinsBold, size: 16))
-                            .foregroundColor(.primary)
+                            .foregroundColor(.black)
                     }
                     
                     Spacer()
                     
                     Text("Shipping Profiles")
-                        .font(.custom(poppinsBold, size: 22))
-                        .foregroundColor(.primary)
+                        .font(.custom(poppinsSemiBold, size: 18))
+                        .foregroundColor(.black)
                     
                     Spacer()
                     
@@ -81,7 +81,7 @@ struct ShippingProfilesListScreen: View {
                 }
                 .padding(.horizontal, 20)
                 .padding(.vertical, 16)
-                .background(Color(.systemBackground))
+                .background(Color(.white))
                 
                 Divider()
                 
@@ -113,7 +113,7 @@ struct ShippingProfilesListScreen: View {
                                         message:  "Are you sure you want to remove this Profile?",
                                         primaryButtonTitle: "Delete",
                                         secondaryButtonTitle: "Cancel",
-                                        bottomPadding: -80
+                                        bottomPadding: -70
                                     )
                                     showDeleteProduct = true
                                 }

@@ -1321,6 +1321,7 @@ extension ProductCardView {
             Text(product.productCondition ?? "New")
                 .font(.custom(poppinsRegular, size: 13))
                 .foregroundColor(.darkGray)
+                .lineLimit(1)
             
             Circle()
                 .fill(Color.secondary)

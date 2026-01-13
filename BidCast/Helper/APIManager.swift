@@ -107,7 +107,7 @@ final class APIManager {
         
         let (data, response) = try await URLSession(configuration: config).data(for: request)
         
-//        print(response)
+        print(response)
         print("API Response >>> \n\(data.prettyPrintedJSONString ?? "")")
 //        print(response)
         guard let response = response as? HTTPURLResponse,

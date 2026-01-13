@@ -227,7 +227,7 @@ struct ExploreViewScreen: View {
             "category_ids": [categoryId]
         ]
         SVProgressHUD.show()
-        await viewModel.getSubCategoryList(param: param)
+        await viewModel.getSubCategoryList1(param: param)
         await SVProgressHUD.dismiss()
         if viewModel.subCategoryResponse?.status == "success" {
             let subCats = viewModel.subCategoryResponse?.data ?? []

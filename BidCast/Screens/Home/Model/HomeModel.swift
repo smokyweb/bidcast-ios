@@ -38,6 +38,12 @@ struct HomeModel: Codable, Identifiable {
     var category: Category?
     var user: User?
     var auction : AuctionData?
+    var sub_category_id: Int?
+    var is_promote: String?
+    var is_promoted: Bool?
+    var promotion_start_at: String?
+    var promotion_end_at: String?
+    var sub_category: SubCategoryDataModel?
 }
 
 struct AuctionData : Codable {

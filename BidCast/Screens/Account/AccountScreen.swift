@@ -123,7 +123,7 @@ struct AccountScreen: View {
         )
         .bottomSheet(
             isPresented: $showError,
-            height: screenHeight * 0.35,
+            height: screenHeight * 0.45,
             topBarCornerRadius: 25,
             contentBackgroundColor: Color(.systemBackground),
             topBarBackgroundColor: Color(.systemBackground),

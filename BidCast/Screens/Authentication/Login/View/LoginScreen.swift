@@ -59,7 +59,7 @@ struct LoginScreen: View {
                         .edgesIgnoringSafeArea(.top)
                     Spacer()
                 }
-                VStack(alignment: .leading, spacing: 15) {
+                VStack(alignment: .leading, spacing: 16) {
                     Group {
                         AuthTextField(floatingLabel: AppString.email.localized, placeholder: AppString.enterEmail.localized, icon: .menuProfile, text: $request.email, enteredText:  { email in
                             self.request.email = email

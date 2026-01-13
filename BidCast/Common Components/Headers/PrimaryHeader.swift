@@ -332,11 +332,9 @@ struct HeaderWithTitle: View {
                     withAnimation { onClickLeading?(ind) }
                 }) {
                     Image(systemName:leadingImgArr[ind])
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 24, height: 24)
-                        .tint(.black)
-                        .clipped()
+                        .font(.custom(poppinsBold, size: 16))
+                        .foregroundColor(.primary)
+                        .frame(width: 36, height: 36)
                 }
             }
             .padding([.leading,.trailing], 16)

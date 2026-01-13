@@ -31,22 +31,25 @@ struct MultiSelectionCategoryScreen: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            HeaderWithTitle(
-                title: "Select Your Favorite Category".localized,
-                leadingImgArr: ["chevron.left"],
-                onClickLeading: { _ in
-                    self.presentationMode.wrappedValue.dismiss()
-                },
-                count: .constant(0)
-            )
+            VStack{
+                HeaderWithTitle(
+                    title: "Select Your Favorite Category".localized,
+                    leadingImgArr: ["chevron.left"],
+                    onClickLeading: { _ in
+                        self.presentationMode.wrappedValue.dismiss()
+                    },
+                    count: .constant(0)
+                )
+            }
+            .background(.white)
             
             Text("Choose the categories you're interested in to watch related shows")
-                .font(.headline)
+                .font(.custom(poppinsRegular, size: 13.0))
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 24)
                 .padding(.top, 5)
                 .foregroundColor(.darkGray)
-                .font(.custom(poppinsRegular, fixedSize: 14))
+                .font(.custom(poppinsRegular, fixedSize: 13))
             
             ScrollView {
                 LazyVGrid(columns: gridColumns, spacing: 16) {
@@ -62,26 +65,32 @@ struct MultiSelectionCategoryScreen: View {
                 }
                 .padding(16)
             }
+            .background(.backGround)
             
             // Next Button with Navigation
             CusNavLink(
                 doNavigate: $navigateToSubCategory,
                 destination: MultiSelectionSubCategoryScreen(isNavFrom : isNavFrom, selectedCategoryIDs: $selectedCategoryIDs)
             )
-            PrimaryButton(
-                title: "Next",
-                isOutLine: false,
-                onButtonClick: {
-                    navigateToSubCategory = true
-                },
-                cornerRadius: 12.0,
-                btnTextColor: .white
-            )
-            .disabled(selectedCategoryIDs.isEmpty)
-            .opacity(selectedCategoryIDs.isEmpty ? 0.5 : 1.0)
-            .padding(.bottom, 20)
+            VStack{
+                PrimaryButton(
+                    title: "Next",
+                    isOutLine: false,
+                    onButtonClick: {
+                        navigateToSubCategory = true
+                    },
+                    cornerRadius: 32.0,
+                    btnTextColor: .white
+                )
+                .disabled(selectedCategoryIDs.isEmpty)
+                .opacity(selectedCategoryIDs.isEmpty ? 0.5 : 1.0)
+            }
+            .background(.backGround)
+            .padding(.bottom, 16)
         }
-        .onAppear {
+        .background(.backGround)
+        .edgesIgnoringSafeArea(.bottom)
+        .onFirstAppear {
             loadCategories()
         }
         
