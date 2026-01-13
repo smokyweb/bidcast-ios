@@ -24,6 +24,7 @@ struct HomeViewScreen: View {
     @State var currentRoomId = ""
     let columns = Array(repeating: GridItem(.flexible(), spacing: 6), count: 2)
     @Binding var showCategory : String
+    @Binding var showSubCategory : String
     @State var viewModel = HomeViewModel()
     var categoryViewModel = SelectCategoryViewModel()
     @State var categoryList = [CategoryDataModel]()
@@ -49,6 +50,7 @@ struct HomeViewScreen: View {
     @State var navigateToProfile = false
     @State private var showSearchView: Bool = false
     @State var category : String = ""
+    @State var subCategory : String = ""
     @State private var isActiveOnHomeScreen = false
     @State var navigateToCategoryDetailScreen : Bool = false
     @State var upCommingSheet : Bool = false
@@ -146,6 +148,48 @@ struct HomeViewScreen: View {
                                 goToExplore()
                             }
 
+                        }
+                        .frame(height: 140)
+                        .padding(.leading)
+                    }
+                }
+                .background(.backGround)
+//                .padding([.leading,.trailing],18)
+                .padding(.top , 5)
+                
+            }
+            
+            if comeFromExploreScreen && categoryList.count != 0 && showSubCategory == ""{
+                ScrollView(.horizontal, showsIndicators: false) {
+                    if isLoadingCategoryAPI {
+                        LazyHGrid(rows: rows, spacing: 16) {
+                            ForEach(0..<5, id: \.self) { _ in
+                                CategoryCardFullShimmerView(
+                                    width: 90,
+                                    height: 120,
+                                    cornerRadius: 9
+                                )
+                            }
+                        }
+                    } else {
+                        LazyHGrid(rows: rows, spacing: 8) {
+                            ForEach(categoryList.indices, id: \.self) { ind in
+                                HomeCategoryCardView(
+                                    title: categoryList[ind].name ?? "",
+                                    imageURL: categoryList[ind].image ?? "",
+                                    backgroundColor: categoryList[ind].color ?? "#CCCCCC",
+                                    isSelected: selectedButton == categoryList[ind].name
+                                )
+                                .onTapGesture {
+                                    withAnimation(.easeInOut(duration: 0.3)) {
+                                        selectedButton = categoryList[ind].name ?? ""
+                                        Task {
+                                            await fetchLiveShow()
+                                        }
+                                    }
+                                }
+                                
+                            }
                         }
                         .frame(height: 140)
                         .padding(.leading)
@@ -261,7 +305,7 @@ struct HomeViewScreen: View {
             CusNavLink(doNavigate: $navigateToNoti, destination: NotificationScreen())
 //            CusNavLink(doNavigate: $navigateToNoti, destination: RandomizerView())
           
-            CusNavLink(doNavigate: $navigateToCategoryDetailScreen, destination: HomeViewScreen(showCategory:$category,comeFromExploreScreen : $navigateToCategoryDetailScreen))
+            CusNavLink(doNavigate: $navigateToCategoryDetailScreen, destination: HomeViewScreen(showCategory:$category,showSubCategory: $subCategory,comeFromExploreScreen : $navigateToCategoryDetailScreen))
         }
         .background(.backGround)
         .edgesIgnoringSafeArea(.bottom)
@@ -354,10 +398,22 @@ struct HomeViewScreen: View {
             loadedRoomIDs.removeAll()
         }
         isLoadingShowAPI = true
-        let apiCategory = (selectedButton == "For You") ? "for_you" : selectedButton
+        var apiCategory = String()
+        var subCategory = String()
+        if comeFromExploreScreen{
+            apiCategory =  showCategory
+            if showSubCategory == ""{
+                subCategory = selectedButton.isEmpty  ? "" : selectedButton
+            }else{
+                subCategory =  showSubCategory
+            }
+        }else{
+            apiCategory = (selectedButton == "For You") ? "for_you" : selectedButton
+        }
         await viewModel.getLiveShows(param: GetLiveShowsRequest(
             type: selectedTab,
             category: apiCategory,
+            sub_category: subCategory,
             search: searchText,
             page: "\(currentPage)"
         ))
@@ -396,11 +452,52 @@ struct HomeViewScreen: View {
         isLoadingCategoryAPI = true
         await categoryViewModel.getCategoryList(param: CategoryRequest(type: selectedTab))
         await SVProgressHUD.dismiss()
-        categorySuccess()
+        await categorySuccess()
     }
+    func fetchSubCategories(categoryId : String) async {
+        guard Reachability.isConnectedToNetwork() else {
+            hudMsg = "No Internet Connection"
+            showhud = true
+            return
+        }
+
+        isLoadingCategoryAPI = true
+        categoryList.removeAll()
+
+        // 🔥 Call category API with parent category
+        await categoryViewModel.getCategoryList(
+            param: CategoryRequest(category_id: categoryId)
+        )
+
+        subCategorySuccess()
+    }
+    func subCategorySuccess() {
+        let response = categoryViewModel.categoryResponse
+
+        guard response.status == "success" else {
+            showError = true
+            alertType = .sheetType(
+                icon: .alert,
+                title: response.error_type?.capitalized ?? "",
+                message: response.message?.capitalized ?? "",
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
+            )
+            return
+        }
+
+        isLoadingCategoryAPI = false
+
+        let subCategories = response.data ?? []
+        categoryList = subCategories
+
+       
+       
+    }
+
     
     // MARK: - categorySuccess
-    func categorySuccess() {
+    func categorySuccess() async {
         let response = categoryViewModel.categoryResponse
         if response.status == "success" {
             isLoadingCategoryAPI = false
@@ -426,6 +523,15 @@ struct HomeViewScreen: View {
             // Default selection
             if selectedButton.isEmpty {
                 selectedButton = forYouCategory.name ?? "For You"
+            }
+            if comeFromExploreScreen {
+                if let matchedCategory = categoryList.first(where: {
+                    ($0.name ?? "").caseInsensitiveCompare(showCategory) == .orderedSame
+                }) {
+                    let categoryId = matchedCategory.id ?? 0
+                    print("Matched categoryId:", categoryId)
+                    await fetchSubCategories(categoryId: "\(categoryId)")
+                }
             }
         } else {
             showError = true

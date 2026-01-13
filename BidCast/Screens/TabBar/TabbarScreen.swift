@@ -65,7 +65,7 @@ struct TabbarScreen: View {
             TabView(selection: $tabBarRouter.selectedTab) {
                 
                 NavigationContainer(navigationPath: $homeNavigationPath) {
-                    HomeViewScreen(deepLinkShowId:selectedShowId,showCategory: .constant(""), comeFromExploreScreen: .constant(false), isNavFrom: "Login")
+                    HomeViewScreen(deepLinkShowId:selectedShowId,showCategory: .constant(""), showSubCategory: .constant(""), comeFromExploreScreen: .constant(false), isNavFrom: "Login")
                 }
                 .id(homeViewID)
                 .disabled(showSellSheet) // Disable interaction when sheet is open

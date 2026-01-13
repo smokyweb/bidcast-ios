@@ -787,7 +787,7 @@ struct ProfileHeaderView: View {
         .padding(.vertical,8)
         .padding(.horizontal, 8)
         CusNavLink(doNavigate: $navigateToRating, destination: RateSellerView(sellerID: Int(sellerID) ?? 0, sellerImage: $profileImage, sellerName: $name))
-        CusNavLink(doNavigate: $navigateToHome, destination: HomeViewScreen(showCategory: .constant(""), comeFromExploreScreen: .constant(false)))
+        CusNavLink(doNavigate: $navigateToHome, destination: HomeViewScreen(showCategory: .constant(""), showSubCategory: .constant(""), comeFromExploreScreen: .constant(false)))
         
     }
     

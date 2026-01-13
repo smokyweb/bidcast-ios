@@ -70,7 +70,7 @@ struct BlockedUserScreen: View {
             
             CusNavLink(
                 doNavigate: $navigateToHome,
-                destination: HomeViewScreen(showCategory: .constant(""), comeFromExploreScreen: .constant(false))
+                destination: HomeViewScreen(showCategory: .constant(""), showSubCategory: .constant(""), comeFromExploreScreen: .constant(false))
             )
         }
         .toast(isPresenting: $showhud) {

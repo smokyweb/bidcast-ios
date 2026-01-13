@@ -119,9 +119,18 @@ struct ExploreViewScreen: View {
                                             parentCategory: categoryName,
                                             viewersCount: 0,
                                             onSubCategoryTap: { subCat in
+//                                                category = categoryName
+//                                                subCategory = subCat.name ?? ""
+//                                                navigateToCategoryDetailScreen = true
                                                 category = categoryName
-                                                subCategory = subCat.name ?? ""
-                                                navigateToCategoryDetailScreen = true
+
+                                                    if subCat.id == -1 {
+                                                        subCategory = ""   // 🔥 All selected
+                                                    } else {
+                                                        subCategory = subCat.name ?? ""
+                                                    }
+
+                                                    navigateToCategoryDetailScreen = true
                                             }
                                         )
                                         .transition(.asymmetric(
@@ -142,7 +151,7 @@ struct ExploreViewScreen: View {
             // Navigation Links
             CusNavLink(doNavigate: $navigateToCategoryDetailScreen,
                        destination: HomeViewScreen(showCategory: $category,
-//                                                   showSubCategory: $subCategory,
+                                                   showSubCategory: $subCategory,
                                                    comeFromExploreScreen: $navigateToCategoryDetailScreen))
             CusNavLink(doNavigate: $navigateToNoti, destination: NotificationScreen())
         }
@@ -221,54 +230,97 @@ struct ExploreViewScreen: View {
             
         }
     }
-    
+//    func fetchSubCategories(categoryId: String, categoryName: String) async {
+//
+//        let param: [String: Any] = [
+//            "category_ids": [categoryId]
+//        ]
+//
+//        loadingSubCategoryId = categoryId
+//        SVProgressHUD.show()
+//
+//        await viewModel.getSubCategoryList1(param: param)
+//
+//        await SVProgressHUD.dismiss()
+//        loadingSubCategoryId = nil
+//
+//        guard viewModel.subCategoryResponse?.status == "success" else {
+//            return
+//        }
+//
+//        let subCats = viewModel.subCategoryResponse?.data ?? []
+//
+//        guard let apiSubCategories = subCats.first?.subcategories else {
+//            return
+//        }
+//
+//        // 🔥 Create "All" subcategory
+//        let allSubCategory = SelectedSubCategoryDataModel(
+//            id: -1,
+//            name: "All",
+//            image: categoryList.first { "\($0.id ?? 0)" == categoryId }?.image
+//        )
+//
+//        // 🔥 Insert "All" at first index
+//        let finalSubCategories = [allSubCategory] + apiSubCategories
+//
+//        subCategoryCache[categoryId] = finalSubCategories
+//    }
     func fetchSubCategories(categoryId: String, categoryName: String) async {
+
         let param = [
             "category_ids": [categoryId]
         ]
+
         SVProgressHUD.show()
         await viewModel.getSubCategoryList1(param: param)
         await SVProgressHUD.dismiss()
-        if viewModel.subCategoryResponse?.status == "success" {
-            let subCats = viewModel.subCategoryResponse?.data ?? []
-            
-            // SAVE TO CACHE
-            if let subCategories = subCats.first?.subcategories {
-                if subCategories.count != 0{
-                    subCategoryCache[categoryId] = subCategories
-                }else{
-                    subCategoryCache[categoryId] = []
-                        expandedCategoryIndex = nil
-                    
-                    category = categoryName
-                    subCategory = ""
-                    navigateToCategoryDetailScreen = true
-                }
-            }
-            else  {
+
+        guard viewModel.subCategoryResponse?.status == "success" else {
+            loadingSubCategoryId = nil
+            return
+        }
+
+        let subCats = viewModel.subCategoryResponse?.data ?? []
+
+        if let apiSubCategories = subCats.first?.subcategories {
+
+            if !apiSubCategories.isEmpty {
+
+                // 🔹 Create "All" subcategory
+                let allSubCategory = SelectedSubCategoryDataModel(
+                    id: -1,
+                    name: "All",
+                    image: categoryList.first { "\($0.id ?? 0)" == categoryId }?.image
+                )
+
+                // 🔹 Insert "All" at first index
+                let finalList = [allSubCategory] + apiSubCategories
+
+                // 🔹 Save to cache
+                subCategoryCache[categoryId] = finalList
+
+            } else {
+                // No subcategories → direct navigation
                 subCategoryCache[categoryId] = []
-                    expandedCategoryIndex = nil
-                
+                expandedCategoryIndex = nil
                 category = categoryName
                 subCategory = ""
                 navigateToCategoryDetailScreen = true
             }
-            
-            // If no subcategories, navigate directly to category
-//            if subCats.isEmpty {
-//                DispatchQueue.main.async {
-//                    withAnimation {
-//                        expandedCategoryIndex = nil
-//                    }
-//                    category = categoryName
-//                    subCategory = ""
-//                    navigateToCategoryDetailScreen = true
-//                }
-//            }
+
+        } else {
+            // No subcategory key → direct navigation
+            subCategoryCache[categoryId] = []
+            expandedCategoryIndex = nil
+            category = categoryName
+            subCategory = ""
+            navigateToCategoryDetailScreen = true
         }
-        
+
         loadingSubCategoryId = nil
     }
+
 }
 
 // MARK: - SubCategory List View
@@ -343,22 +395,23 @@ struct SubCategoryRow: View {
     private var rowContent: some View {
         HStack(spacing: 12) {
             // Image
-            AsyncImage(url: URL(string: subCategory.image ?? "")) { phase in
-                switch phase {
-                case .empty:
-                    ShimmerView()
-                        .frame(width: 50, height: 50)
-                case .success(let image):
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 50, height: 50)
-                        .clipped()
-                default:
-                    placeholder
-                }
-            }
-            .clipShape(RoundedRectangle(cornerRadius: 12))
+            CustomProfileImage(url: subCategory.image ?? "",isCircular: false,cornerRadius: 12,size: 50,defaultImage: "photo")
+//            AsyncImage(url: URL(string: subCategory.image ?? "")) { phase in
+//                switch phase {
+//                case .empty:
+//                    ShimmerView()
+//                        .frame(width: 50, height: 50)
+//                case .success(let image):
+//                    image
+//                        .resizable()
+//                        .aspectRatio(contentMode: .fill)
+//                        .frame(width: 50, height: 50)
+//                        .clipped()
+//                default:
+//                    placeholder
+//                }
+//            }
+//            .clipShape(RoundedRectangle(cornerRadius: 12))
 
             // Name
             Text(subCategory.name ?? "Unknown")
