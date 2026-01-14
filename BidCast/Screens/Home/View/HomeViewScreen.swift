@@ -353,6 +353,7 @@ struct HomeViewScreen: View {
                     UserDefaults.default_card = response?.default_card ?? DefaultCardModel()
                     UserDefaults.default_shipping_address = response?.default_shipping_address ?? AddressModel()
                     UserDefaults.couponCount = "\(response?.coupon_count ?? 0)"
+                    UserDefaults.vacationMode = response?.vacation_mode == "true" ? true : false
                     
                 }else{
                     

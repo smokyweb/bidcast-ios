@@ -26,6 +26,7 @@ struct ProfileModel : Codable{
     var has_card_added : Bool?
     var role : RoleModel?
     var coupon_count : Int?
+    var vacation_mode : String?
     var default_shipping_address : AddressModel?
     var default_card : DefaultCardModel?
     

@@ -12,6 +12,10 @@ struct MenuOptionsModal: Codable {
     var page_name, page_content, page_url: String?
 }
 
+struct VacationModel : Codable{
+    var vacation_mode : String?
+}
+
 // MARK: - DataClass
 struct SellerhubInfoModel: Codable {
     var items: Int?

@@ -617,6 +617,10 @@ struct MakeOfferListRequest : Encodable{
     var product_id : Int?
 }
 
+struct vacationRequest : Encodable{
+    var vacation_mode : Bool
+}
+
 struct OfferUpdateStatusRequest : Encodable{
     var offer_id : Int
     var status : String

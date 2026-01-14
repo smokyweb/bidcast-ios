@@ -218,6 +218,7 @@ enum APIEndPoint{
     case orderReceipt(param:getOrderReceiptRequest)
     case saveProduct(param:MakeOfferListRequest)
     case getCoupon
+    case updateVacation(param:vacationRequest)
 //    case getUserProduct(param : UserProductRequest)
 //    case getItemList(param: ItemListRequest)
     
@@ -674,16 +675,18 @@ extension APIEndPoint: EndPointType {
 //            return "product/fetch-by-status?type=\(param.type)&page=\(param.page)"
         case .getPromoteToolDetails(param: let param):
             return "promote-tool-details?filter=\(param.filter)"
-        case .checkValidShowDate(param: let param):
+        case .checkValidShowDate:
             return "check-schedule-show"
         case .getScheduleShow(param: let param):
             return "get-show-details-by-id?show_id=\(param.show_id)"
-        case .orderReceipt(param: let param):
+        case .orderReceipt:
             return "product/order-receipt"
         case .saveProduct:
             return "product/save"
         case .getCoupon:
             return "get-coupon"
+        case .updateVacation:
+            return "update-vacation-mode-status"
         }
     }
     
@@ -1084,6 +1087,8 @@ extension APIEndPoint: EndPointType {
             return .post
         case .getCoupon:
             return .get
+        case .updateVacation(param: let param):
+            return .post
         }
     }
     
@@ -1496,6 +1501,8 @@ extension APIEndPoint: EndPointType {
             return param
         case .getCoupon:
             return nil
+        case .updateVacation(param: let param):
+            return param
         }
     }
     
@@ -1882,6 +1889,8 @@ extension APIEndPoint: EndPointType {
         case .saveProduct(param: let param):
             return nil
         case .getCoupon:
+            return nil
+        case .updateVacation(param: let param):
             return nil
         }
     }

@@ -15,6 +15,7 @@ final class MenuOptionsViewModel: ObservableObject {
     @Published var sellerHubInfoResponse: ResponseModel<SellerhubInfoModel>?
     @Published var privacyResponse = ResponseModel<MenuOptionsModal>()
     @Published var termsResponse = ResponseModel<MenuOptionsModal>()
+    @Published var vacationResponse = ResponseModel<VacationModel>()
     @Published var aboutUsResponse = ResponseModel<MenuOptionsModal>()
     
     @Published var errorMessage: String? = nil
@@ -27,6 +28,25 @@ final class MenuOptionsViewModel: ObservableObject {
                 header: true
             ) {
                 self.sellerHubInfoResponse = response
+            }
+        } catch(let error) {
+            if let dataError = error as? DataError {
+                self.errorMessage = dataError.getErrorMessage()
+            }
+            else {
+                self.errorMessage = error.localizedDescription
+            }
+            throw error
+        }
+    }
+    
+    func UpdateVacation(param:vacationRequest) async throws{
+        do {
+            if let response: ResponseModel<VacationModel> = try await APIManager.shared.request(
+                type: APIEndPoint.updateVacation(param: param),
+                header: true
+            ) {
+                self.vacationResponse = response
             }
         } catch(let error) {
             if let dataError = error as? DataError {

@@ -32,6 +32,7 @@ struct AccountScreen: View {
     @State private var selectedCredit: AccountCredit?
     
     @State private var hasLoadedData = false
+   
         @State private var isRefreshing = false
     
     
@@ -428,6 +429,7 @@ extension AccountScreen {
                     isLoading = true
                     if menuViewModel.sellerHubInfoResponse?.status == "success" {
                         sellerInfo = menuViewModel.sellerHubInfoResponse?.data
+                        UserDefaults.vacationMode = sellerInfo?.vacationMode == "true" ? true : false
                     }
                 }
             ) {
@@ -480,10 +482,13 @@ extension AccountScreen {
 
 // MARK: - Seller Hub Section
 struct SellerHubSection: View {
-    @State private var isLoadingStats = true
+//    @State private var isLoadingStats = true
+    private var isLoadingStats: Bool {
+        sellerInfo == nil
+    }
     @Binding var sellerInfo: SellerhubInfoModel?
         @Binding var isRefreshing: Bool
-    
+    @StateObject private var viewModel = MenuOptionsViewModel()
     // Stats data
     @State private var itemsCount = 0
     @State private var revenue = "$0.00"
@@ -493,7 +498,7 @@ struct SellerHubSection: View {
     @State private var policyStanding = "Excellent"
     @State private var payouts = "$199.00"
     @State private var totalOrders = "22 Items"
-    
+    @State private var vacationToggle = false
     @State var showID = ""
     @State var SHowId = 0
     @State var isLive = false
@@ -502,6 +507,7 @@ struct SellerHubSection: View {
     @State var navigateToReherseal = false
     @State var navigateToshowTitle = false
     @State var navigateToShowDetails = false
+    @State private var isLoading: Bool = false
     @State private var scheduleRequest = StoreScheduleShowRequest(
         title: "",
         date: "",
@@ -516,6 +522,8 @@ struct SellerHubSection: View {
         language: "english"
     )
 
+    @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
+    @State private var showError = false
     
     var onCreateShow: () -> Void
     var onCreateProduct: () -> Void
@@ -563,7 +571,7 @@ struct SellerHubSection: View {
         }
         .onChange(of: isRefreshing) { oldValue, newValue in
             if newValue {
-                isLoadingStats = true
+//                isLoadingStats = true
             } else {
                 // Reload data after refresh completes
                 loadData()
@@ -760,13 +768,17 @@ struct SellerHubSection: View {
             
             Text("Vacation Mode")
                 .font(.custom(poppinsSemiBold, size: 16))
-                .foregroundColor(.primary)
+                .foregroundColor(.black)
             
             Spacer()
             
-            Toggle("", isOn: .constant(false))
+            Toggle("", isOn: $vacationToggle)
                 .labelsHidden()
                 .tint(.defaultTheme)
+                .onChange(of: vacationToggle) { _, newValue in
+                    print("Vacation Mode:", newValue)
+                   vacationData(valueData: newValue)
+                }
         }
         .padding(16)
         .background(
@@ -798,9 +810,47 @@ struct SellerHubSection: View {
                     policyStanding = "Excellent"
                     payouts = "\(formatCurrencyCompact(Double(info.payouts ?? 0)))"
                     totalOrders = "\(info.totalOrders ?? 0) Items"
-                    isLoadingStats = false
+                    vacationToggle = UserDefaults.vacationMode
+//                    isLoadingStats = false
                 }
             }
+        }
+    }
+    
+    private func vacationData(valueData : Bool){
+        Task {
+            await performAPICalls(
+                isConcurrent: false,
+                showLoader: !isRefreshing,
+                onError: { error in
+                    alertType = .sheetType(
+                        icon: .alert,
+                        title: "Error",
+                        message: viewModel.errorMessage ?? "",
+                        primaryBtnText: AppString.ok.localized,
+                        secondaryBtnText: ""
+                    )
+                    showError = true
+                    isLoading = true
+                },
+                onSuccess: {
+                    isLoading = true
+                    if viewModel.vacationResponse.status == "success" {
+                        let data = viewModel.vacationResponse.data?.vacation_mode ?? ""
+                        if data == "true"{
+                            UserDefaults.vacationMode = true
+                        }else{
+                            UserDefaults.vacationMode = false
+                        }
+                       
+                    }
+                }
+            ) {
+                isLoading = true
+                let request = vacationRequest(vacation_mode: valueData)
+                try await viewModel.UpdateVacation(param: request)
+            }
+            
         }
     }
     private func formatCurrencyCompact(_ value: Double) -> String {

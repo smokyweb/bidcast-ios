@@ -307,6 +307,17 @@ extension UserDefaults{
         }
     }
     
+    static var vacationMode : Bool{
+        set(input){
+            self.standard.setValue(input, forKey: "vacationMode")
+        }
+        get{
+            
+            return self.standard.value(forKey: "vacationMode") as? Bool ?? false
+        }
+    }
+    
+    
     static var sellerAddress : Bool{
         set(input){
             self.standard.setValue(input, forKey: "sellerAddress")
