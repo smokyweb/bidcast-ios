@@ -586,7 +586,7 @@ struct ProductOrderListingRequest : Encodable{
 struct ProductPurchaseDetailRequest : Encodable{
     var shipping_id : Int
     var product_id : Int
-    var coupon_id : Int? = nil
+    var coupon_name : String? = nil
 }
 
 struct ProductOrderRequest : Encodable{

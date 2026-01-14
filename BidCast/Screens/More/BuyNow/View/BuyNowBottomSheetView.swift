@@ -213,7 +213,7 @@ struct BuyNowBottomSheetView: View {
                                             getProductDetails(
                                                 shippingId: shippingID,
                                                 productId: productId,
-                                                couponId: appliedCouponId
+                                                coupon_name: promoCode
                                             )
                                         }
                                         .frame(width: 170)
@@ -337,7 +337,7 @@ struct BuyNowBottomSheetView: View {
                     appliedCouponId = selectedCoupon.coupon?.id ?? 0
                     promoCode = selectedCoupon.coupon?.name ?? ""
                     showCouponSheet = false
-                    getProductDetails(shippingId: shippingID, productId: productId, couponId: appliedCouponId)
+                    getProductDetails(shippingId: shippingID, productId: productId, coupon_name: promoCode)
                 }
                 .presentationBackground(Color.backGround)
             }
@@ -402,14 +402,14 @@ struct BuyNowBottomSheetView: View {
         
     }
     
-    func getProductDetails(shippingId : Int,productId : Int,couponId : Int? = nil){
+    func getProductDetails(shippingId : Int,productId : Int,coupon_name : String? = nil){
         Task{
             SVProgressHUD.show()
             await viewModel.getPurchaseDetail(
                 parameters: ProductPurchaseDetailRequest(
                     shipping_id: shippingId,
                     product_id: productId,
-                    coupon_id: couponId
+                    coupon_name: coupon_name
                 )
             )
             await SVProgressHUD.dismiss()
@@ -694,7 +694,7 @@ struct CouponSelectableRow: View {
             
             Spacer()
         }
-        .padding(.all,2)
+        .padding(.all,8)
         .frame(maxWidth: .infinity)
         .frame(height: 150)
         .background(
