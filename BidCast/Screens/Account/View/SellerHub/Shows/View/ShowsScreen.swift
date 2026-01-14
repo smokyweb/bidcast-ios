@@ -128,7 +128,7 @@ struct ShowsScreen: View {
                             },onTapMenu: {
                                 SHowId = data.id ?? 0
                                 navigateToshowTitle = true
-                            })
+                            },isPastShows : segment == .pastShows)
                             .onAppear {
                                    // Trigger pagination when last cell appears
                                    if index == showsData.count - 1 {

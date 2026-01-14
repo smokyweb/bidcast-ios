@@ -149,7 +149,7 @@ struct AddCardScreen: View {
                     //                    .textContentType(.name)
                 }
             }
-            //            .padding(.horizontal)
+            .padding(.horizontal,16)
             
             Spacer()
             
@@ -158,6 +158,7 @@ struct AddCardScreen: View {
             PrimaryButton(title: isEditMode ? "Update Card" : "Add Card",
                           isOutLine: false,
                           onButtonClick: addCard)
+            .padding(.horizontal,16)
             
 //            PrimaryButton(
 //                title: "Submit",
@@ -214,6 +215,8 @@ struct AddCardScreen: View {
 //            .padding(.vertical, 10)
 //            .background(Color.white)
         }
+        
+        .background(.backGround)
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }
@@ -295,6 +298,7 @@ struct AddCardScreen: View {
     }
         
     private func addCard() {
+        hideKeyboard()
         guard validateAndShowToast() else { return }
         Task {
             await performAPICalls(

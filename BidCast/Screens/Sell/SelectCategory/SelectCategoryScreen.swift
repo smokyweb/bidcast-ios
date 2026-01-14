@@ -506,7 +506,7 @@ struct SelectCategoryScreen: View {
             self.subCategoryName = list.map { $0.name ?? "" }
 
             // Restore selected subcategory
-            if request.sub_category_id != ""{
+            if request.sub_category_id != "" && request.sub_category_id != nil{
                let subId = Int(request.sub_category_id ?? "")
                 let index = list.firstIndex(where: { $0.id == subId }) ?? 0
 

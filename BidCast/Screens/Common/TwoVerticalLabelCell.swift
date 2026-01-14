@@ -14,6 +14,7 @@ struct TwoVerticalLabelCell<T: Hashable & CustomStringConvertible>: View {
     let bottomLabel: (T) -> String
 
     @Binding var selection: T?
+    let onItemTap: ((T) -> Void)?
 
     var h1fontname = poppinsSemiBold
     var h1fontSize = 15.0
@@ -27,6 +28,7 @@ struct TwoVerticalLabelCell<T: Hashable & CustomStringConvertible>: View {
         topLabel: @escaping (T) -> String,
         bottomLabel: @escaping (T) -> String,
         selection: Binding<T?>? = nil,
+        onItemTap: ((T) -> Void)? = nil,
         h1fontname: String = poppinsSemiBold,
         h1fontSize: Double = 15.0,
         h2fontname: String = poppinsRegular,
@@ -38,6 +40,7 @@ struct TwoVerticalLabelCell<T: Hashable & CustomStringConvertible>: View {
         self.topLabel = topLabel
         self.bottomLabel = bottomLabel
         self._selection = selection ?? .constant(nil)
+        self.onItemTap = onItemTap
         self.h1fontname = h1fontname
         self.h1fontSize = h1fontSize
         self.h2fontname = h2fontname
@@ -69,6 +72,7 @@ struct TwoVerticalLabelCell<T: Hashable & CustomStringConvertible>: View {
                 .contentShape(Rectangle())
                 .onTapGesture {
                     selection = item
+                    onItemTap?(item) // 🔥 callback
                 }
             }
         }

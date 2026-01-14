@@ -193,7 +193,7 @@ struct ShowDetailsScreen: View {
 //                        .font(.system(size: 12))
 //                        .foregroundColor(.secondary)
                     
-                    Text(formatDate(show.date?.formattedDate() ?? "12-22-2025"))
+                    Text(show.date?.formattedDateAndTimeString(input: "yyyy-MM-dd",output: "dd-MM-yyyy") ?? "")
                         .font(.custom(poppinsRegular, size: 13))
                         .foregroundColor(.darkGray)
                     

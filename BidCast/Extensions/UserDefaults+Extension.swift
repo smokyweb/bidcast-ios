@@ -283,6 +283,19 @@ extension UserDefaults{
             return self.standard.value(forKey: "fullName") as? String ?? ""
         }
     }
+    static var couponCount:String{
+        set(input){
+            self.standard.setValue(input, forKey: "couponCount")
+        }
+        get{
+            
+            return self.standard.value(forKey: "couponCount") as? String ?? ""
+        }
+    }
+    
+  
+    
+   
     
     static var sellerVerafied : String{
         set(input){
@@ -627,4 +640,43 @@ extension UserDefaults{
     }
     
 
+}
+
+//MARK: For storing models
+extension UserDefaults {
+
+    private static let defaultCardKey = "default_card"
+    private static let defaultShippingKey = "default_shipping_address"
+
+    static var default_card: DefaultCardModel {
+        get {
+            guard let data = standard.data(forKey: defaultCardKey),
+                  let model = try? JSONDecoder().decode(DefaultCardModel.self, from: data)
+            else {
+                return DefaultCardModel()
+            }
+            return model
+        }
+        set {
+            if let data = try? JSONEncoder().encode(newValue) {
+                standard.set(data, forKey: defaultCardKey)
+            }
+        }
+    }
+
+    static var default_shipping_address: AddressModel {
+        get {
+            guard let data = standard.data(forKey: defaultShippingKey),
+                  let model = try? JSONDecoder().decode(AddressModel.self, from: data)
+            else {
+                return AddressModel()
+            }
+            return model
+        }
+        set {
+            if let data = try? JSONEncoder().encode(newValue) {
+                standard.set(data, forKey: defaultShippingKey)
+            }
+        }
+    }
 }

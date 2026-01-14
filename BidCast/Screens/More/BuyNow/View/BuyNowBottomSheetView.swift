@@ -38,8 +38,11 @@ struct BuyNowBottomSheetView: View {
     var productColor: String = ""
     @State private var shippingAddress: String = ""
    @State private var subtotal: Double = 0.0
+    @State private var price: Double = 0.0
+    
     @State private var shipping: Double = 0.0
     @State private var tax: Double = 0.0
+    @State private var discount: Double = 0.0
     @State private var shippingID: Int = 0
     @State private var productID : Int = 0
     @State private var cardID: String = ""
@@ -87,7 +90,7 @@ struct BuyNowBottomSheetView: View {
                         .frame(width: 56, height: 56)
                         .cornerRadius(8)
                         VStack(alignment: .leading) {
-                            Text(purchaseDetail.product?.title ?? "")
+                            Text(purchaseDetail.product?.title?.capitalizingFirstLetter() ?? "")
                                 .font(.custom(poppinsSemiBold, size: 13.0))
 //                            Text(purchaseDetail.product?.category?.color ?? "")
 //                                .font(.custom(poppinsSemiBold, size: 11.0))
@@ -157,38 +160,68 @@ struct BuyNowBottomSheetView: View {
                     VStack(spacing: 8) {
                         
                         HStack {
-                            TextField("Enter promo code", text: $promoCode)
-                                .padding(.horizontal)
-                                .frame(height: 50)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 32)
-                                        .stroke(Color.gray.opacity(0.4), lineWidth: 1)
-                                )
-                            
+                            HStack {
+                                Text(promoCode.isEmpty ? "Enter promo code" : promoCode)
+                                    .font(.custom(poppinsSemiBold, size: 13))
+                                    .foregroundColor(promoCode.isEmpty ? .gray : .black)
+
+                                Spacer()
+
+                                if !promoCode.isEmpty {
+                                    Button {
+                                        promoCode = ""
+                                        appliedCouponId = nil
+                                        getProductDetails(shippingId: shippingID, productId: productId)
+                                    } label: {
+                                        Image(systemName: "xmark.circle.fill")
+                                            .font(.custom(poppinsSemiBold, size: 13.0))
+                                            .foregroundColor(.black)
+                                            .padding(8)
+                                    }
+                                }
+                            }
+                            .padding(.horizontal)
+                            .frame(height: 50)
+                            .background(
+                                RoundedRectangle(cornerRadius: 32)
+                                    .stroke(Color.gray.opacity(0.4), lineWidth: 1)
+                            )
+
                             if !couponArr.isEmpty {
                                 Button("View All") {
-//                                    showCouponSheet = true
+                                    showCouponSheet = true
                                 }
-                                    .font(.custom(poppinsSemiBold, size: 12))
-                                    .foregroundColor(.red)
+                                .font(.custom(poppinsSemiBold, size: 12))
+                                .foregroundColor(.red)
                             }
                         }
                         
                         // Divider with 2 coupons
                         ZStack {
                             Divider()
-                            HStack(spacing: 8) {
-                                ForEach(couponArr.prefix(2), id: \.id) { item in
-                                    CouponApplyCard(
-                                        coupon: item,
-                                        isApplied: appliedCouponId == item.coupon?.id
-                                    ) {
-                                        appliedCouponId = item.coupon?.id
-                                        promoCode = item.coupon?.name ?? ""
+
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack(spacing: 8) {
+                                    ForEach(couponArr, id: \.id) { item in
+                                        CouponApplyCard(
+                                            coupon: item,
+                                            isApplied: appliedCouponId == item.coupon?.id
+                                        ) {
+                                            appliedCouponId = item.coupon?.id ?? 0
+                                            promoCode = item.coupon?.name ?? ""
+
+                                            getProductDetails(
+                                                shippingId: shippingID,
+                                                productId: productId,
+                                                couponId: appliedCouponId
+                                            )
+                                        }
+                                        .frame(width: 170)
                                     }
                                 }
+                                .padding(.horizontal,2)
+                                .padding(.vertical, 4)
                             }
-                            .padding(.horizontal)
                             .background(Color.backGround)
                         }
                     }
@@ -196,9 +229,12 @@ struct BuyNowBottomSheetView: View {
                     
                     // Summary
                     VStack(spacing: 4) {
-                        SummaryRow(label: "Subtotal", value: subtotal)
+                        SummaryRow(label: "Price", value: price)
                         SummaryRow(label: "Shipping", value: shipping)
                         SummaryRow(label: "Tax", value: tax)
+                        SummaryRow(label: "Subtotal", value: subtotal)
+                        Divider()
+                        SummaryRow(label: "Discount", value: discount)
                         Divider()
                         SummaryRow(label: "Total", value: total, isBold: true)
                     }
@@ -298,10 +334,12 @@ struct BuyNowBottomSheetView: View {
                     coupons: couponArr,
                     selectedCode: appliedCouponId
                 ) { selectedCoupon in
-                    appliedCouponId = selectedCoupon.coupon?.id
+                    appliedCouponId = selectedCoupon.coupon?.id ?? 0
                     promoCode = selectedCoupon.coupon?.name ?? ""
                     showCouponSheet = false
+                    getProductDetails(shippingId: shippingID, productId: productId, couponId: appliedCouponId)
                 }
+                .presentationBackground(Color.backGround)
             }
         }
         
@@ -348,33 +386,7 @@ struct BuyNowBottomSheetView: View {
                     shippingID = shippingId
                     shippingAddress = "\(addressArr.first(where: { $0.is_default ?? false })?.street_address ?? "")"
                     
-                    await viewModel.getPurchaseDetail(
-                        parameters: ProductPurchaseDetailRequest(
-                            shipping_id: shippingId,
-                            product_id: productId
-                        )
-                    )
-                    await SVProgressHUD.dismiss()
-                    if viewModel.errorMessage == "" || viewModel.errorMessage == nil {
-                        let response = viewModel.purchaseDetailResponse
-                        if response.status == "success"{
-                            purchaseDetail = response.data ?? ProductPurchaseModel()
-                            
-                            subtotal = Double(purchaseDetail.sub_total ?? "") ?? 0.0
-                            shipping = Double(purchaseDetail.shipping_charges ?? "") ?? 0.0
-                            tax = Double(purchaseDetail.tax_amount ?? "") ?? 0.0
-                            total = Double(purchaseDetail.total ?? "") ?? 0.0
-                        }
-                    }else{
-                        alertType = .sheetType(
-                            icon: .alert,
-                            title: "Error",
-                            message: viewModel.errorMessage ?? "",
-                            primaryBtnText: "",
-                            secondaryBtnText: AppString.ok.localized
-                        )
-                        showError = true
-                    }
+                    getProductDetails(shippingId: shippingID, productId: productId)
                 }
             }
         } else {
@@ -388,6 +400,41 @@ struct BuyNowBottomSheetView: View {
             showError = true
         }
         
+    }
+    
+    func getProductDetails(shippingId : Int,productId : Int,couponId : Int? = nil){
+        Task{
+            SVProgressHUD.show()
+            await viewModel.getPurchaseDetail(
+                parameters: ProductPurchaseDetailRequest(
+                    shipping_id: shippingId,
+                    product_id: productId,
+                    coupon_id: couponId
+                )
+            )
+            await SVProgressHUD.dismiss()
+            if viewModel.errorMessage == "" || viewModel.errorMessage == nil {
+                let response = viewModel.purchaseDetailResponse
+                if response.status == "success"{
+                    purchaseDetail = response.data ?? ProductPurchaseModel()
+                    price = Double(purchaseDetail.price ?? "") ?? 0.0
+                    subtotal = Double(purchaseDetail.sub_total ?? "") ?? 0.0
+                    shipping = Double(purchaseDetail.shipping_charges ?? "") ?? 0.0
+                    tax = Double(purchaseDetail.tax_amount ?? "") ?? 0.0
+                    total = Double(purchaseDetail.total ?? "") ?? 0.0
+                    discount = Double(purchaseDetail.discount_amount ?? "") ?? 0.0
+                }
+            }else{
+                alertType = .sheetType(
+                    icon: .alert,
+                    title: "Error",
+                    message: viewModel.errorMessage ?? "",
+                    primaryBtnText: "",
+                    secondaryBtnText: AppString.ok.localized
+                )
+                showError = true
+            }
+        }
     }
     
     //MARK: cardSuccess.
@@ -506,33 +553,31 @@ struct CouponApplyCard: View {
     }
 
     var body: some View {
-        HStack(alignment: .center, spacing: 12) {
-            
-            // Name and discount stacked vertically
+        HStack(spacing: 12) {
+
             VStack(alignment: .leading, spacing: 2) {
                 Text(coupon.coupon?.name ?? "")
                     .font(.custom(poppinsSemiBold, size: 12))
+                    .lineLimit(1)
+
                 Text(discountText)
                     .font(.custom(poppinsRegular, size: 11))
                     .foregroundColor(.defaultTheme)
             }
-            
+
             Spacer()
-            
-            Button(action: { onApply() }) {
+
+            Button(action: onApply) {
                 Text(isApplied ? "Applied" : "Apply")
                     .font(.custom(poppinsSemiBold, size: 11))
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.7)
-                    .frame(minWidth: 45)
             }
-            .foregroundColor(isApplied ? .gray : .white)
-            .padding(.horizontal, 12)
+            .padding(.horizontal, 8)
             .padding(.vertical, 6)
             .background(
                 RoundedRectangle(cornerRadius: 14)
                     .fill(isApplied ? Color.gray.opacity(0.3) : Color.red)
             )
+            .foregroundColor(isApplied ? .gray : .white)
             .disabled(isApplied)
         }
         .padding(10)
@@ -543,6 +588,7 @@ struct CouponApplyCard: View {
     }
 }
 
+
 // MARK: - Coupon List Sheet (View All)
 struct CouponListSheet: View {
     let coupons: [AssignedCoupon]
@@ -551,62 +597,119 @@ struct CouponListSheet: View {
 
     var body: some View {
         VStack(spacing: 16) {
-            Text("Available Coupons")
-                .font(.custom(poppinsSemiBold, size: 16))
-
+            VStack {
+                Text("Available Coupons")
+                    .font(.custom(poppinsSemiBold, size: 16))
+                    .padding(.vertical, 12)
+            }
+            .frame(maxWidth: .infinity)
+            .background(Color.white)
             ScrollView {
                 VStack(spacing: 12) {
                     ForEach(coupons, id: \.id) { item in
-                        CouponApplyRow(
+                        CouponSelectableRow(
                             coupon: item,
-                            isApplied: selectedCode == item.coupon?.id
+                            isApplied: selectedCode == item.coupon?.id, showApplyButton: true
                         ) {
                             onSelect(item)
                         }
                     }
                 }
             }
+            .background(.backGround)
         }
-        .padding()
+        
+        .padding(.horizontal,8)
+        .padding(.top,8)
+        .background(.backGround)
+        
     }
 }
 
 // MARK: - Coupon Row (Full List)
-struct CouponApplyRow: View {
+struct CouponSelectableRow: View {
+    
     let coupon: AssignedCoupon
     let isApplied: Bool
+    let showApplyButton: Bool
     let onApply: () -> Void
-
+    
     var discountText: String {
         guard let coupon = coupon.coupon else { return "" }
         switch coupon.type {
-        case "percentage": return "\(coupon.value ?? 0)% OFF"
-        case "flat": return "₹\(coupon.value ?? 0) OFF"
-        default: return ""
+        case "percentage":
+            return "\(coupon.value ?? 0)% OFF"
+        case "flat":
+            return "₹\(coupon.value ?? 0) OFF"
+        default:
+            return ""
         }
     }
-
+    
     var body: some View {
         HStack {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(coupon.coupon?.name ?? "")
-                    .font(.custom(poppinsSemiBold, size: 13))
-                Text(discountText)
-                    .font(.custom(poppinsRegular, size: 11))
-                    .foregroundColor(.green)
+            
+            // MARK: - Left Badge
+            Text(discountText)
+                .font(.custom(poppinsSemiBold, size: 13))
+                .foregroundColor(.defaultTheme)
+                .multilineTextAlignment(.center)
+                .padding()
+                .frame(width: 100, height: 100)
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(Color.defaultThemeLight)
+                )
+            
+            // MARK: - Right Content
+            HStack(alignment: .center, spacing: 12) {
+                
+                // Name + Description (VStack)
+                VStack(alignment: .leading, spacing: 6) {
+                    
+                    Text(coupon.coupon?.name ?? "")
+                        .font(.custom(poppinsSemiBold, size: 14))
+                        .lineLimit(1)
+                    
+                    Text(coupon.coupon?.description ?? "")
+                        .font(.custom(poppinsRegular, size: 12))
+                        .foregroundColor(.gray)
+                        .lineLimit(2)
+                }
+                
+                Spacer()
+                
+                // Apply Button
+                if showApplyButton {
+                    Button(isApplied ? "Applied" : "Apply") {
+                        onApply()
+                    }
+                    .font(.custom(poppinsSemiBold, size: 11))
+                    .foregroundColor(isApplied ? .gray : .red)
+                    .disabled(isApplied)
+                }
             }
+            .padding(.leading, 10)
+            .frame(maxHeight: .infinity)
+            
             Spacer()
-            Button(isApplied ? "Applied" : "Apply") {
-                onApply()
-            }
-            .font(.custom(poppinsSemiBold, size: 11))
-            .foregroundColor(isApplied ? .gray : .red)
-            .disabled(isApplied)
         }
-        .padding()
+        .padding(.all,2)
+        .frame(maxWidth: .infinity)
+        .frame(height: 150)
         .background(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(Color.gray.opacity(0.3))
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color.white)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(
+                            isApplied ? Color.defaultTheme : Color.clear,
+                            lineWidth: 1.5
+                        )
+                )
         )
+        .padding(.horizontal, 12)
     }
 }
+
+

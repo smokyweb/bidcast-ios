@@ -78,7 +78,7 @@ struct AddressesScreen: View {
 //                .padding(.bottom, 40)
             }
             .padding(.horizontal,Leading/2)
-            .background(.bg.opacity(0.4))
+            .background(.backGround)
             
             //Bottom fixed button
             PrimaryButton(
@@ -88,12 +88,12 @@ struct AddressesScreen: View {
                     print("Add New Address tapped")
                     navigateToCreate = true
                 },
-                width: screenWidth - 45,
-                cornerRadius: 12.0, imageName: "plus_btn",
+                width: screenWidth - 60,
+                cornerRadius: 32.0, imageName: "plus_btn",
                 btnTextColor : .white, btnColor: .defaultTheme
             )
             //            .padding(.vertical, 10)
-            .background(Color.white)
+            .background(Color.backGround)
             .padding(.all,8)
             .padding(.bottom,-24)
             CusNavLink(doNavigate: $navigateToCreate, destination: CreateAddress())

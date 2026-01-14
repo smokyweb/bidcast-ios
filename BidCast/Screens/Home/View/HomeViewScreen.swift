@@ -344,12 +344,16 @@ struct HomeViewScreen: View {
                     UserDefaults.profileURL = response?.profile_image ?? ""
                     UserDefaults.fullName = response?.name ?? ""
                     UserDefaults.userName = response?.username ?? UserDefaults.fullName
-                    
+                
                     UserDefaults.buyerVerafied = response?.buyer_identity_status ?? ""
                     UserDefaults.sellerVerafied = response?.seller_identity_status ?? ""
                     UserDefaults.sellerAddress = response?.has_shipping_address ?? false
                     UserDefaults.hasCardAdded = response?.has_card_added ?? false
                     UserDefaults.userEmail = response?.email ?? ""
+                    UserDefaults.default_card = response?.default_card ?? DefaultCardModel()
+                    UserDefaults.default_shipping_address = response?.default_shipping_address ?? AddressModel()
+                    UserDefaults.couponCount = "\(response?.coupon_count ?? 0)"
+                    
                 }else{
                     
                 }

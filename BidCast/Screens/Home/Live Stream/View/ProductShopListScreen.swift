@@ -100,7 +100,7 @@ struct ProductListItem: View {
 
             // Details
             VStack(alignment: .leading, spacing: 6) {
-                Text(product.title ?? "Product")
+                Text(product.title?.capitalizingFirstLetter() ?? "Product")
                     .font(.custom("Poppins-SemiBold", size: 16))
                     .lineLimit(2)
 

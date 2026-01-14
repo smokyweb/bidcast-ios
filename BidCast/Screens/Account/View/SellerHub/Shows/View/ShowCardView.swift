@@ -13,6 +13,7 @@ struct ShowCardView: View {
     let show: HomeModel?
     var onTap : () -> () = { }
     var onTapMenu : () -> () = { }
+    @State var isPastShows : Bool = false
     var body: some View {
         HStack {
             
@@ -27,30 +28,32 @@ struct ShowCardView: View {
                 Text(show?.date ?? "")
                     .font(.custom(poppinsSemiBold, size: 13.0))
                     .foregroundColor(.gray)
-
+                
                 HStack {
                     Label(formatTo12HourTime(show?.time ?? ""), systemImage: "clock")
                         .font(.custom(poppinsSemiBold, size: 13.0))
-//                    Label("\(show?.viewer_count ?? 0) RSVPs", systemImage: "person.3")
-//                        .font(.custom(poppinsSemiBold, size: 13.0))
+                    //                    Label("\(show?.viewer_count ?? 0) RSVPs", systemImage: "person.3")
+                    //                        .font(.custom(poppinsSemiBold, size: 13.0))
                 }
             }
             Spacer()
-            Menu {
-                Button("Edit") {
-                    print("Edit tapped")
-                    onTapMenu()
+            if !isPastShows{
+                Menu {
+                    Button("Edit") {
+                        print("Edit tapped")
+                        onTapMenu()
+                    }
+                    
+                } label: {
+                    Image(systemName: "ellipsis")
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundColor(.gray)
+                        .padding(.top, 8)
+                        .frame(width: 32, height: 32)
+                        .background(Color(.systemBackground))
+                        .clipShape(Circle())
+                        .rotationEffect(.degrees(90))
                 }
-
-            } label: {
-                Image(systemName: "ellipsis")
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(.gray)
-                    .padding(.top, 8)
-                    .frame(width: 32, height: 32)
-                    .background(Color(.systemBackground))
-                    .clipShape(Circle())
-                    .rotationEffect(.degrees(90))
             }
         }
         .padding()
@@ -61,6 +64,7 @@ struct ShowCardView: View {
         .onTapGesture {
             onTap()
         }
+        
     }
 }
 

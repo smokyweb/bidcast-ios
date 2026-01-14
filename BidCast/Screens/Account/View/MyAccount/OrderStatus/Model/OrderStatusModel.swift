@@ -18,6 +18,7 @@ struct ProductPurchaseModel: Codable {
     var total: String?
     var tax_percent: String?
     var sub_total: String?
+    var discount_amount : String?
 }
 
 // MARK: - ProductPurchaseDetail
