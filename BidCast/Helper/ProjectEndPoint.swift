@@ -28,8 +28,6 @@ enum APIEndPoint{
     case auctionType
     case logout
     case sellerHubInfo
-//    case getInventory(param : InventoryRequest)
-    
     case getLesson
     case getSellingTips
     case howToSell
@@ -82,7 +80,6 @@ enum APIEndPoint{
     case promo(param : PromoCodeRequest)
     case getReferralCode
 
-//    case storeScheduleShow(param : StoreScheduleShowRequest)
     case storeScheduleShow
     case updateScheduleShow
     case addCard(param:AddCardRequest)
@@ -107,7 +104,6 @@ enum APIEndPoint{
     case updateProfile(param:UpdateProfileRequest)
     case storeBid(param:StoreBidRequest)
     case sellerStatus
-//    case setDefaultCard(param:CardDefaultRequest)
     case getState
     case uploadProductImage
     case deleteProduct(param : DeleteProduct)
@@ -116,87 +112,17 @@ enum APIEndPoint{
     case getMailClass
     case getPromoteShow
     case getLiveSeller
-    
-//    case getAgoraToken(param : AgoraTokenRequest)
 
     case getAgoraToken
-    //MARK: OLD
-    
-    case SubCompany(param : SubCompanyParam)
-    case SubCompanyUpdate(param : SubCompanyParamUpdate)
-    
-    case uploadFile
     case getProfile
     case getCategories
     
     case get_news
-    
-    case getBusiness
-    
-    case Business (param : BusinessModelParam)
-    
     case createUserProfile (param: CreateUserProfSection)
-    case getJob (param: GetJobParameter)
-    case upsertJob (param: JobUpsertParamter)
-    case jobSwipe (param: JobSwipePatamter)
-    case createWorkHistory (param: CreateWorkHistory)
-    case getJobProfile
-    case getEmployeeList(param: SearchRequest)
-    case getEmployeeListByJobId(param: SearchRequestByJobId)
-    case welcome
-    case getEmployeeByJobId(param: EmployeeJobIdRequest)
-    case getQualification
     case termsOfService
-    case searchJob(param: SearchRequest)
-    case getLanguage
-    case performActionJob(param: PerformJobActionRequest)
-    case setEmployerAvailability(param: EmployerAvailabilityRequest)
-    case employerSchedule(param: EmployerScheduleRequest)
-    case getEmployerAvailability
-    case getSalaryType
-    case getScheduledInterview(param: String)
-    case getSubCompanyDetails(param: String)
-    case deleteSubCompanyUser(param: DeleteCompanyUserParam)
-    case UpdateSubCompanyUser(param: SubCompanyUserParam)
-    
-    case getSubCompany(param : String)
-    
-    case saveJob(param: SaveJobRequest)
-    case getSavedJob
-    case getSubCompanyUser
-    
-    case applyJob(param: SaveJobRequest)
-    case getMatches(param: String?)
-    case getMatchesCandidates(page: Int, job_id:Int)
-    
-    case scheduleInterviewForMatchedJob(param: ScheduleInterviewRequest)
-    case getCompanyDetailsJob(param: String)
-    case getSpecificJobDetail(param: String)
-    case getEmployeeDetail(id: String, job: String)
+//
     case getNotification(param: String)
-    case updateNotification(param: ReadNotification)
-    case getNotificationCount
-    case getEmploymentLocationType
-    case cheduledInterviewlList
-    case deleteJob(param: String)
     case deleteAccount(param:DeleteParam)
-    case combineData
-    case checkLinkedIn(param: String)
-    case rescheduleInterviewStatus
-    case getInterviewDetail(param: String)
-    case updateInterviewStatus(statusId: String, matchId: String)
-    case rejectJob(param: SaveJobRequest)
-    case linkLinkedIn(param: LinkedInLinkModel)
-    case CreateEvent(param: CreateEventParam)
-    case linkedInConnect(param: LinkedInURL)
-    case storeLinkedIn(param: LinkedInUserDetail)
-    case upsertCompany(param: CreateCompanyRequest)
-    case getProductEmployer
-    case getProductCandidate
-    case getCompanyName
-    case filterSearch(param: FilterRequestModal)
-    case filterJobSearch(param: FilterRequestModal)
-    case removeSavedJob(param: RemoveSaveJobRequest)
     case sendChatNotification(param: SendChatNotification)
     case getTipsData
     case sendTipAmount(param: TipAmountRequest)
@@ -219,9 +145,6 @@ enum APIEndPoint{
     case saveProduct(param:MakeOfferListRequest)
     case getCoupon
     case updateVacation(param:vacationRequest)
-//    case getUserProduct(param : UserProductRequest)
-//    case getItemList(param: ItemListRequest)
-    
 }
 
 extension APIEndPoint: EndPointType {
@@ -367,7 +290,7 @@ extension APIEndPoint: EndPointType {
         case .getNotificationListing(param:let param):
             return "notification/listing?page=\(param.page)"
         case .getMyScheduleShow(param:let param):
-            return "get-my-schedule-show?=\(param.type)&page=\(param.page)"
+            return "get-my-schedule-show?=\(param.type ?? "")&page=\(param.page)"
         case .productOrderListing:
             return "get-my-orders"
         case .productPurchaseDetail:
@@ -423,8 +346,6 @@ extension APIEndPoint: EndPointType {
             return "bid/store"
         case .sellerStatus:
             return "seller-status"
-//        case .setDefaultCard:
-//            return "set-default-card"
         case .getState:
             return "get-states"
         case .uploadProductImage:
@@ -463,142 +384,27 @@ extension APIEndPoint: EndPointType {
             return "get-subcategories"
         case .storeFavCategories:
             return "user/favorite"
-        case .SubCompany:
-            return "assign-user-access"
-        case .SubCompanyUpdate:
-            return "assign-user-access"
-        case .uploadFile:
-            return "file/upload"
-            
-        case .Business:
-            return "upload-employer-doc"
-            
-        case .getBusiness:
-            return "get-employer-business-doc"
-        case .getEmployerAvailability:
-            return "get-employer-availability"
-            
+       
+      
         case .get_news:
             return "get_news"
             
         case .createUserProfile:
             return "update_user_profile"
-        case .getJob(let param):
-            return "get_jobs?type=\(param.type)&search=\(param.search)&page=\(param.currentPage)"
-        case .upsertJob:
-            return "upsert_job"
-        case .jobSwipe:
-            return "swipe_job"
-        case .createWorkHistory:
-            return "create-work-history"
-        case .getJobProfile:
-            return "get-jobProfiles-list"
-        case .getEmployeeList(let param):
-            return "get_employees?search=\(param.search)&page=\(param.page)"
-        case .getEmployeeListByJobId(let param):
-            return "search-employee?search=\(param.search)&job_id=\(param.job_id)"
-        case .welcome:
-            return "video-link/get-videos"
-        case .getEmployeeByJobId(let param):
-            return "get-employee-list?job_id=\(param.job_id)&status=\(param.status)"
-        case .getQualification:
-            return "get-qualification-list"
+       
         case .termsOfService:
             return "terms-of-service"
-        case .searchJob(let param):
-            return "get_jobs?type=\(param.type)&search=\(param.search)&page=\(param.page)"
-        case .getLanguage:
-            return "get-languages-list"
-        case .performActionJob:
-            return "perform-action"
-        case .setEmployerAvailability:
-            return "set-employer-availability"
-        case .employerSchedule:
-            return "employer-schedule"
-        case .getSalaryType:
-            return "get-salary-type"
-        case .getScheduledInterview(let param):
-            return "scheduled-interview-list?page=\(param)"
-        case .getSubCompanyDetails(let param):
-            return "get-assign-user?page=\(param)"
-        case .deleteSubCompanyUser:
-            return "update-user-status"
-        case .UpdateSubCompanyUser:
-            return "update-user-profile"
-        case .getSubCompany(let param):
-            return "sub-company-details?user_id=\(param)"
-        case .saveJob:
-            return "save-job"
-        case .getSavedJob:
-            return "get-saved-job"
-        case .getSubCompanyUser:
-            return "sub-company-details"
-        case .applyJob:
-            return "apply-job"
-        case .getMatches(let param):
-            return param == "0" ? "get-matches" : "get-matches?page=\(param ?? "1")"
-        case .scheduleInterviewForMatchedJob:
-            return "schedule-interview"
-        case .getCompanyDetailsJob(let param):
-            return "get-company-job/\(param)"
-        case .getSpecificJobDetail(let param):
-            return "get-job-details/\(param)"
+       
         case .saveDeviceDetail:
             return "upsert-device-details"
-        case .getEmployeeDetail(let id, let jobId):
-            return "get_user_details?id=\(id)&job_id=\(jobId)"
-        case .getMatchesCandidates(let page, let job_id):
-            return "get-matches?page=\(page)&job_id=\(job_id)"
+        
         case .getNotification(let param):
             return "get-notification?page=\(param)"
-        case .updateNotification:
-            return "update-notification-status"
-        case .getNotificationCount:
-            return "count-unread-notification"
-        case .getEmploymentLocationType:
-            return "employment-location-type"
-        case .cheduledInterviewlList:
-            return "cheduled-interview-list"
+        
         case .deleteAccount:
             return "delete-account"
-        case .deleteJob(let param):
-            return "delete-job/\(param)"
-        case .combineData:
-            return "merged-details"
-        case .checkLinkedIn(let param):
-            return "checkLinkedInAccount?code=\(param)"
-        case .rescheduleInterviewStatus:
-            return "update-status-Employee"
-        case .getInterviewDetail(let param):
-            return "get-interview-detail-by-id/\(param)"
-        case .updateInterviewStatus(let statusId, let matchId):
-            return "update-interview-status?status=\(statusId)&match_id=\(matchId)"
-        case .rejectJob(let param):
-            return "reject-job?job_id=\(param.job_id)"
-        case .linkLinkedIn:
-            return "link-profile-linkedIn"
-        case .CreateEvent:
-            return "store-access-token"
-        case .linkedInConnect:
-            return "get-user-details-linkedIn"
-        case .storeLinkedIn:
-            return "store-linkedIn-details"
-        case .upsertCompany:
-            return "upsert-company"
-        case .getCompanyName:
-            return "get-company-name"
-        case .getProductEmployer:
-            return "get-subscription-plans"
-        case .getProductCandidate:
-            return "get-product-list"
-        case .filterSearch:
-            return "search"
-        case .filterJobSearch(let param):
-            return "get_jobs?category=\(param.category)&job_title=\(param.job_title)&salary=\(param.salary)"
-        case .removeSavedJob:
-            return "save-job"
-            
-            
+       
+       
         case .sendChatNotification:
             return "send-chat-notification"
         case .getTipsData:
@@ -882,140 +688,26 @@ extension APIEndPoint: EndPointType {
             return .post
         case .storeFavCategories:
             return .post
-            
-        case .SubCompany:
-            return .post
-        case .SubCompanyUpdate:
-            return .post
-        case .uploadFile:
-            return .post
-            
-        case .getBusiness:
-            return .get
-        case .getEmployerAvailability:
-            return .get
-            
         case .createUserProfile:
             return .post
-        case .getJob:
-            return .get
-        case .upsertJob:
-            return .post
-        case .jobSwipe:
-            return .post
+        
+       
         case .get_news:
             return .get
-        case .createWorkHistory:
-            return .post
-        case .getJobProfile:
-            return .get
-        case .welcome:
-            return .get
-        case .getEmployeeList:
-            return .get
-        case .getEmployeeListByJobId:
-            return .get
-        case .getEmployeeByJobId:
-            return .get
-        case .getQualification:
-            return .get
+        
         case .termsOfService:
             return .get
-        case .searchJob:
-            return .get
-        case .getLanguage:
-            return .get
-        case .performActionJob:
-            return .post
-        case .setEmployerAvailability:
-            return .post
-        case .getMatchesCandidates:
-            return .get
-        case .employerSchedule:
-            return .post
-        case .getSalaryType:
-            return .get
-        case .getScheduledInterview:
-            return .get
-        case .getSubCompanyDetails:
-            return .get
-        case .getSubCompany:
-            return .get
-        case .saveJob:
-            return .post
-        case .getSavedJob:
-            return .get
-        case .getSubCompanyUser:
-            return .get
-        case .applyJob:
-            return .post
-        case .getMatches:
-            return .get
-        case .scheduleInterviewForMatchedJob:
-            return .post
-        case .getCompanyDetailsJob:
-            return .get
-        case .getSpecificJobDetail:
-            return .get
+        
         case .saveDeviceDetail:
             return .post
-        case .getEmployeeDetail:
-            return .get
+       
         case .getNotification:
             return .get
-        case .updateNotification:
-            return .post
-        case .getNotificationCount:
-            return .get
-        case .getEmploymentLocationType:
-            return .get
-        case .cheduledInterviewlList:
-            return .get
+       
         case .deleteAccount:
             return .post
-        case .deleteSubCompanyUser:
-            return .post
-        case .UpdateSubCompanyUser:
-            return .post
-        case .deleteJob:
-            return .post
-        case .combineData:
-            return .get
-        case .checkLinkedIn:
-            return .get
-        case .rescheduleInterviewStatus:
-            return .post
-        case .getInterviewDetail:
-            return .get
-        case .updateInterviewStatus:
-            return .get
-        case .rejectJob:
-            return .post
-        case .linkLinkedIn:
-            return .post
-        case .CreateEvent:
-            return .post
-        case .linkedInConnect:
-            return .post
-        case .storeLinkedIn:
-            return .post
-        case .upsertCompany:
-            return .post
-            
-        case .getCompanyName:
-            return .post
-        case .getProductEmployer:
-            return .get
-        case .getProductCandidate:
-            return .get
-        case .filterSearch:
-            return .post
-        case .filterJobSearch:
-            return .get
-        case .removeSavedJob:
-            return .post
-        case .Business:
-            return .post
+      
+      
         case .getWalletInfo:
             return .get
         case .getPayOutHistory:
@@ -1087,7 +779,7 @@ extension APIEndPoint: EndPointType {
             return .post
         case .getCoupon:
             return .get
-        case .updateVacation(param: let param):
+        case .updateVacation:
             return .post
         }
     }
@@ -1099,9 +791,7 @@ extension APIEndPoint: EndPointType {
             return param
         case .singUp(let param):
             return param
-            
-        case .welcome:
-            return nil
+      
         case .resetPassword(let param):
             return param
         case .changePassword(let param):
@@ -1291,143 +981,29 @@ extension APIEndPoint: EndPointType {
             return nil
         case .getCategories:
             return nil
-        case .getSubCategories(let param):
+        case .getSubCategories(_):
             return nil
-        case .storeFavCategories(let param):
+        case .storeFavCategories(_):
             return nil
-        case .SubCompany(let param):
-            return param
-        case .SubCompanyUpdate(let param):
-            return param
-        case .uploadFile:
-            return nil
-            
-        case .Business(let param):
-            return param
-            
-        case .getBusiness:
-            return nil
-        case .getEmployerAvailability:
-            return nil
-            
+        
         case .createUserProfile(let param):
             return param
-        case .getJob:
-            return nil
-        case .upsertJob(let param):
-            return param
-        case .jobSwipe(let param):
-            return param
+       
         case .get_news:
             return nil
-        case .createWorkHistory(let param):
-            return param
-        case .getJobProfile:
-            return nil
-            
-        case .getEmployeeList:
-            return nil
-        case .getEmployeeListByJobId:
-            return nil
-        case .getEmployeeByJobId:
-            return nil
-        case .getQualification:
-            return nil
+       
         case .termsOfService:
             return nil
-        case .searchJob:
-            return nil
-        case .getLanguage:
-            return nil
-        case .performActionJob(let param):
-            return param
-        case .setEmployerAvailability(let param):
-            return param
-        case .employerSchedule(let param):
-            return param
-        case .getSalaryType:
-            return nil
-        case .getScheduledInterview:
-            return nil
-        case .getSubCompanyDetails:
-            return nil
-        case .getSubCompany:
-            return nil
-        case .saveJob(let param):
-            return param
-        case .getSavedJob:
-            return nil
-        case .getSubCompanyUser:
-            return nil
-        case .applyJob(let param):
-            return param
-        case .getMatches:
-            return nil
-        case .scheduleInterviewForMatchedJob(let param):
-            return param
-        case .getCompanyDetailsJob:
-            return nil
-        case .getSpecificJobDetail:
-            return nil
+        
         case .saveDeviceDetail(let param):
             return param
-        case .getEmployeeDetail:
-            return nil
-        case .getMatchesCandidates:
-            return nil
+       
         case .getNotification:
             return  nil
-        case .updateNotification(let param):
-            return param
-        case .getNotificationCount:
-            return nil
-        case .getEmploymentLocationType:
-            return nil
-        case .cheduledInterviewlList:
-            return nil
+       
         case .deleteAccount(let param):
             return param
-        case .deleteSubCompanyUser(let param):
-            return param
-        case .UpdateSubCompanyUser(let param):
-            return param
-        case .deleteJob:
-            return nil
-        case .combineData:
-            return nil
-        case .checkLinkedIn:
-            return nil
-        case .rescheduleInterviewStatus:
-            return nil
-        case .getInterviewDetail:
-            return nil
-        case .updateInterviewStatus:
-            return nil
-        case .rejectJob:
-            return nil
-        case .linkLinkedIn(let param):
-            return param
-        case .CreateEvent(let param):
-            return param
-        case .linkedInConnect(let param):
-            return param
-        case .storeLinkedIn(let param):
-            return param
-        case .upsertCompany(let param):
-            return param
-            
-        case .getCompanyName:
-            return nil
-        case .getProductEmployer:
-            return nil
-        case .getProductCandidate:
-            return nil
-        case .filterSearch(let param):
-            return param
-        case .filterJobSearch:
-            return nil
-        case .removeSavedJob(let param):
-            return param
+      
         case .getWalletInfo:
             return nil
         case .getPayOutHistory:
@@ -1461,8 +1037,6 @@ extension APIEndPoint: EndPointType {
             return param
         case .getLiveSeller:
             return nil
-//        case .getAgoraToken(let param):
-//            return param
         case .getAgoraToken:
             return nil
         case .getSellerInfo:
@@ -1483,17 +1057,15 @@ extension APIEndPoint: EndPointType {
             return param
             
         //MARK: V1
-//        case .getUserProduct(param: let param):
-//            return param
         case .getProduct(param: let param):
             return param
 //        case .getItemList(param: let param):
 //            return param
-        case .getPromoteToolDetails(param: let param):
+        case .getPromoteToolDetails:
             return nil
         case .checkValidShowDate(param: let param):
             return param
-        case .getScheduleShow(param: let param):
+        case .getScheduleShow:
             return nil
         case .orderReceipt(param: let param):
             return param
@@ -1508,9 +1080,9 @@ extension APIEndPoint: EndPointType {
     
     var jsonBody: [String : Any]? {
         switch self {
-        case .login(param: let param):
+        case .login:
             return nil
-        case .singUp(param: let param):
+        case .singUp:
             return nil
         case .aboutUs:
             return nil
@@ -1520,15 +1092,15 @@ extension APIEndPoint: EndPointType {
             return nil
         case .promoteTool:
             return nil
-        case .contact(param: let param):
+        case .contact:
             return nil
-        case .verifyOTP(param: let param):
+        case .verifyOTP:
             return nil
-        case .resetPassword(param: let param):
+        case .resetPassword:
             return nil
-        case .changePassword(param: let param):
+        case .changePassword:
             return nil
-        case .forgotPassword(param: let param):
+        case .forgotPassword:
             return nil
         case .privacyPolicy:
             return nil
@@ -1536,7 +1108,7 @@ extension APIEndPoint: EndPointType {
             return nil
         case .faq:
             return nil
-        case .category(param: let param):
+        case .category:
             return nil
         case .auctionType:
             return nil
@@ -1556,17 +1128,17 @@ extension APIEndPoint: EndPointType {
             return nil
         case .letsPrepare:
             return nil
-        case .getAllTips(param: let param):
+        case .getAllTips:
             return nil
-        case .storeProduct(productId: let proId, param: let param):
+        case .storeProduct(productId: _, param: let param):
             return param
-        case .storeAddress(param: let param):
+        case .storeAddress:
             return nil
         case .getAddress:
             return nil
         case .getMyPurchasedOrder:
             return nil
-        case .setDefaultAddress(param: let param):
+        case .setDefaultAddress:
             return nil
         case .getPreference:
             return nil
@@ -1576,7 +1148,7 @@ extension APIEndPoint: EndPointType {
             return nil
         case .deleteAddress:
             return nil
-        case .getLiveShows(param: let param):
+        case .getLiveShows:
             return nil
         case .getProfileById:
             return nil
@@ -1605,35 +1177,35 @@ extension APIEndPoint: EndPointType {
             return nil
         case .notificationListing:
             return nil
-        case .deleteNotification(param: let param):
+        case .deleteNotification:
             return nil
-        case .getMyScheduleShow(param: let param):
+        case .getMyScheduleShow:
             return nil
-        case .getTotalRating(param: let param):
+        case .getTotalRating:
             return nil
-        case .addRating(param: let param):
+        case .addRating:
             return nil
-        case .productOrderListing(param: let param):
+        case .productOrderListing:
             return nil
-        case .productPurchaseDetail(param: let param):
+        case .productPurchaseDetail:
             return nil
-        case .productOrder(param: let param):
+        case .productOrder:
             return nil
-        case .productOrderDetails(param: let param):
+        case .productOrderDetails:
             return nil
-        case .makeOffer(param: let param):
+        case .makeOffer:
             return nil
-        case .makeOfferList(param: let param):
+        case .makeOfferList:
             return nil
-        case .offerUpdateStatus(param: let param):
+        case .offerUpdateStatus:
             return nil
-        case .searching(param: let param):
+        case .searching:
             return nil
-        case .promo(param: let param):
+        case .promo:
             return nil
         case .getReferralCode:
             return nil
-        case .getPurchasedOrderDetails(param: let param):
+        case .getPurchasedOrderDetails:
             return nil
 //        case .storeScheduleShow(param: let param):
 //            return nil
@@ -1654,16 +1226,16 @@ extension APIEndPoint: EndPointType {
         case .getTransactionList:
             return nil
     
-        case .getScheduledShow(param: let param):
+        case .getScheduledShow:
             return nil
-        case .UpdateShowStatus(param: let param):
+        case .UpdateShowStatus:
             return nil
-        case .getBidList(param: let param):
+        case .getBidList:
             return nil
        
-        case .getNotificationListing(param: let param):
+        case .getNotificationListing:
             return nil
-        case .saveDeviceDetail(param: let param):
+        case .saveDeviceDetail:
             return nil
         case .getWalletInfo:
             return nil
@@ -1673,11 +1245,11 @@ extension APIEndPoint: EndPointType {
             return nil
         case .checkKYC:
             return nil
-        case .fundTransfer(param: let param):
+        case .fundTransfer:
             return nil
         case .getprofile:
             return nil
-        case .updateProfile(param: let param):
+        case .updateProfile:
             return nil
         case .storeBid:
             return nil
@@ -1689,12 +1261,7 @@ extension APIEndPoint: EndPointType {
             return nil
         case .uploadProductImage:
             return nil
-        case .SubCompany:
-            return nil
-        case .SubCompanyUpdate:
-            return nil
-        case .uploadFile:
-            return nil
+       
         case .getProfile:
             return nil
         case .getCategories:
@@ -1705,126 +1272,19 @@ extension APIEndPoint: EndPointType {
             return param
         case .get_news:
             return nil
-        case .getBusiness:
-            return nil
-        case .Business:
-            return nil
+       
         case .createUserProfile:
             return nil
-        case .getJob:
-            return nil
-        case .upsertJob:
-            return nil
-        case .jobSwipe:
-            return nil
-        case .createWorkHistory:
-            return nil
-        case .getJobProfile:
-            return nil
-        case .getEmployeeList:
-            return nil
-        case .getEmployeeListByJobId:
-            return nil
-        case .welcome:
-            return nil
-        case .getEmployeeByJobId:
-            return nil
-        case .getQualification:
-            return nil
+        
         case .termsOfService:
             return nil
-        case .searchJob:
-            return nil
-        case .getLanguage:
-            return nil
-        case .performActionJob:
-            return nil
-        case .setEmployerAvailability:
-            return nil
-        case .employerSchedule:
-            return nil
-        case .getEmployerAvailability:
-            return nil
-        case .getSalaryType:
-            return nil
-        case .getScheduledInterview:
-            return nil
-        case .getSubCompanyDetails:
-            return nil
-        case .deleteSubCompanyUser:
-            return nil
-        case .UpdateSubCompanyUser:
-            return nil
-        case .getSubCompany:
-            return nil
-        case .saveJob:
-            return nil
-        case .getSavedJob:
-            return nil
-        case .getSubCompanyUser:
-            return nil
-        case .applyJob(param: _):
-            return nil
-        case .getMatches(param: _):
-            return nil
-        case .getMatchesCandidates:
-            return nil
-        case .scheduleInterviewForMatchedJob:
-            return nil
-        case .getCompanyDetailsJob:
-            return nil
-        case .getSpecificJobDetail:
-            return nil
-        case .getEmployeeDetail:
-            return nil
+        
         case .getNotification:
             return nil
-        case .updateNotification:
-            return nil
-        case .getNotificationCount:
-            return nil
-        case .getEmploymentLocationType:
-            return nil
-        case .cheduledInterviewlList:
-            return nil
-        case .deleteJob:
-            return nil
+       
         case .deleteAccount:
             return nil
-        case .combineData:
-            return nil
-        case .checkLinkedIn:
-            return nil
-        case .rescheduleInterviewStatus:
-            return nil
-        case .getInterviewDetail:
-            return nil
-        case .updateInterviewStatus:
-            return nil
-        case .rejectJob:
-            return nil
-        case .linkLinkedIn:
-            return nil
-        case .CreateEvent:
-            return nil
-        case .linkedInConnect:
-            return nil
-        case .storeLinkedIn:
-            return nil
-        case .upsertCompany:
-            return nil
-        case .getProductEmployer:
-            return nil
-        case .getProductCandidate:
-            return nil
-        case .getCompanyName:
-            return nil
-        case .filterSearch:
-            return nil
-        case .filterJobSearch:
-            return nil
-        case .removeSavedJob:
-            return nil
+        
         case .sendChatNotification:
             return nil
         case .getTipsData:
@@ -1874,23 +1334,23 @@ extension APIEndPoint: EndPointType {
             //MARK: - V1
 //        case .getUserProduct:
 //            return nil
-        case .getProduct(param: let param):
+        case .getProduct:
             return nil
 //        case .getItemList(param: let param):
 //            return nil
-        case .getPromoteToolDetails(param: let param):
+        case .getPromoteToolDetails:
             return nil
-        case .checkValidShowDate(param: let param):
+        case .checkValidShowDate:
             return nil
-        case .getScheduleShow(param: let param):
+        case .getScheduleShow:
             return nil
-        case .orderReceipt(param: let param):
+        case .orderReceipt:
             return nil
-        case .saveProduct(param: let param):
+        case .saveProduct:
             return nil
         case .getCoupon:
             return nil
-        case .updateVacation(param: let param):
+        case .updateVacation:
             return nil
         }
     }

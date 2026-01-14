@@ -31,32 +31,32 @@ final class ContactUsViewModel: ObservableObject {
     }
 
     // MARK: - Get Business Details
-    func getBusinessDetails() async {
-        do {
-            self.requestType = "getBusinessDetails"
-            let response: BusinessModel = try await APIManager.shared.request(
-                type: APIEndPoint.getBusiness,
-                header: true
-            )
-            self.businessModel = response
-        } catch {
-            handle(error: error)
-        }
-    }
-
-    // MARK: - Update/Create Business
-    func updateBusiness(parameters: BusinessModelParam) async {
-        do {
-            self.requestType = "UpdateBusinessDetails"
-            let response: UpdateBusinessModel = try await APIManager.shared.request(
-                type: APIEndPoint.Business(param: parameters),
-                header: true
-            )
-            self.updateBusinessModel = response
-        } catch {
-            handle(error: error)
-        }
-    }
+//    func getBusinessDetails() async {
+//        do {
+//            self.requestType = "getBusinessDetails"
+//            let response: BusinessModel = try await APIManager.shared.request(
+//                type: APIEndPoint.getBusiness,
+//                header: true
+//            )
+//            self.businessModel = response
+//        } catch {
+//            handle(error: error)
+//        }
+//    }
+//
+//    // MARK: - Update/Create Business
+//    func updateBusiness(parameters: BusinessModelParam) async {
+//        do {
+//            self.requestType = "UpdateBusinessDetails"
+//            let response: UpdateBusinessModel = try await APIManager.shared.request(
+//                type: APIEndPoint.Business(param: parameters),
+//                header: true
+//            )
+//            self.updateBusinessModel = response
+//        } catch {
+//            handle(error: error)
+//        }
+//    }
 
     // MARK: - Centralized Error Handling
     private func handle(error: Error) {
