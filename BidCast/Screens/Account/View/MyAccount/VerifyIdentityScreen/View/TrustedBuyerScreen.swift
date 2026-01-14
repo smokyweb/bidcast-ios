@@ -142,7 +142,7 @@ struct TrustedBuyerScreen: View {
                         }
                     }
                     .padding(16)
-                    .background(Color.bg.opacity(0.4))
+                    .background(Color.white.opacity(0.4))
                     .cornerRadius(12)
                     .padding(.horizontal, 12)
 
@@ -157,8 +157,9 @@ struct TrustedBuyerScreen: View {
                         requirementItem("All corners visible")
                         requirementItem("Verification usually takes 3 business days")
                     }
+                    .foregroundColor(.black)   // 👈 makes all text black
                     .padding(16)
-                    .background(Color.bg.opacity(0.4))
+                    .background(Color.white.opacity(0.4))
                     .cornerRadius(12)
                     .padding(.horizontal, 12)
 
@@ -170,7 +171,7 @@ struct TrustedBuyerScreen: View {
                             .padding()
                             .background(isPhotoSelected ? Color.defaultTheme : Color.gray.opacity(0.4))
                             .foregroundColor(.white)
-                            .cornerRadius(12)
+                            .cornerRadius(32)
                     }
                     .disabled(!isPhotoSelected)
                     .padding(.horizontal, 12)
@@ -178,6 +179,8 @@ struct TrustedBuyerScreen: View {
                 }
                 .frame(maxWidth: .infinity)
             }
+            .background(Color.backGround)
+
 
             CusNavLink(doNavigate: $navigateToProfile, destination: AccountScreen())
         }
@@ -288,10 +291,10 @@ struct TrustedBuyerScreen: View {
     func requirementItem(_ text: String) -> some View {
         HStack(spacing: 8) {
             Image(systemName: "checkmark.circle.fill")
-                .foregroundColor(.darkGreen)
+                .foregroundColor(.defaultThemeLight)
             Text(text)
                 .font(.custom(poppinsRegular, size: 12))
-                .foregroundColor(.defaultTheme)
+                .foregroundColor(.black)
             
             Spacer()
         }
