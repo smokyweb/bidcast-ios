@@ -102,7 +102,7 @@ struct ProductDetailView: View {
                 
                 // MARK: - Send Button
                 if sellerInfo?.seller_details?.id != UserDefaults.userId{
-                    VStack(spacing:12){
+                    HStack(spacing:0){
                         if viewModel.productDetailsResponseDict?.data.acceptOffers ?? false{
                             PrimaryButton(title: "Make Offer",isOutLine: false,onButtonClick: {
                                 makeOfferSheet = true
@@ -112,6 +112,7 @@ struct ProductDetailView: View {
                         PrimaryButton(title: "Buy Now",onButtonClick: {
                             showBuyNowSheet = true
                         })
+                        
                     }
                     .padding(.horizontal, 16)
                     .padding(.top, 8)
@@ -160,8 +161,20 @@ struct ProductDetailView: View {
             
         }
         .sheet(isPresented: $makeOfferSheet)   {
-            MakeOfferBottomSheet(isPresented: $makeOfferSheet, listedPrice: "", offerOptions: [0.0], onSendOffer: {_ in 
-                
+            MakeOfferBottomSheet(isPresented: $makeOfferSheet, listedPrice: "\(productPrice)", offerOptions: offerArr, onSendOffer: { text in
+                let text = "\(text ?? 0.0)"
+                Task{
+                   guard Reachability.isConnectedToNetwork() else {
+                        hudMsg = "No Internet Connection"
+                        showhud = true
+                        return
+                    }
+                    SVProgressHUD.show()
+                    let param = MakeOfferRequest(amount: text, product_id: productID)
+                    await viewModel.MakeOffer(param: param)
+                    await SVProgressHUD.dismiss()
+                    offerSuccess()
+                }
             })
         }
 
@@ -186,6 +199,16 @@ struct ProductDetailView: View {
         isNavigatingToChat = true
     }
     
+    func offerSuccess(){
+        let response = viewModel.offerResponse
+        if response?.status == "success"{
+            alertType = .sheetType(icon: .success, title: response?.status?.capitalized ?? "", message: response?.message?.capitalized ?? "", primaryBtnText: AppString.ok.localized, secondaryBtnText: "", sheetThemeColor: .defaultTheme)
+            withAnimation(.snappy) { showError = true }
+        }else{
+            alertType = .sheetType(icon: .alert, title: response?.status?.capitalized ?? "", message: response?.message?.capitalized ?? "", primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .defaultTheme)
+            withAnimation(.snappy) { showError = true }
+        }
+    }
     
     func handleSuccess(firstTime:Bool) {
         let response = viewModel.productDetailsResponseDict
@@ -207,6 +230,7 @@ struct ProductDetailView: View {
             isProductSaved = data?.product_save_status ?? false
 //            sellerInfo = data?.user ?? SellerUser()
             offerArr.removeAll()
+           
             if firstTime{
                 Task{
                     SVProgressHUD.show()

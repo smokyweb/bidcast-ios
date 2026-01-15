@@ -31,29 +31,18 @@ struct MakeOfferBottomSheet: View {
 
     var body: some View {
         VStack(spacing: 16) {
-            // Header
-            HStack {
-                Text("Make an Offer")
-                    .font(.headline)
-                Spacer()
-                Button {
-                    isPresented = false
-                } label: {
-                    Image(systemName: "xmark")
-                        .foregroundColor(.gray)
-                        .imageScale(.medium)
-                }
-            }
+            
+            PrimarySheetHeader(title: "Make an Offer", onClose: {
+                isPresented = false
+            })
+           
 
-            Divider()
-
-            // Listed Price
             HStack {
                 Text("Listed Price")
                     .font(.custom(poppinsSemiBold, size: 13.0))
-                    .foregroundColor(.gray)
+                    .foregroundColor(.black)
                 Spacer()
-                Text("$\(formattedListedPrice)")
+                Text(formattedListedPrice.toDouble?.compactCurrency() ?? "")
                     .font(.custom(poppinsSemiBold, size: 13.0))
             }
 

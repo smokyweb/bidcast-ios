@@ -45,7 +45,7 @@ struct PrimaryButton: View {
             }else{
                 RoundedRectangle(cornerRadius: cornerRadius)
                     .fill(Color(btnColor))
-                    .shadow(color: .gray, radius: 2, x: 0, y: 0)
+                    .shadow(color: .gray, radius: 0, x: 0, y: 0)
                     .overlay {
                         HStack{
                             if !imageName.isEmpty {
@@ -64,7 +64,7 @@ struct PrimaryButton: View {
                     }
             }
         })
-        .frame(width: width, height: height)
+        .frame(/*width: width, */height: height)
         .padding([.leading,.trailing],12)
     }
 }
