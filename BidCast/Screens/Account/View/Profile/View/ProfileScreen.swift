@@ -350,7 +350,7 @@ struct ProfileScreen: View {
             .sheet(
                 isPresented: $isTipAmountButtoClicked){
                     SendTipView(
-                        sellerId: "\(profileData.id ?? -1)" ?? "",
+                        sellerId: "\(profileData.id ?? -1)",
                         onClose: {
                             isTipAmountButtoClicked = false
                         },
@@ -830,7 +830,7 @@ struct ProfileActionsView: View {
             .padding()
             .background(.defaultThemeLight)
             .foregroundColor(.defaultTheme)
-            .cornerRadius(19)
+            .cornerRadius(32)
             
             Button("Message") {
                 self.onTapMessage()
@@ -841,7 +841,7 @@ struct ProfileActionsView: View {
             .padding()
             .background(.defaultTheme)
             .foregroundColor(.white)
-            .cornerRadius(19)
+            .cornerRadius(32)
             
             Button(action: {
                 // Handle action
@@ -850,7 +850,11 @@ struct ProfileActionsView: View {
                 Image(systemName: "dollarsign.circle")
                     .resizable()
                     .frame(width:32,height: 32)
-                    .foregroundColor(.black)
+                    .foregroundColor(.defaultTheme)
+                    .background(
+                        Circle()
+                            .fill(Color.defaultThemeLight)
+                    )
                     .font(.title2)
             }
         }

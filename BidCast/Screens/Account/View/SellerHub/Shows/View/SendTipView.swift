@@ -35,39 +35,39 @@ struct SendTipView: View {
     var onSendTip: () -> Void
     
     var body: some View {
-        VStack(spacing: 0) {
+        VStack(spacing: 12) {
+                Capsule()
+                    .frame(width: 40, height: 5)
+                    .foregroundColor(.gray.opacity(0.4))
+                    .padding(.top, 8)
+            HStack(alignment: .center) {
+                Text("Send a Tip 💸")
+                    .font(.custom(poppinsSemiBold, size: 16))
+                Spacer()
+                
+                Button(action: onClose) {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.custom(poppinsSemiBold, size: 24.0))
+                        .foregroundStyle(.black)
+                }
+            }
+            .padding(.horizontal,16)
+
             ScrollView(showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 24) {
-                    
-                    // MARK: - Header
-                    HStack(alignment: .center) {
-                        Text("Send a Tip 💸")
-                            .font(.custom(poppinsBold, size: 26))
-                            .foregroundColor(.primary)
-                        
-                        Spacer()
-                        
-                        Button(action: onClose) {
-                            Image(systemName: "xmark.circle.fill")
-                                .font(.custom(poppinsSemiBold, size: 24.0))
-                                .foregroundStyle(.black)
-                        }
-                    }
-                    .padding(.horizontal, 24)
-                    
+                VStack(alignment: .leading, spacing: 12) {
                     // MARK: - Subtitle
                     Text("Support your seller during the live show")
-                        .font(.custom(poppinsRegular, size: 15))
+                        .font(.custom(poppinsRegular, size: 13))
                         .foregroundColor(.gray)
-                        .padding(.horizontal, 24)
-                        .padding(.top, -16)
+                        .padding(.horizontal, 16)
+//                        .padding(.top,)
                     
                     // MARK: - Tip Options
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Quick Amount")
-                            .font(.custom(poppinsSemiBold, size: 14))
-                            .foregroundColor(.gray)
-                            .padding(.horizontal, 24)
+                            .font(.custom(poppinsSemiBold, size: 13))
+                            .foregroundColor(.black)
+                            .padding(.horizontal, 16)
                         
                         HStack(spacing: 12) {
                             ForEach(tipOptions, id: \.self) { amount in
@@ -83,46 +83,47 @@ struct SendTipView: View {
                                 )
                             }
                         }
-                        .padding(.horizontal, 24)
+                        .padding(.horizontal, 16)
                     }
                     
                     // MARK: - Custom Tip Field
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Custom Amount")
-                            .font(.custom(poppinsSemiBold, size: 14))
-                            .foregroundColor(.gray)
+                            .font(.custom(poppinsSemiBold, size: 13))
+                            .foregroundColor(.black)
                         
                         HStack(spacing: 12) {
                             Text("$")
-                                .font(.custom(poppinsSemiBold, size: 20))
-                                .foregroundColor(.primary)
+                                .font(.custom(poppinsSemiBold, size: 16))
+                                .foregroundColor(.black)
                             
                             TextField("Enter amount", text: $customAmount)
-                                .font(.custom(poppinsRegular, size: 16))
+                                .font(.custom(poppinsRegular, size: 11))
                                 .keyboardType(.decimalPad)
                                 .onChange(of: customAmount) { _ in
                                     selectedAmount = nil
                                 }
                         }
-                        .padding(.horizontal, 18)
+                        .padding(.horizontal, 16)
                         .padding(.vertical, 16)
                         .background(
                             RoundedRectangle(cornerRadius: 14)
-                                .fill(Color(.systemGray6))
+                                .fill(Color(.white))
+                                .shadow(color: .lightGray ,radius: 3)
                         )
                         .overlay(
                             RoundedRectangle(cornerRadius: 14)
                                 .stroke(customAmount.isEmpty ? Color.clear : Color.defaultThemeLight, lineWidth: 1.5)
                         )
                     }
-                    .padding(.horizontal, 24)
+                    .padding(.horizontal, 16)
                     
                     // MARK: - Payment Options
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Payment Method")
-                            .font(.custom(poppinsSemiBold, size: 14))
-                            .foregroundColor(.gray)
-                            .padding(.horizontal, 24)
+                            .font(.custom(poppinsSemiBold, size: 13))
+                            .foregroundColor(.black)
+                            .padding(.horizontal, 16)
                         
                         if !cardResponse.isEmpty {
                             VStack(spacing: 12) {
@@ -142,24 +143,25 @@ struct SendTipView: View {
                                     )
                                 }
                             }
-                            .padding(.horizontal, 24)
+                            .padding(.horizontal, 16)
                         } else {
                             HStack {
-                                Image(systemName: "creditcard")
-                                    .font(.system(size: 20))
-                                    .foregroundColor(.gray)
+//                                Image(systemName: "creditcard")
+//                                    .font(.system(size: 20))
+//                                    .foregroundColor(.gray)
                                 
                                 Text("No saved cards found")
-                                    .font(.custom(poppinsRegular, size: 15))
+                                    .font(.custom(poppinsRegular, size: 13))
                                     .foregroundColor(.gray)
                             }
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 32)
                             .background(
                                 RoundedRectangle(cornerRadius: 16)
-                                    .fill(Color(.systemGray6).opacity(0.5))
+                                    .fill(Color(.white))
+                                    .shadow(color: .lightGray ,radius: 3)
                             )
-                            .padding(.horizontal, 24)
+                            .padding(.horizontal, 16)
                         }
                     }
                     
@@ -181,7 +183,7 @@ struct SendTipView: View {
                                 .font(.system(size: 20, weight: .semibold))
                             
                             Text("Send Tip")
-                                .font(.custom(poppinsBold, size: 17))
+                                .font(.custom(poppinsSemiBold, size: 16))
                         }
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
@@ -198,13 +200,13 @@ struct SendTipView: View {
                         (selectedAmount == nil && customAmount.isEmpty) ||
                         selectedPaymentId == nil ? 0.5 : 1.0
                     )
-                    .padding(.horizontal, 24)
+                    .padding(.horizontal, 16)
                     .padding(.top, 8)
                     .padding(.bottom, 32)
                 }
             }
         }
-        .background(Color(.systemBackground))
+        .background(Color(.backGround))
         .onAppear {
             Task {
                 await performAPICalls(
@@ -305,11 +307,11 @@ struct TipOptionButton: View {
     var body: some View {
         Button(action: onTap) {
             Text("$\(Int(amount))")
-                .font(.custom(poppinsSemiBold, size: 18))
-                .foregroundColor(isSelected ? .white : .primary)
+                .font(.custom(poppinsSemiBold, size: 13))
+                .foregroundColor(isSelected ? .white : .defaultTheme)
                 .frame(maxWidth: .infinity)
-                .frame(height: 56)
-                .background(isSelected ? .defaultTheme : Color(.systemGray6) )
+                .frame(height: 48)
+                .background(isSelected ? .defaultTheme : Color(.defaultThemeLight) )
                 .cornerRadius(14)
                 .overlay(
                     RoundedRectangle(cornerRadius: 14)
@@ -343,7 +345,7 @@ struct ElegantPaymentOptionRow: View {
     }
 
     private var expiryText: String {
-        "\(cardDetails?.expMonth)/\(cardDetails?.expYear)" ?? "MM/YY"
+        "\(cardDetails?.expMonth ?? 0)/\(cardDetails?.expYear ?? 0)"
     }
 
     // MARK: - Body
@@ -364,7 +366,7 @@ struct ElegantPaymentOptionRow: View {
             .overlay(borderView)
             .shadow(
                 color: isSelected
-                    ? Color.defaultTheme.opacity(0.15)
+                    ? Color.defaultThemeLight
                     : Color.black.opacity(0.03),
                 radius: isSelected ? 8 : 4,
                 x: 0,
@@ -404,12 +406,12 @@ private extension ElegantPaymentOptionRow {
     var cardDetailsView: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(maskedNumber)
-                .font(.custom(poppinsSemiBold, size: 16))
-                .foregroundColor(.primary)
+                .font(.custom(poppinsSemiBold, size: 13))
+                .foregroundColor(.black)
 
             Text("Exp: \(expiryText)")
-                .font(.custom(poppinsRegular, size: 13))
-                .foregroundColor(.gray)
+                .font(.custom(poppinsRegular, size: 11))
+                .foregroundColor(.darkGray)
         }
     }
 
@@ -443,8 +445,8 @@ private extension ElegantPaymentOptionRow {
         RoundedRectangle(cornerRadius: 16)
             .fill(
                 isSelected
-                    ? Color.defaultTheme.opacity(0.06)
-                    : Color(.systemGray6)
+                    ? Color.defaultThemeLight
+                    : Color(.white)
             )
     }
 
@@ -453,7 +455,7 @@ private extension ElegantPaymentOptionRow {
         RoundedRectangle(cornerRadius: 16)
             .stroke(
                 isSelected
-                    ? Color.defaultTheme.opacity(0.4)
+                    ? Color.defaultTheme
                     : Color.clear,
                 lineWidth: 1.5
             )
