@@ -19,6 +19,7 @@ struct ReportSellerView: View {
     @State var hudMsg: String = ""
     
     var onReportSellerClicked: ((Int?, String?) -> Void) = {_, _ in}
+    var onClose: (() -> Void) = {}
     
     @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @State var showError: Bool = false
@@ -31,83 +32,92 @@ struct ReportSellerView: View {
     @State private var selectedCategoryId: Int? = nil
     
     var body: some View {
-        ScrollView(showsIndicators:false) {
-            VStack(alignment: .leading, spacing: 0) {
-                
-                // MARK: - Title
+        VStack(spacing: 12) {
+            Capsule()
+                .frame(width: 40, height: 5)
+                .foregroundColor(.gray.opacity(0.4))
+                .padding(.top, 8)
+            HStack(alignment: .center) {
                 Text("Report Seller")
-                    .font(.custom("Poppins-SemiBold", size: 20))
-                    .foregroundColor(.black)
-                    .padding(.top, 10)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 12)
+                    .font(.custom(poppinsSemiBold, size: 16))
+                Spacer()
                 
-                // MARK: - Reason Label
-                //            Text("Reason")
-                //                .font(.custom("Poppins-SemiBold", size: 15))
-                //                .foregroundColor(.black)
-                
-                DropDownSelection(
-                    options: $reasons, floatingLabel:"Reason",
-                    hint: "Select",
-                    selected: $selectedReason,
-                    anchor: .top,
-                    custFontName: robotoMedium,
-                    custFontSize:  14.0,
-                    custCategory : robotoRegular,
-                    custCategorySize : 13.0,
-                    onOptionSelected: { value in
-                        selectedReason = value
-                        selectedCategoryId = categoryList.filter({$0.name == value}).first?.id
-                    }
-                )
-                .background(.clear)
-                .padding(.vertical, 12)
-                .padding(.horizontal, 16)
-                
-                // MARK: - Tell us more
-//                Text("Tell us more")
-//                    .font(.custom("Poppins-SemiBold", size: 15))
-//                    .foregroundColor(.black)
-//                    .padding(.horizontal, 16)
+                Button(action: onClose) {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.custom(poppinsSemiBold, size: 24.0))
+                        .foregroundStyle(.black)
+                }
+            }
+//            .padding(.horizontal,16)
+            ScrollView(showsIndicators:false) {
+                VStack(alignment: .leading, spacing: 8) {
+                    DropDownSelection(
+                        options: $reasons, floatingLabel:"Reason",
+                        hint: "Select",
+                        selected: $selectedReason,
+                        anchor: .top,
+                        custFontName: robotoMedium,
+                        custFontSize:  14.0,
+                        custCategory : robotoRegular,
+                        custCategorySize : 13.0,
+                        onOptionSelected: { value in
+                            selectedReason = value
+                            selectedCategoryId = categoryList.filter({$0.name == value}).first?.id
+                        }
+                    )
+                    .background(.clear)
 //                    .padding(.vertical, 12)
-//                
-                DescriptionFieldView(
-                    description:$message,
-                    title: "Tell us more",
-                    placeholder: "Write Something",
-                    custFontName : robotoMedium,
-                    custFontSize : 14.0
-                )
-                { msg in
-                    self.message = msg
-                }
-                .padding(.vertical, 12)
-                
-                // MARK: - Submit Button
-                Button {
-                    // VALIDATION
-                    if !validateFields() {
-                        return
-                    }
+//                    .padding(.horizontal, 16)
                     
-                    onReportSellerClicked(selectedCategoryId, message)
-                } label: {
-                    Text("Submit Report")
-                        .font(.custom("Poppins-SemiBold", size: 17))
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.defaultTheme)
-                        .cornerRadius(30)
+                    // MARK: - Tell us more
+                    DescriptionFieldView(
+                        description:$message,
+                        title: "Tell us more",
+                        placeholder: "Write Something",
+                        custFontName : robotoMedium,
+                        custFontSize : 14.0
+                    )
+                    { msg in
+                        self.message = msg
+                    }
+                    .padding(.horizontal, -16)
+                    
+                    // MARK: - Submit Button
+//                    Button {
+//                        // VALIDATION
+//                        if !validateFields() {
+//                            return
+//                        }
+//                        
+//                        onReportSellerClicked(selectedCategoryId, message)
+//                    } label: {
+//                        Text("Submit Report")
+//                            .font(.custom("Poppins-SemiBold", size: 17))
+//                            .foregroundColor(.white)
+//                            .frame(maxWidth: .infinity)
+//                            .padding()
+//                            .background(Color.defaultTheme)
+//                            .cornerRadius(32)
+//                    }
+//                    .padding(.top, 10)
+//                    .padding(.horizontal, 16)
+//                    Spacer(minLength: 20)
+                    
+                    PrimaryButton(title: "Submit Report",onButtonClick: {
+                        if !validateFields() {
+                            return
+                        }
+                        onReportSellerClicked(selectedCategoryId, message)
+                    })
+//                    .padding(.top, 10)
+//                    .padding(.horizontal, 16)
                 }
-                .padding(.top, 10)
-                .padding(.horizontal, 16)
-                Spacer(minLength: 20)
             }
         }
-        .padding(.top, 10)
+//        .padding(.top, 10)
+        .padding(.horizontal, 16)
         .frame(maxHeight: .infinity, alignment: .top)
+        .background(.backGround)
         .onAppear {
             Task {
                 await fetchReportCategories()

@@ -364,21 +364,19 @@ struct ProfileScreen: View {
                     
                 }
             
-            .bottomSheet(isPresented: $showReportSheet,
-                         height: screenHeight * 0.50,
-                         topBarCornerRadius: 25,
-                         contentBackgroundColor: Color(.white),
-                         topBarBackgroundColor: Color(.white),
-                         showTopIndicator: false,
-                         onDismiss: {
-                showReportSheet = false
-            }) {
-                ReportSellerView(onReportSellerClicked: { categoryId, message in
-                    Task {
-                        await reportSeller(categoryId: categoryId, message: message)
-                    }
-                })
-                .keyboardAwarePadding()
+                .sheet(
+                    isPresented:  $showReportSheet){
+                        
+                        ReportSellerView(onReportSellerClicked: { categoryId, message in
+                            Task {
+                                await reportSeller(categoryId: categoryId, message: message)
+                            }
+                        }, onClose:{
+                            showReportSheet = false
+                        })
+                        .presentationDetents([.fraction(0.50)])   // ✅ Bottom-sheet height
+                        .presentationCornerRadius(25)              // ✅ Rounded top corners
+                        .presentationDragIndicator(.hidden)
             }
             
             .sheet(isPresented: $showSortSheet){
