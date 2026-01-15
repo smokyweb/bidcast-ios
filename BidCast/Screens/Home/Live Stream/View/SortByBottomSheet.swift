@@ -43,24 +43,9 @@ struct SortByBottomSheet: View {
     var body: some View {
         VStack(spacing: 0) {
             // MARK: - Header
-            HStack {
-                Text("Sort By")
-                    .font(.custom(poppinsBold, size: 24))
-                    .foregroundColor(.black)
-                
-                Spacer()
-                
-                Button(action: {
-                    isPresented = false
-                }) {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 20, weight: .semibold))
-                        .foregroundColor(.black)
-                        .frame(width: 32, height: 32)
-                }
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
+            PrimarySheetHeader(title: "Sort By", onClose: {
+                isPresented = false
+            })
             
             // MARK: - Sort Options
             VStack(spacing: 0) {
@@ -81,7 +66,7 @@ struct SortByBottomSheet: View {
                     )
                 }
             }
-            .padding(.horizontal, 20)
+            .padding(.horizontal, 16)
             
             Spacer()
         }
@@ -116,12 +101,12 @@ struct SortOptionRow: View {
                 
                 // Option Text
                 Text(option.rawValue)
-                    .font(.custom(poppinsRegular, size: 16))
+                    .font(.custom(poppinsRegular, size: 13))
                     .foregroundColor(.black)
                 
                 Spacer()
             }
-            .padding(.vertical, 16)
+            .padding(.vertical, 8)
             .background(Color.clear)
         }
         .buttonStyle(PlainButtonStyle())

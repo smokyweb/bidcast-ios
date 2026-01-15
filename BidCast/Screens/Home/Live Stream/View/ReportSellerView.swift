@@ -33,22 +33,11 @@ struct ReportSellerView: View {
     
     var body: some View {
         VStack(spacing: 12) {
-            Capsule()
-                .frame(width: 40, height: 5)
-                .foregroundColor(.gray.opacity(0.4))
-                .padding(.top, 8)
-            HStack(alignment: .center) {
-                Text("Report Seller")
-                    .font(.custom(poppinsSemiBold, size: 16))
-                Spacer()
-                
-                Button(action: onClose) {
-                    Image(systemName: "xmark.circle.fill")
-                        .font(.custom(poppinsSemiBold, size: 24.0))
-                        .foregroundStyle(.black)
-                }
-            }
-//            .padding(.horizontal,16)
+            PrimarySheetHeader(title:"Report Seller",onClose:{
+                onClose()
+            })
+       
+            
             ScrollView(showsIndicators:false) {
                 VStack(alignment: .leading, spacing: 8) {
                     DropDownSelection(

@@ -65,7 +65,7 @@ struct PrimaryButton: View {
             }
         })
         .frame(width: width, height: height)
-        .padding([.leading,.trailing],16)
+        .padding([.leading,.trailing],12)
     }
 }
 

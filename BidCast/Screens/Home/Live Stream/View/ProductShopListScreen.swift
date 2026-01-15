@@ -75,7 +75,7 @@ struct ProductListItem: View {
     var didSelectproduct: () -> Void = {}
 
     var body: some View {
-        HStack(alignment: .top, spacing: 12) {
+        HStack(alignment: .center, spacing: 12) {
 
             // Image
             ZStack(alignment: .topTrailing) {
@@ -89,11 +89,13 @@ struct ProductListItem: View {
                 ) {}
 
                 Image(systemName: "bell.fill")
-                    .font(.system(size: 14, weight: .semibold))
+                    .renderingMode(.template)
+                    .foregroundColor(.defaultTheme)
+                    .font(.system(size: 11, weight: .semibold))
                     .padding(.horizontal, 10)
                     .padding(.vertical, 6)
-                    .background(Color.white)
-                    .clipShape(Capsule())
+                    .background(Color.defaultThemeLight)
+                    .clipShape(Circle())
                     .overlay(Capsule().stroke(Color.gray.opacity(0.3), lineWidth: 0.6))
                     .padding(6)
             }
@@ -101,7 +103,7 @@ struct ProductListItem: View {
             // Details
             VStack(alignment: .leading, spacing: 6) {
                 Text(product.title?.capitalizingFirstLetter() ?? "Product")
-                    .font(.custom("Poppins-SemiBold", size: 16))
+                    .font(.custom(poppinsSemiBold, size: 16))
                     .lineLimit(2)
 
                 Text("Quantity: \(product.quantity ?? "0")")
@@ -109,7 +111,7 @@ struct ProductListItem: View {
                     .foregroundColor(.gray)
 
                 Text(Double(product.pricing ?? "0")?.compactCurrency() ?? "")
-                    .font(.custom(poppinsBold, size: 18))
+                    .font(.custom(poppinsSemiBold, size: 14))
             }
 
             Spacer()

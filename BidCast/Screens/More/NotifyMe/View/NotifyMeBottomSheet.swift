@@ -202,237 +202,121 @@ struct NotifyMeBottomSheet: View {
     
     // MARK: – View
     var body: some View {
-        ZStack {
-            VStack(spacing: 0) {
-                VStack(spacing: 24) {
-                    // ---------- HEADER ----------
-                    HStack(spacing: 0) {
-                        HStack(spacing: 14) {
-                            AsyncImage(url: URL(string: profileImage)) { phase in
-                                switch phase {
-                                case .empty:
-                                    ZStack {
-                                        Circle()
-                                            .fill(Color.gray.opacity(0.1))
-                                            .frame(width: 44, height: 44)
-                                        
-                                        ProgressView()
-                                            .frame(width: 44, height: 44)
-                                    }
-                                case .success(let image):
-                                    image
-                                        .resizable()
-                                        .scaledToFill()
-                                        .frame(width: 44, height: 44)
-                                        .clipShape(Circle())
-                                        .overlay(
-                                            Circle()
-                                                .stroke(
-                                                    LinearGradient(
-                                                        gradient: Gradient(colors: [Color.gray.opacity(0.6), Color.gray.opacity(0.2)]),
-                                                        startPoint: .topLeading,
-                                                        endPoint: .bottomTrailing
-                                                    ),
-                                                    lineWidth: 2
-                                                )
-                                        )
-                                        .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
-                                case .failure:
-                                    ZStack {
-                                        Circle()
-                                            .fill(Color.gray.opacity(0.1))
-                                            .frame(width: 44, height: 44)
-                                        
-                                        Image(systemName: "person.crop.circle.fill")
-                                            .resizable()
-                                            .scaledToFill()
-                                            .frame(width: 44, height: 44)
-                                            .foregroundColor(.gray)
-                                            .clipShape(Circle())
-                                    }
-                                @unknown default:
-                                    EmptyView()
-                                }
-                            }
-                            
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text("@\(username)")
-                                    .font(.custom(poppinsSemiBold, size: 16))
-                                    .foregroundColor(.primary)
-                                
-                                HStack(spacing: 4) {
-                                    Circle()
-                                        .fill(Color.red)
-                                        .frame(width: 6, height: 6)
-                                    
-                                    Text("Live Notification")
-                                        .font(.custom(poppinsRegular, size: 12))
-                                        .foregroundColor(.secondary)
-                                }
-                            }
-                        }
-                        
-                        Spacer()
-                        
-                        Button {
-                            withAnimation(.easeInOut(duration: 0.2)) {
-                                onDismiss()
-                            }
-                        } label: {
-                            ZStack {
-                                Circle()
-                                    .fill(Color.red.opacity(0.1))
-                                    .frame(width: 32, height: 32)
-                                
-                                Image(systemName: "xmark")
-                                    .font(.system(size: 14, weight: .semibold))
-                                    .foregroundColor(.red)
-                            }
-                        }
-                    }
-                    .padding(.horizontal, 20)
-                    
-                    // ---------- MESSAGE CARD ----------
-                    VStack(spacing: 16) {
-                        HStack(spacing: 12) {
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(Color.defaultThemeLight)
-                                    .frame(width: 44, height: 44)
-                                
-                                Image(systemName: "bell.badge.fill")
-                                    .font(.system(size: 20))
-                                    .foregroundColor(.blue)
-                            }
-                            
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text("Stay Updated")
-                                    .font(.custom(poppinsSemiBold, size: 15))
-                                    .foregroundColor(.primary)
-                                
-                                Text("Would you like to be notified when @\(username) goes live?")
-                                    .font(.custom(poppinsRegular, size: 14))
-                                    .foregroundColor(.secondary)
-                                    .fixedSize(horizontal: false, vertical: true)
-                            }
-                            
-                            Spacer(minLength: 0)
-                        }
-                    }
-                    .padding(16)
-                    .background(
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(Color(.systemBackground))
-                            .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 2)
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 16)
-                            .stroke(Color.defaultThemeLight, lineWidth: 1)
-                    )
-                    .padding(.horizontal, 20)
-                    
-                    // ---------- BUTTONS ----------
-                    VStack(spacing: 12) {
-                        // Yes Button
-                        Button {
-                            withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
-                                yesButtonScale = 0.95
-                            }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
-                                    yesButtonScale = 1.0
-                                }
-                                notifyUser()
-                            }
-                        } label: {
-                            HStack(spacing: 8) {
-                                Image(systemName: "bell.fill")
-                                    .font(.system(size: 16, weight: .semibold))
-                                
-                                Text("Yes, notify me")
-                                    .font(.custom(poppinsSemiBold, size: 16))
-                            }
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 16)
-                            .background(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [Color.defaultTheme, Color.defaultTheme.opacity(0.8)]),
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-                            .foregroundColor(.white)
-                            .cornerRadius(14)
-                            .shadow(color: Color.defaultTheme.opacity(0.4), radius: 12, x: 0, y: 6)
-                        }
-                        .scaleEffect(yesButtonScale)
-                        
-                        // No Button
-                        Button {
-                            withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
-                                noButtonScale = 0.95
-                            }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
-                                    noButtonScale = 1.0
-                                }
-                                onDismiss()
-                            }
-                        } label: {
-                            Text("No, thanks")
-                                .font(.custom(poppinsRegular, size: 16))
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 16)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 14)
-                                        .fill(Color(.systemGray6))
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 14)
-                                                .stroke(Color.gray.opacity(0.2), lineWidth: 1)
-                                        )
-                                )
-                                .foregroundColor(.primary)
-                        }
-                        .scaleEffect(noButtonScale)
-                    }
-                    .padding(.horizontal, 20)
+        VStack {
+            VStack(spacing: 12) {
+                Capsule()
+                    .frame(width: 40, height: 5)
+                    .foregroundColor(.gray.opacity(0.4))
                     .padding(.top, 8)
+            }
+            VStack(spacing: 12) {
+                // ---------- HEADER ----------
+                HStack(spacing: 0) {
+                    HStack(spacing: 12) {
+                        
+                        CustomProfileImage(url: profileImage,isCircular: true,size: 44)
+                        
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("@\(username)")
+                                .font(.custom(poppinsSemiBold, size: 16))
+                                .foregroundColor(.primary)
+                            
+                            HStack(spacing: 4) {
+                                Circle()
+                                    .fill(Color.red)
+                                    .frame(width: 6, height: 6)
+                                
+                                Text("Live Notification")
+                                    .font(.custom(poppinsRegular, size: 12))
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                    }
+                    
+                    Spacer()
+                    
+                    Button(action: onDismiss) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.custom(poppinsSemiBold, size: 24.0))
+                            .foregroundStyle(.black)
+                    }
+                }
+                //                    .padding(.horizontal, 16)
+                
+                // ---------- MESSAGE CARD ----------
+                VStack(spacing: 24) {
+                    HStack(spacing: 12) {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(Color.defaultThemeLight)
+                                .frame(width: 44, height: 44)
+                            
+                            Image(systemName: "bell.badge.fill")
+                                .font(.system(size: 20))
+                                .foregroundColor(.blue)
+                        }
+                        
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Stay Updated")
+                                .font(.custom(poppinsSemiBold, size: 13))
+                                .foregroundColor(.primary)
+                            
+                            Text("Would you like to be notified when @\(username) goes live?")
+                                .font(.custom(poppinsRegular, size: 11))
+                                .foregroundColor(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                        
+                        Spacer(minLength: 0)
+                    }
+                }
+                .padding(8)
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(Color(.systemBackground))
+                        .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 2)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(Color.defaultThemeLight, lineWidth: 1)
+                )
+                //                    .padding(.horizontal, 20)
+                Spacer()
+                // ---------- BUTTONS ----------
+                VStack(spacing: 12) {
+                    PrimaryButton(title: "Yes, notify me",isOutLine:false,onButtonClick:{
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                            yesButtonScale = 0.95
+                        }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                                yesButtonScale = 1.0
+                            }
+                            notifyUser()
+                        }
+                    }, btnTextColor:.white, btnColor: .defaultTheme)
+                    
+                    PrimaryButton(title: "No, Thanks",isOutLine:false,onButtonClick:{
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                            noButtonScale = 0.95
+                        }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                                noButtonScale = 1.0
+                            }
+                            onDismiss()
+                        }
+                    }, btnTextColor:.defaultTheme, btnColor: .defaultThemeLight)
                 }
                 
-                Spacer()
+                
             }
-            .padding(.bottom, 20)
             
-            // ---------- LOADING OVERLAY ----------
-            if isLoading {
-                ZStack {
-                    Color.black.opacity(0.3)
-                        .ignoresSafeArea()
-                        .blur(radius: 2)
-                    
-                    VStack(spacing: 16) {
-                        ProgressView()
-                            .scaleEffect(1.2)
-                            .tint(.white)
-                        
-                        Text("Processing...")
-                            .font(.custom(poppinsRegular, size: 14))
-                            .foregroundColor(.white)
-                    }
-                    .padding(24)
-                    .background(
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(Color.black.opacity(0.8))
-                            .shadow(color: Color.black.opacity(0.3), radius: 20, x: 0, y: 10)
-                    )
-                }
-            }
+            
         }
-        .background(
-            RoundedRectangle(cornerRadius: 24)
-                .fill(Color(.systemGroupedBackground))
-                .shadow(color: Color.black.opacity(0.15), radius: 20, x: 0, y: -5)
-        )
+        .edgesIgnoringSafeArea(.top)
+        .padding(.horizontal, 16)
+        .background(.backGround)
         .toast(isPresenting: $showHUD) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: alertStlye)
         }

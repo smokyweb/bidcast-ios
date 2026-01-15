@@ -268,7 +268,7 @@ struct CommonBottomSheet: View {
             // MARK: - Buttons (same structure, just improved aesthetics)
             if sheetType.isBtnVertical {
                 
-                VStack(spacing: 5) {
+                VStack(spacing: 4) {
                     
                     if sheetType.primaryBtnText != "" {
                         PrimaryButton(

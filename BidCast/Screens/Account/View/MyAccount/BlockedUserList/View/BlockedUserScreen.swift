@@ -127,8 +127,9 @@ struct BlockedUserScreen: View {
         if response?.status == "success" {
             hudMsg = response?.message ?? ""
             showhud = true
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                navigateToHome = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+//                navigateToHome = true
+                self.presentationMode.wrappedValue.dismiss()
             }
         } else {
             alertType = .sheetType(

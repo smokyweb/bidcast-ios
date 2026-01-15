@@ -317,17 +317,7 @@ struct ProfileScreen: View {
             .toast(isPresenting: $showToast) {
                 AlertToast(displayMode: .alert, type: .regular, title: toastMessage)
             }
-            .bottomSheet(isPresented: $showNotify,height: screenHeight * 0.45) {
-                NotifyMeBottomSheet(
-                    userId: $profileId, profileImage: profileData.profile_image ?? "" ,
-                    username: profileData.username ?? "",
-                    showParentToast: $showToast,
-                    parentToastMessage: $toastMessage,
-                    onDismiss: {
-                        self.showNotify = false
-                    }
-                )
-            }
+            
             .bottomSheet(isPresented: $showError,
                          height: screenHeight * 0.35,
                          topBarCornerRadius: 25,
@@ -364,9 +354,7 @@ struct ProfileScreen: View {
                     
                 }
             
-                .sheet(
-                    isPresented:  $showReportSheet){
-                        
+                .sheet( isPresented:  $showReportSheet){
                         ReportSellerView(onReportSellerClicked: { categoryId, message in
                             Task {
                                 await reportSeller(categoryId: categoryId, message: message)
@@ -377,15 +365,29 @@ struct ProfileScreen: View {
                         .presentationDetents([.fraction(0.50)])   // ✅ Bottom-sheet height
                         .presentationCornerRadius(25)              // ✅ Rounded top corners
                         .presentationDragIndicator(.hidden)
-            }
+                    }
+                    .sheet(isPresented: $showNotify) {
+                        NotifyMeBottomSheet(
+                            userId: $profileId, profileImage: profileData.profile_image ?? "" ,
+                            username: profileData.username ?? "",
+                            showParentToast: $showToast,
+                            parentToastMessage: $toastMessage,
+                            onDismiss: {
+                                self.showNotify = false
+                            }
+                        )
+                        .presentationDetents([.fraction(0.45)])   // ✅ Bottom-sheet height
+                        .presentationCornerRadius(25)              // ✅ Rounded top corners
+                        .presentationDragIndicator(.hidden)
+                        .presentationBackground(.backGround)
+                    }
             
             .sheet(isPresented: $showSortSheet){
-                
                 SortByBottomSheet(
                     isPresented: $showSortSheet,
                     selectedSort: $selectedSort
                 )
-                .presentationDetents([.fraction(0.55)])   // ✅ Bottom-sheet height
+                .presentationDetents([.fraction(0.40)])   // ✅ Bottom-sheet height
                 .presentationCornerRadius(25)              // ✅ Rounded top corners
                 .presentationDragIndicator(.hidden)
                 
@@ -503,20 +505,6 @@ struct ProfileScreen: View {
             profileId = profileData.id ?? 0
             userName = response.data?.username ?? "\(response.data?.name ?? "")"
             userImage = response.data?.profile_image ?? ""
-//            if !isForFollow{
-//                Task{
-//                    guard Reachability.isConnectedToNetwork() else {
-//                        hudMsg = "No Internet Connection"
-//                        showhud = true
-//                        return
-//                    }
-//                    SVProgressHUD.show()
-//                    let request  = ProductRequest(user_id: id, page: currentPage)
-//                    await self.productViewModel.getProductsData(parameters: request)
-//                    await SVProgressHUD.dismiss()
-//                    success()
-//                }
-//            }
         } else {
             alertType = .sheetType(
                 icon: .alert,
@@ -797,7 +785,7 @@ struct ProfileHeaderView: View {
         if response?.status == "success" {
             hudMsg = response?.message ?? ""
             showhud = true
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                 //                navigateToHome = true
                 self.presentationMode.wrappedValue.dismiss()
             }
@@ -871,7 +859,7 @@ struct ProfileTabsView: View {
                     Text(tab)
                         .font(.custom(poppinsSemiBold, size: 13.0))
                         .fontWeight(selectedTab == tab ? .bold : .regular)
-                        .foregroundColor(selectedTab == tab ? .defaultTheme : .gray)
+                        .foregroundColor(selectedTab == tab ? .defaultTheme : .darkGray)
                     if selectedTab == tab {
                         Capsule().fill(Color.defaultTheme).frame(height: 3)
                     } else {

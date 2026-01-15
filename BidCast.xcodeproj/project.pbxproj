@@ -295,6 +295,7 @@
 		D4A500E12DFAA74D008799B1 /* StepCircle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A500E02DFAA74D008799B1 /* StepCircle.swift */; };
 		D4A500E32DFAC474008799B1 /* OTPVerificationScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A500E22DFAC474008799B1 /* OTPVerificationScreen.swift */; };
 		D4A500E52DFAFC9B008799B1 /* CardDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A500E42DFAFC9B008799B1 /* CardDetailsView.swift */; };
+		D4A6A1282F18EC32006F8F36 /* SheetHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A6A1272F18EC32006F8F36 /* SheetHeader.swift */; };
 		D4A7F9042DDDA8C5001FC705 /* AddressesScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A7F9032DDDA8C5001FC705 /* AddressesScreen.swift */; };
 		D4A7F9092DDDB7CA001FC705 /* AddressesList.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A7F9082DDDB7CA001FC705 /* AddressesList.swift */; };
 		D4B615CE2DE8280200924A3D /* NotifyMeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B615C92DE8280200924A3D /* NotifyMeModel.swift */; };
@@ -884,6 +885,7 @@
 		D4A500E02DFAA74D008799B1 /* StepCircle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepCircle.swift; sourceTree = "<group>"; };
 		D4A500E22DFAC474008799B1 /* OTPVerificationScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OTPVerificationScreen.swift; sourceTree = "<group>"; };
 		D4A500E42DFAFC9B008799B1 /* CardDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardDetailsView.swift; sourceTree = "<group>"; };
+		D4A6A1272F18EC32006F8F36 /* SheetHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetHeader.swift; sourceTree = "<group>"; };
 		D4A7F9032DDDA8C5001FC705 /* AddressesScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressesScreen.swift; sourceTree = "<group>"; };
 		D4A7F9082DDDB7CA001FC705 /* AddressesList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressesList.swift; sourceTree = "<group>"; };
 		D4B615C72DE8280200924A3D /* NotifyMeBottomSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotifyMeBottomSheet.swift; sourceTree = "<group>"; };
@@ -2054,6 +2056,7 @@
 				99C9080C2DC8CD6A0054620B /* CustomButton */,
 				35AC64732DD48C0300B5E13E /* SearchView.swift */,
 				35CA09D82DD5BCE4002ABB83 /* LabelWithButton.swift */,
+				D4A6A1272F18EC32006F8F36 /* SheetHeader.swift */,
 			);
 			path = "Common Components";
 			sourceTree = "<group>";
@@ -4890,6 +4893,7 @@
 				D65B7EE52ED5D8A4000B52EC /* ReportSellerView.swift in Sources */,
 				D4D453DA2E4CBC13005A2F63 /* BlockedUserListModel.swift in Sources */,
 				D66B575E2EC319DD00A334AA /* EditProductScreen.swift in Sources */,
+				D4A6A1282F18EC32006F8F36 /* SheetHeader.swift in Sources */,
 				D698ACB52EF569E900D47058 /* SellerSideMenu.swift in Sources */,
 				D4A500E12DFAA74D008799B1 /* StepCircle.swift in Sources */,
 				D6631E6D2ECF429B00704ED1 /* PollPreviewCardView.swift in Sources */,
