@@ -10,6 +10,7 @@ import SwiftUI
 struct AuthTextField: View {
     
     @State var floatingLabel: String = ""
+    @State private var rawPriceDigits: String = ""
     @State var isRequired: Bool = false
     @State var isMandatory: Bool = false
     @State var placeholder: String = ""
@@ -131,12 +132,36 @@ struct AuthTextField: View {
                                     .focused($isFocused)
                                     .frame(height: height)
                                     .onAppear {
-                                            // Format initial value
-                                            if isForPrice && !text.isEmpty && !text.contains(".") {
-                                                text = text + ".00"
+                                        if isForPrice {
+                                            // If text is a plain number without decimal (e.g., "43" from database)
+                                            if !text.isEmpty && !text.contains(".") {
+                                                // Initialize rawPriceDigits and format it
+                                                rawPriceDigits = text.filter { $0.isNumber }
+                                                
+                                                var digitsToFormat = rawPriceDigits
+                                                while digitsToFormat.count > 1 && digitsToFormat.first == "0" {
+                                                    digitsToFormat.removeFirst()
+                                                }
+                                                
+                                                if digitsToFormat.isEmpty {
+                                                    text = ""
+                                                } else if digitsToFormat.count == 1 {
+                                                    text = "0.0\(digitsToFormat)"
+                                                } else if digitsToFormat.count == 2 {
+                                                    text = "0.\(digitsToFormat)"
+                                                } else {
+                                                    let index = digitsToFormat.index(digitsToFormat.endIndex, offsetBy: -2)
+                                                    let beforeDecimal = digitsToFormat[..<index]
+                                                    let afterDecimal = digitsToFormat[index...]
+                                                    text = "\(beforeDecimal).\(afterDecimal)"
+                                                }
                                                 self.enteredText?(text)
+                                            } else if !text.isEmpty {
+                                                // Initialize rawPriceDigits from existing formatted text
+                                                rawPriceDigits = text.filter { $0.isNumber }
                                             }
                                         }
+                                    }
                                     .onChange(of: text, perform: { value in
                                         if isForPrice && !value.isEmpty && !value.contains(".") {
                                                    // Check if this looks like a plain number (not user typing)
@@ -176,29 +201,41 @@ struct AuthTextField: View {
                                             text = filtered
                                             self.enteredText?(text)
                                         } else if isForPrice {
-                                            var filtered = value.filter { $0.isNumber }
-                                                
-                                                // Remove leading zeros except if the number is just "0" or "00"
-                                                while filtered.count > 1 && filtered.first == "0" {
-                                                    filtered.removeFirst()
-                                                }
-                                                
-                                                // Format with decimal point
-                                                if filtered.isEmpty {
-                                                    text = ""
-                                                } else if filtered.count == 1 {
-                                                    text = "0.0\(filtered)"
-                                                } else if filtered.count == 2 {
-                                                    text = "0.\(filtered)"
-                                                } else {
-                                                    // Insert decimal point 2 places from the end
-                                                    let index = filtered.index(filtered.endIndex, offsetBy: -2)
-                                                    let beforeDecimal = filtered[..<index]
-                                                    let afterDecimal = filtered[index...]
-                                                    text = "\(beforeDecimal).\(afterDecimal)"
-                                                }
-                                                
-                                                self.enteredText?(text)
+                                            let newFiltered = value.filter { $0.isNumber }
+                                                   
+                                                   // Only update if the filtered digits actually changed
+                                                   // This prevents infinite loops and handles deletions properly
+                                                   if newFiltered != rawPriceDigits {
+                                                       rawPriceDigits = newFiltered
+                                                       
+                                                       // Remove leading zeros except if the number is just "0"
+                                                       var digitsToFormat = rawPriceDigits
+                                                       while digitsToFormat.count > 1 && digitsToFormat.first == "0" {
+                                                           digitsToFormat.removeFirst()
+                                                       }
+                                                       
+                                                       // Format with decimal point
+                                                       let formattedText: String
+                                                       if digitsToFormat.isEmpty {
+                                                           formattedText = ""
+                                                       } else if digitsToFormat.count == 1 {
+                                                           formattedText = "0.0\(digitsToFormat)"
+                                                       } else if digitsToFormat.count == 2 {
+                                                           formattedText = "0.\(digitsToFormat)"
+                                                       } else {
+                                                           // Insert decimal point 2 places from the end
+                                                           let index = digitsToFormat.index(digitsToFormat.endIndex, offsetBy: -2)
+                                                           let beforeDecimal = digitsToFormat[..<index]
+                                                           let afterDecimal = digitsToFormat[index...]
+                                                           formattedText = "\(beforeDecimal).\(afterDecimal)"
+                                                       }
+                                                       
+                                                       // Only update text if it actually changed to prevent recursion
+                                                       if text != formattedText {
+                                                           text = formattedText
+                                                           self.enteredText?(text)
+                                                       }
+                                                   }
                                         }else{
                                             filtered = String(filtered.prefix(maxDigits))
                                             self.enteredText?(value)
@@ -206,10 +243,22 @@ struct AuthTextField: View {
                                         
                                         
                                         
-                                    })
+                                    } )
                                     .onSubmit {
                                         self.enteredText?(text)
                                     }
+                                    .onAppear {
+                                    if isForPrice {
+                                        // Initialize rawPriceDigits from existing text
+                                        rawPriceDigits = text.filter { $0.isNumber }
+                                        
+                                        // Format initial value if needed
+                                        if !text.isEmpty && !text.contains(".") {
+                                            text = text + ".00"
+                                            self.enteredText?(text)
+                                        }
+                                    }
+                                }
                                     .ignoresSafeArea(.keyboard, edges: .bottom)
                             }
                         }
@@ -252,6 +301,7 @@ struct AuthTextField: View {
         .onDisappear {
             isFocused = false
         }
+      
         .padding([.leading,.trailing],Leading)
     }
     

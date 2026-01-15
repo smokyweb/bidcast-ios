@@ -177,6 +177,10 @@ struct ProductDetailView: View {
                     offerSuccess()
                 }
             })
+            .presentationDetents([.fraction(0.7)])
+            .presentationCornerRadius(25)
+            .presentationDragIndicator(.hidden)
+            .presentationBackground(.backGround)
         }
 
         .onFirstAppear {
