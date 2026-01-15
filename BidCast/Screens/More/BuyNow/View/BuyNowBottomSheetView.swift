@@ -98,7 +98,18 @@ struct BuyNowBottomSheetView: View {
                         }
                         Spacer()
                     }
-                    Divider()
+                    .padding(12)                       // inner spacing
+                           .background(
+                               RoundedRectangle(cornerRadius: 14)
+                                   .fill(Color.white)         // or Color.white
+                                   .shadow(
+                                       color: Color.gray.opacity(0.1),
+                                       radius: 3,
+                                       x: 0,
+                                       y: 3
+                                   )
+                           )
+//                    Divider()
                     
                     // Gift Toggle
                     HStack {
@@ -114,7 +125,18 @@ struct BuyNowBottomSheetView: View {
                             }
                     }
                     .padding(.vertical, 8)
-                    Divider()
+//                    Divider()
+                    .padding(12)                       // inner spacing
+                           .background(
+                               RoundedRectangle(cornerRadius: 14)
+                                   .fill(Color.white)         // or Color.white
+                                   .shadow(
+                                       color: Color.gray.opacity(0.1),
+                                       radius: 3,
+                                       x: 0,
+                                       y: 3
+                                   )
+                           )
                     
                     // Payment Method
                     HStack {
@@ -135,10 +157,19 @@ struct BuyNowBottomSheetView: View {
                             showCardSheet = true
                         }
                             .font(.custom(poppinsSemiBold, size: 12.0))
-                            .foregroundColor(.red)
+                            .foregroundColor(.defaultTheme)
                     }
-                    Divider()
-                    
+                    .padding(12)                       // inner spacing
+                           .background(
+                               RoundedRectangle(cornerRadius: 14)
+                                   .fill(Color.white)         // or Color.white
+                                   .shadow(
+                                       color: Color.gray.opacity(0.1),
+                                       radius: 3,
+                                       x: 0,
+                                       y: 3
+                                   )
+                           )
                     // Shipping Address
                     HStack {
                         VStack(alignment: .leading) {
@@ -152,9 +183,19 @@ struct BuyNowBottomSheetView: View {
                             showAddressSheet = true
                         }
                             .font(.custom(poppinsSemiBold, size: 12.0))
-                            .foregroundColor(.red)
+                            .foregroundColor(.defaultTheme)
                     }
-                    Divider()
+                    .padding(12)                       // inner spacing
+                           .background(
+                               RoundedRectangle(cornerRadius: 14)
+                                   .fill(Color.white)         // or Color.white
+                                   .shadow(
+                                       color: Color.gray.opacity(0.1),
+                                       radius: 3,
+                                       x: 0,
+                                       y: 3
+                                   )
+                           )
                     
                     // Promo Code
                     VStack(spacing: 8) {
@@ -192,13 +233,13 @@ struct BuyNowBottomSheetView: View {
                                     showCouponSheet = true
                                 }
                                 .font(.custom(poppinsSemiBold, size: 12))
-                                .foregroundColor(.red)
+                                .foregroundColor(.defaultTheme)
                             }
                         }
                         
                         // Divider with 2 coupons
                         ZStack {
-                            Divider()
+//                            Divider()
 
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 8) {
@@ -222,10 +263,20 @@ struct BuyNowBottomSheetView: View {
                                 .padding(.horizontal,2)
                                 .padding(.vertical, 4)
                             }
-                            .background(Color.backGround)
+                            .background(Color.clear)
                         }
                     }
-                    Divider()
+                    .padding(12)                       // inner spacing
+                           .background(
+                               RoundedRectangle(cornerRadius: 14)
+                                   .fill(Color.white)         // or Color.white
+                                   .shadow(
+                                       color: Color.gray.opacity(0.1),
+                                       radius: 3,
+                                       x: 0,
+                                       y: 3
+                                   )
+                           )
                     
                     // Summary
                     VStack(spacing: 4) {
@@ -238,7 +289,17 @@ struct BuyNowBottomSheetView: View {
                         Divider()
                         SummaryRow(label: "Total", value: total, isBold: true)
                     }
-                    
+                    .padding(12)                       // inner spacing
+                           .background(
+                               RoundedRectangle(cornerRadius: 14)
+                                   .fill(Color.white)         // or Color.white
+                                   .shadow(
+                                       color: Color.gray.opacity(0.1),
+                                       radius: 3,
+                                       x: 0,
+                                       y: 3
+                                   )
+                           )
                     
                     // Confirm Button
                     Button(action: {
@@ -345,6 +406,10 @@ struct BuyNowBottomSheetView: View {
         
     }
     
+    
+    
+ 
+
   
     //MARK: getCard.
     func getCard(){
@@ -538,6 +603,11 @@ struct BuyNowBottomSheetView: View {
         }
     }
 }
+
+//#Preview {
+//    BuyNowBottomSheetView()
+//}
+
 struct CouponApplyCard: View {
     let coupon: AssignedCoupon
     let isApplied: Bool
@@ -570,12 +640,16 @@ struct CouponApplyCard: View {
             Button(action: onApply) {
                 Text(isApplied ? "Applied" : "Apply")
                     .font(.custom(poppinsSemiBold, size: 11))
+                    .lineLimit(1)              // ✅ single line only
+                    .fixedSize(horizontal: true, vertical: false)
+
+
             }
-            .padding(.horizontal, 8)
+            .padding(.horizontal, 12)
             .padding(.vertical, 6)
             .background(
                 RoundedRectangle(cornerRadius: 14)
-                    .fill(isApplied ? Color.gray.opacity(0.3) : Color.red)
+                    .fill(isApplied ? Color.gray.opacity(0.3) : Color.defaultTheme)
             )
             .foregroundColor(isApplied ? .gray : .white)
             .disabled(isApplied)
