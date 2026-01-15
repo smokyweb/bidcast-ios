@@ -96,6 +96,7 @@ struct ProductDetailView: View {
                     
                     // MARK: - Seller Stats Section
                     sellerStatsSection
+                    productDetailSection
                 }
                 .padding(.horizontal, 12)
                 .padding(.top, 6)
@@ -338,6 +339,67 @@ extension ProductDetailView {
         }
         .frame(height: 320)
         .tabViewStyle(PageTabViewStyle())
+    }
+}
+
+
+// MARK: - PRODUCT HEADER INFO
+extension ProductDetailView {
+    private var productDetailSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            
+            Text("Detail")
+                .font(.custom(poppinsBold, size: 22))
+                .foregroundColor(.black)
+                .multilineTextAlignment(.leading)
+            
+            HStack(spacing: 6) {
+                Text("\(productDetail?.description ?? "")")
+                    .font(.custom(poppinsRegular, size: 13))
+                    .foregroundColor(.darkGray)
+            }
+            HStack(spacing: 6) {
+                Text("Category")
+                    .font(.custom(poppinsBold, size: 13))
+                    .foregroundColor(.darkGray)
+                Text("\(productDetail?.category?.name ?? "")")
+                    .font(.custom(poppinsRegular, size: 13))
+                    .foregroundColor(.darkGray)
+            }.cardStyle(.lightGray)
+       
+            HStack(spacing: 6) {
+                Text("Sub Category")
+                    .font(.custom(poppinsBold, size: 13))
+                    .foregroundColor(.darkGray)
+                Text("\(productDetail?.sub_category?.name ?? "") ")
+                    .font(.custom(poppinsRegular, size: 13))
+                    .foregroundColor(.darkGray)
+            }.cardStyle(.white)
+            HStack(spacing: 6) {
+                Text("Condition")
+                    .font(.custom(poppinsBold, size: 13))
+                    .foregroundColor(.darkGray)
+                Text("\(productDetail?.product_condition ?? "")")
+                    .font(.custom(poppinsRegular, size: 13))
+                    .foregroundColor(.darkGray)
+            }.cardStyle(.white)
+        }
+    }
+}
+
+extension View {
+    func cardStyle(
+        _ background: Color,
+        fullWidth: Bool = true
+    ) -> some View {
+        self
+            .frame(maxWidth: fullWidth ? .infinity : nil, alignment: .leading)
+            .padding(12)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(background)
+                    //.shadow(color: .black.opacity(0.12), radius: 6, y: 3)
+            )
     }
 }
 

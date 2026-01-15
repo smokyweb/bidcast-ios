@@ -25,6 +25,9 @@ struct ProductDetailsModel: Codable {
     var user: SellerUser?
     var shippingAdress: ShippingAdress?
     var product_save_status : Bool?
+    var product_condition :String?
+    var category : CategoryDataModel?
+    var sub_category : SubCategoryDataModel?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -48,6 +51,7 @@ struct ProductDetailsModel: Codable {
         case offer, user
         case shippingAdress = "shipping_adress"
         case product_save_status
+        case category,sub_category,product_condition
     }
 }
 
