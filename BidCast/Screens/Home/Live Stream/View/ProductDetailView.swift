@@ -54,6 +54,7 @@ struct ProductDetailView: View {
     @State  var shippingCharges : Int = 0
     @State  var taxAmount : Int = 0
     @State var showBuyNowSheet = false
+    @State var makeOfferSheet = false
     
     @Binding var sellerInfo: SellerInfoResponse?
     
@@ -101,35 +102,47 @@ struct ProductDetailView: View {
                 
                 // MARK: - Send Button
                 if sellerInfo?.seller_details?.id != UserDefaults.userId{
-                Button(action: {
-                    showBuyNowSheet = true
-                }) {
-                    HStack(spacing: 12) {
-                        Text("Buy Now")
-                            .font(.custom(poppinsBold, size: 17))
+                    VStack(spacing:12){
+                        if viewModel.productDetailsResponseDict?.data.acceptOffers ?? false{
+                            PrimaryButton(title: "Make Offer",isOutLine: false,onButtonClick: {
+                                makeOfferSheet = true
+                            },btnTextColor:.defaultTheme, btnColor: .defaultThemeLight)
+                        }
+                        
+                        PrimaryButton(title: "Buy Now",onButtonClick: {
+                            showBuyNowSheet = true
+                        })
                     }
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                   
-                    .padding(.vertical, 18)
-                    .background(
-                        LinearGradient(
-                            gradient: Gradient(colors: [
-                                Color.defaultTheme,
-                                Color.defaultTheme.opacity(0.8)
-                            ]),
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-                    .cornerRadius(32)
-                    .shadow(color: Color.defaultThemeLight, radius: 12, x: 0, y: 6)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+                    .padding(.bottom, 32)
+//                    Button(action: {
+//                        
+//                    }) {
+//                        HStack(spacing: 12) {
+//                            Text("Buy Now")
+//                                .font(.custom(poppinsBold, size: 17))
+//                        }
+//                        .foregroundColor(.white)
+//                        .frame(maxWidth: .infinity)
+//                        
+//                        .padding(.vertical, 18)
+//                        .background(
+//                            LinearGradient(
+//                                gradient: Gradient(colors: [
+//                                    Color.defaultTheme,
+//                                    Color.defaultTheme.opacity(0.8)
+//                                ]),
+//                                startPoint: .leading,
+//                                endPoint: .trailing
+//                            )
+//                        )
+//                        .cornerRadius(32)
+//                        .shadow(color: Color.defaultThemeLight, radius: 12, x: 0, y: 6)
+//                    }
+                    
+                    
                 }
-                .padding(.horizontal, 24)
-                .padding(.top, 8)
-                .padding(.bottom, 32)
-               
-            }
             }
             CusNavLink(doNavigate: $showBuyNowSheet, destination:BuyNowBottomSheetView(productId: $productID) )
             if let chatVM = chatVM {
@@ -145,6 +158,11 @@ struct ProductDetailView: View {
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg, style: style)
             
+        }
+        .sheet(isPresented: $makeOfferSheet)   {
+            MakeOfferBottomSheet(isPresented: $makeOfferSheet, listedPrice: "", offerOptions: [0.0], onSendOffer: {_ in 
+                
+            })
         }
 
         .onFirstAppear {
