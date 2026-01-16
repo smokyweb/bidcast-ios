@@ -105,6 +105,26 @@ struct GetMyScheduleShowModel1 : Codable {
 }
 
 
+// MARK: - ClipModel
+struct GetClipModel: Codable {
+    var id: Int
+    var showId: String?
+    var userId: Int?
+    var clipURL: String?
+    var thumbnailURL: String?
+    var isPublic: String?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case showId = "show_id"
+        case userId = "user_id"
+        case clipURL = "clip_url"
+        case thumbnailURL = "thumbnail_url"
+        case isPublic = "is_public"
+    }
+}
+
+
 // MARK: - Datum
 struct GetMyScheduleShowModel: Codable {
     var id: Int?

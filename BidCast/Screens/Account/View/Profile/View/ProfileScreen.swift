@@ -45,6 +45,8 @@ struct ProfileScreen: View {
     @State var productId : Int = 0
 //    @State var productArr = [ProductListingDataModel]()
     @State var scheduleShowArr = [GetMyScheduleShowModel]()
+    @State var clipArr = [GetClipModel]()
+
     @State var totalRatingArr = [RatingDetail]()
     @EnvironmentObject var networkMonitor: NetworkMonitor
     @State var isForFollow = false
@@ -167,12 +169,20 @@ struct ProfileScreen: View {
                                         return
                                     }
                                     SVProgressHUD.show()
-                                    await self.viewModel.getTotalRating(parameters: GetTotalRatingRequest(seller_id: 7))
+                                    await self.viewModel.getTotalRating(parameters: GetTotalRatingRequest(seller_id: Int(id) ?? 0))
                                     await SVProgressHUD.dismiss()
                                     ratingSuccess()
                                 case "Clips":
-                                    print("")
+                                    guard Reachability.isConnectedToNetwork() else {
+                                        hudMsg = "No Internet Connection"
+                                        showhud = true
+                                        return
+                                    }
+                                    SVProgressHUD.show()
+                                    await self.viewModel.getClips(parameters: Int(id) ?? 0)
+                                    await SVProgressHUD.dismiss()
                                     //                                await viewModel.fetchClips()
+                                    ClipSuccess()
                                 default:
                                     break
                                 }
@@ -296,7 +306,23 @@ struct ProfileScreen: View {
                                 )
                                 .padding(.horizontal,0)
                             }
-                        }else{
+                        }
+                        else if selectedTab == "Clips" {
+
+                            ClipsGridView(
+                                imageURLs: clipArr.map { $0.thumbnailURL! }
+                            )
+                            .padding(.vertical, 3)
+                            .padding(.horizontal, 8)
+                            .onAppear {
+                                Task {
+                                    await handlePagination(for: .clips, index: clipArr.count - 1)
+                                }
+                            }
+                        }
+
+                        
+                        else{
                             
                         }
                     }
@@ -536,6 +562,18 @@ struct ProfileScreen: View {
         let response = viewModel.getMyScheduleShowResponseDict
         if response?.status == "success" {
             scheduleShowArr = response?.data ?? []
+            
+        } else {
+            alertType = .sheetType(icon: .alert, title: response?.status?.capitalized ?? "", message: response?.message?.capitalized ?? "", primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .defaultTheme)
+            withAnimation(.snappy) { showError = true }
+        }
+    }
+    
+    func ClipSuccess(){
+        SVProgressHUD.dismiss()
+        let response = viewModel.getClipsResponseDict
+        if response?.status == "success" {
+            clipArr = response?.data ?? []
             
         } else {
             alertType = .sheetType(icon: .alert, title: response?.status?.capitalized ?? "", message: response?.message?.capitalized ?? "", primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .defaultTheme)

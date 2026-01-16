@@ -79,6 +79,7 @@ enum APIEndPoint{
     case searching(param : SearchingRequest)
     case promo(param : PromoCodeRequest)
     case getReferralCode
+    case getclip(param : Int)
 
     case storeScheduleShow
     case updateScheduleShow
@@ -496,6 +497,8 @@ extension APIEndPoint: EndPointType {
             return "update-vacation-mode-status"
         case .makeClip(param: let param):
             return "make-clip"
+        case .getclip(param: let param):
+            return "get-clips?seller_id=\(param)"
         }
     }
     
@@ -786,6 +789,8 @@ extension APIEndPoint: EndPointType {
             return .post
         case .makeClip:
             return .post
+        case .getclip(param: _):
+            return .get
         }
     }
     
@@ -1082,6 +1087,8 @@ extension APIEndPoint: EndPointType {
             return param
         case .makeClip(param: let param):
             return param
+        case .getclip(param: let param):
+            return nil
         }
     }
     
@@ -1360,6 +1367,8 @@ extension APIEndPoint: EndPointType {
         case .updateVacation:
             return nil
         case .makeClip(param: let param):
+            return nil
+        case .getclip(param: let param):
             return nil
         }
     }

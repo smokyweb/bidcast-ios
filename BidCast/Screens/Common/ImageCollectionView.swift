@@ -97,6 +97,71 @@ struct ImageCollectionView: View {
     }
 }
 
+struct ClipsGridView: View {
+
+    let imageURLs: [String]
+
+    private let columns = [
+        GridItem(.flexible(), spacing: 10),
+        GridItem(.flexible(), spacing: 10)
+    ]
+
+    var body: some View {
+        LazyVGrid(columns: columns, spacing: 10) {
+            ForEach(imageURLs, id: \.self) { url in
+                ClipImage(url: url)
+            }
+        }
+        .padding(.horizontal, 12)
+    }
+}
+
+struct ClipImage: View {
+
+    let url: String
+
+    var body: some View {
+        GeometryReader { geo in
+            ZStack {
+                // Thumbnail image
+                AsyncImage(url: URL(string: url)) { image in
+                    image
+                        .resizable()
+                        .scaledToFill()
+                } placeholder: {
+                    Color.gray.opacity(0.3)
+                }
+                .frame(width: geo.size.width, height: geo.size.width)
+                .clipped()
+                .cornerRadius(12)
+
+                // Dark overlay (optional, improves contrast)
+                Color.black.opacity(0.15)
+                    .cornerRadius(12)
+
+                // ▶ Play Icon
+                Image(systemName: "play.fill")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: geo.size.width * 0.22,
+                           height: geo.size.width * 0.22)
+                    .foregroundColor(.white)
+                    .background(
+                        Circle()
+                            .fill(Color.black.opacity(0.6))
+                            .frame(
+                                width: geo.size.width * 0.35,
+                                height: geo.size.width * 0.35
+                            )
+                    )
+            }
+        }
+        .aspectRatio(1, contentMode: .fit)
+    }
+}
+
+
+
 
 struct LiveBadgeView: View {
     var count: Int

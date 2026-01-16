@@ -19,7 +19,8 @@ final class ProfileViewModel: ObservableObject {
     @Published var blockUserResponseDict: ResponseModal<BlockUserModel>?
     @Published var errorMessage: String? = nil
     @Published var requestType = ""
-    
+    @Published var getClipsResponseDict: ResponseModalPaginate<[GetClipModel]>?
+
     // MARK: - Store Address
     func storeAddress(parameters: AddressRequest) async {
         do {
@@ -103,6 +104,22 @@ final class ProfileViewModel: ObservableObject {
                 header: true
             ) {
                 self.getMyScheduleShowResponseDict = response
+            }
+            
+        } catch {
+            handle(error: error)
+        }
+    }
+    
+    func getClips(parameters: Int) async {
+        self.requestType = "getClips"
+        do {
+            
+            if let response : ResponseModalPaginate<[GetClipModel]> = try await APIManager.shared.request(
+                type: APIEndPoint.getclip(param: parameters),
+                header: true
+            ) {
+                self.getClipsResponseDict = response
             }
             
         } catch {
