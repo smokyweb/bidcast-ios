@@ -7,10 +7,9 @@
 
 import SwiftUI
 import Foundation
-//import ZegoExpressEngine
 import SVProgressHUD
-//import MillicastSDK
 import AlertToast
+import AVKit
 
 enum ProductShowType {
     case shop
@@ -59,6 +58,8 @@ struct RehearsalScreen: View {
 
     @State private var showPollSheet : Bool = false
     @State private var showButton: Bool = false
+    @State private var showEditClip = false
+
     
     @State private var initialSelectedProductId: String = ""
     
@@ -113,6 +114,8 @@ struct RehearsalScreen: View {
     @State var showhudAlert: Bool = false
     @State var hudMsg: String = ""
     @Binding var backToTabBar : Bool
+    @State private var clipStart: CMTime?
+    @State private var clipEnd: CMTime?
     
 //    @State private var renderer = MCAcceleratedVideoRenderer()
     
@@ -126,7 +129,7 @@ struct RehearsalScreen: View {
         switch currentBottomSheet {
         case .more: return screenHeight * 0.7
         case .promote: return screenHeight * 0.7
-        case .clip: return screenHeight * 0.6
+        case .clip: return screenHeight * 0.75
         case .share: return screenHeight * 0.9 // Or screenHeight * 0.5
         case .shop: return screenHeight * 0.8
         case .endShow: return screenHeight * 0.3
@@ -144,13 +147,15 @@ struct RehearsalScreen: View {
     @State var categoryName: String = ""
     
     @State var currentPrice: Double = 1.0
-    
+    @State var clipURL = ""
+    @State var clipModel = ClipModel()
     @StateObject private var keyboardResponder = KeyboardResponder()
     
     @State var messageHeight: CGFloat = 40   // single message height
     let maxVisibleMessages = 3
     @State var sellerId = ""
     @State var showItemDetailSheet = false
+    @State var showError = false
     @State var productId: Int = 0
     
     @State var showNotes: String = ""
@@ -179,6 +184,9 @@ struct RehearsalScreen: View {
     @State private var UsersList: [FreebieUser] = []
     @State private var selectedUsersId: [Int] = []
     @State var productCount = 0
+    @State private var hasInitialized = false
+    @State private var isNavigatingToEdit = false
+    @State private var shouldPreventReload = false
     
     @StateObject private var viewModelFreebie = RandomizerViewModel()
     var body: some View {
@@ -472,15 +480,30 @@ struct RehearsalScreen: View {
                         boosts: $boosts,
                         onPromotionSelected: { selectedBoost in
                             handleBoostClick(selectedBoost)
+                            handleBoostClick(selectedBoost)
                         },
                         onClose: { showSellSheet = false }
                     )
                 case .clip:
                     CreateClipBottomSheetView(
                         isPresented: $showSellSheet,
-                        videoURL: URL(string: "https://example.com/video.mp4")!,
+                        videoURL: URL(string: clipURL)!,
                         onCreateClip: { start, end in
                             print("Clip range: \(start.seconds) to \(end.seconds)")
+                        },onEditClip: {
+                            //                            showEditClip = true
+                            print("🚀 Starting navigation to edit screen")
+                            
+                            // ✅ Set BOTH flags
+                            isNavigatingToEdit = true
+                            shouldPreventReload = true
+                            
+                            showSellSheet = false
+                            
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                                showEditClip = true
+                            }
+                            
                         }
                     )
                 case .share:
@@ -642,6 +665,22 @@ struct RehearsalScreen: View {
                 }
             )
         }
+        .bottomSheet(
+            isPresented: $showError,
+            height: screenHeight / 2.3,
+            topBarCornerRadius: 25,
+            showTopIndicator: false
+        ) {
+            CommonBottomSheet(
+                sheetType: $alertType,
+                onPrimaryClick: {
+                    withAnimation { showError = false }
+                },
+                onSecondaryClick: {
+                    withAnimation { showError = false }
+                }
+            )
+        }
         .bottomSheet(isPresented: $showItemDetailSheet, height: screenHeight * 0.65) {
             ProductDetailSheet(
                 onDismiss : {
@@ -661,16 +700,68 @@ struct RehearsalScreen: View {
         .toast(isPresenting: $showhudAlert) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg)
         }
+//        .onAppear {
+//            
+//            logoutRoom()
+//            showTopBadge = true
+//            agoraManager.setupLocalVideo()
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+//                if comeFromPrepare && !comeForLive{
+//                    showReadyModal = false
+//                }else{
+//                    showReadyModal = true
+//                }
+//            }
+//        }
+        .onChange(of: showEditClip) { newValue in
+            print("📊 showEditClip = \(newValue)")
+        }
+
+        .onChange(of: shouldPreventReload) { newValue in
+            print("📊 shouldPreventReload = \(newValue)")
+        }
+
         .onAppear {
+            // ✅ Early exit if returning from edit
+            guard !shouldPreventReload else {
+                print("🔄 Returned from edit - SKIPPING ALL INITIALIZATION")
+                shouldPreventReload = false
+                isNavigatingToEdit = false
+                return // ⚠️ THIS IS THE KEY - EXIT IMMEDIATELY
+            }
+            
+            // ✅ Only run initialization ONCE
+            guard !hasInitialized else {
+                print("⚪ Already initialized - skipping")
+                return
+            }
+            
+            print("🟢 First time initialization ONLY")
+            hasInitialized = true
             
             logoutRoom()
             showTopBadge = true
             agoraManager.setupLocalVideo()
+            
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                if comeFromPrepare && !comeForLive{
+                if comeFromPrepare && !comeForLive {
                     showReadyModal = false
-                }else{
+                } else {
                     showReadyModal = true
+                }
+            }
+        }
+        .onDisappear {
+            guard !shouldPreventReload else {
+                print("🔄 Just navigating to edit - keeping everything alive")
+                return // ⚠️ DON'T RUN endShow()
+            }
+            
+            Task {
+                if agoraManager.isJoined {
+                    print("❌ Truly leaving - ending show")
+                    self.endShow()
+                    hasInitialized = false // Reset for next time
                 }
             }
         }
@@ -705,13 +796,15 @@ struct RehearsalScreen: View {
             //get agora token -> did not call it on preview screen
             fetchAgoraToken()
         }
-        .onDisappear {
-            Task {
-                if agoraManager.isJoined {
-                    self.endShow()
-                }
-            }
-        }
+//        .onDisappear {
+//            Task {
+//                if agoraManager.isJoined {
+//                    if !showEditClip{
+//                        self.endShow()
+//                    }
+//                }
+//            }
+//        }
     }
     
     @ViewBuilder
@@ -1129,6 +1222,27 @@ struct RehearsalScreen: View {
                 doNavigate: $navigateToSeller,
                 destination: SellerVerificationScreen()
             )
+//            CusNavLink(
+//                doNavigate: $showEditClip,
+//                destination: EditClipScreen(videoURL: $clipURL) { trimmedVideoURL in
+//                    print("Trimmed video:", trimmedVideoURL)
+//
+//                }
+//            )
+            
+            NavigationLink(
+                        destination: EditClipScreen(videoURL: $clipURL) { trimmedVideoURL in
+                            print("✅ Video trimmed successfully:", trimmedVideoURL)
+                            
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                showEditClip = false
+                            }
+                        }
+                        .navigationBarHidden(true),
+                        isActive: $showEditClip,
+                        label: { EmptyView() }
+                    )
+            
         }
     }
 
@@ -2109,11 +2223,50 @@ struct RehearsalScreen: View {
         Button(action: {
             if action == .switchView {
                 isUsingFrontCamera.toggle()
-                //                ZegoExpressEngine.shared().useFrontCamera(isUsingFrontCamera)
-                //                Task{
-                //                    await castManager.switchCamera()
-                //                }
                 agoraManager.switchCamera()
+            } else  if action == .clip {
+                if socketManager.hasHit60SecAPI{
+                    Task{
+                        SVProgressHUD.show()
+                        let request = ClipRequest(room_id: self.roomId)
+                        viewModel.errorMessage?.removeAll()
+                        clipModel = ClipModel()
+                        await viewModel.makeClip(param: request)
+                        await SVProgressHUD.dismiss()
+                        if let msg = viewModel.errorMessage{
+                           
+                            alertType = .sheetType(
+                                icon: .alert,
+                                title: "Failed",
+                                message: msg,
+                                primaryBtnText: "",
+                                secondaryBtnText: AppString.ok.localized
+                            )
+                            showError = true
+                        }else{
+                            let response = viewModel.clipResponse
+                            if response?.status == "success"{
+                                clipURL = response?.data?.clipURL ?? ""
+                                clipModel = response?.data ?? ClipModel()
+                                if !clipURL.isEmpty{
+                                    currentBottomSheet = action
+                                    showSellSheet = true
+                                }
+                            }
+                        }
+                    }
+                }else{
+                  
+                    alertType = .sheetType(
+                        icon: .alert,
+                        title: "Failed",
+                        message: "Clip generation failed, minimum 60 sec required.",
+                        primaryBtnText: "",
+                        secondaryBtnText: AppString.ok.localized
+                    )
+                    showError = true
+                }
+               
             } else {
                 currentBottomSheet = action
                 showSellSheet = true

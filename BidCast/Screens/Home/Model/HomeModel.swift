@@ -50,3 +50,17 @@ struct AuctionData : Codable {
     var id : Int?
     var name : String?
 }
+
+struct ClipModel: Codable {
+    var id: Int?
+    var clipURL: String?
+    var userID: Int?
+    var showID: String?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case clipURL = "clip_url"
+        case userID = "user_id"
+        case showID = "show_id"
+    }
+}

@@ -145,6 +145,7 @@ enum APIEndPoint{
     case saveProduct(param:MakeOfferListRequest)
     case getCoupon
     case updateVacation(param:vacationRequest)
+    case makeClip(param:ClipRequest)
 }
 
 extension APIEndPoint: EndPointType {
@@ -493,6 +494,8 @@ extension APIEndPoint: EndPointType {
             return "get-coupon"
         case .updateVacation:
             return "update-vacation-mode-status"
+        case .makeClip(param: let param):
+            return "make-clip"
         }
     }
     
@@ -780,6 +783,8 @@ extension APIEndPoint: EndPointType {
         case .getCoupon:
             return .get
         case .updateVacation:
+            return .post
+        case .makeClip:
             return .post
         }
     }
@@ -1075,6 +1080,8 @@ extension APIEndPoint: EndPointType {
             return nil
         case .updateVacation(param: let param):
             return param
+        case .makeClip(param: let param):
+            return param
         }
     }
     
@@ -1351,6 +1358,8 @@ extension APIEndPoint: EndPointType {
         case .getCoupon:
             return nil
         case .updateVacation:
+            return nil
+        case .makeClip(param: let param):
             return nil
         }
     }

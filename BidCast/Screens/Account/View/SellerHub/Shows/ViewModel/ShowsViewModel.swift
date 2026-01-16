@@ -17,6 +17,7 @@ final class ShowsViewModel: ObservableObject {
     @Published var sellerResponse : ResponseModelPaginate<[SellerUserModel]>?
     @Published var promoteShow: ResponseModelPaginate<[BoostModel]>?
     @Published var scheduledShowData: ResponseModelPaginate<HomeModel>?
+    @Published var clipResponse: ResponseModel<ClipModel>?
     @Published var errorMessage: String? = nil
     @Published var countResponse = countModel()
     @Published var requestType: String = ""
@@ -30,6 +31,19 @@ final class ShowsViewModel: ObservableObject {
                 header: true
             )
             scheduledShow = response
+        } catch {
+            handle(error: error)
+        }
+    }
+    
+    func makeClip(param:ClipRequest) async {
+        requestType = "clip"
+        do {
+            let response: ResponseModel<ClipModel> = try await APIManager.shared.request(
+                type: APIEndPoint.makeClip(param: param),
+                header: true
+            )
+            clipResponse = response
         } catch {
             handle(error: error)
         }

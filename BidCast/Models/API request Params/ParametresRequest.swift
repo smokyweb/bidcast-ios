@@ -652,6 +652,10 @@ struct TransactionRequest : Encodable {
     var status: String?
 }
 
+struct ClipRequest : Encodable{
+    var room_id : String?
+}
+
 struct StoreScheduleShowRequest: Encodable {
     var show_id : String?
     var title: String

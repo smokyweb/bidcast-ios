@@ -39,17 +39,17 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "3D8BE850-1EC4-427C-B3D8-270A3675180A"
+            uuid = "B4F85773-9F2C-4419-93DA-F39A00730611"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "BidCast/Screens/Account/View/Profile/View/ProductDetails/ViewModel/ProductDetailsViewModel.swift"
+            filePath = "BidCast/Screens/Account/View/SellerHub/Shows/View/RehearsalScreen.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "28"
-            endingLineNumber = "28"
-            landmarkName = "getProductDetails(parameters:)"
-            landmarkType = "7">
+            startingLineNumber = "1235"
+            endingLineNumber = "1235"
+            landmarkName = "navigationLinks"
+            landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

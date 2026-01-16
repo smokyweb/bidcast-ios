@@ -102,6 +102,7 @@ final class SocketManagerService: NSObject, ObservableObject {
     @Published var isFollowed: Bool = false
     @Published var lastActionSuccess: Bool = false
     @Published var currentFreebie: FreebieModel?
+    @Published var hasHit60SecAPI = false
 
     
     // MARK: - Callbacks
@@ -135,6 +136,20 @@ final class SocketManagerService: NSObject, ObservableObject {
         }
     }
     
+    func secondsFromTimeString(_ time: String) -> Int {
+        let components = time.split(separator: ":").map { Int($0) ?? 0 }
+
+        if components.count == 3 {
+            // HH:MM:SS
+            return components[0] * 3600 + components[1] * 60 + components[2]
+        } else if components.count == 2 {
+            // MM:SS
+            return components[0] * 60 + components[1]
+        }
+
+        return 0
+    }
+
     
 }
 
@@ -401,6 +416,11 @@ extension SocketManagerService {
                   roomID == roomId else { return }
             
             showTime = formatElapsedTime(seconds: elapsed)
+            let totalSeconds = self.secondsFromTimeString(self.showTime)
+
+                if totalSeconds >= 60 && !self.hasHit60SecAPI {
+                   hasHit60SecAPI = true
+                }
         }
     }
     
