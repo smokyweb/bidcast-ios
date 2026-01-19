@@ -39,49 +39,49 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "2540AEEA-1266-46CB-ABF8-DF986AE4F159"
+            uuid = "9C2E2FC1-3E94-4E07-BEBE-519130DE34A0"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "BidCast/Screens/Account/View/Profile/View/ProfileScreen.swift"
+            filePath = "BidCast/Screens/Account/View/Profile/View/ProductDetails/VideoPlayerScreen.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "149"
-            endingLineNumber = "149"
-            landmarkName = "body"
-            landmarkType = "24">
+            startingLineNumber = "368"
+            endingLineNumber = "368"
+            landmarkName = "downloadVideo()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "CAF47AA8-DBFF-4CC1-9A01-6837AEF8A36B"
+            uuid = "6E0292AF-0FC3-464A-B177-8DF8EEAE6E72"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "BidCast/Screens/Account/View/Profile/View/ProfileScreen.swift"
+            filePath = "BidCast/Screens/Account/View/Profile/View/ProductDetails/VideoPlayerScreen.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "908"
-            endingLineNumber = "908"
-            landmarkName = "body"
-            landmarkType = "24">
+            startingLineNumber = "354"
+            endingLineNumber = "354"
+            landmarkName = "downloadVideo()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "2E140A46-BBFB-4FDB-880C-A872165AC183"
+            uuid = "DD58D463-9C86-4D04-86D8-A611FDD1C988"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "BidCast/Screens/Account/View/Profile/View/ProfileScreen.swift"
+            filePath = "BidCast/Screens/Account/View/Profile/View/ProductDetails/VideoPlayerScreen.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "182"
-            endingLineNumber = "182"
-            landmarkName = "body"
-            landmarkType = "24">
+            startingLineNumber = "352"
+            endingLineNumber = "352"
+            landmarkName = "VideoPlayerViewModel"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

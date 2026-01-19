@@ -96,6 +96,7 @@ final class ProfileViewModel: ObservableObject {
     
     // MARK: - GetMyScheduleShowRequest
     func getMyScheduleShow(parameters: GetMyScheduleShowRequest) async {
+        self.errorMessage?.removeAll()
         self.requestType = "scheduleShow"
         do {
             
@@ -111,7 +112,8 @@ final class ProfileViewModel: ObservableObject {
         }
     }
     
-    func getClips(parameters: Int) async {
+    func getClips(parameters: clipRequest) async {
+        self.errorMessage?.removeAll()
         self.requestType = "getClips"
         do {
             
@@ -129,6 +131,7 @@ final class ProfileViewModel: ObservableObject {
     
     // MARK: - getTotalRating
     func getTotalRating(parameters: GetTotalRatingRequest) async {
+        self.errorMessage?.removeAll()
         self.requestType = "totalRating"
         do {
             
@@ -146,6 +149,7 @@ final class ProfileViewModel: ObservableObject {
     
     // MARK: - addRating
     func addRating(parameters: AddRatingRequest) async {
+        self.errorMessage?.removeAll()
         self.requestType = "addRating"
         do {
             

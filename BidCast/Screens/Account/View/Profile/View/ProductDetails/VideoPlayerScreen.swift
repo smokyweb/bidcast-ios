@@ -31,53 +31,57 @@ struct VideoPlayerScreen: View {
        }
     
     var body: some View {
-        ZStack {
-            Color.black.ignoresSafeArea()
-            
+        VStack(spacing: 0) {
+
+            // Header
+            VideoPlayerHeader(
+                title: videoTitle,
+                onBack: {
+                    presentationMode.wrappedValue.dismiss()
+                }
+            )
+            .background(Color.white)
+            .zIndex(1)
+
+            // Main Content
             VStack(spacing: 0) {
-                // Header
-                VideoPlayerHeader(
-                    title: videoTitle,
-                    onBack: {
-                        presentationMode.wrappedValue.dismiss()
-                    }
-                )
-                
-                Spacer()
-                
-                // Video Player Container
-                if viewModel.isDownloading {
-                    VStack(spacing: 20) {
-                        ProgressView(value: viewModel.downloadProgress)
-                            .progressViewStyle(LinearProgressViewStyle(tint: .white))
-                            .padding(.horizontal)
-                        
-                        Text("Downloading... \(Int(viewModel.downloadProgress * 100))%")
-                            .font(.custom("Poppins-Medium", size: 14))
-                            .foregroundColor(.white.opacity(0.9))
-                    }
-                } else {
-                    VStack(spacing: 20) {
-                        // Video Display
-                        VideoPlayerView(player: viewModel.player)
-                            .aspectRatio(16/9, contentMode: .fit)
-                            .cornerRadius(12)
-                            .shadow(color: .white.opacity(0.1), radius: 20, x: 0, y: 10)
-                            .padding(.horizontal, 16)
-                        
-                        // Controls
-                        VideoControlsView(viewModel: viewModel)
-                            .padding(.horizontal, 20)
-                    }
-                    
-                    Spacer()
+
+                // Fullscreen Player
+                ZStack {
+                    Color.black
+
+                    VideoPlayerView(player: viewModel.player)
+                        .ignoresSafeArea(edges: .bottom)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+                // Controls BELOW player
+                if !viewModel.isDownloading {
+                    VideoControlsView(viewModel: viewModel)
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 16)
+                        .background(Color.black)
                 }
 
-              
+                // Downloading state
+                if viewModel.isDownloading {
+                    VStack(spacing: 16) {
+                        ProgressView(value: viewModel.downloadProgress)
+                            .progressViewStyle(
+                                LinearProgressViewStyle(tint: .white)
+                            )
+
+                        Text("Downloading... \(Int(viewModel.downloadProgress * 100))%")
+                            .font(.custom("Poppins-Medium", size: 14))
+                            .foregroundColor(.white)
+                    }
+                    .padding()
+                    .background(Color.black)
+                }
             }
         }
         .navigationBarHidden(true)
-        .preferredColorScheme(.dark)
+        .background(Color.black)
         .onAppear {
             viewModel.setupPlayer(url: videoURL)
         }
@@ -85,6 +89,7 @@ struct VideoPlayerScreen: View {
             viewModel.cleanup()
         }
     }
+
 }
 
 // MARK: - Video Player Header
@@ -103,13 +108,13 @@ struct VideoPlayerHeader: View {
             
             Text(title)
                 .font(.custom("Poppins-SemiBold", size: 18))
-                .foregroundColor(.white)
+                .foregroundColor(.black)
             
             Spacer()
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
-        .background(Color.black.opacity(0.5))
+        .background(Color.white)
     }
 }
 
@@ -512,445 +517,3 @@ class VideoDownloader: NSObject, URLSessionDownloadDelegate, ObservableObject {
         }
     }
 }
-//
-//
-//import SwiftUI
-//import AVKit
-//import Combine
-//
-//// MARK: - Video Player View with Custom Controls
-//struct VideoPlayerScreen: View {
-//    @Binding var videoURL: String
-//    @StateObject private  var viewModel: VideoPlayerViewModel = VideoPlayerViewModel()
-//    @Environment(\.dismiss) private var dismiss
-//    
-//    
-//    var body: some View {
-//        ZStack {
-//            Color.black.ignoresSafeArea()
-//            
-//            VStack(spacing: 0) {
-//                // Header
-//                HStack {
-//                    Button(action: {
-//                        dismiss()
-//                    }) {
-//                        Image(systemName: "xmark")
-//                            .font(.title3)
-//                            .foregroundColor(.white)
-//                            .padding(8)
-//                            .background(Color.black.opacity(0.5))
-//                            .clipShape(Circle())
-//                    }
-//                    
-//                    Spacer()
-//                }
-//                .padding()
-//                .zIndex(1)
-//                
-//                Spacer()
-//                
-//                // Video Player
-//                ZStack {
-//                    Color.black
-//                    
-//                    if viewModel.isDownloading {
-//                        // Download Progress
-//                        VStack(spacing: 24) {
-//                            ProgressView(value: viewModel.downloadProgress, total: 1.0)
-//                                .progressViewStyle(LinearProgressViewStyle(tint: .blue))
-//                                .scaleEffect(x: 1, y: 2, anchor: .center)
-//                                .frame(width: 200)
-//                            
-//                            Text("Downloading...")
-//                                .font(.headline)
-//                                .foregroundColor(.white)
-//                            
-//                            Text("\(Int(viewModel.downloadProgress * 100))%")
-//                                .font(.title2)
-//                                .fontWeight(.bold)
-//                                .foregroundColor(.blue)
-//                        }
-//                        .padding()
-//                    } else if viewModel.isLoading {
-//                        // Loading
-//                        VStack(spacing: 20) {
-//                            ProgressView()
-//                                .scaleEffect(2)
-//                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
-//                            
-//                            Text("Loading video...")
-//                                .font(.headline)
-//                                .foregroundColor(.white)
-//                        }
-//                    } else if let errorMessage = viewModel.errorMessage {
-//                        // Error
-//                        VStack(spacing: 16) {
-//                            Image(systemName: "exclamationmark.circle")
-//                                .font(.system(size: 50))
-//                                .foregroundColor(.red)
-//                            
-//                            Text(errorMessage)
-//                                .font(.body)
-//                                .foregroundColor(.white)
-//                                .multilineTextAlignment(.center)
-//                                .padding()
-//                            
-//                            Button(action: {
-//                                viewModel.downloadAndPlay()
-//                            }) {
-//                                Text("Retry")
-//                                    .fontWeight(.semibold)
-//                                    .foregroundColor(.white)
-//                                    .padding(.horizontal, 32)
-//                                    .padding(.vertical, 12)
-//                                    .background(Color.defaultTheme)
-//                                    .cornerRadius(25)
-//                            }
-//                        }
-//                    } else if let player = viewModel.player {
-//                        // Video Player
-//                        VideoPlayerLayer(player: player)
-//                            .aspectRatio(16/9, contentMode: .fit)
-//                    }
-//                }
-//                
-//                // Custom Controls
-//                if viewModel.player != nil && !viewModel.isDownloading && !viewModel.isLoading {
-//                    VideoControlsView(viewModel: viewModel)
-//                        .padding()
-//                        .background(
-//                            LinearGradient(
-//                                gradient: Gradient(colors: [Color.black.opacity(0.7), Color.clear]),
-//                                startPoint: .bottom,
-//                                endPoint: .top
-//                            )
-//                        )
-//                }
-//                
-//                Spacer()
-//            }
-//        }
-//        .onAppear {
-//            viewModel.videoURLString = videoURL
-//            viewModel.downloadAndPlay()
-//        }
-//        .onDisappear {
-//            viewModel.cleanup()
-//        }
-//    }
-//}
-//
-//// MARK: - Video Player Layer
-//struct VideoPlayerLayer: UIViewRepresentable {
-//    let player: AVPlayer
-//    
-//    func makeUIView(context: Context) -> UIView {
-//        let view = UIView()
-//        let playerLayer = AVPlayerLayer(player: player)
-//        playerLayer.videoGravity = .resizeAspect
-//        view.layer.addSublayer(playerLayer)
-//        context.coordinator.playerLayer = playerLayer
-//        return view
-//    }
-//    
-//    func updateUIView(_ uiView: UIView, context: Context) {
-//        context.coordinator.playerLayer?.frame = uiView.bounds
-//    }
-//    
-//    func makeCoordinator() -> Coordinator {
-//        Coordinator()
-//    }
-//    
-//    class Coordinator {
-//        var playerLayer: AVPlayerLayer?
-//    }
-//}
-//
-//// MARK: - Custom Controls View
-//struct VideoControlsView: View {
-//    @ObservedObject var viewModel: VideoPlayerViewModel
-//    
-//    var body: some View {
-//        VStack(spacing: 12) {
-//            // Progress Bar
-//            HStack(spacing: 8) {
-//                Text(timeString(from: viewModel.currentTime))
-//                    .font(.caption)
-//                    .foregroundColor(.white)
-//                    .monospacedDigit()
-//                
-//                Slider(value: $viewModel.sliderValue, in: 0...1, onEditingChanged: { editing in
-//                    if !editing {
-//                        viewModel.seek(to: viewModel.sliderValue)
-//                    }
-//                })
-//                .accentColor(.blue)
-//                
-//                Text(timeString(from: viewModel.duration))
-//                    .font(.caption)
-//                    .foregroundColor(.white)
-//                    .monospacedDigit()
-//            }
-//            
-//            // Control Buttons
-//            HStack(spacing: 40) {
-//                Button(action: {
-//                    viewModel.seekBackward()
-//                }) {
-//                    Image(systemName: "gobackward.10")
-//                        .font(.title2)
-//                        .foregroundColor(.white)
-//                }
-//                
-//                Button(action: {
-//                    viewModel.togglePlayPause()
-//                }) {
-//                    Image(systemName: viewModel.isPlaying ? "pause.fill" : "play.fill")
-//                        .font(.title)
-//                        .foregroundColor(.white)
-//                }
-//                
-//                Button(action: {
-//                    viewModel.seekForward()
-//                }) {
-//                    Image(systemName: "goforward.10")
-//                        .font(.title2)
-//                        .foregroundColor(.white)
-//                }
-//            }
-//        }
-//    }
-//    
-//    private func timeString(from seconds: Double) -> String {
-//        guard !seconds.isNaN && !seconds.isInfinite else { return "0:00" }
-//        let totalSeconds = Int(seconds)
-//        let minutes = totalSeconds / 60
-//        let secs = totalSeconds % 60
-//        return String(format: "%d:%02d", minutes, secs)
-//    }
-//}
-//
-//// MARK: - View Model
-//class VideoPlayerViewModel: ObservableObject {
-//    @Published var player: AVPlayer?
-//    @Published var isDownloading = false
-//    @Published var isLoading = false
-//    @Published var downloadProgress: Double = 0.0
-//    @Published var errorMessage: String?
-//    @Published var isPlaying = false
-//    @Published var currentTime: Double = 0
-//    @Published var duration: Double = 0
-//    @Published var sliderValue: Double = 0
-//    
-//    var videoURLString: String = ""
-//    private var localVideoURL: URL?
-//    private var timeObserver: Any?
-//    private var downloadTask: URLSessionDownloadTask?
-//    
-//    func downloadAndPlay() {
-//        guard let url = URL(string: videoURLString) else {
-//            errorMessage = "Invalid video URL"
-//            return
-//        }
-//        
-//        errorMessage = nil
-//        isDownloading = true
-//        downloadProgress = 0.0
-//        
-//        // Create download task
-//        let session = URLSession(configuration: .default, delegate: DownloadDelegate(viewModel: self), delegateQueue: nil)
-//        downloadTask = session.downloadTask(with: url)
-//        downloadTask?.resume()
-//    }
-//    
-//    func videoDownloaded(at location: URL) {
-//        DispatchQueue.main.async {
-//            self.isDownloading = false
-//            self.isLoading = true
-//            
-//            // Move file to documents directory
-//            let fileManager = FileManager.default
-//            let documentsPath = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
-//            let destinationURL = documentsPath.appendingPathComponent("downloaded_video.mp4")
-//            
-//            // Remove old file if exists
-//            try? fileManager.removeItem(at: destinationURL)
-//            
-//            do {
-//                try fileManager.moveItem(at: location, to: destinationURL)
-//                self.localVideoURL = destinationURL
-//                self.setupPlayer(with: destinationURL)
-//            } catch {
-//                self.errorMessage = "Failed to save video: \(error.localizedDescription)"
-//                self.isLoading = false
-//            }
-//        }
-//    }
-//    
-//    func downloadFailed(with error: Error) {
-//        DispatchQueue.main.async {
-//            self.isDownloading = false
-//            self.errorMessage = "Download failed: \(error.localizedDescription)"
-//        }
-//    }
-//    
-//    private func setupPlayer(with url: URL) {
-//        let playerItem = AVPlayerItem(url: url)
-//        player = AVPlayer(playerItem: playerItem)
-//        
-//        // Observe player status
-//        playerItem.publisher(for: \.status)
-//            .sink { [weak self] status in
-//                DispatchQueue.main.async {
-//                    if status == .readyToPlay {
-//                        self?.isLoading = false
-//                        self?.duration = playerItem.duration.seconds
-//                        self?.player?.play()
-//                        self?.isPlaying = true
-//                        self?.addTimeObserver()
-//                    } else if status == .failed {
-//                        self?.errorMessage = "Failed to load video"
-//                        self?.isLoading = false
-//                    }
-//                }
-//            }
-//            .store(in: &cancellables)
-//    }
-//    
-//    private var cancellables = Set<AnyCancellable>()
-//    
-//    private func addTimeObserver() {
-//        guard let player = player else { return }
-//        
-//        let interval = CMTime(seconds: 0.1, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
-//        timeObserver = player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { [weak self] time in
-//            guard let self = self else { return }
-//            self.currentTime = time.seconds
-//            if self.duration > 0 {
-//                self.sliderValue = time.seconds / self.duration
-//            }
-//        }
-//    }
-//    
-//    func togglePlayPause() {
-//        guard let player = player else { return }
-//        
-//        if isPlaying {
-//            player.pause()
-//        } else {
-//            player.play()
-//        }
-//        isPlaying.toggle()
-//    }
-//    
-//    func seek(to value: Double) {
-//        guard let player = player else { return }
-//        let targetTime = duration * value
-//        let time = CMTime(seconds: targetTime, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
-//        player.seek(to: time)
-//    }
-//    
-//    func seekForward() {
-//        guard let player = player else { return }
-//        let currentTime = player.currentTime()
-//        let newTime = CMTimeAdd(currentTime, CMTime(seconds: 10, preferredTimescale: 1))
-//        player.seek(to: newTime)
-//    }
-//    
-//    func seekBackward() {
-//        guard let player = player else { return }
-//        let currentTime = player.currentTime()
-//        let newTime = CMTimeSubtract(currentTime, CMTime(seconds: 10, preferredTimescale: 1))
-//        player.seek(to: newTime)
-//    }
-//    
-//    func cleanup() {
-//        downloadTask?.cancel()
-//        if let observer = timeObserver {
-//            player?.removeTimeObserver(observer)
-//        }
-//        player?.pause()
-//        player = nil
-//        cancellables.removeAll()
-//    }
-//    
-//    deinit {
-//        cleanup()
-//    }
-//}
-//
-//// MARK: - Download Delegate
-//class DownloadDelegate: NSObject, URLSessionDownloadDelegate {
-//    weak var viewModel: VideoPlayerViewModel?
-//    
-//    init(viewModel: VideoPlayerViewModel) {
-//        self.viewModel = viewModel
-//    }
-//    
-//    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
-//        viewModel?.videoDownloaded(at: location)
-//    }
-//    
-//    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
-//        let progress = Double(totalBytesWritten) / Double(totalBytesExpectedToWrite)
-//        DispatchQueue.main.async {
-//            self.viewModel?.downloadProgress = progress
-//        }
-//    }
-//    
-//    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-//        if let error = error {
-//            viewModel?.downloadFailed(with: error)
-//        }
-//    }
-//}
-//
-//// MARK: - Caller View Example
-////struct CallerView: View {
-////    @State private var showPlayer = false
-////    
-////    var body: some View {
-////        NavigationView {
-////            VStack(spacing: 20) {
-////                Text("Video Gallery")
-////                    .font(.largeTitle)
-////                    .fontWeight(.bold)
-////                
-////                Button(action: {
-////                    showPlayer = true
-////                }) {
-////                    HStack {
-////                        Image(systemName: "play.circle.fill")
-////                            .font(.title)
-////                            .foregroundColor(.blue)
-////                        
-////                        VStack(alignment: .leading) {
-////                            Text("Sample Video")
-////                                .font(.headline)
-////                                .foregroundColor(.primary)
-////                            
-////                            Text("Big Buck Bunny")
-////                                .font(.caption)
-////                                .foregroundColor(.gray)
-////                        }
-////                        
-////                        Spacer()
-////                        
-////                        Image(systemName: "arrow.down.circle")
-////                            .foregroundColor(.gray)
-////                    }
-////                    .padding()
-////                    .background(Color.gray.opacity(0.1))
-////                    .cornerRadius(12)
-////                }
-////                .padding(.horizontal)
-////            }
-////            .padding()
-////        }
-////        .fullScreenCover(isPresented: $showPlayer) {
-////            VideoPlayerScreen(videoURL: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4")
-////        }
-////    }
-////}
-//

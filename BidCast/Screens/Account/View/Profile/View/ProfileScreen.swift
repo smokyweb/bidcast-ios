@@ -56,6 +56,8 @@ struct ProfileScreen: View {
     @State var isLive = false
     @State var navigateToReherseal = false
     @State var navigateToChat = false
+    @State var navigateToVideoReceipt = false
+    @State var videoURL = ""
     @State private var chatPath: String = ""
     @State private var isTipAmountButtoClicked: Bool = false
     @State private var showReportSheet: Bool = false
@@ -87,11 +89,17 @@ struct ProfileScreen: View {
         ReviewModel(username: "Eve", profileImageName: "user1", rating: 4.0)
     ]
     let columns = Array(repeating: GridItem(.flexible(), spacing: 6), count: 2)
+    let clipsColumns = Array(repeating: GridItem(.flexible(), spacing: 12), count: 2)
     
     @State private var selectedTab = ""
     @State var navigateToDetail = false
     //Review Variab
     
+    @State private var clipPage = 1
+    @State private var isFetchingMoreClips = false
+    @State private var canLoadMoreClips = true
+    @State private var totalClipsCount = 0
+
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -161,7 +169,16 @@ struct ProfileScreen: View {
                                     SVProgressHUD.show()
                                     await self.viewModel.getMyScheduleShow(parameters: GetMyScheduleShowRequest(type: "upcoming",page : currentPage))
                                     await SVProgressHUD.dismiss()
-                                    scheduleShowSuccess()
+                                    if let error = viewModel.errorMessage{
+                                        alertType = .sheetType(icon: .alert,
+                                                               title: "Error",
+                                                               message: error.capitalizingFirstLetter(),
+                                                               primaryBtnText: "",
+                                                               secondaryBtnText: AppString.ok.localized)
+                                        withAnimation(.snappy) { showError = true }
+                                    }else{
+                                        scheduleShowSuccess()
+                                    }
                                 case "Reviews":
                                     guard Reachability.isConnectedToNetwork() else {
                                         hudMsg = "No Internet Connection"
@@ -173,16 +190,27 @@ struct ProfileScreen: View {
                                     await SVProgressHUD.dismiss()
                                     ratingSuccess()
                                 case "Clips":
+                                    resetClipsData()
                                     guard Reachability.isConnectedToNetwork() else {
                                         hudMsg = "No Internet Connection"
                                         showhud = true
                                         return
                                     }
                                     SVProgressHUD.show()
-                                    await self.viewModel.getClips(parameters: Int(id) ?? 0)
+                                    let requst = clipRequest(sellerId: id, page: 1)
+                                    await self.viewModel.getClips(parameters:requst )
                                     await SVProgressHUD.dismiss()
-                                    //                                await viewModel.fetchClips()
-                                    ClipSuccess()
+                                    if let error = viewModel.errorMessage{
+                                        alertType = .sheetType(icon: .alert,
+                                                               title: "Error",
+                                                               message: error.capitalizingFirstLetter(),
+                                                               primaryBtnText: "",
+                                                               secondaryBtnText: AppString.ok.localized)
+                                        withAnimation(.snappy) { showError = true }
+                                    }else{
+                                        ClipSuccess()
+                                    }
+                                    
                                 default:
                                     break
                                 }
@@ -308,17 +336,27 @@ struct ProfileScreen: View {
                             }
                         }
                         else if selectedTab == "Clips" {
-
-                            ClipsGridView(
-                                imageURLs: clipArr.map { $0.thumbnailURL! }
-                            )
-                            .padding(.vertical, 3)
-                            .padding(.horizontal, 8)
-                            .onAppear {
-                                Task {
-                                    await handlePagination(for: .clips, index: clipArr.count - 1)
+                            let imageURLs = clipArr.map { $0.thumbnailURL ?? "" }
+                            LazyVGrid(columns: clipsColumns, spacing: 12) {
+                                ForEach(imageURLs.indices, id: \.self) { index in
+                                        let url = imageURLs[index]
+                                        ClipImage(url: url, onSelection: {
+                                            navigateToVideoReceipt = true
+                                            videoURL = clipArr[index].clipURL ?? ""
+                                        })
+                                        .onAppear {
+                                            Task {
+                                                await handlePagination(for: .clips, index: clipArr.count - 1)
+                                            }
+                                        }
                                 }
                             }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 4)
+                            if isFetchingMoreClips {
+                                   ProgressView()
+                                       .padding(.vertical, 16)
+                               }
                         }
 
                         
@@ -419,6 +457,8 @@ struct ProfileScreen: View {
                 
             }
             
+            CusNavLink(doNavigate: $navigateToVideoReceipt, destination: VideoPlayerScreen(videoURL: $videoURL))
+            
             CusNavLink(doNavigate: $navigateToDetail, destination: ProductDetailView(productID: $productId, sellerInfo: $sellerInfo))
             CusNavLink(
                 doNavigate: $navigateToChat,
@@ -455,9 +495,19 @@ struct ProfileScreen: View {
                 profileSuccess()
                 if isComeFrom == "Home"{
                     selectedTab = "Shows"
+                
                     await self.viewModel.getMyScheduleShow(parameters: GetMyScheduleShowRequest(type: "upcoming", seller_id: profileData.id ?? 0,page: currentPage))
                     await SVProgressHUD.dismiss()
-                    scheduleShowSuccess()
+                    if let error = viewModel.errorMessage{
+                        alertType = .sheetType(icon: .alert,
+                                               title: "Error",
+                                               message: error.capitalizingFirstLetter(),
+                                               primaryBtnText: "",
+                                               secondaryBtnText: AppString.ok.localized)
+                        withAnimation(.snappy) { showError = true }
+                    }else{
+                        scheduleShowSuccess()
+                    }
                 }else{
                     selectedTab = "Shop"
                     resetShopData()
@@ -468,7 +518,13 @@ struct ProfileScreen: View {
       
        
     }
-    
+    private func resetClipsData() {
+        clipArr = []
+        clipPage = 1
+        canLoadMoreClips = true
+        isFetchingMoreClips = false
+    }
+
     func computeRoomId(senderId: String, receiverId: String) -> String {
         let sortedIds = [senderId, receiverId].sorted()
         return "\(sortedIds[0])_chats_\(sortedIds[1])"
@@ -543,18 +599,7 @@ struct ProfileScreen: View {
         }
     }
     
-//    //MARK: success.
-//    func success(){
-//        SVProgressHUD.dismiss()
-//        let response = viewModel.productDetailsResponseDict
-//        if response?.status == "success" {
-//            productArr = response?.data ?? []
-//            
-//        } else {
-//            alertType = .sheetType(icon: .alert, title: response?.status?.capitalized ?? "", message: response?.message?.capitalized ?? "", primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .defaultTheme)
-//            withAnimation(.snappy) { showError = true }
-//        }
-//    }
+
     
     //MARK: scheduleShowSuccess.
     func scheduleShowSuccess(){
@@ -569,17 +614,31 @@ struct ProfileScreen: View {
         }
     }
     
-    func ClipSuccess(){
-        SVProgressHUD.dismiss()
+    func ClipSuccess() {
         let response = viewModel.getClipsResponseDict
         if response?.status == "success" {
-            clipArr = response?.data ?? []
-            
+            let newClips = response?.data ?? []
+            totalClipsCount = response?.total ?? 0
+
+            if newClips.isEmpty {
+                canLoadMoreClips = false
+            } else {
+                clipArr.append(contentsOf: newClips)
+            }
         } else {
-            alertType = .sheetType(icon: .alert, title: response?.status?.capitalized ?? "", message: response?.message?.capitalized ?? "", primaryBtnText: "", secondaryBtnText: AppString.ok.localized, sheetThemeColor: .defaultTheme)
-            withAnimation(.snappy) { showError = true }
+            canLoadMoreClips = false
+            alertType = .sheetType(
+                icon: .alert,
+                title: response?.status?.capitalized ?? "",
+                message: response?.message?.capitalized ?? "",
+                primaryBtnText: "",
+                secondaryBtnText: AppString.ok.localized
+            )
+            showError = true
         }
+        isFetchingMoreClips = false
     }
+
     
     //MARK: ratingSuccess.
     func ratingSuccess(){
@@ -624,8 +683,19 @@ struct ProfileScreen: View {
             break
             
         case .clips:
-            // Add this once your clips API is paginated
-            break
+            guard canLoadMoreClips, !isFetchingMoreClips else { return }
+
+                let thresholdIndex = clipArr.count - 1
+                if index == thresholdIndex && clipArr.count < totalClipsCount {
+                    isFetchingMoreClips = true
+                    clipPage += 1
+
+                    Task {
+                        let request = clipRequest(sellerId: id, page: clipPage)
+                        await viewModel.getClips(parameters: request)
+                        ClipSuccess()
+                    }
+                }
         }
     }
 }

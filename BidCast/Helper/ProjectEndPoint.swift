@@ -79,7 +79,7 @@ enum APIEndPoint{
     case searching(param : SearchingRequest)
     case promo(param : PromoCodeRequest)
     case getReferralCode
-    case getclip(param : Int)
+    case getclip(param : clipRequest)
 
     case storeScheduleShow
     case updateScheduleShow
@@ -498,7 +498,7 @@ extension APIEndPoint: EndPointType {
         case .makeClip(param: let param):
             return "make-clip"
         case .getclip(param: let param):
-            return "get-clips?seller_id=\(param)"
+            return "get-clips?seller_id=\(param.sellerId ?? "")&page=\(param.page)"
         }
     }
     

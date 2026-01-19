@@ -519,6 +519,11 @@ struct AddCardRequest : Encodable{
     var card_token: String
 }
 
+struct clipRequest : Encodable{
+    var sellerId: String?
+    var page : Int
+}
+
 struct UpdateCardRequest : Encodable{
     var card_id: String
     var name: String
