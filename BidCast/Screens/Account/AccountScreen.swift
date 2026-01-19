@@ -1139,6 +1139,7 @@ enum AccountTabSection: String, CaseIterable, CustomStringConvertible {
     case notifications = "Notifications"
     case preference = "Preference"
     case favCategory = "Favorite"
+    case clips = "Clips"
     
     var description: String {
         NSLocalizedString(rawValue, comment: "")
@@ -1152,6 +1153,7 @@ enum AccountTabSection: String, CaseIterable, CustomStringConvertible {
         case .notifications: return .notifications
         case .preference: return .offers
         case .favCategory: return .favourites
+        case .clips : return .shows
         }
     }
 }
