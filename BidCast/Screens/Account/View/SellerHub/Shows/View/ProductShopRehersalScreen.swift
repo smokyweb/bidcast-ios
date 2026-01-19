@@ -10,11 +10,11 @@ import SwiftUI
 // MARK: - Inventory Segment Enum
 enum RehearsalProductSegment: String, CaseIterable, CustomStringConvertible {
     case auction = "Auction"
-    case buynow = "Buy Now"
-    case giveway = "Freebie"
-    case sold = "Sold"
+//    case buynow = "Buy Now"
+////    case giveway = "Freebie"
+//    case sold = "Sold"
     case offers = "Offers"
-    case tips = "Tips"
+//    case tips = "Tips"
     
     var description: String {
         NSLocalizedString(rawValue, comment: "")
@@ -60,7 +60,7 @@ struct ProductShopRehersalScreen: View {
     var roomId: String
     @State private var isFetchingMore = false
     @State private var canLoadMore = true
-    
+    @State var saleType = "auction"
     @State var showhud: Bool = false
     @State var hudMsg: String = ""
     @State var showError: Bool = false
@@ -119,7 +119,17 @@ struct ProductShopRehersalScreen: View {
                 .padding(12)
             }
             
-            GenericTabView(selectedTab: $segment) {}
+            GenericTabView(selectedTab: $segment) {
+                if segment == .auction{
+                    resetData()
+                    self.saleType = "auction"
+                    fetchProduct()
+                }else if segment == .offers{
+                    resetData()
+                    self.saleType = "accept_offers"
+                    fetchProduct()
+                }
+            }
             
             // MARK: - Heading
             ProductHeading(count: sortedProductData.count)
@@ -306,7 +316,8 @@ extension ProductShopRehersalScreen {
                 let request = ProductRequest(
                     search: searchText,
                     category_ids: categoryId,
-                    page: currentPage
+                    page: currentPage,
+                    sale_type:saleType
                 )
                 try await productViewModel.getProductsData1(parameters: request)
             }
@@ -443,17 +454,17 @@ struct ProductRehearsalListItem: View {
             // MARK: - Right Content
             VStack(alignment: .leading, spacing: 6) {
                 Text(product.title ?? "Product")
-                    .font(.custom("Poppins-SemiBold", size: 16))
+                    .font(.custom("Poppins-SemiBold", size: 13))
                     .foregroundColor(.black)
                     .lineLimit(2)
 
                 HStack(spacing: 6) {
                     Text("\(product.category?.name ?? "N/A")")
-                        .font(.custom("Poppins-Regular", size: 13))
+                        .font(.custom("Poppins-Regular", size: 11))
                         .foregroundColor(.gray)
 
                     Text("\(product.productCondition ?? "New")")
-                        .font(.custom("Poppins-SemiBold", size: 10))
+                        .font(.custom("Poppins-SemiBold", size: 11))
                         .padding(.horizontal, 6)
                         .padding(.vertical, 2)
                         .foregroundColor(.gray)
@@ -462,7 +473,7 @@ struct ProductRehearsalListItem: View {
 
                 HStack(spacing: 4) {
                     Text("$\(product.pricing ?? "0.0")")
-                        .font(.custom("Poppins-Bold", size: 18))
+                        .font(.custom("Poppins-Bold", size: 15))
                         .foregroundColor(.black)
                 }
 
@@ -473,14 +484,14 @@ struct ProductRehearsalListItem: View {
                         onActionTapped?()
                     }) {
                         Text(actionTitle)
-                            .font(.custom("Poppins-SemiBold", size: 15))
+                            .font(.custom("Poppins-SemiBold", size: 13))
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 10)
                             .background(Color(.sRGB, red: 0.98, green: 0.96, blue: 0.95))
                             .clipShape(RoundedRectangle(cornerRadius: 22))
                     }
                     .foregroundColor(.black.opacity(0.85))
-                    if actionTitle != "Start Auction" {
+                    if actionTitle == "Start Auction" {
                         Button(action: {
                             onPinTapped?()
                         }) {

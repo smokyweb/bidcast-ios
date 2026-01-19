@@ -915,7 +915,7 @@ struct TikTokStyleWinnerView: View {
                     .font(.custom(poppinsBold, size: 32))
                     .foregroundColor(.white)
 
-                Text("has won the auction!")
+                Text(winner == "You" ? "have won the auction!" : "has won the auction!")
                     .font(.custom(poppinsSemiBold, size: 24))
                     .foregroundColor(.white)
             }

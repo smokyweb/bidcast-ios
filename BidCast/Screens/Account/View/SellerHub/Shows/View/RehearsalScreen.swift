@@ -1117,6 +1117,7 @@ struct RehearsalScreen: View {
             startOrContinueButtons
         }
         .zIndex(1)
+        .padding(.bottom,-20)
     }
     @ViewBuilder
     private var messageInputAndProductView: some View {
@@ -1203,7 +1204,7 @@ struct RehearsalScreen: View {
                             .padding(.horizontal,16)
                         }
                     } else {
-                        Text("Waiting for product...")
+                        Text("Awaiting for product...")
                             .font(.custom(poppinsSemiBold, size: 14))
                             .foregroundColor(.white)
                             .padding(.horizontal)
@@ -1838,19 +1839,21 @@ struct RehearsalScreen: View {
         winnerProfileID = id
         winnerProfileImage = image
         winnerAmount = amount
-        showWinnerOnParent = true
-        randomWinner = winnerName.capitalizingFirstLetter()
-        randomWinnerImage = winnerProfileImage
-        
-        let message = "Congratulations! \(winnerName) has won the bid with an amount of $\(winnerAmount)"
-        
-        SocketManagerService.shared.sendChat(
-            roomId: roomId,
-            message: message,
-            userId: id,
-            userName: name,
-            userImage: image
-        )
+        if !winnerName.isEmpty{
+            showWinnerOnParent = true
+            randomWinner = winnerName.capitalizingFirstLetter()
+            randomWinnerImage = winnerProfileImage
+            
+            let message = "Congratulations! \(winnerName) has won the bid with an amount of $\(winnerAmount)"
+            
+            SocketManagerService.shared.sendChat(
+                roomId: roomId,
+                message: message,
+                userId: id,
+                userName: name,
+                userImage: image
+            )
+        }
     }
     
     private func handleCountdownCompletion() {

@@ -797,10 +797,14 @@ struct LiveStream: View {
         if isAuctionStartedForCurrentRoom {
             let currentProducts = auctionedProductData
             let product = currentProducts
-            if product != nil && product?.status != "sold"{
+            if product != nil /*&& product?.status != "sold"*/{
                 VStack(alignment: .leading, spacing: 12) {
                     currentProductCard(product: product ?? ProductDataModel1() )
-                    biddingControls
+                    if product?.status != "sold"{
+                        biddingControls
+                    }else{
+                        waitingForProductView
+                    }
                 }
                 
             } else {
@@ -831,7 +835,7 @@ struct LiveStream: View {
     
     @ViewBuilder
     private var waitingForProductView: some View {
-        Text("Waiting for product...")
+        Text("Awaiting next product...")
             .font(.custom(poppinsBold, size: 14.0))
             .foregroundColor(.white)
             .padding(.horizontal)
@@ -2057,12 +2061,23 @@ extension LiveStream {
         let amount = winner?.bid_amount ?? ""
         
         print("🏁 Bid finalized - Winner: \(name), Amount: \(amount)")
-        auctionedProductData = nil
+//        auctionedProductData = nil
+        
         maxBidAmountSheet = false
         winnerName = name
         winnerProfileID = id
         winnerProfileImage = image
         winnerAmount = amount
+        auctionedProductData?.status = "sold"
+        if !winnerName.isEmpty{
+            showWinnerOnParent = true
+            if winnerProfileID == UserDefaults.userId{
+                randomWinner = "You"
+            }else{
+                randomWinner = winnerName.capitalizingFirstLetter()
+            }
+            randomWinnerImage = winnerProfileImage
+        }
         
 //        let message = "Congratulations! \(winnerName) has won the bid with an amount of $\(winnerAmount)"
 //        let roomId = liveShowsData[currentIndex].room_id ?? ""
@@ -2187,7 +2202,7 @@ extension LiveStream {
                 // 🔥 unlock product details for this room
                 self.auctionStartedRooms.insert(roomId)
             }else{
-                auctionedProductData = nil
+//                auctionedProductData = nil
                 
                 self.auctionStartedRooms.remove(roomId)
             }

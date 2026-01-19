@@ -71,7 +71,7 @@ struct CurrentProductView: View {
                     
                 }
             }
-                HStack(spacing: 12) {
+                HStack(spacing: 8) {
                     CustomProfileImage(
                         url: product.images?.first,
                         isCircular: false,
@@ -85,7 +85,7 @@ struct CurrentProductView: View {
                             .foregroundColor(.white)
                         if !categoryName.isEmpty{
                             Text(categoryName)
-                                .font(.custom(poppinsSemiBold, size: 12.0))
+                                .font(.custom(poppinsSemiBold, size: 11.0))
                                 .padding(4)
                                 .foregroundColor(.white)
                         }
