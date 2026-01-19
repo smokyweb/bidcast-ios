@@ -26,7 +26,7 @@ struct CurrentProductView: View {
         
         VStack(alignment: .leading) {
             if let price = product.pricing, let priceInDouble = Double(price) {
-                if !userName.isEmpty && currentPrice > priceInDouble {
+                if !userName.isEmpty /*&& currentPrice > priceInDouble*/ {
                     // Text with different colors for username and "Winning"
                     HStack(spacing: 0) {
                         CustomProfileImage(url: userImage,isCircular: true,size: 13.0)

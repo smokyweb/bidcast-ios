@@ -807,7 +807,7 @@ struct SellerHubSection: View {
                     rating = info.rating ?? 0.0
                     onTimeRate = "\(info.accountHealth?.onTimeScanRate ?? "0")"
                     defectFreeRate = "\(info.accountHealth?.defectFreeOrderRate ?? "")"
-                    policyStanding = "Excellent"
+                    policyStanding = info.accountHealth?.policyStanding ?? ""
                     payouts = "\(formatCurrencyCompact(Double(info.payouts ?? 0)))"
                     totalOrders = "\(info.totalOrders ?? 0) Items"
                     vacationToggle = UserDefaults.vacationMode

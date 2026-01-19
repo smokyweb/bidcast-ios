@@ -16,77 +16,92 @@ enum BottomSheetType {
         primaryBtnText: String = "Continue",
         secondaryBtnText: String = "Cancel",
         sheetThemeColor: ColorResource = .defaultTheme,
+        sheetSecondaryColor: ColorResource = .defaultTheme,
+        secondaryTextColor: Color = .white,
         isButtonVertical: Bool = true,
         buttonHeight: CGFloat = 40,
         buttonWidth: CGFloat = screenWidth/1.5,
-        contentSize : CGFloat = 16.0
+        contentSize : CGFloat = 13.0
     )
     
     var icon: ImageResource {
         switch self {
-            case .sheetType(icon: let icon, _, _, _, _, _, _, _, _,_):
+            case .sheetType(icon: let icon, _, _,_, _, _, _, _, _, _, _,_):
                 return icon
         }
     }
     
     var title: String {
         switch self {
-            case .sheetType(_, title: let title, _, _, _, _, _, _, _,_):
+            case .sheetType(_, title: let title, _,_, _, _, _, _, _,_, _,_):
                 return title
         }
     }
     
     var message: String {
         switch self {
-            case .sheetType(_, _, message: let message, _, _, _, _, _, _,_):
+            case .sheetType(_, _, message: let message, _,_, _, _,_, _, _, _,_):
                 return message
         }
     }
     
     var primaryBtnText: String {
         switch self {
-            case .sheetType(_, _, _, primaryBtnText: let primaryBtnText, _, _, _, _, _,_):
+            case .sheetType(_, _, _, primaryBtnText: let primaryBtnText, _,_, _,_, _, _, _,_):
                 return primaryBtnText
         }
     }
     
     var secondaryBtnText: String {
         switch self {
-            case .sheetType(_, _, _, _, secondaryBtnText: let secondaryBtnText, _, _, _, _,_):
+            case .sheetType(_, _, _, _, secondaryBtnText: let secondaryBtnText,_, _, _,_, _, _,_):
                 return secondaryBtnText
         }
     }
     
     var sheetThemeColor: ColorResource {
         switch self {
-            case .sheetType(_, _, _, _, _, sheetThemeColor: let color, _, _, _,_):
+            case .sheetType(_, _, _, _, _, sheetThemeColor: let color, _,_, _,_, _,_):
+                return color
+        }
+    }
+    
+    var sheetSecondaryColor: ColorResource {
+        switch self {
+            case .sheetType(_, _, _, _, _,_,sheetSecondaryColor: let color,_,_, _, _,_):
+                return color
+        }
+    }
+    var secondaryTextColor: Color {
+        switch self {
+            case .sheetType(_, _, _, _, _,_,_, secondaryTextColor: let color,_, _, _,_):
                 return color
         }
     }
     
     var isBtnVertical: Bool {
         switch self {
-            case .sheetType(_, _, _, _, _, _, isButtonVertical: let isBtnVertical, _, _,_):
+            case .sheetType(_, _, _, _, _, _,_,_, isButtonVertical: let isBtnVertical, _, _,_):
                 return isBtnVertical
         }
     }
     
     var btnWidth: CGFloat {
         switch self {
-            case .sheetType(_, _, _, _, _, _, _, _, buttonWidth: let width,_):
+            case .sheetType(_, _, _, _, _,_, _, _,_, _, buttonWidth: let width,_):
                 return width
         }
     }
     
     var btnHeight: CGFloat {
         switch self {
-            case .sheetType(_, _, _, _, _, _, _, buttonHeight: let height, _, _):
+            case .sheetType(_, _, _, _,_, _, _,_, _, buttonHeight: let height, _, _):
                 return height
         }
     }
     var contentSize: CGFloat {
         switch self {
-        case .sheetType(_, _, _, _, _, _, _, _,_,contentSize:let size):
+        case .sheetType(_, _, _, _, _, _,_, _,_, _,_,contentSize:let size):
                 return size
         }
     }
@@ -257,8 +272,8 @@ struct CommonBottomSheet: View {
             
             // MARK: - Message
             Text(sheetType.message)
-                .font(.custom(poppinsMedium, size: sheetType.contentSize))
-                .foregroundColor(.black.opacity(0.85))
+                .font(.custom(poppinsSemiBold, size: sheetType.contentSize))
+                .foregroundColor(.darkGray)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 28)
                 .fixedSize(horizontal: false, vertical: true)
@@ -293,8 +308,8 @@ struct CommonBottomSheet: View {
                             height: sheetType.btnHeight,
 //                            btnTextColor: sheetType.sheetThemeColor,
 //                            btnColor: Color.gray.opacity(0.12)
-                            btnTextColor: .white,
-                            btnColor: sheetType.sheetThemeColor
+                            btnTextColor: sheetType.secondaryTextColor,
+                            btnColor: sheetType.sheetSecondaryColor
                         )
                     }
                 }
@@ -325,8 +340,8 @@ struct CommonBottomSheet: View {
                             height: sheetType.btnHeight,
 //                            btnTextColor: sheetType.sheetThemeColor,
 //                            btnColor: Color.gray.opacity(0.12)
-                            btnTextColor: .white,
-                            btnColor: sheetType.sheetThemeColor
+                            btnTextColor: sheetType.secondaryTextColor,
+                            btnColor: sheetType.sheetSecondaryColor
                             
                         )
                     }

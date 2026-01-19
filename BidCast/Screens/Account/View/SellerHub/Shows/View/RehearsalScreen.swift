@@ -51,6 +51,7 @@ struct RehearsalScreen: View {
     @State private var showSellSheet: Bool = false
     @State private var showShopSheet: Bool = false
     @State private var showProductSheet : Bool = false
+    @State private var freebieActive : Bool = false
     
     @State private var navigateToProductList : Bool = false
     @State private var navigateToRandomizer : Bool = false
@@ -90,6 +91,7 @@ struct RehearsalScreen: View {
     @State var comeForLive = false
     
     @State var showSellerSheet = false
+    @State var showFreebieSheet = false
     @State var showRaidSheet = false
     @State var showUserSheet = false
     
@@ -548,10 +550,28 @@ struct RehearsalScreen: View {
                             getLiveSeller()
                         },
                         onEndShow: {
-                            
-                            self.endShow()
-                            
-                            self.isLive = false
+                            if freebieActive{
+                           
+                                alertType = .sheetType(
+                                    icon: .info,
+                                    title: "Freebie Live",
+                                    message: "A freebie is currently running. Ending the show will stop the freebie. Are you sure you want to continue?",
+                                    primaryBtnText: "Okay",
+                                    secondaryBtnText: "Cancel",
+                                    sheetSecondaryColor: .defaultThemeLight,
+                                    secondaryTextColor: .defaultTheme,
+                                    buttonWidth: screenWidth - 60,
+                                    contentSize: 12.0
+                                )
+                                withAnimation(.snappy){
+                                    showSellSheet = false
+                                    showFreebieSheet = true
+                                }
+                            }else{
+                                self.endShow()
+                                
+                                self.isLive = false
+                            }
                         }
                     )
                 case .none:
@@ -665,6 +685,28 @@ struct RehearsalScreen: View {
                 }
             )
         }
+        .bottomSheet(isPresented: $showFreebieSheet, height: screenHeight / 2.5, topBarCornerRadius: 25, showTopIndicator: false,onDismiss: {
+            showFreebieSheet = false
+        }) {
+            CommonBottomSheet(
+                sheetType: $alertType,
+                onPrimaryClick: {
+                    withAnimation {
+                        showFreebieSheet = false
+                        self.endShow()
+                        self.isLive = false
+                        
+                    }
+                },
+                onSecondaryClick: {
+                    withAnimation {
+                        showFreebieSheet = false
+                        
+                    }
+                }
+            )
+        }
+        
         .bottomSheet(
             isPresented: $showError,
             height: screenHeight / 2.3,
@@ -865,6 +907,7 @@ struct RehearsalScreen: View {
             },
             onProductSelected: { product in
                 selectedFreebie = product
+                freebieActive = true
                 socketManager.createFreebie(room_id: self.roomId, productId: "\(product.id ?? 0)", time: 100)
                 showFreeBie = false
                 navigateToRandomizer = true
@@ -1672,7 +1715,7 @@ struct RehearsalScreen: View {
         }
         
         socketManager.listenForFreebieWinner{ userId in
-            
+         freebieActive = false
         }
         
         socketManager.listenForFreebie{ freebie,user in
@@ -1795,6 +1838,9 @@ struct RehearsalScreen: View {
         winnerProfileID = id
         winnerProfileImage = image
         winnerAmount = amount
+        showWinnerOnParent = true
+        randomWinner = winnerName.capitalizingFirstLetter()
+        randomWinnerImage = winnerProfileImage
         
         let message = "Congratulations! \(winnerName) has won the bid with an amount of $\(winnerAmount)"
         
