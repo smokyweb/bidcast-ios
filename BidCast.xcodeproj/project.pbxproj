@@ -379,6 +379,7 @@
 		D4C0C7C22E53125500A84165 /* AddPaymentAndMethodModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C0C7BC2E53125500A84165 /* AddPaymentAndMethodModel.swift */; };
 		D4C0C7C32E53125500A84165 /* AddPaymentAndMethodViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C0C7BE2E53125500A84165 /* AddPaymentAndMethodViewModel.swift */; };
 		D4C471CB2E2FA94A00424160 /* PaymentAndShippingInfoSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C471CA2E2FA94A00424160 /* PaymentAndShippingInfoSheet.swift */; };
+		D4C47A2C2F1E347C002983FF /* ClipsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C47A2B2F1E347C002983FF /* ClipsScreen.swift */; };
 		D4C4D7972DD31C2D00274E51 /* ActivityCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C4D7962DD31C2D00274E51 /* ActivityCell.swift */; };
 		D4C4D79A2DD3263A00274E51 /* SingleTitleLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C4D7982DD3263A00274E51 /* SingleTitleLabel.swift */; };
 		D4C4D79C2DD32F3D00274E51 /* TwoButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C4D79B2DD32F3D00274E51 /* TwoButton.swift */; };
@@ -969,6 +970,7 @@
 		D4C0C7BC2E53125500A84165 /* AddPaymentAndMethodModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPaymentAndMethodModel.swift; sourceTree = "<group>"; };
 		D4C0C7BE2E53125500A84165 /* AddPaymentAndMethodViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPaymentAndMethodViewModel.swift; sourceTree = "<group>"; };
 		D4C471CA2E2FA94A00424160 /* PaymentAndShippingInfoSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentAndShippingInfoSheet.swift; sourceTree = "<group>"; };
+		D4C47A2B2F1E347C002983FF /* ClipsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipsScreen.swift; sourceTree = "<group>"; };
 		D4C4D7962DD31C2D00274E51 /* ActivityCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityCell.swift; sourceTree = "<group>"; };
 		D4C4D7982DD3263A00274E51 /* SingleTitleLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleTitleLabel.swift; sourceTree = "<group>"; };
 		D4C4D79B2DD32F3D00274E51 /* TwoButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwoButton.swift; sourceTree = "<group>"; };
@@ -1732,6 +1734,7 @@
 				D4D048262ECC39E40033B647 /* LiveStreamV1.swift */,
 				D65B7EE22ED5CABC000B52EC /* SortByBottomSheet.swift */,
 				D65B7EE42ED5D8A4000B52EC /* ReportSellerView.swift */,
+				D4C47A2B2F1E347C002983FF /* ClipsScreen.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -4889,6 +4892,7 @@
 				99C909AB2DC8CD930054620B /* IAPManager.swift in Sources */,
 				99C909AC2DC8CD930054620B /* UIView+Extension.swift in Sources */,
 				35F8B5662DED978800FE0778 /* ProfileViewModel.swift in Sources */,
+				D4C47A2C2F1E347C002983FF /* ClipsScreen.swift in Sources */,
 				D4BA9C0D2DE4856900DFF6E6 /* ShowsScreen.swift in Sources */,
 				D65B7EE52ED5D8A4000B52EC /* ReportSellerView.swift in Sources */,
 				D4D453DA2E4CBC13005A2F63 /* BlockedUserListModel.swift in Sources */,

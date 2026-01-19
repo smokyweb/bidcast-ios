@@ -305,6 +305,7 @@ struct AccountScreen: View {
             CusNavLink(doNavigate: $navigationState.navigateToSales, destination: SalesTaxScreen())
             CusNavLink(doNavigate: $navigationState.navigateToBlockedList, destination: BlockedUserScreen())
             CusNavLink(doNavigate: $navigationState.navigateToCoupons, destination: CouponListScreen(showApplyButton: false))
+            CusNavLink(doNavigate: $navigationState.navigateToClips, destination: ClipsScreen())
         }
     }
     
@@ -341,6 +342,7 @@ extension AccountScreen {
             case 2: navigationState.navigateTrustedBuyer = true
             case 4: navigationState.navigateToPreference = true
             case 5: navigationState.navigateToCategory = true
+            case 6: navigationState.navigateToClips = true
             default: break
             }
         }
@@ -1084,7 +1086,7 @@ struct NavigationState {
     var navigateToSales = false
     var navigateToBlockedList = false
     var navigateToCoupons = false
-    
+    var navigateToClips = false
     // Seller Hub
     var navigateToShows = false
     var navigateToInventry = false
