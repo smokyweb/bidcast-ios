@@ -27,7 +27,7 @@ struct KycDetailsModel: Codable {
 struct CheckKycModel: Codable {
     var object: String?
     var created, expiresAt: Int?
-    var url: String?
+    var link: String?
     var res: Bool?
     var msg, kycStatus: String?
     var kycDetails: KycDetailsModel?
@@ -35,7 +35,7 @@ struct CheckKycModel: Codable {
     enum CodingKeys: String, CodingKey {
         case object, created
         case expiresAt = "expires_at"
-        case url, res, msg
+        case link, res, msg
         case kycStatus = "kyc_status"
         case kycDetails = "kyc_details"
     }

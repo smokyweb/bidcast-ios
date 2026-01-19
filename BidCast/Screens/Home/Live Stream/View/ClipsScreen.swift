@@ -121,7 +121,7 @@ struct ClipsScreen: View {
 
         guard canLoadMoreClips else { return }
 
-        isFetchingMoreClips = true
+//        isFetchingMoreClips = true
         SVProgressHUD.show()
 
         let request = clipRequest(page: clipPage)

@@ -17,7 +17,7 @@ final class KycViewModel: ObservableObject {
     @Published var errorMessage: String? = nil
     
     // MARK: - Get checkKycDetail.
-    func getKycDetail() async {
+    func getKycDetail() async throws {
         do {
             if let response: ResponseModel<KycDetailsModel> = try await APIManager.shared.request(
                 type: APIEndPoint.getKycDetails,
@@ -25,13 +25,19 @@ final class KycViewModel: ObservableObject {
             ) {
                 self.kycDetailsDict = response
             }
-        } catch {
-            handle(error: error)
+        } catch(let error) {
+            if let dataError = error as? DataError {
+                self.errorMessage = dataError.getErrorMessage()
+            }
+            else {
+                self.errorMessage = error.localizedDescription
+            }
+            throw error
         }
     }
     
     // MARK: - Get checkKycDetail.
-    func checkKycDetail() async {
+    func checkKycDetail() async throws {
         do {
             if let response: ResponseModel<CheckKycModel> = try await APIManager.shared.request(
                 type: APIEndPoint.checkKYC,
@@ -39,13 +45,19 @@ final class KycViewModel: ObservableObject {
             ) {
                 self.checkKycDict = response
             }
-        } catch {
-            handle(error: error)
+        } catch(let error) {
+            if let dataError = error as? DataError {
+                self.errorMessage = dataError.getErrorMessage()
+            }
+            else {
+                self.errorMessage = error.localizedDescription
+            }
+            throw error
         }
     }
     
     // MARK: - fundTransfer.
-    func fundTransfer(param : FundTransferRequest) async {
+    func fundTransfer(param : FundTransferRequest) async{
         do {
             if let response: ResponseModel<FundTransferModel>? = try await APIManager.shared.request(
                 type: APIEndPoint.fundTransfer(param: param),

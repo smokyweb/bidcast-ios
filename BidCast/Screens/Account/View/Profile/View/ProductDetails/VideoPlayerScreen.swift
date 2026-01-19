@@ -21,7 +21,7 @@ struct VideoPlayerScreen: View {
 
        init(
            videoURL: Binding<String>,
-           videoTitle: String = "Video Receipt"
+           videoTitle: String = "Show Clip"
        ) {
            self._videoURL = videoURL
            self.videoTitle = videoTitle

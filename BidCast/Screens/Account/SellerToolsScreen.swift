@@ -135,7 +135,7 @@ struct SellerToolsScreen: View {
 //                Divider().padding(.leading, 68)
                 
                 ToolsRowItem(icon: "identityVerification", title: "Identity Verification") {
-//                    navigationState.navigateToIdentityVerification = true
+                    navigationState.navigateToIdentityVerification = true
                 }
                 
 //                Divider().padding(.leading, 68)
@@ -368,28 +368,3 @@ struct SellerToolsNavigationState {
     var navigateToSellerStatus = false
 }
 
-// MARK: - Identity Verification Screen Placeholder
-struct IdentityVerificationScreen: View {
-    @Environment(\.presentationMode) var presentationMode
-    
-    var body: some View {
-        VStack {
-            Text("Identity Verification")
-                .font(.custom(poppinsBold, size: 24))
-            
-            Text("Coming Soon")
-                .font(.custom(poppinsRegular, size: 16))
-                .foregroundColor(.gray)
-        }
-        .navigationBarHidden(true)
-    }
-}
-
-// MARK: - Preview
-//struct SellerToolsScreen_Previews: PreviewProvider {
-//    static var previews: some View {
-//        NavigationView {
-//            SellerToolsScreen()
-//        }
-//    }
-//}
