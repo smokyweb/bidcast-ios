@@ -10,7 +10,7 @@ import SwiftUI
 // MARK: - Inventory Segment Enum
 enum RehearsalProductSegment: String, CaseIterable, CustomStringConvertible {
     case auction = "Auction"
-//    case buynow = "Buy Now"
+    case buynow = "Buy Now"
 ////    case giveway = "Freebie"
 //    case sold = "Sold"
     case offers = "Offers"
@@ -83,6 +83,9 @@ struct ProductShopRehersalScreen: View {
     @State private var sortedProductData: [ProductDataModel1] = []
     @State private var pinnedProductIds: Set<Int> = []
     
+    @State private var apiProducts: [ProductDataModel1] = []
+    @State private var displayedProducts: [ProductDataModel1] = []
+    
     var categoryId: String = "-1"
     @State var currentPage: Int = 1
     @State var segment: RehearsalProductSegment = .auction
@@ -128,6 +131,10 @@ struct ProductShopRehersalScreen: View {
                     resetData()
                     self.saleType = "accept_offers"
                     fetchProduct()
+                }else if segment == .buynow{
+                    resetData()
+                    self.saleType = ""
+                    fetchProduct()
                 }
             }
             
@@ -142,13 +149,13 @@ struct ProductShopRehersalScreen: View {
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 4)
                         }
-                    } else if sortedProductData.isEmpty {
+                    } else if displayedProducts.isEmpty {
                         NoDataView(message: "No Product Found")
                     } else {
                         // FIX: Use product.id for stable identity, not index
-                        ForEach(sortedProductData, id: \.id) { product in
+                        ForEach(displayedProducts, id: \.id) { product in
                             let productId = product.id ?? 0
-                            let productIndex = sortedProductData.firstIndex(where: { $0.id == product.id }) ?? 0
+                            let productIndex = displayedProducts.firstIndex(where: { $0.id == product.id }) ?? 0
                             
                             ProductRehearsalListItem(
                                 product: product, // FIX: Pass value, not binding
@@ -166,7 +173,11 @@ struct ProductShopRehersalScreen: View {
                             .padding(.vertical, 4)
                             .onAppear {
                                 // FIX: Use original index from productDataFromAPI for pagination
-                                handlePagination(currentDisplayIndex: productIndex)
+//                                handlePagination(currentDisplayIndex: productIndex)
+                                guard let lastApiProduct = apiProducts.last,
+                                          lastApiProduct.id == product.id else { return }
+
+                                    loadNextPageIfNeeded()
                             }
                         }
                     }
@@ -187,7 +198,7 @@ struct ProductShopRehersalScreen: View {
         .onAppear {
             setupSocketListeners()
             
-            if sortedProductData.isEmpty {
+            if displayedProducts.isEmpty {
                 fetchProduct()
             }
         }
@@ -228,10 +239,10 @@ struct ProductShopRehersalScreen: View {
             let id = Int(productId) ?? 0
             
             // FIX: Update state in one place with animation
-            withAnimation(.easeInOut(duration: 0.3)) {
+//            withAnimation(.easeInOut(duration: 0.3)) {
                 pinnedProductIds.insert(id)
                 updateSortedProducts()
-            }
+//            }
         }
         
         socketManager.listenForProductUnpinned { roomID, productID, msg in
@@ -240,10 +251,10 @@ struct ProductShopRehersalScreen: View {
             let id = Int(productID) ?? 0
             
             // FIX: Update state in one place with animation
-            withAnimation(.easeInOut(duration: 0.3)) {
+//            withAnimation(.easeInOut(duration: 0.3)) {
                 pinnedProductIds.remove(id)
                 updateSortedProducts()
-            }
+//            }
         }
     }
     
@@ -268,13 +279,22 @@ struct ProductShopRehersalScreen: View {
     }
     
     // MARK: - Centralized Product Reordering
+//    private func updateSortedProducts() {
+//        sortedProductData = reorderProducts(
+//            pinnedIds: pinnedProductIds,
+//            eventIds: eventProductIds,
+//            apiProducts: productDataFromAPI
+//        )
+//    }
+    
     private func updateSortedProducts() {
-        sortedProductData = reorderProducts(
+        displayedProducts = reorderProducts(
             pinnedIds: pinnedProductIds,
             eventIds: eventProductIds,
-            apiProducts: productDataFromAPI
+            apiProducts: apiProducts
         )
     }
+
 }
 
 // MARK: - Extensions
@@ -292,7 +312,8 @@ extension ProductShopRehersalScreen {
     func fetchProduct(isLoaderShown: Bool = true) {
         // FIX: Prevent duplicate API calls
         guard !isFetchingMore else { return }
-        
+
+            isFetchingMore = true
         Task {
             await performAPICalls(
                 isConcurrent: false,
@@ -324,24 +345,35 @@ extension ProductShopRehersalScreen {
         }
     }
     
-    // FIX: Better pagination logic
-    func handlePagination(currentDisplayIndex: Int) {
-        guard canLoadMore, !isFetchingMore else { return }
-        
-        // Only load more if we have more data available
-        guard productDataFromAPI.count < totalCount else {
-            canLoadMore = false
-            return
-        }
-        
-        let threshold = sortedProductData.count - 3
-        guard currentDisplayIndex >= threshold else { return }
-        guard productDataFromAPI.count < totalCount else { return }
-        
-        isFetchingMore = true
+//    // FIX: Better pagination logic
+//    func handlePagination(currentDisplayIndex: Int) {
+//        guard canLoadMore, !isFetchingMore else { return }
+//        
+//        // Only load more if we have more data available
+//        guard productDataFromAPI.count < totalCount else {
+//            canLoadMore = false
+//            return
+//        }
+//        
+//        let threshold = sortedProductData.count - 3
+//        guard currentDisplayIndex >= threshold else { return }
+//        guard productDataFromAPI.count < totalCount else { return }
+//        
+//        isFetchingMore = true
+//        currentPage += 1
+//        fetchProduct(isLoaderShown: false)
+//    }
+    
+    private func loadNextPageIfNeeded() {
+        guard canLoadMore,
+              !isFetchingMore,
+              productDataFromAPI.count < totalCount else { return }
+
+//        isFetchingMore = true
         currentPage += 1
         fetchProduct(isLoaderShown: false)
     }
+
     
     func reorderProducts(
         pinnedIds: Set<Int>,
@@ -368,44 +400,104 @@ extension ProductShopRehersalScreen {
     }
     
     // MARK: - Product Success
+//    func productSuccess() {
+//        let response = productViewModel.productsResponse1
+//        
+//        if response?.status == "success" {
+//            let newItems = response?.data ?? []
+//            totalCount = response?.total ?? 0
+//            
+//            if newItems.isEmpty {
+//                canLoadMore = false
+//            } else {
+//                // FIX: Check for duplicates before appending
+//                let newUniqueItems = newItems.filter { newItem in
+//                    !productDataFromAPI.contains(where: { $0.id == newItem.id })
+//                }
+//                
+//                productDataFromAPI.append(contentsOf: newUniqueItems)
+//                if productDataFromAPI.count >= totalCount {
+//                                    canLoadMore = false
+//                                }
+//            }
+//            
+//            // FIX: Single reorder call
+//            updateSortedProducts()
+//            
+//        } else {
+//            canLoadMore = false
+//            alertType = .sheetType(
+//                icon: .alert,
+//                title: "Error",
+//                message: viewModel.errorMessage ?? "",
+//                primaryBtnText: AppString.ok.localized,
+//                secondaryBtnText: ""
+//            )
+//            showError = true
+//        }
+//        
+//        isFetchingMore = false
+//    }
+    
+//    func productSuccess() {
+//        let response = productViewModel.productsResponse1
+//
+//        if response?.status == "success" {
+//            let newItems = response?.data ?? []
+//            totalCount = response?.total ?? 0
+//
+//            let uniqueItems = newItems.filter { newItem in
+//                !productDataFromAPI.contains(where: { $0.id == newItem.id })
+//            }
+//
+//            productDataFromAPI.append(contentsOf: uniqueItems)
+//
+//            if productDataFromAPI.count >= totalCount {
+//                canLoadMore = false
+//            }
+//
+//            updateSortedProducts()
+//        } else {
+//            canLoadMore = false
+//        }
+//
+//        isFetchingMore = false
+//    }
+    
     func productSuccess() {
         let response = productViewModel.productsResponse1
-        
-        if response?.status == "success" {
-            let newItems = response?.data ?? []
-            totalCount = response?.total ?? 0
-            
-            if newItems.isEmpty {
-                canLoadMore = false
-            } else {
-                // FIX: Check for duplicates before appending
-                let newUniqueItems = newItems.filter { newItem in
-                    !productDataFromAPI.contains(where: { $0.id == newItem.id })
-                }
-                
-                productDataFromAPI.append(contentsOf: newUniqueItems)
-                if productDataFromAPI.count >= totalCount {
-                                    canLoadMore = false
-                                }
-            }
-            
-            // FIX: Single reorder call
-            updateSortedProducts()
-            
-        } else {
+        guard response?.status == "success" else {
             canLoadMore = false
-            alertType = .sheetType(
-                icon: .alert,
-                title: "Error",
-                message: viewModel.errorMessage ?? "",
-                primaryBtnText: AppString.ok.localized,
-                secondaryBtnText: ""
-            )
-            showError = true
+            isFetchingMore = false
+            return
         }
-        
+
+        let newItems = response?.data ?? []
+        totalCount = response?.total ?? 0
+
+        let uniqueItems = newItems.filter { newItem in
+            !apiProducts.contains(where: { $0.id == newItem.id })
+        }
+
+        guard !uniqueItems.isEmpty else {
+            canLoadMore = false
+            isFetchingMore = false
+            return
+        }
+
+        apiProducts.append(contentsOf: uniqueItems)
+
+        // ✅ IMPORTANT: append, don’t rebuild
+        displayedProducts.append(contentsOf: uniqueItems)
+
+        if apiProducts.count >= totalCount {
+            canLoadMore = false
+        }
+
         isFetchingMore = false
     }
+
+
 }
 
 // MARK: - Product List Heading
