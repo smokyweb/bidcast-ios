@@ -432,7 +432,7 @@ struct SellerVerificationScreen: View {
         if status.lowercased() == "active" {
             kycVerificationComplete = true
             hudMsg = "KYC verified successfully"
-            showhud = true
+//            showhud = true
             if !forVerified{
                 if UserDefaults.hasCardAdded {
                     Task {
