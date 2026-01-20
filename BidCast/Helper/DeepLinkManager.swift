@@ -77,23 +77,39 @@ final class DeepLinkManager: ObservableObject {
 
 enum DeepLinkDestination: Hashable, Equatable {
     case showDetail(id: String)
-    
+    case kycResult(status: KycStatus)
+
     static func == (lhs: DeepLinkDestination, rhs: DeepLinkDestination) -> Bool {
         switch (lhs, rhs) {
         case (.showDetail(let lID), .showDetail(let rID)):
             return lID == rID
+
+        case (.kycResult(let lStatus), .kycResult(let rStatus)):
+            return lStatus == rStatus
+
+        default:
+            return false
         }
     }
-    
+
     func hash(into hasher: inout Hasher) {
         switch self {
         case .showDetail(let id):
             hasher.combine("showDetail")
             hasher.combine(id)
+
+        case .kycResult(let status):
+            hasher.combine("kycResult")
+            hasher.combine(status.rawValue)
         }
     }
 }
 
+enum KycStatus: String {
+    case success
+    case failed
+    case pending
+}
 
 
 

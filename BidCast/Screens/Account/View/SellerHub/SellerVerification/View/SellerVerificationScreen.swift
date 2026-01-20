@@ -17,11 +17,13 @@ enum VerificationStatus {
 struct SellerVerificationScreen: View {
     
     @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var deepLinkManager: DeepLinkManager
     @StateObject var viewModel = SellerVerificationViewModel()
     @EnvironmentObject var networkMonitor: NetworkMonitor
     
     @State private var navigateToOTP = false
     @State private var navigateToAddCard = false
+    @State private var navigateToKYC = false
     @State private var showhud = false
     @State private var hudMsg = ""
     
@@ -35,6 +37,8 @@ struct SellerVerificationScreen: View {
     @State private var phoneVerificationComplete = false
     @State private var paymentMethodComplete = false
     @State private var manualVerificationComplete = false
+    @State private var kycVerificationComplete = false
+    @State private var kycStatus: String = "" // "active", "inactive", "pending"
     
     @State var navigateToProfile: Bool = false
     @State var getCard: Bool = false
@@ -65,14 +69,15 @@ struct SellerVerificationScreen: View {
     
     // MARK: - Computed Properties
     var currentStep: Int {
-        var count = 0
-        if idVerificationComplete { count += 1 }
-        if phoneVerificationComplete { count += 1 }
-        if paymentMethodComplete { count += 1 }
-        return count
-    }
-    
-    let totalSteps = 3.0
+          var count = 0
+          if idVerificationComplete { count += 1 }
+          if phoneVerificationComplete { count += 1 }
+          if kycVerificationComplete { count += 1 }
+          if paymentMethodComplete { count += 1 }
+          return count
+      }
+      
+      let totalSteps = 4.0
     
     private var phoneDetailText: String {
         let status = UserDefaults.sellerVerafied
@@ -83,6 +88,40 @@ struct SellerVerificationScreen: View {
     private var progressValue: Double {
         UserDefaults.sellerVerafied == "verified" ? totalSteps : Double(currentStep)
     }
+    private var kycStatusMessage: String {
+          switch kycStatus.lowercased() {
+          case "active":
+              return "KYC verified successfully"
+          case "pending":
+              return "KYC verification is pending. Please wait for approval."
+          case "inactive":
+              return "KYC verification failed. Please try again."
+          default:
+              return ""
+          }
+      }
+      
+      private var kycStatusColor: Color {
+          switch kycStatus.lowercased() {
+          case "active":
+              return .green
+          case "pending":
+              return .orange
+          case "inactive":
+              return .red
+          default:
+              return .gray
+          }
+      }
+    
+    private var canCompleteVerification: Bool {
+            return idVerificationComplete &&
+                   phoneVerificationComplete &&
+                   kycVerificationComplete &&
+                   kycStatus.lowercased() == "active" &&
+                   paymentMethodComplete &&
+                   manualVerificationComplete
+        }
     
     // MARK: - Body
     var body: some View {
@@ -97,6 +136,22 @@ struct SellerVerificationScreen: View {
         .onFirstAppear {
             fetchSellerStatus()
         }
+       
+        .onReceive(deepLinkManager.$destination) { destination in
+            guard let destination else { return }
+
+            if case .kycResult = destination {
+                // ✅ App returned from KYC
+                checkKYCStatus()
+                deepLinkManager.clearDestination()
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(
+            for: UIApplication.willEnterForegroundNotification
+        )) { _ in
+            checkKYCStatus()
+        }
+
         .toast(isPresenting: $showhud) {
             AlertToast(displayMode: .hud, type: .regular, title: hudMsg)
         }
@@ -171,6 +226,20 @@ struct SellerVerificationScreen: View {
             )
             .disabled(!(UserDefaults.sellerVerafied.isEmpty || UserDefaults.sellerVerafied == "rejected"))
             
+            FinalKYCVerificationCard(
+                            isCompleted: kycVerificationComplete,
+                            kycStatus: kycStatus,
+                            statusMessage: kycStatusMessage,
+                            statusColor: kycStatusColor,
+                            isActionEnabled: phoneVerificationComplete && !kycVerificationComplete,
+                            onVerifyTap: {
+                                openKYCInBrowser(url: viewModel.checkKycDict.data?.link ?? "")
+                            }
+                        )
+                        .disabled(!(UserDefaults.sellerVerafied.isEmpty || UserDefaults.sellerVerafied == "rejected") || !phoneVerificationComplete)
+                        .opacity((UserDefaults.sellerVerafied.isEmpty || UserDefaults.sellerVerafied == "rejected") && !phoneVerificationComplete ? 0.5 : 1.0)
+                        
+            
             FinalPaymentMethodCard(
                 isCompleted: paymentMethodComplete,
                 cardArr: cardArr,
@@ -184,6 +253,7 @@ struct SellerVerificationScreen: View {
                 }
             )
             .disabled(!(UserDefaults.sellerVerafied.isEmpty || UserDefaults.sellerVerafied == "rejected"))
+            .opacity((UserDefaults.sellerVerafied.isEmpty || UserDefaults.sellerVerafied == "rejected") && (!phoneVerificationComplete || kycStatus.lowercased() != "active") ? 0.5 : 1.0)
             
             FinalVerificationCard(
                 iconName: "verify",
@@ -202,21 +272,44 @@ struct SellerVerificationScreen: View {
     }
     
     private var completeVerificationButton: some View {
-        Button(action: {
-            guard UserDefaults.sellerVerafied.isEmpty || UserDefaults.sellerVerafied == "rejected" else { return }
-            Task { await handleFinalUpload() }
-        }) {
-            Text("Complete Verification")
-                .font(.custom(poppinsSemiBold, size: 16))
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(manualVerificationComplete ? Color.defaultTheme : Color.gray)
-                .cornerRadius(32)
-        }
-        .padding()
-        .disabled(UserDefaults.sellerVerafied == "verified")
-    }
+           Button(action: {
+               guard UserDefaults.sellerVerafied.isEmpty || UserDefaults.sellerVerafied == "rejected" else { return }
+               
+               guard phoneVerificationComplete else {
+                   hudMsg = "Please verify phone number first"
+                   showhud = true
+                   return
+               }
+               
+               guard kycVerificationComplete else {
+                   hudMsg = "Please complete KYC verification"
+                   showhud = true
+                   return
+               }
+               
+               guard kycStatus.lowercased() == "active" else {
+                   if kycStatus.lowercased() == "pending" {
+                       hudMsg = "KYC verification is pending. Please wait for approval."
+                   } else {
+                       hudMsg = "KYC verification is not active. Please complete KYC first."
+                   }
+                   showhud = true
+                   return
+               }
+               
+               Task { await handleFinalUpload() }
+           }) {
+               Text("Complete Verification")
+                   .font(.custom(poppinsSemiBold, size: 16))
+                   .foregroundColor(.white)
+                   .frame(maxWidth: .infinity)
+                   .padding()
+                   .background(canCompleteVerification ? Color.defaultTheme : Color.gray)
+                   .cornerRadius(32)
+           }
+           .padding()
+           .disabled(!canCompleteVerification || UserDefaults.sellerVerafied == "verified")
+       }
     
     // MARK: - Header
     private var headerView: some View {
@@ -270,18 +363,11 @@ struct SellerVerificationScreen: View {
         Group {
             CusNavLink(doNavigate: $navigateToOTP, destination: OTPVerificationScreen(viewModel: viewModel, onSuccess: {
                 phoneVerificationComplete = true
-                if UserDefaults.hasCardAdded {
-                    Task {
-                        SVProgressHUD.show()
-                        await viewModel.getCard()
-                        await SVProgressHUD.dismiss()
-                        cardSuccess()
-                        paymentMethodComplete = true
-                        updateManualVerificationIfNeeded()
-                    }
-                }
+               
+                checkKYCStatus()
                 navigateToOTP = false
             }))
+            
             
             CusNavLink(doNavigate: $navigateToAddCard, destination: AddCardScreen(
                 isNavFrom: "SellerVerification",
@@ -300,7 +386,77 @@ struct SellerVerificationScreen: View {
             CusNavLink(doNavigate: $navigateToProfile, destination: AccountScreen())
         }
     }
+    func openKYCInBrowser(url:String) {
+           
+            let kycURLString = url // Replace with actual URL
+            
+            if let url = URL(string: kycURLString) {
+                UIApplication.shared.open(url) { success in
+                    if success {
+                        // URL opened successfully
+                    } else {
+                        self.hudMsg = "Failed to open KYC verification"
+                        self.showhud = true
+                    }
+                }
+            } else {
+                hudMsg = "Invalid KYC URL"
+                showhud = true
+            }
+        }
     
+    func checkKYCStatus(forVerified : Bool = false) {
+           Task {
+               SVProgressHUD.show()
+               await viewModel.checkKycDetail()
+               await SVProgressHUD.dismiss()
+               if viewModel.errorMessage == "" || viewModel.errorMessage == nil{
+                  
+                   successKyC(forVerified: forVerified)
+               }else{
+                   print(viewModel.errorMessage ?? "")
+               }
+               
+           }
+       }
+    func successKyC(forVerified: Bool = false) {
+        let response = viewModel.checkKycDict
+
+        guard response.status == "success" else { return }
+
+        
+        let status = response.data?.kycStatus ?? ""
+        
+        kycStatus = status
+        
+        if status.lowercased() == "active" {
+            kycVerificationComplete = true
+            hudMsg = "KYC verified successfully"
+            showhud = true
+            if !forVerified{
+                if UserDefaults.hasCardAdded {
+                    Task {
+                        SVProgressHUD.show()
+                        await viewModel.getCard()
+                        await SVProgressHUD.dismiss()
+                        cardSuccess()
+                        paymentMethodComplete = true
+                        updateManualVerificationIfNeeded()
+                    }
+                }
+            }
+        } else if status.lowercased() == "pending" {
+            kycVerificationComplete = false
+            hudMsg = "KYC verification is pending. Please wait for approval."
+            showhud = true
+        } else {
+            kycVerificationComplete = false
+            hudMsg = "KYC verification inactive."
+            showhud = true
+        }
+        
+        
+    }
     // MARK: - API / Helpers (same as your code)
     func fetchSellerStatus() {
         Task {
@@ -384,10 +540,15 @@ struct SellerVerificationScreen: View {
     
    
     private func updateManualVerificationIfNeeded() {
-        if idVerificationComplete && phoneVerificationComplete && paymentMethodComplete && !manualVerificationComplete {
-            manualVerificationComplete = true
+            if idVerificationComplete &&
+               phoneVerificationComplete &&
+               kycVerificationComplete &&
+               kycStatus.lowercased() == "active" &&
+               paymentMethodComplete &&
+               !manualVerificationComplete {
+                manualVerificationComplete = true
+            }
         }
-    }
     
     func cardSuccess() {
         SVProgressHUD.dismiss()
@@ -427,9 +588,11 @@ struct SellerVerificationScreen: View {
                         self.cardArr.append(cardDetail)
                     }
                 }
+                checkKYCStatus(forVerified: true)
             } else {
                 idVerificationComplete = false
                 phoneVerificationComplete = false
+                kycVerificationComplete = false
                 paymentMethodComplete = false
             }
         } else {
@@ -484,7 +647,6 @@ struct SellerVerificationScreen: View {
             self.fetchSellerStatus()
         } else {
             SVProgressHUD.dismiss()
-//            hudMsg = "Seller Verification Failed"
             config = BottomSheetConfig(
                 icon: "exclamationmark.circle",
                 title: "Error",
@@ -497,13 +659,98 @@ struct SellerVerificationScreen: View {
        
     }
     
-//    private func updateManualVerificationIfNeeded() {
-//        if idVerificationComplete && phoneVerificationComplete && paymentMethodComplete && !manualVerificationComplete {
-//            manualVerificationComplete = true
-//        }
-//    }
 }
 
+//MARK: KYC
+struct FinalKYCVerificationCard: View {
+    let isCompleted: Bool
+    let kycStatus: String
+    let statusMessage: String
+    let statusColor: Color
+    let isActionEnabled: Bool
+    var onVerifyTap: @MainActor () -> Void = { }
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack {
+                ZStack {
+                    Circle()
+                        .fill(Color.defaultThemeLight)
+                        .frame(width: 48, height: 48)
+                    
+                    Image(systemName: "checkmark.seal")
+                        .resizable()
+                        .scaledToFit()
+                        .foregroundColor(Color.defaultTheme)
+                        .frame(width: 24, height: 24)
+                }
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("KYC Verification")
+                        .font(.custom(poppinsSemiBold, size: 16))
+                        .foregroundColor(.black)
+                    
+                    if !isCompleted && kycStatus.isEmpty {
+                        Text("Complete KYC to proceed")
+                            .font(.custom(poppinsRegular, size: 13))
+                            .foregroundColor(.gray)
+                    }
+                    
+                    if !statusMessage.isEmpty {
+                        Text(statusMessage)
+                            .font(.custom(poppinsMedium, size: 13))
+                            .foregroundColor(statusColor)
+                    }
+                }
+                
+                Spacer()
+                
+                if isCompleted {
+                    Image(systemName: "checkmark")
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundColor(.green)
+                } else if isActionEnabled {
+                    Button(action: onVerifyTap) {
+                        Text("Verify")
+                            .font(.custom(poppinsSemiBold, size: 14))
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 8)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(Color.defaultTheme)
+                            )
+                    }
+                }
+            }
+            
+//            // Add "Check Status" button if KYC is pending or not completed
+//            if !isCompleted && !kycStatus.isEmpty {
+//                Button(action: onVerifyTap) {
+//                    HStack {
+//                        Image(systemName: "arrow.clockwise")
+//                            .font(.system(size: 12))
+//                        Text("Check KYC Status")
+//                            .font(.custom(poppinsMedium, size: 13))
+//                    }
+//                    .foregroundColor(.defaultTheme)
+//                    .padding(.vertical, 8)
+//                    .padding(.horizontal, 12)
+//                    .background(
+//                        RoundedRectangle(cornerRadius: 8)
+//                            .fill(Color.defaultThemeLight)
+//                    )
+//                }
+//            }
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color(.systemBackground))
+                .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 2)
+        )
+    }
+}
 // MARK: - Final ID Verification Card
 struct FinalIDVerificationCard: View {
     @Binding var idCardImageData: Data?
@@ -535,10 +782,11 @@ struct FinalIDVerificationCard: View {
                     Text("Id Verification")
                         .font(.custom(poppinsSemiBold, size: 16))
                         .foregroundColor(.primary)
-                    
-                    Text("Upload your ID card & take a selfie")
-                        .font(.custom(poppinsRegular, size: 13))
-                        .foregroundColor(.gray)
+                    if !idVerificationComplete {
+                        Text("Upload your ID card & take a selfie")
+                            .font(.custom(poppinsRegular, size: 13))
+                            .foregroundColor(.gray)
+                    }
                 }
                 
                 Spacer()
@@ -712,9 +960,11 @@ private struct IDVerificationCard: View {
                     Text("ID Verification")
                         .font(.custom(poppinsSemiBold, size: 14.0))
                         .foregroundColor(.black)
-                    Text("Upload your ID card & take a selfie")
-                        .font(.custom(poppinsRegular, size: 13.0))
-                        .foregroundColor(.gray)
+                    if !idVerificationComplete {
+                        Text("Upload your ID card & take a selfie")
+                            .font(.custom(poppinsRegular, size: 13.0))
+                            .foregroundColor(.gray)
+                    }
                 }
                 
                 Spacer()
@@ -833,9 +1083,11 @@ struct FinalVerificationCard: View {
                         .font(.custom(poppinsMedium, size: 13))
                         .foregroundColor(textColor)
                 } else {
-                    Text(subtitle)
-                        .font(.custom(poppinsRegular, size: 13))
-                        .foregroundColor(.gray)
+                    if !isCompleted {
+                        Text(subtitle)
+                            .font(.custom(poppinsRegular, size: 13))
+                            .foregroundColor(.gray)
+                    }
                 }
                 
                 if !detailText.isEmpty {
@@ -907,10 +1159,11 @@ struct FinalPaymentMethodCard: View {
                     Text("Payment Method")
                         .font(.custom(poppinsSemiBold, size: 16))
                         .foregroundColor(.black)
-                    
-                    Text("Add your payment details")
-                        .font(.custom(poppinsRegular, size: 13))
-                        .foregroundColor(.gray)
+                    if !isCompleted {
+                        Text("Add your payment details")
+                            .font(.custom(poppinsRegular, size: 13))
+                            .foregroundColor(.gray)
+                    }
                 }
                 
                 Spacer()
@@ -941,10 +1194,10 @@ struct FinalPaymentMethodCard: View {
             if !cardArr.isEmpty && (isPending || isCompleted) {
                 VStack(spacing: 12) {
                     ForEach(Array(cardArr.enumerated()), id: \.offset) { index, card in
-//                        let card = profile
                         FinalPaymentMethodRow(
+                            isPending:isPending,
                             cardNumber: "**** **** **** \(card.last4 ?? "****")",
-                            isSelected: (isPending || isCompleted) ? true : selectedCardIndex == index,
+                            isSelected: /*(isPending || isCompleted) ? true :*/ selectedCardIndex == index,
                             onTap: {
                                 onSelectCard(index)
                             }
@@ -964,6 +1217,7 @@ struct FinalPaymentMethodCard: View {
 
 // MARK: - Final Payment Method Row (Matching Screenshot)
 struct FinalPaymentMethodRow: View {
+    let isPending : Bool
     let cardNumber: String
     let isSelected: Bool
     let onTap: () -> Void
@@ -984,22 +1238,24 @@ struct FinalPaymentMethodRow: View {
                 
                 // Card Number (Format: XXXX4242)
                 let lastFour = String(cardNumber.suffix(4))
-                Text("XXXX\(lastFour)")
+                Text("**** **** \(lastFour)")
                     .font(.custom(poppinsSemiBold, size: 15))
                     .foregroundColor(.primary)
                 
                 Spacer()
                 
                 // Radio Button
-                ZStack {
-                    Circle()
-                        .stroke(isSelected ? Color.defaultTheme : Color.gray.opacity(0.3), lineWidth: 2)
-                        .frame(width: 24, height: 24)
-                    
-                    if isSelected {
+                if !isPending{
+                    ZStack {
                         Circle()
-                            .fill(Color.defaultTheme)
-                            .frame(width: 14, height: 14)
+                            .stroke(isSelected ? Color.defaultTheme : Color.gray.opacity(0.3), lineWidth: 2)
+                            .frame(width: 24, height: 24)
+                        
+                        if isSelected {
+                            Circle()
+                                .fill(Color.defaultTheme)
+                                .frame(width: 14, height: 14)
+                        }
                     }
                 }
             }
@@ -1011,578 +1267,3 @@ struct FinalPaymentMethodRow: View {
         }
     }
 }
-
-// MARK: - Verification Card Shimmer
-//struct VerificationCardShimmer: View {
-//    var body: some View {
-//        HStack(spacing: 12) {
-//            ShimmerView()
-//                .frame(width: 48, height: 48)
-//                .clipShape(Circle())
-//            
-//            VStack(alignment: .leading, spacing: 6) {
-//                ShimmerView()
-//                    .frame(width: 140, height: 16)
-//                    .clipShape(RoundedRectangle(cornerRadius: 4))
-//                
-//                ShimmerView()
-//                    .frame(width: 200, height: 13)
-//                    .clipShape(RoundedRectangle(cornerRadius: 4))
-//            }
-//            
-//            Spacer()
-//            
-//            ShimmerView()
-//                .frame(width: 60, height: 32)
-//                .clipShape(RoundedRectangle(cornerRadius: 8))
-//        }
-//        .padding(16)
-//        .background(
-//            RoundedRectangle(cornerRadius: 16)
-//                .fill(Color(.systemBackground))
-//                .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 2)
-//        )
-//    }
-//}
-
-
-//
-//import SwiftUI
-//import AlertToast
-//import PhotosUI
-//import SVProgressHUD
-//
-//enum VerificationStatus {
-//    case completed, pending
-//}
-//
-//struct SellerVerificationScreen: View {
-//    
-//    @Environment(\.presentationMode) var presentationMode
-//    @StateObject var viewModel = SellerVerificationViewModel()
-//    @EnvironmentObject var networkMonitor: NetworkMonitor
-//    @State private var navigateToOTP = false
-//    @State private var navigateToAddCard = false
-//    @State private var showhud = false
-//    @State private var hudMsg = ""
-//    
-//    @State var cardDetails: CardDetails?
-//    @State var cardNumber : String?
-//    @State var expiry : String?
-//    @State var cvv : String?
-//    @State var cardTokenNumber : String?
-//    
-//    @State private var idVerificationComplete = false
-//    @State private var phoneVerificationComplete = false
-//    @State private var paymentMethodComplete = false
-//    @State private var manualVerificationComplete = false
-//    @State var navigateToProfile: Bool = false
-//    @State var getCard: Bool = false
-//    @State private var idCardImageData: Data?
-//    @State private var selfieImageData: Data?
-//    @State private var selectedIDCardItem: PhotosPickerItem?
-//    @State private var selfieImage: UIImage? = nil
-//    @State private var selfiePath: String? = nil
-//    
-//    @State private var showSelfieCamera: Bool = false
-//    @State private var showIDCardPicker: Bool = false
-//    @State var cardId : String = ""
-//    @State var cardArr = [PaymentProfile]()
-//    
-//    @State private var selectedCardIndex: Int? = nil
-//    
-//    var currentStep: Int {
-//        var count = 0
-//        if idVerificationComplete { count += 1 }
-//        if phoneVerificationComplete { count += 1 }
-//        if paymentMethodComplete { count += 1 }
-////        if manualVerificationComplete { count += 1 }
-//        return count
-//    }
-//    
-//    
-//    let totalSteps = 3.0
-//    @State var showError: Bool = false
-//    @State var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
-//    
-//    var body: some View {
-//        VStack(spacing: 0) {
-//            VStack{
-//                PrimaryHeader(
-//                    title: AppString.SellerVerification,
-//                    isForLogo: false,
-//                    leadingImgArr: ["chevron.left"],
-//                    trailingImgArr: [],
-//                    onClickLeading: { _ in self.presentationMode.wrappedValue.dismiss() },
-//                    count: .constant(0)
-//                )
-//            }
-//            
-////            if UserDefaults.sellerVerafied == "pending"{
-////                ReviewScreen(imageName: "verify", title: AppString.PendingVerification, content: "")
-////            }else{
-//                ScrollView {
-//                    VStack(spacing: 18) {
-//                        // Progress Bar
-//                        VStack(alignment: .leading) {
-//                            Text("Verification Progress")
-//                                .font(.custom(poppinsSemiBold, size: 13.0))
-//                                .foregroundColor(.gray)
-//                            
-//                            ProgressView(value: Double(UserDefaults.sellerVerafied == "verified" ? Int(totalSteps) : currentStep), total: totalSteps)
-//                                .accentColor(.defaultTheme)
-//                            
-//                            Text("\(UserDefaults.sellerVerafied == "verified" ? Int(totalSteps) : currentStep) of \(Int(totalSteps))")
-//                                .font(.custom(poppinsSemiBold, size: 11.0))
-//                                .frame(maxWidth: .infinity, alignment: .trailing)
-//                                .foregroundColor(.black)
-//                        }
-//                        
-//                        // ID Verification Card
-//                        IDVerificationCard(
-//                            idCardImageData: $idCardImageData,
-//                            selfieImageData: $selfieImageData,
-//                            showIDCardPicker: $showIDCardPicker,
-//                            showSelfieCamera: $showSelfieCamera,
-//                            idVerificationComplete: $idVerificationComplete,
-//                            handleUpload: {
-//                                idVerificationComplete = true
-//                            }
-//                        )
-//                        .disabled(!(UserDefaults.sellerVerafied.isEmpty || UserDefaults.sellerVerafied == "rejected"))
-//
-//                        
-//                        // Phone Verification
-//                        VerificationSectionView(
-//                            icon: "phone.fill",
-//                            title: "Phone Verification",
-//                            subtitle: "Verify your phone number",
-//                            status: phoneVerificationComplete ? .completed : .pending,
-//                            actionLabel: "Verify",
-//                            isActionEnabled: idVerificationComplete && !phoneVerificationComplete,
-//                            onActionTap: {
-//                                navigateToOTP = true
-//                            }
-//                        )
-//                        .disabled(!(UserDefaults.sellerVerafied.isEmpty || UserDefaults.sellerVerafied == "rejected"))
-//
-//                        
-//                        // Payment Method
-//                        VerificationSectionView(
-//                            icon: "creditcard.fill",
-//                            title: "Payment Method",
-//                            subtitle: "Add your payment details",
-//                            status: paymentMethodComplete ? .completed : .pending,
-//                            actionLabel: UserDefaults.hasCardAdded ?  "Add" : "Add",
-//                            showDashedCard: getCard,
-//                            isActionEnabled: phoneVerificationComplete && !paymentMethodComplete,
-//                            onActionTap: {
-////                                if UserDefaults.hasCardAdded{
-////                                    Task{
-////                                        SVProgressHUD.show()
-////                                        await self.viewModel.getCard()
-////                                        await SVProgressHUD.dismiss()
-////                                        cardSuccess()
-////                                        paymentMethodComplete = true
-////                                        updateManualVerificationIfNeeded()
-////                                    }
-////                                }else{
-//                                    navigateToAddCard = true
-////                                }
-//                            }
-//                        )
-//                        .disabled(!(UserDefaults.sellerVerafied.isEmpty || UserDefaults.sellerVerafied == "rejected"))
-//
-//                        
-//                        // Show Card or Empty View
-//                        if cardArr.count != 0 {
-//                            ForEach(0 ..< cardArr.count, id: \.self) { index in
-//                                let data = cardArr[index]
-//                                let card = data.payment?.creditCard
-//                                CardCell(
-//                                    image: "creditcard.fill",
-//                                    cardNo: card?.cardNumber ?? "",
-//                                    expires: "\(card?.expirationDate ?? "")/\(card?.expirationDate ?? "")",
-//                                    onTapCard : {
-//                                        selectedCardIndex = index
-//                                        self.cardId = self.cardArr[index].customerPaymentProfileId ?? ""
-//                                    },
-//                                    forSelect : true,
-//                                    isSelected:selectedCardIndex == index,
-//                                    isDefault: false
-//                                )
-//                            }
-//                            
-//                        }
-//                        
-//                        // Manual Verification
-//                        VerificationSectionView(
-//                            icon: "person.crop.circle.badge.checkmark",
-//                            title: "Manual Verification",
-//                            subtitle: "Final review by our team",
-//                            statusText: viewModel.paymentDetailDict.data?.status?.capitalizingFirstLetter() ?? "",
-//                            textColor: UserDefaults.sellerVerafied == "verified" ? Color.defaultTheme : Color.gray
-//                        )
-//                    }
-//                    .padding()
-//                }
-//                
-//                // Final Button
-//            if UserDefaults.sellerVerafied.isEmpty || UserDefaults.sellerVerafied == "rejected"{
-//                Button(action: {
-//                    guard UserDefaults.sellerVerafied.isEmpty || UserDefaults.sellerVerafied == "rejected" else {
-//                        return
-//                    }
-//                    Task{
-//                        await handleFinalUpload()
-//                    }
-//                    
-//                }) {
-//                    Text("Complete Verification")
-//                        .font(.custom(poppinsSemiBold, size: 16.0))
-//                        .foregroundColor(.white)
-//                        .frame(maxWidth: .infinity)
-//                        .padding()
-//                        .background(manualVerificationComplete ? Color.defaultTheme : Color.gray)
-//                        .cornerRadius(16)
-//                }
-//                .padding()
-//                .disabled(UserDefaults.sellerVerafied == "verified" ? true : false)
-//            }
-//        }
-//        .onFirstAppear{
-//            feetchSellerStatus()
-//            
-//        }
-//        .background(.white)
-//        .toast(isPresenting: $showhud) {
-//            AlertToast(displayMode: .hud, type: .regular, title: hudMsg)
-//        }
-//        .photosPicker(isPresented: $showIDCardPicker, selection: $selectedIDCardItem, matching: .images)
-//        .onChange(of: selectedIDCardItem) { newItem in
-//            Task {
-//                if let data = try? await newItem?.loadTransferable(type: Data.self) {
-//                    idCardImageData = data
-//                }
-//            }
-//        }
-//        .fullScreenCover(isPresented: $showSelfieCamera) {
-//            ImagePicker(sourceType: .camera, onImagePicked: { image, path in
-//                if let image = image, let data = image.jpegData(compressionQuality: 0.6) {
-//                    selfieImage = image
-//                    selfieImageData = data
-//                    selfiePath = path
-//                }
-//            })
-//            .ignoresSafeArea()
-//        }
-//        .bottomSheet(isPresented: $showError, height: screenHeight * 0.4, topBarCornerRadius: 25, showTopIndicator: false) {
-//            CommonBottomSheet(
-//                sheetType: $alertType,
-//                onPrimaryClick: {
-//                    withAnimation { showError = false }
-//                    if self.viewModel.errorMessage == "" || self.viewModel.errorMessage == nil{
-//                        self.presentationMode.wrappedValue.dismiss()
-//                        withAnimation { showError = false }
-//                    }else{
-//                        withAnimation { showError = false }
-//                    }
-//                },
-//                onSecondaryClick: {
-//                    withAnimation { showError = false }
-//                }
-//            )
-//        }
-//        .background(Color.white)
-//        .navigationBarHidden(true)
-//        CusNavLink(doNavigate: $navigateToOTP,
-//                   destination: OTPVerificationScreen(viewModel: viewModel, onSuccess: {
-//            phoneVerificationComplete = true
-//            if UserDefaults.hasCardAdded{
-//                Task{
-//                    SVProgressHUD.show()
-//                    await viewModel.getCard()
-//                    await SVProgressHUD.dismiss()
-//                    cardSuccess()
-//                    paymentMethodComplete = true
-//                    updateManualVerificationIfNeeded()
-//                }
-//            }
-//            navigateToOTP = false
-//        }))
-//        
-//        CusNavLink(
-//            doNavigate: $navigateToAddCard,
-//            destination: AddCardScreen(
-//                isNavFrom: "SellerVerification",
-//                onSuccess: { cardId in
-//                    SVProgressHUD.show()
-//                    await viewModel.getCard()
-//                    await SVProgressHUD.dismiss()
-//                    cardSuccess()
-//                    //                    cardTokenNumber = cardToken
-//                    //                    self.cardDetails = CardDetails()
-//                    //                    self.cardId = cardId
-//                    //                    self.cardNumber = cardNumber
-//                    //                    self.expiry = expiry
-//                    //                    self.cvv = cvv
-//                    paymentMethodComplete = true
-//                    updateManualVerificationIfNeeded()
-//                }
-//            )
-//        )
-//        CusNavLink(doNavigate: $navigateToProfile, destination: AccountScreen())
-//    }
-//    func feetchSellerStatus(){
-//        Task{
-//            SVProgressHUD.show()
-//            self.viewModel.errorMessage?.removeAll()
-//            await self.viewModel.fetchSellerPaymentDetail()
-//            await SVProgressHUD.dismiss()
-//            if self.viewModel.errorMessage == "" || viewModel.errorMessage == nil {
-//                success()
-//            }else{
-//                
-//                alertType = .sheetType(
-//                    icon: .alert,
-//                    title: "Failed" ,
-//                    message: self.viewModel.errorMessage ?? "",
-//                    primaryBtnText: "",
-//                    secondaryBtnText: AppString.ok.localized
-//                )
-//                showError = true
-//            }
-//            
-//        }
-//    }
-//    //MARK: handleFinalUpload.
-//    func handleFinalUpload() async {
-//       
-//        
-//        guard let idData = idCardImageData,
-//              let selfieData = selfieImageData,
-//              let idURL = compressAndSaveImage(data: idData),
-//              let selfieURL = compressAndSaveImage(data: selfieData)
-//                //              let cardToken = cardTokenNumber
-//        else {
-//            //
-//            DispatchQueue.main.async {
-//                if idCardImageData == nil{
-//                    hudMsg = "Please Upload ID Card"
-//                }else if selfieImageData == nil{
-//                    hudMsg = "Please Upload Selfie"
-//                }
-//                showhud = true
-//            }
-//            return
-//        }
-//        
-//        guard phoneVerificationComplete == true else {
-//            hudMsg = "Please Verify Phone Number"
-//            showhud = true
-//            return
-//        }
-//        
-//        
-//        guard !cardId.isEmpty else {
-//            if UserDefaults.hasCardAdded{
-//                hudMsg = "Please Choose Payment Method"
-//            }else{
-//                hudMsg = "Please Add Payment Method"
-//            }
-//            showhud = true
-//            return
-//        }
-//        
-//        guard Reachability.isConnectedToNetwork() else {
-//            hudMsg = "No Internet Connection"
-//            showhud = true
-//            return
-//        }
-//        SVProgressHUD.show()
-//        DispatchQueue.main.async {
-//            hudMsg = "Uploading..."
-//            showhud = true
-//        }
-//        
-//        let params: [String: Any] = [
-//            "customerPaymentProfileId": cardId ,
-//            "phone_verification": phoneVerificationComplete == true ? 1 : 0
-//        ]
-//        print("Seller Verification Param : \(params)")
-//        
-//        let images = [[idURL.path], [selfieURL.path]]
-//        let keys = ["id_card", "image"]
-//        let mime = ["image/jpeg", "image/jpeg"]
-//        
-//        await viewModel.SellerVerification(
-//            parameters: params,
-//            images: images,
-//            mimeType: mime,
-//            keysValue: keys
-//        )
-//        
-//        DispatchQueue.main.async {
-//            idUploadSuccess()
-//        }
-//    }
-//    func cardSuccess() {
-//        //        DispatchQueue.main.async{
-//        SVProgressHUD.dismiss()
-//        let response = viewModel.cardDict
-//        if response.status == "success" {
-//            cardArr = viewModel.cardDict.data?.paymentProfiles ?? [PaymentProfile]()
-//            if cardArr.count != 0{
-//                getCard = false
-//            }else{
-//                getCard = true
-//            }
-//        } else {
-//            showError = true
-//            alertType = .sheetType(
-//                icon: .alert,
-//                title: response.error_type?.capitalized ?? "",
-//                message: response.message?.capitalized ?? "",
-//                primaryBtnText: "",
-//                secondaryBtnText: AppString.ok.localized
-//            )
-//        }
-//        //        }
-//    }
-//    func loadImageData(from urlString: String, completion: @escaping (Data?) -> Void) {
-//        guard let url = URL(string: urlString) else {
-//            completion(nil)
-//            return
-//        }
-//        
-//        URLSession.shared.dataTask(with: url) { data, _, error in
-//            if let error = error {
-//                print("Failed to load image: \(error.localizedDescription)")
-//                completion(nil)
-//            } else {
-//                completion(data)
-//            }
-//        }.resume()
-//    }
-//    func success(){
-//        let response = self.viewModel.paymentDetailDict
-//        if response.status == "success"{
-//            UserDefaults.sellerVerafied = response.data?.status ?? ""
-//            if UserDefaults.sellerVerafied == "verified" || UserDefaults.sellerVerafied == "pending"{
-//                idVerificationComplete = true
-//                phoneVerificationComplete = true
-//                paymentMethodComplete = true
-//                let idCardURL = response.data?.idCard ?? ""
-//                let selfieURL = response.data?.image ?? ""
-//                loadImages(url:idCardURL,selfieUrl: selfieURL)
-//            }else{
-//                idVerificationComplete = false
-//                phoneVerificationComplete = false
-//                paymentMethodComplete = false
-//            }
-//        }else{
-//            showError = true
-//            alertType = .sheetType(
-//                icon: .alert,
-//                title: response.error_type?.capitalized ?? "",
-//                message: response.message?.capitalized ?? "",
-//                primaryBtnText: "",
-//                secondaryBtnText: AppString.ok.localized
-//            )
-//        }
-//    }
-//    func loadImages(url:String,selfieUrl:String) {
-//        loadImageData(from: url) { data in
-//            DispatchQueue.main.async {
-//                idCardImageData = data
-//            }
-//        }
-//        
-//        loadImageData(from: selfieUrl) { data in
-//            DispatchQueue.main.async {
-//                selfieImageData = data
-//            }
-//        }
-//    }
-//    
-//    //MARK: idUploadSuccess.
-//    func idUploadSuccess() {
-//        let response  = viewModel.sellerVerificationDict
-//        if viewModel.sellerVerificationDict?.status == "success" {
-//            hudMsg = "Seller Verification Successfully"
-//            UserDefaults.sellerVerafied = "pending"
-////            navigateToProfile = true
-//            SVProgressHUD.dismiss()
-////            self.presentationMode.wrappedValue.dismiss()
-//            self.feetchSellerStatus()
-//        } else {
-//            SVProgressHUD.dismiss()
-//            hudMsg = "Seller Verification Failed"
-//            alertType = .sheetType(
-//                icon: .alert,
-//                title: response?.error_type?.capitalized ?? "Error",
-//                message: response?.message?.capitalized ?? "Something went wrong.",
-//                primaryBtnText: "",
-//                secondaryBtnText: "OK"
-//            )
-//            showError = true
-//            paymentMethodComplete = true
-//        }
-//        showhud = true
-//    }
-//    
-//    //MARK: updateManualVerificationIfNeeded.
-//    private func updateManualVerificationIfNeeded() {
-//        if idVerificationComplete && phoneVerificationComplete && paymentMethodComplete && !manualVerificationComplete {
-//            manualVerificationComplete = true
-//        }
-//    }
-//    
-//    //MARK: successPaymentDetail.
-//    func successPaymentDetail() {
-//        if viewModel.paymentDetailDict.status == "success",
-//           let card = viewModel.paymentDetailDict.data?.cardDetails {
-//            cardDetails = card
-//            paymentMethodComplete = true
-//            hudMsg = "Payment Method Added"
-//        } else {
-//            cardDetails = nil
-//            paymentMethodComplete = false
-//            hudMsg = "No Payment Method Found"
-//        }
-//        showhud = true
-//    }
-//}
-
-
-//
-//struct ReviewScreen: View {
-//    var imageName: String = "verify"
-//    var title: String = "No Data Found"
-//    var content : String = "Under Processed"
-//    var yPosition = screenHeight/3
-//    var body: some View {
-//        GeometryReader { geometry in
-//            VStack(spacing: 48) {
-//                Image(imageName)
-//                    .resizable()
-//                    .scaledToFit()
-//                    .frame(width: 200, height: 200)
-//                    .foregroundColor(.gray.opacity(0.6))
-//                VStack(alignment: .leading,spacing: 12){
-//                    Text(title)
-//                        .font(.custom(poppinsBold, size: 16))
-//                        .foregroundColor(.black)
-//                        .multilineTextAlignment(.center)
-//                    
-//                    Text(content)
-//                        .font(.custom(poppinsRegular, size: 13))
-//                        .foregroundColor(.gray)
-//                        .multilineTextAlignment(.center)
-//                }
-//            }
-//            .frame(width: geometry.size.width, height: geometry.size.height)
-//            .position(x: geometry.size.width / 2, y:yPosition )
-//        }
-//    }
-//}

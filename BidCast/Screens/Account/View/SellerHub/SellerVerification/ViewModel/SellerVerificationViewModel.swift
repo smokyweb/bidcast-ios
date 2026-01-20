@@ -17,6 +17,7 @@ final class SellerVerificationViewModel: ObservableObject {
     @Published var otpVerifyDict = ResponseModel<SellerOtpVerifyModel>()
     @Published var paymentDetailDict = ResponseModel<SellerIdentityFetch>()
     @Published var sellerVerificationDict: ResponseModel<SellerVerificationModel>?
+    @Published var checkKycDict = ResponseModel<CheckKycModel>()
     @Published var errorMessage: String?
     @Published var requestType: String = ""
     @Published var cardDict = ResponseModel<[CardModel]>()
@@ -29,6 +30,7 @@ final class SellerVerificationViewModel: ObservableObject {
         uploadImages: [String]? = nil
     ) async {
         requestType = "storeIDCard"
+        errorMessage?.removeAll()
         do {
             let response: ResponseModel<StoreIDCardModel>? = try await APIManager.shared.uploadImageWithMultipleKeys(
                 type: APIEndPoint.buyerIdentityStore,
@@ -46,6 +48,7 @@ final class SellerVerificationViewModel: ObservableObject {
     }
     // MARK: - Get Cards
     func getCard() async {
+        errorMessage?.removeAll()
         do {
         let response: ResponseModel<[CardModel]> = try await APIManager.shared.request(
                 type: APIEndPoint.getCard,
@@ -60,8 +63,9 @@ final class SellerVerificationViewModel: ObservableObject {
         
     // MARK: - storePhoneNumber
     func storePhoneNumber(parameters: StorePhoneNumberRequest) async {
-        
+        errorMessage?.removeAll()
         do {
+          
             requestType = "storePhoneNumber"
             let response: ResponseModel<SellerPhoneNumberModel> = try await APIManager.shared.request(
                 type: APIEndPoint.storePhoneNumber(param: parameters),
@@ -72,10 +76,25 @@ final class SellerVerificationViewModel: ObservableObject {
             self.handle(error: error)
         }
     }
+    // MARK: - Get checkKycDetail.
+    func checkKycDetail() async {
+        errorMessage?.removeAll()
+        do {
+            if let response: ResponseModel<CheckKycModel> = try await APIManager.shared.request(
+                type: APIEndPoint.checkKYC,
+                header: true
+            ) {
+                self.checkKycDict = response
+            }
+        } catch(let error) {
+            handle(error: error)
+        }
+    }
     
     // MARK: - otpVerify
     func otpVerify(parameters: OtpVerifyRequest) async {
         requestType = "otpVerify"
+        errorMessage?.removeAll()
         do {
             let response: ResponseModel<SellerOtpVerifyModel> = try await APIManager.shared.request(
                 type: APIEndPoint.otpVerify(param: parameters),
@@ -90,6 +109,7 @@ final class SellerVerificationViewModel: ObservableObject {
     // MARK: - fetchSellerDetail
     func fetchSellerPaymentDetail() async {
         requestType = "sellerPayment"
+        errorMessage?.removeAll()
         do {
             let response: ResponseModel<SellerIdentityFetch> = try await APIManager.shared.request(
                 type: APIEndPoint.sellerIdentityFetch,
@@ -110,6 +130,7 @@ final class SellerVerificationViewModel: ObservableObject {
         uploadImages: [String]? = nil
     ) async {
         requestType = "SellerVerification"
+        errorMessage?.removeAll()
         do {
             let response: ResponseModel<SellerVerificationModel>? = try await APIManager.shared.uploadImageWithMultipleKeys(
                 type: APIEndPoint.sellerVerification,
@@ -122,13 +143,30 @@ final class SellerVerificationViewModel: ObservableObject {
             )
             self.sellerVerificationDict = response
         } catch {
-            self.errorMessage = error.localizedDescription
+            handle(error: error)
         }
     }
     
     // MARK: - Error Handling
+    // MARK: - Centralized Error Handler
     private func handle(error: Error) {
-        self.errorMessage = error.localizedDescription
+        if let dataError = error as? DataError {
+            switch dataError {
+            case .invalidCode(let message):
+                self.errorMessage = message ?? "Invalid code error"
+            case .invalidResponse(let data):
+                if let data = data,
+                   let json = try? JSONSerialization.jsonObject(with: data, options: []) {
+                    self.errorMessage = "Invalid response: \(json)"
+                } else {
+                    self.errorMessage = "Invalid response with no data"
+                }
+            default:
+                self.errorMessage = error.localizedDescription
+            }
+        } else {
+            self.errorMessage = error.localizedDescription
+        }
     }
 }
 
