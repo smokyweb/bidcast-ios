@@ -1839,6 +1839,7 @@ extension LiveStream {
             
             if response.status == "success" {
                 self.sellerInfo = response.data
+                self.sellerId = sellerId
             } else {
                 throw NSError(domain: "APIError", code: -1, userInfo: [
                     NSLocalizedDescriptionKey: response.message ?? "Something went wrong"

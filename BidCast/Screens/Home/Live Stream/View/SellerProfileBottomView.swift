@@ -26,7 +26,7 @@ struct SellerProfileBottomSheet: View {
                     
                     // Profile Image
                     CustomProfileImage(
-                        url: sellerInfo?.seller_details?.thumbnail ?? "",
+                        url: sellerInfo?.seller_details?.profile_image ?? "",
                         isCircular: true,
                         size: 55
                     )
@@ -42,10 +42,10 @@ struct SellerProfileBottomSheet: View {
                     Button(action: onFollow) {
                         Text((sellerInfo?.is_following ?? false) ? "Following" : "Follow")
                             .font(.custom(poppinsSemiBold, size: 14))
-                            .foregroundColor(.black)
+                            .foregroundColor(.defaultTheme)
                             .padding(.horizontal, 24)
                             .padding(.vertical, 10)
-                            .background(Color.defaultTheme.opacity(0.6))
+                            .background(Color.defaultThemeLight)
                             .cornerRadius(22)
                     }
                 }
@@ -149,7 +149,7 @@ struct StatScreen: View {
 struct ActionButton: View {
     var icon: String
     var title: String
-    var titleColor: Color = .primary
+    var titleColor: Color = .black
     var action: () -> Void
     var showDivider: Bool = true
     
@@ -162,12 +162,12 @@ struct ActionButton: View {
                     // Icon Circle
                     ZStack {
                         Circle()
-                            .fill(Color.gray.opacity(0.1))
+                            .fill( (title == "Block" || title == "Report") ? Color.gray.opacity(0.1) : .defaultThemeLight)
                             .frame(width: 44, height: 44)
                         
                         Image(systemName: icon)
                             .font(.system(size: 20))
-                            .foregroundColor(titleColor)
+                            .foregroundColor((title == "Block" || title == "Report") ? titleColor : .defaultTheme)
                     }
                     
                     // Title
