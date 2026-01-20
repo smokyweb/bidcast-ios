@@ -302,6 +302,8 @@ extension ProductShopRehersalScreen {
     
     private func resetData() {
         productDataFromAPI = []
+        apiProducts = []
+        displayedProducts = []
         sortedProductData = []
         currentPage = 1
         canLoadMore = true
@@ -495,6 +497,7 @@ extension ProductShopRehersalScreen {
         }
 
         isFetchingMore = false
+        updateSortedProducts()
     }
 
 
