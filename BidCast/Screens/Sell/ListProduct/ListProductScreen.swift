@@ -92,6 +92,11 @@ struct ListProductScreen: View {
         secondaryButtonTitle: nil,
         showButtons: true
     )
+    
+    var preSelectedCategoryId: String? = nil
+       var preSelectedCategoryName: String? = nil
+       var isCategoryLocked: Bool = false
+    
     var body: some View {
         
 //        ZStack {
@@ -126,55 +131,60 @@ struct ListProductScreen: View {
                             .font(.custom(robotoMedium, size: 16.0))
                             .padding(.top,8)
                             .padding([.leading,.trailing],16.0)
-                        
-                        DropDownSelection(
-                            options: $categoryNames, floatingLabel:"Category",
-                            hint: "Select Category",
-                            selected: $selectedCategory,
-                            anchor: .bottom,
-                            custFontName: robotoMedium,
-                            custFontSize:  14.0,
-                            custCategory : robotoRegular,
-                            custCategorySize : 13.0,
-                            onOptionSelected: { value in
-                                selectedCategory = value
-                                if let id = categoryList.first(where: { $0.name == value })?.id {
-                                    request.category_id = "\(id)"
-                                } else {
-                                    request.category_id = ""
-                                }
-                                Task{
-                                    
-                                    await performAPICalls(
-                                        isConcurrent: false,
-                                        onError: { error in
-                                            showSubCategorySheet = false
-                                        },
-                                        onSuccess: {
-                                            self.subCategoryList.removeAll()
-                                            if let response = self.viewModel.categoryResponse{
-                                                self.subCategoryList = response.data
-                                                self.subCategoryName = self.subCategoryList.map { $0.name ?? ""}
+                        if isCategoryLocked {
+                            // Show locked category field
+                            LockedCategoryField(categoryName: selectedCategory)
+                                .padding([.leading, .trailing], 16)
+                        } else{
+                            DropDownSelection(
+                                options: $categoryNames, floatingLabel:"Category",
+                                hint: "Select Category",
+                                selected: $selectedCategory,
+                                anchor: .bottom,
+                                custFontName: robotoMedium,
+                                custFontSize:  14.0,
+                                custCategory : robotoRegular,
+                                custCategorySize : 13.0,
+                                onOptionSelected: { value in
+                                    selectedCategory = value
+                                    if let id = categoryList.first(where: { $0.name == value })?.id {
+                                        request.category_id = "\(id)"
+                                    } else {
+                                        request.category_id = ""
+                                    }
+                                    Task{
+                                        
+                                        await performAPICalls(
+                                            isConcurrent: false,
+                                            onError: { error in
+                                                showSubCategorySheet = false
+                                            },
+                                            onSuccess: {
+                                                self.subCategoryList.removeAll()
+                                                if let response = self.viewModel.categoryResponse{
+                                                    self.subCategoryList = response.data
+                                                    self.subCategoryName = self.subCategoryList.map { $0.name ?? ""}
+                                                }
+                                                if subCategoryList.count != 0{
+                                                    showSubCategorySheet = true
+                                                }
                                             }
-                                            if subCategoryList.count != 0{
-                                                showSubCategorySheet = true
-                                            }
+                                        ) {
+                                            extraFields = []
+                                            selectedSubCategory = ""
+                                            selectedOption = []
+                                            request.sub_category_id = ""
+                                            let request = CategoryRequest(category_id: request.category_id)
+                                            SVProgressHUD.show()
+                                            try await self.viewModel.getSubCategoryList(param: request)
+                                            await SVProgressHUD.dismiss()
                                         }
-                                    ) {
-                                        extraFields = []
-                                        selectedSubCategory = ""
-                                        selectedOption = []
-                                        request.sub_category_id = ""
-                                        let request = CategoryRequest(category_id: request.category_id)
-                                        SVProgressHUD.show()
-                                        try await self.viewModel.getSubCategoryList(param: request)
-                                        await SVProgressHUD.dismiss()
                                     }
                                 }
+                            )
+                            .zIndex(1201.0)
+                            .padding([.leading,.trailing],16)
                             }
-                        )
-                        .zIndex(1201.0)
-                        .padding([.leading,.trailing],16)
                         AuthTextField(
                             floatingLabel: "Title".localized,
                             placeholder: "Enter Product title".localized,
@@ -282,12 +292,7 @@ struct ListProductScreen: View {
                             custCategory : robotoRegular,
                             custCategorySize : 13.0,
                             onOptionSelected: { value in
-//                                selectedCategory = value
-//                                if let id = categoryList.first(where: { $0.name == value })?.id {
                                     request.processing_category = value
-//                                } else {
-//                                    request.processing_category = ""
-//                                }
                             }
                         )
                         .padding([.leading,.trailing],16)
@@ -547,21 +552,8 @@ struct ListProductScreen: View {
                             saveProductDetails(as: "draft")
                         }
                     )
-//                    .padding(.horizontal, 12)
-//                    .padding(.bottom, 20)
                 }
-//                .padding(.vertical, 16)
                 .background(.backGround)
-//                .background(
-//                    RoundedRectangle(cornerRadius: 16)
-//                        .fill(Color(.systemBackground))
-//                        .shadow(color: Color.black.opacity(0.08), radius: 12, x: 0, y: 4)
-//                )
-//                .overlay(
-//                    RoundedRectangle(cornerRadius: 16)
-//                        .stroke(Color.gray.opacity(0.1), lineWidth: 1)
-//                )
-//                .padding(.horizontal, 12)
                 .zIndex(1000)
                 
                 
@@ -587,9 +579,6 @@ struct ListProductScreen: View {
                                     selectedCategory = "\(selectedCategory) (\(selectedValue.name ?? ""))"
                                     print("Selected SubCategory: \(selectedValue.name ?? "")")
                                     self.extraFields = selectedValue.extra_fields ?? []
-//                                    if let extraFields =  self.viewModel.categoryResponse?.data[index].extra_fields{
-//                                        
-//                                    }
                                 }
                                 showSubCategorySheet = false
                             }
@@ -711,6 +700,8 @@ struct ListProductScreen: View {
                         categorySuccess()
                         successShippingProfiles()
                         mailSuccess()
+                        
+                        setupPreSelectedCategory()
                     }
                     
                 ) {
@@ -728,6 +719,43 @@ struct ListProductScreen: View {
            hideKeyboard()
         }
     }
+    
+    private func setupPreSelectedCategory() {
+            guard let categoryId = preSelectedCategoryId,
+                  let categoryName = preSelectedCategoryName else { return }
+            
+            // Set the category
+            request.category_id = categoryId
+            selectedCategory = categoryName
+            
+            // If category is locked, fetch subcategories automatically
+            if isCategoryLocked {
+                Task {
+                    await fetchSubCategoriesForPreSelectedCategory(categoryId: categoryId)
+                }
+            }
+        }
+        
+        // NEW: Fetch subcategories for pre-selected category
+        private func fetchSubCategoriesForPreSelectedCategory(categoryId: String) async {
+            await performAPICalls(
+                isConcurrent: false,
+                showLoader: true,
+                onError: { error in
+                    print("Error fetching subcategories: \(error)")
+                },
+                onSuccess: {
+                    self.subCategoryList.removeAll()
+                    if let response = self.viewModel.categoryResponse {
+                        self.subCategoryList = response.data
+                        self.subCategoryName = self.subCategoryList.map { $0.name ?? "" }
+                    }
+                }
+            ) {
+                let request = CategoryRequest(category_id: categoryId)
+                try await self.viewModel.getSubCategoryList(param: request)
+            }
+        }
     
     private func successShippingProfiles() {
         let response = shippingViewModel.getShippingProfilesResponse
@@ -1296,5 +1324,35 @@ struct EnhancedToggleCard: View {
             .scaleEffect(isPressed ? 0.97 : 1.0)
         }
         .buttonStyle(PlainButtonStyle())
+    }
+}
+struct LockedCategoryField: View {
+    let categoryName: String
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Category")
+                .font(.custom(robotoMedium, size: 14.0))
+                .foregroundColor(.text)
+            
+            HStack {
+                Text(categoryName)
+                    .font(.custom(robotoRegular, size: 13.0))
+                    .foregroundColor(.black)
+                
+                Spacer()
+                
+                Image(systemName: "lock.fill")
+                    .font(.system(size: 14))
+                    .foregroundColor(.gray)
+            }
+            .padding()
+            .background(Color.gray.opacity(0.1))
+            .cornerRadius(32)
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+            )
+        }
     }
 }

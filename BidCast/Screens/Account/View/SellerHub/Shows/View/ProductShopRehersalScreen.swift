@@ -224,15 +224,19 @@ struct ProductShopRehersalScreen: View {
             fetchProduct()
         }
         .sheet(isPresented: $showCreateProductSheet) {
-            ListProductScreen(forSheet:true,onCancel:{
+            ListProductScreen(forSheet:true,
+                              onCancel:{
                 showCreateProductSheet = false
-            })
-                .onDisappear {
-                    // Refresh product list after creating
-                    resetData()
-                    fetchProduct()
-                    onProductCreated?()
-                }
+            },
+                              preSelectedCategoryId: "\(displayedProducts.first?.category?.id ?? 0)",
+                              preSelectedCategoryName: displayedProducts.first?.category?.name ?? "",
+                              isCategoryLocked: true)
+            .onDisappear {
+                // Refresh product list after creating
+                resetData()
+                fetchProduct()
+                onProductCreated?()
+            }
         }
         .bottomSheet(
             isPresented: $showSortSheet,
