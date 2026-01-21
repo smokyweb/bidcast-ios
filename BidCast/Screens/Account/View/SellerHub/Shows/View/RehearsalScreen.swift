@@ -1573,7 +1573,9 @@ struct RehearsalScreen: View {
         print("DEBUG: fetchLatestProductList with roomId = \(self.roomId)")
         print("DEBUG: initialSelectedProductId= \(initialSelectedProductId)")
         initialSelectedProductId = "\(productData.first?.id ?? 0)"
-        currentPrice = Double(productData.first?.pricing ?? "") ?? 0.0
+        if !socketManager.hasWon{
+            currentPrice = Double(productData.first?.pricing ?? "") ?? 0.0
+        }
     }
     
     func setProductAsCurrent(selectedID : String){
@@ -2024,7 +2026,9 @@ struct RehearsalScreen: View {
             print("print PRoduct: \(products)")
 //            let currentProducts = productData.filter { $0.isCurrent }
             let currentProducts = productData.first
-            self.currentPrice = Double(currentProducts?.pricing ?? "") ?? 0.0
+            if !socketManager.hasWon{
+                self.currentPrice = Double(currentProducts?.pricing ?? "") ?? 0.0
+            }
             self.productId = currentProducts?.id ?? 0
             print("after product \(productData)")
         }
