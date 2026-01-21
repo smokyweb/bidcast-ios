@@ -19,7 +19,8 @@ struct ProductDetailView: View {
     
     @State private var isLoading = false
     @State private var showError = false
-    
+    @State private var isReadMore = false
+
     @State private var alertType: BottomSheetType = .sheetType(icon: .alert, title: "", message: "", primaryBtnText: "", secondaryBtnText: "")
     @State private var showhud = false
     @State private var hudMsg = ""
@@ -349,18 +350,28 @@ extension ProductDetailView {
 
 // MARK: - PRODUCT HEADER INFO
 extension ProductDetailView {
+
     private var productDetailSection: some View {
+        
         VStack(alignment: .leading, spacing: 10) {
-            
-            Text("Detail")
-                .font(.custom(poppinsBold, size: 22))
-                .foregroundColor(.black)
-                .multilineTextAlignment(.leading)
-            
             HStack(spacing: 6) {
+                Text("Detail")
+                    .font(.custom(poppinsBold, size: 22))
+                    .foregroundColor(.black)
+                    .multilineTextAlignment(.leading)
+                  
+            }
+            
+            VStack(alignment: .leading,spacing: 6) {
                 Text("\(productDetail?.description ?? "")")
                     .font(.custom(poppinsRegular, size: 13))
                     .foregroundColor(.darkGray)
+                    .lineLimit(isReadMore ? nil : 3)
+                Button(!isReadMore ? "Read More" : "Read Less") {
+                    isReadMore.toggle()
+                }
+                .font(.custom(poppinsSemiBold, size: 11))
+                .foregroundColor(.defaultTheme)
             }
             HStack(spacing: 6) {
                 Text("Category")
