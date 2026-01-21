@@ -30,6 +30,7 @@ final class LiveShowsViewModel: ObservableObject {
     // MARK: - Store Address
     func storeAddress(parameters: AddressRequest) async {
         requestType = "store"
+        errorMessage?.removeAll()
         do {
             let response: ResponseModel<AddressModel> = try await APIManager.shared.request(
                 type: APIEndPoint.storeAddress(param: parameters),
@@ -42,6 +43,7 @@ final class LiveShowsViewModel: ObservableObject {
     }
     func storePromoteShow(parameters: StorePromoteShowRequest) async {
         requestType = "promoteShow"
+        errorMessage?.removeAll()
         do {
            if let response:  ResponseModel<StorePromoteShowModel>? = try await APIManager.shared.request(
                 type: APIEndPoint.storePromoteShow(param: parameters),
@@ -56,6 +58,7 @@ final class LiveShowsViewModel: ObservableObject {
     // MARK: - Get Lessons
     func getPromoteShows() async {
         requestType = "promote"
+        errorMessage?.removeAll()
         do {
             let response: ResponseModelPaginate<[BoostModel]> = try await APIManager.shared.request(
                 type: APIEndPoint.getPromoteShow,
@@ -70,6 +73,7 @@ final class LiveShowsViewModel: ObservableObject {
     // MARK: - Get Live Shows
     func getLiveShows(param:GetLiveShowsRequest) async {
         requestType = "get"
+        errorMessage?.removeAll()
         do {
             let response: ResponseModel<[LiveShowsModel]> = try await APIManager.shared.request(
                 type: APIEndPoint.getLiveShows(param:param),
@@ -83,6 +87,7 @@ final class LiveShowsViewModel: ObservableObject {
 
     func CountUppdate(parameters: countRequest) async {
         requestType = "count"
+        errorMessage?.removeAll()
         do {
            if let response: countModel = try await APIManager.shared.request(
                 type: APIEndPoint.countUpdate(param: parameters),
@@ -98,6 +103,7 @@ final class LiveShowsViewModel: ObservableObject {
     
     func storeBid(parameters: StoreBidRequest) async {
         requestType = "store"
+        errorMessage?.removeAll()
         do {
             let response: ResponseModel<BidModel> = try await APIManager.shared.request(
                 type: APIEndPoint.storeBid(param: parameters),
@@ -110,6 +116,7 @@ final class LiveShowsViewModel: ObservableObject {
     }
     
     func followUnfollow(parameters: FollowRequest) async {
+        errorMessage?.removeAll()
         do {
             self.requestType = "follow"
             if let response : ResponseModel<FolloweModel> = try await APIManager.shared.request(
@@ -129,6 +136,7 @@ final class LiveShowsViewModel: ObservableObject {
     /// Get seller info safely. Uses SellerInfoRequest (which has `seller_id`).
     func getSellerInfo(sellerID: String) async throws  {
         let req = SellerInfoRequest(seller_id: sellerID)
+        errorMessage?.removeAll()
         do {
             self.requestType = "sellerInfo"
             let response : ResponseModel<SellerInfoResponse> = try await APIManager.shared.request(
@@ -150,6 +158,7 @@ final class LiveShowsViewModel: ObservableObject {
     
     /// Fetch all report categories (GET request)
     func getReportCategories() async throws {
+        errorMessage?.removeAll()
         do {
             self.requestType = "reportCategories"
 
@@ -172,6 +181,7 @@ final class LiveShowsViewModel: ObservableObject {
     
     /// report seller API
     func reportSeller(request: SellerReportRequest) async throws {
+        errorMessage?.removeAll()
         do {
             self.requestType = "reportSeller"
 

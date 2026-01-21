@@ -166,13 +166,14 @@ struct ProfileScreen: View {
                                         showhud = true
                                         return
                                     }
+                                    scheduleShowArr.removeAll()
                                     SVProgressHUD.show()
-                                    await self.viewModel.getMyScheduleShow(parameters: GetMyScheduleShowRequest(type: "upcoming",page : currentPage))
+                                    await self.viewModel.getMyScheduleShow(parameters: GetMyScheduleShowRequest(type: "upcoming",page : 1))
                                     await SVProgressHUD.dismiss()
-                                    if let error = viewModel.errorMessage{
+                                    if viewModel.errorMessage != "" && viewModel.errorMessage != nil{
                                         alertType = .sheetType(icon: .alert,
                                                                title: "Error",
-                                                               message: error.capitalizingFirstLetter(),
+                                                               message: viewModel.errorMessage ?? "",
                                                                primaryBtnText: "",
                                                                secondaryBtnText: AppString.ok.localized)
                                         withAnimation(.snappy) { showError = true }
@@ -186,9 +187,19 @@ struct ProfileScreen: View {
                                         return
                                     }
                                     SVProgressHUD.show()
+                                    totalRatingArr.removeAll()
                                     await self.viewModel.getTotalRating(parameters: GetTotalRatingRequest(seller_id: Int(id) ?? 0))
                                     await SVProgressHUD.dismiss()
-                                    ratingSuccess()
+                                    if viewModel.errorMessage != "" && viewModel.errorMessage != nil{
+                                        alertType = .sheetType(icon: .alert,
+                                                               title: "Error",
+                                                               message: viewModel.errorMessage ?? "",
+                                                               primaryBtnText: "",
+                                                               secondaryBtnText: AppString.ok.localized)
+                                        withAnimation(.snappy) { showError = true }
+                                    }else{
+                                        ratingSuccess()
+                                    }
                                 case "Clips":
                                     resetClipsData()
                                     guard Reachability.isConnectedToNetwork() else {
@@ -200,10 +211,10 @@ struct ProfileScreen: View {
                                     let requst = clipRequest(sellerId: id, page: 1)
                                     await self.viewModel.getClips(parameters:requst )
                                     await SVProgressHUD.dismiss()
-                                    if let error = viewModel.errorMessage{
+                                    if viewModel.errorMessage != "" && viewModel.errorMessage != nil{
                                         alertType = .sheetType(icon: .alert,
                                                                title: "Error",
-                                                               message: error.capitalizingFirstLetter(),
+                                                               message: viewModel.errorMessage ?? "",
                                                                primaryBtnText: "",
                                                                secondaryBtnText: AppString.ok.localized)
                                         withAnimation(.snappy) { showError = true }
@@ -285,60 +296,71 @@ struct ProfileScreen: View {
                         }
                         
                         else if selectedTab == "Shows" {
-                            LazyVGrid(columns: columns, spacing: 6) {
-                                ForEach(scheduleShowArr.indices, id: \.self) { i in
-                                    let show = scheduleShowArr[i]
-                                    ImageCollectionView(profileImg: show.user?.profile_image ?? "",
-                                                        profileName: show.user?.username ?? show.user?.name ?? "".capitalizingFirstLetter(),
-                                                        textSize: 14.0,
-                                                        image: show.imgThumbnail?.first ?? "",
-                                                        category: show.category?.name ?? "",
-                                                        title2:show.title ?? "",
-                                                        categorySize: 14,
-                                                        title2Size: 16.0,
-                                                        liveCount:  0,
-                                                        onTapProfile: {
-                                        //                                userId = "\(show.user?.id ?? 0)"
-                                        //                                navigateToProfile = true
-                                    },onTapProfileName: {
-                                        //                                userId = "\(show.user?.id ?? 0)"
-                                        //                                navigateToProfile = true
-                                    },onTapMainImage: {
-                                        print(" tapped the card!,inex \(index)")
-                                        //                                self.index = i
-                                        //                                userId = "\(show.user?.id ?? 0)"
-                                        //                                navigateToLiveStream = true
-                                    },onTapCategory: {
-                                        //                                self.category = show.category?.name ?? ""
-                                        //                                navigateToCategoryDetailScreen = true
-                                    })
-                                    //                                .background(.white)
-                                    .cornerRadius(10)
-                                    .onAppear {
-                                        Task {
-                                            await handlePagination(for: .shows, index: i)
+                            if scheduleShowArr.isEmpty {
+                                NoDataView(message: "No Shows Found",yPosition:screenWidth/3.4)
+                            } else {
+                                LazyVGrid(columns: columns, spacing: 6) {
+                                    ForEach(scheduleShowArr.indices, id: \.self) { i in
+                                        let show = scheduleShowArr[i]
+                                        ImageCollectionView(profileImg: show.user?.profile_image ?? "",
+                                                            profileName: show.user?.username ?? show.user?.name ?? "".capitalizingFirstLetter(),
+                                                            textSize: 14.0,
+                                                            image: show.imgThumbnail?.first ?? "",
+                                                            category: show.category?.name ?? "",
+                                                            title2:show.title ?? "",
+                                                            categorySize: 14,
+                                                            title2Size: 16.0,
+                                                            liveCount:  0,
+                                                            onTapProfile: {
+                                            //                                userId = "\(show.user?.id ?? 0)"
+                                            //                                navigateToProfile = true
+                                        },onTapProfileName: {
+                                            //                                userId = "\(show.user?.id ?? 0)"
+                                            //                                navigateToProfile = true
+                                        },onTapMainImage: {
+                                            print(" tapped the card!,inex \(index)")
+                                            //                                self.index = i
+                                            //                                userId = "\(show.user?.id ?? 0)"
+                                            //                                navigateToLiveStream = true
+                                        },onTapCategory: {
+                                            //                                self.category = show.category?.name ?? ""
+                                            //                                navigateToCategoryDetailScreen = true
+                                        })
+                                        //                                .background(.white)
+                                        .cornerRadius(10)
+                                        .onAppear {
+                                            Task {
+                                                await handlePagination(for: .shows, index: i)
+                                            }
                                         }
                                     }
-                                }
-                            } .padding(.vertical,3)
-                                .padding(.horizontal,8)
+                                } .padding(.vertical,3)
+                                    .padding(.horizontal,8)
+                            }
                         }
                         
                         else if selectedTab == "Reviews" {
-                            ForEach(totalRatingArr, id: \.id) { review in
-                                ReviewCard(
-                                    username: review.user.name ?? "",
-                                    profileImage: review.user.profile_image ?? "",
-                                    rating: Double(review.overallRating ?? "0.0") ?? 0.0,
-                                    comment: review.comment
-                                )
-                                .padding(.horizontal,0)
+                            if totalRatingArr.isEmpty {
+                                NoDataView(message: "No ratings Found")
+                            } else {
+                                ForEach(totalRatingArr, id: \.id) { review in
+                                    ReviewCard(
+                                        username: review.user.name ?? "",
+                                        profileImage: review.user.profile_image ?? "",
+                                        rating: Double(review.overallRating ?? "0.0") ?? 0.0,
+                                        comment: review.comment
+                                    )
+                                    .padding(.horizontal,0)
+                                }
                             }
                         }
                         else if selectedTab == "Clips" {
-                            let imageURLs = clipArr.map { $0.thumbnailURL ?? "" }
-                            LazyVGrid(columns: clipsColumns, spacing: 12) {
-                                ForEach(imageURLs.indices, id: \.self) { index in
+                            if clipArr.isEmpty {
+                                NoDataView(message: "No Clips Found",yPosition:screenWidth/3.5)
+                            } else {
+                                let imageURLs = clipArr.map { $0.thumbnailURL ?? "" }
+                                LazyVGrid(columns: clipsColumns, spacing: 12) {
+                                    ForEach(imageURLs.indices, id: \.self) { index in
                                         let url = imageURLs[index]
                                         ClipImage(url: url, onSelection: {
                                             navigateToVideoReceipt = true
@@ -349,10 +371,11 @@ struct ProfileScreen: View {
                                                 await handlePagination(for: .clips, index: clipArr.count - 1)
                                             }
                                         }
+                                    }
                                 }
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 4)
                             }
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 4)
                             if isFetchingMoreClips {
                                    ProgressView()
                                        .padding(.vertical, 16)

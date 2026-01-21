@@ -311,8 +311,16 @@ struct HomeViewScreen: View {
         .edgesIgnoringSafeArea(.bottom)
         .padding(.bottom, -15)
         .onAppear{
-            isActiveOnHomeScreen = true
             SocketManagerService.shared.setupSocket()
+            isActiveOnHomeScreen = true
+            
+            SocketManagerService.shared.observeRoomUpdates { room in
+                
+                Task{
+                    await fetchLiveShow()
+                }
+                
+            }
         }
         .onFirstAppear{
             isActiveOnHomeScreen = true
@@ -320,45 +328,7 @@ struct HomeViewScreen: View {
             if isActiveOnHomeScreen{
                 Task { await fetchCategory(for: "for_you") }
             }
-            Task{
-                liveShowsData.removeAll()
-                guard Reachability.isConnectedToNetwork() else {
-                    hudMsg = "No Internet Connection"
-                    showhud = true
-                    return
-                }
-                if isActiveOnHomeScreen{
-                    await self.viewModel.getProfile()
-                }
-                
-                if isActiveOnHomeScreen{
-                    
-                    await fetchLiveShow()
-                }
-                
-                
-                
-                if viewModel.errorMessage == "" || viewModel.errorMessage == nil {
-                    let response = self.viewModel.accountInfo.data
-                    UserDefaults.isFirstShowCreated = response?.is_FirstShowCreated ?? false
-                    UserDefaults.profileURL = response?.profile_image ?? ""
-                    UserDefaults.fullName = response?.name ?? ""
-                    UserDefaults.userName = response?.username ?? UserDefaults.fullName
-                
-                    UserDefaults.buyerVerafied = response?.buyer_identity_status ?? ""
-                    UserDefaults.sellerVerafied = response?.seller_identity_status ?? ""
-                    UserDefaults.sellerAddress = response?.has_shipping_address ?? false
-                    UserDefaults.hasCardAdded = response?.has_card_added ?? false
-                    UserDefaults.userEmail = response?.email ?? ""
-                    UserDefaults.default_card = response?.default_card ?? DefaultCardModel()
-                    UserDefaults.default_shipping_address = response?.default_shipping_address ?? AddressModel()
-                    UserDefaults.couponCount = "\(response?.coupon_count ?? 0)"
-                    UserDefaults.vacationMode = response?.vacation_mode == "true" ? true : false
-                    
-                }else{
-                    
-                }
-            }
+            getProfileData()
 
         }
         .onDisappear {
@@ -389,6 +359,48 @@ struct HomeViewScreen: View {
                 userId = "\(show.user?.id ?? 0)"
                 userImage = show.user?.profile_image ?? ""
                 userName = show.user?.username ?? ""
+            }
+        }
+    }
+    
+    func getProfileData(){
+        Task{
+            liveShowsData.removeAll()
+            guard Reachability.isConnectedToNetwork() else {
+                hudMsg = "No Internet Connection"
+                showhud = true
+                return
+            }
+            if isActiveOnHomeScreen{
+                await self.viewModel.getProfile()
+            }
+            
+            if isActiveOnHomeScreen{
+                
+                await fetchLiveShow()
+            }
+            
+            
+            
+            if viewModel.errorMessage == "" || viewModel.errorMessage == nil {
+                let response = self.viewModel.accountInfo.data
+                UserDefaults.isFirstShowCreated = response?.is_FirstShowCreated ?? false
+                UserDefaults.profileURL = response?.profile_image ?? ""
+                UserDefaults.fullName = response?.name ?? ""
+                UserDefaults.userName = response?.username ?? UserDefaults.fullName
+            
+                UserDefaults.buyerVerafied = response?.buyer_identity_status ?? ""
+                UserDefaults.sellerVerafied = response?.seller_identity_status ?? ""
+                UserDefaults.sellerAddress = response?.has_shipping_address ?? false
+                UserDefaults.hasCardAdded = response?.has_card_added ?? false
+                UserDefaults.userEmail = response?.email ?? ""
+                UserDefaults.default_card = response?.default_card ?? DefaultCardModel()
+                UserDefaults.default_shipping_address = response?.default_shipping_address ?? AddressModel()
+                UserDefaults.couponCount = "\(response?.coupon_count ?? 0)"
+                UserDefaults.vacationMode = response?.vacation_mode == "true" ? true : false
+                
+            }else{
+                
             }
         }
     }

@@ -882,7 +882,7 @@ struct ShowPromotedShowCardView: View {
         HStack(spacing: 12) {
             // Sales
             HStack(spacing: 4) {
-                Text("\(formatCurrency(show?.totalSalesAmount ?? 0)) Sales")
+                Text("\(formatCurrency(Int(show?.totalSalesAmount ?? 0.0))) Sales")
                     .font(.custom(poppinsRegular, size: 13))
                     .foregroundColor(.secondary)
                 Text("•")

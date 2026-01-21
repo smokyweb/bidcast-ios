@@ -155,6 +155,9 @@ final class APIManager {
         do {
             return try jsonDecoder.decode(T.self, from: data)
         } catch let error as DecodingError {
+#if DEBUG
+print("👉 Error >>> \n\(error)")
+#endif
             let errorMessage = handleDecodingError(error)
             throw DataError.invalidCode(errorMessage)
         } catch {

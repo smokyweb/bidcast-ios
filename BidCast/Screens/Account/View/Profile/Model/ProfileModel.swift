@@ -149,7 +149,8 @@ struct GetMyScheduleShowModel: Codable {
     var promotionStartAt, promotionEndAt: String?
     var isPromoted: Bool?
     var products: [ProductDataModel1]?
-    var totalOrders, totalSalesAmount, totalPromotedMinutes: Int?
+    var totalOrders , totalPromotedMinutes: Int?
+    var totalSalesAmount : Double?
     var lastPromotedAt: String?
     var category: Category?
     var user: User?

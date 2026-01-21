@@ -23,6 +23,7 @@ final class ProfileViewModel: ObservableObject {
 
     // MARK: - Store Address
     func storeAddress(parameters: AddressRequest) async {
+        errorMessage?.removeAll()
         do {
             self.requestType = "store"
             _ = try await APIManager.shared.request(
@@ -37,6 +38,7 @@ final class ProfileViewModel: ObservableObject {
     
     // MARK: - Block User
     func blockUser(param: BlockUserRequest) async {
+        errorMessage?.removeAll()
         do {
             self.requestType = "blockUser"
             let response: ResponseModal<BlockUserModel> = try await APIManager.shared.request(
@@ -51,6 +53,7 @@ final class ProfileViewModel: ObservableObject {
     
     // MARK: - Get Profile
     func getProfile(param: ProfileParamRequest) async {
+        errorMessage?.removeAll()
         do {
             self.requestType = "get"
             let response: ResponseModel<ProfileModel> = try await APIManager.shared.request(
@@ -79,6 +82,7 @@ final class ProfileViewModel: ObservableObject {
     
     // MARK: - Follow / Unfollow
     func followUnfollow(parameters: FollowRequest) async {
+        errorMessage?.removeAll()
         self.requestType = "follow"
         do {
             

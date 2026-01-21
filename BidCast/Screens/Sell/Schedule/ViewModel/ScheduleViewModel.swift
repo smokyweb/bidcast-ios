@@ -39,6 +39,7 @@ final class ScheduleViewModel: ObservableObject {
         guard !hasLoadedLesson else { return }
         hasLoadedLesson = true
         requestType = "lesson"
+        errorMessage?.removeAll()
         
         do {
             let response: ResponseModal<[LessonModel]> = try await APIManager.shared.request(
@@ -56,7 +57,7 @@ final class ScheduleViewModel: ObservableObject {
         guard !hasLoadedSellingTips else { return }
         hasLoadedSellingTips = true
         requestType = "sellingTips"
-        
+        errorMessage?.removeAll()
         do {
             let response: ResponseModal<[LessonModel]> = try await APIManager.shared.request(
                 type: APIEndPoint.getSellingTips,
@@ -71,6 +72,7 @@ final class ScheduleViewModel: ObservableObject {
     // MARK: - Get Selling Tips
     func CheckScheduleShow(param :  checkScheduleRequest) async {
         requestType = "check"
+        errorMessage?.removeAll()
         do {
             let response: ResponseModal<ScheduleModel> = try await APIManager.shared.request(
                 type: APIEndPoint.checkValidShowDate(param: param),
@@ -87,6 +89,7 @@ final class ScheduleViewModel: ObservableObject {
         guard !hasLoadedHowToSell else { return }
         hasLoadedHowToSell = true
         requestType = "howToSell"
+        errorMessage?.removeAll()
         
         do {
             let response: ResponseModal<[LessonModel]> = try await APIManager.shared.request(
@@ -104,6 +107,7 @@ final class ScheduleViewModel: ObservableObject {
         guard !hasLoadedShowTips else { return }
         hasLoadedShowTips = true
         requestType = "showTips"
+        errorMessage?.removeAll()
         
         do {
             let response: ResponseModal<[LessonModel]> = try await APIManager.shared.request(
@@ -121,6 +125,7 @@ final class ScheduleViewModel: ObservableObject {
         guard !hasLoadedLetsPrepare else { return }
         hasLoadedLetsPrepare = true
         requestType = "letsPrepare"
+        errorMessage?.removeAll()
         
         do {
             let response: ResponseModal<[LessonModel]> = try await APIManager.shared.request(
@@ -138,7 +143,7 @@ final class ScheduleViewModel: ObservableObject {
         guard !hasLoadedTitleTips else { return }
         hasLoadedTitleTips = true
         requestType = "titleTips"
-        
+        errorMessage?.removeAll()
         do {
             let response: ResponseModal<TitleTipsModel> = try await APIManager.shared.request(
                 type: APIEndPoint.getAllTips(param: param),
@@ -156,7 +161,7 @@ final class ScheduleViewModel: ObservableObject {
 //        guard !hasLoadedTitleTips else { return }
 //        hasLoadedTitleTips = true
         requestType = "show"
-        
+        errorMessage?.removeAll()
         do {
             let response: ResponseModelPaginate<HomeModel> = try await APIManager.shared.request(
                 type: APIEndPoint.getScheduleShow(param: param),
@@ -194,7 +199,7 @@ final class ScheduleViewModel: ObservableObject {
 //    }
     func storeScheduleShow(param: [String: Any], images: [String], key: String) async throws{
         self.requestType = "store"
-        
+        errorMessage?.removeAll()
         do {
             let response: ResponseModal<HomeModel> = try await APIManager.shared.uploadImage(
                 type: APIEndPoint.storeScheduleShow,
@@ -219,7 +224,7 @@ final class ScheduleViewModel: ObservableObject {
     
     func updateScheduleShow(param: [String: Any], images: [String], key: String) async throws{
         self.requestType = "update"
-        
+        errorMessage?.removeAll()
         do {
             let response: ResponseModal<HomeModel> = try await APIManager.shared.uploadImage(
                 type: APIEndPoint.updateScheduleShow,
