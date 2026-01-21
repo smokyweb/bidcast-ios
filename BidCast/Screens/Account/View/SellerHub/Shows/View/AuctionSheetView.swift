@@ -11,7 +11,8 @@ import AlertToast
 struct AuctionSettingsSheet: View {
     @Environment(\.dismiss) private var dismiss
     
-    @State private var startingBid: String = "1"
+     var startingBid: String
+    @State var bidAmount : String = ""
     @State private var selectedRequiredTime: Int = 30
     @State private var selectedCounterBidTime: Int = 10
     @State private var isSuddenDeathEnabled: Bool = false
@@ -89,14 +90,14 @@ struct AuctionSettingsSheet: View {
                     
                     // Start Auction Button
                     Button(action: {
-                        let bidStarT = Int(startingBid) ?? 0
+                        let bidStarT = Int(bidAmount) ?? 0
                         guard bidStarT > 0 else {
 //                            hudMsg = "Please enter bid amount"
 //                            showHud = true
                             onShowToast?("Please enter bid amount")
                             return
                         }
-                        onStartAuction?(startingBid, selectedRequiredTime, selectedCounterBidTime, isSuddenDeathEnabled)
+                        onStartAuction?(bidAmount, selectedRequiredTime, selectedCounterBidTime, isSuddenDeathEnabled)
                     }) {
                         Text("Start Auction")
                             .font(.custom(poppinsSemiBold, size: 16))
@@ -134,6 +135,9 @@ struct AuctionSettingsSheet: View {
             }
             
         }
+        .onAppear{
+            bidAmount = startingBid
+        }
         .toast(isPresenting: $showHud) {
                AlertToast(
                    displayMode: .hud,
@@ -158,7 +162,7 @@ struct AuctionSettingsSheet: View {
                     .font(.custom(poppinsSemiBold, size: 14))
                     .foregroundColor(.primary)
                 
-                TextField("1", text: $startingBid)
+                TextField(startingBid, text: $bidAmount)
                     .font(.custom(poppinsRegular, size: 14))
                     .keyboardType(.decimalPad)
             }

@@ -367,6 +367,7 @@ struct RehearsalScreen: View {
 
         .sheet(isPresented: $showAuctionSheet) {
             AuctionSettingsSheet(
+                startingBid:auctionedProductData.pricing ?? "",
                 onTapCancel: {
                     showAuctionSheet = false
                 },
