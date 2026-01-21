@@ -12,6 +12,7 @@ struct CurrentProductView: View {
     let product: ProductDataModel1
     
     @Binding var currentPrice: Double
+    @Binding var suddenDeath : Bool
     @Binding var bidTime: String
     @Binding var userName: String
     @Binding var userImage: String
@@ -113,20 +114,19 @@ struct CurrentProductView: View {
                                 .foregroundColor(.danger)
                         }else{
                             HStack(spacing: 4) {
-                                Text("💀")
-                                    .font(.custom(poppinsSemiBold, size: 13))
+                                if suddenDeath{
+                                    Text("💀")
+                                        .font(.custom(poppinsSemiBold, size: 13))
+                                        .foregroundColor(timeToSeconds(bidTime) < 10 ? .red : .white)
+                                }
                                 
                                 Text(bidTime)
                                     .font(.custom(poppinsSemiBold, size: 13))
                                     .foregroundColor(timeToSeconds(bidTime) < 10 ? .red : .white)
                             }
                         }
-                        //                    Text(bidTime)
-                        //                        .font(.custom(poppinsSemiBold, size: 13))
-                        //                        .foregroundColor(.white)
                     }
                     .frame(width: 100, height: 50)
-//                    .background(Color.black.opacity(0.3))
                     .cornerRadius(10)
                     
                     

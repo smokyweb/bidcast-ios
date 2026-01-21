@@ -190,6 +190,8 @@ struct RehearsalScreen: View {
     @State private var isNavigatingToEdit = false
     @State private var shouldPreventReload = false
     
+    @State private var sudden_Death = false
+    
     @StateObject private var viewModelFreebie = RandomizerViewModel()
     var body: some View {
         GeometryReader { geometry in
@@ -1190,6 +1192,7 @@ struct RehearsalScreen: View {
                             CurrentProductView(
                                 product: auctionedProductData,
                                 currentPrice: $currentPrice,
+                                suddenDeath: $sudden_Death,
                                 bidTime: $socketManager.bidTime,
                                 userName: $winnerName,
                                 userImage: $winnerProfileImage,
@@ -1760,6 +1763,7 @@ struct RehearsalScreen: View {
             print("\(counterBidTime)")
             print("\(suddenDeath)")
             if status != "sold"{
+                
                 self.updateProducts(
                     for: roomId,
                     products: products,
@@ -1822,7 +1826,7 @@ struct RehearsalScreen: View {
         guard self.roomId == roomId else { return }
         self.auctionedProductData = products.first ?? ProductDataModel1()
         currentPrice = startingBidAmount
-
+       sudden_Death = suddenDeath
         print("🟢 Products updated for room:", roomId)
     }
     private func handleBidFinalized(for roomId: String, winner: HighestBid?) {
@@ -1839,6 +1843,7 @@ struct RehearsalScreen: View {
         winnerProfileID = id
         winnerProfileImage = image
         winnerAmount = amount
+        currentPrice = Double(winnerAmount) ?? 0.0
         if !winnerName.isEmpty{
             showWinnerOnParent = true
             randomWinner = winnerName.capitalizingFirstLetter()

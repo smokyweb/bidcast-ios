@@ -77,6 +77,7 @@ struct LiveStream: View {
     
     @State var showhudSuccess: Bool = false
     @State var showBlockSeller: Bool = false
+    @State var sudden_Death = false
     
     @State var productData = [ProductDataModel1]()
     @State var BiddingDetail = BiddingModel()
@@ -821,6 +822,7 @@ struct LiveStream: View {
         CurrentProductView(
             product: product,
             currentPrice: $currentPrice,
+            suddenDeath: $sudden_Death,
             bidTime: $socketManagerChat.bidTime,
             userName: $winnerName,
             userImage: $winnerProfileImage,
@@ -2043,6 +2045,7 @@ extension LiveStream {
         // Optional: set current product
         self.currentProductID = "\(products.first?.id ?? 0)"
         currentPrice = startingBidAmount
+        sudden_Death = suddenDeath
         // Auction config
 //        self.startingBidAmount = startingBidAmount
 //        self.requireTime = requireTime

@@ -91,9 +91,7 @@ struct ProductShopRehersalScreen: View {
     @State var segment: RehearsalProductSegment = .auction
     
     var onTapCancel: (() -> Void)?
-//    var onAuctionTapped: ((ProductDataModel1) -> Void)?
-    var onProductSelected: ((ProductDataModel1) -> Void)? // 👈 CHANGE
-    // Track if we've already set up socket listeners
+    var onProductSelected: ((ProductDataModel1) -> Void)? 
     @State private var socketListenersConfigured = false
     
     private var eventProductIds: Set<Int> {
@@ -346,25 +344,7 @@ extension ProductShopRehersalScreen {
             }
         }
     }
-    
-//    // FIX: Better pagination logic
-//    func handlePagination(currentDisplayIndex: Int) {
-//        guard canLoadMore, !isFetchingMore else { return }
-//        
-//        // Only load more if we have more data available
-//        guard productDataFromAPI.count < totalCount else {
-//            canLoadMore = false
-//            return
-//        }
-//        
-//        let threshold = sortedProductData.count - 3
-//        guard currentDisplayIndex >= threshold else { return }
-//        guard productDataFromAPI.count < totalCount else { return }
-//        
-//        isFetchingMore = true
-//        currentPage += 1
-//        fetchProduct(isLoaderShown: false)
-//    }
+
     
     private func loadNextPageIfNeeded() {
         guard canLoadMore,
@@ -400,72 +380,7 @@ extension ProductShopRehersalScreen {
         
         return pinned + event + normal
     }
-    
-    // MARK: - Product Success
-//    func productSuccess() {
-//        let response = productViewModel.productsResponse1
-//        
-//        if response?.status == "success" {
-//            let newItems = response?.data ?? []
-//            totalCount = response?.total ?? 0
-//            
-//            if newItems.isEmpty {
-//                canLoadMore = false
-//            } else {
-//                // FIX: Check for duplicates before appending
-//                let newUniqueItems = newItems.filter { newItem in
-//                    !productDataFromAPI.contains(where: { $0.id == newItem.id })
-//                }
-//                
-//                productDataFromAPI.append(contentsOf: newUniqueItems)
-//                if productDataFromAPI.count >= totalCount {
-//                                    canLoadMore = false
-//                                }
-//            }
-//            
-//            // FIX: Single reorder call
-//            updateSortedProducts()
-//            
-//        } else {
-//            canLoadMore = false
-//            alertType = .sheetType(
-//                icon: .alert,
-//                title: "Error",
-//                message: viewModel.errorMessage ?? "",
-//                primaryBtnText: AppString.ok.localized,
-//                secondaryBtnText: ""
-//            )
-//            showError = true
-//        }
-//        
-//        isFetchingMore = false
-//    }
-    
-//    func productSuccess() {
-//        let response = productViewModel.productsResponse1
-//
-//        if response?.status == "success" {
-//            let newItems = response?.data ?? []
-//            totalCount = response?.total ?? 0
-//
-//            let uniqueItems = newItems.filter { newItem in
-//                !productDataFromAPI.contains(where: { $0.id == newItem.id })
-//            }
-//
-//            productDataFromAPI.append(contentsOf: uniqueItems)
-//
-//            if productDataFromAPI.count >= totalCount {
-//                canLoadMore = false
-//            }
-//
-//            updateSortedProducts()
-//        } else {
-//            canLoadMore = false
-//        }
-//
-//        isFetchingMore = false
-//    }
-    
+  
     func productSuccess() {
         let response = productViewModel.productsResponse1
         guard response?.status == "success" else {

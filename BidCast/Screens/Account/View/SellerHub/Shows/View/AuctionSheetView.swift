@@ -28,10 +28,15 @@ struct AuctionSettingsSheet: View {
         ZStack {
             VStack(spacing: 0) {
                 // Title
-                Text("Auction Settings")
-                    .font(.custom(poppinsBold, size: 18))
-                    .padding(.top, 12)
-                    .padding(.bottom, 12)
+//                Text("Auction Settings")
+//                    .font(.custom(poppinsBold, size: 18))
+//                    .padding(.top, 12)
+//                    .padding(.bottom, 12)
+                
+                PrimarySheetHeader(title:"Auction Settings",onClose:{
+//                    onClose()
+                    onTapCancel()
+                })
                 
                 ScrollView {
                     VStack(spacing: 12) {
@@ -41,11 +46,14 @@ struct AuctionSettingsSheet: View {
                             requiredTimeField
                         }
                         
-                        // Counter-Bid Time
-                        counterBidTimeSection
+                        suddenDeathSection
+                        
+                        if !isSuddenDeathEnabled{
+                            counterBidTimeSection
+                        }
                         
                         // Sudden Death
-                        suddenDeathSection
+                        
                     }
                     .padding(.horizontal, 12)
                     .padding(.bottom, 40)
@@ -336,7 +344,7 @@ struct AuctionSettingsSheet: View {
             
             Toggle("", isOn: $isSuddenDeathEnabled)
                 .labelsHidden()
-                .tint(.black)
+                .tint(.defaultTheme)
         }
         .padding(12)
         .background(

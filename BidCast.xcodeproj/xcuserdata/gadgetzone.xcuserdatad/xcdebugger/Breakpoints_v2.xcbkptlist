@@ -39,49 +39,79 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "93131969-8159-4CD5-9A46-D6371B1D3B6C"
+            uuid = "F258F61B-24FA-407F-9F91-997E93C59BE2"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BidCast/Screens/Account/View/SellerHub/Shows/View/ProductShopRehersalScreen.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "354"
-            endingLineNumber = "354"
-            landmarkName = "ProductShopRehersalScreen"
-            landmarkType = "21">
+            startingLineNumber = "289"
+            endingLineNumber = "289"
+            landmarkName = "updateSortedProducts()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "E35A1786-BD5C-4F30-9C62-428CA80A8F6B"
+            uuid = "5C6457B8-5AD2-4956-83E2-1E19B7C1F823"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BidCast/Screens/Account/View/SellerHub/Shows/View/ProductShopRehersalScreen.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "353"
-            endingLineNumber = "353"
-            landmarkName = "ProductShopRehersalScreen"
-            landmarkType = "21">
+            startingLineNumber = "98"
+            endingLineNumber = "98"
+            landmarkName = "eventProductIds"
+            landmarkType = "24">
+            <Locations>
+               <Location
+                  uuid = "5C6457B8-5AD2-4956-83E2-1E19B7C1F823 - a2ae74730e662b3b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "BidCast.ProductShopRehersalScreen.eventProductIds.getter : Swift.Set&lt;Swift.Int&gt;"
+                  moduleName = "BidCast.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/gadgetzone/Documents/bidcast/BidCast/Screens/Account/View/SellerHub/Shows/View/ProductShopRehersalScreen.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "98"
+                  endingLineNumber = "98">
+               </Location>
+               <Location
+                  uuid = "5C6457B8-5AD2-4956-83E2-1E19B7C1F823 - 32e29aa0be8a935e"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (BidCast.ProductDataModel1) -&gt; Swift.Optional&lt;Swift.Int&gt; in BidCast.ProductShopRehersalScreen.eventProductIds.getter : Swift.Set&lt;Swift.Int&gt;"
+                  moduleName = "BidCast.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/gadgetzone/Documents/bidcast/BidCast/Screens/Account/View/SellerHub/Shows/View/ProductShopRehersalScreen.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "98"
+                  endingLineNumber = "98">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "6DA5FC81-0F95-4E72-A925-2688A458822E"
+            uuid = "38999910-2BCF-40B1-A4F5-29F3ABD04F4C"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "BidCast/Screens/Account/View/SellerHub/Shows/View/ProductShopRehersalScreen.swift"
+            filePath = "BidCast/Screens/Home/Live Stream/View/LiveStream.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "350"
-            endingLineNumber = "350"
-            landmarkName = "ProductShopRehersalScreen"
-            landmarkType = "21">
+            startingLineNumber = "2048"
+            endingLineNumber = "2048"
+            landmarkName = "updateProducts(for:products:startingBidAmount:requireTime:counterBidTime:suddenDeath:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
