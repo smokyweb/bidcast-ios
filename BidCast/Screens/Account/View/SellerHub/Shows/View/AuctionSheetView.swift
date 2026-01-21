@@ -90,7 +90,7 @@ struct AuctionSettingsSheet: View {
                     
                     // Start Auction Button
                     Button(action: {
-                        let bidStarT = Int(bidAmount) ?? 0
+                        let bidStarT = Int(bidAmount.toDouble?.rounded() ?? 0) ?? 0
                         guard bidStarT > 0 else {
 //                            hudMsg = "Please enter bid amount"
 //                            showHud = true

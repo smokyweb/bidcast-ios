@@ -104,7 +104,6 @@ struct ProductShopRehersalScreen: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            
             // MARK: - Header with Search & Close
             HStack(spacing: 12) {
                 SearchBarView(placeholder: "Search shop...") { text in
@@ -117,9 +116,8 @@ struct ProductShopRehersalScreen: View {
                     onTapCancel?()
                 }) {
                     Image(systemName: "xmark.circle.fill")
-                        .font(.custom("Poppins-SemiBold", size: 14))
+                        .font(.custom(poppinsSemiBold, size: 20.0))
                         .foregroundColor(.black)
-                        .frame(width: 44, height: 44)
                 }
             }
            
@@ -226,7 +224,9 @@ struct ProductShopRehersalScreen: View {
             fetchProduct()
         }
         .sheet(isPresented: $showCreateProductSheet) {
-            ListProductScreen()
+            ListProductScreen(forSheet:true,onCancel:{
+                showCreateProductSheet = false
+            })
                 .onDisappear {
                     // Refresh product list after creating
                     resetData()
@@ -238,8 +238,8 @@ struct ProductShopRehersalScreen: View {
             isPresented: $showSortSheet,
             height: screenHeight * 0.6,
             topBarCornerRadius: 20,
-            contentBackgroundColor: Color(.systemBackground),
-            topBarBackgroundColor: Color(.systemBackground),
+            contentBackgroundColor: Color(.backGround),
+            topBarBackgroundColor: Color(.backGround),
             showTopIndicator: false,
             onDismiss: {
                 showSortSheet = false
@@ -312,6 +312,9 @@ extension ProductShopRehersalScreen {
         canLoadMore = true
         isFetchingMore = false
         isLoading = false
+        self.status = ""
+        self.type = "buy_now"
+        self.saleType = ""
     }
     
     func fetchProduct(isLoaderShown: Bool = true) {
@@ -347,7 +350,7 @@ extension ProductShopRehersalScreen {
                 let request = ProductRequest(
                     search: searchText,
                     category_ids: categoryId,
-                    page: currentPage,
+                    status:status, page: currentPage,
                     type: type,
                     sale_type: saleType
                 )
@@ -467,7 +470,7 @@ struct ProductRehearsalListItem: View {
             
             // Right Content
             VStack(alignment: .leading, spacing: 6) {
-                Text(product.title ?? "Product")
+                Text(product.title?.capitalizingFirstLetter() ?? "Product")
                     .font(.custom("Poppins-SemiBold", size: 13))
                     .foregroundColor(.black)
                     .lineLimit(2)

@@ -1241,7 +1241,7 @@ struct RehearsalScreen: View {
                             .cornerRadius(32)
                     }
                     .padding(.horizontal)
-                    .padding(.bottom, 20)
+                    .padding(.bottom, 28)
                 }
             }
             

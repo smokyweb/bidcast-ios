@@ -33,7 +33,7 @@ struct ListProductScreen: View {
     @State var shippingId = ""
     @State var mailClassList = [String]()
 //    @State var isImageSizeExceeding: Bool = false
-    @State var request : StoreProductParam = StoreProductParam(category_id: "", title: "", description: "", quantity: "", pricing: "", flash_sale: "0", accept_offers: "0", reserve_for_live: "0", shipping_profile_id: "", status: "",sub_category_id: "",width: "",length: "", weight: "",height:"",mail_class:"",processing_category:"", product_condition: "")
+    @State var request : StoreProductParam = StoreProductParam(category_id: "", title: "", description: "", quantity: "1", pricing: "", flash_sale: "0", accept_offers: "0", reserve_for_live: "0", shipping_profile_id: "", status: "",sub_category_id: "",width: "",length: "", weight: "",height:"",mail_class:"",processing_category:"", product_condition: "")
     
     @State private var profiles: [StoreShippingModel] = []
     @State var shippingProfileNames: [String] = []
@@ -58,6 +58,9 @@ struct ListProductScreen: View {
     @State var extraFields: [ExtraFieldModel] = []
     @State var processingListArr = ["Letters","Flats","Machinaable","Nonstandard","Non Machinable"]
     @State var openShippingSheet = false
+    var forSheet : Bool = false
+    
+    var onCancel : () -> () = { }
     var strokeColor: Color {
         isHazardousMaterial ? Color.defaultTheme.opacity(0.3) : Color.gray.opacity(0.1)
     }
@@ -89,23 +92,29 @@ struct ListProductScreen: View {
         secondaryButtonTitle: nil,
         showButtons: true
     )
-
     var body: some View {
         
 //        ZStack {
             VStack{
                 VStack{
-                    PrimaryHeader(
-                        title: "List a Product".localized,
-                        isForLogo : false, leadingImgArr: ["chevron.left"],
-                        trailingImgArr: [],
-                        onClickLeading: { _ in
-                            self.presentationMode.wrappedValue.dismiss()
-                        },
-                        count: .constant(0)
-                    )
+                    if forSheet{
+                        PrimarySheetHeader(title: "Add New Product", onClose: {
+                            onCancel()
+                        })
+                        .padding(.vertical,12)
+                    }else{
+                        PrimaryHeader(
+                            title: "List a Product".localized,
+                            isForLogo : false, leadingImgArr: ["chevron.left"],
+                            trailingImgArr: [],
+                            onClickLeading: { _ in
+                                self.presentationMode.wrappedValue.dismiss()
+                            },
+                            count: .constant(0)
+                        )
+                    }
                 }
-                .frame(height: 40)
+                .frame(height: forSheet ? 60 : 50)
                 .background(Color.white)
                 
                 ScrollView(showsIndicators:false){
@@ -188,14 +197,55 @@ struct ListProductScreen: View {
                         { message in
                             request.description = message
                         }
-                        AuthTextField(floatingLabel: "Quantity".localized, placeholder: "Enter Quantity".localized, icon: .menuProfile, text: $request.quantity ,isIconDisplay : false,
-                                      custFontName : robotoMedium,
-                                      custFontSize : 14.0,
-                                      enteredText:  { quantity in
-                            request.quantity = quantity
-                        })
-                        .keyboardType(.numberPad)
-                        .padding([.bottom],4)
+//                        AuthTextField(floatingLabel: "Quantity".localized, placeholder: "Enter Quantity".localized, icon: .menuProfile, text: $request.quantity ,isIconDisplay : false,
+//                                      custFontName : robotoMedium,
+//                                      custFontSize : 14.0,
+//                                      enteredText:  { quantity in
+//                            request.quantity = quantity
+//                        })
+//                        .keyboardType(.numberPad)
+//                        .padding([.bottom],4)
+                        Text("Quantity")
+                            .font(.custom(robotoMedium, fixedSize: 14.0))
+                            .foregroundStyle(.text)
+                            .padding(.horizontal,16)
+                        HStack(spacing: 6) {
+                            Button(action: {
+                                var quantity = Int(request.quantity) ?? 0
+                                if quantity > 1 {
+                                    quantity -= 1
+                                    request.quantity = "\(quantity)" // keep request in sync
+                                }
+                            }) {
+                                Image(systemName: "minus")
+                                    .font(.custom(poppinsBold, size: 16.0))
+                                    .foregroundColor(.defaultTheme)
+                                    .frame(width: 40, height: 40) // fixed size
+                                    .background(.defaultThemeLight)
+                                    .clipShape(Circle())
+                            }
+                            .buttonStyle(.plain)
+                            
+                            Text("\(request.quantity)")
+                                .font(.custom(poppinsSemiBold, fixedSize: 13.0))
+                                .frame(width: 50, alignment: .center)
+                            
+                            Button(action: {
+                                var quantity = Int(request.quantity) ?? 0
+                                quantity += 1
+                                request.quantity = "\(quantity)"
+                            }) {
+                                Image(systemName: "plus")
+                                    .font(.custom(poppinsBold, size: 16.0))
+                                    .foregroundColor(.defaultTheme)
+                                    .frame(width: 40, height: 40) // fixed size
+                                    .background(.defaultThemeLight)
+                                    .clipShape(Circle())
+                            }
+                            .buttonStyle(.plain)
+                        }
+                        .padding(.horizontal,16)
+                        .padding([.top,.bottom],4)
 //
                         
                         // Dimensions Section
@@ -1056,11 +1106,11 @@ struct DimensionsSection: View {
             HStack {
                 Image(systemName: "cube.fill")
                     .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(.blue)
+                    .foregroundColor(.defaultTheme)
                 
                 Text("Package Dimensions")
                     .font(.system(size: 15, weight: .semibold))
-                    .foregroundColor(.primary)
+                    .foregroundColor(.black)
                 
                 Spacer()
             }
@@ -1109,7 +1159,7 @@ struct DimensionsSection: View {
         .padding(.vertical, 12)
         .background(
             RoundedRectangle(cornerRadius: 14)
-                .fill(Color.defaultTheme.opacity(0.04))
+                .fill(Color.defaultThemeLight)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 14)
@@ -1133,12 +1183,12 @@ struct DimensionField: View {
             // Label with Icon
             HStack(spacing: 6) {
                 Image(systemName: icon)
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundColor(.blue)
+                    .font(.custom(poppinsSemiBold,size: 13.0))
+                    .foregroundColor(.defaultTheme)
                 
                 Text(label)
-                    .font(.system(size: 13, weight: .medium))
-                    .foregroundColor(.secondary)
+                    .font(.custom(poppinsSemiBold,size: 13.0))
+                    .foregroundColor(.darkGray)
             }
             
             // Input Field with Unit
@@ -1148,14 +1198,15 @@ struct DimensionField: View {
                         isFocused = focused
                     }
                 })
+               
                 .keyboardType(.decimalPad)
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundColor(.primary)
+                .font(.custom(poppinsSemiBold,size: 13.0))
+                .foregroundColor(.black)
                 .multilineTextAlignment(.leading)
                 
                 Text(unit)
-                    .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(.secondary)
+                    .font(.custom(poppinsSemiBold,size: 13.0))
+                    .foregroundColor(.darkGray)
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 12)
